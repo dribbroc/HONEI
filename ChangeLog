@@ -1,4 +1,9 @@
 2007-05-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/vector.hh: Added abstract base class Vector and a simple DenseVector
+	implementation.
+
+2007-05-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libgraph/, libla/, libsolver/, libswe/: Directory structure created.
 
