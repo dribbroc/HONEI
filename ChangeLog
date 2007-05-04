@@ -1,0 +1,4 @@
+2007-05-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libgraph/, libla/, libsolver/, libswe/: Directory structure created.
+
