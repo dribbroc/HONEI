@@ -5,7 +5,6 @@
 
 #include <iterator>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
-#include <tr1/memory>
 
 namespace pg512 ///< \todo Namespace name?
 {
@@ -15,11 +14,14 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> class Vector
     {
         public:
+            /// Type of the iterator over our elements.
+            typedef libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> ElementIterator;
+
             /// Returns iterator pointing to the first element of the vector.
-            virtual libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> begin_elements() const = 0;
+            virtual ElementIterator begin_elements() const = 0;
 
             /// Returns iterator pointing behind the last element of the vector.
-            virtual libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> end_elements() const = 0;
+            virtual ElementIterator end_elements() const = 0;
 
             /// Returns our size.
             virtual unsigned long size() const = 0;
@@ -29,7 +31,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * A DenseVector is a vector with O(size**2) elements which keeps its data
+     * A DenseVector is a vector with O(size) non-zero elements which keeps its data
      * sequential.
      **/
     template <typename DataType_> class DenseVector :
@@ -46,11 +48,23 @@ namespace pg512 ///< \todo Namespace name?
             template <typename ElementType_> class ElementIteratorImpl;
             friend class ElementIteratorImpl<DataType_>;
 
+            /// Type of the iterator over our elements.
+            typedef libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> ElementIterator;
+
             /// Constructor.
             DenseVector(unsigned long size) :
                 _elements(new DataType_[size]),
                 _size(size)
             {
+            }
+
+            /// Constructor.
+            DenseVector(unsigned long size, DataType_ value) :
+                _elements(new DataType_[size]),
+                _size(size)
+            {
+                for (unsigned long i(0) ; i < size ; ++i)
+                    _elements[i] = value;
             }
 
             /// Destructor.
@@ -61,15 +75,15 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Returns iterator pointing to the first element of the vector.
-            virtual libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> begin_elements() const
+            virtual ElementIterator begin_elements() const
             {
-                return libwrapiter::ForwardIterator<Vector<DataType_>, DataType_>(ElementIteratorImpl<DataType_>(*this, 0));
+                return ElementIterator(ElementIteratorImpl<DataType_>(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the vector.
-            virtual libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> end_elements() const
+            virtual ElementIterator end_elements() const
             {
-                return libwrapiter::ForwardIterator<Vector<DataType_>, DataType_>(ElementIteratorImpl<DataType_>(*this, this->size()));
+                return ElementIterator(ElementIteratorImpl<DataType_>(*this, this->size()));
             }
 
             /// Returns our size.
@@ -144,3 +158,5 @@ namespace pg512 ///< \todo Namespace name?
             }
     };
 }
+
+#endif

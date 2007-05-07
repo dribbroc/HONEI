@@ -1,3 +1,7 @@
+2007-05-07 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/vector.hh: Some cleanup work.
+
 2007-05-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector.hh: Added abstract base class Vector and a simple DenseVector
