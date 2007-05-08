@@ -1,3 +1,17 @@
+ChangeLog for PG512
+===================
+
+This file lists every change made except typo and formatting fixes, which are
+only listed in SVN log. For a summary of what has changed between releases,
+see the NEWS file.
+
+2007-05-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/tags.hh: Added namespace tags and tag-types for generic/C++,
+	multithreaded/C++ and Cell.
+	* libla/scalar_product.hh: Added ScalarProduct template and
+	generic/C++ implementation.
+
 2007-05-07 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/vector.hh: Some cleanup work.
