@@ -22,8 +22,10 @@
 #ifndef LIBLA_GUARD_VECTOR_HH
 #define LIBLA_GUARD_VECTOR_HH 1
 
-#include <string.h>
+#include "../libutil/shared_array.hh"
+#include "element_iterator.hh"
 
+#include <string.h>
 #include <iterator>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
 
@@ -36,7 +38,7 @@ namespace pg512 ///< \todo Namespace name?
     {
         public:
             /// Type of the iterator over our elements.
-            typedef libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> ElementIterator;
+            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_> ElementIterator;
 
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements() const = 0;
@@ -52,7 +54,6 @@ namespace pg512 ///< \todo Namespace name?
 
             /// Retrieves element by index, zero-based, assignable
             virtual DataType_ & operator[] (unsigned long index) = 0;
-
     };
 
     /**
@@ -64,6 +65,7 @@ namespace pg512 ///< \todo Namespace name?
     {
         private:
             /// Pointer to our elements.
+//            SharedArray<DataType_> _elements;
             DataType_ *_elements;
 
             /// Our size.
@@ -75,7 +77,7 @@ namespace pg512 ///< \todo Namespace name?
             friend class ElementIteratorImpl<DataType_>;
 
             /// Type of the iterator over our elements.
-            typedef libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> ElementIterator;
+            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_> ElementIterator;
 
             /// Constructor.
             DenseVector(unsigned long size) :
@@ -93,23 +95,23 @@ namespace pg512 ///< \todo Namespace name?
                     _elements[i] = value;
             }
 
-            /// Destructor.
-            ~DenseVector()
+            /// Constructor.
+            DenseVector(const DenseVector<DataType_> & other) :
+                _elements(other._elements),
+                _size(other._size)
             {
-                /// \todo shared array. Do not use shared_ptr due to delete/delete[] mismatch.
-                delete[] _elements;
             }
 
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements() const
             {
-                return ElementIterator(ElementIteratorImpl<DataType_>(*this, 0));
+                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements() const
             {
-                return ElementIterator(ElementIteratorImpl<DataType_>(*this, this->size()));
+                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, this->size()));
             }
 
             /// Returns our size.
@@ -135,7 +137,7 @@ namespace pg512 ///< \todo Namespace name?
      * A DenseVector::ElementIteratorImpl is a simple iterator implementation for dense vectors.
      **/
     template <> template <typename DataType_> class DenseVector<DataType_>::ElementIteratorImpl<DataType_> :
-        std::iterator<std::forward_iterator_tag, DataType_>
+        public ElementIteratorImplBase<Vector<DataType_>, DataType_>
     {
         private:
             const DenseVector<DataType_> & _vector;
@@ -172,21 +174,33 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Equality operator.
-            virtual bool operator== (const ElementIteratorImpl<DataType_> & other) const
+            virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return (&_vector == &other._vector) && (_index == other._index);
+                return (&_vector == other.vector()) && (_index == other.index());
             }
 
             /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorImpl<DataType_> & other) const
+            virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return ((&_vector != &other._vector) || (_index != other._index));
+                return ((&_vector != other.vector()) || (_index != other.index()));
             }
 
             /// Dereference operator 
             virtual DataType_ & operator* () const
             {
                 return _vector._elements[_index];
+            }
+
+            /// Returns pointer to our vector.
+            virtual const Vector<DataType_> * vector() const
+            {
+                return &_vector;
+            }
+
+            /// Returns our index.
+            virtual const unsigned long index() const
+            {
+                return _index;
             }
     };
 
@@ -228,7 +242,7 @@ namespace pg512 ///< \todo Namespace name?
 
         public:
             /// Iterator over our elements.
-            typedef libwrapiter::ForwardIterator<Vector<DataType_>, DataType_> ElementIterator;
+            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_> ElementIterator;
 
             /// Our implementation of ElementIterator.
             template <typename ElementType_> class ElementIteratorImpl;
@@ -247,13 +261,13 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements() const
             {
-                return ElementIterator(ElementIteratorImpl<DataType_>(*this, 0));
+                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements() const
             {
-                return ElementIterator(ElementIteratorImpl<DataType_>(*this, this->size()));
+                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, this->size()));
             }
 
             /// Returns out element capacity.
@@ -319,7 +333,7 @@ namespace pg512 ///< \todo Namespace name?
      * A SparseVector::ElementIteratorImpl is a smart iterator implementation for sparse vectors.
      **/
     template <> template <typename DataType_> class SparseVector<DataType_>::ElementIteratorImpl<DataType_> :
-        std::iterator<std::forward_iterator_tag, DataType_>
+        public ElementIteratorImplBase<Vector<DataType_>, DataType_>
     {
         private:
             const SparseVector<DataType_> & _vector;
@@ -366,15 +380,15 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Equality operator.
-            virtual bool operator== (const ElementIteratorImpl<DataType_> & other) const
+            virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return (&_vector == &other._vector) && (_index == other._index);
+                return (&_vector == other.vector()) && (_index == other.index());
             }
 
             /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorImpl<DataType_> & other) const
+            virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return ((&_vector != &other._vector) || (_index != other._index));
+                return (&_vector != other.vector()) || (_index != other.index());
             }
 
             /// Dereference operator 
@@ -385,7 +399,19 @@ namespace pg512 ///< \todo Namespace name?
                 else if (_vector._indices[_pos] == _index)
                     return _vector._elements[_pos];
             }
-    };
+
+            /// Returns pointer to our vector.
+            virtual const Vector<DataType_> * vector() const
+            {
+                return &_vector;
+            }
+
+            /// Returns our index.
+            virtual const unsigned long index() const
+            {
+                return _index;
+            }
+   };
 }
 
 #endif

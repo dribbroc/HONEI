@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/element_iterator.hh, libla/Makefile.am, libla/vector.hh:
+	Replaced libwrapiter::ForwardIterator with a more suited
+	ElementIterator.
+
+2007-05-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* configure.ac, Makefile.am, libutil/, libutil/exception.cc,
+	libutil/exception.hh, libutil/shared_array.cc,
+	libutil/shared_array.hh: Added Exception and SharedArray as part of
+	libutil.
+
 2007-05-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* autogen.bash, configure.ac, libla/Makefile.am, Makefile.am:
