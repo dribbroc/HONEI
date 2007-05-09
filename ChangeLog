@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-05-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/vector.hh: Fixed SparseVectors for more than one element.
+
+2007-05-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/vector.hh: Fixed include guards.
 
 2007-05-09 Danny van Dyk <danny.dyk@uni-dortmund.de>

@@ -288,7 +288,7 @@ namespace pg512 ///< \todo Namespace name?
                     return _zero_element;
             }
 
-            /// Retrieves element by index, zero-based, unassignable.
+            /// Retrieves (and inserts empty) element by index, zero-based, assignable.
             virtual DataType_ & operator[] (unsigned long index)
             {
                 unsigned long i(0);
@@ -307,6 +307,7 @@ namespace pg512 ///< \todo Namespace name?
 
                 _elements[i] = DataType_(0);
                 _indices[i] = index;
+                ++_used_elements;
 
                 return _elements[i];
             }
