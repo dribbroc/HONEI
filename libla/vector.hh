@@ -19,8 +19,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef BASISKOMPONENTEN_GUARD_TYPES_HH
-#define BASISKOMPONENTEN_GUARD_TYPES_HH 1
+#ifndef LIBLA_GUARD_VECTOR_HH
+#define LIBLA_GUARD_VECTOR_HH 1
 
 #include <string.h>
 
