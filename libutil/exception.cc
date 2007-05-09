@@ -18,6 +18,9 @@
  */
 
 #include "exception.hh"
+#include "stringify.hh"
+
+#include <cxxabi.h>
 
 using namespace pg512;
 
@@ -32,9 +35,33 @@ Exception::Exception(const Exception & other) :
 {
 }
 
+Exception::~Exception() throw ()
+{
+}
+
 const std::string &
 Exception::message() const
 {
     return _message;
 }
 
+const char *
+Exception::what() const throw ()
+{
+#ifdef HAVE_CXA_DEMANGLE
+    if (_what_str.empty())
+    {
+        int status(0);
+        char * const name(abi::__cxa_demangle(
+                    ("_Z" + stringify(std::exception::what())).c_str(), 0, 0, &status));
+        if (0 == status)
+        {
+            _what_str = name;
+            std::free(name);
+        }
+    }
+#endif
+    if (_what_str.empty())
+        _what_str = stringify(std::exception::what());
+    return _what_str.c_str();
+}

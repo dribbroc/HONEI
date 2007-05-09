@@ -30,6 +30,8 @@ namespace pg512 ///< \todo Namespace name?
         private:
             const std::string _message;
 
+            mutable std::string _what_str;
+
         protected:
             Exception(const std::string & message) throw ();
 
@@ -39,6 +41,8 @@ namespace pg512 ///< \todo Namespace name?
             virtual ~Exception() throw ();
 
             const std::string & message() const;
+
+            const char * what() const throw ();
     };
 }
 

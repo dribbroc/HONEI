@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/vector.hh, libutil/exception.cc, libutil/exception.hh,
+	libutil/shared_array.hh: Fixed SharedArray reference counting and
+	switched DenseVector back to using it.
+
+2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/element_iterator.hh, libla/Makefile.am, libla/vector.hh:
 	Replaced libwrapiter::ForwardIterator with a more suited
 	ElementIterator.

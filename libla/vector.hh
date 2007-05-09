@@ -65,8 +65,7 @@ namespace pg512 ///< \todo Namespace name?
     {
         private:
             /// Pointer to our elements.
-//            SharedArray<DataType_> _elements;
-            DataType_ *_elements;
+            SharedArray<DataType_> _elements;
 
             /// Our size.
             unsigned long _size;
