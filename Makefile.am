@@ -5,7 +5,7 @@ MAINTAINERCLEANFILES = \
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = autogen.bash
 
-SUBDIRS = libla
+SUBDIRS = libutil libla
 
 doxygen:
 	$(MAKE) -C doc $@
