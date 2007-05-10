@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/Makefile.am: Oops. Added libutil's Makefile.am to the
+	repository.
+
+2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/vector.hh, libutil/exception.cc, libutil/exception.hh,
 	libutil/shared_array.hh: Fixed SharedArray reference counting and
 	switched DenseVector back to using it.
