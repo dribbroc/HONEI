@@ -81,27 +81,31 @@ namespace pg512
         }
     };
 
-    /// total specialisation: L2-norm ^ 2
+       /// partial specialisation: L2-norm ^ 2
     template <typename DataType_> struct VectorNorm<DataType_, vnt_l_two, false>
     {
         static DataType_ value (const Vector<DataType_> & vector) {
             DataType_ result(0);
-            result = VectorNorm<DataType_, vnt_l_two, false>::value();
+            for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            {
+                result = ScalarProduct<DataType_>::value(vector, vector);
+            }
             return result;
         }
     };
 
-    /// total specialisation: normal L2-norm (with sqrt)
+    /// partial specialisation: normal L2-norm (with sqrt)
     template <typename DataType_> struct VectorNorm<DataType_, vnt_l_two, true>
     {
         static DataType_ value (const Vector<DataType_> & vector) {
             DataType_ result(0);
-            result = VectorNorm<DataType_, vnt_l_two, true>::value();
+            result = VectorNorm<DataType_, vnt_l_two, false>::value();
+            result = sqrt(result);
             return result;
         }
     };
 
-/// partial specialisation: norm with sqrt (allows L^k-norm)
+    /// partial specialisation: norm with sqrt (allows L^k-norm)
     template <typename DataType_, vector_norm_type NormType_> struct VectorNorm<DataType_, NormType_, true>
     {
         static DataType_ value (const Vector<DataType_> & vector) {
@@ -117,19 +121,7 @@ namespace pg512
 
 /* Unnessacary specialisations... !?
 
-
- /// partial specialisation: norm without sqrt
-    template <typename DataType_, vector_norm_type NormType_> struct VectorNorm<DataType_, NormType_, false>
-    {
-        static DataType_ value (const Vector<DataType_> & vector) {
-            DataType_ result(0);
-            result = VectorNorm<DataType_, NormType_, false>::value();
-            return result;
-        }
-    };
-
-
-    /// partial specialisation: L2-norm
+/// partial specialisation: L2-norm
        template <typename DataType_, bool root> struct VectorNorm<DataType_, vnt_l_two, root>
     {
         static DataType_ value (const Vector<DataType_> & vector) {
@@ -138,6 +130,16 @@ namespace pg512
                 {
                     result = ScalarProduct<DataType_>::value(vector, vector);
                 }
+            return result;
+        }
+    };
+
+ /// partial specialisation: norm without sqrt
+    template <typename DataType_, vector_norm_type NormType_> struct VectorNorm<DataType_, NormType_, false>
+    {
+        static DataType_ value (const Vector<DataType_> & vector) {
+            DataType_ result(0);
+            result = VectorNorm<DataType_, NormType_, false>::value();
             return result;
         }
     };
