@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/vector.hh: Added output operator for arbitrary descendants of
+	Vector.
+
+2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/Makefile.am, libla/scalar_product.cc, libla/scalar_product.hh:
 	Added shallow explicit specilisation for single-precission
 	ScalarProduct on Cell CPU.

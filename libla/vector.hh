@@ -25,9 +25,9 @@
 #include "../libutil/shared_array.hh"
 #include "element_iterator.hh"
 
-#include <string.h>
 #include <iterator>
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
+#include <ostream>
+#include <string.h>
 
 namespace pg512 ///< \todo Namespace name?
 {
@@ -55,6 +55,20 @@ namespace pg512 ///< \todo Namespace name?
             /// Retrieves element by index, zero-based, assignable
             virtual DataType_ & operator[] (unsigned long index) = 0;
     };
+
+    /// Output our Vector to an ostream.
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Vector<DataType_> & v)
+    {
+        lhs << "[ ";
+        for (typename Vector<DataType_>::ElementIterator i(v.begin_elements()), i_end(v.end_elements()) ;
+                i != i_end ; ++i)
+        {
+            lhs << *i << " ";
+        }
+        lhs << "]";
+
+        return lhs;
+    }
 
     /**
      * A DenseVector is a vector with O(size) non-zero elements which keeps its data
