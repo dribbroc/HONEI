@@ -5,7 +5,7 @@ lib_LTLIBRARIES = libla.la
 
 libla_la_SOURCES = \
 	element_iterator.hh \
-	scalar_product.hh \
+	scalar_product.cc scalar_product.hh \
 	tags.hh \
 	vector.hh
 libla_la_LIBADD = \

@@ -22,18 +22,30 @@
 
 #include "tags.hh"
 #include "vector.hh"
+#include "../libutil/exception.hh"
 
 namespace pg512 ///< \todo Namespace name?
 {
+    /**
+     * A ScalarProductError is thrown by ScalarProduct<>::value().
+     **/
+    class ScalarProductError :
+        public Exception
+    {
+        public:
+            /// Constructor.
+            ScalarProductError(const std::string & message) throw ();
+    };
+
     /**
      * A ScalarProduct yields the inner product of two descendants of type Vector.
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarProduct
     {
-        static DataType_ value(const Vector<DataType_> & left, const Vector<DataType_> & right)
+        static DataType_ value(const DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
         {
             if (left.size() != right.size())
-                throw std::string("Yikes. VectorSizesDoNotMatch and no exception classes yet.");
+                throw ScalarProductError("Vector sizes do not match.");
 
             DataType_ result(0);
 
@@ -47,9 +59,24 @@ namespace pg512 ///< \todo Namespace name?
             return result;
         }
 
-        /// \todo Inner product of SparseVector/Vector and
-        /// SparseVector/SparseVector.
+        static DataType_ value(const SparseVector<DataType_> & left, const DenseVector<DataType_> & right)
+        {
+            if (left.size() != right.size())
+                throw ScalarProductError("Vector sizes do not match.");
+
+            DataType_ result(0);
+
+            for (typename Vector<DataType_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; ++l )
+            {
+                result += (*l) * right[l.index()];
+            }
+        }
     };
+
+    /// Explicit instantiation for Cell-based float computation.
+    template <>
+    float ScalarProduct<float, tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right);
 }
 
 #endif
