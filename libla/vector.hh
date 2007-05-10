@@ -235,8 +235,11 @@ namespace pg512 ///< \todo Namespace name?
                 DataType_ *_new_elements(new DataType_[new_capacity]);
 
                 memcpy(_new_elements, _elements, sizeof(DataType_) * _used_elements);
+
                 delete[] _elements;
+
                 _elements = _new_elements;
+                _capacity = new_capacity;
             }
 
         public:
@@ -246,6 +249,10 @@ namespace pg512 ///< \todo Namespace name?
             /// Our implementation of ElementIterator.
             template <typename ElementType_> class ElementIteratorImpl;
             friend class ElementIteratorImpl<DataType_>;
+
+            /// Our implementation of NonZeroElementIterator.
+            template <typename ElementType_> class NonZeroElementIteratorImpl;
+            friend class NonZeroElementIteratorImpl<DataType_>;
 
             /// Constructor.
             SparseVector(unsigned long size, unsigned long capacity) :
@@ -266,7 +273,19 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements() const
             {
-                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, this->size()));
+                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, _size));
+            }
+
+            /// Returns iterator pointing to the first non-zero element of the vector.
+            virtual ElementIterator begin_non_zero_elements() const
+            {
+                return ElementIterator(new NonZeroElementIteratorImpl<DataType_>(*this, 0));
+            }
+
+            /// Returns iterator pointing behind the last element of the vector.
+            virtual ElementIterator end_non_zero_elements() const
+            {
+                return ElementIterator(new NonZeroElementIteratorImpl<DataType_>(*this, _used_elements));
             }
 
             /// Returns out element capacity.
@@ -397,6 +416,86 @@ namespace pg512 ///< \todo Namespace name?
                     return _vector._zero_element;
                 else if (_vector._indices[_pos] == _index)
                     return _vector._elements[_pos];
+            }
+
+            /// Returns pointer to our vector.
+            virtual const Vector<DataType_> * vector() const
+            {
+                return &_vector;
+            }
+
+            /// Returns our index.
+            virtual const unsigned long index() const
+            {
+                return _index;
+            }
+    };
+
+    /**
+     * A SparseVector::NonZeroElementIteratorImpl is a smart iterator implementation that iterates over non-zero
+     * elements of a sparse vectors.
+     **/
+    template <> template <typename DataType_> class SparseVector<DataType_>::NonZeroElementIteratorImpl<DataType_> :
+        public ElementIteratorImplBase<Vector<DataType_>, DataType_>
+    {
+        private:
+            const SparseVector<DataType_> & _vector;
+            unsigned long _pos;
+            unsigned long _index;
+
+        public:
+            /// Constructor.
+            NonZeroElementIteratorImpl(const SparseVector<DataType_> & vector, unsigned long pos) :
+                _vector(vector),
+                _pos(pos),
+                _index(_vector._indices[pos])
+            {
+            }
+
+            /// Constructor.
+            NonZeroElementIteratorImpl(NonZeroElementIteratorImpl<DataType_> const & other) :
+                _vector(other._vector),
+                _pos(other._pos),
+                _index(other._index)
+            {
+            }
+
+            /// Preincrement operator.
+            virtual NonZeroElementIteratorImpl<DataType_> & operator++ ()
+            {
+                ++_pos;
+                _index = _vector._indices[_pos];
+
+                return *this;
+            }
+
+            /// Postincrement operator.
+            virtual NonZeroElementIteratorImpl<DataType_> operator++ (int)
+            {
+                NonZeroElementIteratorImpl<DataType_> result(*this);
+
+                ++_pos;
+                _index = _vector._indices[_pos];
+
+                return result;
+            }
+
+            /// Equality operator.
+            virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
+            {
+                return (&_vector == other.vector()) && (_index == other.index());
+            }
+
+            /// Inequality operator.
+            virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
+            {
+                return (&_vector != other.vector()) || (_index != other.index());
+            }
+
+            /// Dereference operator 
+            virtual DataType_ & operator* () const
+            {
+                return _vector._elements[_pos];
             }
 
             /// Returns pointer to our vector.

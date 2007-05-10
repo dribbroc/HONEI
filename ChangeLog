@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/vector.hh: Added support for iterating over non-zero elements
+	of a SparseVector.
+
+2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/stringify.hh: Oops^2. Added stringify.
 
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
