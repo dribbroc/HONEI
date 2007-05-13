@@ -1,24 +1,9 @@
 #include <iostream>
 #include <string>
+#include "BasisTest.hh"
+#include "BlasTest.hh"
 using namespace std;
-class BasisTest  {
-	string name;
-	string beschreibung;
 
-	public:
-	
-	BasisTest(string n) {
-		this->name         = n;
-		this->beschreibung = "Ein Basistest, gibt immer true zurück!";	
-	}
-
-
-	bool starteTest() {
-		cout << this->name << endl;
-		return true;
-	}
-	
-};
 
 int main(int argc, char** argv) {
 
@@ -35,8 +20,9 @@ cout << anzahl << endl;
 for (int i = 0; (i < anzahl) && (i < argc); i++) {
 	cout << argv[i] << endl; 
 } */
-BasisTest btest("hallo");
-cout << btest.starteTest()<< endl;	
+BlasTest btest("blub");
+//cout << btest.starteTest()<< endl;
+btest.starteTest();	
 	
 	return 0;
 	
