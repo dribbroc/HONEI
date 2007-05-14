@@ -1,12 +1,12 @@
-//#include <iostream>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 extern "C" {
-#include "cblas.h"
+	#include "cblas.h"
 }
 #include "BasisTest.hh"
 #include "BlasTest.hh"
-//using namespace std;	
+using namespace std;	
 BlasTest::BlasTest(string n) : BasisTest(n){}
 //BlasTest::BlasTest() : BasisTest(){}
 

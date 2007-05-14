@@ -15,7 +15,7 @@ class BasisTest  {
 	}
 
 
-	bool starteTest() {
+	virtual bool starteTest() {
 		std::cout << this->name << endl;
 		return true;
 	}

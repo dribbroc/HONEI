@@ -2,6 +2,7 @@
 #include <string>
 #include "BasisTest.hh"
 #include "BlasTest.hh"
+#include "LiblaTest.hh"
 using namespace std;
 
 
@@ -23,6 +24,7 @@ for (int i = 0; (i < anzahl) && (i < argc); i++) {
 BlasTest btest("blub");
 //cout << btest.starteTest()<< endl;
 btest.starteTest();	
+LiblaTest latest("foo");
 	
 	return 0;
 	
