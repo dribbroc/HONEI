@@ -1,12 +1,14 @@
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
 #include <iostream>
 #include <string>
-#include "BasisTest.hh"
-#include "BlasTest.hh"
-#include "LiblaTest.hh"
+#include "basetest.hh"
+#include "blastest.hh"
+#include "liblatest.hh"
 using namespace std;
 
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) 
+{
 
 /*cout << "Hallo du!\n";
 cout << argc << " Argumente. Wert:  " << argv[1];

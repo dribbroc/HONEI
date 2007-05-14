@@ -1,8 +1,9 @@
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
 #ifndef LIBLATEST_HH
 #define LIBLATEST_HH 1
-#include "BasisTest.hh"
+#include "basetest.hh"
 using namespace std;	
-class LiblaTest : BasisTest
+class LiblaTest : BaseTest
 {
 	public:		
 		//BlasTest();
