@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/matrix_row_sum_vector.hh, libla/vector_sum.hh: Added
+	MatrixRowSumVector and its dependence VectorSum.
+
+2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* +libmath, -libsolver: As discussed during the meeting: moved
 	libsolver/ to libmath/.
 
