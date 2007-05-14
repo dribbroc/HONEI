@@ -7,8 +7,13 @@ see the NEWS file.
 
 2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
-	* libutil/shared_array.hh: Reworked SharedArrayCounter and removed
-	silly unsigned bug.
+	* libla/element_iterator.hh, libla/Makefile.am, libla/matrix.hh: Added
+	abstract base class Matrix and a simple implementation DenseMatrix.
+
+2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/shared_array.hh: Reworked
+	SharedArrayCounter and removed silly unsigned bug.
 
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
