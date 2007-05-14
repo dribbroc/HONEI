@@ -23,8 +23,9 @@ for (int i = 0; (i < anzahl) && (i < argc); i++) {
 } */
 BlasTest btest("blub");
 //cout << btest.starteTest()<< endl;
-btest.starteTest();	
-LiblaTest latest("foo");
+btest.starteTest();
+BlasTest btest2();	
+LiblaTest latest();
 	
 	return 0;
 	
