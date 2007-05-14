@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/Makefile.am, libla/norm.hh, libla/scalar_product.hh, libla/vector.hh,
+	libutil/exception.cc, libutil/Makefile.am, libutil/shared_array.cc,
+	libutil/shared_array.hh: Added top source directory to the list of
+	include directories.
+
+2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/element_iterator.hh, libla/Makefile.am, libla/matrix.hh: Added
 	abstract base class Matrix and a simple implementation DenseMatrix.
 
