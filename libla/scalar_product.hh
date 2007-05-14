@@ -20,9 +20,9 @@
 #ifndef LIBLA_GUARD_SCALAR_PRODUCT_HH
 #define LIBLA_GUARD_SCALAR_PRODUCT_HH 1
 
-#include "tags.hh"
-#include "vector.hh"
-#include "../libutil/exception.hh"
+#include <tags.hh>
+#include <vector.hh>
+#include <libutil/exception.hh>
 
 namespace pg512 ///< \todo Namespace name?
 {
@@ -59,7 +59,7 @@ namespace pg512 ///< \todo Namespace name?
             return result;
         }
 
-        static DataType_ value(const SparseVector<DataType_> & left, const DenseVector<DataType_> & right)
+        static DataType_ value(const SparseVector<DataType_> & left, const Vector<DataType_> & right)
         {
             if (left.size() != right.size())
                 throw ScalarProductError("Vector sizes do not match.");

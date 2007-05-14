@@ -1,6 +1,7 @@
 CLEANFILES = *~
-
 MAINTAINERCLEANFILES = Makefile.in
+
+AM_CXXFLAGS = -I$(top_srcdir)
 
 lib_LTLIBRARIES = libutil.la
 

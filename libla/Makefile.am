@@ -1,6 +1,8 @@
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
+AM_CXXFLAGS = -I$(top_srcdir)
+
 lib_LTLIBRARIES = libla.la
 
 libla_la_SOURCES = \

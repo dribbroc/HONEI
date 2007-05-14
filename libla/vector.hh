@@ -22,8 +22,9 @@
 #ifndef LIBLA_GUARD_VECTOR_HH
 #define LIBLA_GUARD_VECTOR_HH 1
 
-#include "../libutil/shared_array.hh"
-#include "element_iterator.hh"
+#include <libutil/exception.hh>
+#include <libutil/shared_array.hh>
+#include <libla/element_iterator.hh>
 
 #include <iterator>
 #include <ostream>
@@ -31,6 +32,19 @@
 
 namespace pg512 ///< \todo Namespace name?
 {
+    /**
+     * A VectorError is thrown when Vector-private methods encounter an exception.
+     **/
+    class VectorError :
+        public Exception
+    {
+        public:
+            VectorError(const std::string & message) throw () :
+                Exception(message)
+            {
+            }
+    };
+
     /**
      * A Vector is the abstract baseclass for all vector-like types used.
      **/
@@ -84,6 +98,12 @@ namespace pg512 ///< \todo Namespace name?
             /// Our size.
             unsigned long _size;
 
+            /// Our offset.
+            unsigned long _offset;
+
+            /// Our stepsize.
+            unsigned long _stepsize;
+
         public:
             /// Our implementation of ElementIterator.
             template <typename ElementType_> class ElementIteratorImpl;
@@ -93,18 +113,22 @@ namespace pg512 ///< \todo Namespace name?
             typedef ElementIteratorWrapper<Vector<DataType_>, DataType_> ElementIterator;
 
             /// Constructor.
-            DenseVector(unsigned long size) :
-                _elements(new DataType_[size]),
-                _size(size)
+            DenseVector(const unsigned long size, unsigned long offset = 0, unsigned long stepsize = 1) :
+                _elements(new DataType_[stepsize * size + offset]),
+                _size(size),
+                _offset(offset),
+                _stepsize(stepsize)
             {
             }
 
             /// Constructor.
-            DenseVector(unsigned long size, DataType_ value) :
-                _elements(new DataType_[size]),
-                _size(size)
+            DenseVector(const unsigned long size, DataType_ value, unsigned long offset = 0, unsigned long stepsize = 1) :
+                _elements(new DataType_[_stepsize * size + _offset]),
+                _size(size),
+                _offset(offset),
+                _stepsize(stepsize)
             {
-                for (unsigned long i(0) ; i < size ; ++i)
+                for (unsigned long i(_offset) ; i < size ; i += _stepsize)
                     _elements[i] = value;
             }
 
@@ -112,6 +136,15 @@ namespace pg512 ///< \todo Namespace name?
             DenseVector(const DenseVector<DataType_> & other) :
                 _elements(other._elements),
                 _size(other._size)
+            {
+            }
+
+            /// Constructor.
+            DenseVector(const unsigned long size, const SharedArray<DataType_> & elements, unsigned long offset = 0, unsigned stepsize = 1) :
+                _elements(elements),
+                _size(size),
+                _offset(offset),
+                _stepsize(stepsize)
             {
             }
 
@@ -136,13 +169,13 @@ namespace pg512 ///< \todo Namespace name?
             /// Retrieves element by index, zero-based, assignable.
             virtual const DataType_ & operator[] (unsigned long index) const
             {
-                return _elements[index];
+                return _elements[_stepsize * index + _offset];
             }
 
             /// Retrieves element by index, zero-based, assignable.
             virtual DataType_ & operator[] (unsigned long index)
             {
-                return _elements[index];
+                return _elements[_stepsize * index + _offset];
             }
     };
 
@@ -189,23 +222,23 @@ namespace pg512 ///< \todo Namespace name?
             /// Equality operator.
             virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return (&_vector == other.vector()) && (_index == other.index());
+                return (&_vector == other.parent()) && (_index == other.index());
             }
 
             /// Inequality operator.
             virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return ((&_vector != other.vector()) || (_index != other.index()));
+                return ((&_vector != other.parent()) || (_index != other.index()));
             }
 
             /// Dereference operator 
             virtual DataType_ & operator* () const
             {
-                return _vector._elements[_index];
+                return _vector._elements[_vector._stepsize * _index + _vector._offset];
             }
 
             /// Returns pointer to our vector.
-            virtual const Vector<DataType_> * vector() const
+            virtual const Vector<DataType_> * parent() const
             {
                 return &_vector;
             }
@@ -414,13 +447,13 @@ namespace pg512 ///< \todo Namespace name?
             /// Equality operator.
             virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return (&_vector == other.vector()) && (_index == other.index());
+                return (&_vector == other.parent()) && (_index == other.index());
             }
 
             /// Inequality operator.
             virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return (&_vector != other.vector()) || (_index != other.index());
+                return (&_vector != other.parent()) || (_index != other.index());
             }
 
             /// Dereference operator 
@@ -433,7 +466,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Returns pointer to our vector.
-            virtual const Vector<DataType_> * vector() const
+            virtual const Vector<DataType_> * parent() const
             {
                 return &_vector;
             }
@@ -497,13 +530,13 @@ namespace pg512 ///< \todo Namespace name?
             /// Equality operator.
             virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return (&_vector == other.vector()) && (_index == other.index());
+                return (&_vector == other.parent()) && (_index == other.index());
             }
 
             /// Inequality operator.
             virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
             {
-                return (&_vector != other.vector()) || (_index != other.index());
+                return (&_vector != other.parent()) || (_index != other.index());
             }
 
             /// Dereference operator 
@@ -512,8 +545,8 @@ namespace pg512 ///< \todo Namespace name?
                 return _vector._elements[_pos];
             }
 
-            /// Returns pointer to our vector.
-            virtual const Vector<DataType_> * vector() const
+            /// Returns pointer to our parent.
+            virtual const Vector<DataType_> * parent() const
             {
                 return &_vector;
             }

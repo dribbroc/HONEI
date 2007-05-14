@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "exception.hh"
-#include "stringify.hh"
+#include <libutil/exception.hh>
+#include <libutil/stringify.hh>
 
 #include <cxxabi.h>
 

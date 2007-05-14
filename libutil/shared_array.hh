@@ -20,8 +20,8 @@
 #ifndef LIBUTIL_GUARD_SHARED_ARRAY_HH
 #define LIBUTIL_GUARD_SHARED_ARRAY_HH 1
 
-#include "exception.hh"
-#include "stringify.hh"
+#include <libutil/exception.hh>
+#include <libutil/stringify.hh>
 
 #include <map>
 
