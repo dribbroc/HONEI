@@ -42,19 +42,38 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Our map of reference counters.
-            std::map<DataType_ *, unsigned long> _counter_map;
+            std::map<DataType_ *, long> _counter_map;
 
         public:
-            static SharedArrayCounter * get_instance()
+            static SharedArrayCounter * instance()
             {
                 static SharedArrayCounter result;
 
                 return &result;
             }
 
-            std::map<DataType_ *, unsigned long> counter_map()
+            void increase(DataType_ * entry)
             {
-                return _counter_map;
+                if (_counter_map.find(entry) == _counter_map.end())
+                    _counter_map[entry] = 0;
+
+                _counter_map[entry]++;
+            }
+
+            void decrease(DataType_ * entry)
+            {
+                if (_counter_map.find(entry) == _counter_map.end())
+                    _counter_map[entry] = 0;
+
+                _counter_map[entry]++;
+            }
+
+            long count(DataType_ * entry)
+            {
+                if (_counter_map.find(entry) == _counter_map.end())
+                    return 0;
+                else
+                    return _counter_map[entry];
             }
     };
 
@@ -70,43 +89,32 @@ namespace pg512 ///< \todo Namespace name?
             SharedArray(DataType_ *array) :
                 _array(array)
             {
-                SharedArrayCounter<DataType_>::get_instance()->counter_map()[_array]++;
+                SharedArrayCounter<DataType_>::instance()->increase(_array);
             }
 
-            /// Constructor.
+            /// Copy-Constructor.
             SharedArray(const SharedArray<DataType_> & other) :
                 _array(other._array)
             {
-                SharedArrayCounter<DataType_>::get_instance()->counter_map()[_array]++;
+                SharedArrayCounter<DataType_>::instance()->increase(_array);
             }
 
             /// Destructor.
             ~SharedArray()
             {
-                SharedArrayCounter<DataType_>::get_instance()->counter_map()[_array]--;
-#if 0
-                if (_counter_map[_array] < 0)
-                    Log(ll_critical, "~SharedArray: reference counter below zero for address " + stringify(_array));
-                else
-#endif
-                if (SharedArrayCounter<DataType_>::get_instance()->counter_map()[_array] == 0)
-                    delete[] _array;
-            }
+                SharedArrayCounter<DataType_>::instance()->decrease(_array);
 
-            DataType_ & operator* ()
-            {
-                if (SharedArrayCounter<DataType_>::get_instance()->counter_map()[_array] < 0)
-                    throw SharedArrayError("SharedArray::operator*(): reference counter below zero for address " + stringify(_array));
-                else
-                    return _array[0];
+                long count(SharedArrayCounter<DataType_>::instance()->count(_array));
+
+                if (count < 0)
+                    SharedArrayError("~SharedArray: reference counter below zero for address " + stringify(_array));
+                else if (count == 0)
+                    delete[] _array;
             }
 
             DataType_ & operator[] (std::ptrdiff_t index) const
             {
-                if (SharedArrayCounter<DataType_>::get_instance()->counter_map()[_array] < 0)
-                    throw SharedArrayError("SharedArray::operator*(): reference counter below zero for address " + stringify(_array));
-                else
-                    return _array[index];
+                return _array[index];
             }
 
             bool operator! () const

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/shared_array.hh: Reworked SharedArrayCounter and removed
+	silly unsigned bug.
+
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector.hh: Added output operator for arbitrary descendants of
