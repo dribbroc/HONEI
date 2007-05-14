@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "scalar_product.hh"
+#include <scalar_product.hh>
 
 #include <string>
 #include <iostream>

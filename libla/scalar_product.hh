@@ -20,8 +20,8 @@
 #ifndef LIBLA_GUARD_SCALAR_PRODUCT_HH
 #define LIBLA_GUARD_SCALAR_PRODUCT_HH 1
 
-#include <tags.hh>
-#include <vector.hh>
+#include <libla/tags.hh>
+#include <libla/vector.hh>
 #include <libutil/exception.hh>
 
 namespace pg512 ///< \todo Namespace name?
