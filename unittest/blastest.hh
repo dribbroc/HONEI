@@ -6,7 +6,7 @@ using namespace std;
 class BlasTest : BaseTest
 {
 	public:		
-		//BlasTest();
+		BlasTest();
 		BlasTest(string n);
 		bool starteTest();
 

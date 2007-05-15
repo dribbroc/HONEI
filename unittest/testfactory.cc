@@ -3,11 +3,11 @@
 
 
 BaseTest * TestFactory::NewTest (const string & description)
-{/*
+{
     if (description == "BlasTest")
         return new BlasTest;
     if (description == "LiblaTest")
         return new LiblaTest;
-*/    return NULL;
+    return NULL;
 }
 

@@ -10,7 +10,7 @@ extern "C"
 #include "blastest.hh"
 using namespace std;	
 BlasTest::BlasTest(string n) : BaseTest(n){}
-//BlasTest::BlasTest() : BasisTest(){}
+BlasTest::BlasTest() : BasisTest(){}
 
 bool BlasTest::starteTest()
 {
