@@ -3,7 +3,7 @@
 #define LIBLATEST_HH 1
 #include "basetest.hh"
 using namespace std;	
-class LiblaTest : BaseTest
+class LiblaTest : public BaseTest
 {
 	public:		
 		//BlasTest();

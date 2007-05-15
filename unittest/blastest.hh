@@ -3,10 +3,10 @@
 #define BLASTEST_HH 1
 #include "basetest.hh"
 using namespace std;	
-class BlasTest : BaseTest
+class BlasTest : public BaseTest
 {
 	public:		
-		BlasTest();
+		//BlasTest();
 		BlasTest(string n);
 		bool starteTest();
 
