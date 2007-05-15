@@ -2,18 +2,21 @@
 .PHONY: all
 all: unittest
 
-Unittest.o	:	Unittest.cpp BlasTest.hh LiblaTest.hh BasisTest.hh Makefile
-		g++ -c Unittest.cpp -o Unittest.o
+unittest.o	:	unittest.cc blastest.hh liblatest.hh basetest.hh Makefile
+		g++ -c unittest.cc -o unittest.o
 
-BlasTest.o	:	BlasTest.cpp BlasTest.hh BasisTest.hh cblas.h Makefile
-		g++ -c BlasTest.cpp -o BlasTest.o
+blastest.o	:	blastest.cc blastest.hh basetest.hh Makefile
+		g++ -c blastest.cc -o blastest.o
 
-LiblaTest.o	:	LiblaTest.cpp LiblaTest.hh BasisTest.hh Makefile
-		g++ -c LiblaTest.cpp -o LiblaTest.o
+liblatest.o	:	liblatest.cc liblatest.hh basetest.hh Makefile
+		g++ -c liblatest.cc -o liblatest.o
 
-unittest	:	Unittest.o BlasTest.o LiblaTest.o Makefile
-		g++ BlasTest.o LiblaTest.o Unittest.o -o unittest -lg2c -lcblas -lblas -Llib
+testfactory.o	:	testfactory.cc testfactory.hh Makefile
+		g++ -c testfactory.cc -o testfactory.o
+
+unittest	:	unittest.o blastest.o liblatest.o testfactory.o Makefile
+		g++ blastest.o liblatest.o unittest.o testfactory.o -o unittest -lg2c -lcblas
 
 clean		:	Makefile
-		rm *.o
+		rm -f *.o
 		

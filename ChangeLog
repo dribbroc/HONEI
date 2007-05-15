@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-05-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* unittest/testfactory.cc unittest/testfactory.hh: Added rudimental classfactory
+
 2007-05-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_matrix.hh, libla/matrix.hh: Split out DenseMatrix to its
