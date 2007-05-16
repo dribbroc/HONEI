@@ -2,6 +2,9 @@
 #ifndef TESTS_HH
 #define TESTS_HH 1
 
-#define ALL 1
+struct Tests
+{
+    const static int all=1;
+};
 
 #endif

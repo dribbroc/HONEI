@@ -16,7 +16,7 @@ class TestDispatcher
 {
 	public:
     /// runs the specified test and returns if it has failed or succeded
-	bool start_test(int Typ);
+	bool start_test(int typ ,BaseTest * instances[], int instances_size);
     
     private:
     /// generate a random dense vector with given size

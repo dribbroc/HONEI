@@ -14,7 +14,7 @@ liblatest.o	:	liblatest.cc liblatest.hh basetest.hh Makefile
 testfactory.o	:	testfactory.cc testfactory.hh Makefile
 		g++ -c testfactory.cc -o testfactory.o
 
-testdispatcher.o	:	testdispatcher.cc testdispatcher.hh Makefile
+testdispatcher.o	:	testdispatcher.cc testdispatcher.hh tests.hh Makefile
 		g++ -c testdispatcher.cc -o testdispatcher.o
 
 unittest	:	unittest.o blastest.o liblatest.o testfactory.o testdispatcher.o Makefile

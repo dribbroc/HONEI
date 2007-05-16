@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-05-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* unittest/tests.hh test-enumeration structure added
+
+2007-05-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* unittest/testdispatcher.cc unittest/testdispatcher.hh: Added TestDispatcher
 	* unittest applied some more coding conventions
 
