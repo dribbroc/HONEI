@@ -2,7 +2,7 @@
 #include "testfactory.hh"
 
 
-BaseTest * TestFactory::NewTest (const string & description)
+BaseTest * TestFactory::new_test (const string & description)
 {
     if (description == "BlasTest")
         return new BlasTest("foo");

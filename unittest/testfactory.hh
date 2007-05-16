@@ -9,7 +9,7 @@ using namespace std;
 class TestFactory
 {
 	public:
-	static BaseTest * NewTest (const string & description);
+	static BaseTest * new_test (const string & description);
 };
 
 #endif

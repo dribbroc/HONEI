@@ -1,18 +1,11 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-extern "C" 
-{
-	#include "cblas.h"
-}
-#include "basetest.hh"
+
 #include "blastest.hh"
 using namespace std;	
 BlasTest::BlasTest(string n) : BaseTest(n){}
 //BlasTest::BlasTest() : BasisTest(){}
 
-bool BlasTest::starteTest()
+bool BlasTest::start_test()
 {
     enum CBLAS_ORDER order;
     enum CBLAS_TRANSPOSE transa;

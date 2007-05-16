@@ -14,8 +14,11 @@ liblatest.o	:	liblatest.cc liblatest.hh basetest.hh Makefile
 testfactory.o	:	testfactory.cc testfactory.hh Makefile
 		g++ -c testfactory.cc -o testfactory.o
 
-unittest	:	unittest.o blastest.o liblatest.o testfactory.o Makefile
-		g++ blastest.o liblatest.o unittest.o testfactory.o -o unittest -lg2c -lcblas
+testdispatcher.o	:	testdispatcher.cc testdispatcher.hh Makefile
+		g++ -c testdispatcher.cc -o testdispatcher.o
+
+unittest	:	unittest.o blastest.o liblatest.o testfactory.o testdispatcher.o Makefile
+		g++ blastest.o liblatest.o unittest.o testfactory.o testdispatcher.o -o unittest -lg2c -lcblas
 
 clean		:	Makefile
 		rm -f *.o

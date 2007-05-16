@@ -18,7 +18,7 @@ class BaseTest
 	}
 
 
-	virtual bool starteTest() = 0;  // Rein virtuell.
+	virtual bool start_test() = 0;  // Rein virtuell.
 
 	
 	

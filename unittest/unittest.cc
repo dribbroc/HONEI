@@ -24,8 +24,8 @@ for (int i = 0; (i < anzahl) && (i < argc); i++) {
 	cout << argv[i] << endl; 
 } */
 BlasTest btest("blub");
-//cout << btest.starteTest()<< endl;
-btest.starteTest();
+//cout << btest.start_test()<< endl;
+btest.start_test();
 BlasTest btest2();	
 LiblaTest latest();
 	
