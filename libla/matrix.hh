@@ -28,7 +28,6 @@
 
 #include <ostream>
 #include <string.h>
-#include <iterator>
 
 namespace pg512 ///< \todo Namespace name?
 {
@@ -41,62 +40,68 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our elements.
             typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_> ElementIterator;
 
-            /// Type of the iterator over our row/column/band/diagonal vectors.
-//            typedef VectorIteratorBase<Matrix<DataType_>, Vector<DataType_> > VectorIterator;
-
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements() const = 0;
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements() const = 0;
-#if 0
-            /// Returns iterator pointing to the first column of the matrix.
-            virtual VectorIterator begin_columns() const = 0;
 
-            /// Returns iterator pointing behind the last column of the matrix.
-            virtual VectorIterator end_columns() const = 0;
-
-            /// Returns iterator pointing to the first row of the matrix.
-            virtual VectorIterator begin_rows() const = 0;
-
-            /// Returns iterator pointing behind the last row of the matrix.
-            virtual VectorIterator end_rows() const = 0;
-#endif
             /// Returns our number of columns.
             virtual unsigned long columns() const = 0;
 
             /// Returns our number of rows.
             virtual unsigned long rows() const = 0;
 
-            /// Retrieves element by index, zero-based, unassignable.
-            virtual const Vector<DataType_> & operator[] (unsigned long row) const = 0;
-    };
-
-    /**
-     * A MutableMatrix is the abstract baseclass for all mutable matrix-like types used.
-     **/
-    template <typename DataType_> class MutableMatrix :
-        public Matrix<DataType_>
-    {
-        public:
-            /// Retrieves element by index, zero-based, assignable
-            virtual Vector<DataType_> & operator[] (unsigned long row) = 0;
     };
 
     /// Output our Matrix to an ostream.
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Matrix<DataType_> & m)
     {
+        unsigned long row(0);
+
         lhs << "[ " << std::endl;
-        for (unsigned long r(0) ; r < m.rows() ; ++r)
+        for (typename Matrix<DataType_>::ElementIterator i(m.begin_elements()), i_end(m.end_elements()) ;
+                i != i_end ; ++i)
+        {
+            if (row != i.row())
+            {
+                lhs << std::endl;
+                row = i.row();
+            }
+            lhs << " " << *i;
+        }
+
+        lhs << "]" << std::endl << "]";
+
+        return lhs;
+    }
+
+    /**
+     * A RowAccessMatrix is the abstract baseclass for all matrix-like types
+     * that offere randome access to their rows.
+     **/
+    template <typename DataType_> class RowAccessMatrix :
+        public Matrix<DataType_>
+    {
+        public:
+            /// Retrieves element by index, zero-based, unassignable.
+            virtual const Vector<DataType_> & operator[] (unsigned long row) const = 0;
+
+            /// Retrieves element by index, zero-based, assignable
+            virtual Vector<DataType_> & operator[] (unsigned long row) = 0;
+
+            /// \todo Iteration over rows.
+    };
+
+    /// Output our RowAccessMatrix to an ostream.
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const RowAccessMatrix<DataType_> & m)
+    {
+        lhs << "[ " << std::endl;
+        for (unsigned long r(0) ; r < m.rows() ; ++r) ///< \todo Add row-iteration to RowAccessMatrix.
         {
             const Vector<DataType_> & v(m[r]);
 
-            for (unsigned long c(0) ; c < m.columns() ; ++c)
-            {
-                lhs << v[c] << " ";
-            }
-
-            lhs << std::endl;
+            lhs << " "<< v << std::endl;
         }
         lhs << "]";
 

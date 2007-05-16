@@ -24,7 +24,7 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/matrix.hh>
-#include <libla/vector.hh>
+#include <libla/dense_vector.hh>
 #include <libutil/shared_array.hh>
 
 #include <string.h>
@@ -37,7 +37,7 @@ namespace pg512 ///< \todo Namespace name?
      * sequential.
      **/
     template <typename DataType_> class DenseMatrix :
-        public MutableMatrix<DataType_>
+        public Matrix<DataType_>
     {
         private:
             /// Pointer to our elements.
@@ -196,13 +196,13 @@ namespace pg512 ///< \todo Namespace name?
             /// Our column.
             virtual const unsigned long column() const
             {
-                return _index % _matrix._rows;
+                return _index % _matrix._columns;
             }
 
             /// Our row.
             virtual const unsigned long row() const
             {
-                return _index / _matrix._rows;
+                return _index / _matrix._columns;
             }
 
             /// Our parent.

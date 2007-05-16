@@ -22,9 +22,10 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_HH
 #define LIBLA_GUARD_DENSE_VECTOR_HH 1
 
+#include <libla/element_iterator.hh>
+#include <libla/vector.hh>
 #include <libutil/exception.hh>
 #include <libutil/shared_array.hh>
-#include <libla/element_iterator.hh>
 
 #include <iterator>
 #include <string.h>
