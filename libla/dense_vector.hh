@@ -24,17 +24,25 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/vector.hh>
-#include <libutil/exception.hh>
 #include <libutil/shared_array.hh>
 
 #include <iterator>
 #include <string.h>
 
+/**
+ * \file
+ *
+ * Implementation of DenseVector and related classes.
+ *
+ * \ingroup grpvector
+ **/
 namespace pg512 ///< \todo Namespace name?
 {
     /**
      * A DenseVector is a vector with O(size) non-zero elements which keeps its data
      * sequential.
+     *
+     * \ingroup grpvector
      **/
     template <typename DataType_> class DenseVector :
         public Vector<DataType_>
@@ -60,7 +68,13 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our elements.
             typedef ElementIteratorWrapper<Vector<DataType_>, DataType_> ElementIterator;
 
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new dense vector.
+             * \param offset Offset of the vector's data inside the shared array.
+             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
+             **/
             DenseVector(const unsigned long size, unsigned long offset = 0, unsigned long stepsize = 1) :
                 _elements(new DataType_[stepsize * size + offset]),
                 _size(size),
@@ -69,7 +83,14 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new dense vector.
+             * \param value Default value for all of the vector's elements.
+             * \param offset Offset of the vector's data inside the shared array.
+             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
+             **/
             DenseVector(const unsigned long size, DataType_ value, unsigned long offset = 0,
                     unsigned long stepsize = 1) :
                 _elements(new DataType_[_stepsize * size + _offset]),
@@ -81,14 +102,21 @@ namespace pg512 ///< \todo Namespace name?
                     _elements[i] = value;
             }
 
-            /// Constructor.
+            /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other) :
                 _elements(other._elements),
                 _size(other._size)
             {
             }
 
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new dense vector.
+             * \param elements SharedArray of the vector's elements.
+             * \param offset Offset of the vector's data inside the shared array.
+             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
+             **/
             DenseVector(const unsigned long size, const SharedArray<DataType_> & elements, unsigned long offset = 0,
                     unsigned stepsize = 1) :
                 _elements(elements),
@@ -131,6 +159,8 @@ namespace pg512 ///< \todo Namespace name?
 
     /**
      * A DenseVector::ElementIteratorImpl is a simple iterator implementation for dense vectors.
+     *
+     * \ingroup grpvector
      **/
     template <> template <typename DataType_> class DenseVector<DataType_>::ElementIteratorImpl<DataType_> :
         public ElementIteratorImplBase<Vector<DataType_>, DataType_>
@@ -140,14 +170,19 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param vector The parent vector that is referenced by the iterator.
+             * \param index The index into the vector.
+             **/
             ElementIteratorImpl(const DenseVector<DataType_> & vector, unsigned long index) :
                 _vector(vector),
                 _index(index)
             {
             }
 
-            /// Constructor.
+            /// Copy-constructor.
             ElementIteratorImpl(ElementIteratorImpl<DataType_> const & other) :
                 _vector(other._vector),
                 _index(other._index)
@@ -187,7 +222,7 @@ namespace pg512 ///< \todo Namespace name?
                 return _vector._elements[_vector._stepsize * _index + _vector._offset];
             }
 
-            /// Returns pointer to our vector.
+            /// Returns our parent vector.
             virtual const Vector<DataType_> * parent() const
             {
                 return &_vector;

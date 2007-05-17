@@ -1,0 +1,35 @@
+/* vim: set ft=cpp tw=80 sw=4 et : */
+
+// ----- Top Level Group -----
+
+/**
+ * \defgroup grppg512 Projektgruppe 512 SmartCell: Clevere Algorithmen fuer den Cell-Prozessor
+ **/
+
+// ----- Library Groups -----
+
+/**
+ * \defgroup grplibla LibLA: Linear Algebra Template Library
+ *
+ * \ingroup grppg512
+ **/
+
+// ----- LibLA Groups -----
+
+/**
+ * \defgroup grpvector Vector types
+ *
+ * \ingroup grplibla
+ **/
+
+/**
+ * \defgroup grpvectorexceptions Exceptions thrown by Vector types
+ *
+ * \ingroup grpvector
+ **/
+
+/**
+ * \defgroup grpvectoroperations Operations that work on Vector types
+ *
+ * \ingroup grpvector
+ **/

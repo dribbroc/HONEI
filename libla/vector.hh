@@ -22,31 +22,27 @@
 #ifndef LIBLA_GUARD_VECTOR_HH
 #define LIBLA_GUARD_VECTOR_HH 1
 
-#include <libutil/exception.hh>
-#include <libutil/shared_array.hh>
 #include <libla/element_iterator.hh>
+#include <libla/vector_error.hh>
+#include <libutil/shared_array.hh>
 
 #include <iterator>
 #include <ostream>
 #include <string.h>
 
+/**
+ * \file
+ *
+ * Interface declarations for Vector-based types.
+ *
+ * \ingroup grpvector
+ **/
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A VectorError is thrown when Vector-private methods encounter an exception.
-     **/
-    class VectorError :
-        public Exception
-    {
-        public:
-            VectorError(const std::string & message) throw () :
-                Exception(message)
-            {
-            }
-    };
-
-    /**
      * A Vector is the abstract baseclass for all vector-like types used.
+     *
+     * \ingroup grpvector
      **/
     template <typename DataType_> class Vector
     {
@@ -71,6 +67,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /// Output our Vector to an ostream.
+    /// \ingroup grpvector
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Vector<DataType_> & v)
     {
         lhs << "[ ";

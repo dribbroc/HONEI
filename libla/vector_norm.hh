@@ -28,28 +28,46 @@
 #include <math.h>
 #include <iostream>
 
+/**
+ * \file
+ *
+ * Templatized definitions of vector norms.<br/>
+ *
+ *
+ * \ingroup grpvectoroperations
+ **/
 namespace pg512
 {
-    /** Norm is the base-class for all supported types of norms,
-     * in the standard unextended case l1- and l2-norm as well as maximum-norm
-     **/
 
     /**
-     * A VectorNormType is a template tag-parameter for the Norm template.
-     * It governs the type of the norm that shall be computed.
+     * A VectorNormType is a template tag parameter for the VectorNorm class
+     * template. It governs the type of the (mathematical) norm that shall be
+     * computed.
+     *
+     * \ingroup grpvectoroperations
      **/
     enum VectorNormType {
         vnt_max = 0,
-        vnt_l_one = 1,
-        vnt_l_two = 2
-        /// Extend here if higher norms needed
+        vnt_l_one,
+        vnt_l_two,
+        // Extend here if higher norms needed
     };
 
     /**
-     * Generic norm template - as default l2-norm is assumed.
+     * VectorNorm is the class template for all supported types of vector norms.
+     * The standard norms of type L1 and L2 are supported, as well as the
+     * maximum norm. As default tag the L2 vector-norm is assumed.
+     *
+     * \ingroup grpvectoroperations
      **/
-    template <typename DataType_, VectorNormType norm_type_ = vnt_l_two, bool root_ = false, typename Tag_ = tags::CPU> struct VectorNorm
+    template <typename DataType_, VectorNormType norm_type_ = vnt_l_two,
+             bool root_ = false, typename Tag_ = tags::CPU> struct VectorNorm
     {
+        /**
+         * Return the norm of a vector.
+         *
+         * \param vector Vector whose norm shall be computed.
+         **/
         static DataType_ value(const DenseVector<DataType_> & vector)
         {
             DataType_ result(0);
@@ -61,6 +79,7 @@ namespace pg512
     };
 
     /// Partial specialisation of VectorNorm for vnt_max (maximums-norm)
+    /// \ingroup grpvectoroperations
     template <typename DataType_, bool root_> struct VectorNorm<DataType_, vnt_max, root_, tags::CPU>
     {
         static DataType_ value(const DenseVector<DataType_> & vector)
@@ -82,6 +101,7 @@ namespace pg512
 
 
     /// Partial specialisation of VectorNorm for vnt_l_one (l1-norm)
+    /// \ingroup grpvectoroperations
     template <typename DataType_, bool root_> struct VectorNorm<DataType_, vnt_l_one, root_, tags::CPU>
     {
         static DataType_ value(const DenseVector<DataType_> & vector)
@@ -98,7 +118,8 @@ namespace pg512
         }
     };
 
-    /// Partial specialisation of VectorNorm for vnt_l_two (square of l2-norm)
+    /// Partial specialisation of VectorNorm for vnt_l_two (square of L2-norm)
+    /// \ingroup grpvectoroperations
     template <typename DataType_> struct VectorNorm<DataType_, vnt_l_two, false, tags::CPU>
     {
         static DataType_ value(const DenseVector<DataType_> & vector)
@@ -107,7 +128,8 @@ namespace pg512
         }
     };
 
-    /// Partial specialisation of VectorNorm for vnt_l_two (l2-norm)
+    /// Partial specialisation of VectorNorm for vnt_l_two (L2-norm)
+    /// \ingroup grpvectoroperations
     template <typename DataType_> struct VectorNorm<DataType_, vnt_l_two, true, tags::CPU>
     {
         static DataType_ value(const DenseVector<DataType_> & vector)
@@ -116,8 +138,10 @@ namespace pg512
         }
     };
 
-    /// Partial specialisation of VectorNorm for arbitrary norms (allows lk-norm)
-    template <typename DataType_, VectorNormType norm_type_> struct VectorNorm<DataType_, norm_type_, true, tags::CPU>
+    /// Partial specialisation of VectorNorm for arbitrary norms (allows Lk-norm)
+    /// \ingroup grpvectoroperations
+    template <typename DataType_, VectorNormType norm_type_> struct VectorNorm<DataType_,
+             norm_type_, true, tags::CPU>
     {
         static DataType_ value (const DenseVector<DataType_> & vector)
         {

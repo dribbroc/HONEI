@@ -30,11 +30,20 @@
 #include <ostream>
 #include <string.h>
 
+/**
+ * \file
+ *
+ * Implementation of SparseVector and related classes.
+ *
+ * \ingroup grpvector
+ **/
 namespace pg512 ///< \todo Namespace name?
 {
     /**
      * A SparseVector is a vector with O(1) non-zero elements which keeps its data
      * non-sequential.
+     *
+     * \ingroup grpvector
      **/
     template <typename DataType_> class SparseVector :
         public Vector<DataType_>
@@ -83,7 +92,12 @@ namespace pg512 ///< \todo Namespace name?
             template <typename ElementType_> class NonZeroElementIteratorImpl;
             friend class NonZeroElementIteratorImpl<DataType_>;
 
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new sparse vector.
+             * \param capacity Number of elements for which the vector shall reserve space.
+             **/
             SparseVector(unsigned long size, unsigned long capacity) :
                 _elements(new DataType_[capacity]),
                 _indices(new unsigned long[capacity]),
@@ -123,7 +137,7 @@ namespace pg512 ///< \todo Namespace name?
                 return _capacity;
             }
 
-            /// Returns our used element numer.
+            /// Returns our used element number.
             virtual unsigned long used_elements() const
             {
                 return _used_elements;
@@ -178,6 +192,8 @@ namespace pg512 ///< \todo Namespace name?
 
     /**
      * A SparseVector::ElementIteratorImpl is a smart iterator implementation for sparse vectors.
+     *
+     * \ingroup grpvector
      **/
     template <> template <typename DataType_> class SparseVector<DataType_>::ElementIteratorImpl<DataType_> :
         public ElementIteratorImplBase<Vector<DataType_>, DataType_>
@@ -188,7 +204,12 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param vector The parent vector that is referenced by the iterator.
+             * \param index The index into the vector.
+             **/
             ElementIteratorImpl(const SparseVector<DataType_> & vector, unsigned long index) :
                 _vector(vector),
                 _pos(0),
@@ -196,7 +217,7 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Constructor.
+            /// Copy-constructor.
             ElementIteratorImpl(ElementIteratorImpl<DataType_> const & other) :
                 _vector(other._vector),
                 _pos(other._pos),
@@ -263,6 +284,8 @@ namespace pg512 ///< \todo Namespace name?
     /**
      * A SparseVector::NonZeroElementIteratorImpl is a smart iterator implementation that iterates over non-zero
      * elements of a sparse vectors.
+     *
+     * \ingroup grpvector
      **/
     template <> template <typename DataType_> class SparseVector<DataType_>::NonZeroElementIteratorImpl<DataType_> :
         public ElementIteratorImplBase<Vector<DataType_>, DataType_>
@@ -273,7 +296,12 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param vector The parent vector that is referenced by the iterator.
+             * \param pos The index of a non-zero element into the vectors internal index table.
+             **/
             NonZeroElementIteratorImpl(const SparseVector<DataType_> & vector, unsigned long pos) :
                 _vector(vector),
                 _pos(pos),
@@ -281,7 +309,7 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Constructor.
+            /// Copy-cnstructor.
             NonZeroElementIteratorImpl(NonZeroElementIteratorImpl<DataType_> const & other) :
                 _vector(other._vector),
                 _pos(other._pos),

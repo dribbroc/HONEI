@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
+
+	* doc/doc_groups.doxygen, doc/doxygen.conf, libla/dense_vector.hh,
+	libla/sparse_vector.hh, libla/vector.hh, libla/vector_error.hh,
+	libla/vector_norm.hh: Documented Vector, its subclasses and
+	VectorNorm.
+
 2007-05-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/banded_matrix.hh: Added BandedMatrix.
