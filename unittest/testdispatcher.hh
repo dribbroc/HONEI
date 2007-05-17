@@ -23,6 +23,10 @@ class TestDispatcher
     //Vector * _random_dense_vector(unsigned long size);
     /// generate a random dense matrix with given size
     //Matrix * _random_dense_matrix(unsigned long columns, unsigned long rows);
+    /// perform a read-write test on a vector
+    //bool _vector_rw(BaseTest * instances[],int instances_size, Vector vector , int operation_count);
+    /// perform a read-write test on a matrix
+    //bool _matrix_rw(BaseTest * instances[],int instances_size,Matrix matrix, int operation_count);
 
 
 };

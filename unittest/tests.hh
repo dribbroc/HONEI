@@ -5,6 +5,8 @@
 struct Tests
 {
     const static int all=1;
+    const static int vector_rw=10;
+    const static int matrix_rw=20;
 };
 
 #endif

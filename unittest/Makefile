@@ -22,4 +22,5 @@ unittest	:	unittest.o blastest.o liblatest.o testfactory.o testdispatcher.o Make
 
 clean		:	Makefile
 		rm -f *.o
+		rm -f unittest
 		

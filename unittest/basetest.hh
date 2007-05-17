@@ -16,8 +16,9 @@ class BaseTest
 		this->name         = n;
 		this->beschreibung = "Ein Basistest, gibt immer true zurück!";	
 	}
-
-
+    /// overwrite value at position, returns the changed vector
+    //virtual Vector * vector_rw(Vector vector,int position, double value);
+     
 	 virtual bool start_test()=0;  // Rein virtuell.
 
 	
