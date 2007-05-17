@@ -29,10 +29,19 @@
 #include <ostream>
 #include <string.h>
 
+/**
+ * \file
+ *
+ * Interface declarations for Matrix-based types.
+ *
+ * \ingroup grpmatrix
+ **/
 namespace pg512 ///< \todo Namespace name?
 {
     /**
      * A Matrix is the abstract baseclass for all matrix-like types used.
+     *
+     * \ingroup grpmatrix
      **/
     template <typename DataType_> class Matrix
     {
@@ -54,7 +63,11 @@ namespace pg512 ///< \todo Namespace name?
 
     };
 
-    /// Output our Matrix to an ostream.
+    /** 
+     * Output our Matrix to an ostream.
+     *
+     * \ingroup grpmatrix
+     **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Matrix<DataType_> & m)
     {
         unsigned long row(0);
@@ -78,7 +91,9 @@ namespace pg512 ///< \todo Namespace name?
 
     /**
      * A RowAccessMatrix is the abstract baseclass for all matrix-like types
-     * that offere randome access to their rows.
+     * that offer random access to their rows.
+     *
+     * \ingroup grpmatrix
      **/
     template <typename DataType_> class RowAccessMatrix :
         public Matrix<DataType_>
@@ -93,7 +108,11 @@ namespace pg512 ///< \todo Namespace name?
             /// \todo Iteration over rows.
     };
 
-    /// Output our RowAccessMatrix to an ostream.
+    /**
+     * Output our RowAccessMatrix to an ostream.
+     *
+     * \ingroup grpmatrix
+     **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const RowAccessMatrix<DataType_> & m)
     {
         lhs << "[ " << std::endl;

@@ -29,20 +29,29 @@
 #include <iterator>
 #include <tr1/memory>
 
+/**
+ * \file
+ *
+ * Implementation of BandedMatrix and related classes.
+ *
+ * \ingroup grpmatrix
+ **/
 namespace pg512 ///< \todo Namespace name?
 {
     /**
      * A BandedMatrix is a square matrix with O(size) non-zero bands which keeps its data
      * non-sequential.
+     *
+     * \ingroup grpmatrix
      **/
     template <typename DataType_> class BandedMatrix :
         public Matrix<DataType_>
     {
         private:
-            /// Pointer to our elements.
+            /// Pointer to our bands.
             SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > _bands;
 
-            /// Our columns.
+            /// Our size.
             unsigned long _size;
 
             /// Our zero element.
@@ -59,7 +68,11 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our row/column/band/diagonal vectors.
 //            typedef VectorIteratorBase<Matrix<DataType_>, Vector<DataType_> > VectorIterator;
 
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new banded matrix.
+             **/
             BandedMatrix(unsigned long size) :
                 _bands(new std::tr1::shared_ptr<DenseVector<DataType_> >[2 * size + 1]),
                 _size(size)
@@ -72,7 +85,7 @@ namespace pg512 ///< \todo Namespace name?
                 return ElementIterator(new ElementIteratorImpl<DataType_>(*this, 0));
             }
 
-            /// Returns iterator pointing behind the last element of the vector.
+            /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements() const
             {
                 return ElementIterator(new ElementIteratorImpl<DataType_>(*this, _size * _size));
@@ -103,6 +116,8 @@ namespace pg512 ///< \todo Namespace name?
 
     /**
      * A BandedMatrix::ElementIteratorImpl is a simple iterator implementation for banded matrices.
+     *
+     * \ingroup grpmatrix
      **/
     template <> template <typename DataType_> class BandedMatrix<DataType_>::ElementIteratorImpl<DataType_> :
         public ElementIteratorImplBase<Matrix<DataType_>, DataType_>
@@ -140,14 +155,19 @@ namespace pg512 ///< \todo Namespace name?
             }
 
         public:
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param matrix The parent matrix that is referenced by the iterator.
+             * \param index The index into the matrix.
+             **/
             ElementIteratorImpl(const BandedMatrix<DataType_> & matrix, unsigned long index) :
                 _matrix(matrix),
                 _index(index)
             {
             }
 
-            /// Constructor.
+            /// Copy-constructor.
             ElementIteratorImpl(ElementIteratorImpl<DataType_> const & other) :
                 _matrix(other._matrix),
                 _index(other._index)
@@ -190,25 +210,25 @@ namespace pg512 ///< \todo Namespace name?
                 return (*_matrix._bands[_band_index()])[(_lower() ? _index : _index - _band_class()) % _matrix._size];
             }
 
-            /// Our index.
+            /// Returns our index.
             virtual const unsigned long index() const
             {
                 return _index;
             }
 
-            /// Our column.
+            /// Returns our column.
             virtual const unsigned long column() const
             {
                 return _index % _matrix._size;
             }
 
-            /// Our row.
+            /// Returns our row.
             virtual const unsigned long row() const
             {
                 return _index / _matrix._size;
             }
 
-            /// Our parent.
+            /// Returns our parent matrix.
             virtual const Matrix<DataType_> * parent() const
             {
                 return &_matrix;

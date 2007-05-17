@@ -30,11 +30,20 @@
 #include <string.h>
 #include <iterator>
 
+/**
+ * \file
+ *
+ * Implementation of DenseMatrix and related classes.
+ *
+ * \ingroup grpmatrix
+ **/
 namespace pg512 ///< \todo Namespace name?
 {
     /**
      * A DenseMatrix is a matrix with O(column * row) non-zero elements which keeps its data
      * sequential.
+     *
+     * \ingroup grpmatrix
      **/
     template <typename DataType_> class DenseMatrix :
         public Matrix<DataType_>
@@ -63,7 +72,12 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our row/column/band/diagonal vectors.
 //            typedef VectorIteratorBase<Matrix<DataType_>, Vector<DataType_> > VectorIterator;
 
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param columns Number of columns of the new matrix.
+             * \param rows Number of rows of the new matrix.
+             **/
             DenseMatrix(unsigned long columns, unsigned long rows) :
                 _elements(new DataType_[rows * columns]),
                 _columns(columns),
@@ -72,7 +86,13 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param columns Number of columns of the new matrix.
+             * \param rows Number of rows of the new matrix.
+             * \param value Default value of each of the new matrice's elements.
+             **/
             DenseMatrix(unsigned long columns, unsigned long rows, DataType_ value) :
                 _elements(new DataType_[rows * columns]),
                 _columns(columns),
@@ -89,7 +109,7 @@ namespace pg512 ///< \todo Namespace name?
                 return ElementIterator(new ElementIteratorImpl<DataType_>(*this, 0));
             }
 
-            /// Returns iterator pointing behind the last element of the vector.
+            /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements() const
             {
                 return ElementIterator(new ElementIteratorImpl<DataType_>(*this, _rows * _columns));
@@ -128,6 +148,8 @@ namespace pg512 ///< \todo Namespace name?
 
     /**
      * A DenseMatrix::ElementIteratorImpl is a simple iterator implementation for dense matrices.
+     *
+     * \ingroup grpmatrix
      **/
     template <> template <typename DataType_> class DenseMatrix<DataType_>::ElementIteratorImpl<DataType_> :
         public ElementIteratorImplBase<Matrix<DataType_>, DataType_>
@@ -140,14 +162,19 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructor.
+            /**
+             * Constructor.
+             *
+             * \param matrix The parent matrix that is referenced by the iterator.
+             * \param index The index into the matrix.
+             **/
             ElementIteratorImpl(const DenseMatrix<DataType_> & matrix, unsigned long index) :
                 _matrix(matrix),
                 _index(index)
             {
             }
 
-            /// Constructor.
+            /// Copy-constructor.
             ElementIteratorImpl(ElementIteratorImpl<DataType_> const & other) :
                 _matrix(other._matrix),
                 _index(other._index)
@@ -187,25 +214,25 @@ namespace pg512 ///< \todo Namespace name?
                 return _matrix._elements[_index];
             }
 
-            /// Our index.
+            /// Returns our index.
             virtual const unsigned long index() const
             {
                 return _index;
             }
 
-            /// Our column.
+            /// Returns our column.
             virtual const unsigned long column() const
             {
                 return _index % _matrix._columns;
             }
 
-            /// Our row.
+            /// Returns our row.
             virtual const unsigned long row() const
             {
                 return _index / _matrix._columns;
             }
 
-            /// Our parent.
+            /// Returns our parent matrix.
             virtual const Matrix<DataType_> * parent() const
             {
                 return &_matrix;

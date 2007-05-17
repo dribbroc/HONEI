@@ -33,3 +33,22 @@
  *
  * \ingroup grpvector
  **/
+
+/**
+ * \defgroup grpmatrix Matrix tpes
+ *
+ * \ingroup grplibla
+ **/
+
+/**
+ * \defgroup grpmatrixexceptions Exceptions thrown by matrix types
+ *
+ * \ingroup grpmatrix
+ **/
+
+/**
+ * \defgroup grpmatrixoperations Operations that work on matrix types
+ *
+ * \ingroup grpmatrix
+ **/
+

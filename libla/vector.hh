@@ -66,8 +66,11 @@ namespace pg512 ///< \todo Namespace name?
             virtual DataType_ & operator[] (unsigned long index) = 0;
     };
 
-    /// Output our Vector to an ostream.
-    /// \ingroup grpvector
+    /**
+     * Output our Vector to an ostream.
+     *
+     * \ingroup grpvector
+     **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Vector<DataType_> & v)
     {
         lhs << "[ ";
