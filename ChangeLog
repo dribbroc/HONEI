@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/vector_error.cc: Oops. Forgot to add file.
+
+2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
+
 	* doc/doc_groups.doxygen, doc/doxygen.conf, libla/dense_vector.hh,
 	libla/sparse_vector.hh, libla/vector.hh, libla/vector_error.hh,
 	libla/vector_norm.hh: Documented Vector, its subclasses and
