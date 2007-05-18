@@ -21,22 +21,12 @@
 #define LIBLA_GUARD_SCALAR_PRODUCT_HH 1
 
 #include <libla/tags.hh>
-#include <libla/vector.hh>
-#include <libutil/exception.hh>
+#include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
+#include <libla/vector_error.hh>
 
 namespace pg512 ///< \todo Namespace name?
 {
-    /**
-     * A ScalarProductError is thrown by ScalarProduct<>::value().
-     **/
-    class ScalarProductError :
-        public Exception
-    {
-        public:
-            /// Constructor.
-            ScalarProductError(const std::string & message) throw ();
-    };
-
     /**
      * A ScalarProduct yields the inner product of two descendants of type Vector.
      **/
@@ -45,7 +35,7 @@ namespace pg512 ///< \todo Namespace name?
         static DataType_ value(const DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
         {
             if (left.size() != right.size())
-                throw ScalarProductError("Vector sizes do not match.");
+                throw VectorSizeDoesNotMatch(right.size(), left.size());
 
             DataType_ result(0);
 
@@ -62,7 +52,7 @@ namespace pg512 ///< \todo Namespace name?
         static DataType_ value(const SparseVector<DataType_> & left, const Vector<DataType_> & right)
         {
             if (left.size() != right.size())
-                throw ScalarProductError("Vector sizes do not match.");
+                throw VectorSizeDoesNotMatch(right.size(), left.size());
 
             DataType_ result(0);
 

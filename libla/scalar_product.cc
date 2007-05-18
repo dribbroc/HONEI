@@ -17,17 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <scalar_product.hh>
+#include <libla/scalar_product.hh>
 
 #include <string>
 #include <iostream>
 
 using namespace pg512;
-
-ScalarProductError::ScalarProductError(const std::string & message) throw () :
-    Exception(message)
-{
-}
 
 template <>
 float ScalarProduct<float, tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right)

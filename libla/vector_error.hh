@@ -59,7 +59,7 @@ namespace pg512 ///< \todo Namespace name?
              * \param size Size of the vector that arose the problem.
              * \param expected_size Size that was expected by the operation.
              **/
-            VectorSizeDoesNotMatch(unsigned long size, unsigned long expected size) throw ();
+            VectorSizeDoesNotMatch(unsigned long size, unsigned long expected_size) throw ();
     };
 }
 
