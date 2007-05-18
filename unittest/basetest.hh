@@ -18,6 +18,8 @@ class BaseTest
 	}
     /// overwrite value at position, returns the changed vector
     //virtual Vector * vector_rw(Vector vector,int position, double value);
+    /// calculate the scalar product of two given vectors
+    //virtual double scalar_product(Vector v1, Vector v2);
      
 	 virtual bool start_test()=0;  // Rein virtuell.
 
