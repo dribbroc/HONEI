@@ -22,6 +22,8 @@
 
 #include <libutil/exception.hh>
 
+#include <string>
+
 /**
  * \file
  *

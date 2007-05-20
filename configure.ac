@@ -13,6 +13,9 @@ AC_PROG_LN_S
 AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 
+dnl check for cblas support
+AC_CHECK_LIB(f77blas, dgemv_, [DYNAMIC_LD_LIBS="-lf77blas" have_dl=yes])
+
 dnl output
 AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(
