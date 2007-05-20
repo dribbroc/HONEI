@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/scalar_product.cc, libla/scalar_product.hh,
+	libla/vector_error.hh: Fixed some compile bugs. Replaced
+	ScalarProductError by VectorSizeDoesNotMatch.
+
+2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
+
 	* doc/doc_groups.doxygen, libla/banded_matrix.hh,
 	libla/dense_matrix.hh, libla/matrix.hh, libla/vector.hh: Documented
 	Matrix and its subclasses.
