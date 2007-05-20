@@ -21,9 +21,11 @@
 #define LIBUTIL_GUARD_SHARED_ARRAY_HH 1
 
 #include <libutil/exception.hh>
+#include <libutil/log.hh>
 #include <libutil/stringify.hh>
 
 #include <map>
+#include <iostream>
 
 namespace pg512 ///< \todo Namespace name?
 {
@@ -57,7 +59,9 @@ namespace pg512 ///< \todo Namespace name?
                 if (_counter_map.find(entry) == _counter_map.end())
                     _counter_map[entry] = 0;
 
-                _counter_map[entry]++;
+                ++_counter_map[entry];
+                Log::instance()->message(ll_full, "SharedArrayCounter: Increasing entry '" + stringify(entry)
+                        + "' to '" + stringify(_counter_map[entry]) + "'");
             }
 
             void decrease(DataType_ * entry)
@@ -65,7 +69,9 @@ namespace pg512 ///< \todo Namespace name?
                 if (_counter_map.find(entry) == _counter_map.end())
                     _counter_map[entry] = 0;
 
-                _counter_map[entry]++;
+                --_counter_map[entry];
+                Log::instance()->message(ll_full, "SharedArrayCounter: Decreasing entry '" + stringify(entry)
+                        + "' to '" + stringify(_counter_map[entry]) + "'");
             }
 
             long count(DataType_ * entry)
