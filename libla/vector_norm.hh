@@ -76,6 +76,15 @@ namespace pg512
 
             return result;
         }
+
+        static DataType_ value(const SparseVector<DataType_> & vector)
+        {
+            DataType_ result(0);
+
+            result = VectorNorm<DataType_, norm_type_, root_>::value(vector);
+
+            return result;
+        }
     };
 
     /// Partial specialisation of VectorNorm for vnt_max (maximums-norm)
@@ -86,7 +95,23 @@ namespace pg512
         {
             DataType_ result(0);
 
-            for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+                    l != l_end ; ++l)
+            {
+                if (abs(*l) > result)
+                {
+                    result = abs(*l);
+                }
+            }
+
+            return result;
+        }
+
+        static DataType_ value(const SparseVector<DataType_> & vector)
+        {
+            DataType_ result(0);
+
+            for (typename SparseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
                 if (abs(*l) > result)
@@ -108,7 +133,20 @@ namespace pg512
         {
             DataType_ result(0);
 
-            for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+                    l != l_end ; ++l)
+            {
+                result += abs(*l);
+            }
+
+            return result;
+        }
+
+        static DataType_ value(const SparseVector<DataType_> & vector)
+        {
+            DataType_ result(0);
+
+            for (typename SparseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
                 result += abs(*l);
@@ -126,6 +164,11 @@ namespace pg512
         {
             return ScalarProduct<DataType_>::value(vector, vector);
         }
+
+        static DataType_ value(const SparseVector<DataType_> & vector)
+        {
+            return ScalarProduct<DataType_>::value(vector, vector);
+        }
     };
 
     /// Partial specialisation of VectorNorm for vnt_l_two (L2-norm)
@@ -133,6 +176,11 @@ namespace pg512
     template <typename DataType_> struct VectorNorm<DataType_, vnt_l_two, true, tags::CPU>
     {
         static DataType_ value(const DenseVector<DataType_> & vector)
+        {
+            return sqrt(VectorNorm<DataType_, vnt_l_two, false>::value(vector));
+        }
+
+        static DataType_ value(const SparseVector<DataType_> & vector)
         {
             return sqrt(VectorNorm<DataType_, vnt_l_two, false>::value(vector));
         }
@@ -148,10 +196,27 @@ namespace pg512
             DataType_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
-            for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
                     l != l_end ; ++l)
             {
-                result += exp(k * log(*l));
+                if (*l != static_cast<DataType_>(0))
+                {
+                result += exp(k * log(abs(*l)));
+                }
+            }
+
+            return exp(log(result) / k);
+        }
+
+        static DataType_ value (const SparseVector<DataType_> & vector)
+        {
+            DataType_ result(0);
+            unsigned int k(static_cast<unsigned int>(norm_type_));
+
+            for (typename SparseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+                    l != l_end ; ++l)
+            {
+                result += exp(k * log(abs(*l)));
             }
 
             return exp(log(result) / k);
