@@ -1,5 +1,5 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
-/*
+#ifdef MOO
 #include <unittest/unittest.hh>
 using namespace std;
 
@@ -41,24 +41,24 @@ class TestList
 
 list<BaseTest *> TestList::_tests;
 
-class BaseTest
-{
-    protected:
-        const string _id;
-    public:
-        BaseTest(const string & id) : _id(id)
+        BaseTest::BaseTest(const string & id) : _id(id)
         {
             TestList::instance()->register_test(this);
         }
         
-        const string id() const
+        const string BaseTest::id() const
         {
             return _id;
         }
-        
-        virtual void run() const = 0;
-        virtual void benchmark() const = 0;
-};
+
+        void BaseTest::check(const char * const function, const char * const file,
+ 	        const long line, bool was_ok, const std::string & message) const
+	 	{
+	 	    std::cout << "." << std::flush;
+	 	    if (! was_ok)
+	 	        throw TestFailedException(function, file, line, message);
+	 	}
+
 
 
 
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
     for (int i = 0; (i < anzahl) && (i < argc); i++) {
     	cout << argv[i] << endl; 
     } */
- /*   
+    
     for (TestList::Iterator i(TestList::instance()->begin_tests()),i_end(TestList::instance()->end_tests()) ; i != i_end ; ++i)
     {
         try
@@ -92,7 +92,8 @@ int main(int argc, char** argv)
         }
     }
 	return 0;
-}*/
+}
+#endif
 
 
 
