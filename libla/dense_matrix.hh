@@ -46,7 +46,8 @@ namespace pg512 ///< \todo Namespace name?
      * \ingroup grpmatrix
      **/
     template <typename DataType_> class DenseMatrix :
-        public Matrix<DataType_>
+        public Matrix<DataType_>,
+        public MutableMatrix<DataType_>
     {
         private:
             /// Pointer to our elements.
@@ -65,12 +66,19 @@ namespace pg512 ///< \todo Namespace name?
             /// Our implementation of ElementIterator.
             template <typename ElementType_> class ElementIteratorImpl;
             friend class ElementIteratorImpl<DataType_>;
+            friend class ElementIteratorImpl<const DataType_>;
+
+            /// Type of the const iterator over our elements.
+            typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_, const DataType_> ConstElementIterator;
+
+            /// Type of the const iterator over our vectors.
+            typedef VectorIteratorWrapper<DataType_, const DataType_> ConstVectorIterator;
 
             /// Type of the iterator over our elements.
             typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_> ElementIterator;
 
-            /// Type of the iterator over our row/column/band/diagonal vectors.
-//            typedef VectorIteratorBase<Matrix<DataType_>, Vector<DataType_> > VectorIterator;
+            /// Type of the iterator over our vectors.
+            typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
 
             /**
              * Constructor.
@@ -104,13 +112,25 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Returns iterator pointing to the first element of the matrix.
-            virtual ElementIterator begin_elements() const
+            virtual ConstElementIterator begin_elements() const
+            {
+                return ConstElementIterator(new ElementIteratorImpl<const DataType_>(*this, 0));
+            }
+
+            /// Returns iterator pointing behind the last element of the matrix.
+            virtual ConstElementIterator end_elements() const
+            {
+                return ConstElementIterator(new ElementIteratorImpl<const DataType_>(*this, _rows * _columns));
+            }
+
+            /// Returns iterator pointing to the first element of the matrix.
+            virtual ElementIterator begin_elements()
             {
                 return ElementIterator(new ElementIteratorImpl<DataType_>(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
-            virtual ElementIterator end_elements() const
+            virtual ElementIterator end_elements()
             {
                 return ElementIterator(new ElementIteratorImpl<DataType_>(*this, _rows * _columns));
             }
@@ -208,7 +228,7 @@ namespace pg512 ///< \todo Namespace name?
                 return ((&_matrix != other.parent()) || (_index != other.index()));
             }
 
-            /// Dereference operator 
+            /// Dereference operator.
             virtual DataType_ & operator* () const
             {
                 return _matrix._elements[_index];
@@ -238,6 +258,95 @@ namespace pg512 ///< \todo Namespace name?
                 return &_matrix;
             }
     };
+
+    template <> template <typename DataType_> class DenseMatrix<DataType_>::ElementIteratorImpl<const DataType_> :
+        public ElementIteratorImplBase<Matrix<DataType_>, DataType_, const DataType_>
+    {
+        private:
+            /// Our matrix.
+            const DenseMatrix<DataType_> & _matrix;
+
+            /// Our index.
+            unsigned long _index;
+
+        public:
+            /**
+             * Constructor.
+             *
+             * \param matrix The parent matrix that is referenced by the iterator.
+             * \param index The index into the matrix.
+             **/
+            ElementIteratorImpl(const DenseMatrix<DataType_> & matrix, unsigned long index) :
+                _matrix(matrix),
+                _index(index)
+            {
+            }
+
+            /// Copy-constructor.
+            ElementIteratorImpl(ElementIteratorImpl<const DataType_> const & other) :
+                _matrix(other._matrix),
+                _index(other._index)
+            {
+            }
+
+            /// Preincrement operator.
+            virtual ElementIteratorImpl<const DataType_> & operator++ ()
+            {
+                ++_index;
+                return *this;
+            }
+
+            /// Postincrement operator.
+            virtual ElementIteratorImpl<const DataType_> operator++ (int)
+            {
+                ElementIteratorImpl<const DataType_> result(*this);
+                ++_index;
+                return result;
+            }
+
+            /// Equality operator.
+            virtual bool operator== (const ElementIteratorImplBase<Matrix<DataType_>, DataType_, const DataType_> & other) const
+            {
+                return (&_matrix == other.parent()) && (_index == other.index());
+            }
+
+            /// Inequality operator.
+            virtual bool operator!= (const ElementIteratorImplBase<Matrix<DataType_>, DataType_, const DataType_> & other) const
+            {
+                return ((&_matrix != other.parent()) || (_index != other.index()));
+            }
+
+            /// Dereference operator.
+            virtual const DataType_ & operator* () const
+            {
+                return _matrix._elements[_index];
+            }
+
+            /// Returns our index.
+            virtual const unsigned long index() const
+            {
+                return _index;
+            }
+
+            /// Returns our column.
+            virtual const unsigned long column() const
+            {
+                return _index % _matrix._columns;
+            }
+
+            /// Returns our row.
+            virtual const unsigned long row() const
+            {
+                return _index / _matrix._columns;
+            }
+
+            /// Returns our parent matrix.
+            virtual const Matrix<DataType_> * parent() const
+            {
+                return &_matrix;
+            }
+    };
+
 }
 
 #endif

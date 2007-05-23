@@ -7,6 +7,15 @@ see the NEWS file.
 
 2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/matrix.hh, libla/element_iterator.hh,
+	libla/vector_iterator.hh: Reworked ElementIterator interfaces and added
+	VectorIterator interfaces.
+	* libla/banded_matrix.hh, libla/dense_matrix.hh,
+	libla/matrix.hh: Applied changed to the iterator interfaces.
+	* libla/Makefile.am: Added missing files.
+
+2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/banded_matrix.hh: Added constructor for merely diagonal banded
 	matrices.
 

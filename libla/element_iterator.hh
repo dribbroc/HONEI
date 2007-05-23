@@ -22,6 +22,7 @@
 #ifndef LIBLA_GUARD_ELEMENT_ITERATOR_HH
 #define LIBLA_GUARD_ELEMENT_ITERATOR_HH 1
 
+#include <iterator>
 #include <tr1/memory>
 
 namespace pg512 ///< \todo Namespace name?
@@ -30,25 +31,25 @@ namespace pg512 ///< \todo Namespace name?
 
     template <typename DataType_> class Matrix;
 
-    template <typename Tag_, typename DataType_> class ElementIteratorBase;
+    template <typename Tag_, typename DataType_, typename ElementType_> class ElementIteratorBase;
 
-    template <typename DataType_> class ElementIteratorBase<Vector<DataType_>, DataType_> :
-        public std::iterator<std::forward_iterator_tag, DataType_>
+    template <typename DataType_, typename ElementType_> class ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_> :
+        public std::iterator<std::forward_iterator_tag, ElementType_>
     {
         public:
             /// Preincrement operator.
-            virtual ElementIteratorBase<Vector<DataType_>, DataType_> & operator++ () = 0;
+            virtual ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_> & operator++ () = 0;
 
             /// Returns our index.
             virtual const unsigned long index() const = 0;
     };
 
-    template <typename DataType_> class ElementIteratorBase<Matrix<DataType_>, DataType_> :
-        public std::iterator<std::forward_iterator_tag, DataType_>
+    template <typename DataType_, typename ElementType_> class ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_> :
+        public std::iterator<std::forward_iterator_tag, ElementType_>
     {
         public:
             /// Preincrement operator.
-            virtual ElementIteratorBase<Matrix<DataType_>, DataType_> & operator++ () = 0;
+            virtual ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_> & operator++ () = 0;
 
             /// Returns our index.
             virtual const unsigned long index() const = 0;
@@ -60,56 +61,56 @@ namespace pg512 ///< \todo Namespace name?
             virtual const unsigned long row() const = 0;
     };
 
-    template <typename ParentType_, typename DataType_> class ElementIteratorImplBase :
-        public ElementIteratorBase<ParentType_, DataType_>
+    template <typename ParentType_, typename DataType_, typename ElementType_ = DataType_> class ElementIteratorImplBase :
+        public ElementIteratorBase<ParentType_, DataType_, ElementType_>
     {
         public:
             /// Equality operator.
-            virtual bool operator== (const ElementIteratorImplBase<ParentType_, DataType_> & other) const = 0;
+            virtual bool operator== (const ElementIteratorImplBase<ParentType_, DataType_, ElementType_> & other) const = 0;
 
             /// Inqquality operator.
-            virtual bool operator!= (const ElementIteratorImplBase<ParentType_, DataType_> & other) const = 0;
+            virtual bool operator!= (const ElementIteratorImplBase<ParentType_, DataType_, ElementType_> & other) const = 0;
 
             /// Dereference operator.
-            virtual DataType_ & operator* () const = 0;
+            virtual ElementType_ & operator* () const = 0;
 
             /// Returns pointer to our parent.
             virtual const ParentType_ * parent() const = 0;
     };
 
-    template <typename ParentType_, typename DataType_> class ElementIteratorWrapper;
+    template <typename ParentType_, typename DataType_, typename ElementType_ = DataType_> class ElementIteratorWrapper;
 
-    template <typename DataType_> class ElementIteratorWrapper<Vector<DataType_>, DataType_> :
-        public ElementIteratorBase<Vector<DataType_>, DataType_>
+    template <typename DataType_, typename ElementType_> class ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> :
+        public ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_>
     {
         private:
             /// Our wrapped iterator.
-            std::tr1::shared_ptr<ElementIteratorImplBase<Vector<DataType_>, DataType_> > _iterator;
+            std::tr1::shared_ptr<ElementIteratorImplBase<Vector<DataType_>, DataType_, ElementType_> > _iterator;
 
         public:
             /// Constructor.
-            ElementIteratorWrapper(ElementIteratorImplBase<Vector<DataType_>, DataType_> *iterator) :
+            ElementIteratorWrapper(ElementIteratorImplBase<Vector<DataType_>, DataType_, ElementType_> *iterator) :
                 _iterator(iterator)
             {
             }
 
             /// Copy-constructor.
-            ElementIteratorWrapper(const ElementIteratorWrapper<Vector<DataType_>, DataType_> & other) :
+            ElementIteratorWrapper(const ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> & other) :
                 _iterator(other._iterator)
             {
             }
 
             /// Preincrement operator.
-            virtual ElementIteratorBase<Vector<DataType_>, DataType_> & operator++ ()
+            virtual ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_> & operator++ ()
             {
                 ++(*_iterator);
                 return *this;
             }
 
             /// Postincrement operator.
-            virtual ElementIteratorWrapper<Vector<DataType_>, DataType_> operator++ (int)
+            virtual ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> operator++ (int)
             {
-                ElementIteratorWrapper<Vector<DataType_>, DataType_> result(*this);
+                ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> result(*this);
 
                 ++(*_iterator);
 
@@ -117,19 +118,19 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Equality operator.
-            virtual bool operator== (const ElementIteratorWrapper<Vector<DataType_>, DataType_> & other) const
+            virtual bool operator== (const ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> & other) const
             {
                 return (*_iterator == *other._iterator);
             }
 
             /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorWrapper<Vector<DataType_>, DataType_> & other) const
+            virtual bool operator!= (const ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> & other) const
             {
                 return (*_iterator != *other._iterator);
             }
 
             /// Dereference operator 
-            virtual DataType_ & operator* () const
+            virtual ElementType_ & operator* () const
             {
                 return **_iterator;
             }
@@ -141,37 +142,37 @@ namespace pg512 ///< \todo Namespace name?
             }
     };
 
-    template <typename DataType_> class ElementIteratorWrapper<Matrix<DataType_>, DataType_> :
-        public ElementIteratorBase<Matrix<DataType_>, DataType_>
+    template <typename DataType_, typename ElementType_> class ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> :
+        public ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_>
     {
         private:
             /// Our wrapped iterator.
-            std::tr1::shared_ptr <ElementIteratorImplBase<Matrix<DataType_>, DataType_> > _iterator;
+            std::tr1::shared_ptr <ElementIteratorImplBase<Matrix<DataType_>, DataType_, ElementType_> > _iterator;
 
         public:
             /// Constructor.
-            ElementIteratorWrapper(ElementIteratorImplBase<Matrix<DataType_>, DataType_> *iterator) :
+            ElementIteratorWrapper(ElementIteratorImplBase<Matrix<DataType_>, DataType_, ElementType_> *iterator) :
                 _iterator(iterator)
             {
             }
 
             /// Copy-constructor.
-            ElementIteratorWrapper(const ElementIteratorWrapper<Matrix<DataType_>, DataType_> & other) :
+            ElementIteratorWrapper(const ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> & other) :
                 _iterator(other._iterator)
             {
             }
 
             /// Preincrement operator.
-            virtual ElementIteratorBase<Matrix<DataType_>, DataType_> & operator++ ()
+            virtual ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_> & operator++ ()
             {
                 ++(*_iterator);
                 return *this;
             }
 
             /// Postincrement operator.
-            virtual ElementIteratorWrapper<Matrix<DataType_>, DataType_> operator++ (int)
+            virtual ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> operator++ (int)
             {
-                ElementIteratorWrapper<Matrix<DataType_>, DataType_> result(*this);
+                ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> result(*this);
 
                 ++(*_iterator);
 
@@ -179,19 +180,19 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Equality operator.
-            virtual bool operator== (const ElementIteratorWrapper<Matrix<DataType_>, DataType_> & other) const
+            virtual bool operator== (const ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> & other) const
             {
                 return (*_iterator == *other._iterator);
             }
 
             /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorWrapper<Matrix<DataType_>, DataType_> & other) const
+            virtual bool operator!= (const ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> & other) const
             {
                 return (*_iterator != *other._iterator);
             }
 
             /// Dereference operator 
-            virtual DataType_ & operator* () const
+            virtual ElementType_ & operator* () const
             {
                 return **_iterator;
             }

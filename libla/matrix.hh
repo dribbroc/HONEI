@@ -24,6 +24,7 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/vector.hh>
+#include <libla/vector_iterator.hh>
 #include <libutil/shared_array.hh>
 
 #include <ostream>
@@ -46,21 +47,39 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> class Matrix
     {
         public:
-            /// Type of the iterator over our elements.
-            typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_> ElementIterator;
+            /// Type of the const iterator over our elements.
+            typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_, const DataType_> ConstElementIterator;
+
+            /// Type of the const iterator over our vectors.
+            typedef VectorIteratorWrapper<DataType_, const Vector<DataType_> > ConstVectorIterator;
 
             /// Returns iterator pointing to the first element of the matrix.
-            virtual ElementIterator begin_elements() const = 0;
+            virtual ConstElementIterator begin_elements() const = 0;
 
             /// Returns iterator pointing behind the last element of the matrix.
-            virtual ElementIterator end_elements() const = 0;
+            virtual ConstElementIterator end_elements() const = 0;
 
             /// Returns our number of columns.
             virtual unsigned long columns() const = 0;
 
             /// Returns our number of rows.
             virtual unsigned long rows() const = 0;
+    };
 
+    template <typename DataType_> class MutableMatrix
+    {
+        public:
+            /// Type of the iterator over our elements.
+            typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_, DataType_> ElementIterator;
+
+            /// Type of the iterator over our vectors.
+            typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
+
+            /// Returns iterator pointing to the first element of the matrix.
+            virtual ElementIterator begin_elements() = 0;
+
+            /// Returns iterator pointing behind the last element of the matrix.
+            virtual ElementIterator end_elements() = 0;
     };
 
     /** 
@@ -73,7 +92,7 @@ namespace pg512 ///< \todo Namespace name?
         unsigned long row(0);
 
         lhs << "[ " << std::endl;
-        for (typename Matrix<DataType_>::ElementIterator i(m.begin_elements()), i_end(m.end_elements()) ;
+        for (typename Matrix<DataType_>::ConstElementIterator i(m.begin_elements()), i_end(m.end_elements()) ;
                 i != i_end ; ++i)
         {
             if (row != i.row())
