@@ -22,7 +22,6 @@ class BaseTest
                 const long line, bool was_ok, const std::string & message) const;
 
         virtual void run() const = 0;
-        virtual void benchmark() const = 0;
 
         /**
          * Utility class used by TEST_CHECK_EQUAL.

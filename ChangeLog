@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/dense_matrix_TEST.cc, unittest/unittest.hh: Removed
+	benchmark() function from BaseTest and descendants.
+
+2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* autogen.bash, libla/files.m4, -libla/Makefile.am,
 	+libla/Makefile.am.m4, misc/do_m4.bash, misc/generated-file.txt,
 	unittest/run.sh, unittest/unittest.hh: Added check target to libla's

@@ -17,8 +17,6 @@ class DenseMatrixCreationTest :
         {
         }
 
-        virtual void benchmark() const {}
-
         virtual void run() const
         {
             for (unsigned long size ; size < (1 << 10) ; size << 1)
