@@ -55,8 +55,7 @@ BaseTest::BaseTest(const std::string & id) :
     TestList::instance()->register_test(this);
 }
 
-const std::string
-BaseTest::id() const
+const std::string BaseTest::id() const
 {
     return _id;
 }

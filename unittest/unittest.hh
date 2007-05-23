@@ -8,19 +8,28 @@
 #include <string>
 #include <exception>
 
+/**
+ * Baseclass for all testingclasses
+ */
 class BaseTest
 {
     protected:
         const std::string _id;
 
     public:
+        /**
+         * Constructor
+         * \param id the test-name
+         */
         BaseTest(const std::string & id);
 
         const std::string id() const;
-
+            
+        /// Utility method used bei TEST_CHECK_*
         void check(const char * const function, const char * const file,
                 const long line, bool was_ok, const std::string & message) const;
 
+        /// called by the unittest framework to run the tests
         virtual void run() const = 0;
 
         /**
@@ -62,6 +71,9 @@ class BaseTest
         };
 };
 
+/**
+ * Exception thrown by the check method in BaseTest
+ */
 class TestFailedException :
     public std::exception
 {
