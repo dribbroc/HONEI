@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* configure.ac, Makefile.am, unittest/Makefile.am: Added unittest directory.
+	* unittest/unittest.cc, unittest/unittest.hh: Applied coding
+	conventions. Sanitized TEST_CHECK_EQUAL_WITHIN_EPS. Fixed includes and
+	namespaces.
+
+2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/matrix.hh, libla/element_iterator.hh,
 	libla/vector_iterator.hh: Reworked ElementIterator interfaces and added
 	VectorIterator interfaces.
