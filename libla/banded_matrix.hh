@@ -79,6 +79,22 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new banded matrix.
+             * \param diagonal Diagonal vector of the new banded matrix.
+             **/
+            BandedMatrix(unsigned long size, std::tr1::shared_ptr<DenseVector<DataType_> diagonal) :
+                _bands(new std::tr1::shared_ptr<DenseVector<DataType_> >[2 * size + 1]),
+                _size(size)
+            {
+                if (size != diagonal->size())
+                    throw VectorSizeDoesNotMatch(diagonal->size(), size);
+
+                _bands[0] = diagonal;
+            }
+
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements() const
             {
