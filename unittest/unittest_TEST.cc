@@ -9,7 +9,8 @@ using namespace std;
 class UnitTest : public BaseTest
 {
     /// Constructor
-	UnitTest(const string & id) : BaseTest(id)
+	UnitTest() : 
+	    BaseTest("unittest_test")
 	{
 	}
 	
