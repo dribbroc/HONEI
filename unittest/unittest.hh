@@ -74,12 +74,16 @@ class TestFailedException :
          * Constructor.
          */
         TestFailedException(const char * const function, const char * const file,
-            const long line, const std::string & message) throw ();
+            const long line, const std::string & message) throw ()
+        {
+        }
 
         /**
          * Destructor.
          */
-        virtual ~TestFailedException() throw ();
+        virtual ~TestFailedException() throw ()
+        {
+        }
 
         /**
          * Description.
