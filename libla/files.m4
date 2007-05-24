@@ -10,7 +10,7 @@ dnl on this file at present...
 
 add(`banded_matrix',             `hh')
 add(`dense_matrix',              `hh', `test')
-add(`dense_vector',              `hh')
+add(`dense_vector',              `hh', `test')
 add(`element_iterator',          `hh')
 add(`matrix',                    `hh')
 add(`scalar_product',            `hh', `cc')
@@ -18,5 +18,5 @@ add(`tags',                      `hh')
 add(`vector',                    `hh')
 add(`vector_error',              `hh', `cc')
 add(`vector_iterator',           `hh')
-add(`vector_norm',               `hh')
+add(`vector_norm',               `hh', `test')
 
