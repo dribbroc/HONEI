@@ -46,7 +46,6 @@ int main(int, char **)
 		 AC_MSG_RESULT([no])
 		 AC_MSG_ERROR([Your C++ compiler doesn't compile C++ code])
 		])
-dnl }}}
 
 dnl {{{ check for tr1 shared pointers
 AC_MSG_CHECKING([for std::tr1::shared_ptr<>])
@@ -62,8 +61,27 @@ int main(int, char **)
 		[AC_MSG_RESULT([yes])],
 		[
 		 AC_MSG_RESULT([no])
-		 AC_MSG_ERROR([Your C++ Standard Library does not support tr1::shared_ptr<>.])
+		 AC_MSG_ERROR([Your C++ Standard Library doesn't support std::tr1::shared_ptr<>.])
 		])
+dnl }}}
+
+dnl {{{ check for numeric limits
+AC_MSG_CHECKING([for std::numeric_limits<>])
+AC_COMPILE_IFELSE([
+#include <limits>
+int main(int, char **)
+{
+	int result(std::numeric_limits<float>::digits >> 3);
+	result += (std::numeric_limits<double>::digits >> 3);
+
+	return result;
+}
+],
+	[AC_MSG_RESULT([yes])],
+	[
+	 AC_MSG_RESULT([no])
+	 AC_MSG_ERROR([Your C++ Standard Library doesn't support std::numeric_limits<>.])
+	])
 dnl }}}
 
 dnl output
