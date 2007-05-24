@@ -39,11 +39,10 @@ namespace pg512 ///< \todo Namespace name?
 
             DataType_ result(0);
 
-            for (typename Vector<DataType_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements()),
+            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_elements()), l_end(left.end_elements()),
                     r(right.begin_elements()) ; l != l_end ; ++l )
             {
-                result += (*l) * (*r);
-                ++r;
+                result += (*l) * right[l.index()];
             }
 
             return result;
@@ -56,7 +55,7 @@ namespace pg512 ///< \todo Namespace name?
 
             DataType_ result(0);
 
-            for (typename Vector<DataType_>::ElementIterator l(left.begin_non_zero_elements()),
+            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * right[l.index()];

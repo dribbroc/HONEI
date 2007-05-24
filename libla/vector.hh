@@ -47,14 +47,23 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> class Vector
     {
         public:
+            /// Type of the const iterator over our elements.
+            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_, const DataType_> ConstElementIterator;
+
+            /// Returns const iterator pointing to the first element of the vector.
+            virtual ConstElementIterator begin_elements() const = 0;
+
+            /// Returns const iterator pointing behind the last element of the vector.
+            virtual ConstElementIterator end_elements() const = 0;
+
             /// Type of the iterator over our elements.
             typedef ElementIteratorWrapper<Vector<DataType_>, DataType_> ElementIterator;
 
             /// Returns iterator pointing to the first element of the vector.
-            virtual ElementIterator begin_elements() const = 0;
+            virtual ElementIterator begin_elements() = 0;
 
             /// Returns iterator pointing behind the last element of the vector.
-            virtual ElementIterator end_elements() const = 0;
+            virtual ElementIterator end_elements() = 0;
 
             /// Returns our size.
             virtual unsigned long size() const = 0;
@@ -74,7 +83,7 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Vector<DataType_> & v)
     {
         lhs << "[ ";
-        for (typename Vector<DataType_>::ElementIterator i(v.begin_elements()), i_end(v.end_elements()) ;
+        for (typename Vector<DataType_>::ConstElementIterator i(v.begin_elements()), i_end(v.end_elements()) ;
                 i != i_end ; ++i)
         {
             lhs << *i << " ";

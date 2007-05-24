@@ -25,7 +25,7 @@
 #include <libla/vector.hh>
 #include <libla/scalar_product.hh>
 
-#include <math.h>
+#include <cmath>
 #include <iostream>
 
 /**
@@ -95,12 +95,12 @@ namespace pg512
         {
             DataType_ result(0);
 
-            for (typename DenseVector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
                     l != l_end ; ++l)
             {
-                if (abs(*l) > result)
+                if (fabs(*l) > result)
                 {
-                    result = abs(*l);
+                    result = fabs(*l);
                 }
             }
 
@@ -111,7 +111,7 @@ namespace pg512
         {
             DataType_ result(0);
 
-            for (typename SparseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
                 if (abs(*l) > result)
@@ -133,10 +133,10 @@ namespace pg512
         {
             DataType_ result(0);
 
-            for (typename DenseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
                     l != l_end ; ++l)
             {
-                result += abs(*l);
+                result += fabs(*l);
             }
 
             return result;
@@ -146,10 +146,10 @@ namespace pg512
         {
             DataType_ result(0);
 
-            for (typename SparseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
-                result += abs(*l);
+                result += fabs(*l);
             }
 
             return result;
@@ -196,12 +196,12 @@ namespace pg512
             DataType_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
-            for (typename DenseVector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
                     l != l_end ; ++l)
             {
                 if (*l != static_cast<DataType_>(0))
                 {
-                result += exp(k * log(abs(*l)));
+                    result += exp(k * log(abs(*l)));
                 }
             }
 
@@ -213,10 +213,10 @@ namespace pg512
             DataType_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
-            for (typename SparseVector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
-                result += exp(k * log(abs(*l)));
+                result += exp(k * log(fabs(*l)));
             }
 
             return exp(log(result) / k);

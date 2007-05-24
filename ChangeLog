@@ -7,13 +7,19 @@ see the NEWS file.
 
 2007-05-24 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/dense_vector.hh, libla/scalar_product.hh,
+	libla/sparse_vector.hh, libla/vector.hh, libla/vector_norm.hh: Added
+	ConstElementIterator and implementations.
+
+2007-05-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* configure.ac: Added dedicated C++ language specification. Added
 	checks for partial specialisation of class templates and
 	std::tr1::shared_ptr<>.
 
 2007-05-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* unittest: Added doxygen documentation
+	* unittest: Added doxygen documentation.
 	
 2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
@@ -68,23 +74,23 @@ see the NEWS file.
 	* libutil/shared_array.cc, libutil/shared_array.hh: Made
 	SharedArrayCounter use Log. Fixed includes.
 
-2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/scalar_product.cc, libla/scalar_product.hh,
 	libla/vector_error.hh: Fixed some compile bugs. Replaced
 	ScalarProductError by VectorSizeDoesNotMatch.
 
-2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* doc/doc_groups.doxygen, libla/banded_matrix.hh,
 	libla/dense_matrix.hh, libla/matrix.hh, libla/vector.hh: Documented
 	Matrix and its subclasses.
 
-2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_error.cc: Oops. Forgot to add file.
 
-2007-05-18 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* doc/doc_groups.doxygen, doc/doxygen.conf, libla/dense_vector.hh,
 	libla/sparse_vector.hh, libla/vector.hh, libla/vector_error.hh,
@@ -241,7 +247,7 @@ see the NEWS file.
 	* libla/scalar_product.hh: Added ScalarProduct template and
 	generic/C++ implementation.
 
-2007-05-07 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector.hh: Some cleanup work.
 
