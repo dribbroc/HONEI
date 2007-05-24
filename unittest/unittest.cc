@@ -77,13 +77,14 @@ int main(int argc, char** argv)
     {
         try
         {
+            std::cout << (*i)->id() << ": " << std::flush;
             (*i)->run();
-            std::cout << (*i)->id() << ": PASSED" << std::endl;
+            std::cout << " PASSED" << std::endl;
             result = EXIT_SUCCESS;
         }
         catch (TestFailedException & e)
         {
-            std::cout << (*i)->id() << ": FAILED" << std::endl;
+            std::cout << " FAILED" << std::endl;
         }
     }
 

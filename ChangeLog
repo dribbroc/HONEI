@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-05-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* unittest/unittest.cc: Tidied up testcase output a bit.
+
+2007-05-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/dense_matrix_TEST.cc, libla/dense_vector_TEST.cc,
 	libla/files.m4, libla/vector_norm_TEST.cc: Added testcase for
 	DenseVector creation and VectorNorm on DenseVectors. Expanded
