@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-05-24 Danny van Dyk <kugelfang@gentoo.org>
 
+	* unittest/unittest.hh: Fixed TEST_CHECK_* macros.
+
+2007-05-24 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/dense_vector.hh, libla/scalar_product.hh,
 	libla/sparse_vector.hh, libla/vector.hh, libla/vector_norm.hh: Added
 	ConstElementIterator and implementations.

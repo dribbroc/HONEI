@@ -24,7 +24,7 @@ class BaseTest
         BaseTest(const std::string & id);
 
         const std::string id() const;
-            
+
         /// Utility method used bei TEST_CHECK_*
         void check(const char * const function, const char * const file,
                 const long line, bool was_ok, const std::string & message) const;
@@ -119,8 +119,7 @@ class TestFailedException :
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception " + \
-                    " inside a TEST_CHECK_EQUAL block"); \
+                    "Test threw unexpected exception FIXME inside a TEST_CHECK_EQUAL block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected unknown exception inside a TEST_CHECK_EQUAL block"); \
@@ -142,8 +141,7 @@ class TestFailedException :
             throw; \
         } catch (const exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception " + \
-                    " inside a TEST_CHECK_STRINGIFY_EQUAL block"); \
+                    "Test threw unexpected exception FIXME inside a TEST_CHECK_STRINGIFY_EQUAL block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected unknown exception inside a TEST_CHECK_STRINGIFY_EQUAL block"); \
@@ -162,8 +160,7 @@ class TestFailedException :
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception "  + \
-                    " inside a TEST_CHECK block"); \
+                    "Test threw unexpected exception FIXME inside a TEST_CHECK block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected unknown exception inside a TEST_CHECK block"); \
@@ -187,8 +184,7 @@ class TestFailedException :
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception "  + \
-                    " inside a TEST_CHECK_THROWS block"); \
+                    "Test threw unexpected exception FIXME inside a TEST_CHECK_THROWS block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected unknown exception inside a TEST_CHECK_THROWS block"); \
@@ -209,8 +205,7 @@ class TestFailedException :
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception " + \
-                    " inside a TEST_CHECK_EQUAL_WITHIN_EPS block"); \
+                    "Test threw unexpected exception FIXME inside a TEST_CHECK_EQUAL_WITHIN_EPS block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected unknown exception inside a TEST_CHECK_EQUAL_WITHIN_EPS block"); \
