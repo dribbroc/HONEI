@@ -2,7 +2,6 @@
 
 #include <unittest/unittest.hh>
 
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
@@ -22,7 +21,7 @@ class TestList
         }
 
     public:
-        typedef libwrapiter::ForwardIterator<TestList, std::list<BaseTest*>::value_type> Iterator;
+        typedef std::list<BaseTest*>::const_iterator Iterator;
 
         static TestList * instance()
         {
@@ -38,12 +37,12 @@ class TestList
 
         Iterator begin_tests() const
         {
-            return Iterator(_tests.begin());
+            return _tests.begin();
         }
 
         Iterator end_tests() const
         {
-            return Iterator(_tests.end());
+            return _tests.end();
         }
 };
 

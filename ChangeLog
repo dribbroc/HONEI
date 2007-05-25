@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-05-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* unittest/unittest.cc: Removed dependency on libwrapiter.
+
 2007-05-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* unittest/unittest.cc: Tidied up testcase output a bit.
