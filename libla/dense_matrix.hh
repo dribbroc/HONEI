@@ -92,6 +92,7 @@ namespace pg512 ///< \todo Namespace name?
             DenseMatrix(unsigned long columns, unsigned long rows) :
                 _elements(new DataType_[rows * columns]),
                 _columns(columns),
+                _column_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[columns]),
                 _rows(rows),
                 _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
             {
@@ -107,6 +108,7 @@ namespace pg512 ///< \todo Namespace name?
             DenseMatrix(unsigned long columns, unsigned long rows, DataType_ value) :
                 _elements(new DataType_[rows * columns]),
                 _columns(columns),
+                _column_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[columns]),
                 _rows(rows),
                 _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
             {
