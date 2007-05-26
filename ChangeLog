@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
 
+	* doc/doxygen.conf, doc/footer.html, doc/header.html, doc/pg512.css,
+	doc/powered-by-c++.png, doc/powered-by-vim.png: Added custom
+	stylesheet, header and footer.
+
+2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
+
 	* Makefile.am: Added misc/ files to EXTRADISTFILES.
 	* libla/vector.hh: Fixed equality operator for Vector.
 	* libla/files.m4, libla/vector_absolute.cc, libla/vector_absolute.hh:
