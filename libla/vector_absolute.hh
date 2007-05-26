@@ -1,7 +1,6 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
