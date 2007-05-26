@@ -27,8 +27,8 @@
 #include <libutil/shared_array.hh>
 
 #include <iterator>
+#include <limits>
 #include <ostream>
-#include <string.h>
 
 /**
  * \file
@@ -74,6 +74,31 @@ namespace pg512 ///< \todo Namespace name?
             /// Retrieves element by index, zero-based, assignable
             virtual DataType_ & operator[] (unsigned long index) = 0;
     };
+
+    /**
+     * Compare two Vectors.
+     *
+     * \ingroup grpvector
+     **/
+    template <typename DataType_> bool operator== (const Vector<DataType_> & left, const Vector<DataType_> & right)
+    {
+        bool result(true);
+
+        for (typename Vector<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
+                j(right.begin_elements()) ; i != i_end ; ++i)
+        {
+            if (((*i - *j)) < std::numeric_limits<DataType_>::epsilon())
+            {
+                j++;
+                continue;
+            }
+
+            result = false;
+            break;
+        }
+
+        return result;
+    }
 
     /**
      * Output our Vector to an ostream.

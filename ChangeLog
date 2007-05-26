@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
 
+	* Makefile.am: Added misc/ files to EXTRADISTFILES.
+	* libla/vector.hh: Fixed equality operator for Vector.
+	* libla/files.m4, libla/vector_absolute.cc, libla/vector_absolute.hh:
+	Added VectorAbsolute.
+
+2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/dense_matrix.hh: Fixed constructors so that tests pass
 	again.
 	* libla/dense_vector.hh: Fixed copy-constructor.
