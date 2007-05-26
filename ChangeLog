@@ -7,8 +7,9 @@ see the NEWS file.
 
 2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
 
-	* libla/dense_matrix.hh: Fixed copy-constructor so that tests pass
+	* libla/dense_matrix.hh: Fixed constructors so that tests pass
 	again.
+	* libla/dense_vector.hh: Fixed copy-constructor.
 
 2007-05-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
 

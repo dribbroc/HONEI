@@ -109,7 +109,9 @@ namespace pg512 ///< \todo Namespace name?
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other) :
                 _elements(other._elements),
-                _size(other._size)
+                _size(other._size),
+                _offset(other._offset),
+                _stepsize(other._stepsize)
             {
             }
 
