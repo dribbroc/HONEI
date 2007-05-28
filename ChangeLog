@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-05-28 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/matrix.hh: Added equality operator for Matrices.
+	* libla/files.m4, libla/matrix_element_inverse.hh,
+	libla/matrix_element_inverse_TEST.cc: Added MatrixElementInverse
+	operator.
+	* libla/vector.hh: Fixed comment.
+
 2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
 
 	* doc/doxygen.conf, doc/footer.html, doc/header.html, doc/pg512.css,

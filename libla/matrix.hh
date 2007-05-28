@@ -82,6 +82,31 @@ namespace pg512 ///< \todo Namespace name?
             virtual ElementIterator end_elements() = 0;
     };
 
+    /**
+     * Compare two Matrices for equality.
+     *
+     * \ingroup grpvector
+     **/
+    template <typename DataType_> bool operator== (const Matrix<DataType_> & left, const Matrix<DataType_> & right)
+    {
+        bool result(true);
+
+        for (typename Matrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
+                j(right.begin_elements()) ; i != i_end ; ++i)
+        {
+            if (((*i - *j)) < std::numeric_limits<DataType_>::epsilon())
+            {
+                j++;
+                continue;
+            }
+
+            result = false;
+            break;
+        }
+
+        return result;
+    }
+
     /** 
      * Output our Matrix to an ostream.
      *

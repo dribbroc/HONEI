@@ -76,7 +76,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Compare two Vectors.
+     * Compare two Vectors for equality.
      *
      * \ingroup grpvector
      **/
