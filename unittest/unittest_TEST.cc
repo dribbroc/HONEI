@@ -9,8 +9,8 @@ using namespace std;
 class UnitTest : public BaseTest
 {
     /// Constructor
-	UnitTest() : 
-	    BaseTest("unittest_test")
+	UnitTest(const std::string & id) : 
+	    BaseTest(id)
 	{
 	}
 	
@@ -23,6 +23,6 @@ class UnitTest : public BaseTest
         TEST_CHECK_EQUAL_WITHIN_EPS(25,23,2.2);
 		TEST_CHECK_THROWS(string("0").at(10), exception);
 	}
-}unittest;
+}unittest("UnitTest-test;
 
 

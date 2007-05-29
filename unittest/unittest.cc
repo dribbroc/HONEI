@@ -9,6 +9,8 @@
 #include <string>
 #include <utility>
 
+using namespace pg512;
+
 class BaseTest;
 
 class TestList
@@ -70,20 +72,26 @@ BaseTest::check(const char * const function, const char * const file,
 
 int main(int argc, char** argv) 
 {
-    int result(EXIT_FAILURE);
+    bool quick = false;
+  	if (argc==2 && stringify(argv[1])=="quick") quick=true;
+    int result(EXIT_SUCCESS);
 
     for (TestList::Iterator i(TestList::instance()->begin_tests()),i_end(TestList::instance()->end_tests()) ; i != i_end ; ++i)
     {
         try
         {
             std::cout << (*i)->id() << ": " << std::flush;
-            (*i)->run();
-            std::cout << " PASSED" << std::endl;
-            result = EXIT_SUCCESS;
+            if (quick)
+            {
+                if ((*i)->is_quick_test()) (*i)->run();
+            }
+            else (*i)->run();
+            std::cout << " PASSED" << std::endl;      
         }
         catch (TestFailedException & e)
         {
             std::cout << " FAILED" << std::endl;
+            result = EXIT_FAILURE;
         }
     }
 

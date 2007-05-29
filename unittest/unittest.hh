@@ -31,6 +31,12 @@ class BaseTest
 
         /// called by the unittest framework to run the tests
         virtual void run() const = 0;
+        
+        /// returns true if the test is a "quick test"
+        virtual bool is_quick_test()
+        {
+            return false;
+        }
 
         /**
          * Utility class used by TEST_CHECK_EQUAL.
@@ -69,6 +75,20 @@ class BaseTest
             {
             }
         };
+};
+
+/**
+ * Baseclass for all testingclasses, marked as quick tests
+ */
+class QuickTest : public BaseTest
+{
+    public:
+        QuickTest(const std::string & id): BaseTest(id) {}
+        
+        virtual bool is_quick_test()
+        {
+            return true;
+        }
 };
 
 /**
