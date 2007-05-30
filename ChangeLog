@@ -7,28 +7,30 @@ see the NEWS file.
 
 2007-05-30 David Gies <david-gies@gmx.de>
 
-        * benchmark/benchmark.cc, benchmark/benchmark.hh: added
+	* benchmark/benchmark.cc, benchmark/benchmark.hh: Added benchmark
+	framework.
 
 2007-05-30 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* unittest/unittest.cc: replaced cout's by log output
+	* unittest/unittest.cc: Replaced cout's by log output.
 	
 2007-05-30 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* unittest/unittest.hh, unittest/unittest.cc: improved test failure output
+	* unittest/unittest.hh, unittest/unittest.cc: Improved test failure
+	output.
 	
 2007-05-30 David Gies <david-gies@gmx.de>
 
-	* unittest/unittest.hh: fixed error in TestFailedException
+	* unittest/unittest.hh: Fixed error in TestFailedException.
 
 2007-05-30 David Gies <david-gies@gmx.de>
 
-	* unittest/unittest.hh: fixed error in TEST_CHECK_EQUAL_WITHIN_EPS
+	* unittest/unittest.hh: Fixed error in TEST_CHECK_EQUAL_WITHIN_EPS.
 
 2007-05-29 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* unittest/unittest.hh: added QuickTest class
-	* unittest/unittest.cc: added 'quick' parameter
+	* unittest/unittest.hh: Added QuickTest class.
+	* unittest/unittest.cc: Added 'quick' parameter.
 	
 2007-05-29 Danny van Dyk <kugelfang@gentoo.org>
 
