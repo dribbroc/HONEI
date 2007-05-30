@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-05-30 David Gies <david-gies@gmx.de>
+
+	* unittest/unittest.hh: fixed error in TEST_CHECK_EQUAL_WITHIN_EPS
+
 2007-05-29 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest/unittest.hh: added QuickTest class

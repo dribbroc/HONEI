@@ -68,11 +68,19 @@ class BaseTest
 
             template <typename T1_, typename T2_, typename T3_>
             WithinEpsCalculator(T1_ a, T2_ b, T3_ c) :
-                result((a - b) < c),
-                s_diff(stringify(a-b)),
                 s_a(stringify(a)),
                 s_b(stringify(b))
             {
+				if (a>=b) 
+				{
+					result = ((a - b) <= c);
+					s_diff = stringify(a-b);
+				}
+				else 
+				{
+					result = ((b - a) <= c);
+					s_diff = stringify(b-a);
+				}
             }
         };
 };
