@@ -70,6 +70,17 @@ BaseTest::check(const char * const function, const char * const file,
         throw TestFailedException(function, file, line, message);
 }
 
+TestFailedException::TestFailedException(const char * const function, const char * const file,
+        const long line, const std::string & message) throw () :
+    _message(pg512::stringify(file) + ":" + pg512::stringify(line) + ": in " +
+            pg512::stringify(function) + ": " + message )
+{
+}
+
+TestFailedException::~TestFailedException() throw ()
+{
+}
+
 int main(int argc, char** argv) 
 {
     bool quick = false;
@@ -90,8 +101,7 @@ int main(int argc, char** argv)
         }
         catch (TestFailedException & e)
         {
-            std::cout << " FAILED" << std::endl;
-			std::cout << e.what() << std::endl;
+            std::cout << "FAILED: " << e.what() << std::endl;
             result = EXIT_FAILURE;
         }
     }
