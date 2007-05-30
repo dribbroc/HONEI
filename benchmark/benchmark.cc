@@ -94,7 +94,7 @@ int main(int argc, char** argv)
             (*i)->run();
             std::cout << "Finished " << (*i)->id() << " succesfull!" << std::endl;
         }
-        catch (TestFailedException & e)
+        catch (BenchFailedException & e)
         {
             std::cout << " FAILED" << std::endl;
 			std::cout << e.what() << std::endl;

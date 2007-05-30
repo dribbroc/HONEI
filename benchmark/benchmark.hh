@@ -36,7 +36,7 @@ class Benchmark
 /**
  * Exception thrown by Benchmarks
  */
-class TestFailedException :
+class BenchFailedException :
     public std::exception
 {
     private:
@@ -46,7 +46,7 @@ class TestFailedException :
         /**
          * Constructor.
          */
-        TestFailedException(const char * const function, const char * const file,
+        BenchFailedException(const char * const function, const char * const file,
             const long line, const std::string & message) throw ()
         {
             _message = message;
@@ -55,7 +55,7 @@ class TestFailedException :
         /**
          * Destructor.
          */
-        virtual ~TestFailedException() throw ()
+        virtual ~BenchFailedException() throw ()
         {
         }
 
@@ -79,10 +79,10 @@ class TestFailedException :
 	    _end = clock(); \
 	    _benchlist.push_back(end - start); \
         } catch (const std::exception & test_e) { \
-            throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
+            throw BenchFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Benchmark threw exception."); \
         } catch (...) { \
-            throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
+            throw BenchFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Benchmark threw unknown exception."); \
         } \
     } while (false)
