@@ -74,7 +74,7 @@ int main(int argc, char** argv)
 {
     bool quick = false;
   	if (argc==2 && stringify(argv[1])=="quick") quick=true;
-    int result(EXIT_SUCCESS);
+    int result=EXIT_SUCCESS;
 
     for (TestList::Iterator i(TestList::instance()->begin_tests()),i_end(TestList::instance()->end_tests()) ; i != i_end ; ++i)
     {
@@ -91,6 +91,7 @@ int main(int argc, char** argv)
         catch (TestFailedException & e)
         {
             std::cout << " FAILED" << std::endl;
+			std::cout << e.what() << std::endl;
             result = EXIT_FAILURE;
         }
     }

@@ -106,7 +106,7 @@ class TestFailedException :
     public std::exception
 {
     private:
-        const std::string _message;
+        std::string _message;
 
     public:
         /**
@@ -115,6 +115,7 @@ class TestFailedException :
         TestFailedException(const char * const function, const char * const file,
             const long line, const std::string & message) throw ()
         {
+            _message = message;
         }
 
         /**
@@ -226,11 +227,11 @@ class TestFailedException :
     do { \
         try { \
             WithinEpsCalculator calc(a, b, eps); \
-            check(__PRETTY_FUNCTION__, __FILE__, __LINE__, calc.result, \
-                    "Expected '" #a "' - '" #b \
-                    "' < '" + stringify(eps) + "' but was '" + calc.s_diff); \
-        } catch (const TestFailedException &) { \
-            throw; \
+            check(__PRETTY_FUNCTION__, __FILE__, __LINE__, calc.result,  \
+                "Expected '" #a "' - '" #b \
+                "' < '" + stringify(eps) + "' but was '" + calc.s_diff); \
+        } catch (const TestFailedException & test_e) { \
+            throw;  \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected exception FIXME inside a TEST_CHECK_EQUAL_WITHIN_EPS block"); \
