@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/scalar_product_TEST.cc: dense_scalar_product_test added
+	
 2007-05-30 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc, benchmark/benchmark.hh: Added benchmark
