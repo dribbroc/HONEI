@@ -8,7 +8,7 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`banded_matrix',             `hh')
+add(`banded_matrix',             `hh', `test')
 add(`dense_matrix',              `hh', `test')
 add(`dense_vector',              `hh', `test')
 add(`element_iterator',          `hh')

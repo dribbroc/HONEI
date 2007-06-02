@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/banded_matrix_TEST.cc: banded_matrix_creation_test added
+	* libla/matrix_row_sum_vector_Test.cc: dense_matrix_row_sum_vector_test added
+	
 2007-06-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_vector_TEST.cc: sparse_vector_test added
