@@ -46,7 +46,7 @@ namespace pg512 ///< \todo Namespace name?
      * \ingroup grpmatrix
      **/
     template <typename DataType_> class DenseMatrix :
-        public Matrix<DataType_>,
+        public RowAccessMatrix<DataType_>,
         public MutableMatrix<DataType_>
     {
         private:
@@ -156,7 +156,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual const Vector<DataType_> & operator[] (unsigned long row) const
             {
                 if (! _row_vectors[row])
-                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, (row-1) * _columns, 1));
+                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
 
                 return *_row_vectors[row];
             }
@@ -165,7 +165,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual Vector<DataType_> & operator[] (unsigned long row)
             {
                 if (! _row_vectors[row])
-                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, (row-1) * _columns, 1));
+                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
 
                 return *_row_vectors[row];
             }
@@ -174,7 +174,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual const Vector<DataType_> & column(unsigned long column) const
             {
                 if (! _column_vectors[column])
-                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, (column-1), _columns));
+                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
 
                 return *_column_vectors[column];
             }
@@ -183,7 +183,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual Vector<DataType_> & column(unsigned long column)
             {
                 if (! _column_vectors[column])
-                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, (column-1), _columns));
+                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
 
                 return *_column_vectors[column];
             }

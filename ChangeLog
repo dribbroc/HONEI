@@ -7,6 +7,19 @@ see the NEWS file.
 
 2007-06-03 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/dense_matrix.hh: Switched base class from Matrix to
+	RowAccessMatrix.
+	* libla/files.m4, libla/matrix_row_sum_vector.hh,
+	libla/matrix_row_sum_vector_TEST.cc: Moved MatrixRowSumVector to accept
+	RowAccessMatrix'es only (for now). Added proper test case.
+	* libla/matrix.hh: Added missing doxygen comment. Whitespaces cleaned
+	up.
+	* libla/vector_element_sum.hh: Let VectorElementSum accept Vector
+	descendants in general, instead of only accepting DenseVector
+	instances.
+
+2007-06-03 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/vector_norm_TEST.cc: Fixed test case.
 	* +libla/vector_element_sum.hh, +libla/vector_element_sum_TEST.cc,
 	-libla/vector_sum.hh, -libla/vector_sum_TEST.cc, libla/files.m4:

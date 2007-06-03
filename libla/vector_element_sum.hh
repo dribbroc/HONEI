@@ -39,7 +39,7 @@ namespace pg512 ///< \todo Namespace name?
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct VectorElementSum
     {
-        static DataType_ value(const DenseVector<DataType_> & vector)
+        static DataType_ value(const Vector<DataType_> & vector)
         {
             DataType_ result(0);
 

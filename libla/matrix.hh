@@ -66,6 +66,11 @@ namespace pg512 ///< \todo Namespace name?
             virtual unsigned long rows() const = 0;
     };
 
+    /**
+     * A MutableMatrix is the abstract interface for matrices with non-const iterators.
+     *
+     * \ingroup grpmatrix
+     **/
     template <typename DataType_> class MutableMatrix
     {
         public:
@@ -164,7 +169,7 @@ namespace pg512 ///< \todo Namespace name?
         {
             const Vector<DataType_> & v(m[r]);
 
-            lhs << " "<< v << std::endl;
+            lhs << " " << v << std::endl;
         }
         lhs << "]";
 
