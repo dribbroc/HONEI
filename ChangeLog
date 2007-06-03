@@ -7,13 +7,15 @@ see the NEWS file.
 
 2007-06-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libla/banded_matrix_TEST.cc: banded_matrix_creation_test added
-	* libla/matrix_row_sum_vector_Test.cc: dense_matrix_row_sum_vector_test added
+	* libla/banded_matrix_TEST.cc: Added test for BandedMatrix creation.
+	* libla/matrix_row_sum_vector_Test.cc: Added test for
+	MatrixRowSumVector, operating on DenseVectors.
 	
 2007-06-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libla/sparse_vector_TEST.cc: sparse_vector_test added
-	* libla/vector_sum_Test.cc: dense_vector_sum_test added
+	* libla/sparse_vector_TEST.cc: Added test for SparseVector creation.
+	* libla/vector_sum_Test.cc: Added test for VectorSum, operating on
+	DenseVectors.
 	
 2007-06-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
