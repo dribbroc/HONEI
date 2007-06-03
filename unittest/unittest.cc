@@ -1,7 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #include <unittest/unittest.hh>
-#include <libutil/log.hh>
 
 #include <cstdlib>
 #include <exception>
@@ -66,7 +65,7 @@ void
 BaseTest::check(const char * const function, const char * const file,
     const long line, bool was_ok, const std::string & message) const
 {
-    Log::instance()->message(ll_stubs,".");
+    std::cout << ".";
     if (! was_ok)
         throw TestFailedException(function, file, line, message);
 }
@@ -112,17 +111,17 @@ int main(int argc, char** argv)
     {
         try
         {
-            Log::instance()->message(ll_minimal, (*i)->id() + ": \n");
+            std::cout << (*i)->id() + ": \n";
 
             if ((! (*i)->is_quick_test()) && (quick))
                 continue;
 
             (*i)->run();
-            Log::instance()->message(ll_minimal, "PASSED \n");
+            std::cout << "PASSED \n";
         }
         catch (TestFailedException & e)
         {
-            Log::instance()->message(ll_minimal, "FAILED: " + stringify(e.what()) + "\n");
+            std::cout << "FAILED: " + stringify(e.what()) + "\n";
             result = EXIT_FAILURE;
         }
     }
