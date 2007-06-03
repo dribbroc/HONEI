@@ -46,6 +46,13 @@ class DenseScalarProductTest :
                 DataType_ p2(ScalarProduct<DataType_>::value(*dv2,*dv2));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2,sqrt(std::numeric_limits<DataType_>::epsilon()));
             }
+            
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv00(new DenseVector<DataType_>(1,
+                    static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv01(new DenseVector<DataType_>(2,
+                    static_cast<DataType_>(1)));
+                    
+            TEST_CHECK_THROWS(ScalarProduct<DataType_>::value(*dv00,*dv01),VectorSizeDoesNotMatch);            
         }
 };
 
