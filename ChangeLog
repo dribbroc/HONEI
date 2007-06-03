@@ -8,8 +8,8 @@ see the NEWS file.
 2007-06-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_sum_TEST.cc: Added DenseVectorAdditionTest.
-	
-2007-06-03 Danny van Dyk <kugelfang@gentoo.org>
+
+2007-06-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_matrix.hh: Switched base class from Matrix to
 	RowAccessMatrix.
@@ -22,7 +22,7 @@ see the NEWS file.
 	descendants in general, instead of only accepting DenseVector
 	instances.
 
-2007-06-03 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_norm_TEST.cc: Fixed test case.
 	* +libla/vector_element_sum.hh, +libla/vector_element_sum_TEST.cc,
