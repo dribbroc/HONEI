@@ -23,5 +23,5 @@ add(`vector_absolute',           `hh', `cc', `test')
 add(`vector_error',              `hh', `cc')
 add(`vector_iterator',           `hh')
 add(`vector_norm',               `hh', `test')
-add(`vector_sum',                `hh')
+add(`vector_sum',                `hh', `test')
 
