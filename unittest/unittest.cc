@@ -71,6 +71,23 @@ BaseTest::check(const char * const function, const char * const file,
         throw TestFailedException(function, file, line, message);
 }
 
+bool
+BaseTest::is_quick_test() const
+{
+    return false;
+}
+
+QuickTest::QuickTest(const std::string & id) :
+    BaseTest(id)
+{
+}
+
+bool
+QuickTest::is_quick_test() const
+{
+    return true;
+}
+
 TestFailedException::TestFailedException(const char * const function, const char * const file,
         const long line, const std::string & message) throw () :
     _message(pg512::stringify(file) + ":" + pg512::stringify(line) + ": in " +
@@ -84,25 +101,28 @@ TestFailedException::~TestFailedException() throw ()
 
 int main(int argc, char** argv) 
 {
-    bool quick = false;
-  	if (argc==2 && stringify(argv[1])=="quick") quick=true;
-    int result=EXIT_SUCCESS;
+    int result(EXIT_SUCCESS);
+    bool quick(false);
 
-    for (TestList::Iterator i(TestList::instance()->begin_tests()),i_end(TestList::instance()->end_tests()) ; i != i_end ; ++i)
+    if ((argc == 2) && (stringify(argv[1]) == "quick"))
+            quick=true;
+
+    for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
+            i != i_end ; ++i)
     {
         try
         {
-            Log::instance()->message(ll_minimal,(*i)->id() + ": \n");
-            if (quick)
-            {
-                if ((*i)->is_quick_test()) (*i)->run();
-            }
-            else (*i)->run();
-            Log::instance()->message(ll_minimal,"PASSED \n");
+            Log::instance()->message(ll_minimal, (*i)->id() + ": \n");
+
+            if ((! (*i)->is_quick_test()) && (quick))
+                continue;
+
+            (*i)->run();
+            Log::instance()->message(ll_minimal, "PASSED \n");
         }
         catch (TestFailedException & e)
         {
-            Log::instance()->message(ll_minimal,"FAILED: " +pg512::stringify(e.what()) + "\n");
+            Log::instance()->message(ll_minimal, "FAILED: " + stringify(e.what()) + "\n");
             result = EXIT_FAILURE;
         }
     }

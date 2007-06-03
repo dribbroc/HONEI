@@ -5,22 +5,28 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* unittest/unittest.cc, unittest/unittest.hh: Applied coding
+	conventions. Moved some method implementations from header to source
+	file. Converted doxygen comments to proper english.
+
 2007-06-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/banded_matrix_TEST.cc: Added test for BandedMatrix creation.
 	* libla/matrix_row_sum_vector_Test.cc: Added test for
 	MatrixRowSumVector, operating on DenseVectors.
-	
+
 2007-06-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_vector_TEST.cc: Added test for SparseVector creation.
 	* libla/vector_sum_Test.cc: Added test for VectorSum, operating on
 	DenseVectors.
-	
+
 2007-06-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/scalar_product_TEST.cc: dense_scalar_product_test added
-	
+
 2007-05-30 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc, benchmark/benchmark.hh: Added benchmark
@@ -29,12 +35,12 @@ see the NEWS file.
 2007-05-30 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest/unittest.cc: Replaced cout's by log output.
-	
+
 2007-05-30 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest/unittest.hh, unittest/unittest.cc: Improved test failure
 	output.
-	
+
 2007-05-30 David Gies <david-gies@gmx.de>
 
 	* unittest/unittest.hh: Fixed error in TestFailedException.
@@ -47,12 +53,12 @@ see the NEWS file.
 
 	* unittest/unittest.hh: Added QuickTest class.
 	* unittest/unittest.cc: Added 'quick' parameter.
-	
-2007-05-29 Danny van Dyk <kugelfang@gentoo.org>
+
+2007-05-29 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_absolute_TEST.cc: Oops. Forgot to add test file.
 
-2007-05-28 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-28 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/matrix.hh: Added equality operator for Matrices.
 	* libla/files.m4, libla/matrix_element_inverse.hh,
@@ -60,20 +66,20 @@ see the NEWS file.
 	operator.
 	* libla/vector.hh: Fixed comment.
 
-2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* doc/doxygen.conf, doc/footer.html, doc/header.html, doc/pg512.css,
 	doc/powered-by-c++.png, doc/powered-by-vim.png: Added custom
 	stylesheet, header and footer.
 
-2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* Makefile.am: Added misc/ files to EXTRADISTFILES.
 	* libla/vector.hh: Fixed equality operator for Vector.
 	* libla/files.m4, libla/vector_absolute.cc, libla/vector_absolute.hh:
 	Added VectorAbsolute.
 
-2007-05-26 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_matrix.hh: Fixed constructors so that tests pass
 	again.
@@ -99,11 +105,11 @@ see the NEWS file.
 
 	* configure.ac: Added check for presence of a proper std::numeric_limits<>.
 
-2007-05-24 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* unittest/unittest.hh: Fixed TEST_CHECK_* macros.
 
-2007-05-24 Danny van Dyk <kugelfang@gentoo.org>
+2007-05-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_vector.hh, libla/scalar_product.hh,
 	libla/sparse_vector.hh, libla/vector.hh, libla/vector_norm.hh: Added

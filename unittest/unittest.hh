@@ -18,31 +18,28 @@ class BaseTest
 
     public:
         /**
-         * Constructor
-         * \param id the test-name
+         * Constructor.
+         *
+         * \param id The testcase's id string.
          */
         BaseTest(const std::string & id);
 
+        /// Returns our id string.
         const std::string id() const;
 
         /// Utility method used bei TEST_CHECK_*
         void check(const char * const function, const char * const file,
                 const long line, bool was_ok, const std::string & message) const;
 
-        /// called by the unittest framework to run the tests
+        /**
+         * Runs the test case.
+         *
+         * Called by unittest framework only.
+         */
         virtual void run() const = 0;
-        
-        /// returns true if the test is a "quick test"
-        virtual bool is_quick_test()
-        {
-            return false;
-        }
-        
-        /// returns testclass id string
-        virtual std::string get_id()
-        {
-            return _id;
-        }
+
+        /// Returns whether we are a quick-test.
+        virtual bool is_quick_test() const;
 
         /**
          * Utility class used by TEST_CHECK_EQUAL.
@@ -77,32 +74,35 @@ class BaseTest
                 s_a(stringify(a)),
                 s_b(stringify(b))
             {
-				if (a>=b) 
-				{
-					result = ((a - b) <= c);
-					s_diff = stringify(a-b);
-				}
-				else 
-				{
-					result = ((b - a) <= c);
-					s_diff = stringify(b-a);
-				}
+                if (a>=b)
+                {
+                    result = ((a - b) <= c);
+                    s_diff = stringify(a-b);
+                }
+                else
+                {
+                    result = ((b - a) <= c);
+                    s_diff = stringify(b-a);
+                }
             }
         };
 };
 
 /**
- * Baseclass for all testingclasses, marked as quick tests
+ * Abstract Baseclass for all quick-test classes.
  */
 class QuickTest : public BaseTest
 {
     public:
-        QuickTest(const std::string & id): BaseTest(id) {}
-        
-        virtual bool is_quick_test()
-        {
-            return true;
-        }
+        /**
+         * Constructor.
+         *
+         * \param id The testcase's id string.
+         */
+        QuickTest(const std::string & id);
+
+        /// Returns whether we are a quick-test.
+        virtual bool is_quick_test() const;
 };
 
 /**
@@ -164,7 +164,7 @@ class TestFailedException :
  */
 #define TEST_CHECK_STRINGIFY_EQUAL(a, b) \
     do { \
-  try { \
+        try { \
             std::string s_a(stringify(a)); \
             std::string s_b(stringify(b)); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, s_a == s_b, \
