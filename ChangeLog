@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-03 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/vector_norm_TEST.cc: Fixed test case.
+	* +libla/vector_element_sum.hh, +libla/vector_element_sum_TEST.cc,
+	-libla/vector_sum.hh, -libla/vector_sum_TEST.cc, libla/files.m4:
+	Renamed VectorSum to VectorElementSum.
+
 2007-06-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* unittest/unittest.cc, unittest/unittest.hh: Applied coding

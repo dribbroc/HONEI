@@ -17,24 +17,33 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_VECTOR_SUM_HH
-#define LIBLA_GUARD_VECTOR_SUM_HH 1
+#ifndef LIBLA_GUARD_VECTOR_ELEMENT_SUM_HH
+#define LIBLA_GUARD_VECTOR_ELEMENT_SUM_HH 1
 
 #include <libla/tags.hh>
-#include <libla/vector.hh>
+#include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 
+/**
+ * \file
+ *
+ * Templatized definition of summing up all of a Vector's elements.<br/>
+ *
+ * \ingroup grpvectoroperations
+ */
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A VectorSum yields the sum of all elemenets of a descendants of type Vector.
+     * A VectorElementSum yields the sum of all elements of descendants of type
+     * Vector.
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct VectorSum
+    template <typename DataType_, typename Tag_ = tags::CPU> struct VectorElementSum
     {
-        static DataType_ value(const Vector<DataType_> & vector)
+        static DataType_ value(const DenseVector<DataType_> & vector)
         {
             DataType_ result(0);
 
-            for (typename Vector<DataType_>::ElementIterator i(vector.begin_elements()), i_end(vector.end_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator i(vector.begin_elements()), i_end(vector.end_elements()) ;
                     i != i_end ; ++i)
             {
                 result += *i;
@@ -47,7 +56,7 @@ namespace pg512 ///< \todo Namespace name?
         {
             DataType_ result(0);
 
-            for (typename Vector<DataType_>::ElementIterator i(vector.begin_non_zero_elements()), i_end(vector.end_non_zero_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator i(vector.begin_non_zero_elements()), i_end(vector.end_non_zero_elements()) ;
                     i != i_end ; ++i)
             {
                 result += *i;

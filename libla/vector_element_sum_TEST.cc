@@ -1,22 +1,23 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #include <libla/dense_vector.hh>
-#include <libla/vector_sum.hh>
+#include <libla/vector_element_sum.hh>
 #include <unittest/unittest.hh>
 
 #include <limits>
-#include <tr1/memory>
 #include <iostream>
+#include <vector>
+#include <tr1/memory>
 
 using namespace pg512;
 
 template <typename DataType_>
-class DenseVectorSumTest :
+class DenseVectorElementSumTest :
     public BaseTest
 {
     public:
-        DenseVectorSumTest(const std::string & type) :
-            BaseTest("dense_vector_sum_test<" + type + ">")
+        DenseVectorElementSumTest(const std::string & type) :
+            BaseTest("dense_vector_element_sum_test<" + type + ">")
         {
         }
 
@@ -31,12 +32,14 @@ class DenseVectorSumTest :
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
                 }
 
-                DataType_ s1(VectorSum<DataType_>::value(*dv));
-                DataType_ sum(size * (size / 1.23456789 + 1) / 2);
-                TEST_CHECK_EQUAL_WITHIN_EPS(s1, sum, std::numeric_limits<DataType_>::epsilon());
+                DataType_ v1(VectorElementSum<DataType_>::value(*dv));
+                DataType_ s1(size * (size + 1) / 2 / 1.23456789);
+                // Behavious similar to size^2 * eps
+                DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
             }
         }
 };
 
-DenseVectorSumTest<float> dense_vector_sum_test_float("float");
-DenseVectorSumTest<double> dense_vector_sum_test_double("double");
+DenseVectorElementSumTest<float> dense_vector_element_sum_test_float("float");
+DenseVectorElementSumTest<double> dense_vector_element_sum_test_double("double");

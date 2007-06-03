@@ -36,12 +36,14 @@ class VectorNormValueTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(*dv));
-                DataType_ s1(size * (size / 1.23456789 + 1) / 2);
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, std::numeric_limits<DataType_>::epsilon());
+                DataType_ s1(size * (size + 1) / 2 / 1.23456789);
+                DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
                 DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(*dv));
-                DataType_ s2(size * (size / 1.23456789 + 1) * (2 * size / 1.23456789 + 1) / 6);
-                TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, sqrt(std::numeric_limits<DataType_>::epsilon()));
+                DataType_ s2(size * (size + 1) * (2 * size + 1) / 6 / 1.23456789 / 1.23456789);
+                DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
             }
         }
 };
