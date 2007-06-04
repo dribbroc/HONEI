@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_VECTOR_ADDITION_HH
-#define LIBLA_GUARD_VECTOR_ADDITION_HH 1
+#ifndef LIBLA_GUARD_VECTOR_SUM_HH
+#define LIBLA_GUARD_VECTOR_SUM_HH 1
 
 #include <libla/tags.hh>
 #include <libla/dense_vector.hh>
@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of vector addition.<br/>
+ * Templatized definitions of vector sums.<br/>
  *
  * \ingroup grpvectoroperations
  **/
@@ -36,33 +36,30 @@ namespace pg512
 {
 
     /**
-     * VectorAddition is the class template for the addition of two vectors
+     * VectorSum is the class template for the sum of two vectors.
      *
      * \ingroup grpvectoroperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct VectorAddition
+    template <typename DataType_, typename Tag_ = tags::CPU> struct VectorSum
     {
         /**
-         * Returns the the resulting vector of the addition of two given dense vectors
+         * Returns the the resulting vector of the sum of two given DenseVector instances.
          **/
-        static DenseVector<DataType_> value(const DenseVector<DataType_> & left, DenseVector<DataType_> & right)
+        static DenseVector<DataType_> & value(DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DenseVector<DataType_> result(0);
-
-            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_elements()), l_end(left.end_elements()) ;
-                    l != l_end ; ++l)
+            for (typename Vector<DataType_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements()) ; l != l_end ; ++l)
             {
-                    result[l.index()] = *l + right[l.index()];
+                *l += right[l.index()];
             }
 
-            return result;
+            return left;
         }
 
         /**
-         * Returns the the resulting vector of the addition of two given sparse vectors
+         * Returns the resulting vector of the sum of two given SparseVector instances.
          **/
         static SparseVector<DataType_> value(const SparseVector<DataType_> & left, SparseVector<DataType_> & right)
         {
@@ -96,10 +93,10 @@ namespace pg512
         }
 
         /**
-         * Returns the the resulting vector of the addition of a given dense and a given sparse vectors
+         * Returns the the resulting vector of the sum of a given dense and a given sparse vector.
          *
-         * \param left The dense vector
-         * \param right The sparse vector
+         * \param left The dense vector.
+         * \param right The sparse vector.
          **/
          static DenseVector<DataType_> value(const DenseVector<DataType_> & left, SparseVector<DataType_> right)
         {
