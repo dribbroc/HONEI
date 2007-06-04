@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-04 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/vector_norm.hh: Changed some "abs()" to "fabs()".
+	* libla/scalar_product.hh: Removed unused iterator.
+
+2007-06-04 Sven Mallach <sven.mallach@uni-dortmund.de>
+
         * libla/vector_sum.hh: Fixed some bugs, so that
         vector_sum_TEST.cc passes now.
 

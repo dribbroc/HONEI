@@ -114,9 +114,9 @@ namespace pg512
             for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
-                if (abs(*l) > result)
+                if (fabs(*l) > result)
                 {
-                    result = abs(*l);
+                    result = fabs(*l);
                 }
             }
 
@@ -201,7 +201,7 @@ namespace pg512
             {
                 if (*l != static_cast<DataType_>(0))
                 {
-                    result += exp(k * log(abs(*l)));
+                    result += exp(k * log(fabs(*l)));
                 }
             }
 
