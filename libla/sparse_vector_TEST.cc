@@ -21,8 +21,8 @@ class SparseVectorCreationTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<SparseVector<DataType_> > dm(new SparseVector<DataType_>(size,size));
-                std::tr1::shared_ptr<SparseVector<DataType_> > dm(new SparseVector<DataType_>(size,1));
+                std::tr1::shared_ptr<SparseVector<DataType_> > dm1(new SparseVector<DataType_>(size,size));
+                std::tr1::shared_ptr<SparseVector<DataType_> > dm2(new SparseVector<DataType_>(size,1));
                 TEST_CHECK(true);
             }
         }
