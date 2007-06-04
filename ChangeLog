@@ -7,12 +7,12 @@ see the NEWS file.
 
 2007-06-04 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* unittest/dense_vector_TEST.cc: added DenseVectorEquationTest
-	
+	* unittest/dense_vector_TEST.cc: Added DenseVectorEquationTest.
+
 2007-06-03 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* unittest/unittest.cc: Unittest no longer uses Log
-	
+	* unittest/unittest.cc: Unittest no longer uses Log.
+
 2007-06-03 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_sum_TEST.cc: Added DenseVectorAdditionTest.
@@ -29,6 +29,10 @@ see the NEWS file.
 	* libla/vector_element_sum.hh: Let VectorElementSum accept Vector
 	descendants in general, instead of only accepting DenseVector
 	instances.
+
+2007-06-03 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* +libla/vector_sum.hh, libla/files.m4: Added after old file was renamed to vector_element_sum.hh.
 
 2007-06-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
@@ -117,6 +121,12 @@ see the NEWS file.
 	again.
 	* libla/dense_vector.hh: Fixed copy-constructor.
 
+2007-05-24 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/dense_matrix.hh: Added function column() which retrieves column-Vectors
+	for DenseMatrices. Fixed the indexing problem in operator[] and column() methods
+	which were off by 1.
+
 2007-05-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* unittest/unittest.cc: Removed dependency on libwrapiter.
@@ -156,7 +166,7 @@ see the NEWS file.
 2007-05-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest: Added doxygen documentation.
-	
+
 2007-05-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_matrix_TEST.cc, unittest/unittest.hh: Removed
@@ -194,14 +204,20 @@ see the NEWS file.
 2007-05-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest/unittest.hh: Added TEST_CHECK defines.
-	
+
 2007-05-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest: Added new initial unittest framework.
-	
+
 2007-05-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest: Removed obsolete unittest framework.
+
+2007-05-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/vector.norm.hh: Added methods for SparseVector.
+	* +libla/matrix_error.hh, +libla/matrix_error.cc: Added exception
+	classes for matrices.
 
 2007-05-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
@@ -310,6 +326,14 @@ see the NEWS file.
 
 	* libutil/shared_array.hh: Reworked
 	SharedArrayCounter and removed silly unsigned bug.
+
+2007-05-10 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/norm.hh: Some fixes.
+
+2007-05-10 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/norm.hh: First Version of VectorNorm header.
 
 2007-05-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
