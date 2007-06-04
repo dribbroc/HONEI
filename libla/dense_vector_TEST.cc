@@ -37,7 +37,7 @@ class DenseVectorEquationTest :
 {
     public:
         DenseVectorEquationTest(const std::string & type) :
-            BaseTest("dense_vector_creation_test<" + type + ">")
+            BaseTest("dense_vector_equation_test<" + type + ">")
         {
         }
 
