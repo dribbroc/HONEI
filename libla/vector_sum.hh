@@ -45,17 +45,19 @@ namespace pg512
         /**
          * Returns the the resulting vector of the sum of two given DenseVector instances.
          **/
-        static DenseVector<DataType_> & value(DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
+        static DenseVector<DataType_> value(DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
+            DenseVector<DataType_> result(left.size(), 0, 0, 1);
+
             for (typename Vector<DataType_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements()) ; l != l_end ; ++l)
             {
-                *l += right[l.index()];
+                result[l.index()] = *l + right[l.index()];
             }
 
-            return left;
+            return result;
         }
 
         /**
@@ -103,7 +105,7 @@ namespace pg512
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DenseVector<DataType_> result(0);
+            DenseVector<DataType_> result(left.size(),0, 0, 1);
 
             for (typename Vector<DataType_>::ConstElementIterator l(left.begin_elements()),
                 l_end(left.end_elements()), r(right.begin_non_zero_elements()), r_end(right.end_non_zero_elements()) ;
