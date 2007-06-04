@@ -113,7 +113,7 @@ int main(int argc, char** argv)
         {
             std::cout << (*i)->id() + ": \n";
 
-            if ((! (*i)->is_quick_test()) && (quick))
+            if (quick && (!(*i)->is_quick_test()) )
                 continue;
 
             (*i)->run();

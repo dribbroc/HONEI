@@ -17,7 +17,7 @@ class DenseVectorSumTest :
 {
     public:
         DenseVectorSumTest(const std::string & type) :
-            BaseTest("dense_vector_addition_test<" + type + ">")
+            BaseTest("dense_vector_sum_test<" + type + ">")
         {
         }
 
@@ -44,5 +44,5 @@ class DenseVectorSumTest :
         }
 };
 
-DenseVectorSumTest<float> dense_vector_addition_test_float("float");
-DenseVectorSumTest<double> dense_scalar_product_double("double");
+DenseVectorSumTest<float> dense_vector_sum_test_float("float");
+DenseVectorSumTest<double> dense_vector_sum_test_double("double");

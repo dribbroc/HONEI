@@ -9,7 +9,16 @@
 #include <exception>
 
 /**
+ * \file
+ *
+ * Implementation of Basetest and related classes.
+ *
+ * \ingroup tests
+ **/
+
+/**
  * Baseclass for all testingclasses
+ * \ingroup tests
  */
 class BaseTest
 {
@@ -35,6 +44,7 @@ class BaseTest
          * Runs the test case.
          *
          * Called by unittest framework only.
+         * \ingroup tests         
          */
         virtual void run() const = 0;
 
@@ -90,6 +100,7 @@ class BaseTest
 
 /**
  * Abstract Baseclass for all quick-test classes.
+ * \ingroup tests
  */
 class QuickTest : public BaseTest
 {
