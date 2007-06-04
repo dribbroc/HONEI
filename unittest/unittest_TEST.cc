@@ -2,6 +2,7 @@
 
 #include <unittest/unittest.hh>
 using namespace std;
+using  namespace tests;
 
 /*
  * Test class for the unittest framework itself

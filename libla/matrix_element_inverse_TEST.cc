@@ -7,6 +7,7 @@
 #include <string>
 
 using namespace pg512;
+using  namespace tests;
 
 template <typename DataType_>
 class DenseMatrixElementInverseTest :

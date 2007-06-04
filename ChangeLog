@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* unittest/unittest.hh: Moved all unittest-classes to namespace tests.
+	* libla/*_TEST.cc: All test cases are now using namespace tests.
+	
 2007-06-04 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/vector_norm.hh: Changed some "abs()" to "fabs()".
@@ -19,7 +24,7 @@ see the NEWS file.
 
 	* doc/doxygen.conf, doc/doc_groups.doxygen: Added Unittest and Benchmark
 	in Doxygen.
-	* libla/vector_sum_TEST.cc: Renamed vector_addition relicts in vector_sum
+	* libla/vector_sum_TEST.cc: Renamed vector_addition relicts to vector_sum.
 	
 2007-06-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
 

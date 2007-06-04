@@ -15,6 +15,9 @@
  *
  * \ingroup tests
  **/
+ 
+namespace tests
+{
 
 /**
  * Baseclass for all testingclasses
@@ -147,7 +150,7 @@ class TestFailedException :
             return _message.c_str();
         }
 };
-
+}
 /**
  * Check that a == b.
  */

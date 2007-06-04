@@ -10,8 +10,7 @@
 #include <utility>
 
 using namespace pg512;
-
-class BaseTest;
+using namespace tests;
 
 class TestList
 {
