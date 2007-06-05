@@ -31,189 +31,61 @@ namespace pg512 ///< \todo Namespace name?
 
     template <typename DataType_> class Matrix;
 
-    template <typename Tag_, typename DataType_, typename ElementType_> class ElementIteratorBase;
+    /**
+     * IteratorTraits declares the interface for the iterators' parent classes.
+     */
+    template <typename Container_> class IteratorTraits;
 
-    template <typename DataType_, typename ElementType_> class ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_> :
-        public std::iterator<std::forward_iterator_tag, ElementType_>
+    /// Specialisation of IteratorTraits for vector-like types.
+    template <typename DataType_> class IteratorTraits<Vector<DataType_> >
     {
         public:
-            /// Preincrement operator.
-            virtual ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_> & operator++ () = 0;
-
             /// Returns our index.
-            virtual const unsigned long index() const = 0;
+            virtual unsigned long index() const = 0;
+
+            /// Returns a pointer to our parent container.
+            virtual const Vector<DataType_> * parent() const = 0;
     };
 
-    template <typename DataType_, typename ElementType_> class ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_> :
-        public std::iterator<std::forward_iterator_tag, ElementType_>
+    /// Specialisation of IteratorTraits for matrix-like types.
+    template <typename DataType_> class IteratorTraits<Matrix<DataType_> >
     {
         public:
-            /// Preincrement operator.
-            virtual ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_> & operator++ () = 0;
-
             /// Returns our index.
-            virtual const unsigned long index() const = 0;
+            virtual unsigned long index() const = 0;
 
-            /// Returns our column.
-            virtual const unsigned long column() const = 0;
+            /// Returns our column index.
+            virtual unsigned long column() const = 0;
 
-            /// Returns our row.
-            virtual const unsigned long row() const = 0;
+            /// Returns our row index.
+            virtual unsigned long row() const = 0;
+
+            /// Returns a pointer to our parent container.
+            virtual const Matrix<DataType_> * parent() const = 0;
     };
 
-    template <typename ParentType_, typename DataType_, typename ElementType_ = DataType_> class ElementIteratorImplBase :
-        public ElementIteratorBase<ParentType_, DataType_, ElementType_>
+    /**
+     * IteratorBase declares the minimal interface for the implementation of an ElementIterator.
+     */
+    template <typename DataType_, typename Container_> class IteratorBase :
+        public std::iterator<std::forward_iterator_tag, DataType_>,
+        public IteratorTraits<Container_>
     {
         public:
-            /// Equality operator.
-            virtual bool operator== (const ElementIteratorImplBase<ParentType_, DataType_, ElementType_> & other) const = 0;
-
-            /// Inqquality operator.
-            virtual bool operator!= (const ElementIteratorImplBase<ParentType_, DataType_, ElementType_> & other) const = 0;
-
-            /// Dereference operator.
-            virtual ElementType_ & operator* () const = 0;
-
-            /// Returns pointer to our parent.
-            virtual const ParentType_ * parent() const = 0;
-    };
-
-    template <typename ParentType_, typename DataType_, typename ElementType_ = DataType_> class ElementIteratorWrapper;
-
-    template <typename DataType_, typename ElementType_> class ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> :
-        public ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_>
-    {
-        private:
-            /// Our wrapped iterator.
-            std::tr1::shared_ptr<ElementIteratorImplBase<Vector<DataType_>, DataType_, ElementType_> > _iterator;
-
-        public:
-            /// Constructor.
-            ElementIteratorWrapper(ElementIteratorImplBase<Vector<DataType_>, DataType_, ElementType_> *iterator) :
-                _iterator(iterator)
-            {
-            }
-
-            /// Copy-constructor.
-            ElementIteratorWrapper(const ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> & other) :
-                _iterator(other._iterator)
-            {
-            }
-
             /// Preincrement operator.
-            virtual ElementIteratorBase<Vector<DataType_>, DataType_, ElementType_> & operator++ ()
-            {
-                ++(*_iterator);
-                return *this;
-            }
+            virtual IteratorBase<DataType_, Container_> & operator++ () = 0;
 
-            /// Postincrement operator.
-            virtual ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> operator++ (int)
-            {
-                ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> result(*this);
+            /// Dereference operator that returns an assignable reference.
+            virtual DataType_ & operator* () = 0;
 
-                ++(*_iterator);
+            /// Dereference operator that returns an unassignable reference.
+            virtual const DataType_ & operator* () const = 0;
 
-                return result;
-            }
+            /// Comparison operator for equality.
+            virtual bool operator== (const IteratorBase<DataType_, Container_> & other) const = 0;
 
-            /// Equality operator.
-            virtual bool operator== (const ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> & other) const
-            {
-                return (*_iterator == *other._iterator);
-            }
-
-            /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorWrapper<Vector<DataType_>, DataType_, ElementType_> & other) const
-            {
-                return (*_iterator != *other._iterator);
-            }
-
-            /// Dereference operator 
-            virtual ElementType_ & operator* () const
-            {
-                return **_iterator;
-            }
-
-            /// Our index.
-            virtual const unsigned long index() const
-            {
-                return _iterator->index();
-            }
-    };
-
-    template <typename DataType_, typename ElementType_> class ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> :
-        public ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_>
-    {
-        private:
-            /// Our wrapped iterator.
-            std::tr1::shared_ptr <ElementIteratorImplBase<Matrix<DataType_>, DataType_, ElementType_> > _iterator;
-
-        public:
-            /// Constructor.
-            ElementIteratorWrapper(ElementIteratorImplBase<Matrix<DataType_>, DataType_, ElementType_> *iterator) :
-                _iterator(iterator)
-            {
-            }
-
-            /// Copy-constructor.
-            ElementIteratorWrapper(const ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> & other) :
-                _iterator(other._iterator)
-            {
-            }
-
-            /// Preincrement operator.
-            virtual ElementIteratorBase<Matrix<DataType_>, DataType_, ElementType_> & operator++ ()
-            {
-                ++(*_iterator);
-                return *this;
-            }
-
-            /// Postincrement operator.
-            virtual ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> operator++ (int)
-            {
-                ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> result(*this);
-
-                ++(*_iterator);
-
-                return result;
-            }
-
-            /// Equality operator.
-            virtual bool operator== (const ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> & other) const
-            {
-                return (*_iterator == *other._iterator);
-            }
-
-            /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorWrapper<Matrix<DataType_>, DataType_, ElementType_> & other) const
-            {
-                return (*_iterator != *other._iterator);
-            }
-
-            /// Dereference operator 
-            virtual ElementType_ & operator* () const
-            {
-                return **_iterator;
-            }
-
-            /// Our index.
-            virtual const unsigned long index() const
-            {
-                return _iterator->index();
-            }
-
-            /// Our column.
-            virtual const unsigned long column() const
-            {
-                return _iterator->column();
-            }
-
-            /// Our row.
-            virtual const unsigned long row() const
-            {
-                return _iterator->row();
-            }
+            /// Comparison operator for inequality.
+            virtual bool operator!= (const IteratorBase<DataType_, Container_> & other) const = 0;
     };
 }
 

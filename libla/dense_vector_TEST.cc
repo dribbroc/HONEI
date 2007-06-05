@@ -50,7 +50,7 @@ class DenseVectorEquationTest :
                     static_cast<DataType_>(4711)));
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
                     static_cast<DataType_>(4711)));
-                    
+
                 TEST_CHECK(dv0==dv1);
                 TEST_CHECK_EQUAL(dv0->size(),size);
             }

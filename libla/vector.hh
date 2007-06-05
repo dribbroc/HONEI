@@ -46,9 +46,14 @@ namespace pg512 ///< \todo Namespace name?
      **/
     template <typename DataType_> class Vector
     {
+        protected:
+            template <typename ElementType_> class ElementIteratorBase;
+            typedef ElementIteratorBase<DataType_> VectorElementIterator;
+
         public:
             /// Type of the const iterator over our elements.
-            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_, const DataType_> ConstElementIterator;
+            template <typename ElementType_> class ConstElementIteratorWrapper;
+            typedef ConstElementIteratorWrapper<DataType_> ConstElementIterator;
 
             /// Returns const iterator pointing to the first element of the vector.
             virtual ConstElementIterator begin_elements() const = 0;
@@ -57,7 +62,8 @@ namespace pg512 ///< \todo Namespace name?
             virtual ConstElementIterator end_elements() const = 0;
 
             /// Type of the iterator over our elements.
-            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_> ElementIterator;
+            template <typename ElementType_> class ElementIteratorWrapper;
+            typedef ElementIteratorWrapper<DataType_> ElementIterator;
 
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements() = 0;
@@ -76,9 +82,188 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Compare two Vectors for equality.
+     * Vector::ElementIteratorBase declares the minimal interface for any ElementIterator implementation
+     * for vector-like types.
      *
      * \ingroup grpvector
+     */
+    template <> template <typename DataType_> class Vector<DataType_>::ElementIteratorBase :
+        public IteratorBase<DataType_, Vector<DataType_> >
+    {
+    };
+
+    /**
+     * Vector::ElementIteratorWrapper provides a covariant mutable forward iterator that wraps the actual
+     * ElementIteratorBase implementations of any of Vector's descendants.
+     *
+     * \ingroup grpvector
+     */
+    template <> template <typename DataType_> class Vector<DataType_>::ElementIteratorWrapper<DataType_> :
+        public std::iterator<std::forward_iterator_tag, DataType_>
+    {
+        private:
+            std::tr1::shared_ptr<ElementIteratorBase<DataType_> > _iterator;
+
+        public:
+            friend class ConstElementIteratorWrapper<DataType_>;
+
+            /**
+             * Constructor.
+             *
+             * \param iterator An instance of one of ElementIteratorBase's descendants that shall be wrapped.
+             */
+            ElementIteratorWrapper(ElementIteratorBase<DataType_> * iterator) :
+                _iterator(iterator)
+            {
+                if (! iterator)
+                    throw std::string("Eek. Iterator is 0, that should not happen!");
+            }
+
+            /// Copy-constructor.
+            ElementIteratorWrapper(const ElementIteratorWrapper<DataType_> & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            virtual ElementIteratorWrapper<DataType_> & operator++ ()
+            {
+                ++(*_iterator);
+
+                return *this;
+            }
+
+            /// Dereference operator that returns an assignable reference.
+            virtual DataType_ & operator* ()
+            {
+                return *(*_iterator);
+            }
+
+            /// Comparison operator for equality.
+            virtual bool operator== (const ElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator == *other._iterator);
+            }
+
+            /// Comparison operator for inequality.
+            virtual bool operator!= (const ElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator != *other._iterator);
+            }
+
+            /// \}
+
+            /// IteratorTraits interface
+            /// \{
+
+            /// Returns our index.
+            unsigned long index() const
+            {
+                return _iterator->index();
+            }
+
+            /// Returns a pointer to our parent container.
+            const Vector<DataType_> * parent() const
+            {
+                return _iterator->parent();
+            }
+
+            /// \}
+    };
+
+    /**
+     * Vector::ConstElementIteratorWrapper provides a covariant const forward iterator that wraps the actual
+     * ElementIteratorBase implementations of any of Vector's descendants.
+     */
+    template <> template <typename DataType_> class Vector<DataType_>::ConstElementIteratorWrapper<DataType_> :
+        public std::iterator<std::forward_iterator_tag, const DataType_>
+    {
+        private:
+            std::tr1::shared_ptr<ElementIteratorBase<DataType_> > _iterator;
+
+        public:
+            /**
+             * Constructor.
+             *
+             * \param iterator An instance of one of ElementIteratorBase's descendants that shall be wrapped.
+             */
+            ConstElementIteratorWrapper(ElementIteratorBase<DataType_> * iterator) :
+                _iterator(iterator)
+            {
+                if (! iterator)
+                    throw std::string("Eek. Iterator is 0, that should not happen!");
+            }
+
+            /// Copy-constructor.
+            ConstElementIteratorWrapper(const ConstElementIteratorWrapper<DataType_> & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Conversion-constructor from mutable ElementIteratorWrapper.
+            ConstElementIteratorWrapper(const ElementIteratorWrapper<DataType_> & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            virtual ConstElementIteratorWrapper<DataType_> & operator++ ()
+            {
+                ++(*_iterator);
+
+                return *this;
+            }
+
+            /// Dereference operator that returns an unassignable reference.
+            virtual const DataType_ & operator* () const
+            {
+                const ElementIteratorBase<DataType_> & iterator(*_iterator);
+
+                return *iterator;
+            }
+
+            /// Comparison operator for equality.
+            bool operator== (const ConstElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator == *other._iterator);
+            }
+
+            /// Comparison operator for inequality.
+            bool operator!= (const ConstElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator != *other._iterator);
+            }
+
+            /// \}
+
+            /// IteratorTraits interface
+            /// \{
+
+            /// Returns our index.
+            unsigned long index() const
+            {
+                return _iterator->index();
+            }
+
+            /// Returns a pointer to our parent container.
+            const Vector<DataType_> * parent() const
+            {
+                return _iterator->parent();
+            }
+
+            /// \}
+    };
+
+    /**
+     * Compare two Vectors for equality.
+     *
+     * \ingroup grpvectoroperations.
      **/
     template <typename DataType_> bool operator== (const Vector<DataType_> & left, const Vector<DataType_> & right)
     {
@@ -89,7 +274,7 @@ namespace pg512 ///< \todo Namespace name?
         {
             if (((*i - *j)) < std::numeric_limits<DataType_>::epsilon())
             {
-                j++;
+                ++j;
                 continue;
             }
 
@@ -103,7 +288,7 @@ namespace pg512 ///< \todo Namespace name?
     /**
      * Output our Vector to an ostream.
      *
-     * \ingroup grpvector
+     * \ingroup grpvectoroperations.
      **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Vector<DataType_> & v)
     {

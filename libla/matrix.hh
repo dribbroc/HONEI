@@ -47,8 +47,12 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> class Matrix
     {
         public:
+            template <typename ElementType_> class ElementIteratorBase;
+            typedef ElementIteratorBase<DataType_> MatrixElementIterator;
+
             /// Type of the const iterator over our elements.
-            typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_, const DataType_> ConstElementIterator;
+            template <typename ElementType_> class ConstElementIteratorWrapper;
+            typedef ConstElementIteratorWrapper<DataType_> ConstElementIterator;
 
             /// Type of the const iterator over our vectors.
             typedef VectorIteratorWrapper<DataType_, const Vector<DataType_> > ConstVectorIterator;
@@ -59,10 +63,10 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const = 0;
 
-            /// Returns our number of columns.
+            /// Returns the number of our columns.
             virtual unsigned long columns() const = 0;
 
-            /// Returns our number of rows.
+            /// Returns the number of our rows.
             virtual unsigned long rows() const = 0;
     };
 
@@ -74,8 +78,11 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> class MutableMatrix
     {
         public:
+            typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
+
             /// Type of the iterator over our elements.
-            typedef ElementIteratorWrapper<Matrix<DataType_>, DataType_, DataType_> ElementIterator;
+            template <typename ElementType_> class ElementIteratorWrapper;
+            typedef ElementIteratorWrapper<DataType_> ElementIterator;
 
             /// Type of the iterator over our vectors.
             typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
@@ -87,35 +94,221 @@ namespace pg512 ///< \todo Namespace name?
             virtual ElementIterator end_elements() = 0;
     };
 
+
     /**
-     * Compare two Matrices for equality.
-     *
-     * \ingroup grpvector
-     **/
-    template <typename DataType_> bool operator== (const Matrix<DataType_> & left, const Matrix<DataType_> & right)
-    {
-        bool result(true);
-
-        for (typename Matrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
-                j(right.begin_elements()) ; i != i_end ; ++i)
-        {
-            if (((*i - *j)) < std::numeric_limits<DataType_>::epsilon())
-            {
-                j++;
-                continue;
-            }
-
-            result = false;
-            break;
-        }
-
-        return result;
-    }
-
-    /** 
-     * Output our Matrix to an ostream.
+     * A RowAccessMatrix is the abstract baseclass for all matrix-like types
+     * that offer random access to their rows.
      *
      * \ingroup grpmatrix
+     **/
+    template <typename DataType_> class RowAccessMatrix :
+        public Matrix<DataType_>
+    {
+        public:
+            /// Retrieves element by index, zero-based, unassignable.
+            virtual const Vector<DataType_> & operator[] (unsigned long row) const = 0;
+
+            /// Retrieves element by index, zero-based, assignable
+            virtual Vector<DataType_> & operator[] (unsigned long row) = 0;
+
+            /// \todo Iteration over rows.
+    };
+
+    /**
+     * Matrix::ElementIteratorBase declares the minimal interface for any ElementIterator implementation
+     * for matrix-like types.
+     *
+     * \ingroup grpmatrix
+     */
+    template <> template <typename DataType_> class Matrix<DataType_>::ElementIteratorBase :
+        public IteratorBase<DataType_, Matrix<DataType_> >
+    {
+    };
+
+    /**
+     * MutableMatrix::ElementIteratorWrapper provides a covariant mutable forward iterator that wraps the actual
+     * ElementIteratorBase implementations of any of Matrix's descendants.
+     *
+     * \ingroup grpmatrix
+     */
+    template <> template <typename DataType_> class MutableMatrix<DataType_>::ElementIteratorWrapper<DataType_> :
+        public std::iterator<std::forward_iterator_tag, DataType_>
+    {
+        private:
+            std::tr1::shared_ptr<MatrixElementIterator> _iterator;
+
+        public:
+            friend class Matrix<DataType_>::ConstElementIterator;
+
+            /**
+             * Constructor.
+             *
+             * \param iterator An instance of one of ElementIteratorBase's descendants that shall be wrapped.
+             */
+            ElementIteratorWrapper(MatrixElementIterator * iterator) :
+                _iterator(iterator)
+            {
+                if (! iterator)
+                    throw std::string("Eek. Iterator is 0, that should not happen!");
+            }
+
+            /// Copy-constructor.
+            ElementIteratorWrapper(const ElementIteratorWrapper<DataType_> & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            virtual ElementIteratorWrapper<DataType_> & operator++ ()
+            {
+                ++(*_iterator);
+
+                return *this;
+            }
+
+            /// Dereference operator that returns an assignable reference.
+            virtual DataType_ & operator* ()
+            {
+                return *(*_iterator);
+            }
+
+            /// Comparison operator for equality.
+            virtual bool operator== (const ElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator == *other._iterator);
+            }
+
+            /// Comparison operator for inequality.
+            virtual bool operator!= (const ElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator != *other._iterator);
+            }
+
+            /// \}
+
+            /// IteratorTraits interface
+            /// \{
+
+            /// Returns our index.
+            unsigned long index() const
+            {
+                return _iterator->index();
+            }
+
+            /// Returns our column index.
+            unsigned long column() const
+            {
+                return _iterator->column();
+            }
+
+            /// Returns our row index.
+            unsigned long row() const
+            {
+                return _iterator->row();
+            }
+
+            /// Returns a pointer to our parent container.
+            const Matrix<DataType_> * parent() const
+            {
+                return _iterator->parent();
+            }
+
+            /// \}
+    };
+
+    /**
+     * ConstElementIteratorWrapper provides a covariant const forward iterator that wraps the actual
+     * ElementIteratorBase implementations of any of Vector's descendants.
+     */
+    template <> template <typename DataType_> class Matrix<DataType_>::ConstElementIteratorWrapper<DataType_> :
+        public std::iterator<std::forward_iterator_tag, const DataType_>
+    {
+        private:
+            std::tr1::shared_ptr<ElementIteratorBase<DataType_> > _iterator;
+
+        public:
+            /**
+             * Constructor.
+             *
+             * \param iterator An instance of one of ElementIteratorBase's descendants that shall be wrapped.
+             */
+            ConstElementIteratorWrapper(ElementIteratorBase<DataType_> * iterator) :
+                _iterator(iterator)
+            {
+                if (! iterator)
+                    throw std::string("Eek. Iterator is 0, that should not happen!");
+            }
+
+            /// Copy-constructor.
+            ConstElementIteratorWrapper(const ConstElementIteratorWrapper<DataType_> & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Conversion-constructor from mutable ElementIteratorWrapper.
+            ConstElementIteratorWrapper(const typename MutableMatrix<DataType_>::ElementIterator & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            virtual ConstElementIteratorWrapper<DataType_> & operator++ ()
+            {
+                ++(*_iterator);
+
+                return *this;
+            }
+
+            /// Dereference operator that returns an unassignable reference.
+            virtual const DataType_ & operator* () const
+            {
+                const ElementIteratorBase<DataType_> & iterator(*_iterator);
+
+                return *iterator;
+            }
+
+            /// Comparison operator for equality.
+            virtual bool operator== (const ConstElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator == *other._iterator);
+            }
+
+            /// Comparison operator for inequality.
+            virtual bool operator!= (const ConstElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator != *other._iterator);
+            }
+
+            /// \}
+
+            /// IteratorTraits interface
+            /// \{
+
+            /// Returns our index.
+            virtual unsigned long index() const
+            {
+                return _iterator->index();
+            }
+
+            /// Returns a pointer to our parent container.
+            virtual const Matrix<DataType_> * parent() const
+            {
+                return _iterator->parent();
+            }
+
+            /// \}
+    };
+
+    /**
+     * Output our Matrix to an ostream.
+     *
+     * \ingroup grpmatrixoperations
      **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Matrix<DataType_> & m)
     {
@@ -139,28 +332,34 @@ namespace pg512 ///< \todo Namespace name?
     }
 
     /**
-     * A RowAccessMatrix is the abstract baseclass for all matrix-like types
-     * that offer random access to their rows.
+     * Compare two Matrices for equality.
      *
-     * \ingroup grpmatrix
+     * \ingroup grpmatrixoperations
      **/
-    template <typename DataType_> class RowAccessMatrix :
-        public Matrix<DataType_>
+    template <typename DataType_> bool operator== (const Matrix<DataType_> & left, const Matrix<DataType_> & right)
     {
-        public:
-            /// Retrieves element by index, zero-based, unassignable.
-            virtual const Vector<DataType_> & operator[] (unsigned long row) const = 0;
+        bool result(true);
 
-            /// Retrieves element by index, zero-based, assignable
-            virtual Vector<DataType_> & operator[] (unsigned long row) = 0;
+        for (typename Matrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
+                j(right.begin_elements()) ; i != i_end ; ++i)
+        {
+            if (((*i - *j)) < std::numeric_limits<DataType_>::epsilon())
+            {
+                ++j;
+                continue;
+            }
 
-            /// \todo Iteration over rows.
-    };
+            result = false;
+            break;
+        }
+
+        return result;
+    }
 
     /**
      * Output our RowAccessMatrix to an ostream.
      *
-     * \ingroup grpmatrix
+     * \ingroup grpmatrixoperations
      **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const RowAccessMatrix<DataType_> & m)
     {

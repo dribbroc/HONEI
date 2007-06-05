@@ -5,11 +5,23 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-05 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/banded_matrix.hh, libla/dense_matrix.hh,
+	libla/dense_vector.hh, libla/element_iterator.hh, libla/matrix.hh,
+	libla/sparse_vector.hh, libla/vector.hh: Rewrote element iterators
+	from scratch. Should fix all previous bugs in regard to non-covariant
+	return types.
+	* libla/element_iterator_TEST.cc, libla/files.m4: Added test case for
+	element iteration that coves const and non-const iterators.
+	* libla/files.m4, libla/sparse_vector_TEST.cc: Added test case for SparseVector creation.
+	* libla/dense_vector_TEST.cc: Fixed whitespaces.
+
 2007-06-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest/unittest.hh: Moved all unittest-classes to namespace tests.
 	* libla/*_TEST.cc: All test cases are now using namespace tests.
-	
+
 2007-06-04 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/vector_norm.hh: Changed some "abs()" to "fabs()".
@@ -17,8 +29,8 @@ see the NEWS file.
 
 2007-06-04 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-        * libla/vector_sum.hh: Fixed some bugs, so that
-        vector_sum_TEST.cc passes now.
+	* libla/vector_sum.hh: Fixed some bugs, so that
+	vector_sum_TEST.cc passes now.
 
 2007-06-04 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 

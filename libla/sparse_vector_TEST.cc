@@ -4,6 +4,7 @@
 #include <unittest/unittest.hh>
 
 #include <string>
+#include <tr1/memory>
 
 using namespace pg512;
 using  namespace tests;
@@ -22,8 +23,8 @@ class SparseVectorCreationTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<SparseVector<DataType_> > dm1(new SparseVector<DataType_>(size,size));
-                std::tr1::shared_ptr<SparseVector<DataType_> > dm2(new SparseVector<DataType_>(size,1));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sm1(new SparseVector<DataType_>(size, size));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sm2(new SparseVector<DataType_>(size, 1));
                 TEST_CHECK(true);
             }
         }

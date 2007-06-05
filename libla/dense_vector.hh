@@ -60,17 +60,22 @@ namespace pg512 ///< \todo Namespace name?
             /// Our stepsize.
             unsigned long _stepsize;
 
+            /// Our implementation of ElementIteratorBase.
+            template <typename ElementType_> class DenseElementIterator;
+
+            typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
+
         public:
-            /// Our implementation of ElementIterator.
-            template <typename ElementType_> class ElementIteratorImpl;
-            friend class ElementIteratorImpl<DataType_>;
-            friend class ElementIteratorImpl<const DataType_>;
+            friend class DenseElementIterator<DataType_>;
 
             /// Type of the const iterator over our elements.
-            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_, const DataType_> ConstElementIterator;
+            typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef ElementIteratorWrapper<Vector<DataType_>, DataType_, DataType_> ElementIterator;
+            typedef typename Vector<DataType_>::ElementIterator ElementIterator;
+
+            /// Constructors
+            /// \{
 
             /**
              * Constructor.
@@ -106,15 +111,6 @@ namespace pg512 ///< \todo Namespace name?
                     _elements[i] = value;
             }
 
-            /// Copy-constructor.
-            DenseVector(const DenseVector<DataType_> & other) :
-                _elements(other._elements),
-                _size(other._size),
-                _offset(other._offset),
-                _stepsize(other._stepsize)
-            {
-            }
-
             /**
              * Constructor.
              *
@@ -132,28 +128,39 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
+            /// Copy-constructor.
+            DenseVector(const DenseVector<DataType_> & other) :
+                _elements(other._elements),
+                _size(other._size),
+                _offset(other._offset),
+                _stepsize(other._stepsize)
+            {
+            }
+
+            /// \}
+
             /// Returns const iterator pointing to the first element of the vector.
             virtual ConstElementIterator begin_elements() const
             {
-                return ConstElementIterator(new ElementIteratorImpl<const DataType_>(*this, 0));
+                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));
             }
 
             /// Returns const iterator pointing behind the last element of the vector.
             virtual ConstElementIterator end_elements() const
             {
-                return ConstElementIterator(new ElementIteratorImpl<const DataType_>(*this, this->size()));
+                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, this->size()));
             }
 
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements()
             {
-                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, 0));
+                return ElementIterator(new DenseElementIterator<DataType_>(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements() 
             {
-                return ElementIterator(new ElementIteratorImpl<DataType_>(*this, this->size()));
+            return ElementIterator(new DenseElementIterator<DataType_>(*this, this->size()));
             }
 
             /// Returns our size.
@@ -180,152 +187,95 @@ namespace pg512 ///< \todo Namespace name?
      *
      * \ingroup grpvector
      **/
-    template <> template <typename DataType_> class DenseVector<DataType_>::ElementIteratorImpl<DataType_> :
-        public ElementIteratorImplBase<Vector<DataType_>, DataType_>
+    template <> template <typename DataType_> class DenseVector<DataType_>::DenseElementIterator<DataType_> :
+        public VectorElementIterator
     {
         private:
+            /// Our parent vector.
             const DenseVector<DataType_> & _vector;
+
+            /// Our index.
             unsigned long _index;
 
         public:
+            /// Constructors
+            /// \{
+
             /**
              * Constructor.
              *
              * \param vector The parent vector that is referenced by the iterator.
              * \param index The index into the vector.
              **/
-            ElementIteratorImpl(const DenseVector<DataType_> & vector, unsigned long index) :
+            DenseElementIterator(const DenseVector<DataType_> & vector, unsigned long index) :
                 _vector(vector),
                 _index(index)
             {
             }
 
             /// Copy-constructor.
-            ElementIteratorImpl(ElementIteratorImpl<DataType_> const & other) :
+            DenseElementIterator(DenseElementIterator<DataType_> const & other) :
                 _vector(other._vector),
                 _index(other._index)
             {
             }
 
+            /// \}
+
+            /// Forward iterator interface
+            /// \{
+
             /// Preincrement operator.
-            virtual ElementIteratorImpl<DataType_> & operator++ ()
+            virtual DenseElementIterator<DataType_> & operator++ ()
             {
                 ++_index;
+
                 return *this;
             }
 
-            /// Postincrement operator.
-            virtual ElementIteratorImpl<DataType_> operator++ (int)
-            {
-                ElementIteratorImpl<DataType_> result(*this);
-                ++_index;
-                return result;
-            }
-
-            /// Equality operator.
-            virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
-            {
-                return (&_vector == other.parent()) && (_index == other.index());
-            }
-
-            /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_> & other) const
-            {
-                return ((&_vector != other.parent()) || (_index != other.index()));
-            }
-
-            /// Dereference operator 
-            virtual DataType_ & operator* () const
+            /// Dereference operator that returns an assignable reference.
+            virtual DataType_ & operator* ()
             {
                 return _vector._elements[_vector._stepsize * _index + _vector._offset];
             }
 
-            /// Returns our parent vector.
-            virtual const Vector<DataType_> * parent() const
-            {
-                return &_vector;
-            }
-
-            /// Returns our index.
-            virtual const unsigned long index() const
-            {
-                return _index;
-            }
-    };
-
-    template <> template <typename DataType_> class DenseVector<DataType_>::ElementIteratorImpl<const DataType_> :
-        public ElementIteratorImplBase<Vector<DataType_>, DataType_, const DataType_>
-    {
-        private:
-            const DenseVector<DataType_> & _vector;
-            unsigned long _index;
-
-        public:
-            /**
-             * Constructor.
-             *
-             * \param vector The parent vector that is referenced by the iterator.
-             * \param index The index into the vector.
-             **/
-            ElementIteratorImpl(const DenseVector<DataType_> & vector, unsigned long index) :
-                _vector(vector),
-                _index(index)
-            {
-            }
-
-            /// Copy-constructor.
-            ElementIteratorImpl(ElementIteratorImpl<const DataType_> const & other) :
-                _vector(other._vector),
-                _index(other._index)
-            {
-            }
-
-            /// Preincrement operator.
-            virtual ElementIteratorImpl<const DataType_> & operator++ ()
-            {
-                ++_index;
-                return *this;
-            }
-
-            /// Postincrement operator.
-            virtual ElementIteratorImpl<const DataType_> operator++ (int)
-            {
-                ElementIteratorImpl<const DataType_> result(*this);
-                ++_index;
-                return result;
-            }
-
-            /// Equality operator.
-            virtual bool operator== (const ElementIteratorImplBase<Vector<DataType_>, DataType_, const DataType_> & other) const
-            {
-                return (&_vector == other.parent()) && (_index == other.index());
-            }
-
-            /// Inequality operator.
-            virtual bool operator!= (const ElementIteratorImplBase<Vector<DataType_>, DataType_, const DataType_> & other) const
-            {
-                return ((&_vector != other.parent()) || (_index != other.index()));
-            }
-
-            /// Dereference operator 
+            /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
                 return _vector._elements[_vector._stepsize * _index + _vector._offset];
             }
 
-            /// Returns our parent vector.
+            /// Equality operator.
+            virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+            {
+                return ((&_vector == other.parent()) && (_index == other.index()));
+            }
+
+            /// Inequality operator.
+            virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+            {
+                return ((&_vector != other.parent()) || (_index != other.index()));
+            }
+
+            /// \}
+
+            /// IteratorTraits interface
+            /// \{
+
+            /// Returns our index.
+            virtual unsigned long index() const
+            {
+                return _index;
+            }
+
+            /// Returns a pointer to our parent container.
             virtual const Vector<DataType_> * parent() const
             {
                 return &_vector;
             }
 
-            /// Returns our index.
-            virtual const unsigned long index() const
-            {
-                return _index;
-            }
+            /// \}
     };
-
 }
 
 #endif
