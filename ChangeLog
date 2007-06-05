@@ -7,6 +7,15 @@ see the NEWS file.
 
 2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* doc/doc_groups.doxygen, libla/banded_matrix.hh,
+	libla/dense_matrix.hh, libla/dense_vector.hh, libla/matrix.hh,
+	libla/scalar_product.hh, libla/sparse_vector.hh, libla/tags.hh,
+	libla/vector.hh: Tidied up the existing documentation a bit. Brief
+	description do now show up properly. Added groups for all existing
+	operation-tags.
+
+2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libla/files.m4, libla/matrix_mask.hh: Added MatrixMask operation.
 
 2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>

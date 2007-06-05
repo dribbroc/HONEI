@@ -40,7 +40,7 @@
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A Matrix is the abstract base class for all matrix-like types used.
+     * \brief Matrix is the abstract base class for all matrix-like types used.
      *
      * \ingroup grpmatrix
      **/
@@ -71,7 +71,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * A MutableMatrix is the abstract interface for matrices with non-const iterators.
+     * \brief MutableMatrix is the abstract interface for matrices with non-const iterators.
      *
      * \ingroup grpmatrix
      **/
@@ -96,8 +96,8 @@ namespace pg512 ///< \todo Namespace name?
 
 
     /**
-     * A RowAccessMatrix is the abstract baseclass for all matrix-like types
-     * that offer random access to their rows.
+     * \brief RowAccessMatrix is the abstract base class for all matrix-like types
+     * \brief that offer random access to their rows.
      *
      * \ingroup grpmatrix
      **/
@@ -115,8 +115,8 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Matrix::ElementIteratorBase declares the minimal interface for any ElementIterator implementation
-     * for matrix-like types.
+     * \brief Matrix::ElementIteratorBase declares the minimal interface for any ElementIterator implementation
+     * \brief for matrix-like types.
      *
      * \ingroup grpmatrix
      */
@@ -126,8 +126,8 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * MutableMatrix::ElementIteratorWrapper provides a covariant mutable forward iterator that wraps the actual
-     * ElementIteratorBase implementations of any of Matrix's descendants.
+     * \brief MutableMatrix::ElementIteratorWrapper provides a covariant mutable forward iterator that wraps the actual
+     * \brief ElementIteratorBase implementations of any of Matrix's descendants.
      *
      * \ingroup grpmatrix
      */
@@ -139,6 +139,9 @@ namespace pg512 ///< \todo Namespace name?
 
         public:
             friend class Matrix<DataType_>::ConstElementIterator;
+
+            /// \name Constructors
+            /// \{
 
             /**
              * Constructor.
@@ -158,7 +161,9 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Forward iterator interface
+            /// \}
+
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -189,7 +194,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.
@@ -220,8 +225,10 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * ConstElementIteratorWrapper provides a covariant const forward iterator that wraps the actual
-     * ElementIteratorBase implementations of any of Vector's descendants.
+     * \brief ConstElementIteratorWrapper provides a covariant const forward iterator that wraps the actual
+     * \brief ElementIteratorBase implementations of any of Vector's descendants.
+     *
+     * \ingroup grpmatrix
      */
     template <> template <typename DataType_> class Matrix<DataType_>::ConstElementIteratorWrapper<DataType_> :
         public std::iterator<std::forward_iterator_tag, const DataType_>
@@ -230,6 +237,9 @@ namespace pg512 ///< \todo Namespace name?
             std::tr1::shared_ptr<ElementIteratorBase<DataType_> > _iterator;
 
         public:
+            /// \name Constructors
+            /// \{
+
             /**
              * Constructor.
              *
@@ -254,7 +264,9 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Forward iterator interface
+            /// \}
+
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -287,7 +299,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.
@@ -306,7 +318,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Output our Matrix to an ostream.
+     * \brief Output our Matrix to an ostream.
      *
      * \ingroup grpmatrixoperations
      **/
@@ -332,7 +344,7 @@ namespace pg512 ///< \todo Namespace name?
     }
 
     /**
-     * Compare two Matrices for equality.
+     * \brief Compare two Matrices for equality.
      *
      * \ingroup grpmatrixoperations
      **/
@@ -357,7 +369,7 @@ namespace pg512 ///< \todo Namespace name?
     }
 
     /**
-     * Output our RowAccessMatrix to an ostream.
+     * \brief Output our RowAccessMatrix to an ostream.
      *
      * \ingroup grpmatrixoperations
      **/

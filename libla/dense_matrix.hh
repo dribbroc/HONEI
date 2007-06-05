@@ -40,8 +40,8 @@
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * DenseMatrix is a matrix with O(column * row) non-zero elements which keeps its data
-     * sequential.
+     * \brief DenseMatrix is a matrix with O(column * row) non-zero elements which keeps its data
+     * \brief sequential.
      *
      * \ingroup grpmatrix
      **/
@@ -85,7 +85,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our vectors.
             typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
 
-            /// Constructors
+            /// \name Constructors
             /// \{
 
             /**
@@ -197,7 +197,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * DenseMatrix::DenseElementIterator is a simple iterator implementation for dense matrices.
+     * \brief DenseMatrix::DenseElementIterator is a simple iterator implementation for dense matrices.
      *
      * \ingroup grpmatrix
      **/
@@ -212,7 +212,7 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructors
+            /// \name Constructors
             /// \{
 
             /**
@@ -236,7 +236,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// Forward iterator interface
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -272,6 +272,9 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
+            /// \name IteratorTraits interface
+            /// \{
+
             /// Returns our index.
             virtual unsigned long index() const
             {
@@ -295,6 +298,8 @@ namespace pg512 ///< \todo Namespace name?
             {
                 return &_matrix;
             }
+
+            /// \}
     };
 }
 

@@ -39,8 +39,8 @@
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A DenseVector is a vector with O(size) non-zero elements which keeps its data
-     * sequential.
+     * \brief DenseVector is a vector with O(size) non-zero elements which keeps its data
+     * \brief sequential.
      *
      * \ingroup grpvector
      **/
@@ -183,7 +183,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * A DenseVector::ElementIteratorImpl is a simple iterator implementation for dense vectors.
+     * \brief DenseVector::DenseElementIterator is a simple iterator implementation for dense vectors.
      *
      * \ingroup grpvector
      **/
@@ -198,7 +198,7 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructors
+            /// \name Constructors
             /// \{
 
             /**
@@ -222,7 +222,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// Forward iterator interface
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -259,7 +259,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.

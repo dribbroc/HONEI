@@ -41,8 +41,8 @@
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A BandedMatrix is a square matrix with O(size) non-zero bands which keeps its data
-     * non-sequential.
+     * \brief BandedMatrix is a square matrix with O(size) non-zero bands which keeps its data
+     * \brief non-sequential.
      *
      * \ingroup grpmatrix
      **/
@@ -79,7 +79,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our vectors.
             typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
 
-            /// Constructors
+            /// \name Constructors
             /// \{
 
             /**
@@ -156,7 +156,7 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> const DataType_ BandedMatrix<DataType_>::_zero_element(0);
 
     /**
-     * BandedMatrix::BandedElementIterator is a simple iterator implementation for banded matrices.
+     * \brief BandedMatrix::BandedElementIterator is a simple iterator implementation for banded matrices.
      *
      * \ingroup grpmatrix
      **/
@@ -196,7 +196,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
         public:
-            /// Constructors
+            /// \name Constructors
             /// \{
 
             /**
@@ -220,7 +220,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// Forward iterator interface
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -264,7 +264,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.

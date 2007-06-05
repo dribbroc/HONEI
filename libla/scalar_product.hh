@@ -25,12 +25,20 @@
 #include <libla/sparse_vector.hh>
 #include <libla/vector_error.hh>
 
+/**
+ * \file
+ *
+ * Implementation of ScalarProduct.
+ *
+ * \ingroup grpvectoroperations
+ */
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A ScalarProduct yields the inner product of two descendants of type Vector.
+     * \brief ScalarProduct yields the inner product of two descendants of type Vector.
+     *
+     * \ingroup grpvectoroperations
      **/
-    ///< \todo Add scalar_product to doxygen ingroup grpvectoroperations
     template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarProduct
     {
         static DataType_ value(const DenseVector<DataType_> & left, const DenseVector<DataType_> & right)

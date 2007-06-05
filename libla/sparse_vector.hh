@@ -42,8 +42,8 @@
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * SparseVector is a vector with O(1) non-zero elements which keeps its data
-     * non-sequential.
+     * \brief SparseVector is a vector with O(1) non-zero elements which keeps its data
+     * \brief non-sequential.
      *
      * \ingroup grpvector
      **/
@@ -99,6 +99,9 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our elements.
             typedef typename Vector<DataType_>::ElementIterator ElementIterator;
 
+            /// \name Constructors
+            /// \{
+
             /**
              * Constructor.
              *
@@ -113,6 +116,8 @@ namespace pg512 ///< \todo Namespace name?
                 _size(size)
             {
             }
+
+            /// \}
 
             /// Returns const iterator pointing to the first element of the vector.
             virtual ConstElementIterator begin_elements() const
@@ -222,7 +227,7 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> const DataType_ SparseVector<DataType_>::_zero_element = 0;
 
     /**
-     * SparseVector::SparseElementIterator is a plain iterator implementation for sparse vectors.
+     * \brief SparseVector::SparseElementIterator is a plain iterator implementation for sparse vectors.
      *
      * \ingroup grpvector
      **/
@@ -240,7 +245,7 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructors
+            /// \name Constructors
             /// \{
 
             /**
@@ -266,7 +271,10 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// Forward iterator interface
+            /// \name Forward iterator interface
+            /// \{
+
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -311,7 +319,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.
@@ -330,8 +338,8 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * SparseVector::NonZeroElementIterator is a smart iterator implementation that iterates over non-zero
-     * elements of sparse vectors.
+     * \brief SparseVector::NonZeroElementIterator is a smart iterator implementation that iterates over non-zero
+     * \brief elements of sparse vectors.
      *
      * \ingroup grpvector
      **/
@@ -349,7 +357,7 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _index;
 
         public:
-            /// Constructors
+            /// \name Constructors
             /// \{
 
             /**
@@ -375,7 +383,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// Forward iterator interface
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -413,7 +421,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.

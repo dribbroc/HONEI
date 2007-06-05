@@ -59,3 +59,26 @@
  * \ingroup grpmatrix
  **/
 
+/**
+ * \defgroup grptags Tag types for distributing computation
+ *
+ * \ingroup grplibla
+ */
+
+/**
+ * \defgroup grptagscpu Generic/C++-based operations
+ *
+ * \ingroup grptags
+ */
+
+/**
+ * \defgroup grptagscpumulitcore Multithreaded/C++-based operations
+ *
+ * \ingroup grptagscpu
+ */
+
+/**
+ * \defgroup grptagscell Cell-based operations
+ *
+ * \ingroup grptags
+ */

@@ -40,7 +40,7 @@
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A Vector is the abstract baseclass for all vector-like types used.
+     * \brief Vector is the abstract baseclass for all vector-like types used.
      *
      * \ingroup grpvector
      **/
@@ -82,8 +82,8 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Vector::ElementIteratorBase declares the minimal interface for any ElementIterator implementation
-     * for vector-like types.
+     * \brief Vector::ElementIteratorBase declares the minimal interface for any ElementIterator implementation
+     * \brief for vector-like types.
      *
      * \ingroup grpvector
      */
@@ -93,8 +93,8 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Vector::ElementIteratorWrapper provides a covariant mutable forward iterator that wraps the actual
-     * ElementIteratorBase implementations of any of Vector's descendants.
+     * \brief Vector::ElementIteratorWrapper provides a covariant mutable forward iterator that wraps the actual
+     * \brief ElementIteratorBase implementations of any of Vector's descendants.
      *
      * \ingroup grpvector
      */
@@ -106,6 +106,9 @@ namespace pg512 ///< \todo Namespace name?
 
         public:
             friend class ConstElementIteratorWrapper<DataType_>;
+
+            /// \name Constructors
+            /// \{
 
             /**
              * Constructor.
@@ -125,7 +128,9 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Forward iterator interface
+            /// \}
+
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -156,7 +161,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.
@@ -175,8 +180,10 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Vector::ConstElementIteratorWrapper provides a covariant const forward iterator that wraps the actual
-     * ElementIteratorBase implementations of any of Vector's descendants.
+     * \brief Vector::ConstElementIteratorWrapper provides a covariant const forward iterator that wraps the actual
+     * \brief ElementIteratorBase implementations of any of Vector's descendants.
+     *
+     * \ingroup grpvector
      */
     template <> template <typename DataType_> class Vector<DataType_>::ConstElementIteratorWrapper<DataType_> :
         public std::iterator<std::forward_iterator_tag, const DataType_>
@@ -185,6 +192,9 @@ namespace pg512 ///< \todo Namespace name?
             std::tr1::shared_ptr<ElementIteratorBase<DataType_> > _iterator;
 
         public:
+            /// \name Constructors
+            /// \{
+
             /**
              * Constructor.
              *
@@ -209,7 +219,9 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
-            /// Forward iterator interface
+            /// \}
+
+            /// \name Forward iterator interface
             /// \{
 
             /// Preincrement operator.
@@ -242,7 +254,7 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
 
-            /// IteratorTraits interface
+            /// \name IteratorTraits interface
             /// \{
 
             /// Returns our index.
@@ -261,7 +273,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * Compare two Vectors for equality.
+     * \brief Compare two Vectors for equality.
      *
      * \ingroup grpvectoroperations.
      **/
@@ -286,7 +298,7 @@ namespace pg512 ///< \todo Namespace name?
     }
 
     /**
-     * Output our Vector to an ostream.
+     * \brief Output our Vector to an ostream.
      *
      * \ingroup grpvectoroperations.
      **/

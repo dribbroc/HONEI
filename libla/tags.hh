@@ -26,17 +26,23 @@ namespace pg512 ///< \todo Namespace name?
     {
         /**
          * Tag-type for generic/C++-based operations.
+         *
+         * \ingroup grptagscpu
          **/
         struct CPU
         {
             /**
              * Tag-type for multithreaded/C++-based operations.
+             *
+             * \ingroup grptagscpumulticore
              **/
             struct MultiCore;
         };
 
         /**
          * Tag-type for Cell-based operations.
+         *
+         * \ingroup grptagscell
          **/
         struct Cell
         {
