@@ -22,23 +22,26 @@ class DenseVectorCreationTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseVector<DataType_> > dm(new DenseVector<DataType_>(size,
+                std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(size,
                             static_cast<DataType_>(0)));
                 TEST_CHECK(true);
+                TEST_CHECK_EQUAL(dv->size(),size);
             }
         }
 };
 
 DenseVectorCreationTest<float> dense_vector_creation_test_float("float");
 DenseVectorCreationTest<double> dense_vector_creation_test_double("double");
+DenseVectorCreationTest<bool> dense_vector_creation_test_bool("bool");
+DenseVectorCreationTest<int> dense_vector_creation_test_int("int");
 
 template <typename DataType_>
-class DenseVectorEquationTest :
+class DenseVectorEqualityTest :
     public BaseTest
 {
     public:
-        DenseVectorEquationTest(const std::string & type) :
-            BaseTest("dense_vector_equation_test<" + type + ">")
+        DenseVectorEqualityTest(const std::string & type) :
+            BaseTest("dense_vector_equality_test<" + type + ">")
         {
         }
 
@@ -47,18 +50,16 @@ class DenseVectorEquationTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv0(new DenseVector<DataType_>(size,
-                    static_cast<DataType_>(4711)));
+                    static_cast<DataType_>(1)));
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
-                    static_cast<DataType_>(4711)));
+                    static_cast<DataType_>(1)));
 
                 TEST_CHECK(dv0==dv1);
-                TEST_CHECK_EQUAL(dv0->size(),size);
             }
         }
 };
-
-DenseVectorEquationTest<float> dense_vector_equation_test_float("float");
-DenseVectorEquationTest<double> dense_vector_equation_test_double("double");
+DenseVectorEqualityTest<bool> dense_vector_equality_test_bool("bool");
+DenseVectorEqualityTest<int> dense_vector_equality_test_int("int");
 
 
 
