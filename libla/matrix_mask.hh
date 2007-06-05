@@ -31,18 +31,17 @@
  *
  * \ingroup grpmatrixoperations
  **/
-
-
 namespace pg512
 {
     /**
-     * A MatrixMask masks a given matrix by setting all elements to zero, for which the mask matrix contains the value "false".
+     * \brief MatrixMask masks a given matrix by setting all elements to zero, for which the mask matrix contains the value "false".
+     *
+     * \ingroup grpmatrixoperations
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixMask
     {
-        static DenseMatrix<DataType_> value(DenseMatrix<DataType_> & matrix, DenseMatrix<bool> & mask)
+        static DenseMatrix<DataType_> value(DenseMatrix<DataType_> & matrix, const Matrix<bool> & mask)
         {
-            // Test if both matrices have the same amount of columns and rows
             if (matrix.columns() != mask.columns())
             {
                 throw MatrixColumnsDoNotMatch(matrix.columns(), mask.columns());
@@ -53,13 +52,11 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.rows(), mask.rows());
             }
 
-            for (typename DenseMatrix<DataType_>::ElementIterator l(mask.begin_elements()), l_end(mask.end_elements()) ;
-                l != l_end ; ++l)
+            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()),
+                    Matrix<bool>::ConstElementIterator r(mask.begin_elements()), r_end(mask.end_elements()) ; l != l_end ; ++l)
             {
-                if (! *l)
-                {
-                matrix[l.index()] = static_cast<DataType_>(0);
-                }
+                *l = (*r ? *l : static_cast<DataType_>(0));
+                ++r;
             }
 
             return matrix;
@@ -67,6 +64,5 @@ namespace pg512
 
         /// \todo overload MaskMatrix::value for sparse matrices.
     };
-
 }
 #endif

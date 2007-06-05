@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/files.m4, libla/matrix_mask.hh: Added MatrixMask operation.
+
+2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* doc/Makefile.am: Added instruction to copy button images to the html
 	directory.
 
