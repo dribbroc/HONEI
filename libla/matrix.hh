@@ -40,7 +40,7 @@
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A Matrix is the abstract baseclass for all matrix-like types used.
+     * A Matrix is the abstract base class for all matrix-like types used.
      *
      * \ingroup grpmatrix
      **/
