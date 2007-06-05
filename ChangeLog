@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* unittest/unittest.cc: Adjusted output for failed tests to mimic gcc
+	error messages.
+
+2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* doc/doc_groups.doxygen, libla/banded_matrix.hh,
 	libla/dense_matrix.hh, libla/dense_vector.hh, libla/matrix.hh,
 	libla/scalar_product.hh, libla/sparse_vector.hh, libla/tags.hh,

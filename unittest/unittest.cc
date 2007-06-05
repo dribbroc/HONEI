@@ -120,7 +120,7 @@ int main(int argc, char** argv)
         }
         catch (TestFailedException & e)
         {
-            std::cout << "FAILED: " + stringify(e.what()) + "\n";
+            std::cout << "FAILED: " << std::endl << stringify(e.what()) << std::endl;
             result = EXIT_FAILURE;
         }
     }
