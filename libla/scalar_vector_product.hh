@@ -44,7 +44,7 @@ namespace pg512
         /**
          * Returns the resulting vector after multiplying a scalar to a given DenseVector instance.
          **/
-        static DenseVector<DataType_> value(DataType_ scalar, DenseVector<DataType_> & vector)
+        static DenseVector<DataType_> value(const DataType_ scalar, const DenseVector<DataType_> & vector)
         {
             DenseVector<DataType_> result(vector.size(), 0, 0, 1);
 
@@ -59,7 +59,7 @@ namespace pg512
         /**
          * Returns the resulting vector after multiplying a scalar to a given SparseVector instance.
          **/
-        static SparseVector<DataType_> value(DataType_ scalar, SparseVector<DataType_> & vector)
+        static SparseVector<DataType_> value(const DataType_ scalar, const SparseVector<DataType_> & vector)
         {
             SparseVector<DataType_> result(vector.size(), 0, 0, 1);
 

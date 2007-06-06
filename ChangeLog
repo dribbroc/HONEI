@@ -7,13 +7,20 @@ see the NEWS file.
 
 2007-06-06 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* +libla/scalar_matrix_product.hh: Added operation scalar * 
+	matrix for dense and banded matrices.
+	* libla/files.m4: Added scalar_matrix_product.hh.
+	* libla/scalar_vector_product.hh, vector_sum.hh, 
+	vector_difference.hh: Made some parameters const.
+	* libla/matrix_mask.hh: added operation for banded matrices.
+
+2007-06-06 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* +libla/scalar_vector_product.hh: Added operation scalar * 
 	vector.
 	* libla/files.m4: Added scalar_vector_product.hh.
-	* libla/vector_sum.hh: Changed some ElementIterator to 
-	ConstElementIterator.
-	* libla/vector_difference.hh: Changed some ElementIterator to 
-	ConstElementIterator.
+	* libla/vector_sum.hh, libla/vector_difference.hh: Changed some 
+	ElementIterator to ConstElementIterator.
 
 2007-06-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
 

@@ -22,6 +22,7 @@
 
 #include <libla/tags.hh>
 #include <libla/dense_matrix.hh>
+#include <libla/banded_matrix.hh>
 #include <libla/matrix_error.hh>
 
 /**
@@ -41,6 +42,28 @@ namespace pg512
     template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixMask
     {
         static DenseMatrix<DataType_> value(DenseMatrix<DataType_> & matrix, const Matrix<bool> & mask)
+        {
+            if (matrix.columns() != mask.columns())
+            {
+                throw MatrixColumnsDoNotMatch(matrix.columns(), mask.columns());
+            }
+
+            if (matrix.rows() != mask.rows())
+            {
+                throw MatrixRowsDoNotMatch(matrix.rows(), mask.rows());
+            }
+
+            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()),
+                    Matrix<bool>::ConstElementIterator r(mask.begin_elements()), r_end(mask.end_elements()) ; l != l_end ; ++l)
+            {
+                *l = (*r ? *l : static_cast<DataType_>(0));
+                ++r;
+            }
+
+            return matrix;
+        }
+
+		static BandedMatrix<DataType_> value(BandedMatrix<DataType_> & matrix, const Matrix<bool> & mask)
         {
             if (matrix.columns() != mask.columns())
             {

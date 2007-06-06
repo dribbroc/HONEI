@@ -45,7 +45,7 @@ namespace pg512
         /**
          * Returns the the resulting vector of the sum of two given DenseVector instances.
          **/
-        static DenseVector<DataType_> value(DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
+        static DenseVector<DataType_> value(const DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
@@ -63,7 +63,7 @@ namespace pg512
         /**
          * Returns the resulting vector of the sum of two given SparseVector instances.
          **/
-        static SparseVector<DataType_> value(const SparseVector<DataType_> & left, SparseVector<DataType_> & right)
+        static SparseVector<DataType_> value(const SparseVector<DataType_> & left, const SparseVector<DataType_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
@@ -100,7 +100,7 @@ namespace pg512
          * \param left The dense vector.
          * \param right The sparse vector.
          **/
-         static DenseVector<DataType_> value(const DenseVector<DataType_> & left, SparseVector<DataType_> right)
+         static DenseVector<DataType_> value(const DenseVector<DataType_> & left, const SparseVector<DataType_> right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
