@@ -84,7 +84,8 @@ class DenseVectorFunctionsTest :
                 
                 for (int i=0 ; i<size ; ++i)
                 {
-                    TEST_CHECK_EQUAL_WITHIN_EPS( (*dv)[i],(i+1)/1.23456789, 
+                    DataType_ s((i+1)/1.23456789);
+                    TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[i] , s , 
                         std::numeric_limits<DataType_>::epsilon());
                 }
             }
