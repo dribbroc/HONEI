@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/matrix.hh: Fixed equality operator for Matrix.
+	* libla/dense_matrix_TEST.cc: Fixed layout test case for DenseMatrix.
+
 2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_difference_TEST.cc: Added DenseVectorDifferenceTest via c+p.
@@ -13,7 +18,7 @@ see the NEWS file.
 
 	* libla/dense_matrix_TEST.cc: Added DenseMatrixEqualityTest and a
 	rudimental version of DenseMatrixFunctionsTest.
-	
+
 2007-06-06 Markus Geveler <apryde@gmx.de> 
 
 	* libla/vector_difference.hh: Added VectorDifference via c+p.
@@ -21,7 +26,7 @@ see the NEWS file.
 2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/dense_vector_TEST.cc: Applied maxInt fix from vector_norm_TEST.cc.
-	
+
 2007-06-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_norm_TEST.cc: Fixed calculation of should-be values for

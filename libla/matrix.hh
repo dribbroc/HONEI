@@ -28,7 +28,7 @@
 #include <libutil/shared_array.hh>
 
 #include <ostream>
-#include <string.h>
+#include <cmath>
 
 /**
  * \file
@@ -355,7 +355,7 @@ namespace pg512 ///< \todo Namespace name?
         for (typename Matrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
                 j(right.begin_elements()) ; i != i_end ; ++i)
         {
-            if (((*i - *j)) < std::numeric_limits<DataType_>::epsilon())
+            if (fabs((*i - *j)) <= std::numeric_limits<DataType_>::epsilon())
             {
                 ++j;
                 continue;
