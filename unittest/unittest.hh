@@ -18,138 +18,137 @@
  
 namespace tests
 {
+    /**
+     * Baseclass for all testingclasses
+     * \ingroup tests
+     */
+    class BaseTest
+    {
+        protected:
+            const std::string _id;
 
-/**
- * Baseclass for all testingclasses
- * \ingroup tests
- */
-class BaseTest
-{
-    protected:
-        const std::string _id;
+        public:
+            /**
+             * Constructor.
+             *
+             * \param id The testcase's id string.
+             */
+            BaseTest(const std::string & id);
 
-    public:
-        /**
-         * Constructor.
-         *
-         * \param id The testcase's id string.
-         */
-        BaseTest(const std::string & id);
+            /// Returns our id string.
+            const std::string id() const;
 
-        /// Returns our id string.
-        const std::string id() const;
+            /// Utility method used bei TEST_CHECK_*
+            void check(const char * const function, const char * const file,
+                    const long line, bool was_ok, const std::string & message) const;
 
-        /// Utility method used bei TEST_CHECK_*
-        void check(const char * const function, const char * const file,
-                const long line, bool was_ok, const std::string & message) const;
+            /**
+             * Runs the test case.
+             *
+             * Called by unittest framework only.
+             * \ingroup tests         
+             */
+            virtual void run() const = 0;
 
-        /**
-         * Runs the test case.
-         *
-         * Called by unittest framework only.
-         * \ingroup tests         
-         */
-        virtual void run() const = 0;
+            /// Returns whether we are a quick-test.
+            virtual bool is_quick_test() const;
 
-        /// Returns whether we are a quick-test.
-        virtual bool is_quick_test() const;
-
-        /**
-         * Utility class used by TEST_CHECK_EQUAL.
-         */
-        struct TwoVarHolder
-        {
-            bool result;
-            std::string s_a;
-            std::string s_b;
-
-            template <typename T1_, typename T2_>
-            TwoVarHolder(T1_ a, T2_ b) :
-                result(a == b),
-                s_a(stringify(a)),
-                s_b(stringify(b))
+            /**
+             * Utility class used by TEST_CHECK_EQUAL.
+             */
+            struct TwoVarHolder
             {
-            }
-        };
+                bool result;
+                std::string s_a;
+                std::string s_b;
 
-        /**
-         * Utility class used by TEST_CHECK_EQUAL_WITHIN_EPS.
-         */
-        struct WithinEpsCalculator
-        {
-            bool result;
-            std::string s_a;
-            std::string s_b;
-            std::string s_diff;
+                template <typename T1_, typename T2_>
+                TwoVarHolder(T1_ a, T2_ b) :
+                    result(a == b),
+                    s_a(stringify(a)),
+                    s_b(stringify(b))
+                {
+                }
+            };
 
-            template <typename T1_, typename T2_, typename T3_>
-            WithinEpsCalculator(T1_ a, T2_ b, T3_ c) :
-                s_a(stringify(a)),
-                s_b(stringify(b))
+            /**
+             * Utility class used by TEST_CHECK_EQUAL_WITHIN_EPS.
+             */
+            struct WithinEpsCalculator
             {
-                if (a>=b)
+                bool result;
+                std::string s_a;
+                std::string s_b;
+                std::string s_diff;
+
+                template <typename T1_, typename T2_, typename T3_>
+                WithinEpsCalculator(T1_ a, T2_ b, T3_ c) :
+                    s_a(stringify(a)),
+                    s_b(stringify(b))
                 {
-                    result = ((a - b) <= c);
-                    s_diff = stringify(a-b);
+                    if (a>=b)
+                    {
+                        result = ((a - b) <= c);
+                        s_diff = stringify(a-b);
+                    }
+                    else
+                    {
+                        result = ((b - a) <= c);
+                        s_diff = stringify(b-a);
+                    }
                 }
-                else
-                {
-                    result = ((b - a) <= c);
-                    s_diff = stringify(b-a);
-                }
+            };
+    };
+
+    /**
+     * Abstract Baseclass for all quick-test classes.
+     * \ingroup tests
+     */
+    class QuickTest : public BaseTest
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param id The testcase's id string.
+             */
+            QuickTest(const std::string & id);
+
+            /// Returns whether we are a quick-test.
+            virtual bool is_quick_test() const;
+    };
+
+    /**
+     * Exception thrown by the check method in BaseTest
+     */
+    class TestFailedException :
+        public std::exception
+    {
+        private:
+            const std::string _message;
+
+        public:
+            /**
+             * Constructor.
+             */
+            TestFailedException(const char * const function, const char * const file,
+                const long line, const std::string & message) throw ();
+
+
+            /**
+             * Destructor.
+             */
+            virtual ~TestFailedException() throw ();
+
+
+            /**
+             * Description.
+             */
+            const char * what() const throw ()
+            {
+                return _message.c_str();
             }
-        };
-};
-
-/**
- * Abstract Baseclass for all quick-test classes.
- * \ingroup tests
- */
-class QuickTest : public BaseTest
-{
-    public:
-        /**
-         * Constructor.
-         *
-         * \param id The testcase's id string.
-         */
-        QuickTest(const std::string & id);
-
-        /// Returns whether we are a quick-test.
-        virtual bool is_quick_test() const;
-};
-
-/**
- * Exception thrown by the check method in BaseTest
- */
-class TestFailedException :
-    public std::exception
-{
-    private:
-        const std::string _message;
-
-    public:
-        /**
-         * Constructor.
-         */
-        TestFailedException(const char * const function, const char * const file,
-            const long line, const std::string & message) throw ();
-
-
-        /**
-         * Destructor.
-         */
-        virtual ~TestFailedException() throw ();
-
-
-        /**
-         * Description.
-         */
-        const char * what() const throw ()
-        {
-            return _message.c_str();
-        }
-};
+    };
 }
 /**
  * Check that a == b.

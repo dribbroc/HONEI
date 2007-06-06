@@ -110,11 +110,10 @@ int main(int argc, char** argv)
     {
         try
         {
-            std::cout << (*i)->id() + ": \n";
-
             if (quick && (!(*i)->is_quick_test()) )
                 continue;
 
+            std::cout << (*i)->id() + ": \n";
             (*i)->run();
             std::cout << "PASSED \n";
         }

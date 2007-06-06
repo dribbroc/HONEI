@@ -9,6 +9,27 @@ using namespace pg512;
 using  namespace tests;
 
 template <typename DataType_>
+class DenseVectorQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorQuickTest(const std::string & type) :
+            QuickTest("dense_vector_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(4711,
+                        static_cast<DataType_>(123.987)));
+            TEST_CHECK_EQUAL(dv->size(),4711);
+            TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[4710] , 123.987 , 
+                        std::numeric_limits<DataType_>::epsilon());
+        }
+};
+DenseVectorQuickTest<double> dense_vector_quick_test_double("double");
+
+template <typename DataType_>
 class DenseVectorCreationTest :
     public BaseTest
 {
@@ -28,7 +49,6 @@ class DenseVectorCreationTest :
             }
         }
 };
-
 DenseVectorCreationTest<float> dense_vector_creation_test_float("float");
 DenseVectorCreationTest<double> dense_vector_creation_test_double("double");
 DenseVectorCreationTest<bool> dense_vector_creation_test_bool("bool");
