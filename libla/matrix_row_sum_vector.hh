@@ -14,6 +14,7 @@ namespace pg512
     /**
      * A MatrixRowSumVector yields a Vector of which each element holds the sum
      * of the matrix's corresponding row's elements.
+      * \ingroup grpmatrixoperations
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixRowSumVector
     {
