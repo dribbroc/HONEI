@@ -26,6 +26,7 @@
 #include <libla/vector_error.hh>
 #include <libutil/shared_array.hh>
 
+#include <cmath>
 #include <iterator>
 #include <limits>
 #include <ostream>
@@ -79,6 +80,9 @@ namespace pg512 ///< \todo Namespace name?
 
             /// Retrieves element by index, zero-based, assignable
             virtual DataType_ & operator[] (unsigned long index) = 0;
+
+            /// Returns a pointer to a copy.
+            virtual Vector * copy() const = 0;
     };
 
     /**
@@ -284,7 +288,7 @@ namespace pg512 ///< \todo Namespace name?
         for (typename Vector<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
                 j(right.begin_elements()) ; i != i_end ; ++i)
         {
-            if (((*i - *j)) < std::numeric_limits<DataType_>::epsilon())
+            if (fabs(*i - *j) <= std::numeric_limits<DataType_>::epsilon())
             {
                 ++j;
                 continue;

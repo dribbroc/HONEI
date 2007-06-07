@@ -68,6 +68,9 @@ namespace pg512 ///< \todo Namespace name?
 
             /// Returns the number of our rows.
             virtual unsigned long rows() const = 0;
+
+            /// Returns a copy of the matrix.
+            virtual Matrix * copy() const = 0;
     };
 
     /**

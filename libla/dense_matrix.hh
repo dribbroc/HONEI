@@ -194,6 +194,16 @@ namespace pg512 ///< \todo Namespace name?
 
                 return *_column_vectors[column];
             }
+
+            /// Returns a copy of the matrix.
+            virtual DenseMatrix * copy() const
+            {
+                DenseMatrix * result(new DenseMatrix(_columns, _rows));
+
+                std::copy(_elements.get(), _elements.get() + _columns * _rows, result->_elements.get());
+
+                return result;
+            }
     };
 
     /**

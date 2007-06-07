@@ -5,6 +5,22 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/banded_matrix.hh: Reworked internal data handling and element
+	iteration.
+	* libla/banded_matrix.hh, libla/dense_matrix.hh,
+	libla/dense_vector.hh, libla/matrix.hh, libla/sparse_vector.hh,
+	libla/vector.hh: Added method copy() to all descendants of Vector and
+	Matrix.
+	* libla/vector.hh: Fixed comparison operator for equality.
+	* libla/dense_matrix_TEST.cc, libla/dense_vector_TEST.cc,
+	libla/sparse_vector_TEST.cc: Added test cases for copying. Fixed some
+	minor bugs.
+	* libla/matrix_row_sum_vector_TEST.cc: Fixed maxint bug.
+	* libutil/exception.cc, libutil/exception.hh: Added exception class
+	InternalError.
+
 2007-06-06 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* +libla/scalar_matrix_product.hh: Added operation scalar * 

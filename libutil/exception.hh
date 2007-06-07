@@ -44,6 +44,13 @@ namespace pg512 ///< \todo Namespace name?
 
             const char * what() const throw ();
     };
+
+    class InternalError :
+        public Exception
+    {
+        public:
+            InternalError(const std::string & message) throw ();
+    };
 }
 
 #endif

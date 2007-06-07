@@ -22,7 +22,7 @@ class DenseMatrixRowSumVectorTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>(size, size));
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm->begin_elements()), i_end(dm->end_elements()) ;
@@ -32,13 +32,14 @@ class DenseMatrixRowSumVectorTest :
                 }
 
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv(MatrixRowSumVector<DataType_>::value(*dm));
+                DataType_ s(size);
                 for (typename Vector<DataType_>::ElementIterator v(dv->begin_elements()), v_end(dv->end_elements()) ;
                         v != v_end ; ++v)
                 {
-                    unsigned long last((v.index() + 1) * size), first(v.index() * size);
-                    DataType_ s((last * (last + 1) / 2) - (first * (first + 1) / 2));
+                    DataType_ last((v.index() + 1) * s), first(v.index() * s);
+                    DataType_ ssum((last * (last + 1) / 2) - (first * (first + 1) / 2));
 
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*v, s, s * 2000 * std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*v, ssum, ssum * 100 * std::numeric_limits<DataType_>::epsilon());
                 }
             }
         }

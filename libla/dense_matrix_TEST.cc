@@ -34,6 +34,48 @@ DenseMatrixCreationTest<float> dense_matrix_creation_test_float("float");
 DenseMatrixCreationTest<double> dense_matrix_creation_test_double("double");
 
 template <typename DataType_>
+class DenseMatrixCopyTest :
+    public BaseTest
+{
+    public:
+        DenseMatrixCopyTest(const std::string & type) :
+            BaseTest("dense_vector_copy_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 4) ; size <<= 1)
+            {
+                DenseMatrix<DataType_> dv1(size, size, static_cast<DataType_>(0)),
+                    dv2(size, size, static_cast<DataType_>(1));
+                std::tr1::shared_ptr<DenseMatrix<DataType_> > c(dv1.copy());
+
+                for (typename MutableMatrix<DataType_>::ElementIterator i(c->begin_elements()),
+                        i_end(c->end_elements()) ; i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
+                    *i = 1;
+                }
+
+                for (typename Matrix<DataType_>::ConstElementIterator i(dv1.begin_elements()),
+                        i_end(dv1.end_elements()) ; i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
+                }
+
+                for (typename Matrix<DataType_>::ConstElementIterator i(dv2.begin_elements()),
+                        i_end(dv2.end_elements()) ; i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, 1, std::numeric_limits<DataType_>::epsilon());
+                }
+            }
+        }
+};
+DenseMatrixCopyTest<float> dense_matrix_copy_test_float("float");
+DenseMatrixCopyTest<double> dense_matrix_copy_test_double("double");
+
+template <typename DataType_>
 class DenseMatrixEqualityTest :
     public BaseTest
 {

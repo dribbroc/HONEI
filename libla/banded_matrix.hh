@@ -50,7 +50,7 @@ namespace pg512 ///< \todo Namespace name?
         public Matrix<DataType_>
     {
         private:
-            /// Array of pointers to our bands.
+            /// Array of pointers to our band-data.
             SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > _bands;
 
             /// Our size.
@@ -100,7 +100,7 @@ namespace pg512 ///< \todo Namespace name?
                 if (diagonal->size() != size)
                     throw VectorSizeDoesNotMatch(diagonal->size(), size);
 
-                _bands[0].reset(diagonal);
+                _bands[size].reset(diagonal);
             }
 
             /// \}
@@ -130,27 +130,27 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Returns a band-vector by index.
-            DenseVector<DataType_> & band(unsigned long index) const
+            DenseVector<DataType_> & band(signed long index) const
             {
-                if (! _bands[index])
-                    _bands[index].reset(new DenseVector<DataType_>(index < _size ? _size - index : index + 1 - _size,
-                                static_cast<DataType_>(0)));
-                return *_bands[index];
+                if (! _bands[index + _size])
+                    _bands[index + _size].reset(new DenseVector<DataType_>(_size));
+
+                return *_bands[index + _size];
             }
 
-#if 0
-            /// Returns iterator pointing to the first non-zero band of the matrix.
-            ConstVectorIterator begin_bands() const
+            /// Returns a copy of the matrix.
+            virtual BandedMatrix * copy() const
             {
-                return ConstVectorIterator(new VectorIteratorImpl<DataType_>(*this, 0));
-            }
+                BandedMatrix * result(new BandedMatrix(_size));
 
-            /// Return iterator pointing behind the last non-zero band of the matrix.
-            ConstVectorIterator end_bands() const
-            {
-                return ConstVectorIterator(new VectorIteratorImpl<DataType_>(*this, 2 * _size + 1));
+                for (unsigned long i(0) ; i < 2 * _size + 1 ; ++i)
+                {
+                    if (_bands[i])
+                        result->_bands[i].reset(_bands[i]->copy());
+                }
+
+                return result;
             }
-#endif
     };
 
     template <typename DataType_> const DataType_ BandedMatrix<DataType_>::_zero_element(0);
@@ -170,29 +170,18 @@ namespace pg512 ///< \todo Namespace name?
             /// Our index.
             unsigned long _index;
 
-            /// Returns the band-class for the current element.
-            inline unsigned long _band_class() const
-            {
-                return _index % (_matrix._size + 1);
-            }
-
             /// Returns true if we're below the diagonal.
             inline bool _lower() const
             {
-                return _index % _matrix._size < _band_class();
+                return row() < column();
             }
 
             /// Returns the band-index for the current element.
-            inline unsigned long _band_index() const
+            inline signed long _band_index() const
             {
-                return (_lower() ? _matrix._size - 2 + _band_class() : _band_class());
-            }
+                signed long result(_index % (_matrix._size + 1));
 
-            /// Return the band-size for the current element.
-            inline unsigned long _band_size() const
-            {
-                return (_band_index() < _matrix._size ?
-                        _matrix._size - _band_index() : _band_index() + 1 - _matrix._size);
+                return _lower() ? result - (_matrix._size + 1) : result;
             }
 
         public:
@@ -227,27 +216,32 @@ namespace pg512 ///< \todo Namespace name?
             virtual MatrixElementIterator & operator++ ()
             {
                 ++_index;
+
                 return *this;
             }
 
-            /// Dereference operator thar returns an assignable reference.
+            /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
-                if (! _matrix._bands[_band_index()])
+                if (! _matrix._bands[_band_index() + _matrix._size])
                 {
-                    _matrix._bands[_band_index()].reset(new DenseVector<DataType_>(_matrix._size, static_cast<DataType_>(0)));
+                    _matrix._bands[_band_index() + _matrix._size].reset(new DenseVector<DataType_>(_matrix._size));
                 }
 
-                return (*_matrix._bands[_band_index()])[(_lower() ? _index : _index - _band_class()) % _matrix._size];
+                return (*_matrix._bands[_band_index() + _matrix._size])[row() + _band_index()];
             }
 
-            /// Dereference operator thar returns an unassignable reference.
+            /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
-                if (! _matrix._bands[_band_index()])
+                if (! _matrix._bands[_band_index() + _matrix._size])
                     return _matrix._zero_element;
                 else
-                    return (*_matrix._bands[_band_index()])[(_lower() ? _index : _index - _band_class()) % _matrix._size];
+                {
+                    std::cout << "_band_index = " << _band_index() << ", _matrix._size = " <<
+                        _matrix._size << ", row = " << row() << std::endl;
+                    return (*_matrix._bands[_band_index() + _matrix._size])[row() + _band_index()];
+                }
             }
 
             /// Comparison operator for equality.
@@ -293,95 +287,6 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
     };
-
-#if 0
-    /**
-     * A BandedMatrix::VectorIteratorImpl is a simple vector iterator implementation for banded matrices.
-     *
-     * \ingroup grpmatrix
-     **/
-    template <> template <typename DataType_> class BandedMatrix<DataType_>::VectorIteratorImpl<const DataType_> :
-        public VectorIteratorImplBase<DataType_, const Vector<DataType_> >
-    {
-        private:
-            /// Our matrix.
-            const BandedMatrix<DataType_> & _matrix;
-
-            /// Our index.
-            unsigned long _index;
-
-        public:
-            /**
-             * Constructor.
-             *
-             * \param matrix The parent matrix that is referenced by the iterator.
-             * \param index The index of the matrix's band.
-             **/
-            VectorIteratorImpl(const BandedMatrix<DataType_> & matrix, unsigned long index) :
-                _matrix(matrix),
-                _index(index)
-            {
-            }
-
-            /// Copy-constructor.
-            VectorIteratorImpl(VectorIteratorImpl<const DataType_> const & other) :
-                _matrix(other._matrix),
-                _index(other._index)
-            {
-            }
-
-            /// Preincrement operator.
-            virtual VectorIteratorImpl<const DataType_> & operator++ ()
-            {
-                ++_index;
-                for ( ; (_index <= 2 * _matrix._size + 1) && (! _matrix._bands[_index]) ; ++_index)
-                    ;
-
-                return *this;
-            }
-
-            /// Postincrement operator.
-            virtual VectorIteratorImpl<const DataType_> operator++ (int)
-            {
-                VectorIteratorImpl<const DataType_> result(*this);
-                ++_index;
-                for ( ; (_index <= 2 * _matrix._size + 1) && (! _matrix._bands[_index]) ; ++_index)
-                    ;
-
-                return result;
-            }
-
-            /// Equality operator.
-            virtual bool operator== (const VectorIteratorImplBase<DataType_, const Vector<DataType_> > & other) const
-            {
-                return (&_matrix == other.parent()) && (_index == other.index());
-            }
-
-            /// Inequality operator.
-            virtual bool operator!= (const VectorIteratorImplBase<DataType_, const Vector<DataType_> > & other) const
-            {
-                return ((&_matrix != other.parent()) || (_index != other.index()));
-            }
-
-            /// Dereference operator 
-            virtual const Vector<DataType_> & operator* () const
-            {
-                return *_matrix._bands[_index];
-            }
-
-            /// Returns our index.
-            virtual const unsigned long index() const
-            {
-                return _index;
-            }
-
-            /// Returns our parent matrix.
-            virtual const Matrix<DataType_> * parent() const
-            {
-                return &_matrix;
-            }
-    };
-#endif
 }
 
 #endif

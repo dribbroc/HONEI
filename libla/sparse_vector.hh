@@ -222,6 +222,18 @@ namespace pg512 ///< \todo Namespace name?
 
                 return _elements[i];
             }
+
+            /// Returns a copy of the vector.
+            virtual SparseVector * copy() const
+            {
+                SparseVector * result(new SparseVector<DataType_>(_size, _capacity));
+
+                result->_used_elements = _used_elements;
+                std::copy(_elements, _elements + _used_elements, result->_elements);
+                std::copy(_indices, _indices + _used_elements, result->_indices);
+
+                return result;
+            }
     };
 
     template <typename DataType_> const DataType_ SparseVector<DataType_>::_zero_element = 0;
@@ -291,7 +303,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual DataType_ & operator* ()
             {
                 if (_vector._indices[_pos] > _index)
-                    throw std::string("NOT YET IMPLEMENTED!");
+                    throw InternalError("Resizing of SparseVector via ElementIterator is not yet implemented.");
                 else if (_vector._indices[_pos] == _index)
                     return _vector._elements[_pos];
             }

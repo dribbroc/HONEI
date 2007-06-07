@@ -65,3 +65,8 @@ Exception::what() const throw ()
         _what_str = stringify(std::exception::what());
     return _what_str.c_str();
 }
+
+InternalError::InternalError(const std::string & message) throw () :
+    Exception("Internal error: " + message)
+{
+}

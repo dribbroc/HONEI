@@ -180,6 +180,16 @@ namespace pg512 ///< \todo Namespace name?
             {
                 return _elements[_stepsize * index + _offset];
             }
+
+            /// Return a copy to the Vector.
+            virtual DenseVector * copy() const
+            {
+                DenseVector * result(new DenseVector(_size));
+
+                std::copy(begin_elements(), end_elements(), result->_elements.get());
+
+                return result;
+            }
     };
 
     /**
