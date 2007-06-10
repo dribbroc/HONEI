@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-10 David Gies <david-gies@gmx.de>
+
+	* benchmark/benchmark.cc: Altered output of evaluate() and some minor fixes.
+
 2007-06-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/banded_matrix.hh: Reworked internal data handling and element

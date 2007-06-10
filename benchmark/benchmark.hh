@@ -28,9 +28,12 @@ class Benchmark
 
         /// called by the benchmark framework to run the benchmark
         virtual void run() = 0;
-		
+
 		///generates a standard benchmark output
         void evaluate();
+
+        ///generates a standard benchmark output with flop being the number of floating point operations of the benchmarked function
+        void evaluate(int flop);
 };
 
 /**
@@ -77,7 +80,7 @@ class BenchFailedException :
 	    _start = clock(); \
 	    a; \
 	    _end = clock(); \
-	    _benchlist.push_back(end - start); \
+	    _benchlist.push_back(_end - _start); \
         } catch (const std::exception & test_e) { \
             throw BenchFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Benchmark threw exception."); \
@@ -86,3 +89,4 @@ class BenchFailedException :
                     "Benchmark threw unknown exception."); \
         } \
     } while (false)
+
