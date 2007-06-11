@@ -107,7 +107,7 @@ class DenseMatrixLayoutTest :
 {
     public:
         DenseMatrixLayoutTest(const std::string & type) :
-            BaseTest("dense_matrix_functions_test<" + type + ">")
+            BaseTest("dense_matrix_layout_test<" + type + ">")
         {
         }
 
