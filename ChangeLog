@@ -5,12 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+2007-06-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Added 'blind' test cases to make bugfixing
 	little bit easier.
 	
-2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+2007-06-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Added basic quicktests to all test cases.
 	
@@ -24,7 +24,7 @@ see the NEWS file.
 
 	* libswe/limiter.hh: Implemented Limiter, MinMod, SuperBee, VanLeer, MC.
 
-2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+2007-06-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/scalar_vector_product_TEST.cc: Added ScalarVectorProductTest.
 	
@@ -53,7 +53,7 @@ see the NEWS file.
 	* libla/dense_vector_TEST.cc: Added float-test in QuickTest.
 	* libla/scalar_product_TEST.cc: Added QuickTest for scalar_product.
 
-2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+2007-06-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* doc/doxygen.conf: Doxygen now includes all *.cc files exclusive *_TEST.cc.
 	
