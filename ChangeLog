@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/matrix_mask.hh: Fixed some compilation problems with the 
+	ConstElementIterator for the boolean mask-matrix, so that it 
+	hopefully can pass tests now.
+	* +libla/vector_mask.hh: Added vector_mask.hh, which does the 
+	same as MatrixMask for vectors.
+
 2007-06-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Added 'blind' test cases to make bugfixing
@@ -93,7 +101,7 @@ see the NEWS file.
 	* libla/files.m4: Added scalar_matrix_product.hh.
 	* libla/scalar_vector_product.hh, vector_sum.hh, 
 	vector_difference.hh: Made some parameters const.
-	* libla/matrix_mask.hh: added operation for banded matrices.
+	* libla/matrix_mask.hh: Added operation for banded matrices.
 
 2007-06-06 Sven Mallach <sven.mallach@uni-dortmund.de>
 

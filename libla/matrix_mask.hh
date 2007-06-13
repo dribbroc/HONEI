@@ -36,11 +36,17 @@ namespace pg512
 {
     /**
      * \brief MatrixMask masks a given matrix by setting all elements to zero, for which the mask matrix contains the value "false".
+     * \brief Member functions use first parameter (reference) as return argument.
      *
      * \ingroup grpmatrixoperations
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixMask
     {
+        /**
+         * Returns the resulting masked dense matrix.
+         * \param matrix The matrix to be masked.
+         * \param mask The boolean matrix to be used for masking.
+         **/
         static DenseMatrix<DataType_> value(DenseMatrix<DataType_> & matrix, const Matrix<bool> & mask)
         {
             if (matrix.columns() != mask.columns())
@@ -53,8 +59,8 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.rows(), mask.rows());
             }
 
-            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()),
-                    Matrix<bool>::ConstElementIterator r(mask.begin_elements()), r_end(mask.end_elements()) ; l != l_end ; ++l)
+            Matrix<bool>::ConstElementIterator r(mask.begin_elements());
+            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
                 *l = (*r ? *l : static_cast<DataType_>(0));
                 ++r;
@@ -63,6 +69,11 @@ namespace pg512
             return matrix;
         }
 
+        /**
+         * Returns the resulting masked banded matrix.
+         * \param matrix The matrix to be masked.
+         * \param mask The boolean matrix to be used for masking.
+         **/
 		static BandedMatrix<DataType_> value(BandedMatrix<DataType_> & matrix, const Matrix<bool> & mask)
         {
             if (matrix.columns() != mask.columns())
@@ -75,8 +86,8 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.rows(), mask.rows());
             }
 
-            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()),
-                    Matrix<bool>::ConstElementIterator r(mask.begin_elements()), r_end(mask.end_elements()) ; l != l_end ; ++l)
+            Matrix<bool>::ConstElementIterator r(mask.begin_elements());
+            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
                 *l = (*r ? *l : static_cast<DataType_>(0));
                 ++r;
