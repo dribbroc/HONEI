@@ -22,9 +22,19 @@ class BandedMatrixCreationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<BandedMatrix<DataType_> > dm(new BandedMatrix<DataType_>(size));
+                std::tr1::shared_ptr<BandedMatrix<DataType_> > dm1(new BandedMatrix<DataType_>(size));
                 TEST_CHECK(true);
+                //std::tr1::shared_ptr<DenseVector<DataType_> >dv1(new DenseVector<DataType_>
+                //    (size, static_cast<DataType_>(1)));
+                //std::tr1::shared_ptr<BandedMatrix<DataType_> > dm2(new BandedMatrix<DataType_>(size,*dv1));
+                //TEST_CHECK(true);
+                
             }
+            
+            //std::tr1::shared_ptr<DenseVector<DataType_> > dv2(new DenseVector<DataType_>
+            //    (5, static_cast<DataType_>(1)));                
+            //TEST_CHECK_THROWS (std::tr1::shared_ptr<BandedMatrix<DataType_> > dm3(new BandedMatrix<DataType_>(6,*dv2)),
+            //    VectorSizeDoesNotMatch);
         }
 };
 
