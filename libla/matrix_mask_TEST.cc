@@ -14,12 +14,12 @@ using namespace pg512;
 using  namespace tests;
 
 template <typename DataType_>
-class MatrixMaskTest :
+class DenseMatrixMaskTest :
     public BaseTest
 {
     public:
-        MatrixMaskTest(const std::string & type) :
-            BaseTest("matrix_mask_test<" + type + ">")
+        DenseMatrixMaskTest(const std::string & type) :
+            BaseTest("dense_matrix_mask_test<" + type + ">")
         {
         }
 
@@ -66,5 +66,5 @@ class MatrixMaskTest :
         }
 };
 
-MatrixMaskTest<float> matrix_mask_test_float("float");
-MatrixMaskTest<double> matrix_mask_test_double("double"); 
+DenseMatrixMaskTest<float> dense_matrix_mask_test_float("float");
+DenseMatrixMaskTest<double> dense_matrix_mask_test_double("double"); 
