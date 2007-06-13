@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 ///< \todo Fix compile errors
-/*
+
 #include <libla/dense_matrix.hh>
 #include <libla/matrix_mask.hh>
 #include <libla/matrix_error.hh>
@@ -67,4 +67,4 @@ class MatrixMaskTest :
 };
 
 MatrixMaskTest<float> matrix_mask_test_float("float");
-MatrixMaskTest<double> matrix_mask_test_double("double"); */
+MatrixMaskTest<double> matrix_mask_test_double("double"); 

@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/files.m4: Added matrix_error.cc in files.m4.
+	
+2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/matrix_mask_TEST.cc: Removed a few bugs in MatrixMaskTest.
 	
 2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
