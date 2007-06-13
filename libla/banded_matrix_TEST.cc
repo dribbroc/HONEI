@@ -40,3 +40,22 @@ class BandedMatrixCreationTest :
 
 BandedMatrixCreationTest<float> banded_matrix_creation_test_float("float");
 BandedMatrixCreationTest<double> banded_matrix_creation_test_double("double");
+
+template <typename DataType_>
+class BandedMatrixQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            std::tr1::shared_ptr<BandedMatrix<DataType_> > dv(new BandedMatrix<DataType_>(4711));
+            TEST_CHECK(true);
+        }
+};
+BandedMatrixQuickTest<float>  banded_matrix_quick_test_float("float");
+BandedMatrixQuickTest<double> banded_matrix_quick_test_double("double");

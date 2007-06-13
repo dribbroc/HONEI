@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/*_TEST.cc: Added 'blind' test cases to make bugfixing
+	little bit easier.
+	
+2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/*_TEST.cc: Added basic quicktests to all test cases.
 	
 2007-06-13 David Gies <david-gies@gmx.de>

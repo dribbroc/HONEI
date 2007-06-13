@@ -23,14 +23,94 @@ class SparseVectorCreationTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<SparseVector<DataType_> > sm1(new SparseVector<DataType_>(size, size));
-                std::tr1::shared_ptr<SparseVector<DataType_> > sm2(new SparseVector<DataType_>(size, 1));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size, 1));
                 TEST_CHECK(true);
             }
         }
 };
 SparseVectorCreationTest<float> sparse_vector_creation_test_float("float");
 SparseVectorCreationTest<double> sparse_vector_creation_test_double("double");
+SparseVectorCreationTest<int> sparse_vector_creation_test_int("int");
+SparseVectorCreationTest<bool> sparse_vector_creation_test_bool("bool");
+
+/*
+template <typename DataType_>
+class SparseVectorEqualityTest :
+    public BaseTest
+{
+    public:
+        SparseVectorEqualityTest(const std::string & type) :
+            BaseTest("sparse_vector_equality_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv0(new SparseVector<DataType_>(size,
+                    size));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size,
+                    size/4+1));
+                
+                for (typename Vector<DataType_>::ElementIterator i(sv0->begin_elements()), 
+                        i_end(sv0->end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0)
+                        *i = static_cast<DataType_>(1);
+                }
+                
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), 
+                    i_end(sv1->end_elements()) ; i != i_end ; ++i)
+                {
+                    //if (i.index() % 10 == 0)
+                       // *i = static_cast<DataType_>(1);
+                }                       
+
+                TEST_CHECK(sv0==sv1);
+            }
+        }
+};
+SparseVectorEqualityTest<bool> sparse_vector_equality_test_bool("bool");
+SparseVectorEqualityTest<int> sparse_vector_equality_test_int("int");
+*/
+/*
+template <typename DataType_>
+class SparseVectorFunctionsTest :
+    public BaseTest
+{
+    public:
+        SparseVectorFunctionsTest(const std::string & type) :
+            BaseTest("sparse_vector_functions_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > dv(new SparseVector<DataType_>(size));
+                for (typename Vector<DataType_>::ElementIterator i(dv->begin_elements()), i_end(dv->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                }
+                TEST_CHECK_EQUAL(dv->size(),size);
+                
+                for (int i=0 ; i<size ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS( (*dv)[i],(i+1)/1.23456789, 
+                        std::numeric_limits<DataType_>::epsilon());
+                }
+            }
+        }
+};
+
+SparseVectorFunctionsTest<float> sparse_vector_functions_test_float("float");
+SparseVectorFunctionsTest<double> sparse_vector_functions_test_double("double"); */
+
+
 
 template <typename DataType_>
 class SparseVectorCopyTest :
@@ -74,4 +154,3 @@ class SparseVectorCopyTest :
 };
 SparseVectorCopyTest<float> sparse_vector_copy_test_float("float");
 SparseVectorCopyTest<double> sparse_vector_copy_test_double("double");
-
