@@ -151,3 +151,34 @@ class DenseMatrixLayoutTest :
 
 DenseMatrixLayoutTest<float> dense_matrix_layout_test_float("float");
 DenseMatrixLayoutTest<double> dense_matrix_layout_test_double("double");
+
+template <typename DataType_>
+class DenseMatrixQuickTest :
+    public QuickTest
+{
+    public:
+        DenseMatrixQuickTest(const std::string & type) :
+            QuickTest("dense_vector_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long columns(3), rows(2);
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>
+                (columns, rows,static_cast<DataType_>(1)));
+
+            TEST_CHECK_EQUAL(*dm, *dm);
+            TEST_CHECK_EQUAL(dm->columns(), columns);
+            TEST_CHECK_EQUAL(dm->rows(), rows);
+
+            Vector<DataType_> & row1 = (*dm)[0];
+            Vector<DataType_> & col1 = dm->column(0);
+
+            TEST_CHECK_EQUAL(row1.size(), columns);
+            TEST_CHECK_EQUAL(col1.size(), rows);
+
+        }
+};
+DenseMatrixQuickTest<float>  dense_matrix_quick_test_float("float");
+DenseMatrixQuickTest<double> dense_matrix_quick_test_double("double");

@@ -47,3 +47,40 @@ class DenseMatrixRowSumVectorTest :
 
 DenseMatrixRowSumVectorTest<float> dense_matrix_row_sum_vector_test_float("float");
 DenseMatrixRowSumVectorTest<double> dense_matrix_row_sum_vector_test_double("double");
+
+
+
+template <typename DataType_>
+class DenseMatrixRowSumVectorQuickTest :
+    public QuickTest
+{
+    public:
+        DenseMatrixRowSumVectorQuickTest(const std::string & type) :
+            QuickTest("dense_matrix_row_sum_vector_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(3);
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>(size, size+2));
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm->begin_elements()), i_end(dm->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = static_cast<DataType_>(i.index() + 1);
+            }
+
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv(MatrixRowSumVector<DataType_>::value(*dm));
+            DataType_ s(size);
+            for (typename Vector<DataType_>::ElementIterator v(dv->begin_elements()), v_end(dv->end_elements()) ;
+                    v != v_end ; ++v)
+            {
+                DataType_ last((v.index() + 1) * s), first(v.index() * s);
+                DataType_ ssum((last * (last + 1) / 2) - (first * (first + 1) / 2));
+
+                TEST_CHECK_EQUAL_WITHIN_EPS(*v, ssum, ssum * 100 * std::numeric_limits<DataType_>::epsilon());
+            }
+        }
+};
+DenseMatrixRowSumVectorQuickTest<float>  dense_matrix_row_sum_vector_quick_test_float("float");
+DenseMatrixRowSumVectorQuickTest<double> dense_matrix_row_sum_vector_quick_test_double("double");

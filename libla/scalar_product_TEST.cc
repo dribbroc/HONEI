@@ -13,45 +13,6 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
-class DenseScalarProductQuickTest :
-    public QuickTest
-{
-    public:
-        DenseScalarProductQuickTest(const std::string & type) :
-            QuickTest("dense_scalar_product_quick_test<" + type + ">")
-        {
-        }
-
-        virtual void run() const
-        {
-            int quicksize = 2 << 7;
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv0q(new DenseVector<DataType_>(quicksize,
-                static_cast<DataType_>(0)));
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv1q(new DenseVector<DataType_>(quicksize,
-                static_cast<DataType_>(1)));
-
-            DataType_ p0q(ScalarProduct<DataType_>::value(*dv1q,*dv0q));
-            DataType_ p1q(ScalarProduct<DataType_>::value(*dv1q,*dv1q));
-            TEST_CHECK_EQUAL(p0q,0);
-            TEST_CHECK_EQUAL(p1q,quicksize);
-            
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv2q(new DenseVector<DataType_>(quicksize));
-            for (typename Vector<DataType_>::ElementIterator iq(dv2q->begin_elements()), i_endq(dv2q->end_elements()) ;
-                    iq != i_endq ; ++iq)
-            {
-                *iq = static_cast<DataType_>((iq.index() + 1) / 1.23456789);
-            }
-
-            DataType_ v2q(VectorNorm<DataType_, vnt_l_two, false>::value(*dv2q));
-            DataType_ p2q(ScalarProduct<DataType_>::value(*dv2q,*dv2q));
-            TEST_CHECK_EQUAL_WITHIN_EPS(v2q, p2q,sqrt(std::numeric_limits<DataType_>::epsilon()));
-        }
-};
-DenseScalarProductQuickTest<float>  dense_scalar_product_quick_test_float("float");
-DenseScalarProductQuickTest<double> dense_scalar_product_quick_test_double("double");
-
-
-template <typename DataType_>
 class DenseScalarProductTest :
     public BaseTest
 {
@@ -98,3 +59,48 @@ class DenseScalarProductTest :
 
 DenseScalarProductTest<float> dense_scalar_product_test_float("float");
 DenseScalarProductTest<double> dense_scalar_product_double("double");
+
+template <typename DataType_>
+class DenseScalarProductQuickTest :
+    public QuickTest
+{
+    public:
+        DenseScalarProductQuickTest(const std::string & type) :
+            QuickTest("dense_scalar_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            int quicksize = 2 << 7;
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv0q(new DenseVector<DataType_>(quicksize,
+                static_cast<DataType_>(0)));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv1q(new DenseVector<DataType_>(quicksize,
+                static_cast<DataType_>(1)));
+
+            DataType_ p0q(ScalarProduct<DataType_>::value(*dv1q,*dv0q));
+            DataType_ p1q(ScalarProduct<DataType_>::value(*dv1q,*dv1q));
+            TEST_CHECK_EQUAL(p0q,0);
+            TEST_CHECK_EQUAL(p1q,quicksize);
+            
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv2q(new DenseVector<DataType_>(quicksize));
+            for (typename Vector<DataType_>::ElementIterator iq(dv2q->begin_elements()), i_endq(dv2q->end_elements()) ;
+                    iq != i_endq ; ++iq)
+            {
+                *iq = static_cast<DataType_>((iq.index() + 1) / 1.23456789);
+            }
+
+            DataType_ v2q(VectorNorm<DataType_, vnt_l_two, false>::value(*dv2q));
+            DataType_ p2q(ScalarProduct<DataType_>::value(*dv2q,*dv2q));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v2q, p2q,sqrt(std::numeric_limits<DataType_>::epsilon()));
+    
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv00(new DenseVector<DataType_>(1,
+                static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv01(new DenseVector<DataType_>(2,
+            static_cast<DataType_>(1)));
+            
+            TEST_CHECK_THROWS(ScalarProduct<DataType_>::value(*dv00,*dv01),VectorSizeDoesNotMatch);    
+        }
+};
+DenseScalarProductQuickTest<float>  dense_scalar_product_quick_test_float("float");
+DenseScalarProductQuickTest<double> dense_scalar_product_quick_test_double("double");

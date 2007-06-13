@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/*_TEST.cc: Added basic quicktests to all test cases.
+	
 2007-06-13 David Gies <david-gies@gmx.de>
 
 	* libla/scalar_product_BENCH: Added scalar product benchmark.

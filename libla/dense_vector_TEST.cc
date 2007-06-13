@@ -10,27 +10,6 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
-class DenseVectorQuickTest :
-    public QuickTest
-{
-    public:
-        DenseVectorQuickTest(const std::string & type) :
-            QuickTest("dense_vector_quick_test<" + type + ">")
-        {
-        }
-
-        virtual void run() const
-        {
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(4711,
-                        static_cast<DataType_>(123.987)));
-            TEST_CHECK_EQUAL(dv->size(), 4711);
-            TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[4710] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
-        }
-};
-DenseVectorQuickTest<float>  dense_vector_quick_test_float("float");
-DenseVectorQuickTest<double> dense_vector_quick_test_double("double");
-
-template <typename DataType_>
 class DenseVectorCreationTest :
     public BaseTest
 {
@@ -157,3 +136,24 @@ class DenseVectorFunctionsTest :
 DenseVectorFunctionsTest<float> dense_vector_functions_test_float("float");
 DenseVectorFunctionsTest<double> dense_vector_functions_test_double("double");
 
+template <typename DataType_>
+class DenseVectorQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorQuickTest(const std::string & type) :
+            QuickTest("dense_vector_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(4711,
+                        static_cast<DataType_>(123.987)));
+            TEST_CHECK_EQUAL(dv->size(), 4711);
+            TEST_CHECK_EQUAL(*dv,*dv);
+            TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[4710] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
+        }
+};
+DenseVectorQuickTest<float>  dense_vector_quick_test_float("float");
+DenseVectorQuickTest<double> dense_vector_quick_test_double("double");

@@ -47,3 +47,36 @@ class DenseVectorSumTest :
 
 DenseVectorSumTest<float> dense_vector_sum_test_float("float");
 DenseVectorSumTest<double> dense_vector_sum_test_double("double");
+
+template <typename DataType_>
+class DenseVectorSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv2(new DenseVector<DataType_>(size,
+                static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
+                static_cast<DataType_>(1)));
+
+            DenseVector<DataType_> sum1(VectorSum<DataType_>::value(*dv1, *dv2));
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
+            TEST_CHECK_EQUAL(v1, 2 * size);
+
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv00(new DenseVector<DataType_>(1,
+                    static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv01(new DenseVector<DataType_>(2,
+                    static_cast<DataType_>(1)));
+
+            TEST_CHECK_THROWS(VectorSum<DataType_>::value(*dv00, *dv01), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorSumQuickTest<float>  dense_vector_sum_quick_test_float("float");
+DenseVectorSumQuickTest<double> dense_vector_sum_quick_test_double("double");

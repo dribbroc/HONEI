@@ -18,7 +18,7 @@ class ScalarVectorProductTest :
 {
     public:
         ScalarVectorProductTest(const std::string & type) :
-            BaseTest("scalar_vector_sum_test<" + type + ">")
+            BaseTest("scalar_vector_product_test<" + type + ">")
         {
         }
 
@@ -36,5 +36,29 @@ class ScalarVectorProductTest :
         }
 };
 
-ScalarVectorProductTest<float> scalar_vector_sum_test_float("float");
-ScalarVectorProductTest<double> scalar_vector_sum_test_double("double");
+ScalarVectorProductTest<float> scalar_vector_product_test_float("float");
+ScalarVectorProductTest<double> scalar_vector_product_test_double("double");
+
+template <typename DataType_>
+class ScalarVectorProductQuickTest :
+    public QuickTest
+{
+    public:
+        ScalarVectorProductQuickTest(const std::string & type) :
+            QuickTest("scalar_vector_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
+                static_cast<DataType_>(1)));
+
+            DenseVector<DataType_> prod1(ScalarVectorProduct<DataType_>::value(static_cast<DataType_>(2), *dv1));
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(prod1));
+            TEST_CHECK_EQUAL(v1, 2 * size);
+        }
+};
+ScalarVectorProductQuickTest<float>  scalar_vector_product_quick_test_float("float");
+ScalarVectorProductQuickTest<double> scalar_vector_product_quick_test_double("double");
