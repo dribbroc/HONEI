@@ -92,4 +92,5 @@ AC_OUTPUT(
 	libla/Makefile
 	libutil/Makefile
 	unittest/Makefile
+	libswe/Makefile
 )
