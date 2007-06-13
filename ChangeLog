@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-06-13 Markus Geveler <apryde@gmx.de>
 
+	* configure.ac, autogen.bash, Makefile.am: Modified for make - infrastr. - purposes.
+	* libswe/files.m4 , libswe/Makefile.am.m4: Added for  make - infrastr. - purposes.
+	* libswe/limiter.hh: Dummy added for  make - infrastr. - purposes.
+
+2007-06-13 Markus Geveler <apryde@gmx.de>
+
 	* libla/linear_combination.hh: Removed.
 	* libla/vector_scaled_sum.hh: Modified due to changes in calling - convention.
 
