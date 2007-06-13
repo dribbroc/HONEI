@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-13 David Gies <david-gies@gmx.de>
+
+	* libla/scalar_product_BENCH: Added scalar product benchmark.
+	benchmark/benchmark.cc, benchmark/benchmark.hh: Added console 
+	user interface and improved accuracy of time measurement.
+
 <<<<<<< .mine
 2007-06-13 Volker Jung <volker.m.jung@t-online.de>
 
