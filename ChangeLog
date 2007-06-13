@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/matrix_mask_TEST.cc: Added DenseMatrixMaskQuickTest.
+	
+2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/files.m4: Added matrix_error.cc in files.m4.
 	
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>

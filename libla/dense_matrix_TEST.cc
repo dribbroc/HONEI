@@ -158,7 +158,7 @@ class DenseMatrixQuickTest :
 {
     public:
         DenseMatrixQuickTest(const std::string & type) :
-            QuickTest("dense_vector_quick_test<" + type + ">")
+            QuickTest("dense_matrix_quick_test<" + type + ">")
         {
         }
 
