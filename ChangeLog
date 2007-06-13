@@ -8,6 +8,7 @@ see the NEWS file.
 2007-06-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/files.m4: Fixed contents from previous unresolved conflict.
+	Removed stray test entry for VectorScaledSum.
 
 2007-06-13 Markus Geveler <apryde@gmx.de>
 
