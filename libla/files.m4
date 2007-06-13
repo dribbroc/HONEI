@@ -12,10 +12,7 @@ add(`banded_matrix',             `hh', `test')
 add(`dense_matrix',              `hh', `test')
 add(`dense_vector',              `hh', `test')
 add(`element_iterator',          `hh', `test')
-<<<<<<< .mine
-=======
-add(`vector_scaled_sum',        `hh')
->>>>>>> .r146
+add(`vector_scaled_sum',         `hh')
 add(`matrix',                    `hh')
 add(`matrix_mask',               `hh')
 add(`matrix_element_inverse',    `hh', `test')
