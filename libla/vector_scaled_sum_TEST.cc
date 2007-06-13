@@ -1,4 +1,5 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
+///< \todo Fix compile errors
 /*
 #include <libla/dense_vector.hh>
 #include <libla/vector_scaled_sum.hh>

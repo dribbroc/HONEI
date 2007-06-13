@@ -47,7 +47,7 @@ namespace pg512
          * \param leftScal The scalar provided in order to be multiplied with left
          * \param rightScal analogous
          **/
-        template < typename DtLeft_ , typename Dtright_, typename DtLeftScal_, typename DtRightScal_> 
+        template < typename DtLeft_ , typename DtRight_, typename DtLeftScal_, typename DtRightScal_> 
         static DenseVector<DtLeft_> value(DenseVector<DtLeft_> & left, 
                         const DenseVector<DtRight_> & right,          
                         const DtLeftScal_ & leftscal, const DtRightScal_ & rightscal)
@@ -70,7 +70,7 @@ namespace pg512
           * \param leftScal The scalar provided in order to be multiplied with left
           * \param rightScal analogous
           **/
-        template < typename DtLeft_ , typename Dtright_, typename DtLeftScal_, typename DtRightScal_>
+        template < typename DtLeft_ , typename DtRight_, typename DtLeftScal_, typename DtRightScal_>
 		static SparseVector<DtLeft_> value(SparseVector<DtLeft_> & left, 
                         const SparseVector<DtRight_> & right, const DtLeftScal_ & leftscal, const DtRightScal_ & rightscal)
 		{
@@ -110,7 +110,7 @@ namespace pg512
           * \param leftscal The scalar provided in order to be multiplied with left
           * \param rightscal see leftscal
           **/
-        template < typename DtLeft_ , typename Dtright_, typename DtLeftScal_, typename DtRightScal_>
+        template < typename DtLeft_ , typename DtRight_, typename DtLeftScal_, typename DtRightScal_>
 		static DenseVector<DtLeft_> value(const DenseVector<DtLeft_> & left, SparseVector<DtRight_> right,
                         const DtRightScal_ & leftscal, const DtRightScal_ & rightscal)
                 {

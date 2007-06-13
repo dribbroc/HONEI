@@ -1,4 +1,5 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
+///< \todo Fix compile errors
 /*
 #include <libla/dense_matrix.hh>
 #include <libla/scalar_matrix_product.hh>
