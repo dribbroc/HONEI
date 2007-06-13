@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-13 Markus Geveler <apryde@gmx.de>
+
+	* libla/linear_combination.hh: Removed.
+	* libla/vector_scaled_sum.hh: Modified due to changes in calling - convention.
+
 2007-06-12 Andre Matuschek <pg512@matuschek.org>
 
 	* libla/dense_vector_TEST.cc: Added float-test in QuickTest.
