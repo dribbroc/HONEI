@@ -6,6 +6,13 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
+	
+	* libla/files.m4: Added vector_mask.hh, scalar_matrix_product_TEST,
+	fixed syntactic error.
+	* libla/scalar_matrix_product.hh, scalar_vector_product.hh: Made these headers meet new 
+	constraints concerning change of references and return types.
+
+2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_mask.hh: Fixed some compilation problems with the 
 	ConstElementIterator for the boolean mask-matrix, so that it 

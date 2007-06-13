@@ -36,38 +36,39 @@ namespace pg512
 
     /**
      * ScalarMatrixProduct is the class template for multiplying a scalar to a matrix
-     *
+     * \brief The given reference matrix is changed by multiplying the given scalar to each of its elements.
      * \ingroup grpmatrixoperations
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarMatrixProduct
     {
         /**
          * Returns the resulting matrix after multiplying a scalar to a given DenseMatrix instance.
+         * \param matrix DenseMatrix to be scaled.
+         * \param scalar The scalar to be used.
          **/
-		static DenseMatrix<DataType_> value(const DataType_ scalar, const DenseMatrix<DataType_> & matrix)
+		static DenseMatrix<DataType_> value(const DataType_ scalar, DenseMatrix<DataType_> & matrix)
         {
-			DenseMatrix<DataType_> result(matrix.columns(), matrix.rows(), 0);
-
-			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
+			for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
-                result[l.index()] = scalar * *l;
+                matrix[l.index()] = scalar * *l;
             }
-            return result;
+            return matrix;
 		}
 
         /**
          * Returns the resulting matrix after multiplying a scalar to a given BandedMatrix instance.
+         * \param matrix BandedMatrix to be scaled.
+         * \param scalar The scalar to be used.
          **/
-		static BandedMatrix<DataType_> value(const DataType_ scalar, const BandedMatrix<DataType_> & matrix)
+		static BandedMatrix<DataType_> value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
         {
-			BandedMatrix<DataType_> result(matrix.columns());
 
-			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
+			for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
-				result[l.index()] = scalar * *l;
+				matrix[l.index()] = scalar * *l;
             }
 
-            return result;
+            return matrix;
         }
     };
 }

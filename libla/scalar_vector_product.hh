@@ -36,39 +36,41 @@ namespace pg512
 
     /**
      * ScalarVectorProduct is the class template for multiplying a scalar to a vector
-     *
+     * \brief The given reference vector is changed by multiplying the given scalar to each of its elements.
      * \ingroup grpvectoroperations
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarVectorProduct
     {
         /**
          * Returns the resulting vector after multiplying a scalar to a given DenseVector instance.
+         * \param matrix DenseVector to be scaled.
+         * \param scalar The scalar to be used.
          **/
-        static DenseVector<DataType_> value(const DataType_ scalar, const DenseVector<DataType_> & vector)
+        static DenseVector<DataType_> value(const DataType_ scalar, DenseVector<DataType_> & vector)
         {
-            DenseVector<DataType_> result(vector.size(), 0, 0, 1);
 
-            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
-                result[l.index()] = scalar * *l;
+                vector[l.index()] = scalar * *l;
             }
 
-            return result;
+            return vector;
         }
 
         /**
          * Returns the resulting vector after multiplying a scalar to a given SparseVector instance.
+         * \param matrix SparseVector to be scaled.
+         * \param scalar The scalar to be used.
          **/
-        static SparseVector<DataType_> value(const DataType_ scalar, const SparseVector<DataType_> & vector)
+        static SparseVector<DataType_> value(const DataType_ scalar, SparseVector<DataType_> & vector)
         {
-            SparseVector<DataType_> result(vector.size(), 0, 0, 1);
 
-            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
             {
-                result[l.index()] = scalar * *l;
+                vector[l.index()] = scalar * *l;
             }
 
-            return result;
+            return vector;
         }
     };
 }
