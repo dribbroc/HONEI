@@ -36,7 +36,8 @@ class DenseScalarMatrixProductTest :
                     sum += *i;
                 }
                 
-                TEST_CHECK_EQUAL(sum, static_cast<DataType_>(2 * size * (size +1)));
+                TEST_CHECK_EQUAL_WITHIN_EPS(sum, static_cast<DataType_>(2 * size * (size +1)), 
+                    std::numeric_limits<DataType_>::epsilon());
             }
         }
 };
@@ -68,7 +69,8 @@ class DenseScalarMatrixProductQuickTest :
                 sum += *i;
             }
             
-            TEST_CHECK_EQUAL(sum, static_cast<DataType_>(2 * size * (size +1)));
+            TEST_CHECK_EQUAL_WITHIN_EPS(sum, static_cast<DataType_>(2 * size * (size +1)), 
+                std::numeric_limits<DataType_>::epsilon());
         }
 };
 DenseScalarMatrixProductQuickTest<float>  dense_scalar_matrix_product_quick_test_float("float");
