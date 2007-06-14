@@ -46,26 +46,29 @@ namespace pg512
          * \param matrix DenseMatrix to be scaled.
          * \param scalar The scalar to be used.
          **/
-		static DenseMatrix<DataType_> value(const DataType_ scalar, DenseMatrix<DataType_> & matrix)
+        static DenseMatrix<DataType_> & value(const DataType_ scalar, DenseMatrix<DataType_> & matrix)
         {
-			for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
+            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
+                    l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= scalar;
             }
+
             return matrix;
-		}
+        }
 
         /**
          * Returns the resulting matrix after multiplying a scalar to a given BandedMatrix instance.
          * \param matrix BandedMatrix to be scaled.
          * \param scalar The scalar to be used.
          **/
-		static BandedMatrix<DataType_> value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
+        static BandedMatrix<DataType_> value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
         {
 
-			for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
+            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
+                    l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
-				*l *= scalar;
+                *l *= scalar;
             }
 
             return matrix;

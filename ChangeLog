@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-14 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/matrix_row_sum_vector_TEST.cc: Fixed error margin.
+	* libla/scalar_matrix_product.hh: Applied coding conventions.
+	* libla/sparse_vector.hh: Rewrote SparseVector's insertion mechanism.
+	* libla/sparse_vector_TEST.cc: Added copy test case.
+
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/scalar_matrix_product_TEST.cc: Replaced TEST_CHECK_EQUAL with 
@@ -35,7 +42,7 @@ see the NEWS file.
 
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libla/matrix_mask_TEST.cc: Added DenseMatrixMaskQuickTest.
+	 libla/matrix_mask_TEST.cc: Added DenseMatrixMaskQuickTest.
 	
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 

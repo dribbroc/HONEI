@@ -25,6 +25,7 @@
 #include <libla/element_iterator.hh>
 #include <libla/vector.hh>
 #include <libutil/exception.hh>
+#include <libutil/log.hh>
 #include <libutil/shared_array.hh>
 
 #include <iterator>
@@ -51,35 +52,53 @@ namespace pg512 ///< \todo Namespace name?
         public Vector<DataType_>
     {
         private:
-            /// Our non-zero elements.
-            DataType_ *_elements;
+            /// Our implementation type.
+            class Implementation;
+
+            /// Pointer to our implementation.
+            Implementation * _imp;
 
             /// Out zero element.
             static const DataType_ _zero_element;
 
-            /// Indices of our non-zero elements.
-            unsigned long *_indices;
-
-            /// Out capacity of non-zero elements.
-            unsigned long _capacity;
-
-            /// Our number of current non-zero elements.
-            unsigned long _used_elements;
-
-            /// Our size, the maximal number of non-zero elements
-            unsigned long _size;
-
-            /// Resize our array of elements.
-            void _resize(unsigned long new_capacity)
+            /**
+             * Insert an empty element into the vector and resizes the vector if necessary.
+             *
+             * \param position The position at which the new element shall be inserted.
+             * \param index The index of the new element.
+             */
+            DataType_ & _insert_element(unsigned long position, unsigned long index) const
             {
-                DataType_ *_new_elements(new DataType_[new_capacity]);
+                bool resize(_imp->_capacity == _imp->_used_elements);
+                bool capacity(resize ? _imp->_capacity + 10 : _imp->_capacity);
+                DataType_ * elements(resize ? new DataType_[capacity] : _imp->_elements.get());
+                unsigned long * indices(resize ? new unsigned long[capacity] : _imp->_indices.get());
 
-                memcpy(_new_elements, _elements, sizeof(DataType_) * _used_elements);
+                ++_imp->_used_elements;
 
-                delete[] _elements;
+                if (resize)
+                {
+                    std::copy(_imp->_elements.get(), _imp->_elements.get() + position + 1, elements);
+                    std::copy(_imp->_indices.get(), _imp->_indices.get() + position + 1, indices);
+                }
 
-                _elements = _new_elements;
-                _capacity = new_capacity;
+                // Relies on capactiy > used_elements.
+                std::copy_backward(_imp->_elements.get() + position, _imp->_elements.get() + _imp->_used_elements,
+                        elements + _imp->_used_elements + 1);
+                std::copy_backward(_imp->_indices.get() + position, _imp->_indices.get() + _imp->_used_elements,
+                        indices + _imp->_used_elements + 1);
+
+                if (resize)
+                {
+                    _imp->_elements.reset(elements);
+                    _imp->_indices.reset(indices);
+                    _imp->_capacity = capacity;
+                }
+
+                // Set new element's index and reset it to zero.
+                _imp->_indices[position] = index;
+                _imp->_elements[position] = DataType_(0);
+
             }
 
             /// Our normal implementation of ElementIteratorBase.
@@ -92,6 +111,7 @@ namespace pg512 ///< \todo Namespace name?
 
         public:
             friend class SparseElementIterator<DataType_>;
+            friend class NonZeroElementIterator<DataType_>;
 
             /// Type of the const iterator over our elements.
             typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
@@ -99,7 +119,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our elements.
             typedef typename Vector<DataType_>::ElementIterator ElementIterator;
 
-            /// \name Constructors
+            /// \name Constructors and Destructors
             /// \{
 
             /**
@@ -109,12 +129,14 @@ namespace pg512 ///< \todo Namespace name?
              * \param capacity Number of elements for which the vector shall reserve space.
              **/
             SparseVector(unsigned long size, unsigned long capacity) :
-                _elements(new DataType_[capacity]),
-                _indices(new unsigned long[capacity]),
-                _used_elements(0),
-                _capacity(capacity),
-                _size(size)
+                _imp(new Implementation(size, capacity))
             {
+            }
+
+            /// Destructor.
+            ~SparseVector()
+            {
+                delete _imp;
             }
 
             /// \}
@@ -128,7 +150,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing behind the last element of the vector.
             virtual ConstElementIterator end_elements() const
             {
-                return ConstElementIterator(new SparseElementIterator<DataType_>(*this, _size));
+                return ConstElementIterator(new SparseElementIterator<DataType_>(*this, _imp->_size));
             }
 
             /// Returns iterator pointing to the first element of the vector.
@@ -140,7 +162,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements()
             {
-                return ElementIterator(new SparseElementIterator<DataType_>(*this, _size));
+                return ElementIterator(new SparseElementIterator<DataType_>(*this, _imp->_size));
             }
 
             /// Returns const iterator pointing to the first non-zero element of the vector.
@@ -152,7 +174,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns const iterator pointing behind the last element of the vector.
             virtual ConstElementIterator end_non_zero_elements() const
             {
-                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, _used_elements));
+                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, _imp->_used_elements));
             }
 
             /// Returns iterator pointing to the first non-zero element of the vector.
@@ -164,25 +186,25 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_non_zero_elements()
             {
-                return ElementIterator(new NonZeroElementIterator<DataType_>(*this, _used_elements));
+                return ElementIterator(new NonZeroElementIterator<DataType_>(*this, _imp->_used_elements));
             }
 
             /// Returns out element capacity.
             virtual unsigned long capacity() const
             {
-                return _capacity;
+                return _imp->_capacity;
             }
 
             /// Returns our used element number.
             virtual unsigned long used_elements() const
             {
-                return _used_elements;
+                return _imp->_used_elements;
             }
 
             /// Returns our size.
             virtual unsigned long size() const
             {
-                return _size;
+                return _imp->_size;
             }
 
             /// Retrieves element by index, zero-based, unassignable.
@@ -190,11 +212,11 @@ namespace pg512 ///< \todo Namespace name?
             {
                 unsigned long i(0);
 
-                for ( ; (i < _used_elements) && (_indices[i] < index) ; ++i)
+                for ( ; (i < _imp->_used_elements) && (_imp->_indices[i] < index) ; ++i)
                     ;
 
-                if (_indices[i] == index)
-                    return _elements[index];
+                if (_imp->_indices[i] == index)
+                    return _imp->_elements[index];
                 else
                     return _zero_element;
             }
@@ -204,39 +226,83 @@ namespace pg512 ///< \todo Namespace name?
             {
                 unsigned long i(0);
 
-                for ( ; (i < _used_elements) && (_indices[i] < index) ; ++i)
+                for ( ; (i < _imp->_used_elements) && (_imp->_indices[i] < index) ; ++i)
                     ;
 
-                if (_used_elements == _capacity)
-                    _resize(_capacity + 10); /// \todo Implement intelligent resizing.
+                if (_imp->_indices[i] != index)
+                    _insert_element(i, index);
 
-                if (_elements[i] != 0)
-                {
-                    memmove(_elements + 1 + i, _elements + i, sizeof(DataType_) * (_used_elements - i)); /// \todo Merge with resizing.
-                    memmove(_indices + 1 + i, _indices + i, sizeof(unsigned long) * (_used_elements - i));
-                }
-
-                _elements[i] = DataType_(0);
-                _indices[i] = index;
-                ++_used_elements;
-
-                return _elements[i];
+                return _imp->_elements[i];
             }
 
             /// Returns a copy of the vector.
             virtual SparseVector * copy() const
             {
-                SparseVector * result(new SparseVector<DataType_>(_size, _capacity));
+                SparseVector * result(new SparseVector<DataType_>(_imp->_size, _imp->_capacity));
 
-                result->_used_elements = _used_elements;
-                std::copy(_elements, _elements + _used_elements, result->_elements);
-                std::copy(_indices, _indices + _used_elements, result->_indices);
+                result->_imp->_used_elements = _imp->_used_elements;
+                std::copy(_imp->_elements.get(), _imp->_elements.get() + _imp->_used_elements,
+                        result->_imp->_elements.get());
+                std::copy(_imp->_indices.get(), _imp->_indices.get() + _imp->_used_elements,
+                        result->_imp->_indices.get());
 
                 return result;
             }
     };
 
     template <typename DataType_> const DataType_ SparseVector<DataType_>::_zero_element = 0;
+
+    /**
+     * \brief SparseVector::Implementation is the private implementation class for SparseVector.
+     *
+     * \ingroup grpvector
+     **/
+    template <typename DataType_> class SparseVector<DataType_>::Implementation
+    {
+        private:
+            /// Unwanted copy-constructor: Do not implement. See EffC++, Item 27.
+            Implementation(const Implementation &);
+
+            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
+            Implementation & operator= (const Implementation &);
+
+        public:
+            /// Our non-zero elements.
+            mutable SharedArray<DataType_> _elements;
+
+            /// Indices of our non-zero elements.
+            mutable SharedArray<unsigned long> _indices;
+
+            /// Out capacity of non-zero elements.
+            mutable unsigned long _capacity;
+
+            /// Our size, the maximal number of non-zero elements
+            const unsigned long _size;
+
+            /// Our number of current non-zero elements.
+            mutable unsigned long _used_elements;
+
+            /// \name Constructors
+            /// \{
+
+            /**
+             * Constructor.
+             *
+             * \param
+             */
+            Implementation(unsigned long size, unsigned long capacity) :
+                _elements(new DataType_[capacity]),
+                _indices(new unsigned long[capacity]),
+                _capacity(capacity),
+                _size(size),
+                _used_elements(1)
+            {
+                std::fill_n(_elements.get(), _capacity, DataType_(0));
+                std::fill_n(_indices.get(), _capacity, 0);
+            }
+
+            /// \}
+    };
 
     /**
      * \brief SparseVector::SparseElementIterator is a plain iterator implementation for sparse vectors.
@@ -274,7 +340,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Copy-constructor.
-            SparseElementIterator(SparseElementIterator<DataType_> const & other) :
+            SparseElementIterator(const SparseElementIterator<DataType_> & other) :
                 _vector(other._vector),
                 _pos(other._pos),
                 _index(other._index)
@@ -286,14 +352,11 @@ namespace pg512 ///< \todo Namespace name?
             /// \name Forward iterator interface
             /// \{
 
-            /// \name Forward iterator interface
-            /// \{
-
             /// Preincrement operator.
             virtual SparseElementIterator<DataType_> & operator++ ()
             {
                 ++_index;
-                while (_vector._indices[_pos] < _index)
+                while ((_pos < _vector._imp->_used_elements) && (_vector._imp->_indices[_pos] < _index))
                     ++_pos;
 
                 return *this;
@@ -302,19 +365,19 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
-                if (_vector._indices[_pos] > _index)
-                    throw InternalError("Resizing of SparseVector via ElementIterator is not yet implemented.");
-                else if (_vector._indices[_pos] == _index)
-                    return _vector._elements[_pos];
+                if (_vector._imp->_indices[_pos] != _index)
+                    _vector._insert_element(_pos, _index);
+
+                return _vector._imp->_elements[_pos];
             }
 
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
-                if (_vector._indices[_pos] > _index)
+                if (_vector._imp->_indices[_pos] != _index)
                     return _vector._zero_element;
-                else if (_vector._indices[_pos] == _index)
-                    return _vector._elements[_pos];
+                else
+                    return _vector._imp->_elements[_pos];
             }
 
             /// Comparison operator for equality.
@@ -381,7 +444,7 @@ namespace pg512 ///< \todo Namespace name?
             NonZeroElementIterator(const SparseVector<DataType_> & vector, unsigned long pos) :
                 _vector(vector),
                 _pos(pos),
-                _index(_vector._indices[pos])
+                _index(_vector._imp->_indices[pos])
             {
             }
 
@@ -402,7 +465,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual NonZeroElementIterator<DataType_> & operator++ ()
             {
                 ++_pos;
-                _index = _vector._indices[_pos];
+                _index = _vector._imp->_indices[_pos];
 
                 return *this;
             }
@@ -410,13 +473,13 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
-                return _vector._elements[_pos];
+                return _vector._imp->_elements[_pos];
             }
 
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
-                return _vector._elements[_pos];
+                return _vector._imp->_elements[_pos];
             }
 
             /// Comparison operator for equality.

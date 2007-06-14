@@ -39,7 +39,7 @@ class DenseMatrixRowSumVectorTest :
                     DataType_ last((v.index() + 1) * s), first(v.index() * s);
                     DataType_ ssum((last * (last + 1) / 2) - (first * (first + 1) / 2));
 
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*v, ssum, ssum * 100 * std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*v, ssum, ssum * 200 * std::numeric_limits<DataType_>::epsilon());
                 }
             }
         }
