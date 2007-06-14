@@ -20,6 +20,12 @@
  *
  * \ingroup grppg512
  **/
+ 
+ /**
+ * \defgroup grpswe LibSWE: Library for Shallow Water Equations
+ *
+ * \ingroup pg512
+ */ 
 
 // ----- LibLA Groups -----
 
@@ -82,3 +88,6 @@
  *
  * \ingroup grptags
  */
+
+
+
