@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 ///< \todo Fix compile errors
-/*
+
 #include <libla/dense_vector.hh>
 #include <libla/vector_scaled_sum.hh>
 #include <libla/vector_norm.hh>
@@ -14,12 +14,12 @@ using namespace pg512;
 using  namespace tests;
 
 template <typename DataType_>
-class VectorScaledSumTest :
+class DenseVectorScaledSumTest :
     public BaseTest
 {
     public:
-        VectorScaledSumTest(const std::string & type) :
-            BaseTest("vector_scaled_sum_test<" + type + ">")
+        DenseVectorScaledSumTest(const std::string & type) :
+            BaseTest("dense_vector_scaled_sum_test<" + type + ">")
         {
         }
 
@@ -51,5 +51,5 @@ class VectorScaledSumTest :
         }
 };
 
-VectorScaledSumTest<float> vector_scaled_sum_test_float("float");
-VectorScaledSumTest<double> vector_scaled__sum_test_double("double");*/
+DenseVectorScaledSumTest<float> dense_vector_scaled_sum_test_float("float");
+DenseVectorScaledSumTest<double> dense_vector_scaled__sum_test_double("double");

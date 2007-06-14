@@ -17,7 +17,7 @@ class DenseVectorNormValueTest :
 {
     public:
         DenseVectorNormValueTest(const std::string & type) :
-            BaseTest("dnese_vector_norm_value_test<" + type + ">")
+            BaseTest("dense_vector_norm_value_test<" + type + ">")
         {
         }
 
@@ -55,12 +55,12 @@ DenseVectorNormValueTest<float> dense_vector_norm_value_test_float("float");
 DenseVectorNormValueTest<double> dense_vector_norm_value_test_double("double");
 
 template <typename DataType_>
-class VectorNormQuickTest :
+class DenseVectorNormQuickTest :
     public QuickTest
 {
     public:
-        VectorNormQuickTest(const std::string & type) :
-            QuickTest("vector_norm_quick_test<" + type + ">")
+        DenseVectorNormQuickTest(const std::string & type) :
+            QuickTest("dense_vector_norm_quick_test<" + type + ">")
         {
         }
 
@@ -91,5 +91,5 @@ class VectorNormQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
     }
 };
-VectorNormQuickTest<float>  vector_norm_quick_test_float("float");
-VectorNormQuickTest<double> vector_norm_quick_test_double("double");
+DenseVectorNormQuickTest<float>  dense_vector_norm_quick_test_float("float");
+DenseVectorNormQuickTest<double> dense_vector_norm_quick_test_double("double");

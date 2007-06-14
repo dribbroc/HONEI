@@ -13,12 +13,12 @@ using namespace pg512;
 using  namespace tests;
 
 template <typename DataType_>
-class ScalarVectorProductTest :
+class DenseScalarVectorProductTest :
     public BaseTest
 {
     public:
-        ScalarVectorProductTest(const std::string & type) :
-            BaseTest("scalar_vector_product_test<" + type + ">")
+        DenseScalarVectorProductTest(const std::string & type) :
+            BaseTest("dense_scalar_vector_product_test<" + type + ">")
         {
         }
 
@@ -36,16 +36,16 @@ class ScalarVectorProductTest :
         }
 };
 
-ScalarVectorProductTest<float> scalar_vector_product_test_float("float");
-ScalarVectorProductTest<double> scalar_vector_product_test_double("double");
+DenseScalarVectorProductTest<float> dense_scalar_vector_product_test_float("float");
+DenseScalarVectorProductTest<double> dense_scalar_vector_product_test_double("double");
 
 template <typename DataType_>
-class ScalarVectorProductQuickTest :
+class DenseScalarVectorProductQuickTest :
     public QuickTest
 {
     public:
-        ScalarVectorProductQuickTest(const std::string & type) :
-            QuickTest("scalar_vector_product_quick_test<" + type + ">")
+        DenseScalarVectorProductQuickTest(const std::string & type) :
+            QuickTest("dense_scalar_vector_product_quick_test<" + type + ">")
         {
         }
 
@@ -60,5 +60,5 @@ class ScalarVectorProductQuickTest :
             TEST_CHECK_EQUAL(v1, 2 * size);
         }
 };
-ScalarVectorProductQuickTest<float>  scalar_vector_product_quick_test_float("float");
-ScalarVectorProductQuickTest<double> scalar_vector_product_quick_test_double("double");
+DenseScalarVectorProductQuickTest<float>  dense_scalar_vector_product_quick_test_float("float");
+DenseScalarVectorProductQuickTest<double> dense_scalar_vector_product_quick_test_double("double");

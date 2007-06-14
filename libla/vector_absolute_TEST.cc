@@ -12,12 +12,12 @@ using namespace pg512;
 using  namespace tests;
 
 template <typename DataType_>
-class VectorAbsoluteValueTest :
+class DenseVectorAbsoluteValueTest :
     public BaseTest
 {
     public:
-        VectorAbsoluteValueTest(const std::string & type) :
-            BaseTest("vector_absolute_value_test<" + type + ">")
+        DenseVectorAbsoluteValueTest(const std::string & type) :
+            BaseTest("dense_vector_absolute_value_test<" + type + ">")
         {
         }
 
@@ -39,16 +39,16 @@ class VectorAbsoluteValueTest :
         }
 };
 
-VectorAbsoluteValueTest<float> vector_absolute_value_test_float("float");
-VectorAbsoluteValueTest<double> vector_absolute_value_test_double("double");
+DenseVectorAbsoluteValueTest<float> dense_vector_absolute_value_test_float("float");
+DenseVectorAbsoluteValueTest<double> dense_vector_absolute_value_test_double("double");
 
 template <typename DataType_>
-class VectorAbsoluteQuickTest :
+class DenseVectorAbsoluteQuickTest :
     public QuickTest
 {
     public:
-        VectorAbsoluteQuickTest(const std::string & type) :
-            QuickTest("vector_absolute_quick_test<" + type + ">")
+        DenseVectorAbsoluteQuickTest(const std::string & type) :
+            QuickTest("dense_vector_absolute_quick_test<" + type + ">")
         {
         }
 
@@ -67,5 +67,5 @@ class VectorAbsoluteQuickTest :
             TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(*dv1), *dv2);
         }
 };
-VectorAbsoluteQuickTest<float>  vector_absolute_quick_test_float("float");
-VectorAbsoluteQuickTest<double> vector_absolute_quick_test_double("double");
+DenseVectorAbsoluteQuickTest<float>  dense_vector_absolute_quick_test_float("float");
+DenseVectorAbsoluteQuickTest<double> dense_vector_absolute_quick_test_double("double");
