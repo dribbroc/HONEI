@@ -67,7 +67,7 @@ namespace pg512
 
             for (typename Vector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
             {
-                *l = scalar;
+                *l *= scalar;
             }
 
             return vector;
