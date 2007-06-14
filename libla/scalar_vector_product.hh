@@ -51,7 +51,7 @@ namespace pg512
 
             for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
-                vector[l.index()] = scalar * *l;
+                *l *= scalar;
             }
 
             return vector;
@@ -67,7 +67,7 @@ namespace pg512
 
             for (typename Vector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
             {
-                vector[l.index()] = scalar * *l;
+                *l = scalar;
             }
 
             return vector;

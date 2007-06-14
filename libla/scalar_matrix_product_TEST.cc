@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 ///< \todo Fix compile errors
-/*
+
 #include <libla/dense_matrix.hh>
 #include <libla/scalar_matrix_product.hh>
 #include <unittest/unittest.hh>
@@ -43,4 +43,4 @@ class ScalarMatrixProductTest :
 };
 
 ScalarMatrixProductTest<float> scalar_matrix_product_test_float("float");
-ScalarMatrixProductTest<double> scalar_matrix_product_test_double("double");*/
+ScalarMatrixProductTest<double> scalar_matrix_product_test_double("double");

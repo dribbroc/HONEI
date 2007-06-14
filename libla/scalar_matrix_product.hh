@@ -50,7 +50,7 @@ namespace pg512
         {
 			for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
-                matrix[l.index()] = scalar * *l;
+                *l *= scalar;
             }
             return matrix;
 		}
@@ -65,7 +65,7 @@ namespace pg512
 
 			for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()), l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
-				matrix[l.index()] = scalar * *l;
+				*l *= scalar;
             }
 
             return matrix;
