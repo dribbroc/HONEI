@@ -62,7 +62,7 @@ namespace pg512
          * \param matrix BandedMatrix to be scaled.
          * \param scalar The scalar to be used.
          **/
-        static BandedMatrix<DataType_> value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
+        static BandedMatrix<DataType_> & value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
         {
 
             for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
