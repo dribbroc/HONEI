@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/vector_mask_TEST.cc: Added DenseVectorMaskTest.
+	* libla/files.m4: Added vector_mask_TEST.cc.
+	
+2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/*_TEST.cc: Unified test names.
 	
 2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
