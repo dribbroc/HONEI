@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-14 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/scalar_matrix_product_TEST.cc: Rewrote test case to compare
+	two matrices.
+
+2007-06-14 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/matrix_row_sum_vector_TEST.cc: Fixed error margin.
 	* libla/scalar_matrix_product.hh: Applied coding conventions.
 	* libla/sparse_vector.hh: Rewrote SparseVector's insertion mechanism.
