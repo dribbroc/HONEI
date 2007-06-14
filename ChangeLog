@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/files.m4: Fixed contents. Please pay attention to M4 syntax
+	guys!
+
+2007-06-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/shared_array.hh: Oops. Forgot to commit reset() support for
 	SharedArray.
 
