@@ -5,17 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/shared_array.hh: Oops. Forgot to commit reset() support for
+	SharedArray.
+
 2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/scalar_vector_product.hh: Fixed a missing *-operator.
 	* libla/scalar_matrix_product.hh: Added a reference-&.
 	* +libla/vector_masked_min_index.hh, 
 	+libla/vector_masked_max_index.hh: Added these operations for 
 	use by graph algorithms.
 	* libla/files.m4: Added the two files.
-
-2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
-
-	* libla/scalar_vector_product.hh: Fixed a missing *-operator.	
 
 2007-06-14 Danny van Dyk <kugelfang@gentoo.org>
 

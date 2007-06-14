@@ -87,14 +87,15 @@ namespace pg512 ///< \todo Namespace name?
     {
         private:
             /// Pointer to our array.
-            DataType_ *_array;
-
+            mutable DataType_ *_array;
 
         public:
             /// Constructor.
             SharedArray(DataType_ *array) :
                 _array(array)
             {
+                Log::instance()->message(ll_full, "SharedArray: new array = " + stringify(array) + " taken with count = "
+                        + stringify(SharedArrayCounter<DataType_>::instance()->count(array)));
                 SharedArrayCounter<DataType_>::instance()->increase(_array);
             }
 
@@ -113,9 +114,12 @@ namespace pg512 ///< \todo Namespace name?
                 long count(SharedArrayCounter<DataType_>::instance()->count(_array));
 
                 if (count < 0)
-                    SharedArrayError("~SharedArray: reference counter below zero for address " + stringify(_array));
+                    throw SharedArrayError("~SharedArray: reference counter below zero for address " + stringify(_array));
                 else if (count == 0)
+                {
+                    Log::instance()->message(ll_full, "~SharedArray: _array = " + stringify(_array) + " deleted");
                     delete[] _array;
+                }
             }
 
             DataType_ & operator[] (std::ptrdiff_t index) const
@@ -131,6 +135,28 @@ namespace pg512 ///< \todo Namespace name?
             DataType_ * get() const
             {
                 return _array;
+            }
+
+            void reset(DataType_ * array) const
+            {
+                if (_array != array)
+                    Log::instance()->message(ll_full, "reset: new array = " + stringify(array) + " taken with count = "
+                            + stringify(SharedArrayCounter<DataType_>::instance()->count(array)));
+
+                // Increase first to avoid race conditions like 'A.reset(A.get())'
+                SharedArrayCounter<DataType_>::instance()->increase(array);
+                SharedArrayCounter<DataType_>::instance()->decrease(_array);
+
+                long count(SharedArrayCounter<DataType_>::instance()->count(_array));
+                if (count < 0)
+                    throw SharedArrayError("reset: reference counter below zero for address " + stringify(_array));
+                else if (count == 0)
+                {
+                    Log::instance()->message(ll_full, "reset: _array = " + stringify(_array) + " deleted");
+                    delete[] _array;
+                }
+
+                _array = array;
             }
     };
 }
