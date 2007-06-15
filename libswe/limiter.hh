@@ -44,22 +44,24 @@ namespace pg512
 
     template<typename Tag_ = tags::CPU> class Limiter
         {
+            protected:
+
             /// Returns the maximum of two values.
-            template<typename DataType_> static DataType_ max(const DataType_ & left, const DataType_ & right)
+            template<typename DataType_> static const DataType_ max(const DataType_ & left, const DataType_ & right)
             {
-                return ((left < right) ? right : left);
+                return ( (left < right) ? right : left);
             }
 
             /// Returns the minimum of two values.            
-            template<typename DataType_> static DataType_ min(const DataType_ & left, const DataType_ & right)
+            template<typename DataType_> static const DataType_ min(const DataType_ & left, const DataType_ & right)
             {
-                return ((left < right) ? left : right);
+                return ( (left < right) ? left : right);
             }
 
             public:
 
             /// Abstract function for evaluating the limiterfunction.
-            template<typename DataType_> static DataType_ value(const DataType_ & scal);
+            template<typename DataType_> static const DataType_ value(const DataType_ & scal);
 
         };
 
@@ -72,10 +74,12 @@ namespace pg512
 
     template<typename Tag_ = tags::CPU> class MM_Limiter : public Limiter<>
     {
+        public:
+
         /// Evaluates due to the MinMod-Limiter specification
-        template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
         {
-            return( max<DataType_, DataType_>( 0, min<DataType_, DataType_>(1, scal) ) );
+            return( max<DataType_>( (DataType_) 0, min<DataType_>( (DataType_) 1, scal) ) );
         }
     };
 
@@ -87,10 +91,12 @@ namespace pg512
 
     template<typename Tag_ = tags::CPU> class SB_Limiter : public Limiter<>
     {
-        /// Evaluates due to the SuperBee-Limiter specification
-        template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        public:
+
+        
+        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
         {
-            return( max<DataType_, DataType_>( 0, max<DataType_, DataType_>(min<DataType_, DataType_>(2*scal, 1), min<DataType_, DataType_>(scal, 2) ) ) );
+            return( max<DataType_>( (DataType_) 0, max<DataType_>( min<DataType_>(2*scal,(DataType_) 1), min<DataType_>(scal,(DataType_) 2) ) ) );
         }
     };
 
@@ -102,10 +108,12 @@ namespace pg512
 
     template<typename Tag_ = tags::CPU> class MC_Limiter : public Limiter<>
     {
+        public:
+
         /// Evaluates due to the Monotonized-Central-Limiter specification
-        template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
         {
-            return( max<DataType_, DataType_>(0, min<DataType_, DataType_>(min<DataType_, DataType_>(2*scal, 2), (1+scal)/2)) );
+            return( max<DataType_>( (DataType_) 0, min<DataType_>( min<DataType_>( 2*scal, (DataType_) 2), (1+scal)/2) ) );
         }
     };
 
@@ -117,10 +125,12 @@ namespace pg512
 
     template<typename Tag_ = tags::CPU> class VL_Limiter : public Limiter<>
     {
+        public:
+
         /// Evaluates due to the VanLeer-Limiter specification
-        template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
         {
-            return( (scal <= 0) ? 0 : (2*scal/(1+scal)) );
+            return( (scal <= (DataType_) 0 ) ? (DataType_) 0 : (2*scal/(1+scal)) );
         }
     };
 

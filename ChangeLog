@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-15 Volker Jung <volker.m.jung@t-online.de>
+
+	* libswe/limiter_TEST.cc: Removed unnecessary tests.
+	* libswe/limiter.hh: Fixed further errors, hopefully improved
+	readability.
+
 2007-06-15 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/files.m4: Removed tests for VectorMaskedMin/MaxIndex, 
