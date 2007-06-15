@@ -108,10 +108,10 @@ namespace pg512 ///< \todo Namespace name?
         public Matrix<DataType_>
     {
         public:
-            /// Retrieves element by index, zero-based, unassignable.
+            /// Retrieves row by index, zero-based, unassignable.
             virtual const Vector<DataType_> & operator[] (unsigned long row) const = 0;
 
-            /// Retrieves element by index, zero-based, assignable
+            /// Retrieves row by index, zero-based, assignable
             virtual Vector<DataType_> & operator[] (unsigned long row) = 0;
 
             /// \todo Iteration over rows.
