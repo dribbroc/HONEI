@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-15 Volker Jung <volker.m.jung@t-online.de>
+
+	* libswe/files.m4: Added limiter testfile.
+	* libswe/limiter.hh: Fixed numerous errors and applied coding
+	conventions.
+	* libswe/limiter_TEST.cc: Added creation tests for each derived
+	limiter-class.
+
 2007-06-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/files.m4: Fixed contents. Please pay attention to M4 syntax

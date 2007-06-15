@@ -1,4 +1,4 @@
-/* vim: set sw=4 sts=4 et nofoldenable : */
+/* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
@@ -23,6 +23,8 @@
 #ifndef LIBSWE_GUARD_LIMITER_HH
 #define LIBSWE_GUARD_LIMITER_HH 1
 
+#include <libla/tags.hh>
+
 /**
  * \file
  *
@@ -40,16 +42,16 @@ namespace pg512
      * \ingroup grpswe
      **/
 
-    template<typename Tags=tags::CPU> class Limiter
+    template<typename Tag_ = tags::CPU> class Limiter
         {
             /// Returns the maximum of two values.
-            template<typename Dt_, typename Dt_> static Dt_ max(const Dt_ & left, const Dt_ & right)
+            template<typename DataType_> static DataType_ max(const DataType_ & left, const DataType_ & right)
             {
                 return ((left < right) ? right : left);
             }
 
             /// Returns the minimum of two values.            
-            template<typename Dt_, typename Dt_> static Dt_ min(const Dt_ & left, const Dt_ & right)
+            template<typename DataType_> static DataType_ min(const DataType_ & left, const DataType_ & right)
             {
                 return ((left < right) ? left : right);
             }
@@ -57,7 +59,7 @@ namespace pg512
             public:
 
             /// Abstract function for evaluating the limiterfunction.
-            template<typename DataType_> virtual static DataType_ value(const DataType_ & scal);
+            template<typename DataType_> static DataType_ value(const DataType_ & scal);
 
         };
 
@@ -68,10 +70,10 @@ namespace pg512
      * \ingroup grpswe
      **/
 
-    template<typename Tags=tags::CPU> class MM_Limiter : public Limiter
+    template<typename Tag_ = tags::CPU> class MM_Limiter : public Limiter<>
     {
         /// Evaluates due to the MinMod-Limiter specification
-        virtual template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        template<typename DataType_> static DataType_ value(const DataType_ & scal)
         {
             return( max<DataType_, DataType_>( 0, min<DataType_, DataType_>(1, scal) ) );
         }
@@ -83,10 +85,10 @@ namespace pg512
      * \ingroup grpswe
      **/
 
-    template<typename Tags=tags::CPU> class SB_Limiter : public Limiter
+    template<typename Tag_ = tags::CPU> class SB_Limiter : public Limiter<>
     {
         /// Evaluates due to the SuperBee-Limiter specification
-        virtual template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        template<typename DataType_> static DataType_ value(const DataType_ & scal)
         {
             return( max<DataType_, DataType_>( 0, max<DataType_, DataType_>(min<DataType_, DataType_>(2*scal, 1), min<DataType_, DataType_>(scal, 2) ) ) );
         }
@@ -98,10 +100,10 @@ namespace pg512
      * \ingroup grpswe
      **/
 
-    template<typename Tags=tags::CPU> class MC_Limiter : public Limiter
+    template<typename Tag_ = tags::CPU> class MC_Limiter : public Limiter<>
     {
         /// Evaluates due to the Monotonized-Central-Limiter specification
-        virtual template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        template<typename DataType_> static DataType_ value(const DataType_ & scal)
         {
             return( max<DataType_, DataType_>(0, min<DataType_, DataType_>(min<DataType_, DataType_>(2*scal, 2), (1+scal)/2)) );
         }
@@ -113,10 +115,10 @@ namespace pg512
      * \ingroup grpswe
      **/
 
-    template<typename Tags=tags::CPU> class VL_Limiter : public Limiter
+    template<typename Tag_ = tags::CPU> class VL_Limiter : public Limiter<>
     {
         /// Evaluates due to the VanLeer-Limiter specification
-        virtual template<typename DataType_> static DataType_ value(const DataType_ & scal)
+        template<typename DataType_> static DataType_ value(const DataType_ & scal)
         {
             return( (scal <= 0) ? 0 : (2*scal/(1+scal)) );
         }
