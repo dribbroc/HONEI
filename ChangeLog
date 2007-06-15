@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-15 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/files.m4: Removed tests for VectorMaskedMin/MaxIndex, 
+	because they don't exist.
+
+2007-06-15 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* +libgraph/files.m4: Added files.m4, appended 
 	matrix_element_distance.hh.
 	* +libgraph/matrix_element_distance.hh: Added first try of 
