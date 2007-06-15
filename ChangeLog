@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-15 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver,hh: Added base class for all SWE solvers,
+	added declaration of 2DSWE_Relax_ImExRK_FVMUSCL_Solver.
+
 2007-06-15 Volker Jung <volker.m.jung@t-online.de>
 
 	* libswe/limiter_TEST.cc: Removed unnecessary tests.
@@ -145,6 +150,10 @@ see the NEWS file.
 
 	* libla/files.m4: Fixed contents from previous unresolved conflict.
 	Removed stray test entry for VectorScaledSum.
+
+2007-06-13 Markus Geveler <apryde@gmx.de>
+
+	* libla/files.m4: Once again.
 
 2007-06-13 Markus Geveler <apryde@gmx.de>
 
