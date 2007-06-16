@@ -29,9 +29,9 @@ class MM_LimiterTest :
             DataType_ s1(-1.23456);
             DataType_ s2(1.23456);
             DataType_ s3(0.23456);
-            TEST_CHECK_EQUAL(MM_Limiter<>::value(s1),static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(MM_Limiter<>::value(s2),static_cast<DataType_>(1));
-            TEST_CHECK_EQUAL(MM_Limiter<>::value(s3),static_cast<DataType_>(0.23456));           
+            TEST_CHECK_EQUAL(MM_Limiter<>::value(s1), static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(MM_Limiter<>::value(s2), static_cast<DataType_>(1));
+            TEST_CHECK_EQUAL(MM_Limiter<>::value(s3), static_cast<DataType_>(0.23456));           
         }
  }; 
 
@@ -58,11 +58,11 @@ class SB_LimiterTest :
             DataType_ s3(0.23456);
             DataType_ s4(0.53456);
             DataType_ s5(1.53456);            
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s1),static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s2),static_cast<DataType_>(2));
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s3),static_cast<DataType_>(2*0.23456));
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s4),static_cast<DataType_>(1));            
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s5),static_cast<DataType_>(1.53456)); 
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s1), static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s2), static_cast<DataType_>(2));
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s3), static_cast<DataType_>(2*0.23456));
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s4), static_cast<DataType_>(1));            
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s5), static_cast<DataType_>(1.53456)); 
         }
  }; 
 
@@ -87,10 +87,10 @@ class MC_LimiterTest :
             DataType_ s2(0.33456);
             DataType_ s3(0.23456);
             DataType_ s4(3.13456);
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s1),static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s2),static_cast<DataType_>((1+s2)/2));
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s3),static_cast<DataType_>(2*0.23456));
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s4),static_cast<DataType_>(2));            
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s1), static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s2), static_cast<DataType_>((1+s2)/2));
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s3), static_cast<DataType_>(2*0.23456));
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s4), static_cast<DataType_>(2));            
         }
  }; 
 
@@ -115,10 +115,10 @@ class VL_LimiterTest :
             DataType_ s2(3.33456);
             DataType_ s3(0.23456);
             DataType_ s4(999999.13456);
-            TEST_CHECK_EQUAL(VL_Limiter<>::value(s1),static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(VL_Limiter<>::value(s2),static_cast<DataType_>((s2+s2)/(s2+1)));
-            TEST_CHECK_EQUAL(VL_Limiter<>::value(s3),static_cast<DataType_>((s3+s3)/(s3+1)));
-            TEST_CHECK(VL_Limiter<>::value(s4)< static_cast<DataType_>(2));            
+            TEST_CHECK_EQUAL(VL_Limiter<>::value(s1), static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(VL_Limiter<>::value(s2), static_cast<DataType_>((s2+s2)/(s2+1)));
+            TEST_CHECK_EQUAL(VL_Limiter<>::value(s3), static_cast<DataType_>((s3+s3)/(s3+1)));
+            TEST_CHECK(VL_Limiter<>::value(s4) < static_cast<DataType_>(2));            
         }
  }; 
 

@@ -178,9 +178,9 @@ class SparseVectorFunctionsTest :
                         *i = DataType_(1);
                 }
                 
-                TEST_CHECK_EQUAL(sv1.capacity(),size/3+1);
-                TEST_CHECK_EQUAL(sv1.size(),size);
-                TEST_CHECK_EQUAL(sv1.used_elements(),size/10);
+                TEST_CHECK_EQUAL(sv1.capacity(), size/3+1);
+                TEST_CHECK_EQUAL(sv1.size(), size);
+                TEST_CHECK_EQUAL(sv1.used_elements(), size/10);
             }
         }
 };
@@ -213,13 +213,13 @@ class SparseVectorQuickTest :
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
             }
-            TEST_CHECK_EQUAL(sv1.capacity(),size);
-            TEST_CHECK_EQUAL(sv2.capacity(),3);
-            TEST_CHECK_EQUAL(sv1.size(),size);
-            TEST_CHECK_EQUAL(sv2.size(),size);            
-            TEST_CHECK_EQUAL(sv1.used_elements(),1);
-            TEST_CHECK_EQUAL(sv2.used_elements(),1); 
-            TEST_CHECK_EQUAL(sv1,sv2);           
+            TEST_CHECK_EQUAL(sv1.capacity(), size);
+            TEST_CHECK_EQUAL(sv2.capacity(), 3);
+            TEST_CHECK_EQUAL(sv1.size(), size);
+            TEST_CHECK_EQUAL(sv2.size(), size);            
+            TEST_CHECK_EQUAL(sv1.used_elements(), 1);
+            TEST_CHECK_EQUAL(sv2.used_elements(), 1); 
+            TEST_CHECK_EQUAL(sv1, sv2);           
         }
 };
 SparseVectorQuickTest<float> sparse_vector_quick_test_float("float");

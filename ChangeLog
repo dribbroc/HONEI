@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-06-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libswe/limiter_TEST.cc: Applied coding conventions.
+	* libla/sparse_vector_TEST.cc: Applied coding conventions.
+	* libgraph/matrix_element_distance_TEST.cc: Added MatrixElementDistanceTest.
+	
+2007-06-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libswe/limiter_TEST.cc: Rewrote LimiterTest's.
 	
 2007-06-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
