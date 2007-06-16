@@ -25,8 +25,8 @@ class ScalarDenseMatrixProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(1)), dm2(size, size + 1, DataType_(2));
-                DenseMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(2), dm1));
+                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(6));
+                DenseMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), dm1));
 
                 for (typename Matrix<DataType_>::ConstElementIterator i(dm1.begin_elements()),
                         i_end(dm1.end_elements()), j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
@@ -53,8 +53,8 @@ class ScalarDenseMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm(size, size + 1, DataType_(1));
-            DenseMatrix<DataType_> prod1(ScalarMatrixProduct<DataType_>::value(DataType_(2), dm));
+            DenseMatrix<DataType_> dm(size, size + 1, DataType_(2));
+            DenseMatrix<DataType_> prod1(ScalarMatrixProduct<DataType_>::value(DataType_(3), dm));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
@@ -62,9 +62,9 @@ class ScalarDenseMatrixProductQuickTest :
             {
                 vsum += *i;
             }
-            TEST_CHECK_EQUAL_WITHIN_EPS(vsum, static_cast<DataType_>(2 * size * (size +1)), 
+            TEST_CHECK_EQUAL_WITHIN_EPS(vsum, static_cast<DataType_>(6 * size * (size +1)), 
                 std::numeric_limits<DataType_>::epsilon());
         }
 };
-//ScalarDenseMatrixProductQuickTest<float> scalar_dense_matrix_product_quick_test_float("float");
-//ScalarDenseMatrixProductQuickTest<double> scalar_dense_matrix_product_quick_test_double("double");
+ScalarDenseMatrixProductQuickTest<float> scalar_dense_matrix_product_quick_test_float("float");
+ScalarDenseMatrixProductQuickTest<double> scalar_dense_matrix_product_quick_test_double("double");

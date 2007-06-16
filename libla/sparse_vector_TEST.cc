@@ -109,10 +109,118 @@ class SparseVectorEqualityTest :
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
                 }
+                
             }
         }
 };
 SparseVectorEqualityTest<float> sparse_vector_equality_test_float("float");
 SparseVectorEqualityTest<double> sparse_vector_equality_test_double("double");
 
+template <typename DataType_>
+class SparseVectorEquityTest :
+    public BaseTest
+{
+    public:
+        SparseVectorEquityTest(const std::string & type) :
+            BaseTest("sparse_vector_equity_test<" + type + ">")
+        {
+        }
 
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                SparseVector<DataType_> sv1(size, size);
+                SparseVector<DataType_> sv2(size, size / 4 + 1);
+
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()),
+                        i_end(sv1.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0)
+                        *i = DataType_(1);
+                }
+
+                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()),
+                        i_end(sv2.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0)
+                        *i = DataType_(1);
+                }
+
+                TEST_CHECK_EQUAL(sv1, sv2);
+                
+            }
+        }
+};
+SparseVectorEquityTest<int> sparse_vector_equity_test_int("int");
+SparseVectorEquityTest<bool> sparse_vector_equity_test_bool("bool");
+
+template <typename DataType_>
+class SparseVectorFunctionsTest :
+    public BaseTest
+{
+    public:
+        SparseVectorFunctionsTest(const std::string & type) :
+            BaseTest("sparse_vector_functions_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                SparseVector<DataType_> sv1(size, size/3+1);
+
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()),
+                        i_end(sv1.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0)
+                        *i = DataType_(1);
+                }
+                
+                TEST_CHECK_EQUAL(sv1.capacity(),size/3+1);
+                TEST_CHECK_EQUAL(sv1.size(),size);
+                TEST_CHECK_EQUAL(sv1.used_elements(),size/10);
+            }
+        }
+};
+SparseVectorFunctionsTest<float> sparse_vector_functions_test_float("float");
+SparseVectorFunctionsTest<double> sparse_vector_functions_test_double("double");
+
+
+template <typename DataType_>
+class SparseVectorQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            SparseVector<DataType_> sv1(size, size);
+            SparseVector<DataType_> sv2(size, 3);
+
+            sv1[0]=static_cast<DataType_>(3.3598);
+            sv2[0]=static_cast<DataType_>(3.3598);
+
+            for (typename Vector<DataType_>::ConstElementIterator i(sv1.begin_elements()),
+                    i_end(sv1.end_elements()), j(sv2.begin_elements()) ; i != i_end ;
+                    ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+            }
+            TEST_CHECK_EQUAL(sv1.capacity(),size);
+            TEST_CHECK_EQUAL(sv2.capacity(),3);
+            TEST_CHECK_EQUAL(sv1.size(),size);
+            TEST_CHECK_EQUAL(sv2.size(),size);            
+            TEST_CHECK_EQUAL(sv1.used_elements(),1);
+            TEST_CHECK_EQUAL(sv2.used_elements(),1); 
+            TEST_CHECK_EQUAL(sv1,sv2);           
+        }
+};
+SparseVectorQuickTest<float> sparse_vector_quick_test_float("float");
+SparseVectorQuickTest<double> sparse_vector_quick_test_double("double");
