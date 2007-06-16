@@ -14,87 +14,113 @@ using namespace tests;
 
 // Testcases for class MM_Limiter
 
-template <typename Tag_ = tags::CPU>
-class MM_LimiterCreationTest :
+template <typename DataType_>
+class MM_LimiterTest :
     public BaseTest
 {
     public:
-        MM_LimiterCreationTest(const std::string & type) :
-            BaseTest("mm_limiter_creation_test<" + type + ">")
+        MM_LimiterTest(const std::string & type) :
+            BaseTest("mm_limiter_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
-            std::tr1::shared_ptr<MM_Limiter<> > mm_limiter(new MM_Limiter<>() );
-            TEST_CHECK(true);
+            DataType_ s1(-1.23456);
+            DataType_ s2(1.23456);
+            DataType_ s3(0.23456);
+            TEST_CHECK_EQUAL(MM_Limiter<>::value(s1),static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(MM_Limiter<>::value(s2),static_cast<DataType_>(1));
+            TEST_CHECK_EQUAL(MM_Limiter<>::value(s3),static_cast<DataType_>(0.23456));           
         }
  }; 
 
-MM_LimiterCreationTest<> mm_limiter_test_float("");
+MM_LimiterTest<float> mm_limiter_test_float("float");
+MM_LimiterTest<double> mm_limiter_test_double("double");
 
 
 // Testcases for class SB_Limiter
 
-template <typename Tag_ = tags::CPU>
-class SB_LimiterCreationTest :
+template <typename DataType_>
+class SB_LimiterTest :
     public BaseTest
-{ 
+{
     public:
-        SB_LimiterCreationTest(const std::string & type) :
-            BaseTest("sb_limiter_creation_test<" + type + ">")
+        SB_LimiterTest(const std::string & type) :
+            BaseTest("sb_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
-            std::tr1::shared_ptr<SB_Limiter<> > sb_limiter(new SB_Limiter<>() );
-            TEST_CHECK(true);
+            DataType_ s1(-1.23456);
+            DataType_ s2(2.23456);
+            DataType_ s3(0.23456);
+            DataType_ s4(0.53456);
+            DataType_ s5(1.53456);            
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s1),static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s2),static_cast<DataType_>(2));
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s3),static_cast<DataType_>(2*0.23456));
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s4),static_cast<DataType_>(1));            
+            TEST_CHECK_EQUAL(SB_Limiter<>::value(s5),static_cast<DataType_>(1.53456)); 
         }
-};
+ }; 
 
-SB_LimiterCreationTest<> sb_limiter_test_float("");
-
+SB_LimiterTest<float> sb_limiter_test_float("float");
+SB_LimiterTest<double> sb_limiter_test_double("double");
 
 // Testcases for class MC_Limiter
 
-template <typename Tag_ = tags::CPU>
-class MC_LimiterCreationTest :
+template <typename DataType_>
+class MC_LimiterTest :
     public BaseTest
 {
     public:
-        MC_LimiterCreationTest(const std::string & type) :
-            BaseTest("mc_limiter_creation_test<" + type + ">")
+        MC_LimiterTest(const std::string & type) :
+            BaseTest("mc_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
-            std::tr1::shared_ptr<MC_Limiter<> > mc_limiter(new MC_Limiter<>() );
-            TEST_CHECK(true);
+            DataType_ s1(-1.23456);
+            DataType_ s2(0.33456);
+            DataType_ s3(0.23456);
+            DataType_ s4(3.13456);
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s1),static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s2),static_cast<DataType_>((1+s2)/2));
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s3),static_cast<DataType_>(2*0.23456));
+            TEST_CHECK_EQUAL(MC_Limiter<>::value(s4),static_cast<DataType_>(2));            
         }
-}; 
+ }; 
 
-MC_LimiterCreationTest<> mc_limiter_test_float("");
-
+MC_LimiterTest<float> mc_limiter_test_float("float");
+MC_LimiterTest<double> mc_limiter_test_double("double");
 
 // Testcases for class VL_Limiter
 
-template <typename Tag_ = tags::CPU>
-class VL_LimiterCreationTest :
+template <typename DataType_>
+class VL_LimiterTest :
     public BaseTest
 {
     public:
-        VL_LimiterCreationTest(const std::string & type) :
-            BaseTest("vl_limiter_creation_test<" + type + ">")
+        VL_LimiterTest(const std::string & type) :
+            BaseTest("vl_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
-            std::tr1::shared_ptr<VL_Limiter<> > vl_limiter(new VL_Limiter<>() );
-            TEST_CHECK(true);
+            DataType_ s1(-1.23456);
+            DataType_ s2(3.33456);
+            DataType_ s3(0.23456);
+            DataType_ s4(999999.13456);
+            TEST_CHECK_EQUAL(VL_Limiter<>::value(s1),static_cast<DataType_>(0));
+            TEST_CHECK_EQUAL(VL_Limiter<>::value(s2),static_cast<DataType_>((s2+s2)/(s2+1)));
+            TEST_CHECK_EQUAL(VL_Limiter<>::value(s3),static_cast<DataType_>((s3+s3)/(s3+1)));
+            TEST_CHECK(VL_Limiter<>::value(s4)< static_cast<DataType_>(2));            
         }
-}; 
+ }; 
 
-VL_LimiterCreationTest<> vl_limiter_test_float("");
+VL_LimiterTest<float> vl_limiter_test_float("float");
+VL_LimiterTest<double> vl_limiter_test_double("double");
