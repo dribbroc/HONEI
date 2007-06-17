@@ -9,12 +9,12 @@
 using namespace pg512;
 using  namespace tests;
 template <typename DataType_>
-class MatrixElementDistanceTest :
-    public BaseTest
+class MatrixElementDistanceQuickTest :
+    public QuickTest
 {
     public:
-        MatrixElementDistanceTest(const std::string & type) :
-            BaseTest("matrix_element_distance_test<" + type + ">")
+        MatrixElementDistanceQuickTest(const std::string & type) :
+            QuickTest("matrix_element_distance_quick_test<" + type + ">")
         {
         }
 
@@ -22,7 +22,7 @@ class MatrixElementDistanceTest :
         {
             unsigned long columns(3), rows(2);
             std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>
-                (3, 2,));
+                (3, 2));
 
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm->begin_elements()),
                     i_end(dm->end_elements()) ; i != i_end ; ++i)
@@ -31,13 +31,18 @@ class MatrixElementDistanceTest :
             }
             DenseMatrix<DataType_> distance = MatrixElementDistance::value(*dm);
             
-            TEST_CHECK_EQUAL(distance[0][0],0);
-            TEST_CHECK_EQUAL(distance[0][1],0);            
+            TEST_CHECK_EQUAL(distance[0][0], 0);
+            TEST_CHECK_EQUAL(distance[1][1], 0);            
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][1], sqrt(8), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][0], sqrt(8), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][2], sqrt(32), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], sqrt(8), std::numeric_limits<DataType_>::epsilon());                                                                                    
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], sqrt(8), std::numeric_limits<DataType_>::epsilon());  
+            
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > dm2(new DenseMatrix<DataType_>
+                (3, 3));            
+            TEST_CHECK_THROWS(MatrixElementDIstance::value(*dm2), MatrixRowsDoNotMatch);
+                                                                                              
         }
 };
-MatrixElementDistanceTest<float>  matrix_element_distance_test_float("float");
-MatrixElementDistanceTest<double> matrix_element_distance_test_double("double");
+MatrixElementDistanceQuickTest<float>  matrix_element_distance_quick_test_float("float");
+MatrixElementDistanceQuickTest<double> matrix_element_distance_test_quick_double("double");
