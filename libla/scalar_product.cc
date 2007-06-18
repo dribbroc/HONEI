@@ -23,11 +23,12 @@
 #include <iostream>
 
 using namespace pg512;
-
+/*
 template <>
-float ScalarProduct<float, tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right)
+float ScalarProduct<tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right)
 {
     std::cout << "Yay! Cell-specilisation!" << std::endl;
 
     return 0;
 }
+*/

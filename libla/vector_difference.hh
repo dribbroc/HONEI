@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -37,42 +38,47 @@ namespace pg512
 
     /**
      * VectorSum is the class template for the difference of two vectors.
-     *
+     * \brief The first referenced vector is changed under this operation.
      * \ingroup grpvectoroperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct VectorDifference
+    template <typename Tag_ = tags::CPU> struct VectorDifference
     {
         /**
          * Returns the the resulting vector of the difference of two given DenseVector instances.
+         *
+         * \param left Reference to dense vector that will be also used as result vector.
+         * \param right Reference to constant dense vector to be added.
          **/
-        static DenseVector<DataType_> value(const DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const DenseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DenseVector<DataType_> result(left.size(), 0, 0, 1);
-
-            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_elements()), l_end(left.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
             {
-                result[l.index()] = *l - right[l.index()];
+                *l -= right[l.index()];
             }
 
-            return result;
+            return left;
         }
 
         /**
          * Returns the resulting vector of the difference of two given SparseVector instances.
+         *
+         * \param left Reference to sparse vector that will be also used as result vector.
+         * \param right Reference to constant sparse vector to be added.
          **/
-        static SparseVector<DataType_> value(const SparseVector<DataType_> & left, const SparseVector<DataType_> & right)
+        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> & value(SparseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            SparseVector<DataType_> result(left.size(), right.used_elements() + left.used_elements());
+            SparseVector<DataType1_> result(left.size(), right.used_elements() + left.used_elements());
 
-            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_non_zero_elements()),
-                l_end(left.end_non_zero_elements()), r(right.begin_non_zero_elements()), r_end(right.end_non_zero_elements()) ;
-                l != l_end ; ++l)
+            typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()), r_end(right.end_non_zero_elements());
+            for (typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 if (r.index() < l.index())
                 {
@@ -96,29 +102,29 @@ namespace pg512
         /**
          * Returns the the resulting vector of the difference of a given dense and a given sparse vector.
          *
-         * \param left The dense vector.
-         * \param right The sparse vector.
+         * \param left Reference to dense vector that will be also used as result vector.
+         * \param right Reference to constant sparse vector to be added.
          **/
-         static DenseVector<DataType_> value(const DenseVector<DataType_> & left, const SparseVector<DataType_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DenseVector<DataType_> result(left.size(),0, 0, 1);
+            DenseVector<DataType1_> result(left.size(),0, 0, 1);
 
-            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_elements()),
-                l_end(left.end_elements()), r(right.begin_non_zero_elements()), r_end(right.end_non_zero_elements()) ;
-                    r != r_end ; )
+            typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements());
+            for (typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
             {
                 while (l.index() < r.index() && (l != l_end))
                 {
-                    result[l.index()] = *l;
                     ++l;
                 }
-                result[l.index()] = *l - *r;
+                *l -= *r;
                 ++r;
             }
-            return result;
+            return left;
         }
 
     };

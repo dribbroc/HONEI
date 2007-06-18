@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -39,16 +40,16 @@ namespace pg512 ///< \todo Namespace name?
      *
      * \ingroup grpvectoroperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarProduct
+    template <typename Tag_ = tags::CPU> struct ScalarProduct
     {
-        static DataType_ value(const DenseVector<DataType_> & left, const DenseVector<DataType_> & right)
+        template <typename DataType1_, typename DataType2_> static DataType1_ value(const DenseVector<DataType1_> & left, const DenseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DataType_ result(0);
+            DataType1_ result(0);
 
-            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_elements()),
+            for (typename Vector<DataType1_>::ConstElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * right[l.index()];
@@ -57,24 +58,25 @@ namespace pg512 ///< \todo Namespace name?
             return result;
         }
 
-        static DataType_ value(const SparseVector<DataType_> & left, const Vector<DataType_> & right)
+        template <typename DataType1_, typename DataType2_> static DataType1_ value(const SparseVector<DataType1_> & left, const Vector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DataType_ result(0);
+            DataType1_ result(0);
 
-            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_non_zero_elements()),
+            for (typename Vector<DataType1_>::ConstElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * right[l.index()];
             }
         }
     };
-
+/*
     /// Explicit instantiation for Cell-based float computation.
     template <>
-    float ScalarProduct<float, tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right);
+    float ScalarProduct<tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right);
+*/
 }
 
 #endif

@@ -162,12 +162,12 @@ namespace pg512
     {
         static DataType_ value(const DenseVector<DataType_> & vector)
         {
-            return ScalarProduct<DataType_>::value(vector, vector);
+            return ScalarProduct<tags::CPU>::value(vector, vector);
         }
 
         static DataType_ value(const SparseVector<DataType_> & vector)
         {
-            return ScalarProduct<DataType_>::value(vector, vector);
+            return ScalarProduct<tags::CPU>::value(vector, vector);
         }
     };
 

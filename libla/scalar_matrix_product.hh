@@ -36,7 +36,7 @@ namespace pg512
 
     /**
      * ScalarMatrixProduct is the class template for multiplying a scalar to a matrix
-     * \brief The given reference matrix is changed by multiplying the given scalar to each of its elements.
+     * \brief The referenced matrix is changed by multiplying the given scalar to each of its elements.
      * \ingroup grpmatrixoperations
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarMatrixProduct

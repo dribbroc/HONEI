@@ -47,7 +47,7 @@ namespace pg512
          * \param matrix The matrix to be masked.
          * \param mask The boolean matrix to be used for masking.
          **/
-        static DenseMatrix<DataType_> value(DenseMatrix<DataType_> & matrix, const Matrix<bool> & mask)
+        static DenseMatrix<DataType_> & value(DenseMatrix<DataType_> & matrix, const Matrix<bool> & mask)
         {
             if (matrix.columns() != mask.columns())
             {
@@ -74,7 +74,7 @@ namespace pg512
          * \param matrix The matrix to be masked.
          * \param mask The boolean matrix to be used for masking.
          **/
-		static BandedMatrix<DataType_> value(BandedMatrix<DataType_> & matrix, const Matrix<bool> & mask)
+		static BandedMatrix<DataType_> & value(BandedMatrix<DataType_> & matrix, const Matrix<bool> & mask)
         {
             if (matrix.columns() != mask.columns())
             {
