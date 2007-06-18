@@ -109,7 +109,7 @@ class SparseVectorEqualityTest :
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
                 }
-                TEST_CHECK_EQUAL(sv1,sv2);
+                TEST_CHECK_EQUAL(sv1, sv2);
                 
             }
         }

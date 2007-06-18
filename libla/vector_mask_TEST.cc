@@ -42,7 +42,7 @@ class DenseVectorMaskTest :
                     }
                     
                 }
-                DenseVector<DataType_> result(VectorMask<DataType_>::value(*dv , *mask));
+                DenseVector<DataType_> result(VectorMask<DataType_>::value(*dv, *mask));
                 DataType_ sum = 0;
                 for (typename Vector<DataType_>::ElementIterator j(result.begin_elements()), 
                     j_end(result.end_elements()) ; j != j_end ; ++j)
@@ -93,7 +93,7 @@ class DenseVectorMaskQuickTest :
                 }
                 
             }
-            DenseVector<DataType_> result(VectorMask<DataType_>::value(*dv , *mask));
+            DenseVector<DataType_> result(VectorMask<DataType_>::value(*dv, *mask));
             DataType_ sum = 0;
             for (typename Vector<DataType_>::ElementIterator j(result.begin_elements()), 
                 j_end(result.end_elements()) ; j != j_end ; ++j)

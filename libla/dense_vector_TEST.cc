@@ -127,12 +127,12 @@ class DenseVectorFunctionsTest :
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
                 }
-                TEST_CHECK_EQUAL(dv->size(),size);
+                TEST_CHECK_EQUAL(dv->size(), size);
 
                 for (int i=0 ; i<size ; ++i)
                 {
                     DataType_ s((i+1)/1.23456789);
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[i] , s , 
+                    TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[i], s, 
                         std::numeric_limits<DataType_>::epsilon());
                 }
             }
@@ -157,7 +157,7 @@ class DenseVectorQuickTest :
             std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(4711,
                         static_cast<DataType_>(123.987)));
             TEST_CHECK_EQUAL(dv->size(), 4711);
-            TEST_CHECK_EQUAL(*dv,*dv);
+            TEST_CHECK_EQUAL(*dv, *dv);
             TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[4710] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
         }
 };

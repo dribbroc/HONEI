@@ -31,10 +31,10 @@ class DenseScalarProductTest :
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
                     static_cast<DataType_>(1)));
 
-                DataType_ p0(ScalarProduct<DataType_>::value(*dv1,*dv0));
-                DataType_ p1(ScalarProduct<DataType_>::value(*dv1,*dv1));
-                TEST_CHECK_EQUAL(p0,0);
-                TEST_CHECK_EQUAL(p1,size);
+                DataType_ p0(ScalarProduct<DataType_>::value(*dv1, *dv0));
+                DataType_ p1(ScalarProduct<DataType_>::value(*dv1, *dv1));
+                TEST_CHECK_EQUAL(p0, 0);
+                TEST_CHECK_EQUAL(p1, size);
                 
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv2(new DenseVector<DataType_>(size));
                 for (typename Vector<DataType_>::ElementIterator i(dv2->begin_elements()), i_end(dv2->end_elements()) ;
@@ -44,8 +44,8 @@ class DenseScalarProductTest :
                 }
 
                 DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(*dv2));
-                DataType_ p2(ScalarProduct<DataType_>::value(*dv2,*dv2));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2,sqrt(std::numeric_limits<DataType_>::epsilon()));
+                DataType_ p2(ScalarProduct<DataType_>::value(*dv2, *dv2));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, sqrt(std::numeric_limits<DataType_>::epsilon()));
             }
             
             std::tr1::shared_ptr<DenseVector<DataType_> > dv00(new DenseVector<DataType_>(1,
@@ -53,7 +53,7 @@ class DenseScalarProductTest :
             std::tr1::shared_ptr<DenseVector<DataType_> > dv01(new DenseVector<DataType_>(2,
                     static_cast<DataType_>(1)));
                     
-            TEST_CHECK_THROWS(ScalarProduct<DataType_>::value(*dv00,*dv01),VectorSizeDoesNotMatch);            
+            TEST_CHECK_THROWS(ScalarProduct<DataType_>::value(*dv00, *dv01), VectorSizeDoesNotMatch);            
         }
 };
 
@@ -78,8 +78,8 @@ class DenseScalarProductQuickTest :
             std::tr1::shared_ptr<DenseVector<DataType_> > dv1q(new DenseVector<DataType_>(quicksize,
                 static_cast<DataType_>(1)));
 
-            DataType_ p0q(ScalarProduct<DataType_>::value(*dv1q,*dv0q));
-            DataType_ p1q(ScalarProduct<DataType_>::value(*dv1q,*dv1q));
+            DataType_ p0q(ScalarProduct<DataType_>::value(*dv1q, *dv0q));
+            DataType_ p1q(ScalarProduct<DataType_>::value(*dv1q, *dv1q));
             TEST_CHECK_EQUAL(p0q,0);
             TEST_CHECK_EQUAL(p1q,quicksize);
             
@@ -91,15 +91,15 @@ class DenseScalarProductQuickTest :
             }
 
             DataType_ v2q(VectorNorm<DataType_, vnt_l_two, false>::value(*dv2q));
-            DataType_ p2q(ScalarProduct<DataType_>::value(*dv2q,*dv2q));
-            TEST_CHECK_EQUAL_WITHIN_EPS(v2q, p2q,sqrt(std::numeric_limits<DataType_>::epsilon()));
+            DataType_ p2q(ScalarProduct<DataType_>::value(*dv2q, *dv2q));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v2q, p2q, sqrt(std::numeric_limits<DataType_>::epsilon()));
     
             std::tr1::shared_ptr<DenseVector<DataType_> > dv00(new DenseVector<DataType_>(1,
                 static_cast<DataType_>(1)));
             std::tr1::shared_ptr<DenseVector<DataType_> > dv01(new DenseVector<DataType_>(2,
             static_cast<DataType_>(1)));
             
-            TEST_CHECK_THROWS(ScalarProduct<DataType_>::value(*dv00,*dv01),VectorSizeDoesNotMatch);    
+            TEST_CHECK_THROWS(ScalarProduct<DataType_>::value(*dv00, *dv01), VectorSizeDoesNotMatch);    
         }
 };
 DenseScalarProductQuickTest<float>  dense_scalar_product_quick_test_float("float");

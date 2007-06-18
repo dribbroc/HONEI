@@ -42,7 +42,7 @@ class DenseMatrixMaskTest :
                     }
                     
                 }
-                DenseMatrix<DataType_> result(MatrixMask<DataType_>::value(*dm , *mask));
+                DenseMatrix<DataType_> result(MatrixMask<DataType_>::value(*dm, *mask));
                 DataType_ sum = 0;
                 for (typename MutableMatrix<DataType_>::ElementIterator j(result.begin_elements()), 
                     j_end(result.end_elements()) ; j != j_end ; ++j)
@@ -97,7 +97,7 @@ class DenseMatrixMaskQuickTest :
                 }
                 
             }
-            DenseMatrix<DataType_> result(MatrixMask<DataType_>::value(*dm , *mask));
+            DenseMatrix<DataType_> result(MatrixMask<DataType_>::value(*dm, *mask));
             DataType_ sum = 0;
             for (typename MutableMatrix<DataType_>::ElementIterator j(result.begin_elements()), 
                 j_end(result.end_elements()) ; j != j_end ; ++j)

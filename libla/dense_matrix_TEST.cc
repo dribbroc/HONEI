@@ -90,9 +90,9 @@ class DenseMatrixEqualityTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 std::tr1::shared_ptr<DenseMatrix<DataType_> > dm0(new DenseMatrix<DataType_>(size,
-                    size,static_cast<DataType_>(1)));
+                    size, static_cast<DataType_>(1)));
                 std::tr1::shared_ptr<DenseMatrix<DataType_> > dm1(new DenseMatrix<DataType_>(size,
-                    size,static_cast<DataType_>(1)));
+                    size, static_cast<DataType_>(1)));
 
                 TEST_CHECK_EQUAL(*dm0, *dm1);
             }
@@ -166,7 +166,7 @@ class DenseMatrixQuickTest :
         {
             unsigned long columns(3), rows(2);
             std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>
-                (columns, rows,static_cast<DataType_>(1)));
+                (columns, rows, static_cast<DataType_>(1)));
 
             TEST_CHECK_EQUAL(*dm, *dm);
             TEST_CHECK_EQUAL(dm->columns(), columns);

@@ -5,7 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-06-17 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+2007-06-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/*_TEST.cc: Applied Coding Conventions.
+	
+2007-06-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/dense_vector_TEST.cc, libla/sparse_vector_TEST.cc: 
 	Merged EqualityTest and EquityTest.
