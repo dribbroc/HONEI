@@ -109,51 +109,13 @@ class SparseVectorEqualityTest :
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
                 }
+                TEST_CHECK_EQUAL(sv1,sv2);
                 
             }
         }
 };
 SparseVectorEqualityTest<float> sparse_vector_equality_test_float("float");
 SparseVectorEqualityTest<double> sparse_vector_equality_test_double("double");
-
-template <typename DataType_>
-class SparseVectorEquityTest :
-    public BaseTest
-{
-    public:
-        SparseVectorEquityTest(const std::string & type) :
-            BaseTest("sparse_vector_equity_test<" + type + ">")
-        {
-        }
-
-        virtual void run() const
-        {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
-            {
-                SparseVector<DataType_> sv1(size, size);
-                SparseVector<DataType_> sv2(size, size / 4 + 1);
-
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()),
-                        i_end(sv1.end_elements()) ; i != i_end ; ++i)
-                {
-                    if (i.index() % 10 == 0)
-                        *i = DataType_(1);
-                }
-
-                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()),
-                        i_end(sv2.end_elements()) ; i != i_end ; ++i)
-                {
-                    if (i.index() % 10 == 0)
-                        *i = DataType_(1);
-                }
-
-                TEST_CHECK_EQUAL(sv1, sv2);
-                
-            }
-        }
-};
-SparseVectorEquityTest<int> sparse_vector_equity_test_int("int");
-SparseVectorEquityTest<bool> sparse_vector_equity_test_bool("bool");
 
 template <typename DataType_>
 class SparseVectorFunctionsTest :

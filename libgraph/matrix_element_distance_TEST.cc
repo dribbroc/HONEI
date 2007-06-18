@@ -33,10 +33,10 @@ class MatrixElementDistanceQuickTest :
             
             TEST_CHECK_EQUAL(distance[0][0], 0);
             TEST_CHECK_EQUAL(distance[1][1], 0);            
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][1], sqrt(8), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][0], sqrt(8), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][2], sqrt(32), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], sqrt(8), std::numeric_limits<DataType_>::epsilon());  
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][1], (8), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][0], (8), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][2], (32), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], (8), std::numeric_limits<DataType_>::epsilon());  
             
             std::tr1::shared_ptr<DenseMatrix<DataType_> > dm2(new DenseMatrix<DataType_>
                 (3, 3));            

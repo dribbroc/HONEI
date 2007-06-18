@@ -108,32 +108,6 @@ DenseVectorEqualityTest<float> dense_vector_equality_test_float("float");
 DenseVectorEqualityTest<double> dense_vector_equality_test_double("double");
 
 template <typename DataType_>
-class DenseVectorEquityTest :
-    public BaseTest
-{
-    public:
-        DenseVectorEquityTest(const std::string & type) :
-            BaseTest("dense_vector_equity_test<" + type + ">")
-        {
-        }
-
-        virtual void run() const
-        {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
-            {
-                std::tr1::shared_ptr<DenseVector<DataType_> > dv0(new DenseVector<DataType_>(size,
-                    static_cast<DataType_>(1)));
-                std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
-                    static_cast<DataType_>(1)));
-
-                TEST_CHECK_EQUAL(*dv0, *dv1);
-            }
-        }
-};
-DenseVectorEquityTest<bool> dense_vector_equity_test_bool("bool");
-DenseVectorEquityTest<int> dense_vector_equity_test_int("int");
-
-template <typename DataType_>
 class DenseVectorFunctionsTest :
     public BaseTest
 {
