@@ -55,7 +55,7 @@ class DenseVectorMaskedMaxIndexTest :
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
                 }
                 
-                (*dv)[3] = static_cast<DataType_>(size);
+                (*dv)[2] = static_cast<DataType_>(size*10);
                                     
                 for (typename Vector<bool>::ElementIterator i(mask->begin_elements()), 
                     i_end(mask->end_elements()) ; i != i_end ; ++i)
@@ -67,8 +67,8 @@ class DenseVectorMaskedMaxIndexTest :
                     }
                     
                 }
-                DataType_ result(VectorMaskedMaxIndex<DataType_>::value(*dv, *mask));
-                TEST_CHECK_EQUAL(result, (*dv)[3]);
+                unsigned long result(VectorMaskedMaxIndex<DataType_>::value(*dv, *mask));
+                TEST_CHECK_EQUAL(result, 2);
             }
 
             std::tr1::shared_ptr<Vector<bool> > mask1(new DenseVector<bool>
@@ -106,7 +106,7 @@ class DenseVectorMaskedMaxIndexQuickTest :
                 *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
             }
             
-            (*dv)[3] = static_cast<DataType_>(size);
+            (*dv)[2] = static_cast<DataType_>(size*10);
                                 
             for (typename Vector<bool>::ElementIterator i(mask->begin_elements()), 
                 i_end(mask->end_elements()) ; i != i_end ; ++i)
@@ -118,8 +118,8 @@ class DenseVectorMaskedMaxIndexQuickTest :
                 }
                 
             }
-            DataType_ result(VectorMaskedMaxIndex<DataType_>::value(*dv, *mask));
-            TEST_CHECK_EQUAL(result, (*dv)[3]);
+            unsigned long result(VectorMaskedMaxIndex<DataType_>::value(*dv, *mask));
+            TEST_CHECK_EQUAL(result, 2);
 
 
             std::tr1::shared_ptr<Vector<bool> > mask1(new DenseVector<bool>
