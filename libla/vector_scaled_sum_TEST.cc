@@ -35,7 +35,7 @@ class DenseVectorScaledSumTest :
                 DataType_ left(static_cast<DataType_>(2));
                 DataType_ right(static_cast<DataType_>(3));
                                 
-                DenseVector<DataType_> sum1(VectorScaledSum<DataType_>::value(*dv1, *dv2, left, right));
+                DenseVector<DataType_> sum1(VectorScaledSum<>::value(*dv1, *dv2, left, right));
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
                 TEST_CHECK_EQUAL(v1, 13 * size);
             }
@@ -47,7 +47,7 @@ class DenseVectorScaledSumTest :
             DataType_ left(static_cast<DataType_>(2));
             DataType_ right(static_cast<DataType_>(3));
 
-            TEST_CHECK_THROWS(VectorScaledSum<DataType_>::value(*dv00, *dv01, left, right), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorScaledSum<>::value(*dv00, *dv01, left, right), VectorSizeDoesNotMatch);
         }
 };
 
