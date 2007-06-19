@@ -153,6 +153,14 @@ class DenseVectorFunctionsTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[i], s, 
                         std::numeric_limits<DataType_>::epsilon());
                 }
+                for (int i=0 ; i<size ; ++i)
+                {
+                    DataType_ s((i+5)/1.23456789);
+                    (*dv)[i] = s;
+                    TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[i], s, 
+                        std::numeric_limits<DataType_>::epsilon());
+                }
+                
             }
         }
 };
@@ -177,6 +185,9 @@ class DenseVectorQuickTest :
             TEST_CHECK_EQUAL(dv->size(), 4711);
             TEST_CHECK_EQUAL(*dv, *dv);
             TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[4710] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            DataType_ s = static_cast<DataType_>(1.2345);
+            (*dv)[333] = s;
+            TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[333] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));            
         }
 };
 DenseVectorQuickTest<float>  dense_vector_quick_test_float("float");
