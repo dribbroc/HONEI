@@ -60,12 +60,10 @@ class DenseVectorMaskedMinIndexTest :
                 for (typename Vector<bool>::ElementIterator i(mask->begin_elements()),
                     i_end(mask->end_elements()) ; i != i_end ; ++i)
                 {
-                    if (i.index()%2 == 0)
+                    if (i.index() % 2 == 0)
                     {
                         *i=true;
-                        ++count;
                     }
-
                 }
                 unsigned long result(VectorMaskedMinIndex<DataType_>::value(*dv, *mask));
                 TEST_CHECK_EQUAL(result, (*dv)[2]);
@@ -117,12 +115,10 @@ class DenseVectorMaskedMinIndexQuickTest :
             for (typename Vector<bool>::ElementIterator i(mask->begin_elements()),
                 i_end(mask->end_elements()) ; i != i_end ; ++i)
             {
-                if (i.index()%2 == 0)
+                if (i.index() % 2 == 0)
                 {
                     *i=true;
-                    ++count;
                 }
-
             }
             unsigned long result(VectorMaskedMinIndex<DataType_>::value(*dv, *mask));
             TEST_CHECK_EQUAL(result, 2);

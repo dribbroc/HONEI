@@ -44,7 +44,6 @@ class DenseVectorMaskedMaxIndexTest :
         {
             for (unsigned long size(10) ; size < (1 << 14) ; size <<= 1)
             {
-                DataType_ count = 0;
                 std::tr1::shared_ptr<DenseVector<bool> > mask(new DenseVector<bool>(
                     size, false));
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(size));
@@ -55,17 +54,15 @@ class DenseVectorMaskedMaxIndexTest :
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
                 }
                 
-                (*dv)[2] = static_cast<DataType_>(size*10);
+                (*dv)[2] = static_cast<DataType_>(size * 10);
                                     
                 for (typename Vector<bool>::ElementIterator i(mask->begin_elements()), 
                     i_end(mask->end_elements()) ; i != i_end ; ++i)
                 {
-                    if (i.index()%2 == 0) 
+                    if (i.index() % 2 == 0) 
                     {
                         *i=true;
-                        ++count;
                     }
-                    
                 }
                 unsigned long result(VectorMaskedMaxIndex<DataType_>::value(*dv, *mask));
                 TEST_CHECK_EQUAL(result, 2);
@@ -95,7 +92,6 @@ class DenseVectorMaskedMaxIndexQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DataType_ count = 0;
             std::tr1::shared_ptr<DenseVector<bool> > mask(new DenseVector<bool>(
                 size, false));
             std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(size));
@@ -106,17 +102,15 @@ class DenseVectorMaskedMaxIndexQuickTest :
                 *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
             }
             
-            (*dv)[2] = static_cast<DataType_>(size*10);
+            (*dv)[2] = static_cast<DataType_>(size * 10);
                                 
             for (typename Vector<bool>::ElementIterator i(mask->begin_elements()), 
                 i_end(mask->end_elements()) ; i != i_end ; ++i)
             {
-                if (i.index()%2 == 0) 
+                if (i.index() % 2 == 0) 
                 {
                     *i=true;
-                    ++count;
                 }
-                
             }
             unsigned long result(VectorMaskedMaxIndex<DataType_>::value(*dv, *mask));
             TEST_CHECK_EQUAL(result, 2);
