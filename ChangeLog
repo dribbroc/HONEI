@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-19 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/vector_masked_min_index.hh, libla/vector_masked_max_index.hh:
+	Fixed a obsolete symbol.
+	* libla/vector_masked_min_index_TEST.cc: Fixed some variable names that
+	were declared more than once in one block.
+	* libla/files.m4: Added the vector_masked_min/max_index tests here.
+	They actually fail - it is being worked on a fix.
+
 2007-06-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc, libgraph/matrix_element_distance_TEST.cc, libgraph/limiter_TEST.cc:

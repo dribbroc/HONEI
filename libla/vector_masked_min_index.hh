@@ -64,7 +64,7 @@ namespace pg512
             {
 				if (*r && *l < temp)
 				{
-					result = *l.index();
+					result = l.index();
 				}
                 ++r;
             }
@@ -92,7 +92,7 @@ namespace pg512
             {
 				if (*r && *l < temp)
 				{
-					result = *l.index();
+					result = l.index();
 				}
                 ++r;
             }
