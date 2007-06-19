@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/*_TEST.cc, libgraph/matrix_element_distance_TEST.cc, libgraph/limiter_TEST.cc:
+	Added GPL header to all test files.
+	
+2007-06-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/vector_masked_max_index_TEST.cc: Added DenseVectorMaskedMaxIndexTest.
 	* libla/vector_masked_min_index_TEST.cc: Added DenseVectorMaskedMinIndexTest.	
 	
