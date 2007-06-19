@@ -64,7 +64,7 @@ void
 BaseTest::check(const char * const function, const char * const file,
     const long line, bool was_ok, const std::string & message) const
 {
-    std::cout << ".";
+    // std::cout << ".";
     if (! was_ok)
         throw TestFailedException(function, file, line, message);
 }
@@ -113,9 +113,9 @@ int main(int argc, char** argv)
             if (quick && (!(*i)->is_quick_test()) )
                 continue;
 
-            std::cout << (*i)->id() + ": \n";
+            std::cout << (*i)->id() + ": ";
             (*i)->run();
-            std::cout << "PASSED \n";
+            std::cout << "PASSED \n\n";
         }
         catch (TestFailedException & e)
         {
