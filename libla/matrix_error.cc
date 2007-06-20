@@ -40,3 +40,9 @@ MatrixRowsDoNotMatch::MatrixRowsDoNotMatch(unsigned long rows, unsigned long exp
             + stringify(expected_rows) + "'")
 {
 }
+
+MatrixRowsDoNotMatch::MatrixMultiplicationError(unsigned long columns, unsigned long rows) throw () :
+    MatrixError("First Matrix column count '" + stringify(columns) + "' does not match second matrix row count '"
+            + stringify(rows) + "'")
+{
+}
