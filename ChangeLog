@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* +libla/scalar_matrix_sum.hh, libla/scalar_vector_sum.hh,
+	libla/matrix_element_sum: Added these 3 operations.
+	* libla/scalar_vector_product.hh: Corrected annotation.
+	* libla/files.m4: Added headers of new files.
+
 2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_norm_TEST.cc: Added sparse vector tests.
