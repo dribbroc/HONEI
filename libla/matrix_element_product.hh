@@ -71,8 +71,8 @@ namespace pg512
 
         /**
          * Returns the resulting matrix after multiplying two Banded Matrix instances elementwise.
-         * \param left Reference to a DenseMatrix. Its return type is used for the result matrix.
-         * \param right Reference to a DenseMatrix.
+         * \param left Reference to a Banded Matrix. Its return type is used for the result matrix.
+         * \param right Reference to a Banded Matrix.
          **/
          template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
         {

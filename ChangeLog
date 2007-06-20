@@ -7,8 +7,14 @@ see the NEWS file.
 
 2007-06-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-	* +libla/matrix_product: Added operation for Dense.
-	* +libla/matrix_element_product. Added operation.
+	* -libla/matrix_mask.hh, libla/matrix_mask_TEST.cc: Removed now
+	obsolete operation.
+	* libla/matrix_element_product.hh: Changed annotation.
+
+2007-06-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* +libla/matrix_product.hh: Added operation for Dense.
+	* +libla/matrix_element_product.hh Added operation.
 	* libla/matrix_error.cc, libla/matrix_error.hh: Appended with new
 	Error-Type: MatrixMultiplicationError.
 	* libla/files.m4: Appended it.
