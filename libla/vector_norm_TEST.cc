@@ -19,6 +19,7 @@
  */
  
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/vector_norm.hh>
 #include <unittest/unittest.hh>
 
@@ -111,3 +112,95 @@ class DenseVectorNormQuickTest :
 };
 DenseVectorNormQuickTest<float>  dense_vector_norm_quick_test_float("float");
 DenseVectorNormQuickTest<double> dense_vector_norm_quick_test_double("double");
+
+template <typename DataType_>
+class SparseVectorNormValueTest :
+    public BaseTest
+{
+    public:
+        SparseVectorNormValueTest(const std::string & type) :
+            BaseTest("sparse_vector_norm_value_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                SparseVector<DataType_> sv(size, size / 4 + 1);
+                DataType_ smax(0);
+                DataType_ s1(0);                
+                DataType_ s2(0);                      
+                for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()),
+                        i_end(sv.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0)
+                    {
+                        *i = DataType_((i.index() + 1) / 1.23456789);
+                        smax = DataType_((i.index() + 1) / 1.23456789);
+                        s1 += DataType_((i.index() + 1) / 1.23456789);
+                        s2 += DataType_((( i.index() + 1) / 1.23456789) * (( i.index() + 1) / 1.23456789));
+                    }   
+                }
+
+                DataType_ vmax(VectorNorm<DataType_, vnt_max>::value(sv));
+                TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+
+                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv));
+                DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
+
+                DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(sv));
+                DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
+            }
+        }
+};
+
+SparseVectorNormValueTest<float> sparse_vector_norm_value_test_float("float");
+SparseVectorNormValueTest<double> sparse_vector_norm_value_test_double("double");
+
+template <typename DataType_>
+class SparseVectorNormQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorNormQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_norm_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            SparseVector<DataType_> sv(size, size / 4 + 1);
+            DataType_ smax(0);
+            DataType_ s1(0);                
+            DataType_ s2(0);                      
+            for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()),
+                    i_end(sv.end_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0)
+                {
+                    *i = DataType_((i.index() + 1) / 1.23456789);
+                    smax = DataType_((i.index() + 1) / 1.23456789);
+                    s1 += DataType_((i.index() + 1) / 1.23456789);
+                    s2 += DataType_((( i.index() + 1) / 1.23456789) * (( i.index() + 1) / 1.23456789));
+                }   
+            }
+
+            DataType_ vmax(VectorNorm<DataType_, vnt_max>::value(sv));
+            TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv));
+            DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
+
+            DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(sv));
+            DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
+        }
+};
+
+SparseVectorNormQuickTest<float> sparse_vector_norm_quick_test_float("float");
+SparseVectorNormQuickTest<double> sparse_vector_norm_quick_test_double("double");

@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/vector_norm_TEST.cc: Added sparse vector tests.
+	
+2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/vector_masked_min_index.hh: Fixed a few bugs.
 	* libla/vector_masked_max_index.hh: Fixed a few bugs.	
 	* libla/vector_masked_min_index_TEST.cc: Fixed a few bugs.
