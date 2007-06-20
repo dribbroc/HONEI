@@ -66,7 +66,7 @@ class DenseVectorMaskedMinIndexTest :
                     }
                 }
                 unsigned long result(VectorMaskedMinIndex<DataType_>::value(*dv, *mask));
-                TEST_CHECK_EQUAL(result, (*dv)[2]);
+                TEST_CHECK_EQUAL(result, 2);
                 (*dv)[2] = static_cast<DataType_>(0);
                 unsigned long result2(VectorMaskedMinIndex<DataType_>::value(*dv, *mask));
                 TEST_CHECK_EQUAL(result2, 2);

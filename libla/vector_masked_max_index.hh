@@ -64,6 +64,7 @@ namespace pg512
 				if (*r && *l > temp)
 				{
 					result = l.index();
+					temp = *l;
 				}
                 ++r;
             }
@@ -92,6 +93,7 @@ namespace pg512
 				if (*r && *l > temp)
 				{
 					result = l.index();
+					temp = *l;					
 				}
                 ++r;
             }
