@@ -80,26 +80,6 @@ namespace pg512 ///< \todo Namespace name?
              **/
             MatrixRowsDoNotMatch(unsigned long rows, unsigned long expected_rows) throw ();
     };
-
-     /**
-     * A MatrixMultiplicationError is thrown when the number of colums of a Matrix argument
-     * does not match the number of rows of the Matrix argument to be multiplied with.
-     *
-     * \ingroup grpmatrixexceptions
-     **/
-    class MatrixMultiplicationError :
-        public MatrixError
-    {
-        public:
-            /**
-             * Constructor.
-             *
-             * \param columns Amount of columns of the first referenced matrix.
-             * \param rows Amount of rows of the second referenced matrix.
-             **/
-            MatrixMultiplicationError(unsigned long columns, unsigned long rows) throw ();
-    };
-
 }
 
 #endif

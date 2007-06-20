@@ -49,7 +49,7 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(const DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.rows())
-                throw MatrixMultiplicationError(left.columns(), right.rows());
+                throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
                 DenseMatrix<DataType1_> result(right.columns(), left.rows());
                 typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());

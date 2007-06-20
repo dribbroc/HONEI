@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-20 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/matrix_error.cc, libla/matrix_error.hh: Removed
+	MatrixMultiplicationError.
+	* libla/matrix_product.hh: Changed exception type to
+	MatrixRowsDoNotMatch.
+
 2007-06-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* -libla/matrix_mask.hh, libla/matrix_mask_TEST.cc: Removed now
