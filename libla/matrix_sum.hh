@@ -55,7 +55,7 @@ namespace pg512
                 throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
             }
 
-            if (left.rows() != left.rows())
+            if (left.rows() != right.rows())
             {
                 throw MatrixRowsDoNotMatch(right.rows(), left.rows());
             }
@@ -65,7 +65,7 @@ namespace pg512
                     l_end(left.end_elements()) ; l != l_end ; ++l)
             {
                 *l += *r;
-                r++;
+                ++r;
             }
 
             return left;
@@ -84,7 +84,7 @@ namespace pg512
                 throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
             }
 
-            if (left.rows() != left.rows())
+            if (left.rows() != right.rows())
             {
                 throw MatrixRowsDoNotMatch(right.rows(), left.rows());
             }
@@ -94,7 +94,7 @@ namespace pg512
                     l_end(left.end_elements()) ; l != l_end ; ++l)
             {
                 *l += *r;
-                r++;
+                ++r;
             }
 
             return left;

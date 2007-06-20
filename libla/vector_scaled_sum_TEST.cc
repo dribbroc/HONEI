@@ -17,7 +17,6 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- ///< \todo Fix compile errors
 
 #include <libla/dense_vector.hh>
 #include <libla/vector_scaled_sum.hh>
@@ -71,3 +70,40 @@ class DenseVectorScaledSumTest :
 
 DenseVectorScaledSumTest<float> dense_vector_scaled_sum_test_float("float");
 DenseVectorScaledSumTest<double> dense_vector_scaled__sum_test_double("double");
+
+template <typename DataType_>
+class DenseVectorScaledSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorScaledSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_scaled_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
+                static_cast<DataType_>(2)));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv2(new DenseVector<DataType_>(size,
+                static_cast<DataType_>(3)));
+                
+            DataType_ left(static_cast<DataType_>(2));
+            DataType_ right(static_cast<DataType_>(3));
+                            
+            DenseVector<DataType_> sum1(VectorScaledSum<>::value(*dv1, *dv2, left, right));
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
+            TEST_CHECK_EQUAL(v1, 13 * size);
+
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv00(new DenseVector<DataType_>(1,
+                    static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv01(new DenseVector<DataType_>(2,
+                    static_cast<DataType_>(1)));
+
+            TEST_CHECK_THROWS(VectorScaledSum<>::value(*dv00, *dv01, left, right), VectorSizeDoesNotMatch);
+        }
+};
+
+DenseVectorScaledSumQuickTest<float> dense_vector_scaled_sum_quick_test_float("float");
+DenseVectorScaledSumQuickTest<double> dense_vector_scaled__sum_quick_test_double("double");
