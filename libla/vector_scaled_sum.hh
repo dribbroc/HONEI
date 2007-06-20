@@ -119,7 +119,7 @@ namespace pg512
 
             //DenseVector<DataType_> result(left.size(),0, 0, 1); old style
 
-            for (typename Vector<DataType_>::ConstElementIterator l(left.begin_elements()),
+            for (typename Vector<DtLeft_>::ConstElementIterator l(left.begin_elements()),
                                         l_end(left.end_elements()), r(right.begin_non_zero_elements()),
                                         r_end(right.end_non_zero_elements()) ;
                                         r != r_end ; )

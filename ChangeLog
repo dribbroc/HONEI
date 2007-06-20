@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-20 Markus Geveler <apryde@gmx.de>
+
+	* libla/vector_scaled_sum.hh: Fixed typo - bug.
+	* libla/files.m4 Added test - entry.
+
 2007-06-19 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/files.m4: Fixed my stupid new entry.
