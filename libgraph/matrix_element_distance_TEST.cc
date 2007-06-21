@@ -59,7 +59,7 @@ class MatrixElementDistanceQuickTest :
             
             std::tr1::shared_ptr<DenseMatrix<DataType_> > dm2(new DenseMatrix<DataType_>
                 (3, 3));            
-            TEST_CHECK_THROWS(MatrixElementDIstance::value(*dm2), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixElementDistance::value(*dm2), MatrixRowsDoNotMatch);
                                                                                               
         }
 };
