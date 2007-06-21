@@ -40,7 +40,7 @@ namespace pg512
 	 * The used matrix will be invariant under this operation.
      * \ingroup grpmatrixoperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixSum
+    template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixElementSum
     {
         /**
          * Returns the the resulting scalar of the sum of all elements of a given dense matrix instance.
