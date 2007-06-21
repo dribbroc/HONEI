@@ -1,9 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Sven Mallach  <sven.mallach@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
-
  *
  * This file is part of the Graph C++ library. LibGraph is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -48,19 +46,19 @@ class MatrixElementDistanceQuickTest :
             {
                 *i = i.index();
             }
-            DenseMatrix<DataType_> distance = MatrixElementDistance::value(*dm);
-            
+            DenseMatrix<DataType_> distance = MatrixElementDistance<DataType_>::value(*dm);
+
             TEST_CHECK_EQUAL(distance[0][0], 0);
-            TEST_CHECK_EQUAL(distance[1][1], 0);            
+            TEST_CHECK_EQUAL(distance[1][1], 0);
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][1], (8), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][0], (8), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][2], (32), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], (8), std::numeric_limits<DataType_>::epsilon());  
-            
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], (8), std::numeric_limits<DataType_>::epsilon());
+
             std::tr1::shared_ptr<DenseMatrix<DataType_> > dm2(new DenseMatrix<DataType_>
-                (3, 3));            
-            TEST_CHECK_THROWS(MatrixElementDistance::value(*dm2), MatrixRowsDoNotMatch);
-                                                                                              
+                (3, 3));
+            TEST_CHECK_THROWS(MatrixElementDistance<DataType_>::value(*dm2), MatrixRowsDoNotMatch);
+
         }
 };
 MatrixElementDistanceQuickTest<float>  matrix_element_distance_quick_test_float("float");

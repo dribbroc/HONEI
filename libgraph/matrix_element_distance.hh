@@ -32,7 +32,7 @@
  *
  * Implementation of MatrixElementDistance. </br>
  *
- * \ingroup graphoperations
+ * \ingroup grplibgraph \\\todo find group name.
  **/
 namespace pg512
 {
@@ -41,7 +41,7 @@ namespace pg512
      * \brief MatrixElementDistance computes the distance between nodes,
      * \brief which positions are given in a position matrix.
      *
-     * \ingroup grpmatrixoperations
+     * \ingroup grplibgraph \\\todo find group name.
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixElementDistance
     {
@@ -49,7 +49,7 @@ namespace pg512
          * Returns the resulting distance matrix.
          * \param pos_matrix The matrix with the positions of nodes. It may only have two rows for x- and y-coordinates.
          **/
-        static DenseMatrix<DataType_> & value(const RowAccessMatrix<DataType_> & pos_matrix)
+        static DenseMatrix<DataType_> value(const RowAccessMatrix<DataType_> & pos_matrix)
         {
 
             if (pos_matrix.rows() != 2)

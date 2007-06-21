@@ -7,6 +7,17 @@ see the NEWS file.
 
 2007-06-21 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libgraph/matrix_element_distance.hh: Fixed small things.
+	* libgraph/matrix_element_distance_TEST.cc: Fixed calls to
+	MatrixElementDistance. Removed myself from header.
+	* libgraph/files.m4: Added inverse operation.
+
+2007-06-21 Nina Harmuth <nina.harmuth@uni-dortmund.de>
+	* +libgraph/matrix_element_distance_inverse.hh: Added new operation
+	for kehrqdist.
+
+2007-06-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* -libla/matrix_element_product.hh,
 	libla/matrix_element_product_TEST.cc: Removed.
 	* +libla/matrix_elementwise_product.hh,
