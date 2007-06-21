@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* doc/doxygen.conf: Removed unittest/ from doxygen.
+	* doc/doc_groups.doxygen: Removed grpunittest.
+	
 2007-06-20 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/matrix_error.cc, libla/matrix_error.hh: Removed

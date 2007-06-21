@@ -6,10 +6,6 @@
  * \defgroup grppg512 Projektgruppe 512 SmartCell: Clevere Algorithmen fuer den Cell-Prozessor
  **/
 
-/**
- * \defgroup tests Unittest Framework
- **/
- 
  /**
  * \defgroup benchmarks Benchmark Framework
  **/
