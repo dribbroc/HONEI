@@ -5,7 +5,7 @@ MAINTAINERCLEANFILES = \
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = autogen.bash misc/do_m4.bash misc/generated-file.txt
 
-SUBDIRS = libutil libla unittest
+SUBDIRS = libutil libla unittest libgraph libswe
 
 doxygen:
 	$(MAKE) -C doc $@
