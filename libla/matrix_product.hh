@@ -46,7 +46,7 @@ namespace pg512
          * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a DenseMatrix used as second factor.
          **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(const DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
