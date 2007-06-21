@@ -93,4 +93,5 @@ AC_OUTPUT(
 	libutil/Makefile
 	unittest/Makefile
 	libswe/Makefile
+	libgraph/Makefile
 )
