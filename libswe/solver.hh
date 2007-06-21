@@ -185,6 +185,7 @@ namespace pg512 {
               * \param j Access Parameter 2.
               * 
               **/
+            template<typename WorkPrec_>
             DenseVector<WorkPrec_> _source(uint i, uint j);
         
             /** Encapsulates the linear combination for prediction. Uses source() 
@@ -202,7 +203,7 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            void _do_setupStage1();
+            void _do_setup_stage1();
 
             /** Encapsulates the setup for the values utemp, vtemp, wtemp.
               * Uses flow().
@@ -210,7 +211,18 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            void _do_setupStage2();
+            void _do_setup_stage2();
+
+             /** Encapsulates computation in one timestep.
+              *
+              **/
+             void _solve()
+             {
+                _do_setup_stage1<PredictionPrec1_>();
+                _do_prediction<PredictionPrec1_>();
+                _do_setup_stage2<PredictionPrec2_>();
+                _do_prediction<PredictionPrec2_>();
+             }
 
         public:
             /**
@@ -224,7 +236,7 @@ namespace pg512 {
                 for(ulint i = 0 ; i < maxtime ; ++i)
                 {
                     _solve_time =i;
-                    _solve(i);
+                    _solve();
                 }
             }
 
