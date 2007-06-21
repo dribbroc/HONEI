@@ -97,4 +97,4 @@ class DenseMatrixElementwiseProductQuickTest :
         }
 };
 DenseMatrixElementwiseProductQuickTest<float> dense_matrix_elementwise_product_quick_test_float("float");
-DenseMatrixwiseProductQuickTest<double> dense_matrix_elementwise_product_quick_test_double("double");
+DenseMatrixElementwiseProductQuickTest<double> dense_matrix_elementwise_product_quick_test_double("double");
