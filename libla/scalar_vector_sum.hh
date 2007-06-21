@@ -35,7 +35,7 @@ namespace pg512
 {
 
     /**
-     * ScalarVectorProduct is the class template for adding a scalar to a vector
+     * ScalarVectorSum is the class template for adding a scalar to a vector
      * \brief The referenced vector is changed by adding the given scalar to each of its elements.
      * \brief With a negative scalar, ScalarVectorSum can also be used to compute a ScalarVectorDifference.
      * \ingroup grpvectoroperations
