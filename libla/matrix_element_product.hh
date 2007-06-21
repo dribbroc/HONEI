@@ -23,6 +23,7 @@
 #include <libla/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/matrix_error.hh>
 
 /**
  * \file
