@@ -132,7 +132,7 @@ int main(int argc, char** argv)
             if (quick && (!(*i)->is_quick_test()) )
                 continue;
 
-            std::cout << (*i)->id() + ": ";
+            std::cout << (*i)->id() + ": \n";
             (*i)->run();
             std::cout << "PASSED \n";
         }
