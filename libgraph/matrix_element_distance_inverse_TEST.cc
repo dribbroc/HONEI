@@ -18,6 +18,7 @@
  */
 
 #include <libla/dense_matrix.hh>
+#include <libgraph/matrix_element_distance_inverse.hh>
 #include <libgraph/matrix_element_distance.hh>
 #include <unittest/unittest.hh>
 
@@ -26,12 +27,12 @@
 using namespace pg512;
 using  namespace tests;
 template <typename DataType_>
-class MatrixElementDistanceQuickTest :
+class MatrixElementDistanceInverseQuickTest :
     public QuickTest
 {
     public:
-        MatrixElementDistanceQuickTest(const std::string & type) :
-            QuickTest("matrix_element_distance_quick_test<" + type + ">")
+        MatrixElementDistanceInverseQuickTest(const std::string & type) :
+            QuickTest("matrix_element_distance_inverse_quick_test<" + type + ">")
         {
         }
 
@@ -46,20 +47,25 @@ class MatrixElementDistanceQuickTest :
             {
                 *i = i.index();
             }
-            DenseMatrix<DataType_> distance = MatrixElementDistance<DataType_>::value(*dm);
+            DenseMatrix<DataType_> distance = MatrixElementDistance<DataType_>::value(*dm);            
+            DenseMatrix<DataType_> distance_inverse = MatrixElementDistanceInverse<DataType_>::value(*dm);
 
-            TEST_CHECK_EQUAL(distance[0][0], 0);
-            TEST_CHECK_EQUAL(distance[1][1], 0);
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][1], (8), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][0], (8), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][2], (32), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], (8), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL(distance_inverse[0][0], 0);
+            TEST_CHECK_EQUAL(distance_inverse[1][1], 0);
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance_inverse[0][1], 1 / distance[0][1], 
+                std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance_inverse[1][0], 1 / distance[0][1], 
+                std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance_inverse[0][2], 1 / distance[0][1], 
+                std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance_inverse[1][2], 1 / distance[0][1], 
+                std::numeric_limits<DataType_>::epsilon());
 
             std::tr1::shared_ptr<DenseMatrix<DataType_> > dm2(new DenseMatrix<DataType_>
                 (3, 3));
-            TEST_CHECK_THROWS(MatrixElementDistance<DataType_>::value(*dm2), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixElementDistanceInverse<DataType_>::value(*dm2), MatrixRowsDoNotMatch);
 
         }
 };
-MatrixElementDistanceQuickTest<float>  matrix_element_distance_quick_test_float("float");
-MatrixElementDistanceQuickTest<double> matrix_element_distance_quick_test_double("double");
+MatrixElementDistanceInverseQuickTest<float>  matrix_element_distance_inverse_quick_test_float("float");
+MatrixElementDistanceInverseQuickTest<double> matrix_element_distance_inverse_quick_test_double("double");

@@ -8,5 +8,5 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`matrix_element_distance',  `hh', `test')
-add(`matrix_element_distance_inverse', `hh')
+add(`matrix_element_distance',          `hh', `test')
+add(`matrix_element_distance_inverse',  `hh', `test')
