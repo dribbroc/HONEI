@@ -8,6 +8,8 @@
 
  /**
  * \defgroup benchmarks Benchmark Framework
+ *
+ * \ingroup grppg512
  **/
 // ----- Library Groups -----
 
@@ -18,9 +20,15 @@
  **/
  
  /**
- * \defgroup grpswe LibSWE: Library for Shallow Water Equations
+ * \defgroup grplibswe LibSWE: Library for Shallow Water Equations
  *
- * \ingroup pg512
+ * \ingroup grppg512
+ */ 
+ 
+  /**
+ * \defgroup grplibgraph LibGraph: Library for Graph Algorithms
+ *
+ * \ingroup grppg512
  */ 
 
 // ----- LibLA Groups -----

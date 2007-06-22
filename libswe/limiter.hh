@@ -30,7 +30,7 @@
  *
  * Implementations for Limiter-based classes.
  *
- * \ingroup grpswe
+ * \ingroup grplibswe
  **/
 
 namespace pg512
@@ -39,7 +39,7 @@ namespace pg512
     /**
      * \brief Limiter is the abstract base class for all Limiter-like classes used.
      *
-     * \ingroup grpswe
+     * \ingroup grplibswe
      **/
 
     template<typename Tag_ = tags::CPU> class Limiter
@@ -69,7 +69,7 @@ namespace pg512
     /**
      * \brief MM_Limiter provides the MinMod-Limiter
      *
-     * \ingroup grpswe
+     * \ingroup grplibswe
      **/
 
     template<typename Tag_ = tags::CPU> class MM_Limiter : public Limiter<>
@@ -86,7 +86,7 @@ namespace pg512
     /**
      * \brief SB_Limiter provides the SuperBee-Limiter
      *
-     * \ingroup grpswe
+     * \ingroup grplibswe
      **/
 
     template<typename Tag_ = tags::CPU> class SB_Limiter : public Limiter<>
@@ -103,7 +103,7 @@ namespace pg512
     /**
      * \brief MC_Limiter provides the Monotonized-Central-Limiter
      *
-     * \ingroup grpswe
+     * \ingroup grplibswe
      **/
 
     template<typename Tag_ = tags::CPU> class MC_Limiter : public Limiter<>
@@ -120,7 +120,7 @@ namespace pg512
     /**
      * \brief VL_Limiter provides the VanLeer-Limiter
      *
-     * \ingroup grpswe
+     * \ingroup grplibswe
      **/
 
     template<typename Tag_ = tags::CPU> class VL_Limiter : public Limiter<>

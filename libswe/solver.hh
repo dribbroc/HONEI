@@ -28,7 +28,7 @@
  *
  * Solver is arbitrary in precision.
  *
- * \ingroup grpswe
+ * \ingroup grplibswe
  **/
  
 #include <libla/dense_matrix.hh>

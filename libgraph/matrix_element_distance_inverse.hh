@@ -32,7 +32,7 @@
  *
  * Implementation of MatrixElementDistanceInverse. </br>
  *
- * \ingroup graphoperations
+ * \ingroup grplibgraph
  **/
 namespace pg512
 {
@@ -41,7 +41,7 @@ namespace pg512
      * \brief MatrixElementDistanceInverse computes the inverse distance between nodes,
      * \brief which positions are given in a position matrix.
      *
-     * \ingroup grpmatrixoperations
+     * \ingroup grplibgraph
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixElementDistanceInverse
     {
