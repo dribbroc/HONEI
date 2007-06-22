@@ -5,9 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-06-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+2007-06-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libgraph/matrix_element_distance_inverse_TEST.cc: Added DenseMatrixElementDistanceInverserQuickTest.
+	* libla/matrix_product_TEST.cc: Added DenseMatrixProductTest.
+	
+2007-06-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libgraph/matrix_element_distance_inverse_TEST.cc: Added DenseMatrixElementDistanceInverseQuickTest.
 	
 2007-06-21 Sven Mallach <sven.mallach@uni-dortmund.de>
 
