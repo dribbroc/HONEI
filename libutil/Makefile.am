@@ -17,3 +17,5 @@ pg512_libutil_include_HEADERS = \
 	log.hh \
 	shared_array.hh \
 	stringify.hh
+	
+quickcheck:	

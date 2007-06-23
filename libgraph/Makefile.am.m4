@@ -10,6 +10,7 @@ define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
+    $(top_builddir)/libla/libla.la \
 	libgraph.la \
 	$(top_builddir)/libutil/libutil.la \
 	$(DYNAMIC_LD_LIBS)
@@ -45,6 +46,9 @@ TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
+quickcheck: $(TESTS)
+	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check
+	
 Makefile.am : Makefile.am.m4 files.m4
 	$(top_srcdir)/misc/do_m4.bash Makefile.am
 

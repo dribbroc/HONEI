@@ -8,3 +8,5 @@ noinst_LIBRARIES = libunittest.a
 
 libunittest_a_SOURCES = \
 	unittest.cc unittest.hh
+
+quickcheck:		
