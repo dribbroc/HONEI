@@ -36,7 +36,7 @@ namespace pg512
 {
 
     /**
-     * MatrixProduct is the class template for multiplying two matrices elementwise.
+     * MatrixElementwiseProduct is the class template for multiplying two matrices elementwise.
      * \brief The first referenced matrix is changed under this operation.
      * \ingroup grpmatrixoperations
      **/
