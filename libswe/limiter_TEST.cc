@@ -34,12 +34,12 @@ using namespace tests;
 // Testcases for class MM_Limiter
 
 template <typename DataType_>
-class MM_LimiterTest :
-    public BaseTest
+class MM_LimiterQuickTest :
+    public QuickTest
 {
     public:
-        MM_LimiterTest(const std::string & type) :
-            BaseTest("mm_limiter_test<" + type + ">")
+        MM_LimiterQuickTest(const std::string & type) :
+            QuickTest("mm_limiter_quick_test<" + type + ">")
         {
         }
 
@@ -54,19 +54,19 @@ class MM_LimiterTest :
         }
  }; 
 
-MM_LimiterTest<float> mm_limiter_test_float("float");
-MM_LimiterTest<double> mm_limiter_test_double("double");
+MM_LimiterQuickTest<float> mm_limiter_quick_test_float("float");
+MM_LimiterQuickTest<double> mm_limiter_quick_test_double("double");
 
 
 // Testcases for class SB_Limiter
 
 template <typename DataType_>
-class SB_LimiterTest :
-    public BaseTest
+class SB_LimiterQuickTest :
+    public QuickTest
 {
     public:
-        SB_LimiterTest(const std::string & type) :
-            BaseTest("sb_test<" + type + ">")
+        SB_LimiterQuickTest(const std::string & type) :
+            QuickTest("sb_limiter_quick_test<" + type + ">")
         {
         }
 
@@ -85,18 +85,18 @@ class SB_LimiterTest :
         }
  }; 
 
-SB_LimiterTest<float> sb_limiter_test_float("float");
-SB_LimiterTest<double> sb_limiter_test_double("double");
+SB_LimiterQuickTest<float> sb_limiter_quick_test_float("float");
+SB_LimiterQuickTest<double> sb_limiter_quick_test_double("double");
 
 // Testcases for class MC_Limiter
 
 template <typename DataType_>
-class MC_LimiterTest :
-    public BaseTest
+class MC_LimiterQuickTest :
+    public QuickTest
 {
     public:
-        MC_LimiterTest(const std::string & type) :
-            BaseTest("mc_test<" + type + ">")
+        MC_LimiterQuickTest(const std::string & type) :
+            QuickTest("mc_limiter_quick_test<" + type + ">")
         {
         }
 
@@ -113,18 +113,18 @@ class MC_LimiterTest :
         }
  }; 
 
-MC_LimiterTest<float> mc_limiter_test_float("float");
-MC_LimiterTest<double> mc_limiter_test_double("double");
+MC_LimiterQuickTest<float> mc_limiter_quick_test_float("float");
+MC_LimiterQuickTest<double> mc_limiter_quick_test_double("double");
 
 // Testcases for class VL_Limiter
 
 template <typename DataType_>
-class VL_LimiterTest :
-    public BaseTest
+class VL_LimiterQuickTest :
+    public QuickTest
 {
     public:
-        VL_LimiterTest(const std::string & type) :
-            BaseTest("vl_test<" + type + ">")
+        VL_LimiterQuickTest(const std::string & type) :
+            QuickTest("vl_limiter_quick_test<" + type + ">")
         {
         }
 
@@ -141,5 +141,5 @@ class VL_LimiterTest :
         }
  }; 
 
-VL_LimiterTest<float> vl_limiter_test_float("float");
-VL_LimiterTest<double> vl_limiter_test_double("double");
+VL_LimiterQuickTest<float> vl_limiter_quick_test_float("float");
+VL_LimiterQuickTest<double> vl_limiter_quick_test_double("double");
