@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-06-24 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/matrix_product.hh: Fixed typo.
+	* libgraph/matrix_element_distance_inverse.hh: Added if-case.
+	* libla/files.m4: Added matrix_product_TEST.cc.
+
+2007-06-24 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/dense_matrix.hh: Changed return-type of []-operator and
 	column()-method from Vector to DenseVector.
 	* libla/matrix_product.hh: Fixed some issues.

@@ -65,12 +65,12 @@ namespace pg512
                 for (typename Vector<DataType_>::ConstElementIterator j(pos_matrix[0].begin_elements()),
                     j_end(pos_matrix[0].end_elements()), l(pos_matrix[1].begin_elements()),
                     l_end(pos_matrix[1].end_elements()) ; j != j_end ; ++j, ++l)
-                {  
-                    if (*i != *j)
+                {
+                    if ((*i != *j) && (*k != *l))
                     {
                         *e = (1 / ((*i -*j) * (*i -*j) + (*k -*l) * (*k-*l)));
                     }
-                    else 
+                    else
                         *e = 0;
                     ++e;
                 }
