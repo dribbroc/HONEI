@@ -23,7 +23,7 @@
 #ifndef LIBSWE_GUARD_LIMITER_HH
 #define LIBSWE_GUARD_LIMITER_HH 1
 
-#include <libla/tags.hh>
+#include <libutil/tags.hh>
 
 /**
  * \file

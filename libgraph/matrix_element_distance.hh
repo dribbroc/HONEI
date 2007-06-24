@@ -21,7 +21,7 @@
 #ifndef LIBGRAPH_GUARD_MATRIX_ELEMENT_DISTANCE_HH
 #define LIBGRAPH_GUARD_MATRIX_ELEMENT_DISTANCE_HH 1
 
-#include <libla/tags.hh>
+#include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_vector.hh>

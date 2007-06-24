@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
- * This file is part of the LA C++ library. LibLa is free software;
+ * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
@@ -17,13 +17,24 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_TAGS_HH
-#define LIBLA_GUARD_TAGS_HH 1
+#ifndef LIBUTIL_GUARD_TAGS_HH
+#define LIBUTIL_GUARD_TAGS_HH 1
 
 namespace pg512 ///< \todo Namespace name?
 {
     namespace tags
     {
+        /**
+         * Tag values for all supported destinations.
+         */
+        enum TagValue
+        {
+            tv_cpu = 1,
+            tv_cpu_multi_core,
+            tv_cell,
+            tv_gpu
+        };
+
         /**
          * Tag-type for generic/C++-based operations.
          *
@@ -31,12 +42,17 @@ namespace pg512 ///< \todo Namespace name?
          **/
         struct CPU
         {
+            const static TagValue tag_value = tv_cpu;
+
             /**
              * Tag-type for multithreaded/C++-based operations.
              *
              * \ingroup grptagscpumulticore
              **/
-            struct MultiCore;
+            struct MultiCore
+            {
+                const static TagValue tag_value = tv_cpu_multi_core;
+            };
         };
 
         /**
@@ -46,6 +62,17 @@ namespace pg512 ///< \todo Namespace name?
          **/
         struct Cell
         {
+            const static TagValue tag_value = tv_cell;
+        };
+
+        /**
+         * Tag-type for GPU-base operations.
+         *
+         * \ingroup gtptagsgpu
+         */
+        struct GPU
+        {
+            const static TagValue tag_value = tv_gpu;
         };
     }
 }

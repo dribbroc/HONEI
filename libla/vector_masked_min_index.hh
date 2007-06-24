@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_VECTOR_MASKED_MIN_INDEX_HH
 #define LIBLA_GUARD_VECTOR_MASKED_MIN_INDEX_HH 1
 
-#include <libla/tags.hh>
+#include <libutil/tags.hh>
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/vector.hh>

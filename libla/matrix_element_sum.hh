@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_MATRIX_ELEMENT_SUM_HH
 #define LIBLA_GUARD_MATRIX_ELEMENT_SUM_HH 1
 
-#include <libla/tags.hh>
+#include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/matrix_error.hh>

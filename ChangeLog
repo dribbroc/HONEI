@@ -5,6 +5,24 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-24 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libgraph/matrix_element_distance.hh,
+	libgraph/matrix_element_distance_inverse.hh, libla/files.m4,
+	libla/matrix_difference.hh, libla/matrix_element_inverse.hh,
+	libla/matrix_element_product.hh, libla/matrix_element_sum.hh,
+	libla/matrix_elementwise_product.hh, libla/matrix_mask.hh,
+	libla/matrix_product.hh, libla/matrix_sum.hh,
+	libla/scalar_matrix_product.hh, libla/scalar_matrix_sum.hh,
+	libla/scalar_product.hh, libla/scalar_vector_product.hh,
+	libla/scalar_vector_sum.hh, libla/vector_absolute.hh,
+	libla/vector_difference.hh, libla/vector_element_sum.hh,
+	libla/vector_mask.hh, libla/vector_masked_max_index.hh,
+	libla/vector_masked_min_index.hh, libla/vector_norm.hh,
+	libla/vector_scaled_sum.hh, libla/vector_sum.hh, libswe/limiter.hh,
+	libutil/Makefile.am, +libutil/tags.hh, -libla/tags.hh: Moved tags from
+	libla to libutil.
+
 2007-06-24 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libgraph/matrix_element_distance_TEST.cc: Fixed test data.

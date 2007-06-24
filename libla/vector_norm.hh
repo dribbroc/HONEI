@@ -21,7 +21,7 @@
 #ifndef LIBLA_GUARD_VECTOR_NORM_HH
 #define LIBLA_GUARD_VECTOR_NORM_HH 1
 
-#include <libla/tags.hh>
+#include <libutil/tags.hh>
 #include <libla/vector.hh>
 #include <libla/scalar_product.hh>
 

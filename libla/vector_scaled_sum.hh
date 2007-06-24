@@ -19,7 +19,7 @@
 #ifndef LIBLA_GUARD_VECTOR_SCALED_SUM_HH
 #define LIBLA_GUARD_VECTOR_SCALED_SUM_HH 1
 
-#include <libla/tags.hh>
+#include <libutil/tags.hh>
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/vector_error.hh>
