@@ -117,7 +117,7 @@ namespace pg512 ///< \todo Namespace name?
                 _rows(rows),
                 _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
             {
-                for (unsigned long i(0) ; i < rows * columns ; ++i)
+                for (unsigned long i(0) ; i < (rows * columns) ; ++i)
                     _elements[i] = value;
             }
 
@@ -160,7 +160,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Retrieves row vector by index, zero-based, unassignable.
-            virtual const Vector<DataType_> & operator[] (unsigned long row) const
+            virtual const DenseVector<DataType_> & operator[] (unsigned long row) const
             {
                 if (! _row_vectors[row])
                     _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
@@ -169,7 +169,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Retrieves row vector by index, zero-based, assignable.
-            virtual Vector<DataType_> & operator[] (unsigned long row)
+            virtual DenseVector<DataType_> & operator[] (unsigned long row)
             {
                 if (! _row_vectors[row])
                     _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
@@ -178,7 +178,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Retrieves column vector by index, zero-based, unassignable.
-            virtual const Vector<DataType_> & column(unsigned long column) const
+            virtual const DenseVector<DataType_> & column(unsigned long column) const
             {
                 if (! _column_vectors[column])
                     _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
@@ -187,7 +187,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Retrieves column vector by index, zero-based, assignable.
-            virtual Vector<DataType_> & column(unsigned long column)
+            virtual DenseVector<DataType_> & column(unsigned long column)
             {
                 if (! _column_vectors[column])
                     _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));

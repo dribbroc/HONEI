@@ -47,7 +47,7 @@ namespace pg512
          *
          * \param left Reference to dense matrix which elements will be accumulated.
          **/
-        static DataType_ & value(const DenseMatrix<DataType_> & matrix)
+        static DataType_ value(const DenseMatrix<DataType_> & matrix)
         {
             DataType_ result(0);
 			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()),
@@ -64,7 +64,7 @@ namespace pg512
          *
          * \param left Reference to banded matrix which elements will be accumulated.
          **/
-        static DataType_ & value(const BandedMatrix<DataType_> & matrix)
+        static DataType_ value(const BandedMatrix<DataType_> & matrix)
         {
             DataType_ result(0);
 			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()),

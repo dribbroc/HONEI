@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -45,14 +46,18 @@ class DenseMatrixProductTest :
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size + 1, size, DataType_(3)),
-                    dm3(size, size, DataType_(6 * size));
-                DenseMatrix<DataType_> & prod(MatrixProduct<DataType_>::value(dm1, dm2));
+                    dm3(size+1, size+1, DataType_(6 * size));
+                DenseMatrix<DataType_> prod(MatrixProduct<DataType_>::value(dm1, dm2));
 
+                TEST_CHECK_EQUAL(prod, dm3);
+    /*
                 for (typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()),
                         i_end(prod.end_elements()), j(dm3.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
                 }
+
+    */
             }
 
             DenseMatrix<DataType_> dm01(3, 3, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1));
@@ -78,18 +83,23 @@ class DenseMatrixProductQuickTest :
         {
             unsigned long size(5);
             DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size + 1, size, DataType_(3)),
-                dm3(size, size, DataType_(6 * size));
-            DenseMatrix<DataType_> & prod(MatrixProduct<DataType_>::value(dm1, dm2));
+                dm3(size+1, size+1, DataType_(6 * size));
+            DenseMatrix<DataType_> prod(MatrixProduct<DataType_>::value(dm1, dm2));
 
+           TEST_CHECK_EQUAL(prod, dm3);
+
+/*
             for (typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()),
                     i_end(prod.end_elements()), j(dm3.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
             }
+*/
 
             DenseMatrix<DataType_> dm01(3, 3, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1));
 
             TEST_CHECK_THROWS(MatrixProduct<DataType_>::value(dm02, dm01), MatrixRowsDoNotMatch);
+
         }
 };
 DenseMatrixProductQuickTest<float> dense_matrix_product_quick_test_float("float");

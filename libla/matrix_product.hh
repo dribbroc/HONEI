@@ -23,6 +23,7 @@
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <matrix_error.hh>
 
 /**
  * \file
@@ -51,8 +52,8 @@ namespace pg512
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-                DenseMatrix<DataType1_> result(right.columns(), left.rows());
-                typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
+            DenseMatrix<DataType1_> result(right.columns(), left.rows(), DataType1_(0));
+            typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
 
             for (unsigned int s=0 ; s < left.rows() ; ++s)
             {
@@ -62,10 +63,9 @@ namespace pg512
                     const DenseVector<DataType2_> right_column = right.column(t);
                     typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
                     for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
-                            l_end(left_row.end_elements()) ; l != l_end ; ++l)
+                            l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
                     {
                         *i += (*l) * (*r);
-                        ++r;
                     }
                     ++i;
                 }
