@@ -49,7 +49,7 @@ namespace pg512
          * Returns the resulting inverse distance matrix.
          * \param pos_matrix The matrix with the positions of nodes. It may only have two rows for x- and y-coordinates.
          **/
-        static DenseMatrix<DataType_> & value(const RowAccessMatrix<DataType_> & pos_matrix)
+        static DenseMatrix<DataType_> value(const RowAccessMatrix<DataType_> & pos_matrix)
         {
 
             if (pos_matrix.rows() != 2)

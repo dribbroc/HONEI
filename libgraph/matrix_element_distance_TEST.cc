@@ -50,13 +50,16 @@ class MatrixElementDistanceQuickTest :
 
             TEST_CHECK_EQUAL(distance[0][0], 0);
             TEST_CHECK_EQUAL(distance[1][1], 0);
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][1], (8), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][0], (8), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][2], (32), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], (8), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][1], 2, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][0], 2, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][2], 8, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[1][2], 2, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[2][0], 8, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[2][1], 2, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(distance[2][2], 0, std::numeric_limits<DataType_>::epsilon());                                    
 
             std::tr1::shared_ptr<DenseMatrix<DataType_> > dm2(new DenseMatrix<DataType_>
-                (3, 3));
+                (2, 3));
             TEST_CHECK_THROWS(MatrixElementDistance<DataType_>::value(*dm2), MatrixRowsDoNotMatch);
 
         }
