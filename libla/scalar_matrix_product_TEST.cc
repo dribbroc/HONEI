@@ -46,11 +46,7 @@ class ScalarDenseMatrixProductTest :
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(6));
                 DenseMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), dm1));
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(dm1.begin_elements()),
-                        i_end(dm1.end_elements()), j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
-                {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
-                }
+                TEST_CHECK_EQUAL(prod, dm2);
             }
         }
 };

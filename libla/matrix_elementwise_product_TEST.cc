@@ -48,11 +48,7 @@ class DenseMatrixElementwiseProductTest :
                     dm3(size, size + 1, DataType_(6));
                 DenseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(dm1, dm2));
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()),
-                        i_end(prod.end_elements()), j(dm3.begin_elements()) ; i != i_end ; ++i, ++j)
-                {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
-                }
+                TEST_CHECK_EQUAL(prod, dm3);
             }
 
             DenseMatrix<DataType_> dm01(2, 3, static_cast<DataType_>(1)), dm02(3, 4, static_cast<DataType_>(1)),
@@ -83,11 +79,7 @@ class DenseMatrixElementwiseProductQuickTest :
                 dm3(size, size + 1, DataType_(6));
             DenseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(dm1, dm2));
 
-            for (typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()),
-                    i_end(prod.end_elements()), j(dm3.begin_elements()) ; i != i_end ; ++i, ++j)
-            {
-                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
-            }
+            TEST_CHECK_EQUAL(prod, dm3);
 
             DenseMatrix<DataType_> dm01(2, 3, static_cast<DataType_>(1)), dm02(3, 4, static_cast<DataType_>(1)),
                 dm03(2, 4, static_cast<DataType_>(1));

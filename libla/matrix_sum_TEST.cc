@@ -44,14 +44,11 @@ class DenseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(-3));
+                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(-3)),
+                    dm3(size, size + 1, DataType_(-1));
                 DenseMatrix<DataType_> & sum(MatrixSum<DataType_>::value(dm1, dm2));
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(sum.begin_elements()),
-                        i_end(sum.end_elements()) ; i != i_end ; ++i)
-                {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, static_cast<DataType_>(-1), std::numeric_limits<DataType_>::epsilon());
-                }
+                TEST_CHECK_EQUAL(sum, dm3);
             }
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
@@ -77,14 +74,11 @@ class DenseMatrixSumQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(-3));
+            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(-3)),
+                dm3(size, size + 1, DataType_(-1));
             DenseMatrix<DataType_> & sum(MatrixSum<DataType_>::value(dm1, dm2));
 
-            for (typename Matrix<DataType_>::ConstElementIterator i(sum.begin_elements()),
-                    i_end(sum.end_elements()) ; i != i_end ; ++i)
-            {
-                TEST_CHECK_EQUAL_WITHIN_EPS(*i, static_cast<DataType_>(-1), std::numeric_limits<DataType_>::epsilon());
-            }
+            TEST_CHECK_EQUAL(sum, dm3);
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
 
