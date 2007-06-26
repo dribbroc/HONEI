@@ -11,7 +11,7 @@
   * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
   * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
   * details.
-  * 
+  *
   * You should have received a copy of the GNU General Public License along with
   * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
   */
@@ -42,22 +42,22 @@ namespace pg512
     struct VectorScaledSum
     {
         /**
-         * Returns the the resulting vector of the linear lombination of two given DenseVector instances and two 
+         * Returns the the resulting vector of the linearcombination of two given DenseVector instances and two
          * scalars.
          * \param leftScal The scalar provided in order to be multiplied with left
          * \param rightScal analogous
          **/
-        template <typename DtLeft_ , typename DtRight_ , typename DtLeftScal_ , typename DtRightScal_ > 
-        static DenseVector<DtLeft_> value(DenseVector<DtLeft_> & left, 
-                        const DenseVector<DtRight_> & right,          
+        template <typename DtLeft_ , typename DtRight_ , typename DtLeftScal_ , typename DtRightScal_ >
+        static DenseVector<DtLeft_> value(DenseVector<DtLeft_> & left,
+                        const DenseVector<DtRight_> & right,
                         const DtLeftScal_ & leftscal, const DtRightScal_ & rightscal)
         {
 	    if (left.size() != right.size())
             	throw VectorSizeDoesNotMatch(right.size(), left.size());
-          
+
             //DenseVector<DataType_> result(left.size(), 0, 0, 1); old style
-            
-            for (typename Vector<DtLeft_>::ElementIterator l(left.begin_elements()), 
+
+            for (typename Vector<DtLeft_>::ElementIterator l(left.begin_elements()),
                                 l_end(left.end_elements()) ; l != l_end ; ++l)
             {
                 left[l.index()] = ((*l) * leftscal) + (rightscal * right[l.index()]);
@@ -66,22 +66,22 @@ namespace pg512
 	}
 
 	/**
-          * Returns the the resulting vector of the lincomb. of two given SparseVector instances and two 
+          * Returns the the resulting vector of the linearcombination of two given SparseVector instances and two
           * scalars.
           * \param leftScal The scalar provided in order to be multiplied with left
           * \param rightScal analogous
           **/
         template < typename DtLeft_ , typename DtRight_, typename DtLeftScal_, typename DtRightScal_>
-	static SparseVector<DtLeft_> value(SparseVector<DtLeft_> & left, 
+	static SparseVector<DtLeft_> value(SparseVector<DtLeft_> & left,
                         const SparseVector<DtRight_> & right, const DtLeftScal_ & leftscal, const DtRightScal_ & rightscal)
 	{
 	    if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
-            
-                //SparseVector<DataType_> result(left.size(), right.used_elements() + left.used_elements()); old style            
+
+                //SparseVector<DataType_> result(left.size(), right.used_elements() + left.used_elements()); old style
             for (typename Vector<DtLeft_>::ConstElementIterator l(left.begin_non_zero_elements()),
                                 l_end(left.end_non_zero_elements()), r(right.begin_non_zero_elements()),
-                                r_end(right.end_non_zero_elements()); l != l_end ; ++l)
+                                r_end(right.end_non_zero_elements()); l != l_end ; )
             {
             	if (r.index() < l.index())
                 {
@@ -102,10 +102,10 @@ namespace pg512
                 return left;
             }
 	}
-		
+
         /**
-          * Returns the the resulting vector of the lincomb. of two given Vector instances (one dense, the other
-          * sparse)and two 
+          * Returns the the resulting vector of the linearcombination of two given Vector instances (one dense, the other
+          * sparse)and two
           * scalars.
           * \param leftscal The scalar provided in order to be multiplied with left
           * \param rightscal see leftscal
@@ -136,7 +136,7 @@ namespace pg512
                 return left;
         }
     };
-	
+
 }
 
-#endif 
+#endif

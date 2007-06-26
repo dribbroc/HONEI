@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/vector_sum.hh, libla/vector_difference.hh,
+	libla/vector_scaled_sum.hh: Corrected algorithm for reassembling a
+	sparse vector.
+	* +libla/vector_product.hh: Added functionality of multiplying two
+	vectors. Here it's the same as elementwise product...
+	* +libla/vector_matrix_product.hh: Added new operation for
+	DenseMatrices. DenseMatrix * SparseVector will not work yet.
+	BandedMatrix-Implementation will come later.
+
 2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libutil/files.m4: Ooops. Forgot to add.

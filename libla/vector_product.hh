@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_VECTOR_SUM_HH
-#define LIBLA_GUARD_VECTOR_SUM_HH 1
+#ifndef LIBLA_GUARD_VECTOR_PRODUCT_HH
+#define LIBLA_GUARD_VECTOR_PRODUCT_HH 1
 
 #include <libutil/tags.hh>
 #include <libla/dense_vector.hh>
@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of vector sums.<br/>
+ * Templatized definitions of vector products.<br/>
  *
  * \ingroup grpvectoroperations
  **/
@@ -36,17 +36,17 @@ namespace pg512
 {
 
     /**
-     * VectorSum is the class template for the sum of two vectors.
+     * VectorProduct is the class template for the product of two vectors.
      * \brief The first referenced vector is changed under this operation.
      * \ingroup grpvectoroperations
      **/
     template <typename Tag_ = tags::CPU> struct VectorSum
     {
         /**
-         * Returns the the resulting vector of the sum of two given DenseVector instances.
+         * Returns the the resulting vector of the product of two given DenseVector instances.
          *
          * \param left Reference to dense vector that will be also used as result vector.
-         * \param right Reference to constant dense vector to be added.
+         * \param right Reference to constant dense vector to be multiplied.
          **/
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const DenseVector<DataType2_> & right)
         {
@@ -56,24 +56,24 @@ namespace pg512
             for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l)
             {
-                *l += right[l.index()];
+                *l *= right[l.index()];
             }
 
             return left;
         }
 
         /**
-         * Returns the resulting vector of the sum of two given SparseVector instances.
+         * Returns the resulting vector of the product of two given SparseVector instances.
          *
          * \param left Reference to sparse vector that will be also used as result vector.
-         * \param right Reference to constant sparse vector to be added.
+         * \param right Reference to constant sparse vector to be multiplied.
          **/
         template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> & value(SparseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            SparseVector<DataType1_> result(left.size(), right.used_elements() + left.used_elements());
+            SparseVector<DataType1_> result(left.size(), min(right.used_elements(), left.used_elements()));
 
             typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
                     r_end(right.end_non_zero_elements());
@@ -82,17 +82,15 @@ namespace pg512
             {
                 if (r.index() < l.index())
                 {
-                    result[r.index()] = *r;
                     ++r;
                 }
                 else if (l.index() < r.index())
                 {
-                    result[l.index()] = *l;
                     ++l;
                 }
                 else
                 {
-                    result[l.index()] = *l + *r;
+                    result[l.index()] = (*l) * (*r);
                     ++l; ++r;
                 }
             }
@@ -101,10 +99,10 @@ namespace pg512
         }
 
         /**
-         * Returns the the resulting vector of the sum of a given dense and a given sparse vector.
+         * Returns the the resulting vector of the product of a given dense and a given sparse vector.
          *
          * \param left Reference to dense vector that will be also used as result vector.
-         * \param right Reference to constant sparse vector to be added.
+         * \param right Reference to constant sparse vector to be multiplied.
          **/
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const SparseVector<DataType2_> right)
         {
@@ -121,7 +119,7 @@ namespace pg512
                     ++l;
                 }
 
-                *l += *r;
+                *l *= *r;
                 ++r;
             }
             return left;
