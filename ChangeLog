@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libutil/files.m4: Ooops. Forgot to add.
+
+2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/Makefile.am.m4: Added debug support to libla.
 	* libla/sparse_vector.hh, libla/sparse_vector_TEST.cc: Fixed
 	longstanding off-by-one bug (_insert_elements) and missing
