@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
+
+	* autogen.bash, configure.ac, -libutil/Makefile.am,
+	+libutil/Makefile.am.m4: Made libutil use m4 generated Makefile.am.
+	Added dependency on libebt (see below).
+	* libutil/assertion.cc, libutil/assertion.hh,
+	libutil/assertion_TEST.cc, libutil/exception.cc, libutil/exception.hh,
+	libutil/log.cc, libutil/log.hh: Added support for ASSERT and CONTEXT
+	macros. Made Log display backtraces.
+	This needs libebt (http://libebt.berlios.de).
+	* libutil/shared_array.hh: Cleaned usage of Log and replaced it with
+	ASSERT where appropriate.
+
 2007-06-25 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_mask_TEST.cc, libla/matrix_element_product_TEST.cc,
@@ -37,7 +50,7 @@ see the NEWS file.
 2007-06-24 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libgraph/matrix_element_distance.hh,
-	libgraph/matrix_element_distance_inverse.hh, libla/files.m4,
+	ibgraph/matrix_element_distance_inverse.hh, libla/files.m4,
 	libla/matrix_difference.hh, libla/matrix_element_inverse.hh,
 	libla/matrix_element_product.hh, libla/matrix_element_sum.hh,
 	libla/matrix_elementwise_product.hh, libla/matrix_mask.hh,

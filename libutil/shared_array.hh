@@ -20,6 +20,7 @@
 #ifndef LIBUTIL_GUARD_SHARED_ARRAY_HH
 #define LIBUTIL_GUARD_SHARED_ARRAY_HH 1
 
+#include <libutil/assertion.hh>
 #include <libutil/exception.hh>
 #include <libutil/log.hh>
 #include <libutil/stringify.hh>
@@ -44,7 +45,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Our map of reference counters.
-            std::map<DataType_ *, long> _counter_map;
+            std::map<DataType_ *, signed long> _counter_map;
 
         public:
             static SharedArrayCounter * instance()
@@ -60,8 +61,6 @@ namespace pg512 ///< \todo Namespace name?
                     _counter_map[entry] = 0;
 
                 ++_counter_map[entry];
-                Log::instance()->message(ll_full, "SharedArrayCounter: Increasing entry '" + stringify(entry)
-                        + "' to '" + stringify(_counter_map[entry]) + "'");
             }
 
             void decrease(DataType_ * entry)
@@ -70,11 +69,9 @@ namespace pg512 ///< \todo Namespace name?
                     _counter_map[entry] = 0;
 
                 --_counter_map[entry];
-                Log::instance()->message(ll_full, "SharedArrayCounter: Decreasing entry '" + stringify(entry)
-                        + "' to '" + stringify(_counter_map[entry]) + "'");
             }
 
-            long count(DataType_ * entry)
+            signed long count(DataType_ * entry)
             {
                 if (_counter_map.find(entry) == _counter_map.end())
                     return 0;
@@ -94,8 +91,8 @@ namespace pg512 ///< \todo Namespace name?
             SharedArray(DataType_ *array) :
                 _array(array)
             {
-                Log::instance()->message(ll_full, "SharedArray: new array = " + stringify(array) + " taken with count = "
-                        + stringify(SharedArrayCounter<DataType_>::instance()->count(array)));
+                ASSERT(SharedArrayCounter<DataType_>::instance()->count(_array) >= 0, "reference counter for array '" +
+                    stringify(array) + "' is below zero!");
                 SharedArrayCounter<DataType_>::instance()->increase(_array);
             }
 
@@ -103,6 +100,8 @@ namespace pg512 ///< \todo Namespace name?
             SharedArray(const SharedArray<DataType_> & other) :
                 _array(other._array)
             {
+                ASSERT(SharedArrayCounter<DataType_>::instance()->count(_array) >= 0, "reference counter for array '" +
+                    stringify(other._array) + "' is below zero!");
                 SharedArrayCounter<DataType_>::instance()->increase(_array);
             }
 
@@ -111,19 +110,16 @@ namespace pg512 ///< \todo Namespace name?
             {
                 SharedArrayCounter<DataType_>::instance()->decrease(_array);
 
-                long count(SharedArrayCounter<DataType_>::instance()->count(_array));
+                signed long count(SharedArrayCounter<DataType_>::instance()->count(_array));
+                ASSERT(count >= 0, "reference counter for array '" + stringify(_array) + "' is below zero!");
 
-                if (count < 0)
-                    throw SharedArrayError("~SharedArray: reference counter below zero for address " + stringify(_array));
-                else if (count == 0)
-                {
-                    Log::instance()->message(ll_full, "~SharedArray: _array = " + stringify(_array) + " deleted");
+                if (count == 0)
                     delete[] _array;
-                }
             }
 
             DataType_ & operator[] (std::ptrdiff_t index) const
             {
+                ASSERT(index >= 0, "index '" + stringify(index) + "' is out of bounds!");
                 return _array[index];
             }
 
@@ -147,14 +143,11 @@ namespace pg512 ///< \todo Namespace name?
                 SharedArrayCounter<DataType_>::instance()->increase(array);
                 SharedArrayCounter<DataType_>::instance()->decrease(_array);
 
-                long count(SharedArrayCounter<DataType_>::instance()->count(_array));
-                if (count < 0)
-                    throw SharedArrayError("reset: reference counter below zero for address " + stringify(_array));
-                else if (count == 0)
-                {
-                    Log::instance()->message(ll_full, "reset: _array = " + stringify(_array) + " deleted");
+                signed long count(SharedArrayCounter<DataType_>::instance()->count(_array));
+                ASSERT(count >= 0, "reference counter for array '" + stringify(_array) + "' is below zero!");
+
+                if (count == 0)
                     delete[] _array;
-                }
 
                 _array = array;
             }

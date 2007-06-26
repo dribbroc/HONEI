@@ -17,9 +17,10 @@ get() {
     exit 127
 }
 
+misc/do_m4.bash libgraph/Makefile.am || exit $?
 misc/do_m4.bash libla/Makefile.am || exit $?
 misc/do_m4.bash libswe/Makefile.am || exit $?
-misc/do_m4.bash libgraph/Makefile.am || exit $?
+misc/do_m4.bash libutil/Makefile.am || exit $?
 run mkdir -p config
 run $(get libtoolize 1.5 ) --copy --force --automake
 rm -f config.cache

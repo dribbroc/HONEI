@@ -15,6 +15,22 @@ AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 dnl }}}
 
+dnl {{{ check for libebt
+AC_MSG_CHECKING([for libebt])
+AC_COMPILE_IFELSE([
+#include <libebt/libebt.hh>
+#include <string>
+struct Tag { };
+int main(int, char **)
+{
+	libebt::BacktraceContext<Tag> context("pg512!");
+}
+],
+	[AC_MSG_RESULT([yes])],
+	[AC_MSG_RESULT([no])
+	 AC_MSG_ERROR([libebt (http://libebt.berlios.de/) is required])])
+dnl }}}
+
 dnl {{{ check for a sensible C++ compiler
 dnl {{{ check for partial specialisation of class templates
 AC_MSG_CHECKING([for compiler support for partial specialisation of template classes])
@@ -83,15 +99,33 @@ int main(int, char **)
 	 AC_MSG_ERROR([Your C++ Standard Library doesn't support std::numeric_limits<>.])
 	])
 dnl }}}
+dnl }}}
+
+dnl {{{ check for build support conditionals
+dnl {{{ check for debug support
+AC_MSG_CHECKING([whether to build debug support])
+AC_ARG_ENABLE([debug],
+	AS_HELP_STRING([--enable-debug], [Build debug support (needs packages: none yet)]),
+		[ENABLE_DEBUG=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_DEBUG=yes
+		  AC_MSG_RESULT([yes])])
+AC_SUBST([ENABLE_DEBUG])
+if test "x$ENABLE_DEBUG" = "xyes"; then
+	DEBUGDEF="-DDEBUG"
+fi
+AC_SUBST([DEBUGDEF])
+dnl }}}
+dnl }}}
 
 dnl output
 AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 	Makefile
 	doc/Makefile
+	libgraph/Makefile
 	libla/Makefile
+	libswe/Makefile
 	libutil/Makefile
 	unittest/Makefile
-	libswe/Makefile
-	libgraph/Makefile
 )
