@@ -78,8 +78,8 @@ namespace pg512
             for (typename Vector<DataType1_>::ConstElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ;)
             {
-				result = *l * right[l.index()];
-			}
+		    result[l.index()] = *l * right[l.index()];
+	    }
             return result;
         }
 
