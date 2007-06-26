@@ -70,7 +70,9 @@ namespace pg512 ///< \todo Namespace name?
             {
                 result += (*l) * right[l.index()];
             }
-        }
+
+            return result;
+       }
     };
 /*
     /// Explicit instantiation for Cell-based float computation.

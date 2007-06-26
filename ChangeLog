@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/scalar_product.hh: Added missing return statement.
+
+2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/vector_sum.hh, libla/vector_difference.hh,
 	libla/vector_scaled_sum.hh: Corrected algorithm for reassembling a
 	sparse vector.
