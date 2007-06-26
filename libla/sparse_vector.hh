@@ -56,7 +56,7 @@ namespace pg512 ///< \todo Namespace name?
             class Implementation;
 
             /// Pointer to our implementation.
-            Implementation * _imp;
+            std::tr1::shared_ptr<Implementation> _imp;
 
             /// Out zero element.
             static const DataType_ _zero_element;
@@ -69,12 +69,16 @@ namespace pg512 ///< \todo Namespace name?
              */
             DataType_ & _insert_element(unsigned long position, unsigned long index) const
             {
+                CONTEXT("When inserting element at position '" + stringify(position) + "' with index '" +
+                        stringify(index) + "':");
+
                 bool resize(_imp->_capacity == _imp->_used_elements);
-                bool capacity(resize ? _imp->_capacity + 10 : _imp->_capacity);
+                unsigned long capacity(resize ? _imp->_capacity + 10 : _imp->_capacity);
                 DataType_ * elements(resize ? new DataType_[capacity] : _imp->_elements.get());
                 unsigned long * indices(resize ? new unsigned long[capacity] : _imp->_indices.get());
 
-                ++_imp->_used_elements;
+                ASSERT(position < capacity, "position '" + stringify(position) + "' out of bounds!");
+                ASSERT(index < _imp->_size, "index '" + stringify(index) + "' out of bounds!");
 
                 if (resize)
                 {
@@ -88,6 +92,8 @@ namespace pg512 ///< \todo Namespace name?
                 std::copy_backward(_imp->_indices.get() + position, _imp->_indices.get() + _imp->_used_elements,
                         indices + _imp->_used_elements + 1);
 
+                ++_imp->_used_elements;
+
                 if (resize)
                 {
                     _imp->_elements.reset(elements);
@@ -98,7 +104,6 @@ namespace pg512 ///< \todo Namespace name?
                 // Set new element's index and reset it to zero.
                 _imp->_indices[position] = index;
                 _imp->_elements[position] = DataType_(0);
-
             }
 
             /// Our normal implementation of ElementIteratorBase.
@@ -131,12 +136,14 @@ namespace pg512 ///< \todo Namespace name?
             SparseVector(unsigned long size, unsigned long capacity) :
                 _imp(new Implementation(size, capacity))
             {
+                CONTEXT("When creating SparseVector:");
+                ASSERT(size >= capacity, "capacity '" + stringify(capacity) + "' exceeds size '" +
+                        stringify(size) + "'!");
             }
 
             /// Destructor.
             ~SparseVector()
             {
-                delete _imp;
             }
 
             /// \}
@@ -210,13 +217,17 @@ namespace pg512 ///< \todo Namespace name?
             /// Retrieves element by index, zero-based, unassignable.
             virtual const DataType_ & operator[] (unsigned long index) const
             {
+                CONTEXT("When accessing unassignable element at index '" + stringify(index) + "':");
+                ASSERT(index < _imp->_size, "index '" + stringify(index) + "' exceeds size '" +
+                        stringify(_imp->_size) + "'!");
+
                 unsigned long i(0);
 
                 for ( ; (i < _imp->_used_elements) && (_imp->_indices[i] < index) ; ++i)
                     ;
 
                 if (_imp->_indices[i] == index)
-                    return _imp->_elements[index];
+                    return _imp->_elements[i];
                 else
                     return _zero_element;
             }
@@ -224,6 +235,10 @@ namespace pg512 ///< \todo Namespace name?
             /// Retrieves (and inserts empty) element by index, zero-based, assignable.
             virtual DataType_ & operator[] (unsigned long index)
             {
+                CONTEXT("When accessing assignable element at index '" + stringify(index) + "':");
+                ASSERT(index < _imp->_size, "index '" + stringify(index) + "' exceeds size '" +
+                        stringify(_imp->_size) + "'!");
+
                 unsigned long i(0);
 
                 for ( ; (i < _imp->_used_elements) && (_imp->_indices[i] < index) ; ++i)
@@ -238,6 +253,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns a copy of the vector.
             virtual SparseVector * copy() const
             {
+                CONTEXT("When creating a copy:'");
                 SparseVector * result(new SparseVector<DataType_>(_imp->_size, _imp->_capacity));
 
                 result->_imp->_used_elements = _imp->_used_elements;
@@ -288,17 +304,29 @@ namespace pg512 ///< \todo Namespace name?
             /**
              * Constructor.
              *
-             * \param
+             * \param size Size of the new SparseVector.
+             * \param capacity Capacity of elements that can be held without resizing.
              */
             Implementation(unsigned long size, unsigned long capacity) :
                 _elements(new DataType_[capacity]),
                 _indices(new unsigned long[capacity]),
                 _capacity(capacity),
                 _size(size),
-                _used_elements(1)
+                _used_elements(0)
             {
-                std::fill_n(_elements.get(), _capacity, DataType_(0));
-                std::fill_n(_indices.get(), _capacity, 0);
+                CONTEXT("When creating SparseVector::Implementation:");
+                ASSERT(capacity > 0, "capacity is zero!");
+
+                // Sneak in a 'terminating element', as index can never be size.
+                _elements[0] = DataType_(0);
+                std::fill_n(_indices.get(), capacity, size);
+            }
+
+            /**
+             * Destructor.
+             */
+            ~Implementation()
+            {
             }
 
             /// \}
@@ -365,6 +393,8 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
+                CONTEXT("When accessing assignable element at position '" + stringify(_pos) + "':");
+
                 if (_vector._imp->_indices[_pos] != _index)
                     _vector._insert_element(_pos, _index);
 
@@ -374,6 +404,8 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
+                CONTEXT("When accessing unassignable element at position '" + stringify(_pos) + "':");
+
                 if (_vector._imp->_indices[_pos] != _index)
                     return _vector._zero_element;
                 else

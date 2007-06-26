@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/Makefile.am.m4: Added debug support to libla.
+	* libla/sparse_vector.hh, libla/sparse_vector_TEST.cc: Fixed
+	longstanding off-by-one bug (_insert_elements) and missing
+	terminators (Implementation). Added ASSERTs and CONTEXTs where
+	appropriate.
+
+2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
+
 	* autogen.bash, configure.ac, -libutil/Makefile.am,
 	+libutil/Makefile.am.m4: Made libutil use m4 generated Makefile.am.
 	Added dependency on libebt (see below).
