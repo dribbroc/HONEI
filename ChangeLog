@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+        * libla/vector_product.hh: Removed overhead, made it more efficient.
+	* libla/vector_sum.hh: Added a missinge reference-&.
+
+2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/scalar_product.hh: Added missing return statement.
 
 2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>

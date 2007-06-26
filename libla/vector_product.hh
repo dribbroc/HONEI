@@ -68,59 +68,36 @@ namespace pg512
          * \param left Reference to sparse vector that will be also used as result vector.
          * \param right Reference to constant sparse vector to be multiplied.
          **/
-        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> & value(SparseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const SparseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
             SparseVector<DataType1_> result(left.size(), min(right.used_elements(), left.used_elements()));
 
-            typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements());
-            for (typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+            for (typename Vector<DataType1_>::ConstElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ;)
             {
-                if (r.index() < l.index())
-                {
-                    ++r;
-                }
-                else if (l.index() < r.index())
-                {
-                    ++l;
-                }
-                else
-                {
-                    result[l.index()] = (*l) * (*r);
-                    ++l; ++r;
-                }
-            }
-
+				result = *l * right[l.index()];
+			}
             return result;
         }
 
         /**
          * Returns the the resulting vector of the product of a given dense and a given sparse vector.
          *
-         * \param left Reference to dense vector that will be also used as result vector.
-         * \param right Reference to constant sparse vector to be multiplied.
+         * \param left Reference to sparse vector that will be also used as result vector.
+         * \param right Reference to constant dense vector to be multiplied.
          **/
-        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const SparseVector<DataType2_> right)
+        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> & value(SparseVector<DataType1_> & left, const DenseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements());
-            for (typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
+            for (typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
             {
-                while (l.index() < r.index() && (l != l_end))
-                {
-                    ++l;
-                }
-
-                *l *= *r;
-                ++r;
+				*l *= right[l.index()];
             }
             return left;
         }

@@ -106,7 +106,7 @@ namespace pg512
          * \param left Reference to dense vector that will be also used as result vector.
          * \param right Reference to constant sparse vector to be added.
          **/
-        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const SparseVector<DataType2_> right)
+        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
