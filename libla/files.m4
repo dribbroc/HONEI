@@ -35,7 +35,7 @@ add(`vector_error',              `hh', `cc')
 add(`vector_iterator',           `hh')
 add(`vector_mask',               `hh', `test')
 add(`vector_masked_max_index',   `hh', `test')
-add(`vector_masked_min_index',   `hh', `test'
+add(`vector_masked_min_index',   `hh', `test')
 add(`vector_matrix_product',     `hh')
 add(`vector_norm',               `hh', `test')
 add(`vector_product',            `hh')
