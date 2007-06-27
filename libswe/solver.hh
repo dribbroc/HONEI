@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ *
  * This file is part of the SWE C++ library. LibSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
@@ -34,7 +35,6 @@
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
-#include <libla/sparse_matrix.hh>
 #include <libla/banded_matrix.hh>
 
 namespace pg512 {
@@ -71,15 +71,7 @@ namespace pg512 {
               * Performs the preprocessing.
               * For Implementation see preprocessing.cc .
               **/
-            virtual void _do_preprocessing();
-
-            /**
-              * Updates the scalarfields in each timestep. 
-              * 
-              * \param time The current timestep.
-              * 
-              **/       
-            virtual void _solve(ulint time);
+            void _do_preprocessing();
 
             ///The relaxation parameter: 0<eps<<1.
             double _eps;
@@ -123,63 +115,106 @@ namespace pg512 {
             ResPrec_ _east_bound;
 
             ///Flags for boundary usage.
-            bool _simple_bound = true;
-            ///If set to false, absorbtion is used.
-            bool _usage_reflect = true;
+            bool _simple_bound;
+            bool _usage_reflect;
+            bool _usage_constant;
+            bool _usage_cyclic;
+            bool _usage_transmissive;
         
             ///Vectors under pointers are the relaxation vectors. size is 3N, where N is the total number of grid cells.
-            DenseVector<ResPrec> * _u;
-            DenseVector<ResPrec> * _v;
-            DenseVector<ResPrec> * _w;
+            ///If using boundary-mapping, the size is 3N + 4(w + h + 4).
+            DenseVector<ResPrec_> * _u;
+            DenseVector<ResPrec_> * _v;
+            DenseVector<ResPrec_> * _w;
 
             ///Vectors under pointers are the temp. relaxation vectors for the prediction stages.
-            ///It`s size is 3N, where N is the total number of grid cells.
-            DenseVector<ResPrec> * _u_temp;
-            DenseVector<ResPrec> * _v_temp;
-            DenseVector<ResPrec> * _w_temp;
+            ///It`s size is 3N, where N is the total number of grid cells. If using boundary - mapping, the size is
+            /// 3N + 4(w + h + 4).
+            DenseVector<ResPrec_> * _u_temp;
+            DenseVector<ResPrec_> * _v_temp;
+            DenseVector<ResPrec_> * _w_temp;
+            
+            ///Vectors for the bottom slopes.
+            DenseVector<ResPrec_> * _bottom_slopes_x; //size:w
+            DenseVector<ResPrec_> * _bottom_slopes_y; //size:h
 
             /** Basic matrix assembling. Uses Limiters and theta().
-              * Computes M_1, M_2, M_5, M_6 (or M_8, ...)due to the set number.
-              * For implementation see libswe/assemble.cc.
-              *
-              * \param number Number is elementOf({1,2,5,6}) or elementOf({8,9,...}).
+              * Computes M_1, M_3.
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _assemble_matrix(usint number);
+            BandedMatrix<WorkPrec_> _assemble_matrix1();
 
-            /** Simplified matrix assembling. See above.
-              * For implementation see matrix_assemble.cc.
-              *
-              *  \param number Number is elementOf({3,4,7,8}) or elementOf({10,11,...}). 
+            /** Basic matrix assembling. Uses Limiters and theta().
+              * Computes M_2, M_4.
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assembleMatrix(usint number);
+            BandedMatrix<WorkPrec_> _assemble_matrix2();
+
+
+            /** Simplified matrix assembling.
+              * Computes M_5.
+              *
+              **/
+            template<typename WorkPrec_>
+            BandedMatrix<WorkPrec_> _quick_assembleMatrix1();
+
+            /** Simplified matrix assembling.
+              * Computes M_6.
+              *
+              **/
+            template<typename WorkPrec_>
+            BandedMatrix<WorkPrec_> _quick_assembleMatrix2();
+
+            /** Simplified matrix assembling.
+              * Computes M_7.
+              *
+              **/
+            template<typename WorkPrec_>
+            BandedMatrix<WorkPrec_> _quick_assembleMatrix3();
+
+            /** Simplified matrix assembling.
+              * Computes M_8.
+              *
+              **/
+            template<typename WorkPrec_>
+            BandedMatrix<WorkPrec_> _quick_assembleMatrix4();
 
             /** Flow computation.
-              * For implementation see flow.cc .
+              * Used by preprocessing.
               *
               * \param i Access Parameter 1.
               * \param j Access Parameter 2.
               * 
               **/
             template<typename WorkPrec_>
-            DenseVector<WorkPrec_> _flowX(uint i, uint j);
+            DenseVector<WorkPrec_> _flow_x(uint i, uint j);
 
             /** Flow computation.
-              * For implementation see libswe/flow.cc .
+              * Used by preprocessing.
               *
               * \param i Access Parameter 1.
               * \param j Access Parameter 2.
               * 
               **/
             template<typename WorkPrec_>
-            DenseVector<WorkPrec_> _flowY(uint i, uint j);
+            DenseVector<WorkPrec_> _flow_y(uint i, uint j);
+
+            /** Flow computation.
+              *
+              **/
+            template<typename WorkPrec_>
+            void _flow_x();
+
+            /** Flow computation.
+              * 
+              **/
+            template<typename WorkPrec_>
+            void _flow_y();
 
 
             /** Source Term computation.
-              * For implementation see libswe/source.cc .
               *
               * \param i Access Parameter 1.
               * \param j Access Parameter 2.
@@ -191,55 +226,59 @@ namespace pg512 {
             /** Encapsulates the linear combination for prediction. Uses source() 
               * as well as the matrix assembling procedures to create the banded matrices.
               * Is used by solve().
-              * For implementation see libswe/prediction.cc.
               *
               **/
             template<typename WorkPrec_>
             void _do_prediction();
 
             /** Encapsulates the setup for the values utemp, vtemp, wtemp.
-              * Uses flow().
-              * For Implementation see libswe/setup.cc .
+              * Uses flow  - computations.
               *
               **/
             template<typename WorkPrec_>
             void _do_setup_stage1();
 
             /** Encapsulates the setup for the values utemp, vtemp, wtemp.
-              * Uses flow().
-              * For Implementation see libswe/setup.cc .
+              * Uses flow - computations.
               *
               **/
             template<typename WorkPrec_>
             void _do_setup_stage2();
 
-             /** Encapsulates computation in one timestep.
-              *
-              **/
-             void _solve()
+             /** Encapsulates computation in one timestep. In the driver-application, one
+               * can simply write a loop in which _do_solve is called at first and then the
+               * renderable matrices are read out.
+               *
+               **/
+             void _do_solve()
              {
-                _do_setup_stage1<PredictionPrec1_>();
+                _do_setup_stage1<InitPrec1_>();
                 _do_prediction<PredictionPrec1_>();
-                _do_setup_stage2<PredictionPrec2_>();
+                _do_setup_stage2<InitPrec2_>();
                 _do_prediction<PredictionPrec2_>();
+                _do_correction<ResPrec_>();
+                ++_solve_time;
              }
+
+             /** Encapsulates the correction stage.
+              *  Precision is that of the result.
+              **/
+             template<typename WorkPrec_> 
+             void _do_correction();
 
         public:
             /**
-              * Encapsulates the simulation stage.
-              *
-              * \param maxtime The number of timesteps to be processed.
+              * Returns the current renderable heigth matrix
+              * 
               **/
-            void doSimulation(uint  maxtime)
-            {
-                _do_preprocessing();
-                for(ulint i = 0 ; i < maxtime ; ++i)
-                {
-                    _solve_time =i;
-                    _solve();
-                }
-            }
+            DenseMatrix<ResPrec_> &getHeigth();
 
+            /**
+              * Returns the renderable bottom.
+              *
+              **/
+            DenseMatrix<ResPrec_> &getBottom();
     };
+
 }
 #endif
