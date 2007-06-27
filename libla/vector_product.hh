@@ -40,7 +40,7 @@ namespace pg512
      * \brief The first referenced vector is changed under this operation.
      * \ingroup grpvectoroperations
      **/
-    template <typename Tag_ = tags::CPU> struct VectorSum
+    template <typename Tag_ = tags::CPU> struct VectorProduct
     {
         /**
          * Returns the the resulting vector of the product of two given DenseVector instances.
