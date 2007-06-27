@@ -57,7 +57,7 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
 
             DenseVector<DataType1_> result(vector.size());
-            typename Vector<DataType1_>::ConstElementIterator l(result.begin_elements());
+            typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
                 DenseVector<DataType2_> dv = matrix.column(i);
@@ -79,7 +79,7 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
 
             SparseVector<DataType1_> result(vector.size());
-            typename Vector<DataType1_>::ConstElementIterator l(result.begin_elements());
+            typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
                 SparseVector<DataType2_> dv = matrix.column(i);
