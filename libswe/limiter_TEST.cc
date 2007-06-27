@@ -18,7 +18,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <limiter.hh>
 #include <unittest/unittest.hh>
 
@@ -27,18 +27,12 @@
 using namespace pg512;
 using namespace tests;
 
-/**************************************************************
- * Testcases for each derived limiter class 
- **************************************************************/
-
-// Testcases for class MM_Limiter
-
 template <typename DataType_>
-class MM_LimiterQuickTest :
+class MinModLimiterQuickTest :
     public QuickTest
 {
     public:
-        MM_LimiterQuickTest(const std::string & type) :
+        MinModLimiterQuickTest(const std::string & type) :
             QuickTest("mm_limiter_quick_test<" + type + ">")
         {
         }
@@ -48,24 +42,21 @@ class MM_LimiterQuickTest :
             DataType_ s1(-1.23456);
             DataType_ s2(1.23456);
             DataType_ s3(0.23456);
-            TEST_CHECK_EQUAL(MM_Limiter<>::value(s1), static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(MM_Limiter<>::value(s2), static_cast<DataType_>(1));
-            TEST_CHECK_EQUAL(MM_Limiter<>::value(s3), static_cast<DataType_>(0.23456));           
+            min_mod_limiter(s1);
+            TEST_CHECK_EQUAL_WITHIN_EPS(s1, DataType_(0), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(min_mod_limiter(s2), DataType_(1), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(min_mod_limiter(s3), DataType_(0.23456), std::numeric_limits<DataType_>::epsilon());
         }
- }; 
-
-MM_LimiterQuickTest<float> mm_limiter_quick_test_float("float");
-MM_LimiterQuickTest<double> mm_limiter_quick_test_double("double");
-
-
-// Testcases for class SB_Limiter
+};
+MinModLimiterQuickTest<float> mm_limiter_quick_test_float("float");
+MinModLimiterQuickTest<double> mm_limiter_quick_test_double("double");
 
 template <typename DataType_>
-class SB_LimiterQuickTest :
+class SuperBeeLimiterQuickTest :
     public QuickTest
 {
     public:
-        SB_LimiterQuickTest(const std::string & type) :
+        SuperBeeLimiterQuickTest(const std::string & type) :
             QuickTest("sb_limiter_quick_test<" + type + ">")
         {
         }
@@ -76,26 +67,23 @@ class SB_LimiterQuickTest :
             DataType_ s2(2.23456);
             DataType_ s3(0.23456);
             DataType_ s4(0.53456);
-            DataType_ s5(1.53456);            
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s1), static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s2), static_cast<DataType_>(2));
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s3), static_cast<DataType_>(2*0.23456));
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s4), static_cast<DataType_>(1));            
-            TEST_CHECK_EQUAL(SB_Limiter<>::value(s5), static_cast<DataType_>(1.53456)); 
+            DataType_ s5(1.53456);
+            TEST_CHECK_EQUAL_WITHIN_EPS(super_bee_limiter(s1), DataType_(0), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(super_bee_limiter(s2), DataType_(2), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(super_bee_limiter(s3), DataType_(2*0.23456), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(super_bee_limiter(s4), DataType_(1), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(super_bee_limiter(s5), DataType_(1.53456), std::numeric_limits<DataType_>::epsilon());
         }
- }; 
-
-SB_LimiterQuickTest<float> sb_limiter_quick_test_float("float");
-SB_LimiterQuickTest<double> sb_limiter_quick_test_double("double");
-
-// Testcases for class MC_Limiter
+};
+SuperBeeLimiterQuickTest<float> sb_limiter_quick_test_float("float");
+SuperBeeLimiterQuickTest<double> sb_limiter_quick_test_double("double");
 
 template <typename DataType_>
-class MC_LimiterQuickTest :
+class MonotonizedCentralLimiterQuickTest :
     public QuickTest
 {
     public:
-        MC_LimiterQuickTest(const std::string & type) :
+        MonotonizedCentralLimiterQuickTest(const std::string & type) :
             QuickTest("mc_limiter_quick_test<" + type + ">")
         {
         }
@@ -106,24 +94,21 @@ class MC_LimiterQuickTest :
             DataType_ s2(0.33456);
             DataType_ s3(0.23456);
             DataType_ s4(3.13456);
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s1), static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s2), static_cast<DataType_>((1+s2)/2));
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s3), static_cast<DataType_>(2*0.23456));
-            TEST_CHECK_EQUAL(MC_Limiter<>::value(s4), static_cast<DataType_>(2));            
+            TEST_CHECK_EQUAL_WITHIN_EPS(monotonized_central_limiter(s1), DataType_(0), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(monotonized_central_limiter(s2), DataType_((1 + s2) / 2), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(monotonized_central_limiter(s3), DataType_(2 * 0.23456), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(monotonized_central_limiter(s4), DataType_(2), std::numeric_limits<DataType_>::epsilon());
         }
- }; 
-
-MC_LimiterQuickTest<float> mc_limiter_quick_test_float("float");
-MC_LimiterQuickTest<double> mc_limiter_quick_test_double("double");
-
-// Testcases for class VL_Limiter
+};
+MonotonizedCentralLimiterQuickTest<float> mc_limiter_quick_test_float("float");
+MonotonizedCentralLimiterQuickTest<double> mc_limiter_quick_test_double("double");
 
 template <typename DataType_>
-class VL_LimiterQuickTest :
+class VanLeerLimiterQuickTest :
     public QuickTest
 {
     public:
-        VL_LimiterQuickTest(const std::string & type) :
+        VanLeerLimiterQuickTest(const std::string & type) :
             QuickTest("vl_limiter_quick_test<" + type + ">")
         {
         }
@@ -134,12 +119,11 @@ class VL_LimiterQuickTest :
             DataType_ s2(3.33456);
             DataType_ s3(0.23456);
             DataType_ s4(999999.13456);
-            TEST_CHECK_EQUAL(VL_Limiter<>::value(s1), static_cast<DataType_>(0));
-            TEST_CHECK_EQUAL(VL_Limiter<>::value(s2), static_cast<DataType_>((s2+s2)/(s2+1)));
-            TEST_CHECK_EQUAL(VL_Limiter<>::value(s3), static_cast<DataType_>((s3+s3)/(s3+1)));
-            TEST_CHECK(VL_Limiter<>::value(s4) < static_cast<DataType_>(2));            
+            TEST_CHECK_EQUAL_WITHIN_EPS(van_leer_limiter(s1), DataType_(0), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(van_leer_limiter(s2), DataType_((s2 + s2) / (s2 + 1)), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(van_leer_limiter(s3), DataType_((s3 + s3) / (s3 + 1)), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK(van_leer_limiter(s4) < DataType_(2));
         }
- }; 
-
-VL_LimiterQuickTest<float> vl_limiter_quick_test_float("float");
-VL_LimiterQuickTest<double> vl_limiter_quick_test_double("double");
+};
+VanLeerLimiterQuickTest<float> vl_limiter_quick_test_float("float");
+VanLeerLimiterQuickTest<double> vl_limiter_quick_test_double("double");

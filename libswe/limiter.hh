@@ -4,8 +4,9 @@
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  * Copyright (c) 2007 Joachim Messer <joachim.messer@t-online.de>
  * Copyright (c) 2007 Volker Jung <volker.m.jung@t-online.de>
+ * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
- * This file is part of the LA C++ library. LibLa is free software;
+ * This file is part of the SWE C++ library. LibSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
@@ -19,121 +20,123 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #ifndef LIBSWE_GUARD_LIMITER_HH
 #define LIBSWE_GUARD_LIMITER_HH 1
 
 #include <libutil/tags.hh>
 
+#include <algorithm>
+
 /**
  * \file
  *
- * Implementations for Limiter-based classes.
+ * Implementations of Limiter classes.
  *
  * \ingroup grplibswe
- **/
-
+ */
 namespace pg512
 {
+    using std::max;
+    using std::min;
 
     /**
-     * \brief Limiter is the abstract base class for all Limiter-like classes used.
+     * \brief MinModLimiter limits a value to the range [0, 1].
      *
-     * \ingroup grplibswe
+     * \ingroup grplimiter
      **/
+    class MinModLimiter
+    {
+        public:
+            /// Evaluates with respect to the MinMod-Limiter specification.
+            /// \{
 
-    template<typename Tag_ = tags::CPU> class Limiter
-        {
-            protected:
-
-            /// Returns the maximum of two values.
-            template<typename DataType_> static const DataType_ max(const DataType_ & left, const DataType_ & right)
+            template <typename DataType_> DataType_ & operator() (DataType_ & scal) const
             {
-                return ( (left < right) ? right : left);
+                return scal =  max(DataType_(0), min(DataType_(1), scal));
             }
 
-            /// Returns the minimum of two values.            
-            template<typename DataType_> static const DataType_ min(const DataType_ & left, const DataType_ & right)
+            template <typename DataType_> DataType_ operator() (const DataType_ & scal) const
             {
-                return ( (left < right) ? left : right);
+                return max(DataType_(0), min(DataType_(1), scal));
             }
 
-            public:
-
-            /// Abstract function for evaluating the limiterfunction.
-            template<typename DataType_> static const DataType_ value(const DataType_ & scal);
-
-        };
-
+            /// \}
+    };
+    static const MinModLimiter min_mod_limiter = MinModLimiter();
 
     /**
-     * \brief MM_Limiter provides the MinMod-Limiter
+     * \brief SuperBeeLimiter limits a value to the range [0, 2].
      *
      * \ingroup grplibswe
      **/
-
-    template<typename Tag_ = tags::CPU> class MM_Limiter : public Limiter<>
+    class SuperBeeLimiter
     {
         public:
+            /// Evaluates with respect to the SuperBee-Limiter specification.
+            /// \{
 
-        /// Evaluates due to the MinMod-Limiter specification
-        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
-        {
-            return( max<DataType_>( (DataType_) 0, min<DataType_>( (DataType_) 1, scal) ) );
-        }
+            template <typename DataType_> DataType_ & operator() (DataType_ & scal) const
+            {
+                return scal = max(DataType_(0), max(min(2 * scal, DataType_(1)), min(scal, DataType_(2))));
+            }
+
+            template <typename DataType_> DataType_ operator() (const DataType_ & scal) const
+            {
+                return max(DataType_(0), max(min(2 * scal, DataType_(1)), min(scal, DataType_(2))));
+            }
+
+            /// \}
     };
+    static const SuperBeeLimiter super_bee_limiter = SuperBeeLimiter();
 
     /**
-     * \brief SB_Limiter provides the SuperBee-Limiter
+     * \brief MonotonizedCentralLimiter limits a value to the range [0, 2].
      *
      * \ingroup grplibswe
      **/
-
-    template<typename Tag_ = tags::CPU> class SB_Limiter : public Limiter<>
+    class MonotonizedCentralLimiter
     {
         public:
+            /// Evaluates with respect to the Monotonized-Central-Limiter specification.
+            /// \{
 
-        
-        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
-        {
-            return( max<DataType_>( (DataType_) 0, max<DataType_>( min<DataType_>(2*scal,(DataType_) 1), min<DataType_>(scal,(DataType_) 2) ) ) );
-        }
+            template <typename DataType_> DataType_ & operator() (DataType_ & scal) const
+            {
+                return scal = max(DataType_(0), min(min(2 * scal, DataType_(2)), (1 + scal ) / 2));
+            }
+
+            template <typename DataType_> DataType_ operator() (const DataType_ & scal) const
+            {
+                return max(DataType_(0), min(min(2 * scal, DataType_(2)), (1 + scal ) / 2));
+            }
+
+            /// \}
     };
+    static const MonotonizedCentralLimiter monotonized_central_limiter = MonotonizedCentralLimiter();
 
     /**
-     * \brief MC_Limiter provides the Monotonized-Central-Limiter
+     * \brief VanLeerLimiter limits a value to the range [0, 2].
      *
      * \ingroup grplibswe
      **/
-
-    template<typename Tag_ = tags::CPU> class MC_Limiter : public Limiter<>
+    class VanLeerLimiter
     {
         public:
+            /// Evaluates due to the VanLeer-Limiter specification.
+            /// \{
+            template <typename DataType_> DataType_ & operator() (DataType_ & scal) const
+            {
+                return scal = (scal <= DataType_(0) ? DataType_(0) : (2 * scal / (1 + scal)));
+            }
 
-        /// Evaluates due to the Monotonized-Central-Limiter specification
-        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
-        {
-            return( max<DataType_>( (DataType_) 0, min<DataType_>( min<DataType_>( 2*scal, (DataType_) 2), (1+scal)/2) ) );
-        }
+            template <typename DataType_> DataType_ operator() (const DataType_ & scal) const
+            {
+                return (scal <= DataType_(0) ? DataType_(0) : (2 * scal / (1 + scal)));
+            }
+
+            /// \}
     };
-
-    /**
-     * \brief VL_Limiter provides the VanLeer-Limiter
-     *
-     * \ingroup grplibswe
-     **/
-
-    template<typename Tag_ = tags::CPU> class VL_Limiter : public Limiter<>
-    {
-        public:
-
-        /// Evaluates due to the VanLeer-Limiter specification
-        template<typename DataType_> static const DataType_ value(const DataType_ & scal)
-        {
-            return( (scal <= (DataType_) 0 ) ? (DataType_) 0 : (2*scal/(1+scal)) );
-        }
-    };
-
+    static const VanLeerLimiter van_leer_limiter = VanLeerLimiter();
 }
 
 #endif
