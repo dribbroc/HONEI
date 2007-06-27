@@ -21,6 +21,7 @@
 #include <libla/element_iterator.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
+#include <libla/sparse_vector.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -142,3 +143,67 @@ class DenseVectorElementIterationTest :
 
 DenseVectorElementIterationTest<float> dense_vector_element_iteration_test_float("float");
 DenseVectorElementIterationTest<double> dense_vector_element_iteration_test_double("double");
+
+template <typename DataType_>
+class SparseVectorElementIterationTest :
+    public BaseTest
+{
+    public:
+        SparseVectorElementIterationTest(const std::string & type) :
+            BaseTest("sparse_vector_element_iteration_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > 
+                    sv(new SparseVector<DataType_>(size, (size / 5) + 1));
+                
+                typename Vector<DataType_>::ElementIterator f(sv->begin_elements()), f_end(sv->end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    if (i % 10 == 0) *f = 10;
+                    ++f;
+                }
+
+                typename Vector<DataType_>::ElementIterator e(sv->begin_elements()), e_end(sv->end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    TEST_CHECK_EQUAL(e.index(), i);
+                    if (i % 10 == 0) 
+                    {
+                        TEST_CHECK_EQUAL_WITHIN_EPS(*e, 10, std::numeric_limits<DataType_>::epsilon());
+                        *e = 222;
+                    }
+                    else TEST_CHECK_EQUAL_WITHIN_EPS(*e, 0, std::numeric_limits<DataType_>::epsilon());
+                    ++e;
+                }
+
+                typename Vector<DataType_>::ConstElementIterator ce(sv->begin_elements()), ce_end(sv->end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    TEST_CHECK_EQUAL(ce.index(), i);
+                    if (i % 10 == 0)
+                    {
+                        TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 222, std::numeric_limits<DataType_>::epsilon());
+                    }
+                    else TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
+                    ++ce;
+                }
+                
+                unsigned long count(0);
+                for (typename Vector<DataType_>::ConstElementIterator nz(sv->begin_non_zero_elements()),
+                    nz_end(sv->end_non_zero_elements()) ; nz != nz_end ; ++nz )
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*nz, 222, std::numeric_limits<DataType_>::epsilon());
+                    count ++;
+                }
+                TEST_CHECK_EQUAL(count, sv->used_elements());
+            }
+        }
+};
+
+SparseVectorElementIterationTest<float> sparse_vector_element_iteration_test_float("float");
+SparseVectorElementIterationTest<double> sparse_vector_element_iteration_test_double("double");

@@ -5,9 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-27 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/element_iterator_TEST.cc: Added SparseVectorElementIterationTest.
+
 2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-        * -libla/vector_product.hh: Is now called vector_elementwise_product.
+    * -libla/vector_product.hh: Is now called vector_elementwise_product.
 	* +libla/vector_elementwise_product.hh: See above.
 	* -libla/vector_product_TEST.hh: Obsolete.
 	* +libla/vector_elementwise_product.hh: New.
