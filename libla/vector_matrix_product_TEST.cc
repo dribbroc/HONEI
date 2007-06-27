@@ -75,7 +75,7 @@ class DenseVectorMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+            DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
             DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size, DataType_(6 * size));
             DenseVector<DataType_> prod(VectorMatrixProduct<DataType_>::value(dv1, dm1));
 
