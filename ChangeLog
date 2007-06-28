@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-28 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Implemented Preprocessing. Flow -computation and
+	unittest - manual are on the way.
+
 2007-06-27 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libswe/limiter.hh, libswe/limiter_TEST.cc: Revised limiter
