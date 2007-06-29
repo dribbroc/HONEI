@@ -20,6 +20,8 @@
 #ifndef LIBUTIL_GUARD_TAGS_HH
 #define LIBUTIL_GUARD_TAGS_HH 1
 
+#include <ostream>
+
 namespace pg512 ///< \todo Namespace name?
 {
     namespace tags
@@ -32,8 +34,10 @@ namespace pg512 ///< \todo Namespace name?
             tv_cpu = 1,
             tv_cpu_multi_core,
             tv_cell,
-            tv_gpu
+            tv_gpu,
+            tv_fake /* used by unit tests */
         };
+
 
         /**
          * Tag-type for generic/C++-based operations.
@@ -75,6 +79,11 @@ namespace pg512 ///< \todo Namespace name?
             const static TagValue tag_value = tv_gpu;
         };
     }
+
+    /**
+     * Output operator for tags::TagValue.
+     */
+    std::ostream & operator<< (std::ostream & left, tags::TagValue value);
 }
 
 #endif

@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-29 Danny van Dyk <kugelfang@gentoo.org>
+
+	* doc/doxygen.conf: Added libutil to the list of source directories.
+	* configure.ac, doc/doc_groups.doxygen, libutil/Makefile.am.m4,
+	libutil/files.m4, libutil/memory_backend.hh,
+	libutil/memory_manager.cc, libutil/memory_manager.hh,
+	libutil/memory_manager_TEST.cc: Added MemoryManager and friends, as
+	well as a rudimentary test case.
+	* libutil/memory_backend_gpu.cc, libutil/memory_backend_gpu.hh: Added
+	initial version of the GPU backend.
+	* libutil/tags.hh: Added output operator for TagValue.
+
 2007-06-28 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Implemented Preprocessing. Flow -computation and

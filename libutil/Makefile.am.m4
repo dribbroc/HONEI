@@ -3,24 +3,27 @@ ifdef(`__gnu__',`',`errprint(`This is not GNU m4...
 
 dnl vim: set ft=m4 noet :
 
-define(`filelist', `')dnl
-define(`testlist', `')dnl
-define(`headerlist', `')dnl
-define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
-$1_TEST_SOURCES = $1_TEST.cc
-$1_TEST_LDADD = \
+define(`general_filelist', `')dnl
+define(`general_testlist', `')dnl
+define(`general_headerlist', `')dnl
+define(`gpu_filelist', `')dnl
+define(`gpu_testlist', `')dnl
+define(`gpu_headerlist', `')dnl
+define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
+$2_TEST_SOURCES = $2_TEST.cc
+$2_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	libutil.la \
 	$(DYNAMIC_LD_LIBS)
-$1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+$2_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
-define(`addhh', `define(`filelist', filelist `$1.hh')define(`headerlist', headerlist `$1.hh')')dnl
-define(`addcc', `define(`filelist', filelist `$1.cc')')dnl
+define(`addhh', `define(`$1_filelist', $1_filelist `$2.hh')define(`$1_headerlist', $1_headerlist `$2.hh')')dnl
+define(`addcc', `define(`$1_filelist', $1_filelist `$2.cc')')dnl
 define(`addthis', `dnl
-ifelse(`$2', `hh', `addhh(`$1')', `')dnl
-ifelse(`$2', `cc', `addcc(`$1')', `')dnl
-ifelse(`$2', `test', `addtest(`$1')', `')')dnl
-define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')')dnl
+ifelse(`$3', `hh', `addhh(`$1',`$2')', `')dnl
+ifelse(`$3', `cc', `addcc(`$1',`$2')', `')dnl
+ifelse(`$3', `test', `addtest(`$1',`$2')', `')')dnl
+define(`add', `addthis(`$1',`$2',`$3')addthis(`$1',`$2',`$4')addthis(`$1',`$2',`$5')')dnl
 
 include(`libutil/files.m4')
 
@@ -32,15 +35,29 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(DEBUGDEF)
 
+if GPU
+
+GPUSOURCES = gpu_filelist
+GPUTESTS = gpu_testlist
+GPUHEADERS = gpu_headerlist
+
+else
+
+GPUSOURCES =
+GPUTESTS =
+GPUHEADERS =
+
+endif
+
 lib_LTLIBRARIES = libutil.la
 
-libutil_la_SOURCES = filelist
+libutil_la_SOURCES = general_filelist $(GPUSOURCES)
 libutil_la_LIBADD =
 
 pg512_includedir = $(includedir)/pg512/
-pg512_include_HEADERS = headerlist
+pg512_include_HEADERS = general_headerlist $(GPUHEADERS)
 
-TESTS = testlist
+TESTS = general_testlist $(GPUTESTS)
 TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)

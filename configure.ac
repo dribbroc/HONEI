@@ -102,10 +102,21 @@ dnl }}}
 dnl }}}
 
 dnl {{{ check for build support conditionals
+dnl {{{ check for GPU support
+AC_MSG_CHECKING([whether to build GPU support])
+AC_ARG_ENABLE([gpu],
+	AS_HELP_STRING([--enable-gpu], [Build gpu support (needs packages: X11lib, GLEW)]),
+		[ENABLE_GPU=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_GPU=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_GPU])
+AM_CONDITIONAL([GPU], test "x$ENABLE_GPU" = "xyes")
+dnl }}}
 dnl {{{ check for debug support
 AC_MSG_CHECKING([whether to build debug support])
 AC_ARG_ENABLE([debug],
-	AS_HELP_STRING([--enable-debug], [Build debug support (needs packages: none yet)]),
+	AS_HELP_STRING([--enable-debug], [Build debug support (needs packages: none)]),
 		[ENABLE_DEBUG=$enableval
 		  AC_MSG_RESULT([$enableval])],
 		[ENABLE_DEBUG=yes
@@ -115,6 +126,7 @@ if test "x$ENABLE_DEBUG" = "xyes"; then
 	DEBUGDEF="-DDEBUG"
 fi
 AC_SUBST([DEBUGDEF])
+AM_CONDITIONAL([DEBUG], test "x$ENABLE_DEBUG" = "xyes")
 dnl }}}
 dnl }}}
 

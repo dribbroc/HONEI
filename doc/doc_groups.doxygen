@@ -6,11 +6,7 @@
  * \defgroup grppg512 Projektgruppe 512 SmartCell: Clevere Algorithmen fuer den Cell-Prozessor
  **/
 
- /**
- * \defgroup benchmarks Benchmark Framework
- *
- * \ingroup grppg512
- **/
+
 // ----- Library Groups -----
 
 /**
@@ -18,18 +14,30 @@
  *
  * \ingroup grppg512
  **/
- 
- /**
- * \defgroup grplibswe LibSWE: Library for Shallow Water Equations
+
+/**
+ * \defgroup grplibswe LibSWE: Library for Solving Shallow Water Equations
  *
  * \ingroup grppg512
- */ 
- 
-  /**
+ */
+
+/**
  * \defgroup grplibgraph LibGraph: Library for Graph Algorithms
  *
  * \ingroup grppg512
- */ 
+ */
+
+/**
+ * \defgroup grplibutil LibUtil: Utility Library for PG512
+ *
+ * \ingroup grppg512
+ */
+
+/**
+ * \defgroup benchmarks Benchmark Framework
+ *
+ * \ingroup grppg512
+ **/
 
 // ----- LibLA Groups -----
 
@@ -69,10 +77,30 @@
  * \ingroup grpmatrix
  **/
 
+// ----- LibUtil Groups -----
+
+/**
+ * \defgroup grpmemorymanager Memory Manager and its utilities
+ *
+ * \ingroup grplibutil
+ */
+
+/**
+ * \defgroup grpmemorybackends Hardware-specific backends
+ *
+ * \ingroup grpmemorymanager
+ */
+
+/**
+ * \defgroup grpgpubackend GPU Backend
+ *
+ * \ingroup grpmemorybackends
+ */
+
 /**
  * \defgroup grptags Tag types for distributing computation
  *
- * \ingroup grplibla
+ * \ingroup grplibutil
  */
 
 /**
