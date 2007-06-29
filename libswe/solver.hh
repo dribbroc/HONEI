@@ -53,11 +53,11 @@ namespace pg512 {
         ///Private members.
         private:
             ///Stepsize in x direction.
-            uint _delta_x;
+            ResPrec_ _delta_x;
             ///Stepsize in y direction.
-            uint _delta_y;
+            ResPrec_ _delta_y;
             ///Size of timestep.
-            ulint _delta_t;
+            ResPrec_ _delta_t;
             ///Current timestep.
             ulint _solve_time;
             
@@ -69,7 +69,6 @@ namespace pg512 {
 
             /**
               * Performs the preprocessing.
-              * For Implementation see preprocessing.cc .
               **/
             void _do_preprocessing();
 
@@ -94,7 +93,7 @@ namespace pg512 {
             DenseVector<ResPrec_> _d_squared;
 
             /** Vector under pointer contains boundary - scalars => must be (2a+2b) - dim.,
-              * if a is the number of cell-steps in x-direction an b represents the same
+              * if a is the number of cell-steps in x-direction and b represents the same
               * in y- direction (For sqzare - grids it is 4n - dim, if n=squarroot(N), and N the total number of cells)
               * This might be useful for very complicated simulation settings. In simpler cases, one should use the
               * below options.
@@ -278,6 +277,69 @@ namespace pg512 {
               *
               **/
             DenseMatrix<ResPrec_> &getBottom();
+
+            ///Constructors
+            /**
+             * First simple public constructor for tests.
+             *
+             * \param heigth The input heigth -field.
+             * \param bottom The input bottom -field.
+             * \param u1 The x -velocity field.
+             * \param u2 The y -velocity field.
+             * \param u The relaxation vector u.
+             * \param v The relaxation vector v.
+             * \param w The relaxation vector w.
+             * \param dwidth The width of the FV - discretization grid.
+             * \param dheigth The heigth of the FV - discretization grid.
+             * \param deltax The x - stepsize.
+             * \param deltay The y - stepsize.
+             * \param deltat The time - stepsize.
+             * \param eps The relaxation parameter.
+             **/
+            RelaxSolver(DenseVector<ResPrec_> *heigth,
+                        DenseVector<ResPrec_> *bottom,
+                        DenseVector<ResPrec_> *u1,
+                        DenseVector<ResPrec_> *u2,
+                        DenseVector<Resprec_> *u,
+                        DenseVector<ResPrec_> *v,
+                        DenseVector<ResPrec_> *w,
+                        ResPrec_ dwidth,
+                        ResPrec_ dheigth,
+                        ResPrec_ deltax,
+                        ResPrec_ deltay,
+                        ResPrec_ deltat
+                        double eps)
+            {
+                this->_heigth = heigth;
+                this->_bottom = bottom;
+                this->_u1 = u1;
+                this->_u2 = u2;
+                this->_u = u;
+                this->_v = v;
+                this->_w = w;
+                this->_d_width = dwidth;
+                this->_d_heigth = dheigth;
+                this->_delta_x = deltax;
+                this->_delta_y = deltay;
+                this->_delta_t = deltat;
+                this->_eps = eps;
+
+                this->_simple_bound = true;
+                this->_usage_reflect = true;
+                this->_usage_constant = false;
+                this->_usage_cyclic = false;
+                this->_usage_transmissive = false;
+
+                this->_n = _width * _heigth;
+
+                DenseVector<ResPrec_> c(3,0,1);
+                DenseVector<ResPrec_> d(3,0,1);
+                c[0] =1; d[0] = c[0]*c[0];
+                c[1] =2; d[1] = c[1]*c[1];
+                c[2] =3; d[2] = c[2]*c[2];
+
+            }
+
     };
 
     ///MEMBER FUNCTION TEMPLATE IMPLEMENTATION
@@ -289,7 +351,7 @@ namespace pg512 {
      * At first, the input scalarfields have to be mapped onto a larger
      * DenseMatrix in order to apply boundary conditions.
      *
-     * Secondly, the h,u1 und u2 - values have to be written to the appropriate
+     * Secondly, the h,u1 und u2 - values have the
      * locations in the relaxation vectors.
      *
      * The preprocessing stage`s third task is to compute the bottom slopes.
@@ -350,7 +412,7 @@ namespace pg512 {
         ///Building up the relaxation - vectors by concatenating the maps` rows.
         ///We need to compute u first in order to be able to compute the initial flows. After this, by using
         ///forward iterators, the v and w vectors can be set up.
-        for (unsigned long i= 0; i!= hbound.rows(); ++i) 
+        for (ulint i= 0; i!= hbound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = hbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
@@ -366,7 +428,7 @@ namespace pg512 {
     
         }
 
-        for (unsigned long i = 0; i!= u1bound.rows(); ++i) 
+        for (ulint i = 0; i!= u1bound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = u1bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
@@ -384,7 +446,7 @@ namespace pg512 {
             }
         }
     
-        for (unsigned long i = 0; i!= u2bound.rows(); ++i) 
+        for (ulint i = 0; i!= u2bound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = u2bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
@@ -404,7 +466,7 @@ namespace pg512 {
     
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to 
         ///compute the bottom slopes.
-        for (unsigned long i = 0; i!= bbound.rows(); ++i) 
+        for (ulint i = 0; i!= bbound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = bbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
