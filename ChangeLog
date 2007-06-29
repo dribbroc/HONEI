@@ -15,7 +15,7 @@ see the NEWS file.
 	well as a rudimentary test case.
 	* libutil/memory_backend_gpu.cc, libutil/memory_backend_gpu.hh: Added
 	initial version of the GPU backend.
-	* libutil/tags.hh: Added output operator for TagValue.
+	* libutil/tags.hh, libutil/tags.cc: Added output operator for TagValue.
 
 2007-06-28 Markus Geveler <apryde@gmx.de>
 
