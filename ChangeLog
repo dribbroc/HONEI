@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-29 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Yet another docu -fix.
+	
+2007-06-29 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Added simple public constructor.
 	Fixed documentation.
 	

@@ -92,9 +92,9 @@ namespace pg512 {
             DenseVector<ResPrec_> _c_squared;
             DenseVector<ResPrec_> _d_squared;
 
-            /** Vector under pointer contains boundary - scalars => must be (2a+2b) - dim.,
-              * if a is the number of cell-steps in x-direction and b represents the same
-              * in y- direction (For sqzare - grids it is 4n - dim, if n=squarroot(N), and N the total number of cells)
+            /** Vectors contain the boundary - scalars => They have to be (2a+2b) - dimensional,
+              * if a is the number of cell-steps in x-direction and b represents the same for
+              * y- direction (For square - shaped grids it is 4n dimensional, where n = squareroot(N), and N is the total number of cells)
               * This might be useful for very complicated simulation settings. In simpler cases, one should use the
               * below options.
               **/
@@ -120,7 +120,7 @@ namespace pg512 {
             bool _usage_cyclic;
             bool _usage_transmissive;
         
-            ///Vectors under pointers are the relaxation vectors. size is 3N, where N is the total number of grid cells.
+            ///Vectors _u, _v, _w pointers are the relaxation vectors. size is 3N, where N is the total number of grid cells.
             ///If using boundary-mapping, the size is 3N + 4(w + h + 4).
             DenseVector<ResPrec_> * _u;
             DenseVector<ResPrec_> * _v;
