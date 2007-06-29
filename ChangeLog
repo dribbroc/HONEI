@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-29 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/vector_elementwise_product.hh: Fixed some bugs hopefully. I
+	will perhaps optimize it a little later.
+
+2007-06-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* -libla/vector_matrix_product.hh,
 	-libla/vector_matrix_product_TEST.cc: Removed.
 	* +libla/matrix_vector_product.hh, +

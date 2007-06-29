@@ -68,19 +68,30 @@ namespace pg512
          * \param left Reference to sparse vector that will be also used as result vector.
          * \param right Reference to constant sparse vector to be multiplied.
          **/
-        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const SparseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(SparseVector<DataType1_> & left, const SparseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            SparseVector<DataType1_> result(left.size(), min(right.used_elements(), left.used_elements()));
-
-            for (typename Vector<DataType1_>::ConstElementIterator l(left.begin_non_zero_elements()),
+            typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
+            for (typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ;)
             {
-		    result[l.index()] = *l * right[l.index()];
-	    }
-            return result;
+                if (r.index() < l.index())
+                {
+                    ++r;
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
+                    *l *= *r;
+                    ++l; ++r;
+                }
+            }
+            return left;
         }
 
         /**
