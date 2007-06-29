@@ -300,14 +300,14 @@ namespace pg512 {
                         DenseVector<ResPrec_> *bottom,
                         DenseVector<ResPrec_> *u1,
                         DenseVector<ResPrec_> *u2,
-                        DenseVector<Resprec_> *u,
+                        DenseVector<ResPrec_> *u,
                         DenseVector<ResPrec_> *v,
                         DenseVector<ResPrec_> *w,
                         ResPrec_ dwidth,
                         ResPrec_ dheigth,
                         ResPrec_ deltax,
                         ResPrec_ deltay,
-                        ResPrec_ deltat
+                        ResPrec_ deltat,
                         double eps)
             {
                 this->_heigth = heigth;
@@ -330,7 +330,7 @@ namespace pg512 {
                 this->_usage_cyclic = false;
                 this->_usage_transmissive = false;
 
-                this->_n = _width * _heigth;
+                this->_n = _d_width * _d_heigth;
 
                 DenseVector<ResPrec_> c(3,0,1);
                 DenseVector<ResPrec_> d(3,0,1);
