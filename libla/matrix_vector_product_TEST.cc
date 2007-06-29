@@ -17,8 +17,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+///< \todo Fix compile errors
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/matrix_vector_product.hh>
 #include <libla/matrix_error.cc>
 #include <unittest/unittest.hh>
@@ -31,12 +33,12 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
-class DenseMatrixVectorProductTest :
+class DenseMatrixDenseVectorProductTest :
     public BaseTest
 {
     public:
-        DenseMatrixVectorProductTest(const std::string & type) :
-            BaseTest("dense_matrix_vector_product_test<" + type + ">")
+        DenseMatrixDenseVectorProductTest(const std::string & type) :
+            BaseTest("dense_matrix_dense_vector_product_test<" + type + ">")
         {
         }
 
@@ -44,30 +46,30 @@ class DenseMatrixVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+                DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
                 DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size, DataType_(6 * size));
-                DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dv1, dm1));
+                DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, dv1));
 
                 TEST_CHECK_EQUAL(prod, dv2);
             }
 
-            DenseMatrix<DataType_> dm01(4, 3, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
             DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
 
-            TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dv01, dm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, dv01), MatrixRowsDoNotMatch);
         }
 };
 
-DenseMatrixVectorProductTest<float> dense_matrix_vector_product_test_float("float");
-DenseMatrixVectorProductTest<double> dense_matrix_vector_product_test_double("double");
+DenseMatrixDenseVectorProductTest<float> dense_matrix_dense_vector_product_test_float("float");
+DenseMatrixDenseVectorProductTest<double> dense_matrix_dense_vector_product_test_double("double");
 
 template <typename DataType_>
-class DenseMatrixVectorProductQuickTest :
+class DenseMatrixDenseVectorProductQuickTest :
     public QuickTest
 {
     public:
-        DenseMatrixVectorProductQuickTest(const std::string & type) :
-            QuickTest("dense_matrix_vector_product_quick_test<" + type + ">")
+        DenseMatrixDenseVectorProductQuickTest(const std::string & type) :
+            QuickTest("dense_matrix_dense_vector_product_quick_test<" + type + ">")
         {
         }
 
@@ -76,16 +78,98 @@ class DenseMatrixVectorProductQuickTest :
             unsigned long size(5);
             DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
             DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size, DataType_(6 * size));
-            DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dv1, dm1));
+            DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, dv1));
 
             TEST_CHECK_EQUAL(prod, dv2);
 
-            DenseMatrix<DataType_> dm01(4, 3, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
             DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
 
-            TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dv01, dm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, dv01), MatrixRowsDoNotMatch);
 
         }
 };
-DenseMatrixVectorProductQuickTest<float> dense_matrix_vector_product_quick_test_float("float");
-DenseMatrixVectorProductQuickTest<double> dense_matrix_vector_product_quick_test_double("double");
+DenseMatrixDenseVectorProductQuickTest<float> dense_matrix_dense_vector_product_quick_test_float("float");
+DenseMatrixDenseVectorProductQuickTest<double> dense_matrix_dense_vector_product_quick_test_double("double");
+
+template <typename DataType_>
+class DenseMatrixSparseVectorProductTest :
+    public BaseTest
+{
+    public:
+        DenseMatrixSparseVectorProductTest(const std::string & type) :
+            BaseTest("dense_matrix_sparse_vector_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
+                }     
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = static_cast<DataType_>(6 * size);
+                }                                
+                SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
+
+                TEST_CHECK_EQUAL(prod, *sv2);
+            }
+
+            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            SparseVector<DataType_> sv01(4, 3);
+
+            TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, sv01), MatrixRowsDoNotMatch);
+        }
+};
+
+DenseMatrixSparseVectorProductTest<float> dense_matrix_sparse_vector_product_test_float("float");
+DenseMatrixSparseVectorProductTest<double> dense_matrix_sparse_vector_product_test_double("double");
+
+template <typename DataType_>
+class DenseMatrixSparseVectorProductQuickTest :
+    public QuickTest
+{
+    public:
+        DenseMatrixSparseVectorProductQuickTest(const std::string & type) :
+            QuickTest("dense__matrix_sparse_vector_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(20);
+            DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
+            }     
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = static_cast<DataType_>(6 * size);
+            }                                
+            SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
+
+            TEST_CHECK_EQUAL(prod, *sv2);
+
+            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            SparseVector<DataType_> sv01(4, 3);
+
+            TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, sv01), MatrixRowsDoNotMatch);
+        }
+};
+
+DenseMatrixSparseVectorProductQuickTest<float> dense_matrix_sparse_vector_product_test_quick_float("float");
+DenseMatrixSparseVectorProductQuickTest<double> dense_matrix_sparse_vector_product_test_quick_double("double");
