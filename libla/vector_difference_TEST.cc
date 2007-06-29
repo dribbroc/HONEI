@@ -19,6 +19,7 @@
  */
  
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/vector_difference.hh>
 #include <libla/vector_norm.hh>
 #include <unittest/unittest.hh>
@@ -114,3 +115,88 @@ class DenseVectorDifferenceQuickTest :
 };
 DenseVectorDifferenceQuickTest<float>  dense_vector_difference_quick_test_float("float");
 DenseVectorDifferenceQuickTest<double> dense_vector_difference_quick_test_double("double");
+
+template <typename DataType_>
+class SparseVectorDifferenceTest :
+    public BaseTest
+{
+    public:
+        SparseVectorDifferenceTest(const std::string & type) :
+            BaseTest("sparse_vector_difference_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1)),
+                    sv2(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()),
+                    j(sv2->begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                        *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    }
+                }            
+
+                SparseVector<DataType_> difference1(VectorDifference<>::value(*sv1, *sv2));
+                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(difference1));
+                TEST_CHECK_EQUAL(v1, 0);
+            }
+
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv00(new SparseVector<DataType_>(1,
+                    static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>(5,
+                    static_cast<DataType_>(1)));
+
+            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
+        }
+};
+
+SparseVectorDifferenceTest<float> sparse_vector_difference_test_float("float");
+SparseVectorDifferenceTest<double> sparse_vector_difference_test_double("double");
+
+template <typename DataType_>
+class SparseVectorDifferenceQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorDifferenceQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_difference_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 5 + 1)),
+                sv2(new SparseVector<DataType_>(size, size / 5 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()),
+                j(sv2->begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                }
+            }            
+            (*sv1)[1] = DataType_(5);
+
+            SparseVector<DataType_> difference1(VectorDifference<>::value(*sv1, *sv2));
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(difference1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, DataType_(5), std::numeric_limits<DataType_>::epsilon());
+
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv00(new SparseVector<DataType_>(1,
+                    static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>(5,
+                    static_cast<DataType_>(1)));
+
+            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
+        }
+};
+
+SparseVectorDifferenceQuickTest<float> sparse_vector_difference_quick_test_float("float");
+SparseVectorDifferenceQuickTest<double> sparse_vector_difference_quick_test_double("double");

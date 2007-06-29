@@ -9,4 +9,4 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`limiter',             `hh', `test')
-add(`solver',              `hh')
+add(`solver',              `hh', `test')

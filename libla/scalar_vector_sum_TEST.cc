@@ -19,6 +19,7 @@
  */
  
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/scalar_vector_sum.hh>
 #include <libla/vector_norm.hh>
 #include <unittest/unittest.hh>
@@ -47,8 +48,8 @@ class ScalarDenseVectorSumTest :
                 std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
                     static_cast<DataType_>(3)));
 
-                DenseVector<DataType_> prod1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *dv1));
-                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(prod1));
+                DenseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *dv1));
+                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
                 TEST_CHECK_EQUAL(v1, 5 * size);
             }
         }
@@ -73,10 +74,68 @@ class ScalarDenseVectorSumQuickTest :
             std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
                 static_cast<DataType_>(3)));
 
-            DenseVector<DataType_> prod1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *dv1));
-            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(prod1));
+            DenseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *dv1));
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
             TEST_CHECK_EQUAL(v1, 5 * size);
         }
 };
 ScalarDenseVectorSumQuickTest<float>  scalar_dense_vector_sum_quick_test_float("float");
 ScalarDenseVectorSumQuickTest<double> scalar_dense_vector_sum_quick_test_double("double");
+
+template <typename DataType_>
+class ScalarSparseVectorSumTest :
+    public BaseTest
+{
+    public:
+        ScalarSparseVectorSumTest(const std::string & type) :
+            BaseTest("scalar_sparse_vector_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = 3;
+                }
+
+                SparseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *sv1));
+                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
+                TEST_CHECK_EQUAL(v1, 2 * size + 3 * (size / 10 + 1));
+            }
+        }
+};
+ScalarSparseVectorSumTest<float> scalar_sparse_vector_sum_test_float("float");
+ScalarSparseVectorSumTest<double> scalar_sparse_vector_sum_test_double("double");
+
+template <typename DataType_>
+class ScalarSparseVectorSumQuickTest :
+    public QuickTest
+{
+    public:
+        ScalarSparseVectorSumQuickTest(const std::string & type) :
+            QuickTest("scalar_sparse_vector_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = 3;
+            }
+
+            SparseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *sv1));
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
+            TEST_CHECK_EQUAL(v1, 2 * size + 3 * (size / 10 + 1));
+        }
+};
+ScalarSparseVectorSumQuickTest<float> scalar_sparse_vector_sum_quick_test_float("float");
+ScalarSparseVectorSumQuickTest<double> scalar_sparse_vector_sum_quick_test_double("double");

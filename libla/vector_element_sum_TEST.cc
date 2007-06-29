@@ -19,6 +19,7 @@
  */
  
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/vector_element_sum.hh>
 #include <unittest/unittest.hh>
 
@@ -92,3 +93,67 @@ class DenseVectorElementSumQuickTest :
 };
 DenseVectorElementSumQuickTest<float>  dense_vector_element_sum_quick_test_float("float");
 DenseVectorElementSumQuickTest<double> dense_vector_element_sum_quick_test_double("double");
+
+template <typename DataType_>
+class SparseVectorElementSumTest :
+    public BaseTest
+{
+    public:
+        SparseVectorElementSumTest(const std::string & type) :
+            BaseTest("sparse_vector_element_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                DataType_ s1(0);
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    s1 += *i;
+                }
+                            
+                DataType_ v1(VectorElementSum<DataType_>::value(*sv1));
+                DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
+            }
+        }
+};
+
+SparseVectorElementSumTest<float> sparse_vector_element_sum_test_float("float");
+SparseVectorElementSumTest<double> sparse_vector_element_sum_test_double("double");
+
+template <typename DataType_>
+class SparseVectorElementSumQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorElementSumQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_element_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            DataType_ s1(0);
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                s1 += *i;
+            }
+                        
+            DataType_ v1(VectorElementSum<DataType_>::value(*sv1));
+            DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
+        }
+};
+
+SparseVectorElementSumQuickTest<float> sparse_vector_element_sum_quick_test_float("float");
+SparseVectorElementSumQuickTest<double> sparse_vector_element_sum_quick_test_double("double");

@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-06-29 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/*_TEST.cc: Added SparseVector tests to all relevant tests.
+	* libswe/solver_TEST.cc: Added empty solver test.
+	
+2007-06-29 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/matrix_vector_product_TEST.cc: Added DenseMatrixSparseVectorProductTest.
 	
 2007-06-29 Sven Mallach <sven.mallach@uni-dortmund.de>

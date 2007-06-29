@@ -19,6 +19,7 @@
  */
 
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/vector_masked_min_index.hh>
 #include <libla/vector_error.hh>
 #include <unittest/unittest.hh>
@@ -140,3 +141,106 @@ class DenseVectorMaskedMinIndexQuickTest :
 };
 DenseVectorMaskedMinIndexQuickTest<float>  dense_vector_masked_min_index_quick_test_float("float");
 DenseVectorMaskedMinIndexQuickTest<double> dense_vector_masked_min_index_quick_test_double("double");
+
+template <typename DataType_>
+class SparseVectorMaskedMinIndexTest :
+    public BaseTest
+{
+    public:
+        SparseVectorMaskedMinIndexTest(const std::string & type) :
+            BaseTest("sparse_vector_masked_min_index_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 14) ; size <<= 1)
+            {
+                DataType_ count = 0;
+                std::tr1::shared_ptr<DenseVector<bool> > mask(new DenseVector<bool>(
+                    size, false));
+
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                }                 
+
+                for (typename Vector<bool>::ElementIterator i(mask->begin_elements()),
+                    i_end(mask->end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 2 == 0)
+                    {
+                        *i=true;
+                    }
+                }
+                (*sv1)[2] = static_cast<DataType_>(0);
+                unsigned long result2(VectorMaskedMinIndex<DataType_>::value(*sv1, *mask));
+                TEST_CHECK_EQUAL(result2, 2);
+                (*sv1)[2] = static_cast<DataType_>(-5.2345);
+                unsigned long result3(VectorMaskedMinIndex<DataType_>::value(*sv1, *mask));
+                TEST_CHECK_EQUAL(result3, 2);
+            }
+
+            std::tr1::shared_ptr<Vector<bool> > mask01(new DenseVector<bool>
+                (2, false));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>
+                (3, 1));
+
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(*sv01, *mask01), VectorSizeDoesNotMatch);
+        }
+};
+SparseVectorMaskedMinIndexTest<float> sparse_vector_masked_min_index_test_float("float");
+SparseVectorMaskedMinIndexTest<double> sparse_vector_masked_min_index_test_double("double");
+
+template <typename DataType_>
+class SparseVectorMaskedMinIndexQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorMaskedMinIndexQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_masked_min_index_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(20);
+            DataType_ count = 0;
+            std::tr1::shared_ptr<DenseVector<bool> > mask(new DenseVector<bool>(
+                size, false));
+
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+            }                 
+
+            for (typename Vector<bool>::ElementIterator i(mask->begin_elements()),
+                i_end(mask->end_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 2 == 0)
+                {
+                    *i=true;
+                }
+            }
+            (*sv1)[2] = static_cast<DataType_>(0);
+            unsigned long result2(VectorMaskedMinIndex<DataType_>::value(*sv1, *mask));
+            TEST_CHECK_EQUAL(result2, 2);
+            (*sv1)[2] = static_cast<DataType_>(-5.2345);
+            unsigned long result3(VectorMaskedMinIndex<DataType_>::value(*sv1, *mask));
+            TEST_CHECK_EQUAL(result3, 2);
+
+
+            std::tr1::shared_ptr<Vector<bool> > mask01(new DenseVector<bool>
+                (2, false));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>
+                (3, 1));
+
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(*sv01, *mask01), VectorSizeDoesNotMatch);
+        }
+};
+SparseVectorMaskedMinIndexQuickTest<float> sparse_vector_masked_min_index_quick_test_float("float");
+SparseVectorMaskedMinIndexQuickTest<double> sparse_vector_masked_min_index_quick_test_double("double");

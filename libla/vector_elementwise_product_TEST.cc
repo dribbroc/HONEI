@@ -18,6 +18,7 @@
  */
 
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/vector_elementwise_product.hh>
 #include <libla/vector_error.cc>
 #include <unittest/unittest.hh>
@@ -87,3 +88,95 @@ class DenseVectorElementwiseProductQuickTest :
 };
 DenseVectorElementwiseProductQuickTest<float> dense_vector_elementwise_product_quick_test_float("float");
 DenseVectorElementwiseProductQuickTest<double> dense_vector_elementwise_product_quick_test_double("double");
+
+template <typename DataType_>
+class SparseVectorElementwiseProductTest :
+    public BaseTest
+{
+    public:
+        SparseVectorElementwiseProductTest(const std::string & type) :
+            BaseTest("sparse_vector_elementwise_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 7 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = static_cast<DataType_>(2);
+                }            
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 7 == 0) *i = static_cast<DataType_>(3);
+                }  
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv3(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv3->begin_elements()), i_end(sv3->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0 && i.index() % 7 == 0) 
+                        *i = static_cast<DataType_>(6);
+                }  
+                SparseVector<DataType_> prod(VectorElementwiseProduct<DataType_>::value(*sv1, *sv2));
+
+                TEST_CHECK_EQUAL(prod, *sv3);
+            }
+
+            SparseVector<DataType_> sv01(3, 1), sv02(4, static_cast<DataType_>(1, 1));
+
+            TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv02, sv01), VectorSizeDoesNotMatch);
+        }
+};
+
+SparseVectorElementwiseProductTest<float> sparse_vector_elementwise_product_test_float("float");
+SparseVectorElementwiseProductTest<double> sparse_vector_elementwise_product_test_double("double");
+
+template <typename DataType_>
+class SparseVectorElementwiseProductQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorElementwiseProductQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_elementwise_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(100);
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 7 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = static_cast<DataType_>(2);
+            }            
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 7 == 0) *i = static_cast<DataType_>(3);
+            }  
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv3(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv3->begin_elements()), i_end(sv3->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0 && i.index() % 7 == 0) 
+                    *i = static_cast<DataType_>(6);
+            }  
+            SparseVector<DataType_> prod(VectorElementwiseProduct<DataType_>::value(*sv1, *sv2));
+
+            TEST_CHECK_EQUAL(prod, *sv3);
+
+            SparseVector<DataType_> sv01(3, 1), sv02(4, static_cast<DataType_>(1, 1));
+
+            TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv02, sv01), VectorSizeDoesNotMatch);
+        }
+};
+
+SparseVectorElementwiseProductQuickTest<float> sparse_vector_elementwise_product_quick_test_float("float");
+SparseVectorElementwiseProductQuickTest<double> sparse_vector_elementwise_product_quick_test_double("double");

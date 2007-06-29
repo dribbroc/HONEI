@@ -19,6 +19,7 @@
  */
  
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/vector_masked_max_index.hh>
 #include <libla/vector_error.hh>
 #include <unittest/unittest.hh>
@@ -126,3 +127,98 @@ class DenseVectorMaskedMaxIndexQuickTest :
 };
 DenseVectorMaskedMaxIndexQuickTest<float>  dense_vector_masked_max_index_quick_test_float("float");
 DenseVectorMaskedMaxIndexQuickTest<double> dense_vector_masked_max_index_quick_test_double("double");
+
+template <typename DataType_>
+class SparseVectorMaskedMaxIndexTest :
+    public BaseTest
+{
+    public:
+        SparseVectorMaskedMaxIndexTest(const std::string & type) :
+            BaseTest("sparse_vector_masked_max_index_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 14) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<DenseVector<bool> > mask(new DenseVector<bool>(
+                    size, false));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                }                  
+                
+                (*sv1)[2] = static_cast<DataType_>(size * 10);
+                                    
+                for (typename Vector<bool>::ElementIterator i(mask->begin_elements()), 
+                    i_end(mask->end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 2 == 0) 
+                    {
+                        *i=true;
+                    }
+                }
+                unsigned long result(VectorMaskedMaxIndex<DataType_>::value(*sv1, *mask));
+                TEST_CHECK_EQUAL(result, 2);
+            }
+
+            std::tr1::shared_ptr<Vector<bool> > mask01(new DenseVector<bool>
+                (2, false));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>
+                (3, 1));
+
+            TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(*sv01, *mask01), VectorSizeDoesNotMatch);
+        }
+};
+SparseVectorMaskedMaxIndexTest<float> sparse_vector_masked_max_index_test_float("float");
+SparseVectorMaskedMaxIndexTest<double> sparse_vector_masked_max_index_test_double("double"); 
+
+template <typename DataType_>
+class SparseVectorMaskedMaxIndexQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorMaskedMaxIndexQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_masked_max_index_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(20);
+            std::tr1::shared_ptr<DenseVector<bool> > mask(new DenseVector<bool>(
+                size, false));
+            std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(size));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+            }                  
+            
+            (*sv1)[2] = static_cast<DataType_>(size * 10);
+                                
+            for (typename Vector<bool>::ElementIterator i(mask->begin_elements()), 
+                i_end(mask->end_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 2 == 0) 
+                {
+                    *i=true;
+                }
+            }
+            unsigned long result(VectorMaskedMaxIndex<DataType_>::value(*sv1, *mask));
+            TEST_CHECK_EQUAL(result, 2);
+
+            std::tr1::shared_ptr<Vector<bool> > mask01(new DenseVector<bool>
+                (2, false));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>
+                (3, 1));
+
+            TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(*sv01, *mask01), VectorSizeDoesNotMatch);
+        }
+};
+SparseVectorMaskedMaxIndexQuickTest<float> sparse_vector_masked_max_index_quick_test_float("float");
+SparseVectorMaskedMaxIndexQuickTest<double> sparse_vector_masked_max_index_quick_test_double("double"); 

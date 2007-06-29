@@ -19,6 +19,7 @@
  */
  
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/scalar_vector_product.hh>
 #include <libla/vector_norm.hh>
 #include <unittest/unittest.hh>
@@ -80,3 +81,62 @@ class ScalarDenseVectorProductQuickTest :
 };
 ScalarDenseVectorProductQuickTest<float>  scalar_dense_vector_product_quick_test_float("float");
 ScalarDenseVectorProductQuickTest<double> scalar_dense_vector_product_quick_test_double("double");
+
+template <typename DataType_>
+class ScalarSparseVectorProductTest :
+    public BaseTest
+{
+    public:
+        ScalarSparseVectorProductTest(const std::string & type) :
+            BaseTest("scalar_sparse_vector_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10) *i = 3;
+                }
+                SparseVector<DataType_> prod1(ScalarVectorProduct<DataType_>::value(static_cast<DataType_>(2), *sv1));
+                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(prod1));
+                TEST_CHECK_EQUAL(v1, 6 * (size / 10 + 1));
+            }
+        }
+};
+
+ScalarSparseVectorProductTest<float> scalar_sparse_vector_product_test_float("float");
+ScalarSparseVectorProductTest<double> scalar_sparse_vector_product_test_double("double");
+
+template <typename DataType_>
+class ScalarSparseVectorProductQuickTest :
+    public QuickTest
+{
+    public:
+        ScalarSparseVectorProductQuickTest(const std::string & type) :
+            QuickTest("scalar_sparse_vector_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = 3;
+            }
+            SparseVector<DataType_> prod1(ScalarVectorProduct<DataType_>::value(static_cast<DataType_>(2), *sv1));
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(prod1));
+            TEST_CHECK_EQUAL(v1, 6 * (size / 10 + 1));
+         
+        }
+};
+
+ScalarSparseVectorProductQuickTest<float> scalar_sparse_vector_product_quick_test_float("float");
+ScalarSparseVectorProductQuickTest<double> scalar_sparse_vector_product_quick_test_double("double");

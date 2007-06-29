@@ -19,6 +19,7 @@
  */
  
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/vector_norm.hh>
 #include <libla/scalar_product.hh>
 #include <unittest/unittest.hh>
@@ -76,7 +77,7 @@ class DenseScalarProductTest :
 };
 
 DenseScalarProductTest<float> dense_scalar_product_test_float("float");
-DenseScalarProductTest<double> dense_scalar_product_double("double");
+DenseScalarProductTest<double> dense_scalar_product_test_double("double");
 
 template <typename DataType_>
 class DenseScalarProductQuickTest :
@@ -122,3 +123,83 @@ class DenseScalarProductQuickTest :
 };
 DenseScalarProductQuickTest<float>  dense_scalar_product_quick_test_float("float");
 DenseScalarProductQuickTest<double> dense_scalar_product_quick_test_double("double");
+
+template <typename DataType_>
+class SparseScalarProductTest :
+    public BaseTest
+{
+    public:
+        SparseScalarProductTest(const std::string & type) :
+            BaseTest("sparse_scalar_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv0(new SparseVector<DataType_>(size,1));
+
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                }
+
+                DataType_ p0(ScalarProduct<>::value(*sv0, *sv1));
+                TEST_CHECK_EQUAL(p0, 0);
+                
+                DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(*sv1));
+                DataType_ p1(ScalarProduct<>::value(*sv1, *sv1));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p1, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            }
+
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv00(new SparseVector<DataType_>(1, 1));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>(2, 1));
+
+            TEST_CHECK_THROWS(ScalarProduct<>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
+        }
+};
+
+SparseScalarProductTest<float> sparse_scalar_product_test_float("float");
+SparseScalarProductTest<double> sparse_scalar_product_test_double("double");
+
+template <typename DataType_>
+class SparseScalarProductQuickTest :
+    public QuickTest
+{
+    public:
+        SparseScalarProductQuickTest(const std::string & type) :
+            QuickTest("sparse_scalar_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size (5);
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv0(new SparseVector<DataType_>(size,1));
+
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+            }
+
+            DataType_ p0(ScalarProduct<>::value(*sv0, *sv1));
+            TEST_CHECK_EQUAL(p0, 0);
+            
+            DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(*sv1));
+            DataType_ p1(ScalarProduct<>::value(*sv1, *sv1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v2, p1, sqrt(std::numeric_limits<DataType_>::epsilon()));
+
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv00(new SparseVector<DataType_>(1, 1));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>(2, 1));
+
+            TEST_CHECK_THROWS(ScalarProduct<>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
+        }
+};
+
+SparseScalarProductQuickTest<float> sparse_scalar_product_quick_test_float("float");
+SparseScalarProductQuickTest<double> sparse_scalar_product_quick_double("double");
