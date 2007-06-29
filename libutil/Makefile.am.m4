@@ -40,19 +40,22 @@ if GPU
 GPUSOURCES = gpu_filelist
 GPUTESTS = gpu_testlist
 GPUHEADERS = gpu_headerlist
+GPULIBS = -lX11 -lGL -lGLEW
 
 else
 
 GPUSOURCES =
 GPUTESTS =
 GPUHEADERS =
+GPULIBS
 
 endif
 
 lib_LTLIBRARIES = libutil.la
 
 libutil_la_SOURCES = general_filelist $(GPUSOURCES)
-libutil_la_LIBADD =
+libutil_la_LIBADD = \
+	$(GPULIBS)
 
 pg512_includedir = $(includedir)/pg512/
 pg512_include_HEADERS = general_headerlist $(GPUHEADERS)

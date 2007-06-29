@@ -23,7 +23,7 @@
 
 using namespace pg512;
 
-std::ostream & operator<< (std::ostream & left, tags::TagValue value)
+std::ostream & pg512::operator<< (std::ostream & left, tags::TagValue value)
 {
     do
     {
