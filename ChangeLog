@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Made _do_preprocessing public.
+	
+2007-06-30 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Fixed bug.
 	
 2007-06-30 Markus Geveler <apryde@gmx.de>

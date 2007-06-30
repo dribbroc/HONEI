@@ -67,11 +67,6 @@ namespace pg512 {
             DenseMatrix<ResPrec_> * _x_veloc;
             DenseMatrix<ResPrec_> * _y_veloc;
 
-            /**
-              * Performs the preprocessing.
-              **/
-            void _do_preprocessing();
-
             ///The relaxation parameter: 0<eps<<1.
             double _eps;
 
@@ -277,6 +272,11 @@ namespace pg512 {
               *
               **/
             DenseMatrix<ResPrec_> &getBottom();
+
+            /**
+              * Performs the preprocessing.
+              **/
+            void _do_preprocessing();
 
             ///Constructors
             /**
