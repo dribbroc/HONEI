@@ -8,50 +8,46 @@ see the NEWS file.
 2007-06-30 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libswe/solver_TEST.cc: Added solver constructor.
-	
+
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Changed type of constructor params,
 	changed some member to pointers.
-	
+
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Made _do_preprocessing public.
-	
+
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Fixed bug.
-	
-2007-06-30 Markus Geveler <apryde@gmx.de>
 
-	* libswe/solver.hh: Fixed member names.
-	
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Fixed typos in constructor.
-	
+
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Fixed name bug.
-	
+
 2007-06-29 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Yet another docu -fix.
-	
+
 2007-06-29 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added simple public constructor.
 	Fixed documentation.
-	
+
 2007-06-29 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Added SparseVector tests to all relevant tests.
 	* libswe/solver_TEST.cc: Added empty solver test.
-	
+
 2007-06-29 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_vector_product_TEST.cc: Added DenseMatrixSparseVectorProductTest.
-	
+
 2007-06-29 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/vector_elementwise_product.hh: Fixed some bugs hopefully. I
@@ -165,7 +161,7 @@ see the NEWS file.
 	* libla/matrix_mask_TEST.cc, libla/matrix_element_product_TEST.cc,
 	libla/matrix_element_product.hh, libla/matrix_mask.hh:
 	Removed obsolete files from svn.
-	
+
 2007-06-25 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/scalar_matrix_product_TEST.cc, libla/matrix_difference_TEST.cc,
@@ -212,28 +208,28 @@ see the NEWS file.
 	* libgraph/matrix_element_distance_TEST.cc: Fixed test data.
 	* libgraph/matrix_element_distance_inverse_TEST.cc: Fixed test data.	
 	* libgraph/matrix_element_distance.hh: Removed obsolete &-operator.
-	
+
 2007-06-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libswe/limiter_TEST: Changed all tests to quicktests.
-	
+
 2007-06-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* Makefile.am: Added quicktest make target.
 	* unittest/run_quick.sh: Added quicktest run script.
-	
+
 2007-06-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* doc/doc_groups.doxygen: Unified doxygen group naming.
-	
+
 2007-06-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_product_TEST.cc: Added DenseMatrixProductTest.
-	
+
 2007-06-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libgraph/matrix_element_distance_inverse_TEST.cc: Added DenseMatrixElementDistanceInverseQuickTest.
-	
+
 2007-06-21 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* autogen.bash, configure.ac: Tried to add libgraph to autotools
@@ -265,29 +261,29 @@ see the NEWS file.
 2007-06-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_element_product_TEST.cc: Added DenseMatrixElementProductTest.
-	
+
 2007-06-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/scalar_matrix_sum_TEST.cc: Added ScalarDenseMatrixSumTest.
-	
+
 2007-06-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/scalar_vector_sum_TEST.cc: Added ScalarDenseVectorSumTest.
-	
+
 2007-06-21  Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added function solve().
-	
+
 
 2007-06-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_element_sum_TEST.cc: Added DenseMatrixElementSumTest.
-	
+
 2007-06-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* doc/doxygen.conf: Removed unittest/ from doxygen.
 	* doc/doc_groups.doxygen: Removed grpunittest.
-	
+
 2007-06-20 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/matrix_error.cc, libla/matrix_error.hh: Removed
@@ -319,13 +315,13 @@ see the NEWS file.
 2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_norm_TEST.cc: Added sparse vector tests.
-	
+
 2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_masked_min_index.hh: Fixed a few bugs.
 	* libla/vector_masked_max_index.hh: Fixed a few bugs.	
 	* libla/vector_masked_min_index_TEST.cc: Fixed a few bugs.
-	
+
 2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_sum_TEST.cc: Added DenseMatrixSumTest.
@@ -333,7 +329,7 @@ see the NEWS file.
 	* libla/vector_scaled_sum_TEST.cc: Added QuickTest.
 	* libla/matrix_difference.hh: Fixed a few bugs.
 	* libla/matrix_sum.hh: Fixed a few bugs.	
-	
+
 2007-06-20 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Merged classes, modified interfaces, added
@@ -356,12 +352,12 @@ see the NEWS file.
 2007-06-19 Markus Geveler <apryde@gmx.de>
 
 	* libla/vector_scaled_sum.hh: Fixed typo - bug.
-	
+
 2007-06-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_masked_max_index_TEST.cc, libla/vector_masked_min_index_TEST.cc: 
 	Fixed stupid error, shoult read doxygen before writing tests.
-	
+
 2007-06-19 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/vector_masked_min_index.hh, libla/vector_masked_max_index.hh:
@@ -375,12 +371,12 @@ see the NEWS file.
 
 	* libla/*_TEST.cc, libgraph/matrix_element_distance_TEST.cc, libgraph/limiter_TEST.cc:
 	Added GPL header to all test files.
-	
+
 2007-06-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_masked_max_index_TEST.cc: Added DenseVectorMaskedMaxIndexTest.
 	* libla/vector_masked_min_index_TEST.cc: Added DenseVectorMaskedMinIndexTest.	
-	
+
 2007-06-18 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libgraph/matrix_element_distance.hh: Corrected header.
@@ -400,35 +396,35 @@ see the NEWS file.
 2007-06-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Applied Coding Conventions.
-	
+
 2007-06-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/dense_vector_TEST.cc, libla/sparse_vector_TEST.cc: 
 	Merged EqualityTest and EquityTest.
-	
+
 2007-06-17 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Applied coding conventions, fixed documentation.
-	
+
 2007-06-17 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libgraph/matrix_element_distance_TEST.cc: Changed MatrixElementDistanceTest
 	to MatrixElementDistanceQuickTest.
-	
+
 2007-06-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libswe/limiter_TEST.cc: Applied coding conventions.
 	* libla/sparse_vector_TEST.cc: Applied coding conventions.
 	* libgraph/matrix_element_distance_TEST.cc: Added MatrixElementDistanceTest.
-	
+
 2007-06-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libswe/limiter_TEST.cc: Rewrote LimiterTest's.
-	
+
 2007-06-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_vector_TEST.cc: Added various test cases.
-	
+
 2007-06-15 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver,hh: Added base class for all SWE solvers,
@@ -502,16 +498,16 @@ see the NEWS file.
 	* libswe/limiter_TEST.cc: Added dummy LimiterTest.
 	* doc/doc_groups.doxygen: Added grpswe.
 	* doc/doxygen.conf: Added libgraph, libswe and libmatch to doxygen path.
-	
+
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_mask_TEST.cc: Added DenseVectorMaskTest.
 	* libla/files.m4: Added vector_mask_TEST.cc.
-	
+
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Unified test names.
-	
+
 2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/scalar_matrix_product.hh, 
@@ -523,17 +519,17 @@ see the NEWS file.
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	 libla/matrix_mask_TEST.cc: Added DenseMatrixMaskQuickTest.
-	
+
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/files.m4: Added matrix_error.cc in files.m4.
-	
+
 2007-06-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_mask_TEST.cc: Removed a few bugs in MatrixMaskTest.
-	
+
 2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
-	
+
 	* libla/files.m4: Added vector_mask.hh, scalar_matrix_product_TEST,
 	fixed syntactic error.
 	* libla/scalar_matrix_product.hh, scalar_vector_product.hh: Made these headers meet new 
@@ -551,11 +547,11 @@ see the NEWS file.
 
 	* libla/*_TEST.cc: Added 'blind' test cases to make bugfixing
 	little bit easier.
-	
+
 2007-06-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Added basic quicktests to all test cases.
-	
+
 2007-06-13 David Gies <david-gies@gmx.de>
 
 	* libla/scalar_product_BENCH: Added scalar product benchmark.
@@ -569,7 +565,7 @@ see the NEWS file.
 2007-06-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/scalar_vector_product_TEST.cc: Added ScalarVectorProductTest.
-	
+
 2007-06-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/files.m4: Fixed contents from previous unresolved conflict.
@@ -602,7 +598,7 @@ see the NEWS file.
 2007-06-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* doc/doxygen.conf: Doxygen now includes all *.cc files exclusive *_TEST.cc.
-	
+
 2007-06-11 David Gies and Andre Matuschek <andre@matuschek.org>
 
 	* benchmark/benchmark_example.cc: Added usage example for benchmark framework.
@@ -657,11 +653,11 @@ see the NEWS file.
 2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/dense_vector_TEST.cc: Added DenseVectorQuickTest.
-	
+
 2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_difference_TEST.cc: Added DenseVectorDifferenceTest via c+p.
-	
+
 2007-06-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/dense_matrix_TEST.cc: Added DenseMatrixEqualityTest and a
@@ -743,7 +739,7 @@ see the NEWS file.
 	* doc/doxygen.conf, doc/doc_groups.doxygen: Added Unittest and Benchmark
 	in Doxygen.
 	* libla/vector_sum_TEST.cc: Renamed vector_addition relicts to vector_sum.
-	
+
 2007-06-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_sum.hh: Fixed VectorSum for DenseVector instances.
