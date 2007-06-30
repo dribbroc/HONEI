@@ -295,6 +295,8 @@ namespace pg512 {
              * \param deltay The y - stepsize.
              * \param deltat The time - stepsize.
              * \param eps The relaxation parameter.
+             * \param bottomx The vector for the bottom slopes in x direction.
+             * \param bottomy The vector for the bottom slopes in y direction.
              **/
             RelaxSolver(DenseMatrix<ResPrec_> *height,
                         DenseMatrix<ResPrec_> *bottom,
@@ -308,7 +310,9 @@ namespace pg512 {
                         ResPrec_ deltax,
                         ResPrec_ deltay,
                         ResPrec_ deltat,
-                        double eps)
+                        double eps,
+                        DenseVector<ResPrec_> * bottomx,
+                        DenseVector<ResPrec_> * bottomy)
             {
                 this->_height = height;
                 this->_bottom = bottom;
@@ -331,6 +335,9 @@ namespace pg512 {
                 this->_usage_transmissive = false;
 
                 this->_n = _d_width * _d_height;
+
+                this->_bottom_slopes_x = bottomx;
+                this->_bottom_slopes_y = bottomy;
             }
 
     };
@@ -384,7 +391,7 @@ namespace pg512 {
                                                                      j!= j_END; ++j)
                 {
                     ///Check if boundary - ghost cell is going to be accessed.
-                    if(i<2 || i>=(hbound.rows()-2) ||(j<2 || j>=(hbound.columns()-2)))
+                    if(i<2 || i>=(hbound.rows()-2) ||(j.index()<2 || j.index() >=(hbound.columns()-2)))
                     {
                         hbound[i][j.index()] = 0;
                         bbound[i][j.index()] = 100000; //TODO: PosInf
@@ -393,10 +400,10 @@ namespace pg512 {
                     }
                     else
                     {
-                        hbound[i][j.index()] = this->*(_height)[i-2][(j.index())-2];
-                        bbound[i][j.index()] = this->*(_bottom)[i-2][(j.index())-2];
-                        u1bound[i][j.index()] = this->*(_x_veloc)[i-2][(j.index())-2];
-                        u2bound[i][j.index()] = this->*(_y_veloc)[i-2][(j.index())-2];
+                        hbound[i][j.index()] = (*_height)[i-2][(j.index())-2];
+                        bbound[i][j.index()] = (*_bottom)[i-2][(j.index())-2];
+                        u1bound[i][j.index()] =(*_x_veloc)[i-2][(j.index())-2];
+                        u2bound[i][j.index()] =(*_y_veloc)[i-2][(j.index())-2];
                     }
                 }
             }
@@ -410,13 +417,13 @@ namespace pg512 {
             DenseVector<ResPrec_> actual_row = hbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements()),
-                                                            k(this->*(_u).begin_elements());
+                                                            k((*_u).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                this->*(_u)[k.index()] = hbound[i][j];
-                this->*(_u)[(k.index())+1] = u1bound[i][j.index()] * hbound[i][j.index()];
-                this->*(_u)[(k.index())+2] = u2bound[i][j.index()] * hbound[i][j.index()];
-                k +=3;
+                (*_u)[k.index()] = hbound[i][j.index()];
+                (*_u)[(k.index())+1] = u1bound[i][j.index()] * hbound[i][j.index()];
+                (*_u)[(k.index())+2] = u2bound[i][j.index()] * hbound[i][j.index()];
+                ++k; ++k; ++k;
             }
     
         }
@@ -426,16 +433,15 @@ namespace pg512 {
             DenseVector<ResPrec_> actual_row = u1bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements()),
-                                                            k(this->*(_v).begin_elements());
+                                                            k((*_v).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                DenseVector<ResPrec_> flow;
-                flow = this->_flow_x<ResPrec_>(i,j.index());
+                DenseVector<ResPrec_> flow =_flow_x<ResPrec_>(i,j.index());
 
-                this->*(_v)[k.index()] = flow[0];
-                this->*(_v)[(k.index())+1] = flow[1];
-                this->*(_v)[(k.index())+2] = flow[2];
-                k +=3;
+                (*_v)[k.index()] = flow[0];
+                (*_v)[(k.index())+1] = flow[1];
+                (*_v)[(k.index())+2] = flow[2];
+                ++k; ++k; ++k;
             }
         }
     
@@ -444,16 +450,15 @@ namespace pg512 {
             DenseVector<ResPrec_> actual_row = u2bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements()),
-                                                            k(this->*(_w).begin_elements());
+                                                            k((*_w).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                DenseVector<ResPrec_> flow;
-                flow = this->_flow_y<ResPrec_>(i,j.index());
+                DenseVector<ResPrec_> flow = this->_flow_y<ResPrec_>(i,j.index());
 
-                this->*(_w)[k.index()] = flow[0];
-                this->*(_w)[(k.index())+1] = flow[1];
-                this->*(_w)[(k.index())+2] = flow[2];
-                k +=3;
+                (*_w)[k.index()] = flow[0];
+                (*_w)[(k.index())+1] = flow[1];
+                (*_w)[(k.index())+2] = flow[2];
+                ++k; ++k; ++k;
             }
         }
     
@@ -464,20 +469,20 @@ namespace pg512 {
             DenseVector<ResPrec_> actual_row = bbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements()),
-                                                            k(this->*(_bottom_slopes_x).begin_elements()),
-                                                            l(this->*(_bottom_slopes_y).begin_elements());
+                                                            k((*_bottom_slopes_x).begin_elements()),
+                                                            l((*_bottom_slopes_y).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                if(i>0 && j>0)
+                if(i>0 && j.index()>0)
                 {
-                    this->*(_bottom_slopes_x)[k.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_x;  
-                    this->*(_bottom_slopes_y)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_y;                
+                    (*_bottom_slopes_x)[k.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_x;  
+                    (*_bottom_slopes_y)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_y;                
  
                 }
                 else
                 {
-                    this->*(_bottom_slopes_x)[k.index()] = -100000; 
-                    this->*(_bottom_slopes_y)[l.index()] = -100000;               
+                    (*_bottom_slopes_x)[k.index()] = -100000; 
+                    (*_bottom_slopes_y)[l.index()] = -100000;               
  
                 }
                 ++k;

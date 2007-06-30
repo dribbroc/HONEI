@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-30 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Fixed critical dereference bug, 
+	added parameters to constructor.
+	* libswe/solver_TEST.cc: Healed malformed vector-sizes,
+	updated accordingly.
+
 2007-06-30 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libswe/solver_TEST.cc: Added solver constructor.
