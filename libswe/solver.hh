@@ -63,7 +63,7 @@ namespace pg512 {
             
             ///The input- and to-be-updated - data.
             DenseMatrix<ResPrec_> * _bottom;
-            DenseMatrix<ResPrec_> * _heigth;
+            DenseMatrix<ResPrec_> * _height;
             DenseMatrix<ResPrec_> * _x_veloc;
             DenseMatrix<ResPrec_> * _y_veloc;
 
@@ -80,7 +80,7 @@ namespace pg512 {
             
             ///Dimension sizes for rectangular grids.
             ulint _d_width;
-            ulint _d_heigth;
+            ulint _d_height;
 
             ///Vector _c is the relaxation - Matrix C`s diagonal-vector (must be 3-dim.).
             DenseVector<ResPrec_> * _c;
@@ -99,7 +99,7 @@ namespace pg512 {
               * below options.
               **/
             DenseVector<ResPrec_> * _bottom_bound;
-            DenseVector<ResPrec_> * _heigth_bound;
+            DenseVector<ResPrec_> * _height_bound;
             DenseVector<ResPrec_> * _xveloc_bound;
             DenseVector<ResPrec_> * _yveloc_bound;
 
@@ -270,7 +270,7 @@ namespace pg512 {
               * Returns the current renderable heigth matrix
               * 
               **/
-            DenseMatrix<ResPrec_> &getHeigth();
+            DenseMatrix<ResPrec_> &getHeight();
 
             /**
               * Returns the renderable bottom.
@@ -296,7 +296,7 @@ namespace pg512 {
              * \param deltat The time - stepsize.
              * \param eps The relaxation parameter.
              **/
-            RelaxSolver(DenseMatrix<ResPrec_> *heigth,
+            RelaxSolver(DenseMatrix<ResPrec_> *height,
                         DenseMatrix<ResPrec_> *bottom,
                         DenseMatrix<ResPrec_> *u1,
                         DenseMatrix<ResPrec_> *u2,
@@ -304,13 +304,13 @@ namespace pg512 {
                         DenseVector<ResPrec_> *v,
                         DenseVector<ResPrec_> *w,
                         ResPrec_ dwidth,
-                        ResPrec_ dheigth,
+                        ResPrec_ dheight,
                         ResPrec_ deltax,
                         ResPrec_ deltay,
                         ResPrec_ deltat,
                         double eps)
             {
-                this->_heigth = heigth;
+                this->_height = height;
                 this->_bottom = bottom;
                 this->_x_veloc = u1;
                 this->_y_veloc = u2;
@@ -318,7 +318,7 @@ namespace pg512 {
                 this->_u= v;
                 this->_w = w;
                 this->_d_width = dwidth;
-                this->_d_heigth = dheigth;
+                this->_d_height = dheight;
                 this->_delta_x = deltax;
                 this->_delta_y = deltay;
                 this->_delta_t = deltat;
@@ -330,7 +330,7 @@ namespace pg512 {
                 this->_usage_cyclic = false;
                 this->_usage_transmissive = false;
 
-                this->_n = _d_width * _d_heigth;
+                this->_n = _d_width * _d_height;
             }
 
     };
@@ -365,10 +365,10 @@ namespace pg512 {
         /// Then apply boundary conditions.
     
         ///Provide maps.
-        DenseMatrix<ResPrec_> hbound((this->_width)+4,  (this->_heigth)+4, 0);
-        DenseMatrix<ResPrec_> u1bound((this->_width)+4, (this->_heigth)+4, 0);
-        DenseMatrix<ResPrec_> u2bound((this->_width)+4, (this->_heigth)+4, 0);
-        DenseMatrix<ResPrec_> bbound((this->_width)+4,  (this->_heigth)+4, 0);
+        DenseMatrix<ResPrec_> hbound((this->_width)+4,  (this->_height)+4, 0);
+        DenseMatrix<ResPrec_> u1bound((this->_width)+4, (this->_height)+4, 0);
+        DenseMatrix<ResPrec_> u2bound((this->_width)+4, (this->_height)+4, 0);
+        DenseMatrix<ResPrec_> bbound((this->_width)+4,  (this->_height)+4, 0);
 
 
         ///Do the mapping by applying boundary - usage.
@@ -393,7 +393,7 @@ namespace pg512 {
                     }
                     else
                     {
-                        hbound[i][j.index()] = this->*(_heigth)[i-2][(j.index())-2];
+                        hbound[i][j.index()] = this->*(_height)[i-2][(j.index())-2];
                         bbound[i][j.index()] = this->*(_bottom)[i-2][(j.index())-2];
                         u1bound[i][j.index()] = this->*(_x_veloc)[i-2][(j.index())-2];
                         u2bound[i][j.index()] = this->*(_y_veloc)[i-2][(j.index())-2];
