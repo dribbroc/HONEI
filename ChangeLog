@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Fixed typos in constructor.
+	
+2007-06-30 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Fixed name bug.
 	
 2007-06-29 Markus Geveler <apryde@gmx.de>

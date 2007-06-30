@@ -296,10 +296,10 @@ namespace pg512 {
              * \param deltat The time - stepsize.
              * \param eps The relaxation parameter.
              **/
-            RelaxSolver(DenseVector<ResPrec_> *heigth,
-                        DenseVector<ResPrec_> *bottom,
-                        DenseVector<ResPrec_> *u1,
-                        DenseVector<ResPrec_> *u2,
+            RelaxSolver(DenseMatrix<ResPrec_> *heigth,
+                        DenseMatrix<ResPrec_> *bottom,
+                        DenseMatrix<ResPrec_> *u1,
+                        DenseMatrix<ResPrec_> *u2,
                         DenseVector<ResPrec_> *u,
                         DenseVector<ResPrec_> *v,
                         DenseVector<ResPrec_> *w,
