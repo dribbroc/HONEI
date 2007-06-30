@@ -68,6 +68,12 @@ see the NEWS file.
 
 2007-06-29 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libutil/tags.cc: Fixed linker error.
+	* configure.ac, libutil/Makefile.am.m4: Added checks and link commands for libraries
+	needed by the GPU backend.
+
+2007-06-29 Danny van Dyk <kugelfang@gentoo.org>
+
 	* doc/doxygen.conf: Added libutil to the list of source directories.
 	* configure.ac, doc/doc_groups.doxygen, libutil/Makefile.am.m4,
 	libutil/files.m4, libutil/memory_backend.hh,
