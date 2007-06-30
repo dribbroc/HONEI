@@ -5,13 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-30 Volker Jung <volker.m.jung@t-online.de>
+
+	* libswe/solver.hh: Added implementations for flow computation,
+	changed flow-function signatures to current implementation.
+
 2007-06-30 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/files.m4, libla/Makefile.am.m4, configure.ac, libutil/Makefile.am.m4,
 	libswe/Makefile.am.m4, libgraph/Makefile.am.m4, Makefile.am, benchmark/run.sh:
 	Added make target benchmark.
 
-	
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Fixed critical dereference bug, 

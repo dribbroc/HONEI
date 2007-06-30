@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2007 Volker Jung <volker.m.jung@t-online.de>
  *
  * This file is part of the SWE C++ library. LibSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -198,14 +199,14 @@ namespace pg512 {
             /** Flow computation.
               *
               **/
-            template<typename WorkPrec_>
-            void _flow_x();
+	    template<typename WorkPrec_>
+            void _flow_x(DenseVector<WorkPrec_> & vector);
 
             /** Flow computation.
               * 
               **/
             template<typename WorkPrec_>
-            void _flow_y();
+            void _flow_y(DenseVector<WorkPrec_> & vector);
 
 
             /** Source Term computation.
@@ -492,6 +493,197 @@ namespace pg512 {
     
 
     }   
+
+///Implementation of flow-processing functions.
+
+    /**
+     *
+     * Flow computation in x-direction.
+     *
+     **/
+
+    template <typename ResPrec_,
+	      typename PredictionPrec1_,
+	      typename PredictionPrec2_,
+	      typename InitPrec1_,
+	      typename InitPrec2_>
+    template <typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(DenseVector<WorkPrec_> & vector)
+    {
+	if (!(vector.size() % 3)) 
+	{
+	    typename DenseVector<WorkPrec_>::DenseElementIterator _resultvectoriterator(vector.begin_elements());
+	    WorkPrec_ _resultcomponentone, _resultcomponenttwo, _resultcomponentthree;
+	    for (typename DenseVector<WorkPrec_>::DenseElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()); l != l_end; ++l)
+	    {	
+	        // Compute additional gravitation-based term for flowcomponent two
+	        WorkPrec_ _gravterm = WorkPrec_(9.81 * l * l / 2);
+
+	        // Compute the influence of the waterdepth
+	        _resultcomponenttwo = 1 / l;
+	        _resultcomponentthree = 1 / l;
+	        ++l;
+
+	        // Compute the influence of the waterflow in X-direction
+		_resultcomponentone = l;
+	        _resultcomponenttwo = _resultcomponenttwo * l * l + _gravterm;
+		_resultcomponentthree *= l;
+	        ++l;
+
+	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
+	        _resultcomponentthree *= l ;
+
+	        // Write the computed values into the resultvector
+	        _resultvectoriterator = _resultcomponentone;
+	        ++_resultvectoriterator;
+	        _resultvectoriterator = _resultcomponenttwo;
+	        ++_resultvectoriterator;
+	        _resultvectoriterator = _resultcomponentthree;
+	        ++_resultvectoriterator;
+	    }
+	}
+	else
+	{
+	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
+	}
+    }
+
+
+    /**
+     *
+     * Flow copmutation in y-direction.
+     *
+     **/
+  
+    template <typename ResPrec_,
+	      typename PredictionPrec1_,
+	      typename PredictionPrec2_,
+	      typename InitPrec1_,
+	      typename InitPrec2_>
+    template <typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(DenseVector<WorkPrec_> & vector)
+    {
+	if (!(vector.size() % 3)) 
+	{
+	    typename DenseVector<WorkPrec_>::DenseElementIterator _resultvectoriterator(vector.begin_elements());
+	    WorkPrec_ _resultcomponentone, _resultcomponenttwo, _resultcomponentthree;
+	    for (typename DenseVector<WorkPrec_>::DenseElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()); l != l_end; ++l)
+	    {
+	        // Initialize locale resultcomponent variables
+	        _resultcomponentone = WorkPrec_(1);
+	        _resultcomponenttwo = WorkPrec_(1);
+	        _resultcomponentthree = WorkPrec_(1);
+	
+	        // Compute additional gravitation-based term for flowcomponent two
+	        WorkPrec_ _gravterm = WorkPrec_(9.81 * l * l / 2);
+
+	        // Compute the influence of the waterdepth
+	        _resultcomponenttwo *= 1 / l;
+	        _resultcomponentthree *= 1 / l;
+	        ++l;
+
+	        // Compute the influence of the waterflow in X-direction
+	        _resultcomponenttwo *= l;
+	        ++l;
+
+	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
+	        _resultcomponentone *= l;
+	        _resultcomponenttwo *= l;
+	        _resultcomponentthree = (_resultcomponentthree * l * l) + _gravterm;
+
+	        // Write the computed values into the resultvector
+	        _resultvectoriterator = _resultcomponentone;
+	        ++_resultvectoriterator;
+	        _resultvectoriterator = _resultcomponenttwo;
+	        ++_resultvectoriterator;
+	        _resultvectoriterator = _resultcomponentthree;
+	        ++_resultvectoriterator;
+	    }
+	}
+	else
+	{
+	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
+	}
+    }
+
+    /**
+     *
+     * Flow computation in x-direction for a single cell.
+     *
+     * This function is used only by the preprcessing stage.
+     *
+     * \param i First coordinate of the processed cell.
+     * \param j Second coordinate of the processed cell.
+     *
+     **/
+
+    template <typename ResPrec_,
+	      typename PredictionPrec1_,
+	      typename PredictionPrec2_,
+	      typename InitPrec1_,
+	      typename InitPrec2_>	  
+    template <typename WorkPrec_>
+    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(uint i, uint j)
+    {
+	DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
+	WorkPrec_ _temp = (*_v)[(_d_width + 4) * i + j];
+
+	// Compute term for gravitional influence
+        WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
+
+	_result[1] = 1 / _temp;
+        _result[2] = _result[1];
+
+	_temp = (*_v)[(_d_width + 4) * i + j + 1];
+        _result[0] = _temp;
+        _result[1] *= _temp * _temp;
+	_result[2] *= _temp;
+
+        _temp = (*_v)[(_d_width + 4) * i + j + 2];
+	_result[1] += _gravterm;
+        _result[2] *= _temp;
+
+	return _result;
+    }
+
+    /**
+     *
+     * Flow computation in y-direction for a single cell.
+     *
+     * This function is used only by the preprocessing stage
+     *
+     * \param i First coordinate of the processed cell.
+     * \param j Second coordinate of the processed cell.
+     *
+     **/
+
+    template <typename ResPrec_,
+	      typename PredictionPrec1_,
+	      typename PredictionPrec2_,
+	      typename InitPrec1_,
+	      typename InitPrec2_>	  
+    template <typename WorkPrec_>
+    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(uint i, uint j)
+    {
+        DenseVector<WorkPrec_> _result(ulint(3), ulint( 0), ulint( 1));
+	WorkPrec_ _temp = (*_w)[(_d_width + 4) * i + j];
+
+        // Compute term for gravitional influence
+	WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
+
+        _result[1] = 1 / _temp;
+	_result[2] = _result[1];
+
+        _temp = (*_w)[(_d_width + 4) * i + j + 1];
+	_result[1] *= _temp;
+
+        _temp = (*_w)[(_d_width + 4) * i + j + 2];
+	_result[0] *= _temp;
+        _result[1] *= _temp;
+        _result[2] = _result[2] * _temp * _temp + _gravterm;
+
+	return _result;
+    }
 
 }
 #endif
