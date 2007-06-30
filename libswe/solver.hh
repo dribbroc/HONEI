@@ -314,8 +314,8 @@ namespace pg512 {
                 this->_bottom = bottom;
                 this->_x_veloc = u1;
                 this->_y_veloc = u2;
-                this->_v = u;
-                this->_u= v;
+                this->_u = u;
+                this->_v = v;
                 this->_w = w;
                 this->_d_width = dwidth;
                 this->_d_height = dheight;
