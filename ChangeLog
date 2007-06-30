@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-06-30 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Fixed name bug.
+	
 2007-06-29 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Yet another docu -fix.

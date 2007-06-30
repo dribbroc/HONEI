@@ -312,10 +312,10 @@ namespace pg512 {
             {
                 this->_heigth = heigth;
                 this->_bottom = bottom;
-                this->_u1 = u1;
-                this->_u2 = u2;
-                this->_u = u;
-                this->_v = v;
+                this->_x_veloc = u1;
+                this->_y_veloc = u2;
+                this->_v = u;
+                this->_u= v;
                 this->_w = w;
                 this->_d_width = dwidth;
                 this->_d_heigth = dheigth;
@@ -331,13 +331,6 @@ namespace pg512 {
                 this->_usage_transmissive = false;
 
                 this->_n = _d_width * _d_heigth;
-
-                DenseVector<ResPrec_> c(3,0,1);
-                DenseVector<ResPrec_> d(3,0,1);
-                c[0] =1; d[0] = c[0]*c[0];
-                c[1] =2; d[1] = c[1]*c[1];
-                c[2] =3; d[2] = c[2]*c[2];
-
             }
 
     };
@@ -436,7 +429,7 @@ namespace pg512 {
                                                             k(this->*(_v).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                DenseVector<ResPrec_> flow(3,0,1);
+                DenseVector<ResPrec_> flow;
                 flow = this->_flow_x<ResPrec_>(i,j.index());
 
                 this->*(_v)[k.index()] = flow[0];
@@ -454,7 +447,7 @@ namespace pg512 {
                                                             k(this->*(_w).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                DenseVector<ResPrec_> flow(3,0,1);
+                DenseVector<ResPrec_> flow;
                 flow = this->_flow_y<ResPrec_>(i,j.index());
 
                 this->*(_w)[k.index()] = flow[0];
