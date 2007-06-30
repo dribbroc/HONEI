@@ -499,7 +499,7 @@ namespace pg512 {
     /**
      *
      * Flow computation in x-direction.
-     *
+     * \param vector The vector, for which the flow is going to be computed.
      **/
 
     template <typename ResPrec_,
@@ -553,6 +553,7 @@ namespace pg512 {
      *
      * Flow copmutation in y-direction.
      *
+     * \param vector The vector, for which the flow is going to be computed.
      **/
   
     template <typename ResPrec_,
@@ -610,7 +611,7 @@ namespace pg512 {
      *
      * Flow computation in x-direction for a single cell.
      *
-     * This function is used only by the preprcessing stage.
+     * This function is used only by the preprocessing stage.
      *
      * \param i First coordinate of the processed cell.
      * \param j Second coordinate of the processed cell.
