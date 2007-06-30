@@ -365,14 +365,14 @@ namespace pg512 {
         /// Then apply boundary conditions.
     
         ///Provide maps.
-        DenseMatrix<ResPrec_> hbound((this->_width)+4,  (this->_height)+4, 0);
-        DenseMatrix<ResPrec_> u1bound((this->_width)+4, (this->_height)+4, 0);
-        DenseMatrix<ResPrec_> u2bound((this->_width)+4, (this->_height)+4, 0);
-        DenseMatrix<ResPrec_> bbound((this->_width)+4,  (this->_height)+4, 0);
+        DenseMatrix<ResPrec_> hbound((this->_d_width)+4,  (this->_d_height)+4, 0);
+        DenseMatrix<ResPrec_> u1bound((this->_d_width)+4, (this->_d_height)+4, 0);
+        DenseMatrix<ResPrec_> u2bound((this->_d_width)+4, (this->_d_height)+4, 0);
+        DenseMatrix<ResPrec_> bbound((this->_d_width)+4,  (this->_d_height)+4, 0);
 
 
         ///Do the mapping by applying boundary - usage.
-        if(this->_reflect && this->_simple_bound)
+        if(this->_usage_reflect && this->_simple_bound)
         {
             ///If assuming, that all input fields are exactly of the same size, we can do all the work within
             ///one loop - pair:
