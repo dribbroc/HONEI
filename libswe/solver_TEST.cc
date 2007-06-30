@@ -17,7 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <solver.hh>
+#include <libswe/solver.hh>
+#include <libla/dense_vector.hh>
+#include <libla/dense_matrix.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -37,8 +39,24 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            //RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_>  relax_solver;
-                //= new RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_>();
+            DenseMatrix<DataType_> height (3, 3, DataType_(1));
+            DenseMatrix<DataType_> bottom (3, 3, DataType_(1));
+            DenseMatrix<DataType_> u1 (3, 3, DataType_(1));
+            DenseMatrix<DataType_> u2 (3, 3, DataType_(1));                                    
+            DenseVector<DataType_> u (3, DataType_(1));
+            DenseVector<DataType_> v(3, DataType_(1));
+            DenseVector<DataType_> w (3, DataType_(1)); 
+            ulint dwith = 3;
+            ulint dheight = 3;
+            DataType_ deltax = 1;                       
+            DataType_ deltay = 1;
+            DataType_ deltat = 1;      
+            double eps = 0.1;                  
+            RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
+                (&height, &bottom, &u1, &u2, &u, &v, &w, 
+                dwith, dheight, deltax, deltay, deltat, eps);
+            //relax_solver.do_preprocessing();
+            TEST_CHECK(true);
         }
 };
 RelaxSolverQuickTest<float> relax_solver_quick_test_float("float");

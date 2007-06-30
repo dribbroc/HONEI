@@ -276,7 +276,7 @@ namespace pg512 {
             /**
               * Performs the preprocessing.
               **/
-            void _do_preprocessing();
+            void do_preprocessing();
 
             ///Constructors
             /**
@@ -355,7 +355,7 @@ namespace pg512 {
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_do_preprocessing()
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::do_preprocessing()
     {
         /// Setting up initial conditions:
         /// v_0(x,y) = F(u_0(x,y)) using flowX(),
