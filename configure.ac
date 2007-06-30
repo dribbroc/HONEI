@@ -163,4 +163,5 @@ AC_OUTPUT(
 	libswe/Makefile
 	libutil/Makefile
 	unittest/Makefile
+	benchmark/Makefile	
 )

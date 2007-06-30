@@ -5,8 +5,11 @@ MAINTAINERCLEANFILES = \
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = autogen.bash misc/do_m4.bash misc/generated-file.txt
 
-SUBDIRS = libutil libla unittest libgraph libswe
+SUBDIRS = benchmark libutil libla unittest libgraph libswe
 
+benchmark: 
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="benchmark-recursive" benchmark-recursive
+	
 quickcheck: 
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-recursive" quickcheck-recursive
 
