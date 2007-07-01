@@ -48,11 +48,11 @@ namespace pg512
     template <typename Tag_ = tags::CPU> struct MatrixVectorProduct
     {
         /**
-         * Returns the resulting vector after multiplying a matrix to a given DenseVector instance.
+         * Returns the resulting vector after multiplying a DenseVector to a given DenseMatrix instance.
          * \param matrix The DenseMatrix to be used as factor.
          * \param vector DenseVector to be used as factor.
          **/
-        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const DenseMatrix<DataType2_> & matrix, const DenseVector<DataType1_> & vector)
+        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const DenseMatrix<DataType1_> & matrix, const DenseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.rows())
                 throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
@@ -61,7 +61,7 @@ namespace pg512
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
-                DenseVector<DataType2_> dv = matrix.column(i);
+                DenseVector<DataType1_> dv = matrix.column(i);
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
@@ -70,11 +70,11 @@ namespace pg512
         }
 
         /**
-         * Returns the resulting vector after multiplying a SparseVector to a matrix instance.
+         * Returns the resulting vector after multiplying a SparseVector to a DenseMatrix instance.
          * \param matrix The DenseMatrix to be used as factor.
          * \param vector SparseVector to be used as factor.
          **/
-        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const DenseMatrix<DataType2_> & matrix, const SparseVector<DataType1_> & vector)
+        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const DenseMatrix<DataType1_> & matrix, const SparseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.rows())
                 throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
@@ -83,13 +83,59 @@ namespace pg512
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
-                DenseVector<DataType2_> dv = matrix.column(i);
+                DenseVector<DataType1_> dv = matrix.column(i);
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
 
             return result;
         }
+
+        /**
+         * Returns the resulting vector after multiplying a DenseVector to a given BandedMatrix instance.
+         * \param matrix The BandedMatrix to be used as factor.
+         * \param vector DenseVector to be used as factor.
+         **/
+        template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const BandedMatrix<DataType1_> & matrix, const DenseVector<DataType2_> & vector)
+        {
+            if (vector.size() != matrix.rows())
+                throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
+
+            DenseVector<DataType1_> result(vector.size());
+            typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
+            for (unsigned long i=0; i < matrix.columns(); ++i)
+            {
+                DenseVector<DataType1_> dv = matrix.column(i);
+                *l = ScalarProduct<Tag_>::value(vector, dv);
+                ++l;
+            }
+
+            return result;
+        }
+
+        /**
+         * Returns the resulting vector after multiplying a SparseVector to a given BandedMatrix instance.
+         * \param matrix The BandedMatrix to be used as factor.
+         * \param vector SparseVector to be used as factor.
+         **/
+        template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const BandedMatrix<DataType1_> & matrix, const SparseVector<DataType2_> & vector)
+        {
+            if (vector.size() != matrix.rows())
+                throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
+
+            SparseVector<DataType1_> result(vector.size());
+            typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
+            for (unsigned long i=0; i < matrix.columns(); ++i)
+            {
+                DenseVector<DataType1_> dv = matrix.column(i);
+                *l = ScalarProduct<Tag_>::value(vector, dv);
+                ++l;
+            }
+
+            return result;
+        }
+
+
 
     };
 }

@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -24,8 +25,6 @@
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
 
-#include <cmath>
-
 /**
  * \file
  *
@@ -40,7 +39,7 @@ namespace pg512
      *
      * \ingroup grpmatrixoperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixElementInverse
+    template <typename Tag_ = tags::CPU> struct MatrixElementInverse
     {
         /**
          * Return a matrix's inverse elements. All elements that equal zero will
@@ -48,7 +47,7 @@ namespace pg512
          *
          * \param matrix DenseMatrix whose non-zero elements shall be inverted.
          **/
-        static DenseMatrix<DataType_> & value(DenseMatrix<DataType_> & matrix)
+        template <typename DataType_> static DenseMatrix<DataType_> & value(DenseMatrix<DataType_> & matrix)
         {
             for (typename MutableMatrix<DataType_>::ElementIterator i(matrix.begin_elements()), i_end(matrix.end_elements()) ;
                     i != i_end ; ++i)
@@ -56,11 +55,26 @@ namespace pg512
                 if (*i == static_cast<DataType_>(0))
                     continue;
 
-                *i = 1 / *i;
+                *i = DataType_(1) / *i;
             }
 
             return matrix;
         }
+
+        template <typename DataType_> static BandedMatrix<DataType_> & value(BandedMatrix<DataType_> & matrix)
+        {
+            for (typename MutableMatrix<DataType_>::ElementIterator i(matrix.begin_elements()), i_end(matrix.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (*i == static_cast<DataType_>(0))
+                    continue;
+
+                *i = DataType_(1) / *i;
+            }
+
+            return matrix;
+        }
+
     };
 }
 

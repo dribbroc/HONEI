@@ -17,7 +17,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/matrix_element_inverse.hh>
 #include <unittest/unittest.hh>
 
@@ -52,7 +52,7 @@ class DenseMatrixElementInverseTest :
                     ++j;
                 }
 
-                TEST_CHECK_EQUAL(MatrixElementInverse<DataType_>::value(*dm1), *dm2);
+                TEST_CHECK_EQUAL(MatrixElementInverse<>::value(*dm1), *dm2);
             }
         }
 };
@@ -83,7 +83,7 @@ class DenseMatrixElementInverseQuickTest :
                 ++j;
             }
 
-            TEST_CHECK_EQUAL(MatrixElementInverse<DataType_>::value(*dm1), *dm2);
+            TEST_CHECK_EQUAL(MatrixElementInverse<>::value(*dm1), *dm2);
         }
 };
 DenseMatrixElementInverseQuickTest<float>  dense_matrix_element_inverse_quick_test_float("float");

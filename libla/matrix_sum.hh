@@ -100,6 +100,64 @@ namespace pg512
             return left;
         }
 
+        /**
+         * Returns the the resulting matrix of the sum of a given BandedMatrix instance and a given DenseMatrix instance.
+         *
+         * \param left Reference to banded matrix that will be also used as result matrix.
+         * \param right Reference to constant dense matrix to be subtracted.
+         **/
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            {
+                *l += *r;
+                ++r;
+            }
+
+            return left;
+        }
+
+        /**
+         * Returns the the resulting matrix of the sum of a given DenseMatrix instance and a given BandedMatrix instance.
+         *
+         * \param left Reference to dense matrix that will be also used as result matrix.
+         * \param right Reference to constant banded matrix to be subtracted.
+         **/
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            {
+                *l += *r;
+                ++r;
+            }
+
+            return left;
+        }
+
     };
 }
 #endif
