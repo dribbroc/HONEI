@@ -69,12 +69,9 @@ namespace pg512
         template <typename DataType_> static SparseVector<DataType_> & value(SparseVector<DataType_> & vector)
         {
 
-            for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()),
-                    l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()),
+                    l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
             {
-                 if (*l == static_cast<DataType_>(0))
-                    continue;
-
                 *l = DataType_(1) / *l;
             }
             return vector;
