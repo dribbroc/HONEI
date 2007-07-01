@@ -83,6 +83,7 @@ namespace pg512
                 }
                 else if (l.index() < r.index())
                 {
+                    *l = DataType1_(0);
                     ++l;
                 }
                 else

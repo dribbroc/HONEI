@@ -5,17 +5,23 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-07-01 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+2007-07-01 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/vector_elementwise_product.hh Fixed a bug so that tests pass
+	now.
+
+2007-07-01 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_sum.hh, libla/matrix_difference.hh,
 	libla/matrix_elementwise_product.hh: Added support for
 	operation(banded,dense) and operation(dense,banded).
-	* libla/matrix_product.hh, matrix_vector_product.hh: Added full support 	for banded.
+	* libla/matrix_product.hh, matrix_vector_product.hh: Added full
+	support for banded.
 	* libla/matrix_element_inverse.hh: Added support for banded, changed
 	to new convention style.
 	* libla/matrix_element_inverse_TEST.cc: Applied changes of header.
 
-2007-07-01 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+2007-07-01 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* +libla/vector_element_inverse.hh: Added this high priority
 	operation for dense and sparse vectors.
