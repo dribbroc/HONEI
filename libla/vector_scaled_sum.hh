@@ -78,9 +78,9 @@ namespace pg512
 	    if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
+            typename Vector<DtRight_>::ConstElementIterator r(right.begin_non_zero_elements());
             for (typename Vector<DtLeft_>::ElementIterator l(left.begin_non_zero_elements()),
-                                l_end(left.end_non_zero_elements()), r(right.begin_non_zero_elements()),
-                                r_end(right.end_non_zero_elements()); l != l_end ; )
+                                l_end(left.end_non_zero_elements()) ; l != l_end ; )
             {
             	if (r.index() < l.index())
                 {
