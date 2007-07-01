@@ -74,29 +74,26 @@ namespace pg512
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            SparseVector<DataType1_> result(left.size(), right.used_elements() + left.used_elements());
-
-            typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()), r_end(right.end_non_zero_elements());
+            typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
             for (typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (r.index() < l.index())
                 {
-                    result[r.index()] = *r;
+                    left[r.index()] = (-1) * (*r);
                     ++r;
                 }
                 else if (l.index() < r.index())
                 {
-                    result[l.index()] = *l;
                     ++l;
                 }
                 else
                 {
-                    result[l.index()] = *l - *r;
+                    *l -= *r;
                     ++l; ++r;
                 }
             }
-            return result;
+            return left;
         }
 
         /**

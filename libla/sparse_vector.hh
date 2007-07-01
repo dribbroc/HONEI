@@ -62,7 +62,7 @@ namespace pg512 ///< \todo Namespace name?
             static const DataType_ _zero_element;
 
             /**
-             * Insert an empty element into the vector and resizes the vector if necessary.
+             * Insert an empty element into the vector and reallocates additional space if necessary.
              *
              * \param position The position at which the new element shall be inserted.
              * \param index The index of the new element.
@@ -72,15 +72,15 @@ namespace pg512 ///< \todo Namespace name?
                 CONTEXT("When inserting element at position '" + stringify(position) + "' with index '" +
                         stringify(index) + "':");
 
-                bool resize(_imp->_capacity == _imp->_used_elements);
-                unsigned long capacity(resize ? _imp->_capacity + 10 : _imp->_capacity);
-                DataType_ * elements(resize ? new DataType_[capacity] : _imp->_elements.get());
-                unsigned long * indices(resize ? new unsigned long[capacity] : _imp->_indices.get());
+                bool realloc(_imp->_capacity == _imp->_used_elements);
+                unsigned long capacity(realloc ? _imp->_capacity + 10 : _imp->_capacity);
+                DataType_ * elements(realloc ? new DataType_[capacity] : _imp->_elements.get());
+                unsigned long * indices(realloc ? new unsigned long[capacity] : _imp->_indices.get());
 
                 ASSERT(position < capacity, "position '" + stringify(position) + "' out of bounds!");
                 ASSERT(index < _imp->_size, "index '" + stringify(index) + "' out of bounds!");
 
-                if (resize)
+                if (realloc)
                 {
                     std::copy(_imp->_elements.get(), _imp->_elements.get() + position + 1, elements);
                     std::copy(_imp->_indices.get(), _imp->_indices.get() + position + 1, indices);
@@ -94,7 +94,7 @@ namespace pg512 ///< \todo Namespace name?
 
                 ++_imp->_used_elements;
 
-                if (resize)
+                if (realloc)
                 {
                     _imp->_elements.reset(elements);
                     _imp->_indices.reset(indices);

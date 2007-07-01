@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-01 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+
+	* +libla/vector_element_inverse.hh: Added this high priority
+	operation for dense and sparse vectors.
+	* libla/sparse_vector.hh: Renamed bool "resize" to "realloc" because
+	of lexicographic nearness to the attribute size, although the
+	attribute capacity is enlarged.
+	* libla/vector_sum.hh, vector_scaled_sum.hh: Optimized sparse-case and
+	made it consistent with annotations.
+	* libla/vector_difference.hh: See above + fixed logical error.
+
 2007-07-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* Makefile.am: Renamed target benchmark in bench.

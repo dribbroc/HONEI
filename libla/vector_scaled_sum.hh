@@ -78,7 +78,6 @@ namespace pg512
 	    if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-                //SparseVector<DataType_> result(left.size(), right.used_elements() + left.used_elements()); old style
             for (typename Vector<DtLeft_>::ConstElementIterator l(left.begin_non_zero_elements()),
                                 l_end(left.end_non_zero_elements()), r(right.begin_non_zero_elements()),
                                 r_end(right.end_non_zero_elements()); l != l_end ; )
@@ -90,12 +89,12 @@ namespace pg512
                 }
                 else if (l.index() < r.index())
                 {
-                    left[l.index()] = (*l) * leftscal;
+                    (*l) *= leftscal;
                     ++l;
                 }
                 else
                 {
-                    left[l.index()] = ((*l) * leftscal) + ((*r) * rightscal);
+                    *l = ((*l) * leftscal) + ((*r) * rightscal);
                     ++l;
                     ++r;
                 }
