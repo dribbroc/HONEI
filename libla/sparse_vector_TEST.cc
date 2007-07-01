@@ -249,3 +249,55 @@ public:
 SparseVectorRandomAccessTest<float> sparse_vector_random_access_test_float("float");
 SparseVectorRandomAccessTest<double> sparse_vector_random_access_test_double("double");
 
+template <typename DataType_>
+class SparseVectorReallocQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorReallocQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_realloc_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(20);            
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1)),
+                sv2(new SparseVector<DataType_>(size, size / 9 + 1));
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 3 == 0) 
+                {
+                    *i = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                    (*sv2)[i.index()] = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                }
+            }      
+            unsigned long count(0);
+            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_non_zero_elements()), 
+                i_end(sv1->end_non_zero_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL(*i, (*sv2)[i.index()]);
+                if (*i == 0) TEST_CHECK(false);
+                count++;
+            } 
+            unsigned long count2(0);
+            for (typename Vector<DataType_>::ElementIterator i(sv2->begin_non_zero_elements()),
+                i_end(sv2->end_non_zero_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL(*i, (*sv1)[i.index()]);
+                if (*i == 0) TEST_CHECK(false);                
+                count2++;
+            }                             
+            TEST_CHECK_EQUAL(count, sv2->used_elements());
+            TEST_CHECK_EQUAL(sv1->used_elements(), sv2->used_elements());
+            TEST_CHECK_EQUAL(*sv1, *sv2);
+            TEST_CHECK_EQUAL(count, 20 / 3);       
+            TEST_CHECK_EQUAL(count2, 20 / 3);             
+
+        }
+};
+
+SparseVectorReallocQuickTest<float> sparse_vector_realloc_quick_test_float("float");
+SparseVectorReallocQuickTest<double> sparse_vector_realloc_quick_test_double("double");
+
