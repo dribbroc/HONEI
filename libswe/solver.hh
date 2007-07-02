@@ -73,7 +73,7 @@ namespace pg512 {
             double _eps;
 
 	    ///The squared Manning-Coefficient used by the sourceterm computation.
-	    double _manning_n_squared;
+	    static const double _manning_n_squared = 0.000625;
 
             ///The number of cells in the finite volume descretization grid.
             ulint _n;
@@ -349,7 +349,6 @@ namespace pg512 {
 
                 this->_bottom_slopes_x = bottomx;
                 this->_bottom_slopes_y = bottomy;
-		this->_manning_n_squared = 0.000625;
             }
 
     };
@@ -638,7 +637,7 @@ namespace pg512 {
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(uint i, uint j)
     {
 	DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
-	WorkPrec_ _temp = (*_v)[(this->_d_width + 4) * i + j];
+	WorkPrec_ _temp = (*_v)[(this->_d_width + 4) * 3 * i + 3 * j];
 
 	// Compute term for gravitional influence
         WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
@@ -646,12 +645,12 @@ namespace pg512 {
 	_result[1] = 1 / _temp;
         _result[2] = _result[1];
 
-	_temp = (*_v)[(this->_d_width + 4) * i + j + 1];
+	_temp = (*_v)[(this->_d_width + 4) * 3 * i + 3 * j + 1];
         _result[0] = _temp;
         _result[1] *= _temp * _temp;
 	_result[2] *= _temp;
 
-        _temp = (*_v)[(this->_d_width + 4) * i + j + 2];
+        _temp = (*_v)[(this->_d_width + 4) * 3 * i + 3 * j + 2];
 	_result[1] += _gravterm;
         _result[2] *= _temp;
 
@@ -678,7 +677,7 @@ namespace pg512 {
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(uint i, uint j)
     {
         DenseVector<WorkPrec_> _result(ulint(3), ulint( 0), ulint( 1));
-	WorkPrec_ _temp = (*_w)[(this->_d_width + 4) * i + j];
+	WorkPrec_ _temp = (*_w)[(this->_d_width + 4) * 3 * i + 3 * j];
 
         // Compute term for gravitional influence
 	WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
@@ -686,10 +685,10 @@ namespace pg512 {
         _result[1] = 1 / _temp;
 	_result[2] = _result[1];
 
-        _temp = (*_w)[(this->_d_width + 4) * i + j + 1];
+        _temp = (*_w)[(this->_d_width + 4) * 3 * i + 3 * j + 1];
 	_result[1] *= _temp;
 
-        _temp = (*_w)[(this->_d_width + 4) * i + j + 2];
+        _temp = (*_w)[(this->_d_width + 4) * 3 * i + 3 * j + 2];
 	_result[0] *= _temp;
         _result[1] *= _temp;
         _result[2] = _result[2] * _temp * _temp + _gravterm;
@@ -715,11 +714,11 @@ namespace pg512 {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(uint i, uint j)
     {
-	WorkPrec_ _h = (*_u)[(this->_d_width + 4) * i + j];
+	WorkPrec_ _h = (*_u)[(this->_d_width + 4) * 3 * i + 3 * j];
 	if (_h > 0)
 	{
-	    WorkPrec_ _q1 = (*_u)[(this->_d_width + 4)* i + j + 1];
-	    WorkPrec_ _q2 = (*_u)[(this->_d_width + 4)* i + j + 2];
+	    WorkPrec_ _q1 = (*_u)[(this->_d_width + 4) * 3 * i + 3 * j + 1];
+	    WorkPrec_ _q2 = (*_u)[(this->_d_width + 4) * 3 * i + 3 * j + 2];
 	    
 	    DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
 	    _result[0] = 0;
