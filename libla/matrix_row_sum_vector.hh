@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,6 +23,7 @@
 
 #include <libla/dense_vector.hh>
 #include <libla/matrix.hh>
+#include <libla/banded_matrix.hh>
 #include <libla/vector_element_sum.hh>
 
 #include <tr1/memory>
@@ -33,16 +35,35 @@ namespace pg512
      * of the matrix's corresponding row's elements.
       * \ingroup grpmatrixoperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixRowSumVector
+    template <typename Tag_ = tags::CPU> struct MatrixRowSumVector
     {
-        static std::tr1::shared_ptr<DenseVector<DataType_> > value(const RowAccessMatrix<DataType_> & matrix)
+        template <typename DataType_> static DenseVector<DataType_> value(const RowAccessMatrix<DataType_> & matrix)
         {
-            std::tr1::shared_ptr<DenseVector<DataType_> > result(new DenseVector<DataType_>(matrix.rows()));
+            DenseVector<DataType_> result(matrix.rows());
 
-            for (typename Vector<DataType_>::ElementIterator i(result->begin_elements()), i_end(result->end_elements()) ;
+            for (typename Vector<DataType_>::ElementIterator i(result.begin_elements()), i_end(result.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = VectorElementSum<DataType_, Tag_>::value(matrix[i.index()]);
+            }
+
+            return result;
+        }
+
+
+        template <typename DataType_> static DenseVector<DataType_> value(const BandedMatrix<DataType_> & matrix)
+        {
+            DenseVector<DataType_> result(matrix.rows());
+            typename Vector<DataType_>::ElementIterator a(result.begin_elements());
+            typename Matrix<DataType_>::ConstElementIterator b(matrix.begin_elements()), b_end(matrix.end_elements());
+
+            ///\todo: Write row-access for banded or use this workaround here
+            for (unsigned row=0; row < matrix.rows(); ++row)
+            {
+                for (b ; b.row() == row && b != b_end; ++b)
+                {
+                    result[row] += *a;
+                }
             }
 
             return result;

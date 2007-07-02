@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-02 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+        * libla/banded_matrix.hh: Added Constructor with initialization of all
+	bands to zero vectors. Needed for MatrixProduct.
+	* libla/matrix_product.hh, matrix_vector_product.hh: Changed some
+	doxygen annotations. Banded-case not applicable yet cause of missing
+	row/column access!
+	* libla/matrix_row_sum_vector.hh: Applied new conventions. Added
+	support for banded matrix. If not buggy, implemented workaround may be
+	used, but later should be replaced by row-access.
+	* libla/matrix_row_sum_vector_TEST.cc: Applied changes to test.
+
 2007-07-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_elemente_inverse_TEST.cc: Added sparse and dense vector_elemente_inverse

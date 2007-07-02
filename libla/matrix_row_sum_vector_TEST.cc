@@ -49,9 +49,9 @@ class DenseMatrixRowSumVectorTest :
                     *i = static_cast<DataType_>(i.index() + 1);
                 }
 
-                std::tr1::shared_ptr<DenseVector<DataType_> > dv(MatrixRowSumVector<DataType_>::value(*dm));
+               DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(*dm));
                 DataType_ s(size);
-                for (typename Vector<DataType_>::ElementIterator v(dv->begin_elements()), v_end(dv->end_elements()) ;
+                for (typename Vector<DataType_>::ElementIterator v(dv.begin_elements()), v_end(dv.end_elements()) ;
                         v != v_end ; ++v)
                 {
                     DataType_ last((v.index() + 1) * s), first(v.index() * s);
@@ -88,9 +88,9 @@ class DenseMatrixRowSumVectorQuickTest :
                 *i = static_cast<DataType_>(i.index() + 1);
             }
 
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv(MatrixRowSumVector<DataType_>::value(*dm));
+            DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(*dm));
             DataType_ s(size);
-            for (typename Vector<DataType_>::ElementIterator v(dv->begin_elements()), v_end(dv->end_elements()) ;
+            for (typename Vector<DataType_>::ElementIterator v(dv.begin_elements()), v_end(dv.end_elements()) ;
                     v != v_end ; ++v)
             {
                 DataType_ last((v.index() + 1) * s), first(v.index() * s);

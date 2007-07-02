@@ -105,7 +105,7 @@ namespace pg512
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
-                DenseVector<DataType1_> dv = matrix.column(i);
+                DenseVector<DataType1_> dv = matrix.column(i); ///\todo: Write column-access for banded or workaround here
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
@@ -127,7 +127,7 @@ namespace pg512
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
-                DenseVector<DataType1_> dv = matrix.column(i);
+                DenseVector<DataType1_> dv = matrix.column(i); ///\todo: Write column-access for banded or workaround here
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
