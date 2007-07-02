@@ -140,16 +140,22 @@ namespace pg512 {
             /** Basic matrix assembling. Uses Limiters and theta().
               * Computes M_1, M_3.
               *
+              * \param m1 Matrix m1 is the first Matrix to be assembled.
+              * \param m3 Matrix m3 is the second Matrix to be assembled.
+              *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _assemble_matrix1();
+            void _assemble_matrix1(BandedMatrix<WorkPrec_>* m1, BandedMatrix<WorkPrec_>* m3);
 
             /** Basic matrix assembling. Uses Limiters and theta().
               * Computes M_2, M_4.
               *
+              * \param m1 Matrix m2 is the first Matrix to be assembled.
+              * \param m3 Matrix m4 is the second Matrix to be assembled.
+              *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _assemble_matrix2();
+            void _assemble_matrix2(BandedMatrix<WorkPrec_>* m2, BandedMatrix<WorkPrec_>* m4);
 
 
             /** Simplified matrix assembling.

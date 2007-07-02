@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-02 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Changed main interface for matrix assemblation.
+
 2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Changed manning-coefficient implementation from
