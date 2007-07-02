@@ -98,8 +98,8 @@ namespace pg512
                     ++l;
                     ++r;
                 }
-                return left;
             }
+            return left;
 	}
 
         /**
