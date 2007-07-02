@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libswe/solver.hh: Implemented sourceterm computation.
+	* ChangeLog: Changed my email-address to a more public one.
+
 2007-07-02 Sven Mallach <sven.mallach@uni-dortmund.de>
 
         * libla/banded_matrix.hh: Added Constructor with initialization of all
@@ -62,7 +67,7 @@ see the NEWS file.
 	* libswe/solver.hh: Fixed parameter documentation for flow term
 	computation, fixed typo.
 	
-2007-06-30 Volker Jung <volker.m.jung@t-online.de>
+2007-06-30 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Added implementations for flow computation,
 	changed flow-function signatures to current implementation.
@@ -505,7 +510,7 @@ see the NEWS file.
 	* libswe/solver,hh: Added base class for all SWE solvers,
 	added declaration of 2DSWE_Relax_ImExRK_FVMUSCL_Solver.
 
-2007-06-15 Volker Jung <volker.m.jung@t-online.de>
+2007-06-15 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/limiter_TEST.cc: Removed unnecessary tests.
 	* libswe/limiter.hh: Fixed further errors, hopefully improved
@@ -524,7 +529,7 @@ see the NEWS file.
 	implementation of qdist in Fruchterman-Reingold algorithm.
 	* libla/matrix.hh: Corrected doxygen annotation.
 
-2007-06-15 Volker Jung <volker.m.jung@t-online.de>
+2007-06-15 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/files.m4: Added limiter testfile.
 	* libswe/limiter.hh: Fixed numerous errors and applied coding
@@ -633,7 +638,7 @@ see the NEWS file.
 	benchmark/benchmark.cc, benchmark/benchmark.hh: Added console 
 	user interface and improved accuracy of time measurement.
 
-2007-06-13 Volker Jung <volker.m.jung@t-online.de>
+2007-06-13 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/limiter.hh: Implemented Limiter, MinMod, SuperBee, VanLeer, MC.
 

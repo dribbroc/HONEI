@@ -22,6 +22,8 @@
 #ifndef LIBSWE_GUARD_SOLVER_HH
 #define LIBSWE_GUARD_SOLVER_HH 1
 
+#define MANNING_N_SQUARED 0.000625
+
 /**
  * \file
  *
@@ -37,6 +39,7 @@
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/banded_matrix.hh>
+#include <math.h>
 
 namespace pg512 {
 
@@ -627,7 +630,7 @@ namespace pg512 {
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(uint i, uint j)
     {
 	DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
-	WorkPrec_ _temp = (*_v)[(_d_width + 4) * i + j];
+	WorkPrec_ _temp = (*_v)[(this->_d_width + 4) * i + j];
 
 	// Compute term for gravitional influence
         WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
@@ -635,12 +638,12 @@ namespace pg512 {
 	_result[1] = 1 / _temp;
         _result[2] = _result[1];
 
-	_temp = (*_v)[(_d_width + 4) * i + j + 1];
+	_temp = (*_v)[(this->_d_width + 4) * i + j + 1];
         _result[0] = _temp;
         _result[1] *= _temp * _temp;
 	_result[2] *= _temp;
 
-        _temp = (*_v)[(_d_width + 4) * i + j + 2];
+        _temp = (*_v)[(this->_d_width + 4) * i + j + 2];
 	_result[1] += _gravterm;
         _result[2] *= _temp;
 
@@ -667,7 +670,7 @@ namespace pg512 {
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(uint i, uint j)
     {
         DenseVector<WorkPrec_> _result(ulint(3), ulint( 0), ulint( 1));
-	WorkPrec_ _temp = (*_w)[(_d_width + 4) * i + j];
+	WorkPrec_ _temp = (*_w)[(this->_d_width + 4) * i + j];
 
         // Compute term for gravitional influence
 	WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
@@ -675,15 +678,58 @@ namespace pg512 {
         _result[1] = 1 / _temp;
 	_result[2] = _result[1];
 
-        _temp = (*_w)[(_d_width + 4) * i + j + 1];
+        _temp = (*_w)[(this->_d_width + 4) * i + j + 1];
 	_result[1] *= _temp;
 
-        _temp = (*_w)[(_d_width + 4) * i + j + 2];
+        _temp = (*_w)[(this->_d_width + 4) * i + j + 2];
 	_result[0] *= _temp;
         _result[1] *= _temp;
         _result[2] = _result[2] * _temp * _temp + _gravterm;
 
 	return _result;
+    }
+
+
+    /**
+     *
+     * Source term computation for a single cell (i, j).
+     *
+     * \param i First coordinate of the processed cell.
+     * \param j Second coordinate of the processed cell.
+     *
+     **/
+
+    template <typename ResPrec_,
+	      typename PredictionPrec1_,
+	      typename PredictionPrec2_,
+	      typename InitPrec1_,
+	      typename InitPrec2_>
+    template <typename WorkPrec_>
+    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(uint i, uint j)
+    {
+	WorkPrec_ _h = (*_u)[(this->_d_width + 4) * i + j];
+	if (_h > 0)
+	{
+	    WorkPrec_ _q1 = (*_u)[(this->_d_width + 4)* i + j + 1];
+	    WorkPrec_ _q2 = (*_u)[(this->_d_width + 4)* i + j + 2];
+	    
+	    DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
+	    _result[0] = 0;
+	    _result[1] = MANNING_N_SQUARED * pow(_h, -7/3) * sqrt(_q1 * _q1 + _q2 * _q2) * (-1);
+	    _result[2] = _result[1];
+    
+	    _result[1] = ((_result[1] * _q1) - (_h * (*_bottom_slopes_x)[(this->_d_width + 4)* i + j])) * 9.81;
+	    _result[2] = ((_result[2] * _q2) - (_h * (*_bottom_slopes_y)[(this->_d_width + 4)* i + j])) * 9.81;
+	    return _result;
+    	}
+	else
+	{
+	    DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
+	    _result[0] = 0;
+	    _result[1] = 0;
+	    _result[2] = 0;
+	    return _result;
+	}
     }
 
 }
