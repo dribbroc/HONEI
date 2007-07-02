@@ -73,7 +73,7 @@ namespace pg512 {
             double _eps;
 
 	    ///The squared Manning-Coefficient used by the sourceterm computation.
-	    const double _MANNING_N_SQUARED = 0.000625;
+	    double _manning_n_squared;
 
             ///The number of cells in the finite volume descretization grid.
             ulint _n;
@@ -343,6 +343,7 @@ namespace pg512 {
 
                 this->_bottom_slopes_x = bottomx;
                 this->_bottom_slopes_y = bottomy;
+		this->_manning_n_squared = 0.000625;
             }
 
     };
@@ -716,7 +717,7 @@ namespace pg512 {
 	    
 	    DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
 	    _result[0] = 0;
-	    _result[1] = MANNING_N_SQUARED * pow(_h, -7/3) * sqrt(_q1 * _q1 + _q2 * _q2) * (-1);
+	    _result[1] = _manning_n_squared * pow(_h, -7/3) * sqrt(_q1 * _q1 + _q2 * _q2) * (-1);
 	    _result[2] = _result[1];
     
 	    _result[1] = ((_result[1] * _q1) - (_h * (*_bottom_slopes_x)[(this->_d_width + 4)* i + j])) * 9.81;

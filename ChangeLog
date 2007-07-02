@@ -7,6 +7,16 @@ see the NEWS file.
 
 2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
 
+	* libswe/solver.hh: Changed manning-coefficient implementation from
+	const double to double.
+
+2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libswe/solver.hh: Changed manning-coefficient implementation from define to const
+	double.
+
+2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
+
 	* libswe/solver.hh: Implemented sourceterm computation.
 	* ChangeLog: Changed my email-address to a more public one.
 
