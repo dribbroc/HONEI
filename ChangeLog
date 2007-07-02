@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-07-02 Andre Matuschek <andre@matuschek.org>
 
+	* libla/scalar_matrix_product_BENCHMARK.cc: Implemented benchmark for scalar_matrix_product.hh.
+
+2007-07-02 Andre Matuschek <andre@matuschek.org>
+
 	* libla/matrix_element_inverse_BENCHMARK.cc: Implemented benchmark for matrix_element_inverse.hh.
 
 2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>

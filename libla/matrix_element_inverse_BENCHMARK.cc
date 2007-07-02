@@ -14,7 +14,7 @@ using namespace pg512;
 
 template <typename DataType_>
 
-class MatrixElementInverseBench :
+class DenseMatrixElementInverseBench :
     public Benchmark
 {
     private:
@@ -22,7 +22,7 @@ class MatrixElementInverseBench :
         int _count;
 
     public:
-        MatrixElementInverseBench(const std::string & id, int size, int count) :
+        DenseMatrixElementInverseBench(const std::string & id, int size, int count) :
             Benchmark(id)
         {
             _size  = size;
@@ -41,5 +41,5 @@ class MatrixElementInverseBench :
     }
 };
 
-MatrixElementInverseBench<float>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 2000x2000, float",  5000, 10);
-MatrixElementInverseBench<double> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 2000x2000, double", 5000, 10);
+DenseMatrixElementInverseBench<float>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 1000x1000, float",  1000, 10);
+DenseMatrixElementInverseBench<double> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 1000x1000, double", 1000, 10);
