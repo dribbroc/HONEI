@@ -41,19 +41,17 @@ class BandedMatrixCreationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<BandedMatrix<DataType_> > dm1(new BandedMatrix<DataType_>(size));
+                std::tr1::shared_ptr<BandedMatrix<DataType_> > bm1(new BandedMatrix<DataType_>(size));
                 TEST_CHECK(true);
-                //std::tr1::shared_ptr<DenseVector<DataType_> >dv1(new DenseVector<DataType_>
-                //    (size, static_cast<DataType_>(1)));
-                //std::tr1::shared_ptr<BandedMatrix<DataType_> > dm2(new BandedMatrix<DataType_>(size,*dv1));
-                //TEST_CHECK(true);
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(1)));
+                std::tr1::shared_ptr<BandedMatrix<DataType_> > bm2(new BandedMatrix<DataType_>(size,dv1));
+                TEST_CHECK(true);
                 
             }
             
-            //std::tr1::shared_ptr<DenseVector<DataType_> > dv2(new DenseVector<DataType_>
-            //    (5, static_cast<DataType_>(1)));                
-            //TEST_CHECK_THROWS (std::tr1::shared_ptr<BandedMatrix<DataType_> > dm3(new BandedMatrix<DataType_>(6,*dv2)),
-            //    VectorSizeDoesNotMatch);
+            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, static_cast<DataType_>(1)));                
+            TEST_CHECK_THROWS (std::tr1::shared_ptr<BandedMatrix<DataType_> > bm3(new BandedMatrix<DataType_>(6, dv2)),
+                VectorSizeDoesNotMatch);
         }
 };
 
@@ -72,8 +70,18 @@ class BandedMatrixQuickTest :
 
         virtual void run() const
         {
-            std::tr1::shared_ptr<BandedMatrix<DataType_> > dv(new BandedMatrix<DataType_>(4711));
+            unsigned long size(4711);
+            std::tr1::shared_ptr<BandedMatrix<DataType_> > dv(new BandedMatrix<DataType_>(size));
             TEST_CHECK(true);
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(1)));
+            std::tr1::shared_ptr<BandedMatrix<DataType_> > bm2(new BandedMatrix<DataType_>(size,dv1));
+            TEST_CHECK(true);
+            TEST_CHECK_EQUAL(&bm2->band(0), dv1);
+            TEST_CHECK_EQUAL(bm2->rows(), size);
+            TEST_CHECK_EQUAL(bm2->columns(), size);            
+            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, static_cast<DataType_>(1)));                
+            TEST_CHECK_THROWS (std::tr1::shared_ptr<BandedMatrix<DataType_> > bm3(new BandedMatrix<DataType_>(6, dv2)),
+                VectorSizeDoesNotMatch);            
         }
 };
 BandedMatrixQuickTest<float>  banded_matrix_quick_test_float("float");
