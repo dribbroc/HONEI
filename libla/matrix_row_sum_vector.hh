@@ -54,15 +54,14 @@ namespace pg512
         template <typename DataType_> static DenseVector<DataType_> value(const BandedMatrix<DataType_> & matrix)
         {
             DenseVector<DataType_> result(matrix.rows());
-            typename Vector<DataType_>::ElementIterator a(result.begin_elements());
             typename Matrix<DataType_>::ConstElementIterator b(matrix.begin_elements()), b_end(matrix.end_elements());
 
             ///\todo: Write row-access for banded or use this workaround here
-            for (unsigned row=0; row < matrix.rows(); ++row)
+            for (typename Vector<DataType_>::ElementIterator a(result.begin_elements()), a_end(result.end_elements()); a != a_end; ++a)
             {
-                for (b ; b.row() == row && b != b_end; ++b)
+                for (b ; b.row() == a.index() && b != b_end; ++b)
                 {
-                    result[row] += *a;
+                    *a += *b;
                 }
             }
 
