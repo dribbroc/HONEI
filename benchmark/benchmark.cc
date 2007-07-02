@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-#include "benchmark.hh"
+#include <benchmark/benchmark.hh>
 
 #include <cstdlib>
 #include <utility>
@@ -26,7 +26,6 @@ class BenchmarkList
         static BenchmarkList * instance()
         {
             static BenchmarkList result;
-
             return &result;
         }
 
@@ -44,8 +43,8 @@ class BenchmarkList
         {
             return _tests.end();
         }
-		
-		int bench_count() const
+        
+        int bench_count() const
         {
             return _tests.size();
         }
@@ -61,30 +60,30 @@ Benchmark::Benchmark(const std::string & id) :
 
 void Benchmark::evaluate()
 {
-	int x = 0;
-	double total = 0;
+    int x = 0;
+    double total = 0;
     double min = _benchlist.front();
     double max = _benchlist.front();
     for (list<double>::iterator i = _benchlist.begin() ; i != _benchlist.end() ; ++i)
-	{
-		total += *i;
-		++x;
+    {
+        total += *i;
+        ++x;
         if (*i < min) 
             min = *i;
         else if (*i > max) 
             max = *i;
     }
     cout << "Function Calls: " << x << endl;
-	cout << "Runtime - total: " << total << "sec" << endl;
-	cout << "Runtime - lowest: " << min << "sec" << endl;
+    cout << "Runtime - total: " << total << "sec" << endl;
+    cout << "Runtime - lowest: " << min << "sec" << endl;
     cout << "Runtime - highest: " << max << "sec" << endl;
-	double avg = (total/x);
-	cout << "Runtime - average: " << avg << "sec" << endl;
-	ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
-	if (!ofs)
+    double avg = (total/x);
+    cout << "Runtime - average: " << avg << "sec" << endl;
+    ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
+    if (!ofs)
         cout << "Can't write to file!" << endl;
-	else
-	{
+    else
+    {
         ofs << _id  << " - " << __DATE__ << " - " << __TIME__ << endl << endl;
         ofs << "Result:"<< endl;
         ofs << "Function Calls: " << x << endl;
@@ -93,91 +92,93 @@ void Benchmark::evaluate()
         ofs << "Runtime - highest: " << max << "sec" << endl;
         ofs << "Runtime - average: " << avg << "sec" << endl;
         ofs << endl << endl << endl;
-	}
+    }
 }
 
 void Benchmark::evaluate(int flop)
 {
-	int x = 0;
-	double total = 0;
+    int x = 0;
+    double total = 0;
     double min = _benchlist.front();
     double max = _benchlist.front();
-	for (list<double>::iterator i = _benchlist.begin() ; i != _benchlist.end() ; ++i)
-	{
-		total += *i;
-		++x;
+    for (list<double>::iterator i = _benchlist.begin() ; i != _benchlist.end() ; ++i)
+    {
+        total += *i;
+        ++x;
         if (*i < min) 
             min = *i;
         else if (*i > max) 
             max = *i;
-	}
-	cout << "Function Calls: " << x << endl;
-	cout << "Runtime - total: " << total << "sec" << endl;
-	cout << "Runtime - lowest: " << min << "sec" << endl;
-	cout << "Runtime - highest: " << max << "sec" << endl;
-	double avg = (total/x);
-	cout << "Runtime - average: " << avg << "sec" << endl;
-	double f = 0;
-	string fl = " FLOPS";
-	if (total > 0)
-		f = ((x/total)*flop);
-	if (f > 100000000)
+    }
+    cout << "Function Calls: " << x << endl;
+    cout << "Runtime - total: " << total << "sec" << endl;
+    cout << "Runtime - lowest: " << min << "sec" << endl;
+    cout << "Runtime - highest: " << max << "sec" << endl;
+    double avg = (total/x);
+    cout << "Runtime - average: " << avg << "sec" << endl;
+    double f = 0;
+    string fl = " FLOPS";
+    if (total > 0)
+        f = ((x/total)*flop);
+    if (f > 100000000)
     {
         f /= 1000000000;
         fl = " GFLOPS";
     }
-    else    
-        if (f > 100000)
-        {
-            f /= 1000000;
-            fl = " MFLOPS";
-        }
-        else
-            if (f > 100)
-            {
-                f /= 1000;
-                fl = " KFLOPS";
-            }
+    else if (f > 100000)
+    {
+        f /= 1000000;
+        fl = " MFLOPS";
+    }
+    else if (f > 100)
+    {
+        f /= 1000;
+        fl = " KFLOPS";
+    }
     cout << f << fl << endl;                
     ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
-	if (!ofs)
+    if (!ofs)
         cout << "Can't write to file!" << endl;
-	else
-	{
-		ofs << _id  << " - " << __DATE__ << " - " << __TIME__ << endl << endl;
-		ofs << "Result:"<< endl;
-		ofs << "Function Calls: " << x << endl;
-		ofs << "Runtime - total: " << total << "sec" << endl;
-		ofs << "Runtime - lowest: " << min << "sec" << endl;
-		ofs << "Runtime - highest: " << max << "sec" << endl;
-		ofs << "Runtime - average: " << avg << "sec" << endl;
-		ofs << f << fl << endl;
-		ofs << endl << endl << endl;
-	}
+    else
+    {
+        ofs << _id  << " - " << __DATE__ << " - " << __TIME__ << endl << endl;
+        ofs << "Result:"<< endl;
+        ofs << "Function Calls: " << x << endl;
+        ofs << "Runtime - total: " << total << "sec" << endl;
+        ofs << "Runtime - lowest: " << min << "sec" << endl;
+        ofs << "Runtime - highest: " << max << "sec" << endl;
+        ofs << "Runtime - average: " << avg << "sec" << endl;
+        ofs << f << fl << endl;
+        ofs << endl << endl << endl;
+    }
 }
 
 const std::string Benchmark::id() const
 {
-	return _id;
+    return _id;
 }
 
 int main(int argc, char** argv)
 {
-	int result=EXIT_SUCCESS;
-	list<int> runrs;
-	cout << "Select Benchmark you'd like to add to runlist:" << endl;
-	int count = 1;
-	for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_tests()),i_end(BenchmarkList::instance()->end_tests()) ; i != i_end ; ++i, ++count)
+    int result=EXIT_SUCCESS;
+    list<int> runrs;
+    cout << "Select Benchmark you'd like to add to runlist:" << endl;
+    int count = 1;
+    for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_tests()),i_end(BenchmarkList::instance()->end_tests()) ; i != i_end ; ++i, ++count)
     {
-		cout << count << ": " << (*i)->id() << endl;
+        cout << count << ": " << (*i)->id() << endl;
     }
-    cout << endl << "(1), (2), ..., (a)ll, (n)one" << endl;
-    string a;
+    cout << endl << "Choose: (1), (2), ..., (a)ll, (n)one" << endl;
+    string a, tmp;
+    int b;
     while (a != "n")
     {
+        cout << "Selection: ";
         cin >> a;
+        cout << "Added: ";
         if (a == "a")
         {
+            cout << "all" << endl;
             a = "n";
             runrs.clear();
             for (int i = 0 ; i < BenchmarkList::instance()->bench_count() ; ++i)
@@ -185,9 +186,30 @@ int main(int argc, char** argv)
                 runrs.push_back(i);
             }
         }
-        int b = atoi(a.c_str());
-        if ((b > 0) && (b <= BenchmarkList::instance()->bench_count())) 
-			runrs.push_back(b-1);
+        while ((a.length()>0) && (a != "n"))
+        {
+            tmp = "";
+            b = a[0];
+            if ((b < 48) || (b > 57))
+                a.erase(0,1);
+            else
+            {
+                while ((b > 48) && (b < 65))
+                {
+                    tmp += a[0];
+                    a.erase(0,1);
+                    b = a[0];
+                } 
+                b = atoi(tmp.c_str());
+                if ((b > 0) && (b <= BenchmarkList::instance()->bench_count())) 
+                {
+                    runrs.push_back(b-1);
+                    cout << b << " ";
+                }
+            }
+        }
+        cout << endl;
+        if (a != "n") cout << "Add more? ";
     }
     count = 0;
     if (runrs.size()>0)
@@ -211,15 +233,15 @@ int main(int argc, char** argv)
                     std::cout << e.what() << std::endl;
                     result = EXIT_FAILURE;
                 }
-				while ((runrs.size() > 0) && (next == runrs.front()))
-				{
-					runrs.pop_front();
-				}
-				if (runrs.size() > 0)
-				{
-					next = runrs.front();
-					runrs.pop_front();
-				}
+                while ((runrs.size() > 0) && (next == runrs.front()))
+                {
+                    runrs.pop_front();
+                }
+                if (runrs.size() > 0)
+                {
+                    next = runrs.front();
+                    runrs.pop_front();
+                }
             }
         }
     }

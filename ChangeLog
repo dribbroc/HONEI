@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-02 David Gies <david-gies@gmx.de>
+
+	* benchmark/benchmark.cc: Improved user interface.
+	* libla/matrix_row_sum_verctor_BENCHMARK.cc, 
+	  libla/matrix_product_BENCHMARK.cc, 
+	  libla/matrix_elementwise_product_BENCHMARK.cc, 
+	  libla/vector_scaled_sum_BENCHMARK.cc: Added Benchmarks.
+
 2007-07-02 Andre Matuschek <andre@matuschek.org>
 
 	* libla/scalar_matrix_sum_BENCHMARK.cc: Implemented benchmark for scalar_matrix_sum.hh.
