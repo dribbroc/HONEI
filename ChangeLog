@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-02 Andre Matuschek <andre@matuschek.org>
+
+	* libla/matrix_element_inverse_BENCHMARK.cc: Implemented benchmark for matrix_element_inverse.hh.
+
 2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Changed manning-coefficient implementation from
