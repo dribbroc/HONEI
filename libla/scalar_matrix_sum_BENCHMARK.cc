@@ -1,12 +1,15 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
+#ifndef ALLBENCH
 #include <benchmark/benchmark.cc>
 #include <libla/dense_matrix.hh>
-#include <libla/scalar_matrix_sum.hh>
 #include <libla/matrix_error.cc>
-
 #include <tr1/memory>
 #include <string>
+#endif
+
+#include <libla/scalar_matrix_sum.hh>
+
  
 using namespace std;
 using namespace pg512;
@@ -43,5 +46,5 @@ class ScalarDenseMatrixSumBench :
     }
 };
 
-ScalarDenseMatrixSumBench<float>  SMPBenchfloat ("MatrixShift Benchmark: size: 2000x2000, float",  2000, 12);
-ScalarDenseMatrixSumBench<double> SMPBenchdouble("MatrixShift Benchmark: size: 2000x2000, double", 2000, 12);
+ScalarDenseMatrixSumBench<float>  SDMSBenchfloat ("MatrixShift Benchmark: size: 2000x2000, float",  2000, 12);
+ScalarDenseMatrixSumBench<double> SDMSBenchdouble("MatrixShift Benchmark: size: 2000x2000, double", 2000, 12);

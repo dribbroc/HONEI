@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-03 David Gies <david-gies@gmx.de>
+
+	* benchmark/benchmark.cc: Fixed error.
+	* libla/bench.cc: Added collection of all current Benchmarks.
+	* libla/Makefile.am.m4: make benchmark altered to run the benchmark collection.
+
 2007-07-02 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc: Improved user interface.

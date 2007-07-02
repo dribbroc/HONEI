@@ -194,7 +194,7 @@ int main(int argc, char** argv)
                 a.erase(0,1);
             else
             {
-                while ((b > 48) && (b < 65))
+                while ((b >=  48) && (b <= 65))
                 {
                     tmp += a[0];
                     a.erase(0,1);

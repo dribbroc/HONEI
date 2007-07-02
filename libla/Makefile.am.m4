@@ -56,16 +56,18 @@ pg512_include_HEADERS = headerlist
 TESTS = testlist
 TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
-BENCHMARKS = benchmarklist
-BENCHMARKS_ENVIRONMENT = bash $(top_builddir)/benchmark/run.sh
+bench_SOURCES = bench.cc
+bench_LDADD = $(top_builddir)/benchmark/libbenchmark.a libla.la $(top_builddir)/libutil/libutil.la $(DYNAMIC_LD_LIBS)
+bench_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
+BENCHMARKS = benchmarklist bench
 
 benchmarkdir = $(srcdir)
 benchmark_PROGRAMS = $(BENCHMARKS)
+
 benchmark: $(BENCHMARKS)
-	$(MAKE) $(AM_MAKEFLAGS) $(benchmark_PROGRAMS)
-	@for b in '$(BENCHMARKS)' ; do \
-	    $(BENCHMARKS_ENVIRONMENT) "$(srcdir)/"$$b; \
-	done
+	$(MAKE) $(AM_MAKEFLAGS) allbench
+	./bench
 
 check_PROGRAMS = $(TESTS)
 

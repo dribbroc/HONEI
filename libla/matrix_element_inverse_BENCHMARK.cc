@@ -1,12 +1,14 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
+#ifndef ALLBENCH
 #include <benchmark/benchmark.cc>
 #include <libla/dense_matrix.hh>
-#include <libla/matrix_element_inverse.hh>
 #include <libla/matrix_error.cc>
-
 #include <tr1/memory>
 #include <string>
+#endif
+
+#include <libla/matrix_element_inverse.hh>
  
 using namespace std;
 using namespace pg512;

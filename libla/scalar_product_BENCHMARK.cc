@@ -1,11 +1,13 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-#include "../benchmark/benchmark.cc"
-#include <libla/scalar_product.hh>
+#ifndef ALLBENCH
+#include <benchmark/benchmark.cc>
 #include <libla/dense_vector.hh>
-
 #include <tr1/memory>
 #include <string>
+#endif
+
+#include <libla/scalar_product.hh>
  
 using namespace std;
 using namespace pg512;
