@@ -22,8 +22,6 @@
 #ifndef LIBSWE_GUARD_SOLVER_HH
 #define LIBSWE_GUARD_SOLVER_HH 1
 
-#define MANNING_N_SQUARED 0.000625
-
 /**
  * \file
  *
@@ -73,6 +71,9 @@ namespace pg512 {
 
             ///The relaxation parameter: 0<eps<<1.
             double _eps;
+
+	    ///The squared Manning-Coefficient used by the sourceterm computation.
+	    const double _MANNING_N_SQUARED = 0.000625;
 
             ///The number of cells in the finite volume descretization grid.
             ulint _n;
