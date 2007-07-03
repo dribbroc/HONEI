@@ -274,7 +274,7 @@ class SparseVectorReallocQuickTest :
                 }
             }      
             unsigned long count(0);
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_non_zero_elements()), 
+            for (typename Vector<DataType_>::ConstElementIterator i(sv1->begin_non_zero_elements()), 
                 i_end(sv1->end_non_zero_elements()) ; i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL(*i, (*sv2)[i.index()]);
@@ -282,7 +282,7 @@ class SparseVectorReallocQuickTest :
                 count++;
             } 
             unsigned long count2(0);
-            for (typename Vector<DataType_>::ElementIterator i(sv2->begin_non_zero_elements()),
+            for (typename Vector<DataType_>::ConstElementIterator i(sv2->begin_non_zero_elements()),
                 i_end(sv2->end_non_zero_elements()) ; i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL(*i, (*sv1)[i.index()]);
