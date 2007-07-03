@@ -9,5 +9,5 @@ noinst_LIBRARIES = libbenchmark.a
 libbenchmark_a_SOURCES = \
 	benchmark.cc benchmark.hh
 
-benchmark:
+bench:
 quickcheck:		

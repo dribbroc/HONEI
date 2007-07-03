@@ -46,7 +46,7 @@ TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
-benchmark:
+bench:
 
 quickcheck: $(TESTS)
 	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check

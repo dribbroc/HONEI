@@ -62,10 +62,10 @@ bench_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 BENCHMARKS = benchmarklist bench
 
-benchmarkdir = $(srcdir)
-benchmark_PROGRAMS = $(BENCHMARKS)
+benchdir = $(srcdir)
+bench_PROGRAMS = $(BENCHMARKS)
 
-benchmark: $(BENCHMARKS)
+bench: $(BENCHMARKS)
 	$(MAKE) $(AM_MAKEFLAGS) allbench
 	./bench
 
