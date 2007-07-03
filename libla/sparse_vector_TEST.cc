@@ -261,40 +261,35 @@ class SparseVectorReallocQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(20);            
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1)),
-                sv2(new SparseVector<DataType_>(size, size / 9 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
-                    i != i_end ; ++i)
-            {
-                if (i.index() % 3 == 0) 
-                {
-                    *i = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
-                    (*sv2)[i.index()] = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
-                }
-            }      
-            unsigned long count(0);
-            for (typename Vector<DataType_>::ConstElementIterator i(sv1->begin_non_zero_elements()), 
-                i_end(sv1->end_non_zero_elements()) ; i != i_end ; ++i)
-            {
-                TEST_CHECK_EQUAL(*i, (*sv2)[i.index()]);
-                if (*i == 0) TEST_CHECK(false);
-                count++;
-            } 
-            unsigned long count2(0);
-            for (typename Vector<DataType_>::ConstElementIterator i(sv2->begin_non_zero_elements()),
-                i_end(sv2->end_non_zero_elements()) ; i != i_end ; ++i)
-            {
-                TEST_CHECK_EQUAL(*i, (*sv1)[i.index()]);
-                if (*i == 0) TEST_CHECK(false);                
-                count2++;
-            }                             
-            TEST_CHECK_EQUAL(count, sv2->used_elements());
-            TEST_CHECK_EQUAL(sv1->used_elements(), sv2->used_elements());
-            TEST_CHECK_EQUAL(*sv1, *sv2);
-            TEST_CHECK_EQUAL(count, 20 / 3);       
-            TEST_CHECK_EQUAL(count2, 20 / 3);             
+            unsigned long size(20);
 
+            SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                    j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                if (i.index() % 3 == 0)
+                {
+                    *i = DataType_((i.index() + 1) / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                    *j = *i;
+                }
+            }
+
+            for (typename Vector<DataType_>::ConstElementIterator i(sv1.begin_non_zero_elements()),
+                i_end(sv1.end_non_zero_elements()), j(sv2.begin_non_zero_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+
+                if (fabs(*i) <= std::numeric_limits<DataType_>::epsilon())
+                    TEST_CHECK(false);
+            }
+
+            unsigned long count1(std::distance(sv1.begin_non_zero_elements(), sv1.end_non_zero_elements())),
+                count2(std::distance(sv2.begin_non_zero_elements(), sv2.end_non_zero_elements()));
+
+            TEST_CHECK_EQUAL(count1, sv2.used_elements());
+            TEST_CHECK_EQUAL(sv1.used_elements(), sv2.used_elements());
+            TEST_CHECK_EQUAL(count1, 20 / 3 + 1);
+            TEST_CHECK_EQUAL(count2, 20 / 3 + 1);
         }
 };
 

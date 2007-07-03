@@ -9,6 +9,8 @@ see the NEWS file.
 
 	* libla/vector_sum_TEST.cc: Tidied up the test cases a bit. Removed
 	unnecessary use of std::tr1::shared_ptr<>.
+	* libla/sparse_vector_TEST.cc: Fixed off-by-one bug in reallocation
+	test case and tidied it up.
 
 2007-07-03 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
