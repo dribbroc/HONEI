@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-03 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/matrix_*.hh: Applied interface RowAccessMatrix where
+	applicable.
+	* libla/matrix_difference.hh: Implemented methods with inverse signature
+	order for allowing every case of difference orders.
+	* libla/matrix_element_sum.hh: Applied new calling conventions.
+	* libla/matrix_element_sum_TEST.cc: Changed calls.
+	* libla/matrix_product.hh, libla/matrix_vector_product.hh: Commented
+	banded-cases out until	band-iterator is implemented.
+
 2007-07-03 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/vector_sum_TEST.cc: Tidied up the test cases a bit. Removed

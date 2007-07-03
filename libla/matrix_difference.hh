@@ -43,12 +43,12 @@ namespace pg512
     template <typename Tag_ = tags::CPU> struct MatrixDifference
     {
         /**
-         * Returns the the resulting matrix of the difference of two given DenseMatrix instances.
+         * Returns the the resulting matrix of the difference of a dense matrix instance and a row access matrix instance.
          *
          * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant dense matrix to be subtracted.
+         * \param right Reference to constant row access matrix to be subtracted.
          **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -62,10 +62,9 @@ namespace pg512
 
             typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
             for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+                    l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l -= *r;
-                ++r;
             }
 
             return left;
@@ -91,22 +90,77 @@ namespace pg512
 
             typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
             for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+                    l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l -= *r;
-                ++r;
             }
 
             return left;
+        }
+
+        /**
+         * Returns the the resulting matrix of the difference of a given BandedMatrix instance and a given RowAccessMatrix instance.
+         *
+         * \param left Reference to banded matrix that will be also used as result matrix.
+         * \param right Reference to constant row access matrix to be subtracted.
+         **/
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
+            {
+                *l -= *r;
+            }
+
+            return left;
+        }
+
+        /**
+         * Returns the the resulting matrix of the difference of a given RowAccessMatrix instance and a given BandedMatrix instance.
+         *
+         * \param left Reference to row access matrix that will be also used as result matrix.
+         * \param right Reference to constant banded matrix to be subtracted.
+         **/
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(const RowAccessMatrix<DataType2_> & left, BandedMatrix<DataType1_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType1_>::ConstElementIterator l(left.begin_elements());
+            for (typename MutableMatrix<DataType2_>::ElementIterator r(right.begin_elements()),
+                    r_end(right.end_elements()) ; r != r_end ; ++r, ++l)
+            {
+                *r = *l - *r;
+            }
+
+            return right;
         }
 
         /**
          * Returns the the resulting matrix of the difference of a given BandedMatrix instance and a given DenseMatrix instance.
          *
-         * \param left Reference to banded matrix that will be also used as result matrix.
-         * \param right Reference to constant dense matrix to be subtracted.
+         * \param left Reference to constant banded matrix which is the base.
+         * \param right Reference to dense matrix to be substracted that will be also used as result matrix.
          **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(const BandedMatrix<DataType2_> & left, DenseMatrix<DataType1_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -118,44 +172,14 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(right.rows(), left.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename Matrix<DataType1_>::ConstElementIterator l(left.begin_elements());
+            for (typename MutableMatrix<DataType2_>::ElementIterator r(right.begin_elements()),
+                    r_end(right.end_elements()) ; r != r_end ; ++r, ++l)
             {
-                *l -= *r;
-                ++r;
+                *r = *l - *r;
             }
 
-            return left;
-        }
-
-        /**
-         * Returns the the resulting matrix of the difference of a given DenseMatrix instance and a given BandedMatrix instance.
-         *
-         * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant banded matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
-        {
-            if (left.columns() != right.columns())
-            {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
-            }
-
-            if (left.rows() != right.rows())
-            {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
-            }
-
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
-            {
-                *l -= *r;
-                ++r;
-            }
-
-            return left;
+            return right;
         }
     };
 }

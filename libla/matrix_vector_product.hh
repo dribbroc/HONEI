@@ -102,14 +102,16 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
 
             DenseVector<DataType1_> result(vector.size());
+            ///\todo: Implement when band-iterator available.
+            /*
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
-                DenseVector<DataType1_> dv = matrix.column(i); ///\todo: Write column-access for banded or workaround here
+                DenseVector<DataType1_> dv = matrix.column(i);
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
-
+            */
             return result;
         }
 
@@ -124,14 +126,16 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
 
             SparseVector<DataType1_> result(vector.size());
+            ///\todo: Implement when band-iterator available.
+            /*
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.columns(); ++i)
             {
-                DenseVector<DataType1_> dv = matrix.column(i); ///\todo: Write column-access for banded or workaround here
+                DenseVector<DataType1_> dv = matrix.column(i);
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
-
+            */
             return result;
         }
 

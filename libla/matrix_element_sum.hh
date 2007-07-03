@@ -40,14 +40,14 @@ namespace pg512
 	 * The used matrix will be invariant under this operation.
      * \ingroup grpmatrixoperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct MatrixElementSum
+    template <typename Tag_ = tags::CPU> struct MatrixElementSum
     {
         /**
          * Returns the the resulting scalar of the sum of all elements of a given dense matrix instance.
          *
          * \param left Reference to dense matrix which elements will be accumulated.
          **/
-        static DataType_ value(const DenseMatrix<DataType_> & matrix)
+        template <typename DataType_> static DataType_ value(const RowAccessMatrix<DataType_> & matrix)
         {
             DataType_ result(0);
 			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()),
@@ -64,7 +64,7 @@ namespace pg512
          *
          * \param left Reference to banded matrix which elements will be accumulated.
          **/
-        static DataType_ value(const BandedMatrix<DataType_> & matrix)
+        template <typename DataType_> static DataType_ value(const BandedMatrix<DataType_> & matrix)
         {
             DataType_ result(0);
 			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()),

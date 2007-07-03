@@ -17,7 +17,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/dense_matrix.hh>
 #include <libla/matrix_element_sum.hh>
 #include <matrix_error.hh>
@@ -45,7 +45,7 @@ class DenseMatrixElementSumTest :
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(1));
-                DataType_ sum(MatrixElementSum<DataType_>::value(dm1));
+                DataType_ sum(MatrixElementSum<>::value(dm1));
 
 				TEST_CHECK_EQUAL(sum, size * (size + 1));
             }
@@ -69,7 +69,7 @@ class DenseMatrixElementSumQuickTest :
         {
             unsigned long size(5);
             DenseMatrix<DataType_> dm1(size, size + 1, DataType_(1));
-            DataType_ sum(MatrixElementSum<DataType_>::value(dm1));
+            DataType_ sum(MatrixElementSum<>::value(dm1));
 
 			TEST_CHECK_EQUAL(sum, size * (size + 1));
         }

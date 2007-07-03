@@ -108,19 +108,6 @@ namespace pg512 ///< \todo Namespace name?
 
                 _bands[size].reset(diagonal);
             }
-
-            /**
-             * Constructor.
-             *
-             * \param size Size of the new banded matrix.
-             * \param value Value for all band-DenseVectors to be initialized with.
-             **/
-            BandedMatrix(unsigned long size, DataType_ value) :
-                _bands(new std::tr1::shared_ptr<DenseVector<DataType_> >[2 * size + 1](size, value)),
-                _size(size)
-            {
-            }
-
             /// \}
 
             /// Returns iterator pointing to the first element of the matrix.

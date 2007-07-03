@@ -106,7 +106,7 @@ namespace pg512
          * \param left Reference to banded matrix that will be also used as result matrix.
          * \param right Reference to constant dense matrix to be subtracted.
          **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {

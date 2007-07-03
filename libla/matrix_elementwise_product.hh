@@ -103,7 +103,7 @@ namespace pg512
          * \param left Reference to a BandedMatrix. Its return type is used for the result matrix.
          * \param right Reference to a DenseMatrix.
          **/
-         template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+         template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
