@@ -60,7 +60,7 @@ bench_SOURCES = bench.cc
 bench_LDADD = $(top_builddir)/benchmark/libbenchmark.a libla.la $(top_builddir)/libutil/libutil.la $(DYNAMIC_LD_LIBS)
 bench_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
-BENCHMARKS = benchmarklist bench
+BENCHMARKS = benchmarklist
 
 benchdir = $(srcdir)
 bench_PROGRAMS = $(BENCHMARKS)
