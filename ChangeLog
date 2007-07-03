@@ -5,38 +5,46 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-03 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/vector_sum_TEST.cc: Tidied up the test cases a bit. Removed
+	unnecessary use of std::tr1::shared_ptr<>.
+
 2007-07-03 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* unittest/Makefile.am, libla/Makefile.am.m4, libutil/Makefile.am.m4, libswe/Makefile.am.m4
-	libgraph/Makefile.am.m4, Makefile.am, benchmark/Makefile.am:
-	Renamed all make targets benchmark in bench.
+	* unittest/Makefile.am, libla/Makefile.am.m4, libutil/Makefile.am.m4,
+	libswe/Makefile.am.m4, libgraph/Makefile.am.m4, Makefile.am,
+	benchmark/Makefile.am: Renamed all make targets benchmark in bench.
 
-	
 2007-07-03 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc: Fixed error.
 	* libla/bench.cc: Added collection of all current Benchmarks.
-	* libla/Makefile.am.m4: make benchmark altered to run the benchmark collection.
+	* libla/Makefile.am.m4: make benchmark altered to run the benchmark
+	collection.
 
 2007-07-02 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc: Improved user interface.
-	* libla/matrix_row_sum_verctor_BENCHMARK.cc, 
-	  libla/matrix_product_BENCHMARK.cc, 
-	  libla/matrix_elementwise_product_BENCHMARK.cc, 
-	  libla/vector_scaled_sum_BENCHMARK.cc: Added Benchmarks.
+	* libla/matrix_row_sum_verctor_BENCHMARK.cc,
+	libla/matrix_product_BENCHMARK.cc,
+	libla/matrix_elementwise_product_BENCHMARK.cc,
+	libla/vector_scaled_sum_BENCHMARK.cc: Added Benchmarks.
 
 2007-07-02 Andre Matuschek <andre@matuschek.org>
 
-	* libla/scalar_matrix_sum_BENCHMARK.cc: Implemented benchmark for scalar_matrix_sum.hh.
+	* libla/scalar_matrix_sum_BENCHMARK.cc: Implemented benchmark for
+	scalar_matrix_sum.hh.
 
 2007-07-02 Andre Matuschek <andre@matuschek.org>
 
-	* libla/scalar_matrix_product_BENCHMARK.cc: Implemented benchmark for scalar_matrix_product.hh.
+	* libla/scalar_matrix_product_BENCHMARK.cc: Implemented benchmark for
+	scalar_matrix_product.hh.
 
 2007-07-02 Andre Matuschek <andre@matuschek.org>
 
-	* libla/matrix_element_inverse_BENCHMARK.cc: Implemented benchmark for matrix_element_inverse.hh.
+	* libla/matrix_element_inverse_BENCHMARK.cc: Implemented benchmark for
+	matrix_element_inverse.hh.
 
 2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
 
@@ -55,8 +63,8 @@ see the NEWS file.
 
 2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
 
-	* libswe/solver.hh: Changed manning-coefficient implementation from define to const
-	double.
+	* libswe/solver.hh: Changed manning-coefficient implementation from
+	define to const double.
 
 2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
 
