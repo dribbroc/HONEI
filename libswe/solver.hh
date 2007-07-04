@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  * Copyright (c) 2007 Volker Jung <volker.m.jung@t-online.de>
+ * Copyright (c) 2007 Joachim Messer <joachim.messer@t-online.de>
  *
  * This file is part of the SWE C++ library. LibSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -138,7 +139,7 @@ namespace pg512 {
             DenseVector<ResPrec_> * _bottom_slopes_x; //size:w
             DenseVector<ResPrec_> * _bottom_slopes_y; //size:h
 
-            /** Basic matrix assembling. Uses Limiters and theta().
+            /** Basic matrix assembly. Uses Limiters and theta().
               * Computes M_1, M_3.
               *
               * \param m1 Matrix m1 is the first Matrix to be assembled.
@@ -149,7 +150,7 @@ namespace pg512 {
             template<typename WorkPrec_>
             void _assemble_matrix1(BandedMatrix<WorkPrec_>* m1, BandedMatrix<WorkPrec_>* m3);
 
-            /** Basic matrix assembling. Uses Limiters and theta().
+            /** Basic matrix assembly. Uses Limiters and theta().
               * Computes M_2, M_4.
               *
               * \param m1 Matrix m2 is the first Matrix to be assembled.
@@ -160,28 +161,28 @@ namespace pg512 {
             void _assemble_matrix2(BandedMatrix<WorkPrec_>* m2, BandedMatrix<WorkPrec_>* m4);
 
 
-            /** Simplified matrix assembling.
+            /** Simplified matrix assembly.
               * Computes M_5.
               *
               **/
             template<typename WorkPrec_>
             BandedMatrix<WorkPrec_> _quick_assembleMatrix1();
 
-            /** Simplified matrix assembling.
+            /** Simplified matrix assembly.
               * Computes M_6.
               *
               **/
             template<typename WorkPrec_>
             BandedMatrix<WorkPrec_> _quick_assembleMatrix2();
 
-            /** Simplified matrix assembling.
+            /** Simplified matrix assembly.
               * Computes M_7.
               *
               **/
             template<typename WorkPrec_>
             BandedMatrix<WorkPrec_> _quick_assembleMatrix3();
 
-            /** Simplified matrix assembling.
+            /** Simplified matrix assembly.
               * Computes M_8.
               *
               **/
@@ -310,6 +311,9 @@ namespace pg512 {
              * \param eps The relaxation parameter.
              * \param bottomx The vector for the bottom slopes in x direction.
              * \param bottomy The vector for the bottom slopes in y direction.
+             * \param c The vector c.
+             * \param d The vector d.
+             *
              **/
             RelaxSolver(DenseMatrix<ResPrec_> *height,
                         DenseMatrix<ResPrec_> *bottom,
@@ -325,7 +329,9 @@ namespace pg512 {
                         ResPrec_ deltat,
                         double eps,
                         DenseVector<ResPrec_> * bottomx,
-                        DenseVector<ResPrec_> * bottomy)
+                        DenseVector<ResPrec_> * bottomy,
+                        DenseVector<ResPrec_> * c,
+                        DenseVector<ResPrec_> * d)
             {
                 this->_height = height;
                 this->_bottom = bottom;
@@ -351,6 +357,9 @@ namespace pg512 {
 
                 this->_bottom_slopes_x = bottomx;
                 this->_bottom_slopes_y = bottomy;
+
+                this->_c = c;
+                this->_d = d;
             }
 
     };
@@ -377,6 +386,14 @@ namespace pg512 {
              typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::do_preprocessing()
     {
+        //typename DenseVector<ResPrec_>:: ElementIterator i(_c_squared->begin_elements());
+        //(*_c_squared)[i.index()] = (*_c)[i.index()] * (*_c)[i.index()];
+        //(*_c_squared)[i.index()+1] = (*_c)[i.index()+1] * (*_c)[i.index()+1];
+        //(*_c_squared)[i.index()+2] = (*_c)[i.index()+2] * (*_c)[i.index()+2]; 
+        //(*_d_squared)[0] = (*_d)[0] * (*_d)[0]; 
+        //(*_d_squared)[1] = (*_d)[1] * (*_d)[1];
+        //(*_d_squared)[2] = (*_d)[2] * (*_d)[2];
+ 
         /// Setting up initial conditions:
         /// v_0(x,y) = F(u_0(x,y)) using flowX(),
         /// w_0(x,y) = G(u_0(x,y)) using flowY().
@@ -742,7 +759,7 @@ namespace pg512 {
 
     /**
      *
-     * Matrix assemblation.
+     * Matrix assembly.
      *
      * \param  m1 The first matrix to assemble.
      * \param  m3 The second matrix to assemble.
@@ -914,7 +931,7 @@ namespace pg512 {
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
- 
+
             }
             m1->band(ulint(0)) = m1diag;
             m1->band(ulint(1)) = m1bandPlus1;

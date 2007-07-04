@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-07-04 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Added parameters to constructor, fixed
+	documentation for matrix assembly.
+	* libswe/solver_TEST.cc: Adjusted constructor call due to changes.
+
+2007-07-04 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Added implementation of fundamental
 	matrix assemblation function - still under heavy construction.
 

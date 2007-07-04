@@ -48,6 +48,8 @@ class RelaxSolverQuickTest :
             DenseVector<DataType_> w (3*49, DataType_(1)); 
             DenseVector<DataType_> bx (49, DataType_(1));
             DenseVector<DataType_> by (49, DataType_(1));
+            DenseVector<DataType_> c (3,DataType_(1));
+            DenseVector<DataType_> d (3,DataType_(1));
             ulint dwith = 3;
             ulint dheight = 3;
             DataType_ deltax = 1;                       
@@ -56,7 +58,7 @@ class RelaxSolverQuickTest :
             double eps = 0.1;                  
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (&height, &bottom, &u1, &u2, &u, &v, &w, 
-                dwith, dheight, deltax, deltay, deltat, eps, &bx, &by);
+                dwith, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
             relax_solver.do_preprocessing();
             TEST_CHECK(true);
         }
