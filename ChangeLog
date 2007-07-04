@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-07-04 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Removed obsolete members, tidied up a bit.
+	
+2007-07-04 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Added parameters to constructor, fixed
 	documentation for matrix assembly.
 	* libswe/solver_TEST.cc: Adjusted constructor call due to changes.
