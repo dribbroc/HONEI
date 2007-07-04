@@ -38,6 +38,7 @@
 #include <libla/sparse_vector.hh>
 #include <libla/banded_matrix.hh>
 #include <math.h>
+#include <libswe/limiter.hh>
 
 namespace pg512 {
 
@@ -144,6 +145,7 @@ namespace pg512 {
               * \param m3 Matrix m3 is the second Matrix to be assembled.
               *
               **/
+           
             template<typename WorkPrec_>
             void _assemble_matrix1(BandedMatrix<WorkPrec_>* m1, BandedMatrix<WorkPrec_>* m3);
 
@@ -500,7 +502,6 @@ namespace pg512 {
                 ++l;
             }   
         }
-    
 
     }   
 
@@ -738,6 +739,193 @@ namespace pg512 {
 	    return _result;
 	}
     }
+
+    /**
+     *
+     * Matrix assemblation.
+     *
+     * \param  m1 The first matrix to assemble.
+     * \param  m3 The second matrix to assemble.
+     *
+     **/
+    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    template<typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
+        ::_assemble_matrix1(BandedMatrix<WorkPrec_>* m1, BandedMatrix<WorkPrec_>* m3)
+    {
+        ///The bands containing data.
+        DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0) ,ulint( 1));      //zero
+        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0) , ulint(1)); //one
+        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0) ,ulint( 1)); //two
+        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0) ,ulint(1));//three
+        DenseVector<WorkPrec_> m3diag(_u->size(),ulint( 0) ,ulint( 1));      //zero
+        DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0) ,ulint( 1)); //one
+        DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0) ,ulint( 1)); //two
+        DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0) ,ulint( 1));//three
+        
+        ///Necessary values to be temporarily saved.
+        DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0),ulint(1));
+
+        DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0),ulint(1));
+
+        DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> tempTopMinus(ulint(3),ulint(0),ulint(1));
+        
+        WorkPrec_ phiMinusOld;
+        WorkPrec_ temp;
+        WorkPrec_ tempTop;
+        WorkPrec_ prefac = _delta_t/4*_delta_x;
+
+        ///Needed Iterators.
+        typename DenseVector<WorkPrec_>::ElementIterator d(m1diag.begin_elements());
+        typename DenseVector<WorkPrec_>::ConstElementIterator i(_u->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b1(m1bandPlus1.begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b2(m1bandPlus2.begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m1bandMinus1.begin_elements());
+        
+        ///Iterate through the vectors in order to avoid boundary access.
+        for( ; i.index() < (2*(m1->rows())); ++i);
+        for( ; d.index() < (2*(m1->rows())); ++d);                               
+        for( ; b1.index() < (2*(m1->rows())); ++b1);                               
+        for( ; b2.index() < (2*(m1->rows())); ++b2);
+        for( ; bminus1.index() < (2*(m1->rows())); ++bminus1);                               
+
+        while(i.index() < (m1->rows()-2) * (m1->rows()))
+        {
+            for(unsigned long k=0; k<3; ++k)
+            {
+                tempPlus[k]= (*_v)[i.index()] + (*_c)[k]*(*_u)[i.index()];
+                ++i;++d;++b1;++b2;++bminus1;
+            }
+
+            for(unsigned long k=0; k<3; ++k)
+            {
+                temp= (*_v)[i.index()] + (*_c)[k]*(*_u)[i.index()];
+                tempTopPlus[k] = temp - tempPlus[k];
+                tempPlus[k] = temp;
+                tempMinus[k] =  (*_v)[i.index()] - (*_c)[k]*(*_u)[i.index()];
+                ++i;++d;++b1;++b2;++bminus1;
+            }
+
+            for(unsigned long k=0; k<3; ++k)
+            {
+                temp= (*_v)[i.index()] - (*_c)[k]*(*_u)[i.index()];
+                tempTopMinus[k] = temp - tempMinus[k];
+                tempMinus[k] = temp;
+                temp= (*_v)[i.index()] + (*_c)[k]*(*_u)[i.index()];
+                tempTop = temp - tempPlus[k];
+                if(tempTop != 0)
+                {
+                    phiPlusOld[k] = min_mod_limiter(tempTopPlus[k]/tempTop);
+                }
+                else
+                {
+                    phiPlusOld[k] = WorkPrec_(0);
+                }
+                tempPlus[k]=temp;
+                tempTopPlus[k]=tempTop;
+                ++i;
+            }
+
+            for(unsigned long k=0; k<3; ++k)
+            {
+                temp = (*_v)[i.index()] - (*_c)[k]*((*_u)[i.index()]); //temp = v(i) - c(k)*u(i);
+                tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
+                if(tempTop != 0)
+                {
+                    phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
+                }
+                else
+                {
+                    phiMinusNew[k] = WorkPrec_(0);
+                }
+                tempMinus[k]=temp;//switch(temp, temp_minus(k));
+                tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
+                temp  = (*_v)[i.index()] + (*_c)[k]* (*_u)[i.index()];//temp = v(i) + c(k)*u(i);
+                tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
+                if(tempTop != 0)
+                {
+                    phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
+                }
+                else
+                {
+                    phiPlusNew[k] = 0;
+                }
+                tempPlus[k]= temp;//switch(temp, temp_plus(k));
+                tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
+                ++i;//++i;
+            }
+
+
+            for(unsigned long x = 0; x < _u->size(); ++x)
+            {
+                for(unsigned long k =0; k<3; ++k)
+                {
+                    temp = prefac *(2 - phiPlusOld[k]);
+                   
+                    m1bandMinus1[bminus1.index()] =temp;
+                    m3bandMinus1[bminus1.index()] =temp * (*_c)[k];
+        
+                    m1diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
+                    m3diag[d.index()] = (*_c)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
+                    
+                    phiPlusOld[k]= phiPlusNew[k];
+                    phiMinusOld = phiMinusNew[k];
+                    temp = (*_v)[i.index()] - (*_c)[k]*(*_u)[i.index()]; //temp = v(i) - c(k)*u(i);
+                    tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
+                    if(tempTop != 0)
+                    {
+                        phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
+                    }
+                    else
+                    {
+                        phiMinusNew[k] = WorkPrec_(0);
+                    }
+                    tempMinus[k]=temp;//switch(temp, temp_minus(k));
+                    tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
+                    temp  = (*_v)[i.index()] + (*_c)[k]* (*_u)[i.index()];//temp = v(i) + c(k)*u(i);
+                    tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
+                    if(tempTop != 0)
+                    {
+                        phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
+                    }
+                    else
+                    {
+                        phiPlusNew[k] = 0;
+                    }
+                    tempPlus[k]= temp;//switch(temp, temp_plus(k));
+                    tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
+                    m1bandPlus1[b1.index()] = prefac * (-2 - phiPlusOld[k] - phiMinusOld - phiMinusNew[k]);
+                    m3bandPlus1[b1.index()] = (*_c)[k]*prefac * (2 - phiPlusOld[k] + phiMinusOld + phiMinusNew[k]);
+                    m1bandPlus2[b2.index()] = prefac* phiMinusNew[k];
+                    m3bandPlus2[b2.index()] = (*_c)[k] * prefac *(-phiMinusNew[k]);
+                    ++i;++d;++b1;++b2;++bminus1;
+
+                    }
+                
+ 
+                }
+                ++d;++b1;++b2;++bminus1;
+                ++d;++b1;++b2;++bminus1;
+                ++d;++b1;++b2;++bminus1;
+                ++d;++b1;++b2;++bminus1;
+                ++d;++b1;++b2;++bminus1;
+                ++d;++b1;++b2;++bminus1;
+ 
+            }
+            m1->band(ulint(0)) = m1diag;
+            m1->band(ulint(1)) = m1bandPlus1;
+            m1->band(ulint(2)) = m1bandPlus2;
+            m1->band(ulint(-1)) = m1bandMinus1;
+            m3->band(ulint(0)) = m3diag;
+            m3->band(ulint(1)) = m3bandPlus1;
+            m3->band(ulint(2)) = m3bandPlus2;
+            m3->band(ulint(-1)) = m3bandMinus1;
+        }
+
 
 }
 #endif
