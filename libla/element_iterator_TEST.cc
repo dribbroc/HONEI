@@ -43,14 +43,13 @@ class BandedMatrixElementIterationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<BandedMatrix<DataType_> > bm(new BandedMatrix<DataType_>(size));
+                BandedMatrix<DataType_> bm(size);
 
-                typename Matrix<DataType_>::ConstElementIterator ce(bm->begin_elements()), ce_end(bm->end_elements());
-                for (unsigned long i(0) ; i < (size * size) ; ++i)
+                typename Matrix<DataType_>::ConstElementIterator ce(bm.begin_elements()), ce_end(bm.end_elements());
+                for (unsigned long i(0) ; i < (size * size) ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
-                    ++ce;
                 }
             }
         }
@@ -73,30 +72,27 @@ class DenseMatrixElementIterationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>(size, size,
-                            static_cast<DataType_>(10)));
+                DenseMatrix<DataType_> dm(size, size, DataType_(10));
 
-                typename MutableMatrix<DataType_>::ElementIterator e(dm->begin_elements()), e_end(dm->end_elements()) ;
-                for (unsigned long i(0) ; i < (size * size) ; ++i)
+                typename MutableMatrix<DataType_>::ElementIterator e(dm.begin_elements()), e_end(dm.end_elements()) ;
+                for (unsigned long i(0) ; i < (size * size) ; ++i, ++e)
                 {
                     TEST_CHECK_EQUAL(e.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*e, 10, std::numeric_limits<DataType_>::epsilon());
                     *e = 333;
-                    ++e;
                 }
 
-                for (typename MutableMatrix<DataType_>::ElementIterator me(dm->begin_elements()), me_end(dm->end_elements()) ;
-                        me != me_end ; ++me)
+                for (typename MutableMatrix<DataType_>::ElementIterator me(dm.begin_elements()),
+                        me_end(dm.end_elements()) ; me != me_end ; ++me)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*me, 333, std::numeric_limits<DataType_>::epsilon());
                 }
 
-                typename Matrix<DataType_>::ConstElementIterator ce(dm->begin_elements()), ce_end(dm->end_elements()) ;
-                for (unsigned long i(0) ; i < (size * size) ; ++i)
+                typename Matrix<DataType_>::ConstElementIterator ce(dm.begin_elements()), ce_end(dm.end_elements()) ;
+                for (unsigned long i(0) ; i < (size * size) ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 333, std::numeric_limits<DataType_>::epsilon());
-                    ++ce;
                 }
             }
         }
@@ -119,23 +115,21 @@ class DenseVectorElementIterationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(size, static_cast<DataType_>(10)));
+                DenseVector<DataType_> dv(size, DataType_(10));
 
-                typename Vector<DataType_>::ElementIterator e(dv->begin_elements()), e_end(dv->end_elements()) ;
-                for (unsigned long i(0) ; i < size ; ++i)
+                typename Vector<DataType_>::ElementIterator e(dv.begin_elements()), e_end(dv.end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i, ++e)
                 {
                     TEST_CHECK_EQUAL(e.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*e, 10, std::numeric_limits<DataType_>::epsilon());
                     *e = 222;
-                    ++e;
                 }
 
-                typename Vector<DataType_>::ConstElementIterator ce(dv->begin_elements()), ce_end(dv->end_elements()) ;
-                for (unsigned long i(0) ; i < size ; ++i)
+                typename Vector<DataType_>::ConstElementIterator ce(dv.begin_elements()), ce_end(dv.end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 222, std::numeric_limits<DataType_>::epsilon());
-                    ++ce;
                 }
             }
         }
@@ -158,18 +152,17 @@ class SparseVectorElementIterationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<SparseVector<DataType_> > 
-                    sv(new SparseVector<DataType_>(size, (size / 5) + 1));
-                
-                typename Vector<DataType_>::ElementIterator f(sv->begin_elements()), f_end(sv->end_elements()) ;
-                for (unsigned long i(0) ; i < size ; ++i)
+                SparseVector<DataType_> sv(size, (size / 5) + 1);
+
+                typename Vector<DataType_>::ElementIterator f(sv.begin_elements()), f_end(sv.end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i, ++f)
                 {
-                    if (i % 10 == 0) *f = 10;
-                    ++f;
+                    if (i % 10 == 0)
+                        *f = 10;
                 }
 
-                typename Vector<DataType_>::ElementIterator e(sv->begin_elements()), e_end(sv->end_elements()) ;
-                for (unsigned long i(0) ; i < size ; ++i)
+                typename Vector<DataType_>::ElementIterator e(sv.begin_elements()), e_end(sv.end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i, ++e)
                 {
                     TEST_CHECK_EQUAL(e.index(), i);
                     if (i % 10 == 0) 
@@ -177,30 +170,35 @@ class SparseVectorElementIterationTest :
                         TEST_CHECK_EQUAL_WITHIN_EPS(*e, 10, std::numeric_limits<DataType_>::epsilon());
                         *e = 222;
                     }
-                    else TEST_CHECK_EQUAL_WITHIN_EPS(*e, 0, std::numeric_limits<DataType_>::epsilon());
-                    ++e;
+                    else
+                    {
+                        typename Vector<DataType_>::ConstElementIterator ce(e);
+                        TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
+                    }
                 }
 
-                typename Vector<DataType_>::ConstElementIterator ce(sv->begin_elements()), ce_end(sv->end_elements()) ;
-                for (unsigned long i(0) ; i < size ; ++i)
+                typename Vector<DataType_>::ConstElementIterator ce(sv.begin_elements()), ce_end(sv.end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);
                     if (i % 10 == 0)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 222, std::numeric_limits<DataType_>::epsilon());
                     }
-                    else TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
-                    ++ce;
+                    else
+                    {
+                        TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
+                    }
                 }
-                
+
                 unsigned long count(0);
-                for (typename Vector<DataType_>::ConstElementIterator nz(sv->begin_non_zero_elements()),
-                    nz_end(sv->end_non_zero_elements()) ; nz != nz_end ; ++nz )
+                for (typename Vector<DataType_>::ConstElementIterator nz(sv.begin_non_zero_elements()),
+                        nz_end(sv.end_non_zero_elements()) ; nz != nz_end ; ++nz, ++count)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*nz, 222, std::numeric_limits<DataType_>::epsilon());
-                    count ++;
                 }
-                TEST_CHECK_EQUAL(count, sv->used_elements());
+
+                TEST_CHECK_EQUAL(count, sv.used_elements());
             }
         }
 };
