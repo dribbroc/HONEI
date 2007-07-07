@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-07 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Added implementation of the correction stage,
+	updated interface.
+	
+2007-07-07 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Added implementation of setup stage 2, updated
 	interface.
 	

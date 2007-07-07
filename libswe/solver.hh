@@ -271,9 +271,11 @@ namespace pg512 {
 
              /** Encapsulates the correction stage.
               *  Precision is that of the result.
-              **/
-             template<typename WorkPrec_> 
-             void _do_correction();
+              * \param predu The temporary vector u.
+              * \param predv The temporary vector v.
+              * \param predw The temporary vector w.
+              **/ 
+             void _do_correction(DenseVector<ResPrec_>& predu,DenseVector<ResPrec_>& predv,DenseVector<ResPrec_>& predw);
 
         public:
             /**
@@ -517,6 +519,8 @@ namespace pg512 {
                 ++l;
             }   
         }
+
+
     }   
 
 ///Implementation of flow-processing functions.
@@ -1121,6 +1125,59 @@ namespace pg512 {
         innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, flow2, -2*_delta_t, 2*_delta_t);
         predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         predictedw = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
-    }   
+    } 
+    
+    /** Implementation of the correction stage.
+      *
+      *\param predictedu Temp u.
+      *\param predictedv Temp v.
+      *\param predictedw Temp w.
+      *
+      **/
+    template<typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_> 
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_correction(DenseVector<ResPrec_>& predictedu,
+    DenseVector<ResPrec_>& predictedv,
+    DenseVector<ResPrec_>& predictedw)
+    {
+        ///ignore first 2(w+4) ghost cells
+        typename DenseVector<ResPrec_>::ConstElementIterator iter(_u->begin_elements());
+        for(unsigned long i = 0; i<(2*(_d_width+4)) ; ++i)
+        {
+            ++iter;
+        }
+        ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
+        for(typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements()) ; iter.index()<((_d_height+2)*(_d_width+4));++iter)
+        {
+            unsigned long count =0;//if made w steps, ignore two.
+            ResPrec_ precomp =  0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+            (*_u)[iter.index()] = precomp;
+            if(count % _d_width !=0)
+            {
+                *h = precomp;
+                ++h;
+                ++count;
+            }
+            else
+            {
+                ++iter;
+                ++iter;
+                count = 0;
+            }
+            (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+            ++iter;
+            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+            (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+            ++iter;
+            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+            (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+        }
+    }       
 }
 #endif
