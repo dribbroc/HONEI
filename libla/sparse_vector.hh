@@ -72,7 +72,7 @@ namespace pg512 ///< \todo Namespace name?
                 CONTEXT("When inserting element at position '" + stringify(position) + "' with index '" +
                         stringify(index) + "':");
 
-                bool realloc(_imp->_capacity >= _imp->_used_elements + 1);
+                bool realloc(_imp->_capacity <= _imp->_used_elements + 1);
                 unsigned long capacity(realloc ? _imp->_capacity + 10 : _imp->_capacity);
                 DataType_ * elements(realloc ? new DataType_[capacity] : _imp->_elements.get());
                 unsigned long * indices(realloc ? new unsigned long[capacity] : _imp->_indices.get());

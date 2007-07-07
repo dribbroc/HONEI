@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/sparse_vector.hh: Fixed a small but mean typo/thinko when
+	deciding on reallocation, found by Sven Mallach.
+
 2007-07-07 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added implementation of the correction stage,
@@ -39,7 +44,7 @@ see the NEWS file.
 	* libla/banded_matrix.hh: Added BandIterator! At the moment only
 	assignable version, will try const version later! Be careful,
 	(in)equality-operators have not been filled with sensible code.
-	
+
 2007-07-07 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added implementation of first setup stage,
