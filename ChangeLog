@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
 
+	* doc/authors.html.skel: Added authors.html skeleton that was missing
+	from one of the previous commits.
+
+2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
+
 	* doc/Makefile.am, doc/doxygen.conf, doc/licence.html.skel: Added
 	generation of licence.html.
 	* libla/matrix_difference.hh, libla/matrix_element_inverse.hh,
