@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/element_iterator_TEST.cc: Tidied up coding style. Switched to
+	usage of ConstElementIterator where necessary.
+
+2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/sparse_vector.hh: Fixed a small but mean typo/thinko when
 	deciding on reallocation, found by Sven Mallach.
 
