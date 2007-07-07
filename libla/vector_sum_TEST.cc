@@ -48,12 +48,13 @@ class DenseVectorSumTest :
                 DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(1));
 
                 VectorSum<>::value(dv1, dv2);
+
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(dv1));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, 2 * size, std::numeric_limits<DataType_>::epsilon());
-            }
 
-            DenseVector<DataType_> dv1(1, DataType_(1)), dv2(2, DataType_(1));
-            TEST_CHECK_THROWS(VectorSum<>::value(dv1, dv2), VectorSizeDoesNotMatch);
+                DenseVector<DataType_> dv3(size + 1), dv4(size - 1);
+                TEST_CHECK_THROWS(VectorSum<>::value(dv3, dv4), VectorSizeDoesNotMatch);
+            }
         }
 };
 
@@ -73,18 +74,17 @@ class DenseVectorSumQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            {
-                DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2));
+            DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2));
 
-                VectorSum<>::value(dv1, dv2);
-                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(dv1));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 2 * size, std::numeric_limits<DataType_>::epsilon());
-            }
+            VectorSum<>::value(dv1, dv2);
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(dv1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size, std::numeric_limits<DataType_>::epsilon());
 
-            DenseVector<DataType_> dv1(1, DataType_(1)), dv2(2, DataType_(1));
-            TEST_CHECK_THROWS(VectorSum<>::value(dv1, dv2), VectorSizeDoesNotMatch);
+            DenseVector<DataType_> dv3(6, DataType_(1)), dv4(4, DataType_(1));
+            TEST_CHECK_THROWS(VectorSum<>::value(dv3, dv4), VectorSizeDoesNotMatch);
         }
 };
+
 DenseVectorSumQuickTest<float>  dense_vector_sum_quick_test_float("float");
 DenseVectorSumQuickTest<double> dense_vector_sum_quick_test_double("double");
 
@@ -114,12 +114,13 @@ class SparseVectorSumTest :
                 }
 
                 VectorSum<>::value(sv1, sv2);
-                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv1));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size / 10, std::numeric_limits<DataType_>::epsilon());
-            }
 
-            SparseVector<DataType_>sv1(1, 1), sv2(2, 1);
-            TEST_CHECK_THROWS(VectorSum<>::value(sv1, sv2), VectorSizeDoesNotMatch);
+                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv1));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * (size / 10 + 1), std::numeric_limits<DataType_>::epsilon());
+
+                SparseVector<DataType_> sv3(size + 1, 1), sv4(size, 1);
+                TEST_CHECK_THROWS(VectorSum<>::value(sv3, sv4), VectorSizeDoesNotMatch);
+            }
         }
 };
 
@@ -139,25 +140,24 @@ class SparseVectorSumQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
+            SparseVector<DataType_> sv1(size, size / 5 + 1), sv2(size, size / 5 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
-                SparseVector<DataType_> sv1(size, size / 5 + 1), sv2(size, size / 5 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                    j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                if (i.index() % 10 == 0) 
                 {
-                    if (i.index() % 10 == 0) 
-                    {
-                        *i = static_cast<DataType_>(1);
-                        *j = static_cast<DataType_>(2);
-                    }
+                    *i = static_cast<DataType_>(1);
+                    *j = static_cast<DataType_>(2);
                 }
-
-                VectorSum<>::value(sv1, sv2);
-                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv1));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size / 10, std::numeric_limits<DataType_>::epsilon());
             }
 
-            SparseVector<DataType_> sv1(1, 1), sv2(2, 1);
-            TEST_CHECK_THROWS(VectorSum<>::value(sv1, sv2), VectorSizeDoesNotMatch);
+            VectorSum<>::value(sv1, sv2);
+
+            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size / 10, std::numeric_limits<DataType_>::epsilon());
+
+            SparseVector<DataType_> sv3(21, 1), sv4(20, 1);
+            TEST_CHECK_THROWS(VectorSum<>::value(sv3, sv4), VectorSizeDoesNotMatch);
         }
 };
 

@@ -17,7 +17,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/vector_absolute.hh>
@@ -44,16 +44,15 @@ class DenseVectorAbsoluteValueTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size)),
-                        dv2(new DenseVector<DataType_>(size));
-                for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()) ;
-                        i != i_end ; ++i)
+                DenseVector<DataType_> dv1(size), dv2(size);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
-                    *i = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
-                    (*dv2)[i.index()] = i.index() / 0.987654321;
+                    *i = DataType_(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                    *j = DataType_(i.index() / 0.987654321);
                 }
 
-                TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(*dv1), *dv2);
+                TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(dv1), dv2);
             }
         }
 };
@@ -74,16 +73,15 @@ class DenseVectorAbsoluteQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size)),
-                    dv2(new DenseVector<DataType_>(size));
-            for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()) ;
-                    i != i_end ; ++i)
+            DenseVector<DataType_> dv1(size), dv2(size);
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
-                *i = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
-                (*dv2)[i.index()] = i.index() / 0.987654321;
+                *i = DataType_(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                *j = DataType_(i.index() / 0.987654321);
             }
 
-            TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(*dv1), *dv2);
+            TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(dv1), dv2);
         }
 };
 DenseVectorAbsoluteQuickTest<float>  dense_vector_absolute_quick_test_float("float");
@@ -103,20 +101,18 @@ class SparseVectorAbsoluteValueTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-            
-                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1)),
-                    sv2(new SparseVector<DataType_>(size, size / 9 + 1));
-                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
-                        i != i_end ; ++i)
+                SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                        j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
-                    if (i.index() % 3 == 0) 
+                    if (i.index() % 3 == 0)
                     {
-                        *i = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
-                        (*sv2)[i.index()] = i.index() / 0.987654321;
+                        *i = DataType_(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                        *j = DataType_(i.index() / 0.987654321);
                     }
-                }          
+                }
 
-                TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(*sv1), *sv2);
+                TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(sv1), sv2);
             }
         }
 };
@@ -136,20 +132,19 @@ class SparseVectorAbsoluteValueQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(20);            
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1)),
-                sv2(new SparseVector<DataType_>(size, size / 9 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
-                    i != i_end ; ++i)
+            unsigned long size(20);
+            SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                    j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
-                if (i.index() % 3 == 0) 
+                if (i.index() % 3 == 0)
                 {
-                    *i = static_cast<DataType_>(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
-                    (*sv2)[i.index()] = static_cast<DataType_>(i.index() / 0.987654321);
+                    *i = DataType_(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                    *j = DataType_(i.index() / 0.987654321);
                 }
-            }          
+            }
 
-            TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(*sv1), *sv2);
+            TEST_CHECK_EQUAL(VectorAbsolute<DataType_>::value(sv1), sv2);
         }
 };
 

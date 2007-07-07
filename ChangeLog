@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/vector_sum_TEST.cc: Fixed test cases for DenseVector. Expanded
+	exception checks to arbitrary vector sizes.
+	* libla/vector_absolute_TEST.cc: Tidied up coding style.
+
+2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/element_iterator_TEST.cc: Tidied up coding style. Switched to
 	usage of ConstElementIterator where necessary.
 
@@ -19,12 +25,12 @@ see the NEWS file.
 
 	* libswe/solver.hh: Added implementation of the correction stage,
 	updated interface.
-	
+
 2007-07-07 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added implementation of setup stage 2, updated
 	interface.
-	
+
 2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/sparse_vector.hh: Fixed bogus insertion of elements at the
@@ -43,7 +49,7 @@ see the NEWS file.
 
 	* libswe/solver.hh: Added implementation of prediction stage, updated
 	solver interface.
-	
+
 2007-07-03 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/banded_matrix.hh: Added BandIterator! At the moment only
