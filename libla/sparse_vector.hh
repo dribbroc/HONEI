@@ -72,7 +72,7 @@ namespace pg512 ///< \todo Namespace name?
                 CONTEXT("When inserting element at position '" + stringify(position) + "' with index '" +
                         stringify(index) + "':");
 
-                bool realloc(_imp->_capacity == _imp->_used_elements);
+                bool realloc(_imp->_capacity >= _imp->_used_elements + 1);
                 unsigned long capacity(realloc ? _imp->_capacity + 10 : _imp->_capacity);
                 DataType_ * elements(realloc ? new DataType_[capacity] : _imp->_elements.get());
                 unsigned long * indices(realloc ? new unsigned long[capacity] : _imp->_indices.get());
@@ -82,11 +82,12 @@ namespace pg512 ///< \todo Namespace name?
 
                 if (realloc)
                 {
+                    std::fill_n(indices, capacity, _imp->_size);
                     std::copy(_imp->_elements.get(), _imp->_elements.get() + position + 1, elements);
                     std::copy(_imp->_indices.get(), _imp->_indices.get() + position + 1, indices);
                 }
 
-                // Relies on capactiy > used_elements.
+                // Relies on capactiy >= used_elements + 1.
                 std::copy_backward(_imp->_elements.get() + position, _imp->_elements.get() + _imp->_used_elements,
                         elements + _imp->_used_elements + 1);
                 std::copy_backward(_imp->_indices.get() + position, _imp->_indices.get() + _imp->_used_elements,
@@ -317,7 +318,7 @@ namespace pg512 ///< \todo Namespace name?
                 CONTEXT("When creating SparseVector::Implementation:");
                 ASSERT(capacity > 0, "capacity is zero!");
 
-                // Sneak in a 'terminating element', as index can never be size.
+                // Sneak in 'terminating elements', as index can never be size.
                 _elements[0] = DataType_(0);
                 std::fill_n(_indices.get(), capacity, size);
             }
@@ -383,6 +384,8 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual SparseElementIterator<DataType_> & operator++ ()
             {
+                CONTEXT("When incrementing");
+
                 ++_index;
                 while ((_pos < _vector._imp->_used_elements) && (_vector._imp->_indices[_pos] < _index))
                     ++_pos;

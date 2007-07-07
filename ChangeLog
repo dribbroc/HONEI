@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/sparse_vector.hh: Fixed bogus insertion of elements at the
+	edge of capacity. This fixes all test case failures of
+	sparse_vector_TEST.
+	* libla/sparse_vector_TEST.cc: Removed test cases for
+	SparseVector::capacity(), as this is an implementation detail.
+	Converted SparseVectorReallocQuickTest to an ordinary test.
+
 2007-07-07 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Added source term computation for a whole vector,
@@ -58,6 +67,7 @@ see the NEWS file.
 	* libla/matrix_product.hh, libla/matrix_vector_product.hh: Commented
 	banded-cases out until	band-iterator is implemented.
 
+>>>>>>> .r340
 2007-07-03 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/vector_sum_TEST.cc: Tidied up the test cases a bit. Removed

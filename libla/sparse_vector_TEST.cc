@@ -157,9 +157,9 @@ public:
                     *i = DataType_(1);
             }
 
-            TEST_CHECK_EQUAL(sv1.capacity(), size / 3 + 1);
             TEST_CHECK_EQUAL(sv1.size(), size);
             TEST_CHECK_EQUAL(sv1.used_elements(), size / 10);
+            // Do not test for capacity(), as it's an implementation detail.
         }
     }
 };
@@ -191,13 +191,13 @@ public:
         {
             TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
         }
-        TEST_CHECK_EQUAL(sv1.capacity(), size);
-        TEST_CHECK_EQUAL(sv2.capacity(), 3);
+
         TEST_CHECK_EQUAL(sv1.size(), size);
         TEST_CHECK_EQUAL(sv2.size(), size);
         TEST_CHECK_EQUAL(sv1.used_elements(), 1);
         TEST_CHECK_EQUAL(sv2.used_elements(), 1);
         TEST_CHECK_EQUAL(sv1, sv2);
+        // Do not test for capacity(), as it's an implementation detail.
     }
 };
 SparseVectorQuickTest<float> sparse_vector_quick_test_float("float");
@@ -250,49 +250,48 @@ SparseVectorRandomAccessTest<float> sparse_vector_random_access_test_float("floa
 SparseVectorRandomAccessTest<double> sparse_vector_random_access_test_double("double");
 
 template <typename DataType_>
-class SparseVectorReallocQuickTest :
-    public QuickTest
+class SparseVectorReallocTest :
+    public BaseTest
 {
     public:
-        SparseVectorReallocQuickTest(const std::string & type) :
-            QuickTest("sparse_vector_realloc_quick_test<" + type + ">")
+        SparseVectorReallocTest(const std::string & type) :
+            BaseTest("sparse_vector_realloc_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
-            unsigned long size(20);
-
-            SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                    j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
+            for (unsigned long size(10) ; size < (10 << 10) ; size <<= 1)
             {
-                if (i.index() % 3 == 0)
+                SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                        i != i_end ; ++i)
                 {
-                    *i = DataType_((i.index() + 1) / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
-                    *j = *i;
+                    if (i.index() % 3 == 0)
+                    {
+                        *i = DataType_((i.index() + 1) / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
+                        // Keep this operator[] for testing purpose!
+                        sv2[i.index()] = *i;
+                    }
                 }
+
+                unsigned long c(0);
+                for (typename Vector<DataType_>::ConstElementIterator i(sv1.begin_non_zero_elements()),
+                    i_end(sv1.end_non_zero_elements()), j(sv2.begin_non_zero_elements()) ; i != i_end ; ++i, ++j, ++c)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+
+                    if (fabs(*i) <= std::numeric_limits<DataType_>::epsilon())
+                        TEST_CHECK(false);
+                }
+
+                TEST_CHECK_EQUAL(c, sv2.used_elements());
+                TEST_CHECK_EQUAL(sv1.used_elements(), sv2.used_elements());
+                TEST_CHECK_EQUAL(c, size / 3 + 1);
             }
-
-            for (typename Vector<DataType_>::ConstElementIterator i(sv1.begin_non_zero_elements()),
-                i_end(sv1.end_non_zero_elements()), j(sv2.begin_non_zero_elements()) ; i != i_end ; ++i, ++j)
-            {
-                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
-
-                if (fabs(*i) <= std::numeric_limits<DataType_>::epsilon())
-                    TEST_CHECK(false);
-            }
-
-            unsigned long count1(std::distance(sv1.begin_non_zero_elements(), sv1.end_non_zero_elements())),
-                count2(std::distance(sv2.begin_non_zero_elements(), sv2.end_non_zero_elements()));
-
-            TEST_CHECK_EQUAL(count1, sv2.used_elements());
-            TEST_CHECK_EQUAL(sv1.used_elements(), sv2.used_elements());
-            TEST_CHECK_EQUAL(count1, 20 / 3 + 1);
-            TEST_CHECK_EQUAL(count2, 20 / 3 + 1);
         }
 };
 
-SparseVectorReallocQuickTest<float> sparse_vector_realloc_quick_test_float("float");
-SparseVectorReallocQuickTest<double> sparse_vector_realloc_quick_test_double("double");
+SparseVectorReallocTest<float> sparse_vector_realloc_test_float("float");
+SparseVectorReallocTest<double> sparse_vector_realloc_test_double("double");
 
