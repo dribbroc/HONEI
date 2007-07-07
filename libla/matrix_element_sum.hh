@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of matrix element sums.<br/>
+ * Templatized definitions of matrix element sums.
  *
  * \ingroup grpmatrixoperations
  **/

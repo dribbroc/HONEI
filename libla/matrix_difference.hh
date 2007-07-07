@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of matrix differences.<br/>
+ * Templatized definitions of matrix differences.
  *
  * \ingroup grpmatrixoperations
  **/

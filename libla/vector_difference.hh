@@ -29,7 +29,7 @@
 /**
  * \file
  *
- * Templatized definitions of vector differences.<br/>
+ * Templatized definitions of vector differences.
  *
  * \ingroup grpvectoroperations
  **/

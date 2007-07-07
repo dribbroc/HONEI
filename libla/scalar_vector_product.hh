@@ -27,7 +27,7 @@
 /**
  * \file
  *
- * Templatized definitions of scalar-vector products.<br/>
+ * Templatized definitions of scalar-vector products.
  *
  * \ingroup grpvectoroperations
  **/

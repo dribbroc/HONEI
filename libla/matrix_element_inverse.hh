@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of inverting a matrix's elements.<br/>
+ * Templatized definitions of inverting a matrix's elements.
  *
  * \ingroup grpmatrixoperations
  **/

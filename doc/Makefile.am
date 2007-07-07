@@ -7,7 +7,8 @@ doxygen: doxygen.conf htmlpages
 	cp powered-by-*.png $(top_srcdir)/doc/html/
 
 HTMLPAGES = \
-	authors.html
+	authors.html \
+	licence.html
 
 htmlpages: $(HTMLPAGES)
 	for f in $(HTMLPAGES) pg512.css ; do cp $(srcdir)/$$f $(srcdir)/html/ ; done
@@ -28,13 +29,23 @@ cleancontributors: $(top_srcdir)/AUTHORS
 	    -e 's,^\([^ <].*\),<dt>\1</dt>,' \
 	    < ../AUTHORS > cleancontributors
 
-authors.html: authors.html.skel cleanauthors cleancontributors
+authors.html: authors.html.skel cleanauthors cleancontributors header.html footer.html
 	sed -e '/@AUTHORS@/r cleanauthors' -e '/@AUTHORS@/d' \
 	    -e '/@CONTRIBUTORS@/r cleancontributors' -e '/@CONTRIBUTORS@/d' \
 	    -e '/@HEADER@/r header.html' \
 	    -e '/@HEADER@/d' \
 	    -e '/@FOOTER@/r footer.html' \
-	    -e '/@FOOTER@/d' < $(srcdir)/authors.html.skel > authors.html
+	    -e '/@FOOTER@/d' \
+	     < $(srcdir)/authors.html.skel > authors.html
+
+licence.html: licence.html.skel ../COPYING header.html footer.html
+	sed -e '/@HEADER@/r header.html' \
+	    -e '/@HEADER@/d' \
+	    -e '/@FOOTER@/r footer.html' \
+	    -e '/@FOOTER@/d' \
+	    -e '/@COPYING@/r ../COPYING' \
+	    -e '/@COPYING@/d' \
+	    < $(srcdir)/licence.html.skel > licence.html
 
 
 

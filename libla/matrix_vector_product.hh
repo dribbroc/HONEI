@@ -31,7 +31,7 @@
 /**
  * \file
  *
- * Templatized definitions of matrix-vector products.<br/>
+ * Templatized definitions of matrix-vector products.
  *
  * \ingroup grpmatrixoperations
  * \ingroup grpvectoroperations

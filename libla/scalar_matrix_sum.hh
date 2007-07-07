@@ -27,7 +27,7 @@
 /**
  * \file
  *
- * Templatized definitions of scalar-matrix sums.<br/>
+ * Templatized definitions of scalar-matrix sums.
  *
  * \ingroup grpmatrixoperations
  **/

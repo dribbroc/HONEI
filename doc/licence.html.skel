@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- vim: set ft=html : -->
+<html lang="en" xml:lang="en">
+<head>
+<title>PG512: Release Notes</title>
+<link rel="stylesheet" href="pg512.css" type="text/css" />
+</head>
+<body>
+@HEADER@
+
+    <h1>PG512</h1>
+
+    <h2>Licence</h2>
+
+<pre>
+@COPYING@
+</pre>
+
+@FOOTER@
+</body>
+</html>
+
+
+
+

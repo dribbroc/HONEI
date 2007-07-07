@@ -27,7 +27,7 @@
 /**
  * \file
  *
- * Templatized definitions of scalar-vector sums.<br/>
+ * Templatized definitions of scalar-vector sums.
  *
  * \ingroup grpvectoroperations
  **/

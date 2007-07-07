@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of elementwise vector products.<br/>
+ * Templatized definitions of elementwise vector products.
  *
  * \ingroup grpvectoroperations
  **/

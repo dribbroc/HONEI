@@ -27,7 +27,7 @@
 /**
  * \file
  *
- * Templatized definition of summing up all of a Vector's elements.<br/>
+ * Templatized definition of summing up all of a Vector's elements.
  *
  * \ingroup grpvectoroperations
  */

@@ -29,7 +29,7 @@
 /**
  * \file
  *
- * Templatized definitions of calculating a vector's absolute values.<br/>
+ * Templatized definitions of calculating a vector's absolute values.
  *
  * \ingroup grpvectoroperations
  **/

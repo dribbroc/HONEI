@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of vector inversion.<br/>
+ * Templatized definitions of vector inversion.
  *
  * \ingroup grpvectoroperations
  **/

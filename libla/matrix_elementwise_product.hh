@@ -28,7 +28,7 @@
 /**
  * \file
  *
- * Templatized definitions of elementwise matrix products.<br/>
+ * Templatized definitions of elementwise matrix products.
  *
  * \ingroup grpmatrixoperations
  **/

@@ -27,7 +27,7 @@
 /**
  * \file
  *
- * Templatized definitions of linearcombinations (in libla notation: VectorScaledSum)<br/>
+ * Templatized definitions of linearcombinations (in libla notation: VectorScaledSum)
  *
  * \ingroup grpvectoroperations
  **/

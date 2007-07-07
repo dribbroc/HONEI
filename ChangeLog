@@ -5,6 +5,26 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
+
+	* doc/Makefile.am, doc/doxygen.conf, doc/licence.html.skel: Added
+	generation of licence.html.
+	* libla/matrix_difference.hh, libla/matrix_element_inverse.hh,
+	libla/matrix_element_sum.hh, libla/matrix_elementwise_product.hh,
+	libla/matrix_product.hh, libla/matrix_sum.hh,
+	libla/matrix_vector_product.hh, libla/scalar_matrix_product.hh,
+	libla/scalar_matrix_sum.hh, libla/scalar_vector_product.hh,
+	libla/scalar_vector_sum.hh, libla/vector_absolute.hh,
+	libla/vector_difference.hh, libla/vector_element_inverse.hh,
+	libla/vector_element_sum.hh, libla/vector_elementwise_product.hh,
+	libla/vector_norm.hh, libla/vector_scaled_sum.hh, libla/vector_sum.hh:
+	Removed illegal use of <br/> in doxygen comments.
+
+2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+
+	* AUTHORS, COPYING, doc/Makefile.am, doc/footer.html: Added list of
+	authors and redistribution conditions as discussed.
+
 2007-07-07 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/banded_matrix.hh: Fixed logical bug and added (in)equality

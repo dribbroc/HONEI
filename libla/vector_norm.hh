@@ -31,7 +31,7 @@
 /**
  * \file
  *
- * Templatized definitions of vector norms.<br/>
+ * Templatized definitions of vector norms.
  *
  *
  * \ingroup grpvectoroperations
