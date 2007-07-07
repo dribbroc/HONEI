@@ -364,23 +364,22 @@ namespace pg512 ///< \todo Namespace name?
             /// Equality operator.
             virtual bool operator== (const VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & other) const
             {
-                return 0; ///\todo: Implement == operator
+                return ((&_matrix == other.parent()) && (_index == other.index()));
             }
 
             /// Inequality operator.
             virtual bool operator!= (const VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & other) const
             {
-                return 0; ///\todo: Implement != operator
+                return ((&_matrix != other.parent()) || (_index != other.index()));
             }
 
             /// Dereference operator that returns an assignable reference.
             virtual DenseVector<DataType_> & operator* () const
             {
-                if (_matrix._bands[_index])
+                if (!_matrix._bands[_index])
                 {
                     _matrix._bands[_index].reset(new DenseVector<DataType_>(_matrix._size));
                 }
-                if (! _matrix._bands[_index])
 
                 return (*_matrix._bands[_index]);
             }
