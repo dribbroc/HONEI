@@ -67,7 +67,6 @@ see the NEWS file.
 	* libla/matrix_product.hh, libla/matrix_vector_product.hh: Commented
 	banded-cases out until	band-iterator is implemented.
 
->>>>>>> .r340
 2007-07-03 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/vector_sum_TEST.cc: Tidied up the test cases a bit. Removed
