@@ -43,7 +43,7 @@
 #include <libla/vector_scaled_sum.hh>
 #include <libla/scalar_vector_product.hh>
 #include <libla/vector_sum.hh>
-
+#include <libla/matrix_vector_product.hh>
 namespace pg512 {
 
     typedef unsigned long ulint;
@@ -144,7 +144,7 @@ namespace pg512 {
               **/
            
             template<typename WorkPrec_>
-            void _assemble_matrix1(BandedMatrix<WorkPrec_>* m1, BandedMatrix<WorkPrec_>* m3);
+            void _assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3);
 
             /** Basic matrix assembly. Uses Limiters and theta().
               * Computes M_2, M_4.
@@ -154,7 +154,7 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            void _assemble_matrix2(BandedMatrix<WorkPrec_>* m2, BandedMatrix<WorkPrec_>* m4);
+            void _assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4);
 
 
             /** Simplified matrix assembly.
@@ -162,28 +162,28 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assembleMatrix1();
+            BandedMatrix<WorkPrec_> _quick_assemble_matrix1();
 
             /** Simplified matrix assembly.
               * Computes M_6.
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assembleMatrix2();
+            BandedMatrix<WorkPrec_> _quick_assemble_matrix2();
 
             /** Simplified matrix assembly.
               * Computes M_7.
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assembleMatrix3();
+            BandedMatrix<WorkPrec_> _quick_assemble_matrix3();
 
             /** Simplified matrix assembly.
               * Computes M_8.
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assembleMatrix4();
+            BandedMatrix<WorkPrec_> _quick_assemble_matrix4();
 
             /** Flow computation.
               * Used by preprocessing.
@@ -231,9 +231,13 @@ namespace pg512 {
               * as well as the matrix assembling procedures to create the banded matrices.
               * Is used by solve().
               *
+              * \param predictedu The temporary u vector to work on.
+              * \param predictedv The temporary v vector to work on.
+              * \param predictedw The temporary w vector to work on.
+              *
               **/
             template<typename WorkPrec_>
-            void _do_prediction();
+            void _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw);
 
             /** Encapsulates the setup for the values utemp, vtemp, wtemp.
               * Uses flow  - computations.
@@ -498,7 +502,6 @@ namespace pg512 {
             }   
         }
 
-
     }   
 
 ///Implementation of flow-processing functions.
@@ -747,7 +750,7 @@ namespace pg512 {
     template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
-        ::_assemble_matrix1(BandedMatrix<WorkPrec_>* m1, BandedMatrix<WorkPrec_>* m3)
+        ::_assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3)
     {
         ///The bands containing data.
         DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0) ,ulint( 1));      //zero
@@ -783,13 +786,13 @@ namespace pg512 {
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m1bandMinus1.begin_elements());
         
         ///Iterate through the vectors in order to avoid boundary access.
-        for( ; i.index() < (2*(m1->rows())); ++i);
-        for( ; d.index() < (2*(m1->rows())); ++d);                               
-        for( ; b1.index() < (2*(m1->rows())); ++b1);                               
-        for( ; b2.index() < (2*(m1->rows())); ++b2);
-        for( ; bminus1.index() < (2*(m1->rows())); ++bminus1);                               
+        for( ; i.index() < (2*(m1.rows())); ++i);
+        for( ; d.index() < (2*(m1.rows())); ++d);                               
+        for( ; b1.index() < (2*(m1.rows())); ++b1);                               
+        for( ; b2.index() < (2*(m1.rows())); ++b2);
+        for( ; bminus1.index() < (2*(m1.rows())); ++bminus1);                               
 
-        while(i.index() < (m1->rows()-2) * (m1->rows()))
+        while(i.index() < (m1.rows()-2) * (m1.rows()))
         {
             for(unsigned long k=0; k<3; ++k)
             {
@@ -912,14 +915,14 @@ namespace pg512 {
                 ++d;++b1;++b2;++bminus1;
 
             }
-            m1->band(ulint(0)) = m1diag;
-            m1->band(ulint(1)) = m1bandPlus1;
-            m1->band(ulint(2)) = m1bandPlus2;
-            m1->band(ulint(-1)) = m1bandMinus1;
-            m3->band(ulint(0)) = m3diag;
-            m3->band(ulint(1)) = m3bandPlus1;
-            m3->band(ulint(2)) = m3bandPlus2;
-            m3->band(ulint(-1)) = m3bandMinus1;
+            m1.band(ulint(0)) = m1diag;
+            m1.band(ulint(1)) = m1bandPlus1;
+            m1.band(ulint(2)) = m1bandPlus2;
+            m1.band(ulint(-1)) = m1bandMinus1;
+            m3.band(ulint(0)) = m3diag;
+            m3.band(ulint(1)) = m3bandPlus1;
+            m3.band(ulint(2)) = m3bandPlus2;
+            m3.band(ulint(-1)) = m3bandMinus1;
         }
     /**
       * First setup of values.
@@ -961,7 +964,55 @@ namespace pg512 {
         *_w_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum2);
     }
 
+    template<typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_> 
+    template<typename WorkPrec_>
+        void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
+    {
+        BandedMatrix<WorkPrec_> m1(_u->size());
+        BandedMatrix<WorkPrec_> m2(_u->size());
+        BandedMatrix<WorkPrec_> m3(_u->size());
+        BandedMatrix<WorkPrec_> m4(_u->size());
 
+        _assemble_matrix1<WorkPrec_>(m1, m3);
+        _assemble_matrix2<WorkPrec_>(m2, m4);
+
+        BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>();
+        BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>();
+        BandedMatrix<WorkPrec_> m7 = _quick_assemble_matrix3<WorkPrec_>();
+        BandedMatrix<WorkPrec_> m8 = _quick_assemble_matrix4<WorkPrec_>();
+
+        DenseVector<WorkPrec_> tempv(*_v);
+        DenseVector<WorkPrec_> tempu(*_u);
+        DenseVector<WorkPrec_> tempw(*_w);
+        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,tempv);
+        DenseVector<WorkPrec_> tempu2(*_u);
+        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,tempu);
+        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,tempw);
+        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,tempu2);
+    
+        //DenseVector<WorkPrec_> source = _source(_u); //not yet provided!!!
+        predictedu = VectorSum<>::value<WorkPrec_,WorkPrec_>(temp1,temp2);
+        predictedu = VectorSum<>::value(predictedu, temp3);
+        predictedu = VectorSum<>::value(predictedu, temp4);
+        //predictedu = VectorSum<>::value(predictedu, source);
+
+        DenseVector<WorkPrec_> tempu3(*_u);
+        DenseVector<WorkPrec_> tempv2(*_v);
+        DenseVector<WorkPrec_> tempw2(*_w);
+        temp1 = MatrixVectorProduct<>::value(m5,tempv2);
+        DenseVector<WorkPrec_> tempu4(*_u);
+        temp2 = MatrixVectorProduct<>::value(m6,tempu3);
+        temp3 = MatrixVectorProduct<>::value(m7,tempw2);
+        temp4 = MatrixVectorProduct<>::value(m8,tempu4);
+
+        predictedv = VectorSum<>::value(temp1,temp2);
+        predictedw = VectorSum<>::value(temp3,temp4);
+   
+    }
 
 }
 #endif
