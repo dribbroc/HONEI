@@ -1,0 +1,39 @@
+Authors of PG512
+================
+
+Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
+    LibLA
+
+Markus Geveler <apryde@gmx.de>
+    LibLA, LibSWE
+
+David Gies <david-gies@gmx.de>
+    Benchmarks, Unit Tests
+
+Nina Harmuth <nina.harmuth@uni-dortmund.de>
+    LibGraph
+
+Volker Jung <volker.m.jung@t-online.de>
+    LibSWE
+
+Sven Mallach <sven.mallach@uni-dortmund.de>
+    LibGraph, LibLA
+
+Andre Matuschek <andre@matuschek.org>
+    Unit Tests
+
+Joachim Messer <joachim.messer@t-online.de>
+    LibSWE
+
+Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+    Unit Tests
+
+Danny van Dyk <danny.dyk@uni-dortmund.de>
+    LibLA, LibSWE, LibUtil, Unit Tests
+
+
+Contributions
+=============
+
+Ciaran McCreesh <ciaran@ciaranm.org>
+    LibUtil, Unit Tests
