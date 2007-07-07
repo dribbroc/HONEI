@@ -40,6 +40,9 @@
 #include <libla/banded_matrix.hh>
 #include <math.h>
 #include <libswe/limiter.hh>
+#include <libla/vector_scaled_sum.hh>
+#include <libla/scalar_vector_product.hh>
+#include <libla/vector_sum.hh>
 
 namespace pg512 {
 
@@ -123,14 +126,11 @@ namespace pg512 {
             DenseVector<ResPrec_> * _u;
             DenseVector<ResPrec_> * _v;
             DenseVector<ResPrec_> * _w;
-
-            ///Vectors under pointers are the temp. relaxation vectors for the prediction stages.
-            ///It`s size is 3N, where N is the total number of grid cells. If using boundary - mapping, the size is
-            /// 3N + 4(w + h + 4).
             DenseVector<ResPrec_> * _u_temp;
             DenseVector<ResPrec_> * _v_temp;
             DenseVector<ResPrec_> * _w_temp;
-            
+
+
             ///Vectors for the bottom slopes.
             DenseVector<ResPrec_> * _bottom_slopes_x; //size:w
             DenseVector<ResPrec_> * _bottom_slopes_y; //size:h
@@ -249,21 +249,6 @@ namespace pg512 {
             template<typename WorkPrec_>
             void _do_setup_stage2();
 
-             /** Encapsulates computation in one timestep. In the driver-application, one
-               * can simply write a loop in which _do_solve is called at first and then the
-               * renderable matrices are read out.
-               *
-               **/
-             void _do_solve()
-             {
-                _do_setup_stage1<InitPrec1_>();
-                _do_prediction<PredictionPrec1_>();
-                _do_setup_stage2<InitPrec2_>();
-                _do_prediction<PredictionPrec2_>();
-                _do_correction<ResPrec_>();
-                ++_solve_time;
-             }
-
              /** Encapsulates the correction stage.
               *  Precision is that of the result.
               **/
@@ -357,7 +342,12 @@ namespace pg512 {
                 this->_c = c;
                 this->_d = d;
             }
-
+            /** Encapsulates computation in one timestep. In the driver-application, one
+              * can simply write a loop in which solve is called at first and then the
+              * renderable matrices are read out.
+              *
+              **/
+            void solve();
     };
 
     ///MEMBER FUNCTION TEMPLATE IMPLEMENTATION
@@ -508,6 +498,7 @@ namespace pg512 {
             }   
         }
 
+
     }   
 
 ///Implementation of flow-processing functions.
@@ -528,33 +519,33 @@ namespace pg512 {
     {
 	if (!(vector.size() % 3)) 
 	{
-	    typename DenseVector<WorkPrec_>::DenseElementIterator _resultvectoriterator(vector.begin_elements());
+	    typename DenseVector<WorkPrec_>::ElementIterator _resultvectoriterator(vector.begin_elements());
 	    WorkPrec_ _resultcomponentone, _resultcomponenttwo, _resultcomponentthree;
-	    for (typename DenseVector<WorkPrec_>::DenseElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()); l != l_end; ++l)
+	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {	
 	        // Compute additional gravitation-based term for flowcomponent two
-	        WorkPrec_ _gravterm = WorkPrec_(9.81 * l * l / 2);
+	        WorkPrec_ _gravterm = WorkPrec_(9.81 * (*l) * 0.5);
 
 	        // Compute the influence of the waterdepth
-	        _resultcomponenttwo = 1 / l;
-	        _resultcomponentthree = 1 / l;
+	        _resultcomponenttwo = 1 / *l;
+	        _resultcomponentthree = 1 / *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in X-direction
-		_resultcomponentone = l;
-	        _resultcomponenttwo = _resultcomponenttwo * l * l + _gravterm;
-		_resultcomponentthree *= l;
+		_resultcomponentone = *l;
+	        _resultcomponenttwo = _resultcomponenttwo * (*l) * (*l) + _gravterm;
+		_resultcomponentthree *= *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
-	        _resultcomponentthree *= l ;
+	        _resultcomponentthree *= *l ;
 
 	        // Write the computed values into the resultvector
-	        _resultvectoriterator = _resultcomponentone;
+	        *_resultvectoriterator = _resultcomponentone;
 	        ++_resultvectoriterator;
-	        _resultvectoriterator = _resultcomponenttwo;
+	        *_resultvectoriterator = _resultcomponenttwo;
 	        ++_resultvectoriterator;
-	        _resultvectoriterator = _resultcomponentthree;
+	        *_resultvectoriterator = _resultcomponentthree;
 	        ++_resultvectoriterator;
 	    }
 	}
@@ -582,9 +573,9 @@ namespace pg512 {
     {
 	if (!(vector.size() % 3)) 
 	{
-	    typename DenseVector<WorkPrec_>::DenseElementIterator _resultvectoriterator(vector.begin_elements());
+	    typename DenseVector<WorkPrec_>::ElementIterator _resultvectoriterator(vector.begin_elements());
 	    WorkPrec_ _resultcomponentone, _resultcomponenttwo, _resultcomponentthree;
-	    for (typename DenseVector<WorkPrec_>::DenseElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()); l != l_end; ++l)
+	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {
 	        // Initialize locale resultcomponent variables
 	        _resultcomponentone = WorkPrec_(1);
@@ -592,28 +583,28 @@ namespace pg512 {
 	        _resultcomponentthree = WorkPrec_(1);
 	
 	        // Compute additional gravitation-based term for flowcomponent two
-	        WorkPrec_ _gravterm = WorkPrec_(9.81 * l * l / 2);
+	        WorkPrec_ _gravterm = WorkPrec_(9.81 * (*l) * (*l) / 2);
 
 	        // Compute the influence of the waterdepth
-	        _resultcomponenttwo *= 1 / l;
-	        _resultcomponentthree *= 1 / l;
+	        _resultcomponenttwo *= 1 / *l;
+	        _resultcomponentthree *= 1 / *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in X-direction
-	        _resultcomponenttwo *= l;
+	        _resultcomponenttwo *= *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
-	        _resultcomponentone *= l;
-	        _resultcomponenttwo *= l;
-	        _resultcomponentthree = (_resultcomponentthree * l * l) + _gravterm;
+	        _resultcomponentone *= *l;
+	        _resultcomponenttwo *= *l;
+	        _resultcomponentthree = (_resultcomponentthree * (*l) * (*l)) + _gravterm;
 
 	        // Write the computed values into the resultvector
-	        _resultvectoriterator = _resultcomponentone;
+	        *_resultvectoriterator = _resultcomponentone;
 	        ++_resultvectoriterator;
-	        _resultvectoriterator = _resultcomponenttwo;
+	        *_resultvectoriterator = _resultcomponenttwo;
 	        ++_resultvectoriterator;
-	        _resultvectoriterator = _resultcomponentthree;
+	        *_resultvectoriterator = _resultcomponentthree;
 	        ++_resultvectoriterator;
 	    }
 	}
@@ -930,6 +921,46 @@ namespace pg512 {
             m3->band(ulint(2)) = m3bandPlus2;
             m3->band(ulint(-1)) = m3bandMinus1;
         }
+    /**
+      * First setup of values.
+      * 
+      *
+      **/
+    template<typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_> 
+    template<typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1()
+    {
+        //Type conversion
+        _u_temp = reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
+        _v_temp = reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
+        _w_temp = reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
+
+        WorkPrec_ prefac;
+        if(_eps != _delta_t)
+        {
+            prefac = 1/(_eps - _delta_t);
+        }
+        else
+        {
+            //TODO:error handling
+        }
+        DenseVector<WorkPrec_> v(*_v);//using copy -constructor
+        DenseVector<WorkPrec_> flow1(_u->size(),ulint(0),ulint( 1));
+        _flow_x<WorkPrec_>(flow1);
+        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(v, flow1, _eps,_delta_t);
+        *_v_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum);
+        DenseVector<WorkPrec_> w =(*_w);
+        DenseVector<WorkPrec_> flow2(_u->size(), ulint(0), ulint(1));
+        _flow_y<WorkPrec_>(flow2);
+       
+        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(w, flow2, _eps,_delta_t);
+        *_w_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum2);
+    }
+
 
 
 }
