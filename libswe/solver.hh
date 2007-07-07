@@ -226,7 +226,16 @@ namespace pg512 {
               **/
             template<typename WorkPrec_>
             DenseVector<WorkPrec_> _source(uint i, uint j);
-        
+
+	    /** Source Term computation.
+	     *
+	     * \param vector Densevector for which the source term should be computed.
+	     *
+	     **/
+	    template<typename WorkPrec_>
+	    void _source(DenseVector<WorkPrec_>& vector);
+
+
             /** Encapsulates the linear combination for prediction. Uses source() 
               * as well as the matrix assembling procedures to create the banded matrices.
               * Is used by solve().
@@ -737,6 +746,59 @@ namespace pg512 {
 	    _result[2] = 0;
 	    return _result;
 	}
+    }
+
+    /** 
+     *
+     * Source term computation for a whole vector.
+     *
+     * \param vector Densevector for which the flow should be computed.
+     *
+     **/
+
+    template <typename ResPrec_,
+	      typename PredictionPrec1_,
+	      typename PredictionPrec2_,
+	      typename InitPrec1_,
+	      typename InitPrec2_>
+    template <typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
+    {
+	if (!(vector.size() % 3)) 
+	{
+	    typename DenseVector<WorkPrec_>::ElementIterator _resultvectoriterator(vector.begin_elements());
+    	    typename DenseVector<WorkPrec_>::ElementIterator _bottomslopesxiterator(this->_bottom_slopes_x.begin_elements());
+	    typename DenseVector<WorkPrec_>::ElementIterator _bottomslopesyiterator(this->_bottom_slopes_y.begin_elements());
+	    WorkPrec_ _h, _q1, _q2;
+	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
+	    {
+	        // Fetch values for source term computation
+	        _h = l;
+		++l;
+	        _q1 = l;
+		++l;
+	        _q2 = l;
+	
+	        // Compute the influence of the waterdepth
+	        _resultvectoriterator = WorkPrec_(0);
+		++_resultvectoriterator;
+	        
+		WorkPrec_ _friction = _manning_n_squared * pow(_h, -7/3) * sqrt(_q1 * _q1 + _q2 * _q2) * (-1);
+
+		_resultvectoriterator = ((_friction * _q1) - (_h * _bottomslopesxiterator)) * 9.81;
+		++_bottomslopesxiterator;
+		++_resultvectoriterator;
+		
+		_resultvectoriterator = ((_friction * _q2) - (_h * _bottomslopesyiterator)) * 9.81;
+		++_bottomslopesyiterator;
+		++_resultvectoriterator;
+	    }
+	}
+	else
+	{
+	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
+	}
+	
     }
 
     /**
