@@ -44,6 +44,7 @@
 #include <libla/scalar_vector_product.hh>
 #include <libla/vector_sum.hh>
 #include <libla/matrix_vector_product.hh>
+#include <libutil/tags.hh>
 namespace pg512 {
 
     typedef unsigned long ulint;
@@ -258,9 +259,15 @@ namespace pg512 {
             /** Encapsulates the setup for the values utemp, vtemp, wtemp.
               * Uses flow - computations.
               *
+              * \param predictedu The vector u to work on.
+              * \param predictedv The vector v to work on.
+              * \param predictedw The vector w to work on.
+              *
               **/
             template<typename WorkPrec_>
-            void _do_setup_stage2();
+            void _do_setup_stage2(DenseVector<WorkPrec_>& predictedu,
+                                  DenseVector<WorkPrec_>& predictedv,
+                                  DenseVector<WorkPrec_>& predictedw);
 
              /** Encapsulates the correction stage.
               *  Precision is that of the result.
@@ -510,7 +517,6 @@ namespace pg512 {
                 ++l;
             }   
         }
-
     }   
 
 ///Implementation of flow-processing functions.
@@ -1026,6 +1032,12 @@ namespace pg512 {
         *_w_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum2);
     }
 
+    /** The prediction stage.
+      *
+      * \param predictedu Temp u.
+      * \param predictedv Temp v.
+      * \param predictedw Temp w.
+      **/
     template<typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
@@ -1076,5 +1088,39 @@ namespace pg512 {
    
     }
 
+    /** Second setup of values.
+      *
+      * \param predictedu Temp u.
+      * \param predictedv Temp v.
+      * \param predictedw Temp w.
+      **/
+    template<typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_> 
+    template<typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
+    {
+        
+        DenseVector<WorkPrec_> f(predictedu);
+        _flow_x(f);
+
+        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedv,f, _eps, _delta_t);
+        
+        DenseVector<WorkPrec_> flow(*_u_temp);
+        _flow_x(flow);
+        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_v_temp,flow, -2*_delta_t, 2*_delta_t);
+        predictedv = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
+        predictedv = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
+        
+        DenseVector<WorkPrec_> flow2(predictedu);
+        _flow_y(flow2);
+
+        innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedw, flow2, _eps, _delta_t);
+        innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, flow2, -2*_delta_t, 2*_delta_t);
+        predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
+        predictedw = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
+    }   
 }
 #endif
