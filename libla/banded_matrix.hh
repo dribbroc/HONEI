@@ -138,7 +138,7 @@ namespace pg512 ///< \todo Namespace name?
             DenseVector<DataType_> & band(signed long index) const
             {
                 if (! _bands[index + _size])
-                    _bands[index + _size].reset(new DenseVector<DataType_>(_size));
+                    _bands[index + _size].reset(new DenseVector<DataType_>(_size, static_cast<DataType_>(0)));
 
                 return *_bands[index + _size];
             }
