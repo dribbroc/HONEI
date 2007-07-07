@@ -2,6 +2,8 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ *
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -59,13 +61,20 @@ namespace pg512 ///< \todo Namespace name?
             /// Our zero element.
             static const DataType_ _zero_element;
 
+            /// Our zero vector.
+            static const DenseVector<DataType_> _zero_vector;
+
             /// Our implementation of ElementIteratorBase.
             template <typename ElementType_> class BandedElementIterator;
+
+            /// Our implementation of VectorIteratorBase.
+            template <typename ElementType_> class BandIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
             friend class BandedElementIterator<DataType_>;
+            friend class BandIterator<DataType_>;
 
             /// Type of the const iterator over our elements.
             typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
@@ -74,10 +83,10 @@ namespace pg512 ///< \todo Namespace name?
             typedef typename MutableMatrix<DataType_>::ElementIterator ElementIterator;
 
             /// Type of the const iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, const DataType_> ConstVectorIterator;
+            typedef VectorIteratorWrapper<DataType_, const DenseVector<DataType_> > ConstVectorIterator;
 
             /// Type of the iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
+            typedef VectorIteratorWrapper<DataType_, DenseVector<DataType_> > VectorIterator;
 
             /// \name Constructors
             /// \{
@@ -120,6 +129,18 @@ namespace pg512 ///< \todo Namespace name?
             virtual ConstElementIterator end_elements() const
             {
                 return ConstElementIterator(new BandedElementIterator<DataType_>(*this, _size * _size));
+            }
+
+            /// Returns iterator pointing to the first band of the matrix.
+            VectorIterator begin_bands() const
+            {
+                return VectorIterator(new BandIterator<DataType_>(*this,0));
+            }
+
+            /// Returns iterator pointing behind the last band of the matrix.
+            VectorIterator end_bands() const
+            {
+                return VectorIterator(new BandIterator<DataType_>(*this,_size));
             }
 
             /// Returns the number of our columns.
@@ -292,6 +313,110 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \}
     };
+
+    template <> template <typename DataType_> class BandedMatrix<DataType_>::BandIterator<DataType_> :
+            public VectorIteratorImplBase<DataType_, DenseVector<DataType_> >
+    {
+            private:
+            /// Our parent matrix.
+            const BandedMatrix<DataType_> & _matrix;
+
+            /// Our index.
+            unsigned long _index;
+
+        public:
+            /// \name Constructors
+            /// \{
+
+            /**
+             * Constructor.
+             *
+             * \param matrix The parent matrix that is referenced by the iterator.
+             * \param index The index into the matrix.
+             **/
+
+            BandIterator(const BandedMatrix<DataType_> & matrix, unsigned long index) :
+                _matrix(matrix),
+                _index(index)
+            {
+            }
+
+            /// Copy-constructor.
+            BandIterator(BandIterator<DataType_> const & other) :
+                _matrix(other._matrix),
+                _index(other._index)
+            {
+            }
+
+            /// \}
+
+            /// \name Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            virtual VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & operator++ ()
+            {
+                ++_index;
+
+                return *this;
+            }
+
+            /// Equality operator.
+            virtual bool operator== (const VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & other) const
+            {
+                return 0; ///\todo: Implement == operator
+            }
+
+            /// Inequality operator.
+            virtual bool operator!= (const VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & other) const
+            {
+                return 0; ///\todo: Implement != operator
+            }
+
+            /// Dereference operator that returns an assignable reference.
+            virtual DenseVector<DataType_> & operator* () const
+            {
+                if (_matrix._bands[_index])
+                {
+                    _matrix._bands[_index].reset(new DenseVector<DataType_>(_matrix._size));
+                }
+                if (! _matrix._bands[_index])
+
+                return (*_matrix._bands[_index]);
+            }
+/*
+            /// Dereference operator that returns an unassignable reference.
+            virtual const DenseVector<DataType_> & operator* () const
+            {
+                if (! _matrix._bands[_index])
+                    return _matrix._zero_vector;
+                else
+                {
+                    return (*_matrix._bands[_index]);
+                }
+            }
+*/
+            /// \}
+
+            /// \name IteratorTraits interface
+            /// \{
+
+            /// Returns our index.
+            virtual const unsigned long index() const
+            {
+                return _index;
+            }
+
+            /// Returns a pointer to our parent matrix.
+            virtual const Matrix<DataType_> * parent() const
+            {
+                return &_matrix;
+            }
+
+            /// \}
+    };
+
+
 }
 
 #endif
