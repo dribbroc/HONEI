@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-08 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Added time increment to
+	solve() -function, fixed documentation.
+
+2007-07-08 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Added implementation of main solve capsule,
 	implemented missing getter for renderable scalarfields.
 

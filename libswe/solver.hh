@@ -1184,7 +1184,12 @@ namespace pg512 {
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
         }
-    } 
+    }
+
+    /** Capsule for the solution- computation in one timestep.
+      *
+      *
+      **/
     template<typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
@@ -1203,6 +1208,7 @@ namespace pg512 {
         _do_setup_stage2<InitPrec2_>(predictedu, predictedv, predictedw);
         _do_prediction<PredictionPrec2_>(predictedu, predictedv, predictedw);
         _do_correction(predictedu, predictedv, predictedw);
+        ++_solve_time;
     }
 }
 #endif
