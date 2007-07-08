@@ -311,6 +311,18 @@ namespace pg512 ///< \todo Namespace name?
                 return _iterator->index();
             }
 
+            /// Returns our column index.
+            unsigned long column() const
+            {
+                return _iterator->column();
+            }
+
+            /// Returns our row index.
+            unsigned long row() const
+            {
+                return _iterator->row();
+            }
+
             /// Returns a pointer to our parent container.
             virtual const Matrix<DataType_> * parent() const
             {

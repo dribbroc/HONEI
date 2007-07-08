@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/files.m4, libla/sparse_matrix.hh, libla/sparse_matrix_TEST.cc:
+	Added SparseMatrix and initial test cases.
+	* libla/matrix.hh: Added missing methods of the iterator traits
+	interface to ConstElementIteratorWrapper.
+
+2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
+
 	* doc/authors.html.skel: Added authors.html skeleton that was missing
 	from one of the previous commits.
 
