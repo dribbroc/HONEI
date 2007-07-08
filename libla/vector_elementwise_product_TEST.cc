@@ -45,7 +45,7 @@ class DenseVectorElementwiseProductTest :
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
-                    dv3(size, DataType_(6 * size));
+                    dv3(size, DataType_(6));
                 DenseVector<DataType_> prod(VectorElementwiseProduct<DataType_>::value(dv1, dv2));
 
                 TEST_CHECK_EQUAL(prod, dv3);
@@ -127,7 +127,7 @@ class SparseVectorElementwiseProductTest :
                 TEST_CHECK_EQUAL(prod, *sv3);
             }
 
-            SparseVector<DataType_> sv01(3, 1), sv02(4, static_cast<DataType_>(1, 1));
+            SparseVector<DataType_> sv01(3, static_cast<DataType_>(1)), sv02(4, static_cast<DataType_>(1));
 
             TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv02, sv01), VectorSizeDoesNotMatch);
         }
