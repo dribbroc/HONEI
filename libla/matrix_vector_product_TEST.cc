@@ -53,7 +53,7 @@ class DenseMatrixDenseVectorProductTest :
                 TEST_CHECK_EQUAL(prod, dv2);
             }
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(4, 3, static_cast<DataType_>(1));
             DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, dv01), MatrixRowsDoNotMatch);
@@ -82,7 +82,7 @@ class DenseMatrixDenseVectorProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, dv2);
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(4, 3, static_cast<DataType_>(1));
             DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, dv01), MatrixRowsDoNotMatch);
@@ -124,7 +124,7 @@ class DenseMatrixSparseVectorProductTest :
                 TEST_CHECK_EQUAL(prod, *sv2);
             }
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(4, 3, static_cast<DataType_>(1));
             SparseVector<DataType_> sv01(4, 3);
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, sv01), MatrixRowsDoNotMatch);
@@ -164,7 +164,7 @@ class DenseMatrixSparseVectorProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, *sv2);
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(4, 3, static_cast<DataType_>(1));
             SparseVector<DataType_> sv01(4, 3);
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, sv01), MatrixRowsDoNotMatch);
