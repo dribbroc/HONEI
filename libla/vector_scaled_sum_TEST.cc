@@ -167,7 +167,7 @@ class SparseVectorScaledSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(200);
+            unsigned long size(201);
             std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 6 + 1));
             for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
                     i != i_end ; ++i)

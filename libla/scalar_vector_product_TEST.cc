@@ -94,13 +94,13 @@ class ScalarSparseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(11) ; size < (1 << 14) ; size <<= 1)
             {
                 std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
                 for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    if (i.index() % 10) *i = 3;
+                    if (i.index() % 10 == 0) *i = 3;
                 }
                 SparseVector<DataType_> prod1(ScalarVectorProduct<DataType_>::value(static_cast<DataType_>(2), *sv1));
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(prod1));
@@ -124,7 +124,7 @@ class ScalarSparseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(111);
             std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
             for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
                     i != i_end ; ++i)
