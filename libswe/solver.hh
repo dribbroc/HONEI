@@ -282,13 +282,19 @@ namespace pg512 {
               * Returns the current renderable heigth matrix
               * 
               **/
-            DenseMatrix<ResPrec_> &getHeight();
+            DenseMatrix<ResPrec_> &getHeight()
+            {
+                return *_height;
+            }
 
             /**
               * Returns the renderable bottom.
               *
               **/
-            DenseMatrix<ResPrec_> &getBottom();
+            DenseMatrix<ResPrec_> &getBottom()
+            {
+                return *_bottom;
+            }
 
             /**
               * Performs the preprocessing.
@@ -1178,6 +1184,25 @@ namespace pg512 {
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
         }
-    }       
+    } 
+    template<typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_> 
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: solve()
+    {
+        DenseVector<PredictionPrec1_> predictedu(_u->size(),ulint(0), ulint(1));
+        DenseVector<PredictionPrec1_> predictedv(_u->size(),ulint(0),ulint(1));
+        DenseVector<PredictionPrec1_> predictedw(_u->size(),ulint(0), ulint(1));
+        _do_setup_stage1<InitPrec1_>();
+        _do_prediction<PredictionPrec1_>(predictedu, predictedv, predictedw);
+        //DenseVector<InitPrec2_> predictedu2(_u->size(), 0, 1);
+        //DenseVector<InitPrec2_> predictedv2(_u->size(), 0, 1);
+        //DenseVector<InitPrec2_> predictedw2(_u->size(), 0, 1);
+        _do_setup_stage2<InitPrec2_>(predictedu, predictedv, predictedw);
+        _do_prediction<PredictionPrec2_>(predictedu, predictedv, predictedw);
+        _do_correction(predictedu, predictedv, predictedw);
+    }
 }
 #endif

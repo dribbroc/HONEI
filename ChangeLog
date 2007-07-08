@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-08 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Added implementation of main solve capsule,
+	implemented missing getter for renderable scalarfields.
+
 2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/files.m4, libla/sparse_matrix.hh, libla/sparse_matrix_TEST.cc:
