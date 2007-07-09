@@ -525,8 +525,6 @@ namespace pg512 {
                 ++l;
             }   
         }
-
-
     }   
 
 ///Implementation of flow-processing functions.
@@ -547,34 +545,34 @@ namespace pg512 {
     {
 	if (!(vector.size() % 3)) 
 	{
-	    typename DenseVector<WorkPrec_>::ElementIterator _resultvectoriterator(vector.begin_elements());
-	    WorkPrec_ _resultcomponentone, _resultcomponenttwo, _resultcomponentthree;
+	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
+	    WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
 	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {	
 	        // Compute additional gravitation-based term for flowcomponent two
-	        WorkPrec_ _gravterm = WorkPrec_(9.81 * (*l) * 0.5);
+	        gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
 
 	        // Compute the influence of the waterdepth
-	        _resultcomponenttwo = 1 / *l;
-	        _resultcomponentthree = 1 / *l;
+	        resultcomponenttwo = 1 / *l;
+	        resultcomponentthree = 1 / *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in X-direction
-		_resultcomponentone = *l;
-	        _resultcomponenttwo = _resultcomponenttwo * (*l) * (*l) + _gravterm;
-		_resultcomponentthree *= *l;
+		resultcomponentone = *l;
+	        resultcomponenttwo = resultcomponenttwo * (*l) * (*l) + gravterm;
+		resultcomponentthree *= *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
-	        _resultcomponentthree *= *l ;
+	        resultcomponentthree *= *l ;
 
 	        // Write the computed values into the resultvector
-	        *_resultvectoriterator = _resultcomponentone;
-	        ++_resultvectoriterator;
-	        *_resultvectoriterator = _resultcomponenttwo;
-	        ++_resultvectoriterator;
-	        *_resultvectoriterator = _resultcomponentthree;
-	        ++_resultvectoriterator;
+	        *resultvectoriterator = resultcomponentone;
+	        ++resultvectoriterator;
+	        *resultvectoriterator = resultcomponenttwo;
+	        ++resultvectoriterator;
+	        *resultvectoriterator = resultcomponentthree;
+	        ++resultvectoriterator;
 	    }
 	}
 	else
@@ -601,39 +599,39 @@ namespace pg512 {
     {
 	if (!(vector.size() % 3)) 
 	{
-	    typename DenseVector<WorkPrec_>::ElementIterator _resultvectoriterator(vector.begin_elements());
-	    WorkPrec_ _resultcomponentone, _resultcomponenttwo, _resultcomponentthree;
+	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
+	    WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
 	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {
 	        // Initialize locale resultcomponent variables
-	        _resultcomponentone = WorkPrec_(1);
-	        _resultcomponenttwo = WorkPrec_(1);
-	        _resultcomponentthree = WorkPrec_(1);
+	        resultcomponentone = WorkPrec_(1);
+	        resultcomponenttwo = WorkPrec_(1);
+	        resultcomponentthree = WorkPrec_(1);
 	
 	        // Compute additional gravitation-based term for flowcomponent two
-	        WorkPrec_ _gravterm = WorkPrec_(9.81 * (*l) * (*l) / 2);
+	        gravterm = WorkPrec_(9.81 * (*l) * (*l) / 2);
 
 	        // Compute the influence of the waterdepth
-	        _resultcomponenttwo *= 1 / *l;
-	        _resultcomponentthree *= 1 / *l;
+	        resultcomponenttwo *= 1 / *l;
+	        resultcomponentthree *= 1 / *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in X-direction
-	        _resultcomponenttwo *= *l;
+	        resultcomponenttwo *= *l;
 	        ++l;
 
 	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
-	        _resultcomponentone *= *l;
-	        _resultcomponenttwo *= *l;
-	        _resultcomponentthree = (_resultcomponentthree * (*l) * (*l)) + _gravterm;
+	        resultcomponentone *= *l;
+	        resultcomponenttwo *= *l;
+	        resultcomponentthree = (resultcomponentthree * (*l) * (*l)) + gravterm;
 
 	        // Write the computed values into the resultvector
-	        *_resultvectoriterator = _resultcomponentone;
-	        ++_resultvectoriterator;
-	        *_resultvectoriterator = _resultcomponenttwo;
-	        ++_resultvectoriterator;
-	        *_resultvectoriterator = _resultcomponentthree;
-	        ++_resultvectoriterator;
+	        *resultvectoriterator = resultcomponentone;
+	        ++resultvectoriterator;
+	        *resultvectoriterator = resultcomponenttwo;
+	        ++resultvectoriterator;
+	        *resultvectoriterator = resultcomponentthree;
+	        ++resultvectoriterator;
 	    }
 	}
 	else
@@ -661,25 +659,24 @@ namespace pg512 {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(uint i, uint j)
     {
-	DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
-	WorkPrec_ _temp = (*_v)[(this->_d_width + 4) * 3 * i + 3 * j];
+	DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
+	WorkPrec_ temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j];
 
-	// Compute term for gravitional influence
-        WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
+        WorkPrec_ gravterm = 9.81 * temp * temp / 2;
 
-	_result[1] = 1 / _temp;
-        _result[2] = _result[1];
+	result[1] = 1 / temp;
+        result[2] = result[1];
 
-	_temp = (*_v)[(this->_d_width + 4) * 3 * i + 3 * j + 1];
-        _result[0] = _temp;
-        _result[1] *= _temp * _temp;
-	_result[2] *= _temp;
+	temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 1];
+        result[0] = temp;
+        result[1] *= temp * temp;
+	result[2] *= temp;
 
-        _temp = (*_v)[(this->_d_width + 4) * 3 * i + 3 * j + 2];
-	_result[1] += _gravterm;
-        _result[2] *= _temp;
+        temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 2];
+	result[1] += gravterm;
+        result[2] *= temp;
 
-	return _result;
+	return result;
     }
 
     /**
@@ -701,24 +698,23 @@ namespace pg512 {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(uint i, uint j)
     {
-        DenseVector<WorkPrec_> _result(ulint(3), ulint( 0), ulint( 1));
-	WorkPrec_ _temp = (*_w)[(this->_d_width + 4) * 3 * i + 3 * j];
+        DenseVector<WorkPrec_> result(ulint(3), ulint( 0), ulint( 1));
+	WorkPrec_ temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j];
 
-        // Compute term for gravitional influence
-	WorkPrec_ _gravterm = 9.81 * _temp * _temp / 2;
+	WorkPrec_ gravterm = 9.81 * temp * temp / 2;
 
-        _result[1] = 1 / _temp;
-	_result[2] = _result[1];
+        result[1] = 1 / temp;
+	result[2] = result[1];
 
-        _temp = (*_w)[(this->_d_width + 4) * 3 * i + 3 * j + 1];
-	_result[1] *= _temp;
+        temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j + 1];
+	result[1] *= temp;
 
-        _temp = (*_w)[(this->_d_width + 4) * 3 * i + 3 * j + 2];
-	_result[0] *= _temp;
-        _result[1] *= _temp;
-        _result[2] = _result[2] * _temp * _temp + _gravterm;
+        temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j + 2];
+	result[0] *= temp;
+        result[1] *= temp;
+        result[2] = result[2] * temp * temp + gravterm;
 
-	return _result;
+	return result;
     }
 
 
@@ -739,28 +735,27 @@ namespace pg512 {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(uint i, uint j)
     {
-	WorkPrec_ _h = (*_u)[(this->_d_width + 4) * 3 * i + 3 * j];
-	if (_h > 0)
+	DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
+	WorkPrec_ h = (*_u)[(_d_width + 4) * 3 * i + 3 * j];
+	if (h > 0)
 	{
-	    WorkPrec_ _q1 = (*_u)[(this->_d_width + 4) * 3 * i + 3 * j + 1];
-	    WorkPrec_ _q2 = (*_u)[(this->_d_width + 4) * 3 * i + 3 * j + 2];
+	    WorkPrec_ q1 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 1];
+	    WorkPrec_ q2 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 2];
 	    
-	    DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
-	    _result[0] = 0;
-	    _result[1] = _manning_n_squared * pow(_h, -7/3) * sqrt(_q1 * _q1 + _q2 * _q2) * (-1);
-	    _result[2] = _result[1];
+	    result[0] = 0;
+	    result[1] = _manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
+	    result[2] = result[1];
     
-	    _result[1] = ((_result[1] * _q1) - (_h * (*_bottom_slopes_x)[(this->_d_width + 4)* i + j])) * 9.81;
-	    _result[2] = ((_result[2] * _q2) - (_h * (*_bottom_slopes_y)[(this->_d_width + 4)* i + j])) * 9.81;
-	    return _result;
+	    result[1] = ((result[1] * q1) - (h * (*_bottom_slopes_x)[(_d_width + 4)* i + j])) * 9.81;
+	    result[2] = ((result[2] * q2) - (h * (*_bottom_slopes_y)[(_d_width + 4)* i + j])) * 9.81;
+	    return result;
     	}
 	else
 	{
-	    DenseVector<WorkPrec_> _result(ulint(3), ulint(0), ulint(1));
-	    _result[0] = 0;
-	    _result[1] = 0;
-	    _result[2] = 0;
-	    return _result;
+	    result[0] = 0;
+	    result[1] = 0;
+	    result[2] = 0;
+	    return result;
 	}
     }
 
@@ -782,32 +777,32 @@ namespace pg512 {
     {
 	if (!(vector.size() % 3)) 
 	{
-	    typename DenseVector<WorkPrec_>::ElementIterator _resultvectoriterator(vector.begin_elements());
-    	    typename DenseVector<WorkPrec_>::ElementIterator _bottomslopesxiterator(this->_bottom_slopes_x.begin_elements());
-	    typename DenseVector<WorkPrec_>::ElementIterator _bottomslopesyiterator(this->_bottom_slopes_y.begin_elements());
-	    WorkPrec_ _h, _q1, _q2;
+	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
+    	    typename DenseVector<WorkPrec_>::ElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
+	    typename DenseVector<WorkPrec_>::ElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
+	    WorkPrec_ h, q1, q2, friction;
 	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {
 	        // Fetch values for source term computation
-	        _h = l;
+	        h = *l;
 		++l;
-	        _q1 = l;
+	        q1 = *l;
 		++l;
-	        _q2 = l;
+	        q2 = *l;
 	
 	        // Compute the influence of the waterdepth
-	        _resultvectoriterator = WorkPrec_(0);
-		++_resultvectoriterator;
+	        *resultvectoriterator = WorkPrec_(0);
+		++resultvectoriterator;
 	        
-		WorkPrec_ _friction = _manning_n_squared * pow(_h, -7/3) * sqrt(_q1 * _q1 + _q2 * _q2) * (-1);
+		friction = this->_manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
 
-		_resultvectoriterator = ((_friction * _q1) - (_h * _bottomslopesxiterator)) * 9.81;
-		++_bottomslopesxiterator;
-		++_resultvectoriterator;
+		*resultvectoriterator = ((friction * q1) - (h * *bottomslopesxiterator)) * 9.81;
+		++bottomslopesxiterator;
+		++resultvectoriterator;
 		
-		_resultvectoriterator = ((_friction * _q2) - (_h * _bottomslopesyiterator)) * 9.81;
-		++_bottomslopesyiterator;
-		++_resultvectoriterator;
+		*resultvectoriterator = ((friction * q2) - (h * *bottomslopesyiterator)) * 9.81;
+		++bottomslopesyiterator;
+		++resultvectoriterator;
 	    }
 	}
 	else
