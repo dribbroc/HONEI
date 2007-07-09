@@ -11,6 +11,8 @@ bench:
 	$(MAKE) $(AM_MAKEFLAGS) all 
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="bench-recursive" bench-recursive
 
+bench-am:
+
 quickcheck: 
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-recursive" quickcheck-recursive
 
