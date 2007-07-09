@@ -7,9 +7,10 @@ EXTRA_DIST = autogen.bash misc/do_m4.bash misc/generated-file.txt
 
 SUBDIRS = benchmark libutil libla unittest libgraph libswe
 
-bench: 
+bench:
+	$(MAKE) $(AM_MAKEFLAGS) all 
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="bench-recursive" bench-recursive
-	
+
 quickcheck: 
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-recursive" quickcheck-recursive
 
