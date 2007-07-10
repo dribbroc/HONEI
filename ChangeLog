@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-10 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libswe/sover.hh: Added implementations for
+	quick-matrix-assembly.
+
 2007-07-08 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Fixed access to iterators in flow- and source term
