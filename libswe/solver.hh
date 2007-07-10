@@ -1483,15 +1483,15 @@ namespace pg512 {
 	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
 	    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
 	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
-
-	    BandedMatrix<WorkPrec_> result(m6diag.size());
-	    result.band(0) = m6diag;
-	    result.band(3) = m6bandplus3;
-	    result.band(6) = m6bandplus6;
-	    result.band(-3) = m6bandminus3;
-
-	    return result;
 	}
+	BandedMatrix<WorkPrec_> result(m6diag.size());
+	result.band(0) = m6diag;
+	result.band(3) = m6bandplus3;
+	result.band(6) = m6bandplus6;
+	result.band(-3) = m6bandminus3;
+
+	return result;
+	
     }
 
     template<typename ResPrec_,
@@ -1557,16 +1557,17 @@ namespace pg512 {
 	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
 	    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
 	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+	}
+	
+	BandedMatrix<WorkPrec_> result(m8diag.size());
 
-	    BandedMatrix<WorkPrec_> result(m8diag.size());
-
-	    result.band(0) = m8diag;
-	    result.band(3*(_d_width + 4)) = m8bandplus3;
-	    result.band(6*(_d_width + 4)) = m8bandplus6;
-	    result.band((-3)*(_d_width + 4)) = m8bandminus3;
+	result.band(0) = m8diag;
+	result.band(3*(_d_width + 4)) = m8bandplus3;
+	result.band(6*(_d_width + 4)) = m8bandplus6;
+	result.band((-3)*(_d_width + 4)) = m8bandminus3;
 
 	    return result;
-	}
+	
     }
 }
 #endif
