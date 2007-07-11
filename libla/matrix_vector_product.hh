@@ -125,7 +125,7 @@ namespace pg512
             if (vector.size() != matrix.rows())
                 throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
 
-            SparseVector<DataType1_> result(vector.size());
+            SparseVector<DataType1_> result(vector.size(), vector.size());
             ///\todo: Implement when band-iterator available.
             /*
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
