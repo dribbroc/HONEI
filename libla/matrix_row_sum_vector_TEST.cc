@@ -17,9 +17,8 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/dense_matrix.hh>
-#include <libla/dense_vector.hh>
 #include <libla/matrix_row_sum_vector.hh>
 #include <unittest/unittest.hh>
 
@@ -27,6 +26,56 @@
 
 using namespace pg512;
 using  namespace tests;
+
+template <typename DataType_>
+class BandedMatrixRowSumVectorTest :
+    public BaseTest
+{
+    public:
+        BandedMatrixRowSumVectorTest(const std::string & type) :
+            BaseTest("banded_matrix_row_sum_vector_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+                BandedMatrix<DataType_> bm1(size, dv1);
+                DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(bm1));
+                DenseVector<DataType_> dv2(size, static_cast<DataType_>(2));
+                
+                TEST_CHECK_EQUAL(sum, dv2);
+            }
+        }
+};
+BandedMatrixRowSumVectorTest<float> banded_matrix_row_sum_vector_test_float("float");
+BandedMatrixRowSumVectorTest<double> banded_matrix_row_sum_vector_test_double("double");
+
+template <typename DataType_>
+class BandedMatrixRowSumVectorQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixRowSumVectorQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_row_sum_vector_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+            BandedMatrix<DataType_> bm1(size, dv1);
+            DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(bm1));
+            DenseVector<DataType_> dv2(size, static_cast<DataType_>(2));
+            
+            TEST_CHECK_EQUAL(sum, dv2);
+        }
+};
+BandedMatrixRowSumVectorQuickTest<float> banded_matrix_row_sum_vector_quick_test_float("float");
+BandedMatrixRowSumVectorQuickTest<double> banded_matrix_row_sum_vector_quick_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixRowSumVectorTest :
@@ -49,7 +98,7 @@ class DenseMatrixRowSumVectorTest :
                     *i = static_cast<DataType_>(i.index() + 1);
                 }
 
-               DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(*dm));
+                DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(*dm));
                 DataType_ s(size);
                 for (typename Vector<DataType_>::ElementIterator v(dv.begin_elements()), v_end(dv.end_elements()) ;
                         v != v_end ; ++v)
@@ -62,11 +111,8 @@ class DenseMatrixRowSumVectorTest :
             }
         }
 };
-
 DenseMatrixRowSumVectorTest<float> dense_matrix_row_sum_vector_test_float("float");
 DenseMatrixRowSumVectorTest<double> dense_matrix_row_sum_vector_test_double("double");
-
-
 
 template <typename DataType_>
 class DenseMatrixRowSumVectorQuickTest :

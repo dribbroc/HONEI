@@ -9,6 +9,7 @@ see the NEWS file.
 
 	* libla/matrix_element_sum_TEST.cc: Added banded matrix tests.
 	* libla/matrix_product_TEST.cc: Added banded matrix tests.	
+	* libla/matrix_row_sum_vector_TEST.cc: Added banded matrix tests.		
 	
 2007-07-10 Volker Jung <volker.jung@uni-dortmund.de>
 
