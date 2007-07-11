@@ -7,7 +7,8 @@ see the NEWS file.
 
 2007-07-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libla/matrix_element_sum_TEST.c: Added banded matrix tests.
+	* libla/matrix_element_sum_TEST.cc: Added banded matrix tests.
+	* libla/matrix_product_TEST.cc: Added banded matrix tests.	
 	
 2007-07-10 Volker Jung <volker.jung@uni-dortmund.de>
 

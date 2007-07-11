@@ -32,6 +32,65 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
+class BandedMatrixProductTest :
+    public BaseTest
+{
+    public:
+        BandedMatrixProductTest(const std::string & type) :
+            BaseTest("banded_matrix_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
+                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(6)));                 
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);            
+                BandedMatrix<DataType_> prod(MatrixProduct<DataType_>::value(bm1, bm2));
+
+                TEST_CHECK_EQUAL(prod, bm3);
+            }
+            BandedMatrix<DataType_> bm01(5), bm02(6);
+
+            TEST_CHECK_THROWS(MatrixProduct<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+        }
+};
+BandedMatrixProductTest<float> banded_matrix_product_test_float("float");
+BandedMatrixProductTest<double> banded_matrix_product_test_double("double");
+
+template <typename DataType_>
+class BandedMatrixProductQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixProductQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
+            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(6)));                 
+            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);            
+            BandedMatrix<DataType_> prod(MatrixProduct<DataType_>::value(bm1, bm2));
+
+            TEST_CHECK_EQUAL(prod, bm3);
+
+            BandedMatrix<DataType_> bm01(5), bm02(6);
+
+            TEST_CHECK_THROWS(MatrixProduct<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+        }
+};
+BandedMatrixProductQuickTest<float> banded_matrix_product_quick_test_float("float");
+BandedMatrixProductQuickTest<double> banded_matrix_product_quick_test_double("double");
+
+template <typename DataType_>
 class DenseMatrixProductTest :
     public BaseTest
 {
@@ -57,7 +116,6 @@ class DenseMatrixProductTest :
             TEST_CHECK_THROWS(MatrixProduct<DataType_>::value(dm02, dm01), MatrixRowsDoNotMatch);
         }
 };
-
 DenseMatrixProductTest<float> dense_matrix_product_test_float("float");
 DenseMatrixProductTest<double> dense_matrix_product_test_double("double");
 
