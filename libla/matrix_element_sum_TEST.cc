@@ -31,6 +31,54 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
+class BandedMatrixElementSumTest :
+    public BaseTest
+{
+    public:
+        BandedMatrixElementSumTest(const std::string & type) :
+            BaseTest("banded_matrix_element_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+                BandedMatrix<DataType_> bm1(size, dv1);
+                DataType_ sum(MatrixElementSum<>::value(bm1));            
+
+				TEST_CHECK_EQUAL(sum, size * 2);
+            }
+        }
+};
+BandedMatrixElementSumTest<float> banded_matrix_element_sum_test_float("float");
+BandedMatrixElementSumTest<double> banded_matrix_element_sum_test_double("double");
+
+template <typename DataType_>
+class BandedMatrixElementSumQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixElementSumQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_element_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(20);
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+            BandedMatrix<DataType_> bm1(size, dv1);
+            DataType_ sum(MatrixElementSum<>::value(bm1));            
+
+			TEST_CHECK_EQUAL(sum, size * 2);
+        }
+};
+BandedMatrixElementSumQuickTest<float> banded_matrix_element_sum_quick_test_float("float");
+BandedMatrixElementSumQuickTest<double> banded_matrix_element_sum_quick_test_double("double");
+
+template <typename DataType_>
 class DenseMatrixElementSumTest :
     public BaseTest
 {
@@ -51,7 +99,6 @@ class DenseMatrixElementSumTest :
             }
         }
 };
-
 DenseMatrixElementSumTest<float> dense_matrix_element_sum_test_float("float");
 DenseMatrixElementSumTest<double> dense_matrix_element_sum_test_double("double");
 
