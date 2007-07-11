@@ -419,11 +419,11 @@ namespace pg512 {
         DenseMatrix<ResPrec_> u1bound((this->_d_width)+4, (this->_d_height)+4, 0);
         DenseMatrix<ResPrec_> u2bound((this->_d_width)+4, (this->_d_height)+4, 0);
         DenseMatrix<ResPrec_> bbound((this->_d_width)+4,  (this->_d_height)+4, 0);
-
+        std::cout << "Preproc: Maps provided.\n";
 
         ///Do the mapping by applying boundary - usage.
-        if(this->_usage_reflect && this->_simple_bound)
-        {
+        //if(this->_usage_reflect && this->_simple_bound)
+        //{
             ///If assuming, that all input fields are exactly of the same size, we can do all the work within
             ///one loop - pair:
             for (unsigned long i = 0; i!= hbound.rows(); ++i) 
@@ -450,13 +450,16 @@ namespace pg512 {
                     }
                 }
             }
-        }//TODO: the other cases of boundary usage
+            std::cout << "Preproc: Mapping done.\n";
+       // }//TODO: the other cases of boundary usage
 
         ///Building up the relaxation - vectors by concatenating the maps` rows.
         ///We need to compute u first in order to be able to compute the initial flows. After this, by using
         ///forward iterators, the v and w vectors can be set up.
         for (ulint i= 0; i!= hbound.rows(); ++i) 
         {
+
+
             DenseVector<ResPrec_> actual_row = hbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements()),
@@ -532,9 +535,9 @@ namespace pg512 {
                 ++l;
             }   
         }
-	BandedMatrix<ResPrec_> testmatrix(_u->size());
-	testmatrix = _quick_assemble_matrix2<ResPrec_>(testmatrix);
-	testmatrix = _quick_assemble_matrix4<ResPrec_>(testmatrix);
+
+    std::cout << "Finished preprocessing.\n";
+
     }   
 
 ///Implementation of flow-processing functions.
@@ -589,6 +592,7 @@ namespace pg512 {
 	{
 	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
 	}
+        std::cout << "Finished Flow.\n";
     }
 
 
@@ -642,12 +646,14 @@ namespace pg512 {
 	        ++resultvectoriterator;
 	        *resultvectoriterator = resultcomponentthree;
 	        ++resultvectoriterator;
+                
 	    }
 	}
 	else
 	{
 	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
 	}
+        std::cout << "Finished Flow.\n";
     }
 
     /**
@@ -685,8 +691,10 @@ namespace pg512 {
         temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 2];
 	result[1] += gravterm;
         result[2] *= temp;
+        std::cout << "Finished Flow x (cell). \n";
 
 	return result;
+
     }
 
     /**
@@ -723,8 +731,10 @@ namespace pg512 {
 	result[0] *= temp;
         result[1] *= temp;
         result[2] = result[2] * temp * temp + gravterm;
+        std::cout << "Finished Flow y (cell).\n";
 
 	return result;
+
     }
 
 
@@ -758,6 +768,8 @@ namespace pg512 {
     
 	    result[1] = ((result[1] * q1) - (h * (*_bottom_slopes_x)[(_d_width + 4)* i + j])) * 9.81;
 	    result[2] = ((result[2] * q2) - (h * (*_bottom_slopes_y)[(_d_width + 4)* i + j])) * 9.81;
+            std::cout << "Finished simple flow.\n";
+ 
 	    return result;
     	}
 	else
@@ -767,6 +779,7 @@ namespace pg512 {
 	    result[2] = 0;
 	    return result;
 	}
+
     }
 
     /** 
@@ -819,7 +832,7 @@ namespace pg512 {
 	{
 	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
 	}
-	
+	std::cout << "Finished Source.\n";
     }
 
     /**
@@ -941,7 +954,7 @@ namespace pg512 {
                 ++i;//++i;
             }
 
-
+//ERROR!!!!!!!!!!!!!!!!
             for(unsigned long x = 0; x < _u->size(); ++x)
             {
                 for(unsigned long k =0; k<3; ++k)
@@ -958,6 +971,7 @@ namespace pg512 {
                     phiMinusOld = phiMinusNew[k];
                     temp = (*_v)[i.index()] - (*_c)[k]*(*_u)[i.index()]; //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
+                    
                     if(tempTop != 0)
                     {
                         phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
@@ -966,6 +980,7 @@ namespace pg512 {
                     {
                         phiMinusNew[k] = WorkPrec_(0);
                     }
+                    
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
                     temp  = (*_v)[i.index()] + (*_c)[k]* (*_u)[i.index()];//temp = v(i) + c(k)*u(i);
@@ -978,13 +993,14 @@ namespace pg512 {
                     {
                         phiPlusNew[k] = 0;
                     }
+                    
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
                     tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
                     m1bandPlus1[b1.index()] = prefac * (-2 - phiPlusOld[k] - phiMinusOld - phiMinusNew[k]);
                     m3bandPlus1[b1.index()] = (*_c)[k]*prefac * (2 - phiPlusOld[k] + phiMinusOld + phiMinusNew[k]);
                     m1bandPlus2[b2.index()] = prefac* phiMinusNew[k];
                     m3bandPlus2[b2.index()] = (*_c)[k] * prefac *(-phiMinusNew[k]);
-                    ++i;++d;++b1;++b2;++bminus1;
+                    ++i;//++d;++b1;++b2;++bminus1;
 
                     }
                 
@@ -998,6 +1014,7 @@ namespace pg512 {
                 ++d;++b1;++b2;++bminus1;
 
             }
+
             m1.band(ulint(0)) = m1diag;
             m1.band(ulint(3)) = m1bandPlus1;
             m1.band(ulint(6)) = m1bandPlus2;
@@ -1006,6 +1023,8 @@ namespace pg512 {
             m3.band(ulint(3)) = m3bandPlus1;
             m3.band(ulint(6)) = m3bandPlus2;
             m3.band(ulint(-3)) = m3bandMinus1;
+
+            std::cout << "Finished Matrix Assembly 1.\n";
         }
     /**
       * First setup of values.
@@ -1045,6 +1064,7 @@ namespace pg512 {
        
         DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(w, flow2, _eps,_delta_t);
         *_w_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum2);
+        std::cout << "Finished Setup 1.\n";
     }
 
     /** The prediction stage.
@@ -1100,6 +1120,7 @@ namespace pg512 {
 
         predictedv = VectorSum<>::value(temp1,temp2);
         predictedw = VectorSum<>::value(temp3,temp4);
+        std::cout << "Finished Prediction.\n";
    
     }
 
@@ -1136,6 +1157,7 @@ namespace pg512 {
         innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, flow2, -2*_delta_t, 2*_delta_t);
         predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         predictedw = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
+        std::cout << "Finished Setup 2.\n";
     } 
     
     /** Implementation of the correction stage.
@@ -1189,6 +1211,7 @@ namespace pg512 {
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
         }
+        std::cout << "Finished Correction.\n";
     }
 
     /** Capsule for the solution- computation in one timestep.
@@ -1228,7 +1251,8 @@ namespace pg512 {
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
         ::_assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4)
-    {
+    {   
+        std::cout << "Entering Matrix Assembly 2.\n";
         ///The bands containing data.
         DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0) ,ulint( 1));      //zero
         DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0) , ulint(1)); //one
@@ -1238,7 +1262,7 @@ namespace pg512 {
         DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0) ,ulint( 1)); //one
         DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0) ,ulint( 1)); //two
         DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0) ,ulint( 1));//three
-        
+        std::cout << "Setup Bands complete.\n";
         ///Necessary values to be temporarily saved.
         DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0),ulint(1));
         DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0),ulint(1));
@@ -1417,6 +1441,7 @@ namespace pg512 {
         m4.band(ulint(3*(_d_width+4))) = m4bandPlus1;
         m4.band(ulint(6*(_d_width+4))) = m4bandPlus2;
         m4.band(ulint((-3)*(_d_width+4))) = m4bandMinus1;
+        std::cout << "Finished Matrix Assembly 2.\n";
     }
 
 
@@ -1491,7 +1516,7 @@ namespace pg512 {
 	result.band(-3) = m6bandminus3;
 
 	return result;
-	
+	std::cout << "Finished Quick Assembly m2.\n";
     }
 
     template<typename ResPrec_,
@@ -1567,7 +1592,8 @@ namespace pg512 {
 	result.band((-3)*(_d_width + 4)) = m8bandminus3;
 
 	    return result;
-	
+        std::cout << "Finished Quick Assembly m4.\n";	
     }
+
 }
 #endif

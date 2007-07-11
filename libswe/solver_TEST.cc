@@ -39,13 +39,13 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> height (3, 3, DataType_(1));
-            DenseMatrix<DataType_> bottom (3, 3, DataType_(1));
-            DenseMatrix<DataType_> u1 (3, 3, DataType_(1));
-            DenseMatrix<DataType_> u2 (3, 3, DataType_(1));                                    
-            DenseVector<DataType_> u (3*49, DataType_(1));
-            DenseVector<DataType_> v(3*49, DataType_(1));
-            DenseVector<DataType_> w (3*49, DataType_(1)); 
+            DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (3, 3, DataType_(1));
+            DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (3, 3, DataType_(1));
+            DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (3, 3, DataType_(1));
+            DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (3, 3, DataType_(1));                                    
+            DenseVector<DataType_>* u = new DenseVector<DataType_>(3*49, DataType_(1));
+            DenseVector<DataType_>* v = new DenseVector<DataType_>(3*49, DataType_(1));
+            DenseVector<DataType_>* w = new DenseVector<DataType_> (3*49, DataType_(1)); 
             DenseVector<DataType_> bx (49, DataType_(1));
             DenseVector<DataType_> by (49, DataType_(1));
             DenseVector<DataType_> c (3,DataType_(1));
@@ -57,9 +57,10 @@ class RelaxSolverQuickTest :
             DataType_ deltat = 1;      
             double eps = 0.1;                  
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
-                (&height, &bottom, &u1, &u2, &u, &v, &w, 
+                (height, bottom, u1, u2, u, v, w, 
                 dwith, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
             relax_solver.do_preprocessing();
+            relax_solver.solve();
             TEST_CHECK(true);
         }
 };

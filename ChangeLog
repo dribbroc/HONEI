@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-11 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Finished solver - Solver is running but still
+	under frequent testing, added debug marks.
+	* libswe/solver_TEST.cc: Moved data to heap, updated accordingly.
+
 2007-07-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_element_sum_TEST.cc: Added banded matrix tests.
