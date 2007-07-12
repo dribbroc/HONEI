@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-12 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+        * libla/matrix_vector_product_TEST.cc: Changed values of row/columns
+	for THROW-Test due to changes in header.
+
+2007-07-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+
         * libla/matrix_vector_product.hh: Fixed algorithm. Tests pass for
 	anything except banded cases now.
 
