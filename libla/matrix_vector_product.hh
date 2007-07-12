@@ -54,14 +54,14 @@ namespace pg512
          **/
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const DenseMatrix<DataType1_> & matrix, const DenseVector<DataType2_> & vector)
         {
-            if (vector.size() != matrix.rows())
-                throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
+            if (vector.size() != matrix.columns())
+                throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
-            DenseVector<DataType1_> result(vector.size());
+            DenseVector<DataType1_> result(matrix.rows());
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < matrix.columns(); ++i)
+            for (unsigned long i=0; i < matrix.rows(); ++i)
             {
-                DenseVector<DataType1_> dv = matrix.column(i);
+                DenseVector<DataType1_> dv = matrix[i];
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
@@ -77,13 +77,13 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const DenseMatrix<DataType1_> & matrix, const SparseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.rows())
-                throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
+                throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
-            SparseVector<DataType1_> result(vector.size(), matrix.columns());
+            SparseVector<DataType1_> result(matrix.rows(), matrix.rows());
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < matrix.columns(); ++i)
+            for (unsigned long i=0; i < matrix.rows(); ++i)
             {
-                DenseVector<DataType1_> dv = matrix.column(i);
+                DenseVector<DataType1_> dv = matrix[i];
                 *l = ScalarProduct<Tag_>::value(vector, dv);
                 ++l;
             }
@@ -99,9 +99,9 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const BandedMatrix<DataType1_> & matrix, const DenseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.rows())
-                throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
+                throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
-            DenseVector<DataType1_> result(vector.size());
+            DenseVector<DataType1_> result(matrix.rows());
             ///\todo: Implement when band-iterator available.
             /*
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
@@ -123,9 +123,9 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const BandedMatrix<DataType1_> & matrix, const SparseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.rows())
-                throw MatrixRowsDoNotMatch(matrix.rows(), vector.size());
+                throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
-            SparseVector<DataType1_> result(vector.size(), vector.size());
+            SparseVector<DataType1_> result(matrix.rows(), matrix.rows());
             ///\todo: Implement when band-iterator available.
             /*
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
