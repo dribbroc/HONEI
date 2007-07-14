@@ -255,7 +255,7 @@ class DenseMatrixSparseVectorProductTest :
                 for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    if (i.index() % 10 == 0) *i = static_cast<DataType_>(6 * size);
+                    *i = static_cast<DataType_>(12);
                 }
                 SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
 
@@ -296,7 +296,7 @@ class DenseMatrixSparseVectorProductQuickTest :
             for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
                     i != i_end ; ++i)
             {
-                if (i.index() % 10 == 0) *i = static_cast<DataType_>(6 * size);
+                *i = static_cast<DataType_>(12);
             }
             SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
 
