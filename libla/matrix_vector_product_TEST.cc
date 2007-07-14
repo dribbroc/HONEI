@@ -242,7 +242,7 @@ class DenseMatrixSparseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(11) ; size < (1 << 12) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
                 std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
@@ -255,7 +255,7 @@ class DenseMatrixSparseVectorProductTest :
                 for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    *i = static_cast<DataType_>(12);
+                    *i = static_cast<DataType_>(6 * (size / 10 + 1));
                 }
                 SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
 
