@@ -184,8 +184,8 @@ class DenseMatrixDenseVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
-                DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size, DataType_(6 * size));
+                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+                DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
                 DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, dv1));
 
                 TEST_CHECK_EQUAL(prod, dv2);
@@ -214,8 +214,8 @@ class DenseMatrixDenseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
-            DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size, DataType_(6 * size));
+            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+            DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
             DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, dv1));
 
             TEST_CHECK_EQUAL(prod, dv2);
@@ -244,14 +244,14 @@ class DenseMatrixSparseVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
+                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
                 std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
                 for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
                 }
-                std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size, size / 8 + 1));
+                std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size + 1, size / 8 + 1));
                 for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
                         i != i_end ; ++i)
                 {
@@ -285,14 +285,14 @@ class DenseMatrixSparseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseMatrix<DataType_> dm1(size + 1, size, DataType_(2));
+            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
             std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
             for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
             }
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size, size / 8 + 1));
+            std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size + 1, size / 8 + 1));
             for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
                     i != i_end ; ++i)
             {
