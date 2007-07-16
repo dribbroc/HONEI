@@ -24,6 +24,7 @@
 #include <libla/dense_vector.hh>
 #include <libla/matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/sparse_matrix.hh>
 #include <libla/vector_element_sum.hh>
 
 #include <tr1/memory>
@@ -37,7 +38,11 @@ namespace pg512
      **/
     template <typename Tag_ = tags::CPU> struct MatrixRowSumVector
     {
-        template <typename DataType_> static DenseVector<DataType_> value(const RowAccessMatrix<DataType_> & matrix)
+		/**
+         * Returns a vector containing the sums of a row access matrix' rows elements.
+         * \param matrix Reference to a RowAccessMatrix
+         **/
+		template <typename DataType_> static DenseVector<DataType_> value(const RowAccessMatrix<DataType_> & matrix)
         {
             DenseVector<DataType_> result(matrix.rows());
 
@@ -51,7 +56,11 @@ namespace pg512
         }
 
 
-        template <typename DataType_> static DenseVector<DataType_> value(const BandedMatrix<DataType_> & matrix)
+        /**
+         * Returns a vector containing the sums of a banded matrix' rows elements.
+         * \param matrix Reference to a BandedMatrix
+         **/
+		template <typename DataType_> static DenseVector<DataType_> value(const BandedMatrix<DataType_> & matrix)
         {
             DenseVector<DataType_> result(matrix.rows(), DataType_(0));
             typename Matrix<DataType_>::ConstElementIterator b(matrix.begin_elements()), b_end(matrix.end_elements());

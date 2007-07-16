@@ -22,6 +22,7 @@
 
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
+#include <libla/sparse_matrix.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/matrix_error.hh>
 
@@ -43,7 +44,7 @@ namespace pg512
     template <typename Tag_ = tags::CPU> struct MatrixSum
     {
         /**
-         * Returns the the resulting matrix of the sum of two given DenseMatrix instances.
+         * Returns the the resulting matrix of the sum of two DenseMatrix instances.
          *
          * \param left Reference to dense matrix that will be also used as result matrix.
          * \param right Reference to constant dense matrix to be added.
@@ -66,6 +67,81 @@ namespace pg512
             {
                 *l += *r;
                 ++r;
+            }
+
+            return left;
+        }
+
+		/**
+         * Returns the the resulting matrix of the sum of a DenseMatrix and a SparseMatrix instance.
+         *
+         * \param left Reference to dense matrix that will be also used as result matrix.
+         * \param right Reference to constant sparse matrix to be added.
+         **/
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            {
+				while (l.index() < r.index() && (l != l_end))
+                {
+                    ++l;
+                }
+
+                *l += *r;
+                ++r;
+            }
+
+            return left;
+        }
+
+		/**
+         * Returns the the resulting matrix of the sum of two given SparseMatrix instances.
+         *
+         * \param left Reference to sparse matrix that will be also used as result matrix.
+         * \param right Reference to constant sparse matrix to be added.
+         **/
+        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; )
+            {
+				if (r.index() < l.index())
+                {
+                    left[r.row()](r.column) = *r;
+                    ++r;
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
+                    *l += *r;
+                    ++l; ++r;
+                }
             }
 
             return left;

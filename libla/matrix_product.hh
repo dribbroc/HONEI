@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,6 +23,8 @@
 
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
+#include <libla/sparse_matrix.hh>
+#include <libla/scalar_product.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/matrix_error.hh>
 
@@ -52,7 +55,7 @@ namespace pg512
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            DenseMatrix<DataType1_> result(right.columns(), left.rows(), DataType1_(0));
+            DenseMatrix<DataType1_> result(right.columns(), left.rows());
             typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
 
             for (unsigned int s=0 ; s < left.rows() ; ++s)
@@ -61,20 +64,95 @@ namespace pg512
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
                     const DenseVector<DataType2_> right_column = right.column(t);
-                    typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
-                    for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
-                            l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
-                    {
-                        *i += (*l) * (*r);
-                    }
-                    ++i;
+					*i = ScalarProduct<>::value(left_row, right_column);
+					++i;
                 }
 
             }
             return result;
         }
 
-        /**
+		/**
+         * Returns the resulting matrix after multiplying a DenseMatrix and a SparseMatrix instance.
+         * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
+         * \param right Reference to a SparseMatrix used as second factor.
+         **/
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.rows())
+                throw MatrixRowsDoNotMatch(right.rows(), left.columns());
+
+            DenseMatrix<DataType1_> result(right.columns(), left.rows());
+            typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
+
+            for (unsigned int s=0 ; s < left.rows() ; ++s)
+            {
+                const DenseVector<DataType1_> left_row = left[s];
+                for (unsigned int t=0; t < right.columns() ; ++t)
+                {
+                    const Vector<DataType2_> & right_column(right.column(t));
+					*i = ScalarProduct<>::value(left_row, right_column);
+					++i;
+                }
+
+            }
+            return result;
+        }
+
+		 /**
+         * Returns the resulting matrix after multiplying a sparse and a sparse matrix instance.
+         * \param left Reference to a SparseMatrix used as first factor. Its return type is used for the result matrix.
+         * \param right Reference to a SparseMatrix used as second factor.
+         **/
+        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> value(const SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.rows())
+                throw MatrixRowsDoNotMatch(right.rows(), left.columns());
+
+            SparseMatrix<DataType1_> result(right.columns(), left.rows());
+            typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
+
+            for (unsigned int s=0 ; s < left.rows() ; ++s)
+            {
+                const Vector<DataType1_> & left_row(left[s]);
+                for (unsigned int t=0; t < right.columns() ; ++t)
+                {
+                    const Vector<DataType2_> & right_column(right.column(t));
+					*i = ScalarProduct<>::value(left_row, right_column);
+					++i;
+				}
+            }
+            return result;
+        }
+
+		/**
+         * Returns the resulting matrix after multiplying a SparseMatrix and a DenseMatrix instance.
+         * \param left Reference to a SparseMatrix used as first factor.
+         * \param right Reference to a DenseMatrix used as second factor. Its return type is used for the result matrix.
+         **/
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const SparseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.rows())
+                throw MatrixRowsDoNotMatch(right.rows(), left.columns());
+
+            DenseMatrix<DataType1_> result(right.columns(), left.rows());
+            typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
+
+            for (unsigned int s=0 ; s < left.rows() ; ++s)
+            {
+                const Vector<DataType1_> & left_row(left[s]);
+                for (unsigned int t=0; t < right.columns() ; ++t)
+                {
+                    const DenseVector<DataType2_> right_column = right.column(t);
+					*i = ScalarProduct<>::value(left_row, right_column);
+					++i;
+                }
+
+            }
+            return result;
+        }
+
+		/**
          * Returns the resulting matrix after multiplying two BandedMatrix instances.
          * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a BandedMatrix used as second factor.
@@ -86,26 +164,6 @@ namespace pg512
 
             BandedMatrix<DataType1_> result(left.rows());
             ///\todo: Implement when BandIterator ready
-            /*
-            typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
-
-            for (unsigned int s=0 ; s < left.rows() ; ++s)
-            {
-                const DenseVector<DataType1_> left_row = left[s];
-                for (unsigned int t=0; t < right.columns() ; ++t)
-                {
-                    const DenseVector<DataType2_> right_column = right.column(t);
-                    typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
-                    for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
-                            l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
-                    {
-                        *i += (*l) * (*r);
-                    }
-                    ++i;
-                }
-
-            }
-            */
             return result;
         }
 
@@ -114,68 +172,59 @@ namespace pg512
          * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a DenseMatrix used as second factor.
          **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> value(const BandedMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> value(const BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
             BandedMatrix<DataType1_> result(left.rows());
             ///\todo: Implement when BandIterator ready
-            /*
-            typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
-
-            for (unsigned int s=0 ; s < left.rows() ; ++s)
-            {
-                const DenseVector<DataType1_> left_row = left[s]; ///\todo: Write row-access for banded or workaround here
-                for (unsigned int t=0; t < right.columns() ; ++t)
-                {
-                    const DenseVector<DataType2_> right_column = right.column(t);
-                    typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
-                    for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
-                            l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
-                    {
-                        *i += (*l) * (*r);
-                    }
-                    ++i;
-                }
-
-            }
-            */
             return result;
         }
 
-        /**
-         * Returns the resulting matrix after multiplying a BandedMatrix instance and a DenseMatrix instance.
+		/**
+         * Returns the resulting matrix after multiplying a BandedMatrix instance and a SparseMatrix instance.
          * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
-         * \param right Reference to a DenseMatrix used as second factor.
+         * \param right Reference to a SparseMatrix used as second factor.
+         **/
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> value(const BandedMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.rows())
+                throw MatrixRowsDoNotMatch(right.rows(), left.columns());
+
+            BandedMatrix<DataType1_> result(left.rows());
+            ///\todo: Implement when BandIterator ready
+            return result;
+        }
+	
+
+        /**
+         * Returns the resulting matrix after multiplying a DenseMatrix instance and a BandedMatrix instance.
+         * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
+         * \param right Reference to a BandedMatrix used as second factor.
          **/
         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const DenseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
         {
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            DenseMatrix<DataType1_> result(right.columns(), left.rows(), DataType1_(0));
+            DenseMatrix<DataType1_> result(right.columns(), left.rows());
             ///\todo: Implement when BandIterator ready
-            /*
-            typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
+            return result;
+        }
 
-            for (unsigned int s=0 ; s < left.rows() ; ++s)
-            {
-                const DenseVector<DataType1_> left_row = left[s];
-                for (unsigned int t=0; t < right.columns() ; ++t)
-                {
-                    const DenseVector<DataType2_> right_column = right.column(t);
-                    typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
-                    for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
-                            l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
-                    {
-                        *i += (*l) * (*r);
-                    }
-                    ++i;
-                }
+		/**
+         * Returns the resulting matrix after multiplying a SparseMatrix instance and a BandedMatrix instance.
+         * \param left Reference to a SparseMatrix used as first factor.
+         * \param right Reference to a BandedMatrix used as second factor. Its return type is used for the result matrix.
+         **/
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const SparseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.rows())
+                throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            }
-            */
+            DenseMatrix<DataType1_> result(right.columns(), left.rows());
+            ///\todo: Implement when BandIterator ready
             return result;
         }
 

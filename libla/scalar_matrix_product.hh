@@ -23,6 +23,7 @@
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/sparse_matrix.hh>
 
 /**
  * \file
@@ -50,6 +51,22 @@ namespace pg512
         {
             for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
                     l_end(matrix.end_elements()) ; l != l_end ; ++l)
+            {
+                *l *= scalar;
+            }
+
+            return matrix;
+        }
+
+		/**
+         * Returns the resulting matrix after multiplying a scalar to a given SparseMatrix instance.
+         * \param matrix SparseMatrix to be scaled.
+         * \param scalar The scalar to be used.
+         **/
+        static SparseMatrix<DataType_> & value(const DataType_ scalar, SparseMatrix<DataType_> & matrix)
+        {
+            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_non_zero_elements()),
+                    l_end(matrix.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 *l *= scalar;
             }

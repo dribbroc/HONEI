@@ -23,6 +23,7 @@
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/sparse_matrix.hh>
 #include <libla/matrix_error.hh>
 
 /**
@@ -65,6 +66,83 @@ namespace pg512
             {
                 *l *= *r;
                 ++r;
+            }
+
+            return left;
+        }
+
+		/**
+         * Returns the resulting matrix after multiplying a dense and a sparse matrix instance elementwise.
+         * \param left Reference to a DenseMatrix. Its return type is used for the result matrix.
+         * \param right Reference to a SparseMatrix.
+         **/
+         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            {
+                while (l.index() < r.index() && (l != l_end))
+                {
+					*l = DataType1_(0);
+                    ++l;
+                }
+
+                *l *= *r;
+                ++r;
+            }
+
+            return left;
+        }
+
+
+		/**
+         * Returns the resulting matrix after multiplying two sparse matrix instances elementwise.
+         * \param left Reference to a SparseMatrix. Its return type is used for the result matrix.
+         * \param right Reference to a SparseMatrix
+         **/
+         template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
+            {
+				if (l.index() < r.index())
+				{
+					*l = DataType1_(0);
+					++l;
+				}
+
+				else if (r.index() < l.index())
+				{
+					++r;
+				}
+
+				else
+				{
+					*l *= *r;
+                	++l; ++r;
+				}
             }
 
             return left;

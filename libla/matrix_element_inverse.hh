@@ -24,6 +24,7 @@
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/sparse_matrix.hh>
 
 /**
  * \file
@@ -61,7 +62,30 @@ namespace pg512
             return matrix;
         }
 
-        template <typename DataType_> static BandedMatrix<DataType_> & value(BandedMatrix<DataType_> & matrix)
+		/**
+         * Return a matrix's inverse elements. All elements that equal zero will
+         * be invariant under this operation.
+         *
+         * \param matrix SparseMatrix whose non-zero elements shall be inverted.
+         **/
+        template <typename DataType_> static SparseMatrix<DataType_> & value(SparseMatrix<DataType_> & matrix)
+        {
+            for (typename MutableMatrix<DataType_>::ElementIterator i(matrix.begin_non_zero_elements()), i_end(matrix.end_non_zero_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(1) / *i;
+            }
+
+            return matrix;
+        }
+
+        /**
+         * Return a matrix's inverse elements. All elements that equal zero will
+         * be invariant under this operation.
+         *
+         * \param matrix BandedMatrix whose non-zero elements shall be inverted.
+         **/
+		template <typename DataType_> static BandedMatrix<DataType_> & value(BandedMatrix<DataType_> & matrix)
         {
             for (typename MutableMatrix<DataType_>::ElementIterator i(matrix.begin_elements()), i_end(matrix.end_elements()) ;
                     i != i_end ; ++i)

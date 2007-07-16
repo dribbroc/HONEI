@@ -23,6 +23,7 @@
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/sparse_matrix.hh>
 #include <libla/matrix_error.hh>
 
 /**
@@ -43,12 +44,12 @@ namespace pg512
     template <typename Tag_ = tags::CPU> struct MatrixDifference
     {
         /**
-         * Returns the the resulting matrix of the difference of a dense matrix instance and a row access matrix instance.
+         * Returns the the resulting matrix of the difference of two dense matrix instances.
          *
          * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant row access matrix to be subtracted.
+         * \param right Reference to constant dense matrix to be subtracted.
          **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -65,6 +66,81 @@ namespace pg512
                     l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l -= *r;
+            }
+
+            return left;
+        }
+
+		/**
+         * Returns the the resulting matrix of the difference of a DenseMatrix and a SparseMatrix instance.
+         *
+         * \param left Reference to dense matrix that will be also used as result matrix.
+         * \param right Reference to constant sparse matrix to be subtracted.
+         **/
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; )
+            {
+				while (l.index() < r.index() && (l != l_end))
+                {
+                    ++l;
+                }
+
+                *l -= *r;
+                ++r;
+            }
+
+            return left;
+        }
+
+		/**
+         * Returns the the resulting matrix of the difference of a sparse matrix instance and a sparse matrix instance.
+         *
+         * \param left Reference to sparse matrix that will be also used as result matrix.
+         * \param right Reference to constant sparse matrix to be subtracted.
+         **/
+		template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
+            {
+                if (r.index() < l.index())
+                {
+                    left[r.row()](r.column) = -(*r);
+                    ++r;
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
+                    *l -= *r;
+                    ++l; ++r;
+                }
             }
 
             return left;
@@ -97,6 +173,8 @@ namespace pg512
 
             return left;
         }
+
+		///\todo: Find a solution for different order and return types when changing RowAccess to Dense/Sparse, because now this would mean duplicate signatures.
 
         /**
          * Returns the the resulting matrix of the difference of a given BandedMatrix instance and a given RowAccessMatrix instance.
@@ -181,6 +259,41 @@ namespace pg512
 
             return right;
         }
+		
+		 /**
+         * Returns the the resulting matrix of the difference of a given BandedMatrix instance and a given SparseMatrix instance.
+         *
+         * \param left Reference to constant banded matrix which is the base.
+         * \param right Reference to sparse matrix to be substracted that will be also used as result matrix.
+         **/
+        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(const BandedMatrix<DataType2_> & left, SparseMatrix<DataType1_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType1_>::ConstElementIterator l(left.begin_elements()), l_end(left.begin_elements());
+            for (typename MutableMatrix<DataType2_>::ElementIterator r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; ++r, ++l)
+            {
+				while (l.index() < r.index() && (l != l_end))
+                {
+                    ++l;
+                }
+
+				*r = *l - *r;
+                ++r;
+            }
+
+            return right;
+        }
+
     };
 }
 #endif
