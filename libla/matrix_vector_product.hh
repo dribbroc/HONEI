@@ -138,7 +138,7 @@ namespace pg512
                 *l = ScalarProduct<Tag_>::value(vector, v);
                 ++l;
             }
-
+			///\todo: perhaps sparsify
             return result;
         }
 
@@ -187,6 +187,7 @@ namespace pg512
                 ++l;
             }
             */
+			///\todo: perhaps sparsify
             return result;
         }
 
