@@ -21,11 +21,13 @@
 #include <libla/dense_vector.hh>
 #include <libla/dense_matrix.hh>
 #include <unittest/unittest.hh>
-
+#include <libutil/stringify.hh>
 #include <string>
+#include <iostream>
 
 using namespace pg512;
 using namespace tests;
+using namespace std;
 
 template <typename DataType_>
 class RelaxSolverQuickTest :
@@ -43,11 +45,11 @@ class RelaxSolverQuickTest :
             DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (3, 3, DataType_(1));
             DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (3, 3, DataType_(1));
             DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (3, 3, DataType_(1));                                    
-            DenseVector<DataType_>* u = new DenseVector<DataType_>(3*49, DataType_(1));
-            DenseVector<DataType_>* v = new DenseVector<DataType_>(3*49, DataType_(1));
-            DenseVector<DataType_>* w = new DenseVector<DataType_> (3*49, DataType_(1)); 
-            DenseVector<DataType_> bx (49, DataType_(1));
-            DenseVector<DataType_> by (49, DataType_(1));
+            DenseVector<DataType_>* u = new DenseVector<DataType_>(3*49, DataType_(0));
+            DenseVector<DataType_>* v = new DenseVector<DataType_>(3*49, DataType_(0));
+            DenseVector<DataType_>* w = new DenseVector<DataType_> (3*49, DataType_(0)); 
+            DenseVector<DataType_> bx (3*49, DataType_(0));
+            DenseVector<DataType_> by (3*49, DataType_(0));
             DenseVector<DataType_> c (3,DataType_(1));
             DenseVector<DataType_> d (3,DataType_(1));
             ulint dwith = 3;
@@ -60,11 +62,31 @@ class RelaxSolverQuickTest :
                 (height, bottom, u1, u2, u, v, w, 
                 dwith, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
             relax_solver.do_preprocessing();
+            cout << "Height -field after preprocessing:\n";
+            string outHeight = stringify(*height);
+            cout <<  outHeight;
+            /*cout << "Relax - vectors after preprocessing:\n";
+            cout << "u^T:\n";
+            cout << stringify(*u) << endl;
+            cout << "v^T:\n";
+            cout << stringify(*v) << endl;
+            cout << "w^T:\n";
+            cout << stringify(*w) << endl;
+            
+            cout << "Bottom - slopes after preprocessing:\n";
+            cout << "b_x^T:\n";
+            cout << stringify(bx)<< endl;
+            cout << "b_y^T:\n";
+            cout << stringify(by)<< endl;
+            */
             relax_solver.solve();
+            cout << "Height -field after solve():\n";
+            cout << stringify(*height);
+            cout << "Relax - vectors after solve():\n";
             TEST_CHECK(true);
         }
 };
-RelaxSolverQuickTest<float> relax_solver_quick_test_float("float");
+//RelaxSolverQuickTest<float> relax_solver_quick_test_float("float");
 RelaxSolverQuickTest<double> relax_solver_quick_test_double("double");
 
 

@@ -46,6 +46,9 @@
 #include <libla/vector_elementwise_product.hh>
 #include <libla/matrix_vector_product.hh>
 #include <libutil/tags.hh>
+
+using namespace std;
+
 namespace pg512 {
 
     typedef unsigned long ulint;
@@ -451,6 +454,11 @@ namespace pg512 {
                 }
             }
             std::cout << "Preproc: Mapping done.\n";
+            cout << stringify(hbound) << endl;
+            cout << stringify(bbound) << endl;
+            cout << stringify(u1bound) << endl;
+            cout << stringify(u2bound) << endl;
+
        // }//TODO: the other cases of boundary usage
 
         ///Building up the relaxation - vectors by concatenating the maps` rows.
@@ -473,6 +481,8 @@ namespace pg512 {
             }
     
         }
+        //cout << "u^T after building:\n";
+        //cout << stringify(*_u) << endl;
 
         for (ulint i = 0; i!= u1bound.rows(); ++i) 
         {
@@ -521,8 +531,8 @@ namespace pg512 {
             {
                 if(i>0 && j.index()>0)
                 {
-                    (*_bottom_slopes_x)[k.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_x;  
-                    (*_bottom_slopes_y)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_y;                
+                    (*_bottom_slopes_x)[k.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
+                    (*_bottom_slopes_y)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;                
  
                 }
                 else
