@@ -53,10 +53,12 @@ namespace pg512
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
+			typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
             for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l)
             {
-                *l += right[l.index()];
+                *l += *r;
+				++r;
             }
 
             return left;

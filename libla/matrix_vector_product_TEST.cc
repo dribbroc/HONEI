@@ -257,7 +257,7 @@ class DenseMatrixSparseVectorProductTest :
                 {
                     *i = static_cast<DataType_>(6 * (size / 10 + 1));
                 }
-                SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
+                DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
 
                 TEST_CHECK_EQUAL(prod, *sv2);
             }
@@ -298,7 +298,7 @@ class DenseMatrixSparseVectorProductQuickTest :
             {
                 *i = static_cast<DataType_>(12);
             }
-            SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
+            DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
 
             TEST_CHECK_EQUAL(prod, *sv2);
 
