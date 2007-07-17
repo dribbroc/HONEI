@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-07-17 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Remanaged relaxation - vector setup in
+	preprocessing, debugged NAN errors in flow computation, resolved
+	iterator - bug in slope -setup.
+	
+2007-07-17 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Remanaged preprocessing, stringified relax
 	-vectors, which reveals problems with flow(i,j).
 	

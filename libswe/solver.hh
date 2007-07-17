@@ -484,7 +484,7 @@ namespace pg512 {
         }
         cout << "u^T after building:\n";
         cout << stringify(*_u) << endl;
-        
+        /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k2(_v->begin_elements());
         for (ulint i = 0; i!= u1bound.rows(); ++i) 
         {
@@ -502,10 +502,14 @@ namespace pg512 {
                 ++k2; ++k2; ++k2;
             }
         }
-
+        */
+       
+        DenseVector<ResPrec_> uFlow(*_u);
+        _flow_x(uFlow);
+        *_v = uFlow;
         cout << "v^T after building:\n";
         cout << stringify(*_v) << endl;
-
+        /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k3(_w->begin_elements());
         for (ulint i = 0; i!= u2bound.rows(); ++i) 
         {
@@ -523,38 +527,48 @@ namespace pg512 {
                 ++k3; ++k3; ++k3;
             }
         }
+        */
+
         cout << "w^T after building:\n";
         cout << stringify(*_w) << endl;
-
+        DenseVector<ResPrec_> vFlow(*_u);
+        _flow_x(vFlow);
+        *_v = vFlow;
+        
    
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to 
         ///compute the bottom slopes.
+        typename DenseVector<ResPrec_>::ElementIterator k4(_bottom_slopes_x->begin_elements());
+        typename DenseVector<ResPrec_>::ElementIterator l(_bottom_slopes_y->begin_elements());
         for (ulint i = 0; i!= bbound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = bbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
-                                                            j_END(actual_row.end_elements()),
-                                                            k((*_bottom_slopes_x).begin_elements()),
-                                                            l((*_bottom_slopes_y).begin_elements());
+                                                            j_END(actual_row.end_elements());
+                                                            //k((*_bottom_slopes_x).begin_elements()),
+                                                            //l((*_bottom_slopes_y).begin_elements());
                                                                 j!= j_END; ++j)
             {
                 if(i>0 && j.index()>0)
                 {
-                    (*_bottom_slopes_x)[k.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
+                    (*_bottom_slopes_x)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
                     (*_bottom_slopes_y)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;                
  
                 }
                 else
                 {
-                    (*_bottom_slopes_x)[k.index()] = -100000; 
+                    (*_bottom_slopes_x)[k4.index()] = -100000; 
                     (*_bottom_slopes_y)[l.index()] = -100000;               
  
                 }
-                ++k;
+                ++k4;
                 ++l;
             }   
         }
-
+    
+    cout << "Slopes after building:\n";
+    cout << stringify(*_bottom_slopes_x) << endl;
+    cout << stringify(*_bottom_slopes_y) << endl;
     std::cout << "Finished preprocessing.\n";
 
     }   
@@ -585,8 +599,17 @@ namespace pg512 {
 	        gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
 
 	        // Compute the influence of the waterdepth
-	        resultcomponenttwo = 1 / *l;
-	        resultcomponentthree = 1 / *l;
+                if(*l!=0)
+                {
+	            resultcomponenttwo = 1 / *l;
+	            resultcomponentthree = 1 / *l;
+                }
+                else
+                {
+	            resultcomponenttwo = 0;
+	            resultcomponentthree = 0;
+        
+                }
 	        ++l;
 
 	        // Compute the influence of the waterflow in X-direction
@@ -645,8 +668,17 @@ namespace pg512 {
 	        gravterm = WorkPrec_(9.81 * (*l) * (*l) / 2);
 
 	        // Compute the influence of the waterdepth
-	        resultcomponenttwo *= 1 / *l;
-	        resultcomponentthree *= 1 / *l;
+                if(*l!=0)
+                {
+	            resultcomponenttwo *= 1 / *l;
+	            resultcomponentthree *= 1 / *l;
+                }
+                else
+                {
+ 	            resultcomponenttwo = 0;
+	            resultcomponentthree = 0;
+                           
+                }
 	        ++l;
 
 	        // Compute the influence of the waterflow in X-direction
@@ -694,7 +726,7 @@ namespace pg512 {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(uint i, uint j)
     {
-	DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
+	DenseVector<WorkPrec_> result(ulint(3), ulint(0));
 	WorkPrec_ temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j];
 
         WorkPrec_ gravterm = 9.81 * temp * temp / 2;
@@ -735,7 +767,7 @@ namespace pg512 {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(uint i, uint j)
     {
-        DenseVector<WorkPrec_> result(ulint(3), ulint( 0), ulint( 1));
+        DenseVector<WorkPrec_> result(ulint(3), ulint(0));
 	WorkPrec_ temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j];
 
 	WorkPrec_ gravterm = 9.81 * temp * temp / 2;
