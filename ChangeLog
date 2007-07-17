@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-07-17 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh libswe/solver_TEST.cc: Resolved iteration bug
+	within slope - processing, adjusted slope - vector size in the test,
+	finished testing of the preprocessing stage.
+	
+2007-07-17 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Remanaged relaxation - vector setup in
 	preprocessing, debugged NAN errors in flow computation, resolved
 	iterator - bug in slope -setup.

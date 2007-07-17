@@ -538,38 +538,52 @@ namespace pg512 {
    
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to 
         ///compute the bottom slopes.
-        typename DenseVector<ResPrec_>::ElementIterator k4(_bottom_slopes_x->begin_elements());
-        typename DenseVector<ResPrec_>::ElementIterator l(_bottom_slopes_y->begin_elements());
+        typename DenseVector<ResPrec_>::ElementIterator l(_bottom_slopes_x->begin_elements());
+        typename DenseVector<ResPrec_>::ElementIterator k4(_bottom_slopes_y->begin_elements());
         for (ulint i = 0; i!= bbound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = bbound[i];
-            for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
+            for(typename DenseVector<ResPrec_>::ConstElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements());
                                                             //k((*_bottom_slopes_x).begin_elements()),
                                                             //l((*_bottom_slopes_y).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                if(i>0 && j.index()>0)
+                if(i>0 /*&& j.index()>0*/)
                 {
-                    (*_bottom_slopes_x)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
-                    (*_bottom_slopes_y)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;                
+                    (*_bottom_slopes_y)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
+                    //(*_bottom_slopes_x)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;                
  
                 }
                 else
                 {
-                    (*_bottom_slopes_x)[k4.index()] = -100000; 
-                    (*_bottom_slopes_y)[l.index()] = -100000;               
+                    //(*_bottom_slopes_x)[k4.index()] = -100000; 
+                    (*_bottom_slopes_y)[k4.index()] = -100000;               
  
                 }
+                if(j.index()>0)
+                {
+                    //(*_bottom_slopes_y)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
+                    (*_bottom_slopes_x)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;                
+ 
+                }
+                else
+                {
+                    (*_bottom_slopes_x)[l.index()] = -100000; 
+                    //(*_bottom_slopes_y)[l.index()] = -100000;               
+ 
+                }
+
+
                 ++k4;
                 ++l;
             }   
         }
     
-    cout << "Slopes after building:\n";
-    cout << stringify(*_bottom_slopes_x) << endl;
-    cout << stringify(*_bottom_slopes_y) << endl;
-    std::cout << "Finished preprocessing.\n";
+        cout << "Slopes after building:\n";
+        cout << stringify(*_bottom_slopes_x) << endl;
+        cout << stringify(*_bottom_slopes_y) << endl;
+        std::cout << "Finished preprocessing.\n";
 
     }   
 

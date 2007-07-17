@@ -42,14 +42,14 @@ class RelaxSolverQuickTest :
         virtual void run() const
         {
             DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (3, 3, DataType_(1));
-            DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (3, 3, DataType_(1));
+            DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (3, 3, DataType_(0));
             DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (3, 3, DataType_(1));
             DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (3, 3, DataType_(1));                                    
             DenseVector<DataType_>* u = new DenseVector<DataType_>(3*49, DataType_(0));
             DenseVector<DataType_>* v = new DenseVector<DataType_>(3*49, DataType_(0));
             DenseVector<DataType_>* w = new DenseVector<DataType_> (3*49, DataType_(0)); 
-            DenseVector<DataType_> bx (3*49, DataType_(0));
-            DenseVector<DataType_> by (3*49, DataType_(0));
+            DenseVector<DataType_> bx (49, DataType_(0));
+            DenseVector<DataType_> by (49, DataType_(0));
             DenseVector<DataType_> c (3,DataType_(1));
             DenseVector<DataType_> d (3,DataType_(1));
             ulint dwith = 3;
@@ -83,6 +83,13 @@ class RelaxSolverQuickTest :
             cout << "Height -field after solve():\n";
             cout << stringify(*height);
             cout << "Relax - vectors after solve():\n";
+            cout << "u^T:\n";
+            cout << stringify(*u) << endl;
+            cout << "v^T:\n";
+            cout << stringify(*v) << endl;
+            cout << "w^T:\n";
+            cout << stringify(*w) << endl;
+ 
             TEST_CHECK(true);
         }
 };
