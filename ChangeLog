@@ -7,6 +7,20 @@ see the NEWS file.
 
 2007-07-17 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/scalar_vector_product.hh libla/scalar_vector_sum.hh
+	libla/vector_difference.hh libla/vector_sum.hh
+	libla/vector_elementwise_product.hh libla/matrix_difference.hh
+	libla/matrix_elementwise_product.hh : appended even more marks where
+	spasifying may be useful.
+
+	* libla/matrix_row_sum_vector.hh: Removed a unnecessary symbol ;-).
+
+	* +libla/saxpy.hh: Implemented operation << y[i] = y[i] + scalar *
+	x[i]>>. To be renamed later. Want to hold vector_scaled_sum.hh because
+	it mind help unittest-group find further errors.
+
+2007-07-17 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/matrix_sum.hh: Fixed some small things, added more Sparse
 	support.
 	* libla/matrix_difference.hh, libla/matrix_vector_product.hh: Added

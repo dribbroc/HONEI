@@ -95,6 +95,7 @@ namespace pg512
                 }
             }
             return left;
+			///\todo: perhaps sparsify - in case l.index < r.index Write of 0 possible.
         }
 
         /**
@@ -116,6 +117,7 @@ namespace pg512
 				++r;
             }
             return left;
+			///\todo: perhaps sparsify - if *r == 0 -> write of zero.
         }
 
     };

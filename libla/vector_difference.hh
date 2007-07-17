@@ -96,6 +96,7 @@ namespace pg512
                 }
             }
             return left;
+			///\todo: perhaps sparsify - i.e. substraction of 7 and 7 possible.
         }
 
         /**

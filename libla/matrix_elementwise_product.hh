@@ -144,7 +144,7 @@ namespace pg512
                 	++l; ++r;
 				}
             }
-
+			///\todo: perhaps sparsify - in case l.index < r.index set to zero possible.
             return left;
         }
 

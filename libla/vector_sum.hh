@@ -94,7 +94,7 @@ namespace pg512
                     ++l; ++r;
                 }
             }
-
+			///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
             return left;
         }
 

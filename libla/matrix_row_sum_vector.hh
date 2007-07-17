@@ -67,7 +67,7 @@ namespace pg512
 
             for (typename Vector<DataType_>::ElementIterator a(result.begin_elements()), a_end(result.end_elements()); a != a_end; ++a)
             {
-                for (b ; b.row() == a.index() && b != b_end; ++b)
+                for ( ; b.row() == a.index() && b != b_end; ++b)
                 {
                     *a += *b;
                 }

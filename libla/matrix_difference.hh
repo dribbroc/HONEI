@@ -142,7 +142,7 @@ namespace pg512
                     ++l; ++r;
                 }
             }
-			///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
+			///\todo: perhaps sparsify - i.e. subtraction of 7 and 7 possible
             return left;
         }
 
@@ -290,7 +290,7 @@ namespace pg512
 				*r = *l - *r;
                 ++r;
             }
-			///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
+			///\todo: perhaps sparsify - i.e. substraction of 7 and 7 possible
             return right;
         }
 
