@@ -464,14 +464,15 @@ namespace pg512 {
         ///Building up the relaxation - vectors by concatenating the maps` rows.
         ///We need to compute u first in order to be able to compute the initial flows. After this, by using
         ///forward iterators, the v and w vectors can be set up.
+        typename DenseVector<ResPrec_>::ElementIterator k(_u->begin_elements());
         for (ulint i= 0; i!= hbound.rows(); ++i) 
         {
 
 
             DenseVector<ResPrec_> actual_row = hbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
-                                                            j_END(actual_row.end_elements()),
-                                                            k((*_u).begin_elements());
+                                                            j_END(actual_row.end_elements());
+                                                            //k((*_u).begin_elements());
                                                                 j!= j_END; ++j)
             {
                 (*_u)[k.index()] = hbound[i][j.index()];
@@ -481,43 +482,51 @@ namespace pg512 {
             }
     
         }
-        //cout << "u^T after building:\n";
-        //cout << stringify(*_u) << endl;
-
+        cout << "u^T after building:\n";
+        cout << stringify(*_u) << endl;
+        
+        typename DenseVector<ResPrec_>::ElementIterator k2(_v->begin_elements());
         for (ulint i = 0; i!= u1bound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = u1bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
-                                                            j_END(actual_row.end_elements()),
-                                                            k((*_v).begin_elements());
+                                                            j_END(actual_row.end_elements());
+                                                            //k2((*_v).begin_elements());
                                                                 j!= j_END; ++j)
             {
                 DenseVector<ResPrec_> flow =_flow_x<ResPrec_>(i,j.index());
 
-                (*_v)[k.index()] = flow[0];
-                (*_v)[(k.index())+1] = flow[1];
-                (*_v)[(k.index())+2] = flow[2];
-                ++k; ++k; ++k;
+                (*_v)[k2.index()] = flow[0];
+                (*_v)[(k2.index())+1] = flow[1];
+                (*_v)[(k2.index())+2] = flow[2];
+                ++k2; ++k2; ++k2;
             }
         }
-    
+
+        cout << "v^T after building:\n";
+        cout << stringify(*_v) << endl;
+
+        typename DenseVector<ResPrec_>::ElementIterator k3(_w->begin_elements());
         for (ulint i = 0; i!= u2bound.rows(); ++i) 
         {
             DenseVector<ResPrec_> actual_row = u2bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
-                                                            j_END(actual_row.end_elements()),
-                                                            k((*_w).begin_elements());
+                                                            j_END(actual_row.end_elements());
+                                                            //k3((*_w).begin_elements());
                                                                 j!= j_END; ++j)
             {
                 DenseVector<ResPrec_> flow = this->_flow_y<ResPrec_>(i,j.index());
 
-                (*_w)[k.index()] = flow[0];
-                (*_w)[(k.index())+1] = flow[1];
-                (*_w)[(k.index())+2] = flow[2];
-                ++k; ++k; ++k;
+                (*_w)[k3.index()] = flow[0];
+                (*_w)[(k3.index())+1] = flow[1];
+                (*_w)[(k3.index())+2] = flow[2];
+                ++k3; ++k3; ++k3;
             }
         }
-    
+        cout << "w^T after building:\n";
+        cout << stringify(*_w) << endl;
+
+   
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to 
         ///compute the bottom slopes.
         for (ulint i = 0; i!= bbound.rows(); ++i) 
