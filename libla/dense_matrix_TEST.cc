@@ -197,7 +197,7 @@ class DenseMatrixQuickTest :
 
             DenseMatrix<DataType_> dm2(3, 4, DataType_(2));
             DenseMatrix<DataType_> dm3(4, 5, DataType_(2));
-            TEST_CHECK_EQUAL(dm2, dm3);
+            TEST_CHECK_NOT_EQUAL(dm2, dm3);
 
         }
 };

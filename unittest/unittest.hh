@@ -193,6 +193,28 @@ namespace tests
     } while (false)
 
 /**
+ * Check that a != b.
+ */
+#define TEST_CHECK_NOT_EQUAL(a, b) \
+    do { \
+        try { \
+            TwoVarHolder test_h(a, b); \
+            check(__PRETTY_FUNCTION__, __FILE__, __LINE__, !test_h.result, \
+                    _id + "\n" +  "Expected '" #a "' that is'" + test_h.s_a + \
+                    "' to equal not '" + test_h.s_b + "'"); \
+        } catch (const TestFailedException &) { \
+            throw; \
+        } catch (const std::exception & test_e) { \
+            throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
+                    "Test threw unexpected exception "+ pg512::stringify(test_e.what()) + \
+                    " inside a TEST_CHECK_NOT_EQUAL block"); \
+        } catch (...) { \
+            throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
+                    "Test threw unexpected unknown exception inside a TEST_CHECK_NOT_EQUAL block"); \
+        } \
+    } while (false)
+    
+/**
  * Check that stringify(a) == stringify(b).
  */
 #define TEST_CHECK_STRINGIFY_EQUAL(a, b) \
