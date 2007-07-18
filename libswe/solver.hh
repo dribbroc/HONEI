@@ -397,7 +397,7 @@ namespace pg512 {
      * At first, the input scalarfields have to be mapped onto a larger
      * DenseMatrix in order to apply boundary conditions.
      *
-     * Secondly, the h,u1 und u2 - values have the
+     * Secondly, the h,u1 und u2 - values have to be written to the
      * locations in the relaxation vectors.
      *
      * The preprocessing stage`s third task is to compute the bottom slopes.
@@ -504,9 +504,9 @@ namespace pg512 {
         }
         */
        
-        DenseVector<ResPrec_> uFlow(*_u);
-        _flow_x(uFlow);
-        *_v = uFlow;
+        DenseVector<ResPrec_> *uFlow = _u->copy();
+        _flow_x(*uFlow);
+        *_v = *uFlow;
         cout << "v^T after building:\n";
         cout << stringify(*_v) << endl;
         /*OBSOLETE
@@ -529,13 +529,13 @@ namespace pg512 {
         }
         */
 
+        DenseVector<ResPrec_>* u2Flow = _u->copy();
+        _flow_y(*u2Flow);
+        *_w = *u2Flow;
         cout << "w^T after building:\n";
         cout << stringify(*_w) << endl;
-        DenseVector<ResPrec_> vFlow(*_u);
-        _flow_x(vFlow);
-        *_v = vFlow;
-        
-   
+       
+  
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to 
         ///compute the bottom slopes.
         typename DenseVector<ResPrec_>::ElementIterator l(_bottom_slopes_x->begin_elements());
@@ -1104,10 +1104,10 @@ namespace pg512 {
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1()
     {
-        //Type conversion
-        _u_temp = reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
-        _v_temp = reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
-        _w_temp = reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
+       
+        _u_temp = _u;//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
+        _v_temp = _v;//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
+        _w_temp = _w;//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
 
         WorkPrec_ prefac;
         if(_eps != _delta_t)
@@ -1118,17 +1118,23 @@ namespace pg512 {
         {
             //TODO:error handling
         }
-        DenseVector<WorkPrec_> v(*_v);//using copy -constructor
-        DenseVector<WorkPrec_> flow1(_u->size(),ulint(0),ulint( 1));
-        _flow_x<WorkPrec_>(flow1);
-        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(v, flow1, _eps,_delta_t);
+        DenseVector<WorkPrec_> *v = _v->copy();
+        DenseVector<WorkPrec_> *u1 = _u->copy();//using copy -constructor
+        DenseVector<WorkPrec_> *u2 = _u->copy();//using copy -constructor
+        //DenseVector<WorkPrec_> flow1(_u->size(),ulint(0));
+        _flow_x<WorkPrec_>(*u1);
+        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(*v, *u1, _eps,_delta_t);
         *_v_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum);
-        DenseVector<WorkPrec_> w =(*_w);
-        DenseVector<WorkPrec_> flow2(_u->size(), ulint(0), ulint(1));
-        _flow_y<WorkPrec_>(flow2);
-       
-        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(w, flow2, _eps,_delta_t);
+        DenseVector<WorkPrec_> *w = _w->copy();
+        //DenseVector<WorkPrec_> flow2(_u->size(), ulint(0), ulint(1));
+        _flow_y<WorkPrec_>(*u2);
+        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(*w, *u2, _eps,_delta_t);
         *_w_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum2);
+
+        cout << "Temp relax vectors after building:\n";
+        cout << stringify(*_u_temp) << endl;
+        cout << stringify(*_v_temp) << endl;
+        cout << stringify(*_w_temp) << endl;
         std::cout << "Finished Setup 1.\n";
     }
 

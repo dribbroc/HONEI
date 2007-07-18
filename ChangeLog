@@ -4,6 +4,12 @@ ChangeLog for PG512
 This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
+
+2007-07-18 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Resolved copy() -bugs in setup stage1, added
+	stringification of temporary relax vectors.
+	
 2007-07-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest/unittest.hh: Added TEST_CHECK_NOT_EQUAL macro.
