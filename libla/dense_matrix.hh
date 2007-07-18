@@ -25,6 +25,7 @@
 #include <libla/element_iterator.hh>
 #include <libla/matrix.hh>
 #include <libla/dense_vector.hh>
+#include <libla/matrix_error.hh>
 #include <libutil/shared_array.hh>
 
 #include <string.h>
@@ -117,90 +118,127 @@ namespace pg512 ///< \todo Namespace name?
                 _rows(rows),
                 _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
             {
-                for (unsigned long i(0) ; i < (rows * columns) ; ++i)
-                    _elements[i] = value;
+            for (unsigned long i(0) ; i < (rows * columns) ; ++i)
+                _elements[i] = value;
+        }
+
+        /**
+         * Constructor
+         *
+         * Create a submatrix from a given source matrix.
+         * \param source The source matrix.
+         * \param column_offset The source matrix column offset. 
+         * \param columns Number of columns of the new matrix.
+         * \param row_offset The source matrix row offset.
+         * \param rows Number of rows of the new matrix.
+         **/
+        DenseMatrix(const DenseMatrix<DataType_> & source, unsigned long column_offset, unsigned long columns, 
+                unsigned long row_offset, unsigned long rows) :
+                _elements(new DataType_[columns * rows]),
+                _columns(columns),
+                _column_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[columns]),
+                _rows(rows),
+                _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
+        {
+            if(column_offset + columns > source.columns())
+            {
+                throw MatrixColumnsDoNotMatch(column_offset + columns, source.columns());
+            }
+            
+            if(row_offset + rows > source.rows())
+            {
+                throw MatrixRowsDoNotMatch(row_offset + rows, source.rows());
             }
 
-            /// \}
-
-            /// Returns iterator pointing to the first element of the matrix.
-            virtual ConstElementIterator begin_elements() const
+            for (unsigned long i = 0 ; i < rows ; ++i)
             {
-                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+                for (unsigned long j = 0; j < columns ; ++j)
+                {
+                    _elements[j + columns * i] = source._elements[j + column_offset  + 
+                        ((i + row_offset) * source.columns())];
+                }
             }
+        }
+        /// \}
 
-            /// Returns iterator pointing behind the last element of the matrix.
-            virtual ConstElementIterator end_elements() const
-            {
-                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, _rows * _columns));
-            }
+        /// Returns iterator pointing to the first element of the matrix.
+        virtual ConstElementIterator begin_elements() const
+        {
+            return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+        }
 
-            /// Returns iterator pointing to the first element of the matrix.
-            virtual ElementIterator begin_elements()
-            {
-                return ElementIterator(new DenseElementIterator<DataType_>(*this, 0));
-            }
+        /// Returns iterator pointing behind the last element of the matrix.
+        virtual ConstElementIterator end_elements() const
+        {
+            return ConstElementIterator(new DenseElementIterator<DataType_>(*this, _rows * _columns));
+        }
 
-            /// Returns iterator pointing behind the last element of the matrix.
-            virtual ElementIterator end_elements()
-            {
-                return ElementIterator(new DenseElementIterator<DataType_>(*this, _rows * _columns));
-            }
+        /// Returns iterator pointing to the first element of the matrix.
+        virtual ElementIterator begin_elements()
+        {
+            return ElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+        }
 
-            /// Returns the number of our columns.
-            virtual unsigned long columns() const
-            {
-                return _columns;
-            }
+        /// Returns iterator pointing behind the last element of the matrix.
+        virtual ElementIterator end_elements()
+        {
+            return ElementIterator(new DenseElementIterator<DataType_>(*this, _rows * _columns));
+        }
 
-            /// Returns the number of our rows.
-            virtual unsigned long rows() const
-            {
-                return _rows;
-            }
+        /// Returns the number of our columns.
+        virtual unsigned long columns() const
+        {
+            return _columns;
+        }
 
-            /// Retrieves row vector by index, zero-based, unassignable.
-            virtual const DenseVector<DataType_> & operator[] (unsigned long row) const
-            {
-                if (! _row_vectors[row])
-                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
+        /// Returns the number of our rows.
+        virtual unsigned long rows() const
+        {
+            return _rows;
+        }
 
-                return *_row_vectors[row];
-            }
+        /// Retrieves row vector by index, zero-based, unassignable.
+        virtual const DenseVector<DataType_> & operator[] (unsigned long row) const
+        {
+            if (! _row_vectors[row])
+                _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
 
-            /// Retrieves row vector by index, zero-based, assignable.
-            virtual DenseVector<DataType_> & operator[] (unsigned long row)
-            {
-                if (! _row_vectors[row])
-                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
+            return *_row_vectors[row];
+        }
 
-                return *_row_vectors[row];
-            }
+        /// Retrieves row vector by index, zero-based, assignable.
+        virtual DenseVector<DataType_> & operator[] (unsigned long row)
+        {
+            if (! _row_vectors[row])
+                _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
 
-            /// Retrieves column vector by index, zero-based, unassignable.
-            virtual const DenseVector<DataType_> & column(unsigned long column) const
-            {
-                if (! _column_vectors[column])
-                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
+            return *_row_vectors[row];
+        }
 
-                return *_column_vectors[column];
-            }
+        /// Retrieves column vector by index, zero-based, unassignable.
+        virtual const DenseVector<DataType_> & column(unsigned long column) const
+        {
+            if (! _column_vectors[column])
+                _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
 
-            /// Retrieves column vector by index, zero-based, assignable.
-            virtual DenseVector<DataType_> & column(unsigned long column)
-            {
-                if (! _column_vectors[column])
-                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
+            return *_column_vectors[column];
+        }
 
-                return *_column_vectors[column];
-            }
+        /// Retrieves column vector by index, zero-based, assignable.
+        virtual DenseVector<DataType_> & column(unsigned long column)
+        {
+            if (! _column_vectors[column])
+                _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
 
-            /// Returns a copy of the matrix.
-            virtual DenseMatrix * copy() const
-            {
-                DenseMatrix * result(new DenseMatrix(_columns, _rows));
+            return *_column_vectors[column];
+        }
 
-                std::copy(_elements.get(), _elements.get() + _columns * _rows, result->_elements.get());
+        /// Returns a copy of the matrix.
+        virtual DenseMatrix * copy() const
+        {
+            DenseMatrix * result(new DenseMatrix(_columns, _rows));
+
+            std::copy(_elements.get(), _elements.get() + _columns * _rows, result->_elements.get());
 
                 return result;
             }

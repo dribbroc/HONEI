@@ -147,11 +147,7 @@ class SparseVectorDifferenceTest :
                 TEST_CHECK_EQUAL(v1, 0);
             }
 
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv00(new SparseVector<DataType_>(1,
-                    static_cast<DataType_>(1)));
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>(5,
-                    static_cast<DataType_>(1)));
-
+            SparseVector<DataType_> sv00(1, 1), sv01(5, 1);
             TEST_CHECK_THROWS(VectorDifference<DataType_>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
         }
 };
@@ -189,11 +185,7 @@ class SparseVectorDifferenceQuickTest :
             DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(difference1));
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, DataType_(5), std::numeric_limits<DataType_>::epsilon());
 
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv00(new SparseVector<DataType_>(1,
-                    static_cast<DataType_>(1)));
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv01(new SparseVector<DataType_>(5,
-                    static_cast<DataType_>(1)));
-
+            SparseVector<DataType_> sv00(1, 1), sv01(5, 1);
             TEST_CHECK_THROWS(VectorDifference<DataType_>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
         }
 };

@@ -127,7 +127,7 @@ class SparseVectorElementwiseProductTest :
                 TEST_CHECK_EQUAL(prod, *sv3);
             }
 
-            SparseVector<DataType_> sv01(3, static_cast<DataType_>(1)), sv02(4, static_cast<DataType_>(1));
+            SparseVector<DataType_> sv01(3, 1), sv02(4, 1);
 
             TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv02, sv01), VectorSizeDoesNotMatch);
         }

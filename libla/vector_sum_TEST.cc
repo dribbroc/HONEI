@@ -45,12 +45,12 @@ class DenseVectorSumTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(1));
+                DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2));
 
                 VectorSum<>::value(dv1, dv2);
 
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(dv1));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 2 * size, std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size, std::numeric_limits<DataType_>::epsilon());
 
                 DenseVector<DataType_> dv3(size + 1), dv4(size - 1);
                 TEST_CHECK_THROWS(VectorSum<>::value(dv3, dv4), VectorSizeDoesNotMatch);

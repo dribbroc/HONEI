@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/vector_difference_TEST.cc, libla/vector_elementwise_product_TEST:
+	Fixed datatype conversion warning.
+	* libla/dense_matrix.hh: Added brute force version of submatrix constructor.
+	* libla/dense_matrix_TEST.cc: Added a test case for the nxn equals n+1xn+1 bug.
+	
 2007-07-17 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved iteration bug

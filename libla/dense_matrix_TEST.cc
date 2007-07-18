@@ -183,18 +183,21 @@ class DenseMatrixQuickTest :
         virtual void run() const
         {
             unsigned long columns(3), rows(2);
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>
-                (columns, rows, static_cast<DataType_>(1)));
+            DenseMatrix<DataType_> dm(columns, rows, DataType_(1));
 
-            TEST_CHECK_EQUAL(*dm, *dm);
-            TEST_CHECK_EQUAL(dm->columns(), columns);
-            TEST_CHECK_EQUAL(dm->rows(), rows);
+            TEST_CHECK_EQUAL(dm, dm);
+            TEST_CHECK_EQUAL(dm.columns(), columns);
+            TEST_CHECK_EQUAL(dm.rows(), rows);
 
-            Vector<DataType_> & row1 = (*dm)[0];
-            Vector<DataType_> & col1 = dm->column(0);
+            Vector<DataType_> & row1 = (dm)[0];
+            Vector<DataType_> & col1 = dm.column(0);
 
             TEST_CHECK_EQUAL(row1.size(), columns);
             TEST_CHECK_EQUAL(col1.size(), rows);
+
+            DenseMatrix<DataType_> dm2(3, 4, DataType_(2));
+            DenseMatrix<DataType_> dm3(4, 5, DataType_(2));
+            TEST_CHECK_EQUAL(dm2, dm3);
 
         }
 };
