@@ -148,7 +148,7 @@ class SparseVectorDifferenceTest :
             }
 
             SparseVector<DataType_> sv00(1, 1), sv01(5, 1);
-            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(sv00, sv01), VectorSizeDoesNotMatch);
         }
 };
 
@@ -186,7 +186,7 @@ class SparseVectorDifferenceQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, DataType_(5), std::numeric_limits<DataType_>::epsilon());
 
             SparseVector<DataType_> sv00(1, 1), sv01(5, 1);
-            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(*sv00, *sv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(sv00, sv01), VectorSizeDoesNotMatch);
         }
 };
 
