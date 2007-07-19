@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-19 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Appended source -term application to the
+	prediction stage.
+	
+2007-07-19 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved memory - bug in the
 	prediction stage, cleaned up the test a bit.
 	

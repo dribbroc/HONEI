@@ -1183,11 +1183,12 @@ namespace pg512 {
         DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,*tempw);
         DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,*tempu2);
         
-        //DenseVector<WorkPrec_> source = _source(_u); //not yet provided!!!
+        DenseVector<WorkPrec_>* source = _u->copy(); 
+        _source(*source);
         predictedu = VectorSum<>::value<WorkPrec_,WorkPrec_>(temp1,temp2);
         predictedu = VectorSum<>::value(predictedu, temp3);
         predictedu = VectorSum<>::value(predictedu, temp4);
-        //predictedu = VectorSum<>::value(predictedu, source);
+        predictedu = VectorSum<>::value(predictedu, *source);
     
         DenseVector<WorkPrec_> *tempu3 = _u->copy();
         DenseVector<WorkPrec_> *tempv2 = _v->copy();
