@@ -89,7 +89,13 @@ class RelaxSolverQuickTest :
             cout << stringify(*v) << endl;
             cout << "w^T:\n";
             cout << stringify(*w) << endl;
- 
+            delete height;
+            delete bottom;
+            delete u1;
+            delete u2;
+            delete u;
+            delete v;
+            delete w;
             TEST_CHECK(true);
         }
 };

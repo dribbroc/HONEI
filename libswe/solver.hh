@@ -1156,43 +1156,56 @@ namespace pg512 {
         BandedMatrix<WorkPrec_> m2(_u->size());
         BandedMatrix<WorkPrec_> m3(_u->size());
         BandedMatrix<WorkPrec_> m4(_u->size());
-
+        
         _assemble_matrix1<WorkPrec_>(m1, m3);
         _assemble_matrix2<WorkPrec_>(m2, m4);
 
-        BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
-        BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
-        BandedMatrix<WorkPrec_> m7 = _quick_assemble_matrix3<WorkPrec_>(m4);
-        BandedMatrix<WorkPrec_> m8 = _quick_assemble_matrix4<WorkPrec_>(m2);
-
-        DenseVector<WorkPrec_> tempv(*_v);
-        DenseVector<WorkPrec_> tempu(*_u);
-        DenseVector<WorkPrec_> tempw(*_w);
-        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,tempv);
-        DenseVector<WorkPrec_> tempu2(*_u);
-        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,tempu);
-        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,tempw);
-        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,tempu2);
-    
+        BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(_u->size());
+        m5 = &_quick_assemble_matrix1<WorkPrec_>(m3);
+        BandedMatrix<WorkPrec_>* m6 = new BandedMatrix<WorkPrec_>(_u->size());
+        m6 = &_quick_assemble_matrix1<WorkPrec_>(m1);
+        BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(_u->size());
+        m7 = &_quick_assemble_matrix1<WorkPrec_>(m4);
+        BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
+        m8 = &_quick_assemble_matrix1<WorkPrec_>(m2);
+ 
+        //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
+        //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
+        //BandedMatrix<WorkPrec_> m7 = _quick_assemble_matrix3<WorkPrec_>(m4);
+        //BandedMatrix<WorkPrec_> m8 = _quick_assemble_matrix4<WorkPrec_>(m2);
+        
+        DenseVector<WorkPrec_>* tempv = _v->copy();
+        DenseVector<WorkPrec_>* tempu = _u->copy();
+        DenseVector<WorkPrec_>* tempw = _w->copy();
+        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,*tempv);
+        DenseVector<WorkPrec_> *tempu2 = _u->copy();
+        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,*tempu);
+        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,*tempw);
+        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,*tempu2);
+        
         //DenseVector<WorkPrec_> source = _source(_u); //not yet provided!!!
         predictedu = VectorSum<>::value<WorkPrec_,WorkPrec_>(temp1,temp2);
         predictedu = VectorSum<>::value(predictedu, temp3);
         predictedu = VectorSum<>::value(predictedu, temp4);
         //predictedu = VectorSum<>::value(predictedu, source);
-
-        DenseVector<WorkPrec_> tempu3(*_u);
-        DenseVector<WorkPrec_> tempv2(*_v);
-        DenseVector<WorkPrec_> tempw2(*_w);
-        temp1 = MatrixVectorProduct<>::value(m5,tempv2);
-        DenseVector<WorkPrec_> tempu4(*_u);
-        temp2 = MatrixVectorProduct<>::value(m6,tempu3);
-        temp3 = MatrixVectorProduct<>::value(m7,tempw2);
-        temp4 = MatrixVectorProduct<>::value(m8,tempu4);
+    
+        DenseVector<WorkPrec_> *tempu3 = _u->copy();
+        DenseVector<WorkPrec_> *tempv2 = _v->copy();
+        DenseVector<WorkPrec_> *tempw2 = _w->copy();
+        temp1 = MatrixVectorProduct<>::value(*m5,*tempv2);
+        DenseVector<WorkPrec_> *tempu4 = _u->copy();
+        temp2 = MatrixVectorProduct<>::value(*m6,*tempu3);
+        temp3 = MatrixVectorProduct<>::value(*m7,*tempw2);
+        temp4 = MatrixVectorProduct<>::value(*m8,*tempu4);
 
         predictedv = VectorSum<>::value(temp1,temp2);
         predictedw = VectorSum<>::value(temp3,temp4);
+        delete m5;
+        delete m6;
+        delete m7;
+        delete m8;
         std::cout << "Finished Prediction.\n";
-   
+        
     }
 
     /** Second setup of values.
@@ -1209,23 +1222,23 @@ namespace pg512 {
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
-        
-        DenseVector<WorkPrec_> f(predictedu);
-        _flow_x(f);
+  
+        DenseVector<WorkPrec_>* f = predictedu.copy();
+        _flow_x(*f);
 
-        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedv,f, _eps, _delta_t);
+        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedv,*f, _eps, _delta_t);
         
-        DenseVector<WorkPrec_> flow(*_u_temp);
-        _flow_x(flow);
-        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_v_temp,flow, -2*_delta_t, 2*_delta_t);
+        DenseVector<WorkPrec_>* flow = _u_temp->copy();
+        _flow_x(*flow);
+        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_v_temp,*flow, -2*_delta_t, 2*_delta_t);
         predictedv = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         predictedv = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
         
-        DenseVector<WorkPrec_> flow2(predictedu);
-        _flow_y(flow2);
+        DenseVector<WorkPrec_>* flow2 = predictedu.copy();
+        _flow_y(*flow2);
 
-        innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedw, flow2, _eps, _delta_t);
-        innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, flow2, -2*_delta_t, 2*_delta_t);
+        innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedw, *flow2, _eps, _delta_t);
+        innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, *flow2, -2*_delta_t, 2*_delta_t);
         predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         predictedw = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
         std::cout << "Finished Setup 2.\n";
