@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-07-19 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Debugged matrix assembly 1, which now works on the
+	right versions of the relax vectors. This has to be done for the other
+	assembly functions, therefore interfaces will have to be overloaded.
+	
+2007-07-19 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Appended source -term application to the
 	prediction stage.
 	

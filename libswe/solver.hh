@@ -941,7 +941,7 @@ namespace pg512 {
 
         ///Needed Iterators.
         typename DenseVector<WorkPrec_>::ElementIterator d(m1diag.begin_elements());
-        typename DenseVector<WorkPrec_>::ConstElementIterator i(_u->begin_elements());
+        typename DenseVector<WorkPrec_>::ConstElementIterator i(_u_temp->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b1(m1bandPlus1.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m1bandPlus2.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m1bandMinus1.begin_elements());
@@ -957,25 +957,25 @@ namespace pg512 {
         {
             for(unsigned long k=0; k<3; ++k)
             {
-                tempPlus[k]= (*_v)[i.index()] + (*_c)[k]*(*_u)[i.index()];
+                tempPlus[k]= (*_v_temp)[i.index()] + (*_c)[k]*(*_u_temp)[i.index()];
                 ++i;++d;++b1;++b2;++bminus1;
             }
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp= (*_v)[i.index()] + (*_c)[k]*(*_u)[i.index()];
+                temp= (*_v_temp)[i.index()] + (*_c)[k]*(*_u_temp)[i.index()];
                 tempTopPlus[k] = temp - tempPlus[k];
                 tempPlus[k] = temp;
-                tempMinus[k] =  (*_v)[i.index()] - (*_c)[k]*(*_u)[i.index()];
+                tempMinus[k] =  (*_v_temp)[i.index()] - (*_c)[k]*(*_u_temp)[i.index()];
                 ++i;++d;++b1;++b2;++bminus1;
             }
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp= (*_v)[i.index()] - (*_c)[k]*(*_u)[i.index()];
+                temp= (*_v_temp)[i.index()] - (*_c)[k]*(*_u_temp)[i.index()];
                 tempTopMinus[k] = temp - tempMinus[k];
                 tempMinus[k] = temp;
-                temp= (*_v)[i.index()] + (*_c)[k]*(*_u)[i.index()];
+                temp= (*_v_temp)[i.index()] + (*_c)[k]*(*_u_temp)[i.index()];
                 tempTop = temp - tempPlus[k];
                 if(tempTop != 0)
                 {
@@ -992,7 +992,7 @@ namespace pg512 {
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp = (*_v)[i.index()] - (*_c)[k]*((*_u)[i.index()]); //temp = v(i) - c(k)*u(i);
+                temp = (*_v_temp)[i.index()] - (*_c)[k]*((*_u_temp)[i.index()]); //temp = v(i) - c(k)*u(i);
                 tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
                 if(tempTop != 0)
                 {
@@ -1004,7 +1004,7 @@ namespace pg512 {
                 }
                 tempMinus[k]=temp;//switch(temp, temp_minus(k));
                 tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
-                temp  = (*_v)[i.index()] + (*_c)[k]* (*_u)[i.index()];//temp = v(i) + c(k)*u(i);
+                temp  = (*_v_temp)[i.index()] + (*_c)[k]* (*_u_temp)[i.index()];//temp = v(i) + c(k)*u(i);
                 tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
                 if(tempTop != 0)
                 {
@@ -1019,7 +1019,6 @@ namespace pg512 {
                 ++i;//++i;
             }
 
-//ERROR!!!!!!!!!!!!!!!!
             for(unsigned long x = 0; x < _u->size(); ++x)
             {
                 for(unsigned long k =0; k<3; ++k)
@@ -1034,7 +1033,7 @@ namespace pg512 {
                     
                     phiPlusOld[k]= phiPlusNew[k];
                     phiMinusOld = phiMinusNew[k];
-                    temp = (*_v)[i.index()] - (*_c)[k]*(*_u)[i.index()]; //temp = v(i) - c(k)*u(i);
+                    temp = (*_v_temp)[i.index()] - (*_c)[k]*(*_u_temp)[i.index()]; //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
                     
                     if(tempTop != 0)
@@ -1048,7 +1047,7 @@ namespace pg512 {
                     
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
-                    temp  = (*_v)[i.index()] + (*_c)[k]* (*_u)[i.index()];//temp = v(i) + c(k)*u(i);
+                    temp  = (*_v_temp)[i.index()] + (*_c)[k]* (*_u_temp)[i.index()];//temp = v(i) + c(k)*u(i);
                     tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
                     if(tempTop != 0)
                     {
@@ -1119,8 +1118,8 @@ namespace pg512 {
             //TODO:error handling
         }
         DenseVector<WorkPrec_> *v = _v->copy();
-        DenseVector<WorkPrec_> *u1 = _u->copy();//using copy -constructor
-        DenseVector<WorkPrec_> *u2 = _u->copy();//using copy -constructor
+        DenseVector<WorkPrec_> *u1 = _u->copy();
+        DenseVector<WorkPrec_> *u2 = _u->copy();
         //DenseVector<WorkPrec_> flow1(_u->size(),ulint(0));
         _flow_x<WorkPrec_>(*u1);
         DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(*v, *u1, _eps,_delta_t);
@@ -1260,7 +1259,7 @@ namespace pg512 {
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_correction(DenseVector<ResPrec_>& predictedu,
     DenseVector<ResPrec_>& predictedv,
     DenseVector<ResPrec_>& predictedw)
-    {
+    {   
         ///ignore first 2(w+4) ghost cells
         typename DenseVector<ResPrec_>::ConstElementIterator iter(_u->begin_elements());
         for(unsigned long i = 0; i<(2*(_d_width+4)) ; ++i)
@@ -1285,6 +1284,7 @@ namespace pg512 {
                 ++iter;
                 count = 0;
             }
+            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
             ++iter;
@@ -1599,9 +1599,10 @@ namespace pg512 {
 	result.band(3) = m6bandplus3;
 	result.band(6) = m6bandplus6;
 	result.band(-3) = m6bandminus3;
-
-	return result;
 	std::cout << "Finished Quick Assembly m2.\n";
+ 
+	return result;
+
     }
 
     template<typename ResPrec_,
@@ -1675,9 +1676,10 @@ namespace pg512 {
 	result.band(3*(_d_width + 4)) = m8bandplus3;
 	result.band(6*(_d_width + 4)) = m8bandplus6;
 	result.band((-3)*(_d_width + 4)) = m8bandminus3;
-
-	    return result;
         std::cout << "Finished Quick Assembly m4.\n";	
+ 
+	return result;
+	
     }
 
 }
