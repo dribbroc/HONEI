@@ -149,7 +149,7 @@ namespace pg512 {
               **/
            
             template<typename WorkPrec_>
-            void _assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3);
+            void _assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v);
 
             /** Basic matrix assembly. Uses Limiters and theta().
               * Computes M_2, M_4.
@@ -159,7 +159,7 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            void _assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4);
+            void _assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* w);
 
 
             /** Simplified matrix assembly.
@@ -911,7 +911,7 @@ namespace pg512 {
     template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
-        ::_assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3)
+        ::_assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
         DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0) ,ulint( 1));      //zero
@@ -941,7 +941,7 @@ namespace pg512 {
 
         ///Needed Iterators.
         typename DenseVector<WorkPrec_>::ElementIterator d(m1diag.begin_elements());
-        typename DenseVector<WorkPrec_>::ConstElementIterator i(_u_temp->begin_elements());
+        typename DenseVector<WorkPrec_>::ConstElementIterator i(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b1(m1bandPlus1.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m1bandPlus2.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m1bandMinus1.begin_elements());
@@ -957,25 +957,25 @@ namespace pg512 {
         {
             for(unsigned long k=0; k<3; ++k)
             {
-                tempPlus[k]= (*_v_temp)[i.index()] + (*_c)[k]*(*_u_temp)[i.index()];
+                tempPlus[k]= (*v)[i.index()] + (*_c)[k]*(*u)[i.index()];
                 ++i;++d;++b1;++b2;++bminus1;
             }
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp= (*_v_temp)[i.index()] + (*_c)[k]*(*_u_temp)[i.index()];
+                temp= (*v)[i.index()] + (*_c)[k]*(*u)[i.index()];
                 tempTopPlus[k] = temp - tempPlus[k];
                 tempPlus[k] = temp;
-                tempMinus[k] =  (*_v_temp)[i.index()] - (*_c)[k]*(*_u_temp)[i.index()];
+                tempMinus[k] =  (*v)[i.index()] - (*_c)[k]*(*u)[i.index()];
                 ++i;++d;++b1;++b2;++bminus1;
             }
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp= (*_v_temp)[i.index()] - (*_c)[k]*(*_u_temp)[i.index()];
+                temp= (*v)[i.index()] - (*_c)[k]*(*u)[i.index()];
                 tempTopMinus[k] = temp - tempMinus[k];
                 tempMinus[k] = temp;
-                temp= (*_v_temp)[i.index()] + (*_c)[k]*(*_u_temp)[i.index()];
+                temp= (*v)[i.index()] + (*_c)[k]*(*u)[i.index()];
                 tempTop = temp - tempPlus[k];
                 if(tempTop != 0)
                 {
@@ -992,7 +992,7 @@ namespace pg512 {
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp = (*_v_temp)[i.index()] - (*_c)[k]*((*_u_temp)[i.index()]); //temp = v(i) - c(k)*u(i);
+                temp = (*v)[i.index()] - (*_c)[k]*((*u)[i.index()]); //temp = v(i) - c(k)*u(i);
                 tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
                 if(tempTop != 0)
                 {
@@ -1004,7 +1004,7 @@ namespace pg512 {
                 }
                 tempMinus[k]=temp;//switch(temp, temp_minus(k));
                 tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
-                temp  = (*_v_temp)[i.index()] + (*_c)[k]* (*_u_temp)[i.index()];//temp = v(i) + c(k)*u(i);
+                temp  = (*v)[i.index()] + (*_c)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                 tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
                 if(tempTop != 0)
                 {
@@ -1033,7 +1033,7 @@ namespace pg512 {
                     
                     phiPlusOld[k]= phiPlusNew[k];
                     phiMinusOld = phiMinusNew[k];
-                    temp = (*_v_temp)[i.index()] - (*_c)[k]*(*_u_temp)[i.index()]; //temp = v(i) - c(k)*u(i);
+                    temp = (*v)[i.index()] - (*_c)[k]*(*u)[i.index()]; //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
                     
                     if(tempTop != 0)
@@ -1047,7 +1047,7 @@ namespace pg512 {
                     
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
-                    temp  = (*_v_temp)[i.index()] + (*_c)[k]* (*_u_temp)[i.index()];//temp = v(i) + c(k)*u(i);
+                    temp  = (*v)[i.index()] + (*_c)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                     tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
                     if(tempTop != 0)
                     {
@@ -1156,8 +1156,8 @@ namespace pg512 {
         BandedMatrix<WorkPrec_> m3(_u->size());
         BandedMatrix<WorkPrec_> m4(_u->size());
         
-        _assemble_matrix1<WorkPrec_>(m1, m3);
-        _assemble_matrix2<WorkPrec_>(m2, m4);
+        _assemble_matrix1<WorkPrec_>(m1, m3, &predictedu, &predictedv);
+        _assemble_matrix2<WorkPrec_>(m2, m4, &predictedu, &predictedw);
 
         BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(_u->size());
         m5 = &_quick_assemble_matrix1<WorkPrec_>(m3);
@@ -1335,7 +1335,7 @@ namespace pg512 {
     template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
-        ::_assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4)
+        ::_assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* w)
     {   
         std::cout << "Entering Matrix Assembly 2.\n";
         ///The bands containing data.
@@ -1369,7 +1369,7 @@ namespace pg512 {
 
 	    ///Needed Iterators.
             typename DenseVector<WorkPrec_>::ElementIterator d(m2diag.begin_elements());
-	    typename DenseVector<WorkPrec_>::ConstElementIterator i(_u->begin_elements());
+	    typename DenseVector<WorkPrec_>::ConstElementIterator i(u->begin_elements());
             typename DenseVector<WorkPrec_>::ElementIterator b1(m2bandPlus1.begin_elements());
 	    typename DenseVector<WorkPrec_>::ElementIterator b2(m2bandPlus2.begin_elements());
 	    typename DenseVector<WorkPrec_>::ElementIterator bminus1(m2bandMinus1.begin_elements());
@@ -1384,7 +1384,7 @@ namespace pg512 {
 	    
 	    for(unsigned long k=0; k<3; ++k)
             {
-                tempPlus[k]= (*_w)[i.index()] + (*_d)[k]*(*_u)[i.index()];
+                tempPlus[k]= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
 		++i;++d;++b1;++b2;++bminus1;
 	    }	
 
@@ -1396,10 +1396,10 @@ namespace pg512 {
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp= (*_w)[i.index()] + (*_d)[k]*(*_u)[i.index()];
+                temp= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
                 tempTopPlus[k] = temp - tempPlus[k];
                 tempPlus[k] = temp;
-                tempMinus[k] =  (*_w)[i.index()] - (*_d)[k]*(*_u)[i.index()];
+                tempMinus[k] =  (*w)[i.index()] - (*_d)[k]*(*u)[i.index()];
                 ++i;++d;++b1;++b2;++bminus1;
             }
 
@@ -1411,10 +1411,10 @@ namespace pg512 {
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp= (*_w)[i.index()] - (*_d)[k]*(*_u)[i.index()];
+                temp= (*w)[i.index()] - (*_d)[k]*(*u)[i.index()];
                 tempTopMinus[k] = temp - tempMinus[k];
                 tempMinus[k] = temp;
-                temp= (*_w)[i.index()] + (*_d)[k]*(*_u)[i.index()];
+                temp= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
                 tempTop = temp - tempPlus[k];
                 if(tempTop != 0)
                 {
@@ -1437,7 +1437,7 @@ namespace pg512 {
 
             for(unsigned long k=0; k<3; ++k)
             {
-                temp = (*_w)[i.index()] - (*_d)[k]*((*_u)[i.index()]); //temp = v(i) - c(k)*u(i);
+                temp = (*w)[i.index()] - (*_d)[k]*((*u)[i.index()]); //temp = v(i) - c(k)*u(i);
                 tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
                 if(tempTop != 0)
                 {
@@ -1449,7 +1449,7 @@ namespace pg512 {
                 }
                 tempMinus[k]=temp;//switch(temp, temp_minus(k));
                 tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
-                temp  = (*_w)[i.index()] + (*_d)[k]* (*_u)[i.index()];//temp = v(i) + c(k)*u(i);
+                temp  = (*w)[i.index()] + (*_d)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                 tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
                 if(tempTop != 0)
                 {
@@ -1486,7 +1486,7 @@ namespace pg512 {
                         
                     phiPlusOld[k]= phiPlusNew[k];
                     phiMinusOld = phiMinusNew[k];
-                    temp = (*_w)[i.index()] - (*_d)[k]*(*_u)[i.index()]; //temp = v(i) - c(k)*u(i);
+                    temp = (*w)[i.index()] - (*_d)[k]*(*u)[i.index()]; //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
                     if(tempTop != 0)
                     {
@@ -1498,7 +1498,7 @@ namespace pg512 {
                     }
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
-                    temp  = (*_w)[i.index()] + (*_d)[k]* (*_u)[i.index()];//temp = v(i) + c(k)*u(i);
+                    temp  = (*w)[i.index()] + (*_d)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                     tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
                     if(tempTop != 0)
                     {
@@ -1554,7 +1554,7 @@ namespace pg512 {
 	m6bandplus3 = m1.band(ulint(3));
 	m6bandplus6 = m1.band(ulint(6));
 	m6bandminus3 = m1.band(ulint(-3));
-	
+	//Possible ERROR: COPY
 	DenseVector<WorkPrec_> c_squared((*_c));
 	VectorElementwiseProduct<WorkPrec_>::value(c_squared, (*_c));
 
@@ -1629,7 +1629,7 @@ namespace pg512 {
 	m8bandplus3 = m2.band(ulint(3*(_d_width + 4)));
 	m8bandplus6 = m2.band(ulint(6*(_d_width + 4)));
 	m8bandminus3 = m2.band(ulint((-3)*(_d_width + 4)));
-	
+	//Possible ERROR: copy
 	DenseVector<WorkPrec_> d_squared((*_d));
 	VectorElementwiseProduct<WorkPrec_>::value(d_squared, (*_d));
 

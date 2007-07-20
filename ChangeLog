@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-20 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Finished refactoring of main matrix assembly,
+	resolved vector - access bugs, updated prediction stage, adjusted
+	interfaces.
+	
 2007-07-19 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Debugged matrix assembly 1, which now works on the
