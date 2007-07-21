@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-20 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Resolved two iteration bugs in the correction
+	stage.
+	
+2007-07-20 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Finished refactoring of main matrix assembly,
 	resolved vector - access bugs, updated prediction stage, adjusted
 	interfaces.

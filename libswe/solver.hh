@@ -1260,21 +1260,21 @@ namespace pg512 {
     DenseVector<ResPrec_>& predictedv,
     DenseVector<ResPrec_>& predictedw)
     {   
-        ///ignore first 2(w+4) ghost cells
+        ///ignore first 2(w+4)+2 ghost cells (tripels)
         typename DenseVector<ResPrec_>::ConstElementIterator iter(_u->begin_elements());
-        for(unsigned long i = 0; i<(2*(_d_width+4)) ; ++i)
+        for(unsigned long i = 0; i<(6*(_d_width+4)+6) ; ++i)
         {
             ++iter;
         }
+        
+        unsigned long count =0;//if made w steps, ignore four.
         ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
         for(typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements()) ; iter.index()<((_d_height+2)*(_d_width+4));++iter)
         {
-            unsigned long count =0;//if made w steps, ignore two.
-            ResPrec_ precomp =  0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
-            (*_u)[iter.index()] = precomp;
+            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
             if(count % _d_width !=0)
             {
-                *h = precomp;
+                *h = (*_u)[iter.index()];
                 ++h;
                 ++count;
             }
@@ -1282,9 +1282,10 @@ namespace pg512 {
             {
                 ++iter;
                 ++iter;
+                ++iter;
+                ++iter;
                 count = 0;
             }
-            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
             ++iter;
