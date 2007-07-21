@@ -440,7 +440,7 @@ namespace pg512 {
                     if(i<2 || i>=(hbound.rows()-2) ||(j.index()<2 || j.index() >=(hbound.columns()-2)))
                     {
                         hbound[i][j.index()] = 0;
-                        bbound[i][j.index()] = 100000; //TODO: PosInf
+                        bbound[i][j.index()] = 100; 
                         u1bound[i][j.index()] = 0;
                         u2bound[i][j.index()] = 0;
                     }
@@ -558,7 +558,7 @@ namespace pg512 {
                 else
                 {
                     //(*_bottom_slopes_x)[k4.index()] = -100000; 
-                    (*_bottom_slopes_y)[k4.index()] = -100000;               
+                    (*_bottom_slopes_y)[k4.index()] = -100;               
  
                 }
                 if(j.index()>0)
@@ -569,7 +569,7 @@ namespace pg512 {
                 }
                 else
                 {
-                    (*_bottom_slopes_x)[l.index()] = -100000; 
+                    (*_bottom_slopes_x)[l.index()] = -100; 
                     //(*_bottom_slopes_y)[l.index()] = -100000;               
  
                 }
@@ -1151,22 +1151,28 @@ namespace pg512 {
     template<typename WorkPrec_>
         void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
-        BandedMatrix<WorkPrec_> m1(_u->size());
+        /*BandedMatrix<WorkPrec_> m1(_u->size());
         BandedMatrix<WorkPrec_> m2(_u->size());
         BandedMatrix<WorkPrec_> m3(_u->size());
         BandedMatrix<WorkPrec_> m4(_u->size());
+        */
         
-        _assemble_matrix1<WorkPrec_>(m1, m3, &predictedu, &predictedv);
-        _assemble_matrix2<WorkPrec_>(m2, m4, &predictedu, &predictedw);
+        BandedMatrix<WorkPrec_>* m1= new BandedMatrix<WorkPrec_>(_u->size());
+        BandedMatrix<WorkPrec_>* m2= new BandedMatrix<WorkPrec_>(_u->size());
+        BandedMatrix<WorkPrec_>* m3= new BandedMatrix<WorkPrec_>(_u->size());
+        BandedMatrix<WorkPrec_>* m4= new BandedMatrix<WorkPrec_>(_u->size());
+        
+        _assemble_matrix1<WorkPrec_>(*m1, *m3, &predictedu, &predictedv);
+        _assemble_matrix2<WorkPrec_>(*m2, *m4, &predictedu, &predictedw);
 
         BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(_u->size());
-        m5 = &_quick_assemble_matrix1<WorkPrec_>(m3);
+        m5 = &_quick_assemble_matrix1<WorkPrec_>(*m3);
         BandedMatrix<WorkPrec_>* m6 = new BandedMatrix<WorkPrec_>(_u->size());
-        m6 = &_quick_assemble_matrix1<WorkPrec_>(m1);
+        m6 = &_quick_assemble_matrix1<WorkPrec_>(*m1);
         BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(_u->size());
-        m7 = &_quick_assemble_matrix1<WorkPrec_>(m4);
+        m7 = &_quick_assemble_matrix1<WorkPrec_>(*m4);
         BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
-        m8 = &_quick_assemble_matrix1<WorkPrec_>(m2);
+        m8 = &_quick_assemble_matrix1<WorkPrec_>(*m2);
  
         //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
         //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
@@ -1176,11 +1182,11 @@ namespace pg512 {
         DenseVector<WorkPrec_>* tempv = _v->copy();
         DenseVector<WorkPrec_>* tempu = _u->copy();
         DenseVector<WorkPrec_>* tempw = _w->copy();
-        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,*tempv);
+        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m1,*tempv);
         DenseVector<WorkPrec_> *tempu2 = _u->copy();
-        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,*tempu);
-        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,*tempw);
-        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,*tempu2);
+        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m2,*tempu);
+        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m3,*tempw);
+        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m2,*tempu2);
         
         DenseVector<WorkPrec_>* source = _u->copy(); 
         _source(*source);
@@ -1200,10 +1206,14 @@ namespace pg512 {
 
         predictedv = VectorSum<>::value(temp1,temp2);
         predictedw = VectorSum<>::value(temp3,temp4);
+        /*delete m1;
+        delete m2;
+        delete m3;
+        delete m4;
         delete m5;
         delete m6;
         delete m7;
-        delete m8;
+        delete m8;*/
         std::cout << "Finished Prediction.\n";
         
     }

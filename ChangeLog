@@ -5,7 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-07-20 Markus Geveler <apryde@gmx.de>
+2007-07-21 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh libswe/solver_TEST.cc: Resolved invalidity of
+	pointers in correction stage, prepared test for larger input fields.
+	
+2007-07-21 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Resolved two iteration bugs in the correction
 	stage.

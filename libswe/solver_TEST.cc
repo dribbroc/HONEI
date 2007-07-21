@@ -41,26 +41,30 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (3, 3, DataType_(1));
-            DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (3, 3, DataType_(0));
-            DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (3, 3, DataType_(1));
-            DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (3, 3, DataType_(1));                                    
-            DenseVector<DataType_>* u = new DenseVector<DataType_>(3*49, DataType_(0));
-            DenseVector<DataType_>* v = new DenseVector<DataType_>(3*49, DataType_(0));
-            DenseVector<DataType_>* w = new DenseVector<DataType_> (3*49, DataType_(0)); 
-            DenseVector<DataType_> bx (49, DataType_(0));
-            DenseVector<DataType_> by (49, DataType_(0));
+            ulint dwidth = 16;
+            ulint dheight = 16;
+ 
+            DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
+            DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(0));
+            DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
+            DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
+            unsigned long entries = 3*((dwidth*dheight)+4*(dwidth+dheight+4));
+            DenseVector<DataType_>* u = new DenseVector<DataType_>(entries, DataType_(0));
+            DenseVector<DataType_>* v = new DenseVector<DataType_>(entries, DataType_(0));
+            DenseVector<DataType_>* w = new DenseVector<DataType_>(entries, DataType_(0)); 
+            DenseVector<DataType_> bx (entries/3, DataType_(0));
+            DenseVector<DataType_> by (entries/3, DataType_(0));
             DenseVector<DataType_> c (3,DataType_(1));
             DenseVector<DataType_> d (3,DataType_(1));
-            ulint dwith = 3;
-            ulint dheight = 3;
+            
             DataType_ deltax = 1;                       
             DataType_ deltay = 1;
-            DataType_ deltat = 1;      
+            DataType_ deltat = 0.5;
+
             double eps = 0.1;                  
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (height, bottom, u1, u2, u, v, w, 
-                dwith, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
+                dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
             relax_solver.do_preprocessing();
             cout << "Height -field after preprocessing:\n";
             string outHeight = stringify(*height);
