@@ -43,7 +43,7 @@ class RelaxSolverQuickTest :
         {
             ulint dwidth = 32;
             ulint dheight = 32;
-            ulint timesteps = 4;
+            ulint timesteps = 10;
  
             DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
             //SCENARIO setup
@@ -51,6 +51,7 @@ class RelaxSolverQuickTest :
             {
                 (*height)[0][i] = 5;
             }
+            //END SCENARIO setup
             DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(0));
             DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
             DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
@@ -75,20 +76,6 @@ class RelaxSolverQuickTest :
             cout << "Height -field after preprocessing:\n";
             string outHeight = stringify(*height);
             cout <<  outHeight;
-            /*cout << "Relax - vectors after preprocessing:\n";
-            cout << "u^T:\n";
-            cout << stringify(*u) << endl;
-            cout << "v^T:\n";
-            cout << stringify(*v) << endl;
-            cout << "w^T:\n";
-            cout << stringify(*w) << endl;
-            
-            cout << "Bottom - slopes after preprocessing:\n";
-            cout << "b_x^T:\n";
-            cout << stringify(bx)<< endl;
-            cout << "b_y^T:\n";
-            cout << stringify(by)<< endl;
-            */
             for (ulint i =1; i <= timesteps; ++i) 
             {
                 relax_solver.solve();
@@ -102,13 +89,13 @@ class RelaxSolverQuickTest :
             cout << stringify(*v) << endl;
             cout << "w^T:\n";
             cout << stringify(*w) << endl;*/
-            delete height;
+            /*delete height;
             delete bottom;
             delete u1;
             delete u2;
             delete u;
             delete v;
-            delete w;
+            delete w;*/
             TEST_CHECK(true);
         }
 };

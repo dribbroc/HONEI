@@ -264,7 +264,7 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            void _do_setup_stage1();
+            void _do_setup_stage1( DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw);
 
             /** Encapsulates the setup for the values utemp, vtemp, wtemp.
               * Uses flow - computations.
@@ -1101,12 +1101,12 @@ namespace pg512 {
              typename InitPrec1_,
              typename InitPrec2_> 
     template<typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1()
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
     {
        
-        _u_temp = _u;//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
-        _v_temp = _v;//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
-        _w_temp = _w;//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
+        _u_temp = new DenseVector<WorkPrec_>(*(_u->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
+        _v_temp = new DenseVector<WorkPrec_>(*(_v->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
+        _w_temp = new DenseVector<WorkPrec_>(*(_w->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
 
         WorkPrec_ prefac;
         if(_eps != _delta_t)
@@ -1129,7 +1129,10 @@ namespace pg512 {
         _flow_y<WorkPrec_>(*u2);
         DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(*w, *u2, _eps,_delta_t);
         *_w_temp = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum2);
-
+        
+        su = *_u_temp;
+        sv = *_v_temp;
+        sw = *_w_temp;
         cout << "Temp relax vectors after building:\n";
         cout << stringify(*_u_temp) << endl;
         cout << stringify(*_v_temp) << endl;
@@ -1166,18 +1169,17 @@ namespace pg512 {
         _assemble_matrix2<WorkPrec_>(*m2, *m4, &predictedu, &predictedw);
 
         BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(_u->size());
-        BandedMatrix<WorkPrec_> tmp = _quick_assemble_matrix1<WorkPrec_>(*m3);
-        m5 = &tmp;
+        *m5 = _quick_assemble_matrix1<WorkPrec_>(*m3);
+
         BandedMatrix<WorkPrec_>* m6 = new BandedMatrix<WorkPrec_>(_u->size());
-        BandedMatrix<WorkPrec_> tmp2 = _quick_assemble_matrix1<WorkPrec_>(*m1);
-        m6 = &tmp2;
-        BandedMatrix<WorkPrec_> tmp3 = _quick_assemble_matrix1<WorkPrec_>(*m4);
-        BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(_u->size());
-        m7 = &tmp3;
-        BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
-        BandedMatrix<WorkPrec_> tmp4 = _quick_assemble_matrix1<WorkPrec_>(*m2); 
-        m8 = &tmp4;
+        *m6 = _quick_assemble_matrix1<WorkPrec_>(*m1);
  
+        BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(_u->size());
+        *m7= _quick_assemble_matrix1<WorkPrec_>(*m4);
+
+        BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
+        *m8 = _quick_assemble_matrix1<WorkPrec_>(*m2); 
+
         //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
         //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
         //BandedMatrix<WorkPrec_> m7 = _quick_assemble_matrix3<WorkPrec_>(m4);
@@ -1214,10 +1216,10 @@ namespace pg512 {
         delete m2;
         delete m3;
         delete m4;
-        //delete m5;
-        //delete m6;
-        //delete m7;
-        //delete m8;
+        delete m5;
+        delete m6;
+        delete m7;
+        delete m8;
         std::cout << "Finished Prediction.\n";
         
     }
@@ -1254,7 +1256,7 @@ namespace pg512 {
         innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedw, *flow2, _eps, _delta_t);
         innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, *flow2, -2*_delta_t, 2*_delta_t);
         predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
-        predictedw = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
+        predictedw = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedw);
         std::cout << "Finished Setup 2.\n";
     } 
     
@@ -1275,17 +1277,19 @@ namespace pg512 {
     DenseVector<ResPrec_>& predictedw)
     {   
         ///ignore first 2(w+4)+2 ghost cells (tripels)
-        typename DenseVector<ResPrec_>::ConstElementIterator iter(_u->begin_elements());
+        typename DenseVector<ResPrec_>::ElementIterator iter(_u->begin_elements());
         for(unsigned long i = 0; i<(6*(_d_width+4)+6) ; ++i)
         {
-            ++iter;
+          ++iter;
         }
         
-        unsigned long count =0;//if made w steps, ignore four.
+        unsigned long count =1;//if made w steps, ignore four.
         ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
-        for(typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements()) ; iter.index()<((_d_height+2)*(_d_width+4));++iter)
+        for(typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements()) ; iter.index()<3*((_d_height+2)*(_d_width+4));++iter)
         {
-            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+            PredictionPrec2_ a = (*_u)[iter.index()];
+            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
+            cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;
             if(count % _d_width !=0)
             {
                 *h = (*_u)[iter.index()];
@@ -1298,7 +1302,15 @@ namespace pg512 {
                 ++iter;
                 ++iter;
                 ++iter;
-                count = 0;
+                ++iter;
+                ++iter;
+                ++iter;
+                ++iter;
+                ++iter;
+                ++iter;
+                ++iter;
+                ++iter;
+                count = 1;
             }
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
@@ -1310,6 +1322,7 @@ namespace pg512 {
             (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+            
         }
         std::cout << "Finished Correction.\n";
     }
@@ -1328,15 +1341,30 @@ namespace pg512 {
         DenseVector<PredictionPrec1_> predictedu(_u->size(),ulint(0), ulint(1));
         DenseVector<PredictionPrec1_> predictedv(_u->size(),ulint(0),ulint(1));
         DenseVector<PredictionPrec1_> predictedw(_u->size(),ulint(0), ulint(1));
-        _do_setup_stage1<InitPrec1_>();
+        _do_setup_stage1<InitPrec1_>(predictedu, predictedv, predictedw );
+        //DenseVector<PredictionPrec1_>* tu, * tv, * tw;
+        /*tu = _u->copy();
+        tv = _v->copy();
+        tw = _w->copy();*/
+        /*tu = new DenseVector<PredictionPrec1_>(*(_u_temp->copy()));
+        tv = new DenseVector<PredictionPrec1_>(*(_v_temp->copy()));
+        tw = new DenseVector<PredictionPrec1_>(*(_w_temp->copy()));
+        */
         _do_prediction<PredictionPrec1_>(predictedu, predictedv, predictedw);
         //DenseVector<InitPrec2_> predictedu2(_u->size(), 0, 1);
         //DenseVector<InitPrec2_> predictedv2(_u->size(), 0, 1);
         //DenseVector<InitPrec2_> predictedw2(_u->size(), 0, 1);
         _do_setup_stage2<InitPrec2_>(predictedu, predictedv, predictedw);
         _do_prediction<PredictionPrec2_>(predictedu, predictedv, predictedw);
+        cout << "Predicted u:\n";
+        cout << stringify(predictedu)<< endl;
+        cout << "u before correction:\n";
+        cout << stringify(*_u)<<endl;
+        
         _do_correction(predictedu, predictedv, predictedw);
         ++_solve_time;
+        cout << "Corrected u:\n";
+        cout << stringify(*_u)<<endl;
     }
 
     /**
