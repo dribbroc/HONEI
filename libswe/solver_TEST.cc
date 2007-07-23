@@ -41,10 +41,16 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            ulint dwidth = 16;
-            ulint dheight = 16;
+            ulint dwidth = 32;
+            ulint dheight = 32;
+            ulint timesteps = 4;
  
             DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
+            //SCENARIO setup
+            for(ulint i = 0; i< height->rows(); ++i)
+            {
+                (*height)[0][i] = 5;
+            }
             DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(0));
             DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
             DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
@@ -83,16 +89,19 @@ class RelaxSolverQuickTest :
             cout << "b_y^T:\n";
             cout << stringify(by)<< endl;
             */
-            relax_solver.solve();
+            for (ulint i =1; i <= timesteps; ++i) 
+            {
+                relax_solver.solve();
+            }
             cout << "Height -field after solve():\n";
             cout << stringify(*height);
-            cout << "Relax - vectors after solve():\n";
+            /*cout << "Relax - vectors after solve():\n";
             cout << "u^T:\n";
             cout << stringify(*u) << endl;
             cout << "v^T:\n";
             cout << stringify(*v) << endl;
             cout << "w^T:\n";
-            cout << stringify(*w) << endl;
+            cout << stringify(*w) << endl;*/
             delete height;
             delete bottom;
             delete u1;

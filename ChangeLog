@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-23 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh libswe/solver_TEST.cc: Resolved memory
+	fragmentation bug, prepared test for 32x32 simple wave scenario.
+	
 2007-07-21 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved invalidity of

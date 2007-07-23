@@ -1166,13 +1166,17 @@ namespace pg512 {
         _assemble_matrix2<WorkPrec_>(*m2, *m4, &predictedu, &predictedw);
 
         BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(_u->size());
-        m5 = &_quick_assemble_matrix1<WorkPrec_>(*m3);
+        BandedMatrix<WorkPrec_> tmp = _quick_assemble_matrix1<WorkPrec_>(*m3);
+        m5 = &tmp;
         BandedMatrix<WorkPrec_>* m6 = new BandedMatrix<WorkPrec_>(_u->size());
-        m6 = &_quick_assemble_matrix1<WorkPrec_>(*m1);
+        BandedMatrix<WorkPrec_> tmp2 = _quick_assemble_matrix1<WorkPrec_>(*m1);
+        m6 = &tmp2;
+        BandedMatrix<WorkPrec_> tmp3 = _quick_assemble_matrix1<WorkPrec_>(*m4);
         BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(_u->size());
-        m7 = &_quick_assemble_matrix1<WorkPrec_>(*m4);
+        m7 = &tmp3;
         BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
-        m8 = &_quick_assemble_matrix1<WorkPrec_>(*m2);
+        BandedMatrix<WorkPrec_> tmp4 = _quick_assemble_matrix1<WorkPrec_>(*m2); 
+        m8 = &tmp4;
  
         //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
         //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
@@ -1206,14 +1210,14 @@ namespace pg512 {
 
         predictedv = VectorSum<>::value(temp1,temp2);
         predictedw = VectorSum<>::value(temp3,temp4);
-        /*delete m1;
+        delete m1;
         delete m2;
         delete m3;
         delete m4;
-        delete m5;
-        delete m6;
-        delete m7;
-        delete m8;*/
+        //delete m5;
+        //delete m6;
+        //delete m7;
+        //delete m8;
         std::cout << "Finished Prediction.\n";
         
     }
