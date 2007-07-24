@@ -1,4 +1,4 @@
-/* vim: set sw=4 sts=4 et nofoldenable : */
+/* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
@@ -1282,19 +1282,36 @@ namespace pg512 {
         {
           ++iter;
         }
+        cout << stringify(iter.index()) << endl;
         
-        unsigned long count =1;//if made w steps, ignore four.
+        unsigned long count =0;//if made w steps, ignore four.
         ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
-        for(typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements()) ; iter.index()<3*((_d_height+2)*(_d_width+4));++iter)
+        for(typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements()) ; iter.index()<3*((_d_height+2)*(_d_width+4)) ; ++iter)
         {
-            PredictionPrec2_ a = (*_u)[iter.index()];
+            /*PredictionPrec2_ a = (*_u)[iter.index()];
             (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
-            cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;
-            if(count % _d_width !=0)
+            cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;*/
+            if(count < _d_width)
             {
+                PredictionPrec2_ a = (*_u)[iter.index()];
+                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
+                cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;
+                
                 *h = (*_u)[iter.index()];
                 ++h;
                 ++count;
+              
+                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                ++iter;
+                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                ++iter;
+                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+ 
             }
             else
             {
@@ -1309,10 +1326,11 @@ namespace pg512 {
                 ++iter;
                 ++iter;
                 ++iter;
-                ++iter;
-                count = 1;
+                //++iter;
+                count = 0;
             }
-            (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+            cout << stringify(count)<<endl;
+            /*(*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
             (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
             ++iter;
             (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
@@ -1321,7 +1339,7 @@ namespace pg512 {
             ++iter;
             (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
             (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);*/
             
         }
         std::cout << "Finished Correction.\n";

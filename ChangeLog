@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-25 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh libswe/solver_TEST.cc: Applied refactoring of the
+	correction stage, finishing tests - there are still one or more bugs in
+	the matrix - assembly stages (possibly stage 1).
+	
 2007-07-23 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved memory
