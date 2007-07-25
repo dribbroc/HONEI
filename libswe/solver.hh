@@ -38,7 +38,7 @@
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/banded_matrix.hh>
-#include <math.h>
+#include <cmath>
 #include <libswe/limiter.hh>
 #include <libla/vector_scaled_sum.hh>
 #include <libla/scalar_vector_product.hh>
@@ -863,32 +863,47 @@ namespace pg512 {
     template <typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
     {
+        WorkPrec_ oneThird = WorkPrec_(0.33333333333333333333333333333333333333333333333333333333333333333333333333333);
 	if (!(vector.size() % 3)) 
 	{
 	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
     	    typename DenseVector<WorkPrec_>::ElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
 	    typename DenseVector<WorkPrec_>::ElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
-	    WorkPrec_ h, q1, q2, friction;
+	    WorkPrec_ h, u1, u2, friction;
 	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {
 	        // Fetch values for source term computation
 	        h = *l;
 		++l;
-	        q1 = *l;
-		++l;
-	        q2 = *l;
-	
+                if(h!=0)
+                {
+	            u1 = *l/h ;
+		    ++l;
+	            u2 = *l/h ;
+	        }
+                else
+                {
+                    u1 = 0;
+                    u2 = 0;
+                    ++l;
+                }
 	        // Compute the influence of the waterdepth
 	        *resultvectoriterator = WorkPrec_(0);
 		++resultvectoriterator;
-	        
-		friction = this->_manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
-
-		*resultvectoriterator = ((friction * q1) - (h * *bottomslopesxiterator)) * 9.81;
+	        if(h!=0)
+                {
+		    friction = this->_manning_n_squared * pow(h, oneThird) * sqrt(u1 * u1 + u2 * u2) * (-1);
+                    cout << "h:"<< stringify(h)<<"pow:" << stringify(  pow(h, oneThird)  ) << endl;
+                }
+                else
+                {
+                    friction = 0;
+                }
+                *resultvectoriterator = ((friction * u1) - (h * *bottomslopesxiterator)) * 9.81;
 		++bottomslopesxiterator;
 		++resultvectoriterator;
 		
-		*resultvectoriterator = ((friction * q2) - (h * *bottomslopesyiterator)) * 9.81;
+		*resultvectoriterator = ((friction * u2) - (h * *bottomslopesyiterator)) * 9.81;
 		++bottomslopesyiterator;
 		++resultvectoriterator;
 	    }
@@ -922,6 +937,15 @@ namespace pg512 {
         DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0) ,ulint( 1)); //one
         DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0) ,ulint( 1)); //two
         DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0) ,ulint( 1));//three
+        m1.band(ulint(0)) = m1diag;
+        m1.band(ulint(3)) = m1bandPlus1;
+        m1.band(ulint(6)) = m1bandPlus2;
+        m1.band(ulint(-3)) = m1bandMinus1;
+        m3.band(ulint(0)) = m3diag;
+        m3.band(ulint(3)) = m3bandPlus1;
+        m3.band(ulint(6)) = m3bandPlus2;
+        m3.band(ulint(-3)) = m3bandMinus1;
+ 
         
         ///Necessary values to be temporarily saved.
         DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0),ulint(1));
@@ -958,6 +982,9 @@ namespace pg512 {
             for(unsigned long k=0; k<3; ++k)
             {
                 tempPlus[k]= (*v)[i.index()] + (*_c)[k]*(*u)[i.index()];
+                /*cout << "u[i]:" << stringify((*u)[i.index()]) << endl;
+                cout << "v[i]:" << stringify((*v)[i.index()]) << endl;
+                cout << "temPlus:"<< stringify(tempPlus[k])<<endl;*/
                 ++i;++d;++b1;++b2;++bminus1;
             }
 
@@ -1079,15 +1106,19 @@ namespace pg512 {
 
             }
 
-            m1.band(ulint(0)) = m1diag;
+ /*           m1.band(ulint(0)) = m1diag;
             m1.band(ulint(3)) = m1bandPlus1;
             m1.band(ulint(6)) = m1bandPlus2;
             m1.band(ulint(-3)) = m1bandMinus1;
             m3.band(ulint(0)) = m3diag;
             m3.band(ulint(3)) = m3bandPlus1;
             m3.band(ulint(6)) = m3bandPlus2;
-            m3.band(ulint(-3)) = m3bandMinus1;
-
+            m3.band(ulint(-3)) = m3bandMinus1;*/
+            
+            cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
+            cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
+            cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
+            cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
             std::cout << "Finished Matrix Assembly 1.\n";
         }
     /**
