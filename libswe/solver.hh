@@ -863,7 +863,7 @@ namespace pg512 {
     template <typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
     {
-        WorkPrec_ oneThird = WorkPrec_(0.33333333333333333333333333333333333333333333333333333333333333333333333333333);
+        WorkPrec_ oneThird = WorkPrec_(-0.33333333333333333333333333333333333333333333333333333333333333333333333333333);
 	if (!(vector.size() % 3)) 
 	{
 	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
@@ -929,14 +929,14 @@ namespace pg512 {
         ::_assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0) ,ulint( 1));      //zero
-        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0) , ulint(1)); //one
-        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0) ,ulint( 1)); //two
-        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0) ,ulint(1));//three
-        DenseVector<WorkPrec_> m3diag(_u->size(),ulint( 0) ,ulint( 1));      //zero
-        DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0) ,ulint( 1)); //one
-        DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0) ,ulint( 1)); //two
-        DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0) ,ulint( 1));//three
+        DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
+        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0)); //one
+        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0)); //two
+        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0));//three
+        DenseVector<WorkPrec_> m3diag(_u->size(),ulint( 0));      //zero
+        DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0)); //one
+        DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0)); //two
+        DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0));//three
         m1.band(ulint(0)) = m1diag;
         m1.band(ulint(3)) = m1bandPlus1;
         m1.band(ulint(6)) = m1bandPlus2;
@@ -948,15 +948,15 @@ namespace pg512 {
  
         
         ///Necessary values to be temporarily saved.
-        DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0));
 
-        DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0));
 
-        DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> tempTopMinus(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> tempTopMinus(ulint(3),ulint(0));
         
         WorkPrec_ phiMinusOld;
         WorkPrec_ temp;
@@ -976,9 +976,9 @@ namespace pg512 {
         for( ; b1.index() < 6*(_d_width+4); ++b1);                               
         for( ; b2.index() < 6*(_d_width+4); ++b2);
         for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);                               
-
-        while(i.index() < 3*(_d_width+4) * (_d_height))
-        {
+        
+        //while(i.index() < 3*(_d_width+4) * (_d_height))
+        //{
             for(unsigned long k=0; k<3; ++k)
             {
                 tempPlus[k]= (*v)[i.index()] + (*_c)[k]*(*u)[i.index()];
@@ -1043,7 +1043,7 @@ namespace pg512 {
                 }
                 tempPlus[k]= temp;//switch(temp, temp_plus(k));
                 tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
-                ++i;//++i;
+                ++i;
             }
 
             for(unsigned long x = 0; x < _u->size(); ++x)
@@ -1092,18 +1092,17 @@ namespace pg512 {
                     m1bandPlus2[b2.index()] = prefac* phiMinusNew[k];
                     m3bandPlus2[b2.index()] = (*_c)[k] * prefac *(-phiMinusNew[k]);
                     ++i;//++d;++b1;++b2;++bminus1;
-
-                    }
+                }
                 
  
-                }
+                //}
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
-
+                
             }
 
  /*           m1.band(ulint(0)) = m1diag;
@@ -1429,27 +1428,27 @@ namespace pg512 {
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
         ::_assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* w)
     {   
-        std::cout << "Entering Matrix Assembly 2.\n";
+        
         ///The bands containing data.
-        DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0) ,ulint( 1));      //zero
-        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0) , ulint(1)); //one
-        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0) ,ulint( 1)); //two
-        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0) ,ulint(1));//three
-        DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0) ,ulint( 1));      //zero
-        DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0) ,ulint( 1)); //one
-        DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0) ,ulint( 1)); //two
-        DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0) ,ulint( 1));//three
-        std::cout << "Setup Bands complete.\n";
+        DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
+        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
+        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
+        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
+        DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
+        DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
+        DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
+        DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
+        
         ///Necessary values to be temporarily saved.
-        DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0));
 
-        DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0));
 
-        DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0),ulint(1));
-        DenseVector<WorkPrec_> tempTopMinus(ulint(3),ulint(0),ulint(1));
+        DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> tempTopMinus(ulint(3), ulint(0));
         
         WorkPrec_ phiMinusOld;
         WorkPrec_ temp;
@@ -1465,8 +1464,8 @@ namespace pg512 {
             typename DenseVector<WorkPrec_>::ElementIterator b1(m2bandPlus1.begin_elements());
 	    typename DenseVector<WorkPrec_>::ElementIterator b2(m2bandPlus2.begin_elements());
 	    typename DenseVector<WorkPrec_>::ElementIterator bminus1(m2bandMinus1.begin_elements());
-        
-	    ///Iterate to the next column
+            
+            ///Iterate to the next column
             for(unsigned long f=0; f < 3*(s+2); ++f)
 	    {
 		++i;++d;++b1;++b2;++bminus1;
