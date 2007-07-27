@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-27 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh libswe/solver_TEST.cc: Implemented a huge and
+	subefficient but easy to debug version of matrix assembly stage 1,
+	which revealed a critical data movement error, which has been resolved
+	now.
+	
 2007-07-26 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Healed little sign bug in source(), cleaned up
