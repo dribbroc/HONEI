@@ -1401,7 +1401,10 @@ namespace pg512 {
              typename InitPrec2_> 
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: solve()
     {
-        
+        _u_temp = _u->copy();
+        _v_temp = _v->copy();
+        _w_temp = _w->copy();
+
         _do_setup_stage1<InitPrec1_>(*_u_temp, *_v_temp, *_w_temp );
         //DenseVector<PredictionPrec1_>* tu, * tv, * tw;
         /*tu = _u->copy();
@@ -1812,13 +1815,13 @@ namespace pg512 {
         DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0)); //two
         DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0));//three
         m1.band(ulint(0)) = m1diag;
-        m1.band(ulint(_d_width+2)) = m1bandPlus1;
-        m1.band(ulint(2*(_d_width+2))) = m1bandPlus2;
-        m1.band(ulint(-2*(_d_width+2))) = m1bandMinus1;
+        m1.band(ulint(3)) = m1bandPlus1;
+        m1.band(ulint(6)) = m1bandPlus2;
+        m1.band(ulint(-3)) = m1bandMinus1;
         m3.band(ulint(0)) = m3diag;
-        m3.band(ulint(_d_width+2)) = m3bandPlus1;
-        m3.band(ulint(2*(_d_width+2))) = m3bandPlus2;
-        m3.band(ulint(-2*(_d_width+2))) = m3bandMinus1;
+        m3.band(ulint(3)) = m3bandPlus1;
+        m3.band(ulint(6)) = m3bandPlus2;
+        m3.band(ulint(-3)) = m3bandMinus1;
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
