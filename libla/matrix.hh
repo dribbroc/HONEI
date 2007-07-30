@@ -54,9 +54,6 @@ namespace pg512 ///< \todo Namespace name?
             template <typename ElementType_> class ConstElementIteratorWrapper;
             typedef ConstElementIteratorWrapper<DataType_> ConstElementIterator;
 
-            /// Type of the const iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, const Vector<DataType_> > ConstVectorIterator;
-
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const = 0;
 
@@ -86,9 +83,6 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our elements.
             template <typename ElementType_> class ElementIteratorWrapper;
             typedef ElementIteratorWrapper<DataType_> ElementIterator;
-
-            /// Type of the iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements() = 0;

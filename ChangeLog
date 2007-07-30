@@ -7,8 +7,12 @@ see the NEWS file.
 
 2007-07-30 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
-	* libla/dense_vector.hh: Tidied up a bit. No changes to
-	implementation.
+	* libla/dense_vector.hh, libla/sparse_vector.hh: Tidied up a bit. No
+	changes to implementation.
+	* libla/banded_matrix.hh, libla/files.m4, libla/matrix.hh,
+	libla/vector_iterator.hh, libla/vector_iterator_TEST.cc: Reworked
+	vector iteration classes and adjusted BandedMatrix's BandIterator
+	accordingly.
 
 2007-07-29 Markus Geveler <apryde@gmx.de>
 
@@ -25,8 +29,8 @@ see the NEWS file.
 	
 2007-07-26 Markus Geveler <apryde@gmx.de>
 
-	* libswe/solver.hh libswe/solver_TEST.cc: Healed little sign bug in source(), cleaned up
-	matrix assembly a bit.
+	* libswe/solver.hh libswe/solver_TEST.cc: Healed little sign bug in
+	source(), cleaned up matrix assembly a bit.
 	
 2007-07-25 Markus Geveler <apryde@gmx.de>
 

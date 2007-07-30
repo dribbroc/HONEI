@@ -62,7 +62,7 @@ namespace pg512 ///< \todo Namespace name?
             static const DataType_ _zero_element;
 
             /**
-             * Insert an empty element into the vector and reallocates additional space if necessary.
+             * Insert an empty element into the vector and reallocate additional space if necessary.
              *
              * \param position The position at which the new element shall be inserted.
              * \param index The index of the new element.
@@ -82,7 +82,9 @@ namespace pg512 ///< \todo Namespace name?
 
                 if (realloc)
                 {
+                    // Write out the terminating elements.
                     std::fill_n(indices, capacity, _imp->_size);
+
                     std::copy(_imp->_elements.get(), _imp->_elements.get() + position + 1, elements);
                     std::copy(_imp->_indices.get(), _imp->_indices.get() + position + 1, indices);
                 }
@@ -376,6 +378,11 @@ namespace pg512 ///< \todo Namespace name?
             {
             }
 
+            /// Destructor
+            virtual ~SparseElementIterator()
+            {
+            }
+
             /// \}
 
             /// \name Forward iterator interface
@@ -384,7 +391,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual SparseElementIterator<DataType_> & operator++ ()
             {
-                CONTEXT("When incrementing");
+                CONTEXT("When incrementing iterator by one:");
 
                 ++_index;
                 while ((_pos < _vector._imp->_used_elements) && (_vector._imp->_indices[_pos] < _index))
@@ -488,6 +495,11 @@ namespace pg512 ///< \todo Namespace name?
                 _vector(other._vector),
                 _pos(other._pos),
                 _index(other._index)
+            {
+            }
+
+            /// Destructor.
+            virtual ~NonZeroElementIterator()
             {
             }
 

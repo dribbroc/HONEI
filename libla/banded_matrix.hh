@@ -62,7 +62,7 @@ namespace pg512 ///< \todo Namespace name?
             static const DataType_ _zero_element;
 
             /// Our zero vector.
-            static const DenseVector<DataType_> _zero_vector;
+            const DenseVector<DataType_> _zero_vector;
 
             /// Our implementation of ElementIteratorBase.
             template <typename ElementType_> class BandedElementIterator;
@@ -82,11 +82,11 @@ namespace pg512 ///< \todo Namespace name?
             /// Type of the iterator over our elements.
             typedef typename MutableMatrix<DataType_>::ElementIterator ElementIterator;
 
-            /// Type of the const iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, const DenseVector<DataType_> > ConstVectorIterator;
-
             /// Type of the iterator over our vectors.
             typedef VectorIteratorWrapper<DataType_, DenseVector<DataType_> > VectorIterator;
+
+            /// Type of the const iterator over our vectors.
+            typedef ConstVectorIteratorWrapper<DataType_, DenseVector<DataType_> > ConstVectorIterator;
 
             /// \name Constructors
             /// \{
@@ -98,7 +98,8 @@ namespace pg512 ///< \todo Namespace name?
              **/
             BandedMatrix(unsigned long size) :
                 _bands(new std::tr1::shared_ptr<DenseVector<DataType_> >[2 * size + 1]),
-                _size(size)
+                _size(size),
+                _zero_vector(size, DataType_(0))
             {
             }
 
@@ -110,7 +111,8 @@ namespace pg512 ///< \todo Namespace name?
              **/
             BandedMatrix(unsigned long size, DenseVector<DataType_> * diagonal) :
                 _bands(new std::tr1::shared_ptr<DenseVector<DataType_> >[2 * size + 1]),
-                _size(size)
+                _size(size),
+                _zero_vector(size, DataType_(0))
             {
                 if (diagonal->size() != size)
                     throw VectorSizeDoesNotMatch(diagonal->size(), size);
@@ -120,27 +122,51 @@ namespace pg512 ///< \todo Namespace name?
             /// \}
 
             /// Returns iterator pointing to the first element of the matrix.
+            virtual ElementIterator begin_elements()
+            {
+                return ElementIterator(new BandedElementIterator<DataType_>(*this, 0));
+            }
+
+            /// Returns iterator pointing behind the last element of the matrix.
+            virtual ElementIterator end_elements()
+            {
+                return ElementIterator(new BandedElementIterator<DataType_>(*this, _size * _size));
+            }
+
+            /// Returns const iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const
             {
                 return ConstElementIterator(new BandedElementIterator<DataType_>(*this, 0));
             }
 
-            /// Returns iterator pointing behind the last element of the matrix.
+            /// Returns const iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const
             {
                 return ConstElementIterator(new BandedElementIterator<DataType_>(*this, _size * _size));
             }
 
             /// Returns iterator pointing to the first band of the matrix.
-            VectorIterator begin_bands() const
+            VectorIterator begin_bands()
             {
                 return VectorIterator(new BandIterator<DataType_>(*this,0));
             }
 
             /// Returns iterator pointing behind the last band of the matrix.
-            VectorIterator end_bands() const
+            VectorIterator end_bands()
             {
                 return VectorIterator(new BandIterator<DataType_>(*this,_size));
+            }
+
+            /// Returns iterator pointing to the first band of the matrix.
+            ConstVectorIterator begin_bands() const
+            {
+                return ConstVectorIterator(new BandIterator<DataType_>(*this,0));
+            }
+
+            /// Returns iterator pointing behind the last band of the matrix.
+            ConstVectorIterator end_bands() const
+            {
+                return ConstVectorIterator(new BandIterator<DataType_>(*this,_size));
             }
 
             /// Returns the number of our columns.
@@ -251,6 +277,7 @@ namespace pg512 ///< \todo Namespace name?
             {
                 if (! _matrix._bands[_band_index() + _matrix._size])
                 {
+                    Log::instance()->message(ll_full, "Band " + stringify(_band_index() + _matrix._size) + " created.");
                     _matrix._bands[_band_index() + _matrix._size].reset(new DenseVector<DataType_>(_matrix._size));
                 }
 
@@ -315,7 +342,7 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     template <> template <typename DataType_> class BandedMatrix<DataType_>::BandIterator<DataType_> :
-            public VectorIteratorImplBase<DataType_, DenseVector<DataType_> >
+            public VectorIteratorBase<DataType_, DenseVector<DataType_> >
     {
             private:
             /// Our parent matrix.
@@ -354,7 +381,7 @@ namespace pg512 ///< \todo Namespace name?
             /// \{
 
             /// Preincrement operator.
-            virtual VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & operator++ ()
+            virtual VectorIteratorBase<DataType_, DenseVector<DataType_> > & operator++ ()
             {
                 ++_index;
 
@@ -362,19 +389,19 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Equality operator.
-            virtual bool operator== (const VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & other) const
+            virtual bool operator== (const VectorIteratorBase<DataType_, DenseVector<DataType_> > & other) const
             {
                 return ((&_matrix == other.parent()) && (_index == other.index()));
             }
 
             /// Inequality operator.
-            virtual bool operator!= (const VectorIteratorImplBase<DataType_, DenseVector<DataType_> > & other) const
+            virtual bool operator!= (const VectorIteratorBase<DataType_, DenseVector<DataType_> > & other) const
             {
                 return ((&_matrix != other.parent()) || (_index != other.index()));
             }
 
             /// Dereference operator that returns an assignable reference.
-            virtual DenseVector<DataType_> & operator* () const
+            virtual DenseVector<DataType_> & operator* ()
             {
                 if (!_matrix._bands[_index])
                 {
@@ -383,18 +410,20 @@ namespace pg512 ///< \todo Namespace name?
 
                 return (*_matrix._bands[_index]);
             }
-/*
+
             /// Dereference operator that returns an unassignable reference.
             virtual const DenseVector<DataType_> & operator* () const
             {
                 if (! _matrix._bands[_index])
+                {
                     return _matrix._zero_vector;
+                }
                 else
                 {
                     return (*_matrix._bands[_index]);
                 }
             }
-*/
+
             /// \}
 
             /// \name IteratorTraits interface

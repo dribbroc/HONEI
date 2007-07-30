@@ -20,51 +20,59 @@
 #ifndef LIBLA_GUARD_VECTOR_ITERATOR_HH
 #define LIBLA_GUARD_VECTOR_ITERATOR_HH 1
 
-#include <libla/vector.hh>
+#include <libla/matrix.hh>
 
 #include <iterator>
 #include <tr1/memory>
 
 namespace pg512 ///< \todo Namespace name?
 {
-    template <typename DataType_, typename VectorType_ = Vector<DataType_> > class VectorIteratorBase :
-        public std::iterator<std::forward_iterator_tag, VectorType_>
+    class VectorIteratorTraits
+    {
+        public:
+            /// Returns our index.
+            virtual const unsigned long index() const = 0;
+    };
+
+    template <typename DataType_, typename VectorType_> class VectorIteratorBase :
+        public std::iterator<std::forward_iterator_tag, VectorType_>,
+        public VectorIteratorTraits
     {
         public:
             /// Preincrement operator.
             virtual VectorIteratorBase<DataType_, VectorType_> & operator++ () = 0;
 
-            /// Returns our index.
-            virtual const unsigned long index() const = 0;
-    };
-
-    template <typename DataType_, typename VectorType_ = Vector<DataType_> > class VectorIteratorImplBase :
-        public VectorIteratorBase<DataType_, VectorType_>
-    {
-        public:
             /// Equality operator.
-            virtual bool operator== (const VectorIteratorImplBase<DataType_, VectorType_> & other) const = 0;
+            virtual bool operator== (const VectorIteratorBase<DataType_, VectorType_> &) const = 0;
 
             /// Inequality operator.
-            virtual bool operator!= (const VectorIteratorImplBase<DataType_, VectorType_> & other) const = 0;
+            virtual bool operator!= (const VectorIteratorBase<DataType_, VectorType_> &) const = 0;
 
-            /// Dereference operator.
-            virtual VectorType_ & operator* () const = 0;
+            /// Dereference operator (mutable).
+            virtual VectorType_ & operator* () = 0;
+
+            /// Dereference operator (const).
+            virtual const VectorType_ & operator* () const = 0;
 
             /// Returns our parent.
             virtual const Matrix<DataType_> * parent() const = 0;
     };
 
-    template <typename DataType_, typename VectorType_ = Vector<DataType_> > class VectorIteratorWrapper :
-        public VectorIteratorBase<DataType_, VectorType_>
+    template <typename DataType_, typename VectorType_> class ConstVectorIteratorWrapper;
+
+    template <typename DataType_, typename VectorType_> class VectorIteratorWrapper :
+        public std::iterator<std::forward_iterator_tag, VectorType_>,
+        public VectorIteratorTraits
     {
         private:
             /// Our wrapped iterator.
-            std::tr1::shared_ptr<VectorIteratorImplBase<DataType_, VectorType_> > _iterator;
+            std::tr1::shared_ptr<VectorIteratorBase<DataType_, VectorType_> > _iterator;
 
         public:
+            friend class ConstVectorIteratorWrapper<DataType_, VectorType_>;
+
             /// Constructor.
-            VectorIteratorWrapper(VectorIteratorImplBase<DataType_, VectorType_> *iterator) :
+            VectorIteratorWrapper(VectorIteratorBase<DataType_, VectorType_> *iterator) :
                 _iterator(iterator)
             {
             }
@@ -76,20 +84,10 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Preincrement operator.
-            virtual VectorIteratorBase<DataType_, VectorType_> & operator++ ()
+            virtual VectorIteratorWrapper<DataType_, VectorType_> & operator++ ()
             {
                 ++(*_iterator);
                 return *this;
-            }
-
-            /// Postincrement operator.
-            virtual VectorIteratorWrapper<DataType_, VectorType_> operator++ (int)
-            {
-                VectorIteratorWrapper<DataType_, VectorType_> result(*this);
-
-                ++(*_iterator);
-
-                return result;
             }
 
             /// Equality operator.
@@ -105,9 +103,70 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Dereference operator 
-            virtual VectorType_ & operator* () const
+            virtual VectorType_ & operator* ()
             {
                 return **_iterator;
+            }
+
+            /// Our index.
+            virtual const unsigned long index() const
+            {
+                return _iterator->index();
+            }
+    };
+
+    template <typename DataType_, typename VectorType_> class ConstVectorIteratorWrapper :
+        public std::iterator<std::forward_iterator_tag, VectorType_>,
+        public VectorIteratorTraits
+    {
+        private:
+            /// Our wrapped iterator.
+            std::tr1::shared_ptr<VectorIteratorBase<DataType_, VectorType_> > _iterator;
+
+        public:
+            /// Constructor.
+            ConstVectorIteratorWrapper(VectorIteratorBase<DataType_, VectorType_> *iterator) :
+                _iterator(iterator)
+            {
+            }
+
+            /// Conversion-constructor.
+            ConstVectorIteratorWrapper(const VectorIteratorWrapper<DataType_, VectorType_> & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Copy-constructor.
+            ConstVectorIteratorWrapper(const ConstVectorIteratorWrapper<DataType_, VectorType_> & other) :
+                _iterator(other._iterator)
+            {
+            }
+
+            /// Preincrement operator.
+            virtual ConstVectorIteratorWrapper<DataType_, VectorType_> & operator++ ()
+            {
+                ++(*_iterator);
+                return *this;
+            }
+
+            /// Equality operator.
+            virtual bool operator== (const ConstVectorIteratorWrapper<DataType_, VectorType_> & other) const
+            {
+                return (*_iterator == *other._iterator);
+            }
+
+            /// Inequality operator.
+            virtual bool operator!= (const ConstVectorIteratorWrapper<DataType_, VectorType_> & other) const
+            {
+                return (*_iterator != *other._iterator);
+            }
+
+            /// Dereference operator 
+            virtual const VectorType_ & operator* () const
+            {
+                const VectorIteratorBase<DataType_, VectorType_> & iterator(*_iterator);
+
+                return *iterator;
             }
 
             /// Our index.
