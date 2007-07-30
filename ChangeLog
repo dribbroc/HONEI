@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-30 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh libswe/solver_TEST.cc: Implemented corresponding
+	subefficient but easy to debug version of matrix assembly stage 2,
+	cleaned up prediction stage due to changes in libla::BandedMatrix,
+	changed interfaces of quick assemble member functions.
+	
 2007-07-30 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_vector.hh, libla/sparse_vector.hh: Tidied up a bit. No

@@ -41,24 +41,24 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            ulint dwidth = 32;
+            ulint dwidth =32;
             ulint dheight = 32;
-            ulint timesteps = 20;
+            ulint timesteps = 40;
  
-            DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
+            DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(5));
             //SCENARIO setup
             for(ulint i = 0; i< height->rows(); ++i)
             {
                 (*height)[0][i] = 5;
             }
             //END SCENARIO setup
-            DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(0));
+            DenseMatrix<DataType_>* bottom = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
             DenseMatrix<DataType_>* u1 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
             DenseMatrix<DataType_>* u2 = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(1));
             unsigned long entries = 3*((dwidth*dheight)+4*(dwidth+dheight+4));
-            DenseVector<DataType_>* u = new DenseVector<DataType_>(entries, DataType_(0));
-            DenseVector<DataType_>* v = new DenseVector<DataType_>(entries, DataType_(0));
-            DenseVector<DataType_>* w = new DenseVector<DataType_>(entries, DataType_(0)); 
+            DenseVector<DataType_>* u = new DenseVector<DataType_>(entries, DataType_(1));
+            DenseVector<DataType_>* v = new DenseVector<DataType_>(entries, DataType_(1));
+            DenseVector<DataType_>* w = new DenseVector<DataType_>(entries, DataType_(1)); 
             DenseVector<DataType_> bx (entries/3, DataType_(0));
             DenseVector<DataType_> by (entries/3, DataType_(0));
             DenseVector<DataType_> c (3,DataType_(1));

@@ -168,9 +168,10 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assemble_matrix1(BandedMatrix<WorkPrec_>& m3)
+            /*BandedMatrix<WorkPrec_>*/ void _quick_assemble_matrix1(BandedMatrix<WorkPrec_>& m3, BandedMatrix<WorkPrec_>& result)
 	    {
-		return m3;
+                //result = *(m3.copy());
+		//return ;
 	    }
 
             /** Simplified matrix assembly.
@@ -178,16 +179,17 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1);
+            /*BandedMatrix<WorkPrec_>*/void _quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result);
 
             /** Simplified matrix assembly.
               * Computes M_7.
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assemble_matrix3(BandedMatrix<WorkPrec_>& m4)
+            /*BandedMatrix<WorkPrec_>*/void _quick_assemble_matrix3(BandedMatrix<WorkPrec_>& m4, BandedMatrix<WorkPrec_>& result)
 	    {
-		return m4;
+                //result = *(m4.copy());
+		//return ;
 	    }
 
             /** Simplified matrix assembly.
@@ -195,7 +197,7 @@ namespace pg512 {
               *
               **/
             template<typename WorkPrec_>
-            BandedMatrix<WorkPrec_> _quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2);
+            /*BandedMatrix<WorkPrec_>*/void _quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& result);
 
             /** Flow computation.
               * Used by preprocessing.
@@ -297,6 +299,17 @@ namespace pg512 {
            
             template<typename WorkPrec_>
             void _assemble_matrix1_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v);
+
+            /** Basic matrix assembly. Uses Limiters. DEBUG version.
+              * Computes M_2, M_4.
+              *
+              * \param m2 Matrix m1 is the first Matrix to be assembled.
+              * \param m4 Matrix m3 is the second Matrix to be assembled.
+              *
+              **/
+           
+            template<typename WorkPrec_>
+            void _assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v);
 
 
         public:
@@ -1211,19 +1224,19 @@ namespace pg512 {
         BandedMatrix<WorkPrec_>* m4= new BandedMatrix<WorkPrec_>(_u->size());
         
         _assemble_matrix1_DEBUG<WorkPrec_>(*m1, *m3, &predictedu, &predictedv);
-        _assemble_matrix2<WorkPrec_>(*m2, *m4, &predictedu, &predictedw);
+        _assemble_matrix2_DEBUG<WorkPrec_>(*m2, *m4, &predictedu, &predictedw);
 
-        BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(_u->size());
-        *m5 = _quick_assemble_matrix1<WorkPrec_>(*m3);
-
+        BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(*(m3->copy()));
+        //_quick_assemble_matrix1<WorkPrec_>(*m3, *m5);
+        
         BandedMatrix<WorkPrec_>* m6 = new BandedMatrix<WorkPrec_>(_u->size());
-        *m6 = _quick_assemble_matrix1<WorkPrec_>(*m1);
+        _quick_assemble_matrix3<WorkPrec_>(*m1, *m6);
  
-        BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(_u->size());
-        *m7= _quick_assemble_matrix1<WorkPrec_>(*m4);
+        BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(*(m4->copy()));
+        //_quick_assemble_matrix2<WorkPrec_>(*m4, *m7);
 
         BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
-        *m8 = _quick_assemble_matrix1<WorkPrec_>(*m2); 
+        _quick_assemble_matrix4<WorkPrec_>(*m2, *m8); 
 
         //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
         //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
@@ -1647,7 +1660,7 @@ namespace pg512 {
              typename InitPrec1_,
              typename InitPrec2_> 
     template<typename WorkPrec_>
-    BandedMatrix<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1)
+    /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result)
     {
 	///Bands of the matrix which will be assembled.
 	DenseVector<WorkPrec_> m6diag(_u->size(), ulint(0) ,ulint( 1));      //zero
@@ -1705,14 +1718,14 @@ namespace pg512 {
 	    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
 	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
 	}
-	BandedMatrix<WorkPrec_> result(m6diag.size());
+	//BandedMatrix<WorkPrec_> result(m6diag.size());
 	result.band(0) = m6diag;
 	result.band(3) = m6bandplus3;
 	result.band(6) = m6bandplus6;
 	result.band(-3) = m6bandminus3;
 	std::cout << "Finished Quick Assembly m2.\n";
  
-	return result;
+	//return result;
 
     }
 
@@ -1722,7 +1735,7 @@ namespace pg512 {
              typename InitPrec1_,
              typename InitPrec2_> 
     template<typename WorkPrec_>
-    BandedMatrix<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2)
+    /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& result)
     {
 	///Bands of the matrix which will be assembled.
 	DenseVector<WorkPrec_> m8diag(_u->size(), ulint(0) ,ulint( 1));      //zero
@@ -1781,7 +1794,7 @@ namespace pg512 {
 	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
 	}
 	
-	BandedMatrix<WorkPrec_> result(m8diag.size());
+	//BandedMatrix<WorkPrec_> result(m8diag.size());
 
 	result.band(0) = m8diag;
 	result.band(3*(_d_width + 4)) = m8bandplus3;
@@ -1789,7 +1802,7 @@ namespace pg512 {
 	result.band((-3)*(_d_width + 4)) = m8bandminus3;
         std::cout << "Finished Quick Assembly m4.\n";	
  
-	return result;
+	//return result;
 	
     }
     /**
@@ -2319,5 +2332,533 @@ namespace pg512 {
         std::cout << "Finished Matrix Assembly 1.\n";
  
     }
+    /**
+     *
+     * Matrix assembly. DEBUG version.
+     *
+     * \param  m2 The first matrix to assemble.
+     * \param  m4 The second matrix to assemble.
+     *
+     **/
+    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    template<typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
+        ::_assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
+    {
+        ///The bands containing data.
+        DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
+        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
+        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
+        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
+        DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
+        DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
+        DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
+        DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
+        m2.band(ulint(0)) = m2diag;
+        m2.band(ulint(_d_width+2)) = m2bandPlus1;
+        m2.band(ulint(2*(_d_width+2))) = m2bandPlus2;
+        m2.band(ulint(-(_d_width+2))) = m2bandMinus1;
+        m4.band(ulint(0)) = m4diag;
+        m4.band(ulint(_d_width+2)) = m4bandPlus1;
+        m4.band(ulint(2*(_d_width+2))) = m4bandPlus2;
+        m4.band(ulint(-(_d_width+2))) = m4bandMinus1;
+
+        typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator vi(u->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator vi_END(u->end_elements());
+        
+        //Preparing left operand for all scalar products
+        DenseVector<WorkPrec_> constantVector(ulint(12), ulint(0));
+        constantVector[0] = WorkPrec_(-1);
+        constantVector[1] = WorkPrec_(-1);
+        constantVector[2] = WorkPrec_(-1);
+        constantVector[3] = WorkPrec_(1);
+        constantVector[4] = WorkPrec_(1);
+        constantVector[5] = WorkPrec_(1);
+        constantVector[6] = WorkPrec_(-((*_c)[0]));
+        constantVector[7] = WorkPrec_(-((*_c)[1]));
+        constantVector[8] = WorkPrec_(-((*_c)[2]));
+        constantVector[9]  = WorkPrec_((*_c)[0]);
+        constantVector[10] = WorkPrec_((*_c)[1]);
+        constantVector[11] = WorkPrec_((*_c)[2]);
+        //Preparing left operand for all scalar products
+        DenseVector<WorkPrec_> constantVectorMinus(ulint(12), ulint(0));
+        constantVectorMinus[0] = WorkPrec_(-1);
+        constantVectorMinus[1] = WorkPrec_(-1);
+        constantVectorMinus[2] = WorkPrec_(-1);
+        constantVectorMinus[3] = WorkPrec_(1);
+        constantVectorMinus[4] = WorkPrec_(1);
+        constantVectorMinus[5] = WorkPrec_(1);
+        constantVectorMinus[6] = WorkPrec_((*_c)[0]);
+        constantVectorMinus[7] = WorkPrec_((*_c)[1]);
+        constantVectorMinus[8] = WorkPrec_((*_c)[2]);
+        constantVectorMinus[9]  = WorkPrec_(-(*_c)[0]);
+        constantVectorMinus[10] = WorkPrec_(-(*_c)[1]);
+        constantVectorMinus[11] = WorkPrec_(-(*_c)[2]);
+
+ 
+        while(ui!=ui_END)
+        {
+            //Prepare right operands for band_-1:
+            //thetaXPlus_iMinus1_j
+            DenseVector<WorkPrec_> rightMinus1Upper(ulint(12), ulint(0));
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightMinus1Upper[0] = (*v)[vi.index()-6*_d_width];
+                rightMinus1Upper[1] = (*v)[vi.index()-5*_d_width];
+                rightMinus1Upper[2] = (*v)[vi.index()-4*_d_width];
+                rightMinus1Upper[3] = (*v)[vi.index()-3*_d_width];
+                rightMinus1Upper[4] = (*v)[vi.index()-2*_d_width];
+                rightMinus1Upper[5] = (*v)[vi.index()-1*_d_width];
+
+                rightMinus1Upper[6] = (*u)[ui.index()-6*_d_width];
+                rightMinus1Upper[7] = (*u)[ui.index()-5*_d_width];
+                rightMinus1Upper[8] = (*u)[ui.index()-4*_d_width];
+                rightMinus1Upper[9] = (*u)[ui.index()-3*_d_width];
+                rightMinus1Upper[10] = (*u)[ui.index()-2*_d_width];
+                rightMinus1Upper[11] = (*u)[ui.index()-1*_d_width];
+                
+
+
+
+            }
+            DenseVector<WorkPrec_> rightMinus1Lower(ulint(12), ulint(0));
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width) 
+            {
+                rightMinus1Lower[0] = (*v)[vi.index()-3*_d_width];
+                rightMinus1Lower[1] = (*v)[vi.index()-2*_d_width];
+                rightMinus1Lower[2] = (*v)[vi.index()-1*_d_width];
+                rightMinus1Lower[3] = (*v)[vi.index()];
+                rightMinus1Lower[4] = (*v)[vi.index()+1*_d_width];
+                rightMinus1Lower[5] = (*v)[vi.index()+2*_d_width];
+
+                rightMinus1Lower[6] = (*u)[ui.index()-3*_d_width];
+                rightMinus1Lower[7] = (*u)[ui.index()-2*_d_width];
+                rightMinus1Lower[8] = (*u)[ui.index()-1*_d_width];
+                rightMinus1Lower[9] = (*u)[ui.index()];
+                rightMinus1Lower[10] = (*u)[ui.index()+1*_d_width];
+                rightMinus1Lower[11] = (*u)[ui.index()+2*_d_width];
+                
+            }
+
+            //Compute ScalarProducts and Theta - value for band_-1:
+            WorkPrec_ minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Upper, constantVector );
+            WorkPrec_ minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Lower, constantVector );
+            WorkPrec_ thetaXPlus_iMinus1_j;
+            if(minusLower!=0)
+            {
+                 thetaXPlus_iMinus1_j = minusUpper / minusLower;
+            }
+            //Compute limitation of Theta for band_-1:
+            WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
+
+            //Compute matrix element value:
+            m2bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m4bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            //FINISHED band_-1.
+
+            //Prepare right operands for diagonal:
+            //First Theta - value (thetaXPlus_i_j)
+            DenseVector<WorkPrec_> rightDiagUpper(ulint(12), ulint(0));
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightDiagUpper[0] = (*v)[vi.index()-3*_d_width];
+                rightDiagUpper[1] = (*v)[vi.index()-2*_d_width];
+                rightDiagUpper[2] = (*v)[vi.index()-1*_d_width];
+                rightDiagUpper[3] = (*v)[vi.index()];
+                rightDiagUpper[4] = (*v)[vi.index()+1*_d_width];
+                rightDiagUpper[5] = (*v)[vi.index()+2*_d_width];
+
+                rightDiagUpper[6] = (*u)[ui.index()-3*_d_width];
+                rightDiagUpper[7] = (*u)[ui.index()-2*_d_width];
+                rightDiagUpper[8] = (*u)[ui.index()-1*_d_width];
+                rightDiagUpper[9] = (*u)[ui.index()];
+                rightDiagUpper[10] = (*u)[ui.index()+1*_d_width];
+                rightDiagUpper[11] = (*u)[ui.index()+2*_d_width];
+            }
+            DenseVector<WorkPrec_> rightDiagLower(ulint(12), ulint(0));
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightDiagLower[0] = (*v)[vi.index()];
+                rightDiagLower[1] = (*v)[vi.index()+1*_d_width];
+                rightDiagLower[2] = (*v)[vi.index()+2*_d_width];
+                rightDiagLower[3] = (*v)[vi.index()+3*_d_width];
+                rightDiagLower[4] = (*v)[vi.index()+4*_d_width];
+                rightDiagLower[5] = (*v)[vi.index()+5*_d_width];
+
+                rightDiagLower[6] = (*u)[ui.index()];
+                rightDiagLower[7] = (*u)[ui.index()+1*_d_width];
+                rightDiagLower[8] = (*u)[ui.index()+2*_d_width];
+                rightDiagLower[9] = (*u)[ui.index()]+3*_d_width;
+                rightDiagLower[10] = (*u)[ui.index()+4*_d_width];
+                rightDiagLower[11] = (*u)[ui.index()+5*_d_width];
+            }
+
+            //Compute ScalarProducts and Theta - value for diagonal (first theta):
+            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            WorkPrec_ thetaXPlus_i_j;
+            if(minusLower!=0)
+            {
+                 thetaXPlus_i_j = minusUpper / minusLower;
+            }
+            else
+            {
+                thetaXPlus_i_j = 0;
+            }
+            //Compute limitation of Theta for diagonal (first theta):
+            WorkPrec_ thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
+
+            //Second theta (thetaXPlus_iMinus1_j):
+            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            {
+                rightDiagUpper[0] = (*v)[vi.index()-6*_d_width];
+                rightDiagUpper[1] = (*v)[vi.index()-5*_d_width];
+                rightDiagUpper[2] = (*v)[vi.index()-4*_d_width];
+                rightDiagUpper[3] = (*v)[vi.index()-3*_d_width];
+                rightDiagUpper[4] = (*v)[vi.index()-2*_d_width];
+                rightDiagUpper[5] = (*v)[vi.index()-1*_d_width];
+
+                rightDiagUpper[6] = (*u)[ui.index()-6*_d_width];
+                rightDiagUpper[7] = (*u)[ui.index()-5*_d_width];
+                rightDiagUpper[8] = (*u)[ui.index()-4*_d_width];
+                rightDiagUpper[9] = (*u)[ui.index()-3*_d_width];
+                rightDiagUpper[10] = (*u)[ui.index()-2*_d_width];
+                rightDiagUpper[11] = (*u)[ui.index()-1*_d_width];
+                
+
+
+
+            }
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightDiagLower[0] = (*v)[vi.index()-3*_d_width];
+                rightDiagLower[1] = (*v)[vi.index()-2*_d_width];
+                rightDiagLower[2] = (*v)[vi.index()-1*_d_width];
+                rightDiagLower[3] = (*v)[vi.index()];
+                rightDiagLower[4] = (*v)[vi.index()+1*_d_width];
+                rightDiagLower[5] = (*v)[vi.index()+2*_d_width];
+
+                rightDiagLower[6] = (*u)[ui.index()-3*_d_width];
+                rightDiagLower[7] = (*u)[ui.index()-2*_d_width];
+                rightDiagLower[8] = (*u)[ui.index()-1*_d_width];
+                rightDiagLower[9] = (*u)[ui.index()];
+                rightDiagLower[10] = (*u)[ui.index()+1*_d_width];
+                rightDiagLower[11] = (*u)[ui.index()+2*_d_width];
+                
+            }
+            //Compute ScalarProducts and Theta - value for diagonal (second theta):
+            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+
+            if(minusLower!=0)
+            {
+                 thetaXPlus_iMinus1_j = minusUpper / minusLower;
+            }
+            else
+            {
+                thetaXPlus_iMinus1_j = 0;
+            }
+            //Compute limitation of Theta for diagonal (second theta):
+            thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
+
+            //Third theta (thetaXMinus_i_j):
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightDiagUpper[0] = (*v)[vi.index()-3*_d_width];
+                rightDiagUpper[1] = (*v)[vi.index()-2*_d_width];
+                rightDiagUpper[2] = (*v)[vi.index()-1*_d_width];
+                rightDiagUpper[3] = (*v)[vi.index()];
+                rightDiagUpper[4] = (*v)[vi.index()+1*_d_width];
+                rightDiagUpper[5] = (*v)[vi.index()+2*_d_width];
+
+                rightDiagUpper[6] = (*u)[ui.index()-3*_d_width];
+                rightDiagUpper[7] = (*u)[ui.index()-2*_d_width];
+                rightDiagUpper[8] = (*u)[ui.index()-1*_d_width];
+                rightDiagUpper[9] = (*u)[ui.index()];
+                rightDiagUpper[10] = (*u)[ui.index()+1*_d_width];
+                rightDiagUpper[11] = (*u)[ui.index()+2*_d_width];
+                
+
+
+
+            }
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightDiagLower[0] = (*v)[vi.index()];
+                rightDiagLower[1] = (*v)[vi.index()+1*_d_width];
+                rightDiagLower[2] = (*v)[vi.index()+2*_d_width];
+                rightDiagLower[3] = (*v)[vi.index()+3*_d_width];
+                rightDiagLower[4] = (*v)[vi.index()+4*_d_width];
+                rightDiagLower[5] = (*v)[vi.index()+5*_d_width];
+
+                rightDiagLower[6] = (*u)[ui.index()];
+                rightDiagLower[7] = (*u)[ui.index()+1*_d_width];
+                rightDiagLower[8] = (*u)[ui.index()+2*_d_width];
+                rightDiagLower[9] = (*u)[ui.index()+3*_d_width];
+                rightDiagLower[10] = (*u)[ui.index()+4*_d_width];
+                rightDiagLower[11] = (*u)[ui.index()+5*_d_width];
+                
+            }
+            //Compute ScalarProducts and Theta - value for diagonal (third theta):
+            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            WorkPrec_ thetaXMinus_i_j;
+            if(minusLower!=0)
+            {
+                 thetaXMinus_i_j = minusUpper / minusLower;
+            }
+            else
+            {
+                thetaXMinus_i_j = 0;
+            }
+            //Compute limitation of Theta for diagonal (third theta):
+            WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
+
+            //Compute matrix element value:
+            m2diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+                                                       thetaXMinus_i_j_limited );
+            m4diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+                                                       thetaXMinus_i_j_limited );
+            //FINISHED diagonal.
+
+            //Prepare right operands for band_+1:
+            //First Theta - value (thetaXPlus_i_j)
+            DenseVector<WorkPrec_> rightPlus1Upper(ulint(12), ulint(0));
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus1Upper[0] = (*v)[vi.index()-3*_d_width];
+                rightPlus1Upper[1] = (*v)[vi.index()-2*_d_width];
+                rightPlus1Upper[2] = (*v)[vi.index()-1*_d_width];
+                rightPlus1Upper[3] = (*v)[vi.index()];
+                rightPlus1Upper[4] = (*v)[vi.index()+1*_d_width];
+                rightPlus1Upper[5] = (*v)[vi.index()+2*_d_width];
+
+                rightPlus1Upper[6] = (*u)[ui.index()-3*_d_width];
+                rightPlus1Upper[7] = (*u)[ui.index()-2*_d_width];
+                rightPlus1Upper[8] = (*u)[ui.index()-1*_d_width];
+                rightPlus1Upper[9] = (*u)[ui.index()];
+                rightPlus1Upper[10] = (*u)[ui.index()+1*_d_width];
+                rightPlus1Upper[11] = (*u)[ui.index()+2*_d_width];
+            }
+            DenseVector<WorkPrec_> rightPlus1Lower(ulint(12), ulint(0));
+            if(ui.index()>6 *_d_width|| ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus1Lower[0] = (*v)[vi.index()];
+                rightPlus1Lower[1] = (*v)[vi.index()+1*_d_width];
+                rightPlus1Lower[2] = (*v)[vi.index()+2*_d_width];
+                rightPlus1Lower[3] = (*v)[vi.index()+3*_d_width];
+                rightPlus1Lower[4] = (*v)[vi.index()+4*_d_width];
+                rightPlus1Lower[5] = (*v)[vi.index()+5*_d_width];
+
+                rightPlus1Lower[6] = (*u)[ui.index()];
+                rightPlus1Lower[7] = (*u)[ui.index()+1*_d_width];
+                rightPlus1Lower[8] = (*u)[ui.index()+2*_d_width];
+                rightPlus1Lower[9] = (*u)[ui.index()]+3*_d_width;
+                rightPlus1Lower[10] = (*u)[ui.index()+4*_d_width];
+                rightPlus1Lower[11] = (*u)[ui.index()+5*_d_width];
+            }
+
+            //Compute ScalarProducts and Theta - value for diagonal (first theta):
+            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            thetaXPlus_i_j;
+            if(minusLower!=0)
+            {
+                 thetaXPlus_i_j = minusUpper / minusLower;
+            }
+            else
+            {
+                thetaXPlus_i_j = 0;
+            }
+            //Compute limitation of Theta for diagonal (first theta):
+            thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
+
+            //Second theta (thetaXMinus_iPlus1_j):
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus1Upper[0] = (*v)[vi.index()];
+                rightPlus1Upper[1] = (*v)[vi.index()+1*_d_width];
+                rightPlus1Upper[2] = (*v)[vi.index()+2*_d_width];
+                rightPlus1Upper[3] = (*v)[vi.index()+3*_d_width];
+                rightPlus1Upper[4] = (*v)[vi.index()+4*_d_width];
+                rightPlus1Upper[5] = (*v)[vi.index()+5*_d_width];
+
+                rightPlus1Upper[6] = (*u)[ui.index()];
+                rightPlus1Upper[7] = (*u)[ui.index()+1*_d_width];
+                rightPlus1Upper[8] = (*u)[ui.index()+2*_d_width];
+                rightPlus1Upper[9] = (*u)[ui.index()+3*_d_width];
+                rightPlus1Upper[10] = (*u)[ui.index()+4*_d_width];
+                rightPlus1Upper[11] = (*u)[ui.index()+5*_d_width];
+                
+
+
+
+            }
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus1Lower[0] = (*v)[vi.index()+3*_d_width];
+                rightPlus1Lower[1] = (*v)[vi.index()+4*_d_width];
+                rightPlus1Lower[2] = (*v)[vi.index()+5*_d_width];
+                rightPlus1Lower[3] = (*v)[vi.index()+6*_d_width];
+                rightPlus1Lower[4] = (*v)[vi.index()+7*_d_width];
+                rightPlus1Lower[5] = (*v)[vi.index()+8*_d_width];
+
+                rightPlus1Lower[6] = (*u)[ui.index()+3*_d_width];
+                rightPlus1Lower[7] = (*u)[ui.index()+4*_d_width];
+                rightPlus1Lower[8] = (*u)[ui.index()+5*_d_width];
+                rightPlus1Lower[9] = (*u)[ui.index()+6*_d_width];
+                rightPlus1Lower[10] = (*u)[ui.index()+7*_d_width];
+                rightPlus1Lower[11] = (*u)[ui.index()+8*_d_width];
+                
+            }
+            //Compute ScalarProducts and Theta - value for diagonal (second theta):
+            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            WorkPrec_ thetaXMinus_iPlus1_j;
+            if(minusLower!=0)
+            {
+                 thetaXMinus_iPlus1_j = minusUpper / minusLower;
+            }
+            else
+            {
+                thetaXMinus_iPlus1_j = 0;
+            }
+            //Compute limitation of Theta for diagonal (second theta):
+            WorkPrec_ thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
+
+            //Third theta (thetaXMinus_i_j):
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus1Upper[0] = (*v)[vi.index()-3*_d_width];
+                rightPlus1Upper[1] = (*v)[vi.index()-2*_d_width];
+                rightPlus1Upper[2] = (*v)[vi.index()-1*_d_width];
+                rightPlus1Upper[3] = (*v)[vi.index()];
+                rightPlus1Upper[4] = (*v)[vi.index()+1*_d_width];
+                rightPlus1Upper[5] = (*v)[vi.index()+2*_d_width];
+
+                rightPlus1Upper[6] = (*u)[ui.index()-3*_d_width];
+                rightPlus1Upper[7] = (*u)[ui.index()-2*_d_width];
+                rightPlus1Upper[8] = (*u)[ui.index()-1*_d_width];
+                rightPlus1Upper[9] = (*u)[ui.index()];
+                rightPlus1Upper[10] = (*u)[ui.index()+1*_d_width];
+                rightPlus1Upper[11] = (*u)[ui.index()+2*_d_width];
+                
+
+
+
+            }
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus1Lower[0] = (*v)[vi.index()];
+                rightPlus1Lower[1] = (*v)[vi.index()+1*_d_width];
+                rightPlus1Lower[2] = (*v)[vi.index()+2*_d_width];
+                rightPlus1Lower[3] = (*v)[vi.index()+3*_d_width];
+                rightPlus1Lower[4] = (*v)[vi.index()+4*_d_width];
+                rightPlus1Lower[5] = (*v)[vi.index()+5*_d_width];
+
+                rightPlus1Lower[6] = (*u)[ui.index()];
+                rightPlus1Lower[7] = (*u)[ui.index()+1*_d_width];
+                rightPlus1Lower[8] = (*u)[ui.index()+2*_d_width];
+                rightPlus1Lower[9] = (*u)[ui.index()+3*_d_width];
+                rightPlus1Lower[10] = (*u)[ui.index()+4*_d_width];
+                rightPlus1Lower[11] = (*u)[ui.index()+5*_d_width];
+                
+            }
+            //Compute ScalarProducts and Theta - value for diagonal (third theta):
+            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+
+            if(minusLower!=0)
+            {
+                 thetaXMinus_i_j = minusUpper / minusLower;
+            }
+            else
+            {
+                thetaXMinus_i_j = 0;
+            }
+            //Compute limitation of Theta for diagonal (third theta):
+            thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
+
+            //Compute matrix element value:
+            m2bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+                                                       thetaXMinus_i_j_limited );
+            m4bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+                                                       thetaXMinus_i_j_limited );
+            //FINISHED band_+1.
+
+            //band_+2 (thetaXMinus_iPlus1_j):
+            DenseVector<WorkPrec_> rightPlus2Upper(ulint(12), ulint(0));
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus2Upper[0] = (*v)[vi.index()];
+                rightPlus2Upper[1] = (*v)[vi.index()+1*_d_width];
+                rightPlus2Upper[2] = (*v)[vi.index()+2*_d_width];
+                rightPlus2Upper[3] = (*v)[vi.index()+3*_d_width];
+                rightPlus2Upper[4] = (*v)[vi.index()+4*_d_width];
+                rightPlus2Upper[5] = (*v)[vi.index()+5*_d_width];
+
+                rightPlus2Upper[6] = (*u)[ui.index()];
+                rightPlus2Upper[7] = (*u)[ui.index()+1*_d_width];
+                rightPlus2Upper[8] = (*u)[ui.index()+2*_d_width];
+                rightPlus2Upper[9] = (*u)[ui.index()+3*_d_width];
+                rightPlus2Upper[10] = (*u)[ui.index()+4*_d_width];
+                rightPlus2Upper[11] = (*u)[ui.index()+5*_d_width];
+                
+
+
+
+            }
+            DenseVector<WorkPrec_> rightPlus2Lower(ulint(12), ulint(0));
+ 
+            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            {
+                rightPlus2Lower[0] = (*v)[vi.index()+3*_d_width];
+                rightPlus2Lower[1] = (*v)[vi.index()+4*_d_width];
+                rightPlus2Lower[2] = (*v)[vi.index()+5*_d_width];
+                rightPlus2Lower[3] = (*v)[vi.index()+6*_d_width];
+                rightPlus2Lower[4] = (*v)[vi.index()+7*_d_width];
+                rightPlus2Lower[5] = (*v)[vi.index()+8*_d_width];
+
+                rightPlus2Lower[6] = (*u)[ui.index()+3*_d_width];
+                rightPlus2Lower[7] = (*u)[ui.index()+4*_d_width];
+                rightPlus2Lower[8] = (*u)[ui.index()+5*_d_width];
+                rightPlus2Lower[9] = (*u)[ui.index()+6*_d_width];
+                rightPlus2Lower[10] = (*u)[ui.index()+7*_d_width];
+                rightPlus2Lower[11] = (*u)[ui.index()+8*_d_width];
+                
+            }
+            //Compute ScalarProducts and Theta - value for band_+2:
+            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+
+            if(minusLower!=0)
+            {
+                 thetaXMinus_iPlus1_j = minusUpper / minusLower;
+            }
+            else
+            {
+                thetaXMinus_iPlus1_j = 0;
+            }
+            //Compute limitation of Theta for band_+2:
+            thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
+
+            //Compute matrix element value:
+            m2bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            m4bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            //FINISHED band_+2.
+
+            //Iterate:
+            ++ui;++vi;
+        }
+        cout << "M_2:" << stringify(m2.band(ulint(0))) << endl;
+        cout << "M_2:" << stringify(m2.band(ulint(_d_width+2))) << endl;
+        cout << "M_2:" << stringify(m2.band(ulint(2*(_d_width+2)))) << endl;
+        cout << "M_2:" << stringify(m2.band(ulint(-(_d_width)))) << endl;
+        std::cout << "Finished Matrix Assembly 2.\n";
+ 
+    }
+
 }
 #endif
