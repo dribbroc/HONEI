@@ -24,10 +24,10 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/vector.hh>
+#include <libutil/assertion.hh>
 #include <libutil/shared_array.hh>
 
 #include <iterator>
-#include <string.h>
 
 /**
  * \file
@@ -38,6 +38,8 @@
  **/
 namespace pg512 ///< \todo Namespace name?
 {
+    template <typename DataType_> class DenseMatrix;
+
     /**
      * \brief DenseVector is a vector with O(size) non-zero elements which keeps its data
      * \brief sequential.
@@ -65,8 +67,30 @@ namespace pg512 ///< \todo Namespace name?
 
             typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
 
+            /**
+             * Constructor.
+             *
+             * For use by DenseMatrix.
+             *
+             * \param size Size of the new dense vector.
+             * \param elements SharedArray of the vector's elements.
+             * \param offset Offset of the vector's data inside the shared array.
+             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
+             **/
+            DenseVector(const unsigned long size, const SharedArray<DataType_> & elements, unsigned long offset = 0,
+                    unsigned stepsize = 1) :
+                _elements(elements),
+                _size(size),
+                _offset(offset),
+                _stepsize(stepsize)
+            {
+                CONTEXT("When creating DenseVector:");
+                ASSERT(size > 0, "size is zero!");
+            }
+
         public:
             friend class DenseElementIterator<DataType_>;
+            friend class DenseMatrix<DataType_>;
 
             /// Type of the const iterator over our elements.
             typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
@@ -84,12 +108,14 @@ namespace pg512 ///< \todo Namespace name?
              * \param offset Offset of the vector's data inside the shared array.
              * \param stepsize Stepsize between two of the vector's elements inside the shared array.
              **/
-            DenseVector(const unsigned long size, unsigned long offset = 0, unsigned long stepsize = 1) :
+            DenseVector(const unsigned long size, const unsigned long offset = 0, const unsigned long stepsize = 1) :
                 _elements(new DataType_[stepsize * size + offset]),
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
             {
+                CONTEXT("When creating DenseVector:");
+                ASSERT(size > 0, "size is zero!");
             }
 
             /**
@@ -107,26 +133,13 @@ namespace pg512 ///< \todo Namespace name?
                 _offset(offset),
                 _stepsize(stepsize)
             {
+                CONTEXT("When creating DenseVector:");
+                ASSERT(size > 0, "size is zero!");
+
                 for (unsigned long i(_offset) ; i < (_stepsize * _size + _offset) ; i += _stepsize)
                     _elements[i] = value;
             }
 
-            /**
-             * Constructor.
-             *
-             * \param size Size of the new dense vector.
-             * \param elements SharedArray of the vector's elements.
-             * \param offset Offset of the vector's data inside the shared array.
-             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
-             **/
-            DenseVector(const unsigned long size, const SharedArray<DataType_> & elements, unsigned long offset = 0,
-                    unsigned stepsize = 1) :
-                _elements(elements),
-                _size(size),
-                _offset(offset),
-                _stepsize(stepsize)
-            {
-            }
 
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other) :
@@ -227,6 +240,11 @@ namespace pg512 ///< \todo Namespace name?
             DenseElementIterator(DenseElementIterator<DataType_> const & other) :
                 _vector(other._vector),
                 _index(other._index)
+            {
+            }
+
+            /// Destructor.
+            virtual ~DenseElementIterator()
             {
             }
 
