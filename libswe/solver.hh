@@ -1230,10 +1230,10 @@ namespace pg512 {
         //_quick_assemble_matrix1<WorkPrec_>(*m3, *m5);
         
         BandedMatrix<WorkPrec_>* m6 = new BandedMatrix<WorkPrec_>(_u->size());
-        _quick_assemble_matrix3<WorkPrec_>(*m1, *m6);
+        _quick_assemble_matrix2<WorkPrec_>(*m1, *m6);
  
         BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(*(m4->copy()));
-        //_quick_assemble_matrix2<WorkPrec_>(*m4, *m7);
+        //_quick_assemble_matrix3<WorkPrec_>(*m4, *m7);
 
         BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
         _quick_assemble_matrix4<WorkPrec_>(*m2, *m8); 

@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-07-30 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh: Corrected quick assembly
+	calls in the prediction stage.
+	
+2007-07-30 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh libswe/solver_TEST.cc: Implemented corresponding
 	subefficient but easy to debug version of matrix assembly stage 2,
 	cleaned up prediction stage due to changes in libla::BandedMatrix,
