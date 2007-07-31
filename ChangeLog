@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-07-31 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh libswe/solver_TEST.cc: Implemented Dirichlet boundary
+	correction in the correction stage, adjusted preprocessing accordingly.
+	
 2007-07-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Corrected quick assembly

@@ -469,10 +469,10 @@ namespace pg512 {
                     ///Check if boundary - ghost cell is going to be accessed.
                     if(i<2 || i>=(hbound.rows()-2) ||(j.index()<2 || j.index() >=(hbound.columns()-2)))
                     {
-                        hbound[i][j.index()] = 0;
-                        bbound[i][j.index()] = 100; 
-                        u1bound[i][j.index()] = 0;
-                        u2bound[i][j.index()] = 0;
+                        hbound[i][j.index()] = 5;
+                        bbound[i][j.index()] = 1; 
+                        u1bound[i][j.index()] = 1;
+                        u2bound[i][j.index()] = 1;
                     }
                     else
                     {
@@ -1334,17 +1334,33 @@ namespace pg512 {
     DenseVector<ResPrec_>& predictedv,
     DenseVector<ResPrec_>& predictedw)
     {   
-        ///ignore first 2(w+4)+2 ghost cells (tripels)
+        ///correct first 2(w+4)+2 ghost cells (tripels)
         typename DenseVector<ResPrec_>::ElementIterator iter(_u->begin_elements());
-        for(unsigned long i = 0; i<(6*(_d_width+4)+6) ; ++i)
+        while(iter.index()<(6*(_d_width+4)+6))
         {
-          ++iter;
+            (*_u)[iter.index()] = 5;
+            ++iter;
+            (*_u)[iter.index()] = 1;
+            ++iter;
+            (*_u)[iter.index()] = 1;
+            ++iter;
+            (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
+            (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+            (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+            (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
+            (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+            (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+
+
         }
         cout << stringify(iter.index()) << endl;
         
         unsigned long count =0;//if made w steps, ignore four.
         ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
-        for(typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements()) ; iter.index()<3*((_d_height+2)*(_d_width+4)) ; ++iter)
+        typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements());
+        while(iter.index()<3*((_d_height+2)*(_d_width+4)))
         {
             /*PredictionPrec2_ a = (*_u)[iter.index()];
             (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
@@ -1369,36 +1385,93 @@ namespace pg512 {
                 (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
                 (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
                 (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                ++iter;
  
             }
             else
             {
+                (*_u)[iter.index()] = 5;
                 ++iter;
+                (*_u)[iter.index()] = 1;
                 ++iter;
+                (*_u)[iter.index()] = 1;
                 ++iter;
+                (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_u)[iter.index()] = 5;
                 ++iter;
+                (*_u)[iter.index()] = 1;
                 ++iter;
+                (*_u)[iter.index()] = 1;
                 ++iter;
+                (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_u)[iter.index()] = 5;
                 ++iter;
+                (*_u)[iter.index()] = 1;
                 ++iter;
+                (*_u)[iter.index()] = 1;
                 ++iter;
+                (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_u)[iter.index()] = 5;
                 ++iter;
+                (*_u)[iter.index()] = 1;
                 ++iter;
-                //++iter;
+                (*_u)[iter.index()] = 1;
+                ++iter;
+                (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 count = 0;
             }
             cout << stringify(count)<<endl;
-            /*(*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
-            ++iter;
-            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
-            (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
-            ++iter;
-            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
-            (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-            (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);*/
             
+            
+        }
+        typename DenseVector<ResPrec_>::ElementIterator iter_END(_u->end_elements());
+        while(iter!=iter_END)
+        {
+            (*_u)[iter.index()] = 5;
+            ++iter;
+            (*_u)[iter.index()] = 1;
+            ++iter;
+            (*_u)[iter.index()] = 1;
+            ++iter;
+            (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
+            (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+            (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+            (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
+            (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+            (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+
+
+           
         }
         std::cout << "Finished Correction.\n";
     }
