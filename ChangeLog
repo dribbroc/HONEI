@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-01 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh libswe/solver_TEST.cc: Made predicted temporary
+	data reside on the heap and therefore added member pointers.
+	
 2007-08-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_matrix.hh: Added NonZeroElementIterator. Still bugy due to

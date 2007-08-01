@@ -41,9 +41,9 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            ulint dwidth =32;
-            ulint dheight =32;
-            ulint timesteps = 100;
+            ulint dwidth =2;
+            ulint dheight =2;
+            ulint timesteps = 1;
  
             DenseMatrix<DataType_>* height = new DenseMatrix<DataType_> (dheight, dwidth, DataType_(5));
             //SCENARIO setup

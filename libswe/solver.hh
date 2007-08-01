@@ -135,6 +135,10 @@ namespace pg512 {
             DenseVector<ResPrec_> * _u_temp;
             DenseVector<ResPrec_> * _v_temp;
             DenseVector<ResPrec_> * _w_temp;
+            DenseVector<ResPrec_> * _u_predicted;
+            DenseVector<ResPrec_> * _v_predicted;
+            DenseVector<ResPrec_> * _w_predicted;;
+
 
 
             ///Vectors for the bottom slopes.
@@ -407,6 +411,9 @@ namespace pg512 {
                 _u_temp = new DenseVector<ResPrec_>(*(_u->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
                 _v_temp = new DenseVector<ResPrec_>(*(_v->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
                 _w_temp = new DenseVector<ResPrec_>(*(_w->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
+                _u_predicted = new DenseVector<ResPrec_>(*(_u_temp->copy()));
+                _v_predicted = new DenseVector<ResPrec_>(*(_v_temp->copy()));
+                _w_predicted = new DenseVector<ResPrec_>(*(_w_temp->copy()));
 
 
             }
@@ -1490,6 +1497,10 @@ namespace pg512 {
         _u_temp = _u->copy();
         _v_temp = _v->copy();
         _w_temp = _w->copy();
+        _u_predicted = _u_temp->copy();
+        _v_predicted = _v_temp->copy();
+        _w_predicted = _w_temp->copy();
+
 
         _do_setup_stage1<InitPrec1_>(*_u_temp, *_v_temp, *_w_temp );
         //DenseVector<PredictionPrec1_>* tu, * tv, * tw;
@@ -1500,22 +1511,22 @@ namespace pg512 {
         tv = new DenseVector<PredictionPrec1_>(*(_v_temp->copy()));
         tw = new DenseVector<PredictionPrec1_>(*(_w_temp->copy()));
         */
-        DenseVector<PredictionPrec1_> predictedu = *(_u_temp->copy());
+        /*DenseVector<PredictionPrec1_> predictedu = *(_u_temp->copy());
         DenseVector<PredictionPrec1_> predictedv = *(_v_temp->copy());
         DenseVector<PredictionPrec1_> predictedw = *(_w_temp->copy());
-        
-        _do_prediction<PredictionPrec1_>(predictedu, predictedv, predictedw);
+        */
+        _do_prediction<PredictionPrec1_>(*_u_predicted, *_v_predicted, *_w_predicted);
         //DenseVector<InitPrec2_> predictedu2(_u->size(), 0, 1);
         //DenseVector<InitPrec2_> predictedv2(_u->size(), 0, 1);
         //DenseVector<InitPrec2_> predictedw2(_u->size(), 0, 1);
-        _do_setup_stage2<InitPrec2_>(predictedu, predictedv, predictedw);
-        _do_prediction<PredictionPrec2_>(predictedu, predictedv, predictedw);
+        _do_setup_stage2<InitPrec2_>(*_u_predicted, *_v_predicted, *_w_predicted);
+        _do_prediction<PredictionPrec2_>(*_u_predicted, *_v_predicted, *_w_predicted);
         cout << "Predicted u:\n";
-        cout << stringify(predictedu)<< endl;
+        cout << stringify(*_u_predicted)<< endl;
         cout << "u before correction:\n";
         cout << stringify(*_u)<<endl;
         
-        _do_correction(predictedu, predictedv, predictedw);
+        _do_correction(*_u_predicted, *_v_predicted, *_w_predicted);
         ++_solve_time;
         cout << "Corrected u:\n";
         cout << stringify(*_u)<<endl;
