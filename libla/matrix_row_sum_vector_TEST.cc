@@ -148,3 +148,67 @@ class DenseMatrixRowSumVectorQuickTest :
 };
 DenseMatrixRowSumVectorQuickTest<float>  dense_matrix_row_sum_vector_quick_test_float("float");
 DenseMatrixRowSumVectorQuickTest<double> dense_matrix_row_sum_vector_quick_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixRowSumVectorTest :
+    public BaseTest
+{
+    public:
+        SparseMatrixRowSumVectorTest(const std::string & type) :
+            BaseTest("sparse_matrix_row_sum_vector_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(11) ; size < (1 << 10) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % (size) == 0) 
+                    {
+                        *i = DataType_(2);
+                    }
+                }   
+                DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(sm1));
+                DenseVector<DataType_> dv1(size + 1, static_cast<DataType_>((size / size / 2 + 1) * 2));
+                
+                TEST_CHECK_EQUAL(sum, dv1);
+            }
+        }
+};
+SparseMatrixRowSumVectorTest<float> sparse_matrix_row_sum_vector_test_float("float");
+SparseMatrixRowSumVectorTest<double> sparse_matrix_row_sum_vector_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixRowSumVectorQuickTest :
+    public QuickTest
+{
+    public:
+        SparseMatrixRowSumVectorQuickTest(const std::string & type) :
+            QuickTest("sparse_matrix_row_sum_vector_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                i_end(sm1.end_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % ((size + 1) / 2) == 0) 
+                {
+                    *i = DataType_(2);
+                }
+            }   
+            DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(sm1));
+            DenseVector<DataType_> dv1(size + 1, static_cast<DataType_>((size / size / 2 + 1) * 4));
+            
+            TEST_CHECK_EQUAL(sum, dv1);
+        }
+};
+SparseMatrixRowSumVectorQuickTest<float> sparse_matrix_row_sum_vector_quick_test_float("float");
+SparseMatrixRowSumVectorQuickTest<double> sparse_matrix_row_sum_vector_quick_test_double("double");

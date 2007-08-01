@@ -130,7 +130,7 @@ namespace pg512
             {
 				if (r.index() < l.index())
                 {
-                    left[r.row()](r.column) = *r;
+                    left[r.row()][r.column()] = *r;
                     ++r;
                 }
                 else if (l.index() < r.index())

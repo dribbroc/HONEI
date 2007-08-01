@@ -30,6 +30,56 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
+class ScalarBandedMatrixProductTest :
+    public BaseTest
+{
+    public:
+        ScalarBandedMatrixProductTest(const std::string & type) :
+            BaseTest("scalar_banded_matrix_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                 
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(6)));                   
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);            
+                BandedMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), bm1));
+
+                TEST_CHECK_EQUAL(prod, bm2);
+            }
+        }
+};
+ScalarBandedMatrixProductTest<float> scalar_banded_matrix_product_test_float("float");
+ScalarBandedMatrixProductTest<double> scalar_banded_matrix_product_test_double("double");
+
+template <typename DataType_>
+class ScalarBandedMatrixProductQuickTest :
+    public QuickTest
+{
+    public:
+        ScalarBandedMatrixProductQuickTest(const std::string & type) :
+            QuickTest("scalar_banded_matrix_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(20);
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                 
+            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(6)));                   
+            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);            
+            BandedMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), bm1));
+
+            TEST_CHECK_EQUAL(prod, bm2);
+        }
+};
+ScalarBandedMatrixProductQuickTest<float> scalar_banded_matrix_product_quick_test_float("float");
+ScalarBandedMatrixProductQuickTest<double> scalar_banded_matrix_product_quick_test_double("double");
+
+template <typename DataType_>
 class ScalarDenseMatrixProductTest :
     public BaseTest
 {
@@ -50,7 +100,6 @@ class ScalarDenseMatrixProductTest :
             }
         }
 };
-
 ScalarDenseMatrixProductTest<float> scalar_dense_matrix_product_test_float("float");
 ScalarDenseMatrixProductTest<double> scalar_dense_matrix_product_test_double("double");
 
@@ -82,3 +131,69 @@ class ScalarDenseMatrixProductQuickTest :
 };
 ScalarDenseMatrixProductQuickTest<float> scalar_dense_matrix_product_quick_test_float("float");
 ScalarDenseMatrixProductQuickTest<double> scalar_dense_matrix_product_quick_test_double("double");
+
+template <typename DataType_>
+class ScalarSparseMatrixProductTest :
+    public BaseTest
+{
+    public:
+        ScalarSparseMatrixProductTest(const std::string & type) :
+            BaseTest("scalar_sparse_matrix_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                    sm2(size, size + 1, size / 7 + 1);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                    i_end(sm1.end_elements()), j(sm2.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = DataType_(2);
+                        *j = DataType_(6);
+                    }
+                }             
+                SparseMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), sm1));
+
+                TEST_CHECK_EQUAL(prod, sm2);
+            }
+        }
+};
+ScalarSparseMatrixProductTest<float> scalar_sparse_matrix_product_test_float("float");
+ScalarSparseMatrixProductTest<double> scalar_sparse_matrix_product_test_double("double");
+
+template <typename DataType_>
+class ScalarSparseMatrixProductQuickTest :
+    public QuickTest
+{
+    public:
+        ScalarSparseMatrixProductQuickTest(const std::string & type) :
+            QuickTest("scalar_sparse_matrix_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size (22);
+            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                sm2(size, size + 1, size / 7 + 1);
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                i_end(sm1.end_elements()), j(sm2.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = DataType_(2);
+                    *j = DataType_(6);
+                }
+            }             
+            SparseMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), sm1));
+
+            TEST_CHECK_EQUAL(prod, sm2);
+        }
+};
+ScalarSparseMatrixProductQuickTest<float> scalar_sparse_matrix_product_quick_test_float("float");
+ScalarSparseMatrixProductQuickTest<double> scalar_sparse_matrix_product_quick_test_double("double");

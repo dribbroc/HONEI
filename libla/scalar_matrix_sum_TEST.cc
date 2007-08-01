@@ -30,6 +30,58 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
+class ScalarBandedMatrixSumTest :
+    public BaseTest
+{
+    public:
+        ScalarBandedMatrixSumTest(const std::string & type) :
+            BaseTest("scalar_banded_matrix_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                 
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(5)));                   
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);     
+                BandedMatrix<DataType_> & prod(ScalarMatrixSum<DataType_>::value(DataType_(3), bm1));
+
+                TEST_CHECK_EQUAL(prod, bm2);
+            }
+        }
+};
+ScalarBandedMatrixSumTest<float> scalar_banded_matrix_sum_test_float("float");
+ScalarBandedMatrixSumTest<double> scalar_banded_matrix_sum_test_double("double");
+
+template <typename DataType_>
+class ScalarBandedMatrixSumQuickTest :
+    public QuickTest
+{
+    public:
+        ScalarBandedMatrixSumQuickTest(const std::string & type) :
+            QuickTest("scalar_banded_matrix_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                 
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(5)));                   
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);     
+                BandedMatrix<DataType_> & prod(ScalarMatrixSum<DataType_>::value(DataType_(3), bm1));
+
+                TEST_CHECK_EQUAL(prod, bm2);
+            }
+        }
+};
+ScalarBandedMatrixSumQuickTest<float> scalar_banded_matrix_sum_quick_test_float("float");
+ScalarBandedMatrixSumQuickTest<double> scalar_banded_matrix_sum_quick_test_double("double");
+
+template <typename DataType_>
 class ScalarDenseMatrixSumTest :
     public BaseTest
 {
@@ -50,7 +102,6 @@ class ScalarDenseMatrixSumTest :
             }
         }
 };
-
 ScalarDenseMatrixSumTest<float> scalar_dense_matrix_sum_test_float("float");
 ScalarDenseMatrixSumTest<double> scalar_dense_matrix_sum_test_double("double");
 
@@ -82,3 +133,71 @@ class ScalarDenseMatrixSumQuickTest :
 };
 ScalarDenseMatrixSumQuickTest<float> scalar_dense_matrix_sum_quick_test_float("float");
 ScalarDenseMatrixSumQuickTest<double> scalar_dense_matrix_sum_quick_test_double("double");
+/*
+template <typename DataType_>
+class ScalarSparseMatrixSumTest :
+    public BaseTest
+{
+    public:
+        ScalarSparseMatrixSumTest(const std::string & type) :
+            BaseTest("scalar_sparse_matrix_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
+                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(3));                    
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                    i_end(sm1.end_elements()), j(dm1.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = DataType_(2);
+                        *j += DataType_(2);
+                    }
+                }              
+                DenseMatrix<DataType_> & prod(ScalarMatrixSum<DataType_>::value(DataType_(3), sm1));
+
+                TEST_CHECK_EQUAL(prod, dm1);
+            }
+        }
+};
+ScalarSparseMatrixSumTest<float> scalar_sparse_matrix_sum_test_float("float");
+ScalarSparseMatrixSumTest<double> scalar_sparse_matrix_sum_test_double("double");
+
+template <typename DataType_>
+class ScalarSparseMatrixQuickSumTest :
+    public QuickTest
+{
+    public:
+        ScalarSparseMatrixQuickSumTest(const std::string & type) :
+            QuickTest("scalar_sparse_matrix_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
+                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(3));                    
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                    i_end(sm1.end_elements()), j(dm1.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = DataType_(2);
+                        *j += DataType_(2);
+                    }
+                }              
+                DenseMatrix<DataType_> & prod(ScalarMatrixSum<DataType_>::value(DataType_(3), sm1));
+
+                TEST_CHECK_EQUAL(prod, dm1);
+            }
+        }
+};
+ScalarSparseMatrixQuickSumTest<float> scalar_sparse_matrix_sum_quick_test_float("float");
+ScalarSparseMatrixQuickSumTest<double> scalar_sparse_matrix_sum_quick_test_double("double");*/

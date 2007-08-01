@@ -123,3 +123,65 @@ class DenseMatrixElementSumQuickTest :
 };
 DenseMatrixElementSumQuickTest<float> dense_matrix_element_sum_quick_test_float("float");
 DenseMatrixElementSumQuickTest<double> dense_matrix_element_sum_quick_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixElementSumTest :
+    public BaseTest
+{
+    public:
+        SparseMatrixElementSumTest(const std::string & type) :
+            BaseTest("dense_matrix_element_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(11) ; size < (1 << 12) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size, size + 1, size + 8 / 1);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = DataType_(2);
+                    }
+                }                 
+                DataType_ sum(MatrixElementSum<>::value(sm1));
+
+				TEST_CHECK_EQUAL(sum, (size / 10 + 1) * 2);
+            }
+        }
+};
+SparseMatrixElementSumTest<float> sparse_matrix_element_sum_test_float("float");
+SparseMatrixElementSumTest<double> sparse_matrix_element_sum_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixElementSumQuickTest :
+    public QuickTest
+{
+    public:
+        SparseMatrixElementSumQuickTest(const std::string & type) :
+            QuickTest("dense_matrix_element_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                i_end(sm1.end_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = DataType_(2);
+                }
+            }                 
+            DataType_ sum(MatrixElementSum<>::value(sm1));
+
+			TEST_CHECK_EQUAL(sum, ((size * size + 1) / 10 + 1) * 2);
+        }
+};
+SparseMatrixElementSumQuickTest<float> sparse_matrix_element_sum_quick_test_float("float");
+SparseMatrixElementSumQuickTest<double> sparse_matrix_element_sum_quick_test_double("double");

@@ -28,12 +28,76 @@ using namespace pg512;
 using  namespace tests;
 
 template <typename DataType_>
+class BandedMatrixElementInverseTest :
+    public BaseTest
+{
+    public:
+        BandedMatrixElementInverseTest(const std::string & type) :
+            BaseTest("banded_matrix_element_inverse_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size));                    
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size)); 
+                for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()),
+                        j(dv2->begin_elements()) ; i != i_end ; ++i)
+                {
+                    *i = i.index() + 1;
+                    *j = 1 / static_cast<DataType_>(i.index() + 1);
+                    ++j;
+                }
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);  
+                
+                TEST_CHECK_EQUAL(MatrixElementInverse<>::value(bm1), bm2);
+            }
+        }
+};
+BandedMatrixElementInverseTest<float> banded_matrix_element_inverse_test_float("float");
+BandedMatrixElementInverseTest<double> banded_matrix_element_inverse_test_double("double");
+
+template <typename DataType_>
+class BandedMatrixElementInverseQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixElementInverseQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_element_inverse_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size));                    
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size)); 
+                for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()),
+                        j(dv2->begin_elements()) ; i != i_end ; ++i)
+                {
+                    *i = i.index() + 1;
+                    *j = 1 / static_cast<DataType_>(i.index() + 1);
+                    ++j;
+                }
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);  
+                
+                TEST_CHECK_EQUAL(MatrixElementInverse<>::value(bm1), bm2);
+            }
+        }
+};
+BandedMatrixElementInverseQuickTest<float> banded_matrix_element_inverse_quick_test_float("float");
+BandedMatrixElementInverseQuickTest<double> banded_matrix_element_inverse_quick_test_double("double");
+
+template <typename DataType_>
 class DenseMatrixElementInverseTest :
     public BaseTest
 {
     public:
         DenseMatrixElementInverseTest(const std::string & type) :
-            BaseTest("matrix_element_inverse_test<" + type + ">")
+            BaseTest("dense_matrix_element_inverse_test<" + type + ">")
         {
         }
 
@@ -56,7 +120,6 @@ class DenseMatrixElementInverseTest :
             }
         }
 };
-
 DenseMatrixElementInverseTest<float> dense_matrix_element_inverse_test_float("float");
 DenseMatrixElementInverseTest<double> dense_matrix_element_inverse_test_double("double");
 
@@ -88,3 +151,69 @@ class DenseMatrixElementInverseQuickTest :
 };
 DenseMatrixElementInverseQuickTest<float>  dense_matrix_element_inverse_quick_test_float("float");
 DenseMatrixElementInverseQuickTest<double> dense_matrix_element_inverse_quick_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixElementInverseTest :
+    public BaseTest
+{
+    public:
+        SparseMatrixElementInverseTest(const std::string & type) :
+            BaseTest("sparse_matrix_element_inverse_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                    sm2(size, size + 1, size / 7 + 1);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                    i_end(sm1.end_elements()), j(sm2.begin_elements()); 
+                    i != i_end ; ++i, ++j)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = i.index() + 1;
+                        *j = 1 / static_cast<DataType_>(i.index() + 1);
+
+                    }
+                }  
+                TEST_CHECK_EQUAL(MatrixElementInverse<>::value(sm1), sm2);
+            }
+        }
+};
+SparseMatrixElementInverseTest<float> sparse_matrix_element_inverse_test_float("float");
+SparseMatrixElementInverseTest<double> sparse_matrix_element_inverse_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixElementInverseQuickTest :
+    public QuickTest
+{
+    public:
+        SparseMatrixElementInverseQuickTest(const std::string & type) :
+            QuickTest("sparse_matrix_element_inverse_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size (22);
+            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                sm2(size, size + 1, size / 7 + 1);
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                i_end(sm1.end_elements()), j(sm2.begin_elements()); 
+                i != i_end ; ++i, ++j)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = i.index() + 1;
+                    *j = 1 / static_cast<DataType_>(i.index() + 1);
+
+                }
+            }  
+            TEST_CHECK_EQUAL(MatrixElementInverse<>::value(sm1), sm2);
+        }
+};
+SparseMatrixElementInverseQuickTest<float> sparse_matrix_element_inverse_quick_test_float("float");
+SparseMatrixElementInverseQuickTest<double> sparse_matrix_element_inverse_quick_test_double("double");

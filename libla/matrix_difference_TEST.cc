@@ -31,6 +31,68 @@ using namespace pg512;
 using namespace tests;
 
 template <typename DataType_>
+class BandedMatrixDifferenceTest :
+    public BaseTest
+{
+    public:
+        BandedMatrixDifferenceTest(const std::string & type) :
+            BaseTest("banded_matrix_difference_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
+                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(-1)));                 
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
+                BandedMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(bm1, bm2));
+
+                TEST_CHECK_EQUAL(difference, bm3);
+            }
+
+            BandedMatrix<DataType_> bm01(5), bm02(6);
+
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixColumnsDoNotMatch);            
+        }
+};
+BandedMatrixDifferenceTest<float> banded_matrix_difference_test_float("float");
+BandedMatrixDifferenceTest<double> banded_matrix_difference_test_double("double");
+
+template <typename DataType_>
+class BandedMatrixDifferenceQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixDifferenceQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_difference_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size (5);
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
+            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(-1)));                 
+            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
+            BandedMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(bm1, bm2));
+
+            TEST_CHECK_EQUAL(difference, bm3);
+
+            BandedMatrix<DataType_> bm01(5), bm02(6);
+
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixColumnsDoNotMatch);            
+        }
+};
+BandedMatrixDifferenceQuickTest<float> banded_matrix_difference_quick_test_float("float");
+BandedMatrixDifferenceQuickTest<double> banded_matrix_difference_quick_test_double("double");
+
+template <typename DataType_>
 class DenseMatrixDifferenceTest :
     public BaseTest
 {
@@ -57,7 +119,6 @@ class DenseMatrixDifferenceTest :
             TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(dm03, dm02), MatrixColumnsDoNotMatch);            
         }
 };
-
 DenseMatrixDifferenceTest<float> dense_matrix_difference_test_float("float");
 DenseMatrixDifferenceTest<double> dense_matrix_difference_test_double("double");
 
@@ -88,3 +149,83 @@ class DenseMatrixDifferenceQuickTest :
 };
 DenseMatrixDifferenceQuickTest<float> dense_matrix_difference_quick_test_float("float");
 DenseMatrixDifferenceQuickTest<double> dense_matrix_difference_quick_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixDifferenceTest :
+    public BaseTest
+{
+    public:
+        SparseMatrixDifferenceTest(const std::string & type) :
+            BaseTest("sparse_matrix_difference_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                    sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                    i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ; 
+                    i != i_end ; ++i, ++j, ++k)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = static_cast<DataType_>((i.index() +1) * 2 / 1.23456789);
+                        *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                        *k = static_cast<DataType_>((i.index() +1) / 1.23456789);                        
+                    }
+                }                        
+                SparseMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(sm1, sm2));
+
+                TEST_CHECK_EQUAL(difference, sm3);
+            }
+
+            SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
+
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch);            
+        }
+};
+SparseMatrixDifferenceTest<float> sparse_matrix_difference_test_float("float");
+SparseMatrixDifferenceTest<double> sparse_matrix_difference_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixDifferenceQuickTest :
+    public QuickTest
+{
+    public:
+        SparseMatrixDifferenceQuickTest(const std::string & type) :
+            QuickTest("sparse_matrix_difference_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size (25);
+            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ; 
+                i != i_end ; ++i, ++j, ++k)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = static_cast<DataType_>((i.index() +1) * 2 / 1.23456789);
+                    *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    *k = static_cast<DataType_>((i.index() +1) / 1.23456789);                        
+                }
+            }                        
+            SparseMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(sm1, sm2));
+
+            TEST_CHECK_EQUAL(difference, sm3);
+
+            SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
+
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch);            
+        }
+};
+SparseMatrixDifferenceQuickTest<float> sparse_matrix_difference_quick_test_float("float");
+SparseMatrixDifferenceQuickTest<double> sparse_matrix_difference_quick_test_double("double");
