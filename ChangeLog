@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-08-01 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh libswe/solver_TEST.cc: Reemployed the old solution
+	due to unstability side effects of the one from the last commit.
+	
+2007-08-01 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh libswe/solver_TEST.cc: Made predicted temporary
 	data reside on the heap and therefore added member pointers.
 	
