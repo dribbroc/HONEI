@@ -28,14 +28,18 @@
  * \file
  *
  * Templatized definition of summing up all of a Vector's elements.
- *
+ 
  * \ingroup grpvectoroperations
  */
 namespace pg512 ///< \todo Namespace name?
 {
     /**
      * A VectorElementSum yields the sum of all elements of descendants of type
-     * Vector.
+     * Vector.  
+     *
+     * In Formula: \f$ result=\sum^{size-1}_{k=0} vector[k] \f$
+     *
+     * \ingroup grpvectoroperations
      **/
     template <typename DataType_, typename Tag_ = tags::CPU> struct VectorElementSum
     {
