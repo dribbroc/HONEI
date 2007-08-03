@@ -196,8 +196,10 @@ class DenseMatrixQuickTest :
             TEST_CHECK_EQUAL(col1.size(), rows);
 
             DenseMatrix<DataType_> dm2(3, 4, DataType_(2));
-            DenseMatrix<DataType_> dm3(4, 5, DataType_(2));
-            TEST_CHECK_NOT_EQUAL(dm2, dm3);
+            DenseMatrix<DataType_> dm3(3, 5, DataType_(2));
+            DenseMatrix<DataType_> dm4(4, 5, DataType_(2));            
+            TEST_CHECK_THROWS(dm2==dm3, MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(dm3==dm4, MatrixColumnsDoNotMatch);
 
         }
 };

@@ -1,7 +1,7 @@
 /* vim: set number sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the SWE C++ library. LiSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General

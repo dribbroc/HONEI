@@ -140,6 +140,34 @@ namespace pg512 ///< \todo Namespace name?
                     _elements[i] = value;
             }
 
+            /**
+             * Constructor.
+             *
+             * Create a sub vector from a given source vector.
+             * \param source The source vector.
+             * \param start The starting point of the new vector in the old vector.
+             * \param size Size of the new vector.
+             **/
+            DenseVector(const DenseVector<DataType_> & source, unsigned long start, unsigned long size) :
+                _elements(new DataType_[size]),
+                _size(size),
+                _offset(0),
+                _stepsize(1)
+            {
+                CONTEXT("When creating DenseVector:");
+                ASSERT(size > 0, "size is zero!");
+                
+                if  (start + size > source.size())
+                {
+                    throw VectorSizeDoesNotMatch(start + size, source.size());
+                }
+                
+                for (int i = 0 ; i < size ; ++i)
+                {
+                    _elements[i] = source._elements[i + start];
+                }
+                
+            }
 
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other) :

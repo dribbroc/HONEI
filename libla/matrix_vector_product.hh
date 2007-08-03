@@ -108,12 +108,12 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
                 }
 
-            SparseVector<DataType1_> result(matrix.rows());
+            SparseVector<DataType1_> result(matrix.rows(),1);
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.rows(); ++i)
             {
-                Vector<DataType1_> & v(matrix[i]);
-                *l = ScalarProduct<Tag_>::value(vector, v);
+                SparseVector<DataType1_>  v(matrix[i]);
+                *l = ScalarProduct<Tag_>::value(v, vector);
                 ++l;
             }
 			///\todo: perhaps sparsify
@@ -131,7 +131,7 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
             SparseVector<DataType1_> result(matrix.rows(), matrix.rows());
-            typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
+            typename SparseVector<DataType1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < matrix.rows(); ++i)
             {
                 const Vector<DataType1_> & v(matrix[i]);

@@ -187,7 +187,21 @@ class DenseVectorQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[4710] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
             DataType_ s = static_cast<DataType_>(1.2345);
             (*dv)[333] = s;
-            TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[333] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));            
+            TEST_CHECK_EQUAL_WITHIN_EPS((*dv)[333] , s, sqrt(std::numeric_limits<DataType_>::epsilon())); 
+            
+            DenseVector<DataType_> dv2(10); 
+            for (int i = 0 ; i < 10 ; ++i)
+            {
+                dv2[i] = DataType_(i);
+            }
+            DenseVector<DataType_> dv3(5);
+            for (int i = 0 ; i < 5 ; ++i)
+            {
+                dv3[i] = DataType_(i + 3);
+            }
+            DenseVector<DataType_> dv4(dv2, 3, 5);
+            TEST_CHECK_EQUAL(dv3, dv4);
+                         
         }
 };
 DenseVectorQuickTest<float>  dense_vector_quick_test_float("float");

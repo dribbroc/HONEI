@@ -24,6 +24,7 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/vector.hh>
+#include <libla/matrix_error.hh>
 #include <libla/vector_iterator.hh>
 #include <libutil/shared_array.hh>
 
@@ -360,6 +361,15 @@ namespace pg512 ///< \todo Namespace name?
     template <typename DataType_> bool operator== (const Matrix<DataType_> & left, const Matrix<DataType_> & right)
     {
         bool result(true);
+        if (left.columns() != right.columns())
+        {
+            throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+        }
+
+        if (left.rows() != right.rows())
+        {
+            throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+        }
 
         for (typename Matrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
                 j(right.begin_elements()) ; i != i_end ; ++i)

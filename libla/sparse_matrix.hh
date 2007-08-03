@@ -170,7 +170,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Retrieves row vector by index, zero-based, unassignable.
-            virtual const Vector<DataType_> & operator[] (unsigned long row) const
+            virtual const SparseVector<DataType_> & operator[] (unsigned long row) const
             {
                 if (! _row_vectors[row])
                     return _zero_vector;
@@ -179,7 +179,7 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Retrieves row vector by index, zero-based, assignable.
-            virtual Vector<DataType_> & operator[] (unsigned long row)
+            virtual SparseVector<DataType_> & operator[] (unsigned long row)
             {
                 if (! _row_vectors[row])
                     _row_vectors[row].reset(new SparseVector<DataType_>(_columns, _capacity));
