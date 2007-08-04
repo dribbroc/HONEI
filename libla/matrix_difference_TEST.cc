@@ -17,10 +17,10 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/dense_matrix.hh>
 #include <libla/matrix_difference.hh>
-#include <matrix_error.hh>
+#include <libla/matrix_error.hh>
 #include <unittest/unittest.hh>
 
 #include <limits>
@@ -44,19 +44,19 @@ class BandedMatrixDifferenceTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
-                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
-                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(-1)));                 
+                DenseVector<DataType_> * dv1(new DenseVector<DataType_>(size, DataType_(2)));
+                DenseVector<DataType_> * dv2(new DenseVector<DataType_>(size, DataType_(3)));
+                DenseVector<DataType_> * dv3(new DenseVector<DataType_>(size, DataType_(-1)));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-                BandedMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(bm1, bm2));
+                BandedMatrix<DataType_> & difference(MatrixDifference<>::value(bm1, bm2));
 
                 TEST_CHECK_EQUAL(difference, bm3);
             }
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm02, bm01), MatrixColumnsDoNotMatch);
         }
 };
 BandedMatrixDifferenceTest<float> banded_matrix_difference_test_float("float");
@@ -75,18 +75,22 @@ class BandedMatrixDifferenceQuickTest :
         virtual void run() const
         {
             unsigned long size (5);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
-            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(-1)));                 
+            DenseVector<DataType_> * dv1(new DenseVector<DataType_>(size, DataType_(2))),
+                * dv2(new DenseVector<DataType_>(size, DataType_(3))),
+                * dv3(new DenseVector<DataType_>(size, DataType_(-1)));
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-            BandedMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(bm1, bm2));
 
-            TEST_CHECK_EQUAL(difference, bm3);
+            BandedMatrix<DataType_> & diff(MatrixDifference<>::value(bm1, bm2));
+
+            for (typename Matrix<DataType_>::ConstElementIterator i(diff.begin_elements()),
+                    i_end(diff.end_elements()), j(bm3.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+            }
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(bm02, bm01), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
 BandedMatrixDifferenceQuickTest<float> banded_matrix_difference_quick_test_float("float");
@@ -108,15 +112,15 @@ class DenseMatrixDifferenceTest :
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(3)),
                     dm3(size, size + 1, DataType_(-1));
-                DenseMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(dm1, dm2));
+                DenseMatrix<DataType_> & difference(MatrixDifference<>::value(dm1, dm2));
 
                 TEST_CHECK_EQUAL(difference, dm3);
             }
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
 
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(dm03, dm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(dm03, dm02), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(dm03, dm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
         }
 };
 DenseMatrixDifferenceTest<float> dense_matrix_difference_test_float("float");
@@ -137,14 +141,14 @@ class DenseMatrixDifferenceQuickTest :
             unsigned long size(5);
             DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(3)),
                 dm3(size, size + 1, DataType_(-1));
-            DenseMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(dm1, dm2));
+            DenseMatrix<DataType_> & difference(MatrixDifference<>::value(dm1, dm2));
 
             TEST_CHECK_EQUAL(difference, dm3);
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
 
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(dm03, dm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(dm03, dm02), MatrixColumnsDoNotMatch);     
+            TEST_CHECK_THROWS(MatrixDifference<>::value(dm03, dm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
         }
 };
 DenseMatrixDifferenceQuickTest<float> dense_matrix_difference_quick_test_float("float");
@@ -164,28 +168,28 @@ class SparseMatrixDifferenceTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
-                    i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ; 
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                    i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
                 {
-                    if (i.index() % 10 == 0) 
+                    if (i.index() % 10 == 0)
                     {
-                        *i = static_cast<DataType_>((i.index() +1) * 2 / 1.23456789);
-                        *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                        *k = static_cast<DataType_>((i.index() +1) / 1.23456789);                        
+                        *i = DataType_((i.index() +1) * 2 / 1.23456789);
+                        *j = DataType_((i.index() +1) / 1.23456789);
+                        *k = DataType_((i.index() +1) / 1.23456789);
                     }
-                }                        
-                SparseMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(sm1, sm2));
+                }
+                SparseMatrix<DataType_> & difference(MatrixDifference<>::value(sm1, sm2));
 
                 TEST_CHECK_EQUAL(difference, sm3);
             }
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
 SparseMatrixDifferenceTest<float> sparse_matrix_difference_test_float("float");
@@ -204,27 +208,27 @@ class SparseMatrixDifferenceQuickTest :
         virtual void run() const
         {
             unsigned long size (25);
-            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                 sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
-                i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ; 
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
             {
-                if (i.index() % 10 == 0) 
+                if (i.index() % 10 == 0)
                 {
-                    *i = static_cast<DataType_>((i.index() +1) * 2 / 1.23456789);
-                    *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                    *k = static_cast<DataType_>((i.index() +1) / 1.23456789);                        
+                    *i = DataType_((i.index() +1) * 2 / 1.23456789);
+                    *j = DataType_((i.index() +1) / 1.23456789);
+                    *k = DataType_((i.index() +1) / 1.23456789);
                 }
-            }                        
-            SparseMatrix<DataType_> & difference(MatrixDifference<DataType_>::value(sm1, sm2));
+            }
+            SparseMatrix<DataType_> & difference(MatrixDifference<>::value(sm1, sm2));
 
             TEST_CHECK_EQUAL(difference, sm3);
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
 SparseMatrixDifferenceQuickTest<float> sparse_matrix_difference_quick_test_float("float");

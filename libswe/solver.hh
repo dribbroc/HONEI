@@ -1190,12 +1190,12 @@ namespace pg512 {
         //DenseVector<WorkPrec_> flow1(_u->size(),ulint(0));
         _flow_x<WorkPrec_>(*u1);
         DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(*v, *u1, _eps,_delta_t);
-        sv = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum);
+        sv = ScalarVectorProduct<>::value(prefac,tempsum);
         DenseVector<WorkPrec_> *w = _w->copy();
         //DenseVector<WorkPrec_> flow2(_u->size(), ulint(0), ulint(1));
         _flow_y<WorkPrec_>(*u2);
         DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(*w, *u2, _eps,_delta_t);
-        sw = ScalarVectorProduct<WorkPrec_>::value(prefac,tempsum2);
+        sw = ScalarVectorProduct<>::value(prefac,tempsum2);
         
         
         cout << "Temp relax vectors after building:\n";
@@ -1313,7 +1313,7 @@ namespace pg512 {
         _flow_x(*flow);
         DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_v_temp,*flow, -2*_delta_t, 2*_delta_t);
         predictedv = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
-        predictedv = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedv);
+        predictedv = ScalarVectorProduct<>::value(1+(1/_delta_t), predictedv);
         
         DenseVector<WorkPrec_>* flow2 = predictedu.copy();
         _flow_y(*flow2);
@@ -1321,7 +1321,7 @@ namespace pg512 {
         innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedw, *flow2, _eps, _delta_t);
         innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, *flow2, -2*_delta_t, 2*_delta_t);
         predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
-        predictedw = ScalarVectorProduct<WorkPrec_>::value(1+(1/_delta_t), predictedw);
+        predictedw = ScalarVectorProduct<>::value(1+(1/_delta_t), predictedw);
         std::cout << "Finished Setup 2.\n";
     } 
     

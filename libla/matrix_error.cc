@@ -40,3 +40,15 @@ MatrixRowsDoNotMatch::MatrixRowsDoNotMatch(unsigned long rows, unsigned long exp
             + stringify(expected_rows) + "'")
 {
 }
+
+MatrixSizeDoesNotMatch::MatrixSizeDoesNotMatch(unsigned long size, unsigned long expected_size) throw () :
+    MatrixError("Matrix size '" + stringify(size) + "' does not match expected size '"
+            + stringify(expected_size) + "'")
+{
+}
+
+MatrixIsNotSquare::MatrixIsNotSquare(unsigned long rows, unsigned long expected_columns) throw () :
+    MatrixError("Matrix row count '" + stringify(rows) + "' does not match expected column count '"
+            + stringify(expected_columns) + "'")
+{
+}

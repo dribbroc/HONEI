@@ -5,6 +5,21 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/scalar_vector_product.hh, libswe/solver.hh: Changed
+	ScalarVectorProduct to new calling convention using multiple data
+	types.
+	* libla/banded_matrix.hh: Fixed several off-by-one bugs. Added new
+	member function squared().
+	* libla/vector_iterator.hh: Added new member function exists(). Added
+	existing trait parent() to vector iterator wrappers.
+	* libla/matrix_error.cc, libla/matrix_error.hh: Created
+	MatrixSizeDoesNotMatch exception.
+	* libla/matrix_difference.hh, libla/matrix_difference_TEST.cc: Fixed
+	computation of BandedMatrix - BandedMatrix. Tidied up test cases a
+	bit.
+
 2007-08-03 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/dense_vector.hh: Added subvector constructor.
@@ -22,7 +37,7 @@ see the NEWS file.
 	
 2007-08-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libla/sparse_matrix.hh: Added NonZeroElementIterator. Still bugy due to
+	* libla/sparse_matrix.hh: Added NonZeroElementIterator. Still buggy due to
 	missing used_elements usage.
 	* libla/*_TEST.cc: Added SparseMatrix and BandedMatrix test cases to nearly
 	all operations.

@@ -30,6 +30,9 @@ namespace pg512 ///< \todo Namespace name?
     class VectorIteratorTraits
     {
         public:
+            /// Returns true if the referenced vector already exists.
+            virtual bool exists() const = 0;
+
             /// Returns our index.
             virtual const unsigned long index() const = 0;
     };
@@ -108,10 +111,22 @@ namespace pg512 ///< \todo Namespace name?
                 return **_iterator;
             }
 
+            /// Returns true if the referenced vector already exists.
+            virtual bool exists() const
+            {
+                return _iterator->exists();
+            }
+
             /// Our index.
             virtual const unsigned long index() const
             {
                 return _iterator->index();
+            }
+
+            /// Returns a pointer to our parent matrix.
+            virtual const Matrix<DataType_> * parent() const
+            {
+                return _iterator->parent();
             }
     };
 
@@ -169,10 +184,22 @@ namespace pg512 ///< \todo Namespace name?
                 return *iterator;
             }
 
+            /// Returns true if the referenced vector already exists.
+            virtual bool exists() const
+            {
+                return _iterator->exists();
+            }
+
             /// Our index.
             virtual const unsigned long index() const
             {
                 return _iterator->index();
+            }
+
+            /// Returns a pointer to our parent matrix.
+            virtual const Matrix<DataType_> * parent() const
+            {
+                return _iterator->parent();
             }
     };
 }

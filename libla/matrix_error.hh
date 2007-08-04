@@ -28,14 +28,14 @@
  * Declaration of exception classes which are related to Matrix.
  *
  * \ingroup grpmatrixexceptions
- **/
+ */
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * A MatrixError is the base class for all Matrix related exceptions.
+     * MatrixError is the base class for all Matrix related exceptions.
      *
      * \ingroup grpmatrixexceptions
-     **/
+     */
     class MatrixError :
         public Exception
     {
@@ -44,11 +44,11 @@ namespace pg512 ///< \todo Namespace name?
     };
 
     /**
-     * A MatrixColumnsDoNotMatch is thrown when the number of columns of a Matrix argument
+     * MatrixColumnsDoNotMatch is thrown when the number of columns of a Matrix argument
      * does not match the expected number of columns.
      *
      * \ingroup grpmatrixexceptions
-     **/
+     */
     class MatrixColumnsDoNotMatch :
         public MatrixError
     {
@@ -56,18 +56,18 @@ namespace pg512 ///< \todo Namespace name?
             /**
              * Constructor.
              *
-             * \param columns Amount of columns of the Matrix that arose the problem.
-             * \param expected_columns Amount of Columns that was expected by the operation.
-             **/
+             * \param columns Number of columns of the Matrix that arose the problem.
+             * \param expected_columns Number of Columns that was expected by the operation.
+             */
             MatrixColumnsDoNotMatch(unsigned long columns, unsigned long expected_columns) throw ();
     };
 
-     /**
-     * A MatrixRowsDoNotMatch is thrown when the number of rows of a Matrix argument
+    /**
+     * MatrixRowsDoNotMatch is thrown when the number of rows of a Matrix argument
      * does not match the expected number of rows.
      *
      * \ingroup grpmatrixexceptions
-     **/
+     */
     class MatrixRowsDoNotMatch :
         public MatrixError
     {
@@ -75,10 +75,48 @@ namespace pg512 ///< \todo Namespace name?
             /**
              * Constructor.
              *
-             * \param rows Amount of rows of the Matrix that arose the problem.
-             * \param expected_rows Amount of rows that was expected by the operation.
-             **/
+             * \param rows Number of rows of the Matrix that arose the problem.
+             * \param expected_rows Number of rows that was expected by the operation.
+             */
             MatrixRowsDoNotMatch(unsigned long rows, unsigned long expected_rows) throw ();
+    };
+
+    /**
+     * MatrixSizeDoesNotMatch is thrown when the size of a square Matrix argument
+     * does not match the expected size.
+     *
+     * \ingroup grpmatrixexceptions
+     */
+    class MatrixSizeDoesNotMatch :
+        public MatrixError
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param size Size of the square Matrix that arose the problem.
+             * \param expected_size Size that was expected by the operation.
+             */
+            MatrixSizeDoesNotMatch(unsigned long size, unsigned long expected_size) throw ();
+    };
+
+    /**
+     * MatrixIsNotSquare is thrown when a Matrix argument is not a square matrix, i.e. its
+     * number of rows does not match its number of columns.
+     *
+     * \ingroup grpmatrixexceptions
+     */
+    class MatrixIsNotSquare :
+        public MatrixError
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param rows Number of rows of the Matrix that arose the problem.
+             * \param expected_columns Number fo columsn that was expected by the operation.
+             */
+            MatrixIsNotSquare(unsigned long rows, unsigned long expected_columns) throw ();
     };
 }
 

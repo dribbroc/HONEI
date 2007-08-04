@@ -62,7 +62,7 @@ namespace pg512 ///< \todo Namespace name?
             static const DataType_ _zero_element;
 
             /// Our zero vector.
-            const DenseVector<DataType_> _zero_vector;
+            DenseVector<DataType_> _zero_vector;
 
             /// Our implementation of ElementIteratorBase.
             template <typename ElementType_> class BandedElementIterator;
@@ -117,7 +117,7 @@ namespace pg512 ///< \todo Namespace name?
                 if (diagonal->size() != size)
                     throw VectorSizeDoesNotMatch(diagonal->size(), size);
 
-                _bands[size].reset(diagonal);
+                _bands[size - 1].reset(diagonal);
             }
             /// \}
 
@@ -148,25 +148,25 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing to the first band of the matrix.
             VectorIterator begin_bands()
             {
-                return VectorIterator(new BandIterator<DataType_>(*this,0));
+                return VectorIterator(new BandIterator<DataType_>(*this, 0));
             }
 
             /// Returns iterator pointing behind the last band of the matrix.
             VectorIterator end_bands()
             {
-                return VectorIterator(new BandIterator<DataType_>(*this,_size));
+                return VectorIterator(new BandIterator<DataType_>(*this, 2 * _size - 1));
             }
 
             /// Returns iterator pointing to the first band of the matrix.
             ConstVectorIterator begin_bands() const
             {
-                return ConstVectorIterator(new BandIterator<DataType_>(*this,0));
+                return ConstVectorIterator(new BandIterator<DataType_>(*this, 0));
             }
 
             /// Returns iterator pointing behind the last band of the matrix.
             ConstVectorIterator end_bands() const
             {
-                return ConstVectorIterator(new BandIterator<DataType_>(*this,_size));
+                return ConstVectorIterator(new BandIterator<DataType_>(*this, 2 * _size));
             }
 
             /// Returns the number of our columns.
@@ -184,10 +184,10 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns a band-vector by index.
             DenseVector<DataType_> & band(signed long index) const
             {
-                if (! _bands[index + _size])
-                    _bands[index + _size].reset(new DenseVector<DataType_>(_size, static_cast<DataType_>(0)));
+                if (! _bands[index + _size - 1])
+                    _bands[index + _size - 1].reset(new DenseVector<DataType_>(_size, DataType_(0)));
 
-                return *_bands[index + _size];
+                return *_bands[index + _size - 1];
             }
 
             /// Returns a copy of the matrix.
@@ -225,7 +225,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns true if we're below the diagonal.
             inline bool _lower() const
             {
-                return row() < column();
+                return row() > column();
             }
 
             /// Returns the band-index for the current element.
@@ -275,25 +275,28 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
-                if (! _matrix._bands[_band_index() + _matrix._size])
+                CONTEXT("When dereferencing BandedElementIterator (mutable):");
+
+                if (! _matrix._bands[_band_index() + _matrix._size - 1])
                 {
-                    Log::instance()->message(ll_full, "Band " + stringify(_band_index() + _matrix._size) + " created.");
-                    _matrix._bands[_band_index() + _matrix._size].reset(new DenseVector<DataType_>(_matrix._size));
+                    _matrix._bands[_band_index() + _matrix._size - 1].reset(new DenseVector<DataType_>(_matrix._size));
                 }
 
-                return (*_matrix._bands[_band_index() + _matrix._size])[row() + _band_index()];
+                return (*_matrix._bands[_band_index() + _matrix._size - 1])[row() + _band_index()];
             }
 
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
-                if (! _matrix._bands[_band_index() + _matrix._size])
+                CONTEXT("When dereferencing BandedElementIterator (const):");
+
+                if (! _matrix._bands[_band_index() + _matrix._size - 1])
+                {
                     return _matrix._zero_element;
+                }
                 else
                 {
-                    std::cout << "_band_index = " << _band_index() << ", _matrix._size = " <<
-                        _matrix._size << ", row = " << row() << std::endl;
-                    return (*_matrix._bands[_band_index() + _matrix._size])[row() + _band_index()];
+                    return (*_matrix._bands[_band_index() + _matrix._size - 1])[row() + _band_index()];
                 }
             }
 
@@ -428,6 +431,12 @@ namespace pg512 ///< \todo Namespace name?
 
             /// \name IteratorTraits interface
             /// \{
+
+            /// Returns true if the referenced vector already exists.
+            virtual bool exists() const
+            {
+                return _matrix._bands[_index];
+            }
 
             /// Returns our index.
             virtual const unsigned long index() const

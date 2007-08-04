@@ -39,17 +39,19 @@ namespace pg512
      * \brief The referenced vector is changed by multiplying the given scalar to each of its elements.
      * \ingroup grpvectoroperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarVectorProduct
+    template <typename Tag_ = tags::CPU> struct ScalarVectorProduct
     {
         /**
          * Returns the resulting vector after multiplying a scalar to a given DenseVector instance.
          * \param vector DenseVector to be scaled.
          * \param scalar The scalar to be used.
          **/
-        static DenseVector<DataType_> & value(const DataType_ scalar, DenseVector<DataType_> & vector)
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT2_> & value(const DT1_ scalar, DenseVector<DT2_> & vector)
         {
 
-            for (typename Vector<DataType_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DT2_>::ElementIterator l(vector.begin_elements()),
+                    l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= scalar;
             }
@@ -62,16 +64,18 @@ namespace pg512
          * \param vector SparseVector to be scaled.
          * \param scalar The scalar to be used.
          **/
-        static SparseVector<DataType_> & value(const DataType_ scalar, SparseVector<DataType_> & vector)
+        template <typename DT1_, typename DT2_>
+        static SparseVector<DT2_> & value(const DT1_ scalar, SparseVector<DT2_> & vector)
         {
-
-            for (typename Vector<DataType_>::ElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DT2_>::ElementIterator l(vector.begin_non_zero_elements()),
+                    l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 *l *= scalar;
             }
-			///\todo: perhaps sparsify - would be senseless, but scalar may be zero.
+
             return vector;
         }
     };
 }
+
 #endif
