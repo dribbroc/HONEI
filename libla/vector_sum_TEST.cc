@@ -52,7 +52,7 @@ class DenseVectorSumTest :
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(dv1));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size, std::numeric_limits<DataType_>::epsilon());
 
-                DenseVector<DataType_> dv3(size + 1), dv4(size - 1);
+                DenseVector<DataType_> dv3(size + 1), dv4(size);
                 TEST_CHECK_THROWS(VectorSum<>::value(dv3, dv4), VectorSizeDoesNotMatch);
             }
         }

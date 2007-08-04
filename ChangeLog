@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/vector_sum_TEST.cc: Fixed zero-sized DenseVector in exception
+	tests.
+
+2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/scalar_vector_product.hh, libswe/solver.hh: Changed
 	ScalarVectorProduct to new calling convention using multiple data
 	types.
