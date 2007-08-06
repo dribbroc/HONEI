@@ -74,11 +74,13 @@ namespace pg512
             return result;
         }
 
+
 		/**
          * Returns the resulting matrix after multiplying a DenseMatrix and a SparseMatrix instance.
          * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix used as second factor.
          **/
+
         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.rows())
@@ -87,16 +89,23 @@ namespace pg512
             DenseMatrix<DataType1_> result(right.columns(), left.rows());
             typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
 
-            for (unsigned int s=0 ; s < left.rows() ; ++s)
+            ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
+            for (unsigned int l_row=0 ; l_row < left.rows() ; ++l_row)
             {
-                const DenseVector<DataType1_> left_row = left[s];
-                for (unsigned int t=0; t < right.columns() ; ++t)
-                {
-                    const Vector<DataType2_> & right_column(right.column(t));
-					*i = ScalarProduct<>::value(left_row, right_column);
-					++i;
-                }
+                const DenseVector<DataType1_> left_row(left[l_row]);
+                typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements());
 
+                for (unsigned int r_column=0; r_column < right.columns() ; ++r_column)
+                {
+                    for (unsigned int r_row=0; r_row < right.rows() ; ++r_row)
+                    {
+                        const SparseVector<DataType2_> right_row(right[r_row]);
+                        DataType2_ right_value(right_row[r_column]);
+                        *i += right_value * *l;
+                        ++l;
+                    }
+                    ++i;
+				}
             }
             return result;
         }
@@ -113,15 +122,22 @@ namespace pg512
 
             SparseMatrix<DataType1_> result(right.columns(), left.rows());
             typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
-
-            for (unsigned int s=0 ; s < left.rows() ; ++s)
+            ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
+            for (unsigned int l_row=0 ; l_row < left.rows() ; ++l_row)
             {
-                const Vector<DataType1_> & left_row(left[s]);
-                for (unsigned int t=0; t < right.columns() ; ++t)
+                const SparseVector<DataType1_> left_row(left[l_row]);
+                typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements());
+
+                for (unsigned int r_column=0; r_column < right.columns() ; ++r_column)
                 {
-                    const Vector<DataType2_> & right_column(right.column(t));
-					*i = ScalarProduct<>::value(left_row, right_column);
-					++i;
+                    for (unsigned int r_row=0; r_row < right.rows() ; ++r_row)
+                    {
+                        const SparseVector<DataType2_> right_row(right[r_row]);
+                        DataType2_ right_value(right_row[r_column]);
+                        *i += right_value * *l;
+                        ++l;
+                    }
+                    ++i;
 				}
             }
             return result;
@@ -142,11 +158,11 @@ namespace pg512
 
             for (unsigned int s=0 ; s < left.rows() ; ++s)
             {
-                const Vector<DataType1_> & left_row(left[s]);
+                const SparseVector<DataType1_> left_row(left[s]);
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
                     const DenseVector<DataType2_> right_column = right.column(t);
-					*i = ScalarProduct<>::value(left_row, right_column);
+					*i = ScalarProduct<>::value(right_column, left_row);
 					++i;
                 }
 
@@ -198,7 +214,7 @@ namespace pg512
             ///\todo: Implement when BandIterator ready
             return result;
         }
-	
+
 
         /**
          * Returns the resulting matrix after multiplying a DenseMatrix instance and a BandedMatrix instance.
@@ -268,6 +284,6 @@ namespace pg512
         }
 	};
 
-	
+
 }
 #endif

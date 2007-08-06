@@ -5,12 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-06 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/matrix_product.hh: Made algorithms compatible to SparseMatrix
+	due to missing column-access. I hope it computes the right thing :-).
+
 2007-08-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libla/matrix_sum_TEST.cc: Replaced TEST_CHECK_EQUAL with TEST_CHECK_EQUAL_WITHIN_EPS
-	for banded marices.
-	* libla/scalar_matrix_product_TEST.cc: Replaced TEST_CHECK_EQUAL with TEST_CHECK_EQUAL_WITHIN_EPS
-	for banded marices.
+	* libla/matrix_sum_TEST.cc: Replaced TEST_CHECK_EQUAL with
+	TEST_CHECK_EQUAL_WITHIN_EPS for banded matrices.
+	* libla/scalar_matrix_product_TEST.cc: Replaced TEST_CHECK_EQUAL with
+	TEST_CHECK_EQUAL_WITHIN_EPS for banded matrices.
 	
 2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
 
