@@ -155,14 +155,9 @@ namespace pg512
          **/
         template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
         {
-            if (left.columns() != right.columns())
-            {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
-            }
-
             if (left.rows() != right.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixSizeDoesNotMatch(right.rows(), left.rows()); 
             }
 
             typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());

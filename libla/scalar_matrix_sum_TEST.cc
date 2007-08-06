@@ -72,9 +72,9 @@ class ScalarBandedMatrixSumQuickTest :
                 DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                 
                 DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(5)));                   
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);     
-                BandedMatrix<DataType_> & prod(ScalarMatrixSum<DataType_>::value(DataType_(3), bm1));
+                BandedMatrix<DataType_> & sum(ScalarMatrixSum<DataType_>::value(DataType_(3), bm1));
 
-                TEST_CHECK_EQUAL(prod, bm2);
+                TEST_CHECK_EQUAL(sum, bm2);
             }
         }
 };

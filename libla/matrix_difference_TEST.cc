@@ -55,8 +55,7 @@ class BandedMatrixDifferenceTest :
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(MatrixDifference<>::value(bm02, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<>::value(bm02, bm01), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
 BandedMatrixDifferenceTest<float> banded_matrix_difference_test_float("float");

@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-06 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/matrix_sum_TEST.cc: Replaced TEST_CHECK_EQUAL with TEST_CHECK_EQUAL_WITHIN_EPS
+	for banded marices.
+	* libla/scalar_matrix_product_TEST.cc: Replaced TEST_CHECK_EQUAL with TEST_CHECK_EQUAL_WITHIN_EPS
+	for banded marices.
+	
 2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/vector_sum_TEST.cc: Fixed zero-sized DenseVector in exception
