@@ -79,7 +79,7 @@ namespace pg512
                 *r += *l;
             }
 
-            return matrix;
+            return result;
         }
 
         /**
