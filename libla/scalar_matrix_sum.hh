@@ -23,6 +23,7 @@
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/sparse_matrix.hh>
 
 /**
  * \file
@@ -53,6 +54,29 @@ namespace pg512
                     l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
                 *l += scalar;
+            }
+
+            return matrix;
+        }
+
+        /**
+         * Returns the resulting matrix after add a scalar to a given SparseMatrix instance, which is then considered as dense.
+         * \param matrix SparseMatrix to be used.
+         * \param scalar The scalar to be added.
+         **/
+        static DenseMatrix<DataType_> & value(const DataType_ scalar, SparseMatrix<DataType_> & matrix)
+        {
+            DenseMatrix<DataType_> result(matrix.columns(), matrix.rows(), scalar);
+            typename MutableMatrix<DataType_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements());
+            for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_non_zero_elements()),
+                    l_end(matrix.end_non_zero_elements()) ; l != l_end ; ++l)
+            {
+                while (r.index() < l.index())
+                {
+                    ++r;
+                }
+
+                *r += *l;
             }
 
             return matrix;
