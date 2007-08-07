@@ -164,7 +164,7 @@ namespace pg512
                 typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
                 DenseVector<DataType1_> band = *vi;
 
-                for(typename Vector<DataType1_>::ElementIterator b(band.begin_elements()), b_end(band.end_elements()) ; b != b_end ; ++b)
+                for(typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()), b_end(band.end_elements()) ; b != b_end ; ++b)
                 {
                     *r += *b * *j;
                     ++r; ++j;
@@ -184,7 +184,7 @@ namespace pg512
             if (vector.size() != matrix.columns())
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
-            SparseVector<DataType1_> result(matrix.rows(), matrix.rows());
+            SparseVector<DataType1_> result(vector.size(), vector.capacity());
             ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
             //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
 
@@ -192,28 +192,31 @@ namespace pg512
             for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
             {
                 typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements());
-                typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
-
                 DenseVector<DataType1_> band = *vi;
 
-                for(typename Vector<DataType1_>::ElementIterator b(band.begin_elements()), b_end(band.end_elements()) ; b != b_end ; )
+                typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()); //, b_end(band.end_elements()) ; b != b_end ; )
+                for(typename Vector<DataType1_>::ConstElementIterator r(result.begin_elements()), r_end(result.end_elements()) ; r != r_end ; )
                 {
-                    while (j.index() > r.index())
+                    while (j.index() > b.index() && j != j_end)
                     {
-                        ++r; ++b;
+                        ++b; ++r;
                     }
-                    *r += *b * *j;
-                    ++b; ++r;
-                    if (j != j_end)
-                        ++j;
+
+                    if (j == j_end)
+                    {
+                        break;
+                    }
+
+                    if (b.index() == r.index())
+                    {
+                        result[r.index()] += *b * *j; //Used instead of Mutable Iterator and *r += *b * *j, because then every (!!) element would be allocated in the new SparseVector
+                        ++b; ++r; ++j;
+                    }
                 }
             }
-			///\todo: perhaps sparsify
+			///\todo: perhaps sparsify (*b can be zero)
             return result;
         }
-
-
-
     };
 }
 #endif
