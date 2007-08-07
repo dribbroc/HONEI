@@ -40,18 +40,16 @@ class DenseVectorElementInverseTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseVector<DataType_> > 
-                    dv1(new DenseVector<DataType_>(size, static_cast<DataType_>(0))),
-                    dv2(new DenseVector<DataType_>(size, static_cast<DataType_>(0)));
-                for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()),
-                        j(dv2->begin_elements()) ; i != i_end ; ++i)
+                DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() + 1;
                     *j = 1 / static_cast<DataType_>(i.index() + 1);
                     ++j;
                 }
 
-                TEST_CHECK_EQUAL(VectorElementInverse<>::value(*dv1), *dv2);
+                TEST_CHECK_EQUAL(VectorElementInverse<>::value(dv1), dv2);
             }
         }
 };
@@ -71,18 +69,17 @@ class DenseVectorElementInverseQuickTest :
 
         virtual void run() const
         {
-            std::tr1::shared_ptr<DenseVector<DataType_> > 
-                dv1(new DenseVector<DataType_>(3, static_cast<DataType_>(0))),
-                dv2(new DenseVector<DataType_>(3, static_cast<DataType_>(0)));
-            for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()),
-                    j(dv2->begin_elements()) ; i != i_end ; ++i)
+            unsigned long size(11);
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()) ; i != i_end ; ++i)
             {
                 *i = i.index() + 1;
                 *j = 1 / static_cast<DataType_>(i.index() + 1);
                 ++j;
             }
 
-            TEST_CHECK_EQUAL(VectorElementInverse<>::value(*dv1), *dv2);
+            TEST_CHECK_EQUAL(VectorElementInverse<>::value(dv1), dv2);
         }
 };
 DenseVectorElementInverseQuickTest<float>  dense_vector_element_inverse_quick_test_float("float");
@@ -103,11 +100,9 @@ class SparseVectorElementInverseTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                std::tr1::shared_ptr<SparseVector<DataType_> > 
-                    sv1(new SparseVector<DataType_>(size, size / 7 + 1)),
-                    sv2(new SparseVector<DataType_>(size, size / 8 + 1));
-                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()),
-                        j(sv2->begin_elements()) ; i != i_end ; ++i)
+                SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                        j(sv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -117,7 +112,7 @@ class SparseVectorElementInverseTest :
                     ++j;
                 }
 
-                TEST_CHECK_EQUAL(VectorElementInverse<>::value(*sv1), *sv2);
+                TEST_CHECK_EQUAL(VectorElementInverse<>::value(sv1), sv2);
             }
         }
 };
@@ -137,11 +132,9 @@ class SparseVectorElementInverseQuickTest :
         virtual void run() const
         {
             unsigned long size (20);
-            std::tr1::shared_ptr<SparseVector<DataType_> > 
-                sv1(new SparseVector<DataType_>(size, size / 7 + 1)),
-                sv2(new SparseVector<DataType_>(size, size / 8 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()),
-                    j(sv2->begin_elements()) ; i != i_end ; ++i)
+            SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                    j(sv2.begin_elements()) ; i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0)
                 {
@@ -151,7 +144,7 @@ class SparseVectorElementInverseQuickTest :
                 ++j;
             }
 
-            TEST_CHECK_EQUAL(VectorElementInverse<>::value(*sv1), *sv2);
+            TEST_CHECK_EQUAL(VectorElementInverse<>::value(sv1), sv2);
         }
 };
 SparseVectorElementInverseQuickTest<float> sparse_vector_element_inverse_quick_test_float("float");

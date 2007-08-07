@@ -41,10 +41,10 @@ class BandedMatrixRowSumVectorTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(bm1));
-                DenseVector<DataType_> dv2(size, static_cast<DataType_>(2));
+                DenseVector<DataType_> dv2(size, DataType_(2));
                 
                 TEST_CHECK_EQUAL(sum, dv2);
             }
@@ -66,10 +66,10 @@ class BandedMatrixRowSumVectorQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(bm1));
-            DenseVector<DataType_> dv2(size, static_cast<DataType_>(2));
+            DenseVector<DataType_> dv2(size, DataType_(2));
             
             TEST_CHECK_EQUAL(sum, dv2);
         }
@@ -91,14 +91,14 @@ class DenseMatrixRowSumVectorTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>(size, size));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm->begin_elements()), i_end(dm->end_elements()) ;
+                DenseMatrix<DataType_> dm(size, size);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>(i.index() + 1);
                 }
 
-                DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(*dm));
+                DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(dm));
                 DataType_ s(size);
                 for (typename Vector<DataType_>::ElementIterator v(dv.begin_elements()), v_end(dv.end_elements()) ;
                         v != v_end ; ++v)
@@ -127,14 +127,14 @@ class DenseMatrixRowSumVectorQuickTest :
         virtual void run() const
         {
             unsigned long size(3);
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>(size, size+2));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm->begin_elements()), i_end(dm->end_elements()) ;
+            DenseMatrix<DataType_> dm(size, size+2);
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = static_cast<DataType_>(i.index() + 1);
             }
 
-            DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(*dm));
+            DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(dm));
             DataType_ s(size);
             for (typename Vector<DataType_>::ElementIterator v(dv.begin_elements()), v_end(dv.end_elements()) ;
                     v != v_end ; ++v)

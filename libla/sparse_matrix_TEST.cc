@@ -66,8 +66,8 @@ class SparseMatrixCreationTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 unsigned long columns(size + 1), rows(size);
-                std::tr1::shared_ptr<SparseMatrix<DataType_> > sv1(new SparseMatrix<DataType_>(columns, rows, columns * rows));
-                std::tr1::shared_ptr<SparseMatrix<DataType_> > sv2(new SparseMatrix<DataType_>(size, 1));
+                SparseMatrix<DataType_> sv1(columns, rows, columns * rows);
+                SparseMatrix<DataType_> sv2(size, 1);
                 TEST_CHECK(true);
             }
         }

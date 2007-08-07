@@ -139,8 +139,8 @@ class DenseMatrixElementwiseProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, dm3);
 
-            DenseMatrix<DataType_> dm01(2, 3, static_cast<DataType_>(1)), dm02(3, 4, static_cast<DataType_>(1)),
-                dm03(2, 4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(2, 3, static_cast<DataType_>(1)), dm02(3, 4, DataType_(1)),
+                dm03(2, 4, DataType_(1));
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(dm03, dm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(dm03, dm02), MatrixColumnsDoNotMatch);

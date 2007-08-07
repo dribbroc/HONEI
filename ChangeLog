@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-08-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/*_TEST.cc: Removed static_cast and shared_ptr where unnecessary.
+	
+2007-08-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/matrix_elementwise_product_TEST.cc: Replaced MatrixRowsDoNotMatch by
 	MatrixSizeDoesNotMatch for banded matrices.
 	* libla/matrix_elementwise_product.hh: Replaced MatrixRowsDoNotMatch by

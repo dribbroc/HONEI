@@ -41,8 +41,7 @@ class DenseMatrixCreationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>(size, size, 
-                            static_cast<DataType_>(0)));
+                DenseMatrix<DataType_> dm(size, size, DataType_(0));
                 TEST_CHECK(true);
             }
         }
@@ -65,9 +64,9 @@ class DenseMatrixCopyTest :
         {
             for (unsigned long size(10) ; size < (1 << 4) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dv1(size, size, static_cast<DataType_>(0)),
-                    dv2(size, size, static_cast<DataType_>(1));
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > c(dv1.copy());
+                DenseMatrix<DataType_> dm1(size, size, DataType_(0)),
+                    dm2(size, size, static_cast<DataType_>(1));
+                std::tr1::shared_ptr<DenseMatrix<DataType_> > c(dm1.copy());
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(c->begin_elements()),
                         i_end(c->end_elements()) ; i != i_end ; ++i)
@@ -76,14 +75,14 @@ class DenseMatrixCopyTest :
                     *i = 1;
                 }
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(dv1.begin_elements()),
-                        i_end(dv1.end_elements()) ; i != i_end ; ++i)
+                for (typename Matrix<DataType_>::ConstElementIterator i(dm1.begin_elements()),
+                        i_end(dm1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(dv2.begin_elements()),
-                        i_end(dv2.end_elements()) ; i != i_end ; ++i)
+                for (typename Matrix<DataType_>::ConstElementIterator i(dm2.begin_elements()),
+                        i_end(dm2.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 1, std::numeric_limits<DataType_>::epsilon());
                 }
@@ -107,12 +106,10 @@ class DenseMatrixEqualityTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > dm0(new DenseMatrix<DataType_>(size,
-                    size, static_cast<DataType_>(1)));
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > dm1(new DenseMatrix<DataType_>(size,
-                    size, static_cast<DataType_>(1)));
+                DenseMatrix<DataType_> dm0(size, size, DataType_(1));
+                DenseMatrix<DataType_> dm1(size, size, DataType_(1));
 
-                TEST_CHECK_EQUAL(*dm0, *dm1);
+                TEST_CHECK_EQUAL(dm0, dm1);
             }
         }
 };
@@ -135,19 +132,19 @@ class DenseMatrixLayoutTest :
             {
                 unsigned long columns(size + 1), rows(size);
 
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > dm(new DenseMatrix<DataType_>(columns, rows));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm->begin_elements()), i_end(dm->end_elements()) ;
+                DenseMatrix<DataType_> dm(columns, rows);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>(i.index());
                 }
 
 
-                TEST_CHECK_EQUAL(dm->columns(), columns);
-                TEST_CHECK_EQUAL(dm->rows(), rows);
+                TEST_CHECK_EQUAL(dm.columns(), columns);
+                TEST_CHECK_EQUAL(dm.rows(), rows);
 
-                Vector<DataType_> & row1 = (*dm)[0];
-                Vector<DataType_> & col1 = dm->column(0);
+                Vector<DataType_> & row1 = dm[0];
+                Vector<DataType_> & col1 = dm.column(0);
 
                 TEST_CHECK_EQUAL(row1.size(), columns);
                 TEST_CHECK_EQUAL(col1.size(), rows);

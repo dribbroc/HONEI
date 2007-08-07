@@ -44,7 +44,7 @@ class BandedMatrixElementSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DataType_ sum(MatrixElementSum<>::value(bm1));            
 
@@ -68,7 +68,7 @@ class BandedMatrixElementSumQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
             BandedMatrix<DataType_> bm1(size, dv1);
             DataType_ sum(MatrixElementSum<>::value(bm1));            
 

@@ -45,9 +45,9 @@ class BandedMatrixProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
-                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
-                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(6)));                 
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3))); 
+                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));                 
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);            
                 BandedMatrix<DataType_> prod(MatrixProduct<DataType_>::value(bm1, bm2));
 
@@ -74,9 +74,9 @@ class BandedMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                    
-            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, static_cast<DataType_>(3))); 
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, static_cast<DataType_>(6)));                 
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
+            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3))); 
+            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));                 
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);            
             BandedMatrix<DataType_> prod(MatrixProduct<DataType_>::value(bm1, bm2));
 
@@ -111,7 +111,7 @@ class DenseMatrixProductTest :
                 TEST_CHECK_EQUAL(prod, dm3);
             }
 
-            DenseMatrix<DataType_> dm01(3, 3, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(4, 3, DataType_(1));
 
             TEST_CHECK_THROWS(MatrixProduct<DataType_>::value(dm02, dm01), MatrixRowsDoNotMatch);
         }
@@ -138,7 +138,7 @@ class DenseMatrixProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, dm3);
 
-            DenseMatrix<DataType_> dm01(3, 3, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(4, 3, DataType_(1));
 
             TEST_CHECK_THROWS(MatrixProduct<DataType_>::value(dm02, dm01), MatrixRowsDoNotMatch);
 

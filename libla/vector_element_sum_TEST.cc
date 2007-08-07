@@ -45,14 +45,14 @@ class DenseVectorElementSumTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(size));
-                for (typename Vector<DataType_>::ElementIterator i(dv->begin_elements()), i_end(dv->end_elements()) ;
+                DenseVector<DataType_> dv(size);
+                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
                 }
 
-                DataType_ v1(VectorElementSum<DataType_>::value(*dv));
+                DataType_ v1(VectorElementSum<DataType_>::value(dv));
                 DataType_ s1(size * (size + 1) / 2 / 1.23456789);
                 // Behavious similar to size^2 * eps
                 DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
@@ -77,14 +77,14 @@ class DenseVectorElementSumQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv(new DenseVector<DataType_>(size));
-            for (typename Vector<DataType_>::ElementIterator i(dv->begin_elements()), i_end(dv->end_elements()) ;
+            DenseVector<DataType_> dv(size);
+            for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
             }
 
-            DataType_ v1(VectorElementSum<DataType_>::value(*dv));
+            DataType_ v1(VectorElementSum<DataType_>::value(dv));
             DataType_ s1(size * (size + 1) / 2 / 1.23456789);
             // Behavious similar to size^2 * eps
             DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
@@ -109,15 +109,15 @@ class SparseVectorElementSumTest :
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
                 DataType_ s1(0);
-                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
-                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                SparseVector<DataType_> sv1(size, size / 8 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
                     s1 += *i;
                 }
                             
-                DataType_ v1(VectorElementSum<DataType_>::value(*sv1));
+                DataType_ v1(VectorElementSum<DataType_>::value(sv1));
                 DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
             }
@@ -141,15 +141,15 @@ class SparseVectorElementSumQuickTest :
         {
             unsigned long size(5);
             DataType_ s1(0);
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+            SparseVector<DataType_> sv1(size, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
                 s1 += *i;
             }
                         
-            DataType_ v1(VectorElementSum<DataType_>::value(*sv1));
+            DataType_ v1(VectorElementSum<DataType_>::value(sv1));
             DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
         }

@@ -43,7 +43,7 @@ class ScalarBandedMatrixProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                 
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                 
                 BandedMatrix<DataType_> bm1(size, dv1);
                 BandedMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), bm1));
                 for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()), ce_end(prod.end_bands()) ;
@@ -86,7 +86,7 @@ class ScalarBandedMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));                 
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                 
             BandedMatrix<DataType_> bm1(size, dv1);
             BandedMatrix<DataType_> & prod(ScalarMatrixProduct<DataType_>::value(DataType_(3), bm1));
             for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()), ce_end(prod.end_bands()) ;

@@ -45,10 +45,9 @@ class ScalarDenseVectorSumTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
-                    static_cast<DataType_>(3)));
+                DenseVector<DataType_> dv1(size, DataType_(3));
 
-                DenseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *dv1));
+                DenseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(DataType_(2), dv1));
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
                 TEST_CHECK_EQUAL(v1, 5 * size);
             }
@@ -71,10 +70,9 @@ class ScalarDenseVectorSumQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            std::tr1::shared_ptr<DenseVector<DataType_> > dv1(new DenseVector<DataType_>(size,
-                static_cast<DataType_>(3)));
+            DenseVector<DataType_> dv1(size, DataType_(3));
 
-            DenseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *dv1));
+            DenseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(DataType_(2), dv1));
             DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
             TEST_CHECK_EQUAL(v1, 5 * size);
         }
@@ -96,14 +94,14 @@ class ScalarSparseVectorSumTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
-                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                SparseVector<DataType_> sv1(size, size / 8 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = 3;
                 }
 
-                SparseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *sv1));
+                SparseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(DataType_(2), sv1));
                 DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
                 TEST_CHECK_EQUAL(v1, 2 * size + 3 * (size / 10 + 1));
             }
@@ -125,14 +123,14 @@ class ScalarSparseVectorSumQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+            SparseVector<DataType_> sv1(size, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = 3;
             }
 
-            SparseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(static_cast<DataType_>(2), *sv1));
+            SparseVector<DataType_> sum1(ScalarVectorSum<DataType_>::value(DataType_(2), sv1));
             DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sum1));
             TEST_CHECK_EQUAL(v1, 2 * size + 3 * (size / 10 + 1));
         }

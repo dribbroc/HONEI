@@ -46,7 +46,7 @@ class BandedMatrixDenseVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6));
                 DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
@@ -55,7 +55,7 @@ class BandedMatrixDenseVectorProductTest :
             }
 
             BandedMatrix<DataType_> bm01(5);
-            DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
+            DenseVector<DataType_> dv01(4, DataType_(1));
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(bm01, dv01), MatrixRowsDoNotMatch);
         }
 };
@@ -75,7 +75,7 @@ class BandedMatrixDenseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6));
             DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
@@ -83,7 +83,7 @@ class BandedMatrixDenseVectorProductQuickTest :
             TEST_CHECK_EQUAL(prod, dv3);
 
             BandedMatrix<DataType_> bm01(5);
-            DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
+            DenseVector<DataType_> dv01(4, DataType_(1));
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(bm01, dv01), MatrixRowsDoNotMatch);
         }
 };
@@ -104,19 +104,19 @@ class BandedMatrixSparseVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
+                    if (i.index() % 10 == 0) *i = DataType_(3);
                 }
                 SparseVector<DataType_> sv2(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    if (i.index() % 10 == 0) *i = static_cast<DataType_>(6);
+                    if (i.index() % 10 == 0) *i = DataType_(6);
                 }
                 SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(bm1, sv1));
 
@@ -144,19 +144,19 @@ class BandedMatrixSparseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(2)));
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
             SparseVector<DataType_> sv1(size, size / 8 + 1);
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
-                if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
+                if (i.index() % 10 == 0) *i = DataType_(3);
             }
             SparseVector<DataType_> sv2(size, size / 8 + 1);
             for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
             {
-                if (i.index() % 10 == 0) *i = static_cast<DataType_>(6);
+                if (i.index() % 10 == 0) *i = DataType_(6);
             }
             SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(bm1, sv1));
 
@@ -191,8 +191,8 @@ class DenseMatrixDenseVectorProductTest :
                 TEST_CHECK_EQUAL(prod, dv2);
             }
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
-            DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 4, DataType_(1));
+            DenseVector<DataType_> dv01(4, DataType_(1));
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, dv01), MatrixRowsDoNotMatch);
         }
@@ -220,8 +220,8 @@ class DenseMatrixDenseVectorProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, dv2);
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
-            DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 4, DataType_(1));
+            DenseVector<DataType_> dv01(4, DataType_(1));
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, dv01), MatrixRowsDoNotMatch);
 
@@ -245,24 +245,24 @@ class DenseMatrixSparseVectorProductTest :
             for (unsigned long size(11) ; size < (1 << 12) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
-                std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
-                for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+                SparseVector<DataType_> sv1(size, size / 8 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
+                    if (i.index() % 10 == 0) *i = DataType_(3);
                 }
-                std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size + 1, size / 8 + 1));
-                for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
+                SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>(6 * (size / 10 + 1));
                 }
-                DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
+                DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, sv1));
 
-                TEST_CHECK_EQUAL(prod, *sv2);
+                TEST_CHECK_EQUAL(prod, sv2);
             }
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 4, DataType_(1));
             SparseVector<DataType_> sv01(4, 3);
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, sv01), MatrixRowsDoNotMatch);
@@ -286,23 +286,23 @@ class DenseMatrixSparseVectorProductQuickTest :
         {
             unsigned long size(20);
             DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+            SparseVector<DataType_> sv1(size, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
-                if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
+                if (i.index() % 10 == 0) *i = DataType_(3);
             }
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size + 1, size / 8 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
+            SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
             {
-                *i = static_cast<DataType_>(12);
+                *i = DataType_(12);
             }
-            DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, *sv1));
+            DenseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(dm1, sv1));
 
-            TEST_CHECK_EQUAL(prod, *sv2);
+            TEST_CHECK_EQUAL(prod, sv2);
 
-            DenseMatrix<DataType_> dm01(3, 4, static_cast<DataType_>(1));
+            DenseMatrix<DataType_> dm01(3, 4, DataType_(1));
             SparseVector<DataType_> sv01(4, 3);
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(dm01, sv01), MatrixRowsDoNotMatch);
@@ -337,7 +337,7 @@ class SparseMatrixDenseVectorProductQuickTest :
             TEST_CHECK_EQUAL(prod, dv2);
 
             SparseMatrix<DataType_> sm01(3, 4, 1);
-            DenseVector<DataType_> dv01(4, static_cast<DataType_>(1));
+            DenseVector<DataType_> dv01(4, DataType_(1));
 
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(sm01, dv01), MatrixRowsDoNotMatch);
 
@@ -365,21 +365,21 @@ class SparseMatrixSparseVectorProductQuickTest :
             {
                 *i = 2;
             }
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv1(new SparseVector<DataType_>(size, size / 8 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv1->begin_elements()), i_end(sv1->end_elements()) ;
+            SparseVector<DataType_> sv1(size, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
-                if (i.index() % 10 == 0) *i = static_cast<DataType_>(3);
+                if (i.index() % 10 == 0) *i = DataType_(3);
             }
-            std::tr1::shared_ptr<SparseVector<DataType_> > sv2(new SparseVector<DataType_>(size + 1, size / 8 + 1));
-            for (typename Vector<DataType_>::ElementIterator i(sv2->begin_elements()), i_end(sv2->end_elements()) ;
+            SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
             {
-                *i = static_cast<DataType_>(12);
+                *i = DataType_(12);
             }
-            SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(sm1, *sv1));
+            SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(sm1, sv1));
 
-            TEST_CHECK_EQUAL(prod, *sv2);
+            TEST_CHECK_EQUAL(prod, sv2);
 
             SparseMatrix<DataType_> sm01(3, 4, 1);
             SparseVector<DataType_> sv01(4, 3);

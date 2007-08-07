@@ -105,18 +105,17 @@ class DenseMatrixElementInverseTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > dm1(new DenseMatrix<DataType_>(size, size,
-                            static_cast<DataType_>(0))),
-                        dm2(new DenseMatrix<DataType_>(size, size, static_cast<DataType_>(0)));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1->begin_elements()), i_end(dm1->end_elements()),
-                        j(dm2->begin_elements()) ; i != i_end ; ++i)
+                DenseMatrix<DataType_> dm1(size, size, DataType_(0)),
+                        dm2(size, size, DataType_(0));
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+                        j(dm2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() + 1;
                     *j = 1 / static_cast<DataType_>(i.index() + 1);
                     ++j;
                 }
 
-                TEST_CHECK_EQUAL(MatrixElementInverse<>::value(*dm1), *dm2);
+                TEST_CHECK_EQUAL(MatrixElementInverse<>::value(dm1), dm2);
             }
         }
 };
@@ -135,18 +134,17 @@ class DenseMatrixElementInverseQuickTest :
 
         virtual void run() const
         {
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > dm1(new DenseMatrix<DataType_>(3, 2,
-                        static_cast<DataType_>(0))),
-                    dm2(new DenseMatrix<DataType_>(3, 2, static_cast<DataType_>(0)));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1->begin_elements()), i_end(dm1->end_elements()),
-                    j(dm2->begin_elements()) ; i != i_end ; ++i)
+            DenseMatrix<DataType_> dm1(3, 2, DataType_(0)),
+                    dm2(3, 2, DataType_(0));
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+                    j(dm2.begin_elements()) ; i != i_end ; ++i)
             {
                 *i = i.index() + 1;
                 *j = 1 / static_cast<DataType_>(i.index() + 1);
                 ++j;
             }
-
-            TEST_CHECK_EQUAL(MatrixElementInverse<>::value(*dm1), *dm2);
+            
+            TEST_CHECK_EQUAL(MatrixElementInverse<>::value(dm1), dm2);
         }
 };
 DenseMatrixElementInverseQuickTest<float>  dense_matrix_element_inverse_quick_test_float("float");

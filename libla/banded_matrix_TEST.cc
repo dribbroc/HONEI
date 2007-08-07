@@ -41,17 +41,16 @@ class BandedMatrixCreationTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                std::tr1::shared_ptr<BandedMatrix<DataType_> > bm1(new BandedMatrix<DataType_>(size));
+                BandedMatrix<DataType_> bm1(size);
                 TEST_CHECK(true);
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, static_cast<DataType_>(1)));
-                std::tr1::shared_ptr<BandedMatrix<DataType_> > bm2(new BandedMatrix<DataType_>(size,dv1));
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(1)));
+                BandedMatrix<DataType_> bm2(size,dv1);
                 TEST_CHECK(true);
                 
             }
             
-            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, static_cast<DataType_>(1)));                
-            TEST_CHECK_THROWS (std::tr1::shared_ptr<BandedMatrix<DataType_> > bm3(new BandedMatrix<DataType_>(6, dv2)),
-                VectorSizeDoesNotMatch);
+            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, DataType_(1)));                
+            TEST_CHECK_THROWS (BandedMatrix<DataType_> bm3(6, dv2), VectorSizeDoesNotMatch);
         }
 };
 
@@ -72,20 +71,19 @@ class BandedMatrixQuickTest :
         {
             unsigned long size(20);
             BandedMatrix<DataType_>bm1(size);
-            DenseVector<DataType_> * dv1 = new DenseVector<DataType_>(size, static_cast<DataType_>(1));
+            DenseVector<DataType_> * dv1 = new DenseVector<DataType_>(size, DataType_(1));
             BandedMatrix<DataType_> bm2(size,dv1);
-            DenseVector<DataType_> dv4 (size, static_cast<DataType_>(0));
-            dv4[size/2] = static_cast<DataType_>(5);
+            DenseVector<DataType_> dv4 (size, DataType_(0));
+            dv4[size/2] = DataType_(5);
             DenseVector<DataType_> dv3 = bm2.band(3);
-            dv3[size/2] = static_cast<DataType_>(5);
+            dv3[size/2] = DataType_(5);
 
             TEST_CHECK_EQUAL(bm2.band(0), *dv1);
             TEST_CHECK_EQUAL(bm2.band(3), dv4);            
             TEST_CHECK_EQUAL(bm2.rows(), size);
             TEST_CHECK_EQUAL(bm2.columns(), size);            
-            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, static_cast<DataType_>(1)));                
-            TEST_CHECK_THROWS (std::tr1::shared_ptr<BandedMatrix<DataType_> > bm3(new BandedMatrix<DataType_>(6, dv2)),
-                VectorSizeDoesNotMatch);            
+            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, DataType_(1)));                
+            TEST_CHECK_THROWS (BandedMatrix<DataType_> bm3(6, dv2), VectorSizeDoesNotMatch);            
         }
 };
 BandedMatrixQuickTest<float>  banded_matrix_quick_test_float("float");
