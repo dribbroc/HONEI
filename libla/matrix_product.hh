@@ -92,15 +92,17 @@ namespace pg512
             ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
             for (unsigned int l_row=0 ; l_row < left.rows() ; ++l_row)
             {
-                const DenseVector<DataType1_> left_row(left[l_row]);
-                typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements());
+                const SparseVector<DataType1_> left_row(left[l_row]);
+
 
                 for (unsigned int r_column=0; r_column < right.columns() ; ++r_column)
                 {
+                    typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements());
                     for (unsigned int r_row=0; r_row < right.rows() ; ++r_row)
                     {
                         const SparseVector<DataType2_> right_row(right[r_row]);
                         DataType2_ right_value(right_row[r_column]);
+                        //result[l_row][r_column] += right_value * *l;
                         *i += right_value * *l;
                         ++l;
                     }
@@ -126,14 +128,16 @@ namespace pg512
             for (unsigned int l_row=0 ; l_row < left.rows() ; ++l_row)
             {
                 const SparseVector<DataType1_> left_row(left[l_row]);
-                typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements());
+
 
                 for (unsigned int r_column=0; r_column < right.columns() ; ++r_column)
                 {
+                    typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements());
                     for (unsigned int r_row=0; r_row < right.rows() ; ++r_row)
                     {
                         const SparseVector<DataType2_> right_row(right[r_row]);
                         DataType2_ right_value(right_row[r_column]);
+                        //result[l_row][r_column] += right_value * *l;
                         *i += right_value * *l;
                         ++l;
                     }

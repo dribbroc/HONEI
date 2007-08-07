@@ -28,6 +28,7 @@
 #include <libla/sparse_matrix.hh>
 #include <libla/matrix_error.hh>
 #include <libla/scalar_product.hh>
+#include <iostream>
 
 /**
  * \file
@@ -152,17 +153,23 @@ namespace pg512
             if (vector.size() != matrix.columns())
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
-            DenseVector<DataType1_> result(matrix.rows());
-            ///\todo: Implement when band-iterator available.
-            /*
-            typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < matrix.columns(); ++i)
+            DenseVector<DataType1_> result(matrix.rows(), DataType1_(0));
+            ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
+            //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
+            typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
+            for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
             {
-                DenseVector<DataType1_> dv = matrix.column(i);
-                *l = ScalarProduct<Tag_>::value(vector, dv);
-                ++l;
+                typename Vector<DataType2_>::ConstElementIterator j(vector.begin_elements());
+                typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
+                DenseVector<DataType1_> band = *vi;
+
+                for(typename Vector<DataType1_>::ElementIterator b(band.begin_elements()), b_end(band.end_elements()) ; b != b_end ; ++b)
+                {
+                    *r += *b * *j;
+                    ++r; ++j;
+                }
             }
-            */
+
             return result;
         }
 
@@ -177,16 +184,28 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
             SparseVector<DataType1_> result(matrix.rows(), matrix.rows());
-            ///\todo: Implement when band-iterator available.
-            /*
-            typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < matrix.columns(); ++i)
+            ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
+            //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
+            typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
+            for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
             {
-                DenseVector<DataType1_> dv = matrix.column(i);
-                *l = ScalarProduct<Tag_>::value(vector, dv);
-                ++l;
+                typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements());
+                typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
+
+                DenseVector<DataType1_> band = *vi;
+
+                for(typename Vector<DataType1_>::ElementIterator b(band.begin_elements()), b_end(band.end_elements()) ; b != b_end ; )
+                {
+                    while (j.index() > r.index())
+                    {
+                        ++r; ++b;
+                    }
+                    *r += *b * *j;
+                    ++b; ++r;
+                    if (j != j_end)
+                        ++j;
+                }
             }
-            */
 			///\todo: perhaps sparsify
             return result;
         }
