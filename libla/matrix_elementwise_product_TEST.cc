@@ -54,8 +54,7 @@ class BandedMatrixElementwiseProductTest :
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixColumnsDoNotMatch); 
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
 BandedMatrixElementwiseProductTest<float> banded_matrix_elementwise_product_test_float("float");
@@ -84,8 +83,7 @@ class BandedMatrixElementwiseProductQuickTest :
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixColumnsDoNotMatch); 
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixSizeDoesNotMatch); 
         }
 };
 BandedMatrixElementwiseProductQuickTest<float> banded_matrix_elementwise_product_quick_test_float("float");
