@@ -154,10 +154,11 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
             DenseVector<DataType1_> result(matrix.rows(), DataType1_(0));
-            for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
-            //Old Workaround because it seemed as if end_bands() is buggy
-            //typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
-            //for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
+            ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
+            //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
+
+            typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
+            for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
             {
                 typename Vector<DataType2_>::ConstElementIterator j(vector.begin_elements());
                 typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
@@ -184,10 +185,11 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
 
             SparseVector<DataType1_> result(matrix.rows(), matrix.rows());
-            for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
-            //Old Workaround because it seemed as if end_bands() is buggy
-            //typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
-            //for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
+            ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
+            //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
+
+            typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
+            for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
             {
                 typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements());
                 typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
