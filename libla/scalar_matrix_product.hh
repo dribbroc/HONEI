@@ -81,7 +81,7 @@ namespace pg512
          **/
         static BandedMatrix<DataType_> & value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
         {
-
+            /// \todo use banded iterator instead of filling the whole matrix with zero entries
             for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
                     l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {

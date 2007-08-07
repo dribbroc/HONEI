@@ -29,7 +29,7 @@
 using namespace pg512;
 using namespace tests;
 
-template <typename DataType_>
+/*template <typename DataType_>
 class ScalarBandedMatrixSumTest :
     public BaseTest
 {
@@ -80,7 +80,7 @@ class ScalarBandedMatrixSumQuickTest :
 };
 ScalarBandedMatrixSumQuickTest<float> scalar_banded_matrix_sum_quick_test_float("float");
 ScalarBandedMatrixSumQuickTest<double> scalar_banded_matrix_sum_quick_test_double("double");
-
+*/
 template <typename DataType_>
 class ScalarDenseMatrixSumTest :
     public BaseTest
