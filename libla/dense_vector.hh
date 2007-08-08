@@ -156,17 +156,17 @@ namespace pg512 ///< \todo Namespace name?
             {
                 CONTEXT("When creating DenseVector:");
                 ASSERT(size > 0, "size is zero!");
-                
+
                 if  (start + size > source.size())
                 {
                     throw VectorSizeDoesNotMatch(start + size, source.size());
                 }
-                
+
                 for (int i = 0 ; i < size ; ++i)
                 {
                     _elements[i] = source._elements[i + start];
                 }
-                
+
             }
 
             /// Copy-constructor.
@@ -192,6 +192,12 @@ namespace pg512 ///< \todo Namespace name?
                 return ConstElementIterator(new DenseElementIterator<DataType_>(*this, this->size()));
             }
 
+            /// Returns const iterator pointing to a given element of the vector.
+            virtual ConstElementIterator element_at(unsigned long index) const
+            {
+                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, index));
+            }
+
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements()
             {
@@ -199,9 +205,15 @@ namespace pg512 ///< \todo Namespace name?
             }
 
             /// Returns iterator pointing behind the last element of the vector.
-            virtual ElementIterator end_elements() 
+            virtual ElementIterator end_elements()
             {
-            return ElementIterator(new DenseElementIterator<DataType_>(*this, this->size()));
+                return ElementIterator(new DenseElementIterator<DataType_>(*this, this->size()));
+            }
+
+            /// Returns iterator pointing to a given element of the vector.
+            virtual ElementIterator element_at(unsigned long index)
+            {
+                return ElementIterator(new DenseElementIterator<DataType_>(*this, index));
             }
 
             /// Returns our size.

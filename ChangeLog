@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/dense_vector.hh: Added additional iterator called
+	<<element_at(unsigned long index)>> to be able to create miscellaneous
+	iteration start- and end-points, needed to cope with bands, because
+	they often contain trashed memory.
+
 2007-08-08 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_vector_product_TEST.cc: Added additional bands to the source
@@ -16,7 +23,7 @@ see the NEWS file.
 	* libla/matrix_vector_product.hh: Added a first implementation for
 	Banded Matrix * Dense Vector using a workaround because  end_bands()
 	seems to be still buggy. Added also Banded Matrix * Sparse Vector.
-	MatrixVectorProduct-Tests now all pass!
+	Both cases are still buggy for multiple bands.
 
 2007-08-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
