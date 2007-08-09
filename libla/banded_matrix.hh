@@ -166,7 +166,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns iterator pointing behind the last band of the matrix.
             ConstVectorIterator end_bands() const
             {
-                return ConstVectorIterator(new BandIterator<DataType_>(*this, 2 * _size));
+                return ConstVectorIterator(new BandIterator<DataType_>(*this, 2 * _size - 1));
             }
 
             /// Returns the number of our columns.
@@ -184,6 +184,10 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns a band-vector by index.
             DenseVector<DataType_> & band(signed long index) const
             {
+                CONTEXT("When retrieving band '" + stringify(index) + "':");
+
+                ASSERT((-_size < index) && (index < _size), "index out of bounds!");
+
                 if (! _bands[index + _size - 1])
                     _bands[index + _size - 1].reset(new DenseVector<DataType_>(_size, DataType_(0)));
 
