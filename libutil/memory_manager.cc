@@ -57,7 +57,7 @@ void
 MemoryManager::upload(MemoryId & id, const tags::TagValue destination, void * address,
         const std::ptrdiff_t size)
 {
-    CONTEXT("When uploading '" + stringify(size) + '" bytes from '" + stringify(address) + "' to '" +
+    CONTEXT("When uploading '" + stringify(size) + "' bytes from '" + stringify(address) + "' to '" +
             stringify(destination) + "'-memory for memory id '" + stringify(id) + "':");
     ASSERT(tags::tv_cpu != destination, "Invalid destionation 'CPU' for upload");
 
