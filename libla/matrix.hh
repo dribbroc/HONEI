@@ -69,6 +69,12 @@ namespace pg512 ///< \todo Namespace name?
 
             /// Returns a copy of the matrix.
             virtual Matrix * copy() const = 0;
+
+            /// Returns true if the matrix is square.
+            virtual inline bool square() const
+            {
+                return rows() == columns();
+            }
     };
 
     /**

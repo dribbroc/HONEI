@@ -29,27 +29,46 @@
 /**
  * \file
  *
- * Implementation of ScalarProduct.
+ * Templatized definitions of operation ScalarProduct.
  *
- * \ingroup grpvectoroperations
+ * \ingroup grpoperations
+ * \ingroup grpreductions
  */
 namespace pg512 ///< \todo Namespace name?
 {
     /**
-     * \brief ScalarProduct yields the inner product of two descendants of type Vector.
+     * ScalarProduct is the class template for the operation
+     * \f[
+     *     ScalarProduct(x, y): \quad r \leftarrow x \cdot y,
+     * \f]
+     * which yields the scalar or inner product of the given vectors x and y.
      *
-     * \ingroup grpvectoroperations
-     **/
+     * \ingroup grpoperations
+     * \ingroup grpreductions
+     */
     template <typename Tag_ = tags::CPU> struct ScalarProduct
     {
-        template <typename DataType1_, typename DataType2_> static DataType1_ value(const DenseVector<DataType1_> & left, const DenseVector<DataType2_> & right)
+        /**
+         * Returns the scalar (or inner) product of two given vectors.
+         *
+         * \param x One of the vectors of which the scalar product shall be
+         *          computed.
+         * \param y idem
+         *
+         * \retval Will return a static instance of the used data type
+         *         containing the scalar product.
+         */
+
+        /// \{
+        template <typename DT1_, typename DT2_>
+        static DT1_ value(const Vector<DT1_> & left, const Vector<DT2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DataType1_ result(0);
+            DT1_ result(0);
 
-            for (typename Vector<DataType1_>::ConstElementIterator l(left.begin_elements()),
+            for (typename Vector<DT1_>::ConstElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * right[l.index()];
@@ -58,27 +77,68 @@ namespace pg512 ///< \todo Namespace name?
             return result;
         }
 
-        template <typename DataType1_, typename DataType2_> static DataType1_ value(const SparseVector<DataType1_> & left, const Vector<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static DT1_ value(const SparseVector<DT1_> & left, const Vector<DT2_> & right)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            DataType1_ result(0);
+            DT1_ result(0);
 
-            for (typename Vector<DataType1_>::ConstElementIterator l(left.begin_non_zero_elements()),
+            for (typename Vector<DT1_>::ConstElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * right[l.index()];
             }
 
             return result;
-       }
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DT1_ value(const SparseVector<DT1_> & left, const SparseVector<DT2_> & right)
+        {
+            if (left.size() != right.size())
+                throw VectorSizeDoesNotMatch(right.size(), left.size());
+
+            DT1_ result(0);
+
+            for (typename Vector<DT1_>::ConstElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()), r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()) ; (l != l_end) && (r != r_end) ; )
+            {
+                if (l.index() == r.index())
+                {
+                    result += (*l) * (*r);
+                    ++l; ++r;
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
+                    ++r;
+                }
+            }
+
+            return result;
+        }
+
+        template <typename IT1_, typename IT2_>
+        static typename IT1_::value_type value(IT1_ & left, const IT1_ & left_end,
+                IT2_ & right, const IT2_ & right_end)
+        {
+            typename IT1_::value_type result(0);
+
+            for ( ; (left != left_end) && (right != right_end) ; ++left, ++right)
+            {
+                result += (*left) * (*right);
+            }
+
+            return result;
+        }
+        /// \}
     };
-/*
-    /// Explicit instantiation for Cell-based float computation.
-    template <>
-    float ScalarProduct<tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right);
-*/
 }
 
 #endif

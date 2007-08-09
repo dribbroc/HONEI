@@ -7,6 +7,16 @@ see the NEWS file.
 
 2007-08-10 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/matrix.hh: Added method square().
+	* libla/scalar_product.hh: Tidied up the whole file. Replaced
+	overloaded signatures for DenseVector by signatures for Vector.
+	Added means to compute the scalar product for a given pair of iterator
+	ranges. The latter will probably be used for BandedMatrix operations.
+	* libla/files.m4, libla/residual.hh, libla/residual_TEST.cc: Added
+	operation Residual.
+
+2007-08-10 Danny van Dyk <kugelfang@gentoo.org>
+
 	* libla/banded_matrix_TEST.cc: Tidied up the test cases a bit.
 
 2007-08-09 Danny van Dyk <kugelfang@gentoo.org>
