@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-08-07 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/matrix_vector_product.hh: Implemented should-be-working
+	version of Banded Matrix * Dense Vector. Test will not pass, because
+	of problems with a Shared Array Counter, when the function band() (in
+	the TEST.cc) is called. Banded Matrix * Sparse Vector will follow later.
+
+2007-08-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/dense_vector.hh: Added additional iterator called
 	<<element_at(unsigned long index)>> to be able to create miscellaneous
 	iteration start- and end-points, needed to cope with bands, because

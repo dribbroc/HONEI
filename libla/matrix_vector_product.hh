@@ -156,18 +156,49 @@ namespace pg512
             DenseVector<DataType1_> result(matrix.rows(), DataType1_(0));
             ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
             //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
-
             typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
             for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
             {
-                typename Vector<DataType2_>::ConstElementIterator j(vector.begin_elements());
-                typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
                 DenseVector<DataType1_> band = *vi;
+                typename Vector<DataType2_>::ConstElementIterator j(vector.begin_elements()), j_end(vector.end_elements());
+                typename Vector<DataType1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements());
 
-                for(typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()), b_end(band.end_elements()) ; b != b_end ; ++b)
+                int middle_index = matrix.rows() -1;
+                // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+                if (vi.index() >= middle_index)
                 {
-                    *r += *b * *j;
-                    ++r; ++j;
+                    for (unsigned int a=0 ; a < (vi.index()-middle_index) && j != j_end ; ++a)
+                    {
+                        ++j; // Get the right position in vector.
+                    }
+                    unsigned long end = band.size() - (vi.index() - middle_index); //Calculation of the element-index to stop in iteration!
+                    for(typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()), b_end(band.element_at(end)) ; b != b_end ; ++b)
+                    {
+                        *r += *b * *j;
+                        if (j != j_end && r != r_end)
+                        {
+                            ++r;
+                            ++j;
+                        }
+                    }
+                }
+                // If we are below the diagonal band, we start at Element index and go on until the last element.
+                else
+                {
+                    unsigned long start = middle_index - vi.index(); //Calculation of the element-index to start in iteration!
+                    for (unsigned int a=0; a < middle_index - vi.index() && r != r_end; ++a)
+                    {
+                        ++r; // Get the right position in result vector.
+                    }
+                    for(typename Vector<DataType1_>::ConstElementIterator b(band.element_at(start)), b_end(band.end_elements()) ; b != b_end ; ++b)
+                    {
+                        *r += *b * *j;
+                        if (j != j_end && r != r_end)
+                        {
+                            ++j;
+                            ++r;
+                        }
+                    }
                 }
             }
 
