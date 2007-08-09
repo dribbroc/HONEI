@@ -61,11 +61,14 @@ namespace pg512 ///< \todo Namespace name?
             static std::string backtrace(const std::string & delimiter);
     };
 
-#ifdef HAVE_DEBUG
-#define CONTEXT(c) \
-    Context c__LINE__(__FILE__, __LINE__, c)
+#if defined (DEBUG)
+// C Preprocessor abomination following...
+#define CONTEXT_NAME_(x) ctx_##x
+#define CONTEXT_NAME(x) CONTEXT_NAME_(x)
+#define CONTEXT(s) \
+    Context CONTEXT_NAME(__LINE__)(__FILE__, __LINE__, (s))
 #else
-#define CONTEXT(c)
+#define CONTEXT(s)
 #endif
 
     /**

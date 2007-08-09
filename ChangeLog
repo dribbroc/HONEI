@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-09 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/banded_matrix.hh: Fixed assertion.
+	* libutil/exception.hh: Fixed twofold bug. First, fixed
+	CONTEXT to do something if DEBUG is defined instead of HAVE_DEBUG.
+	Second, fixed usage of __LINE__ to allow multiple CONTEXT invocations
+	per block.
+
 2007-08-09 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/banded_matrix.hh: Changed *-operator for mutable iterators so

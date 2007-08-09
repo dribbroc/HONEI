@@ -184,9 +184,9 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns a band-vector by index.
             DenseVector<DataType_> & band(signed long index) const
             {
-                CONTEXT("When retrieving band '" + stringify(index) + "':");
+                CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '" + stringify(_size) + "':");
 
-                ASSERT((-_size < index) && (index < _size), "index out of bounds!");
+                ASSERT(std::abs(index) < _size, "index out of bounds!");
 
                 if (! _bands[index + _size - 1])
                     _bands[index + _size - 1].reset(new DenseVector<DataType_>(_size, DataType_(0)));
