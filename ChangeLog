@@ -5,12 +5,20 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-09 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/banded_matrix.hh: Changed *-operator for mutable iterators so
+	that the instanciated DenseVector, that is created when an element / a
+	band does not exist, is zero-initialized to avoid trashed memory
+	problems.
+	* libla/scalar_matrix_product.hh: Fixed banded case. Passes now.
+
 2007-08-09 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/banded_matrix.hh: Fixed another off-by-one bug in end_bands().
 	Added assertion on index range to bands().
 
-2007-08-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-09 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_vector_product.hh: Implemented should-be-working
 	version of Banded Matrix * Dense Vector. Test will not pass, because

@@ -24,6 +24,7 @@
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/sparse_matrix.hh>
+#include <libla/scalar_vector_product.hh>
 
 /**
  * \file
@@ -81,11 +82,11 @@ namespace pg512
          **/
         static BandedMatrix<DataType_> & value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
         {
-            /// \todo use banded iterator instead of filling the whole matrix with zero entries
-            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
-                    l_end(matrix.end_elements()) ; l != l_end ; ++l)
+
+            for (typename BandedMatrix<DataType_>::VectorIterator l(matrix.begin_bands()),
+                    l_end(matrix.end_bands()) ; l != l_end ; ++l)
             {
-                *l *= scalar;
+                *l = ScalarVectorProduct<DataType_>::value(scalar, *l);
             }
 
             return matrix;
