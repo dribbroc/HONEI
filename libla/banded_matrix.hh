@@ -283,7 +283,7 @@ namespace pg512 ///< \todo Namespace name?
 
                 if (! _matrix._bands[_band_index() + _matrix._size - 1])
                 {
-                    _matrix._bands[_band_index() + _matrix._size - 1].reset(new DenseVector<DataType_>(_matrix._size));
+                    _matrix._bands[_band_index() + _matrix._size - 1].reset(new DenseVector<DataType_>(_matrix._size, DataType_(0)));
                 }
 
                 return (*_matrix._bands[_band_index() + _matrix._size - 1])[row() + _band_index()];
@@ -412,7 +412,7 @@ namespace pg512 ///< \todo Namespace name?
             {
                 if (!_matrix._bands[_index])
                 {
-                    _matrix._bands[_index].reset(new DenseVector<DataType_>(_matrix._size));
+                    _matrix._bands[_index].reset(new DenseVector<DataType_>(_matrix._size, DataType_(0)));
                 }
 
                 return (*_matrix._bands[_index]);
