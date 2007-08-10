@@ -1182,7 +1182,7 @@ namespace pg512 {
         }
         else
         {
-            //TODO:error handling
+	  cout << "prefac is invalid!\n";
         }
         DenseVector<WorkPrec_> *v = _v->copy();
         DenseVector<WorkPrec_> *u1 = _u->copy();
@@ -1244,39 +1244,55 @@ namespace pg512 {
 
         BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
         _quick_assemble_matrix4<WorkPrec_>(*m2, *m8); 
-
+	cout << "Prediction: Finished assembly.\n";
         //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
         //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
         //BandedMatrix<WorkPrec_> m7 = _quick_assemble_matrix3<WorkPrec_>(m4);
         //BandedMatrix<WorkPrec_> m8 = _quick_assemble_matrix4<WorkPrec_>(m2);
         
-        DenseVector<WorkPrec_>* tempv = _v->copy();
-        DenseVector<WorkPrec_>* tempu = _u->copy();
-        DenseVector<WorkPrec_>* tempw = _w->copy();
+        DenseVector<WorkPrec_>* tempu = predictedu.copy();
+        DenseVector<WorkPrec_>* tempv = predictedv.copy();
+        DenseVector<WorkPrec_>* tempw = predictedw.copy();
+	cout << "Prediction: Before matrix*vector.\n";
         DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m1,*tempv);
-        DenseVector<WorkPrec_> *tempu2 = _u->copy();
-        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m2,*tempu);
-        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m3,*tempw);
-        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m2,*tempu2);
-        
-        DenseVector<WorkPrec_>* source = _u->copy(); 
+        DenseVector<WorkPrec_> *tempu2 = predictedu.copy();
+	cout << "First product solved.\n";
+        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m2,*tempw);
+	cout << "Second product solved.\n";
+	//ERROR?:
+        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m3,*tempu);
+	cout << "Third product solved.\n";
+        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m4,*tempu2);
+        cout << "Fourth product solved.\n";
+	DenseVector<WorkPrec_>* source = predictedu.copy(); 
         _source(*source);
-        predictedu = VectorSum<>::value<WorkPrec_,WorkPrec_>(temp1,temp2);
-        predictedu = VectorSum<>::value(predictedu, temp3);
-        predictedu = VectorSum<>::value(predictedu, temp4);
-        predictedu = VectorSum<>::value(predictedu, *source);
-    
-        DenseVector<WorkPrec_> *tempu3 = _u->copy();
-        DenseVector<WorkPrec_> *tempv2 = _v->copy();
-        DenseVector<WorkPrec_> *tempw2 = _w->copy();
+	cout << "Source solved.\n";
+	DenseVector<WorkPrec_>* predicteduTemp = predictedu.copy();
+	*predicteduTemp = VectorSum<>::value<WorkPrec_,WorkPrec_>(*predicteduTemp, temp1);
+        *predicteduTemp = VectorSum<>::value<WorkPrec_,WorkPrec_>(*predicteduTemp,temp2);
+        *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp3);
+        *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp4);
+        *predicteduTemp = VectorSum<>::value(*predicteduTemp, *source);
+	
+	cout << "First accu solved.\n";
+        DenseVector<WorkPrec_> *tempu3 = predictedu.copy();
+        DenseVector<WorkPrec_> *tempv2 = predictedv.copy();
+        DenseVector<WorkPrec_> *tempw2 = predictedw.copy();
+
         temp1 = MatrixVectorProduct<>::value(*m5,*tempv2);
-        DenseVector<WorkPrec_> *tempu4 = _u->copy();
+        DenseVector<WorkPrec_> *tempu4 = predictedu.copy();
         temp2 = MatrixVectorProduct<>::value(*m6,*tempu3);
         temp3 = MatrixVectorProduct<>::value(*m7,*tempw2);
         temp4 = MatrixVectorProduct<>::value(*m8,*tempu4);
 
-        predictedv = VectorSum<>::value(temp1,temp2);
-        predictedw = VectorSum<>::value(temp3,temp4);
+	
+
+	predictedu = *predicteduTemp;
+	predictedv = VectorSum<>::value(predictedv, temp1);
+        predictedv = VectorSum<>::value(predictedv, temp2);
+        predictedw = VectorSum<>::value(predictedw, temp3);
+        predictedw = VectorSum<>::value(predictedw, temp4);
+
         delete m1;
         delete m2;
         delete m3;
@@ -1303,23 +1319,34 @@ namespace pg512 {
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
-  
+        ///Apply flow to newest u:
         DenseVector<WorkPrec_>* f = predictedu.copy();
         _flow_x(*f);
 
+        ///Compute linear combinations und accumulate:
         DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedv,*f, _eps, _delta_t);
-        
+        delete f;
+        ///Apply flow to old u:
         DenseVector<WorkPrec_>* flow = _u_temp->copy();
         _flow_x(*flow);
+
         DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_v_temp,*flow, -2*_delta_t, 2*_delta_t);
+        delete flow;
         predictedv = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
-        predictedv = ScalarVectorProduct<>::value(1+(1/_delta_t), predictedv);
+        ///Scale sum:
+        predictedv = ScalarVectorProduct<>::value(1+(_eps/_delta_t), predictedv);
         
+        ///Repeat for w:
         DenseVector<WorkPrec_>* flow2 = predictedu.copy();
         _flow_y(*flow2);
-
+    
         innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedw, *flow2, _eps, _delta_t);
-        innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, *flow2, -2*_delta_t, 2*_delta_t);
+        delete flow2;
+        DenseVector<WorkPrec_>* flow3 = _u_temp->copy();
+        _flow_x(*flow3);
+
+        innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, *flow3, -2*_delta_t, 2*_delta_t);
+        delete flow3;
         predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         predictedw = ScalarVectorProduct<>::value(1+(1/_delta_t), predictedw);
         std::cout << "Finished Setup 2.\n";
@@ -1764,7 +1791,7 @@ namespace pg512 {
 	m6bandplus6 = m1.band(ulint(6));
 	m6bandminus3 = m1.band(ulint(-3));
 	//Possible ERROR: COPY
-	DenseVector<WorkPrec_> c_squared((*_c));
+	DenseVector<WorkPrec_> c_squared(*(_c->copy()));
 	VectorElementwiseProduct<WorkPrec_>::value(c_squared, (*_c));
 
         for( ; d.index() < 6*(_d_width+4); ++d);                               
@@ -1838,8 +1865,7 @@ namespace pg512 {
 	m8bandplus3 = m2.band(ulint(3*(_d_width + 4)));
 	m8bandplus6 = m2.band(ulint(6*(_d_width + 4)));
 	m8bandminus3 = m2.band(ulint((-3)*(_d_width + 4)));
-	//Possible ERROR: copy
-	DenseVector<WorkPrec_> d_squared((*_d));
+	DenseVector<WorkPrec_> d_squared((*(_d->copy())));
 	VectorElementwiseProduct<WorkPrec_>::value(d_squared, (*_d));
 
         for( ; d.index() < 6*(_d_width + 4); ++d);                               
@@ -2048,7 +2074,7 @@ namespace pg512 {
                 rightDiagLower[6] = (*u)[ui.index()];
                 rightDiagLower[7] = (*u)[ui.index()+1];
                 rightDiagLower[8] = (*u)[ui.index()+2];
-                rightDiagLower[9] = (*u)[ui.index()]+3;
+                rightDiagLower[9] = (*u)[ui.index()+3];
                 rightDiagLower[10] = (*u)[ui.index()+4];
                 rightDiagLower[11] = (*u)[ui.index()+5];
             }
@@ -2213,7 +2239,7 @@ namespace pg512 {
                 rightPlus1Lower[6] = (*u)[ui.index()];
                 rightPlus1Lower[7] = (*u)[ui.index()+1];
                 rightPlus1Lower[8] = (*u)[ui.index()+2];
-                rightPlus1Lower[9] = (*u)[ui.index()]+3;
+                rightPlus1Lower[9] = (*u)[ui.index()+3];
                 rightPlus1Lower[10] = (*u)[ui.index()+4];
                 rightPlus1Lower[11] = (*u)[ui.index()+5];
             }
@@ -2575,7 +2601,7 @@ namespace pg512 {
                 rightDiagLower[6] = (*u)[ui.index()];
                 rightDiagLower[7] = (*u)[ui.index()+1*_d_width];
                 rightDiagLower[8] = (*u)[ui.index()+2*_d_width];
-                rightDiagLower[9] = (*u)[ui.index()]+3*_d_width;
+                rightDiagLower[9] = (*u)[ui.index()+3*_d_width];
                 rightDiagLower[10] = (*u)[ui.index()+4*_d_width];
                 rightDiagLower[11] = (*u)[ui.index()+5*_d_width];
             }
@@ -2740,7 +2766,7 @@ namespace pg512 {
                 rightPlus1Lower[6] = (*u)[ui.index()];
                 rightPlus1Lower[7] = (*u)[ui.index()+1*_d_width];
                 rightPlus1Lower[8] = (*u)[ui.index()+2*_d_width];
-                rightPlus1Lower[9] = (*u)[ui.index()]+3*_d_width;
+                rightPlus1Lower[9] = (*u)[ui.index()+3*_d_width];
                 rightPlus1Lower[10] = (*u)[ui.index()+4*_d_width];
                 rightPlus1Lower[11] = (*u)[ui.index()+5*_d_width];
             }

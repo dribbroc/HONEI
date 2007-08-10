@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-10 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Added some debug - output, resolved logical bugs
+	in prediction- and second setup stages, resolved index invalidity in
+	matrix assembly stages (DEBUG).
+	* libswe/solver_TEST.cc: Set timesteps to one, until libla - problems
+	are resolved.
+	
 2007-08-10 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/matrix.hh: Added method square().
