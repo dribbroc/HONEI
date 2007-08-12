@@ -1190,11 +1190,13 @@ namespace pg512 {
         //DenseVector<WorkPrec_> flow1(_u->size(),ulint(0));
         _flow_x<WorkPrec_>(*u1);
         DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(*v, *u1, _eps,_delta_t);
+        delete u1;
         sv = ScalarVectorProduct<>::value(prefac,tempsum);
         DenseVector<WorkPrec_> *w = _w->copy();
         //DenseVector<WorkPrec_> flow2(_u->size(), ulint(0), ulint(1));
         _flow_y<WorkPrec_>(*u2);
         DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(*w, *u2, _eps,_delta_t);
+        delete u2;
         sw = ScalarVectorProduct<>::value(prefac,tempsum2);
         
         
@@ -1273,6 +1275,7 @@ namespace pg512 {
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp3);
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp4);
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, *source);
+        delete source;
 	
 	cout << "First accu solved.\n";
         DenseVector<WorkPrec_> *tempu3 = predictedu.copy();
@@ -1284,8 +1287,6 @@ namespace pg512 {
         temp2 = MatrixVectorProduct<>::value(*m6,*tempu3);
         temp3 = MatrixVectorProduct<>::value(*m7,*tempw2);
         temp4 = MatrixVectorProduct<>::value(*m8,*tempu4);
-
-	
 
 	predictedu = *predicteduTemp;
 	predictedv = VectorSum<>::value(predictedv, temp1);
@@ -1539,23 +1540,26 @@ namespace pg512 {
         tv = new DenseVector<PredictionPrec1_>(*(_v_temp->copy()));
         tw = new DenseVector<PredictionPrec1_>(*(_w_temp->copy()));
         */
-        DenseVector<PredictionPrec1_> predictedu = *(_u_temp->copy());
-        DenseVector<PredictionPrec1_> predictedv = *(_v_temp->copy());
-        DenseVector<PredictionPrec1_> predictedw = *(_w_temp->copy());
+        DenseVector<PredictionPrec1_>* predictedu = _u_temp->copy();
+        DenseVector<PredictionPrec1_>* predictedv = _v_temp->copy();
+        DenseVector<PredictionPrec1_>* predictedw = _w_temp->copy();
         
-        _do_prediction<PredictionPrec1_>(predictedu, predictedv, predictedw);
+        _do_prediction<PredictionPrec1_>(*predictedu, *predictedv, *predictedw);
         //DenseVector<InitPrec2_> predictedu2(_u->size(), 0, 1);
         //DenseVector<InitPrec2_> predictedv2(_u->size(), 0, 1);
         //DenseVector<InitPrec2_> predictedw2(_u->size(), 0, 1);
-        _do_setup_stage2<InitPrec2_>(predictedu, predictedv, predictedw);
-        _do_prediction<PredictionPrec2_>(predictedu, predictedv, predictedw);
+        _do_setup_stage2<InitPrec2_>(*predictedu, *predictedv, *predictedw);
+        _do_prediction<PredictionPrec2_>(*predictedu, *predictedv, *predictedw);
         cout << "Predicted u:\n";
-        cout << stringify(predictedu)<< endl;
+        cout << stringify(*predictedu)<< endl;
         cout << "u before correction:\n";
         cout << stringify(*_u)<<endl;
         
-        _do_correction(predictedu, predictedv, predictedw);
+        _do_correction(*predictedu, *predictedv, *predictedw);
         ++_solve_time;
+        delete predictedu;
+        delete predictedv;
+        delete predictedw;
         cout << "Corrected u:\n";
         cout << stringify(*_u)<<endl;
     }
