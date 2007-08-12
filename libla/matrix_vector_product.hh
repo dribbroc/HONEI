@@ -57,9 +57,9 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const DenseMatrix<DataType1_> & matrix, const DenseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.columns())
-                {
+            {
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
-                }
+            }
 
             DenseVector<DataType1_> result(matrix.rows());
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
@@ -81,9 +81,9 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const DenseMatrix<DataType1_> & matrix, const SparseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.columns())
-                {
+            {
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
-                }
+            }
 
             DenseVector<DataType1_> result(matrix.rows());
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
@@ -105,9 +105,9 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const SparseMatrix<DataType1_> & matrix, const DenseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.columns())
-                {
+            {
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
-                }
+            }
 
             SparseVector<DataType1_> result(matrix.rows(),1);
             typename Vector<DataType1_>::ElementIterator l(result.begin_elements());
@@ -129,7 +129,9 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const SparseMatrix<DataType1_> & matrix, const SparseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.columns())
+            {
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
+            }
 
             SparseVector<DataType1_> result(matrix.rows(), matrix.rows());
             typename SparseVector<DataType1_>::ElementIterator l(result.begin_elements());
@@ -151,13 +153,12 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> value(const BandedMatrix<DataType1_> & matrix, const DenseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.columns())
+            {
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
+            }
 
             DenseVector<DataType1_> result(matrix.rows(), DataType1_(0));
-            ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
-            //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
-            typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
-            for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
+            for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
             {
                 DenseVector<DataType1_> band = *vi;
                 typename Vector<DataType2_>::ConstElementIterator j(vector.begin_elements()), j_end(vector.end_elements());
@@ -213,35 +214,49 @@ namespace pg512
         template <typename DataType1_, typename DataType2_> static SparseVector<DataType1_> value(const BandedMatrix<DataType1_> & matrix, const SparseVector<DataType2_> & vector)
         {
             if (vector.size() != matrix.columns())
+            {
                 throw MatrixRowsDoNotMatch(matrix.columns(), vector.size());
+            }
 
             SparseVector<DataType1_> result(vector.size(), vector.capacity());
-            ///\todo: Change to begin_bands() - end_bands() iterator, when end_bands() fixed!!!
-            //for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
-
-            typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands());
-            for (long i=0; i < 2*matrix.rows()-1 ; ++i, ++vi)
+            for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
             {
-                typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements());
                 DenseVector<DataType1_> band = *vi;
+                typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()), b_end(band.end_elements());;
+                typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
+                int middle_index = matrix.rows() -1;
 
-                typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()); //, b_end(band.end_elements()) ; b != b_end ; )
-                for(typename Vector<DataType1_>::ConstElementIterator r(result.begin_elements()), r_end(result.end_elements()) ; r != r_end ; )
+                // If we are above or on the diagonal band, we first search the first non-zero element, then we make positions in band and result vector meet it.
+                if (vi.index() >= middle_index)
                 {
-                    while (j.index() > b.index() && j != j_end)
+                    for (typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements()) ; j != j_end ; ++j)
                     {
-                        ++b; ++r;
-                    }
+                        while (j.index() < vi.index()-middle_index && j != j_end)
+                        {
+                            ++j;
+                        }
 
-                    if (j == j_end)
-                    {
-                        break;
-                    }
+                        while (b.index() < j.index() - (vi.index()-middle_index) && b != b_end)
+                        {
+                            ++b;
+                            ++r;
+                        }
 
-                    if (b.index() == r.index())
+                        *r += *b * *j;
+                    }
+                }
+                // If we are below the diagonal band we correct the position in band an result vector.
+                else
+                {
+                    for (typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements()) ; j != j_end ; ++j)
                     {
-                        result[r.index()] += *b * *j; //Used instead of Mutable Iterator and *r += *b * *j, because then every (!!) element would be allocated in the new SparseVector
-                        ++b; ++r; ++j;
+                        while (b.index() < j.index() - (vi.index() - middle_index) && b != b_end) //normally + but we get a negative index where we want to work with a positive one
+                        {
+                            ++b;
+                            ++r;
+                        }
+
+                        *r += *b * *j;
                     }
                 }
             }

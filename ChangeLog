@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/matrix_vector_product.hh: Corrected Banded Matrix * Sparse
+	Vector case and tidied the whole file up. Re-switched to band-iterator
+	with end_bands() because it now works. Caution: Tests will still not
+	pass due to band()-problems. If you comment band()-access out in
+	TEST.cc-file, this will show up new problems...
+
 2007-08-12 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Closed memory leaks in setup1 and prediction
