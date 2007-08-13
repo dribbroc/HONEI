@@ -2470,13 +2470,13 @@ namespace pg512 {
         DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
         DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
         m2.band(ulint(0)) = m2diag;
-        m2.band(ulint(_d_width+2)) = m2bandPlus1;
-        m2.band(ulint(2*(_d_width+2))) = m2bandPlus2;
-        m2.band(ulint(-(_d_width+2))) = m2bandMinus1;
+        m2.band(ulint(3*(_d_width-1))) = m2bandPlus1;
+        m2.band(ulint(6*(_d_width-1))) = m2bandPlus2;
+        m2.band(ulint(-3*(_d_width-1))) = m2bandMinus1;
         m4.band(ulint(0)) = m4diag;
-        m4.band(ulint(_d_width+2)) = m4bandPlus1;
-        m4.band(ulint(2*(_d_width+2))) = m4bandPlus2;
-        m4.band(ulint(-(_d_width+2))) = m4bandMinus1;
+        m4.band(ulint(3*(_d_width-1))) = m4bandPlus1;
+        m4.band(ulint(6*(_d_width-1))) = m4bandPlus2;
+        m4.band(ulint(-3*(_d_width-1))) = m4bandMinus1;
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
