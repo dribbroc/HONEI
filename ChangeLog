@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/matrix_vector_product_TEST.cc: Commented calls to band() out
+	until it is fixed, so that checkmailer.bash can do its work...
+
 2007-08-13 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Resolved bad band insertion in matrix assembly

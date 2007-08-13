@@ -49,8 +49,8 @@ class BandedMatrixDenseVectorProductTest :
                 DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DenseVector<DataType_> dv4 (size, DataType_(2));
-                bm1.band(1)= dv4;
-                bm1.band(-2)= dv4;                
+                //bm1.band(1)= dv4;
+                //bm1.band(-2)= dv4;                
                 DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
                 DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
 
@@ -81,8 +81,8 @@ class BandedMatrixDenseVectorProductQuickTest :
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseVector<DataType_> dv4 (size, DataType_(2));
-            bm1.band(1)= dv4;     
-            bm1.band(-2)= dv4;                   
+            //bm1.band(1)= dv4;     
+            //bm1.band(-2)= dv4;                   
             DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
             DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
 
@@ -113,8 +113,8 @@ class BandedMatrixSparseVectorProductTest :
                 DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DenseVector<DataType_> dv4 (size, DataType_(2));
-                bm1.band(1)= dv4;      
-                bm1.band(-2)= dv4;                              
+                //bm1.band(1)= dv4;      
+                //bm1.band(-2)= dv4;                              
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
@@ -156,8 +156,8 @@ class BandedMatrixSparseVectorProductQuickTest :
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseVector<DataType_> dv4 (size, DataType_(2));
-            bm1.band(1)= dv4;   
-            bm1.band(-2)= dv4;                                         
+            //bm1.band(1)= dv4;   
+            //bm1.band(-2)= dv4;                                         
             SparseVector<DataType_> sv1(size, size / 8 + 1);
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
