@@ -49,21 +49,9 @@ class BandedMatrixDenseVectorProductTest :
                 DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
-                //bm1.insert_band(1,dv4);
-                bm1.band(1)= dv4;
-                //bm1.band(-2)= dv4;                
-                DenseVector<DataType_> dv5 = bm1.band(1);
-                for (typename DenseVector<DataType_>::ElementIterator i(dv5.begin_elements()), 
-                    i_end(dv5.end_elements()) ; i != i_end ; ++i)
-                {
-                    *i = DataType_(2);
-                }
-                DenseVector<DataType_> dv6 = bm1.band(-2);
-                for (typename DenseVector<DataType_>::ElementIterator i(dv6.begin_elements()),
-                    i_end(dv6.end_elements()) ; i != i_end ; ++i)
-                {
-                    *i = DataType_(2);
-                }
+                bm1.insert_band(1, dv4);
+                bm1.insert_band(-2, dv4);
+                
                 DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
                 DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
 
@@ -93,9 +81,10 @@ class BandedMatrixDenseVectorProductQuickTest :
             unsigned long size(5);
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
-            DenseVector<DataType_> dv4 (size, DataType_(2));
-            //bm1.band(1)= dv4;     
-            //bm1.band(-2)= dv4;                   
+            DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
+            bm1.insert_band(1, dv4);
+            bm1.insert_band(-2 ,dv4);
+
             DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
             DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
 
@@ -106,8 +95,8 @@ class BandedMatrixDenseVectorProductQuickTest :
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(bm01, dv01), MatrixRowsDoNotMatch);
         }
 };
-//BandedMatrixDenseVectorProductQuickTest<float> banded_matrix_dense_vector_product_quick_test_float("float");
-//BandedMatrixDenseVectorProductQuickTest<double> banded_matrix_dense_vector_product_quick_test_double("double");
+BandedMatrixDenseVectorProductQuickTest<float> banded_matrix_dense_vector_product_quick_test_float("float");
+BandedMatrixDenseVectorProductQuickTest<double> banded_matrix_dense_vector_product_quick_test_double("double");
 
 template <typename DataType_>
 class BandedMatrixSparseVectorProductTest :
@@ -125,9 +114,9 @@ class BandedMatrixSparseVectorProductTest :
             {
                 DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
-                DenseVector<DataType_> dv4 (size, DataType_(2));
-                //bm1.band(1)= dv4;      
-                //bm1.band(-2)= dv4;                              
+                DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
+                bm1.insert_band(1, dv4);
+                bm1.insert_band(-2, dv4);
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
@@ -150,8 +139,8 @@ class BandedMatrixSparseVectorProductTest :
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(bm01, sv01), MatrixRowsDoNotMatch);
         }
 };
-//BandedMatrixSparseVectorProductTest<float> banded_matrix_sparse_vector_product_test_float("float");
-//BandedMatrixSparseVectorProductTest<double> banded_matrix_sparse_vector_product_test_double("double");
+BandedMatrixSparseVectorProductTest<float> banded_matrix_sparse_vector_product_test_float("float");
+BandedMatrixSparseVectorProductTest<double> banded_matrix_sparse_vector_product_test_double("double");
 
 template <typename DataType_>
 class BandedMatrixSparseVectorProductQuickTest :
@@ -168,9 +157,9 @@ class BandedMatrixSparseVectorProductQuickTest :
             unsigned long size(20);
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
-            DenseVector<DataType_> dv4 (size, DataType_(2));
-            //bm1.band(1)= dv4;   
-            //bm1.band(-2)= dv4;                                         
+            DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
+            bm1.insert_band(1, dv4);
+            bm1.insert_band(-2, dv4);
             SparseVector<DataType_> sv1(size, size / 8 + 1);
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
@@ -192,8 +181,8 @@ class BandedMatrixSparseVectorProductQuickTest :
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(bm01, sv01), MatrixRowsDoNotMatch);
         }
 };
-//BandedMatrixSparseVectorProductQuickTest<float> banded_matrix_sparse_vector_product_quick_test_float("float");
-//BandedMatrixSparseVectorProductQuickTest<double> banded_matrix_sparse_vector_product_quick_test_double("double");
+BandedMatrixSparseVectorProductQuickTest<float> banded_matrix_sparse_vector_product_quick_test_float("float");
+BandedMatrixSparseVectorProductQuickTest<double> banded_matrix_sparse_vector_product_quick_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixDenseVectorProductTest :
@@ -223,8 +212,8 @@ class DenseMatrixDenseVectorProductTest :
         }
 };
 
-//DenseMatrixDenseVectorProductTest<float> dense_matrix_dense_vector_product_test_float("float");
-//DenseMatrixDenseVectorProductTest<double> dense_matrix_dense_vector_product_test_double("double");
+DenseMatrixDenseVectorProductTest<float> dense_matrix_dense_vector_product_test_float("float");
+DenseMatrixDenseVectorProductTest<double> dense_matrix_dense_vector_product_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixDenseVectorProductQuickTest :
@@ -252,8 +241,8 @@ class DenseMatrixDenseVectorProductQuickTest :
 
         }
 };
-//DenseMatrixDenseVectorProductQuickTest<float> dense_matrix_dense_vector_product_quick_test_float("float");
-//DenseMatrixDenseVectorProductQuickTest<double> dense_matrix_dense_vector_product_quick_test_double("double");
+DenseMatrixDenseVectorProductQuickTest<float> dense_matrix_dense_vector_product_quick_test_float("float");
+DenseMatrixDenseVectorProductQuickTest<double> dense_matrix_dense_vector_product_quick_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixSparseVectorProductTest :
@@ -294,8 +283,8 @@ class DenseMatrixSparseVectorProductTest :
         }
 };
 
-//DenseMatrixSparseVectorProductTest<float> dense_matrix_sparse_vector_product_test_float("float");
-//DenseMatrixSparseVectorProductTest<double> dense_matrix_sparse_vector_product_test_double("double");
+DenseMatrixSparseVectorProductTest<float> dense_matrix_sparse_vector_product_test_float("float");
+DenseMatrixSparseVectorProductTest<double> dense_matrix_sparse_vector_product_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixSparseVectorProductQuickTest :
@@ -334,8 +323,8 @@ class DenseMatrixSparseVectorProductQuickTest :
         }
 };
 
-//DenseMatrixSparseVectorProductQuickTest<float> dense_matrix_sparse_vector_product_test_quick_float("float");
-//DenseMatrixSparseVectorProductQuickTest<double> dense_matrix_sparse_vector_product_test_quick_double("double");
+DenseMatrixSparseVectorProductQuickTest<float> dense_matrix_sparse_vector_product_test_quick_float("float");
+DenseMatrixSparseVectorProductQuickTest<double> dense_matrix_sparse_vector_product_test_quick_double("double");
 
 template <typename DataType_>
 class SparseMatrixDenseVectorProductQuickTest :
@@ -368,8 +357,8 @@ class SparseMatrixDenseVectorProductQuickTest :
 
         }
 };
-//SparseMatrixDenseVectorProductQuickTest<float> sparse_matrix_dense_vector_product_quick_test_float("float");
-//SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_product_quick_test_double("double");
+SparseMatrixDenseVectorProductQuickTest<float> sparse_matrix_dense_vector_product_quick_test_float("float");
+SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_product_quick_test_double("double");
 
 template <typename DataType_>
 class SparseMatrixSparseVectorProductQuickTest :
@@ -413,5 +402,5 @@ class SparseMatrixSparseVectorProductQuickTest :
         }
 };
 
-//SparseMatrixSparseVectorProductQuickTest<float> sparse_matrix_sparse_vector_product_test_quick_float("float");
-//SparseMatrixSparseVectorProductQuickTest<double> sparse_matrix_sparse_vector_product_test_quick_double("double");
+SparseMatrixSparseVectorProductQuickTest<float> sparse_matrix_sparse_vector_product_test_quick_float("float");
+SparseMatrixSparseVectorProductQuickTest<double> sparse_matrix_sparse_vector_product_test_quick_double("double");
