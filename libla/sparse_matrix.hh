@@ -381,6 +381,21 @@ namespace pg512 ///< \todo Namespace name?
                 return matrix._row_vectors[row]->begin_non_zero_elements();
             }
 
+            static typename Vector<DataType_>::ElementIterator _get_first_iterator(const SparseMatrix<DataType_> & matrix, 
+                    unsigned long row)
+            {
+                while (! matrix._row_vectors[row])
+                {
+                    ++row;
+                    if (matrix._rows == row)
+                    {
+                        matrix._row_vectors[row].reset(new SparseVector<DataType_>(matrix._columns,
+                                matrix._capacity));
+                        return matrix._row_vectors[row]->begin_non_zero_elements();
+                    }
+                }
+                return matrix._row_vectors[row]->begin_non_zero_elements();
+            }
         public:
             /// \name Constructors and destructor
             /// \{
@@ -395,7 +410,7 @@ namespace pg512 ///< \todo Namespace name?
                 _matrix(matrix),
                 _index(index),
                 _row(index / matrix._columns),
-                _iter(_get_iterator(matrix, index, _row))
+                _iter(_get_first_iterator(matrix, _row))
             {
             
             }
@@ -424,18 +439,23 @@ namespace pg512 ///< \todo Namespace name?
             {
                 ++_index;
                 ++_iter;
-
-                while (_iter == _matrix._row_vectors[_row]->end_non_zero_elements())
+                if (_iter != _matrix._row_vectors[_row]->end_non_zero_elements())
                 {
-                    ++ _row; 
-                    if (! _matrix._row_vectors[_row])                    
-                        _matrix._row_vectors[_row].reset(new SparseVector<DataType_>(_matrix._columns,
-                                    _matrix._capacity));                        
-                    _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();                        
-                    if (_matrix._rows == _row)
-                        return *this;
+                    return *this; 
                 }
-
+                ++ _row;
+                while (!_matrix._row_vectors[_row])
+                {
+                    if (_matrix._rows == _row)
+                    {
+                        _matrix._row_vectors[_row].reset(new SparseVector<DataType_>(_matrix._columns,
+                                _matrix._capacity));
+                        _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+                        return *this;
+                    }
+                    ++ _row;
+                }
+                _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
                 return *this;
             }
 

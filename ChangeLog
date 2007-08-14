@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/sparse_matrix.hh: Rewrote NonZeroElementIterator to not 
+	create new empty vectors when possible. Still buggy.
+
+2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/matrix_vector_product_TEST.cc: Corrected result generation.
 	
 2007-08-14 Markus Geveler <apryde@gmx.de>
