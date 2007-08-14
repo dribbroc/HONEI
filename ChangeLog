@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-08-14 Markus Geveler <apryde@gmx.de>
 
+	* libla/banded_matrix.hh, matrix_vector_product_TEST.cc: (Sven, Dirk,
+	Markus): Implemented new Operation insert_band(), which correctly
+	inserts a band to libla::BandedMatrix.
+	
+2007-08-14 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh: Added implementation of a first postprocessing
 	method, which generates GNUPLOT>splot compatible files, employed it
 	after preprocessing in order to test it, adjusted condtructor. See

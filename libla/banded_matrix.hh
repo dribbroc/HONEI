@@ -26,6 +26,7 @@
 #include <libla/matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libla/vector_iterator.hh>
+#include <libla/vector_error.hh>
 #include <libutil/shared_array.hh>
 #include <libutil/log.hh>
 
@@ -179,6 +180,18 @@ namespace pg512 ///< \todo Namespace name?
             virtual unsigned long rows() const
             {
                 return _size;
+            }
+            
+            /// Inserts a new Band in the matrix.
+            void insert_band(signed long index, DenseVector<DataType_> * vector)
+            {
+                if (_size != vector->size()) 
+                {
+                    throw VectorSizeDoesNotMatch(_size, vector->size());
+                }
+
+                    _bands[index + _size - 1].reset(vector);
+
             }
 
             /// Returns a band-vector by index.
