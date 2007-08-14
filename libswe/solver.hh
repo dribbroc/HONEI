@@ -47,6 +47,8 @@
 #include <libla/vector_elementwise_product.hh>
 #include <libla/matrix_vector_product.hh>
 #include <libutil/tags.hh>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -286,13 +288,21 @@ namespace pg512 {
                                   DenseVector<WorkPrec_>& predictedv,
                                   DenseVector<WorkPrec_>& predictedw);
 
-             /** Encapsulates the correction stage.
+            /** Encapsulates the correction stage.
               *  Precision is that of the result.
               * \param predu The temporary vector u.
               * \param predv The temporary vector v.
               * \param predw The temporary vector w.
+             **/ 
+            void _do_correction(DenseVector<ResPrec_>& predu,DenseVector<ResPrec_>& predv,DenseVector<ResPrec_>& predw);
+
+            /** First simple postprocessing method, generating a GNUPLOT>splot
+              * compatible matrix file for the height field of the current timestep.
+              *
+              * \param every Generate file for every xth timestep.
               **/ 
-             void _do_correction(DenseVector<ResPrec_>& predu,DenseVector<ResPrec_>& predv,DenseVector<ResPrec_>& predw);
+            void _do_postprocessing(int every);
+
             /** Basic matrix assembly. Uses Limiters. DEBUG version.
               * Computes M_1, M_3.
               *
@@ -300,7 +310,6 @@ namespace pg512 {
               * \param m3 Matrix m3 is the second Matrix to be assembled.
               *
               **/
-           
             template<typename WorkPrec_>
             void _assemble_matrix1_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v);
 
@@ -394,6 +403,7 @@ namespace pg512 {
                 this->_delta_y = deltay;
                 this->_delta_t = deltat;
                 this->_eps = eps;
+                this->_solve_time = 1;
 
                 this->_simple_bound = true;
                 this->_usage_reflect = true;
@@ -621,6 +631,8 @@ namespace pg512 {
         cout << stringify(*_bottom_slopes_x) << endl;
         cout << stringify(*_bottom_slopes_y) << endl;
         std::cout << "Finished preprocessing.\n";
+        
+        _do_postprocessing(1);
 
     }   
 
@@ -2974,6 +2986,52 @@ namespace pg512 {
         std::cout << "Finished Matrix Assembly 2.\n";
  
     }
+
+    /** Implementation of a simple postprocessing method generating a file for GNUPLOT>splot
+     *  to display the heightfield in one timestep. The fileformat is "default", which means, that
+     *  for each row, a block with tripels is written to the file: <x, y, value>. The row-blocks 
+     *  are separated by empty records within the file. When reading the file without plotting, be careful to
+     *  have in mind, that a step of 1 from one row to the other means a step of one in x -direction so we
+     *  have the "scalarfield" -point of view and not the "matrix" -point of view.
+     *  To simply display the file type
+     *      gnuplot
+     *      splot "filename"
+     *  For more details see
+     *      gnuplot
+     *      help splot
+     *  The filenames are consisting of the string "rsolverfield" and the number of the related timestep. The filesuffix is "dat".
+     *
+     * \param every In order to not have an overload of files, we do not need, one can specify the number by which _solve_time has to be able to be divided by restlessly - obviously this will slow down the computation, so the common use case will be to set every to _solve_time, so that we render only the data for the last timestep.
+     *
+     * 
+     **/ 
+    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_do_postprocessing(int every)
+    {
+        if(_solve_time % every == 0)
+        {
+            string filename;
+            ofstream file;
+            filename = "rsolverfield" + stringify(_solve_time) + ".dat";
+            
+            file.open(filename.c_str());
+
+            ///For every column, traverse elements and write record to file:
+            for(ulint x = 0; x < _d_width; ++x)
+            {
+                for(ulint y = 0; y < _d_height; ++y)
+                {
+                    string record = stringify(x) + " " + stringify(y) + " " + stringify((*_height)[y][x]) + "\n";
+                    file << record;
+                }
+                //Create empty record after each row:
+                file << "\n";
+            }
+            file.close();
+        }
+        cout <<"Finished postprocessing." << endl;
+    }
+ 
 
 }
 #endif
