@@ -71,8 +71,7 @@ class BandedMatrixElementInverseQuickTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
-            {
+                unsigned long size(11);
                 DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size));                    
                 DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size)); 
                 for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()),
@@ -85,7 +84,6 @@ class BandedMatrixElementInverseQuickTest :
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);  
                 
                 TEST_CHECK_EQUAL(MatrixElementInverse<>::value(bm1), bm2);
-            }
         }
 };
 BandedMatrixElementInverseQuickTest<float> banded_matrix_element_inverse_quick_test_float("float");

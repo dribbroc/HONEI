@@ -51,6 +51,18 @@ class BandedMatrixElementIterationTest :
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
                 }
+                
+                BandedMatrix<DataType_> bm2(size);
+                for (typename BandedMatrix<DataType_>::ConstVectorIterator cb(bm2.begin_bands()), cb_end(bm2.end_bands()) ;
+                    cb != cb_end ; ++cb)
+                {
+                    DenseVector<DataType_>  dv = *cb;
+                        for (typename Vector<DataType_>::ConstElementIterator i(dv.begin_elements()), 
+                            i_end(dv.end_elements()) ; i != i_end ; ++i)                    
+                        {
+                            TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
+                        }
+                }
             }
         }
 };
