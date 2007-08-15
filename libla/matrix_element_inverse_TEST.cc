@@ -162,7 +162,6 @@ class SparseMatrixElementInverseTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-            std::cout <<size << std::endl;
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
                     sm2(size, size + 1, size / 7 + 1);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 

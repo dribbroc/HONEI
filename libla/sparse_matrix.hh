@@ -384,9 +384,7 @@ namespace pg512 ///< \todo Namespace name?
                     return matrix._row_vectors[row]->begin_non_zero_elements();
                 }
                 
-                while ((! matrix._row_vectors[row])  || 
-                    matrix._row_vectors[row]->begin_non_zero_elements() ==
-                    matrix._row_vectors[row]->end_non_zero_elements())
+                while ((! matrix._row_vectors[row])  || matrix._row_vectors[row]->used_elements() == 0)
                 {
                     ++row;
                     if (matrix._rows == row)
@@ -467,7 +465,7 @@ namespace pg512 ///< \todo Namespace name?
                     _index = _matrix._rows * _matrix._columns;
                     return *this;
                 }                
-                while (!_matrix._row_vectors[_row])
+                while (!_matrix._row_vectors[_row] || _matrix._row_vectors[_row]->used_elements() == 0)
                 {
                     ++ _row;
                     if (_matrix._rows == _row)
