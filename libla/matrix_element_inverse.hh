@@ -87,6 +87,7 @@ namespace pg512
          **/
 		template <typename DataType_> static BandedMatrix<DataType_> & value(BandedMatrix<DataType_> & matrix)
         {
+            /// \todo only use BandIterator to avoid a ton of zero elements.
             for (typename MutableMatrix<DataType_>::ElementIterator i(matrix.begin_elements()), i_end(matrix.end_elements()) ;
                     i != i_end ; ++i)
             {

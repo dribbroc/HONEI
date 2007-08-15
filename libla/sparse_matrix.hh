@@ -372,25 +372,28 @@ namespace pg512 ///< \todo Namespace name?
             /// Our row index.
             unsigned long _row;
 
-            /// Returns the first non zero iterator for a given row in the matrix.
-            static typename Vector<DataType_>::ElementIterator _get_first_iterator(const SparseMatrix<DataType_> & matrix, 
+            /// Returns the first non zero iterator starting from a given row in the matrix.
+            typename Vector<DataType_>::ElementIterator _get_first_iterator(const SparseMatrix<DataType_> & matrix, 
                     unsigned long row)
             {
                 if (matrix._rows == row)
                 {
                     matrix._row_vectors[row].reset(new SparseVector<DataType_>(matrix._columns,
                             matrix._capacity));
+                    _index = _matrix._rows * _matrix._columns;                            
                     return matrix._row_vectors[row]->begin_non_zero_elements();
                 }
                 
-                while (! matrix._row_vectors[row])
+                while ((! matrix._row_vectors[row])  || 
+                    matrix._row_vectors[row]->begin_non_zero_elements() ==
+                    matrix._row_vectors[row]->end_non_zero_elements())
                 {
                     ++row;
                     if (matrix._rows == row)
                     {
                         matrix._row_vectors[row].reset(new SparseVector<DataType_>(matrix._columns,
                                 matrix._capacity));
-                        
+                        _index = _matrix._rows * _matrix._columns;                        
                         return matrix._row_vectors[row]->begin_non_zero_elements();
                     }
                 }

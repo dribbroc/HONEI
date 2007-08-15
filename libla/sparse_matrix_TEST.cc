@@ -146,6 +146,7 @@ class SparseMatrixQuickTest :
                 //iterating over an empty matrix - should never reach this point
                 TEST_CHECK(false);
             } 
+            
             sm[0][0] = DataType_(1);
             sm[0][1] = DataType_(2);            
             sm[1][1] = DataType_(3);
