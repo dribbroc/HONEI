@@ -159,7 +159,7 @@ class SparseMatrixQuickTest :
                 TEST_CHECK_EQUAL(*i, i.index()+1);
             }  
             
-            unsigned long size (10);
+            unsigned long size (7);
             SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
                 i_end(sm1.end_elements()); 
