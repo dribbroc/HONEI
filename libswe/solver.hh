@@ -1791,22 +1791,27 @@ namespace pg512 {
     /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result)
     {
 	///Bands of the matrix which will be assembled.
-	DenseVector<WorkPrec_> m6diag(_u->size(), ulint(0) ,ulint( 1));      //zero
+	/*DenseVector<WorkPrec_> m6diag(_u->size(), ulint(0) ,ulint( 1));      //zero
         DenseVector<WorkPrec_> m6bandplus3(_u->size(), ulint(0) , ulint(1)); //one
         DenseVector<WorkPrec_> m6bandplus6(_u->size(), ulint(0) ,ulint( 1)); //two
         DenseVector<WorkPrec_> m6bandminus3(_u->size(), ulint(0) ,ulint(1));//three
+        */
+        /*DenseVector<WorkPrec_>* m6diag = new DenseVector<WorkPrec_>(_u->size(), ulint(0) ,ulint( 1));      //zero
+        DenseVector<WorkPrec_>* m6bandplus3 = new DenseVector<WorkPrec_>(_u->size(), ulint(0) , ulint(1)); //one
+        DenseVector<WorkPrec_>* m6bandplus6 = new DenseVector<WorkPrec_>(_u->size(), ulint(0) ,ulint( 1)); //two
+        DenseVector<WorkPrec_>* m6bandminus3 = new DenseVector<WorkPrec_>(_u->size(), ulint(0) ,ulint(1));//three
+        */
 
+	DenseVector<WorkPrec_>* m6diag = (m1.band(ulint(0))).copy();
+	DenseVector<WorkPrec_>* m6bandplus3 = (m1.band(ulint(3))).copy();
+	DenseVector<WorkPrec_>* m6bandplus6 = (m1.band(ulint(6))).copy();
+	DenseVector<WorkPrec_>* m6bandminus3 = (m1.band(ulint(-3))).copy();
         ///Needed Iterators.
-        typename DenseVector<WorkPrec_>::ElementIterator d(m6diag.begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3.begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b2(m6bandplus6.begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3.begin_elements());
- 
-	m6diag = m1.band(ulint(0));
-	m6bandplus3 = m1.band(ulint(3));
-	m6bandplus6 = m1.band(ulint(6));
-	m6bandminus3 = m1.band(ulint(-3));
-	//Possible ERROR: COPY
+        typename DenseVector<WorkPrec_>::ElementIterator d(m6diag->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b2(m6bandplus6->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3->begin_elements());
+        
 	DenseVector<WorkPrec_> c_squared(*(_c->copy()));
 	VectorElementwiseProduct<WorkPrec_>::value(c_squared, (*_c));
 
@@ -1847,10 +1852,11 @@ namespace pg512 {
 	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
 	}
 	//BandedMatrix<WorkPrec_> result(m6diag.size());
-	result.band(0) = m6diag;
-	result.band(3) = m6bandplus3;
-	result.band(6) = m6bandplus6;
-	result.band(-3) = m6bandminus3;
+	result.insert_band(0, m6diag);
+	result.insert_band(3, m6bandplus3);
+	result.insert_band(6, m6bandplus6);
+	result.insert_band(-3, m6bandminus3);
+
 	std::cout << "Finished Quick Assembly m2.\n";
  
 	//return result;
@@ -1866,21 +1872,22 @@ namespace pg512 {
     /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& result)
     {
 	///Bands of the matrix which will be assembled.
-	DenseVector<WorkPrec_> m8diag(_u->size(), ulint(0) ,ulint( 1));      //zero
+	/*DenseVector<WorkPrec_> m8diag(_u->size(), ulint(0) ,ulint( 1));      //zero
         DenseVector<WorkPrec_> m8bandplus3(_u->size(), ulint(0) , ulint(1)); //one
         DenseVector<WorkPrec_> m8bandplus6(_u->size(), ulint(0) ,ulint( 1)); //two
         DenseVector<WorkPrec_> m8bandminus3(_u->size(), ulint(0) ,ulint(1));//three
+        */
 
+	DenseVector<WorkPrec_>* m8diag = (m2.band(ulint(0))).copy();
+	DenseVector<WorkPrec_>* m8bandplus3 = (m2.band(ulint(3*(_d_width + 4)))).copy();
+	DenseVector<WorkPrec_>* m8bandplus6 = (m2.band(ulint(6*(_d_width + 4)))).copy();
+	DenseVector<WorkPrec_>* m8bandminus3 = (m2.band(ulint((-3)*(_d_width + 4)))).copy();
         ///Needed Iterators.
-        typename DenseVector<WorkPrec_>::ElementIterator d(m8diag.begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3.begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6.begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3.begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator d(m8diag->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3->begin_elements());
  
-	m8diag = m2.band(ulint(0));
-	m8bandplus3 = m2.band(ulint(3*(_d_width + 4)));
-	m8bandplus6 = m2.band(ulint(6*(_d_width + 4)));
-	m8bandminus3 = m2.band(ulint((-3)*(_d_width + 4)));
 	DenseVector<WorkPrec_> d_squared((*(_d->copy())));
 	VectorElementwiseProduct<WorkPrec_>::value(d_squared, (*_d));
 
@@ -1923,10 +1930,10 @@ namespace pg512 {
 	
 	//BandedMatrix<WorkPrec_> result(m8diag.size());
 
-	result.band(0) = m8diag;
-	result.band(3*(_d_width + 4)) = m8bandplus3;
-	result.band(6*(_d_width + 4)) = m8bandplus6;
-	result.band((-3)*(_d_width + 4)) = m8bandminus3;
+	result.insert_band(0, m8diag);
+	result.insert_band(3*(_d_width + 4), m8bandplus3);
+	result.insert_band(6*(_d_width + 4), m8bandplus6);
+	result.insert_band((-3)*(_d_width + 4),m8bandminus3);
         std::cout << "Finished Quick Assembly m4.\n";	
  
 	//return result;
@@ -1946,7 +1953,7 @@ namespace pg512 {
         ::_assemble_matrix1_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
+        /*DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
         DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0)); //one
         DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0)); //two
         DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0));//three
@@ -1962,6 +1969,15 @@ namespace pg512 {
         m3.band(ulint(3)) = m3bandPlus1;
         m3.band(ulint(6)) = m3bandPlus2;
         m3.band(ulint(-3)) = m3bandMinus1;
+        */
+        DenseVector<WorkPrec_>* m1diag = new DenseVector<WorkPrec_>(_u->size(), ulint(0));      //zero
+        DenseVector<WorkPrec_>* m1bandPlus1= new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //one
+        DenseVector<WorkPrec_>* m1bandPlus2= new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //two
+        DenseVector<WorkPrec_>* m1bandMinus1= new DenseVector<WorkPrec_>(_u->size(), ulint(0));//three
+        DenseVector<WorkPrec_>* m3diag= new DenseVector<WorkPrec_>(_u->size(),ulint( 0));      //zero
+        DenseVector<WorkPrec_>* m3bandPlus1= new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //one
+        DenseVector<WorkPrec_>* m3bandPlus2= new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //two
+        DenseVector<WorkPrec_>* m3bandMinus1= new DenseVector<WorkPrec_>(_u->size(),ulint( 0));//three
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2054,8 +2070,8 @@ namespace pg512 {
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Compute matrix element value:
-            m1bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
-            m3bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            (*m1bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            (*m3bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
             //FINISHED band_-1.
 
             //Prepare right operands for diagonal:
@@ -2217,9 +2233,9 @@ namespace pg512 {
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m1diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            (*m1diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            m3diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            (*m3diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED diagonal.
 
@@ -2382,9 +2398,9 @@ namespace pg512 {
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m1bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            (*m1bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            m3bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            (*m3bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED band_+1.
 
@@ -2445,13 +2461,23 @@ namespace pg512 {
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Compute matrix element value:
-            m1bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
-            m3bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            (*m1bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            (*m3bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
             //FINISHED band_+2.
 
             //Iterate:
             ++ui;++vi;
         }
+        m1.insert_band(0, m1diag);
+        m1.insert_band(3, m1bandPlus1);
+        m1.insert_band(6, m1bandPlus2);
+        m1.insert_band(-3,m1bandMinus1);
+        m3.insert_band(0, m3diag);
+        m3.insert_band(3, m3bandPlus1);
+        m3.insert_band(6, m3bandPlus2);
+        m3.insert_band(-3,m3bandMinus1);
+ 
+
         cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
@@ -2473,7 +2499,7 @@ namespace pg512 {
         ::_assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
+        /*DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
         DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
         DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
         DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
@@ -2489,6 +2515,15 @@ namespace pg512 {
         m4.band(ulint(3*(_d_width-1))) = m4bandPlus1;
         m4.band(ulint(6*(_d_width-1))) = m4bandPlus2;
         m4.band(ulint(-3*(_d_width-1))) = m4bandMinus1;
+        */
+        DenseVector<WorkPrec_>* m2diag = new DenseVector<WorkPrec_>(_u->size(), ulint(0));      //zero
+        DenseVector<WorkPrec_>* m2bandPlus1 = new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //one
+        DenseVector<WorkPrec_>* m2bandPlus2 = new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //two
+        DenseVector<WorkPrec_>* m2bandMinus1 = new DenseVector<WorkPrec_>(_u->size(), ulint(0));//three
+        DenseVector<WorkPrec_>* m4diag = new DenseVector<WorkPrec_>(_u->size(),ulint( 0));      //zero
+        DenseVector<WorkPrec_>* m4bandPlus1 = new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //one
+        DenseVector<WorkPrec_>* m4bandPlus2 = new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //two
+        DenseVector<WorkPrec_>* m4bandMinus1 = new DenseVector<WorkPrec_>(_u->size(),ulint( 0));//three
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2581,8 +2616,8 @@ namespace pg512 {
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Compute matrix element value:
-            m2bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
-            m4bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            (*m2bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            (*m4bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
             //FINISHED band_-1.
 
             //Prepare right operands for diagonal:
@@ -2744,9 +2779,9 @@ namespace pg512 {
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m2diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            (*m2diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            m4diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            (*m4diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED diagonal.
 
@@ -2909,9 +2944,9 @@ namespace pg512 {
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m2bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            (*m2bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            m4bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            (*m4bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED band_+1.
 
@@ -2972,13 +3007,22 @@ namespace pg512 {
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Compute matrix element value:
-            m2bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
-            m4bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            (*m2bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            (*m4bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
             //FINISHED band_+2.
 
             //Iterate:
             ++ui;++vi;
         }
+        m2.insert_band(0, m2diag);
+        m2.insert_band(3*(_d_width-1), m2bandPlus1);
+        m2.insert_band(6*(_d_width-1), m2bandPlus2);
+        m2.insert_band(-3*(_d_width-1), m2bandMinus1);
+        m4.insert_band(0, m4diag);
+        m4.insert_band(3*(_d_width-1), m4bandPlus1);
+        m4.insert_band(6*(_d_width-1), m4bandPlus2);
+        m4.insert_band(-3*(_d_width-1), m4bandMinus1);
+        
         cout << "M_2:" << stringify(m2.band(ulint(0))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(_d_width+2))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(2*(_d_width+2)))) << endl;
