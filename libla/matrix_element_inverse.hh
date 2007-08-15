@@ -87,15 +87,35 @@ namespace pg512
          **/
 		template <typename DataType_> static BandedMatrix<DataType_> & value(BandedMatrix<DataType_> & matrix)
         {
-            /// \todo only use BandIterator to avoid a ton of zero elements.
-            for (typename MutableMatrix<DataType_>::ElementIterator i(matrix.begin_elements()), i_end(matrix.end_elements()) ;
-                    i != i_end ; ++i)
-            {
-                if (*i == static_cast<DataType_>(0))
-                    continue;
+			for (typename BandedMatrix<DataType_>::VectorIterator i(matrix.begin_bands()), 
+					i_end(matrix.end_bands()) ; i != i_end ; ++i)
+			{
+				DenseVector<DataType_> band = *i;
+				int middle_index = matrix.rows() -1;
+				// If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+                if (i.index() >= middle_index)
+				{
+					unsigned long end = band.size() - (i.index() - middle_index); //Calculation of the element-index to stop in iteration!
+					for(typename Vector<DataType_>::ElementIterator b(band.begin_elements()), b_end(band.element_at(end)) ; b != b_end ; ++b)
+					{
+						if (*b == static_cast<DataType_>(0))
+							continue;
 
-                *i = DataType_(1) / *i;
-            }
+						*b = DataType_(1) / *b;
+					}
+				}
+				else
+				{
+					unsigned long start = middle_index - i.index(); //Calculation of the element-index to start in iteration!
+					for(typename Vector<DataType_>::ElementIterator b(band.element_at(start)), b_end(band.end_elements()) ; b != b_end ; ++b)
+                    {
+						if (*b == static_cast<DataType_>(0))
+							continue;
+
+						*b = DataType_(1) / *b;
+					}
+				}
+			}
 
             return matrix;
         }
