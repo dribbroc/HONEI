@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/sparse_matrix.hh: Rewrote NonZeroElementIterator
+	with a thousand special cases - should now work somehow.
+	* libla/sparse_matrix_TEST.cc: Added a small 
+	NonZeroElementIterator test.
+	
+2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/sparse_matrix.hh: Rewrote NonZeroElementIterator to not 
 	create new empty vectors when possible. Still buggy.
 
