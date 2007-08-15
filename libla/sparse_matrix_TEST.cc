@@ -144,7 +144,7 @@ class SparseMatrixQuickTest :
                 i_end(sm.end_non_zero_elements()) ; i != i_end ; ++i)
             {
                 //iterating over an empty matrix - should never reach this point
-                TEST_CHECK_EQUAL(false);
+                TEST_CHECK(false);
             } 
             sm[0][0] = DataType_(1);
             sm[0][1] = DataType_(2);            
