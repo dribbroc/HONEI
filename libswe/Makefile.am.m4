@@ -10,7 +10,7 @@ define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
-    $(top_builddir)/libla/libla.la \
+	$(top_builddir)/libla/libla.la \
 	libswe.la \
 	$(top_builddir)/libutil/libutil.la \
 	$(DYNAMIC_LD_LIBS)
@@ -36,7 +36,8 @@ lib_LTLIBRARIES = libswe.la
 
 libswe_la_SOURCES = filelist
 libswe_la_LIBADD = \
-	$(top_builddir)/libutil/libutil.la
+	$(top_builddir)/libutil/libutil.la \
+	$(top_builddir)/libla/libla.la
 
 pg512_includedir = $(includedir)/pg512/
 pg512_include_HEADERS = headerlist
