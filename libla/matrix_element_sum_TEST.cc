@@ -52,8 +52,8 @@ class BandedMatrixElementSumTest :
             }
         }
 };
-//BandedMatrixElementSumTest<float> banded_matrix_element_sum_test_float("float");
-//BandedMatrixElementSumTest<double> banded_matrix_element_sum_test_double("double");
+BandedMatrixElementSumTest<float> banded_matrix_element_sum_test_float("float");
+BandedMatrixElementSumTest<double> banded_matrix_element_sum_test_double("double");
 
 template <typename DataType_>
 class BandedMatrixElementSumQuickTest :
@@ -75,8 +75,8 @@ class BandedMatrixElementSumQuickTest :
             TEST_CHECK_EQUAL(sum, size * 2);
         }
 };
-//BandedMatrixElementSumQuickTest<float> banded_matrix_element_sum_quick_test_float("float");
-//BandedMatrixElementSumQuickTest<double> banded_matrix_element_sum_quick_test_double("double");
+BandedMatrixElementSumQuickTest<float> banded_matrix_element_sum_quick_test_float("float");
+BandedMatrixElementSumQuickTest<double> banded_matrix_element_sum_quick_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixElementSumTest :
@@ -99,8 +99,8 @@ class DenseMatrixElementSumTest :
             }
         }
 };
-//DenseMatrixElementSumTest<float> dense_matrix_element_sum_test_float("float");
-//DenseMatrixElementSumTest<double> dense_matrix_element_sum_test_double("double");
+DenseMatrixElementSumTest<float> dense_matrix_element_sum_test_float("float");
+DenseMatrixElementSumTest<double> dense_matrix_element_sum_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixElementSumQuickTest :
@@ -121,8 +121,8 @@ class DenseMatrixElementSumQuickTest :
             TEST_CHECK_EQUAL(sum, size * (size + 1));
         }
 };
-//DenseMatrixElementSumQuickTest<float> dense_matrix_element_sum_quick_test_float("float");
-//DenseMatrixElementSumQuickTest<double> dense_matrix_element_sum_quick_test_double("double");
+DenseMatrixElementSumQuickTest<float> dense_matrix_element_sum_quick_test_float("float");
+DenseMatrixElementSumQuickTest<double> dense_matrix_element_sum_quick_test_double("double");
 
 template <typename DataType_>
 class SparseMatrixElementSumTest :
