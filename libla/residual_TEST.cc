@@ -80,4 +80,57 @@ class DenseResidualTest :
         }
 };
 DenseResidualTest<float> dense_residual_test_float("float");
-//DenseResidualTest<double> dense_residual_test_double("double");
+DenseResidualTest<double> dense_residual_test_double("double");
+
+template <typename DataType_>
+class DenseResidualQuickTest :
+    public QuickTest
+{
+    public:
+        DenseResidualQuickTest(const std::string & type) :
+            QuickTest("dense_residual_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(11);
+            DataType_ s(size);
+
+            {
+                DenseVector<DataType_> b(size), x(size);
+                DenseMatrix<DataType_> a(size, size);
+
+                for (typename Vector<DataType_>::ElementIterator i(x.begin_elements()),
+                        i_end(x.end_elements()), j(b.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    *i = DataType_(i.index() + 1);
+                    *j = DataType_(j.index()) * s * (s + 1) / 2;
+                }
+
+                for (typename DenseMatrix<DataType_>::ElementIterator i(a.begin_elements()),
+                        i_end(a.end_elements()) ; i != i_end ; ++i)
+                {
+                    *i = DataType_(i.row());
+                }
+
+                Residual<>::value(b, a, x);
+
+                for (typename Vector<DataType_>::ConstElementIterator i(b.begin_elements()),
+                        i_end(b.end_elements()) ; i != i_end ; ++i)
+                {
+                    DataType_ r(i.index() * s * s * s); /// \todo Find a lower border.
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, r * std::numeric_limits<DataType_>::epsilon());
+                }
+
+                DenseVector<DataType_> b1(size + 1), b2(size);
+                DenseVector<DataType_> x1(size), x2(size + 1);
+                DenseMatrix<DataType_> a1(size + 1, size + 1), a2(size, size + 1);
+                TEST_CHECK_THROWS(Residual<>::value(b1, a1, x1), VectorSizeDoesNotMatch);
+                TEST_CHECK_THROWS(Residual<>::value(b2, a1, x2), VectorSizeDoesNotMatch);
+                TEST_CHECK_THROWS(Residual<>::value(b1, a2, x2), MatrixIsNotSquare);
+            }
+        }
+};
+DenseResidualQuickTest<float> dense_residual_quick_test_float("float");
+DenseResidualQuickTest<double> dense_residual_quick_test_double("double");
