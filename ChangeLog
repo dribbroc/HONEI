@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-16 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libgraph/files.m4, libgraph/node_distance.hh,
+	libgraph/node_distance_inverse.hh: Added missing files.
+
 2007-08-16 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Cleaned up a lot, resolved
@@ -15,7 +20,7 @@ see the NEWS file.
 
 	* libla/residual_TEST.cc: Added DenseResidualQuickTest.
 
-2007-07-16 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-16 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/matrix_row_sum_vector.hh, libla/matrix_row_sum_vector_TEST.cc:
 	Changed return type to reflect that operation MatrixRowSumVector
@@ -30,7 +35,7 @@ see the NEWS file.
 	libgraph/position.hh, libgraph/position_TEST.cc: Added existing
 	libgraph code. Still needs major cleanups.
 
-2007-08-16 Danny van Dyk <kugelfang@gentoo.org>
+2007-08-16 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libswe/Makefile.am.m4: Added LibLA to LibSWE's list of dependencies.
 
@@ -120,7 +125,7 @@ see the NEWS file.
 	* libswe/solver_TEST.cc: Set timesteps to one, until libla - problems
 	are resolved.
 
-2007-08-10 Danny van Dyk <kugelfang@gentoo.org>
+2007-08-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/matrix.hh: Added method square().
 	* libla/scalar_product.hh: Tidied up the whole file. Replaced
@@ -130,11 +135,11 @@ see the NEWS file.
 	* libla/files.m4, libla/residual.hh, libla/residual_TEST.cc: Added
 	operation Residual.
 
-2007-08-10 Danny van Dyk <kugelfang@gentoo.org>
+2007-08-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/banded_matrix_TEST.cc: Tidied up the test cases a bit.
 
-2007-08-09 Danny van Dyk <kugelfang@gentoo.org>
+2007-08-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/banded_matrix.hh: Fixed assertion.
 	* libutil/exception.hh: Fixed twofold bug. First, fixed
@@ -150,7 +155,7 @@ see the NEWS file.
 	problems.
 	* libla/scalar_matrix_product.hh: Fixed banded case. Passes now.
 
-2007-08-09 Danny van Dyk <kugelfang@gentoo.org>
+2007-08-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/banded_matrix.hh: Fixed another off-by-one bug in end_bands().
 	Added assertion on index range to bands().
@@ -211,12 +216,12 @@ see the NEWS file.
 	* libla/scalar_matrix_product_TEST.cc: Replaced TEST_CHECK_EQUAL with
 	TEST_CHECK_EQUAL_WITHIN_EPS for banded matrices.
 
-2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
+2007-08-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_sum_TEST.cc: Fixed zero-sized DenseVector in exception
 	tests.
 
-2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
+2007-08-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/scalar_vector_product.hh, libswe/solver.hh: Changed
 	ScalarVectorProduct to new calling convention using multiple data
@@ -480,19 +485,19 @@ see the NEWS file.
 	* libswe/solver.hh: Added implementation of main solve capsule,
 	implemented missing getter for renderable scalarfields.
 
-2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/files.m4, libla/sparse_matrix.hh, libla/sparse_matrix_TEST.cc:
 	Added SparseMatrix and initial test cases.
 	* libla/matrix.hh: Added missing methods of the iterator traits
 	interface to ConstElementIteratorWrapper.
 
-2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* doc/authors.html.skel: Added authors.html skeleton that was missing
 	from one of the previous commits.
 
-2007-07-08 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* doc/Makefile.am, doc/doxygen.conf, doc/licence.html.skel: Added
 	generation of licence.html.
@@ -507,7 +512,7 @@ see the NEWS file.
 	libla/vector_norm.hh, libla/vector_scaled_sum.hh, libla/vector_sum.hh:
 	Removed illegal use of <br/> in doxygen comments.
 
-2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* AUTHORS, COPYING, doc/Makefile.am, doc/footer.html: Added list of
 	authors and redistribution conditions as discussed.
@@ -517,18 +522,18 @@ see the NEWS file.
 	* libla/banded_matrix.hh: Fixed logical bug and added (in)equality
 	operators.
 
-2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_sum_TEST.cc: Fixed test cases for DenseVector. Expanded
 	exception checks to arbitrary vector sizes.
 	* libla/vector_absolute_TEST.cc: Tidied up coding style.
 
-2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/element_iterator_TEST.cc: Tidied up coding style. Switched to
 	usage of ConstElementIterator where necessary.
 
-2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/sparse_vector.hh: Fixed a small but mean typo/thinko when
 	deciding on reallocation, found by Sven Mallach.
@@ -543,7 +548,7 @@ see the NEWS file.
 	* libswe/solver.hh: Added implementation of setup stage 2, updated
 	interface.
 
-2007-07-07 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/sparse_vector.hh: Fixed bogus insertion of elements at the
 	edge of capacity. This fixes all test case failures of
@@ -605,7 +610,7 @@ see the NEWS file.
 	* libla/matrix_product.hh, libla/matrix_vector_product.hh: Commented
 	banded-cases out until	band-iterator is implemented.
 
-2007-07-03 Danny van Dyk <kugelfang@gentoo.org>
+2007-07-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/vector_sum_TEST.cc: Tidied up the test cases a bit. Removed
 	unnecessary use of std::tr1::shared_ptr<>.
@@ -805,13 +810,13 @@ see the NEWS file.
 	compilation errors hopefully.
 	* libla/files.m4: Updated.
 
-2007-06-29 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-29 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/tags.cc: Fixed linker error.
 	* configure.ac, libutil/Makefile.am.m4: Added checks and link commands for libraries
 	needed by the GPU backend.
 
-2007-06-29 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-29 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* doc/doxygen.conf: Added libutil to the list of source directories.
 	* configure.ac, doc/doc_groups.doxygen, libutil/Makefile.am.m4,
@@ -828,7 +833,7 @@ see the NEWS file.
 	* libswe/solver.hh: Implemented Preprocessing. Flow -computation and
 	unittest - manual are on the way.
 
-2007-06-27 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-27 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libswe/limiter.hh, libswe/limiter_TEST.cc: Revised limiter
 	interface and altered test cases accordingly.
@@ -874,11 +879,11 @@ see the NEWS file.
 	DenseMatrices. DenseMatrix * SparseVector will not work yet.
 	BandedMatrix-Implementation will come later.
 
-2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/files.m4: Ooops. Forgot to add.
 
-2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/Makefile.am.m4: Added debug support to libla.
 	* libla/sparse_vector.hh, libla/sparse_vector_TEST.cc: Fixed
@@ -886,7 +891,7 @@ see the NEWS file.
 	terminators (Implementation). Added ASSERTs and CONTEXTs where
 	appropriate.
 
-2007-06-26 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* autogen.bash, configure.ac, -libutil/Makefile.am,
 	+libutil/Makefile.am.m4: Made libutil use m4 generated Makefile.am.
@@ -928,7 +933,7 @@ see the NEWS file.
 	* libla/matrix_product_TEST.cc: Fixed errors, changed type of test.
 	* libla/matrix_element_sum.hh: Removed obsolete "&".
 
-2007-06-24 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libgraph/matrix_element_distance.hh,
 	ibgraph/matrix_element_distance_inverse.hh, libla/files.m4,
@@ -1027,7 +1032,7 @@ see the NEWS file.
 	* doc/doxygen.conf: Removed unittest/ from doxygen.
 	* doc/doc_groups.doxygen: Removed grpunittest.
 
-2007-06-20 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/matrix_error.cc, libla/matrix_error.hh: Removed
 	MatrixMultiplicationError.
@@ -1219,12 +1224,12 @@ see the NEWS file.
 	use by graph algorithms.
 	* libla/files.m4: Added the two files.
 
-2007-06-14 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/scalar_matrix_product_TEST.cc: Rewrote test case to compare
 	two matrices.
 
-2007-06-14 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/matrix_row_sum_vector_TEST.cc: Fixed error margin.
 	* libla/scalar_matrix_product.hh: Applied coding conventions.
@@ -1450,7 +1455,7 @@ see the NEWS file.
 	* doc/Makefile.am: Added instruction to copy button images to the html
 	directory.
 
-2007-06-05 Danny van Dyk <kugelfang@gentoo.org>
+2007-06-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/banded_matrix.hh, libla/dense_matrix.hh,
 	libla/dense_vector.hh, libla/element_iterator.hh, libla/matrix.hh,
