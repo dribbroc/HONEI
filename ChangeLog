@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-16 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libgraph/position.hh: Fixed paramter order in invocation of
+	MatrixSum.
+	* libla/matrix_element_sum_TEST.cc: Fixed SparseMatrix test cases.
+	* libla/matrix_sum.hh: Tidied up the file, refurbished doxygen
+	documentation.
+	* libla/vector_iterator.hh: Added operator->() for VectorIterators.
+	Fixes compile problem in libla/matrix_sum.hh.
+
 2007-08-16 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* doc/Makefile.am: Fixed Makefile bug regarding missing directory.

@@ -25,112 +25,118 @@
 #include <libla/sparse_matrix.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/matrix_error.hh>
+#include <libla/vector_sum.hh>
+
+#include <algorithm>
 
 /**
  * \file
  *
- * Templatized definitions of matrix sums.
+ * Templatized definitions of operation MatrixSum.
  *
- * \ingroup grpmatrixoperations
+ * \ingroup grpoperations
  **/
 namespace pg512
 {
-
     /**
-     * MatrixSum is the class template for the sum of two matrix instances.
-     * \brief The first referenced matrix is changed under this operation.
-     * \ingroup grpmatrixoperations
-     **/
+     * \brief Sum of two matrices.
+     *
+     * MatrixSum is the class template for the addition operation
+     * \f[
+     *     MatrixSum(a, b): \quad r \aarrow a + b,
+     * \f]
+     * which yields r, the sum of matrices a and b.
+     *
+     * The return value is the summand a after modification.
+     *
+     * \ingroup grpoperations
+     */
+
     template <typename Tag_ = tags::CPU> struct MatrixSum
     {
         /**
-         * Returns the the resulting matrix of the sum of two DenseMatrix instances.
+         * \brief Returns the the sum of two given matrices.
          *
-         * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant dense matrix to be added.
-         **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+         * \param a The matrix that is the left-hand summand of the operation.
+         * \param b The matrix that is the right-hand summand of the operation.
+         *
+         * \retval Will modify the summand a and return it.
+         */
+
+        /// \{
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When adding DenseMatrix to DenseMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l += *r;
-                ++r;
             }
 
-            return left;
+            return a;
         }
 
-		/**
-         * Returns the the resulting matrix of the sum of a DenseMatrix and a SparseMatrix instance.
-         *
-         * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant sparse matrix to be added.
-         **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When adding SparseMatrix to DenseMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; )
+            // DenseMatrix<>::operator[] is as fast as the iterator-based access.
+            // Avoid using unnecessary branches by iterating over a's elements.
+            for (typename Matrix<DT2_>::ConstElementIterator r(r.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
             {
-				while (l.index() < r.index() && (l != l_end))
-                {
-                    ++l;
-                }
-
-                *l += *r;
-                ++r;
+                a[r.index()] += *r;
             }
 
-            return left;
+            return a;
         }
 
-		/**
-         * Returns the the resulting matrix of the sum of two given SparseMatrix instances.
-         *
-         * \param left Reference to sparse matrix that will be also used as result matrix.
-         * \param right Reference to constant sparse matrix to be added.
-         **/
-        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When adding SparseMatrix to SparseMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; )
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; )
             {
-				if (r.index() < l.index())
+                if (r.index() < l.index())
                 {
-                    left[r.row()][r.column()] = *r;
+                    a[r.row()][r.column()] = *r;
                     ++r;
                 }
                 else if (l.index() < r.index())
@@ -143,149 +149,97 @@ namespace pg512
                     ++l; ++r;
                 }
             }
-			///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
-            return left;
+
+            return a;
         }
 
-        /**
-         * Returns the the resulting matrix of the sum of two given BandedMatrix instances.
-         *
-         * \param left Reference to banded matrix that will be also used as result matrix.
-         * \param right Reference to constant banded matrix to be added.
-         **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
-            if (left.rows() != right.rows())
+            CONTEXT("When adding BandedMatrix to BandedMatrix:");
+
+            if (a.rows() != b.rows())
             {
-                throw MatrixSizeDoesNotMatch(right.rows(), left.rows()); 
+                throw MatrixSizeDoesNotMatch(b.rows(), a.rows()); 
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
+            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
+            for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
             {
-                *l += *r;
-                ++r;
+                if (! r.exists())
+                    continue;
+
+                if (l.exists())
+                    VectorSum<>::value(*l, *r);
+                else
+                    a.band(r.index()) = *((*r).copy());
             }
 
-            return left;
+            return a;
         }
 
-        /**
-         * Returns the the resulting matrix of the sum of a given BandedMatrix instance and a given DenseMatrix instance.
-         *
-         * \param left Reference to banded matrix that will be also used as result matrix.
-         * \param right Reference to constant dense matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When adding BandedMatrix to DenseMatrix:");
+
+            if (a.columns() != a.rows())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixIsNotSquare(a.rows(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixSizeDoesNotMatch(b.rows(), a.rows()); /// \todo Implement size() method?
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands()) ;
+                    r != r_end ; ++r)
             {
-                *l += *r;
-                ++r;
-            }
+                if (! r.exists())
+                    continue;
 
-            return left;
-        }
+                unsigned long size(b.rows()); /// \todo Add size() method for square matrices?
+                unsigned long row_index(-std::max(long(r.index() - size + 1), long(0)));
+                unsigned long col_index(std::min(long(r.index() - size + 1), long(0)));
 
-		/**
-         * Returns the the resulting matrix of the sum of a given BandedMatrix instance and a given SparseMatrix instance.
-         *
-         * \param left Reference to banded matrix that will be also used as result matrix.
-         * \param right Reference to constant sparse matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
-        {
-            if (left.columns() != right.columns())
-            {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
-            }
-
-            if (left.rows() != right.rows())
-            {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
-            }
-
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; )
-            {
-                while (l.index() < r.index() && (l != l_end))
+                for (typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements()) ;
+                        c != c_end ; ++c)
                 {
-                    ++l;
+                    if (row_index + c.index() >= size)
+                        break;
+
+                    if (col_index + c.index() >= size)
+                        break;
+
+                    a[row_index + c.index()][col_index + c.index()] += *c;
                 }
-
-                *l += *r;
-                ++r;
             }
 
-            return left;
+            return a;
         }
 
-        /**
-         * Returns the the resulting matrix of the sum of a given DenseMatrix instance and a given BandedMatrix instance.
-         *
-         * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant banded matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When adding BandedMatrix to SparseMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; )
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
-                *l += *r;
-                ++r;
-            }
-
-            return left;
-        }
-
-		/**
-         * Returns the the resulting matrix of the sum of a given SparseMatrix instance and a given BandedMatrix instance.
-         *
-         * \param left Reference to sparse matrix that will be also used as result matrix.
-         * \param right Reference to constant banded matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
-        {
-            if (left.columns() != right.columns())
-            {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
-            }
-
-            if (left.rows() != right.rows())
-            {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
-            }
-
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements()), r_end(right.end_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
-            {
-				while (r.index() < l.index() && (r != r_end))
+                while (r.index() < l.index() && (r != r_end))
                 {
                     ++r;
                 }
@@ -293,10 +247,10 @@ namespace pg512
                 *l += *r;
                 ++l;
             }
-			///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
-            return left;
-        }
 
+            return a;
+        }
+        /// \}
     };
 }
 #endif

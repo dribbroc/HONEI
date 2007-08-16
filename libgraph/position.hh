@@ -174,7 +174,7 @@
 
                     // Calculating Distance_Neg = (diag(SumVecInv) - InvSquaDist)
                     BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), &sum_vec_inv);
-                    MatrixSum<>::value(diag, inv_square_dist);
+                    MatrixSum<>::value(inv_square_dist, diag);
 
                     // Calculating FRep = (p * Distance_neg)
                     DenseMatrix<DataType_> repulsive_forces(MatrixProduct<>::value(_coordinates, inv_diag));

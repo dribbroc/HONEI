@@ -105,10 +105,16 @@ namespace pg512 ///< \todo Namespace name?
                 return (*_iterator != *other._iterator);
             }
 
-            /// Dereference operator 
+            /// Dereference operator (return reference to type).
             virtual VectorType_ & operator* ()
             {
                 return **_iterator;
+            }
+
+            /// Dereference operator (return pointer to type).
+            virtual VectorType_ * operator-> ()
+            {
+                return &(*(*_iterator));
             }
 
             /// Returns true if the referenced vector already exists.
@@ -176,12 +182,20 @@ namespace pg512 ///< \todo Namespace name?
                 return (*_iterator != *other._iterator);
             }
 
-            /// Dereference operator 
+            /// Dereference operator (return reference to type).
             virtual const VectorType_ & operator* () const
             {
                 const VectorIteratorBase<DataType_, VectorType_> & iterator(*_iterator);
 
                 return *iterator;
+            }
+
+            /// Dereference operator (return pointer to type).
+            virtual const VectorType_ * operator-> () const
+            {
+                const VectorIteratorBase<DataType_, VectorType_> & iterator(*_iterator);
+
+                return &(*iterator);
             }
 
             /// Returns true if the referenced vector already exists.
