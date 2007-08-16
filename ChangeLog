@@ -14,7 +14,22 @@ see the NEWS file.
 2007-08-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/residual_TEST.cc: Added DenseResidualQuickTest.
-	
+
+2007-07-16 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/matrix_row_sum_vector.hh, libla/matrix_row_sum_vector_TEST.cc:
+	Changed return type to reflect that operation MatrixRowSumVector
+	returns a new object.
+	* libla/scalar_matrix_product.hh, libla/residual.hh,
+	libla/vector_absolute.hh: Cleaned up.
+	* libla/scalar_matrix_sum.hh: Cleaned up and removed unnecessary and
+	unwanted cases.
+	* libla/matrix_difference.hh, libla/vector_masked_min_index.hh:
+	Cleaned up as preparation for libgraph code.
+	* libgraph/dijkstra.hh, libgraph/dijkstra_TEST.cc, libgraph/files.m4,
+	libgraph/position.hh, libgraph/position_TEST.cc: Added existing
+	libgraph code. Still needs major cleanups.
+
 2007-08-16 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libswe/Makefile.am.m4: Added LibLA to LibSWE's list of dependencies.
@@ -27,7 +42,7 @@ see the NEWS file.
 2007-08-16 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_matrix.hh: NonZeroElementIterator finally working.
-	
+
 2007-08-1 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Reimplemented all currently employed matrix
@@ -35,23 +50,23 @@ see the NEWS file.
 	- bug in quick assembly stages. RelaxSolver is now working for some
 	input sizes again (e.g. 32x32) but obviously, there is still some
 	memory adress invalidation.
-	
+
 2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_matrix_TEST.cc: Added test for ugly
 	*i = 1 / *i bug.
-	
+
 2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_matrix.hh: Fixed a bug with empty matrices.
-	
+
 2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_matrix.hh: Rewrote NonZeroElementIterator
 	with a thousand special cases - should now work somehow.
 	* libla/sparse_matrix_TEST.cc: Added a small 
 	NonZeroElementIterator test.
-	
+
 2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_matrix.hh: Rewrote NonZeroElementIterator to not 
@@ -60,20 +75,20 @@ see the NEWS file.
 2007-08-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_vector_product_TEST.cc: Corrected result generation.
-	
+
 2007-08-14 Markus Geveler <apryde@gmx.de>
 
 	* libla/banded_matrix.hh, matrix_vector_product_TEST.cc: (Sven, Dirk,
 	Markus): Implemented new Operation insert_band(), which correctly
 	inserts a band to libla::BandedMatrix.
-	
+
 2007-08-14 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added implementation of a first postprocessing
 	method, which generates GNUPLOT>splot compatible files, employed it
 	after preprocessing in order to test it, adjusted condtructor. See
 	documentation for details of usage.
-	
+
 2007-08-13 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_vector_product_TEST.cc: Commented calls to band() out
@@ -83,7 +98,7 @@ see the NEWS file.
 
 	* libswe/solver.hh: Resolved bad band insertion in matrix assembly
 	(DEBUG).
-	
+
 2007-08-12 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_vector_product.hh: Corrected Banded Matrix * Sparse
@@ -96,7 +111,7 @@ see the NEWS file.
 
 	* libswe/solver.hh: Closed memory leaks in setup1 and prediction
 	stages, released temporary data in solve capsule.
-	
+
 2007-08-10 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added some debug - output, resolved logical bugs
@@ -104,7 +119,7 @@ see the NEWS file.
 	matrix assembly stages (DEBUG).
 	* libswe/solver_TEST.cc: Set timesteps to one, until libla - problems
 	are resolved.
-	
+
 2007-08-10 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/matrix.hh: Added method square().
@@ -158,7 +173,7 @@ see the NEWS file.
 
 	* libla/matrix_vector_product_TEST.cc: Added additional bands to the source
 	banded matrix.
-	
+
 2007-08-07 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_product.hh: Fixed SparseVector-Case -> Test passes.
@@ -170,18 +185,18 @@ see the NEWS file.
 2007-08-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/*_TEST.cc: Removed static_cast and shared_ptr where unnecessary.
-	
+
 2007-08-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_elementwise_product_TEST.cc: Replaced
 	MatrixRowsDoNotMatch by	MatrixSizeDoesNotMatch for banded matrices.
 	* libla/matrix_elementwise_product.hh: Replaced MatrixRowsDoNotMatch by
-	MatrixSizeDoesNotMatch for banded matrices.	
+	MatrixSizeDoesNotMatch for banded matrices.
 
 2007-08-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_product_TEST.cc: Added SparseMatrixProductQuickTest.
-	
+
 2007-08-06 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_product.hh: Made algorithms compatible to SparseMatrix
@@ -195,7 +210,7 @@ see the NEWS file.
 	TEST_CHECK_EQUAL_WITHIN_EPS for banded matrices.
 	* libla/scalar_matrix_product_TEST.cc: Replaced TEST_CHECK_EQUAL with
 	TEST_CHECK_EQUAL_WITHIN_EPS for banded matrices.
-	
+
 2007-08-05 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/vector_sum_TEST.cc: Fixed zero-sized DenseVector in exception
@@ -220,41 +235,41 @@ see the NEWS file.
 
 	* libla/dense_vector.hh: Added subvector constructor.
 	* libla/matrix.hh: Added dimension check to the matrix equality operator.
-	
+
 2007-08-01 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Reemployed the old solution
 	due to unstability side effects of the one from the last commit.
-	
+
 2007-08-01 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Made predicted temporary
 	data reside on the heap and therefore added member pointers.
-	
+
 2007-08-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_matrix.hh: Added NonZeroElementIterator. Still buggy due to
 	missing used_elements usage.
 	* libla/*_TEST.cc: Added SparseMatrix and BandedMatrix test cases to nearly
 	all operations.
-	
+
 2007-07-31 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Implemented Dirichlet boundary
 	correction in the correction stage, adjusted preprocessing accordingly.
-	
+
 2007-07-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Corrected quick assembly
 	calls in the prediction stage.
-	
+
 2007-07-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Implemented corresponding
 	subefficient but easy to debug version of matrix assembly stage 2,
 	cleaned up prediction stage due to changes in libla::BandedMatrix,
 	changed interfaces of quick assemble member functions.
-	
+
 2007-07-30 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_vector.hh, libla/sparse_vector.hh: Tidied up a bit. No
@@ -269,31 +284,31 @@ see the NEWS file.
 	* libswe/solver.hh: Implemented neccessary reset
 	of temporary relax vectors and resolved a band access - bug in the
 	debug version of matrix assembly stage 1.
-	
+
 2007-07-27 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Implemented a huge and
 	subefficient but easy to debug version of matrix assembly stage 1,
 	which revealed a critical data movement error, which has been resolved
 	now.
-	
+
 2007-07-26 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Healed little sign bug in
 	source(), cleaned up matrix assembly a bit.
-	
+
 2007-07-25 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Healed NAN errors in the
 	source term computation function - finally the RelaxSolver produces no
 	NANs any more.
-	
+
 2007-07-25 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Applied refactoring of the
 	correction stage, finishing tests - there are still one or more bugs in
 	the matrix - assembly stages (possibly stage 1).
-	
+
 2007-07-23 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved memory
@@ -301,49 +316,49 @@ see the NEWS file.
 	The solver is now capable of running stably in 32x32 input mode and
 	with an arbitrary number of timesteps and
 	fields are updated. Results are being checked.
-	
+
 2007-07-23 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved memory
 	fragmentation bug, prepared test for 32x32 simple wave scenario.
-	
+
 2007-07-21 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved invalidity of
 	pointers in correction stage, prepared test for larger input fields.
-	
+
 2007-07-21 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Resolved two iteration bugs in the correction
 	stage.
-	
+
 2007-07-20 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Finished refactoring of main matrix assembly,
 	resolved vector - access bugs, updated prediction stage, adjusted
 	interfaces.
-	
+
 2007-07-19 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Debugged matrix assembly 1, which now works on the
 	right versions of the relax vectors. This has to be done for the other
 	assembly functions, therefore interfaces will have to be overloaded.
-	
+
 2007-07-19 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Appended source -term application to the
 	prediction stage.
-	
+
 2007-07-19 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved memory - bug in the
 	prediction stage, cleaned up the test a bit.
-	
+
 2007-07-18 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Resolved copy() -bugs in setup stage1, added
 	stringification of temporary relax vectors.
-	
+
 2007-07-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* unittest/unittest.hh: Added TEST_CHECK_NOT_EQUAL macro.
@@ -354,24 +369,24 @@ see the NEWS file.
 	Fixed datatype conversion warning.
 	* libla/dense_matrix.hh: Added brute force version of submatrix constructor.
 	* libla/dense_matrix_TEST.cc: Added a test case for the nxn equals n+1xn+1 bug.
-	
+
 2007-07-17 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh libswe/solver_TEST.cc: Resolved iteration bug
 	within slope - processing, adjusted slope - vector size in the test,
 	finished testing of the preprocessing stage.
-	
+
 2007-07-17 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Remanaged relaxation - vector setup in
 	preprocessing, debugged NAN errors in flow computation, resolved
 	iterator - bug in slope -setup.
-	
+
 2007-07-17 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Remanaged preprocessing, stringified relax
 	-vectors, which reveals problems with flow(i,j).
-	
+
 2007-07-17 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/scalar_vector_product.hh libla/scalar_vector_sum.hh
@@ -401,7 +416,7 @@ see the NEWS file.
 
 	* libswe/solver_TEST.cc: Added stringification of scalarfields.
 	* libswe/solver.hh: Resolved preprocessing bug, stringified maps.
-	
+
 2007-07-16 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/scalar_matrix_product.hh, libla/matrix_vector_product.hh,
@@ -422,7 +437,7 @@ see the NEWS file.
 2007-07-14 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_vector_product_TEST.cc: Fixed test reference values.
-	
+
 2007-07-12 Sven Mallach <sven.mallach@uni-dortmund.de>
 
         * libla/matrix_vector_product_TEST.cc: Changed values of row/columns
@@ -442,9 +457,9 @@ see the NEWS file.
 2007-07-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_element_sum_TEST.cc: Added banded matrix tests.
-	* libla/matrix_product_TEST.cc: Added banded matrix tests.	
-	* libla/matrix_row_sum_vector_TEST.cc: Added banded matrix tests.		
-	
+	* libla/matrix_product_TEST.cc: Added banded matrix tests.
+	* libla/matrix_row_sum_vector_TEST.cc: Added banded matrix tests.
+
 2007-07-10 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/sover.hh: Added implementations for
@@ -558,7 +573,7 @@ see the NEWS file.
 	* libswe/solver.hh: Added implementation of first setup stage,
 	debugged flow - computations, updated interface, made solve() public,
 	removed obsolete testimplementation.
-	
+
 2007-07-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/banded_matrix.hh: New generated bands are now initialized with 
@@ -567,7 +582,7 @@ see the NEWS file.
 2007-07-04 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Removed obsolete members, tidied up a bit.
-	
+
 2007-07-04 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Added parameters to constructor, fixed
@@ -674,7 +689,7 @@ see the NEWS file.
 
 	* libla/vector_elemente_inverse_TEST.cc: Added sparse and dense vector_elemente_inverse
 	tests.
-	
+
 2007-07-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sparse_vector_TEST.cc: Added SparseVectorReallocQuickTest.
@@ -709,12 +724,12 @@ see the NEWS file.
 2007-07-01 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* Makefile.am: Renamed target benchmark in bench.
-	
+
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Fixed parameter documentation for flow term
 	computation, fixed typo.
-	
+
 2007-06-30 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Added implementations for flow computation,
@@ -725,7 +740,7 @@ see the NEWS file.
 	* libla/files.m4, libla/Makefile.am.m4, configure.ac, libutil/Makefile.am.m4,
 	libswe/Makefile.am.m4, libgraph/Makefile.am.m4, Makefile.am, benchmark/run.sh:
 	Added make target benchmark.
-	
+
 2007-06-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Fixed critical dereference bug, 
@@ -934,7 +949,7 @@ see the NEWS file.
 2007-06-24 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libgraph/matrix_element_distance_TEST.cc: Fixed test data.
-	* libgraph/matrix_element_distance_inverse_TEST.cc: Fixed test data.	
+	* libgraph/matrix_element_distance_inverse_TEST.cc: Fixed test data.
 	* libgraph/matrix_element_distance.hh: Removed obsolete &-operator.
 
 2007-06-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
@@ -1047,16 +1062,16 @@ see the NEWS file.
 2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_masked_min_index.hh: Fixed a few bugs.
-	* libla/vector_masked_max_index.hh: Fixed a few bugs.	
+	* libla/vector_masked_max_index.hh: Fixed a few bugs.
 	* libla/vector_masked_min_index_TEST.cc: Fixed a few bugs.
 
 2007-06-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_sum_TEST.cc: Added DenseMatrixSumTest.
-	* libla/matrix_difference_TEST.cc: Added DenseMatrixDifferenceTest.	
+	* libla/matrix_difference_TEST.cc: Added DenseMatrixDifferenceTest.
 	* libla/vector_scaled_sum_TEST.cc: Added QuickTest.
 	* libla/matrix_difference.hh: Fixed a few bugs.
-	* libla/matrix_sum.hh: Fixed a few bugs.	
+	* libla/matrix_sum.hh: Fixed a few bugs.
 
 2007-06-20 Markus Geveler <apryde@gmx.de>
 
@@ -1103,7 +1118,7 @@ see the NEWS file.
 2007-06-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_masked_max_index_TEST.cc: Added DenseVectorMaskedMaxIndexTest.
-	* libla/vector_masked_min_index_TEST.cc: Added DenseVectorMaskedMinIndexTest.	
+	* libla/vector_masked_min_index_TEST.cc: Added DenseVectorMaskedMinIndexTest.
 
 2007-06-18 Sven Mallach <sven.mallach@uni-dortmund.de>
 
@@ -1115,7 +1130,7 @@ see the NEWS file.
 	* libla/scalar_product.hh, libla/scalar_product.cc: Applied new
 	parameter/reference conventions.
 	* libla/scalar_product_TEST.cc: Changed call to ScalarProduct
-	* libla/vector_norm.hh: Changed call to ScalarProduct.	
+	* libla/vector_norm.hh: Changed call to ScalarProduct.
 	* libla/vector_sum.hh, libla/vector_difference.hh: Applied new
 	parameter/reference conventions, made annotations more fine.
 	* libla/vector_sum_TEST.cc, libla/vector_difference_TEST.cc: Changed
