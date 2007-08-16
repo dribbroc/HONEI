@@ -403,7 +403,7 @@ namespace pg512 {
                 this->_delta_y = deltay;
                 this->_delta_t = deltat;
                 this->_eps = eps;
-                this->_solve_time = 1;
+                this->_solve_time = 0;
 
                 this->_simple_bound = true;
                 this->_usage_reflect = true;
@@ -418,9 +418,9 @@ namespace pg512 {
 
                 this->_c = c;
                 this->_d = d;
-                _u_temp = new DenseVector<ResPrec_>(*(_u->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
-                _v_temp = new DenseVector<ResPrec_>(*(_v->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
-                _w_temp = new DenseVector<ResPrec_>(*(_w->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
+                _u_temp = _u->copy();//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
+                _v_temp = _v->copy();//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
+                _w_temp = _w->copy();//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
                 //_u_predicted = new DenseVector<ResPrec_>(*(_u_temp->copy()));
                 //_v_predicted = new DenseVector<ResPrec_>(*(_v_temp->copy()));
                 //_w_predicted = new DenseVector<ResPrec_>(*(_w_temp->copy()));
@@ -605,7 +605,7 @@ namespace pg512 {
                 else
                 {
                     //(*_bottom_slopes_x)[k4.index()] = -100000; 
-                    (*_bottom_slopes_y)[k4.index()] = -100;               
+                    (*_bottom_slopes_y)[k4.index()] = 0;               
  
                 }
                 if(j.index()>0)
@@ -616,7 +616,7 @@ namespace pg512 {
                 }
                 else
                 {
-                    (*_bottom_slopes_x)[l.index()] = -100; 
+                    (*_bottom_slopes_x)[l.index()] = 0; 
                     //(*_bottom_slopes_y)[l.index()] = -100000;               
  
                 }
@@ -632,7 +632,7 @@ namespace pg512 {
         cout << stringify(*_bottom_slopes_y) << endl;
         std::cout << "Finished preprocessing.\n";
         
-        _do_postprocessing(1);
+        //_do_postprocessing(1);
 
     }   
 
@@ -1233,31 +1233,31 @@ namespace pg512 {
     template<typename WorkPrec_>
         void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
-        /*BandedMatrix<WorkPrec_> m1(_u->size());
+        BandedMatrix<WorkPrec_> m1(_u->size());
         BandedMatrix<WorkPrec_> m2(_u->size());
         BandedMatrix<WorkPrec_> m3(_u->size());
         BandedMatrix<WorkPrec_> m4(_u->size());
-        */
         
-        BandedMatrix<WorkPrec_>* m1= new BandedMatrix<WorkPrec_>(_u->size());
+        
+        /*BandedMatrix<WorkPrec_>* m1= new BandedMatrix<WorkPrec_>(_u->size());
         BandedMatrix<WorkPrec_>* m2= new BandedMatrix<WorkPrec_>(_u->size());
         BandedMatrix<WorkPrec_>* m3= new BandedMatrix<WorkPrec_>(_u->size());
         BandedMatrix<WorkPrec_>* m4= new BandedMatrix<WorkPrec_>(_u->size());
-        
-        _assemble_matrix1_DEBUG<WorkPrec_>(*m1, *m3, &predictedu, &predictedv);
-        _assemble_matrix2_DEBUG<WorkPrec_>(*m2, *m4, &predictedu, &predictedw);
+        */
+        _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
+        _assemble_matrix2_DEBUG<WorkPrec_>(m2, m4, &predictedu, &predictedw);
 
-        BandedMatrix<WorkPrec_>* m5 = new BandedMatrix<WorkPrec_>(*(m3->copy()));
+        BandedMatrix<WorkPrec_> m5(*(m3.copy()));
         //_quick_assemble_matrix1<WorkPrec_>(*m3, *m5);
         
-        BandedMatrix<WorkPrec_>* m6 = new BandedMatrix<WorkPrec_>(_u->size());
-        _quick_assemble_matrix2<WorkPrec_>(*m1, *m6);
+        BandedMatrix<WorkPrec_> m6(_u->size());
+        _quick_assemble_matrix2<WorkPrec_>(m1, m6);
  
-        BandedMatrix<WorkPrec_>* m7 = new BandedMatrix<WorkPrec_>(*(m4->copy()));
+        BandedMatrix<WorkPrec_> m7(*(m4.copy()));
         //_quick_assemble_matrix3<WorkPrec_>(*m4, *m7);
 
-        BandedMatrix<WorkPrec_>* m8 = new BandedMatrix<WorkPrec_>(_u->size());
-        _quick_assemble_matrix4<WorkPrec_>(*m2, *m8); 
+        BandedMatrix<WorkPrec_> m8(_u->size());
+        _quick_assemble_matrix4<WorkPrec_>(m2, m8); 
 	cout << "Prediction: Finished assembly.\n";
         //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
         //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
@@ -1268,15 +1268,15 @@ namespace pg512 {
         DenseVector<WorkPrec_>* tempv = predictedv.copy();
         DenseVector<WorkPrec_>* tempw = predictedw.copy();
 	cout << "Prediction: Before matrix*vector.\n";
-        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m1,*tempv);
+        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,*tempv);
         DenseVector<WorkPrec_> *tempu2 = predictedu.copy();
 	cout << "First product solved.\n";
-        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m2,*tempw);
+        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,*tempw);
 	cout << "Second product solved.\n";
-	//ERROR?:
-        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m3,*tempu);
+	
+        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,*tempu);
 	cout << "Third product solved.\n";
-        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(*m4,*tempu2);
+        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m4,*tempu2);
         cout << "Fourth product solved.\n";
 	DenseVector<WorkPrec_>* source = predictedu.copy(); 
         _source(*source);
@@ -1287,18 +1287,18 @@ namespace pg512 {
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp3);
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp4);
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, *source);
-        delete source;
+        //delete source;
 	
 	cout << "First accu solved.\n";
         DenseVector<WorkPrec_> *tempu3 = predictedu.copy();
         DenseVector<WorkPrec_> *tempv2 = predictedv.copy();
         DenseVector<WorkPrec_> *tempw2 = predictedw.copy();
 
-        temp1 = MatrixVectorProduct<>::value(*m5,*tempv2);
+        temp1 = MatrixVectorProduct<>::value(m5,*tempv2);
         DenseVector<WorkPrec_> *tempu4 = predictedu.copy();
-        temp2 = MatrixVectorProduct<>::value(*m6,*tempu3);
-        temp3 = MatrixVectorProduct<>::value(*m7,*tempw2);
-        temp4 = MatrixVectorProduct<>::value(*m8,*tempu4);
+        temp2 = MatrixVectorProduct<>::value(m6,*tempu3);
+        temp3 = MatrixVectorProduct<>::value(m7,*tempw2);
+        temp4 = MatrixVectorProduct<>::value(m8,*tempu4);
 
 	predictedu = *predicteduTemp;
 	predictedv = VectorSum<>::value(predictedv, temp1);
@@ -1306,14 +1306,14 @@ namespace pg512 {
         predictedw = VectorSum<>::value(predictedw, temp3);
         predictedw = VectorSum<>::value(predictedw, temp4);
 
-        delete m1;
+        /*delete m1;
         delete m2;
         delete m3;
         delete m4;
         delete m5;
         delete m6;
         delete m7;
-        delete m8;
+        delete m8;*/
         std::cout << "Finished Prediction.\n";
         
     }
@@ -1387,9 +1387,9 @@ namespace pg512 {
         {
             (*_u)[iter.index()] = 5;
             ++iter;
-            (*_u)[iter.index()] = 1;
+            (*_u)[iter.index()] = 5;
             ++iter;
-            (*_u)[iter.index()] = 1;
+            (*_u)[iter.index()] = 5;
             ++iter;
             (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
             (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1439,9 +1439,9 @@ namespace pg512 {
             {
                 (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1453,9 +1453,9 @@ namespace pg512 {
                                                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1467,9 +1467,9 @@ namespace pg512 {
                                                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1481,9 +1481,9 @@ namespace pg512 {
                                                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 1;
+                (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1504,9 +1504,9 @@ namespace pg512 {
         {
             (*_u)[iter.index()] = 5;
             ++iter;
-            (*_u)[iter.index()] = 1;
+            (*_u)[iter.index()] = 5;
             ++iter;
-            (*_u)[iter.index()] = 1;
+            (*_u)[iter.index()] = 5;
             ++iter;
             (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
             (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1569,9 +1569,9 @@ namespace pg512 {
         
         _do_correction(*predictedu, *predictedv, *predictedw);
         ++_solve_time;
-        delete predictedu;
+        /*delete predictedu;
         delete predictedv;
-        delete predictedw;
+        delete predictedw;*/
         cout << "Corrected u:\n";
         cout << stringify(*_u)<<endl;
     }
@@ -1970,14 +1970,14 @@ namespace pg512 {
         m3.band(ulint(6)) = m3bandPlus2;
         m3.band(ulint(-3)) = m3bandMinus1;
         */
-        DenseVector<WorkPrec_>* m1diag = new DenseVector<WorkPrec_>(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_>* m1bandPlus1= new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_>* m1bandPlus2= new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_>* m1bandMinus1= new DenseVector<WorkPrec_>(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_>* m3diag= new DenseVector<WorkPrec_>(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_>* m3bandPlus1= new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_>* m3bandPlus2= new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_>* m3bandMinus1= new DenseVector<WorkPrec_>(_u->size(),ulint( 0));//three
+        DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
+        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0)); //one
+        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0)); //two
+        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0));//three
+        DenseVector<WorkPrec_> m3diag(_u->size(),ulint( 0));      //zero
+        DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0)); //one
+        DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0)); //two
+        DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0));//three
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2070,8 +2070,8 @@ namespace pg512 {
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Compute matrix element value:
-            (*m1bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
-            (*m3bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m1bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m3bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
             //FINISHED band_-1.
 
             //Prepare right operands for diagonal:
@@ -2233,9 +2233,9 @@ namespace pg512 {
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            (*m1diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m1diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            (*m3diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m3diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED diagonal.
 
@@ -2398,9 +2398,9 @@ namespace pg512 {
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            (*m1bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m1bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            (*m3bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m3bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED band_+1.
 
@@ -2461,21 +2461,21 @@ namespace pg512 {
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Compute matrix element value:
-            (*m1bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
-            (*m3bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            m1bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            m3bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
             //FINISHED band_+2.
 
             //Iterate:
             ++ui;++vi;
         }
-        m1.insert_band(0, m1diag);
-        m1.insert_band(3, m1bandPlus1);
-        m1.insert_band(6, m1bandPlus2);
-        m1.insert_band(-3,m1bandMinus1);
-        m3.insert_band(0, m3diag);
-        m3.insert_band(3, m3bandPlus1);
-        m3.insert_band(6, m3bandPlus2);
-        m3.insert_band(-3,m3bandMinus1);
+        m1.insert_band(0, m1diag.copy());
+        m1.insert_band(3, m1bandPlus1.copy());
+        m1.insert_band(6, m1bandPlus2.copy());
+        m1.insert_band(-3,m1bandMinus1.copy());
+        m3.insert_band(0, m3diag.copy());
+        m3.insert_band(3, m3bandPlus1.copy());
+        m3.insert_band(6, m3bandPlus2.copy());
+        m3.insert_band(-3,m3bandMinus1.copy());
  
 
         cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
@@ -2516,14 +2516,14 @@ namespace pg512 {
         m4.band(ulint(6*(_d_width-1))) = m4bandPlus2;
         m4.band(ulint(-3*(_d_width-1))) = m4bandMinus1;
         */
-        DenseVector<WorkPrec_>* m2diag = new DenseVector<WorkPrec_>(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_>* m2bandPlus1 = new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_>* m2bandPlus2 = new DenseVector<WorkPrec_>(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_>* m2bandMinus1 = new DenseVector<WorkPrec_>(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_>* m4diag = new DenseVector<WorkPrec_>(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_>* m4bandPlus1 = new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_>* m4bandPlus2 = new DenseVector<WorkPrec_>(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_>* m4bandMinus1 = new DenseVector<WorkPrec_>(_u->size(),ulint( 0));//three
+        DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
+        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
+        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
+        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
+        DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
+        DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
+        DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
+        DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2616,8 +2616,8 @@ namespace pg512 {
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Compute matrix element value:
-            (*m2bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
-            (*m4bandMinus1)[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m2bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m4bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
             //FINISHED band_-1.
 
             //Prepare right operands for diagonal:
@@ -2779,9 +2779,9 @@ namespace pg512 {
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            (*m2diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m2diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            (*m4diag)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m4diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED diagonal.
 
@@ -2944,9 +2944,9 @@ namespace pg512 {
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            (*m2bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m2bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            (*m4bandPlus1)[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m4bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED band_+1.
 
@@ -3007,21 +3007,21 @@ namespace pg512 {
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Compute matrix element value:
-            (*m2bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
-            (*m4bandPlus2)[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            m2bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            m4bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
             //FINISHED band_+2.
 
             //Iterate:
             ++ui;++vi;
         }
-        m2.insert_band(0, m2diag);
-        m2.insert_band(3*(_d_width-1), m2bandPlus1);
-        m2.insert_band(6*(_d_width-1), m2bandPlus2);
-        m2.insert_band(-3*(_d_width-1), m2bandMinus1);
-        m4.insert_band(0, m4diag);
-        m4.insert_band(3*(_d_width-1), m4bandPlus1);
-        m4.insert_band(6*(_d_width-1), m4bandPlus2);
-        m4.insert_band(-3*(_d_width-1), m4bandMinus1);
+        m2.insert_band(0, m2diag.copy());
+        m2.insert_band(3*(_d_width-1), m2bandPlus1.copy());
+        m2.insert_band(6*(_d_width-1), m2bandPlus2.copy());
+        m2.insert_band(-3*(_d_width-1), m2bandMinus1.copy());
+        m4.insert_band(0, m4diag.copy());
+        m4.insert_band(3*(_d_width-1), m4bandPlus1.copy());
+        m4.insert_band(6*(_d_width-1), m4bandPlus2.copy());
+        m4.insert_band(-3*(_d_width-1), m4bandMinus1.copy());
         
         cout << "M_2:" << stringify(m2.band(ulint(0))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(_d_width+2))) << endl;
@@ -3052,7 +3052,7 @@ namespace pg512 {
     template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_do_postprocessing(int every)
     {
-        if(_solve_time % every == 0)
+        if(_solve_time % every == 0 || _solve_time == 0)
         {
             string filename;
             ofstream file;
