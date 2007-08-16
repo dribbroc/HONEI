@@ -25,12 +25,13 @@
 #include <libla/sparse_vector.hh>
 #include <libla/vector.hh>
 #include <libla/vector_error.hh>
+
 #include <limits>
 
 /**
  * \file
  *
- * Implementation of VectorMaskedMinIndex. </br>
+ * Implementation of VectorMaskedMinIndex.
  *
  * \ingroup grpvectoroperations
  **/
@@ -38,11 +39,11 @@ namespace pg512
 {
     /**
      * \brief VectorMaskedMinIndex retrieves the index of the minimum element of a vector.
-	 * \brief Every Element for which the mask vector has the value "false" will be ignored in search of minimum.
+     * \brief Every Element for which the mask vector has the value "false" will be ignored in search of minimum.
      * \brief All parameters will be invariant under this operation.
      * \ingroup grpvectoroperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct VectorMaskedMinIndex
+    template <typename Tag_ = tags::CPU> struct VectorMaskedMinIndex
     {
          /**
          * Return the index of the minimum element of a masked vector.
@@ -50,23 +51,23 @@ namespace pg512
          * \param vector The DenseVector to be used.
          * \param mask Vector<bool> to be used for masking.
          **/
-
+        template <typename DataType_>
         static unsigned long value(const DenseVector<DataType_> & vector, const Vector<bool> & mask)
         {
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-			unsigned long result(-1);
-			DataType_ temp(std::numeric_limits<DataType_>::max());
-			Vector<bool>::ConstElementIterator r(mask.begin_elements());
+            unsigned long result(-1);
+            DataType_ temp(std::numeric_limits<DataType_>::max());
+            Vector<bool>::ConstElementIterator r(mask.begin_elements());
 
-			for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
-				if (*r && *l < temp)
-				{
-					result = l.index();
-					temp = *l;					
-				}
+                if (*r && *l < temp)
+                {
+                    result = l.index();
+                    temp = *l;
+                }
                 ++r;
             }
 
@@ -79,23 +80,23 @@ namespace pg512
          * \param vector The SparseVector to be used.
          * \param mask Vector<bool> to be used for masking.
          **/
-
+        template <typename DataType_>
         static unsigned long value(const SparseVector<DataType_> & vector, const Vector<bool> & mask)
         {
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-			unsigned long result(-1);
-			DataType_ temp(std::numeric_limits<DataType_>::max());
-			Vector<bool>::ConstElementIterator r(mask.begin_elements());
+            unsigned long result(-1);
+            DataType_ temp(std::numeric_limits<DataType_>::max());
+            Vector<bool>::ConstElementIterator r(mask.begin_elements());
 
-			for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
-				if (*r && *l < temp)
-				{
-					result = l.index();
-					temp = *l;					
-				}
+                if (*r && *l < temp)
+                {
+                    result = l.index();
+                    temp = *l;
+                }
                 ++r;
             }
 

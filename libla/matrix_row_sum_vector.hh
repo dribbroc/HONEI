@@ -38,15 +38,16 @@ namespace pg512
      **/
     template <typename Tag_ = tags::CPU> struct MatrixRowSumVector
     {
-		/**
+        /**
          * Returns a vector containing the sums of a row access matrix' rows elements.
          * \param matrix Reference to a RowAccessMatrix
          **/
-		template <typename DataType_> static DenseVector<DataType_> value(const RowAccessMatrix<DataType_> & matrix)
+        template <typename DataType_>
+        static DenseVector<DataType_> * value(const RowAccessMatrix<DataType_> & matrix)
         {
-            DenseVector<DataType_> result(matrix.rows());
+            DenseVector<DataType_> * result(new DenseVector<DataType_>(matrix.rows()));
 
-            for (typename Vector<DataType_>::ElementIterator i(result.begin_elements()), i_end(result.end_elements()) ;
+            for (typename Vector<DataType_>::ElementIterator i(result->begin_elements()), i_end(result->end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = VectorElementSum<DataType_, Tag_>::value(matrix[i.index()]);
@@ -55,17 +56,17 @@ namespace pg512
             return result;
         }
 
-
         /**
          * Returns a vector containing the sums of a banded matrix' rows elements.
          * \param matrix Reference to a BandedMatrix
          **/
-		template <typename DataType_> static DenseVector<DataType_> value(const BandedMatrix<DataType_> & matrix)
+        template <typename DataType_>
+        static DenseVector<DataType_> * value(const BandedMatrix<DataType_> & matrix)
         {
-            DenseVector<DataType_> result(matrix.rows(), DataType_(0));
-            typename Matrix<DataType_>::ConstElementIterator b(matrix.begin_elements()), b_end(matrix.end_elements());
+            DenseVector<DataType_> * result(new DenseVector<DataType_>(matrix.rows(), DataType_(0)));
 
-            for (typename Vector<DataType_>::ElementIterator a(result.begin_elements()), a_end(result.end_elements()); a != a_end; ++a)
+            typename Matrix<DataType_>::ConstElementIterator b(matrix.begin_elements()), b_end(matrix.end_elements());
+            for (typename Vector<DataType_>::ElementIterator a(result->begin_elements()), a_end(result->end_elements()); a != a_end; ++a)
             {
                 for ( ; b.row() == a.index() && b != b_end; ++b)
                 {

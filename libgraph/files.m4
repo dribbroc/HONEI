@@ -10,3 +10,5 @@ dnl on this file at present...
 
 add(`matrix_element_distance',          `hh', `test')
 add(`matrix_element_distance_inverse',  `hh', `test')
+add(`dijkstra',                         `hh', `test')
+add(`position',                         `hh', `test')

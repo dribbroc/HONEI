@@ -41,16 +41,17 @@ namespace pg512
      * \brief The referenced matrix is changed by multiplying the given scalar to each of its elements.
      * \ingroup grpmatrixoperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarMatrixProduct
+    template <typename Tag_ = tags::CPU> struct ScalarMatrixProduct
     {
         /**
          * Returns the resulting matrix after multiplying a scalar to a given DenseMatrix instance.
          * \param matrix DenseMatrix to be scaled.
          * \param scalar The scalar to be used.
          **/
-        static DenseMatrix<DataType_> & value(const DataType_ scalar, DenseMatrix<DataType_> & matrix)
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT2_> & value(const DT1_ scalar, DenseMatrix<DT2_> & matrix)
         {
-            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
+            for (typename MutableMatrix<DT2_>::ElementIterator l(matrix.begin_elements()),
                     l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= scalar;
@@ -59,14 +60,15 @@ namespace pg512
             return matrix;
         }
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying a scalar to a given SparseMatrix instance.
          * \param matrix SparseMatrix to be scaled.
          * \param scalar The scalar to be used.
          **/
-        static SparseMatrix<DataType_> & value(const DataType_ scalar, SparseMatrix<DataType_> & matrix)
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT2_> & value(const DT1_ scalar, SparseMatrix<DT2_> & matrix)
         {
-            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_non_zero_elements()),
+            for (typename MutableMatrix<DT2_>::ElementIterator l(matrix.begin_non_zero_elements()),
                     l_end(matrix.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 *l *= scalar;
@@ -80,13 +82,13 @@ namespace pg512
          * \param matrix BandedMatrix to be scaled.
          * \param scalar The scalar to be used.
          **/
-        static BandedMatrix<DataType_> & value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
+        template <typename DT1_, typename DT2_>
+        static BandedMatrix<DT2_> & value(const DT1_ scalar, BandedMatrix<DT2_> & matrix)
         {
-
-            for (typename BandedMatrix<DataType_>::VectorIterator l(matrix.begin_bands()),
+            for (typename BandedMatrix<DT2_>::VectorIterator l(matrix.begin_bands()),
                     l_end(matrix.end_bands()) ; l != l_end ; ++l)
             {
-                *l = ScalarVectorProduct<DataType_>::value(scalar, *l);
+                *l = ScalarVectorProduct<>::value(scalar, *l);
             }
 
             return matrix;

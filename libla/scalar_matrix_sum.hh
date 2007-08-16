@@ -22,7 +22,7 @@
 
 #include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
-#include <libla/banded_matrix.hh>
+#include <libla/matrix.hh>
 #include <libla/sparse_matrix.hh>
 
 /**
@@ -34,63 +34,25 @@
  **/
 namespace pg512
 {
-
     /**
      * ScalarMatrixSum is the class template for adding a scalar to a matrix.
-     * \brief The referenced matrix is changed by adding the given scalar to each of its elements.
-	 * \brief With a negative scalar, ScalarMatrixSum can also be used to compute a ScalarMatrixDifference.
+     * \brief With a negative scalar, ScalarMatrixSum can also be used to compute a ScalarMatrixDifference.
      * \ingroup grpmatrixoperations
      **/
-    template <typename DataType_, typename Tag_ = tags::CPU> struct ScalarMatrixSum
+    template <typename Tag_ = tags::CPU> struct ScalarMatrixSum
     {
         /**
          * Returns the resulting matrix after add a scalar to a given DenseMatrix instance.
-         * \param matrix DenseMatrix to be used.
+         *
+         * \param matrix The DenseMatrix to be used.
          * \param scalar The scalar to be added.
+         *
+         * \retval matrix The referenced matrix is changed by adding the given scalar to each of its elements.
          **/
-        static DenseMatrix<DataType_> & value(const DataType_ scalar, DenseMatrix<DataType_> & matrix)
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT2_> & value(const DT1_ scalar, DenseMatrix<DT2_> & matrix)
         {
-            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
-                    l_end(matrix.end_elements()) ; l != l_end ; ++l)
-            {
-                *l += scalar;
-            }
-
-            return matrix;
-        }
-
-        /**
-         * Returns the resulting matrix after add a scalar to a given SparseMatrix instance, which is then considered as dense.
-         * \param matrix SparseMatrix to be used.
-         * \param scalar The scalar to be added.
-         **/
-        static DenseMatrix<DataType_> & value(const DataType_ scalar, SparseMatrix<DataType_> & matrix)
-        {
-            DenseMatrix<DataType_> result(matrix.columns(), matrix.rows(), scalar);
-            typename MutableMatrix<DataType_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements());
-            for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_non_zero_elements()),
-                    l_end(matrix.end_non_zero_elements()) ; l != l_end ; ++l)
-            {
-                while (r.index() < l.index())
-                {
-                    ++r;
-                }
-
-                *r += *l;
-            }
-
-            return result;
-        }
-
-        /**
-         * Returns the resulting matrix after add a scalar to a given BandedMatrix instance.
-         * \param matrix BandedMatrix to be used.
-         * \param scalar The scalar to be added.
-         **/
-        static BandedMatrix<DataType_> & value(const DataType_ scalar, BandedMatrix<DataType_> & matrix)
-        {
-
-            for (typename MutableMatrix<DataType_>::ElementIterator l(matrix.begin_elements()),
+            for (typename MutableMatrix<DT2_>::ElementIterator l(matrix.begin_elements()),
                     l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
                 *l += scalar;
@@ -100,4 +62,5 @@ namespace pg512
         }
     };
 }
+
 #endif

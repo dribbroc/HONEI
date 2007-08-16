@@ -37,6 +37,8 @@
 namespace pg512
 {
     /**
+     * \brief Residual of a system of linear equations.
+     *
      * Residual is the class template for the operation
      * \f[
      *     Residual(b, A, x): \quad b \leftarrow b - A \cdot x,
@@ -71,6 +73,8 @@ namespace pg512
                 const DenseMatrix<DT2_> & a,
                 const VT_ & x)
         {
+            CONTEXT("When calculating residual for a DenseMatrix:");
+
             if (b.size() != x.size())
                 throw VectorSizeDoesNotMatch(x.size(), b.size());
 
@@ -83,7 +87,7 @@ namespace pg512
             for (typename Vector<DT1_>::ElementIterator i(b.begin_elements()),
                     i_end(b.end_elements()) ; i != i_end ; ++i)
             {
-                *i -= ScalarProduct<Tag_>::value(a[i.index()], x);
+                *i -= ScalarProduct<>::value(a[i.index()], x);
             }
 
             return b;
@@ -94,6 +98,8 @@ namespace pg512
                 const SparseMatrix<DT2_> & a,
                 const VT_ & x)
         {
+            CONTEXT("When calculating residual for a SparseMatrix:");
+
             if (b.size() != x.size())
                 throw VectorSizeDoesNotMatch(x.size(), b.size());
 
@@ -106,7 +112,7 @@ namespace pg512
             for (typename Vector<DT1_>::ElementIterator i(b.begin_elements()),
                     i_end(b.end_elements()) ; i != i_end ; ++i)
             {
-                *i -= ScalarProduct<Tag_>::value(a[i.index()], x);
+                *i -= ScalarProduct<>::value(a[i.index()], x);
             }
 
             return b;

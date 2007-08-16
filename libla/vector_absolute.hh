@@ -24,8 +24,6 @@
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 
-#include <cmath>
-
 /**
  * \file
  *
@@ -53,7 +51,7 @@ namespace pg512
             for (typename Vector<DataType_>::ElementIterator i(vector.begin_elements()), i_end(vector.end_elements()) ;
                     i != i_end ; ++i)
             {
-                if (*i < static_cast<DataType_>(0))
+                if (*i < DataType_(0))
                     *i *= -1;
             }
 

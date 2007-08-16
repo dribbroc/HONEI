@@ -31,69 +31,83 @@
 /**
  * \file
  *
- * Templatized definitions of matrix differences.
+ * Templatized definitions of operation MatrixDifference.
  *
- * \ingroup grpmatrixoperations
+ * \ingroup grpoperations
  */
 namespace pg512
 {
-
     /**
-     * MatrixDifference is the class template for the difference of two matrix.
-     * \brief The first referenced matrix is changed under this operation.
-     * \ingroup grpmatrixoperations
+     * \brief Difference of two matrices.
+     *
+     * MatrixDifference is the class template for the subtraction operation
+     * \f[
+     *     MatrixDifference(a, b): \quad r \leftarrow a - b,
+     * \f]
+     * which yields r, the difference of matrices a and b.
+     *
+     * Usually, the return value is the minuend a after modification. However,
+     * there are signatures for which b is returned. For these cases a short
+     * notice is added.
+     *
+     * \ingroup grpoperations
      */
+
     template <typename Tag_ = tags::CPU> struct MatrixDifference
     {
         /**
-         * Returns the the resulting matrix of the difference of two dense matrix instances.
+         * \brief Returns the the difference of two given matrices.
          *
-         * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant dense matrix to be subtracted.
+         * \param a The matrix that is the minuend of the operation.
+         * \param b The matrix that is the subtrahend of the operation.
+         *
+         * \retval Will modify the minuend a and return it.
          */
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+
+        /// \{
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When subtracting DenseMatrix from DenseMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l -= *r;
             }
 
-            return left;
+            return a;
         }
 
-        /**
-         * Returns the the resulting matrix of the difference of a DenseMatrix and a SparseMatrix instance.
-         *
-         * \param left Reference to dense matrix that will be also used as result matrix.
-         * \param right Reference to constant sparse matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When subtracting SparseMatrix from DenseMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; )
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; )
             {
                 while (l.index() < r.index() && (l != l_end))
                 {
@@ -104,34 +118,31 @@ namespace pg512
                 ++r;
             }
 
-            return left;
+            return a;
         }
 
-        /**
-         * Returns the the resulting matrix of the difference of a sparse matrix instance and a sparse matrix instance.
-         *
-         * \param left Reference to sparse matrix that will be also used as result matrix.
-         * \param right Reference to constant sparse matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When subtracting SparseMatrix from SparseMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (r.index() < l.index())
                 {
-                    left[r.row()][r.column()] = -(*r);
+                    a[r.row()][r.column()] = -(*r);
                     ++r;
                 }
                 else if (l.index() < r.index())
@@ -144,29 +155,23 @@ namespace pg512
                     ++l; ++r;
                 }
             }
-            ///\todo: perhaps sparsify - i.e. subtraction of 7 and 7 possible
-            return left;
+
+            return a;
         }
 
-        /**
-         * Returns the the resulting matrix of the difference of two given BandedMatrix instances.
-         *
-         * \param left Reference to banded matrix that will be also used as result matrix.
-         * \param right Reference to constant banded matrix to be subtracted.
-         */
-        template <typename DataType1_, typename DataType2_>
-        static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left,
-                const BandedMatrix<DataType2_> & right)
+        template <typename DT1_, typename DT2_>
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a,
+                const BandedMatrix<DT2_> & b)
         {
             CONTEXT("When subtracting BandedMatrix from BandedMatrix:");
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixSizeDoesNotMatch(right.rows(), left.rows()); /// \todo Implement size() method?
+                throw MatrixSizeDoesNotMatch(b.rows(), a.rows()); /// \todo Implement size() method?
             }
 
-            typename BandedMatrix<DataType1_>::VectorIterator l(left.begin_bands()), l_end(left.end_bands());
-            typename BandedMatrix<DataType2_>::ConstVectorIterator r(right.begin_bands()), r_end(right.end_bands());
+            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
+            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
             for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
             {
                 if (! r.exists())
@@ -175,119 +180,68 @@ namespace pg512
                 if (l.exists())
                     VectorDifference<>::value(*l, *r);
                 else
-                    left.band(r.index()) = ScalarVectorProduct<>::value(DataType1_(-1), *((*r).copy()));
+                    a.band(r.index()) = ScalarVectorProduct<>::value(DT1_(-1), *((*r).copy()));
             }
 
-            return left;
+            return a;
         }
-
-        ///\todo: Find a solution for different order and return types when changing RowAccess to Dense/Sparse, because now this would mean duplicate signatures.
+        /// \}
 
         /**
-         * Returns the the resulting matrix of the difference of a given BandedMatrix instance and a given RowAccessMatrix instance.
+         * \brief Returns the the difference of two given matrices.
          *
-         * \param left Reference to banded matrix that will be also used as result matrix.
-         * \param right Reference to constant row access matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
-        {
-            if (left.columns() != right.columns())
-            {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
-            }
-
-            if (left.rows() != right.rows())
-            {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
-            }
-
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
-            {
-                *l -= *r;
-            }
-
-            return left;
-        }
-
-        /**
-         * Returns the the resulting matrix of the difference of a given RowAccessMatrix instance and a given BandedMatrix instance.
+         * \param a The matrix that is the minuend of the operation.
+         * \param b The matrix that is the subtrahend of the operation.
          *
-         * \param left Reference to row access matrix that will be also used as result matrix.
-         * \param right Reference to constant banded matrix to be subtracted.
-         **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(const RowAccessMatrix<DataType2_> & left, BandedMatrix<DataType1_> & right)
+         * \retval Will modify the subtrahend b and return it.
+         */
+
+        /// \{
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When subtracting DenseMatrix from BandedMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType1_>::ConstElementIterator l(left.begin_elements());
-            for (typename MutableMatrix<DataType2_>::ElementIterator r(right.begin_elements()),
-                    r_end(right.end_elements()) ; r != r_end ; ++r, ++l)
+            /// \todo Optimise algorithm. Iterate over a's bands.
+            typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements());
+            for (typename MutableMatrix<DT2_>::ElementIterator r(b.begin_elements()),
+                    r_end(b.end_elements()) ; r != r_end ; ++r, ++l)
             {
                 *r = *l - *r;
             }
 
-            return right;
+            return b;
         }
 
-        /**
-         * Returns the the resulting matrix of the difference of a given BandedMatrix instance and a given DenseMatrix instance.
-         *
-         * \param left Reference to constant banded matrix which is the base.
-         * \param right Reference to dense matrix to be substracted that will be also used as result matrix.
-         */
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(const BandedMatrix<DataType2_> & left, DenseMatrix<DataType1_> & right)
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(const BandedMatrix<DT2_> & a, SparseMatrix<DT1_> & b)
         {
-            if (left.columns() != right.columns())
+            CONTEXT("When subtracting SparseMatrix from BandedMatrix:");
+
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DataType1_>::ConstElementIterator l(left.begin_elements());
-            for (typename MutableMatrix<DataType2_>::ElementIterator r(right.begin_elements()),
-                    r_end(right.end_elements()) ; r != r_end ; ++r, ++l)
-            {
-                *r = *l - *r;
-            }
-
-            return right;
-        }
-
-        /**
-         * Returns the the resulting matrix of the difference of a given BandedMatrix instance and a given SparseMatrix instance.
-         *
-         * \param left Reference to constant banded matrix which is the base.
-         * \param right Reference to sparse matrix to be substracted that will be also used as result matrix.
-         */
-        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(const BandedMatrix<DataType2_> & left, SparseMatrix<DataType1_> & right)
-        {
-            if (left.columns() != right.columns())
-            {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
-            }
-
-            if (left.rows() != right.rows())
-            {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
-            }
-
-            typename Matrix<DataType1_>::ConstElementIterator l(left.begin_elements()), l_end(left.begin_elements());
-            for (typename MutableMatrix<DataType2_>::ElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; ++r, ++l)
+            /// \todo Optimise algorithm. Iterate over a's bands.
+            typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements()), l_end(a.begin_elements());
+            for (typename MutableMatrix<DT2_>::ElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r, ++l)
             {
                 while (l.index() < r.index() && (l != l_end))
                 {
@@ -297,10 +251,11 @@ namespace pg512
                 *r = *l - *r;
                 ++r;
             }
-            ///\todo: perhaps sparsify - i.e. substraction of 7 and 7 possible
-            return right;
-        }
 
+            return b;
+        }
+        /// \}
     };
 }
+
 #endif

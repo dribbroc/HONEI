@@ -41,11 +41,11 @@ class BandedMatrixRowSumVectorTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
-                DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(bm1));
+                DenseVector<DataType_> sum(*MatrixRowSumVector<DataType_>::value(bm1));
                 DenseVector<DataType_> dv2(size, DataType_(2));
-                
+
                 TEST_CHECK_EQUAL(sum, dv2);
             }
         }
@@ -66,11 +66,11 @@ class BandedMatrixRowSumVectorQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));                    
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
-            DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(bm1));
+            DenseVector<DataType_> sum(*MatrixRowSumVector<DataType_>::value(bm1));
             DenseVector<DataType_> dv2(size, DataType_(2));
-            
+
             TEST_CHECK_EQUAL(sum, dv2);
         }
 };
@@ -98,7 +98,7 @@ class DenseMatrixRowSumVectorTest :
                     *i = static_cast<DataType_>(i.index() + 1);
                 }
 
-                DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(dm));
+                DenseVector<DataType_> dv(*MatrixRowSumVector<DataType_>::value(dm));
                 DataType_ s(size);
                 for (typename Vector<DataType_>::ElementIterator v(dv.begin_elements()), v_end(dv.end_elements()) ;
                         v != v_end ; ++v)
@@ -134,7 +134,7 @@ class DenseMatrixRowSumVectorQuickTest :
                 *i = static_cast<DataType_>(i.index() + 1);
             }
 
-            DenseVector<DataType_> dv(MatrixRowSumVector<DataType_>::value(dm));
+            DenseVector<DataType_> dv(*MatrixRowSumVector<DataType_>::value(dm));
             DataType_ s(size);
             for (typename Vector<DataType_>::ElementIterator v(dv.begin_elements()), v_end(dv.end_elements()) ;
                     v != v_end ; ++v)
@@ -164,17 +164,17 @@ class SparseMatrixRowSumVectorTest :
             for (unsigned long size(11) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
-                    if (i.index() % (size) == 0) 
+                    if (i.index() % (size) == 0)
                     {
                         *i = DataType_(2);
                     }
-                }   
-                DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(sm1));
+                }
+                DenseVector<DataType_> sum(*MatrixRowSumVector<DataType_>::value(sm1));
                 DenseVector<DataType_> dv1(size + 1, static_cast<DataType_>((size / size / 2 + 1) * 2));
-                
+
                 TEST_CHECK_EQUAL(sum, dv1);
             }
         }
@@ -196,17 +196,17 @@ class SparseMatrixRowSumVectorQuickTest :
         {
             unsigned long size(22);
             SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
-                if (i.index() % ((size + 1) / 2) == 0) 
+                if (i.index() % ((size + 1) / 2) == 0)
                 {
                     *i = DataType_(2);
                 }
-            }   
-            DenseVector<DataType_> sum(MatrixRowSumVector<DataType_>::value(sm1));
+            }
+            DenseVector<DataType_> sum(*MatrixRowSumVector<DataType_>::value(sm1));
             DenseVector<DataType_> dv1(size + 1, static_cast<DataType_>((size / size / 2 + 1) * 4));
-            
+
             TEST_CHECK_EQUAL(sum, dv1);
         }
 };
