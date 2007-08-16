@@ -11,6 +11,7 @@ HTMLPAGES = \
 	licence.html
 
 htmlpages: $(HTMLPAGES)
+	mkdir -p $(srcdir)/html/
 	for f in $(HTMLPAGES) pg512.css ; do cp $(srcdir)/$$f $(srcdir)/html/ ; done
 
 cleanauthors: $(top_srcdir)/AUTHORS
