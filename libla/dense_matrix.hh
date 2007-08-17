@@ -28,7 +28,7 @@
 #include <libla/matrix_error.hh>
 #include <libutil/shared_array.hh>
 
-#include <string.h>
+#include <algorithm>
 #include <iterator>
 
 /**
@@ -37,7 +37,7 @@
  * Implementation of DenseMatrix and related classes.
  *
  * \ingroup grpmatrix
- **/
+ */
 namespace pg512 ///< \todo Namespace name?
 {
     /**
@@ -45,7 +45,7 @@ namespace pg512 ///< \todo Namespace name?
      * \brief sequential.
      *
      * \ingroup grpmatrix
-     **/
+     */
     template <typename DataType_> class DenseMatrix :
         public RowAccessMatrix<DataType_>,
         public MutableMatrix<DataType_>
@@ -94,13 +94,13 @@ namespace pg512 ///< \todo Namespace name?
              *
              * \param columns Number of columns of the new matrix.
              * \param rows Number of rows of the new matrix.
-             **/
+             */
             DenseMatrix(unsigned long columns, unsigned long rows) :
-                _elements(new DataType_[rows * columns]),
+                _elements(rows * columns),
                 _columns(columns),
-                _column_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[columns]),
+                _column_vectors(columns),
                 _rows(rows),
-                _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
+                _row_vectors(rows)
             {
             }
 
@@ -110,16 +110,15 @@ namespace pg512 ///< \todo Namespace name?
              * \param columns Number of columns of the new matrix.
              * \param rows Number of rows of the new matrix.
              * \param value Default value of each of the new matrice's elements.
-             **/
+             */
             DenseMatrix(unsigned long columns, unsigned long rows, DataType_ value) :
-                _elements(new DataType_[rows * columns]),
+                _elements(rows * columns),
                 _columns(columns),
-                _column_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[columns]),
+                _column_vectors(columns),
                 _rows(rows),
-                _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
+                _row_vectors(rows)
             {
-                for (unsigned long i(0) ; i < (rows * columns) ; ++i)
-                    _elements[i] = value;
+                std::fill_n(_elements.get(), rows * columns, value);
             }
 
             /**
@@ -131,21 +130,21 @@ namespace pg512 ///< \todo Namespace name?
              * \param columns Number of columns of the new matrix.
              * \param row_offset The source matrix row offset.
              * \param rows Number of rows of the new matrix.
-             **/
+             */
             DenseMatrix(const DenseMatrix<DataType_> & source, unsigned long column_offset, unsigned long columns,
                     unsigned long row_offset, unsigned long rows) :
-                    _elements(new DataType_[columns * rows]),
+                    _elements(columns * rows),
                     _columns(columns),
-                    _column_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[columns]),
+                    _column_vectors(columns),
                     _rows(rows),
-                    _row_vectors(new std::tr1::shared_ptr<DenseVector<DataType_> >[rows])
+                    _row_vectors(rows)
             {
-                if(column_offset + columns > source.columns())
+                if (column_offset + columns > source.columns())
                 {
                     throw MatrixColumnsDoNotMatch(column_offset + columns, source.columns());
                 }
 
-                if(row_offset + rows > source.rows())
+                if (row_offset + rows > source.rows())
                 {
                     throw MatrixRowsDoNotMatch(row_offset + rows, source.rows());
                 }
@@ -248,7 +247,7 @@ namespace pg512 ///< \todo Namespace name?
      * \brief DenseMatrix::DenseElementIterator is a simple iterator implementation for dense matrices.
      *
      * \ingroup grpmatrix
-     **/
+     */
     template <> template <typename DataType_> class DenseMatrix<DataType_>::DenseElementIterator<DataType_> :
         public MatrixElementIterator
     {
@@ -268,7 +267,7 @@ namespace pg512 ///< \todo Namespace name?
              *
              * \param matrix The parent matrix that is referenced by the iterator.
              * \param index The index into the matrix.
-             **/
+             */
             DenseElementIterator(const DenseMatrix<DataType_> & matrix, unsigned long index) :
                 _matrix(matrix),
                 _index(index)

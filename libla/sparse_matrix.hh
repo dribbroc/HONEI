@@ -98,7 +98,7 @@ namespace pg512 ///< \todo Namespace name?
                 _capacity(capacity),
                 _columns(columns),
                 _rows(rows),
-                _row_vectors(new std::tr1::shared_ptr<SparseVector<DataType_> >[rows + 1]),
+                _row_vectors(rows + 1),
                 _zero_vector(columns, 1)
             {
             }

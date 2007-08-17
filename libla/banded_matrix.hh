@@ -98,7 +98,7 @@ namespace pg512 ///< \todo Namespace name?
              * \param size Size of the new banded matrix.
              **/
             BandedMatrix(unsigned long size) :
-                _bands(new std::tr1::shared_ptr<DenseVector<DataType_> >[2 * size - 1]),
+                _bands(2 * size - 1),
                 _size(size),
                 _zero_vector(size, DataType_(0))
             {
@@ -111,7 +111,7 @@ namespace pg512 ///< \todo Namespace name?
              * \param diagonal Diagonal of the new banded matrix.
              **/
             BandedMatrix(unsigned long size, DenseVector<DataType_> * diagonal) :
-                _bands(new std::tr1::shared_ptr<DenseVector<DataType_> >[2 * size - 1]),
+                _bands(2 * size - 1),
                 _size(size),
                 _zero_vector(size, DataType_(0))
             {

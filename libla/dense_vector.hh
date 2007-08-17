@@ -109,7 +109,7 @@ namespace pg512 ///< \todo Namespace name?
              * \param stepsize Stepsize between two of the vector's elements inside the shared array.
              **/
             DenseVector(const unsigned long size, const unsigned long offset = 0, const unsigned long stepsize = 1) :
-                _elements(new DataType_[stepsize * size + offset]),
+                _elements(stepsize * size + offset),
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
@@ -128,7 +128,7 @@ namespace pg512 ///< \todo Namespace name?
              **/
             DenseVector(const unsigned long size, DataType_ value, unsigned long offset = 0,
                     unsigned long stepsize = 1) :
-                _elements(new DataType_[stepsize * size + offset]),
+                _elements(stepsize * size + offset),
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
@@ -149,7 +149,7 @@ namespace pg512 ///< \todo Namespace name?
              * \param size Size of the new vector.
              **/
             DenseVector(const DenseVector<DataType_> & source, unsigned long start, unsigned long size) :
-                _elements(new DataType_[size]),
+                _elements(size),
                 _size(size),
                 _offset(0),
                 _stepsize(1)

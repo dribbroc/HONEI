@@ -99,8 +99,8 @@ namespace pg512 ///< \todo Namespace name?
 
                 if (realloc)
                 {
-                    _imp->_elements.reset(elements);
-                    _imp->_indices.reset(indices);
+                    _imp->_elements.reset(capacity, elements);
+                    _imp->_indices.reset(capacity, indices);
                     _imp->_capacity = capacity;
                 }
 
@@ -311,8 +311,8 @@ namespace pg512 ///< \todo Namespace name?
              * \param capacity Capacity of elements that can be held without resizing.
              */
             Implementation(unsigned long size, unsigned long capacity) :
-                _elements(new DataType_[capacity]),
-                _indices(new unsigned long[capacity]),
+                _elements(capacity),
+                _indices(capacity),
                 _capacity(capacity),
                 _size(size),
                 _used_elements(0)

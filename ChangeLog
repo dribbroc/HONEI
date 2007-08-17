@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-17 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/shared_array.hh: Revamped SharedArray and related classes.
+	Fixed up documentation a bit. Added Contexts where appropriate and
+	switched constructor signatures.
+	* libla/banded_matrix.hh, libla/dense_matrix.hh,
+	libla/dense_vector.hh, libla/sparse_matrix.hh, libla/sparse_vector.hh:
+	Converted all affected classes to new SharedArray constructor
+	signature.
+
 2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* configure.ac: Added check for libpthread.
