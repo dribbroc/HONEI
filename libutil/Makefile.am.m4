@@ -74,6 +74,7 @@ lib_LTLIBRARIES = libutil.la
 
 libutil_la_SOURCES = general_filelist $(GPUSOURCES) $(CELLSOURCES)
 libutil_la_LIBADD = \
+	-lpthread \
 	$(GPULIBS) \
 	$(CELLLIBS)
 

@@ -7,6 +7,16 @@ see the NEWS file.
 
 2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* configure.ac: Added check for libpthread.
+	* libutil/Makefile.am.m4: Added libpthread to libutil's dependencies.
+
+2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/files.m4, libutil/spe_manager_TEST.cc: Oops. Forgot to add
+	test cases.
+
+2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/condition_variable.cc, libutil/condition_variable.hh,
 	libutil/files.m4, libutil/lock.cc, libutil/lock.hh, libutil/mutex.cc,
 	libutil/mutex.hh: Added necessary code for multithreading.

@@ -101,6 +101,14 @@ int main(int, char **)
 dnl }}}
 dnl }}}
 
+dnl {{{ check for libpthread
+AC_CHECK_LIB(pthread, pthread_mutex_init,
+	[have_pthread=yes])
+if test "x$have_pthread" != "xyes" ; then
+	AC_MSG_ERROR([libpthread is required.])
+fi
+dnl }}}
+
 dnl {{{ check for build support conditionals
 dnl {{{ check for CELL support
 AC_MSG_CHECKING([whether to build CELL BE support])
