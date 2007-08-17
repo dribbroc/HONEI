@@ -113,7 +113,7 @@ dnl {{{ check for build support conditionals
 dnl {{{ check for CELL support
 AC_MSG_CHECKING([whether to build CELL BE support])
 AC_ARG_ENABLE([cell],
-	AS_HELP_STRING([--enable-cell], [Build gpu support (needs packages: libspe2)]),
+	AS_HELP_STRING([--enable-cell], [Build Cell BE support (needs packages: libspe2)]),
 		[ENABLE_CELL=$enableval
 		  AC_MSG_RESULT([$enableval])],
 		[ENABLE_CELL=no
@@ -136,7 +136,7 @@ dnl }}}
 dnl {{{ check for GPU support
 AC_MSG_CHECKING([whether to build GPU support])
 AC_ARG_ENABLE([gpu],
-	AS_HELP_STRING([--enable-gpu], [Build gpu support (needs packages: libX11, libGL, libGLEW)]),
+	AS_HELP_STRING([--enable-gpu], [Build GPU support (needs packages: libX11, libGL, libGLEW)]),
 		[ENABLE_GPU=$enableval
 		  AC_MSG_RESULT([$enableval])],
 		[ENABLE_GPU=no
