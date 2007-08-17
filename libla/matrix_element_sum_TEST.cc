@@ -138,7 +138,7 @@ class SparseMatrixElementSumTest :
         {
             for (unsigned long size(11) ; size < (1 << 12) ; size <<= 1)
             {
-                SparseMatrix<DataType_> sm1(size, size + 1, size + 8 / 1);
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
