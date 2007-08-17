@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/memory_backend_gpu.cc, libutil/memory_backend.hh,
+	libutil/memory_manager.cc, libutil/memory_manager.hh,
+	libutil/memory_manager_TEST.cc: Added support for more than one
+	backend device. Added a default_device for backends that only support
+	one device. Adjusted test cases.
+
+2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/memory_manager.cc, libutil/memory_manager.hh,
 	libutil/memory_manager_TEST.cc: Added means to assoicate memory with
 	a memory id w/o uploading it, as well as support for full and partial

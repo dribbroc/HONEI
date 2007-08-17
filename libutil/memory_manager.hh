@@ -32,7 +32,7 @@
 namespace pg512
 {
     /**
-     * MemoryId uniquly identifies remote memory chunks across all backends.
+     * MemoryId uniquely identifies remote memory chunks across all backends.
      *
      * \ingroup grpmemorymanager
      */
@@ -239,18 +239,19 @@ namespace pg512
              * Upload a complete memory chunk from local memory to remote memory.
              *
              * \param id Associated memory id.
-             * \param destination Tag value of the remote memory whence to copy to.
+             * \param destination Tag value of the remote memory where to copy to.
              */
-            void upload(const MemoryId id, const tags::TagValue location);
+            void upload(const MemoryId id, const DeviceId device, const tags::TagValue location);
 
             /**
              * Upload a partial memory chunk from local memory to remote memory.
              *
              * \param id Associated memory id.
-             * \param destination Tag value of the remote memory whence to copy to.
+             * \param device Id of the the device where to copy to.
+             * \param destination Tag value of the remote memory where to copy to.
              * \param size Size of the memory chunk that will be copied.
              */
-            void upload(const MemoryId id, const tags::TagValue location, const std::ptrdiff_t size);
+            void upload(const MemoryId id, const DeviceId device, const tags::TagValue location, const std::ptrdiff_t size);
 
             /**
              * Download a memory chunk from remote memory to local memory.
@@ -263,13 +264,13 @@ namespace pg512
              * Download a memory chunk from remote memory to local memory at a custom address
              *
              * \param id Memory id that uniquely identifies a remove memory chunk.
-             * \param address Local memory address whence to copy from.
+             * \param address Local memory address whence to copy.
              * \param size Size of the memory block that will be copied.
              */
             void download(const MemoryId id, void * address, const std::ptrdiff_t size);
 
             /**
-             * Free an existing memory id and its associated remote memory.
+             * Free an existing memory id <-> remote memory association.
              * Local memory will not be tampered with.
              *
              * \param id Memory id that shall be freed.
@@ -304,7 +305,7 @@ namespace pg512
         /**
          * Constructor.
          *
-         * \param v Tagvalue that the backend is associated with.
+         * \param v Tag value that the backend is associated with.
          * \param f Singleton-instance function of the backend.
          */
         MemoryBackendRegistrator(const tags::TagValue v, MemoryManager::InstanceFunction f)

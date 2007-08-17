@@ -70,7 +70,7 @@ MemoryManager::associate(void * address, const std::ptrdiff_t size)
 }
 
 void
-MemoryManager::upload(const MemoryId id, const tags::TagValue destination)
+MemoryManager::upload(const MemoryId id, const DeviceId device, const tags::TagValue destination)
 {
     CONTEXT("When uploading complete chunk to '" + stringify(destination)
             + "'-memory for memory id '" + stringify(id) + "':");
@@ -82,7 +82,7 @@ MemoryManager::upload(const MemoryId id, const tags::TagValue destination)
     InfoMap::iterator i(_info_map.find(id));
     ASSERT(_info_map.end() != i, "No info map entry found for id '" + stringify(id) + "'!");
 
-    _get_backend(destination)->upload(id, i->second->_address, i->second->size);
+    _get_backend(destination)->upload(id, device, i->second->_address, i->second->size);
 
     MemoryInfo * info(new MemoryInfo(i->second->_address, i->second->size, destination));
     delete i->second;
@@ -90,7 +90,7 @@ MemoryManager::upload(const MemoryId id, const tags::TagValue destination)
 }
 
 void
-MemoryManager::upload(const MemoryId id, const tags::TagValue destination, const std::ptrdiff_t size)
+MemoryManager::upload(const MemoryId id, const DeviceId device, const tags::TagValue destination, const std::ptrdiff_t size)
 {
     CONTEXT("When uploading '" + stringify(size) + "' bytes to '" + stringify(destination)
             + "'-memory for memory id '" + stringify(id) + "':");
@@ -102,7 +102,7 @@ MemoryManager::upload(const MemoryId id, const tags::TagValue destination, const
     AddressMap::const_iterator a(_address_map.find(id));
     ASSERT(_address_map.end() != a, "No address map entry found for id '" + stringify(id) + "'!");
 
-    _get_backend(destination)->upload(id, a->second, size);
+    _get_backend(destination)->upload(id, device, a->second, size);
 
     MemoryInfo * info(new MemoryInfo(a->second, size, destination));
     _info_map[id] = info;

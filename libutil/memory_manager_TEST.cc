@@ -50,7 +50,7 @@ namespace
                 return instance();
             }
 
-            virtual void upload(const MemoryId id, const void * address, const std::ptrdiff_t size)
+            virtual void upload(const MemoryId id, const DeviceId, const void * address, const std::ptrdiff_t size)
             {
                 const char * a(static_cast<const char *>(address));
                 Info * info(new Info(new char[size], size));
@@ -114,8 +114,8 @@ class MemoryManagerTest :
 
             MemoryId id_a(MemoryManager::instance()->associate(a, 30 * sizeof(float))),
                     id_b(MemoryManager::instance()->associate(b, 30 * sizeof(float)));
-            MemoryManager::instance()->upload(id_a, tags::tv_fake);
-            MemoryManager::instance()->upload(id_b, tags::tv_fake);
+            MemoryManager::instance()->upload(id_a, default_device, tags::tv_fake);
+            MemoryManager::instance()->upload(id_b, default_device, tags::tv_fake);
 
             MemoryManager::instance()->download(id_b, a, 30 * sizeof(float));
             bool ok(true);

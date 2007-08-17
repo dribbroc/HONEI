@@ -208,13 +208,13 @@ GPUBackend::backend_instance()
 }
 
 void
-GPUBackend::upload(const MemoryId, const void * address, const std::ptrdiff_t size)
+GPUBackend::upload(const MemoryId, const DeviceId device, const void * address, const std::ptrdiff_t size)
 {
     /// \todo
 }
 
 void
-GPUBackend::download(const MemoryId, void * address, const std::ptrdiff_t size)
+GPUBackend::download(const MemoryId, const DeviceId device, void * address, const std::ptrdiff_t size)
 {
     /// \todo
 }

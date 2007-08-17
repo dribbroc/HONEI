@@ -25,6 +25,18 @@ namespace pg512
     typedef unsigned long long MemoryId;
 
     /**
+     * DeviceId uniquely identifies one of the available remote memory devices that a backend
+     * can interface. Possible are e.g. several Cell BE SPE Local Stores or several video memories.
+     */
+    typedef unsigned long DeviceId;
+
+    /**
+     * If there is only one device supported by a MemoryBackend, it must not accept requests for
+     * other devices except default_device.
+     */
+    const DeviceId default_device(~0x0L);
+
+    /**
      * MemoryBackend is the interface class for all memory backends that MemoryManager supports.
      *
      * \ingroup grpmemorymanager
@@ -36,11 +48,12 @@ namespace pg512
             /**
              * Upload a memory chunk from local memory to remote memory.
              *
-             * \param id Associated memory id. Valid value will be filled in if left zero.
+             * \param id Associated memory id.
+             * \param device Id of the the device whence to copy to.
              * \param address Local memory address whence to copy from.
              * \param size Size of the memory chunk that will be copied.
              */
-            virtual void upload(const MemoryId id, const void * address, const std::ptrdiff_t size) = 0;
+            virtual void upload(const MemoryId id, const DeviceId device, const void * address, const std::ptrdiff_t size) = 0;
 
             /**
              * Download a memory chunk from remote memory to local memory at a custom address
