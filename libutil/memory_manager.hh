@@ -149,7 +149,7 @@ namespace pg512
     class MemoryManager
     {
         public:
-            /// \name Convenience typedef for backend handling
+            /// \name Convenience types for backend handling
             /// \{
             typedef MemoryBackend * (*InstanceFunction)();
             typedef std::map<tags::TagValue, InstanceFunction> BackendMap;
@@ -228,14 +228,29 @@ namespace pg512
             static MemoryManager * instance();
 
             /**
-             * Upload a memory chunk from local memory to remote memory.
+             * Associate a local memory chunk with a memory id.
              *
-             * \param id Associated memory id. Valid value will be filled in if left zero.
+             * \param address Local memory address that shall be associated.
+             * \param size Size of the memory chunk that shall be associated.
+             */
+            MemoryId associate(void * address, const std::ptrdiff_t size);
+
+            /**
+             * Upload a complete memory chunk from local memory to remote memory.
+             *
+             * \param id Associated memory id.
              * \param destination Tag value of the remote memory whence to copy to.
-             * \param address Local memory address whence to copy from.
+             */
+            void upload(const MemoryId id, const tags::TagValue location);
+
+            /**
+             * Upload a partial memory chunk from local memory to remote memory.
+             *
+             * \param id Associated memory id.
+             * \param destination Tag value of the remote memory whence to copy to.
              * \param size Size of the memory chunk that will be copied.
              */
-            void upload(MemoryId & id, const tags::TagValue location, void * address, const std::ptrdiff_t size);
+            void upload(const MemoryId id, const tags::TagValue location, const std::ptrdiff_t size);
 
             /**
              * Download a memory chunk from remote memory to local memory.
@@ -255,7 +270,7 @@ namespace pg512
 
             /**
              * Free an existing memory id and its associated remote memory.
-             * Local memory will not be tempered with.
+             * Local memory will not be tampered with.
              *
              * \param id Memory id that shall be freed.
              */

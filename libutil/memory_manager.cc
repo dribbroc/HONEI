@@ -53,21 +53,58 @@ MemoryManager::instance()
     return &result;
 }
 
-void
-MemoryManager::upload(MemoryId & id, const tags::TagValue destination, void * address,
-        const std::ptrdiff_t size)
+MemoryId
+MemoryManager::associate(void * address, const std::ptrdiff_t size)
 {
-    CONTEXT("When uploading '" + stringify(size) + "' bytes from '" + stringify(address) + "' to '" +
-            stringify(destination) + "'-memory for memory id '" + stringify(id) + "':");
-    ASSERT(tags::tv_cpu != destination, "Invalid destionation 'CPU' for upload");
+    CONTEXT("When associating with memory chunk of size '" + stringify(size)
+            + "' at address '" + stringify(address) + "':");
+    ASSERT(0 != address, "Invalid address 'NULL' for associate!");
+    ASSERT(0 != size, "Invalid size '0' for associate!");
 
-    if (0 == id)
-        id = _get_free_id();
+    MemoryId result(_get_free_id());
+    MemoryInfo * info(new MemoryInfo(address, size, tags::tv_cpu));
+    _address_map[result] = address;
+    _info_map[result] = info;
 
-    _get_backend(destination)->upload(id, address, size);
+    return result;
+}
 
-    MemoryInfo * info(new MemoryInfo(address, size, destination));
-    _address_map[id] = address;
+void
+MemoryManager::upload(const MemoryId id, const tags::TagValue destination)
+{
+    CONTEXT("When uploading complete chunk to '" + stringify(destination)
+            + "'-memory for memory id '" + stringify(id) + "':");
+    ASSERT(tags::tv_cpu != destination, "Invalid destination 'CPU' for upload!");
+
+    if (! _id_used(id))
+        throw MemoryIdNotKnown(id);
+
+    InfoMap::iterator i(_info_map.find(id));
+    ASSERT(_info_map.end() != i, "No info map entry found for id '" + stringify(id) + "'!");
+
+    _get_backend(destination)->upload(id, i->second->_address, i->second->size);
+
+    MemoryInfo * info(new MemoryInfo(i->second->_address, i->second->size, destination));
+    delete i->second;
+    i->second = info;
+}
+
+void
+MemoryManager::upload(const MemoryId id, const tags::TagValue destination, const std::ptrdiff_t size)
+{
+    CONTEXT("When uploading '" + stringify(size) + "' bytes to '" + stringify(destination)
+            + "'-memory for memory id '" + stringify(id) + "':");
+    ASSERT(tags::tv_cpu != destination, "Invalid destination 'CPU' for upload!");
+
+    if (! _id_used(id))
+        throw MemoryIdNotKnown(id);
+
+    AddressMap::const_iterator a(_address_map.find(id));
+    ASSERT(_address_map.end() != a, "No address map entry found for id '" + stringify(id) + "'!");
+
+    _get_backend(destination)->upload(id, a->second, size);
+
+    MemoryInfo * info(new MemoryInfo(a->second, size, destination));
     _info_map[id] = info;
 }
 
@@ -80,7 +117,7 @@ MemoryManager::download(const MemoryId id)
         throw MemoryIdNotKnown(id);
 
     InfoMap::const_iterator i(_info_map.find(id));
-    ASSERT(_info_map.end() != i, "No map entry found for id '" + stringify(id) + "'");
+    ASSERT(_info_map.end() != i, "No info map entry found for id '" + stringify(id) + "'!");
 
     download(id, i->second->_address, i->second->size);
 }
@@ -94,7 +131,7 @@ MemoryManager::download(const MemoryId id, void * address, const std::ptrdiff_t 
         throw MemoryIdNotKnown(id);
 
     InfoMap::iterator i(_info_map.find(id));
-    ASSERT(_info_map.end() != i, "No map entry found for id '" + stringify(id) + "'");
+    ASSERT(_info_map.end() != i, "No map entry found for id '" + stringify(id) + "'!");
 
      _get_backend(i->second->location)->download(id, address, size);
 
@@ -114,7 +151,7 @@ MemoryManager::free(const MemoryId id)
         throw MemoryIdNotKnown(id);
 
     InfoMap::iterator i(_info_map.find(id));
-    ASSERT(_info_map.end() != i, "No map entry found for id '" + stringify(id) + "'");
+    ASSERT(_info_map.end() != i, "No map entry found for id '" + stringify(id) + "'!");
 
     _get_backend(i->second->location)->free(id);
 
@@ -169,7 +206,7 @@ MemoryManager::swap(const MemoryId left, const MemoryId right)
     _address_map[left] = _address_map[right];
     _address_map[right] = tmp_address;
 
-    /// \todo Call swap for _all_ backends.
+    /// \todo Call swap for _all_ backends ?
     _get_backend(tmp_info->location)->swap(left, right);
 }
 

@@ -112,9 +112,10 @@ class MemoryManagerTest :
             std::fill_n(a, 30, float(1.11));
             std::fill_n(b, 30, float(2.22));
 
-            MemoryId id_a(0), id_b(0);
-            MemoryManager::instance()->upload(id_a, tags::tv_fake, a, 30 * sizeof(float));
-            MemoryManager::instance()->upload(id_b, tags::tv_fake, b, 30 * sizeof(float));
+            MemoryId id_a(MemoryManager::instance()->associate(a, 30 * sizeof(float))),
+                    id_b(MemoryManager::instance()->associate(b, 30 * sizeof(float)));
+            MemoryManager::instance()->upload(id_a, tags::tv_fake);
+            MemoryManager::instance()->upload(id_b, tags::tv_fake);
 
             MemoryManager::instance()->download(id_b, a, 30 * sizeof(float));
             bool ok(true);

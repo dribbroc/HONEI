@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/memory_manager.cc, libutil/memory_manager.hh,
+	libutil/memory_manager_TEST.cc: Added means to assoicate memory with
+	a memory id w/o uploading it, as well as support for full and partial
+	uploading w/o knowing the local memory address (but the memory id).
+	All preparations for adding id() support to containers.
+
 2007-08-16 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libgraph/position.hh: Fixed paramter order in invocation of
