@@ -7,6 +7,15 @@ see the NEWS file.
 
 2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/condition_variable.cc, libutil/condition_variable.hh,
+	libutil/files.m4, libutil/lock.cc, libutil/lock.hh, libutil/mutex.cc,
+	libutil/mutex.hh: Added necessary code for multithreading.
+	* configure.ac, libutil/files.m4, libutil/Makefile.am.m4,
+	libutil/spe_manager.cc, libutil/spe_manager.hh: Added start of
+	SPEManager and friends. Start of Cell BE backend.
+
+2007-08-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/memory_backend_gpu.cc, libutil/memory_backend.hh,
 	libutil/memory_manager.cc, libutil/memory_manager.hh,
 	libutil/memory_manager_TEST.cc: Added support for more than one

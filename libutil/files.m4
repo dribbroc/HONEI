@@ -9,11 +9,15 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`general', `assertion',                 `hh', `cc', `test')
+add(`general', `condition_variable',        `hh', `cc')
 add(`general', `exception',                 `hh', `cc')
+add(`general', `lock',                      `hh', `cc')
 add(`general', `log',                       `hh', `cc')
 add(`general', `memory_backend',            `hh')
 add(`gpu',     `memory_backend_gpu',        `hh', `cc')
 add(`general', `memory_manager',            `hh', `cc', `test')
+add(`general', `mutex',                     `hh', `cc')
 add(`general', `shared_array',              `hh', `cc')
+add(`cell',    `spe_manager',               `hh', `cc')
 add(`general', `stringify',                 `hh')
 add(`general', `tags',                      `hh', `cc')

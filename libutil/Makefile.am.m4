@@ -9,6 +9,9 @@ define(`general_headerlist', `')dnl
 define(`gpu_filelist', `')dnl
 define(`gpu_testlist', `')dnl
 define(`gpu_headerlist', `')dnl
+define(`cell_filelist', `')dnl
+define(`cell_testlist', `')dnl
+define(`cell_headerlist', `')dnl
 define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
 $2_TEST_SOURCES = $2_TEST.cc
 $2_TEST_LDADD = \
@@ -51,16 +54,33 @@ GPULIBS =
 
 endif
 
+if CELL
+
+CELLSOURCES = cell_filelist
+CELLTESTS = cell_testlist
+CELLHEADERS = cell_headerlist
+CELLLIBS = -lspe2
+
+else
+
+CELLSOURCES =
+CELLTESTS =
+CELLHEADERS =
+CELLLIBS =
+
+endif
+
 lib_LTLIBRARIES = libutil.la
 
-libutil_la_SOURCES = general_filelist $(GPUSOURCES)
+libutil_la_SOURCES = general_filelist $(GPUSOURCES) $(CELLSOURCES)
 libutil_la_LIBADD = \
-	$(GPULIBS)
+	$(GPULIBS) \
+	$(CELLLIBS)
 
 pg512_includedir = $(includedir)/pg512/
-pg512_include_HEADERS = general_headerlist $(GPUHEADERS)
+pg512_include_HEADERS = general_headerlist $(GPUHEADERS) $(CELLHEADERS)
 
-TESTS = general_testlist $(GPUTESTS)
+TESTS = general_testlist $(GPUTESTS) $(CELLTESTS)
 TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)

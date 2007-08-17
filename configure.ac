@@ -102,6 +102,29 @@ dnl }}}
 dnl }}}
 
 dnl {{{ check for build support conditionals
+dnl {{{ check for CELL support
+AC_MSG_CHECKING([whether to build CELL BE support])
+AC_ARG_ENABLE([cell],
+	AS_HELP_STRING([--enable-cell], [Build gpu support (needs packages: libspe2)]),
+		[ENABLE_CELL=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_CELL=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_CELL])
+AM_CONDITIONAL([CELL], test "x$ENABLE_CELL" = "xyes")
+if test "x$ENABLE_CELL" = "xyes" ; then
+    dnl {{{ enable 64bit support
+    CXXFLAGS="$CXXFLAGS -m64"
+    dnl }}}
+	dnl {{{ check for libspe2
+	AC_CHECK_LIB(spe2, spe_context_create,
+		[have_spe2=yes])
+	if test "x$have_spe2" != "xyes" ; then
+		AC_MSG_ERROR([libspe2 (http://sourceforge.net/projects/libspe) is required for CELL BE support.])
+	fi
+	dnl }}}
+fi
+dnl }}}
 dnl {{{ check for GPU support
 AC_MSG_CHECKING([whether to build GPU support])
 AC_ARG_ENABLE([gpu],
