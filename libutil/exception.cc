@@ -116,3 +116,8 @@ InternalError::InternalError(const std::string & message) throw () :
     Exception("Internal error: " + message)
 {
 }
+
+ExternalError::ExternalError(const std::string & library, const std::string & message) throw () :
+    Exception("External error in '" + library + "': " + message)
+{
+}

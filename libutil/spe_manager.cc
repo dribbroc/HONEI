@@ -7,7 +7,7 @@
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLa is distributed in the hope that it will be useful, but WITHOUT ANY
+ * LibUtil is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -32,16 +32,21 @@
 using namespace pg512;
 
 SPEError::SPEError(const std::string & msg, const std::string & reason) :
-    Exception(msg + ": " + reason)
+    ExternalError("libspe2", msg + ", reason is " + reason + ".")
 {
 }
 
 struct SPE::Implementation
 {
-    typedef std::list<SPETask> TaskList;
+    typedef std::list<SPETask *> TaskList;
 
     /// Our mutex.
     Mutex * const mutex;
+
+    std::tr1::function<void () throw ()> function;
+
+    /// Our thread.
+    Thread * thread;
 
     /// Our queued tasks.
     TaskList task_list;
@@ -53,22 +58,22 @@ struct SPE::Implementation
     const DeviceId device;
 
     /// Enqueue an SPETask.
-    inline void enqueue(const SPETask & task)
+    inline void enqueue(SPETask * task)
     {
         Lock l(*mutex);
 
         task_list.push_back(task);
     }
 
-    /// Dequeue an SPETask and return it.
+    /// Dequeue an SPETask and return it or return 0.
     inline SPETask * dequeue()
     {
         Lock l(*mutex);
-
         SPETask * result(0);
+
         if (! task_list.empty())
         {
-            result = new SPETask(task_list.front());
+            result = task_list.front();
             task_list.pop_front();
         }
 
@@ -91,68 +96,69 @@ struct SPE::Implementation
     {
         if (! context)
         {
-            std::string error;
+            std::string reason;
             switch (errno)
             {
                 case ENOMEM:
-                    error = "Lack of system resources. (ENOMEM)";
+                    reason = "lack of system resources (ENOMEM)";
                     break;
 
                 case EPERM:
-                    error = "Insufficient permissions to create context. (EPERM)";
+                    reason = "insufficient permissions to create context (EPERM)";
                     break;
 
                 case EFAULT:
-                    error = "Libspe2 internal error. (EFAULT)";
+                    reason = "internal error (EFAULT)";
                     break;
 
                 default:
-                    error = "Unknown error. (errno = " + stringify(errno) + ")";
+                    reason = "unknown error (errno = " + stringify(errno) + ")";
             }
 
-            throw SPEError("Could not create SPE context", error);
+            throw SPEError("Could not create SPE context", reason);
         }
+
+        thread = new Thread(std::tr1::bind(&Implementation::spe_thread, this));
     }
 
     /// Destructor.
     ~Implementation()
     {
         // Kill the thread.
+        delete thread;
 
-        int retval(spe_context_destroy(context));
-        while ((retval == -1) && (errno == EAGAIN))
+        int retval(spe_context_destroy(context)), counter(5);
+        while ((retval == -1) && (errno == EAGAIN) && (counter > 0))
         {
-            Log::instance()->message(ll_minimal, "SPE has still running threads on destruction. "
-                "Attempting to terminate them.");
-            /// \todo Hopefully this never happens.
+            Log::instance()->message(ll_minimal, "SPE '" + stringify(device)
+                    + "' has still running threads on destruction.");
+            usleep(1000);
+            --counter;
         }
 
         if (retval == -1)
         {
-            std::string error;
+            std::string reason;
             switch (errno)
             {
                 case ESRCH:
-                    error = "Invalid context. (ESRCH)";
+                    reason = "invalid context (ESRCH)";
                     break;
 
                 case EFAULT:
-                    error = "Libspe2 internal error. (EFAULT)";
+                    reason = "internal error (EFAULT)";
                     break;
 
                 default:
-                    error = "Unknown error. (errno = " + stringify(errno) + ")";
+                    reason = "unknown error (errno = " + stringify(errno) + ")";
             }
 
-            Log::instance()->message(ll_minimal, "Could not destroy SPE context: " + error);
+            Log::instance()->message(ll_minimal, "Could not destroy SPE context " + reason + ".");
         }
     }
 
-    static void * spe_thread(void * data)
+    static void * spe_thread_function(Implementation * imp)
     {
-        Implementation * imp(reinterpret_cast<Implementation *>(data));
-        bool exit(false);
-
         do
         {
             SPETask * task(0);
@@ -171,16 +177,14 @@ struct SPE::Implementation
             {
                 // Wait or sleep?
             }
-            
+
             // Update exit condition
             {
                 Lock query_lock(*imp->mutex);
                 /// \todo
             }
         }
-        while (! exit);
-
-        pthread_exit(0);
+        while (true);
     }
 };
 

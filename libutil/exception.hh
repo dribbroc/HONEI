@@ -135,6 +135,23 @@ namespace pg512 ///< \todo Namespace name?
              */
             InternalError(const std::string & message) throw ();
     };
+
+    /**
+     * ExternalError is an Exception that is thrown if an external library
+     * errors out.
+     */
+    class ExternalError :
+        public Exception
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param library The name of the external library.
+             * \param message A short error message.
+             */
+            ExternalError(const std::string & library, const std::string & message) throw ();
+    };
 }
 
 #endif
