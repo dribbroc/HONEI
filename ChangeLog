@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-19 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/assertion_TEST.cc: Fixed include directive.
+	* libutil/files.m4, libutil/worker.cc, libutil/worker.hh,
+	libutil/worker_TEST.cc: Added WorkerThread plus simple test case.
+
 2007-08-18 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libutil/exception.cc, libutil/exception.hh: Added ExternalError for

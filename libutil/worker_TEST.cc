@@ -1,4 +1,4 @@
-/* vim: set number sw=4 sts=4 et foldmethod=syntax : */
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
@@ -17,41 +17,60 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// This test needs DEBUG defined.
+// This test case needs debug support.
 #ifndef DEBUG
 #define DEBUG 1
 #endif
 
-#include <libutil/assertion.hh>
+#include <libutil/worker.hh>
 #include <unittest/unittest.hh>
-
-#include <string>
 
 using namespace pg512;
 using namespace tests;
 
-class AssertionTest :
+namespace
+{
+    class TestTask :
+        public WorkerTask
+    {
+        private:
+            unsigned & _v;
+
+        public:
+            TestTask(unsigned & v) :
+                _v(v)
+            {
+            }
+
+            virtual void run()
+            {
+                ++_v;
+            }
+    };
+}
+
+class WorkerQueueTest :
     public QuickTest
 {
     public:
-        AssertionTest() :
-            QuickTest("assertion_test")
+        WorkerQueueTest() :
+            QuickTest("worker_queue_test")
         {
         }
 
         virtual void run() const
         {
-            TEST_CHECK_THROWS(ASSERT(false, "Should throw!"), Assertion);
+            WorkerThread thread;
+            unsigned v(34);
 
-            bool no_exception_thrown(true);
-            try
+            for (unsigned i(0) ; i < 8 ; ++i)
             {
-                ASSERT(true, "Shouldn't throw!");
+                thread.enqueue(new TestTask(v));
             }
-            catch (...)
-            {
-                no_exception_thrown = false;
-            }
-            TEST_CHECK(no_exception_thrown);
+
+            while (! thread.idle())
+                sleep(1);
+
+            TEST_CHECK_EQUAL(v, 42);
         }
-} assertion_test;
+} worker_queue_test;
