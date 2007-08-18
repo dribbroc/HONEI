@@ -5,10 +5,21 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-18 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/assertion.cc, libutil/assertion.hh,
+	libutil/condition_variable.cc, libutil/condition_variable.hh,
+	libutil/lock.cc, libutil/lock.hh, libutil/memory_backend.hh,
+	libutil/memory_backend_gpu.cc, libutil/memory_backend_gpu.hh,
+	libutil/memory_manager.cc, libutil/memory_manager.hh, libutil/mutex.cc,
+	libutil/mutex.hh, libutil/shared_array.cc, libutil/shared_array.hh,
+	libutil/tags.cc, libutil/tags.hh: Fixed copyright header (LibLa ->
+	LibUtil).
+
 2007-08-18 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
-	* libla/sparse_matrix.hh: Reworked NonZeroElementIterator::operator
-	++, to prepare ist for operator +=.
+	* libla/sparse_matrix.hh: Reworked NonZeroElementIterator::operator++,
+	to prepare it for operator+=.
 
 2007-08-18 Danny van Dyk <kugelfang@gentoo.org>
 
