@@ -441,31 +441,36 @@ namespace pg512 ///< \todo Namespace name?
             {
                 ++_index;
                 ++_iter;
-                
-                if (_matrix._rows == _row)
+                bool done = false; 
+                if (!done && _matrix._rows == _row)
                 {
                     _matrix._row_vectors[_row].reset(new SparseVector<DataType_>(_matrix._columns,
                             _matrix._capacity));
                     _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
                     _index = _matrix._rows * _matrix._columns;
-                    return *this;
+                    //return *this;
+                    done = true;
                 }  
                                 
-                if (_iter != _matrix._row_vectors[_row]->end_non_zero_elements())
+                if (!done && _iter != _matrix._row_vectors[_row]->end_non_zero_elements())
                 {
-                    return *this; 
+                    //return *this; 
+                    done = true;
                 }
                 
-                ++ _row;
-                if (_matrix._rows == _row)
+                if (!done)
+                        ++ _row;
+                
+                if (!done && _matrix._rows == _row)
                 {
                     _matrix._row_vectors[_row].reset(new SparseVector<DataType_>(_matrix._columns,
                             _matrix._capacity));
                     _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
                     _index = _matrix._rows * _matrix._columns;
-                    return *this;
+                    //return *this;
+                    done = true;
                 }                
-                while (!_matrix._row_vectors[_row] || _matrix._row_vectors[_row]->used_elements() == 0)
+                while (!done && (!_matrix._row_vectors[_row] || _matrix._row_vectors[_row]->used_elements() == 0))
                 {
                     ++ _row;
                     if (_matrix._rows == _row)
@@ -474,10 +479,13 @@ namespace pg512 ///< \todo Namespace name?
                                 _matrix._capacity));
                         _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
                         _index = _matrix._rows * _matrix._columns;  
-                        return *this;
+                        //return *this;
+                        done = true;
                     }
                 }
-                _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+                if (!done)
+                        _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+
                 return *this;
             }
 
