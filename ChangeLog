@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-18 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/shared_array.hh: Oops. Forgot to commit this file.
+
 2007-08-17 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libutil/shared_array.hh: Revamped SharedArray and related classes.
