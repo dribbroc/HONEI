@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-19 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh, libswe/solver_TEST.cc: Some minor cleanups in
+	solve, prediction and setup stages, experimented with global
+	parameters, increased stability.
+	
 2007-08-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/worker.cc, libutil/worker.hh, libutil/worker_TEST.cc:

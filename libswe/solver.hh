@@ -553,7 +553,7 @@ namespace pg512 {
        
         DenseVector<ResPrec_> *uFlow = _u->copy();
         _flow_x(*uFlow);
-        *_v = *uFlow;
+        _v = uFlow;
         cout << "v^T after building:\n";
         cout << stringify(*_v) << endl;
         /*OBSOLETE
@@ -578,7 +578,7 @@ namespace pg512 {
 
         DenseVector<ResPrec_>* u2Flow = _u->copy();
         _flow_y(*u2Flow);
-        *_w = *u2Flow;
+        _w = u2Flow;
         cout << "w^T after building:\n";
         cout << stringify(*_w) << endl;
        
@@ -656,7 +656,7 @@ namespace pg512 {
 	{
 	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
 	    WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
-	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
+	    for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {	
 	        // Compute additional gravitation-based term for flowcomponent two
 	        gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
@@ -720,7 +720,7 @@ namespace pg512 {
 	{
 	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
 	    WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
-	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
+	    for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {
 	        // Initialize locale resultcomponent variables
 	        resultcomponentone = WorkPrec_(1);
@@ -728,13 +728,13 @@ namespace pg512 {
 	        resultcomponentthree = WorkPrec_(1);
 	
 	        // Compute additional gravitation-based term for flowcomponent two
-	        gravterm = WorkPrec_(9.81 * (*l) * (*l) / 2);
+	        gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
 
 	        // Compute the influence of the waterdepth
                 if(*l!=0)
                 {
-	            resultcomponenttwo *= 1 / *l;
-	            resultcomponentthree *= 1 / *l;
+	            resultcomponenttwo = 1 / *l;
+	            resultcomponentthree = 1 / *l;
                 }
                 else
                 {
@@ -912,14 +912,14 @@ namespace pg512 {
     template <typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
     {
-        WorkPrec_ oneThird = WorkPrec_(-0.33333333333333333333333333333333333333333333333333333333333333333333333333333);
+        WorkPrec_ oneThird = WorkPrec_(-1./3./*0.33333333333333333333333333333333333333333333333333333333333333333333333333333*/);
 	if (!(vector.size() % 3)) 
 	{
 	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
-    	    typename DenseVector<WorkPrec_>::ElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
-	    typename DenseVector<WorkPrec_>::ElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
+    	    typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
+	    typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
 	    WorkPrec_ h, u1, u2, friction;
-	    for (typename DenseVector<WorkPrec_>::ElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
+	    for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
 	    {
 	        // Fetch values for source term computation
 	        h = *l;
@@ -939,7 +939,7 @@ namespace pg512 {
 	        // Compute the influence of the waterdepth
 	        *resultvectoriterator = WorkPrec_(0);
 		++resultvectoriterator;
-	        if(h!=0)
+	        if(h>=0)
                 {
 		    friction = this->_manning_n_squared * pow(h, oneThird) * sqrt(u1 * u1 + u2 * u2) * (-1);
                     cout << "h:"<< stringify(h)<<"pow:" << stringify(  pow(h, oneThird)  ) << endl;
@@ -1247,13 +1247,13 @@ namespace pg512 {
         _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
         _assemble_matrix2_DEBUG<WorkPrec_>(m2, m4, &predictedu, &predictedw);
 
-        BandedMatrix<WorkPrec_> m5(*(m3.copy()));
+        BandedMatrix<WorkPrec_> m5 = *(m3.copy());
         //_quick_assemble_matrix1<WorkPrec_>(*m3, *m5);
         
         BandedMatrix<WorkPrec_> m6(_u->size());
         _quick_assemble_matrix2<WorkPrec_>(m1, m6);
  
-        BandedMatrix<WorkPrec_> m7(*(m4.copy()));
+        BandedMatrix<WorkPrec_> m7 = *(m4.copy());
         //_quick_assemble_matrix3<WorkPrec_>(*m4, *m7);
 
         BandedMatrix<WorkPrec_> m8(_u->size());
@@ -1287,7 +1287,7 @@ namespace pg512 {
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp3);
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp4);
         *predicteduTemp = VectorSum<>::value(*predicteduTemp, *source);
-        //delete source;
+        delete source;
 	
 	cout << "First accu solved.\n";
         DenseVector<WorkPrec_> *tempu3 = predictedu.copy();
@@ -1569,9 +1569,12 @@ namespace pg512 {
         
         _do_correction(*predictedu, *predictedv, *predictedw);
         ++_solve_time;
-        /*delete predictedu;
+        delete predictedu;
         delete predictedv;
-        delete predictedw;*/
+        delete predictedw;
+        delete _u_temp;
+        delete _v_temp;
+        delete _w_temp;
         cout << "Corrected u:\n";
         cout << stringify(*_u)<<endl;
     }

@@ -41,9 +41,9 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            ulint dwidth =2;
-            ulint dheight =2;
-            ulint timesteps =2;
+            ulint dwidth =4;
+            ulint dheight =4;
+            ulint timesteps =20;
  
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
@@ -61,14 +61,14 @@ class RelaxSolverQuickTest :
             DenseVector<DataType_> w(entries, DataType_(1)); 
             DenseVector<DataType_> bx (entries/3, DataType_(0));
             DenseVector<DataType_> by (entries/3, DataType_(0));
-            DenseVector<DataType_> c (3,DataType_(0.001));
-            DenseVector<DataType_> d (3,DataType_(0.001));
+            DenseVector<DataType_> c (3,DataType_(0.0001));
+            DenseVector<DataType_> d (3,DataType_(0.0001));
             
-            DataType_ deltax = 1.;                       
-            DataType_ deltay = 1.;
-            DataType_ deltat = .5;
+            DataType_ deltax = .2;                       
+            DataType_ deltay = .2;
+            DataType_ deltat = .2;
 
-            double eps = 0.1;                  
+            double eps = 1e-100;                  
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (&height, &bottom, &u1, &u2, &u, &v, &w, 
                 dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
