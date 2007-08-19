@@ -1810,7 +1810,7 @@ namespace pg512 {
 	DenseVector<WorkPrec_>* m6bandplus6 = (m1.band(ulint(6))).copy();
 	DenseVector<WorkPrec_>* m6bandminus3 = (m1.band(ulint(-3))).copy();
         ///Needed Iterators.
-        typename DenseVector<WorkPrec_>::ElementIterator d(m6diag->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator d(m6diag->begin_elements()), d_END(m6diag->end_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m6bandplus6->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3->begin_elements());
@@ -1823,7 +1823,7 @@ namespace pg512 {
         for( ; b2.index() < 6*(_d_width+4); ++b2);
         for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);                               
 
-	while(d.index() < 3*(_d_width +4) * _d_height)
+	while(d != d_END)
 	{
 	    ++d; ++d; ++d; ++d; ++d; ++d;
 	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
@@ -1886,7 +1886,7 @@ namespace pg512 {
 	DenseVector<WorkPrec_>* m8bandplus6 = (m2.band(ulint(6*(_d_width + 4)))).copy();
 	DenseVector<WorkPrec_>* m8bandminus3 = (m2.band(ulint((-3)*(_d_width + 4)))).copy();
         ///Needed Iterators.
-        typename DenseVector<WorkPrec_>::ElementIterator d(m8diag->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator d(m8diag->begin_elements()), d_END(m8diag->end_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3->begin_elements());
@@ -1899,7 +1899,7 @@ namespace pg512 {
         for( ; b2.index() < 6*(_d_width + 4); ++b2);
         for( ; bminus1.index() < 6*(_d_width + 4); ++bminus1);                               
 
-	while(d.index() < 3*(_d_width + 4) * _d_height)
+	while(d != d_END)
 	{
 	    ++d; ++d; ++d; ++d; ++d; ++d;
 	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
@@ -2022,7 +2022,7 @@ namespace pg512 {
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
             DenseVector<WorkPrec_> rightMinus1Upper(ulint(12), ulint(0));
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightMinus1Upper[0] = (*v)[vi.index()-6];
                 rightMinus1Upper[1] = (*v)[vi.index()-5];
@@ -2043,7 +2043,7 @@ namespace pg512 {
 
             }
             DenseVector<WorkPrec_> rightMinus1Lower(ulint(12), ulint(0));
-            if(ui.index()>6 || ui.index()<ui_END.index()-6) 
+            if(ui.index()>6 && ui.index()<ui_END.index()-6) 
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3];
                 rightMinus1Lower[1] = (*v)[vi.index()-2];
@@ -2080,7 +2080,7 @@ namespace pg512 {
             //Prepare right operands for diagonal:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightDiagUpper(ulint(12), ulint(0));
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3];
                 rightDiagUpper[1] = (*v)[vi.index()-2];
@@ -2097,7 +2097,7 @@ namespace pg512 {
                 rightDiagUpper[11] = (*u)[ui.index()+2];
             }
             DenseVector<WorkPrec_> rightDiagLower(ulint(12), ulint(0));
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1];
@@ -2130,7 +2130,7 @@ namespace pg512 {
             WorkPrec_ thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXPlus_iMinus1_j):
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-6];
                 rightDiagUpper[1] = (*v)[vi.index()-5];
@@ -2150,7 +2150,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightDiagLower[0] = (*v)[vi.index()-3];
                 rightDiagLower[1] = (*v)[vi.index()-2];
@@ -2183,7 +2183,7 @@ namespace pg512 {
             thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3];
                 rightDiagUpper[1] = (*v)[vi.index()-2];
@@ -2203,7 +2203,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1];
@@ -2245,7 +2245,7 @@ namespace pg512 {
             //Prepare right operands for band_+1:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightPlus1Upper(ulint(12), ulint(0));
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3];
                 rightPlus1Upper[1] = (*v)[vi.index()-2];
@@ -2262,7 +2262,7 @@ namespace pg512 {
                 rightPlus1Upper[11] = (*u)[ui.index()+2];
             }
             DenseVector<WorkPrec_> rightPlus1Lower(ulint(12), ulint(0));
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1];
@@ -2295,7 +2295,7 @@ namespace pg512 {
             thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXMinus_iPlus1_j):
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()];
                 rightPlus1Upper[1] = (*v)[vi.index()+1];
@@ -2315,7 +2315,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()+3];
                 rightPlus1Lower[1] = (*v)[vi.index()+4];
@@ -2348,7 +2348,7 @@ namespace pg512 {
             WorkPrec_ thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3];
                 rightPlus1Upper[1] = (*v)[vi.index()-2];
@@ -2368,7 +2368,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1];
@@ -2409,7 +2409,7 @@ namespace pg512 {
 
             //band_+2 (thetaXMinus_iPlus1_j):
             DenseVector<WorkPrec_> rightPlus2Upper(ulint(12), ulint(0));
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus2Upper[0] = (*v)[vi.index()];
                 rightPlus2Upper[1] = (*v)[vi.index()+1];
@@ -2431,7 +2431,7 @@ namespace pg512 {
             }
             DenseVector<WorkPrec_> rightPlus2Lower(ulint(12), ulint(0));
  
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightPlus2Lower[0] = (*v)[vi.index()+3];
                 rightPlus2Lower[1] = (*v)[vi.index()+4];
@@ -2568,7 +2568,7 @@ namespace pg512 {
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
             DenseVector<WorkPrec_> rightMinus1Upper(ulint(12), ulint(0));
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightMinus1Upper[0] = (*v)[vi.index()-6*_d_width];
                 rightMinus1Upper[1] = (*v)[vi.index()-5*_d_width];
@@ -2589,7 +2589,7 @@ namespace pg512 {
 
             }
             DenseVector<WorkPrec_> rightMinus1Lower(ulint(12), ulint(0));
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width) 
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width) 
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3*_d_width];
                 rightMinus1Lower[1] = (*v)[vi.index()-2*_d_width];
@@ -2626,7 +2626,7 @@ namespace pg512 {
             //Prepare right operands for diagonal:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightDiagUpper(ulint(12), ulint(0));
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3*_d_width];
                 rightDiagUpper[1] = (*v)[vi.index()-2*_d_width];
@@ -2643,7 +2643,7 @@ namespace pg512 {
                 rightDiagUpper[11] = (*u)[ui.index()+2*_d_width];
             }
             DenseVector<WorkPrec_> rightDiagLower(ulint(12), ulint(0));
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1*_d_width];
@@ -2676,7 +2676,7 @@ namespace pg512 {
             WorkPrec_ thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXPlus_iMinus1_j):
-            if(ui.index()>6 || ui.index()<ui_END.index()-6)
+            if(ui.index()>6 && ui.index()<ui_END.index()-6)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-6*_d_width];
                 rightDiagUpper[1] = (*v)[vi.index()-5*_d_width];
@@ -2696,7 +2696,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightDiagLower[0] = (*v)[vi.index()-3*_d_width];
                 rightDiagLower[1] = (*v)[vi.index()-2*_d_width];
@@ -2729,7 +2729,7 @@ namespace pg512 {
             thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3*_d_width];
                 rightDiagUpper[1] = (*v)[vi.index()-2*_d_width];
@@ -2749,7 +2749,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1*_d_width];
@@ -2791,7 +2791,7 @@ namespace pg512 {
             //Prepare right operands for band_+1:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightPlus1Upper(ulint(12), ulint(0));
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3*_d_width];
                 rightPlus1Upper[1] = (*v)[vi.index()-2*_d_width];
@@ -2808,7 +2808,7 @@ namespace pg512 {
                 rightPlus1Upper[11] = (*u)[ui.index()+2*_d_width];
             }
             DenseVector<WorkPrec_> rightPlus1Lower(ulint(12), ulint(0));
-            if(ui.index()>6 *_d_width|| ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6 *_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1*_d_width];
@@ -2841,7 +2841,7 @@ namespace pg512 {
             thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXMinus_iPlus1_j):
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()];
                 rightPlus1Upper[1] = (*v)[vi.index()+1*_d_width];
@@ -2861,7 +2861,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()+3*_d_width];
                 rightPlus1Lower[1] = (*v)[vi.index()+4*_d_width];
@@ -2894,7 +2894,7 @@ namespace pg512 {
             WorkPrec_ thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3*_d_width];
                 rightPlus1Upper[1] = (*v)[vi.index()-2*_d_width];
@@ -2914,7 +2914,7 @@ namespace pg512 {
 
 
             }
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1*_d_width];
@@ -2955,7 +2955,7 @@ namespace pg512 {
 
             //band_+2 (thetaXMinus_iPlus1_j):
             DenseVector<WorkPrec_> rightPlus2Upper(ulint(12), ulint(0));
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus2Upper[0] = (*v)[vi.index()];
                 rightPlus2Upper[1] = (*v)[vi.index()+1*_d_width];
@@ -2977,7 +2977,7 @@ namespace pg512 {
             }
             DenseVector<WorkPrec_> rightPlus2Lower(ulint(12), ulint(0));
  
-            if(ui.index()>6*_d_width || ui.index()<ui_END.index()-6*_d_width)
+            if(ui.index()>6*_d_width && ui.index()<ui_END.index()-6*_d_width)
             {
                 rightPlus2Lower[0] = (*v)[vi.index()+3*_d_width];
                 rightPlus2Lower[1] = (*v)[vi.index()+4*_d_width];

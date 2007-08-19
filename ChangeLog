@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-08-19 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh, libswe/solver_TEST.cc: Resolved logical bug in
+	matrix assembly stages, cleaned up quick assembly.
+	
+2007-08-19 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh, libswe/solver_TEST.cc: Some minor cleanups in
 	solve, prediction and setup stages, experimented with global
 	parameters, increased stability.
