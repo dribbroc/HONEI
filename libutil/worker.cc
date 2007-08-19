@@ -23,6 +23,7 @@
 #include <libutil/stringify.hh>
 #include <libutil/worker.hh>
 
+#include <iostream>
 #include <list>
 
 #include <errno.h>
@@ -31,7 +32,7 @@ using namespace pg512;
 
 struct WorkerThread::Implementation
 {
-    typedef std::list<WorkerTask *> TaskList;
+    typedef std::list<WorkerTask> TaskList;
 
     /// Our thread.
     pthread_t * const thread;
@@ -52,25 +53,22 @@ struct WorkerThread::Implementation
         WorkerTask * result(0);
 
         if (! task_list.empty())
-            result = task_list.front();
+            result = new WorkerTask(task_list.front());
 
         return result;
     }
 
     /// Dequeue the next task.
-    inline WorkerTask * dequeue()
+    inline void dequeue()
     {
         Lock l(*mutex);
 
         if (! task_list.empty())
-        {
-            delete task_list.front();
             task_list.pop_front();
-        }
     }
 
     /// Enqueue a task with us.
-    inline void enqueue(WorkerTask * task)
+    inline void enqueue(WorkerTask & task)
     {
         Lock l(*mutex);
 
@@ -78,7 +76,7 @@ struct WorkerThread::Implementation
     }
 
     /// Return true if we are idling.
-    inline bool idle()
+    inline bool idle() const
     {
         Lock l(*mutex);
 
@@ -111,7 +109,7 @@ struct WorkerThread::Implementation
             // Run our task
             if (task)
             {
-                task->run();
+                (*task)();
                 imp->dequeue();
             }
         }
@@ -157,13 +155,13 @@ WorkerThread::~WorkerThread()
 }
 
 void
-WorkerThread::enqueue(WorkerTask * task)
+WorkerThread::enqueue(WorkerTask & task)
 {
     _imp->enqueue(task);
 }
 
 bool
-WorkerThread::idle()
+WorkerThread::idle() const
 {
     return _imp->idle();
 }

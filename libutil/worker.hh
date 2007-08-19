@@ -20,13 +20,11 @@
 #ifndef LIBUTIL_GUARD_WORKER_HH
 #define LIBUTIL_GUARD_WORKER_HH 1
 
+#include <tr1/functional>
+
 namespace pg512
 {
-    class WorkerTask
-    {
-        public:
-            virtual void run() = 0;
-    };
+    typedef std::tr1::function<void () throw ()> WorkerTask;
 
     class WorkerThread
     {
@@ -59,11 +57,11 @@ namespace pg512
 
             /// \}
 
-            /// Enqueue a descendant of WorkerTask with us.
-            void enqueue(WorkerTask * task);
+            /// Enqueue a WorkerTask with us.
+            void enqueue(WorkerTask & task);
 
             /// Return true if we are idling.
-            bool idle();
+            bool idle() const;
     };
 }
 

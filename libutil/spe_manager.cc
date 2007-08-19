@@ -21,12 +21,13 @@
 #include <libutil/log.hh>
 #include <libutil/mutex.hh>
 #include <libutil/spe_manager.hh>
+#include <libutil/worker.hh>
 
 #include <list>
 #include <string>
+#include <tr1/functional> 
 
 #include <libspe2.h>
-
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 using namespace pg512;
@@ -38,47 +39,14 @@ SPEError::SPEError(const std::string & msg, const std::string & reason) :
 
 struct SPE::Implementation
 {
-    typedef std::list<SPETask *> TaskList;
-
-    /// Our mutex.
-    Mutex * const mutex;
-
-    std::tr1::function<void () throw ()> function;
-
     /// Our thread.
-    Thread * thread;
-
-    /// Our queued tasks.
-    TaskList task_list;
+    WorkerThread * thread;
 
     /// Our libspe context.
     spe_context_ptr_t context;
 
     /// Our device id.
     const DeviceId device;
-
-    /// Enqueue an SPETask.
-    inline void enqueue(SPETask * task)
-    {
-        Lock l(*mutex);
-
-        task_list.push_back(task);
-    }
-
-    /// Dequeue an SPETask and return it or return 0.
-    inline SPETask * dequeue()
-    {
-        Lock l(*mutex);
-        SPETask * result(0);
-
-        if (! task_list.empty())
-        {
-            result = task_list.front();
-            task_list.pop_front();
-        }
-
-        return result;
-    }
 
     /// Return the next device id.
     inline DeviceId next_device_id()
@@ -88,11 +56,16 @@ struct SPE::Implementation
         return result++;
     }
 
+    inline void enqueue(WorkerTask & task)
+    {
+        thread->enqueue(task);
+    }
+
     /// Constructor.
     Implementation() :
-        mutex(new Mutex),
         context(spe_context_create(0, 0)),
-        device(next_device_id())
+        device(next_device_id()),
+        thread(new WorkerThread)
     {
         if (! context)
         {
@@ -117,8 +90,6 @@ struct SPE::Implementation
 
             throw SPEError("Could not create SPE context", reason);
         }
-
-        thread = new Thread(std::tr1::bind(&Implementation::spe_thread, this));
     }
 
     /// Destructor.
@@ -127,7 +98,9 @@ struct SPE::Implementation
         // Kill the thread.
         delete thread;
 
+        // Release the context.
         int retval(spe_context_destroy(context)), counter(5);
+
         while ((retval == -1) && (errno == EAGAIN) && (counter > 0))
         {
             Log::instance()->message(ll_minimal, "SPE '" + stringify(device)
@@ -156,36 +129,6 @@ struct SPE::Implementation
             Log::instance()->message(ll_minimal, "Could not destroy SPE context " + reason + ".");
         }
     }
-
-    static void * spe_thread_function(Implementation * imp)
-    {
-        do
-        {
-            SPETask * task(0);
-
-            // Dequeue task
-            {
-                Lock dequeue_lock(*imp->mutex);
-                task = imp->dequeue();
-            }
-
-            if (task)
-            {
-                // task->run();
-            }
-            else
-            {
-                // Wait or sleep?
-            }
-
-            // Update exit condition
-            {
-                Lock query_lock(*imp->mutex);
-                /// \todo
-            }
-        }
-        while (true);
-    }
 };
 
 SPE::SPE() :
@@ -202,15 +145,38 @@ SPE::~SPE()
 {
 }
 
+spe_context_ptr_t
+SPE::context() const
+{
+    return _imp->context;
+}
+
+void
+SPE::enqueue(SPETask & task)
+{
+    WorkerTask t(std::tr1::bind(task, *this));
+
+    _imp->enqueue(t);
+}
+
 DeviceId
-SPE::id()
+SPE::id() const
 {
     return _imp->device;
+}
+
+bool
+SPE::idle() const
+{
+    return _imp->thread->idle();
 }
 
 struct SPEManager::Implementation
 {
     typedef std::list<SPE> SPEList;
+
+    /// Our mutex.
+    Mutex * const mutex;
 
     /// Our number of available SPEs.
     unsigned spe_count;
@@ -218,10 +184,26 @@ struct SPEManager::Implementation
     /// Out list of SPEs.
     SPEList spe_list;
 
+    /// Dispatch an SPETask to all SPEs.
+    inline void dispatch(SPETask & task)
+    {
+        for (SPEList::iterator i(spe_list.begin()), i_end(spe_list.end()) ; i != i_end ; ++i)
+        {
+            i->enqueue(task);
+        }
+    }
+
     /// Constructor.
     Implementation() :
+        mutex(new Mutex),
         spe_count(spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1)) /// \todo USABLE or PHYSICAL?
     {
+    }
+
+    /// Destructor.
+    ~Implementation()
+    {
+        delete mutex;
     }
 };
 
@@ -257,4 +239,10 @@ SPEManager::Iterator
 SPEManager::end() const
 {
     return Iterator(_imp->spe_list.end());
+}
+
+void
+SPEManager::dispatch(SPETask & task)
+{
+    _imp->dispatch(task);
 }

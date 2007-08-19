@@ -30,8 +30,7 @@ using namespace tests;
 
 namespace
 {
-    class TestTask :
-        public WorkerTask
+    class TestTask
     {
         private:
             unsigned & _v;
@@ -42,7 +41,7 @@ namespace
             {
             }
 
-            virtual void run()
+            virtual void operator() ()
             {
                 ++_v;
             }
@@ -60,12 +59,14 @@ class WorkerQueueTest :
 
         virtual void run() const
         {
-            WorkerThread thread;
             unsigned v(34);
+            TestTask t(v);
+            WorkerThread thread;
+            WorkerTask wt(t);
 
             for (unsigned i(0) ; i < 8 ; ++i)
             {
-                thread.enqueue(new TestTask(v));
+                thread.enqueue(wt);
             }
 
             while (! thread.idle())

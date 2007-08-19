@@ -25,15 +25,18 @@
 #include <libutil/memory_backend.hh>
 #include <libutil/stringify.hh>
 
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
-
 #include <string>
 #include <tr1/memory>
+#include <tr1/functional>
 
 #include <libspe2.h>
+#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace pg512
 {
+    class SPE;
+    class SPEManager;
+
     /**
      * SPEError is thrown by SPEManager and related classes whenever an error
      * occurs in interfacing Libspe2.
@@ -53,9 +56,10 @@ namespace pg512
         SPEError(const std::string & msg, const std::string & reason);
     };
 
-    class SPETask
-    {
-    };
+    /**
+     * SPETask is the type for any task that shall be executable by SPE.
+     */
+    typedef std::tr1::function<void (const SPE &) throw ()> SPETask;
 
     /**
      * An instance of SPE encapsulates one of the system's Synergistic
@@ -94,13 +98,21 @@ namespace pg512
 
             /// \}
 
+            /// Return out libspe2 context.
+            spe_context_ptr_t context() const;
+
+            /// Enqueue an SPETask.
+            void enqueue(SPETask &);
+
             /// Return our device id.
-            DeviceId id();
+            DeviceId id() const;
+
+            /// Return true if we idle.
+            bool idle() const;
     };
 
     /**
-     * SPEManager handles all available SPEs and dispatches SPEThread instances
-     * them.
+     * SPEManager handles all available SPEs and dispatches tasks to them.
      *
      * \ingroup grpcell
      */
@@ -144,7 +156,11 @@ namespace pg512
 
             /// \}
 
-            /// \todo dispatch 
+            /// Dispatch an SPETask to the specified SPE.
+            void dispatch(const DeviceId, SPETask &);
+
+            /// Dispatch an SPETask to all SPEs.
+            void dispatch(SPETask &);
     };
 }
 

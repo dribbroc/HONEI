@@ -5,6 +5,8 @@
 #define DEBUG 1
 #endif
 
+#include <libutil/mutex.hh>
+#include <libutil/lock.hh>
 #include <libutil/spe_manager.hh>
 #include <unittest/unittest.hh>
 
@@ -24,11 +26,11 @@ class SPEManagerIterationTest :
 
         virtual void run() const
         {
-	    try
+            try
             {
                 unsigned long count(0);
-                for (SPEManager::Iterator i(SPEManager::instance()->begin()), i_end(SPEManager::instance()->end()) ;
-                        i != i_end ; ++i, ++count)
+                for (SPEManager::Iterator i(SPEManager::instance()->begin()),
+                        i_end(SPEManager::instance()->end()) ; i != i_end ; ++i, ++count)
                 {
                     std::cout << "SPE id is '" << i->id() << "'" << std::endl;
                 }
@@ -41,3 +43,65 @@ class SPEManagerIterationTest :
             }
         }
 } spe_manager_iteration_test;
+
+namespace
+{
+    class TestTask
+    {
+        private:
+            static DeviceId v;
+            Mutex * const m;
+
+        public:
+            TestTask() :
+                m(new Mutex)
+            {
+            }
+
+            virtual void operator() (const SPE & spe)
+            {
+                DeviceId id(spe.id());
+                Lock l(*m);
+
+                v += id;
+            }
+
+            inline DeviceId value() const
+            {
+                Lock l(*m);
+
+                return v;
+            }
+    };
+
+    DeviceId TestTask::v = 0;
+}
+
+class SPEManagerThreadingTest :
+    public QuickTest
+{
+    public:
+        SPEManagerThreadingTest() :
+            QuickTest("spe_manager_threading_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            TestTask t;
+            SPETask st(t);
+            unsigned count(std::distance(SPEManager::instance()->begin(), SPEManager::instance()->end())),
+                     repetitions(5);
+            bool unequal;
+
+            SPEManager::instance()->dispatch(st);
+
+            while ((unequal = ((count * (count - 1) / 2) != t.value())) && (repetitions > 0))
+            {
+                sleep(1);
+                --repetitions;
+            }
+
+            TEST_CHECK(! unequal);
+        }
+} spe_manager_threading_test;
