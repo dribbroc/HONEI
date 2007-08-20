@@ -92,7 +92,8 @@ namespace pg512
 				}
 				else
 				{
-                *l += scalar * (*r);
+                    *l += scalar * (*r);
+                    ++l; ++r;
 				}
             }
 			///\todo: perhaps sparsify - written results may be zero.
