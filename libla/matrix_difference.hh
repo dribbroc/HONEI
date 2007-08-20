@@ -106,7 +106,7 @@ namespace pg512
             }
 
             typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()), r_end(b.end_non_zero_elements());
-            for ( ; r != r_end ; ++r; )
+            for ( ; r != r_end ; ++r )
             {
                 a[r.row()][r.column()] -= *r;
             }
