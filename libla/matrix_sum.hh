@@ -106,10 +106,10 @@ namespace pg512
 
             // DenseMatrix<>::operator[] is as fast as the iterator-based access.
             // Avoid using unnecessary branches by iterating over a's elements.
-            for (typename Matrix<DT2_>::ConstElementIterator r(r.begin_non_zero_elements()),
+            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
             {
-                a[r.index()] += *r;
+                a[r.row()][r.column()] += *r;
             }
 
             return a;
@@ -160,7 +160,7 @@ namespace pg512
 
             if (a.rows() != b.rows())
             {
-                throw MatrixSizeDoesNotMatch(b.rows(), a.rows()); 
+                throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
             }
 
             typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
@@ -189,9 +189,9 @@ namespace pg512
                 throw MatrixIsNotSquare(a.rows(), a.columns());
             }
 
-            if (a.rows() != b.rows())
+            if (a.size() != b.size())
             {
-                throw MatrixSizeDoesNotMatch(b.rows(), a.rows()); /// \todo Implement size() method?
+                throw MatrixSizeDoesNotMatch(b.size(), a.size()); /// \todo Implement size() method?
             }
 
             for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands()) ;
@@ -200,7 +200,7 @@ namespace pg512
                 if (! r.exists())
                     continue;
 
-                unsigned long size(b.rows()); /// \todo Add size() method for square matrices?
+                unsigned long size(b.size());
                 unsigned long row_index(-std::max(long(r.index() - size + 1), long(0)));
                 unsigned long col_index(std::min(long(r.index() - size + 1), long(0)));
 
@@ -235,16 +235,10 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements());
             for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
-                while (r.index() < l.index() && (r != r_end))
-                {
-                    ++r;
-                }
-
-                *l += *r;
+                *l += b[l.row()][l.column()];
                 ++l;
             }
 

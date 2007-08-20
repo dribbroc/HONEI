@@ -105,17 +105,10 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements());
             typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()), r_end(b.end_non_zero_elements());
-            for ( ; r != r_end ; )
+            for ( ; r != r_end ; ++r; )
             {
-                while (l.index() < r.index())
-                {
-                    ++l;
-                }
-
-                *l -= *r;
-                ++r; ++l;
+                a[r.row()][r.column()] -= *r;
             }
 
             return a;

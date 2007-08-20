@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+        * libla/matrix_sum.hh, libla/matrix_difference.hh: Fixed bugs, made
+	consequent use of new size()-member in BandedMatrix and []-operator
+	for dense matrices.
+
+2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/banded_matrix.hh: Added member size().
 	* libla/matrix_difference.hh: Made use of size(), optimized
 	iterator-order (sometimes it was stupidly iterated over all elements
