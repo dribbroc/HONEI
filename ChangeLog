@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+        * libla/vector_sum.hh, libla/vector_difference.hh,
+	libla/vector_elementwise_product.hh: Some fixes and optimizations.
+
+2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
         * libla/matrix_sum.hh: Some corrections.
 	* libla/saxpy.hh: Simplified and destupided algorithms.
 

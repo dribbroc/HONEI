@@ -112,18 +112,12 @@ namespace pg512
 
             DenseVector<DataType1_> result(left.size(),0, 0, 1);
 
-            typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements());
             for (typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; ++r)
             {
-                while (l.index() < r.index() && (l != l_end))
-                {
-                    ++l;
-                }
-                *l -= *r;
-				++r;
+                left[r.index()] -= *r;
             }
+
             return left;
         }
 
