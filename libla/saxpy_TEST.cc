@@ -159,7 +159,7 @@ class SparseVectorScaledSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(21);
+            unsigned long size(15);
             SparseVector<DataType_> sv1(size, size / 7 + 1);
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
