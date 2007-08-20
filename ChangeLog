@@ -7,7 +7,8 @@ see the NEWS file.
 
 2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-        * libla/saxpy.hh: Fixed error. Tests pass.
+        * libla/saxpy.hh: Fixed some issues, should be okay when
+	Sparse-Iterators are fixed.
 
 2007-08-20 Markus Geveler <apryde@gmx.de>
 
