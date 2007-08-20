@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+        * libla/matrix_sum.hh: Some corrections.
+	* libla/saxpy.hh: Simplified and destupided algorithms.
+
+2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
         * libla/matrix_sum.hh, libla/matrix_difference.hh: Fixed bugs, made
 	consequent use of new size()-member in BandedMatrix and []-operator
 	for dense matrices.

@@ -59,7 +59,7 @@ namespace pg512
                     l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l += scalar * (*r);
-				
+
             }
 
             return left;
@@ -111,17 +111,10 @@ namespace pg512
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-			typename Vector<DataType1_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements());
             for (typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; ++r )
             {
-				while (l.index() < r.index() && (l != l_end))
-                {
-                    ++l;
-                }
-
-                *l += scalar * (*r);
-                ++r;
+                left[r.index()] += scalar * (*r);
             }
 			///\todo: perhaps sparsify - if senseless use with scalar == zero, zeros may be written.
             return left;
@@ -139,20 +132,15 @@ namespace pg512
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-			typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()), l_end(left.end_non_zero_elements());
-            for (typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements()),
-                    r_end(right.end_elements()) ; r != r_end ; )
+            // Here there is no sense in using non_zero_iterator, cause every element in resulting sparse vector must be +=ed with scalar * b[i]
+            typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
+			for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
             {
-				while (l.index() > r.index() && (l != l_end))
-                {
-					left[r.index()] += scalar * (*r);
-					++r;
-                }
-
                 *l += scalar * (*r);
-                ++l; ++r;
+                ++r;
             }
-			///\todo: perhaps sparsify - if senseless use with scalar == zero, zeros may be written.
+			///\todo: perhaps sparsify - if senseless use with scalar == zero or *r == 0, zeros may be written.
             return left;
         }
 

@@ -158,9 +158,9 @@ namespace pg512
         {
             CONTEXT("When adding BandedMatrix to BandedMatrix:");
 
-            if (a.rows() != b.rows())
+            if (a.size() != b.size())
             {
-                throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
+                throw MatrixSizeDoesNotMatch(b.size(), a.size());
             }
 
             typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
@@ -189,9 +189,9 @@ namespace pg512
                 throw MatrixIsNotSquare(a.rows(), a.columns());
             }
 
-            if (a.size() != b.size())
+            if (a.rows() != b.rows())
             {
-                throw MatrixSizeDoesNotMatch(b.size(), a.size()); /// \todo Implement size() method?
+                throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
             }
 
             for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands()) ;
