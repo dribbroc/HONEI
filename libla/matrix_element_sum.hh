@@ -25,6 +25,7 @@
 #include <libla/banded_matrix.hh>
 #include <libla/sparse_matrix.hh>
 #include <libla/matrix_error.hh>
+#include <libla/vector_element_sum.hh>
 
 /**
  * \file
@@ -85,10 +86,10 @@ namespace pg512
         template <typename DataType_> static DataType_ value(const BandedMatrix<DataType_> & matrix)
         {
             DataType_ result(0);
-			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()),
-                    l_end(matrix.end_elements()) ; l != l_end ; ++l)
+            for (typename BandedMatrix<DataType_>::ConstVectorIterator l(matrix.begin_bands()),
+                    l_end(matrix.end_bands()) ; l != l_end ; ++l)
             {
-                result += *l;
+                result += VectorElementSum<DataType_>::value(*l);
             }
 
             return result;

@@ -25,6 +25,7 @@
 #include <libla/banded_matrix.hh>
 #include <libla/sparse_matrix.hh>
 #include <libla/matrix_error.hh>
+#include <libla/vector_elementwise_product.hh>
 
 /**
  * \file
@@ -48,7 +49,7 @@ namespace pg512
          * \param left Reference to a DenseMatrix. Its return type is used for the result matrix.
          * \param right Reference to a DenseMatrix.
          **/
-         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -76,7 +77,7 @@ namespace pg512
          * \param left Reference to a DenseMatrix. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix.
          **/
-         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -88,18 +89,19 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(right.rows(), left.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements());
+
+            for (typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()); r != r_end ; ++r)
             {
-                while (l.index() < r.index() && (l != l_end))
+                while (l.index() < r.index())
                 {
 					*l = DataType1_(0);
                     ++l;
                 }
 
                 *l *= *r;
-                ++r;
+                ++r; ++l;
             }
 
             return left;
@@ -111,7 +113,7 @@ namespace pg512
          * \param left Reference to a SparseMatrix. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix
          **/
-         template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -153,18 +155,24 @@ namespace pg512
          * \param left Reference to a Banded Matrix. Its return type is used for the result matrix.
          * \param right Reference to a Banded Matrix.
          **/
-         template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
         {
             if (left.rows() != right.rows())
             {
                 throw MatrixSizeDoesNotMatch(right.rows(), left.rows());
             }
 
-            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename BandedMatrix<DataType2_>::ConstVectorIterator r(right.begin_bands());
+            for (typename BandedMatrix<DataType1_>::VectorIterator l(left.begin_bands()),
+                    l_end(left.end_bands()) ; l != l_end ; ++l)
             {
-                *l *= *r;
+                if (! r.exists()) //won't check l.exists() here, cause it is always created by Iterator.
+                {
+                    ++r;
+                    continue;
+                }
+
+                *l = VectorElementwiseProduct<>::value(*l, *r);
                 ++r;
             }
 
@@ -176,7 +184,7 @@ namespace pg512
          * \param left Reference to a BandedMatrix. Its return type is used for the result matrix.
          * \param right Reference to a DenseMatrix.
          **/
-         template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const RowAccessMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -200,11 +208,42 @@ namespace pg512
         }
 
         /**
+         * Returns the resulting matrix after multiplying a SparseMatrix instance to a BandedMatrix instance elementwise.
+         * \param left Reference to a BandedMatrix. Its return type is used for the result matrix.
+         * \param right Reference to a SparseMatrix.
+         **/
+        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> & value(BandedMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements());
+            for (typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()); r != r_end ; ++r)
+            {
+                while (l.index() < r.index())
+                    ++l;
+
+                *l *= *r;
+                ++l;
+            }
+
+            return left;
+        }
+
+        /**
          * Returns the resulting matrix after multiplying a BandedMatrix instance to a DenseMatrix instance elementwise.
          * \param left Reference to a DenseMatrix. Its return type is used for the result matrix.
          * \param right Reference to a BandedMatrix.
          **/
-         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -226,6 +265,38 @@ namespace pg512
 
             return left;
         }
+
+        /**
+         * Returns the resulting matrix after multiplying a BandedMatrix instance to a SparseMatrix instance elementwise.
+         * \param left Reference to a SparseMatrix. Its return type is used for the result matrix.
+         * \param right Reference to a BandedMatrix.
+         **/
+        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const BandedMatrix<DataType2_> & right)
+        {
+            if (left.columns() != right.columns())
+            {
+                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+            }
+
+            if (left.rows() != right.rows())
+            {
+                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+            }
+
+            typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; ++l)
+            {
+                while (r.index() < l.index())
+                    ++r;
+
+                *l *= *r;
+                ++r;
+            }
+
+            return left;
+        }
+
     };
 }
 #endif

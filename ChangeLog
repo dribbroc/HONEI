@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/banded_matrix.hh: Added member size().
+	* libla/matrix_difference.hh: Made use of size(), optimized
+	iterator-order (sometimes it was stupidly iterated over all elements
+	instead of non_zero_elements), killed some overhead-ifs.
+	* libla/matrix_element_sum.hh: Made use of BandIterator.
+	* libla/matrix_elementwise_product.hh: optimized iterator-orders, made
+	banded-banded use Band-Iterators, added new cases Sparse <- Sparse *
+	Banded and Dense <- Dense * Banded.
+
 2007-08-19 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Resolved logical bug in

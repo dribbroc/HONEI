@@ -181,11 +181,17 @@ namespace pg512 ///< \todo Namespace name?
             {
                 return _size;
             }
-            
+
+            /// Returns our size, equal to rows and columns.
+            virtual unsigned long size() const
+            {
+                return _size;
+            }
+
             /// Inserts a new Band in the matrix.
             void insert_band(signed long index, DenseVector<DataType_> * vector)
             {
-                if (_size != vector->size()) 
+                if (_size != vector->size())
                 {
                     throw VectorSizeDoesNotMatch(_size, vector->size());
                 }

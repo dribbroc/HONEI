@@ -105,17 +105,17 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
-                    l_end(a.end_elements()) ; l != l_end ; )
+            typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements());
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()), r_end(b.end_non_zero_elements());
+            for ( ; r != r_end ; )
             {
-                while (l.index() < r.index() && (l != l_end))
+                while (l.index() < r.index())
                 {
                     ++l;
                 }
 
                 *l -= *r;
-                ++r;
+                ++r; ++l;
             }
 
             return a;
@@ -165,9 +165,9 @@ namespace pg512
         {
             CONTEXT("When subtracting BandedMatrix from BandedMatrix:");
 
-            if (a.rows() != b.rows())
+            if (a.size() != b.size())
             {
-                throw MatrixSizeDoesNotMatch(b.rows(), a.rows()); /// \todo Implement size() method?
+                throw MatrixSizeDoesNotMatch(b.size(), a.size());
             }
 
             typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
@@ -243,7 +243,7 @@ namespace pg512
             for (typename MutableMatrix<DT2_>::ElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; ++r, ++l)
             {
-                while (l.index() < r.index() && (l != l_end))
+                while (l.index() < r.index())
                 {
                     ++l;
                 }
