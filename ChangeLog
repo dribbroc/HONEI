@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-20 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh, libswe/solver_TEST.cc: Found and resolved critical
+	memory leak - bug, adjusted index range in assembly stages, adjusted
+	debug output, cleaned up a bit - RelaxSolver has not crashed in any of
+	my tests yet but it also reveals, that with the current source term
+	implementation, a LAKE AT REST situation will collapse after the first
+	60 timesteps.
+	
 2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
         * libla/saxpy.hh: Fixed some issues, should be okay when
