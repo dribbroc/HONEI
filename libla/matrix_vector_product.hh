@@ -73,7 +73,7 @@ namespace pg512
             return result;
         }
 
-		/**
+        /**
          * Returns the resulting vector after multiplying a SparseVector to a given DenseMatrix instance.
          * \param matrix The DenseMatrix to be used as factor.
          * \param vector SparseVector to be used as factor.
@@ -97,7 +97,7 @@ namespace pg512
             return result;
         }
 
-		/**
+        /**
          * Returns the resulting vector after multiplying a DenseVector to a given SparseMatrix instance.
          * \param matrix The SparseMatrix to be used as factor.
          * \param vector DenseVector to be used as factor.
@@ -117,7 +117,7 @@ namespace pg512
                 *l = ScalarProduct<Tag_>::value(v, vector);
                 ++l;
             }
-			///\todo: perhaps sparsify
+            ///\todo: perhaps sparsify
             return result;
         }
 
@@ -141,7 +141,7 @@ namespace pg512
                 *l = ScalarProduct<Tag_>::value(vector, v);
                 ++l;
             }
-			///\todo: perhaps sparsify
+            ///\todo: perhaps sparsify
             return result;
         }
 
@@ -160,7 +160,6 @@ namespace pg512
             DenseVector<DataType1_> result(matrix.rows(), DataType1_(0));
             for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
             {
-                DenseVector<DataType1_> band = *vi;
                 typename Vector<DataType2_>::ConstElementIterator j(vector.begin_elements()), j_end(vector.end_elements());
                 typename Vector<DataType1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements());
 
@@ -172,8 +171,8 @@ namespace pg512
                     {
                         ++j; // Get the right position in vector.
                     }
-                    unsigned long end = band.size() - (vi.index() - middle_index); //Calculation of the element-index to stop in iteration!
-                    for(typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()), b_end(band.element_at(end)) ; b != b_end ; ++b)
+                    unsigned long end = vi->size() - (vi.index() - middle_index); //Calculation of the element-index to stop in iteration!
+                    for(typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->element_at(end)) ; b != b_end ; ++b)
                     {
                         *r += *b * *j;
                         if (j != j_end && r != r_end)
@@ -191,7 +190,7 @@ namespace pg512
                     {
                         ++r; // Get the right position in result vector.
                     }
-                    for(typename Vector<DataType1_>::ConstElementIterator b(band.element_at(start)), b_end(band.end_elements()) ; b != b_end ; ++b)
+                    for(typename Vector<DataType1_>::ConstElementIterator b(vi->element_at(start)), b_end(vi->end_elements()) ; b != b_end ; ++b)
                     {
                         *r += *b * *j;
                         if (j != j_end && r != r_end)
@@ -221,8 +220,7 @@ namespace pg512
             SparseVector<DataType1_> result(vector.size(), vector.capacity());
             for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
             {
-                DenseVector<DataType1_> band = *vi;
-                typename Vector<DataType1_>::ConstElementIterator b(band.begin_elements()), b_end(band.end_elements());;
+                typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->end_elements());;
                 typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
                 int middle_index = matrix.rows() -1;
 
@@ -260,7 +258,7 @@ namespace pg512
                     }
                 }
             }
-			///\todo: perhaps sparsify (*b can be zero)
+            ///\todo: perhaps sparsify (*b can be zero)
             return result;
         }
     };
