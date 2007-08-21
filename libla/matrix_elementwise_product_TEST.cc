@@ -172,7 +172,15 @@ class SparseMatrixElementwiseProductTest :
                     if (i.index() % 10 == 0) 
                     {
                         *i = DataType_(2);
+                        *k = DataType_(0);                        
+                    }
+                    if (i.index() % 7 == 0) 
+                    {
                         *j = DataType_(3);
+                        *k = DataType_(0);                        
+                    }
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                    {
                         *k = DataType_(6);                        
                     }
                 }  
@@ -213,9 +221,17 @@ class SparseMatrixElementwiseProductQuickTest :
                 if (i.index() % 10 == 0) 
                 {
                     *i = DataType_(2);
-                    *j = DataType_(3);
-                    *k = DataType_(6);                        
+                    *k = DataType_(0);                        
                 }
+                if (i.index() % 7 == 0) 
+                {
+                    *j = DataType_(3);
+                    *k = DataType_(0);                        
+                }
+                if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                {
+                    *k = DataType_(6);                        
+                }                                
             }  
                         
             SparseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(sm1, sm2));
