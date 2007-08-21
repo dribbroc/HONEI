@@ -176,9 +176,17 @@ class SparseMatrixDifferenceTest :
                     if (i.index() % 10 == 0)
                     {
                         *i = DataType_((i.index() +1) * 2 / 1.23456789);
-                        *j = DataType_((i.index() +1) / 1.23456789);
-                        *k = DataType_((i.index() +1) / 1.23456789);
+                        *k = DataType_((i.index() +1) * 2 / 1.23456789);                        
                     }
+                    if (i.index() % 7 == 0)
+                    {
+                        *j = DataType_((i.index() +1) / 1.23456789);
+                        *k = DataType_((i.index() +1) / -1.23456789);
+                    }
+                    if (i.index() % 10 == 0 && i.index() % 7 == 0)
+                    {
+                        *k = DataType_((i.index() +1) / 1.23456789);
+                    }                                        
                 }
                 SparseMatrix<DataType_> & difference(MatrixDifference<>::value(sm1, sm2));
 
@@ -206,7 +214,7 @@ class SparseMatrixDifferenceQuickTest :
 
         virtual void run() const
         {
-            unsigned long size (25);
+            unsigned long size (21);
             SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                 sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
@@ -216,9 +224,17 @@ class SparseMatrixDifferenceQuickTest :
                 if (i.index() % 10 == 0)
                 {
                     *i = DataType_((i.index() +1) * 2 / 1.23456789);
-                    *j = DataType_((i.index() +1) / 1.23456789);
-                    *k = DataType_((i.index() +1) / 1.23456789);
+                    *k = DataType_((i.index() +1) * 2 / 1.23456789);                        
                 }
+                if (i.index() % 7 == 0)
+                {
+                    *j = DataType_((i.index() +1) / 1.23456789);
+                    *k = DataType_((i.index() +1) / -1.23456789);
+                }
+                if (i.index() % 10 == 0 && i.index() % 7 == 0)
+                {
+                    *k = DataType_((i.index() +1) / 1.23456789);
+                }                                        
             }
             SparseMatrix<DataType_> & difference(MatrixDifference<>::value(sm1, sm2));
 

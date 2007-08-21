@@ -125,20 +125,28 @@ class SparseVectorDifferenceTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 8 + 1);
+                SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 7 + 1), sv3(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                    j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                    j(sv2.begin_elements()), k(sv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0) 
                     {
-                        *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                        *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                        *i = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                        *k = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
                     }
+                    if (i.index() % 7 == 0) 
+                    {
+                        *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                        *k = static_cast<DataType_>((i.index() +1) / -1.23456789);
+                    }
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                    {
+                        *k = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    }                                
                 }            
 
-                SparseVector<DataType_> difference1(VectorDifference<>::value(sv1, sv2));
-                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(difference1));
-                TEST_CHECK_EQUAL(v1, 0);
+            SparseVector<DataType_> difference1(VectorDifference<>::value(sv1, sv2));
+            TEST_CHECK_EQUAL(difference1, sv3);
             }
 
             SparseVector<DataType_> sv00(1, 1), sv01(5, 1);
@@ -161,22 +169,29 @@ class SparseVectorDifferenceQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
-            SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 8 + 1);
+            unsigned long size(25);
+            SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 7 + 1), sv3(size, size / 8 + 1);
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                j(sv2.begin_elements()), k(sv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0) 
                 {
-                    *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                    *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    *i = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                    *k = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
                 }
+                if (i.index() % 7 == 0) 
+                {
+                    *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    *k = static_cast<DataType_>((i.index() +1) / -1.23456789);
+                }
+                if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                {
+                    *k = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                }                                
             }            
-            (sv1)[1] = DataType_(5);
 
             SparseVector<DataType_> difference1(VectorDifference<>::value(sv1, sv2));
-            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(difference1));
-            TEST_CHECK_EQUAL_WITHIN_EPS(v1, DataType_(5), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL(difference1, sv3);
 
             SparseVector<DataType_> sv00(1, 1), sv01(5, 1);
             TEST_CHECK_THROWS(VectorDifference<DataType_>::value(sv00, sv01), VectorSizeDoesNotMatch);

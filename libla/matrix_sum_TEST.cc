@@ -207,9 +207,17 @@ class SparseMatrixSumTest :
                     if (i.index() % 10 == 0) 
                     {
                         *i = DataType_(2);
-                        *j = DataType_(-3);
-                        *k = DataType_(-1);                        
+                        *k = DataType_(2);                        
                     }
+                    if (i.index() % 7 == 0) 
+                    {
+                        *j = DataType_(-3);
+                        *k = DataType_(-3);                        
+                    }
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                    {
+                        *k = DataType_(-1);                        
+                    }                                        
                 }              
                 SparseMatrix<DataType_> & sum(MatrixSum<DataType_>::value(sm1, sm2));
 
@@ -247,9 +255,17 @@ class SparseMatrixSumQuickTest :
                 if (i.index() % 10 == 0) 
                 {
                     *i = DataType_(2);
-                    *j = DataType_(-3);
-                    *k = DataType_(-1);                        
+                    *k = DataType_(2);                        
                 }
+                if (i.index() % 7 == 0) 
+                {
+                    *j = DataType_(-3);
+                    *k = DataType_(-3);                        
+                }
+                if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                {
+                    *k = DataType_(-1);                        
+                }                                        
             }              
             SparseMatrix<DataType_> & sum(MatrixSum<DataType_>::value(sm1, sm2));
 
