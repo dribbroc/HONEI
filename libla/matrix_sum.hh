@@ -43,7 +43,7 @@ namespace pg512
      *
      * MatrixSum is the class template for the addition operation
      * \f[
-     *     MatrixSum(a, b): \quad r \aarrow a + b,
+     *     MatrixSum(a, b): \quad r \leftarrow a + b,
      * \f]
      * which yields r, the sum of matrices a and b.
      *
