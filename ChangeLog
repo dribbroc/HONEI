@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/matrix_vector_product.hh: Fixed bug in dereferencing
+	ConstVectorIterator to mutable DenseVector.
+
 2007-08-20 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Found and resolved critical
