@@ -27,6 +27,7 @@
 #include <libla/matrix_error.hh>
 #include <libla/scalar_vector_product.hh>
 #include <libla/vector_difference.hh>
+#include <iostream>
 
 /**
  * \file
@@ -62,6 +63,11 @@ namespace pg512
          * \param b The matrix that is the subtrahend of the operation.
          *
          * \retval Will modify the minuend a and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          */
 
         /// \{
@@ -129,23 +135,23 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
-                    l_end(a.end_non_zero_elements()) ; l != l_end ; )
+            typename MutableMatrix<DT2_>::ElementIterator l(a.begin_non_zero_elements()), l_end(a.end_non_zero_elements());
+            for (typename Matrix<DT1_>::ConstElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
             {
-                if (r.index() < l.index())
-                {
-                    a[r.row()][r.column()] = -(*r);
-                    ++r;
-                }
-                else if (l.index() < r.index())
+                while (l.index() < r.index() && l != l_end)
                 {
                     ++l;
                 }
-                else
+
+                if (r.index() < l.index() || l == l_end)
+                {
+                    a[r.row()][r.column()] = -(*r);
+                }
+                else // l.index() == r.index()
                 {
                     *l -= *r;
-                    ++l; ++r;
+                    ++l;
                 }
             }
 
@@ -195,9 +201,9 @@ namespace pg512
         {
             CONTEXT("When subtracting DenseMatrix from BandedMatrix:");
 
-            if (a.columns() != b.columns())
+            if (b.columns() != b.rows())
             {
-                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                throw MatrixIsNotSquare(b.rows(), b.columns());
             }
 
             if (a.rows() != b.rows())
@@ -205,7 +211,6 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            /// \todo Optimise algorithm. Iterate over a's bands.
             typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements());
             for (typename MutableMatrix<DT2_>::ElementIterator r(b.begin_elements()),
                     r_end(b.end_elements()) ; r != r_end ; ++r, ++l)
@@ -221,28 +226,20 @@ namespace pg512
         {
             CONTEXT("When subtracting SparseMatrix from BandedMatrix:");
 
-            if (a.columns() != b.columns())
+            if (b.columns() != b.rows())
             {
-                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
-            }
+                throw MatrixIsNotSquare(b.rows(), b.columns());
+            } }
 
             if (a.rows() != b.rows())
             {
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            /// \todo Optimise algorithm. Iterate over a's bands.
-            typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements()), l_end(a.begin_elements());
-            for (typename MutableMatrix<DT2_>::ElementIterator r(b.begin_non_zero_elements()),
-                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r, ++l)
+            for (typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
             {
-                while (l.index() < r.index())
-                {
-                    ++l;
-                }
-
-                *r = *l - *r;
-                ++r;
+                    b[l.row()][l.column()] += *l;
             }
 
             return b;

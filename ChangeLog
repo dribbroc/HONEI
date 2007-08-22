@@ -5,15 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-23 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/matrix_difference.hh, libla/matrix_sum.hh: Reworked some
+	sparse--algorithms! Debugged Throwing of Exceptions. Added information
+	concerning thrown exceptions to doxygen annotations.
 
 2007-08-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
-    * libla/vector_sum_TEST.cc, libla/saxpy_TEST.cc, 
-    libla/vector_elementwise_product_TEST.cc, libla/scalar_product_TEST.cc,
-    libla/vector_difference_TEST.cc: Added tests for sparse/dense and dense/sparse
-    operations where wise.
+	* libla/vector_sum_TEST.cc, libla/saxpy_TEST.cc,
+	libla/vector_elementwise_product_TEST.cc,
+	libla/scalar_product_TEST.cc, libla/vector_difference_TEST.cc: Added
+	tests for sparse/dense and dense/sparse operations where wise.
 
-	
 2007-08-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/matrix_elementwise_product_TEST.cc: Now using
