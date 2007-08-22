@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+
+	* libla/matrix_sum_TEST.cc, libla/matrix_difference_TEST.cc: Added
+	tests for mixed sparse/dense/banded operations where wise.
+	
 2007-08-23 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/matrix_difference.hh, libla/matrix_sum.hh: Reworked some
