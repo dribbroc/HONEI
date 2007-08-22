@@ -229,7 +229,7 @@ namespace pg512
             if (b.columns() != b.rows())
             {
                 throw MatrixIsNotSquare(b.rows(), b.columns());
-            } }
+            }
 
             if (a.rows() != b.rows())
             {
