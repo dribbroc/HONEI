@@ -90,6 +90,88 @@ DenseVectorElementwiseProductQuickTest<float> dense_vector_elementwise_product_q
 DenseVectorElementwiseProductQuickTest<double> dense_vector_elementwise_product_quick_test_double("double");
 
 template <typename DataType_>
+class SparseVectorDenseVectorElementwiseProductTest :
+    public BaseTest
+{
+    public:
+        SparseVectorDenseVectorElementwiseProductTest(const std::string & type) :
+            BaseTest("sparse_vector_dense_vector_elementwise_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            {
+                SparseVector<DataType_> sv1(size, size / 7 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 7 == 0) *i = static_cast<DataType_>(2);
+                }            
+                DenseVector<DataType_> dv2(size, DataType_(3));
+                SparseVector<DataType_> sv3(size, size / 8 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(sv3.begin_elements()), i_end(sv3.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    if (i.index() % 7 == 0) 
+                        *i = static_cast<DataType_>(6);
+                }  
+                SparseVector<DataType_> prod(VectorElementwiseProduct<DataType_>::value(sv1, dv2));
+
+                TEST_CHECK_EQUAL(prod, sv3);
+            }
+
+            SparseVector<DataType_> sv01(3, 1);
+            DenseVector<DataType_> dv02(4);
+
+            TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv01, dv02), VectorSizeDoesNotMatch);
+        }
+};
+SparseVectorDenseVectorElementwiseProductTest<float> sparse_vector_dense_vector_elementwise_product_test_float("float");
+SparseVectorDenseVectorElementwiseProductTest<double> sparse_vector_dense_vector_elementwise_product_test_double("double");
+
+template <typename DataType_>
+class SparseVectorDenseVectorElementwiseProductQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorDenseVectorElementwiseProductQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_dense_vector_elementwise_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            SparseVector<DataType_> sv1(size, size / 7 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 7 == 0) *i = static_cast<DataType_>(2);
+            }            
+            DenseVector<DataType_> dv2(size, DataType_(3));
+            SparseVector<DataType_> sv3(size, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv3.begin_elements()), i_end(sv3.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 7 == 0) 
+                    *i = static_cast<DataType_>(6);
+            }  
+            SparseVector<DataType_> prod(VectorElementwiseProduct<DataType_>::value(sv1, dv2));
+
+            TEST_CHECK_EQUAL(prod, sv3);
+
+            SparseVector<DataType_> sv01(3, 1);
+            DenseVector<DataType_> dv02(4);
+
+            TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv01, dv02), VectorSizeDoesNotMatch);
+        }
+};
+SparseVectorDenseVectorElementwiseProductQuickTest<float> sparse_vector_dense_vector_elementwise_product_quick_test_float("float");
+SparseVectorDenseVectorElementwiseProductQuickTest<double> sparse_vector_dense_vector_elementwise_product_quick_test_double("double");
+
+template <typename DataType_>
 class SparseVectorElementwiseProductTest :
     public BaseTest
 {
@@ -132,7 +214,6 @@ class SparseVectorElementwiseProductTest :
             TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv02, sv01), VectorSizeDoesNotMatch);
         }
 };
-
 SparseVectorElementwiseProductTest<float> sparse_vector_elementwise_product_test_float("float");
 SparseVectorElementwiseProductTest<double> sparse_vector_elementwise_product_test_double("double");
 
@@ -177,6 +258,5 @@ class SparseVectorElementwiseProductQuickTest :
             TEST_CHECK_THROWS(VectorElementwiseProduct<DataType_>::value(sv02, sv01), VectorSizeDoesNotMatch);
         }
 };
-
 SparseVectorElementwiseProductQuickTest<float> sparse_vector_elementwise_product_quick_test_float("float");
 SparseVectorElementwiseProductQuickTest<double> sparse_vector_elementwise_product_quick_test_double("double");

@@ -68,7 +68,6 @@ class DenseVectorDifferenceTest :
             TEST_CHECK_THROWS(VectorDifference<DataType_>::value(dv00, dv01), VectorSizeDoesNotMatch);
         }
 };
-
 DenseVectorDifferenceTest<float> dense_vector_difference_test_float("float");
 DenseVectorDifferenceTest<double> dense_vector_difference_test_double("double");
 
@@ -112,6 +111,98 @@ DenseVectorDifferenceQuickTest<float>  dense_vector_difference_quick_test_float(
 DenseVectorDifferenceQuickTest<double> dense_vector_difference_quick_test_double("double");
 
 template <typename DataType_>
+class DenseVectorSparseVectorDifferenceTest :
+    public BaseTest
+{
+    public:
+        DenseVectorSparseVectorDifferenceTest(const std::string & type) :
+            BaseTest("dense_vector_sparse_vector_difference_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
+                SparseVector<DataType_> sv2(size, size / 7 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                        *k = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                    }
+                    if (i.index() % 7 == 0) 
+                    {
+                        *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                        *k = static_cast<DataType_>((i.index() +1) / -1.23456789);
+                    }
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                    {
+                        *k = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    }                                
+                }            
+
+            DenseVector<DataType_> difference1(VectorDifference<>::value(dv1, sv2));
+            TEST_CHECK_EQUAL(difference1, dv3);
+            }
+
+            DenseVector<DataType_> dv00(1);
+            SparseVector<DataType_> sv01(5, 1);
+            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(dv00, sv01), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorSparseVectorDifferenceTest<float> dense_vector_sparse_vector_difference_test_float("float");
+DenseVectorSparseVectorDifferenceTest<double> dense_vector_sparse_vector_difference_test_double("double");
+
+template <typename DataType_>
+class DenseVectorSparseVectorDifferenceQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorSparseVectorDifferenceQuickTest(const std::string & type) :
+            QuickTest("dense_vector_sparse_vector_difference_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
+            SparseVector<DataType_> sv2(size, size / 7 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                    *k = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                }
+                if (i.index() % 7 == 0) 
+                {
+                    *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                    *k = static_cast<DataType_>((i.index() +1) / -1.23456789);
+                }
+                if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                {
+                    *k = static_cast<DataType_>((i.index() +1) / 1.23456789);
+                }                                
+            }
+
+            DenseVector<DataType_> difference1(VectorDifference<>::value(dv1, sv2));
+            TEST_CHECK_EQUAL(difference1, dv3);
+
+            DenseVector<DataType_> dv00(1);
+            SparseVector<DataType_> sv01(5, 1);
+            TEST_CHECK_THROWS(VectorDifference<DataType_>::value(dv00, sv01), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorSparseVectorDifferenceQuickTest<float> dense_vector_sparse_vector_difference_quick_test_float("float");
+DenseVectorSparseVectorDifferenceQuickTest<double> dense_vector_sparse_vector_difference_quick_test_double("double");
+
+template <typename DataType_>
 class SparseVectorDifferenceTest :
     public BaseTest
 {
@@ -153,7 +244,6 @@ class SparseVectorDifferenceTest :
             TEST_CHECK_THROWS(VectorDifference<DataType_>::value(sv00, sv01), VectorSizeDoesNotMatch);
         }
 };
-
 SparseVectorDifferenceTest<float> sparse_vector_difference_test_float("float");
 SparseVectorDifferenceTest<double> sparse_vector_difference_test_double("double");
 
@@ -197,6 +287,5 @@ class SparseVectorDifferenceQuickTest :
             TEST_CHECK_THROWS(VectorDifference<DataType_>::value(sv00, sv01), VectorSizeDoesNotMatch);
         }
 };
-
 SparseVectorDifferenceQuickTest<float> sparse_vector_difference_quick_test_float("float");
 SparseVectorDifferenceQuickTest<double> sparse_vector_difference_quick_test_double("double");

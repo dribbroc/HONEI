@@ -88,6 +88,100 @@ DenseVectorSumQuickTest<float>  dense_vector_sum_quick_test_float("float");
 DenseVectorSumQuickTest<double> dense_vector_sum_quick_test_double("double");
 
 template <typename DataType_>
+class DenseVectorSparseVectorSumTest :
+    public BaseTest
+{
+    public:
+        DenseVectorSparseVectorSumTest(const std::string & type) :
+            BaseTest("dense_vector_sparse_vector_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
+                SparseVector<DataType_> sv2(size, size / 7 + 1);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = DataType_(1);
+                        *k = DataType_(1);
+                    }
+                    if (i.index() % 7 == 0) 
+                    {
+                        *j = DataType_(2);
+                        *k = DataType_(2);
+                    }
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                    {
+                        *k = DataType_(3);
+                    }                                        
+                }
+
+                VectorSum<>::value(dv1, sv2);
+
+                TEST_CHECK_EQUAL(dv1, dv3);
+            }
+            
+            DenseVector<DataType_> dv01(2);
+            SparseVector<DataType_> sv02(1, 1);
+            TEST_CHECK_THROWS(VectorSum<>::value(dv01, sv02), VectorSizeDoesNotMatch);            
+        }
+};
+DenseVectorSparseVectorSumTest<float> dense_vector_sparse_vector_sum_test_float("float");
+DenseVectorSparseVectorSumTest<double> dense_vector_sparse_vector_sum_test_double("double");
+
+template <typename DataType_>
+class DenseVectorSparseVectorSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorSparseVectorSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_sparse_vector_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
+            SparseVector<DataType_> sv2(size, size / 7 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = DataType_(1);
+                    *k = DataType_(1);
+                }
+                if (i.index() % 7 == 0) 
+                {
+                    *j = DataType_(2);
+                    *k = DataType_(2);
+                }
+                if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                {
+                    *k = DataType_(3);
+                }                                        
+            }
+
+            VectorSum<>::value(dv1, sv2);
+
+            TEST_CHECK_EQUAL(dv1, dv3);
+            
+            DenseVector<DataType_> dv01(2);
+            SparseVector<DataType_> sv02(1, 1);
+            TEST_CHECK_THROWS(VectorSum<>::value(dv01, sv02), VectorSizeDoesNotMatch);            
+        }
+};
+DenseVectorSparseVectorSumQuickTest<float> dense_vector_sparse_vector_sum_quick_test_float("float");
+DenseVectorSparseVectorSumQuickTest<double> dense_vector_sparse_vector_sum_quick_test_double("double");
+
+template <typename DataType_>
 class SparseVectorSumTest :
     public BaseTest
 {

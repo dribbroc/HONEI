@@ -115,6 +115,98 @@ DenseScalarProductQuickTest<float>  dense_scalar_product_quick_test_float("float
 DenseScalarProductQuickTest<double> dense_scalar_product_quick_test_double("double");
 
 template <typename DataType_>
+class SparseDenseScalarProductTest :
+    public BaseTest
+{
+    public:
+        SparseDenseScalarProductTest(const std::string & type) :
+            BaseTest("sparse_dense_scalar_product_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                DataType_ p1(0);
+                SparseVector<DataType_> sv1(size, size / 7 + 1);
+                DenseVector<DataType_> dv2(size, DataType_(0));
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()), 
+                        j(dv2.begin_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0) 
+                    {
+                        *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                    }
+                    if (i.index() % 7 == 0) 
+                    {
+                        *j = static_cast<DataType_>(((i.index() + 1) * 2) / 1.23456789);
+                    }
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                    {
+                        p1 += *i * *j;
+                    }                    
+                }
+
+                DataType_ p0(ScalarProduct<>::value(sv1, dv2));
+                TEST_CHECK_EQUAL(p0, p1);
+             }
+
+            SparseVector<DataType_> sv00(1, 1);
+            DenseVector<DataType_> dv01(2);
+
+            TEST_CHECK_THROWS(ScalarProduct<>::value(sv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
+SparseDenseScalarProductTest<float> sparse_dense_scalar_product_test_float("float");
+SparseDenseScalarProductTest<double> sparse_dense_scalar_product_test_double("double");
+
+template <typename DataType_>
+class SparseDenseScalarProductQuickTest :
+    public QuickTest
+{
+    public:
+        SparseDenseScalarProductQuickTest(const std::string & type) :
+            QuickTest("sparse_dense_scalar_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DataType_ p1(0);
+            SparseVector<DataType_> sv1(size, size / 7 + 1);
+            DenseVector<DataType_> dv2(size, DataType_(0));
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()), 
+                    j(dv2.begin_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0) 
+                {
+                    *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                }
+                if (i.index() % 7 == 0) 
+                {
+                    *j = static_cast<DataType_>(((i.index() + 1) * 2) / 1.23456789);
+                }
+                if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                {
+                    p1 += *i * *j;
+                }                    
+            }
+
+            DataType_ p0(ScalarProduct<>::value(sv1, dv2));
+            TEST_CHECK_EQUAL(p0, p1);
+
+            SparseVector<DataType_> sv00(1, 1);
+            DenseVector<DataType_> dv01(2);
+
+            TEST_CHECK_THROWS(ScalarProduct<>::value(sv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
+SparseDenseScalarProductQuickTest<float> sparse_dense_scalar_product_quick_test_float("float");
+SparseDenseScalarProductQuickTest<double> sparse_dense_scalar_product_quick_test_double("double");
+
+template <typename DataType_>
 class SparseScalarProductTest :
     public BaseTest
 {
