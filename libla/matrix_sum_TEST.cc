@@ -104,7 +104,7 @@ class BandedMatrixDenseMatrixSumQuickTest :
             BandedMatrix<DataType_> bm01(5); 
             DenseMatrix<DataType_> dm02(6, 6);
 
-            TEST_CHECK_THROWS(MatrixSum<>::value(dm02, bm01), MatrixSizeDoesNotMatch);            
+            TEST_CHECK_THROWS(MatrixSum<>::value(dm02, bm01), MatrixRowsDoNotMatch);            
         }   
 };
 BandedMatrixDenseMatrixSumQuickTest<float> banded_matrix_dense_matrix_sum_quick_test_float("float");

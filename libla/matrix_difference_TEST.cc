@@ -103,10 +103,10 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
             TEST_CHECK_EQUAL(difference, dm3);
 
             BandedMatrix<DataType_> bm01(5); 
-            DenseMatrix<DataType_> dm02(6, 5), dm03(5, 6);
+            DenseMatrix<DataType_> dm02(6, 6), dm03(5, 6);
 
-            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, dm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, dm02), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, dm03), MatrixIsNotSquare);
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, dm02), MatrixRowsDoNotMatch);            
         }
 };
 BandedMatrixDenseMatrixDifferenceQuickTest<float> banded_matrix_dense_matrix_difference_quick_test_float("float");
