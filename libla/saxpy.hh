@@ -77,32 +77,24 @@ namespace pg512
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-			typename Vector<DataType2_>::ElementIterator l(left.begin_non_zero_elements()), l_end(left.end_non_zero_elements());
+			typename Vector<DataType2_>::ElementIterator l(left.begin_non_zero_elements());
             for (typename Vector<DataType1_>::ConstElementIterator r(right.begin_non_zero_elements()),
                     r_end(right.end_non_zero_elements()) ; r != r_end ; )
             {
-				while (l.index() < r.index() && l != l_end)
-				{
-					++l;
-				}
-
-				if (l == l_end)
-				{
+                if (r.index() < l.index())
+                {
                     left[r.index()] = scalar * (*r);
                     ++r;
-                    continue;
-				}
-
-				if (r.index() < l.index())
-				{
-					left[r.index()] = scalar * (*r);
-					++r;
-				}
-				else
-				{
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
                     *l += scalar * (*r);
                     ++l; ++r;
-				}
+                }
             }
 			///\todo: perhaps sparsify - written results may be zero.
             return left;

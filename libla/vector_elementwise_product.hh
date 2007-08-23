@@ -115,7 +115,7 @@ namespace pg512
 				*l *= right[l.index()];
             }
             return left;
-			///\todo: perhaps sparsify - if *r == 0 -> write of zero.
+			///\todo: perhaps sparsify - if *right[l.index()] == 0 -> write of zero.
         }
 
     };

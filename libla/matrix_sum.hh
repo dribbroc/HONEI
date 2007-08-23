@@ -135,21 +135,21 @@ namespace pg512
 
             typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()), l_end(a.end_non_zero_elements());
             for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
-                    r_end(b.end_elements()) ; r != r_end ; ++r)
+                    r_end(b.end_elements()) ; r != r_end ; )
             {
-                while (l.index() < r.index() && l != l_end)
+                if (r.index() < l.index())
+                {
+                    a[r.row()][r.column()] = (*r);
+                    ++r;
+                }
+                else if (l.index() < r.index())
                 {
                     ++l;
                 }
-
-                if (r.index() < l.index() || l == l_end)
-                {
-                    a[r.row()][r.column()] = *r;
-                }
-                else // l.index() == r.index()
+                else
                 {
                     *l += *r;
-                    ++l;
+                    ++l; ++r;
                 }
             }
 
@@ -238,9 +238,8 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
-                    l_end(a.end_non_zero_elements()) ; r != r_end ; ++r )
+            typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements());
+            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements()) ; r != r_end ; ++r )
             {
                 if (r.index() < l.index())
                 {

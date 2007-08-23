@@ -89,10 +89,9 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(right.rows(), left.rows());
             }
 
-            typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements());
-
+            typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements());
             for (typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()); r != r_end ; ++r)
+                    r_end(right.end_non_zero_elements()); r != r_end ; )
             {
                 while (l.index() < r.index())
                 {
@@ -224,15 +223,18 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(right.rows(), left.rows());
             }
 
-            typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements()), l_end(left.end_elements());
+            typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements());
             for (typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()); r != r_end ; ++r)
+                    r_end(right.end_non_zero_elements()); r != r_end ; )
             {
                 while (l.index() < r.index())
+                {
+					*l = DataType1_(0);
                     ++l;
+                }
 
                 *l *= *r;
-                ++l;
+                ++l; ++r;
             }
 
             return left;
@@ -285,13 +287,13 @@ namespace pg512
 
             typename Matrix<DataType2_>::ConstElementIterator r(right.begin_elements());
             for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; ++l)
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
             {
                 while (r.index() < l.index())
                     ++r;
 
                 *l *= *r;
-                ++r;
+                ++r; ++l;
             }
 
             return left;

@@ -29,26 +29,39 @@
 /**
  * \file
  *
- * Templatized definitions of vector differences.
+ * Templatized definitions of operation VectorDifference.
  *
- * \ingroup grpvectoroperations
- **/
-namespace pg512
+ * \ingroup grpoperations
+ */
+namespace pg512 ///< \todo Namespace name?
 {
-
     /**
-     * VectorSum is the class template for the difference of two vectors.
-     * \brief The first referenced vector is changed under this operation.
-     * \ingroup grpvectoroperations
-     **/
+     * \brief Difference of two vectors.
+     *
+     * VectorDifference is the class template for the subraction operation
+     * \f[
+     *     VectorDifference(a, b): \quad r \leftarrow a - b,
+     * \f]
+     * which yields r, the difference of vectors a and b.
+     *
+     * The return value is the minuend a after modification.
+     *
+     * \ingroup grpoperations
+     */
     template <typename Tag_ = tags::CPU> struct VectorDifference
     {
         /**
-         * Returns the the resulting vector of the difference of two given DenseVector instances.
+         * \brief Returns the the difference of two given vectors.
          *
-         * \param left Reference to dense vector that will be also used as result vector.
-         * \param right Reference to constant dense vector to be added.
-         **/
+         * \param a The vector that is the left-hand minuend of the operation.
+         * \param b The vector that is the right-hand subtrahend of the operation.
+         *
+         * \retval Will modify the minuend a and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
+        /// \{
         template <typename DataType1_, typename DataType2_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const DenseVector<DataType2_> & right)
         {
             if (left.size() != right.size())
@@ -76,13 +89,13 @@ namespace pg512
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
+            typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements());
+            for (typename Vector<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
             {
                 if (r.index() < l.index())
                 {
-                    left[r.index()] = (-1) * (*r);
+                    left[r.index()] = -(*r);
                     ++r;
                 }
                 else if (l.index() < r.index())
@@ -120,7 +133,7 @@ namespace pg512
 
             return left;
         }
-
+        /// \}
     };
 }
 #endif

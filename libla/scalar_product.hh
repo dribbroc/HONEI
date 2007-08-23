@@ -57,6 +57,8 @@ namespace pg512 ///< \todo Namespace name?
          *
          * \retval Will return a static instance of the used data type
          *         containing the scalar product.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
 
         /// \{
@@ -102,9 +104,9 @@ namespace pg512 ///< \todo Namespace name?
 
             DT1_ result(0);
 
+            typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements());
             for (typename Vector<DT1_>::ConstElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()), r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; (l != l_end) && (r != r_end) ; )
+                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (l.index() == r.index())
                 {

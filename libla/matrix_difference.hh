@@ -135,23 +135,23 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename MutableMatrix<DT2_>::ElementIterator l(a.begin_non_zero_elements()), l_end(a.end_non_zero_elements());
+            typename MutableMatrix<DT2_>::ElementIterator l(a.begin_non_zero_elements());
             for (typename Matrix<DT1_>::ConstElementIterator r(b.begin_non_zero_elements()),
-                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; )
             {
-                while (l.index() < r.index() && l != l_end)
-                {
-                    ++l;
-                }
-
-                if (r.index() < l.index() || l == l_end)
+               if (r.index() < l.index())
                 {
                     a[r.row()][r.column()] = -(*r);
+                    ++r;
                 }
-                else // l.index() == r.index()
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
                 {
                     *l -= *r;
-                    ++l;
+                    ++l; ++r;
                 }
             }
 
@@ -239,7 +239,7 @@ namespace pg512
             for (typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
-                    b[l.row()][l.column()] += *l;
+                    b[l.row()][l.column()] = (b[l.row()][l.column()] * (-1)) + *l;
             }
 
             return b;

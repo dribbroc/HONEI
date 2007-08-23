@@ -4,39 +4,48 @@ ChangeLog for PG512
 This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
-
-2007-08-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
-
-	* libla/matrix_sum_TEST.cc, libla/matrix_difference_TEST.cc: Added
-	tests for mixed sparse/dense/banded operations where wise.
 	
 2007-08-23 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-	* libla/matrix_difference.hh, libla/matrix_sum.hh: Reworked some
-	sparse--algorithms! Debugged Throwing of Exceptions. Added information
-	concerning thrown exceptions to doxygen annotations.
+        * libla/matrix_difference.hh, libla/matrix_sum.hh,
+	libla/matrix_elementwise_product.hh, libla/saxpy.hh,
+	libla/scalar_product.hh, libla/vector_difference.hh,
+	libla/vector_elementwise_product.hh, libla/vector_sum.hh: Reworked
+	sparse algorithms. Deleted overhead iterators and iterator-usage.
+	Applied new doxygen-headers to vector_sum.hh and vector_difference.hh.
+	Some tests pass, some don't - will see clearly when sparse-iterator's
+	index() is fixed.
 
 2007-08-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+
+        * libla/matrix_sum_TEST.cc, libla/matrix_difference_TEST.cc: Added
+	tests for mixed sparse/dense/banded operations where wise.
+
+2007-08-22 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/matrix_difference.hh, libla/matrix_sum.hh: Reworked some
+	sparse-algorithms! Debugged Throwing of Exceptions. Added information
+	concerning thrown exceptions to doxygen annotations.
+
+2007-08-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/vector_sum_TEST.cc, libla/saxpy_TEST.cc,
 	libla/vector_elementwise_product_TEST.cc,
 	libla/scalar_product_TEST.cc, libla/vector_difference_TEST.cc: Added
 	tests for sparse/dense and dense/sparse operations where wise.
 
-2007-08-22 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+2007-08-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
-	* libla/matrix_elementwise_product_TEST.cc: Now using
+	* libla/matrix_elementwise_product_TEST.cc,
+	libla/scalar_product_TEST.cc: Now using
 	sparse matrices with different element frequencies.
-	* libla/scalar_product_TEST.cc: Now using
-	sparse vectors with different element frequencies.	
 
 2007-08-21 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
-	* libla/matrix_difference_TEST.cc, libla/matrix_sum_TEST.cc: Now using
+	* libla/matrix_difference_TEST.cc, libla/matrix_sum_TEST.cc,
+	libla/matriix_difference_TEST.cc, libla/matrix_sum_TEST.cc: Now using
 	sparse matrices with different element frequencies.
-	* libla/vector_difference_TEST.cc, libla/vector_sum_TEST.cc: Now using
-	sparse vectors with different element frequencies.	
-	
+
 2007-08-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/matrix_vector_product.hh: Fixed bug in dereferencing
