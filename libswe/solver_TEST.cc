@@ -43,7 +43,7 @@ class RelaxSolverQuickTest :
         {
             ulint dwidth =4;
             ulint dheight =4;
-            ulint timesteps =60;
+            ulint timesteps =2;
  
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
@@ -53,22 +53,22 @@ class RelaxSolverQuickTest :
             }
             //END SCENARIO setup
             DenseMatrix<DataType_> bottom(dheight, dwidth, DataType_(1));
-            DenseMatrix<DataType_> u1(dheight, dwidth, DataType_(1));
-            DenseMatrix<DataType_> u2(dheight, dwidth, DataType_(1));
+            DenseMatrix<DataType_> u1(dheight, dwidth, DataType_(0));
+            DenseMatrix<DataType_> u2(dheight, dwidth, DataType_(0));
             unsigned long entries = 3*((dwidth*dheight)+4*(dwidth+dheight+4));
             DenseVector<DataType_> u(entries, DataType_(1));
             DenseVector<DataType_> v(entries, DataType_(1));
             DenseVector<DataType_> w(entries, DataType_(1)); 
             DenseVector<DataType_> bx (entries/3, DataType_(0));
             DenseVector<DataType_> by (entries/3, DataType_(0));
-            DenseVector<DataType_> c (3,DataType_(0.0001));
-            DenseVector<DataType_> d (3,DataType_(0.0001));
+            DenseVector<DataType_> c (3,DataType_(0.00001));
+            DenseVector<DataType_> d (3,DataType_(0.00001));
             
             DataType_ deltax = .2;                       
             DataType_ deltay = .2;
             DataType_ deltat = .2;
 
-            double eps = 1e-100;                  
+            double eps = 1e-200;                  
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (&height, &bottom, &u1, &u2, &u, &v, &w, 
                 dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);

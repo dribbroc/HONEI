@@ -939,7 +939,7 @@ namespace pg512 {
 	        // Compute the influence of the waterdepth
 	        *resultvectoriterator = WorkPrec_(0);
 		++resultvectoriterator;
-	        if(h>=0)
+	        if(h>0)
                 {
 		    friction = this->_manning_n_squared * pow(h, oneThird) * sqrt(u1 * u1 + u2 * u2) * (-1);
                     cout << "h:"<< stringify(h)<<"pow:" << stringify(  pow(h, oneThird)  ) << endl;
@@ -1196,18 +1196,22 @@ namespace pg512 {
         {
 	  cout << "prefac is invalid!\n";
         }
-        DenseVector<WorkPrec_> *v = _v->copy();
-        DenseVector<WorkPrec_> *u1 = _u->copy();
-        DenseVector<WorkPrec_> *u2 = _u->copy();
+        DenseVector<WorkPrec_> *v(_v->copy());
+        DenseVector<WorkPrec_> vc = *v;
+        delete v;
+        DenseVector<WorkPrec_> *u1(_u->copy());
+        DenseVector<WorkPrec_> *u2(_u->copy());
         //DenseVector<WorkPrec_> flow1(_u->size(),ulint(0));
         _flow_x<WorkPrec_>(*u1);
-        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(*v, *u1, _eps,_delta_t);
+        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(vc, *u1, _eps,-_delta_t);
         delete u1;
         sv = ScalarVectorProduct<>::value(prefac,tempsum);
-        DenseVector<WorkPrec_> *w = _w->copy();
+        DenseVector<WorkPrec_> *w(_w->copy());
+        DenseVector<WorkPrec_> wc = *w;
+        delete w;
         //DenseVector<WorkPrec_> flow2(_u->size(), ulint(0), ulint(1));
         _flow_y<WorkPrec_>(*u2);
-        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(*w, *u2, _eps,_delta_t);
+        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(wc, *u2, _eps,-_delta_t);
         delete u2;
         
         sw = ScalarVectorProduct<>::value(prefac,tempsum2);
@@ -1336,31 +1340,35 @@ namespace pg512 {
         _flow_x(*f);
 
         ///Compute linear combinations und accumulate:
-        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedv,*f, _eps, _delta_t);
+        DenseVector<WorkPrec_>* vresult(predictedv.copy());
+        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(*vresult,*f, _eps, _delta_t);
         delete f;
         ///Apply flow to old u:
         DenseVector<WorkPrec_>* flow = _u_temp->copy();
         _flow_x(*flow);
-
-        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_v_temp,*flow, -2*_delta_t, 2*_delta_t);
+        
+        DenseVector<WorkPrec_>* vtempresult(_v_temp->copy());
+        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*vtempresult, *flow, -2*_delta_t, 2*_delta_t);
         delete flow;
         predictedv = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         ///Scale sum:
-        predictedv = ScalarVectorProduct<>::value(1+(_eps/_delta_t), predictedv);
+        predictedv = ScalarVectorProduct<>::value(1/(_eps+_delta_t), predictedv);
         
         ///Repeat for w:
         DenseVector<WorkPrec_>* flow2 = predictedu.copy();
         _flow_y(*flow2);
-    
-        innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(predictedw, *flow2, _eps, _delta_t);
+        
+        DenseVector<WorkPrec_>* wresult(predictedw.copy());
+        DenseVector<WorkPrec_>innersum11 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(*wresult, *flow2, _eps, _delta_t);
         delete flow2;
         DenseVector<WorkPrec_>* flow3 = _u_temp->copy();
         _flow_x(*flow3);
-
-        innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*_w_temp, *flow3, -2*_delta_t, 2*_delta_t);
+        
+        DenseVector<WorkPrec_>* wtempresult(_w_temp->copy());
+        DenseVector<WorkPrec_>innersum22 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*wtempresult, *flow3, -2*_delta_t, 2*_delta_t);
         delete flow3;
-        predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
-        predictedw = ScalarVectorProduct<>::value(1+(1/_delta_t), predictedw);
+        predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum11, innersum22);
+        predictedw = ScalarVectorProduct<>::value(1/(_eps + _delta_t), predictedw);
         std::cout << "Finished Setup 2.\n";
     } 
     
@@ -1386,9 +1394,9 @@ namespace pg512 {
         {
             (*_u)[iter.index()] = 5;
             ++iter;
-            (*_u)[iter.index()] = 5;
+            (*_u)[iter.index()] = 0;
             ++iter;
-            (*_u)[iter.index()] = 5;
+            (*_u)[iter.index()] = 0;
             ++iter;
             (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
             (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1438,23 +1446,9 @@ namespace pg512 {
             {
                 (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 5;
+                (*_u)[iter.index()] = 0;
                 ++iter;
-                (*_u)[iter.index()] = 5;
-                ++iter;
-                (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
-                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
-                (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-                (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
-                (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
-                (*_u)[iter.index()] = 5;
-                ++iter;
-                (*_u)[iter.index()] = 5;
-                ++iter;
-                (*_u)[iter.index()] = 5;
+                (*_u)[iter.index()] = 0;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1466,9 +1460,9 @@ namespace pg512 {
                                                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 5;
+                (*_u)[iter.index()] = 0;
                 ++iter;
-                (*_u)[iter.index()] = 5;
+                (*_u)[iter.index()] = 0;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1480,9 +1474,23 @@ namespace pg512 {
                                                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
+                (*_u)[iter.index()] = 0;
+                ++iter;
+                (*_u)[iter.index()] = 0;
+                ++iter;
+                (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
-                (*_u)[iter.index()] = 5;
+                (*_u)[iter.index()] = 0;
+                ++iter;
+                (*_u)[iter.index()] = 0;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
@@ -1503,9 +1511,9 @@ namespace pg512 {
         {
             (*_u)[iter.index()] = 5;
             ++iter;
-            (*_u)[iter.index()] = 5;
+            (*_u)[iter.index()] = 0;
             ++iter;
-            (*_u)[iter.index()] = 5;
+            (*_u)[iter.index()] = 0;
             ++iter;
             (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
             (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
