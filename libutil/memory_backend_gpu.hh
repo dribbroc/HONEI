@@ -75,8 +75,9 @@ namespace pg512
              * Look up the memory chunk that is associated with a given memory id.
              *
              * \param id Memory id whose remote memory chunk shall be looked up.
+             * \param device Id of the device on which the chunk exists.
              */
-            const GPUBackend::Chunk & get_chunk(const MemoryId id);
+            const GPUBackend::Chunk & get_chunk(const MemoryId id, const DeviceId device);
 
             /// \name MemoryBackend interface
             /// \{
@@ -88,27 +89,30 @@ namespace pg512
              * Upload a memory chunk from local memory to remote memory.
              *
              * \param id Associated memory id. Valid value will be filled in if left zero.
+             * \param device Id of the device whence to copy.
              * \param address Local memory address whence to copy from.
              * \param size Size of the memory chunk that will be copied.
              */
-            virtual void upload(const MemoryId, const void * address, const std::ptrdiff_t size);
+            virtual void upload(const MemoryId, const DeviceId device, void * address, const std::ptrdiff_t size);
 
             /**
              * Download a memory chunk from remote memory to local memory at a custom address
              *
              * \param id Memory id that uniquely identifies a remove memory chunk.
+             * \param device Id of the device where to copy from.
              * \param address Local memory address whence to copy from.
              * \param size Size of the memory block that will be copied. \todo eliminate?
              */
-            virtual void download(const MemoryId, void * address, const std::ptrdiff_t size);
+            virtual void download(const MemoryId, const DeviceId device, void * address, const std::ptrdiff_t size);
 
             /**
              * Free an existing memory id and its associated remote memory.
              * Local memory will not be tempered with.
              *
              * \param id Memory id that shall be freed.
+             * \param device Id of the device on which memory shall be freed.
              */
-            virtual void free(const MemoryId id);
+            virtual void free(const MemoryId id, const DeviceId device);
 
             /**
              * Swap all memory information of two memory ids.

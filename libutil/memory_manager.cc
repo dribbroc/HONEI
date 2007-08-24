@@ -109,7 +109,7 @@ MemoryManager::upload(const MemoryId id, const DeviceId device, const tags::TagV
 }
 
 void
-MemoryManager::download(const MemoryId id)
+MemoryManager::download(const MemoryId id, const DeviceId device)
 {
     CONTEXT("When downloading device memory for id '" + stringify(id) + "':");
 
@@ -119,11 +119,11 @@ MemoryManager::download(const MemoryId id)
     InfoMap::const_iterator i(_info_map.find(id));
     ASSERT(_info_map.end() != i, "No info map entry found for id '" + stringify(id) + "'!");
 
-    download(id, i->second->_address, i->second->size);
+    download(id, device, i->second->_address, i->second->size);
 }
 
 void
-MemoryManager::download(const MemoryId id, void * address, const std::ptrdiff_t size)
+MemoryManager::download(const MemoryId id, const DeviceId device, void * address, const std::ptrdiff_t size)
 {
     CONTEXT("When downloading device memory for id '" + stringify(id) + "':");
 
@@ -131,9 +131,9 @@ MemoryManager::download(const MemoryId id, void * address, const std::ptrdiff_t 
         throw MemoryIdNotKnown(id);
 
     InfoMap::iterator i(_info_map.find(id));
-    ASSERT(_info_map.end() != i, "No map entry found for id '" + stringify(id) + "'!");
+    ASSERT(_info_map.end() != i, "No info map entry found for id '" + stringify(id) + "'!");
 
-     _get_backend(i->second->location)->download(id, address, size);
+     _get_backend(i->second->location)->download(id, device, address, size);
 
     _address_map[id] = address;
 

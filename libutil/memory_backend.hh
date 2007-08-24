@@ -20,6 +20,11 @@
 #ifndef LIBUTIL_GUARD_MEMORY_BACKEND_HH
 #define LIBUTIL_GUARD_MEMORY_BACKEND_HH 1
 
+#include <libutil/exception.hh>
+#include <libutil/tags.hh>
+
+#include <string>
+
 namespace pg512
 {
     typedef unsigned long long MemoryId;
@@ -37,6 +42,27 @@ namespace pg512
     const DeviceId default_device(~0x0L);
 
     /**
+     * MemoryBackendError is the base class for all errors thrown by any class that implements
+     * MemoryBackend.
+     */
+    class MemoryBackendError :
+        public Exception
+    {
+        protected:
+            MemoryBackendError(const tags::TagValue tag, const DeviceId tag, const std::string & msg);
+    };
+
+    /**
+     * OutOfMemoryError is thrown when a MemoryBackend runs out of memory on one of its devices.
+     */
+    class OutOfMemoryError :
+        public MemoryBackendError
+    {
+        public:
+            OutOfMemoryError(const tags::TagValue tag, const DeviceId device);
+    };
+
+    /**
      * MemoryBackend is the interface class for all memory backends that MemoryManager supports.
      *
      * \ingroup grpmemorymanager
@@ -49,28 +75,30 @@ namespace pg512
              * Upload a memory chunk from local memory to remote memory.
              *
              * \param id Associated memory id.
-             * \param device Id of the the device whence to copy to.
-             * \param address Local memory address whence to copy from.
+             * \param device Id of the the device whence to copy.
+             * \param address Local memory address where to copy from.
              * \param size Size of the memory chunk that will be copied.
              */
-            virtual void upload(const MemoryId id, const DeviceId device, const void * address, const std::ptrdiff_t size) = 0;
+            virtual void upload(const MemoryId id, const DeviceId device, void * address, const std::ptrdiff_t size) = 0;
 
             /**
              * Download a memory chunk from remote memory to local memory at a custom address
              *
              * \param id Memory id that uniquely identifies a remove memory chunk.
-             * \param address Local memory address whence to copy from.
-             * \param size Size of the memory block that will be copied. \todo eliminate?
+             * \param device Id of the device whence to copy.
+             * \param address Local memory address where to copy from.
+             * \param size Size of the memory block that will be copied.
              */
-            virtual void download(const MemoryId id, void * address, const std::ptrdiff_t size) = 0;
+            virtual void download(const MemoryId id, const DeviceId device, void * address, const std::ptrdiff_t size) = 0;
 
             /**
              * Free an existing memory id and its associated remote memory.
-             * Local memory will not be tempered with.
+             * Local memory will not be tampered with.
              *
              * \param id Memory id that shall be freed.
+             * \param device Id of the Device for which the memory shall be freed.
              */
-            virtual void free(const MemoryId id) = 0;
+            virtual void free(const MemoryId id, const DeviceId = default_device) = 0;
 
             /**
              * Swap all memory information of two memory ids.

@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBUTIL_GUARD_MEMORY_MANAGER_HH
-#define LIBUTIL_GUARD_MEMORY_MANAGER_HH 1
+#ifndef LIBUTIL_GUARD_SPE_MANAGER_HH
+#define LIBUTIL_GUARD_SPE_MANAGER_HH 1
 
 #include <libutil/assertion.hh>
 #include <libutil/exception.hh>

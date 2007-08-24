@@ -190,7 +190,7 @@ GPUBackend::instance()
 }
 
 const GPUBackend::Chunk &
-GPUBackend::get_chunk(const MemoryId id)
+GPUBackend::get_chunk(const MemoryId id, const DeviceId)
 {
     if (_data->known_ids.end() == _data->known_ids.find(id))
         throw MemoryIdNotKnown(id);
@@ -208,7 +208,7 @@ GPUBackend::backend_instance()
 }
 
 void
-GPUBackend::upload(const MemoryId, const DeviceId device, const void * address, const std::ptrdiff_t size)
+GPUBackend::upload(const MemoryId, const DeviceId device, void * address, const std::ptrdiff_t size)
 {
     /// \todo
 }
@@ -226,7 +226,7 @@ GPUBackend::swap(const MemoryId left, const MemoryId right)
 }
 
 void
-GPUBackend::free(const MemoryId id)
+GPUBackend::free(const MemoryId id, const DeviceId)
 {
     std::map<MemoryId, GPUBackend::Chunk *>::iterator c(_data->chunk_map.find(id));
     if (_data->chunk_map.end() == c)

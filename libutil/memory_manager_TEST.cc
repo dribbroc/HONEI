@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <map>
+#include <iostream>
 
 using namespace pg512;
 using namespace tests;
@@ -50,7 +51,7 @@ namespace
                 return instance();
             }
 
-            virtual void upload(const MemoryId id, const DeviceId, const void * address, const std::ptrdiff_t size)
+            virtual void upload(const MemoryId id, const DeviceId, void * address, const std::ptrdiff_t size)
             {
                 const char * a(static_cast<const char *>(address));
                 Info * info(new Info(new char[size], size));
@@ -60,7 +61,7 @@ namespace
                 _info_map.insert(std::make_pair(id, info));
             }
 
-            virtual void download(const MemoryId id, void * address, const std::ptrdiff_t size)
+            virtual void download(const MemoryId id, const DeviceId, void * address, const std::ptrdiff_t size)
             {
                 char * a(static_cast<char *>(address));
                 std::map<MemoryId, Info *>::iterator i(_info_map.find(id));
@@ -70,7 +71,7 @@ namespace
                 std::copy(i->second->address, i->second->address + size, a);
             }
 
-            virtual void free(const MemoryId id)
+            virtual void free(const MemoryId id, const DeviceId)
             {
                 std::map<MemoryId, Info *>::iterator i(_info_map.find(id));
                 ASSERT(_info_map.end() != i, "Unknown id '" + stringify(id) + "'!");
@@ -114,20 +115,20 @@ class MemoryManagerTest :
 
             MemoryId id_a(MemoryManager::instance()->associate(a, 30 * sizeof(float))),
                     id_b(MemoryManager::instance()->associate(b, 30 * sizeof(float)));
-            MemoryManager::instance()->upload(id_a, default_device, tags::tv_fake);
-            MemoryManager::instance()->upload(id_b, default_device, tags::tv_fake);
+            MemoryManager::instance()->upload(id_a, default_device, tags::tv_fake, 30 * sizeof(float));
+            MemoryManager::instance()->upload(id_b, default_device, tags::tv_fake, 30 * sizeof(float));
 
-            MemoryManager::instance()->download(id_b, a, 30 * sizeof(float));
+            MemoryManager::instance()->download(id_b, default_device);
             bool ok(true);
-            for (float * i(a) ; i < a + 30 ; ++i)
+            for (float * i(b) ; i < b + 30 ; ++i)
             {
                 ok &= (fabs(*i - 2.22) <= std::numeric_limits<float>::epsilon());
             }
             TEST_CHECK(ok);
 
-            MemoryManager::instance()->download(id_a, b, 30 * sizeof(float));
+            MemoryManager::instance()->download(id_a, default_device);
             ok = true;
-            for (float * i(b) ; i < b + 30 ; ++i)
+            for (float * i(a) ; i < a + 30 ; ++i)
             {
                 ok &= (fabs(*i - 1.11) <= std::numeric_limits<float>::epsilon());
             }
@@ -135,7 +136,7 @@ class MemoryManagerTest :
 
             MemoryManager::instance()->swap(id_a, id_b);
 
-            MemoryManager::instance()->download(id_b, a, 30 * sizeof(float));
+            MemoryManager::instance()->download(id_b, default_device);
             ok = true;
             for (float * i(a) ; i < a + 30 ; ++i)
             {
@@ -143,7 +144,7 @@ class MemoryManagerTest :
             }
             TEST_CHECK(ok);
 
-            MemoryManager::instance()->download(id_a, b, 30 * sizeof(float));
+            MemoryManager::instance()->download(id_a, default_device);
             ok = true;
             for (float * i(b) ; i < b + 30 ; ++i)
             {

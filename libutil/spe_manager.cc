@@ -48,6 +48,14 @@ struct SPE::Implementation
     /// Our device id.
     const DeviceId device;
 
+    /// Enqueue an SPETask.
+    inline void enqueue(SPETask * task)
+    {
+        Lock l(*mutex);
+
+        task_list.push_back(task);
+    }
+
     /// Return the next device id.
     inline DeviceId next_device_id()
     {

@@ -5,14 +5,31 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-24 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/files.m4, libutil/memory_backend.cc,
+	libutil/memory_backend.hh: Added exception classes for backend error.
+	Added OutOfMemoryError.
+	* libutil/spe_manager.hh: Fixed include guards.
+	* libutil/spe_manager.cc: Added enqueue() to
+	SPEManager::Implementation.
+	* libutil/memory_backend.hh, libutil/memory_backend_gpu.cc,
+	libutil/memory_backend_gpu.hh, libutil/memory_manager.cc,
+	libutil/memory_manager_TEST.cc: Removed const-ness from address in
+	upload() as preparation for Cell BE Backend, as libspe2 has a really
+	nasty interface.
+	* libutil/files.m4, libutil/memory_backend_cell.cc,
+	libutil/memory_backend_cell.hh, libutil/memory_backend_cell_TEST.cc:
+	Added CellBackend, the MemoryBackend implementation for Cell BE.
+
 2007-08-23 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-        * libla/matrix_difference_TEST.cc, libla/matrix_sum_TEST.cc: Applied
-	changed to tests due to my changes in thrown exceptions.
-	
+	* libla/matrix_difference_TEST.cc, libla/matrix_sum_TEST.cc: Applied
+	changes to tests due to my changes in thrown exceptions.
+
 2007-08-23 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-        * libla/matrix_difference.hh, libla/matrix_sum.hh,
+	* libla/matrix_difference.hh, libla/matrix_sum.hh,
 	libla/matrix_elementwise_product.hh, libla/saxpy.hh,
 	libla/scalar_product.hh, libla/vector_difference.hh,
 	libla/vector_elementwise_product.hh, libla/vector_sum.hh: Reworked
@@ -23,8 +40,10 @@ see the NEWS file.
 
 2007-08-23 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
-        * libla/matrix_sum_TEST.cc, libla/matrix_difference_TEST.cc: Added
-	tests for mixed sparse/dense/banded operations where wise.
+	* libla/vector_sum_TEST.cc, libla/saxpy_TEST.cc,
+	libla/vector_elementwise_product_TEST.cc,
+	libla/scalar_product_TEST.cc, libla/vector_difference_TEST.cc: Added
+	tests for sparse/dense and dense/sparse operations where appropriate.
 
 2007-08-22 Sven Mallach <sven.mallach@uni-dortmund.de>
 
@@ -64,7 +83,7 @@ see the NEWS file.
 	my tests yet but it also reveals, that with the current source term
 	implementation, a LAKE AT REST situation will collapse after the first
 	60 timesteps.
-	
+
 2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
         * libla/saxpy.hh: Fixed some issues, should be okay when
@@ -75,12 +94,12 @@ see the NEWS file.
 	* libswe/solver.hh, libswe/solver_TEST.cc: Resolved destructive band
 	insertions in quick assembly stages, resolved logical bug in matrix
 	assembly stage 2 (DEBUG).
-	
+
 2007-08-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/saxpy_TEST.cc: Added tests for new VectorScaledSum aka
 	saxpy.
-	
+
 2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
 
         * libla/vector_sum.hh, libla/vector_difference.hh,
@@ -112,13 +131,13 @@ see the NEWS file.
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Resolved logical bug in
 	matrix assembly stages, cleaned up quick assembly.
-	
+
 2007-08-19 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Some minor cleanups in
 	solve, prediction and setup stages, experimented with global
 	parameters, increased stability.
-	
+
 2007-08-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/worker.cc, libutil/worker.hh, libutil/worker_TEST.cc:
