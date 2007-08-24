@@ -257,17 +257,19 @@ namespace pg512
              * Download a memory chunk from remote memory to local memory.
              *
              * \param id Memory id that uniquely identifies a remote memory chunk.
+             * \param device Device whence to copy from.
              */
-            void download(const MemoryId id);
+            void download(const MemoryId id, const DeviceId device = 0);
 
             /**
              * Download a memory chunk from remote memory to local memory at a custom address
              *
              * \param id Memory id that uniquely identifies a remove memory chunk.
+             * \param device Device where to copy from.
              * \param address Local memory address whence to copy.
              * \param size Size of the memory block that will be copied.
              */
-            void download(const MemoryId id, void * address, const std::ptrdiff_t size);
+            void download(const MemoryId id, const DeviceId device, void * address, const std::ptrdiff_t size);
 
             /**
              * Free an existing memory id <-> remote memory association.
