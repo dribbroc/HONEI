@@ -59,7 +59,32 @@ namespace pg512
         public MemoryBackendError
     {
         public:
+            /**
+             * Constructor.
+             *
+             * \param tag Tag value for the MemoryBackend.
+             * \param device Id of the affected device.
+             */
             OutOfMemoryError(const tags::TagValue tag, const DeviceId device);
+    };
+
+    /**
+     * MisalignmentError is thrown when a MemoryBackend is asked to handle misaligned memory.
+     */
+    class MisalignmentError :
+        public MemoryBackendError
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param address Misaligned address.
+             * \param alignment Alignment as expected by the MemoryBackend.
+             * \param tag Tag value for the MemoryBackend.
+             * \param device Id of the affected device.
+             */
+            MisalignmentError(const void * address, const unsigned alignment, const tags::TagValue tag,
+                    const DeviceId device);
     };
 
     /**

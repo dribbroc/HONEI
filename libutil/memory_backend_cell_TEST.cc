@@ -12,7 +12,6 @@
 #include <unittest/unittest.hh>
 
 #include <cmath>
-#include <iostream>
 #include <map>
 
 #include <libspe2.h>
@@ -20,12 +19,12 @@
 using namespace pg512;
 using namespace tests;
 
-class CellBackendTest :
+class CellBackendFunctionTest :
     public BaseTest
 {
     public:
-        CellBackendTest() :
-            BaseTest("cell_backend_test")
+        CellBackendFunctionTest() :
+            BaseTest("cell_backend_function_test")
         {
         }
 
@@ -63,5 +62,50 @@ class CellBackendTest :
             TEST_CHECK(0 == memcmp(c, b, 32 * sizeof(float)));
             CellBackend::instance()->download(id_b, spe.id(), c, 32 * sizeof(float));
             TEST_CHECK(0 == memcmp(c, a, 32 * sizeof(float)));
+
+            CellBackend::instance()->free(id_a, spe.id());
+            CellBackend::instance()->free(id_b, spe.id());
         }
-} memory_manager_test;
+} cell_backend_function_test;
+
+class CellBackendAlignmentTest :
+    public QuickTest
+{
+    public:
+        CellBackendAlignmentTest() :
+            QuickTest("cell_backend_alignment_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            char aligned_data1[32] __attribute__ ((aligned (16)));
+            char * aligned_data2(new char[32]);
+            SPE spe(*SPEManager::instance()->begin());
+
+            MemoryId id1(10), id2(11);
+
+            bool has_thrown(false);
+            try
+            {
+                CellBackend::instance()->upload(id1, spe.id(), aligned_data1, 32);
+                CellBackend::instance()->upload(id2, spe.id(), aligned_data2, 32);
+            }
+            catch (Exception & e)
+            {
+                has_thrown = true;
+                throw;
+            }
+            TEST_CHECK(! has_thrown);
+
+            char * misaligned_data1(aligned_data1 + 3);
+            char * misaligned_data2(aligned_data2 + 7);
+
+            MemoryId id3(12), id4(13);
+            TEST_CHECK_THROWS(CellBackend::instance()->upload(id3, spe.id(), misaligned_data1, 16),
+                    MisalignmentError);
+            TEST_CHECK_THROWS(CellBackend::instance()->upload(id4, spe.id(), misaligned_data2, 16),
+                    MisalignmentError);
+
+        }
+} cell_backend_alignment_test;

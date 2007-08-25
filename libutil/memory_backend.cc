@@ -1,4 +1,4 @@
-
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
@@ -29,5 +29,12 @@ MemoryBackendError::MemoryBackendError(const tags::TagValue tag, const DeviceId 
 
 OutOfMemoryError::OutOfMemoryError(const tags::TagValue tag, const DeviceId device) :
     MemoryBackendError(tag, device, "Out of Memory")
+{
+}
+
+MisalignmentError::MisalignmentError(const void * address, const unsigned alignment, const tags::TagValue tag,
+        const DeviceId device) :
+    MemoryBackendError(tag, device, "Misaligned address '" + stringify(address) + "', expected '" +
+            stringify(alignment) + "'-byte-alignment")
 {
 }

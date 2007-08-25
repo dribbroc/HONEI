@@ -118,6 +118,18 @@ namespace pg512
             const CellBackend::Chunk * alloc(const DeviceId device, const unsigned int size);
 
             /**
+             * Swap all memory information of two memory ids for a specific
+             * SPE only.
+             *
+             * \warning Both ids need to describe memory chunks of identical size.
+             *
+             * \param left One of the memory ids that shall be swapped.
+             * \param right idem
+             * \param device Id of the device.
+             */
+            virtual void swap(const MemoryId left, const MemoryId right, const DeviceId device);
+
+            /**
              * Free an anonymous memory chunk.
              *
              * \param chunk Chunk that shall be freed.

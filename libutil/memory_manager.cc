@@ -32,6 +32,11 @@ MemoryIdNotKnown::MemoryIdNotKnown(const MemoryId id) :
 {
 }
 
+MemoryIdNotKnown::MemoryIdNotKnown(const MemoryId id, const DeviceId device) :
+    Exception("Memory id '" + stringify(id) + "' is unknown to backend device '" + stringify(device) + "'")
+{
+}
+
 MemoryChunkSizeInvalid::MemoryChunkSizeInvalid(unsigned long size, const std::string & msg) :
     Exception("Chunk size '" + stringify(size) + "' is invalid: " + msg)
 {

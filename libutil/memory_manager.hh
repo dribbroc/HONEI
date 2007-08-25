@@ -71,6 +71,14 @@ namespace pg512
          * \param id Unknown memory id.
          */
         MemoryIdNotKnown(const MemoryId id);
+
+        /**
+         * Constructor.
+         *
+         * \param id Unknown memory id.
+         * \param device Associated device id.
+         */
+        MemoryIdNotKnown(const MemoryId id, const DeviceId device);
     };
 
     /**

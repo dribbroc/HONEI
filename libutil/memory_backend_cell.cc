@@ -22,17 +22,23 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/mutex.hh>
 #include <libutil/lock.hh>
+#include <libutil/log.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/tags.hh>
 
 #include <list>
 #include <map>
 #include <set>
-#include <iostream>
+#include <vector>
 
 #include <libspe2.h>
 
 using namespace pg512;
+
+/**
+ * \todo Implement locking for CellBackend::Implementation::SPEData
+ * \fixme Allow for transfers > 16kB
+ */
 
 CellBackend::Chunk::Chunk(DeviceId i, unsigned int a, unsigned int s) :
     id(i),
@@ -52,6 +58,24 @@ CellBackend::Chunk::~Chunk()
 {
 }
 
+namespace
+{
+    inline unsigned block_size(unsigned size)
+    {
+        unsigned result(size), modulo(size & 0xF);
+
+        if (modulo > 0)
+            result += 16 - modulo;
+
+        return result;
+    }
+
+    inline bool aligned(const void * address)
+    {
+        return 0 == (reinterpret_cast<const unsigned long>(address) & 0xF);
+    }
+}
+
 struct CellBackend::Implementation
 {
     /**
@@ -64,6 +88,17 @@ struct CellBackend::Implementation
         as_used,
         as_reserved
     };
+
+    std::string print(const AllocationState & s)
+    {
+        switch (s)
+        {
+            case as_free: return "free"; break;
+            case as_used: return "used"; break;
+            case as_reserved: return "reserved"; break;
+            default: return "bug!";
+        }
+    }
 
     /**
      * AllocationInfo provides all information to uniquely identify and handle a
@@ -91,29 +126,45 @@ struct CellBackend::Implementation
         }
     };
 
+    struct SPEData;
+
     /// \name Convenience typedefs
     /// \{
     typedef std::set<MemoryId> IdSet;
-    typedef std::multimap<MemoryId, CellBackend::Chunk *> ChunkMap;
-    typedef std::map<DeviceId, SPE> SPEMap;
+    typedef std::map<MemoryId, CellBackend::Chunk *> ChunkMap;
     typedef std::list<AllocationInfo> AllocationList;
-    typedef std::map<DeviceId, AllocationList *> AllocationMap;
+    typedef std::vector<SPEData *> SPEVector;
     /// \}
 
-    /// Our set of known memory ids.
-    IdSet known_ids;
+    /**
+     * SPEData holds all data that is uniquely linked to one SPE.
+     */
+    struct SPEData
+    {
+        /// Our set of known memory ids.
+        CellBackend::Implementation::IdSet known_ids;
 
-    /// Our map of memory ids to SPE local store memory chunks.
-    ChunkMap chunk_map;
+        /// Our map of memory ids to SPE local store memory chunks.
+        ChunkMap chunk_map;
 
-    /// Our SPEs.
-    SPEMap spe_map;
+        /// Our allocations.
+        AllocationList allocation_list;
 
-    /// Our SPEs' allocations.
-    AllocationMap allocation_map;
+        /// Our SPE.
+        SPE spe;
+
+        SPEData(const SPE & s) :
+            spe(s)
+        {
+        }
+    };
+
 
     /// Our mutex.
     Mutex * const mutex;
+
+    /// Our data.
+    SPEVector spes;
 
     Implementation() :
         mutex(new Mutex)
@@ -121,18 +172,17 @@ struct CellBackend::Implementation
         for (SPEManager::Iterator i(SPEManager::instance()->begin()), i_end(SPEManager::instance()->end()) ;
                 i != i_end ; ++i)
         {
-            spe_map.insert(std::make_pair(i->id(), *i));
+            SPEData * data(new SPEData(*i));
             // \todo Get information on reserved space! Use SPEProgram, ELF information.
             // \todo Hardcoding 0x4000@0 and 0x1000@end for now.
-            AllocationList * list(new AllocationList);
             AllocationInfo program(0x0, 0x4000, 0x4000, as_reserved);
             AllocationInfo space(0x4000, 0x3b000, 0x3b000, as_free);
             AllocationInfo end(0x3f000, 0x1000, 0x1000, as_reserved);
 
-            list->push_back(program);
-            list->push_back(space);
-            list->push_back(end);
-            allocation_map[i->id()] = list;
+            data->allocation_list.push_back(program);
+            data->allocation_list.push_back(space);
+            data->allocation_list.push_back(end);
+            spes.push_back(data);
         }
     }
 
@@ -140,21 +190,24 @@ struct CellBackend::Implementation
     {
         delete mutex;
 
-        for (AllocationMap::iterator m(allocation_map.begin()), m_end(allocation_map.end()) ;
-                m != m_end ; ++m)
+        for (SPEVector::iterator i(spes.begin()), i_end(spes.end()) ; i != i_end ; ++i)
         {
-            delete m->second;
+            ChunkMap & map((*i)->chunk_map);
+            for (ChunkMap::iterator c(map.begin()), c_end(map.end()) ; c != c_end ; ++c)
+            {
+                delete c->second;
+            }
+            delete *i;
         }
     }
 
-    CellBackend::Chunk * alloc(const DeviceId id, unsigned int size)
+    CellBackend::Chunk * alloc(const DeviceId device, unsigned int size)
     {
         CONTEXT("When allocating space of size '" + stringify(size) + "':");
         CellBackend::Chunk * result(0);
 
-        AllocationMap::iterator li(allocation_map.find(id));
-        ASSERT(allocation_map.end() != li, "invalid SPE id '" + stringify(id) + "'!");
-        AllocationList & list(*li->second);
+        ASSERT(device < spes.size(), "invalid SPE id '" + stringify(device) + "'!");
+        AllocationList & list(spes[device]->allocation_list);
 
         for (AllocationList::iterator i(list.begin()), i_end(list.end()) ; i != i_end ; ++i)
         {
@@ -164,7 +217,7 @@ struct CellBackend::Implementation
             if (size > i->block_size)
                 continue;
 
-            AllocationInfo info(i->address, size, ((size / 16) + 1) * 16, as_used);
+            AllocationInfo info(i->address, size, ::block_size(size), as_used);
 
             i->address += info.block_size;
             i->block_size -= info.block_size;
@@ -172,25 +225,49 @@ struct CellBackend::Implementation
 
             list.insert(i, info);
 
-            result = new Chunk(id, info.address, info.size);
+            result = new Chunk(device, info.address, info.size);
 
             break;
         }
 
         if (! result)
-            throw OutOfMemoryError(tags::tv_cell, id);
+            throw OutOfMemoryError(tags::tv_cell, device);
 
         return result;
     }
 
-    inline void free(const DeviceId id, unsigned address, unsigned size)
+    inline void swap(const MemoryId left, const MemoryId right, const DeviceId device)
+    {
+        CONTEXT("When swapping memory ids on SPE '" + stringify(device) + "':");
+        if (left == right)
+        {
+            Log::instance()->message(ll_minimal, "CellBackend::swap called for identical memory ids");
+            return;
+        }
+
+        ASSERT(device < spes.size(), "invalid SPE id '" + stringify(device) + "'!");
+        ChunkMap & map(spes[device]->chunk_map);
+
+        ChunkMap::iterator l(map.find(left)), r(map.find(right));
+        if (map.end() == l)
+            throw MemoryIdNotKnown(left, device);
+
+        if (map.end() == r)
+            throw MemoryIdNotKnown(right, device);
+
+        Chunk * tmp(l->second);
+        l->second = r->second;
+        r->second = tmp;
+    }
+
+    inline void free(const DeviceId device, unsigned address, unsigned size)
     {
         CONTEXT("When freeing allocated space of size '" + stringify(size) + "' at '" + stringify(address) + "':");
-        AllocationMap::iterator li(allocation_map.find(id));
-        ASSERT(allocation_map.end() != li, "invalid SPE id '" + stringify(id) + "'!");
-        AllocationList & list(*li->second);
+        ASSERT(device < spes.size(), "invalid SPE id '" + stringify(device) + "'!");
 
-        AllocationInfo info(address, size, (((size / 16) + 1) * 16), as_used);
+        AllocationList & list(spes[device]->allocation_list);
+
+        AllocationInfo info(address, size, ::block_size(size), as_used);
         AllocationList::iterator iter(std::find(list.begin(), list.end(), info));
         ASSERT(list.end() != iter, "double free or corruption!");
 
@@ -218,6 +295,7 @@ struct CellBackend::Implementation
             // Merge iter and next
             iter->block_size += next->block_size;
             iter->size = prev->block_size;
+            iter->state = as_free;
 
             list.erase(next);
         }
@@ -234,6 +312,13 @@ struct CellBackend::Implementation
         free(chunk->id, chunk->address, chunk->size);
 
         delete chunk;
+    }
+
+    inline bool id_known(const MemoryId id, const DeviceId device)
+    {
+        IdSet & set(spes[device]->known_ids);
+
+        return set.end() != set.find(id);
     }
 
     inline unsigned int next_download_tag()
@@ -262,11 +347,6 @@ CellBackend::CellBackend() :
 
 CellBackend::~CellBackend()
 {
-    for (std::map<MemoryId, CellBackend::Chunk *>::iterator c(_imp->chunk_map.begin()),
-            c_end(_imp->chunk_map.end()) ; c != c_end ; ++c)
-    {
-        free(c->second);
-    }
 }
 
 CellBackend *
@@ -283,18 +363,13 @@ CellBackend::get_chunk(const MemoryId id, const DeviceId device)
     CONTEXT("When retrieving Chunk for memory id '" + stringify(id) + "' on SPE '" + stringify(device) + ":");
     Lock l(*_imp->mutex);
 
-    if (_imp->known_ids.end() == _imp->known_ids.find(id))
-        throw MemoryIdNotKnown(id);
+    if (! _imp->id_known(id, device))
+        throw MemoryIdNotKnown(id, device);
 
-    Implementation::ChunkMap::const_iterator c(_imp->chunk_map.find(id)), c_end(_imp->chunk_map.upper_bound(id));
-    for ( ; c != c_end ; ++c)
-    {
-        if (device != c->second->id)
-            continue;
-
-        break;
-    }
-    ASSERT(c_end != c, "No information found for id '" + stringify(id) + "'!");
+    ASSERT(device < _imp->spes.size(), "invalid SPE id '" + stringify(device) + "'!");
+    Implementation::ChunkMap & map(_imp->spes[device]->chunk_map);
+    Implementation::ChunkMap::iterator c(map.find(id));
+    ASSERT(map.end() != c, "No chunk found for memory id '" + stringify(id) + "'!");
 
     return c->second;
 }
@@ -311,43 +386,38 @@ CellBackend::upload(const MemoryId id, const DeviceId device, void * address, co
     /// \todo Does not yet work for size > 16kB.
     CONTEXT("When uploading '" + stringify(size) + "' bytes of data from '" + stringify(address) +
             "' for memory id '" + stringify(id) + "' to SPE '" + stringify(device) + "':");
+    if (! aligned(address))
+        throw MisalignmentError(address, 16, tags::tv_cell, device);
+
     Lock l(*_imp->mutex);
 
-    _imp->known_ids.insert(id);
-    Implementation::ChunkMap::iterator c(_imp->chunk_map.find(id)), c_end(_imp->chunk_map.upper_bound(id));
-    for ( ; c != c_end ; ++c)
-    {
-        if (c->second->id != device)
-            continue;
-
-        break;
-    }
-
+    ASSERT(device < _imp->spes.size(), "invalid SPE id '" + stringify(device) + "'!");
+    Implementation::SPEData & spe(*_imp->spes[device]);
+    spe.known_ids.insert(id);
+    Implementation::ChunkMap::iterator c(spe.chunk_map.find(id)), c_end(spe.chunk_map.end());
     if (c_end != c) // We already uploaded for this memory id
     {
         if (size != c->second->size) // We uploaded a different size \todo checkfor > ?
         {
             _imp->free(c->second);
-            c = _imp->chunk_map.insert(_imp->chunk_map.end(), std::make_pair(id, _imp->alloc(device, size)));
+            c = spe.chunk_map.insert(spe.chunk_map.end(), std::make_pair(id, _imp->alloc(device, size)));
         }
     }
     else
     {
-        c = _imp->chunk_map.insert(_imp->chunk_map.end(), std::make_pair(id, _imp->alloc(device, size)));
+        c = spe.chunk_map.insert(spe.chunk_map.end(), std::make_pair(id, _imp->alloc(device, size)));
     }
     ASSERT(c_end != c, "urgh... something very wrong in CellBackend::upload()!");
 
-    Implementation::SPEMap::const_iterator s(_imp->spe_map.find(c->second->id));
-    ASSERT(_imp->spe_map.end() != s, "No SPE found with device id '" + stringify(c->second->id) + "'!");
-
-    unsigned int tag(_imp->next_upload_tag()), tag_status(3), counter(5);
+    unsigned int tag(_imp->next_upload_tag()), tag_status(0), counter(5);
     do
     {
-        int retval(spe_mfcio_get(s->second.context(), c->second->address, address, size, tag, 0, 0));
-        spe_mfcio_tag_status_read(s->second.context(), 0, SPE_TAG_IMMEDIATE, &tag_status);
+        int retval(spe_mfcio_get(spe.spe.context(), c->second->address, address, size, tag, 0, 0));
+        spe_mfcio_tag_status_read(spe.spe.context(), 0, SPE_TAG_ANY, &tag_status);
         --counter;
     }
-    while ((tag_status != 0) && (counter > 0));
+    while ((! (tag_status && (1 << tag))) && (counter > 0));
+    ASSERT(counter > 0, "DMA transfer didn't work!");
 }
 
 void
@@ -356,32 +426,38 @@ CellBackend::download(const MemoryId id, const DeviceId device, void * address, 
     /// \todo Does not yet work for size > 16kB.
     CONTEXT("When downloading '" + stringify(size) + "' bytes of data to '" + stringify(address) +
             "' for memory id '" + stringify(id) + "' from SPE '" + stringify(device) + "':");
-    Lock l(*_imp->mutex);
+    if (! aligned(address))
+        throw MisalignmentError(address, 16, tags::tv_cell, device);
 
-    if (_imp->known_ids.end() == _imp->known_ids.find(id))
-        throw MemoryIdNotKnown(id);
+    Lock l(*_imp->mutex);
+    ASSERT(device < _imp->spes.size(), "invalid SPE id '" + stringify(device) + "'!");
+
+    if (! _imp->id_known(id, device))
+        throw MemoryIdNotKnown(id, device);
 
     CellBackend::Chunk * result(0);
-    Implementation::ChunkMap::const_iterator c(_imp->chunk_map.find(id)), c_end(_imp->chunk_map.upper_bound(id));
-    for ( ; c != c_end ; ++c)
-    {
-        if (device != c->second->id)
-            continue;
-
-        break;
-    }
+    Implementation::SPEData & spe(*_imp->spes[device]);
+    Implementation::ChunkMap::const_iterator c(spe.chunk_map.find(id)), c_end(spe.chunk_map.end());
     ASSERT(c_end != c, "No chunk found for memory id '" + stringify(id) + "'!");
 
-    Implementation::SPEMap::const_iterator s(_imp->spe_map.find(c->second->id));
-    ASSERT(_imp->spe_map.end() != s, "No SPE found with device id '" + stringify(c->second->id) + "'!");
-
-    unsigned int tag(_imp->next_download_tag()), tag_status(0), counter(5);
+    unsigned int tag(_imp->next_download_tag()), tag_status(0x3), counter(5);
     do
     {
-        spe_mfcio_put(s->second.context(), c->second->address, address, size, tag, 0, 0);
-        spe_mfcio_tag_status_read(s->second.context(), tag, SPE_TAG_IMMEDIATE, &tag_status);
+        int retval(spe_mfcio_put(spe.spe.context(), c->second->address, address, size, tag, 0, 0));
+        spe_mfcio_tag_status_read(spe.spe.context(), 0, SPE_TAG_ANY, &tag_status);
+        --counter;
     }
-    while ((tag_status != 0) && (counter > 0));
+    while ((! (tag_status && (1 << tag))) && (counter > 0));
+}
+
+void
+CellBackend::swap(const MemoryId left, const MemoryId right, const DeviceId device)
+{
+    CONTEXT("When swapping memory ids '" + stringify(left) + "' and '" + stringify(right) + "' on " +
+            "device '" + stringify(device) + "':");
+    Lock l(*_imp->mutex);
+
+    _imp->swap(left, right, device);
 }
 
 void
@@ -390,38 +466,42 @@ CellBackend::swap(const MemoryId left, const MemoryId right)
     CONTEXT("When swapping memory ids '" + stringify(left) + "' and '" + stringify(right) + "':");
     Lock l(*_imp->mutex);
 
-    Implementation::ChunkMap::iterator i(_imp->chunk_map.find(left)), j(_imp->chunk_map.find(right));
-    if (i == _imp->chunk_map.end())
-        throw MemoryIdNotKnown(left);
+    for (SPEManager::Iterator i(SPEManager::instance()->begin()), i_end(SPEManager::instance()->end()) ;
+            i != i_end ; ++i)
+    {
+        bool left_known(_imp->id_known(left, i->id())), right_known(_imp->id_known(right, i->id()));
+        if (left_known != right_known)
+        {
+            if (! left_known)
+                throw MemoryIdNotKnown(left, i->id());
+            else
+                throw MemoryIdNotKnown(right, i->id());
+        }
 
-    if (j == _imp->chunk_map.end())
-        throw MemoryIdNotKnown(right);
+        if (! left_known)
+            continue;
 
-    CellBackend::Chunk * tmp(i->second);
-    i->second = j->second;
-    j->second = tmp;
+        _imp->swap(left, right, i->id());
+    }
 }
 
 void
 CellBackend::free(const MemoryId id, const DeviceId device)
 {
-    CONTEXT("When freeing memory id '" + stringify(id) + "':");
+    CONTEXT("When freeing memory id '" + stringify(id) + "' on SPE '" + stringify(device) + "':");
     Lock l(*_imp->mutex);
 
-    if (_imp->known_ids.end() != _imp->known_ids.find(id))
-        throw MemoryIdNotKnown(id);
+    if (! _imp->id_known(id, device))
+        throw MemoryIdNotKnown(id, device);
 
-    _imp->known_ids.erase(id);
-    Implementation::ChunkMap::iterator c(_imp->chunk_map.find(id)), c_end(_imp->chunk_map.upper_bound(id));
-    for ( ; c != c_end ; ++c)
-    {
-        if (device != c->second->id)
-            continue;
-
-        break;
-    }
+    ASSERT(device < _imp->spes.size(), "invalid SPE id '" + stringify(device) + "'!");
+    Implementation::SPEData & spe(*_imp->spes[device]);
+    spe.known_ids.erase(id);
+    Implementation::ChunkMap::iterator c(spe.chunk_map.find(id)), c_end(spe.chunk_map.end());
     ASSERT(c_end != c, "no chunk found for memory id '" + stringify(id) + "'!");
+
     _imp->free(c->second);
+    spe.chunk_map.erase(c);
 }
 
 const CellBackend::Chunk *

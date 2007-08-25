@@ -5,18 +5,31 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/memory_manager.cc, libutil/memory_manager.hh: Added
+	constructor for device-bound MemoryIdNotKnown exception.
+	* libutil/memory_backend.cc, libutil/memory_backend.hh: Added
+	MisalignmentError exception.
+	* libutil/memory_backend_cell.cc libutil/memory_backend_cell.hh:
+	Reworked the internals of CellBackend to minimize lookup-overhead.
+	Added swap() for specific SPEs. Fixed block_size calculations.
+	* libutil/memory_backend_cell_TEST.cc: Added test case for alignment
+	checks.
+	* libutil/spe_manager.cc: Removed SPE::enqueue().
+
 2007-08-24 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Resolved several logical
 	bugs in the setup stages, two of them thanks to Volker, adjusted
 	correction stage for steady state scenario, substituted unecessary
 	assignments by built-in-constructor calls.
-	
+
 2007-08-24 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/matrix_elementwise_product_TEST.cc:
 	Added tests for mixed sparse/dense/banded operations where appropriate.
-	
+
 2007-08-24 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libutil/files.m4, libutil/memory_backend.cc,
