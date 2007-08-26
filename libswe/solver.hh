@@ -137,10 +137,6 @@ namespace pg512 {
             DenseVector<ResPrec_> * _u_temp;
             DenseVector<ResPrec_> * _v_temp;
             DenseVector<ResPrec_> * _w_temp;
-            //DenseVector<ResPrec_> * _u_predicted;
-            //DenseVector<ResPrec_> * _v_predicted;
-            //DenseVector<ResPrec_> * _w_predicted;;
-
 
 
             ///Vectors for the bottom slopes.
@@ -488,8 +484,8 @@ namespace pg512 {
                     {
                         hbound[i][j.index()] = 5;
                         bbound[i][j.index()] = 1; 
-                        u1bound[i][j.index()] = 1;
-                        u2bound[i][j.index()] = 1;
+                        u1bound[i][j.index()] = 0;
+                        u2bound[i][j.index()] = 0;
                     }
                     else
                     {
@@ -1182,11 +1178,6 @@ namespace pg512 {
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
     {
-       
-        /*_u_temp = new DenseVector<WorkPrec_>(*(_u->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
-        _v_temp = new DenseVector<WorkPrec_>(*(_v->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
-        _w_temp = new DenseVector<WorkPrec_>(*(_w->copy()));//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
-        */
         WorkPrec_ prefac;
         if(_eps != _delta_t)
         {
@@ -1194,25 +1185,27 @@ namespace pg512 {
         }
         else
         {
-	  cout << "prefac is invalid!\n";
+	    cout << "prefac is invalid!\n";
         }
         DenseVector<WorkPrec_> *v(_v->copy());
         DenseVector<WorkPrec_> vc = *v;
         delete v;
         DenseVector<WorkPrec_> *u1(_u->copy());
-        DenseVector<WorkPrec_> *u2(_u->copy());
-        //DenseVector<WorkPrec_> flow1(_u->size(),ulint(0));
-        _flow_x<WorkPrec_>(*u1);
-        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(vc, *u1, _eps,-_delta_t);
+        DenseVector<WorkPrec_> u1_c = *u1;
         delete u1;
+        DenseVector<WorkPrec_> *u2(_u->copy());
+        DenseVector<WorkPrec_> u2_c = *u2;
+        delete u2;
+
+        _flow_x<WorkPrec_>(u1_c);
+        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(vc, u1_c, _eps,-_delta_t);
+        
         sv = ScalarVectorProduct<>::value(prefac,tempsum);
         DenseVector<WorkPrec_> *w(_w->copy());
         DenseVector<WorkPrec_> wc = *w;
         delete w;
-        //DenseVector<WorkPrec_> flow2(_u->size(), ulint(0), ulint(1));
-        _flow_y<WorkPrec_>(*u2);
-        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(wc, *u2, _eps,-_delta_t);
-        delete u2;
+        _flow_y<WorkPrec_>(u2_c);
+        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(wc, u2_c, _eps,-_delta_t);
         
         sw = ScalarVectorProduct<>::value(prefac,tempsum2);
         
@@ -1241,82 +1234,97 @@ namespace pg512 {
         BandedMatrix<WorkPrec_> m2(_u->size());
         BandedMatrix<WorkPrec_> m3(_u->size());
         BandedMatrix<WorkPrec_> m4(_u->size());
-        
-        
-        /*BandedMatrix<WorkPrec_>* m1= new BandedMatrix<WorkPrec_>(_u->size());
-        BandedMatrix<WorkPrec_>* m2= new BandedMatrix<WorkPrec_>(_u->size());
-        BandedMatrix<WorkPrec_>* m3= new BandedMatrix<WorkPrec_>(_u->size());
-        BandedMatrix<WorkPrec_>* m4= new BandedMatrix<WorkPrec_>(_u->size());
-        */
+
         _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
         _assemble_matrix2_DEBUG<WorkPrec_>(m2, m4, &predictedu, &predictedw);
         
-        BandedMatrix<WorkPrec_> m5 = *(m3.copy());
+        BandedMatrix<WorkPrec_>* m5(m3.copy());
+        BandedMatrix<WorkPrec_> m5c = *m5;
+        delete m5;
          
         BandedMatrix<WorkPrec_> m6(_u->size());
         _quick_assemble_matrix2<WorkPrec_>(m1, m6);
  
-        BandedMatrix<WorkPrec_> m7 = *(m4.copy());
+        BandedMatrix<WorkPrec_>* m7(m4.copy());
+        BandedMatrix<WorkPrec_> m7c = *m7;
+        delete m7;
       
         BandedMatrix<WorkPrec_> m8(_u->size());
         _quick_assemble_matrix4<WorkPrec_>(m2, m8); 
 	cout << "Prediction: Finished assembly.\n";
-        //BandedMatrix<WorkPrec_> m5 = _quick_assemble_matrix1<WorkPrec_>(m3);
-        //BandedMatrix<WorkPrec_> m6 = _quick_assemble_matrix2<WorkPrec_>(m1);
-        //BandedMatrix<WorkPrec_> m7 = _quick_assemble_matrix3<WorkPrec_>(m4);
-        //BandedMatrix<WorkPrec_> m8 = _quick_assemble_matrix4<WorkPrec_>(m2);
-        
-        DenseVector<WorkPrec_>* tempu = predictedu.copy();
-        DenseVector<WorkPrec_>* tempv = predictedv.copy();
-        DenseVector<WorkPrec_>* tempw = predictedw.copy();
+       
+        DenseVector<WorkPrec_>* temp_u(predictedu.copy());
+        DenseVector<WorkPrec_>* temp_v(predictedv.copy());
+        DenseVector<WorkPrec_>* temp_u2(predictedu.copy());
+        DenseVector<WorkPrec_>* temp_w(predictedw.copy());
+        DenseVector<WorkPrec_> temp_u_c = *temp_u;
+        DenseVector<WorkPrec_> temp_v_c = *temp_v;
+        DenseVector<WorkPrec_> temp_w_c = *temp_w;
+        DenseVector<WorkPrec_> temp_u2_c = *temp_u2;
+        delete temp_u;
+        delete temp_v;
+        delete temp_w;
+        delete temp_u2;
+
 	cout << "Prediction: Before matrix*vector.\n";
-        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,*tempv);
-        DenseVector<WorkPrec_> *tempu2 = predictedu.copy();
-	cout << "First product solved.\n";
-        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,*tempw);
+        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,temp_v_c);
+cout << "First product solved.\n";
+        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,temp_w_c);
 	cout << "Second product solved.\n";
 	
-        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,*tempu);
+        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,temp_u_c);
 	cout << "Third product solved.\n";
-        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m4,*tempu2);
+        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m4,temp_u2_c);
         cout << "Fourth product solved.\n";
-	DenseVector<WorkPrec_>* source = predictedu.copy(); 
-        _source(*source);
-	cout << "Source solved.\n";
-	DenseVector<WorkPrec_>* predicteduTemp = predictedu.copy();
-	*predicteduTemp = VectorSum<>::value<WorkPrec_,WorkPrec_>(*predicteduTemp, temp1);
-        *predicteduTemp = VectorSum<>::value<WorkPrec_,WorkPrec_>(*predicteduTemp,temp2);
-        *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp3);
-        *predicteduTemp = VectorSum<>::value(*predicteduTemp, temp4);
-        *predicteduTemp = VectorSum<>::value(*predicteduTemp, *source);
+
+	DenseVector<WorkPrec_>* source(predictedu.copy());
+        DenseVector<WorkPrec_> source_c = *source;
         delete source;
+
+        _source(source_c);
+
+	cout << "Source solved.\n";
+	DenseVector<WorkPrec_>* predicted_u_temp(predictedu.copy());
+        DenseVector<WorkPrec_> predicted_u_temp_c = *predicted_u_temp;
+        delete predicted_u_temp;
+
+	VectorSum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp1);
+        VectorSum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp2);
+        VectorSum<>::value(predicted_u_temp_c, temp3);
+        VectorSum<>::value(predicted_u_temp_c, temp4);
+        predictedu = VectorSum<>::value(predicted_u_temp_c, source_c);
+        cout << "First accu solved.\n";
+
+        DenseVector<WorkPrec_>* temp_u3(predictedu.copy());
+        DenseVector<WorkPrec_>* temp_v2(predictedv.copy());
+        DenseVector<WorkPrec_>* temp_w2(predictedw.copy());
+        DenseVector<WorkPrec_>* temp_u4(predictedu.copy());
+        DenseVector<WorkPrec_> temp_u3_c = *temp_u3;
+        DenseVector<WorkPrec_> temp_v2_c = *temp_v2;
+        DenseVector<WorkPrec_> temp_w2_c = *temp_w2;
+        DenseVector<WorkPrec_> temp_u4_c = *temp_u4;
+        delete temp_u3;
+        delete temp_v2;
+        delete temp_w2;
+        delete temp_u4;
+        
+        DenseVector<WorkPrec_> temp11 = MatrixVectorProduct<>::value(m5c,temp_v2_c);
+        DenseVector<WorkPrec_> temp22 = MatrixVectorProduct<>::value(m6, temp_u3_c);
+        DenseVector<WorkPrec_> temp33 = MatrixVectorProduct<>::value(m7c,temp_w2_c);
+        DenseVector<WorkPrec_> temp44 = MatrixVectorProduct<>::value(m8, temp_u4_c);
 	
-	cout << "First accu solved.\n";
-        DenseVector<WorkPrec_> *tempu3 = predictedu.copy();
-        DenseVector<WorkPrec_> *tempv2 = predictedv.copy();
-        DenseVector<WorkPrec_> *tempw2 = predictedw.copy();
-        
-        
-        DenseVector<WorkPrec_> temp11 = MatrixVectorProduct<>::value(m5,*tempv2);
-        DenseVector<WorkPrec_> *tempu4 = predictedu.copy();
-        DenseVector<WorkPrec_> temp22 = MatrixVectorProduct<>::value(m6,*tempu3);
-        DenseVector<WorkPrec_> temp33 = MatrixVectorProduct<>::value(m7,*tempw2);
-        DenseVector<WorkPrec_> temp44 = MatrixVectorProduct<>::value(m8,*tempu4);
-        
-	predictedu = *predicteduTemp;
-	predictedv = VectorSum<>::value(*(predictedv.copy()), temp11);
-        predictedv = VectorSum<>::value(*(predictedv.copy()), temp22);
-        predictedw = VectorSum<>::value(*(predictedw.copy()), temp33);
-        predictedw = VectorSum<>::value(*(predictedw.copy()), temp44);
-        
-        /*delete m1;
-        delete m2;
-        delete m3;
-        delete m4;
-        delete m5;
-        delete m6;
-        delete m7;
-        delete m8;*/
+        DenseVector<WorkPrec_>* v(predictedv.copy());
+        DenseVector<WorkPrec_>* w(predictedw.copy());
+        DenseVector<WorkPrec_> v_c = *v;
+        DenseVector<WorkPrec_> w_c = *w;
+        delete v;
+        delete w;
+
+	VectorSum<>::value(v_c, temp11);
+        predictedv = VectorSum<>::value(v_c, temp22);
+        VectorSum<>::value(w_c, temp33);
+        predictedw = VectorSum<>::value(w_c, temp44);
+
         std::cout << "Finished Prediction.\n";
         
     }
@@ -1336,39 +1344,58 @@ namespace pg512 {
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
         ///Apply flow to newest u:
-        DenseVector<WorkPrec_>* f = predictedu.copy();
-        _flow_x(*f);
+        DenseVector<WorkPrec_>* f(predictedu.copy());
+        DenseVector<WorkPrec_> f_c = *f;
+        delete f;
+        _flow_x(f_c);
 
         ///Compute linear combinations und accumulate:
-        DenseVector<WorkPrec_>* vresult(predictedv.copy());
-        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(*vresult,*f, _eps, _delta_t);
-        delete f;
-        ///Apply flow to old u:
-        DenseVector<WorkPrec_>* flow = _u_temp->copy();
-        _flow_x(*flow);
+        DenseVector<WorkPrec_>* v_result(predictedv.copy());
+        DenseVector<WorkPrec_> v_result_c = *v_result;
+        delete v_result;
+        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(v_result_c,f_c, _eps, _delta_t);
         
-        DenseVector<WorkPrec_>* vtempresult(_v_temp->copy());
-        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*vtempresult, *flow, -2*_delta_t, 2*_delta_t);
+        ///Apply flow to old u:
+        DenseVector<WorkPrec_>* flow(_u_temp->copy());
+        DenseVector<WorkPrec_> flow_c = *flow;
         delete flow;
+        _flow_x(flow_c);
+        
+        DenseVector<WorkPrec_>* v_temp_result(_v_temp->copy());
+        DenseVector<WorkPrec_> v_temp_result_c = *v_temp_result;
+        delete v_temp_result;
+
+        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(v_temp_result_c, flow_c, -2*_delta_t, 2*_delta_t);
+        
         predictedv = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         ///Scale sum:
-        predictedv = ScalarVectorProduct<>::value(1/(_eps+_delta_t), predictedv);
+        ScalarVectorProduct<>::value(1/(_eps+_delta_t), predictedv);
         
         ///Repeat for w:
-        DenseVector<WorkPrec_>* flow2 = predictedu.copy();
-        _flow_y(*flow2);
-        
-        DenseVector<WorkPrec_>* wresult(predictedw.copy());
-        DenseVector<WorkPrec_>innersum11 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(*wresult, *flow2, _eps, _delta_t);
+        DenseVector<WorkPrec_>* flow2(predictedu.copy());
+        DenseVector<WorkPrec_> flow2_c = *flow2;
         delete flow2;
-        DenseVector<WorkPrec_>* flow3 = _u_temp->copy();
-        _flow_x(*flow3);
+        _flow_y(flow2_c);
         
-        DenseVector<WorkPrec_>* wtempresult(_w_temp->copy());
-        DenseVector<WorkPrec_>innersum22 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(*wtempresult, *flow3, -2*_delta_t, 2*_delta_t);
+        DenseVector<WorkPrec_>* w_result(predictedw.copy());
+        DenseVector<WorkPrec_> w_result_c = *w_result;
+        delete w_result;
+        DenseVector<WorkPrec_>innersum11 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(w_result_c, flow2_c, _eps, _delta_t);
+        
+        DenseVector<WorkPrec_>* flow3(_u_temp->copy());
+        DenseVector<WorkPrec_> flow3_c = *flow3;
         delete flow3;
+
+        _flow_x(flow3_c);
+        
+        DenseVector<WorkPrec_>* w_temp_result(_w_temp->copy());
+        DenseVector<WorkPrec_> w_temp_result_c = *w_temp_result;
+        delete w_temp_result;
+
+        DenseVector<WorkPrec_>innersum22 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(w_temp_result_c, flow3_c, -2*_delta_t, 2*_delta_t);
+        
         predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum11, innersum22);
-        predictedw = ScalarVectorProduct<>::value(1/(_eps + _delta_t), predictedw);
+        ScalarVectorProduct<>::value(1/(_eps + _delta_t), predictedw);
         std::cout << "Finished Setup 2.\n";
     } 
     
@@ -1545,51 +1572,35 @@ namespace pg512 {
         _v_temp = _v->copy();
         _w_temp = _w->copy();
         
-        /*_u_predicted = _u_temp->copy();
-        _v_predicted = _v_temp->copy();
-        _w_predicted = _w_temp->copy();
-        */
-
         _do_setup_stage1<InitPrec1_>(*_u_temp, *_v_temp, *_w_temp );
-        //DenseVector<PredictionPrec1_>* tu, * tv, * tw;
-        /*tu = _u->copy();
-        tv = _v->copy();
-        tw = _w->copy();*/
-        /*tu = new DenseVector<PredictionPrec1_>(*(_u_temp->copy()));
-        tv = new DenseVector<PredictionPrec1_>(*(_v_temp->copy()));
-        tw = new DenseVector<PredictionPrec1_>(*(_w_temp->copy()));
-        */
-        DenseVector<PredictionPrec1_>* predictedu = _u_temp->copy();
-        DenseVector<PredictionPrec1_>* predictedv = _v_temp->copy();
-        DenseVector<PredictionPrec1_>* predictedw = _w_temp->copy();
-        
-        _do_prediction<PredictionPrec1_>(*predictedu, *predictedv, *predictedw);
-        //DenseVector<InitPrec2_> predictedu2(_u->size(), 0, 1);
-        //DenseVector<InitPrec2_> predictedv2(_u->size(), 0, 1);
-        //DenseVector<InitPrec2_> predictedw2(_u->size(), 0, 1);
-        _do_setup_stage2<InitPrec2_>(*predictedu, *predictedv, *predictedw);
-        _do_prediction<PredictionPrec2_>(*predictedu, *predictedv, *predictedw);
-        cout << "Predicted u:\n";
-        cout << stringify(*predictedu)<< endl;
-        cout << "u before correction:\n";
-        cout << stringify(*_u)<<endl;
-        
-        _do_correction(*predictedu, *predictedv, *predictedw);
-        ++_solve_time;
 
+        DenseVector<PredictionPrec1_>* predictedu(_u_temp->copy());
+        DenseVector<PredictionPrec1_>* predictedv(_v_temp->copy());
+        DenseVector<PredictionPrec1_>* predictedw(_w_temp->copy());
+        DenseVector<PredictionPrec1_> predictedu_c = *predictedu;
+        DenseVector<PredictionPrec1_> predictedv_c = *predictedv;
+        DenseVector<PredictionPrec1_> predictedw_c = *predictedw;
         delete predictedu;
         delete predictedv;
         delete predictedw;
+        
+        _do_prediction<PredictionPrec1_>(predictedu_c, predictedv_c, predictedw_c);
+
+        _do_setup_stage2<InitPrec2_>(predictedu_c, predictedv_c, predictedw_c);
+        
+        _do_prediction<PredictionPrec2_>(predictedu_c, predictedv_c, predictedw_c);
+
+        cout << "Predicted u:\n";
+        cout << stringify(predictedu_c)<< endl;
+        cout << "u before correction:\n";
+        cout << stringify(*_u)<<endl;
+        
+        _do_correction(predictedu_c, predictedv_c, predictedw_c);
+        ++_solve_time;
+
         delete _u_temp;
         delete _v_temp;
         delete _w_temp;
-        /*predictedu = 0;
-        predictedv = 0;
-        predictedw = 0;
-        _u_temp = 0;
-        _v_temp = 0;
-        _w_temp = 0;
-        */
         cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
         cout << stringify(*_u)<<endl;
     }
@@ -1809,17 +1820,6 @@ namespace pg512 {
     /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result)
     {
 	///Bands of the matrix which will be assembled.
-	/*DenseVector<WorkPrec_> m6diag(_u->size(), ulint(0) ,ulint( 1));      //zero
-        DenseVector<WorkPrec_> m6bandplus3(_u->size(), ulint(0) , ulint(1)); //one
-        DenseVector<WorkPrec_> m6bandplus6(_u->size(), ulint(0) ,ulint( 1)); //two
-        DenseVector<WorkPrec_> m6bandminus3(_u->size(), ulint(0) ,ulint(1));//three
-        */
-        /*DenseVector<WorkPrec_>* m6diag = new DenseVector<WorkPrec_>(_u->size(), ulint(0) ,ulint( 1));      //zero
-        DenseVector<WorkPrec_>* m6bandplus3 = new DenseVector<WorkPrec_>(_u->size(), ulint(0) , ulint(1)); //one
-        DenseVector<WorkPrec_>* m6bandplus6 = new DenseVector<WorkPrec_>(_u->size(), ulint(0) ,ulint( 1)); //two
-        DenseVector<WorkPrec_>* m6bandminus3 = new DenseVector<WorkPrec_>(_u->size(), ulint(0) ,ulint(1));//three
-        */
-
 	DenseVector<WorkPrec_>* m6diag = (m1.band(ulint(0))).copy();
 	DenseVector<WorkPrec_>* m6bandplus3 = (m1.band(ulint(3))).copy();
 	DenseVector<WorkPrec_>* m6bandplus6 = (m1.band(ulint(6))).copy();
