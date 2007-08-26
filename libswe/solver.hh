@@ -1200,20 +1200,23 @@ namespace pg512 {
         _flow_x<WorkPrec_>(u1_c);
         DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(vc, u1_c, _eps,-_delta_t);
         
-        sv = ScalarVectorProduct<>::value(prefac,tempsum);
+        ScalarVectorProduct<>::value(prefac,tempsum);
         DenseVector<WorkPrec_> *w(_w->copy());
         DenseVector<WorkPrec_> wc = *w;
         delete w;
         _flow_y<WorkPrec_>(u2_c);
         DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(wc, u2_c, _eps,-_delta_t);
         
-        sw = ScalarVectorProduct<>::value(prefac,tempsum2);
+        ScalarVectorProduct<>::value(prefac,tempsum2);
         
         cout << "Temp relax vectors after building:\n";
         cout << stringify(*_u_temp) << endl;
         cout << stringify(*_v_temp) << endl;
         cout << stringify(*_w_temp) << endl;
         std::cout << "Finished Setup 1.\n";
+
+        sv = *(tempsum.copy());
+        sw = *(tempsum2.copy());
     }
 
     /** The prediction stage.
@@ -1292,7 +1295,7 @@ cout << "First product solved.\n";
         VectorSum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp2);
         VectorSum<>::value(predicted_u_temp_c, temp3);
         VectorSum<>::value(predicted_u_temp_c, temp4);
-        predictedu = VectorSum<>::value(predicted_u_temp_c, source_c);
+        VectorSum<>::value(predicted_u_temp_c, source_c);
         cout << "First accu solved.\n";
 
         DenseVector<WorkPrec_>* temp_u3(predictedu.copy());
@@ -1321,9 +1324,13 @@ cout << "First product solved.\n";
         delete w;
 
 	VectorSum<>::value(v_c, temp11);
-        predictedv = VectorSum<>::value(v_c, temp22);
+        VectorSum<>::value(v_c, temp22);
         VectorSum<>::value(w_c, temp33);
-        predictedw = VectorSum<>::value(w_c, temp44);
+        VectorSum<>::value(w_c, temp44);
+        
+        predictedu = *(predicted_u_temp_c.copy());
+        predictedv = *(v_c.copy());
+        predictedw = *(w_c.copy());
 
         std::cout << "Finished Prediction.\n";
         
@@ -1367,7 +1374,7 @@ cout << "First product solved.\n";
 
         DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(v_temp_result_c, flow_c, -2*_delta_t, 2*_delta_t);
         
-        predictedv = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
+        VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
         ///Scale sum:
         ScalarVectorProduct<>::value(1/(_eps+_delta_t), predictedv);
         
@@ -1394,8 +1401,11 @@ cout << "First product solved.\n";
 
         DenseVector<WorkPrec_>innersum22 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(w_temp_result_c, flow3_c, -2*_delta_t, 2*_delta_t);
         
-        predictedw = VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum11, innersum22);
+        VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum11, innersum22);
         ScalarVectorProduct<>::value(1/(_eps + _delta_t), predictedw);
+
+        predictedv = *(innersum1.copy());
+        predictedw = *(innersum11.copy());
         std::cout << "Finished Setup 2.\n";
     } 
     

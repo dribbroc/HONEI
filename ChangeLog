@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-08-26 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh, libswe/solver_TEST.cc: Modified return of main
+	stages, which healed a global reference bug, that had previously
+	corrupted the solution.
+	
+2007-08-26 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh, libswe/solver_TEST.cc: Performed a massive
 	cleanup, substituted unnecessary assignments in major stages,
 	corrected boundary setup, resolved copy - conflicts, resolved memory
