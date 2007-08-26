@@ -73,11 +73,11 @@ namespace pg512
         }
 
 		/**
-         * Returns the resulting matrix after multiplying a dense and a sparse matrix instance elementwise.
-         * \param left Reference to a DenseMatrix. Its return type is used for the result matrix.
-         * \param right Reference to a SparseMatrix.
+         * Returns the resulting matrix after multiplying a sparse and a dense matrix instance elementwise.
+         * \param left Reference to a SparseMatrix. Its return type is used for the result matrix.
+         * \param right Reference to a DenseMatrix.
          **/
-        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> & value(DenseMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static SparseMatrix<DataType1_> & value(SparseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.columns())
             {
@@ -89,23 +89,14 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(right.rows(), left.rows());
             }
 
-            typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_elements());
-            for (typename Matrix<DataType2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()); r != r_end ; )
+            for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
+                    l_end(left.end_non_zero_elements()); l != l_end ; ++l)
             {
-                while (l.index() < r.index())
-                {
-					*l = DataType1_(0);
-                    ++l;
-                }
-
-                *l *= *r;
-                ++r; ++l;
+                *l *= right[l.row()][l.column()];
             }
 
-            return left;
+            return left; ///\todo: perhaps sparsify, dense_matrix[row][col] may be zero.
         }
-
 
 		/**
          * Returns the resulting matrix after multiplying two sparse matrix instances elementwise.

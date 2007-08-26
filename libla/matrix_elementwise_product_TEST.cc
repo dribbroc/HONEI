@@ -43,11 +43,11 @@ class BandedMatrixDenseMatrixElementwiseProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size, DataType_(3));                  
+                DenseMatrix<DataType_> dm1(size, size, DataType_(3));
                 DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(2)));
-                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));                  
-                BandedMatrix<DataType_> bm2(size, dv2),  bm3(size, dv3); 
-                
+                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
+                BandedMatrix<DataType_> bm2(size, dv2),  bm3(size, dv3);
+
                 BandedMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(bm2, dm1));
 
                 TEST_CHECK_EQUAL(prod, bm3);
@@ -57,7 +57,7 @@ class BandedMatrixDenseMatrixElementwiseProductTest :
             BandedMatrix<DataType_> bm02(6);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, dm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, dm01), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, dm01), MatrixColumnsDoNotMatch);
         }
 };
 BandedMatrixDenseMatrixElementwiseProductTest<float> banded_matrix_dense_matrix_elementwise_product_test_float("float");
@@ -76,11 +76,11 @@ class BandedMatrixDenseMatrixElementwiseProductQuickTest :
         virtual void run() const
         {
             unsigned long size (11);
-            DenseMatrix<DataType_> dm1(size, size, DataType_(3));                  
+            DenseMatrix<DataType_> dm1(size, size, DataType_(3));
             DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(2)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));                  
-            BandedMatrix<DataType_> bm2(size, dv2),  bm3(size, dv3); 
-            
+            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
+            BandedMatrix<DataType_> bm2(size, dv2),  bm3(size, dv3);
+
             BandedMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(bm2, dm1));
 
             TEST_CHECK_EQUAL(prod, bm3);
@@ -89,7 +89,7 @@ class BandedMatrixDenseMatrixElementwiseProductQuickTest :
             BandedMatrix<DataType_> bm02(6);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, dm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, dm01), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, dm01), MatrixColumnsDoNotMatch);
         }
 };
 BandedMatrixDenseMatrixElementwiseProductQuickTest<float> banded_matrix_dense_matrix_elementwise_product_quick_test_float("float");
@@ -109,10 +109,10 @@ class BandedMatrixElementwiseProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));                    
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));
                 DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(2)));
-                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));                  
-                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2),  bm3(size, dv3); 
+                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2),  bm3(size, dv3);
                 BandedMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(bm1, bm2));
 
                 TEST_CHECK_EQUAL(prod, bm3);
@@ -139,17 +139,17 @@ class BandedMatrixElementwiseProductQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));                    
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));
             DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(2)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));                  
-            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2),  bm3(size, dv3); 
+            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
+            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2),  bm3(size, dv3);
             BandedMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(bm1, bm2));
 
             TEST_CHECK_EQUAL(prod, bm3);
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixSizeDoesNotMatch); 
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
 BandedMatrixElementwiseProductQuickTest<float> banded_matrix_elementwise_product_quick_test_float("float");
@@ -169,20 +169,20 @@ class BandedMatrixSparseMatrixElementwiseProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));                    
-                BandedMatrix<DataType_> bm1(size, dv1),  bm3(size); 
+                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));
+                BandedMatrix<DataType_> bm1(size, dv1),  bm3(size);
                 SparseMatrix<DataType_> sm2(size, size, size / 7 + 1);
-                typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements());            
+                typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements());
                 typename BandedMatrix<DataType_>::ElementIterator k(bm3.begin_elements());
                 for (typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements()),
                     j_end(sm2.end_elements()) ; j != j_end ; ++i, ++j, ++k)
                 {
-                    if (j.index() % 7 == 0) 
+                    if (j.index() % 7 == 0)
                         *j = DataType_(2);
 
                     if (*i != DataType_(0))
-                        *k = DataType_(6);                     
-                } 
+                        *k = DataType_(6);
+                }
 
                 BandedMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(bm1, sm2));
 
@@ -193,7 +193,7 @@ class BandedMatrixSparseMatrixElementwiseProductTest :
             SparseMatrix<DataType_> sm02(5, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm01, sm02), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm01, sm03), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm01, sm03), MatrixColumnsDoNotMatch);
         }
 };
 BandedMatrixSparseMatrixElementwiseProductTest<float> banded_matrix_sparse_matrix_elementwise_product_test_float("float");
@@ -212,20 +212,20 @@ class BandedMatrixSparseMatrixElementwiseProductQuickTest :
         virtual void run() const
         {
             unsigned long size(10);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));                    
-            BandedMatrix<DataType_> bm1(size, dv1),  bm3(size); 
+            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));
+            BandedMatrix<DataType_> bm1(size, dv1),  bm3(size);
             SparseMatrix<DataType_> sm2(size, size, size / 7 + 1);
-            typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements());            
+            typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements());
             typename BandedMatrix<DataType_>::ElementIterator k(bm3.begin_elements());
             for (typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements()),
                 j_end(sm2.end_elements()) ; j != j_end ; ++i, ++j, ++k)
             {
-                if (j.index() % 7 == 0) 
+                if (j.index() % 7 == 0)
                     *j = DataType_(2);
 
                 if (*i != DataType_(0))
-                    *k = DataType_(6);                     
-            } 
+                    *k = DataType_(6);
+            }
 
             BandedMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(bm1, sm2));
 
@@ -235,7 +235,7 @@ class BandedMatrixSparseMatrixElementwiseProductQuickTest :
             SparseMatrix<DataType_> sm02(5, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm01, sm02), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm01, sm03), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(bm01, sm03), MatrixColumnsDoNotMatch);
         }
 };
 BandedMatrixSparseMatrixElementwiseProductQuickTest<float> banded_matrix_sparse_matrix_elementwise_product_quick_test_float("float");
@@ -302,12 +302,12 @@ DenseMatrixElementwiseProductQuickTest<float> dense_matrix_elementwise_product_q
 DenseMatrixElementwiseProductQuickTest<double> dense_matrix_elementwise_product_quick_test_double("double");
 
 template <typename DataType_>
-class DenseMatrixSparseMatrixElementwiseProductTest :
+class SparseMatrixDenseMatrixElementwiseProductTest :
     public BaseTest
 {
     public:
-        DenseMatrixSparseMatrixElementwiseProductTest(const std::string & type) :
-            BaseTest("dense_matrix_sparse_matrix_elementwise_product_test<" + type + ">")
+        SparseMatrixDenseMatrixElementwiseProductTest(const std::string & type) :
+            BaseTest("sparse_matrix_dense_matrix_elementwise_product_test<" + type + ">")
         {
         }
 
@@ -315,71 +315,71 @@ class DenseMatrixSparseMatrixElementwiseProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm3(size, size + 1, DataType_(0));
-                SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()), 
-                    k(dm3.begin_elements()) ; j != j_end ; ++j, ++k)
+                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+                SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 7 + 1);
+                for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
+                    k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
                 {
-                    if (j.index() % 7 == 0) 
+                    if (j.index() % 7 == 0)
                     {
                         *j = DataType_(3);
-                        *k = DataType_(6);                        
+                        *k = DataType_(6);
                     }
-                }  
-                            
-                DenseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(dm1, sm2));
+                }
 
-                TEST_CHECK_EQUAL(prod, dm3);
+                SparseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(sm2, dm1));
+
+                TEST_CHECK_EQUAL(prod, sm3);
             }
 
             DenseMatrix<DataType_> dm03(5, 6);
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(dm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(dm03, sm02), MatrixColumnsDoNotMatch); 
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm01, dm03), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm02, dm03), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSparseMatrixElementwiseProductTest<float> dense_matrix_sparse_matrix_elementwise_product_test_float("float");
-DenseMatrixSparseMatrixElementwiseProductTest<double> dense_matrix_sparse_matrix_elementwise_product_test_double("double");
+SparseMatrixDenseMatrixElementwiseProductTest<float> sparse_matrix_dense_matrix_elementwise_product_test_float("float");
+SparseMatrixDenseMatrixElementwiseProductTest<double> sparse_matrix_dense_matrix_elementwise_product_test_double("double");
 
 template <typename DataType_>
-class DenseMatrixSparseMatrixElementwiseProductQuickTest :
+class SparseMatrixDenseMatrixElementwiseProductQuickTest :
     public QuickTest
 {
     public:
-        DenseMatrixSparseMatrixElementwiseProductQuickTest(const std::string & type) :
-            QuickTest("dense_matrix_sparse_matrix_elementwise_product_quick_test<" + type + ">")
+        SparseMatrixDenseMatrixElementwiseProductQuickTest(const std::string & type) :
+            QuickTest("sparse_matrix_dense_matrix_elementwise_product_quick_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
             unsigned long size (11);
-            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm3(size, size + 1, DataType_(0));
-            SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()), 
-                k(dm3.begin_elements()) ; j != j_end ; ++j, ++k)
+            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+            SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 7 + 1);
+            for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
+                k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
             {
-                if (j.index() % 7 == 0) 
+                if (j.index() % 7 == 0)
                 {
                     *j = DataType_(3);
-                    *k = DataType_(6);                        
+                    *k = DataType_(6);
                 }
-            }  
-                        
-            DenseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(dm1, sm2));
+            }
 
-            TEST_CHECK_EQUAL(prod, dm3);
+            SparseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(sm2, dm1));
+
+            TEST_CHECK_EQUAL(prod, sm3);
 
             DenseMatrix<DataType_> dm03(5, 6);
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(dm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(dm03, sm02), MatrixColumnsDoNotMatch); 
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm01, dm03), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm02, dm03), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSparseMatrixElementwiseProductQuickTest<float> dense_matrix_sparse_matrix_elementwise_product_quick_test_float("float");
-DenseMatrixSparseMatrixElementwiseProductQuickTest<double> dense_matrix_sparse_matrix_elementwise_product_quick_test_double("double");
+SparseMatrixDenseMatrixElementwiseProductQuickTest<float> sparse_matrix_dense_matrix_elementwise_product_quick_test_float("float");
+SparseMatrixDenseMatrixElementwiseProductQuickTest<double> sparse_matrix_dense_matrix_elementwise_product_quick_test_double("double");
 
 template <typename DataType_>
 class SparseMatrixBandedMatrixElementwiseProductTest :
@@ -395,20 +395,20 @@ class SparseMatrixBandedMatrixElementwiseProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));                    
-                BandedMatrix<DataType_> bm2(size, dv2); 
+                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));
+                BandedMatrix<DataType_> bm2(size, dv2);
                 SparseMatrix<DataType_> sm1(size, size, size / 7 + 1), sm3(size, size, size / 7 + 1);
-                typename BandedMatrix<DataType_>::ConstElementIterator j(bm2.begin_elements());                   
+                typename BandedMatrix<DataType_>::ConstElementIterator j(bm2.begin_elements());
                 for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), k(sm3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
-                    if (i.index() % 7 == 0) 
+                    if (i.index() % 7 == 0)
                     {
                         *i = DataType_(2);
                         if (*j != DataType_(0))
-                            *k = DataType_(6);                        
-                    }                       
-                } 
+                            *k = DataType_(6);
+                    }
+                }
 
                 SparseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(sm1, bm2));
 
@@ -419,7 +419,7 @@ class SparseMatrixBandedMatrixElementwiseProductTest :
             SparseMatrix<DataType_> sm02(5, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm02, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, bm01), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, bm01), MatrixColumnsDoNotMatch);
         }
 };
 SparseMatrixBandedMatrixElementwiseProductTest<float> sparse_matrix_banded_matrix_elementwise_product_test_float("float");
@@ -438,19 +438,19 @@ class SparseMatrixBandedMatrixElementwiseProductQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));                    
-            BandedMatrix<DataType_> bm2(size, dv2); 
+            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));
+            BandedMatrix<DataType_> bm2(size, dv2);
             SparseMatrix<DataType_> sm1(size, size, size / 7 + 1), sm3(size, size, size / 7 + 1);
-            typename BandedMatrix<DataType_>::ConstElementIterator j(bm2.begin_elements());                   
+            typename BandedMatrix<DataType_>::ConstElementIterator j(bm2.begin_elements());
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()), k(sm3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
-                if (i.index() % 7 == 0) 
+                if (i.index() % 7 == 0)
                 {
                     *i = DataType_(2);
                     if (*j != DataType_(0))
-                        *k = DataType_(6);                        
-                } 
+                        *k = DataType_(6);
+                }
             }
 
             SparseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(sm1, bm2));
@@ -461,7 +461,7 @@ class SparseMatrixBandedMatrixElementwiseProductQuickTest :
             SparseMatrix<DataType_> sm02(5, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm02, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, bm01), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, bm01), MatrixColumnsDoNotMatch);
         }
 };
 SparseMatrixBandedMatrixElementwiseProductQuickTest<float> sparse_matrix_banded_matrix_elementwise_product_quick_test_float("float");
@@ -481,26 +481,26 @@ class SparseMatrixElementwiseProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
-                    i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ; 
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                    i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
                 {
-                    if (i.index() % 10 == 0) 
+                    if (i.index() % 10 == 0)
                     {
                         *i = DataType_(2);
                     }
-                    if (i.index() % 7 == 0) 
+                    if (i.index() % 7 == 0)
                     {
                         *j = DataType_(3);
                     }
-                    if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0)
                     {
-                        *k = DataType_(6);                        
+                        *k = DataType_(6);
                     }
-                }  
-                            
+                }
+
                 SparseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(sm1, sm2));
 
                 TEST_CHECK_EQUAL(prod, sm3);
@@ -509,7 +509,7 @@ class SparseMatrixElementwiseProductTest :
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch); 
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
 SparseMatrixElementwiseProductTest<float> sparse_matrix_elementwise_product_test_float("float");
@@ -528,26 +528,26 @@ class SparseMatrixElementwiseProductQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1), 
+            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                 sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
-                i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ; 
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
             {
-                if (i.index() % 10 == 0) 
+                if (i.index() % 10 == 0)
                 {
                     *i = DataType_(2);
                 }
-                if (i.index() % 7 == 0) 
+                if (i.index() % 7 == 0)
                 {
                     *j = DataType_(3);
                 }
-                if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                if (i.index() % 7 == 0 && i.index() % 10 == 0)
                 {
-                    *k = DataType_(6);                        
-                }                                
-            }  
-                        
+                    *k = DataType_(6);
+                }
+            }
+
             SparseMatrix<DataType_> & prod(MatrixElementwiseProduct<DataType_>::value(sm1, sm2));
 
             TEST_CHECK_EQUAL(prod, sm3);
@@ -555,7 +555,7 @@ class SparseMatrixElementwiseProductQuickTest :
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
             TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch); 
+            TEST_CHECK_THROWS(MatrixElementwiseProduct<DataType_>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
 SparseMatrixElementwiseProductQuickTest<float> sparse_matrix_elementwise_product_quick_test_float("float");
