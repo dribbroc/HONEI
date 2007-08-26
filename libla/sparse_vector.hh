@@ -400,6 +400,18 @@ namespace pg512 ///< \todo Namespace name?
                 return *this;
             }
 
+            /// In-place-add operator.
+            virtual SparseElementIterator<DataType_> & operator+= (const unsigned long step)
+            {
+                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+
+                _index += step;
+                while ((_pos < _vector._imp->_used_elements) && (_vector._imp->_indices[_pos] < _index))
+                    ++_pos;
+
+                return *this;
+            }
+
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
@@ -420,6 +432,12 @@ namespace pg512 ///< \todo Namespace name?
                     return _vector._zero_element;
                 else
                     return _vector._imp->_elements[_pos];
+            }
+
+            /// Less-than operator.
+            virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+            {
+                return _index < other.index();
             }
 
             /// Comparison operator for equality.
@@ -511,8 +529,24 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual NonZeroElementIterator<DataType_> & operator++ ()
             {
+                CONTEXT("When incrementing iterator by one:");
+
                 ++_pos;
                 _index = _vector._imp->_indices[_pos];
+
+                return *this;
+            }
+
+            /// In-place-add operator.
+            virtual NonZeroElementIterator<DataType_> & operator+= (const unsigned long step)
+            {
+                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+
+                _pos += step;
+                if (_pos < _vector.capacity())
+                    _index = _vector._imp->_indices[_pos];
+                else
+                    _index = _vector.size();
 
                 return *this;
             }
@@ -520,13 +554,23 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
+                CONTEXT("When accessing assignable element at position '" + stringify(_pos) + "':");
+
                 return _vector._imp->_elements[_pos];
             }
 
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
+                CONTEXT("When accessing unassignable element at position '" + stringify(_pos) + "':");
+
                 return _vector._imp->_elements[_pos];
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+            {
+                return _index < other.index();
             }
 
             /// Comparison operator for equality.

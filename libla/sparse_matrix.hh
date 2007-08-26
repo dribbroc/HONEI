@@ -65,7 +65,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Our implementation of ElementIteratorBase.
             template <typename ElementType_> class SparseElementIterator;
             /// Our smart implementation of ElementIteratorBase.
-            template <typename ElementType_> class NonZeroElementIterator;            
+            template <typename ElementType_> class NonZeroElementIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
@@ -101,6 +101,7 @@ namespace pg512 ///< \todo Namespace name?
                 _row_vectors(rows + 1),
                 _zero_vector(columns, 1)
             {
+                _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
             }
 
             ~SparseMatrix()
@@ -136,25 +137,25 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns const iterator pointing to the first non-zero element of the matrix.
             virtual ConstElementIterator begin_non_zero_elements() const
             {
-                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, 0));
+                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this));
             }
 
             /// Returns const iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_non_zero_elements() const
             {
-                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, _rows * _columns));
+                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, 0 /* Dummy */));
             }
 
             /// Returns iterator pointing to the first non-zero element of the matrix.
             virtual ElementIterator begin_non_zero_elements()
             {
-                return ElementIterator(new NonZeroElementIterator<DataType_>(*this, 0));
+                return ElementIterator(new NonZeroElementIterator<DataType_>(*this));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_non_zero_elements()
             {
-                return ElementIterator(new NonZeroElementIterator<DataType_>(*this, _rows * _columns));
+                return ElementIterator(new NonZeroElementIterator<DataType_>(*this, 0 /* Dummy */));
             }
 
             /// Returns the number of our columns.
@@ -273,7 +274,36 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual SparseElementIterator<DataType_> & operator++ ()
             {
+                CONTEXT("When incrementing iterator by one:");
+
                 ++_index;
+                unsigned long row(_index / _matrix._columns);
+                if (row != _row)
+                {
+                    if (! _matrix._row_vectors[row])
+                        _matrix._row_vectors[row].reset(new SparseVector<DataType_>(_matrix._columns,
+                                    _matrix._capacity));
+
+                    _iter = _matrix._row_vectors[row]->begin_elements();
+                    _row = row;
+                }
+                else
+                {
+                    ++_iter;
+                }
+
+                return *this;
+            }
+
+            /// In-place-add operator.
+            virtual SparseElementIterator<DataType_> & operator+= (const unsigned long step)
+            {
+                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+
+                _index += step;
+                if (_matrix._rows * _matrix._columns >= _index)
+                    _index = _matrix._rows + _matrix._columns;
+
                 unsigned long row(_index / _matrix._columns);
                 if (row != _row)
                 {
@@ -295,15 +325,25 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns assignable reference.
             virtual DataType_ & operator* ()
             {
+                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
+
                 return *_iter;
             }
 
             /// Dereference operator that returns umassignable reference.
             virtual const DataType_ & operator* () const
             {
+                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
+
                 typename Vector<DataType_>::ConstElementIterator const_iter(_iter);
 
                 return *const_iter;
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
+            {
+                return _index < other.index();
             }
 
             /// Comparison operator for equality.
@@ -366,55 +406,74 @@ namespace pg512 ///< \todo Namespace name?
             /// Our index.
             unsigned long _index;
 
-            /// Our row-vector's iterator.
+            /// Our row-vector's iterator for the current position.
             typename Vector<DataType_>::ElementIterator _iter;
+
+            /// Our row-vector's iterator for the end.
+            typename Vector<DataType_>::ElementIterator _end;
+
+            /// Our column index.
+            unsigned long _column;
 
             /// Our row index.
             unsigned long _row;
 
-            /// Returns the first non zero iterator starting from a given row in the matrix.
-            typename Vector<DataType_>::ElementIterator _get_first_iterator(const SparseMatrix<DataType_> & matrix, 
-                    unsigned long row)
+            /// Find the pair of iterators for the next existing row.
+            typename Vector<DataType_>::ElementIterator _find_next_row()
             {
-                if (matrix._rows == row)
+                for ( ; _row < _matrix._rows ; ++_row)
                 {
-                    matrix._row_vectors[row].reset(new SparseVector<DataType_>(matrix._columns,
-                            matrix._capacity));
-                    _index = _matrix._rows * _matrix._columns;                            
-                    return matrix._row_vectors[row]->begin_non_zero_elements();
+                    if (! _matrix._row_vectors[_row])
+                        continue;
+
+                    _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+                    _end = _matrix._row_vectors[_row]->end_non_zero_elements();
+
+                    if (_iter.index() == _matrix._columns)
+                        continue;
+
+                    break;
                 }
-                
-                while ((! matrix._row_vectors[row])  || matrix._row_vectors[row]->used_elements() == 0)
-                {
-                    ++row;
-                    if (matrix._rows == row)
-                    {
-                        matrix._row_vectors[row].reset(new SparseVector<DataType_>(matrix._columns,
-                                matrix._capacity));
-                        _index = _matrix._rows * _matrix._columns;                        
-                        return matrix._row_vectors[row]->begin_non_zero_elements();
-                    }
-                }
-                return matrix._row_vectors[row]->begin_non_zero_elements();
+
+                _index = _row * _matrix._columns + _iter.index();
+
+                return _iter;
             }
-            
+
         public:
             /// \name Constructors and destructor
             /// \{
 
             /**
-             * Constructor.
+             * Constructor, creates a begin iterator.
              *
              * \param matrix The parent matrix that is referenced by the iterator.
-             * \param index The index into the matrix.
              **/
-            NonZeroElementIterator(const SparseMatrix<DataType_> & matrix, unsigned long index) :
+            NonZeroElementIterator(const SparseMatrix<DataType_> & matrix) :
                 _matrix(matrix),
-                _index(index),
-                _row(index / matrix._columns),
-                _iter(_get_first_iterator(matrix, index / matrix._columns))
+                _index(0),
+                _column(0),
+                _row(0),
+                _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()), // Dummy
+                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements()) // Dummy
             {
-                //_row = index / matrix._columns;
+                _find_next_row();
+            }
+
+            /**
+             * Constructor, creates an end iterator.
+             *
+             * \param matrix The parent matrix that is referenced by the iterator.
+             */
+            NonZeroElementIterator(const SparseMatrix<DataType_> & matrix, const DataType_ &) :
+                _matrix(matrix),
+                _index(matrix._rows * matrix._columns),
+                _column(0),
+                _row(matrix._rows),
+                _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()),
+                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements())
+            {
+                _find_next_row();
             }
 
             /// Copy-constructor.
@@ -422,6 +481,8 @@ namespace pg512 ///< \todo Namespace name?
                 _matrix(other._matrix),
                 _index(other._index),
                 _iter(other._iter),
+                _end(other._end),
+                _column(other._columns),
                 _row(other._row)
             {
             }
@@ -439,52 +500,27 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual NonZeroElementIterator<DataType_> & operator++ ()
             {
-                ++_index;
-                ++_iter;
-                bool done = false; 
-                if (!done && _matrix._rows == _row)
+                if (_iter != _end)
                 {
-                    _matrix._row_vectors[_row].reset(new SparseVector<DataType_>(_matrix._columns,
-                            _matrix._capacity));
-                    _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
-                    _index = _matrix._rows * _matrix._columns;
-                    //return *this;
-                    done = true;
-                }  
-                                
-                if (!done && _iter != _matrix._row_vectors[_row]->end_non_zero_elements())
-                {
-                    //return *this; 
-                    done = true;
+                    ++_iter;
+                    ++_column;
                 }
-                
-                if (!done)
-                        ++ _row;
-                
-                if (!done && _matrix._rows == _row)
+                else
                 {
-                    _matrix._row_vectors[_row].reset(new SparseVector<DataType_>(_matrix._columns,
-                            _matrix._capacity));
-                    _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
-                    _index = _matrix._rows * _matrix._columns;
-                    //return *this;
-                    done = true;
-                }                
-                while (!done && (!_matrix._row_vectors[_row] || _matrix._row_vectors[_row]->used_elements() == 0))
-                {
-                    ++ _row;
-                    if (_matrix._rows == _row)
-                    {
-                        _matrix._row_vectors[_row].reset(new SparseVector<DataType_>(_matrix._columns,
-                                _matrix._capacity));
-                        _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
-                        _index = _matrix._rows * _matrix._columns;  
-                        //return *this;
-                        done = true;
-                    }
+                    ++_row;
+                    _column = 0;
+                    _iter = _find_next_row();
                 }
-                if (!done)
-                        _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+
+                _index = _row * _matrix._columns + _column;
+
+                return *this;
+            }
+
+            /// In-place-add operator.
+            virtual NonZeroElementIterator<DataType_> & operator+= (const unsigned long step)
+            {
+                /// \todo
 
                 return *this;
             }
@@ -492,15 +528,25 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns assignable reference.
             virtual DataType_ & operator* ()
             {
+                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
+
                 return *_iter;
             }
 
             /// Dereference operator that returns umassignable reference.
             virtual const DataType_ & operator* () const
             {
+                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
+
                 typename Vector<DataType_>::ConstElementIterator const_iter(_iter);
 
                 return *const_iter;
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
+            {
+                return _index < other.index();
             }
 
             /// Comparison operator for equality.
@@ -529,7 +575,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns our column index.
             virtual unsigned long column() const
             {
-                return _iter.index();
+                return _column;
             }
 
             /// Returns our row index.

@@ -75,11 +75,17 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual IteratorBase<DataType_, Container_> & operator++ () = 0;
 
+            /// In-place-add operator.
+            virtual IteratorBase<DataType_, Container_> & operator+= (const unsigned long step) = 0;
+
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* () = 0;
 
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const = 0;
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const IteratorBase<DataType_, Container_> & other) const = 0;
 
             /// Comparison operator for equality.
             virtual bool operator== (const IteratorBase<DataType_, Container_> & other) const = 0;

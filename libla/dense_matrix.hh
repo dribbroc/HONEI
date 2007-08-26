@@ -289,20 +289,43 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual DenseElementIterator<DataType_> & operator++ ()
             {
+                CONTEXT("When incrementing iterator by one:");
+
                 ++_index;
+
+                return *this;
+            }
+
+            /// In-place-add operator.
+            virtual DenseElementIterator<DataType_> & operator+= (const unsigned long step)
+            {
+                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+
+                _index += step;
+
                 return *this;
             }
 
             /// Dereference operator that returns assignable reference.
             virtual DataType_ & operator* ()
             {
+                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
+
                 return _matrix._elements[_index];
             }
 
             /// Dereference operator that returns umassignable reference.
             virtual const DataType_ & operator* () const
             {
+                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
+
                 return _matrix._elements[_index];
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
+            {
+                return _index < other.index();
             }
 
             /// Comparison operator for equality.

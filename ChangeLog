@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-27 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/banded_matrix.hh, libla/dense_matrix.hh,
+	libla/dense_vector.hh, libla/element_iterator.hh,
+	libla/sparse_matrix.hh, libla/sparse_vector.hh: Added operator+= and
+	operator< to element iterators. Attempted to rewrite SparseMatrix's
+	NonZeroElementIterator.
+
 2007-08-26 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/vector_difference_TEST.cc: Fixed SparseVector test cases.

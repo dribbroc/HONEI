@@ -203,8 +203,8 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns a band-vector by index.
             DenseVector<DataType_> & band(signed long index) const
             {
-                CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '" + stringify(_size) + "':");
-
+                CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '"
+                        + stringify(_size) + "':");
                 ASSERT(std::abs(index) < _size, "index out of bounds!");
 
                 if (! _bands[index + _size - 1])
@@ -290,7 +290,19 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual MatrixElementIterator & operator++ ()
             {
+                CONTEXT("When incrementing iterator by one:");
+
                 ++_index;
+
+                return *this;
+            }
+
+            /// In-place-add operator.
+            virtual MatrixElementIterator & operator+= (const unsigned long step)
+            {
+                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+
+                _index += step;
 
                 return *this;
             }
@@ -298,7 +310,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
-                CONTEXT("When dereferencing BandedElementIterator (mutable):");
+                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
 
                 if (! _matrix._bands[_band_index() + _matrix._size - 1])
                 {
@@ -311,7 +323,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
-                CONTEXT("When dereferencing BandedElementIterator (const):");
+                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
 
                 if (! _matrix._bands[_band_index() + _matrix._size - 1])
                 {
@@ -321,6 +333,12 @@ namespace pg512 ///< \todo Namespace name?
                 {
                     return (*_matrix._bands[_band_index() + _matrix._size - 1])[row() + _band_index()];
                 }
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
+            {
+                return _index < other.index();
             }
 
             /// Comparison operator for equality.

@@ -296,7 +296,19 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual DenseElementIterator<DataType_> & operator++ ()
             {
+                CONTEXT("When incrementing iterator by one:");
+
                 ++_index;
+
+                return *this;
+            }
+
+            /// In-place-add operator.
+            virtual DenseElementIterator<DataType_> & operator+= (const unsigned long step)
+            {
+                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+
+                _index += step;
 
                 return *this;
             }
@@ -304,13 +316,23 @@ namespace pg512 ///< \todo Namespace name?
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
+                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
+
                 return _vector._elements[_vector._stepsize * _index + _vector._offset];
             }
 
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
+                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
+
                 return _vector._elements[_vector._stepsize * _index + _vector._offset];
+            }
+
+            /// Less-than operator.
+            virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+            {
+                return _index < other.index();
             }
 
             /// Equality operator.
