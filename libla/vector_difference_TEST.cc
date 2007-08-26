@@ -220,24 +220,26 @@ class SparseVectorDifferenceTest :
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                     j(sv2.begin_elements()), k(sv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
-                    if (i.index() % 10 == 0) 
+                    if ((i.index() % 7 == 0) && (i.index() % 10 == 0))
                     {
-                        *i = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
-                        *k = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                        *i = DataType_((i.index() + 1) / 1.23456789);
+                        *j = DataType_(((i.index() +1) * 2) / 1.23456789);
+                        *k = -*i;
                     }
-                    if (i.index() % 7 == 0) 
+                    else if (i.index() % 7 == 0) 
                     {
-                        *j = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                        *k = static_cast<DataType_>((i.index() +1) / -1.23456789);
+                        *i = DataType_((i.index() +1) / 1.23456789);
+                        *k = *i;
                     }
-                    if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                    else if (i.index() % 10 == 0) 
                     {
-                        *k = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                    }                                
-                }            
+                        *j = DataType_(((i.index() +1) * 2) / 1.23456789);
+                        *k = -*j;
+                    }
+                }
 
-            SparseVector<DataType_> difference1(VectorDifference<>::value(sv1, sv2));
-            TEST_CHECK_EQUAL(difference1, sv3);
+                SparseVector<DataType_> difference1(VectorDifference<>::value(sv1, sv2));
+                TEST_CHECK_EQUAL(difference1, sv3);
             }
 
             SparseVector<DataType_> sv00(1, 1), sv01(5, 1);
@@ -264,21 +266,23 @@ class SparseVectorDifferenceQuickTest :
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                 j(sv2.begin_elements()), k(sv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
-                if (i.index() % 10 == 0) 
+                if ((i.index() % 7 == 0) && (i.index() % 10 == 0))
                 {
-                    *i = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
-                    *k = static_cast<DataType_>(((i.index() +1) * 2) / 1.23456789);
+                    *i = DataType_((i.index() + 1) / 1.23456789);
+                    *j = DataType_(((i.index() +1) * 2) / 1.23456789);
+                    *k = -*i;
                 }
-                if (i.index() % 7 == 0) 
+                else if (i.index() % 7 == 0) 
                 {
-                    *i = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                    *k = static_cast<DataType_>((i.index() +1) / -1.23456789);
+                    *i = DataType_((i.index() +1) / 1.23456789);
+                    *k = *i;
                 }
-                if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                else if (i.index() % 10 == 0) 
                 {
-                    *k = static_cast<DataType_>((i.index() +1) / 1.23456789);
-                }                                
-            }            
+                    *j = DataType_(((i.index() +1) * 2) / 1.23456789);
+                    *k = -*j;
+                }
+            }
 
             SparseVector<DataType_> difference1(VectorDifference<>::value(sv1, sv2));
             TEST_CHECK_EQUAL(difference1, sv3);
