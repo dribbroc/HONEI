@@ -1981,23 +1981,6 @@ cout << "First product solved.\n";
         ::_assemble_matrix1_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        /*DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_> m3diag(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0));//three
-        m1.band(ulint(0)) = m1diag;
-        m1.band(ulint(3)) = m1bandPlus1;
-        m1.band(ulint(6)) = m1bandPlus2;
-        m1.band(ulint(-3)) = m1bandMinus1;
-        m3.band(ulint(0)) = m3diag;
-        m3.band(ulint(3)) = m3bandPlus1;
-        m3.band(ulint(6)) = m3bandPlus2;
-        m3.band(ulint(-3)) = m3bandMinus1;
-        */
         DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
         DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0)); //one
         DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0)); //two
@@ -2047,7 +2030,7 @@ cout << "First product solved.\n";
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
             DenseVector<WorkPrec_> rightMinus1Upper(ulint(12), ulint(0));
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=6 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightMinus1Upper[0] = (*v)[vi.index()-6];
                 rightMinus1Upper[1] = (*v)[vi.index()-5];
@@ -2067,8 +2050,27 @@ cout << "First product solved.\n";
 
 
             }
+            else
+            {
+                rightMinus1Upper[0] = 0;
+                rightMinus1Upper[1] = 0;
+                rightMinus1Upper[2] = 0;
+                rightMinus1Upper[3] = 0;
+                rightMinus1Upper[4] = 0;
+                rightMinus1Upper[5] = 0;
+
+                rightMinus1Upper[6] = 0;
+                rightMinus1Upper[7] = 0;
+                rightMinus1Upper[8] = 0;
+                rightMinus1Upper[9] = 0;
+                rightMinus1Upper[10] = 0;
+                rightMinus1Upper[11] = 0;
+
+
+            }
+
             DenseVector<WorkPrec_> rightMinus1Lower(ulint(12), ulint(0));
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6) 
+            if(ui.index()>=/*6*/3 && ui.index()<ui_END.index()/*-6*/-2) 
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3];
                 rightMinus1Lower[1] = (*v)[vi.index()-2];
@@ -2105,7 +2107,7 @@ cout << "First product solved.\n";
             //Prepare right operands for diagonal:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightDiagUpper(ulint(12), ulint(0));
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/3 && ui.index()<=ui_END.index()/*-6*/-2)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3];
                 rightDiagUpper[1] = (*v)[vi.index()-2];
@@ -2122,7 +2124,7 @@ cout << "First product solved.\n";
                 rightDiagUpper[11] = (*u)[ui.index()+2];
             }
             DenseVector<WorkPrec_> rightDiagLower(ulint(12), ulint(0));
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-5)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1];
@@ -2155,7 +2157,7 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXPlus_iMinus1_j):
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=6 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-6];
                 rightDiagUpper[1] = (*v)[vi.index()-5];
@@ -2175,7 +2177,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/3 && ui.index()<=ui_END.index()-/*6*/2)
             {
                 rightDiagLower[0] = (*v)[vi.index()-3];
                 rightDiagLower[1] = (*v)[vi.index()-2];
@@ -2208,7 +2210,7 @@ cout << "First product solved.\n";
             thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/3 && ui.index()<=ui_END.index()/*-6*/-2)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3];
                 rightDiagUpper[1] = (*v)[vi.index()-2];
@@ -2228,7 +2230,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-5)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1];
@@ -2270,7 +2272,7 @@ cout << "First product solved.\n";
             //Prepare right operands for band_+1:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightPlus1Upper(ulint(12), ulint(0));
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/3 && ui.index()<=ui_END.index()/*-6*/-2)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3];
                 rightPlus1Upper[1] = (*v)[vi.index()-2];
@@ -2287,7 +2289,7 @@ cout << "First product solved.\n";
                 rightPlus1Upper[11] = (*u)[ui.index()+2];
             }
             DenseVector<WorkPrec_> rightPlus1Lower(ulint(12), ulint(0));
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-6)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1];
@@ -2320,7 +2322,7 @@ cout << "First product solved.\n";
             thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXMinus_iPlus1_j):
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-5)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()];
                 rightPlus1Upper[1] = (*v)[vi.index()+1];
@@ -2340,7 +2342,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()/*-6*/-8)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()+3];
                 rightPlus1Lower[1] = (*v)[vi.index()+4];
@@ -2373,7 +2375,7 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/3 && ui.index()<=ui_END.index()/*-6*/-2)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3];
                 rightPlus1Upper[1] = (*v)[vi.index()-2];
@@ -2393,7 +2395,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=0/*6*/ && ui.index()<=ui_END.index()-5)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1];
@@ -2434,7 +2436,7 @@ cout << "First product solved.\n";
 
             //band_+2 (thetaXMinus_iPlus1_j):
             DenseVector<WorkPrec_> rightPlus2Upper(ulint(12), ulint(0));
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-5)
             {
                 rightPlus2Upper[0] = (*v)[vi.index()];
                 rightPlus2Upper[1] = (*v)[vi.index()+1];
@@ -2456,7 +2458,7 @@ cout << "First product solved.\n";
             }
             DenseVector<WorkPrec_> rightPlus2Lower(ulint(12), ulint(0));
  
-            if(ui.index()>=6 && ui.index()<=ui_END.index()-6)
+            if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()/*-6*/-8)
             {
                 rightPlus2Lower[0] = (*v)[vi.index()+3];
                 rightPlus2Lower[1] = (*v)[vi.index()+4];
@@ -2494,7 +2496,8 @@ cout << "First product solved.\n";
             //FINISHED band_+2.
 
             //Iterate:
-            ++ui;++vi;
+            ++ui;
+            ++vi;
         }
         m1.insert_band(0, m1diag.copy());
         m1.insert_band(3, m1bandPlus1.copy());
@@ -2527,23 +2530,6 @@ cout << "First product solved.\n";
         ::_assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        /*DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
-        m2.band(ulint(0)) = m2diag;
-        m2.band(ulint(3*(_d_width-1))) = m2bandPlus1;
-        m2.band(ulint(6*(_d_width-1))) = m2bandPlus2;
-        m2.band(ulint(-3*(_d_width-1))) = m2bandMinus1;
-        m4.band(ulint(0)) = m4diag;
-        m4.band(ulint(3*(_d_width-1))) = m4bandPlus1;
-        m4.band(ulint(6*(_d_width-1))) = m4bandPlus2;
-        m4.band(ulint(-3*(_d_width-1))) = m4bandMinus1;
-        */
         DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
         DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
         DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
@@ -2593,7 +2579,7 @@ cout << "First product solved.\n";
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
             DenseVector<WorkPrec_> rightMinus1Upper(ulint(12), ulint(0));
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightMinus1Upper[0] = (*v)[vi.index()-6*(_d_width+4)];
                 rightMinus1Upper[1] = (*v)[vi.index()-6*(_d_width+4)+1];
@@ -2614,7 +2600,7 @@ cout << "First product solved.\n";
 
             }
             DenseVector<WorkPrec_> rightMinus1Lower(ulint(12), ulint(0));
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4)) 
+            if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2) 
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3*(_d_width+4)];
                 rightMinus1Lower[1] = (*v)[vi.index()-3*(_d_width+4)+1];
@@ -2651,7 +2637,7 @@ cout << "First product solved.\n";
             //Prepare right operands for diagonal:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightDiagUpper(ulint(12), ulint(0));
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*/3*(_d_width+4)+2 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3*(_d_width+4)];
                 rightDiagUpper[1] = (*v)[vi.index()-3*(_d_width+4)+1];
@@ -2668,7 +2654,7 @@ cout << "First product solved.\n";
                 rightDiagUpper[11] = (*u)[ui.index()+2];
             }
             DenseVector<WorkPrec_> rightDiagLower(ulint(12), ulint(0));
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*(_d_width+4)*/ 0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1];
@@ -2701,7 +2687,7 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXPlus_iMinus1_j):
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=6*(_d_width+4)+2 && ui.index()<ui_END.index()/*-6*(_d_width+4)*/)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-6*(_d_width)];
                 rightDiagUpper[1] = (*v)[vi.index()-6*(_d_width)+1];
@@ -2721,7 +2707,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*/3*(_d_width+4)+2 && ui.index()<=ui_END.index()/*-6*(_d_width+4)*/-2)
             {
                 rightDiagLower[0] = (*v)[vi.index()-3*(_d_width+4)];
                 rightDiagLower[1] = (*v)[vi.index()-3*(_d_width+4)];
@@ -2754,7 +2740,7 @@ cout << "First product solved.\n";
             thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*/3*(_d_width+4)+2 && ui.index()<=ui_END.index()/*-6*(_d_width+4)*/-2)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3*(_d_width+4)];
                 rightDiagUpper[1] = (*v)[vi.index()-3*(_d_width+4)];
@@ -2774,7 +2760,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
                 rightDiagLower[1] = (*v)[vi.index()+1];
@@ -2816,7 +2802,7 @@ cout << "First product solved.\n";
             //Prepare right operands for band_+1:
             //First Theta - value (thetaXPlus_i_j)
             DenseVector<WorkPrec_> rightPlus1Upper(ulint(12), ulint(0));
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*/3*(_d_width+4)+2 && ui.index()<=ui_END.index()-/*6*(_d_width+4)*/-2)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3*(_d_width+4)];
                 rightPlus1Upper[1] = (*v)[vi.index()-3*(_d_width+4)+1];
@@ -2833,7 +2819,7 @@ cout << "First product solved.\n";
                 rightPlus1Upper[11] = (*u)[ui.index()+2];
             }
             DenseVector<WorkPrec_> rightPlus1Lower(ulint(12), ulint(0));
-            if(ui.index()>=6 *(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=0/*6 *(_d_width+4)*/ && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1];
@@ -2866,7 +2852,7 @@ cout << "First product solved.\n";
             thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
 
             //Second theta (thetaXMinus_iPlus1_j):
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=0/*6*(_d_width+4)*/ && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()];
                 rightPlus1Upper[1] = (*v)[vi.index()+1];
@@ -2886,7 +2872,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=0/*6*(_d_width+4)*/ && ui.index()<=ui_END.index()-6*(_d_width+4)-2)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()+3*(_d_width+4)];
                 rightPlus1Lower[1] = (*v)[vi.index()+3*(_d_width+4)+1];
@@ -2919,7 +2905,7 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Third theta (thetaXMinus_i_j):
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*/3*(_d_width+4)+2 && ui.index()<=ui_END.index()-2)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3*(_d_width+4)];
                 rightPlus1Upper[1] = (*v)[vi.index()-3*(_d_width+4)+1];
@@ -2939,7 +2925,7 @@ cout << "First product solved.\n";
 
 
             }
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
                 rightPlus1Lower[1] = (*v)[vi.index()+1];
@@ -2980,7 +2966,7 @@ cout << "First product solved.\n";
 
             //band_+2 (thetaXMinus_iPlus1_j):
             DenseVector<WorkPrec_> rightPlus2Upper(ulint(12), ulint(0));
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4)-2)
             {
                 rightPlus2Upper[0] = (*v)[vi.index()];
                 rightPlus2Upper[1] = (*v)[vi.index()+1];
@@ -3002,7 +2988,7 @@ cout << "First product solved.\n";
             }
             DenseVector<WorkPrec_> rightPlus2Lower(ulint(12), ulint(0));
  
-            if(ui.index()>=6*(_d_width+4) && ui.index()<=ui_END.index()-6*(_d_width+4))
+            if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-6*(_d_width+4)-2)
             {
                 rightPlus2Lower[0] = (*v)[vi.index()+3*(_d_width+4)];
                 rightPlus2Lower[1] = (*v)[vi.index()+3*(_d_width+4)+1];
@@ -3040,7 +3026,8 @@ cout << "First product solved.\n";
             //FINISHED band_+2.
 
             //Iterate:
-            ++ui;++vi;
+            ++ui;
+            ++vi;
         }
         m2.insert_band(0, m2diag.copy());
         m2.insert_band(3*(_d_width +4), m2bandPlus1.copy());
