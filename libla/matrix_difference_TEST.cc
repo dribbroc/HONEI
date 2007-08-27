@@ -197,8 +197,8 @@ class BandedMatrixSparseMatrixDifferenceTest :
                         sm3(size, size, size / 8 + 1);
                
                 for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
-                    i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
-                    i != i_end ; ++i, ++k)
+                        i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
+                        i != i_end ; ++i, ++k)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -209,11 +209,13 @@ class BandedMatrixSparseMatrixDifferenceTest :
 
                 typename MutableMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
                 for (typename Matrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
-                    i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
+                        i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
                 {
                     if (*i != DataType_(0))
                     {
-                        *k = DataType_(1);                        
+                        *k = DataType_(2);                        
+                        if (i.index() % 10 == 0)
+                            *k = DataType_(1);
                     }                    
                 }             
                 SparseMatrix<DataType_> & difference(MatrixDifference<>::value(bm1, sm2));
@@ -222,10 +224,10 @@ class BandedMatrixSparseMatrixDifferenceTest :
             }
 
             BandedMatrix<DataType_> bm01(5); 
-            SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
+            SparseMatrix<DataType_> sm02(6, 5, 1), sm03(6, 6, 1);
 
             TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, sm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, sm02), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, sm02), MatrixIsNotSquare);            
         }   
 };
 BandedMatrixSparseMatrixDifferenceTest<float> banded_matrix_sparse_matrix_difference_test_float("float");
@@ -248,7 +250,7 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
             BandedMatrix<DataType_> bm1(size, dv1);
             SparseMatrix<DataType_> sm2(size, size, size / 8 + 1), 
                     sm3(size, size, size / 8 + 1);
-            
+
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                 i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
                 i != i_end ; ++i, ++k)
@@ -260,24 +262,26 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
                 }                        
             }
 
-            typename MutableMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
+           typename MutableMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
             for (typename Matrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
                 i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
             {
                 if (*i != DataType_(0))
                 {
-                    *k = DataType_(1);                        
+                    *k = DataType_(2);                        
+                    if (i.index() % 10 == 0)
+                        *k = DataType_(1);
                 }                    
             }             
-            SparseMatrix<DataType_> & difference(MatrixDifference<>::value(bm1, sm2));
 
+            SparseMatrix<DataType_> & difference(MatrixDifference<>::value(bm1, sm2));
             TEST_CHECK_EQUAL(difference, sm3);
 
             BandedMatrix<DataType_> bm01(5); 
-            SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
+            SparseMatrix<DataType_> sm02(6, 5, 1), sm03(6, 6, 1);
 
             TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, sm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, sm02), MatrixColumnsDoNotMatch);            
+            TEST_CHECK_THROWS(MatrixDifference<>::value(bm01, sm02), MatrixIsNotSquare);            
         }   
 };
 BandedMatrixSparseMatrixDifferenceQuickTest<float> banded_matrix_sparse_matrix_difference_quick_test_float("float");
