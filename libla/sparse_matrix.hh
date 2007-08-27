@@ -419,25 +419,32 @@ namespace pg512 ///< \todo Namespace name?
             unsigned long _row;
 
             /// Find the pair of iterators for the next existing row.
-            typename Vector<DataType_>::ElementIterator _find_next_row()
+            void _find_next_row()
             {
-                for ( ; _row < _matrix._rows ; ++_row)
+                for ( ; _row <= _matrix._rows ; ++_row)
                 {
+                    if (_row == _matrix._rows)
+                    {
+                        _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+                        _end = _matrix._row_vectors[_row]->end_non_zero_elements();
+                        break;
+                    }
+
                     if (! _matrix._row_vectors[_row])
                         continue;
 
                     _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
                     _end = _matrix._row_vectors[_row]->end_non_zero_elements();
 
-                    if (_iter.index() == _matrix._columns)
+                    
+                    if (_iter == _end)
                         continue;
 
                     break;
                 }
 
-                _index = _row * _matrix._columns + _iter.index();
-
-                return _iter;
+                _column = _iter.index();
+                _index = _row * _matrix._columns + _column;
             }
 
         public:
@@ -500,16 +507,14 @@ namespace pg512 ///< \todo Namespace name?
             /// Preincrement operator.
             virtual NonZeroElementIterator<DataType_> & operator++ ()
             {
-                if (_iter != _end)
-                {
                     ++_iter;
                     ++_column;
-                }
-                else
+                
+                if (_iter == _end)
                 {
                     ++_row;
                     _column = 0;
-                    _iter = _find_next_row();
+                    _find_next_row();
                 }
 
                 _index = _row * _matrix._columns + _column;
