@@ -31,6 +31,19 @@
  *
  * Solver is arbitrary in precision.
  *
+ * The computed solution will converge to the unrelaxed solution (eps->0), if the
+ * following conditions are satisfied:
+ *
+ * 1. CFL: MAX((MAXc_i)*_delta_t/_delta_x,(MAXd_i)*_delta_t/_delta_y) <=1/2 ;
+ *
+ * 2. Subcharacteristics: (lambda_i)²/(c_i)² + (mu_i)²*(d_i)² <= 1 ;
+ *    Where lambda and mu are the eigenvalues of the Jacobian dF(u)/du or dG(u)/du
+ *    respectively.
+ *
+ * 3. _delta_t >> _eps;
+ *
+ * 4. 0 < _eps << 1.
+ *
  * \ingroup grplibswe
  **/
  
@@ -85,8 +98,8 @@ namespace pg512 {
             ///The relaxation parameter: 0<eps<<1.
             double _eps;
 
-	    ///The squared Manning-Coefficient used by the sourceterm computation.
-	    static const double _manning_n_squared = 0.000625;
+            ///The squared Manning-Coefficient used by the sourceterm computation.
+            static const double _manning_n_squared = 0.000625;
 
             ///The number of cells in the finite volume descretization grid.
             ulint _n;
@@ -140,8 +153,8 @@ namespace pg512 {
 
 
             ///Vectors for the bottom slopes.
-            DenseVector<ResPrec_> * _bottom_slopes_x; //size:w
-            DenseVector<ResPrec_> * _bottom_slopes_y; //size:h
+            DenseVector<ResPrec_> * _bottom_slopes_x; 
+            DenseVector<ResPrec_> * _bottom_slopes_y; 
 
             /** Basic matrix assembly. Uses Limiters and theta().
               * Computes M_1, M_3.
@@ -171,10 +184,10 @@ namespace pg512 {
               **/
             template<typename WorkPrec_>
             /*BandedMatrix<WorkPrec_>*/ void _quick_assemble_matrix1(BandedMatrix<WorkPrec_>& m3, BandedMatrix<WorkPrec_>& result)
-	    {
+            {
                 //result = *(m3.copy());
-		//return ;
-	    }
+                //return ;
+            }
 
             /** Simplified matrix assembly.
               * Computes M_6.
@@ -189,10 +202,10 @@ namespace pg512 {
               **/
             template<typename WorkPrec_>
             /*BandedMatrix<WorkPrec_>*/void _quick_assemble_matrix3(BandedMatrix<WorkPrec_>& m4, BandedMatrix<WorkPrec_>& result)
-	    {
+            {
                 //result = *(m4.copy());
-		//return ;
-	    }
+                //return ;
+            }
 
             /** Simplified matrix assembly.
               * Computes M_8.
@@ -224,7 +237,7 @@ namespace pg512 {
             /** Flow computation.
               *
               **/
-	    template<typename WorkPrec_>
+            template<typename WorkPrec_>
             void _flow_x(DenseVector<WorkPrec_> & vector);
 
             /** Flow computation.
@@ -243,13 +256,13 @@ namespace pg512 {
             template<typename WorkPrec_>
             DenseVector<WorkPrec_> _source(uint i, uint j);
 
-	    /** Source Term computation.
-	     *
-	     * \param vector Densevector for which the source term should be computed.
-	     *
-	     **/
-	    template<typename WorkPrec_>
-	    void _source(DenseVector<WorkPrec_>& vector);
+            /** Source Term computation.
+             *
+             * \param vector Densevector for which the source term should be computed.
+             *
+             **/
+            template<typename WorkPrec_>
+            void _source(DenseVector<WorkPrec_>& vector);
 
 
             /** Encapsulates the linear combination for prediction. Uses source() 
@@ -414,14 +427,9 @@ namespace pg512 {
 
                 this->_c = c;
                 this->_d = d;
-                _u_temp = _u->copy();//reinterpret_cast<DenseVector<WorkPrec_>*>(_u);
-                _v_temp = _v->copy();//reinterpret_cast<DenseVector<WorkPrec_>*>(_v);
-                _w_temp = _w->copy();//reinterpret_cast<DenseVector<WorkPrec_>*>(_w);
-                //_u_predicted = new DenseVector<ResPrec_>(*(_u_temp->copy()));
-                //_v_predicted = new DenseVector<ResPrec_>(*(_v_temp->copy()));
-                //_w_predicted = new DenseVector<ResPrec_>(*(_w_temp->copy()));
-
-
+                _u_temp = _u->copy();
+                _v_temp = _v->copy();
+                _w_temp = _w->copy();
             }
             /** Encapsulates computation in one timestep. In the driver-application, one
               * can simply write a loop in which solve is called at first and then the

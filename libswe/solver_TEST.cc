@@ -41,15 +41,15 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            ulint dwidth =16;
-            ulint dheight =16;
-            ulint timesteps =1;
+            ulint dwidth =4;
+            ulint dheight =4;
+            ulint timesteps =20;
  
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
             for(ulint i = 0; i< height.rows(); ++i)
             {
-                (height)[0][i] = 10;
+                (height)[0][i] = DataType_(5);
             }
             //END SCENARIO setup
             DenseMatrix<DataType_> bottom(dheight, dwidth, DataType_(1));
@@ -61,14 +61,14 @@ class RelaxSolverQuickTest :
             DenseVector<DataType_> w(entries, DataType_(1)); 
             DenseVector<DataType_> bx (entries/3, DataType_(0));
             DenseVector<DataType_> by (entries/3, DataType_(0));
-            DenseVector<DataType_> c (3,DataType_(0.000001));
-            DenseVector<DataType_> d (3,DataType_(0.000001));
+            DenseVector<DataType_> c (3,DataType_(5e-200));
+            DenseVector<DataType_> d (3,DataType_(5e-200));
             
             DataType_ deltax = .01;                       
             DataType_ deltay = .01;
-            DataType_ deltat = .01;
+            DataType_ deltat = .1;
 
-            double eps = 1e-200;                  
+            double eps = 1e-256;                  
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (&height, &bottom, &u1, &u2, &u, &v, &w, 
                 dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);

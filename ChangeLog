@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-08-27 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh, libswe/solver_TEST.cc: Added documentation for CFL
+	and subcharacteristic conditions, inserted best steady-state-scenario
+	achieved so far.
+
+2007-08-27 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver_TEST.cc: Inserted test scenario, that works. If
 	the global parameters _delta_x, _delta_t, delta_y, eps are calibrated
 	correctly, the solver is even capable of computing near-steady-states.
