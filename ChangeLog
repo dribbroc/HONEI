@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-27 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+
+	* libla/scalar_product_TEST.cc:
+	Added missing ++j in sparse test cases.
+
 2007-08-27 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/banded_matrix.hh, libla/dense_matrix.hh,

@@ -132,7 +132,7 @@ class SparseDenseScalarProductTest :
                 SparseVector<DataType_> sv1(size, size / 7 + 1);
                 DenseVector<DataType_> dv2(size, DataType_(0));
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()), 
-                        j(dv2.begin_elements()) ; i != i_end ; ++i)
+                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 10 == 0) 
                     {
@@ -178,7 +178,7 @@ class SparseDenseScalarProductQuickTest :
             SparseVector<DataType_> sv1(size, size / 7 + 1);
             DenseVector<DataType_> dv2(size, DataType_(0));
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()), 
-                    j(dv2.begin_elements()) ; i != i_end ; ++i)
+                    j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 if (i.index() % 10 == 0) 
                 {
@@ -223,7 +223,7 @@ class SparseScalarProductTest :
                 DataType_ p1(0);
                 SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()), 
-                        j(sv2.begin_elements()) ; i != i_end ; ++i)
+                        j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 10 == 0) 
                     {
@@ -268,7 +268,7 @@ class SparseScalarProductQuickTest :
             DataType_ p1(0);
             SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);
             for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()), 
-                    j(sv2.begin_elements()) ; i != i_end ; ++i)
+                    j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 if (i.index() % 10 == 0) 
                 {
@@ -280,7 +280,7 @@ class SparseScalarProductQuickTest :
                 }
                 if (i.index() % 7 == 0 && i.index() % 10 == 0) 
                 {
-                    p1 += *i * *j;
+                    p1 += (*i) * (*j);
                 }                    
             }
 
