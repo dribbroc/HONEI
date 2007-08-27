@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-27 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver_TEST.cc: Inserted test scenario, that works. If
+	the global parameters _delta_x, _delta_t, delta_y, eps are calibrated
+	correctly, the solver is even capable of computing near-steady-states.
+	The actual scenario generates a wave from north to south. If someone
+	recognizes artifacts in a later timestep, please report to me. CAN YOU
+	SEE THE WAVE :) ?
+	
 2007-08-27 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/matrix_elementwise_product_TEST.cc: Fixed bugs in several tests.
