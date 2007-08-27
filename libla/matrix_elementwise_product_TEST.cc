@@ -180,7 +180,7 @@ class BandedMatrixSparseMatrixElementwiseProductTest :
                     if (j.index() % 7 == 0)
                         *j = DataType_(2);
 
-                    if (*i != DataType_(0))
+                    if (*i != DataType_(0) && i.index() % 7 == 0)
                         *k = DataType_(6);
                 }
 
@@ -223,7 +223,7 @@ class BandedMatrixSparseMatrixElementwiseProductQuickTest :
                 if (j.index() % 7 == 0)
                     *j = DataType_(2);
 
-                if (*i != DataType_(0))
+                if (*i != DataType_(0) && i.index() % 7 == 0)
                     *k = DataType_(6);
             }
 
