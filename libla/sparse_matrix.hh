@@ -421,7 +421,7 @@ namespace pg512 ///< \todo Namespace name?
             /// Find the pair of iterators for the next existing row.
             void _find_next_row()
             {
-                for ( ; _row <= _matrix._rows ; ++_row)
+                for ( ; _row < _matrix._rows + 1; ++_row)
                 {
                     if (_row == _matrix._rows)
                     {
