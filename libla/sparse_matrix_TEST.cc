@@ -148,7 +148,7 @@ class SparseMatrixQuickTest :
             } 
             
             
-            unsigned long size (3);
+            unsigned long size (5);
             SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
                 i_end(sm1.end_elements()); i != i_end ; ++i)
@@ -158,10 +158,11 @@ class SparseMatrixQuickTest :
                     *i = DataType_(5);
 
                 }
-            } 
+            }
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_non_zero_elements()),
                 i_end(sm1.end_non_zero_elements()) ; i != i_end ; ++i)
             {
+                TEST_CHECK_EQUAL(i.index() % 4, 0);
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(5), std::numeric_limits<DataType_>::epsilon());
             }                        
             

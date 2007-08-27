@@ -508,7 +508,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual NonZeroElementIterator<DataType_> & operator++ ()
             {
                     ++_iter;
-                    ++_column;
+                    _column= _iter.index();
                 
                 if (_iter == _end)
                 {

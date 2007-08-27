@@ -178,7 +178,7 @@ public:
 
     virtual void run() const
     {
-        unsigned long size(5);
+        unsigned long size(10);
         SparseVector<DataType_> sv1(size, size);
         SparseVector<DataType_> sv2(size, 3);
 
@@ -198,6 +198,21 @@ public:
         TEST_CHECK_EQUAL(sv2.used_elements(), 1);
         TEST_CHECK_EQUAL(sv1, sv2);
         // Do not test for capacity(), as it's an implementation detail.
+
+
+        SparseVector<DataType_> sv3(size, size / 8 + 1);
+        for (typename Vector<DataType_>::ElementIterator i(sv3.begin_elements()),
+                i_end(sv3.end_elements()) ; i != i_end ; ++i)
+        {
+            if (i.index() % 4 == 0)
+                *i = DataType_(5);
+        }
+        for (typename Vector<DataType_>::ElementIterator i(sv3.begin_non_zero_elements()),
+                i_end(sv3.end_non_zero_elements()) ; i != i_end ; ++i)
+        {
+            TEST_CHECK_EQUAL(i.index() % 4, 0);
+            TEST_CHECK_EQUAL(*i, DataType_(5));
+        }
     }
 };
 SparseVectorQuickTest<float> sparse_vector_quick_test_float("float");
