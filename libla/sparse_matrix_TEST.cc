@@ -1,4 +1,4 @@
-/* vim: set sw=4 sts=4 et folsmethod=syntax : */
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #include <libla/sparse_matrix.hh>
 #include <unittest/unittest.hh>
@@ -147,17 +147,6 @@ class SparseMatrixQuickTest :
                 TEST_CHECK(false);
             } 
             
-            sm[0][0] = DataType_(1);
-            sm[0][1] = DataType_(2);            
-            sm[1][1] = DataType_(3);
-            typename MutableMatrix<DataType_>::ElementIterator i(sm.begin_non_zero_elements());
-            typename MutableMatrix<DataType_>::ElementIterator i_end(sm.end_non_zero_elements());            
-            TEST_CHECK_EQUAL(*i, DataType_(1));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm.begin_non_zero_elements()),
-                i_end(sm.end_non_zero_elements()) ; i != i_end ; ++i)
-            {
-                TEST_CHECK_EQUAL(*i, i.index()+1);
-            }  
             
             unsigned long size (3);
             SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
@@ -166,16 +155,14 @@ class SparseMatrixQuickTest :
             {
                 if (i.index() % 4 == 0) 
                 {
-                    *i = 5; //+ i.index();
+                    *i = DataType_(5);
 
                 }
             } 
-            std::cout.flush();                             
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_non_zero_elements()),
                 i_end(sm1.end_non_zero_elements()) ; i != i_end ; ++i)
             {
-                //std::cout << i.index() << ": " << *i << std::endl;
-                TEST_CHECK_EQUAL_WITHIN_EPS(*i, 5, std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(5), std::numeric_limits<DataType_>::epsilon());
             }                        
             
         }
