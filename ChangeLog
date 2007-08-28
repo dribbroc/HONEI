@@ -7,7 +7,12 @@ see the NEWS file.
 
 2007-08-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
-	* libla/matrix_sum.cc: Fixed wrong end iterator bug.
+	* libla/matrix_product_TEST.cc: 
+	Added tests for mixed sparse/dense/banded operations where appropriate.
+	
+2007-08-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+
+	* libla/matrix_sum.hh: Fixed wrong end iterator bug.
 
 2007-08-27 Markus Geveler <apryde@gmx.de>
 

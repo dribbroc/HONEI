@@ -17,7 +17,6 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-///< \todo Fix compile errors
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>

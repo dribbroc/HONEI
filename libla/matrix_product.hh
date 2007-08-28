@@ -92,7 +92,7 @@ namespace pg512
             ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
             for (unsigned int l_row=0 ; l_row < left.rows() ; ++l_row)
             {
-                const SparseVector<DataType1_> left_row(left[l_row]);
+                const DenseVector<DataType1_> left_row(left[l_row]);
 
 
                 for (unsigned int r_column=0; r_column < right.columns() ; ++r_column)
