@@ -10,13 +10,13 @@ see the NEWS file.
 	* libswe/solver.hh: Second revision of assembly (DEBUG). Resolved
 	global bug, steady state can be achieved over arbitrary timestep
 	numbers (as tested so far) - improved numerical behaviour dramatically.
-	
+
 2007-08-28 Mathias Kadolsky <mathkad@gmx.de>
 
 	* libgraph/dijkstra.hh: Modified dijkstra-method added.
 	* libgraph/dijkstra_TEST.cc: quicktest for modified dijkstra-method added.
 	* libgraph/position.hh: Weighted FruchtermanReingold added.
-	* libgraph/position_TEST.cc: Quicktest forweighted FruchtermanReingold added.	
+	* libgraph/position_TEST.cc: Quicktest forweighted FruchtermanReingold added.
 
 2007-08-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
@@ -27,7 +27,7 @@ see the NEWS file.
 
 	* libla/matrix_product_TEST.cc: 
 	Added tests for mixed sparse/dense/banded operations where appropriate.
-	
+
 2007-08-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/matrix_sum.hh: Fixed wrong end iterator bug.
@@ -46,7 +46,7 @@ see the NEWS file.
 	The actual scenario generates a wave from north to south. If someone
 	recognizes artifacts in a later timestep, please report to me. CAN YOU
 	SEE THE WAVE :) ?
-	
+
 2007-08-27 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/matrix_elementwise_product_TEST.cc: Fixed bugs in several tests.
@@ -57,7 +57,7 @@ see the NEWS file.
 
 2007-08-27 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
-	* libla/sparse_matrix.:	Fixed bug in SM:NZEI, a neverending story.
+	* libla/sparse_matrix.: Fixed bug in SM:NZEI, a neverending story.
 	* libla/sparse_vector_TEST, libla/sparse_matrix_TEST:
 	Added i.index() checks.
 
@@ -555,7 +555,7 @@ see the NEWS file.
 2007-08-07 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/matrix_elementwise_product_TEST.cc: Replaced
-	MatrixRowsDoNotMatch by	MatrixSizeDoesNotMatch for banded matrices.
+	MatrixRowsDoNotMatch by MatrixSizeDoesNotMatch for banded matrices.
 	* libla/matrix_elementwise_product.hh: Replaced MatrixRowsDoNotMatch by
 	MatrixSizeDoesNotMatch for banded matrices.
 
@@ -969,7 +969,7 @@ see the NEWS file.
 	* libla/matrix_element_sum.hh: Applied new calling conventions.
 	* libla/matrix_element_sum_TEST.cc: Changed calls.
 	* libla/matrix_product.hh, libla/matrix_vector_product.hh: Commented
-	banded-cases out until	band-iterator is implemented.
+	banded-cases out until band-iterator is implemented.
 
 2007-07-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
@@ -1492,7 +1492,7 @@ see the NEWS file.
 	* +libgraph/Makefile.am.m4: Added first attempt for Makefile.am.m4
 	* libla/matrix_row_sum_vector.hh: Added header for Danny.
 	* libla/scalar_vector_product.hh, libla/scalar_matrix_product.hh,
-	matrix_mask.hh:	Added annotations and some "&".
+	matrix_mask.hh: Added annotations and some "&".
 	* libla/scalar_product.hh, libla/scalar_product.cc: Applied new
 	parameter/reference conventions.
 	* libla/scalar_product_TEST.cc: Changed call to ScalarProduct
