@@ -496,7 +496,7 @@ class SparseMatrixSumQuickTest :
                     *j = DataType_(-3);
                     *k = DataType_(-3);                        
                 }
-                if (i.index() % 7 == 0 && i.index() % 10 == 0) 
+                if (i.index() % 10 == 0 && i.index() % 7 == 0) 
                 {
                     *k = DataType_(-1);                        
                 }                                        
