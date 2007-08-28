@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-27 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Second revision of assembly (DEBUG). Resolved
+	global bug, steady state can be achieved over arbitrary timestep
+	numbers (as tested so far) - improved numerical behaviour dramatically.
+	
 2007-08-28 Mathias Kadolsky <mathkad@gmx.de>
 
 	* libgraph/dijkstra.hh: Modified dijkstra-method added.
