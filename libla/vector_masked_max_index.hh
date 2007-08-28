@@ -37,7 +37,7 @@ namespace pg512
 {
     /**
      * \brief VectorMaskedMaxIndex retrieves the index of the maximum element of a vector.
-	 * \brief Every Element for which the mask vector has the value "false" will be ignored in search of maximum.
+     * \brief Every Element for which the mask vector has the value "false" will be ignored in search of maximum.
      * \brief All parameters will be invariant under this operation.
      * \ingroup grpvectoroperations
      **/
@@ -55,17 +55,17 @@ namespace pg512
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-			unsigned long result(-1);
-			DataType_ temp(std::numeric_limits<DataType_>::min());
-			Vector<bool>::ConstElementIterator r(mask.begin_elements());
+            unsigned long result(-1);
+            DataType_ temp(std::numeric_limits<DataType_>::min());
+            Vector<bool>::ConstElementIterator r(mask.begin_elements());
 
-			for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
-				if (*r && *l > temp)
-				{
-					result = l.index();
-					temp = *l;
-				}
+                if (*r && *l > temp)
+                {
+                    result = l.index();
+                    temp = *l;
+                }
                 ++r;
             }
 
@@ -84,17 +84,17 @@ namespace pg512
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-			unsigned long result(-1);
-			DataType_ temp(std::numeric_limits<DataType_>::min());
-			Vector<bool>::ConstElementIterator r(mask.begin_elements());
+            unsigned long result(-1);
+            DataType_ temp(std::numeric_limits<DataType_>::min());
+            Vector<bool>::ConstElementIterator r(mask.begin_elements());
 
-			for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
-				if (*r && *l > temp)
-				{
-					result = l.index();
-					temp = *l;					
-				}
+                if (*r && *l > temp)
+                {
+                    result = l.index();
+                    temp = *l;
+                }
                 ++r;
             }
 

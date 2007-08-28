@@ -30,14 +30,14 @@
  * Templatized definitions of linearcombinations (in libla notation: VectorScaledSum)
  *
  * \ingroup grpvectoroperations
- **/
+ */
 namespace pg512
 {
     /**
-      * VectorScaledSum is the class template for the scaled vector +/- scaled vector operation.
-      *
-      * \ingroup grpvectoroperations
-      **/
+     * VectorScaledSum is the class template for the scaled vector +/- scaled vector operation.
+     *
+     * \ingroup grpvectoroperations
+     */
     template <typename Tag_ = tags::CPU>
     struct VectorScaledSum
     {
@@ -46,43 +46,43 @@ namespace pg512
          * scalars.
          * \param leftScal The scalar provided in order to be multiplied with left
          * \param rightScal analogous
-         **/
+         */
         template <typename DtLeft_ , typename DtRight_ , typename DtLeftScal_ , typename DtRightScal_ >
         static DenseVector<DtLeft_> value(DenseVector<DtLeft_> & left,
                         const DenseVector<DtRight_> & right,
                         const DtLeftScal_ & leftscal, const DtRightScal_ & rightscal)
         {
-	    if (left.size() != right.size())
-            	throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (left.size() != right.size())
+                throw VectorSizeDoesNotMatch(right.size(), left.size());
 
             //DenseVector<DataType_> result(left.size(), 0, 0, 1); old style
 
             for (typename Vector<DtLeft_>::ElementIterator l(left.begin_elements()),
-                                l_end(left.end_elements()) ; l != l_end ; ++l)
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
             {
                 left[l.index()] = ((*l) * leftscal) + (rightscal * right[l.index()]);
             }
             return left;
-	}
+        }
 
-	/**
-          * Returns the the resulting vector of the linearcombination of two given SparseVector instances and two
-          * scalars.
-          * \param leftScal The scalar provided in order to be multiplied with left
-          * \param rightScal analogous
-          **/
+        /**
+         * Returns the the resulting vector of the linearcombination of two given SparseVector instances and two
+         * scalars.
+         * \param leftScal The scalar provided in order to be multiplied with left
+         * \param rightScal analogous
+         */
         template < typename DtLeft_ , typename DtRight_, typename DtLeftScal_, typename DtRightScal_>
-	static SparseVector<DtLeft_> value(SparseVector<DtLeft_> & left,
-                        const SparseVector<DtRight_> & right, const DtLeftScal_ & leftscal, const DtRightScal_ & rightscal)
-	{
-	    if (left.size() != right.size())
+        static SparseVector<DtLeft_> value(SparseVector<DtLeft_> & left,
+                const SparseVector<DtRight_> & right, const DtLeftScal_ & leftscal, const DtRightScal_ & rightscal)
+        {
+            if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
             typename Vector<DtRight_>::ConstElementIterator r(right.begin_non_zero_elements());
             for (typename Vector<DtLeft_>::ElementIterator l(left.begin_elements()),
-                                l_end(left.end_elements()) ; l != l_end ; )
+                    l_end(left.end_elements()) ; l != l_end ; )
             {
-            	if (r.index() < l.index())
+                if (r.index() < l.index())
                 {
                     left[r.index()] = (*r) * rightscal;
                     ++r;
@@ -100,17 +100,17 @@ namespace pg512
                 }
             }
             return left;
-	}
+        }
 
         /**
-          * Returns the the resulting vector of the linearcombination of two given Vector instances (one dense, the other
-          * sparse)and two
-          * scalars.
-          * \param leftscal The scalar provided in order to be multiplied with left
-          * \param rightscal see leftscal
-          **/
+         * Returns the the resulting vector of the linearcombination of two given Vector instances (one dense, the other
+         * sparse)and two
+         * scalars.
+         * \param leftscal The scalar provided in order to be multiplied with left
+         * \param rightscal see leftscal
+         */
         template < typename DtLeft_ , typename DtRight_, typename DtLeftScal_, typename DtRightScal_>
-	static DenseVector<DtLeft_> value(const DenseVector<DtLeft_> & left, SparseVector<DtRight_> right,
+        static DenseVector<DtLeft_> value(const DenseVector<DtLeft_> & left, SparseVector<DtRight_> right,
                         const DtRightScal_ & leftscal, const DtRightScal_ & rightscal)
         {
             if (left.size() != right.size())
@@ -119,9 +119,8 @@ namespace pg512
             //DenseVector<DataType_> result(left.size(),0, 0, 1); old style
 
             for (typename Vector<DtLeft_>::ConstElementIterator l(left.begin_elements()),
-                                        l_end(left.end_elements()), r(right.begin_non_zero_elements()),
-                                        r_end(right.end_non_zero_elements()) ;
-                                        r != r_end ; )
+                    l_end(left.end_elements()), r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
             {
                 while (l.index() < r.index() && (l != l_end))
                 {
@@ -132,7 +131,8 @@ namespace pg512
                 left[l.index()] = ((*l) * leftscal) + ((*r) * rightscal);
                                 ++r;
             }
-                return left;
+
+            return left;
         }
     };
 

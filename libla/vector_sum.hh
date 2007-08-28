@@ -66,12 +66,12 @@ namespace pg512 ///< \todo Namespace name?
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-			typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
+            typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
             for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l)
             {
                 *l += *r;
-				++r;
+                ++r;
             }
 
             return left;
@@ -107,7 +107,7 @@ namespace pg512 ///< \todo Namespace name?
                     ++l; ++r;
                 }
             }
-			///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
+            ///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
             return left;
         }
 

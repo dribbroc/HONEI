@@ -38,7 +38,7 @@
 namespace pg512
 {
 
-	///\todo: When DenseMatrix operator[] return type is restored, some cases can be put together to RowAccessMatrix.
+    ///\todo: When DenseMatrix operator[] return type is restored, some cases can be put together to RowAccessMatrix.
 
     /**
      * MatrixProduct is the class template for multiplying two matrices
@@ -66,8 +66,8 @@ namespace pg512
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
                     const DenseVector<DataType2_> right_column = right.column(t);
-					*i = ScalarProduct<>::value(left_row, right_column);
-					++i;
+                    *i = ScalarProduct<>::value(left_row, right_column);
+                    ++i;
                 }
 
             }
@@ -75,7 +75,7 @@ namespace pg512
         }
 
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying a DenseMatrix and a SparseMatrix instance.
          * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix used as second factor.
@@ -107,12 +107,12 @@ namespace pg512
                         ++l;
                     }
                     ++i;
-				}
+                }
             }
             return result;
         }
 
-		 /**
+         /**
          * Returns the resulting matrix after multiplying a sparse and a sparse matrix instance.
          * \param left Reference to a SparseMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix used as second factor.
@@ -142,12 +142,12 @@ namespace pg512
                         ++l;
                     }
                     ++i;
-				}
+                }
             }
             return result;
         }
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying a SparseMatrix and a DenseMatrix instance.
          * \param left Reference to a SparseMatrix used as first factor.
          * \param right Reference to a DenseMatrix used as second factor. Its return type is used for the result matrix.
@@ -166,15 +166,15 @@ namespace pg512
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
                     const DenseVector<DataType2_> right_column = right.column(t);
-					*i = ScalarProduct<>::value(right_column, left_row);
-					++i;
+                    *i = ScalarProduct<>::value(right_column, left_row);
+                    ++i;
                 }
 
             }
             return result;
         }
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying two BandedMatrix instances.
          * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a BandedMatrix used as second factor.
@@ -204,7 +204,7 @@ namespace pg512
             return result;
         }
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying a BandedMatrix instance and a SparseMatrix instance.
          * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix used as second factor.
@@ -235,7 +235,7 @@ namespace pg512
             return result;
         }
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying a SparseMatrix instance and a BandedMatrix instance.
          * \param left Reference to a SparseMatrix used as first factor.
          * \param right Reference to a BandedMatrix used as second factor. Its return type is used for the result matrix.
@@ -252,14 +252,14 @@ namespace pg512
 
     };
 
-	/// Use the following algorithm for Cell processor, cause of optimized multiply-accumulate.
+    /// Use the following algorithm for Cell processor, cause of optimized multiply-accumulate.
 
-	template <> struct MatrixProduct<tags::Cell>
-	{
-		/**
+    template <> struct MatrixProduct<tags::Cell>
+    {
+        /**
          * Returns the resulting matrix after multiplying two DenseMatrix instances.
-		 * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
-		 * \param right Reference to a DenseMatrix used as second factor.
+         * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
+         * \param right Reference to a DenseMatrix used as second factor.
          **/
         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
@@ -274,19 +274,19 @@ namespace pg512
                 const DenseVector<DataType1_> left_row = left[s];
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
-					const DenseVector<DataType2_> right_column = right.column(t);
-					typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
-					for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
-							l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
-					{
-						*i += (*l) * (*r);
-					}
-					++i;
-				}
+                    const DenseVector<DataType2_> right_column = right.column(t);
+                    typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
+                    for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
+                            l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
+                    {
+                        *i += (*l) * (*r);
+                    }
+                    ++i;
+                }
             }
             return result;
         }
-	};
+    };
 
 
 }

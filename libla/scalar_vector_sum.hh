@@ -70,7 +70,7 @@ namespace pg512
             {
                 *l += scalar;
             }
-			///\todo: perhaps sparsify - scalar may set value of *l to zero.
+            ///\todo: perhaps sparsify - scalar may set value of *l to zero.
             return vector;
         }
     };

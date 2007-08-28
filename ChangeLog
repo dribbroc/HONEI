@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-29 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libla/matrix_element_inverse.hh, libla/matrix_element_sum.hh,
+	libla/matrix_elementwise_product.hh, libla/matrix_product.hh,
+	libla/saxpy.hh, libla/scalar_vector_sum.hh,
+	libla/vector_elementwise_product.hh, libla/vector_masked_max_index.hh,
+	libla/vector_scaled_sum.hh, libla/vector_sum.hh: Fixed whitespaces and
+	tabs.
+
 2007-08-27 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Second revision of assembly (DEBUG). Resolved

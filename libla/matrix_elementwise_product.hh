@@ -72,7 +72,7 @@ namespace pg512
             return left;
         }
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying a sparse and a dense matrix instance elementwise.
          * \param left Reference to a SparseMatrix. Its return type is used for the result matrix.
          * \param right Reference to a DenseMatrix.
@@ -98,7 +98,7 @@ namespace pg512
             return left; ///\todo: perhaps sparsify, dense_matrix[row][col] may be zero.
         }
 
-		/**
+        /**
          * Returns the resulting matrix after multiplying two sparse matrix instances elementwise.
          * \param left Reference to a SparseMatrix. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix
@@ -119,24 +119,24 @@ namespace pg512
             for (typename MutableMatrix<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ; )
             {
-				if (l.index() < r.index())
-				{
-					*l = DataType1_(0);
-					++l;
-				}
+                if (l.index() < r.index())
+                {
+                    *l = DataType1_(0);
+                    ++l;
+                }
 
-				else if (r.index() < l.index())
-				{
-					++r;
-				}
+                else if (r.index() < l.index())
+                {
+                    ++r;
+                }
 
-				else
-				{
-					*l *= *r;
-                	++l; ++r;
-				}
+                else
+                {
+                    *l *= *r;
+                    ++l; ++r;
+                }
             }
-			///\todo: perhaps sparsify - in case l.index < r.index set to zero possible.
+            ///\todo: perhaps sparsify - in case l.index < r.index set to zero possible.
             return left;
         }
 
@@ -220,7 +220,7 @@ namespace pg512
             {
                 while (l.index() < r.index())
                 {
-					*l = DataType1_(0);
+                    *l = DataType1_(0);
                     ++l;
                 }
 

@@ -54,11 +54,11 @@ namespace pg512
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
             typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
-			for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
+            for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
-				++r;
+                ++r;
             }
 
             return left;
@@ -95,7 +95,7 @@ namespace pg512
                 }
             }
             return left;
-			///\todo: perhaps sparsify - in case l.index < r.index Write of 0 possible.
+            ///\todo: perhaps sparsify - in case l.index < r.index Write of 0 possible.
         }
 
         /**
@@ -112,10 +112,10 @@ namespace pg512
             for (typename Vector<DataType1_>::ElementIterator l(left.begin_non_zero_elements()),
                     l_end(left.end_non_zero_elements()) ; l != l_end ; ++l )
             {
-				*l *= right[l.index()];
+                *l *= right[l.index()];
             }
             return left;
-			///\todo: perhaps sparsify - if *right[l.index()] == 0 -> write of zero.
+            ///\todo: perhaps sparsify - if *right[l.index()] == 0 -> write of zero.
         }
 
     };

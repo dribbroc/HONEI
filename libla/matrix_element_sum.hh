@@ -39,7 +39,7 @@ namespace pg512
 
     /**
      * MatrixElementSum is the class template for the sum of all elements of a matrix.
-	 * The used matrix will be invariant under this operation.
+     * The used matrix will be invariant under this operation.
      * \ingroup grpmatrixoperations
      **/
     template <typename Tag_ = tags::CPU> struct MatrixElementSum
@@ -52,7 +52,7 @@ namespace pg512
         template <typename DataType_> static DataType_ value(const DenseMatrix<DataType_> & matrix)
         {
             DataType_ result(0);
-			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()),
+            for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_elements()),
                     l_end(matrix.end_elements()) ; l != l_end ; ++l)
             {
                 result += *l;
@@ -69,7 +69,7 @@ namespace pg512
         template <typename DataType_> static DataType_ value(const SparseMatrix<DataType_> & matrix)
         {
             DataType_ result(0);
-			for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_non_zero_elements()),
+            for (typename Matrix<DataType_>::ConstElementIterator l(matrix.begin_non_zero_elements()),
                     l_end(matrix.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 result += *l;

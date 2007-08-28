@@ -47,14 +47,14 @@ namespace pg512
          *
          * \param left Reference to dense vector that will be also used as result vector.
          * \param right Reference to constant dense vector to be added.
-		 * \param scalar The scalar to be used as factor.
+         * \param scalar The scalar to be used as factor.
          **/
         template <typename DataType1_, typename DataType2_, typename DataType3_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const DenseVector<DataType2_> & right, DataType3_ scalar)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-			typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
+            typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
             for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
             {
@@ -65,19 +65,19 @@ namespace pg512
             return left;
         }
 
-		/**
+        /**
          * Returns the the resulting vector of the scaled sum of two given SparseVector instances.
          *
          * \param left Reference to sparse vector that will be also used as result vector.
          * \param right Reference to constant sparse vector to be added.
-		 * \param scalar The scalar to be used as factor.
+         * \param scalar The scalar to be used as factor.
          **/
         template <typename DataType1_, typename DataType2_, typename DataType3_> static SparseVector<DataType1_> & value(SparseVector<DataType1_> & left, const SparseVector<DataType2_> & right, DataType3_ scalar)
         {
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-			typename Vector<DataType2_>::ElementIterator l(left.begin_non_zero_elements());
+            typename Vector<DataType2_>::ElementIterator l(left.begin_non_zero_elements());
             for (typename Vector<DataType1_>::ConstElementIterator r(right.begin_non_zero_elements()),
                     r_end(right.end_non_zero_elements()) ; r != r_end ; )
             {
@@ -96,16 +96,16 @@ namespace pg512
                     ++l; ++r;
                 }
             }
-			///\todo: perhaps sparsify - written results may be zero.
+            ///\todo: perhaps sparsify - written results may be zero.
             return left;
         }
 
-		/**
+        /**
          * Returns the the resulting vector of the scaled sum of a given DenseVector and a given SparseVector instance.
          *
          * \param left Reference to dense vector that will be also used as result vector.
          * \param right Reference to constant sparse vector to be added.
-		 * \param scalar The scalar to be used as factor.
+         * \param scalar The scalar to be used as factor.
          **/
         template <typename DataType1_, typename DataType2_, typename DataType3_> static DenseVector<DataType1_> & value(DenseVector<DataType1_> & left, const SparseVector<DataType2_> & right, DataType3_ scalar)
         {
@@ -117,16 +117,16 @@ namespace pg512
             {
                 left[r.index()] += scalar * (*r);
             }
-			///\todo: perhaps sparsify - if senseless use with scalar == zero, zeros may be written.
+            ///\todo: perhaps sparsify - if senseless use with scalar == zero, zeros may be written.
             return left;
         }
 
-		/**
+        /**
          * Returns the the resulting vector of the scaled sum of a given SparseVector and a given DenseVector instance.
          *
          * \param left Reference to sparse vector that will be also used as result vector.
          * \param right Reference to constant dense vector to be added.
-		 * \param scalar The scalar to be used as factor.
+         * \param scalar The scalar to be used as factor.
          **/
         template <typename DataType1_, typename DataType2_, typename DataType3_> static SparseVector<DataType1_> & value(SparseVector<DataType1_> & left, const DenseVector<DataType2_> & right, DataType3_ scalar)
         {
@@ -135,13 +135,13 @@ namespace pg512
 
             // Here there is no sense in using non_zero_iterator, cause every element in resulting sparse vector must be +=ed with scalar * b[i]
             typename Vector<DataType2_>::ConstElementIterator r(right.begin_elements());
-			for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
+            for (typename Vector<DataType1_>::ElementIterator l(left.begin_elements()),
                     l_end(left.end_elements()) ; l != l_end ; ++l)
             {
                 *l += scalar * (*r);
                 ++r;
             }
-			///\todo: perhaps sparsify - if senseless use with scalar == zero or *r == 0, zeros may be written.
+            ///\todo: perhaps sparsify - if senseless use with scalar == zero or *r == 0, zeros may be written.
             return left;
         }
 
