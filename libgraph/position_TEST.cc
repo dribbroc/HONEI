@@ -3,6 +3,8 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+ * Copyright (c) 2007 Mathias Kadolsky <mathkad@gmx.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -31,59 +33,52 @@ using namespace pg512;
 using  namespace tests;
 
 template <typename DataType_>
-// our PositionsTest is a BaseTest.
-class FruchtermanReingoldPositionsTest :
-    public BaseTest
+class FruchtermanReingoldPositionsQuickTest :
+    public QuickTest
 {
     public:
-        FruchtermanReingoldPositionsTest(const std::string & type) :
-            BaseTest("fruchterman_reingold_positions_test<" + type + ">")
+        FruchtermanReingoldPositionsQuickTest(const std::string & type) :
+            QuickTest("fruchterman_reingold_positions_quick_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
             // Creating test scenario
-            DataType_ pos[] =  {1, 2, 2, 3, 2, 3, 3,
-                                1, 1, 3, 1, 4, 4, 3};
-
-            DataType_ adj[] =  {0, 1, 0, 0, 0, 0, 0,
-                                1, 0, 1, 0, 0, 0, 0,
-                                0, 1, 0, 1, 1, 0, 0,
-                                0, 0, 1, 0, 0, 0, 0,
-                                0, 0, 1, 0, 0, 1, 0,
-                                0, 0, 0, 0, 1, 0, 1,
-                                0, 0, 0, 0, 0, 1, 0};
+            DataType_ pos[] = {-2, 8, 
+                                1, 1};
+            DataType_ adj[] = { 0, 1, 
+                                1, 0};
 
             // Now, fill that numbers into the real matrices
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(7,2));
-            int i = 0;
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
+            int i(0);
             for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
                 *e = pos[i++];
             }
             i = 0;
-            std::tr1::shared_ptr<DenseMatrix<bool> > pNeighbour(new DenseMatrix<bool>(7,7));
+            std::tr1::shared_ptr<DenseMatrix<bool> > pNeighbour(new DenseMatrix<bool>(2,2));
             for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
-                    e_end(pNeighbour->end_elements()); e != e_end ; ++e)
+                e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
                 *e = adj[i++];
             }
             // Creating a Positions object with the test scenario
             Positions<DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
 
-            // update the positions - try and see what happens :D
-            position.update(0.01,350);
-            std::cout << position.coordinates();
-
-            // we say the test was fine if we really get here. the numbers are not important right now. perhaps tomorrow :D
-            TEST_CHECK(true);
+            // update the positions 
+            position.update(0.01,85);
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 2, 85*std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 4, 85*std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, 85*std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, 85*std::numeric_limits<DataType_>::epsilon());
         }
 };
 
-FruchtermanReingoldPositionsTest<float> fruchterman_reingold_positions_test_float("float");
-FruchtermanReingoldPositionsTest<double> fruchterman_reingold_positions_test_double("double");
+FruchtermanReingoldPositionsQuickTest<float> fruchterman_reingold_positions_quick_test_float("float");
+FruchtermanReingoldPositionsQuickTest<double> fruchterman_reingold_positions_quick_test_double("double");
 
 template <typename DataType_>
 class KamadaKawaiPositionsQuickTest :
@@ -105,7 +100,7 @@ class KamadaKawaiPositionsQuickTest :
 
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
-            int i = 0;
+            int i(0);
             for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
@@ -123,16 +118,74 @@ class KamadaKawaiPositionsQuickTest :
             // Creating a Positions object with the test scenario
             Positions<DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
 
-            // update the positions - try and see what happens :D
-            position.update(0.1,85);
-
-            //std::cout << position.coordinates();
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 6, 30 * std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 8, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, std::numeric_limits<DataType_>::epsilon());
+            // update the positions 
+            position.update(0.01,85);
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 6, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 8, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, 85 * std::numeric_limits<DataType_>::epsilon());
         }
 };
 
 KamadaKawaiPositionsQuickTest<float> kamada_kawai_positions_quick_test_float("float");
 KamadaKawaiPositionsQuickTest<double> kamada_kawai_positions_quick_test_double("double");
+
+template <typename DataType_>
+class weightedFruchtermanReingoldPositionsQuickTest :
+    public QuickTest
+{
+    public:
+        weightedFruchtermanReingoldPositionsQuickTest(const std::string & type) :
+            QuickTest("weighted_fruchterman_reingold_positions_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            // Creating test scenario
+            DataType_ pos[] = {-2, 8, 
+                                1, 1};
+
+            DataType_ node_weights[] =  {2, 2};
+
+            DataType_ edge_weights[] =  {0, 2,
+                                         2, 0};
+
+            // Now, fill that numbers into the real matrices
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
+            int i(0);
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
+                    e_end(pPosition->end_elements());e != e_end ; ++e)
+            {
+                *e = pos[i++]; 
+            }
+
+            i = 0;
+            std::tr1::shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(2));
+            for (typename Vector<DataType_>::ElementIterator e(pNode_Weights->begin_elements()),
+                    e_end(pNode_Weights->end_elements()); e != e_end ; ++e)
+            {
+                *e = node_weights[i++];
+            }
+
+            i = 0;
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pEdge_Weights(new DenseMatrix<DataType_>(2,2));
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
+                    e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
+            {
+                *e = edge_weights[i++];
+            }
+            // Creating a Positions object with the test scenario
+            Positions<DataType_, methods::weighted_FruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
+
+            // update the positions 
+            position.update(0.01,85);
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 2.5, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 3.5, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, 85 * std::numeric_limits<DataType_>::epsilon());
+        }
+};
+
+weightedFruchtermanReingoldPositionsQuickTest<float> weighted_fruchterman_reingold_positions_quick_test_float("float");
+weightedFruchtermanReingoldPositionsQuickTest<double> weighted_fruchterman_reingold_positions_quick_test_double("double");

@@ -4,6 +4,7 @@
  * Copyright (c) 2007 Nina Harmuth <nina.harmuth@uni-dortmund.de>
  * Copyright (c) 2007 Mathias Kadolsky <mathkad@gmx.de>
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
  *
  * This file is part of the Graph C library. LibGraph is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -68,6 +69,13 @@
         };
 
         /**
+         * Implementation tag for weighted Fruchterman-Reingold method.
+         */
+        struct weighted_FruchtermanReingold
+        {
+        };
+
+        /**
          * Implementation class template for the varying methods.
          */
         template <typename DataType_, typename Tag_>
@@ -84,6 +92,38 @@
             Positions(DenseMatrix<DataType_> & coordinates, const DenseMatrix<bool> & neighbours, DataType_ edge_length) :
                 _imp(new methods::Implementation<DataType_, GraphTag_>(coordinates, neighbours, edge_length))
             {
+                if (coordinates.columns() != neighbours.columns())
+                   throw MatrixColumnsDoNotMatch(neighbours.columns(), coordinates.columns());
+
+                if (! neighbours.square())
+                    throw MatrixIsNotSquare(neighbours.rows(), neighbours.columns());
+#if 0
+                \todo Implement Trace
+                if (Trace<>::value(neighbours) > false)
+                    throw MatrixHasNonVanishingTrace;
+
+                if (edge_length <= std::numeric_limits<DataType_>::epsilon())
+                    \todo Implement GraphError
+                    throw GraphError("Edge length must be positive");
+#endif
+            }
+            Positions(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes, 
+                    DenseMatrix<DataType_> & weights_of_edges) :
+                _imp(new methods::Implementation<DataType_, GraphTag_>(coordinates, weights_of_nodes, weights_of_edges))
+            {
+                if (coordinates.columns() != weights_of_edges.columns())
+                    throw MatrixColumnsDoNotMatch(weights_of_edges.columns(), coordinates.columns());
+
+                if (! weights_of_edges.square())
+                    throw MatrixIsNotSquare(weights_of_edges.rows(), weights_of_edges.columns());
+
+                if (weights_of_nodes.size() != coordinates.columns())
+                    throw VectorSizeDoesNotMatch(weights_of_nodes.size(), coordinates.columns());
+#if 0
+                \todo Implement Trace
+                if (Trace<>::value(weights_of_edges) > std::numeric_limits<DataType_>::epsilon())
+                    throw MatrixHasNonVanishingTrace;
+#endif
             }
 
             void update(DataType_ eps, int timeout)
@@ -123,69 +163,53 @@
                     _coordinates(coordinates),
                     _neighbours(neighbours),
                     _edge_length(edge_length)
-                {
-                    /// \todo Move these checks to Position's constructor?
-                    if (coordinates.columns() != neighbours.columns())
-                        throw MatrixColumnsDoNotMatch(neighbours.columns(), coordinates.columns());
-
-                    if (! neighbours.square())
-                        throw MatrixIsNotSquare(neighbours.rows(), neighbours.columns());
-
-#if 0
-                    \todo Implement Trace
-                    if (Trace<>::value(neighbours) > false)
-                        throw MatrixHasNonVanishingTrace;
-
-                    if (edge_length <= std::numeric_limits<DataType_>::epsilon())
-                        \todo Implement GraphError
-                        throw GraphError("Edge length must be positive");
-#endif
+                { 
                 }
 
-                DataType_ value(const DataType_ &)
+                DataType_ value(const DataType_ & eps)
                 {
-                    // Calculate InvSquaDist = (1 / d(i,j))
+                    // Calculate inv_square_dist = (1 / d(i,j)^2)
                     DenseMatrix<DataType_> inv_square_dist(NodeDistanceInverse<>::value(_coordinates));
 
-                    // Having InvSquaDist, mask it and invert each element to get SquaDist
+                    // Having inv_square_dist, mask it and invert each element to get square_dist
                     DenseMatrix<DataType_> square_dist(*inv_square_dist.copy());
                     MatrixElementwiseProduct<>::value(square_dist, _neighbours);
                     MatrixElementInverse<>::value(square_dist);
 
-                    // Calculate the single diagonal matrix containing the row sum vector of SquaDist
+                    // Calculate the single diagonal matrix containing the row sum vector of square_dist
                     DenseVector<DataType_> & sum_vec(*MatrixRowSumVector<DataType_>::value(square_dist));
 
-                    // Calculate the same stuff for InvSquaDist
+                    // Calculate the same stuff for inv_square_dist
                     DenseVector<DataType_> & sum_vec_inv(*MatrixRowSumVector<DataType_>::value(inv_square_dist));
 
-                    // Calculating SquaDist = (SquaDist - diag(SumVec))
+                    // Calculating square_dist = (square_dist - diag(sum_vec))
                     BandedMatrix<DataType_> diag(sum_vec.size(), &sum_vec);
                     MatrixDifference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
                     ScalarMatrixProduct<>::value(DataType_(-1), square_dist);
 
-                    // Calculating FAttr = (p * SquaDist)
+                    // Calculating attractive_forces = (_coordinates * square_dist)
                     DenseMatrix<DataType_> attractive_forces(MatrixProduct<>::value(_coordinates, square_dist));
 
-                    // Calculating FAttr = (1/k^2 * FAttr)
+                    // Calculating attractive_forces = (1/k^2 * attractive_forces)
                     ScalarMatrixProduct<>::value(DataType_(1 / (_edge_length * _edge_length)), attractive_forces);
 
                     // Calculating inv_square_dist <- -inv_square_dist
                     ScalarMatrixProduct<DataType_>::value(DataType_(-1), inv_square_dist);
 
-                    // Calculating Distance_Neg = (diag(SumVecInv) - InvSquaDist)
+                    // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
                     BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), &sum_vec_inv);
-                    MatrixSum<>::value(inv_square_dist, diag);
+                    DenseMatrix<DataType_> diff(MatrixSum<>::value(inv_square_dist, inv_diag));
 
-                    // Calculating FRep = (p * Distance_neg)
-                    DenseMatrix<DataType_> repulsive_forces(MatrixProduct<>::value(_coordinates, inv_diag));
+                    // Calculating repulsive_forces = (_coordinates * diff)
+                    DenseMatrix<DataType_> repulsive_forces(MatrixProduct<>::value(_coordinates, diff));
 
-                    // Calculating FRep = (k^2 * FRep)
+                    // Calculating repulsive_forces = (k^2 * repulsive_forces)
                     ScalarMatrixProduct<>::value(_edge_length * _edge_length, repulsive_forces);
 
                     // Calculate the maximal force and the result forces
                     MatrixSum<>::value(attractive_forces, repulsive_forces);
                     DataType_ result(0);
-                    DenseVector<DataType_> resulting_forces(_coordinates.columns(), DataType_(0)); /// \todo check
+                    DenseVector<DataType_> resulting_forces(_coordinates.columns(), DataType_(0));
                     for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements()) ;
                         i != i_end ; ++i)
                     {
@@ -197,9 +221,128 @@
                     for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
                         e_end(_coordinates.end_elements()), k(attractive_forces.begin_elements()) ; e != e_end ; ++e, ++k)
                     {
-                        *e = *e + 1 / (10 * resulting_forces[e.column()]) * *k;
+                        result > eps ? *e = *e + 1 / (10 * resulting_forces[e.column()]) * *k : 0;
                     }
 
+                    return result;
+                }
+        };
+
+        template <typename DataType_>
+        class Implementation<DataType_, weighted_FruchtermanReingold>
+        {
+            private:
+                ///  position matrix - the coordinates of each node
+                DenseMatrix<DataType_> & _coordinates;
+            
+                ///  weight vector - the weights of each node
+                DenseVector<DataType_> & _weights_of_nodes;
+            
+                ///  edge weight matrix - the weights of each edge
+                DenseMatrix<DataType_> & _weights_of_edges;
+
+                /// adjacence matrix - which nodes are neighbours?
+                DenseMatrix<bool> & _neighbours;
+
+                /// parameter matrix for repulsive forces
+                DenseMatrix<DataType_> & _repulsive_force_parameter;
+
+                /// parameter matrix for attractive forces
+                DenseMatrix<DataType_> & _attractive_force_parameter;
+
+            public:
+                friend class Positions<DataType_, weighted_FruchtermanReingold>;
+
+                Implementation(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes, 
+                    DenseMatrix<DataType_> & weights_of_edges) :
+                    _coordinates(coordinates),
+                    _weights_of_nodes(weights_of_nodes),
+                    _weights_of_edges(weights_of_edges),
+                    _neighbours(*(new DenseMatrix<bool>(weights_of_edges.columns(), weights_of_edges.rows()))),
+                    _repulsive_force_parameter(*(new DenseMatrix<DataType_>(weights_of_edges.columns(), weights_of_edges.rows()))),
+                    _attractive_force_parameter(*(new DenseMatrix<DataType_>(weights_of_edges.columns(), weights_of_edges.rows())))
+                {
+                    // Calculate adjacence matrix
+                    for (typename MutableMatrix<bool>::ElementIterator e(_neighbours.begin_elements()),
+                        e_end(_neighbours.end_elements()); e != e_end ; ++e)
+                    {
+                        fabs (_weights_of_edges[e.row()][e.column()]) <= std::numeric_limits<DataType_>::epsilon() ?
+                            *e = false : *e = true;
+                    }
+
+                    // Calculate parameter matrix for repulsive forces
+                    for (typename MutableMatrix<DataType_>::ElementIterator e(_repulsive_force_parameter.begin_elements()),
+                        e_end(_repulsive_force_parameter.end_elements()), g(_weights_of_edges.begin_elements()); e != e_end ; ++e, ++g)
+                    {
+                        *g == 0 ? *e = sqrt(_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]) :
+                        *e = sqrt(_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]) * (_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]) / (*g * *g);
+                    }
+
+                    // Calculate parameter matrix for attractive forces
+                    for (typename MutableMatrix<DataType_>::ElementIterator e(_attractive_force_parameter.begin_elements()),
+                        e_end(_attractive_force_parameter.end_elements()), g(_weights_of_edges.begin_elements()); e != e_end ; ++e, ++g)                                               
+                    {
+                        *e = *g * *g * *g / (_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]);
+                    }
+                }
+
+                DataType_ value(const DataType_ & eps)
+                {
+                    // Calculate inv_square_dist = (1 / d(i,j)^2)
+                    DenseMatrix<DataType_> inv_square_dist(NodeDistanceInverse<>::value(_coordinates));
+                
+                    // Having inv_square_dist, mask it and invert each element to get square_dist
+                    DenseMatrix<DataType_> square_dist(*inv_square_dist.copy());
+                    MatrixElementwiseProduct<>::value(square_dist, _neighbours);
+                    MatrixElementInverse<>::value(square_dist);
+
+                    // Calculate inv_square_dist = Mul(inv_square_dist,  _repulsive_force_parameter)
+                    MatrixElementwiseProduct<>::value(inv_square_dist, _repulsive_force_parameter);
+
+                    // Calculate square_dist = Mul(square_dist,  _attractive_force_parameter)
+                    MatrixElementwiseProduct<>::value(square_dist, _attractive_force_parameter);
+
+                    // Calculate the single diagonal matrix containing the row sum vector of square_dist
+                    DenseVector<DataType_> & sum_vec(*MatrixRowSumVector<DataType_>::value(square_dist));
+
+                    // Calculate the same stuff for inv_square_dist
+                    DenseVector<DataType_> & sum_vec_inv(*MatrixRowSumVector<DataType_>::value(inv_square_dist));
+
+                    // Calculating square_dist = (square_dist - diag(sum_vec))
+                    BandedMatrix<DataType_> diag(sum_vec.size(), &sum_vec);
+                    MatrixDifference<>::value(diag, square_dist);
+                    ScalarMatrixProduct<>::value(DataType_(-1), square_dist);
+
+                    // Calculating attractive_forces = (_coordinates * square_dist)
+                    DenseMatrix<DataType_> attractive_forces(MatrixProduct<>::value(_coordinates, square_dist));
+
+                    // Calculating inv_square_dist <- -inv_square_dist
+                    ScalarMatrixProduct<DataType_>::value(DataType_(-1), inv_square_dist);
+
+                    // Calculating inv_square_dist = (diag(sum_vec_inv) - inv_square_dist)
+                    BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), &sum_vec_inv);
+                    DenseMatrix<DataType_> diff(MatrixSum<>::value(inv_square_dist, inv_diag));
+
+                    // Calculating repulsive_forces = (_coordinates * inv_square_dist)
+                    DenseMatrix<DataType_> repulsive_forces(MatrixProduct<>::value(_coordinates, diff));
+
+                    // Calculate the maximal force and the result forces
+                    MatrixSum<>::value(attractive_forces, repulsive_forces);
+                    DataType_ result(0);
+                    DenseVector<DataType_> resulting_forces(_coordinates.columns(), DataType_(0)); 
+                    for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements()) ;
+                        i != i_end ; ++i)
+                    {
+                        *i = VectorNorm<DataType_, vnt_l_two, true>::value(attractive_forces.column(i.index()));
+                        result = std::max(result, *i);
+                    }
+
+                    // Calculate the new positions by using result forces
+                    for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
+                        e_end(_coordinates.end_elements()), k(attractive_forces.begin_elements()) ; e != e_end ; ++e, ++k)
+                    {
+                        result > eps ? *e = *e + 1 / (10 * resulting_forces[e.column()]) * *k : 0;
+                    }
                     return result;
                 }
         };
@@ -215,93 +358,81 @@
                 const DenseMatrix<bool> & _neighbours;
 
                 /// a scalar factor which determinates how much influence the distance has while calculating the forces.
-                DataType_ _edge_length;
+                const DataType_ _edge_length;
+
+                /// parameter matrix for attractive forces
+                DenseMatrix<DataType_> & _attractive_force_parameter;
 
             public:
                 friend class Positions<DataType_, KamadaKawai>;
 
-                Implementation(DenseMatrix<DataType_> & coordinates, const DenseMatrix<bool> & neighbours, DataType_ edge_length) :
+                Implementation(DenseMatrix<DataType_> & coordinates, const DenseMatrix<bool> & neighbours, const DataType_ edge_length) :
                     _coordinates(coordinates),
                     _neighbours(neighbours),
-                    _edge_length(edge_length)
-                {
-                    /// \todo See comment in FruchtermanReingold-Implementation's
-                    if (coordinates.columns() != neighbours.columns())
-                        throw MatrixColumnsDoNotMatch(neighbours.columns(), coordinates.columns());
+                    _edge_length(edge_length),
+                    _attractive_force_parameter(*(new DenseMatrix<DataType_>(neighbours.columns(), neighbours.rows())))
 
-                    if (neighbours.columns() != neighbours.rows())
-                        throw MatrixColumnsDoNotMatch(neighbours.rows(), neighbours.columns());
+                {
+                    // Use adjacency matrix to calculate the _attractive_force_parameter matrix
+                    for (typename Matrix<bool>::ConstElementIterator e(_neighbours.begin_elements()),
+                        e_end(_neighbours.end_elements()) ; e != e_end ; ++e)
+                    {
+                        *e == 0 ? _attractive_force_parameter[e.row()][e.column()] = 2 * _attractive_force_parameter.columns() :
+                        _attractive_force_parameter[e.row()][e.column()] = 1 ;
+                    }
+
+                    // Using Dijkstra to calculate the graph distance matrix represented by _attractive_force_parameter
+                    Dijkstra<DataType_>::value(_attractive_force_parameter);
+
+                    // Mul(_attractive_force_parameter, _attractive_force_parameter) * _edge_length^2
+                    MatrixElementwiseProduct<>::value (_attractive_force_parameter, _attractive_force_parameter);
+                    ScalarMatrixProduct<DataType_>::value((_edge_length * _edge_length), _attractive_force_parameter);
+
+                    // Calculate 1 / _attractive_force_parameter
+                    MatrixElementInverse<>::value(_attractive_force_parameter);
                 }
 
                 DataType_ value(DataType_ & eps)
                 {
-                    /// \todo Apply coding conventions.
-                    // Calculate SquaDist = d(i,j)
-                    DenseMatrix<DataType_> SquaDist = NodeDistance<>::value(_coordinates);
+                    // Calculate square_dist = d(i,j)^2
+                    DenseMatrix<DataType_> square_dist(NodeDistance<>::value(_coordinates));
 
-                    // Use adjacency matrix to calculate the cost matrix
-                    DenseMatrix<DataType_> CostMat(_neighbours.columns(), _neighbours.columns(), 0);
-                    int ix=0;
-                    int jx=0;
-                    for (typename Matrix<bool>::ConstElementIterator e(_neighbours.begin_elements()),
-                        e_end(_neighbours.end_elements()) ; e != e_end ; ++e)
+                    // Mul(square_dist, cost_matrix) -1
+                    MatrixElementwiseProduct<>::value (square_dist, _attractive_force_parameter);
+                    ScalarMatrixSum<>::value (-1, square_dist);
+                    
+                    // Calculate the single diagonal matrix containing the row sum vector of square_dist
+                    DenseVector<DataType_> & sum_vec(*MatrixRowSumVector<>::value(square_dist));
+
+                    // Calculating square_dist = (square_dist - diag(sum_vec))
+                    BandedMatrix<DataType_> diag(sum_vec.size(), &sum_vec);
+                    MatrixDifference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
+                    ScalarMatrixProduct<>::value(DataType_(-1), square_dist);
+
+                    // Calculating attractive_forces = (_coordinates * square_dist)
+                    DenseMatrix<DataType_> attractive_forces(MatrixProduct<>::value(_coordinates, square_dist));
+
+                    // Calculate the resulting forces, the maximal force and the node with maximal force
+                    DataType_ result(0);
+                    int max_node(0);
+                    DenseVector<DataType_> resulting_forces(_coordinates.columns(), DataType_(0));
+                    for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements()) ;
+                        i != i_end ; ++i)
                     {
-                        *e == 0 ? CostMat[ix][jx] = 2 * CostMat.columns() : CostMat[ix][jx] = 1 ;
-                        jx = ((jx +1) % CostMat.columns());
-                        jx == 0 ? ix++ : ix = ix;
+                        *i = VectorNorm<DataType_, vnt_l_two, true>::value(attractive_forces.column(i.index()));
+                        *i > result ? result = *i, max_node = i.index() : 0;
                     }
 
-
-                    // Calculate the cost matrix by Dijkstra
-                    DenseMatrix<DataType_> newCostMat = Dijkstra<DataType_>::value(*CostMat.copy());
-
-                    // Calculate InvGraphDist = Mul(newCostMat,newCostMat) * k^2
-                    DenseMatrix<DataType_> InvGraphDist = MatrixElementwiseProduct<>::value (newCostMat, newCostMat);
-                    InvGraphDist = ScalarMatrixProduct<DataType_>::value((_edge_length * _edge_length),InvGraphDist);
-
-                    // Calculate InvGraphDist = 1 / InvGraphDist
-                    InvGraphDist = MatrixElementInverse<>::value(InvGraphDist);
-
-                    // Calculate SquaDist_InvGD = Mul(InvGraphDist,SquaDist) -1
-                    DenseMatrix<DataType_> SquaDist_InvGD = ScalarMatrixSum<>::value (-1, MatrixElementwiseProduct<>::value (InvGraphDist, SquaDist));
-
-                    // Calculate the row sum vector of SquaDist_InvGD, SumVec
-                    std::tr1::shared_ptr<DenseVector<DataType_> > SumVec(MatrixRowSumVector<>::value(SquaDist_InvGD));
-
-                    // Calculate SquaDist_InvGD = SquaDist_InvGD - diag(SumVec)
-                    for (int i = 0; i < SquaDist_InvGD.columns(); i++)
+                    // Calculate the new positions by using resulting forces
+                    if (result > eps)
                     {
-                        SquaDist_InvGD[i][i] -= (*SumVec)[i];
+                        for (int i(0) ; i != _coordinates.rows() ; ++i)
+                        {
+                            _coordinates[i][max_node] = _coordinates[i][max_node] + 
+                            1 / (10 * resulting_forces[max_node]) * attractive_forces[i][max_node];
+                        }
                     }
-
-                    // Calculate Forces: fKK = p * (SquaDist_InvGD - diag(SumVec))
-                    DenseMatrix<DataType_> fKK =  MatrixProduct<>::value(*_coordinates.copy(), SquaDist_InvGD);
-
-                    // Calculate the result forces, the maximal force and the node with maximal force
-                    DenseVector<DataType_> fRes(_coordinates.columns(), 0, 0, 1);
-                    DataType_ maxForce = 0;
-                    int maxNode = 0;
-                    for (int i = 0; i < fKK.columns(); ++i)
-                    {
-                        DenseVector<DataType_> column = fKK.column(i);
-                        DataType_ f = VectorNorm<DataType_, vnt_l_two, true>::value(column);
-                        fRes[i] = f;
-                        maxForce < f ? maxNode = i, maxForce = f : maxNode = maxNode;
-                    }
-
-                    jx = 0;
-                    ix = 0;
-
-                    // Calculate the new positions by using result forces
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
-                        e_end(_coordinates.end_elements()) ; e != e_end ; ++e)
-                    {
-                        (jx == maxNode) && (maxForce > eps)? *e = *e + 1 / (10 * fRes[maxNode]) * fKK[ix][maxNode]: *e = *e ;
-                        jx = ((jx +1) % _coordinates.columns());
-                        jx == 0 ? ix++ : ix = ix;
-                    }
-                    return maxForce;
-
+                    return result;
                 }
         };
 
