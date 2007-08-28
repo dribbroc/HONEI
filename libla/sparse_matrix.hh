@@ -427,7 +427,8 @@ namespace pg512 ///< \todo Namespace name?
                     {
                         _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
                         _end = _matrix._row_vectors[_row]->end_non_zero_elements();
-                        break;
+                        _index = _row * _matrix._columns;
+                        return;
                     }
 
                     if (! _matrix._row_vectors[_row])
@@ -474,7 +475,7 @@ namespace pg512 ///< \todo Namespace name?
              */
             NonZeroElementIterator(const SparseMatrix<DataType_> & matrix, const DataType_ &) :
                 _matrix(matrix),
-                _index(matrix._rows * matrix._columns),
+                _index(matrix._rows * matrix._columns  ),
                 _column(0),
                 _row(matrix._rows),
                 _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()),

@@ -14,6 +14,11 @@ see the NEWS file.
 
 2007-08-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
+	* libla/sparse_matrix_TEST.cc: Added end_non_zero_element test.
+	* libla/sparse_matrix_hh: end_non_zero_element index.
+
+2007-08-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+
 	* libla/matrix_product_TEST.cc: 
 	Added tests for mixed sparse/dense/banded operations where appropriate.
 	
