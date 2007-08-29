@@ -228,6 +228,12 @@ namespace pg512
                 ++l; ++r;
             }
 
+            for (typename MutableMatrix<DataType1_>::ElementIterator l_end(left.end_elements()) ;
+                l != l_end ; ++l)
+            {
+                *l = DataType1_(0);
+            }
+            /// \todo Left is complete dense at this point.
             return left;
         }
 
