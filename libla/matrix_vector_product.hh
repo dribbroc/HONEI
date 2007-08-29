@@ -225,18 +225,18 @@ namespace pg512
                 // If we are above or on the diagonal band, we first search the first non-zero element, then we make positions in band and result vector meet it.
                 if (vi.index() >= middle_index)
                 {
-                    long move_index = vi.index();
-                    move_index -= middle_index; // Do not wonder: vi.index() - middle_index returns SHIT!
+                    unsigned long move_index = vi.index() - middle_index;
+                    unsigned long end = vi->size() - move_index; //Calculation of the element-index to stop in iteration!
 
                     for (typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements()) ; j != j_end ; ++j)
                     {
-                        typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->end_elements());
-                        typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
-
-                        while (j.index() < move_index && j != j_end)
+                        if (j.index() < move_index)
                         {
-                            ++j;
+                            continue;
                         }
+
+                        typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->element_at(end));
+                        typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
 
                         while (b.index() < (j.index() - move_index) && b != b_end)
                         {
@@ -250,16 +250,14 @@ namespace pg512
                         }
                     }
                 }
-                // If we are below the diagonal band we correct the position in band an result vector.
+                // If we are below the diagonal band we correct the position in band and result vector.
                 else
                 {
-                    long move_index = middle_index;
-                    move_index-= vi.index(); // Do not wonder: vi.index() - middle_index returns SHIT!
-
+                    unsigned long move_index = middle_index - vi.index(); // is also = the element index to start in iteration for b
                     for (typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements()) ; j != j_end ; ++j)
                     {
-                        typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->end_elements());
-                        typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
+                        typename Vector<DataType1_>::ConstElementIterator b(vi->element_at(move_index)), b_end(vi->end_elements());
+                        typename Vector<DataType1_>::ElementIterator r(result.element_at(move_index));
                         while (b.index() < (j.index() + move_index) && b != b_end) // Need a positive index here, so + is used!
                         {
                             ++b;

@@ -7,9 +7,12 @@ see the NEWS file.
 
 2007-08-29 Sven Mallach <sven.mallach@uni-dortmund.de>
 
-        * libla/matrix_vector_product.hh,
-	libla/matrix_elementwise_product_TEST.cc: Fixed bugs in Header and
-	Test! So wonderful to see it passing!
+	* libla/sparse_vector.hh: Added iterator element_at(index) also for
+	sparse vector. Of course only for Not-Non-Zero-Iterator.
+	* libla/matrix_vector_product.hh,
+	libla/matrix_elementwise_product_TEST.cc: Now really fixed remaining
+	bugs in Header and Test! So wonderful to see it passing! After more
+	than one hour of waiting for results, I decided to also optimize it.
 
 2007-08-29 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 

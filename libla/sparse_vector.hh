@@ -163,6 +163,12 @@ namespace pg512 ///< \todo Namespace name?
                 return ConstElementIterator(new SparseElementIterator<DataType_>(*this, _imp->_size));
             }
 
+            /// Returns const iterator pointing to a given element of the vector.
+            virtual ConstElementIterator element_at(unsigned long index) const
+            {
+                return ConstElementIterator(new SparseElementIterator<DataType_>(*this, index));
+            }
+
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements()
             {
@@ -173,6 +179,12 @@ namespace pg512 ///< \todo Namespace name?
             virtual ElementIterator end_elements()
             {
                 return ElementIterator(new SparseElementIterator<DataType_>(*this, _imp->_size));
+            }
+
+            /// Returns iterator pointing to a given element of the vector.
+            virtual ElementIterator element_at(unsigned long index)
+            {
+                return ElementIterator(new SparseElementIterator<DataType_>(*this, index));
             }
 
             /// Returns const iterator pointing to the first non-zero element of the vector.

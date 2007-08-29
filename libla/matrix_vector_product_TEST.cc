@@ -137,8 +137,11 @@ class BandedMatrixSparseVectorProductTest :
                     if (i.index() % 10 == 1) *i = DataType_(6 * 1);
                     if (i.index() % 10 == 10 - 1) *i = DataType_(6 * 1);
                 }
+                if (!(size % 12 == 0))
+                {
+                   sv2[size-1] = DataType_(0);
+                }
 
-                sv2[size-1] = DataType_(0);
                 SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(bm1, sv1));
 
                 TEST_CHECK_EQUAL(prod, sv2);
@@ -419,4 +422,3 @@ class SparseMatrixSparseVectorProductQuickTest :
 
 SparseMatrixSparseVectorProductQuickTest<float> sparse_matrix_sparse_vector_product_test_quick_float("float");
 SparseMatrixSparseVectorProductQuickTest<double> sparse_matrix_sparse_vector_product_test_quick_double("double");
-
