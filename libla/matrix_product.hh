@@ -27,6 +27,8 @@
 #include <libla/scalar_product.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/matrix_error.hh>
+#include <libla/vector_sum.hh>
+#include <libla/vector_elementwise_product.hh>
 
 /**
  * \file
@@ -38,7 +40,7 @@
 namespace pg512
 {
 
-    ///\todo: When DenseMatrix operator[] return type is restored, some cases can be put together to RowAccessMatrix.
+        ///\todo: When DenseMatrix operator[] return type is restored, some cases can be put together to RowAccessMatrix.
 
     /**
      * MatrixProduct is the class template for multiplying two matrices
@@ -66,8 +68,8 @@ namespace pg512
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
                     const DenseVector<DataType2_> right_column = right.column(t);
-                    *i = ScalarProduct<>::value(left_row, right_column);
-                    ++i;
+                                        *i = ScalarProduct<>::value(left_row, right_column);
+                                        ++i;
                 }
 
             }
@@ -75,7 +77,7 @@ namespace pg512
         }
 
 
-        /**
+                /**
          * Returns the resulting matrix after multiplying a DenseMatrix and a SparseMatrix instance.
          * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix used as second factor.
@@ -93,8 +95,6 @@ namespace pg512
             for (unsigned int l_row=0 ; l_row < left.rows() ; ++l_row)
             {
                 const DenseVector<DataType1_> left_row(left[l_row]);
-
-
                 for (unsigned int r_column=0; r_column < right.columns() ; ++r_column)
                 {
                     typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements());
@@ -107,12 +107,12 @@ namespace pg512
                         ++l;
                     }
                     ++i;
-                }
+                                }
             }
             return result;
         }
 
-         /**
+                 /**
          * Returns the resulting matrix after multiplying a sparse and a sparse matrix instance.
          * \param left Reference to a SparseMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a SparseMatrix used as second factor.
@@ -142,12 +142,12 @@ namespace pg512
                         ++l;
                     }
                     ++i;
-                }
+                                }
             }
             return result;
         }
 
-        /**
+                /**
          * Returns the resulting matrix after multiplying a SparseMatrix and a DenseMatrix instance.
          * \param left Reference to a SparseMatrix used as first factor.
          * \param right Reference to a DenseMatrix used as second factor. Its return type is used for the result matrix.
@@ -166,15 +166,15 @@ namespace pg512
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
                     const DenseVector<DataType2_> right_column = right.column(t);
-                    *i = ScalarProduct<>::value(right_column, left_row);
-                    ++i;
+                                        *i = ScalarProduct<>::value(right_column, left_row);
+                                        ++i;
                 }
 
             }
             return result;
         }
 
-        /**
+                /**
          * Returns the resulting matrix after multiplying two BandedMatrix instances.
          * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
          * \param right Reference to a BandedMatrix used as second factor.
@@ -191,34 +191,83 @@ namespace pg512
 
         /**
          * Returns the resulting matrix after multiplying a BandedMatrix instance and a DenseMatrix instance.
-         * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
-         * \param right Reference to a DenseMatrix used as second factor.
+         * \param left Reference to a BandedMatrix used as first factor.
+         * \param right Reference to a DenseMatrix used as second factor. Its return type is used for the result matrix.
          **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> value(const BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType2_> value(const BandedMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            BandedMatrix<DataType1_> result(left.rows());
-            ///\todo: Implement when BandIterator ready
+            if (right.columns() != left.rows())
+                throw MatrixRowsDoNotMatch(left.rows(), right.columns());
+
+            DenseMatrix<DataType2_> result(right.columns(), right.rows(), DataType2_(0));
+            unsigned long middle_index = left.size() -1;
+
+            for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(left.begin_bands()), vi_end(left.end_bands()) ; vi != vi_end ; ++vi)
+            {
+                if (vi.index() == middle_index) // Are we on diagonal?
+                {
+                    for (unsigned int s = 0 ; s < right.columns() ; ++s)
+                    {
+                        VectorSum<>::value(result.column(s), VectorElementwiseProduct<>::value(*(right.column(s).copy()), *vi));
+                    }
+                }
+                else if (vi.index() > middle_index) // Are we above?
+                {
+                    for (unsigned int s = 0 ; s < right.columns() ; ++s)
+                    {
+                        DenseVector<DataType2_> temp(right.rows(), DataType2_(0)); // Temporary container for efficient calculation of elementwise vector product.
+                        unsigned long real_index = vi.index() - middle_index;
+                        typename Vector<DataType2_>::ConstElementIterator a(right.column(s).element_at(real_index)), b(vi->begin_elements());
+                        unsigned long end = temp.size();
+                        end-= real_index;
+
+                        for(typename Vector<DataType2_>::ElementIterator x(temp.begin_elements()), x_end(temp.element_at(end)) ; x != x_end ; ++x)
+                        {
+                            *x = *a * *b;
+                            ++a; ++b;
+                        }
+                        VectorSum<>::value(result.column(s), temp);
+                    }
+                }
+                else // We are below.
+                {
+                    for (unsigned int s = 0 ; s < right.columns() ; ++s)
+                    {
+                        DenseVector<DataType2_> temp(right.rows(), DataType2_(0)); // Temporary container for efficient calculation of elementwise vector product.
+                        unsigned long real_index = middle_index - vi.index();
+                        typename Vector<DataType2_>::ConstElementIterator a(right.column(s).begin_elements()), b(vi->element_at(real_index));
+                        for(typename Vector<DataType2_>::ElementIterator x(temp.element_at(real_index)), x_end(temp.end_elements()) ; x != x_end ; ++x)
+                        {
+                            *x = *a * *b;
+                            ++a; ++b;
+                        }
+                        VectorSum<>::value(result.column(s), temp);
+                    }
+                }
+            }
             return result;
         }
 
-        /**
+                /**
          * Returns the resulting matrix after multiplying a BandedMatrix instance and a SparseMatrix instance.
-         * \param left Reference to a BandedMatrix used as first factor. Its return type is used for the result matrix.
-         * \param right Reference to a SparseMatrix used as second factor.
+         * \param left Reference to a BandedMatrix used as first factor.
+         * \param right Reference to a SparseMatrix used as second factor. Its return type is used for the result matrix.
          **/
-        template <typename DataType1_, typename DataType2_> static BandedMatrix<DataType1_> value(const BandedMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
+        template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const BandedMatrix<DataType1_> & left, const SparseMatrix<DataType2_> & right)
         {
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            BandedMatrix<DataType1_> result(left.rows());
-            ///\todo: Implement when BandIterator ready
+            if (right.columns() != left.rows())
+                throw MatrixRowsDoNotMatch(left.rows(), right.columns());
+
+            DenseMatrix<DataType1_> result(left.columns(), left.rows(), DataType1_(0));
+            ///\todo: Will be implemented soon.
             return result;
         }
-
 
         /**
          * Returns the resulting matrix after multiplying a DenseMatrix instance and a BandedMatrix instance.
@@ -230,12 +279,12 @@ namespace pg512
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            DenseMatrix<DataType1_> result(right.columns(), left.rows());
-            ///\todo: Implement when BandIterator ready
+            DenseMatrix<DataType1_> result(right.columns(), left.rows(), DataType1_(0));
+            ///\todo: Will be implemented soon.
             return result;
         }
 
-        /**
+                /**
          * Returns the resulting matrix after multiplying a SparseMatrix instance and a BandedMatrix instance.
          * \param left Reference to a SparseMatrix used as first factor.
          * \param right Reference to a BandedMatrix used as second factor. Its return type is used for the result matrix.
@@ -245,21 +294,21 @@ namespace pg512
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            DenseMatrix<DataType1_> result(right.columns(), left.rows());
-            ///\todo: Implement when BandIterator ready
+            DenseMatrix<DataType1_> result(right.columns(), left.rows(), DataType1_(0));
+            ///\todo: Will be implemented soon.
             return result;
         }
 
     };
 
-    /// Use the following algorithm for Cell processor, cause of optimized multiply-accumulate.
+        /// Use the following algorithm for Cell processor, cause of optimized multiply-accumulate.
 
-    template <> struct MatrixProduct<tags::Cell>
-    {
-        /**
+        template <> struct MatrixProduct<tags::Cell>
+        {
+                /**
          * Returns the resulting matrix after multiplying two DenseMatrix instances.
-         * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
-         * \param right Reference to a DenseMatrix used as second factor.
+                 * \param left Reference to a DenseMatrix used as first factor. Its return type is used for the result matrix.
+                 * \param right Reference to a DenseMatrix used as second factor.
          **/
         template <typename DataType1_, typename DataType2_> static DenseMatrix<DataType1_> value(const DenseMatrix<DataType1_> & left, const DenseMatrix<DataType2_> & right)
         {
@@ -274,20 +323,19 @@ namespace pg512
                 const DenseVector<DataType1_> left_row = left[s];
                 for (unsigned int t=0; t < right.columns() ; ++t)
                 {
-                    const DenseVector<DataType2_> right_column = right.column(t);
-                    typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
-                    for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
-                            l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
-                    {
-                        *i += (*l) * (*r);
-                    }
-                    ++i;
-                }
+                                        const DenseVector<DataType2_> right_column = right.column(t);
+                                        typename Vector<DataType2_>::ConstElementIterator r(right_column.begin_elements());
+                                        for (typename Vector<DataType1_>::ConstElementIterator l(left_row.begin_elements()),
+                                                        l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
+                                        {
+                                                *i += (*l) * (*r);
+                                        }
+                                        ++i;
+                                }
             }
             return result;
         }
-    };
-
+        };
 
 }
 #endif

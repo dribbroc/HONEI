@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-30 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/vector.hh: Added function element_at(index) to interface
+	vector.hh.
+	* libla/matrix_product.hh: Fixed Dense * Sparse. Implemented complete
+	and working algo for Banded * Dense. Decided, that all Banded * Dense,
+	Banded * Sparse and vice versa shall return dense matrices.
+
 2007-08-29 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/sparse_vector.hh: Added iterator element_at(index) also for

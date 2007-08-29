@@ -62,6 +62,9 @@ namespace pg512 ///< \todo Namespace name?
             /// Returns const iterator pointing behind the last element of the vector.
             virtual ConstElementIterator end_elements() const = 0;
 
+            /// Returns const iterator pointing to a given element of the vector.
+            virtual ConstElementIterator element_at(unsigned long index) const = 0;
+
             /// Type of the iterator over our elements.
             template <typename ElementType_> class ElementIteratorWrapper;
             typedef ElementIteratorWrapper<DataType_> ElementIterator;
@@ -71,6 +74,9 @@ namespace pg512 ///< \todo Namespace name?
 
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements() = 0;
+
+            /// Returns const iterator pointing to a given element of the vector.
+            virtual ElementIterator element_at(unsigned long index) = 0;
 
             /// Returns our size.
             virtual unsigned long size() const = 0;
