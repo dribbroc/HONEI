@@ -220,41 +220,56 @@ namespace pg512
             SparseVector<DataType1_> result(vector.size(), vector.capacity());
             for (typename BandedMatrix<DataType1_>::ConstVectorIterator vi(matrix.begin_bands()), vi_end(matrix.end_bands()) ;  vi != vi_end ; ++vi)
             {
-                typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->end_elements());;
-                typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
-                int middle_index = matrix.rows() -1;
+                unsigned long middle_index = matrix.rows() -1;
 
                 // If we are above or on the diagonal band, we first search the first non-zero element, then we make positions in band and result vector meet it.
                 if (vi.index() >= middle_index)
                 {
+                    long move_index = vi.index();
+                    move_index -= middle_index; // Do not wonder: vi.index() - middle_index returns SHIT!
+
                     for (typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements()) ; j != j_end ; ++j)
                     {
-                        while (j.index() < vi.index()-middle_index && j != j_end)
+                        typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->end_elements());
+                        typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
+
+                        while (j.index() < move_index && j != j_end)
                         {
                             ++j;
                         }
 
-                        while (b.index() < j.index() - (vi.index()-middle_index) && b != b_end)
+                        while (b.index() < (j.index() - move_index) && b != b_end)
                         {
                             ++b;
                             ++r;
                         }
 
-                        *r += *b * *j;
+                        if (b != b_end)
+                        {
+                            *r += *b * *j;
+                        }
                     }
                 }
                 // If we are below the diagonal band we correct the position in band an result vector.
                 else
                 {
+                    long move_index = middle_index;
+                    move_index-= vi.index(); // Do not wonder: vi.index() - middle_index returns SHIT!
+
                     for (typename Vector<DataType2_>::ConstElementIterator j(vector.begin_non_zero_elements()), j_end(vector.end_non_zero_elements()) ; j != j_end ; ++j)
                     {
-                        while (b.index() < j.index() - (vi.index() - middle_index) && b != b_end) //normally + but we get a negative index where we want to work with a positive one
+                        typename Vector<DataType1_>::ConstElementIterator b(vi->begin_elements()), b_end(vi->end_elements());
+                        typename Vector<DataType1_>::ElementIterator r(result.begin_elements());
+                        while (b.index() < (j.index() + move_index) && b != b_end) // Need a positive index here, so + is used!
                         {
                             ++b;
                             ++r;
                         }
 
-                        *r += *b * *j;
+                        if (b != b_end)
+                        {
+                            *r += *b * *j;
+                        }
                     }
                 }
             }

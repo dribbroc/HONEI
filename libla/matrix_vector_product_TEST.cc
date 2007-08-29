@@ -51,10 +51,10 @@ class BandedMatrixDenseVectorProductTest :
                 DenseVector<DataType_> * dv5 = dv4->copy();
                 bm1.insert_band(1, dv4);
                 bm1.insert_band(-1, dv5);
-                
+
                 DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
                 (dv3)[0]= DataType_(12);
-                (dv3)[size-1]= DataType_(12);   
+                (dv3)[size-1]= DataType_(12);
                 DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
 
                 TEST_CHECK_EQUAL(prod, dv3);
@@ -90,11 +90,11 @@ class BandedMatrixDenseVectorProductQuickTest :
 
             DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
             (dv3)[0]= DataType_(12);
-            (dv3)[size-1]= DataType_(12);            
+            (dv3)[size-1]= DataType_(12);
             DenseVector<DataType_> prod (MatrixVectorProduct<DataType_>::value(bm1, dv2));
 
             TEST_CHECK_EQUAL(prod, dv3);
-            
+
             BandedMatrix<DataType_> bm01(5);
             DenseVector<DataType_> dv01(4, DataType_(1));
             TEST_CHECK_THROWS(MatrixVectorProduct<DataType_>::value(bm01, dv01), MatrixRowsDoNotMatch);
@@ -120,7 +120,7 @@ class BandedMatrixSparseVectorProductTest :
                 DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
-                DenseVector<DataType_> * dv5 = dv4->copy();                
+                DenseVector<DataType_> * dv5 = dv4->copy();
                 bm1.insert_band(1, dv4);
                 bm1.insert_band(-1, dv5);
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
@@ -137,7 +137,6 @@ class BandedMatrixSparseVectorProductTest :
                     if (i.index() % 10 == 1) *i = DataType_(6 * 1);
                     if (i.index() % 10 == 10 - 1) *i = DataType_(6 * 1);
                 }
-                sv2[size-1]=DataType_(0);
                 SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(bm1, sv1));
 
                 TEST_CHECK_EQUAL(prod, sv2);
@@ -167,7 +166,7 @@ class BandedMatrixSparseVectorProductQuickTest :
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
-            DenseVector<DataType_> * dv5 = dv4->copy();                
+            DenseVector<DataType_> * dv5 = dv4->copy();
             bm1.insert_band(1, dv4);
             bm1.insert_band(-1, dv5);
             SparseVector<DataType_> sv1(size, size / 8 + 1);
@@ -184,7 +183,6 @@ class BandedMatrixSparseVectorProductQuickTest :
                 if (i.index() % 5 == 1) *i = DataType_(6 * 1);
                 if (i.index() % 5 == 5 - 1) *i = DataType_(6 * 1);
             }
-            sv2[size-1]=DataType_(0);
             SparseVector<DataType_> prod(MatrixVectorProduct<DataType_>::value(bm1, sv1));
 
             TEST_CHECK_EQUAL(prod, sv2);
@@ -353,7 +351,7 @@ class SparseMatrixDenseVectorProductQuickTest :
         {
             unsigned long size(20);
             SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 2;
@@ -387,7 +385,7 @@ class SparseMatrixSparseVectorProductQuickTest :
         {
             unsigned long size(20);
             SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 2;
@@ -417,3 +415,4 @@ class SparseMatrixSparseVectorProductQuickTest :
 
 SparseMatrixSparseVectorProductQuickTest<float> sparse_matrix_sparse_vector_product_test_quick_float("float");
 SparseMatrixSparseVectorProductQuickTest<double> sparse_matrix_sparse_vector_product_test_quick_double("double");
+
