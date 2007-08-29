@@ -86,7 +86,7 @@ namespace pg512
             if (left.columns() != right.rows())
                 throw MatrixRowsDoNotMatch(right.rows(), left.columns());
 
-            DenseMatrix<DataType1_> result(right.columns(), left.rows());
+            DenseMatrix<DataType1_> result(right.columns(), left.rows(), DataType1_(0));
             typename MutableMatrix<DataType1_>::ElementIterator i(result.begin_elements());
 
             ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)

@@ -9,6 +9,7 @@ see the NEWS file.
 
 	* libla/matrix_elementwise_product.hh: Fixed last elements not
 	overwritten bug.
+	* libla/matrix_product.hh: Fixed elements not initialized bug.
 
 2007-08-29 Danny van Dyk <kugelfang@gentoo.org>
 
