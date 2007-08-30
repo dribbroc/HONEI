@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-08-30 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/sparse_vector.hh: Fixed issue, that when resizing capacity it
+	was not checked if capacity will then exceed size. Now it is resized
+	to the minimum of size and capacity+10.
+
+2007-08-30 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/vector.hh: Added function element_at(index) to interface
 	vector.hh.
 	* libla/matrix_product.hh: Fixed Dense * Sparse. Implemented complete
