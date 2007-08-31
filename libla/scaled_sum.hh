@@ -66,39 +66,39 @@ namespace honei
         /// \{
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const DenseVector<DT2_> & right, DT3_ scalar)
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & x, const DenseVector<DT2_> & y, DT3_ b)
         {
             CONTEXT("When calculating ScaledSum (DenseVector, DenseVector, scalar):");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(right.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l, ++r)
+            typename Vector<DT2_>::ConstElementIterator r(y.begin_elements());
+            for (typename Vector<DT1_>::ElementIterator l(x.begin_elements()),
+                    l_end(x.end_elements()) ; l != l_end ; ++l, ++r)
             {
-                *l += scalar * (*r);
+                *l += b * (*r);
 
             }
 
-            return left;
+            return x;
         }
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static SparseVector<DT1_> & value(SparseVector<DT1_> & left, const SparseVector<DT2_> & right, DT3_ scalar)
+        static SparseVector<DT1_> & value(SparseVector<DT1_> & x, const SparseVector<DT2_> & y, DT3_ b)
         {
             CONTEXT("When calculating ScaledSum (SparseVector, SparseVector, scalar):");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            typename Vector<DT2_>::ElementIterator l(left.begin_non_zero_elements());
-            for (typename Vector<DT1_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
+            typename Vector<DT2_>::ElementIterator l(x.begin_non_zero_elements());
+            for (typename Vector<DT1_>::ConstElementIterator r(y.begin_non_zero_elements()),
+                    r_end(y.end_non_zero_elements()) ; r != r_end ; )
             {
                 if (r.index() < l.index())
                 {
-                    left[r.index()] = scalar * (*r);
+                    x[r.index()] = b * (*r);
                     ++r;
                 }
                 else if (l.index() < r.index())
@@ -107,28 +107,29 @@ namespace honei
                 }
                 else
                 {
-                    *l += scalar * (*r);
+                    *l += b * (*r);
                     ++l; ++r;
                 }
             }
             ///\todo: perhaps sparsify - written results may be zero.
-            return left;
+            return x;
         }
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const SparseVector<DT2_> & right, DT3_ scalar)
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & x, const SparseVector<DT2_> & y, DT3_ b)
         {
             CONTEXT("When calculating ScaledSum (DenseVector, SparseVector, scalar):");
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
 
-            for (typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; ++r )
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            for (typename Vector<DT2_>::ConstElementIterator r(y.begin_non_zero_elements()),
+                    r_end(y.end_non_zero_elements()) ; r != r_end ; ++r )
             {
-                left[r.index()] += scalar * (*r);
+                x[r.index()] += b * (*r);
             }
-            ///\todo: perhaps sparsify - if senseless use with scalar == zero, zeros may be written.
-            return left;
+            ///\todo: perhaps sparsify - if senseless use with b == zero, zeros may be written.
+            return x;
         }
 
         /// \}

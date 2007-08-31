@@ -28,6 +28,8 @@ namespace honei
 {
     /**
      * Assertion is thrown when a critical condition is not fulfilled.
+     *
+     * \ingroup grpdebug
      */
     class Assertion :
         public Exception
@@ -45,6 +47,20 @@ namespace honei
                     const long line, const std::string & message);
     };
 
+/**
+ * \def ASSERT
+ *
+ * Convenience definition that provides a way to throw Assertion Exceptions.
+ * The thrown Assertion will be automatically provided with the correct filename,
+ * line number and function name.
+ *
+ * \param expr Boolean expression that shall be asserted.
+ * \param msg Error message that will be display in case that expr evaluates to false.
+ *
+ * \warning Will only be compiled in when debug support is enabled.
+ *
+ * \ingroup grpdebug
+ */
 #if defined (DEBUG)
 #define ASSERT(expr, msg) \
     do { \

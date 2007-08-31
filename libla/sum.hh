@@ -370,17 +370,17 @@ namespace honei
          * \retval x Will return x after modification.
          */
         template <typename DT_>
-        static DenseVector<DT_> & value(const DT_ scalar, DenseVector<DT_> & vector)
+        static DenseVector<DT_> & value(const DT_ a, DenseVector<DT_> & x)
         {
-            CONTEXT("When adding scalar to DenseVector:");
+            CONTEXT("When adding a to DenseVector:");
 
-            for (typename Vector<DT_>::ElementIterator l(vector.begin_elements()),
-                    l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DT_>::ElementIterator l(x.begin_elements()),
+                    l_end(x.end_elements()) ; l != l_end ; ++l)
             {
-                *l += scalar;
+                *l += a;
             }
 
-            return vector;
+            return x;
         }
     };
 }

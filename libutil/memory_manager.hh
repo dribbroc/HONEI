@@ -247,7 +247,8 @@ namespace honei
              * Upload a complete memory chunk from local memory to remote memory.
              *
              * \param id Associated memory id.
-             * \param destination Tag value of the remote memory where to copy to.
+             * \param device Id of the device where to copy to.
+             * \param location Tag value of the remote memory where to copy to.
              */
             void upload(const MemoryId id, const DeviceId device, const tags::TagValue location);
 
@@ -255,11 +256,12 @@ namespace honei
              * Upload a partial memory chunk from local memory to remote memory.
              *
              * \param id Associated memory id.
-             * \param device Id of the the device where to copy to.
-             * \param destination Tag value of the remote memory where to copy to.
+             * \param device Id of the device where to copy to.
+             * \param location Tag value of the remote memory where to copy to.
              * \param size Size of the memory chunk that will be copied.
              */
-            void upload(const MemoryId id, const DeviceId device, const tags::TagValue location, const std::ptrdiff_t size);
+            void upload(const MemoryId id, const DeviceId device, const tags::TagValue location,
+                    const std::ptrdiff_t size);
 
             /**
              * Download a memory chunk from remote memory to local memory.

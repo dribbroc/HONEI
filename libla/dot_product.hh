@@ -42,7 +42,6 @@ namespace honei
      * \f]
      * which yields the scalar or inner product of the given vectors x and y.
      *
-     * \ingroup grpoperations
      * \ingroup grpvectoroperations
      * \ingroup grpreductions
      */
@@ -60,57 +59,58 @@ namespace honei
          */
 
         /// \{
+
         template <typename DT1_, typename DT2_>
-        static DT1_ value(const Vector<DT1_> & left, const Vector<DT2_> & right)
+        static DT1_ value(const Vector<DT1_> & x, const Vector<DT2_> & y)
         {
             CONTEXT("When calculating Vector-Vector dot product:");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
 
             DT1_ result(0);
 
-            for (typename Vector<DT1_>::ConstElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l )
+            for (typename Vector<DT1_>::ConstElementIterator l(x.begin_elements()),
+                    l_end(x.end_elements()) ; l != l_end ; ++l )
             {
-                result += (*l) * right[l.index()];
+                result += (*l) * y[l.index()];
             }
 
             return result;
         }
 
         template <typename DT1_, typename DT2_>
-        static DT1_ value(const SparseVector<DT1_> & left, const Vector<DT2_> & right)
+        static DT1_ value(const SparseVector<DT1_> & x, const Vector<DT2_> & y)
         {
             CONTEXT("When calculating SparseVector-Vector dot product:");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
 
             DT1_ result(0);
 
-            for (typename Vector<DT1_>::ConstElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; ++l )
+            for (typename Vector<DT1_>::ConstElementIterator l(x.begin_non_zero_elements()),
+                    l_end(x.end_non_zero_elements()) ; l != l_end ; ++l )
             {
-                result += (*l) * right[l.index()];
+                result += (*l) * y[l.index()];
             }
 
             return result;
         }
 
         template <typename DT1_, typename DT2_>
-        static DT1_ value(const SparseVector<DT1_> & left, const SparseVector<DT2_> & right)
+        static DT1_ value(const SparseVector<DT1_> & x, const SparseVector<DT2_> & y)
         {
             CONTEXT("When calculating SparseVector-SparseVector dot product:");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
 
             DT1_ result(0);
 
-            typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename Vector<DT1_>::ConstElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
+            typename Vector<DT2_>::ConstElementIterator r(y.begin_non_zero_elements());
+            for (typename Vector<DT1_>::ConstElementIterator l(x.begin_non_zero_elements()),
+                    l_end(x.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (l.index() == r.index())
                 {
@@ -131,20 +131,21 @@ namespace honei
         }
 
         template <typename IT1_, typename IT2_>
-        static typename IT1_::value_type value(IT1_ & left, const IT1_ & left_end,
-                IT2_ & right, const IT2_ & right_end)
+        static typename IT1_::value_type value(IT1_ & x, const IT1_ & x_end,
+                IT2_ & y, const IT2_ & y_end)
         {
             CONTEXT("When calculating iterator-based dot product:");
 
             typename IT1_::value_type result(0);
 
-            for ( ; (left != left_end) && (right != right_end) ; ++left, ++right)
+            for ( ; (x != x_end) && (y != y_end) ; ++x, ++y)
             {
-                result += (*left) * (*right);
+                result += (*x) * (*y);
             }
 
             return result;
         }
+
         /// \}
     };
 }

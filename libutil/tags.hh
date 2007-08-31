@@ -22,7 +22,7 @@
 
 #include <ostream>
 
-namespace honei ///< \todo Namespace name?
+namespace honei
 {
     namespace tags
     {

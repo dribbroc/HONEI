@@ -28,7 +28,7 @@
 #include <map>
 #include <iostream>
 
-namespace honei ///< \todo Namespace name?
+namespace honei
 {
     /**
      * SharedArrayError is thrown by SharedArray and related classes.

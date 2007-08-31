@@ -34,7 +34,7 @@
 /**
  * \file
  *
- * Implementation of NodeDistanceInverse. </br>
+ * Implementation of NodeDistanceInverse.
  *
  * \ingroup grplibgraph
  **/

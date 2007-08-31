@@ -58,7 +58,7 @@ namespace honei
          * \brief Returns the the result of elementwise multiplication of two entities.
          *
          * \param a Entity that is a factor of the operation.
-         * \param b idem 
+         * \param b idem
          *
          * \retval a Will modify the factor a and return it.
          *
@@ -68,36 +68,38 @@ namespace honei
          * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          */
 
+        /// \{
+
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const DenseVector<DT2_> & right)
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
         {
             CONTEXT("When calculating the product of DenseVectors elements");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(right.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename Vector<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
                 ++r;
             }
 
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT1_> value(SparseVector<DT1_> & left, const SparseVector<DT2_> & right)
+        static SparseVector<DT1_> value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseVector elements");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename Vector<DT1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ;)
+            typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            for (typename Vector<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()) ; l != l_end ;)
             {
                 if (r.index() < l.index())
                 {
@@ -114,95 +116,95 @@ namespace honei
                     ++l; ++r;
                 }
             }
-            return left;
+            return a;
             ///\todo: perhaps sparsify - in case l.index < r.index Write of 0 possible.
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT1_> & value(SparseVector<DT1_> & left, const DenseVector<DT2_> & right)
+        static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVector<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseVector and DenseVector elements");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            for (typename Vector<DT1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; ++l )
+            for (typename Vector<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()) ; l != l_end ; ++l )
             {
-                *l *= right[l.index()];
+                *l *= b[l.index()];
             }
-            return left;
-            ///\todo: perhaps sparsify - if *right[l.index()] == 0 -> write of zero.
+            return a;
+            ///\todo: perhaps sparsify - if *b[l.index()] == 0 -> write of zero.
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & left, const DenseMatrix<DT2_> & right)
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of DenseMatrix elements");
 
-            if (left.columns() != right.columns())
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
                 ++r;
             }
 
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & left, const DenseMatrix<DT2_> & right)
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseMatrix and DenseMatrix elements");
 
-            if (left.columns() != right.columns())
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            for (typename MutableMatrix<DT1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()); l != l_end ; ++l)
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()); l != l_end ; ++l)
             {
-                *l *= right[l.row()][l.column()];
+                *l *= b[l.row()][l.column()];
             }
 
-            return left; ///\todo: perhaps sparsify, dense_matrix[row][col] may be zero.
+            return a; ///\todo: perhaps sparsify, dense_matrix[row][col] may be zero.
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & left, const SparseMatrix<DT2_> & right)
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseMatrix elements");
 
-            if (left.columns() != right.columns())
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(right.begin_non_zero_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (l.index() < r.index())
                 {
@@ -222,22 +224,22 @@ namespace honei
                 }
             }
             ///\todo: perhaps sparsify - in case l.index < r.index set to zero possible.
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & left, const BandedMatrix<DT2_> & right)
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseVector elements");
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixSizeDoesNotMatch(right.rows(), left.rows());
+                throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
             }
 
-            typename BandedMatrix<DT2_>::ConstVectorIterator r(right.begin_bands());
-            for (typename BandedMatrix<DT1_>::VectorIterator l(left.begin_bands()),
-                    l_end(left.end_bands()) ; l != l_end ; ++l)
+            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands());
+            for (typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()),
+                    l_end(a.end_bands()) ; l != l_end ; ++l)
             {
                 if (! r.exists()) //won't check l.exists() here, cause it is always created by Iterator.
                 {
@@ -249,53 +251,53 @@ namespace honei
                 ++r;
             }
 
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & left, const DenseMatrix<DT2_> & right)
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseMatrix and BandedMatrix elements");
 
-            if (left.columns() != right.columns())
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
                 ++r;
             }
 
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & left, const SparseMatrix<DT2_> & right)
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of BandedMatrix and a SparseMatrix elements");
 
-            if (left.columns() != right.columns())
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename MutableMatrix<DT1_>::ElementIterator l(left.begin_elements());
-            for (typename Matrix<DT2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()); r != r_end ; )
+            typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements());
+            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()); r != r_end ; )
             {
                 while (l.index() < r.index())
                 {
@@ -307,59 +309,59 @@ namespace honei
                 ++l; ++r;
             }
 
-            for (typename MutableMatrix<DT1_>::ElementIterator l_end(left.end_elements()) ;
+            for (typename MutableMatrix<DT1_>::ElementIterator l_end(a.end_elements()) ;
                 l != l_end ; ++l)
             {
                 *l = DT1_(0);
             }
             /// \todo Left is complete dense at this point.
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & left, const BandedMatrix<DT2_> & right)
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of DenseMatrix and BandedMatrix elements");
 
-            if (left.columns() != right.columns())
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
                 ++r;
             }
 
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & left, const BandedMatrix<DT2_> & right)
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseMatrix and BandedMatrix elements");
 
-            if (left.columns() != right.columns())
+            if (a.columns() != b.columns())
             {
-                throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
             }
 
-            if (left.rows() != right.rows())
+            if (a.rows() != b.rows())
             {
-                throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(right.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(left.begin_non_zero_elements()),
-                    l_end(left.end_non_zero_elements()) ; l != l_end ; )
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
                 while (r.index() < l.index())
                     ++r;
@@ -368,8 +370,10 @@ namespace honei
                 ++r; ++l;
             }
 
-            return left;
+            return a;
         }
+
+        /// \}
     };
 }
 #endif

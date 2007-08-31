@@ -5,6 +5,22 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-31 Danny van Dyk <kugelfang@gentoo.org>
+
+	* doc/doc_groups.doxygen, doc/doxygen.conf: PG512 -> HONEI.
+	Worked a bit on documentation groups.
+	* libgraph/node_distance_inverse.hh: Removed illegal </br> in doxygen
+	comment.
+	* libla/absolute.hh, libla/difference.hh, libla/dot_product.hh,
+	libla/element_product.hh, libla/norm.hh, libla/product.hh,
+	libla/reduction.hh, libla/scaled_sum.hh, libla/sparse_matrix.hh,
+	libla/sum.hh, libla/vector_masked_max_index.hh, libswe/solver_TEST.cc,
+	libutil/assertion.hh, libutil/exception.hh, libutil/log.cc,
+	libutil/log.hh, libutil/memory_backend.hh,
+	libutil/memory_backend_cell.hh, libutil/memory_backend_gpu.hh,
+	libutil/memory_manager.hh, libutil/shared_array.hh, libutil/tags.hh:
+	Substantially diminished the number of doxygen warnings.
+
 2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
 
 	* libla/vector.hh: Fixed operator==.

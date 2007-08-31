@@ -3,8 +3,8 @@
 // ----- Top Level Group -----
 
 /**
- * \defgroup grppg512 Projektgruppe 512 SmartCell: Clevere Algorithmen fuer den Cell-Prozessor
- **/
+ * \defgroup grphonei HONEI: Hardware Oriented Numerics, Efficiently Implemented.
+ */
 
 
 // ----- Library Groups -----
@@ -12,32 +12,32 @@
 /**
  * \defgroup grplibla LibLA: Linear Algebra Template Library
  *
- * \ingroup grppg512
- **/
+ * \ingroup grphonei
+ */
 
 /**
  * \defgroup grplibswe LibSWE: Library for Solving Shallow Water Equations
  *
- * \ingroup grppg512
+ * \ingroup grphonei
  */
 
 /**
  * \defgroup grplibgraph LibGraph: Library for Graph Algorithms
  *
- * \ingroup grppg512
+ * \ingroup grphonei
  */
 
 /**
- * \defgroup grplibutil LibUtil: Utility Library for PG512
+ * \defgroup grplibutil LibUtil: Utility Library for HONEI
  *
- * \ingroup grppg512
+ * \ingroup grphonei
  */
 
 /**
  * \defgroup benchmarks Benchmark Framework
  *
- * \ingroup grppg512
- **/
+ * \ingroup grphonei
+ */
 
 // ----- LibLA Groups -----
 
@@ -45,39 +45,57 @@
  * \defgroup grpvector Vector types
  *
  * \ingroup grplibla
- **/
+ */
+
+/**
+ * \defgroup grpoperations Operations
+ *
+ * \ingroup grplibla
+ */
 
 /**
  * \defgroup grpvectorexceptions Exceptions thrown by Vector types
  *
  * \ingroup grpvector
- **/
+ */
 
 /**
  * \defgroup grpvectoroperations Operations that work on Vector types
  *
- * \ingroup grpvector
- **/
+ * \ingroup grpoperations
+ */
 
 /**
  * \defgroup grpmatrix Matrix types
  *
  * \ingroup grplibla
- **/
+ */
 
 /**
- * \defgroup grpmatrixexceptions Exceptions thrown by matrix types
+ * \defgroup grpmatrixexceptions Exceptions thrown by Matrix types
  *
  * \ingroup grpmatrix
- **/
+ */
 
 /**
- * \defgroup grpmatrixoperations Operations that work on matrix types
+ * \defgroup grpmatrixoperations Operations that work on Matrix types
  *
- * \ingroup grpmatrix
- **/
+ * \ingroup grpoperations
+ */
 
 // ----- LibUtil Groups -----
+
+/**
+ * \defgroup grpdebug Debugging utilities
+ *
+ * \ingroup grplibutil
+ */
+
+/**
+ * \defgroup grpexceptions Exception classes
+ *
+ * \ingroup grplibutil
+ */
 
 /**
  * \defgroup grpmemorymanager Memory Manager and its utilities
@@ -98,9 +116,21 @@
  */
 
 /**
+ * \defgroup grpcellbackend Cell BE Backend
+ *
+ * \ingroup grpmemorybackends
+ */
+
+/**
  * \defgroup grptags Tag types for distributing computation
  *
  * \ingroup grplibutil
+ */
+
+/**
+ * \defgroup grptagscell Cell-based operations
+ *
+ * \ingroup grptags
  */
 
 /**
@@ -116,10 +146,8 @@
  */
 
 /**
- * \defgroup grptagscell Cell-based operations
+ * \defgroup grptagsgpu GPU-based operations
  *
  * \ingroup grptags
  */
-
-
 

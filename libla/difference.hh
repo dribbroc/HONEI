@@ -265,39 +265,39 @@ namespace honei
         /// \{
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const DenseVector<DT2_> & right)
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
         {
             CONTEXT("When subtracting DenseVector from DenseVector:");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(right.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(left.begin_elements()),
-                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            typename Vector<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l -= *r;
                 ++r;
             }
 
-            return left;
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT1_> & value(SparseVector<DT1_> & left, const SparseVector<DT2_> & right)
+        static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
             CONTEXT("When subtracting SparseVector from SparseVector:");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT1_>::ElementIterator l(left.begin_non_zero_elements());
-            for (typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
+            typename Vector<DT1_>::ElementIterator l(a.begin_non_zero_elements());
+            for (typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; )
             {
                 if (r.index() < l.index())
                 {
-                    left[r.index()] = -(*r);
+                    a[r.index()] = -(*r);
                     ++r;
                 }
                 else if (l.index() < r.index())
@@ -310,27 +310,27 @@ namespace honei
                     ++l; ++r;
                 }
             }
-            return left;
+            return a;
             ///\todo: perhaps sparsify - i.e. substraction of 7 and 7 possible.
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const SparseVector<DT2_> & right)
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
             CONTEXT("When subtracting SparseVector from DenseVector:");
 
-            if (left.size() != right.size())
-                throw VectorSizeDoesNotMatch(right.size(), left.size());
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            DenseVector<DT1_> result(left.size(),0, 0, 1);
+            DenseVector<DT1_> result(a.size(),0, 0, 1);
 
-            for (typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements()),
-                    r_end(right.end_non_zero_elements()) ; r != r_end ; ++r)
+            for (typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
             {
-                left[r.index()] -= *r;
+                a[r.index()] -= *r;
             }
 
-            return left;
+            return a;
         }
 
         /// \}

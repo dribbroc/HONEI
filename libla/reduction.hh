@@ -64,15 +64,15 @@ namespace honei
      * to a Vector, and a Vector is reduced to a scalar.
      *
      * \f[
-     *     Reduction(a): \quad x \leftarrow \sum(a[0], \dots, a[size - 1]),
+     *     Reduction(a): \quad x \leftarrow \sum(a_0, \dots, a_{size - 1}),
      * \f]
      *
      * \f[
-     *     Reduction(a): \quad x \leftarrow \text{max }(a[0], \dots, a[size - 1]),
+     *     Reduction(a): \quad x \leftarrow \max(a_0, \dots, a_{size - 1}),
      * \f]
      *
      * \f[
-     *     Reduction(a): \quad x \leftarrow \text{min }(a[0], \dots, a[size - 1]),
+     *     Reduction(a): \quad x \leftarrow \min(a_0, \dots, a_{size - 1}),
      * \f]
      *
      * which yield the entity x, the reduction.

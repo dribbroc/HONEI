@@ -41,7 +41,6 @@ namespace honei
      *     Absolute(a): \quad a[i] \leftarrow \vert a[i] \vert.
      * \f]
      *
-     * \ingroup grpoperations
      * \ingroup grpvectoroperations
      */
 

@@ -123,7 +123,7 @@ namespace honei
              * \param id Memory id that shall be freed.
              * \param device Id of the Device for which the memory shall be freed.
              */
-            virtual void free(const MemoryId id, const DeviceId = default_device) = 0;
+            virtual void free(const MemoryId id, const DeviceId device = default_device) = 0;
 
             /**
              * Swap all memory information of two memory ids.

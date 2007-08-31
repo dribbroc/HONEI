@@ -23,7 +23,7 @@
 #include <string>
 #include <list>
 
-namespace honei ///< \todo Namespace name?
+namespace honei
 {
     enum LogLevel
     {
@@ -50,6 +50,7 @@ namespace honei ///< \todo Namespace name?
             /**
              * Log a message.
              *
+             * \param level Log-level of the message.
              * \param msg Message to be logged.
              **/
             void message(const LogLevel level, const std::string & msg);

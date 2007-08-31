@@ -54,11 +54,11 @@ class Log::LogOutput
          * Constructor.
          *
          * \param level Log level for this output.
-         * \param name Stream for this output.
+         * \param stream Stream for this output.
          **/
-        LogOutput(LogLevel level, std::ostream * output) :
+        LogOutput(LogLevel level, std::ostream * stream) :
             _level(level),
-            _output(output)
+            _output(stream)
         {
         }
 

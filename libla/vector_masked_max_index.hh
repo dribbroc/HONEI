@@ -29,7 +29,7 @@
 /**
  * \file
  *
- * Implementation of VectorMaskedMaxIndex. </br>
+ * Implementation of VectorMaskedMaxIndex.
  *
  * \ingroup grpvectoroperations
  **/

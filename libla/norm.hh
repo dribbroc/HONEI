@@ -116,11 +116,11 @@ namespace honei
         /// \{
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & vector)
+        static DT_ value(const DenseVector<DT_> & x)
         {
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
                     l != l_end ; ++l)
             {
                 if (fabs(*l) > result)
@@ -133,11 +133,11 @@ namespace honei
         }
 
         template <typename DT_>
-        static DT_ value(const SparseVector<DT_> & vector)
+        static DT_ value(const SparseVector<DT_> & x)
         {
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+            for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
                 if (fabs(*l) > result)
@@ -165,11 +165,11 @@ namespace honei
         /// \{
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & vector)
+        static DT_ value(const DenseVector<DT_> & x)
         {
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
                     l != l_end ; ++l)
             {
                 result += fabs(*l);
@@ -179,11 +179,11 @@ namespace honei
         }
 
         template <typename DT_>
-        static DT_ value(const SparseVector<DT_> & vector)
+        static DT_ value(const SparseVector<DT_> & x)
         {
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_non_zero_elements()), l_end(vector.end_non_zero_elements()) ;
+            for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
                 result += fabs(*l);
@@ -208,15 +208,15 @@ namespace honei
         /// \{
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & vector)
+        static DT_ value(const DenseVector<DT_> & x)
         {
-            return DotProduct<tags::CPU>::value(vector, vector);
+            return DotProduct<tags::CPU>::value(x, x);
         }
 
         template <typename DT_>
-        static DT_ value(const SparseVector<DT_> & vector)
+        static DT_ value(const SparseVector<DT_> & x)
         {
-            return DotProduct<tags::CPU>::value(vector, vector);
+            return DotProduct<tags::CPU>::value(x, x);
         }
 
         /// \}
@@ -235,15 +235,15 @@ namespace honei
         /// \{
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & vector)
+        static DT_ value(const DenseVector<DT_> & x)
         {
-            return sqrt(Norm<vnt_l_two, false>::value(vector));
+            return sqrt(Norm<vnt_l_two, false>::value(x));
         }
 
         template <typename DT_>
-        static DT_ value(const SparseVector<DT_> & vector)
+        static DT_ value(const SparseVector<DT_> & x)
         {
-            return sqrt(Norm<vnt_l_two, false>::value(vector));
+            return sqrt(Norm<vnt_l_two, false>::value(x));
         }
 
         /// \}
@@ -262,12 +262,12 @@ namespace honei
         /// \{
 
         template <typename DT_>
-        static DT_ value (const DenseVector<DT_> & vector)
+        static DT_ value (const DenseVector<DT_> & x)
         {
             DT_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ;
+            for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
                     l != l_end ; ++l)
             {
                 if (*l != static_cast<DT_>(0))
@@ -280,13 +280,13 @@ namespace honei
         }
 
         template <typename DT_>
-        static DT_ value (const SparseVector<DT_> & vector)
+        static DT_ value (const SparseVector<DT_> & x)
         {
             DT_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_non_zero_elements()),
-                    l_end(vector.end_non_zero_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()),
+                    l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 result += exp(k * log(fabs(*l)));
             }

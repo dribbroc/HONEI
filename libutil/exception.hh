@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace honei ///< \todo Namespace name?
+namespace honei
 {
     /**
      * Backtrace class context.
@@ -61,6 +61,19 @@ namespace honei ///< \todo Namespace name?
             static std::string backtrace(const std::string & delimiter);
     };
 
+/**
+ * \def CONTEXT
+ *
+ * Convenience definition that provides a way to declare uniquely-named
+ * instances of class Context. The created Context will be automatically
+ * provided with the correct filename and line number.
+ *
+ * \param s Context message that can be display by an exception-triggered backtrace.
+ *
+ * \warning Will only be compiled in when debug support is enabled.
+ *
+ * \ingroup grpdebug
+ */
 #if defined (DEBUG)
 // C Preprocessor abomination following...
 #define CONTEXT_NAME_(x) ctx_##x
@@ -86,7 +99,7 @@ namespace honei ///< \todo Namespace name?
             struct ContextData;
             ContextData * const _context_data;
 
-            /// Unwanted operations. Do not implement. See EffCpp, Item 27.
+            /// Unwanted operation. Do not implement. See EffCpp, Item 27.
             const Exception & operator= (const Exception &);
 
         protected:

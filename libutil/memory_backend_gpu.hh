@@ -29,7 +29,6 @@ namespace honei
     /**
      * GPUBackend is the MemoryBackend for GPU-based calculations.
      *
-     * \ingroup grpbackends
      * \ingroup grpgpubackend
      */
     class GPUBackend :
@@ -93,7 +92,7 @@ namespace honei
              * \param address Local memory address whence to copy from.
              * \param size Size of the memory chunk that will be copied.
              */
-            virtual void upload(const MemoryId, const DeviceId device, void * address, const std::ptrdiff_t size);
+            virtual void upload(const MemoryId id, const DeviceId device, void * address, const std::ptrdiff_t size);
 
             /**
              * Download a memory chunk from remote memory to local memory at a custom address
@@ -103,7 +102,7 @@ namespace honei
              * \param address Local memory address whence to copy from.
              * \param size Size of the memory block that will be copied. \todo eliminate?
              */
-            virtual void download(const MemoryId, const DeviceId device, void * address, const std::ptrdiff_t size);
+            virtual void download(const MemoryId id, const DeviceId device, void * address, const std::ptrdiff_t size);
 
             /**
              * Free an existing memory id and its associated remote memory.
@@ -144,11 +143,10 @@ namespace honei
     /**
      * \brief Chunk of GPU device memory.
      *
-     * GPUBackend::Chunk represents a memory chunk in GPU memory.
-     * It is unique per texture id and can only be created, copied and freed
-     * by GPUBackend.
+     * GPUBackend::Chunk represents a memory chunk in GPU memory. It is unique
+     * per texture id and can only be created, copied and freed by GPUBackend.
      *
-     * \ingroup grpgpubackend.
+     * \ingroup grpgpubackend
      */
     struct GPUBackend::Chunk
     {
