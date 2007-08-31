@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+
+	* libla/vector.hh: Fixed operator==.
+	* libla/scaled_sum.hh, libla/reduction.hh: Added context statements.
+	* libla/reduction_TEST.cc: Fixed vector size in some tests.
+
 2007-08-31 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libgraph/dijkstra.hh, libgraph/dijkstra_TEST.cc,
