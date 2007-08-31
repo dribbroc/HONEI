@@ -29,7 +29,6 @@
 using namespace honei;
 using namespace tests;
 
-CONTEXT("When testing reduction:");
 template <typename DT_>
 class BandedMatrixReductionToSumTest :
     public BaseTest
