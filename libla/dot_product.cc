@@ -20,7 +20,6 @@
 #include <libla/dot_product.hh>
 
 #include <string>
-#include <iostream>
 
 using namespace honei;
 

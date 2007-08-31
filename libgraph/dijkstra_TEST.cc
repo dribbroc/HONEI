@@ -23,7 +23,6 @@
 #include <libla/dense_matrix.hh>
 
 #include <string>
-#include <iostream>
 
 using namespace honei;
 using  namespace tests;

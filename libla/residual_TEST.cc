@@ -22,7 +22,6 @@
 #include <unittest/unittest.hh>
 
 #include <limits>
-#include <iostream>
 
 using namespace honei;
 using namespace tests;

@@ -20,7 +20,6 @@
 #include <libla/element_inverse.hh>
 #include <unittest/unittest.hh>
 
-#include <iostream>
 #include <string>
 
 using namespace honei;

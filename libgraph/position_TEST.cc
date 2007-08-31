@@ -27,7 +27,6 @@
 #include <libutil/tags.hh>
 
 #include <string>
-#include <iostream>
 
 using namespace honei;
 using  namespace tests;

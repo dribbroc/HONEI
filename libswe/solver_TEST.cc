@@ -23,7 +23,6 @@
 #include <unittest/unittest.hh>
 #include <libutil/stringify.hh>
 #include <string>
-#include <iostream>
 
 using namespace honei;
 using namespace tests;

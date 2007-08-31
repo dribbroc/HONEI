@@ -25,7 +25,6 @@
 
 #include <limits>
 #include <tr1/memory>
-#include <iostream>
 
 using namespace honei;
 using  namespace tests;

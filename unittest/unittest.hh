@@ -24,6 +24,7 @@
 #define UNITTEST_GUARD_UNITTEST_HH 1
 
 #include <libutil/stringify.hh>
+#include <libutil/exception.hh>
 
 #include <string>
 #include <exception>

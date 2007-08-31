@@ -17,7 +17,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/vector_masked_max_index.hh>
@@ -26,7 +26,6 @@
 
 #include <limits>
 #include <tr1/memory>
-#include <iostream>
 
 using namespace pg512;
 using  namespace tests;
@@ -47,19 +46,19 @@ class DenseVectorMaskedMaxIndexTest :
             {
                 DenseVector<bool > mask(size, false);
                 DenseVector<DataType_> dv(size);
-                
-                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), 
+
+                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()),
                     i_end(dv.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
                 }
-                
+
                 (dv)[2] = DataType_(size * 10);
-                                    
-                for (typename Vector<bool>::ElementIterator i(mask.begin_elements()), 
+
+                for (typename Vector<bool>::ElementIterator i(mask.begin_elements()),
                     i_end(mask.end_elements()) ; i != i_end ; ++i)
                 {
-                    if (i.index() % 2 == 0) 
+                    if (i.index() % 2 == 0)
                     {
                         *i=true;
                     }
@@ -75,7 +74,7 @@ class DenseVectorMaskedMaxIndexTest :
         }
 };
 DenseVectorMaskedMaxIndexTest<float> dense_vector_masked_max_index_test_float("float");
-DenseVectorMaskedMaxIndexTest<double> dense_vector_masked_max_index_test_double("double"); 
+DenseVectorMaskedMaxIndexTest<double> dense_vector_masked_max_index_test_double("double");
 
 template <typename DataType_>
 class DenseVectorMaskedMaxIndexQuickTest :
@@ -92,19 +91,19 @@ class DenseVectorMaskedMaxIndexQuickTest :
             unsigned long size(5);
             DenseVector<bool> mask(size, false);
             DenseVector<DataType_> dv(size);
-            
-            for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), 
+
+            for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()),
                 i_end(dv.end_elements()) ; i != i_end ; ++i)
             {
                 *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
             }
-            
+
             (dv)[2] = DataType_(size * 10);
-                                
-            for (typename Vector<bool>::ElementIterator i(mask.begin_elements()), 
+
+            for (typename Vector<bool>::ElementIterator i(mask.begin_elements()),
                 i_end(mask.end_elements()) ; i != i_end ; ++i)
             {
-                if (i.index() % 2 == 0) 
+                if (i.index() % 2 == 0)
                 {
                     *i=true;
                 }
@@ -142,14 +141,14 @@ class SparseVectorMaskedMaxIndexTest :
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
-                }                  
-                
+                }
+
                 (sv1)[2] = DataType_(size * 10);
-                                    
-                for (typename Vector<bool>::ElementIterator i(mask.begin_elements()), 
+
+                for (typename Vector<bool>::ElementIterator i(mask.begin_elements()),
                     i_end(mask.end_elements()) ; i != i_end ; ++i)
                 {
-                    if (i.index() % 2 == 0) 
+                    if (i.index() % 2 == 0)
                     {
                         *i=true;
                     }
@@ -165,7 +164,7 @@ class SparseVectorMaskedMaxIndexTest :
         }
 };
 SparseVectorMaskedMaxIndexTest<float> sparse_vector_masked_max_index_test_float("float");
-SparseVectorMaskedMaxIndexTest<double> sparse_vector_masked_max_index_test_double("double"); 
+SparseVectorMaskedMaxIndexTest<double> sparse_vector_masked_max_index_test_double("double");
 
 template <typename DataType_>
 class SparseVectorMaskedMaxIndexQuickTest :
@@ -187,14 +186,14 @@ class SparseVectorMaskedMaxIndexQuickTest :
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
-            }                  
-            
+            }
+
             (sv1)[2] = DataType_(size * 10);
-                                
-            for (typename Vector<bool>::ElementIterator i(mask.begin_elements()), 
+
+            for (typename Vector<bool>::ElementIterator i(mask.begin_elements()),
                 i_end(mask.end_elements()) ; i != i_end ; ++i)
             {
-                if (i.index() % 2 == 0) 
+                if (i.index() % 2 == 0)
                 {
                     *i=true;
                 }
@@ -209,4 +208,4 @@ class SparseVectorMaskedMaxIndexQuickTest :
         }
 };
 SparseVectorMaskedMaxIndexQuickTest<float> sparse_vector_masked_max_index_quick_test_float("float");
-SparseVectorMaskedMaxIndexQuickTest<double> sparse_vector_masked_max_index_quick_test_double("double"); 
+SparseVectorMaskedMaxIndexQuickTest<double> sparse_vector_masked_max_index_quick_test_double("double");
