@@ -1,4 +1,4 @@
-/* vim: set number sw=4 sts=4 et nofoldenable : */
+/* VIM: set number sw=4 sts=4 et nofoldenable : */
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
@@ -46,26 +46,26 @@
  *
  * \ingroup grplibswe
  **/
- 
+
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/banded_matrix.hh>
 #include <cmath>
 #include <libswe/limiter.hh>
-#include <libla/vector_scaled_sum.hh>
-#include <libla/scalar_vector_product.hh>
-#include <libla/scalar_product.hh>
-#include <libla/vector_sum.hh>
-#include <libla/vector_elementwise_product.hh>
-#include <libla/matrix_vector_product.hh>
+#include <libla/scaled_sum.hh>
+#include <libla/scale.hh>
+#include <libla/dot_product.hh>
+#include <libla/sum.hh>
+#include <libla/element_product.hh>
+#include <libla/product.hh>
 #include <libutil/tags.hh>
 #include <iostream>
 #include <fstream>
 
 using namespace std;
 
-namespace pg512 {
+namespace honei {
 
     typedef unsigned long ulint;
     typedef unsigned int uint;
@@ -88,7 +88,7 @@ namespace pg512 {
             ResPrec_ _delta_t;
             ///Current timestep.
             ulint _solve_time;
-            
+
             ///The input- and to-be-updated - data.
             DenseMatrix<ResPrec_> * _bottom;
             DenseMatrix<ResPrec_> * _height;
@@ -103,7 +103,7 @@ namespace pg512 {
 
             ///The number of cells in the finite volume descretization grid.
             ulint _n;
-            
+
             ///Dimension sizes for rectangular grids.
             ulint _d_width;
             ulint _d_height;
@@ -141,7 +141,7 @@ namespace pg512 {
             bool _usage_constant;
             bool _usage_cyclic;
             bool _usage_transmissive;
-        
+
             ///Vectors _u, _v, _w pointers are the relaxation vectors. size is 3N, where N is the total number of grid cells.
             ///If using boundary-mapping, the size is 3N + 4(w + h + 4).
             DenseVector<ResPrec_> * _u;
@@ -153,8 +153,8 @@ namespace pg512 {
 
 
             ///Vectors for the bottom slopes.
-            DenseVector<ResPrec_> * _bottom_slopes_x; 
-            DenseVector<ResPrec_> * _bottom_slopes_y; 
+            DenseVector<ResPrec_> * _bottom_slopes_x;
+            DenseVector<ResPrec_> * _bottom_slopes_y;
 
             /** Basic matrix assembly. Uses Limiters and theta().
               * Computes M_1, M_3.
@@ -163,7 +163,6 @@ namespace pg512 {
               * \param m3 Matrix m3 is the second Matrix to be assembled.
               *
               **/
-           
             template<typename WorkPrec_>
             void _assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v);
 
@@ -219,7 +218,7 @@ namespace pg512 {
               *
               * \param i Access Parameter 1.
               * \param j Access Parameter 2.
-              * 
+              *
               **/
             template<typename WorkPrec_>
             DenseVector<WorkPrec_> _flow_x(uint i, uint j);
@@ -229,7 +228,7 @@ namespace pg512 {
               *
               * \param i Access Parameter 1.
               * \param j Access Parameter 2.
-              * 
+              *
               **/
             template<typename WorkPrec_>
             DenseVector<WorkPrec_> _flow_y(uint i, uint j);
@@ -241,7 +240,7 @@ namespace pg512 {
             void _flow_x(DenseVector<WorkPrec_> & vector);
 
             /** Flow computation.
-              * 
+              *
               **/
             template<typename WorkPrec_>
             void _flow_y(DenseVector<WorkPrec_> & vector);
@@ -251,7 +250,7 @@ namespace pg512 {
               *
               * \param i Access Parameter 1.
               * \param j Access Parameter 2.
-              * 
+              *
               **/
             template<typename WorkPrec_>
             DenseVector<WorkPrec_> _source(uint i, uint j);
@@ -265,7 +264,7 @@ namespace pg512 {
             void _source(DenseVector<WorkPrec_>& vector);
 
 
-            /** Encapsulates the linear combination for prediction. Uses source() 
+            /** Encapsulates the linear combination for prediction. Uses source()
               * as well as the matrix assembling procedures to create the banded matrices.
               * Is used by solve().
               *
@@ -302,14 +301,14 @@ namespace pg512 {
               * \param predu The temporary vector u.
               * \param predv The temporary vector v.
               * \param predw The temporary vector w.
-             **/ 
+             **/
             void _do_correction(DenseVector<ResPrec_>& predu,DenseVector<ResPrec_>& predv,DenseVector<ResPrec_>& predw);
 
             /** First simple postprocessing method, generating a GNUPLOT>splot
               * compatible matrix file for the height field of the current timestep.
               *
               * \param every Generate file for every xth timestep.
-              **/ 
+              **/
             void _do_postprocessing(int every);
 
             /** Basic matrix assembly. Uses Limiters. DEBUG version.
@@ -337,7 +336,7 @@ namespace pg512 {
         public:
             /**
               * Returns the current renderable heigth matrix
-              * 
+              *
               **/
             DenseMatrix<ResPrec_> &getHeight()
             {
@@ -454,20 +453,20 @@ namespace pg512 {
      * The preprocessing stage`s third task is to compute the bottom slopes.
      *
      **/
-    template<typename ResPrec_, 
+    template<typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::do_preprocessing()
-    {   
+    {
         /// Setting up initial conditions:
         /// v_0(x,y) = F(u_0(x,y)) using flowX(),
         /// w_0(x,y) = G(u_0(x,y)) using flowY().
         /// where u = transpose((h q1 q2)), v = transpose((v1 v2 v3)) and w = transpose((w1 w2 w3))
         /// and q1 = h*u1, q2 = h*u2.
         /// Then apply boundary conditions.
-    
+
         ///Provide maps.
         DenseMatrix<ResPrec_> hbound((this->_d_width)+4,  (this->_d_height)+4, 0);
         DenseMatrix<ResPrec_> u1bound((this->_d_width)+4, (this->_d_height)+4, 0);
@@ -480,7 +479,7 @@ namespace pg512 {
         //{
             ///If assuming, that all input fields are exactly of the same size, we can do all the work within
             ///one loop - pair:
-            for (unsigned long i = 0; i!= hbound.rows(); ++i) 
+            for (unsigned long i = 0; i!= hbound.rows(); ++i)
             {
                 DenseVector<ResPrec_> actual_row = hbound[i];
                 for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
@@ -491,7 +490,7 @@ namespace pg512 {
                     if(i<2 || i>=(hbound.rows()-2) ||(j.index()<2 || j.index() >=(hbound.columns()-2)))
                     {
                         hbound[i][j.index()] = 5;
-                        bbound[i][j.index()] = 1; 
+                        bbound[i][j.index()] = 1;
                         u1bound[i][j.index()] = 0;
                         u2bound[i][j.index()] = 0;
                     }
@@ -516,7 +515,7 @@ namespace pg512 {
         ///We need to compute u first in order to be able to compute the initial flows. After this, by using
         ///forward iterators, the v and w vectors can be set up.
         typename DenseVector<ResPrec_>::ElementIterator k(_u->begin_elements());
-        for (ulint i= 0; i!= hbound.rows(); ++i) 
+        for (ulint i= 0; i!= hbound.rows(); ++i)
         {
 
 
@@ -531,13 +530,12 @@ namespace pg512 {
                 (*_u)[(k.index())+2] = u2bound[i][j.index()] * hbound[i][j.index()];
                 ++k; ++k; ++k;
             }
-    
         }
         cout << "u^T after building:\n";
         cout << stringify(*_u) << endl;
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k2(_v->begin_elements());
-        for (ulint i = 0; i!= u1bound.rows(); ++i) 
+        for (ulint i = 0; i!= u1bound.rows(); ++i)
         {
             DenseVector<ResPrec_> actual_row = u1bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
@@ -554,7 +552,6 @@ namespace pg512 {
             }
         }
         */
-       
         DenseVector<ResPrec_> *uFlow = _u->copy();
         _flow_x(*uFlow);
         _v = uFlow;
@@ -585,13 +582,12 @@ namespace pg512 {
         _w = u2Flow;
         cout << "w^T after building:\n";
         cout << stringify(*_w) << endl;
-       
-  
-        ///Now, that the relaxation vectors have been provided, the only thing left to do is to 
+
+        ///Now, that the relaxation vectors have been provided, the only thing left to do is to
         ///compute the bottom slopes.
         typename DenseVector<ResPrec_>::ElementIterator l(_bottom_slopes_x->begin_elements());
         typename DenseVector<ResPrec_>::ElementIterator k4(_bottom_slopes_y->begin_elements());
-        for (ulint i = 0; i!= bbound.rows(); ++i) 
+        for (ulint i = 0; i!= bbound.rows(); ++i)
         {
             DenseVector<ResPrec_> actual_row = bbound[i];
             for(typename DenseVector<ResPrec_>::ConstElementIterator j(actual_row.begin_elements()),
@@ -602,43 +598,37 @@ namespace pg512 {
             {
                 if(i>0 /*&& j.index()>0*/)
                 {
-                    (*_bottom_slopes_y)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
-                    //(*_bottom_slopes_x)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;                
- 
+                    (*_bottom_slopes_y)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;
+                    //(*_bottom_slopes_x)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;
                 }
                 else
                 {
-                    //(*_bottom_slopes_x)[k4.index()] = -100000; 
-                    (*_bottom_slopes_y)[k4.index()] = 0;               
- 
+                    //(*_bottom_slopes_x)[k4.index()] = -100000;
+                    (*_bottom_slopes_y)[k4.index()] = 0;
                 }
                 if(j.index()>0)
                 {
-                    //(*_bottom_slopes_y)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;  
-                    (*_bottom_slopes_x)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;                
- 
+                    //(*_bottom_slopes_y)[k4.index()] = (bbound[i][j.index()] - bbound[i-1][j.index()]) /this->_delta_y;
+                    (*_bottom_slopes_x)[l.index()] = (bbound[i][j.index()] - bbound[i][(j.index())-1]) /this->_delta_x;
+
                 }
                 else
                 {
-                    (*_bottom_slopes_x)[l.index()] = 0; 
-                    //(*_bottom_slopes_y)[l.index()] = -100000;               
- 
+                    (*_bottom_slopes_x)[l.index()] = 0;
+                    //(*_bottom_slopes_y)[l.index()] = -100000;
+
                 }
 
 
                 ++k4;
                 ++l;
-            }   
+            }
         }
-    
         cout << "Slopes after building:\n";
         cout << stringify(*_bottom_slopes_x) << endl;
         cout << stringify(*_bottom_slopes_y) << endl;
         std::cout << "Finished preprocessing.\n";
-        
-        //_do_postprocessing(1);
-
-    }   
+    }
 
 ///Implementation of flow-processing functions.
 
@@ -649,58 +639,57 @@ namespace pg512 {
      **/
 
     template <typename ResPrec_,
-	      typename PredictionPrec1_,
-	      typename PredictionPrec2_,
-	      typename InitPrec1_,
-	      typename InitPrec2_>
+          typename PredictionPrec1_,
+          typename PredictionPrec2_,
+          typename InitPrec1_,
+          typename InitPrec2_>
     template <typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(DenseVector<WorkPrec_> & vector)
     {
-	if (!(vector.size() % 3)) 
-	{
-	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
-	    WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
-	    for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
-	    {	
-	        // Compute additional gravitation-based term for flowcomponent two
-	        gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
+    if (!(vector.size() % 3))
+    {
+        typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
+        WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
+        for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
+        {
+            // Compute additional gravitation-based term for flowcomponent two
+            gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
 
-	        // Compute the influence of the waterdepth
+            // Compute the influence of the waterdepth
                 if(*l!=0)
                 {
-	            resultcomponenttwo = 1 / *l;
-	            resultcomponentthree = 1 / *l;
+                resultcomponenttwo = 1 / *l;
+                resultcomponentthree = 1 / *l;
                 }
                 else
                 {
-	            resultcomponenttwo = 0;
-	            resultcomponentthree = 0;
-        
+                resultcomponenttwo = 0;
+                resultcomponentthree = 0;
                 }
-	        ++l;
+            ++l;
 
-	        // Compute the influence of the waterflow in X-direction
-		resultcomponentone = *l;
-	        resultcomponenttwo = resultcomponenttwo * (*l) * (*l) + gravterm;
-		resultcomponentthree *= *l;
-	        ++l;
+            // Compute the influence of the waterflow in X-direction
+        resultcomponentone = *l;
+            resultcomponenttwo = resultcomponenttwo * (*l) * (*l) + gravterm;
+        resultcomponentthree *= *l;
+            ++l;
 
-	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
-	        resultcomponentthree *= *l ;
+            // Compute the influence of the waterflow in Y-direction and add the gravition-based term
+            resultcomponentthree *= *l ;
 
-	        // Write the computed values into the resultvector
-	        *resultvectoriterator = resultcomponentone;
-	        ++resultvectoriterator;
-	        *resultvectoriterator = resultcomponenttwo;
-	        ++resultvectoriterator;
-	        *resultvectoriterator = resultcomponentthree;
-	        ++resultvectoriterator;
-	    }
-	}
-	else
-	{
-	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
-	}
+            // Write the computed values into the resultvector
+            *resultvectoriterator = resultcomponentone;
+            ++resultvectoriterator;
+            *resultvectoriterator = resultcomponenttwo;
+            ++resultvectoriterator;
+            *resultvectoriterator = resultcomponentthree;
+            ++resultvectoriterator;
+        }
+    }
+    else
+    {
+        std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
+    }
         std::cout << "Finished Flow.\n";
     }
 
@@ -711,66 +700,64 @@ namespace pg512 {
      *
      * \param vector The vector, for which the flow is going to be computed.
      **/
-  
     template <typename ResPrec_,
-	      typename PredictionPrec1_,
-	      typename PredictionPrec2_,
-	      typename InitPrec1_,
-	      typename InitPrec2_>
+          typename PredictionPrec1_,
+          typename PredictionPrec2_,
+          typename InitPrec1_,
+          typename InitPrec2_>
     template <typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(DenseVector<WorkPrec_> & vector)
     {
-	if (!(vector.size() % 3)) 
-	{
-	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
-	    WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
-	    for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
-	    {
-	        // Initialize locale resultcomponent variables
-	        resultcomponentone = WorkPrec_(1);
-	        resultcomponenttwo = WorkPrec_(1);
-	        resultcomponentthree = WorkPrec_(1);
-	
-	        // Compute additional gravitation-based term for flowcomponent two
-	        gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
+    if (!(vector.size() % 3))
+    {
+        typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
+        WorkPrec_ resultcomponentone, resultcomponenttwo, resultcomponentthree, gravterm;
+        for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
+        {
+            // Initialize locale resultcomponent variables
+            resultcomponentone = WorkPrec_(1);
+            resultcomponenttwo = WorkPrec_(1);
+            resultcomponentthree = WorkPrec_(1);
 
-	        // Compute the influence of the waterdepth
+            // Compute additional gravitation-based term for flowcomponent two
+            gravterm = WorkPrec_(9.81 * (*l) * (*l) * 0.5);
+
+            // Compute the influence of the waterdepth
                 if(*l!=0)
                 {
-	            resultcomponenttwo = 1 / *l;
-	            resultcomponentthree = 1 / *l;
+                resultcomponenttwo = 1 / *l;
+                resultcomponentthree = 1 / *l;
                 }
                 else
                 {
- 	            resultcomponenttwo = 0;
-	            resultcomponentthree = 0;
-                           
+                resultcomponenttwo = 0;
+                resultcomponentthree = 0;
                 }
-	        ++l;
+            ++l;
 
-	        // Compute the influence of the waterflow in X-direction
-	        resultcomponenttwo *= *l;
-	        ++l;
+            // Compute the influence of the waterflow in X-direction
+            resultcomponenttwo *= *l;
+            ++l;
 
-	        // Compute the influence of the waterflow in Y-direction and add the gravition-based term
-	        resultcomponentone *= *l;
-	        resultcomponenttwo *= *l;
-	        resultcomponentthree = (resultcomponentthree * (*l) * (*l)) + gravterm;
+            // Compute the influence of the waterflow in Y-direction and add the gravition-based term
+            resultcomponentone *= *l;
+            resultcomponenttwo *= *l;
+            resultcomponentthree = (resultcomponentthree * (*l) * (*l)) + gravterm;
 
-	        // Write the computed values into the resultvector
-	        *resultvectoriterator = resultcomponentone;
-	        ++resultvectoriterator;
-	        *resultvectoriterator = resultcomponenttwo;
-	        ++resultvectoriterator;
-	        *resultvectoriterator = resultcomponentthree;
-	        ++resultvectoriterator;
-                
-	    }
-	}
-	else
-	{
-	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
-	}
+            // Write the computed values into the resultvector
+            *resultvectoriterator = resultcomponentone;
+            ++resultvectoriterator;
+            *resultvectoriterator = resultcomponenttwo;
+            ++resultvectoriterator;
+            *resultvectoriterator = resultcomponentthree;
+            ++resultvectoriterator;
+
+        }
+    }
+    else
+    {
+        std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
+    }
         std::cout << "Finished Flow.\n";
     }
 
@@ -786,33 +773,32 @@ namespace pg512 {
      **/
 
     template <typename ResPrec_,
-	      typename PredictionPrec1_,
-	      typename PredictionPrec2_,
-	      typename InitPrec1_,
-	      typename InitPrec2_>	  
+          typename PredictionPrec1_,
+          typename PredictionPrec2_,
+          typename InitPrec1_,
+          typename InitPrec2_>
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(uint i, uint j)
     {
-	DenseVector<WorkPrec_> result(ulint(3), ulint(0));
-	WorkPrec_ temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j];
+    DenseVector<WorkPrec_> result(ulint(3), ulint(0));
+    WorkPrec_ temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j];
 
         WorkPrec_ gravterm = 9.81 * temp * temp / 2;
 
-	result[1] = 1 / temp;
+    result[1] = 1 / temp;
         result[2] = result[1];
 
-	temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 1];
+    temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 1];
         result[0] = temp;
         result[1] *= temp * temp;
-	result[2] *= temp;
+    result[2] *= temp;
 
         temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 2];
-	result[1] += gravterm;
+    result[1] += gravterm;
         result[2] *= temp;
         std::cout << "Finished Flow x (cell). \n";
 
-	return result;
-
+    return result;
     }
 
     /**
@@ -827,31 +813,31 @@ namespace pg512 {
      **/
 
     template <typename ResPrec_,
-	      typename PredictionPrec1_,
-	      typename PredictionPrec2_,
-	      typename InitPrec1_,
-	      typename InitPrec2_>	  
+          typename PredictionPrec1_,
+          typename PredictionPrec2_,
+          typename InitPrec1_,
+          typename InitPrec2_>
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(uint i, uint j)
     {
         DenseVector<WorkPrec_> result(ulint(3), ulint(0));
-	WorkPrec_ temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j];
+    WorkPrec_ temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j];
 
-	WorkPrec_ gravterm = 9.81 * temp * temp / 2;
+    WorkPrec_ gravterm = 9.81 * temp * temp / 2;
 
         result[1] = 1 / temp;
-	result[2] = result[1];
+    result[2] = result[1];
 
         temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j + 1];
-	result[1] *= temp;
+    result[1] *= temp;
 
         temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j + 2];
-	result[0] *= temp;
+    result[0] *= temp;
         result[1] *= temp;
         result[2] = result[2] * temp * temp + gravterm;
         std::cout << "Finished Flow y (cell).\n";
 
-	return result;
+    return result;
 
     }
 
@@ -866,86 +852,85 @@ namespace pg512 {
      **/
 
     template <typename ResPrec_,
-	      typename PredictionPrec1_,
-	      typename PredictionPrec2_,
-	      typename InitPrec1_,
-	      typename InitPrec2_>
+          typename PredictionPrec1_,
+          typename PredictionPrec2_,
+          typename InitPrec1_,
+          typename InitPrec2_>
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(uint i, uint j)
     {
-	DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
-	WorkPrec_ h = (*_u)[(_d_width + 4) * 3 * i + 3 * j];
-	if (h > 0)
-	{
-	    WorkPrec_ q1 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 1];
-	    WorkPrec_ q2 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 2];
-	    
-	    result[0] = 0;
-	    result[1] = _manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
-	    result[2] = result[1];
-    
-	    result[1] = ((result[1] * q1) - (h * (*_bottom_slopes_x)[(_d_width + 4)* i + j])) * 9.81;
-	    result[2] = ((result[2] * q2) - (h * (*_bottom_slopes_y)[(_d_width + 4)* i + j])) * 9.81;
+    DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
+    WorkPrec_ h = (*_u)[(_d_width + 4) * 3 * i + 3 * j];
+    if (h > 0)
+    {
+        WorkPrec_ q1 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 1];
+        WorkPrec_ q2 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 2];
+
+        result[0] = 0;
+        result[1] = _manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
+        result[2] = result[1];
+
+        result[1] = ((result[1] * q1) - (h * (*_bottom_slopes_x)[(_d_width + 4)* i + j])) * 9.81;
+        result[2] = ((result[2] * q2) - (h * (*_bottom_slopes_y)[(_d_width + 4)* i + j])) * 9.81;
             std::cout << "Finished simple flow.\n";
- 
-	    return result;
-    	}
-	else
-	{
-	    result[0] = 0;
-	    result[1] = 0;
-	    result[2] = 0;
-	    return result;
-	}
+
+        return result;
+        }
+        else
+        {
+            result[0] = 0;
+            result[1] = 0;
+            result[2] = 0;
+            return result;
+        }
 
     }
 
-    /** 
+    /**
      *
      * Source term computation for a whole vector.
      *
      * \param vector Densevector for which the flow should be computed.
      *
      **/
-
     template <typename ResPrec_,
-	      typename PredictionPrec1_,
-	      typename PredictionPrec2_,
-	      typename InitPrec1_,
-	      typename InitPrec2_>
+          typename PredictionPrec1_,
+          typename PredictionPrec2_,
+          typename InitPrec1_,
+          typename InitPrec2_>
     template <typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
     {
-        WorkPrec_ oneThird = WorkPrec_(-1./3./*0.33333333333333333333333333333333333333333333333333333333333333333333333333333*/);
-	if (!(vector.size() % 3)) 
-	{
-	    typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
-    	    typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
-	    typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
-	    WorkPrec_ h, u1, u2, friction;
-	    for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
-	    {
-	        // Fetch values for source term computation
-	        h = *l;
-		++l;
+        WorkPrec_ oneThird = WorkPrec_(-1./3.);
+    if (!(vector.size() % 3))
+    {
+        typename DenseVector<WorkPrec_>::ElementIterator resultvectoriterator(vector.begin_elements());
+            typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
+        typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
+        WorkPrec_ h, u1, u2, friction;
+        for (typename DenseVector<WorkPrec_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()); l != l_end; ++l)
+        {
+            // Fetch values for source term computation
+            h = *l;
+        ++l;
                 if(h!=0)
                 {
-	            u1 = *l/h ;
-		    ++l;
-	            u2 = *l/h ;
-	        }
+                u1 = *l/h ;
+            ++l;
+                u2 = *l/h ;
+            }
                 else
                 {
                     u1 = 0;
                     u2 = 0;
                     ++l;
                 }
-	        // Compute the influence of the waterdepth
-	        *resultvectoriterator = WorkPrec_(0);
-		++resultvectoriterator;
-	        if(h>0)
+            // Compute the influence of the waterdepth
+            *resultvectoriterator = WorkPrec_(0);
+        ++resultvectoriterator;
+            if(h>0)
                 {
-		    friction = this->_manning_n_squared * pow(h, oneThird) * sqrt(u1 * u1 + u2 * u2) * (-1);
+            friction = this->_manning_n_squared * pow(h, oneThird) * sqrt(u1 * u1 + u2 * u2) * (-1);
                     cout << "h:"<< stringify(h)<<"pow:" << stringify(  pow(h, oneThird)  ) << endl;
                 }
                 else
@@ -953,19 +938,19 @@ namespace pg512 {
                     friction = 0;
                 }
                 *resultvectoriterator = ((friction * u1) - (h * *bottomslopesxiterator)) * 9.81;
-		++bottomslopesxiterator;
-		++resultvectoriterator;
-		
-		*resultvectoriterator = ((friction * u2) - (h * *bottomslopesyiterator)) * 9.81;
-		++bottomslopesyiterator;
-		++resultvectoriterator;
-	    }
-	}
-	else
-	{
-	    std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
-	}
-	std::cout << "Finished Source.\n";
+        ++bottomslopesxiterator;
+        ++resultvectoriterator;
+
+        *resultvectoriterator = ((friction * u2) - (h * *bottomslopesyiterator)) * 9.81;
+        ++bottomslopesyiterator;
+        ++resultvectoriterator;
+        }
+    }
+    else
+    {
+        std::cout << "Tststs... size of given vector does not match the requirements (size modulo 3 = 0).";
+    }
+    std::cout << "Finished Source.\n";
     }
 
     /**
@@ -998,8 +983,7 @@ namespace pg512 {
         m3.band(ulint(3)) = m3bandPlus1;
         m3.band(ulint(6)) = m3bandPlus2;
         m3.band(ulint(-3)) = m3bandMinus1;
- 
-        
+
         ///Necessary values to be temporarily saved.
         DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
         DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0));
@@ -1010,7 +994,7 @@ namespace pg512 {
 
         DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0));
         DenseVector<WorkPrec_> tempTopMinus(ulint(3),ulint(0));
-        
+
         WorkPrec_ phiMinusOld;
         WorkPrec_ temp;
         WorkPrec_ tempTop;
@@ -1022,14 +1006,14 @@ namespace pg512 {
         typename DenseVector<WorkPrec_>::ElementIterator b1(m1bandPlus1.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m1bandPlus2.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m1bandMinus1.begin_elements());
-        
+
         ///Iterate through the vectors in order to avoid boundary access.
         for( ; i.index() < 6*(_d_width+4); ++i);
-        for( ; d.index() < 6*(_d_width+4); ++d);                               
-        for( ; b1.index() < 6*(_d_width+4); ++b1);                               
+        for( ; d.index() < 6*(_d_width+4); ++d);
+        for( ; b1.index() < 6*(_d_width+4); ++b1);
         for( ; b2.index() < 6*(_d_width+4); ++b2);
-        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);                               
-        
+        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);
+
         //while(i.index() < 3*(_d_width+4) * (_d_height))
         //{
             for(unsigned long k=0; k<3; ++k)
@@ -1104,18 +1088,17 @@ namespace pg512 {
                 for(unsigned long k =0; k<3; ++k)
                 {
                     temp = prefac *(2 - phiPlusOld[k]);
-                   
                     m1bandMinus1[bminus1.index()] =temp;
                     m3bandMinus1[bminus1.index()] =temp * (*_c)[k];
-        
+
                     m1diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
                     m3diag[d.index()] = (*_c)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
-                    
+
                     phiPlusOld[k]= phiPlusNew[k];
                     phiMinusOld = phiMinusNew[k];
                     temp = (*v)[i.index()] - (*_c)[k]*(*u)[i.index()]; //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
-                    
+
                     if(tempTop != 0)
                     {
                         phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
@@ -1124,7 +1107,7 @@ namespace pg512 {
                     {
                         phiMinusNew[k] = WorkPrec_(0);
                     }
-                    
+
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
                     temp  = (*v)[i.index()] + (*_c)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
@@ -1137,7 +1120,7 @@ namespace pg512 {
                     {
                         phiPlusNew[k] = 0;
                     }
-                    
+
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
                     tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
                     m1bandPlus1[b1.index()] = prefac * (-2 - phiPlusOld[k] - phiMinusOld - phiMinusNew[k]);
@@ -1146,8 +1129,6 @@ namespace pg512 {
                     m3bandPlus2[b2.index()] = (*_c)[k] * prefac *(-phiMinusNew[k]);
                     ++i;//++d;++b1;++b2;++bminus1;
                 }
-                
- 
                 //}
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
@@ -1155,7 +1136,6 @@ namespace pg512 {
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
                 ++d;++b1;++b2;++bminus1;
-                
             }
 
  /*           m1.band(ulint(0)) = m1diag;
@@ -1166,7 +1146,7 @@ namespace pg512 {
             m3.band(ulint(3)) = m3bandPlus1;
             m3.band(ulint(6)) = m3bandPlus2;
             m3.band(ulint(-3)) = m3bandMinus1;*/
-            
+
             cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
             cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
             cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
@@ -1175,7 +1155,7 @@ namespace pg512 {
         }
     /**
       * First setup of values.
-      * 
+      *
       *
       **/
     template<typename ResPrec_,
@@ -1193,7 +1173,7 @@ namespace pg512 {
         }
         else
         {
-	    cout << "prefac is invalid!\n";
+        cout << "prefac is invalid!\n";
         }
         DenseVector<WorkPrec_> *v(_v->copy());
         DenseVector<WorkPrec_> vc = *v;
@@ -1206,17 +1186,23 @@ namespace pg512 {
         delete u2;
 
         _flow_x<WorkPrec_>(u1_c);
-        DenseVector<WorkPrec_> tempsum = VectorScaledSum<>::value(vc, u1_c, _eps,-_delta_t);
-        
-        ScalarVectorProduct<>::value(prefac,tempsum);
+
+        Scale<>::value(_eps,vc);
+        Scale<>::value(-_delta_t, u1_c);
+        DenseVector<WorkPrec_> tempsum = Sum<>::value<WorkPrec_,WorkPrec_>(vc, u1_c);
+
+        Scale<>::value(prefac,tempsum);
         DenseVector<WorkPrec_> *w(_w->copy());
         DenseVector<WorkPrec_> wc = *w;
         delete w;
         _flow_y<WorkPrec_>(u2_c);
-        DenseVector<WorkPrec_> tempsum2 = VectorScaledSum<>::value(wc, u2_c, _eps,-_delta_t);
-        
-        ScalarVectorProduct<>::value(prefac,tempsum2);
-        
+
+        Scale<>::value(_eps,wc);
+        Scale<>::value(-_delta_t, u2_c);
+        DenseVector<WorkPrec_> tempsum2 = Sum<>::value(wc, u2_c);
+
+        Scale<>::value(prefac,tempsum2);
+
         cout << "Temp relax vectors after building:\n";
         cout << stringify(*_u_temp) << endl;
         cout << stringify(*_v_temp) << endl;
@@ -1248,22 +1234,22 @@ namespace pg512 {
 
         _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
         _assemble_matrix2_DEBUG<WorkPrec_>(m2, m4, &predictedu, &predictedw);
-        
+
         BandedMatrix<WorkPrec_>* m5(m3.copy());
         BandedMatrix<WorkPrec_> m5c = *m5;
         delete m5;
-         
+
         BandedMatrix<WorkPrec_> m6(_u->size());
         _quick_assemble_matrix2<WorkPrec_>(m1, m6);
- 
+
         BandedMatrix<WorkPrec_>* m7(m4.copy());
         BandedMatrix<WorkPrec_> m7c = *m7;
         delete m7;
-      
+
         BandedMatrix<WorkPrec_> m8(_u->size());
-        _quick_assemble_matrix4<WorkPrec_>(m2, m8); 
-	cout << "Prediction: Finished assembly.\n";
-       
+        _quick_assemble_matrix4<WorkPrec_>(m2, m8);
+        cout << "Prediction: Finished assembly.\n";
+
         DenseVector<WorkPrec_>* temp_u(predictedu.copy());
         DenseVector<WorkPrec_>* temp_v(predictedv.copy());
         DenseVector<WorkPrec_>* temp_u2(predictedu.copy());
@@ -1277,33 +1263,33 @@ namespace pg512 {
         delete temp_w;
         delete temp_u2;
 
-	cout << "Prediction: Before matrix*vector.\n";
-        DenseVector<WorkPrec_> temp1 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m1,temp_v_c);
-cout << "First product solved.\n";
-        DenseVector<WorkPrec_> temp2 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m2,temp_w_c);
-	cout << "Second product solved.\n";
-	
-        DenseVector<WorkPrec_> temp3 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m3,temp_u_c);
-	cout << "Third product solved.\n";
-        DenseVector<WorkPrec_> temp4 = MatrixVectorProduct<>::value<WorkPrec_,WorkPrec_>(m4,temp_u2_c);
+        cout << "Prediction: Before matrix*vector.\n";
+        DenseVector<WorkPrec_> temp1 = Product<>::value<WorkPrec_,WorkPrec_>(m1,temp_v_c);
+        cout << "First product solved.\n";
+        DenseVector<WorkPrec_> temp2 = Product<>::value<WorkPrec_,WorkPrec_>(m2,temp_w_c);
+        cout << "Second product solved.\n";
+
+        DenseVector<WorkPrec_> temp3 = Product<>::value<WorkPrec_,WorkPrec_>(m3,temp_u_c);
+        cout << "Third product solved.\n";
+        DenseVector<WorkPrec_> temp4 = Product<>::value<WorkPrec_,WorkPrec_>(m4,temp_u2_c);
         cout << "Fourth product solved.\n";
 
-	DenseVector<WorkPrec_>* source(predictedu.copy());
+        DenseVector<WorkPrec_>* source(predictedu.copy());
         DenseVector<WorkPrec_> source_c = *source;
         delete source;
 
         _source(source_c);
 
-	cout << "Source solved.\n";
-	DenseVector<WorkPrec_>* predicted_u_temp(predictedu.copy());
+        cout << "Source solved.\n";
+        DenseVector<WorkPrec_>* predicted_u_temp(predictedu.copy());
         DenseVector<WorkPrec_> predicted_u_temp_c = *predicted_u_temp;
         delete predicted_u_temp;
 
-	VectorSum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp1);
-        VectorSum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp2);
-        VectorSum<>::value(predicted_u_temp_c, temp3);
-        VectorSum<>::value(predicted_u_temp_c, temp4);
-        VectorSum<>::value(predicted_u_temp_c, source_c);
+        Sum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp1);
+        Sum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp2);
+        Sum<>::value(predicted_u_temp_c, temp3);
+        Sum<>::value(predicted_u_temp_c, temp4);
+        Sum<>::value(predicted_u_temp_c, source_c);
         cout << "First accu solved.\n";
 
         DenseVector<WorkPrec_>* temp_u3(predictedu.copy());
@@ -1318,12 +1304,12 @@ cout << "First product solved.\n";
         delete temp_v2;
         delete temp_w2;
         delete temp_u4;
-        
-        DenseVector<WorkPrec_> temp11 = MatrixVectorProduct<>::value(m5c,temp_v2_c);
-        DenseVector<WorkPrec_> temp22 = MatrixVectorProduct<>::value(m6, temp_u3_c);
-        DenseVector<WorkPrec_> temp33 = MatrixVectorProduct<>::value(m7c,temp_w2_c);
-        DenseVector<WorkPrec_> temp44 = MatrixVectorProduct<>::value(m8, temp_u4_c);
-	
+
+        DenseVector<WorkPrec_> temp11 = Product<>::value(m5c,temp_v2_c);
+        DenseVector<WorkPrec_> temp22 = Product<>::value(m6, temp_u3_c);
+        DenseVector<WorkPrec_> temp33 = Product<>::value(m7c,temp_w2_c);
+        DenseVector<WorkPrec_> temp44 = Product<>::value(m8, temp_u4_c);
+
         DenseVector<WorkPrec_>* v(predictedv.copy());
         DenseVector<WorkPrec_>* w(predictedw.copy());
         DenseVector<WorkPrec_> v_c = *v;
@@ -1331,31 +1317,31 @@ cout << "First product solved.\n";
         delete v;
         delete w;
 
-	VectorSum<>::value(v_c, temp11);
-        VectorSum<>::value(v_c, temp22);
-        VectorSum<>::value(w_c, temp33);
-        VectorSum<>::value(w_c, temp44);
-        
+        Sum<>::value(v_c, temp11);
+        Sum<>::value(v_c, temp22);
+        Sum<>::value(w_c, temp33);
+        Sum<>::value(w_c, temp44);
+
         predictedu = *(predicted_u_temp_c.copy());
         predictedv = *(v_c.copy());
         predictedw = *(w_c.copy());
 
         std::cout << "Finished Prediction.\n";
-        
+
     }
 
     /** Second setup of values.
-      *
-      * \param predictedu Temp u.
-      * \param predictedv Temp v.
-      * \param predictedw Temp w.
-      **/
+     *
+     * \Param predictedu Temp u.
+     * \param predictedv Temp v.
+     * \param predictedw Temp w.
+     **/
     template<typename ResPrec_,
-             typename PredictionPrec1_,
-             typename PredictionPrec2_,
-             typename InitPrec1_,
-             typename InitPrec2_> 
-    template<typename WorkPrec_>
+        typename PredictionPrec1_,
+        typename PredictionPrec2_,
+        typename InitPrec1_,
+        typename InitPrec2_> 
+        template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
         ///Apply flow to newest u:
@@ -1368,71 +1354,80 @@ cout << "First product solved.\n";
         DenseVector<WorkPrec_>* v_result(predictedv.copy());
         DenseVector<WorkPrec_> v_result_c = *v_result;
         delete v_result;
-        DenseVector<WorkPrec_> innersum1 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(v_result_c,f_c, _eps, _delta_t);
-        
+        Scale<>::value(_eps,v_result_c);
+        Scale<>::value(_delta_t,f_c);
+        DenseVector<WorkPrec_> innersum1 = Sum<>::value<>(v_result_c,f_c);
+
         ///Apply flow to old u:
         DenseVector<WorkPrec_>* flow(_u_temp->copy());
         DenseVector<WorkPrec_> flow_c = *flow;
         delete flow;
         _flow_x(flow_c);
-        
+
         DenseVector<WorkPrec_>* v_temp_result(_v_temp->copy());
         DenseVector<WorkPrec_> v_temp_result_c = *v_temp_result;
         delete v_temp_result;
 
-        DenseVector<WorkPrec_> innersum2 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(v_temp_result_c, flow_c, -2*_delta_t, 2*_delta_t);
-        
-        VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum1, innersum2);
+        Scale<>::value(-2*_delta_t,v_temp_result_c);
+        Scale<>::value(2*_delta_t, flow_c);
+        DenseVector<WorkPrec_> innersum2 = Sum<>::value<>(v_temp_result_c, flow_c);
+
+        Sum<>::value<>(innersum1, innersum2);
         ///Scale sum:
-        ScalarVectorProduct<>::value(1/(_eps+_delta_t), predictedv);
-        
+        Scale<>::value(1/(_eps+_delta_t), predictedv);
+
         ///Repeat for w:
         DenseVector<WorkPrec_>* flow2(predictedu.copy());
         DenseVector<WorkPrec_> flow2_c = *flow2;
         delete flow2;
         _flow_y(flow2_c);
-        
+
         DenseVector<WorkPrec_>* w_result(predictedw.copy());
         DenseVector<WorkPrec_> w_result_c = *w_result;
         delete w_result;
-        DenseVector<WorkPrec_>innersum11 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, double, WorkPrec_>(w_result_c, flow2_c, _eps, _delta_t);
-        
+
+        Scale<>::value(_eps, w_result_c);
+        Scale<>::value(_delta_t,flow2_c);
+        DenseVector<WorkPrec_>innersum11 = Sum<>::value<>(w_result_c, flow2_c);
+
         DenseVector<WorkPrec_>* flow3(_u_temp->copy());
         DenseVector<WorkPrec_> flow3_c = *flow3;
         delete flow3;
 
         _flow_x(flow3_c);
-        
+
         DenseVector<WorkPrec_>* w_temp_result(_w_temp->copy());
         DenseVector<WorkPrec_> w_temp_result_c = *w_temp_result;
         delete w_temp_result;
 
-        DenseVector<WorkPrec_>innersum22 = VectorScaledSum<>::value<WorkPrec_, WorkPrec_, WorkPrec_, WorkPrec_>(w_temp_result_c, flow3_c, -2*_delta_t, 2*_delta_t);
-        
-        VectorSum<>::value<WorkPrec_, WorkPrec_>(innersum11, innersum22);
-        ScalarVectorProduct<>::value(1/(_eps + _delta_t), predictedw);
+        Scale<>::value(-2*_delta_t,w_temp_result_c);
+        Scale<>::value(2*_delta_t, flow3_c);
+        DenseVector<WorkPrec_>innersum22 = Sum<>::value<>(w_temp_result_c, flow3_c);
+
+        Sum<>::value<>(innersum11, innersum22);
+        Scale<>::value(1/(_eps + _delta_t), predictedw);
 
         predictedv = *(innersum1.copy());
         predictedw = *(innersum11.copy());
         std::cout << "Finished Setup 2.\n";
-    } 
-    
+    }
+
     /** Implementation of the correction stage.
-      *
-      *\param predictedu Temp u.
-      *\param predictedv Temp v.
-      *\param predictedw Temp w.
-      *
-      **/
+     *
+     *\param predictedu Temp u.
+     *\param predictedv Temp v.
+     *\param predictedw Temp w.
+     *
+     **/
     template<typename ResPrec_,
-             typename PredictionPrec1_,
-             typename PredictionPrec2_,
-             typename InitPrec1_,
-             typename InitPrec2_> 
+        typename PredictionPrec1_,
+        typename PredictionPrec2_,
+        typename InitPrec1_,
+        typename InitPrec2_> 
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_correction(DenseVector<ResPrec_>& predictedu,
-    DenseVector<ResPrec_>& predictedv,
-    DenseVector<ResPrec_>& predictedw)
-    {   
+                    DenseVector<ResPrec_>& predictedv,
+                    DenseVector<ResPrec_>& predictedw)
+    {
         ///correct first 2(w+4)+2 ghost cells (tripels)
         typename DenseVector<ResPrec_>::ElementIterator iter(_u->begin_elements());
         while(iter.index()<(6*(_d_width+4)+6))
@@ -1445,35 +1440,35 @@ cout << "First product solved.\n";
             ++iter;
             (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
             (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
             (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-            (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+            (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
+                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
 
 
         }
         cout << stringify(iter.index()) << endl;
-        
+
         unsigned long count =0;//if made w steps, ignore four.
         ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
         typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements());
         while(iter.index()<3*((_d_height+2)*(_d_width+4)))
         {
             /*PredictionPrec2_ a = (*_u)[iter.index()];
-            (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
-            cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;*/
+              (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
+              cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;*/
             if(count < _d_width)
             {
                 PredictionPrec2_ a = (*_u)[iter.index()];
                 (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
                 cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;
-                
+
                 *h = (*_u)[iter.index()];
                 ++h;
                 ++count;
-              
+
                 (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
                 (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
@@ -1485,7 +1480,6 @@ cout << "First product solved.\n";
                 (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
                 (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
- 
             }
             else
             {
@@ -1497,12 +1491,12 @@ cout << "First product solved.\n";
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
                 (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_u)[iter.index()] = 0;
@@ -1510,13 +1504,13 @@ cout << "First product solved.\n";
                 (*_u)[iter.index()] = 0;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
-                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_u)[iter.index()] = 0;
@@ -1524,13 +1518,13 @@ cout << "First product solved.\n";
                 (*_u)[iter.index()] = 0;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
-                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_u)[iter.index()] = 0;
@@ -1538,18 +1532,16 @@ cout << "First product solved.\n";
                 (*_u)[iter.index()] = 0;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
-                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
+                    (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 count = 0;
             }
             cout << stringify(count)<<endl;
-            
-            
         }
         typename DenseVector<ResPrec_>::ElementIterator iter_END(_u->end_elements());
         while(iter!=iter_END)
@@ -1561,35 +1553,33 @@ cout << "First product solved.\n";
             (*_u)[iter.index()] = 0;
             ++iter;
             (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
-            (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+            (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+
+                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
             (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
-                                                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+                (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
 
-
-           
         }
         std::cout << "Finished Correction.\n";
     }
 
     /** Capsule for the solution- computation in one timestep.
-      *
-      *
-      **/
+     *
+     *
+     **/
     template<typename ResPrec_,
-             typename PredictionPrec1_,
-             typename PredictionPrec2_,
-             typename InitPrec1_,
-             typename InitPrec2_> 
+        typename PredictionPrec1_,
+        typename PredictionPrec2_,
+        typename InitPrec1_,
+        typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: solve()
     {
         _u_temp = _u->copy();
         _v_temp = _v->copy();
         _w_temp = _w->copy();
-        
+
         _do_setup_stage1<InitPrec1_>(*_u_temp, *_v_temp, *_w_temp );
 
         DenseVector<PredictionPrec1_>* predictedu(_u_temp->copy());
@@ -1601,18 +1591,18 @@ cout << "First product solved.\n";
         delete predictedu;
         delete predictedv;
         delete predictedw;
-        
+
         _do_prediction<PredictionPrec1_>(predictedu_c, predictedv_c, predictedw_c);
 
         _do_setup_stage2<InitPrec2_>(predictedu_c, predictedv_c, predictedw_c);
-        
+
         _do_prediction<PredictionPrec2_>(predictedu_c, predictedv_c, predictedw_c);
 
         cout << "Predicted u:\n";
         cout << stringify(predictedu_c)<< endl;
         cout << "u before correction:\n";
         cout << stringify(*_u)<<endl;
-        
+
         _do_correction(predictedu_c, predictedv_c, predictedw_c);
         ++_solve_time;
 
@@ -1621,6 +1611,7 @@ cout << "First product solved.\n";
         delete _w_temp;
         cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
         cout << stringify(*_u)<<endl;
+        _do_postprocessing(1);
     }
 
     /**
@@ -1632,161 +1623,159 @@ cout << "First product solved.\n";
      *
      **/
     template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
-    template<typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
+        template<typename WorkPrec_>
+        void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
         ::_assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* w)
-    {   
-        
-        ///The bands containing data.
-        DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
-        
-        ///Necessary values to be temporarily saved.
-        DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0));
+        {
 
-        DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0));
+            ///The bands containing data.
+            DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
+            DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
+            DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
+            DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
+            DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
+            DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
+            DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
+            DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
 
-        DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> tempTopMinus(ulint(3), ulint(0));
-        
-        WorkPrec_ phiMinusOld;
-        WorkPrec_ temp;
-        WorkPrec_ tempTop;
-        WorkPrec_ prefac = _delta_t/4*_delta_y;
+            ///Necessary values to be temporarily saved.
+            DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
+            DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0));
 
-	for(unsigned long s=0; s< _d_width; ++s)
-	{
+            DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0));
+            DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0));
+            DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0));
 
-	    ///Needed Iterators.
-            typename DenseVector<WorkPrec_>::ElementIterator d(m2diag.begin_elements());
-	    typename DenseVector<WorkPrec_>::ConstElementIterator i(u->begin_elements());
-            typename DenseVector<WorkPrec_>::ElementIterator b1(m2bandPlus1.begin_elements());
-	    typename DenseVector<WorkPrec_>::ElementIterator b2(m2bandPlus2.begin_elements());
-	    typename DenseVector<WorkPrec_>::ElementIterator bminus1(m2bandMinus1.begin_elements());
-            
-            ///Iterate to the next column
-            for(unsigned long f=0; f < 3*(s+2); ++f)
-	    {
-		++i;++d;++b1;++b2;++bminus1;
-	    }
+            DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0));
+            DenseVector<WorkPrec_> tempTopMinus(ulint(3), ulint(0));
 
-            
-	    
-	    for(unsigned long k=0; k<3; ++k)
-            {
-                tempPlus[k]= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
-		++i;++d;++b1;++b2;++bminus1;
-	    }	
+            WorkPrec_ phiMinusOld;
+            WorkPrec_ temp;
+            WorkPrec_ tempTop;
+            WorkPrec_ prefac = _delta_t/4*_delta_y;
 
-	    //Iterate to next column-element
-	    for(unsigned long f=0; f<3*(_d_width+3);++f)
-	    {
-		++i;++d;++b1;++b2;++bminus1;
-	    }
-
-            for(unsigned long k=0; k<3; ++k)
-            {
-                temp= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
-                tempTopPlus[k] = temp - tempPlus[k];
-                tempPlus[k] = temp;
-                tempMinus[k] =  (*w)[i.index()] - (*_d)[k]*(*u)[i.index()];
-                ++i;++d;++b1;++b2;++bminus1;
-            }
-
-	    //Iterate i to next column-element
-	    for(unsigned long f=0; f<3*(_d_width+3);++f)
-	    {
-		++i;
-	    }
-
-            for(unsigned long k=0; k<3; ++k)
-            {
-                temp= (*w)[i.index()] - (*_d)[k]*(*u)[i.index()];
-                tempTopMinus[k] = temp - tempMinus[k];
-                tempMinus[k] = temp;
-                temp= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
-                tempTop = temp - tempPlus[k];
-                if(tempTop != 0)
-                {
-                    phiPlusOld[k] = min_mod_limiter(tempTopPlus[k]/tempTop);
-                }
-                else
-                {
-                    phiPlusOld[k] = WorkPrec_(0);
-                }
-                tempPlus[k]=temp;
-                tempTopPlus[k]=tempTop;
-                ++i;
-            }
-
-	    //Iterate i to next column-element
-	    for(unsigned long f=0; f<3*(_d_width+3);++f)
-	    {
-		++i;
-	    }
-
-            for(unsigned long k=0; k<3; ++k)
-            {
-                temp = (*w)[i.index()] - (*_d)[k]*((*u)[i.index()]); //temp = v(i) - c(k)*u(i);
-                tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
-                if(tempTop != 0)
-                {
-                    phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
-                }
-                else
-                {
-                    phiMinusNew[k] = WorkPrec_(0);
-                }
-                tempMinus[k]=temp;//switch(temp, temp_minus(k));
-                tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
-                temp  = (*w)[i.index()] + (*_d)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
-                tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
-                if(tempTop != 0)
-                {
-                    phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
-                }
-                else
-                {
-                    phiPlusNew[k] = 0;
-                }
-                tempPlus[k]= temp;//switch(temp, temp_plus(k));
-                tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
-                ++i;//++i;
-            }
-    
-    
-            for(unsigned long x = 0; x < _d_height; ++x)
+            for(unsigned long s=0; s< _d_width; ++s)
             {
 
-		//Iterate to next column-elements
-		for(unsigned long f=0; f<3*(_d_width+3);++f)
-		{
-		    ++i;++d;++b1;++b2;++bminus1;
-		}
+                ///Needed Iterators.
+                typename DenseVector<WorkPrec_>::ElementIterator d(m2diag.begin_elements());
+                typename DenseVector<WorkPrec_>::ConstElementIterator i(u->begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator b1(m2bandPlus1.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator b2(m2bandPlus2.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator bminus1(m2bandMinus1.begin_elements());
 
-                for(unsigned long k =0; k<3; ++k)
+                ///Iterate to the next column
+                for(unsigned long f=0; f < 3*(s+2); ++f)
                 {
-                    temp = prefac *(2 - phiPlusOld[k]);
-                       
-                    m2bandMinus1[bminus1.index()] =temp;
-                    m4bandMinus1[bminus1.index()] =temp * (*_d)[k];
-          
-                    m2diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
-                    m4diag[d.index()] = (*_d)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
-                        
-                    phiPlusOld[k]= phiPlusNew[k];
-                    phiMinusOld = phiMinusNew[k];
-                    temp = (*w)[i.index()] - (*_d)[k]*(*u)[i.index()]; //temp = v(i) - c(k)*u(i);
+                    ++i;++d;++b1;++b2;++bminus1;
+                }
+
+
+
+                for(unsigned long k=0; k<3; ++k)
+                {
+                    tempPlus[k]= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
+                    ++i;++d;++b1;++b2;++bminus1;
+                }
+
+                //Iterate to next column-element
+                for(unsigned long f=0; f<3*(_d_width+3);++f)
+                {
+                    ++i;++d;++b1;++b2;++bminus1;
+                }
+
+                for(unsigned long k=0; k<3; ++k)
+                {
+                    temp= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
+                    tempTopPlus[k] = temp - tempPlus[k];
+                    tempPlus[k] = temp;
+                    tempMinus[k] =  (*w)[i.index()] - (*_d)[k]*(*u)[i.index()];
+                    ++i;++d;++b1;++b2;++bminus1;
+                }
+
+                //Iterate i to next column-element
+                for(unsigned long f=0; f<3*(_d_width+3);++f)
+                {
+                    ++i;
+                }
+
+                for(unsigned long k=0; k<3; ++k)
+                {
+                    temp= (*w)[i.index()] - (*_d)[k]*(*u)[i.index()];
+                    tempTopMinus[k] = temp - tempMinus[k];
+                    tempMinus[k] = temp;
+                    temp= (*w)[i.index()] + (*_d)[k]*(*u)[i.index()];
+                    tempTop = temp - tempPlus[k];
+                    if(tempTop != 0)
+                    {
+                        phiPlusOld[k] = min_mod_limiter(tempTopPlus[k]/tempTop);
+                    }
+                    else
+                    {
+                        phiPlusOld[k] = WorkPrec_(0);
+                    }
+                    tempPlus[k]=temp;
+                    tempTopPlus[k]=tempTop;
+                    ++i;
+                }
+
+                //Iterate i to next column-element
+                for(unsigned long f=0; f<3*(_d_width+3);++f)
+                {
+                    ++i;
+                }
+
+                for(unsigned long k=0; k<3; ++k)
+                {
+                    temp = (*w)[i.index()] - (*_d)[k]*((*u)[i.index()]); //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
+                    if(tempTop != 0)
+                    {
+                        phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
+                    }
+                    else
+                    {
+                        phiMinusNew[k] = WorkPrec_(0);
+                    }
+                    tempMinus[k]=temp;//switch(temp, temp_minus(k));
+                    tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
+                    temp  = (*w)[i.index()] + (*_d)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
+                    tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
+                    if(tempTop != 0)
+                    {
+                        phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
+                    }
+                    else
+                    {
+                        phiPlusNew[k] = 0;
+                    }
+                    tempPlus[k]= temp;//switch(temp, temp_plus(k));
+                    tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
+                    ++i;//++i;
+                }
+                for(unsigned long x = 0; x < _d_height; ++x)
+                {
+
+                    //Iterate to next column-elements
+                    for(unsigned long f=0; f<3*(_d_width+3);++f)
+                    {
+                        ++i;++d;++b1;++b2;++bminus1;
+                    }
+
+                    for(unsigned long k =0; k<3; ++k)
+                    {
+                        temp = prefac *(2 - phiPlusOld[k]);
+
+                        m2bandMinus1[bminus1.index()] =temp;
+                        m4bandMinus1[bminus1.index()] =temp * (*_d)[k];
+
+                        m2diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
+                        m4diag[d.index()] = (*_d)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
+
+                        phiPlusOld[k]= phiPlusNew[k];
+                        phiMinusOld = phiMinusNew[k];
+                        temp = (*w)[i.index()] - (*_d)[k]*(*u)[i.index()]; //temp = v(i) - c(k)*u(i);
+                        tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
                     if(tempTop != 0)
                     {
                         phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
@@ -1814,9 +1803,9 @@ cout << "First product solved.\n";
                     m2bandPlus2[b2.index()] = prefac* phiMinusNew[k];
                     m4bandPlus2[b2.index()] = (*_d)[k] * prefac *(-phiMinusNew[k]);
                     ++i;++d;++b1;++b2;++bminus1;
-                }  
+                }
             }
-	}
+    }
         m2.band(ulint(0)) = m2diag;
         m2.band(ulint(3*(_d_width+4))) = m2bandPlus1;
         m2.band(ulint(6*(_d_width+4))) = m2bandPlus2;
@@ -1833,69 +1822,69 @@ cout << "First product solved.\n";
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
-             typename InitPrec2_> 
+             typename InitPrec2_>
     template<typename WorkPrec_>
     /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result)
     {
-	///Bands of the matrix which will be assembled.
-	DenseVector<WorkPrec_>* m6diag = (m1.band(ulint(0))).copy();
-	DenseVector<WorkPrec_>* m6bandplus3 = (m1.band(ulint(3))).copy();
-	DenseVector<WorkPrec_>* m6bandplus6 = (m1.band(ulint(6))).copy();
-	DenseVector<WorkPrec_>* m6bandminus3 = (m1.band(ulint(-3))).copy();
+        ///Bands of the matrix which will be assembled.
+        DenseVector<WorkPrec_>* m6diag = (m1.band(ulint(0))).copy();
+        DenseVector<WorkPrec_>* m6bandplus3 = (m1.band(ulint(3))).copy();
+        DenseVector<WorkPrec_>* m6bandplus6 = (m1.band(ulint(6))).copy();
+        DenseVector<WorkPrec_>* m6bandminus3 = (m1.band(ulint(-3))).copy();
         ///Needed Iterators.
         typename DenseVector<WorkPrec_>::ElementIterator d(m6diag->begin_elements());//, d_END(m6diag->end_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m6bandplus6->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3->begin_elements());
-        
-	DenseVector<WorkPrec_> c_squared(*(_c->copy()));
-	VectorElementwiseProduct<WorkPrec_>::value(c_squared, (*_c));
+        //MIGHTBEBUG:
+        DenseVector<WorkPrec_> c_squared(*(_c->copy()));
+        ElementProduct<WorkPrec_>::value(c_squared, (*_c));
 
-        for( ; d.index() < 6*(_d_width+4); ++d);                               
-        for( ; b1.index() < 6*(_d_width+4); ++b1);                               
+        for( ; d.index() < 6*(_d_width+4); ++d);
+        for( ; b1.index() < 6*(_d_width+4); ++b1);
         for( ; b2.index() < 6*(_d_width+4); ++b2);
-        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);                               
+        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);
 
-	while(d.index() < 3*(_d_width+4)*(_d_height-2))
-	{
-	    ++d; ++d; ++d; ++d; ++d; ++d;
-	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
-	    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
-	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+        while(d.index() < 3*(_d_width+4)*(_d_height-2))
+        {
+            ++d; ++d; ++d; ++d; ++d; ++d;
+            ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+            ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+            ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
 
-	    for(ulint i = 0; i < _d_width; ++i)
-	    {
-		*d *= c_squared[0];
-		*b1 *= c_squared[0];
-		*b2 *= c_squared[0];
-		*bminus1 *= c_squared[0];
-		++d; ++b1; ++b2; ++bminus1;
-		*d *= c_squared[1];
-		*b1 *= c_squared[1];
-		*b2 *= c_squared[1];
-		*bminus1 *= c_squared[1];
-		++d; ++b1; ++b2; bminus1;
-		*d *= c_squared[2];
-		*b1 *= c_squared[2];
-		*b2 *= c_squared[2];
-		*bminus1 *= c_squared[2];
-		++d; ++b1; ++b2; ++bminus1;
-	    }
+        for(ulint i = 0; i < _d_width; ++i)
+        {
+            *d *= c_squared[0];
+            *b1 *= c_squared[0];
+            *b2 *= c_squared[0];
+            *bminus1 *= c_squared[0];
+            ++d; ++b1; ++b2; ++bminus1;
+            *d *= c_squared[1];
+            *b1 *= c_squared[1];
+            *b2 *= c_squared[1];
+            *bminus1 *= c_squared[1];
+            ++d; ++b1; ++b2; bminus1;
+            *d *= c_squared[2];
+            *b1 *= c_squared[2];
+            *b2 *= c_squared[2];
+            *bminus1 *= c_squared[2];
+            ++d; ++b1; ++b2; ++bminus1;
+        }
 
-	    ++d; ++d; ++d; ++d; ++d; ++d;
-	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
-	    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
-	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
-	}
-	//BandedMatrix<WorkPrec_> result(m6diag.size());
-	result.insert_band(0, m6diag);
-	result.insert_band(3, m6bandplus3);
-	result.insert_band(6, m6bandplus6);
-	result.insert_band(-3, m6bandminus3);
+        ++d; ++d; ++d; ++d; ++d; ++d;
+        ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+        ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+        ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+    }
+    //BandedMatrix<WorkPrec_> result(m6diag.size());
+    result.insert_band(0, m6diag);
+    result.insert_band(3, m6bandplus3);
+    result.insert_band(6, m6bandplus6);
+    result.insert_band(-3, m6bandminus3);
 
-	std::cout << "Finished Quick Assembly m2.\n";
- 
-	//return result;
+    std::cout << "Finished Quick Assembly m2.\n";
+
+    //return result;
 
     }
 
@@ -1903,77 +1892,77 @@ cout << "First product solved.\n";
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
-             typename InitPrec2_> 
+             typename InitPrec2_>
     template<typename WorkPrec_>
     /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& result)
     {
-	///Bands of the matrix which will be assembled.
-	/*DenseVector<WorkPrec_> m8diag(_u->size(), ulint(0) ,ulint( 1));      //zero
+        ///Bands of the matrix which will be assembled.
+        /*DenseVector<WorkPrec_> m8diag(_u->size(), ulint(0) ,ulint( 1));      //zero
         DenseVector<WorkPrec_> m8bandplus3(_u->size(), ulint(0) , ulint(1)); //one
         DenseVector<WorkPrec_> m8bandplus6(_u->size(), ulint(0) ,ulint( 1)); //two
         DenseVector<WorkPrec_> m8bandminus3(_u->size(), ulint(0) ,ulint(1));//three
         */
 
-	DenseVector<WorkPrec_>* m8diag = (m2.band(ulint(0))).copy();
-	DenseVector<WorkPrec_>* m8bandplus3 = (m2.band(ulint(3*(_d_width +4)))).copy();
-	DenseVector<WorkPrec_>* m8bandplus6 = (m2.band(ulint(6*(_d_width +4)))).copy();
-	DenseVector<WorkPrec_>* m8bandminus3 = (m2.band(ulint((-3)*(_d_width +4)))).copy();
+        DenseVector<WorkPrec_>* m8diag = (m2.band(ulint(0))).copy();
+        DenseVector<WorkPrec_>* m8bandplus3 = (m2.band(ulint(3*(_d_width +4)))).copy();
+        DenseVector<WorkPrec_>* m8bandplus6 = (m2.band(ulint(6*(_d_width +4)))).copy();
+        DenseVector<WorkPrec_>* m8bandminus3 = (m2.band(ulint((-3)*(_d_width +4)))).copy();
         ///Needed Iterators.
         typename DenseVector<WorkPrec_>::ElementIterator d(m8diag->begin_elements()); //, d_END(m8diag->end_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3->begin_elements());
- 
-	DenseVector<WorkPrec_> d_squared((*(_d->copy())));
-	VectorElementwiseProduct<WorkPrec_>::value(d_squared, (*_d));
+        //MIGHTBEBUG:
+        DenseVector<WorkPrec_> d_squared((*(_d->copy())));
+        ElementProduct<WorkPrec_>::value(d_squared, (*_d));
 
-        for( ; d.index() < 6*(_d_width + 4); ++d);                               
-        for( ; b1.index() < 6*(_d_width + 4); ++b1);                               
+        for( ; d.index() < 6*(_d_width + 4); ++d);
+        for( ; b1.index() < 6*(_d_width + 4); ++b1);
         for( ; b2.index() < 6*(_d_width + 4); ++b2);
-        for( ; bminus1.index() < 6*(_d_width + 4); ++bminus1);                               
+        for( ; bminus1.index() < 6*(_d_width + 4); ++bminus1);
 
-	while(d.index() < 3*(_d_width+4)*(_d_height-2))
-	{
-	    ++d; ++d; ++d; ++d; ++d; ++d;
-	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
-	    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
-	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+        while(d.index() < 3*(_d_width+4)*(_d_height-2))
+        {
+            ++d; ++d; ++d; ++d; ++d; ++d;
+            ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+            ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+            ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
 
-	    for(ulint i = 0; i < _d_width; ++i)
-	    {
-		*d *= d_squared[0];
-		*b1 *= d_squared[0];
-		*b2 *= d_squared[0];
-		*bminus1 *= d_squared[0];
-		++d; ++b1; ++b2; ++bminus1;
-		*d *= d_squared[1];
-		*b1 *= d_squared[1];
-		*b2 *= d_squared[1];
-		*bminus1 *= d_squared[1];
-		++d; ++b1; ++b2; bminus1;
-		*d *= d_squared[2];
-		*b1 *= d_squared[2];
-		*b2 *= d_squared[2];
-		*bminus1 *= d_squared[2];
-		++d; ++b1; ++b2; ++bminus1;
-	    }
+        for(ulint i = 0; i < _d_width; ++i)
+        {
+            *d *= d_squared[0];
+            *b1 *= d_squared[0];
+            *b2 *= d_squared[0];
+            *bminus1 *= d_squared[0];
+            ++d; ++b1; ++b2; ++bminus1;
+            *d *= d_squared[1];
+            *b1 *= d_squared[1];
+            *b2 *= d_squared[1];
+            *bminus1 *= d_squared[1];
+            ++d; ++b1; ++b2; bminus1;
+            *d *= d_squared[2];
+            *b1 *= d_squared[2];
+            *b2 *= d_squared[2];
+            *bminus1 *= d_squared[2];
+            ++d; ++b1; ++b2; ++bminus1;
+        }
 
-	    ++d; ++d; ++d; ++d; ++d; ++d;
-	    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
-	    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
-	    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
-	}
-	
-	//BandedMatrix<WorkPrec_> result(m8diag.size());
+        ++d; ++d; ++d; ++d; ++d; ++d;
+        ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+        ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+        ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+    }
 
-	result.insert_band(0, m8diag);
-	result.insert_band(3*(_d_width +4), m8bandplus3);
-	result.insert_band(6*(_d_width +4), m8bandplus6);
-	result.insert_band((-3)*(_d_width +4),m8bandminus3);
-        std::cout << "Finished Quick Assembly m4.\n";	
- 
-	//return result;
-	
+    //BandedMatrix<WorkPrec_> result(m8diag.size());
+
+    result.insert_band(0, m8diag);
+    result.insert_band(3*(_d_width +4), m8bandplus3);
+    result.insert_band(6*(_d_width +4), m8bandplus6);
+    result.insert_band((-3)*(_d_width +4),m8bandminus3);
+    std::cout << "Finished Quick Assembly m4.\n";
+
+    //return result;
+
     }
     /**
      *
@@ -2002,69 +1991,48 @@ cout << "First product solved.\n";
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
         typename DenseVector<WorkPrec_>::ElementIterator vi(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator vi_END(u->end_elements());
-        
+
         unsigned int k = 0;
         //Preparing left operand for all scalar products
         DenseVector<WorkPrec_> constantVector(ulint(4), ulint(0));
-        constantVector[0] = WorkPrec_(-1);
-        constantVector[1] = WorkPrec_(1);
-        constantVector[2] = WorkPrec_(-((*_c)[k]));
-        constantVector[3] = WorkPrec_((*_c)[k]);
         //Preparing left operand for all scalar products
         DenseVector<WorkPrec_> constantVectorMinus(ulint(4), ulint(0));
-        constantVectorMinus[0] = WorkPrec_(-1);
-        constantVectorMinus[1] = WorkPrec_(1);
-        constantVectorMinus[2] = WorkPrec_((*_c)[k]);
-        constantVectorMinus[3] = WorkPrec_(-((*_c)[k]));
 
         while(ui!=ui_END)
         {
+            constantVector[0] = WorkPrec_(-1);
+            constantVector[1] = WorkPrec_(1);
+            constantVector[2] = WorkPrec_(-((*_c)[k]));
+            constantVector[3] = WorkPrec_((*_c)[k]);
+            constantVectorMinus[0] = WorkPrec_(-1);
+            constantVectorMinus[1] = WorkPrec_(1);
+            constantVectorMinus[2] = WorkPrec_((*_c)[k]);
+            constantVectorMinus[3] = WorkPrec_(-((*_c)[k]));
+
+
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
             DenseVector<WorkPrec_> rightMinus1Upper(ulint(4), ulint(0));
             if(ui.index()>=6 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightMinus1Upper[0] = (*v)[vi.index()-6];
-                
-                
                 rightMinus1Upper[1] = (*v)[vi.index()-3];
-                
-                
-
                 rightMinus1Upper[2] = (*u)[ui.index()-6];
-                
-                
                 rightMinus1Upper[3] = (*u)[ui.index()-3];
-                
-                
-                
-
-
-
             }
 
             DenseVector<WorkPrec_> rightMinus1Lower(ulint(4), ulint(0));
-            if(ui.index()>=/*6*/3 && ui.index()<ui_END.index()/*-6*/) 
+            if(ui.index()>=/*6*/3 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3];
-                
-                
                 rightMinus1Lower[1] = (*v)[vi.index()];
-                
-                
-
                 rightMinus1Lower[2] = (*u)[ui.index()-3];
-                
-                
                 rightMinus1Lower[3] = (*u)[ui.index()];
-                
-                
-                
             }
 
             //Compute ScalarProducts and Theta - value for band_-1:
-            WorkPrec_ minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Upper, constantVector );
-            WorkPrec_ minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Lower, constantVector );
+            WorkPrec_ minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Upper, constantVector );
+            WorkPrec_ minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Lower, constantVector );
             WorkPrec_ thetaXPlus_iMinus1_j;
             if(minusLower!=0)
             {
@@ -2074,8 +2042,8 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Compute matrix element value:
-            m1bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
-            m3bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m1bandMinus1[ui.index()] = (_delta_t / (4*_delta_x)) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m3bandMinus1[ui.index()] = (*_c)[k]*(_delta_t / (4*_delta_x)) * (2 -  thetaXPlus_iMinus1_j_limited);
             //FINISHED band_-1.
 
             //Prepare right operands for diagonal:
@@ -2084,40 +2052,22 @@ cout << "First product solved.\n";
             if(ui.index()>=/*6*/3 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3];
-                
-                
                 rightDiagUpper[1] = (*v)[vi.index()];
-                
-                
-
                 rightDiagUpper[2] = (*u)[ui.index()-3];
-                
-                
                 rightDiagUpper[3] = (*u)[ui.index()];
-                
-                
             }
             DenseVector<WorkPrec_> rightDiagLower(ulint(4), ulint(0));
             if(ui.index()>=/*6*/0 && ui.index()<ui_END.index())
             {
                 rightDiagLower[0] = (*v)[vi.index()];
-                
-                
                 rightDiagLower[1] = (*v)[vi.index()+3];
-                
-                
-
                 rightDiagLower[2] = (*u)[ui.index()];
-                
-                
                 rightDiagLower[3] = (*u)[ui.index()+3];
-                
-                
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
             WorkPrec_ thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2134,43 +2084,20 @@ cout << "First product solved.\n";
             if(ui.index()>=6 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-6];
-                
-                
                 rightDiagUpper[1] = (*v)[vi.index()-3];
-                
-                
-
                 rightDiagUpper[2] = (*u)[ui.index()-6];
-                
-                
                 rightDiagUpper[3] = (*u)[ui.index()-3];
-                
-                
-                
-
-
-
             }
             if(ui.index()>=/*6*/3 && ui.index()<ui_END.index())
             {
                 rightDiagLower[0] = (*v)[vi.index()-3];
-                
-                
                 rightDiagLower[1] = (*v)[vi.index()];
-                
-                
-
                 rightDiagLower[2] = (*u)[ui.index()-3];
-                
-                
                 rightDiagLower[3] = (*u)[ui.index()];
-                
-                
-                
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
 
             if(minusLower!=0)
             {
@@ -2187,43 +2114,20 @@ cout << "First product solved.\n";
             if(ui.index()>=/*6*/3 && ui.index()<ui_END.index())
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3];
-                
-                
                 rightDiagUpper[1] = (*v)[vi.index()];
-                
-                
-
                 rightDiagUpper[2] = (*u)[ui.index()-3];
-                
-
                 rightDiagUpper[3] = (*u)[ui.index()];
-                
-                
-                
-
-
-
             }
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-3)
             {
                 rightDiagLower[0] = (*v)[vi.index()];
-                
-                
                 rightDiagLower[1] = (*v)[vi.index()+3];
-                
-                
-
                 rightDiagLower[2] = (*u)[ui.index()];
-                
-                
                 rightDiagLower[3] = (*u)[ui.index()+3];
-                
-                
-                
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_i_j;
             if(minusLower!=0)
             {
@@ -2237,10 +2141,10 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m1diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m1diag[ui.index()] = (_delta_t / (4*_delta_x)) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            m3diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
-                                                       thetaXMinus_i_j_limited );
+            m3diag[ui.index()] = -(*_c)[k]*((_delta_t / (4*_delta_x)) * (4 - thetaXPlus_i_j_limited - thetaXPlus_iMinus1_j_limited + 
+                                                       thetaXMinus_i_j_limited) );
             //FINISHED diagonal.
 
             //Prepare right operands for band_+1:
@@ -2249,39 +2153,23 @@ cout << "First product solved.\n";
             if(ui.index()>= 3 && ui.index()<ui_END.index())
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3];
-                
-                
                 rightPlus1Upper[1] = (*v)[vi.index()];
-                
-                
-
                 rightPlus1Upper[2] = (*u)[ui.index()-3];
-                
-                
                 rightPlus1Upper[3] = (*u)[ui.index()];
-                
-                
+
             }
             DenseVector<WorkPrec_> rightPlus1Lower(ulint(4), ulint(0));
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-3)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
-                
-                
                 rightPlus1Lower[1] = (*v)[vi.index()+3];
-                
-                
-
                 rightPlus1Lower[2] = (*u)[ui.index()];
-
                 rightPlus1Lower[3] = (*u)[ui.index()+3];
-                
-                
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
             thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2298,43 +2186,20 @@ cout << "First product solved.\n";
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-3)
             {
                 rightPlus1Upper[0] = (*v)[vi.index()];
-                
-                
                 rightPlus1Upper[1] = (*v)[vi.index()+3];
-                
-                
-
                 rightPlus1Upper[2] = (*u)[ui.index()];
-                
-                
                 rightPlus1Upper[3] = (*u)[ui.index()+3];
-                
-                
-                
-
-
-
             }
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()/*-6*/-6)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()+3];
-                
-                
                 rightPlus1Lower[1] = (*v)[vi.index()+6];
-                
-                
-
                 rightPlus1Lower[2] = (*u)[ui.index()+3];
-                
-                
                 rightPlus1Lower[3] = (*u)[ui.index()+6];
-                
-                
-                
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_iPlus1_j;
             if(minusLower!=0)
             {
@@ -2351,43 +2216,21 @@ cout << "First product solved.\n";
             if(ui.index()>=/*6*/3 && ui.index()<ui_END.index())
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3];
-                
-                
                 rightPlus1Upper[1] = (*v)[vi.index()];
-                
-                
-
                 rightPlus1Upper[2] = (*u)[ui.index()-3];
-                
-                
                 rightPlus1Upper[3] = (*u)[ui.index()];
-                
-                
-                
-
-
 
             }
             if(ui.index()>=0/*6*/ && ui.index()<=ui_END.index()-3)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
-                
-                
                 rightPlus1Lower[1] = (*v)[vi.index()+3];
-                
-                
-
                 rightPlus1Lower[2] = (*u)[ui.index()];
-                
-                
                 rightPlus1Lower[3] = (*u)[ui.index()+3];
-                
-                
-                
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
 
             if(minusLower!=0)
             {
@@ -2401,9 +2244,9 @@ cout << "First product solved.\n";
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m1bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m1bandPlus1[ui.index()] = -(_delta_t / (4*_delta_x)) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited +
                                                        thetaXMinus_i_j_limited );
-            m3bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m3bandPlus1[ui.index()] = (*_c)[k]*(_delta_t / (4*_delta_x)) * (2 - thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited +
                                                        thetaXMinus_i_j_limited );
             //FINISHED band_+1.
 
@@ -2412,45 +2255,22 @@ cout << "First product solved.\n";
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-3)
             {
                 rightPlus2Upper[0] = (*v)[vi.index()];
-                
-                
                 rightPlus2Upper[1] = (*v)[vi.index()+3];
-                
-                
-
                 rightPlus2Upper[2] = (*u)[ui.index()];
-                
-                
                 rightPlus2Upper[3] = (*u)[ui.index()+3];
-                
-                
-                
-
-
-
             }
             DenseVector<WorkPrec_> rightPlus2Lower(ulint(4), ulint(0));
- 
+
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()/*-6*/-6)
             {
                 rightPlus2Lower[0] = (*v)[vi.index()+3];
-                
-                
                 rightPlus2Lower[1] = (*v)[vi.index()+6];
-                
-                
-
                 rightPlus2Lower[2] = (*u)[ui.index()+3];
-                
-                
                 rightPlus2Lower[3] = (*u)[ui.index()+6];
-                
-                
-                
             }
             //Compute ScalarProducts and Theta - value for band_+2:
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {
@@ -2464,8 +2284,8 @@ cout << "First product solved.\n";
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Compute matrix element value:
-            m1bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
-            m3bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            m1bandPlus2[ui.index()] = (_delta_t / (4*_delta_x)) * (thetaXMinus_iPlus1_j_limited);
+            m3bandPlus2[ui.index()] = -(*_c)[k]*(_delta_t / (4*_delta_x)) * (thetaXMinus_iPlus1_j_limited);
             //FINISHED band_+2.
 
             //Iterate:
@@ -2488,14 +2308,13 @@ cout << "First product solved.\n";
         m3.insert_band(3, m3bandPlus1.copy());
         m3.insert_band(6, m3bandPlus2.copy());
         m3.insert_band(-3,m3bandMinus1.copy());
- 
 
         cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
         std::cout << "Finished Matrix Assembly 1.\n";
- 
+
     }
     /**
      *
@@ -2527,20 +2346,20 @@ cout << "First product solved.\n";
         unsigned int k = 0;
         //Preparing left operand for all scalar products
         DenseVector<WorkPrec_> constantVector(ulint(4), ulint(0));
-        constantVector[0] = WorkPrec_(-1);
-        constantVector[1] = WorkPrec_(1);
-        constantVector[2] = WorkPrec_(-((*_d)[k]));
-        constantVector[3] = WorkPrec_((*_d)[k]);
-        //Preparing left operand for all scalar products
+               //Preparing left operand for all scalar products
         DenseVector<WorkPrec_> constantVectorMinus(ulint(4), ulint(0));
-        constantVectorMinus[0] = WorkPrec_(-1);
-        constantVectorMinus[1] = WorkPrec_(1);
-        constantVectorMinus[2] = WorkPrec_((*_d)[k]);
-        constantVectorMinus[3] = WorkPrec_(-((*_d)[k]));
 
- 
         while(ui!=ui_END)
         {
+            constantVector[0] = WorkPrec_(-1);
+            constantVector[1] = WorkPrec_(1);
+            constantVector[2] = WorkPrec_(-((*_d)[k]));
+            constantVector[3] = WorkPrec_((*_d)[k]);
+            constantVectorMinus[0] = WorkPrec_(-1);
+            constantVectorMinus[1] = WorkPrec_(1);
+            constantVectorMinus[2] = WorkPrec_((*_d)[k]);
+            constantVectorMinus[3] = WorkPrec_(-((*_d)[k]));
+
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
             DenseVector<WorkPrec_> rightMinus1Upper(ulint(4), ulint(0));
@@ -2550,10 +2369,6 @@ cout << "First product solved.\n";
                 rightMinus1Upper[1] = (*v)[vi.index()-3*(_d_width+4)];
                 rightMinus1Upper[2] = (*u)[ui.index()-6*(_d_width+4)];
                 rightMinus1Upper[3] = (*u)[ui.index()-3*(_d_width+4)];
-               
-
-
-
             }
             DenseVector<WorkPrec_> rightMinus1Lower(ulint(4), ulint(0));
             if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index()) 
@@ -2562,12 +2377,11 @@ cout << "First product solved.\n";
                 rightMinus1Lower[1] = (*v)[vi.index()];
                 rightMinus1Lower[2] = (*u)[ui.index()-3*(_d_width+4)];
                 rightMinus1Lower[3] = (*u)[ui.index()];
-               
             }
 
             //Compute ScalarProducts and Theta - value for band_-1:
-            WorkPrec_ minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Upper, constantVector );
-            WorkPrec_ minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Lower, constantVector );
+            WorkPrec_ minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Upper, constantVector );
+            WorkPrec_ minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Lower, constantVector );
             WorkPrec_ thetaXPlus_iMinus1_j;
             if(minusLower!=0)
             {
@@ -2577,8 +2391,8 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
             //Compute matrix element value:
-            m2bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
-            m4bandMinus1[ui.index()] = (_delta_t / 4*_delta_x) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m2bandMinus1[ui.index()] = (_delta_t / (4*_delta_y)) * (2 -  thetaXPlus_iMinus1_j_limited);
+            m4bandMinus1[ui.index()] = (*_d)[k]*(_delta_t / (4*_delta_y)) * (2 -  thetaXPlus_iMinus1_j_limited);
             //FINISHED band_-1.
 
             //Prepare right operands for diagonal:
@@ -2599,12 +2413,11 @@ cout << "First product solved.\n";
                 rightDiagLower[1] = (*v)[vi.index()+3*(_d_width+4)];
                 rightDiagLower[2] = (*u)[ui.index()];
                 rightDiagLower[3] = (*u)[ui.index()+3*(_d_width+4)];
-               
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
             WorkPrec_ thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2624,9 +2437,6 @@ cout << "First product solved.\n";
                 rightDiagUpper[1] = (*v)[vi.index()-3*(_d_width)];
                 rightDiagUpper[2] = (*u)[ui.index()-6*(_d_width)];
                 rightDiagUpper[3] = (*u)[ui.index()-3*_d_width];
-               
-
-
 
             }
             if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index())
@@ -2635,11 +2445,10 @@ cout << "First product solved.\n";
                 rightDiagLower[1] = (*v)[vi.index()];
                 rightDiagLower[2] = (*u)[ui.index()-3*(_d_width+4)];
                 rightDiagLower[3] = (*u)[ui.index()];
-              
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
 
             if(minusLower!=0)
             {
@@ -2659,10 +2468,6 @@ cout << "First product solved.\n";
                 rightDiagUpper[1] = (*v)[vi.index()];
                 rightDiagUpper[2] = (*u)[ui.index()-3*(_d_width+4)];
                 rightDiagUpper[3] = (*u)[ui.index()];
-               
-
-
-
             }
             if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4))
             {
@@ -2670,11 +2475,10 @@ cout << "First product solved.\n";
                 rightDiagLower[1] = (*v)[vi.index()+3*(_d_width+4)];
                 rightDiagLower[2] = (*u)[ui.index()];
                 rightDiagLower[3] = (*u)[ui.index()+3*(_d_width+4)];
-               
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_i_j;
             if(minusLower!=0)
             {
@@ -2688,9 +2492,9 @@ cout << "First product solved.\n";
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m2diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m2diag[ui.index()] = (_delta_t / (4*_delta_y)) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            m4diag[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m4diag[ui.index()] = -(*_d)[k]*(_delta_t / (4*_delta_y)) * (4-thetaXPlus_i_j_limited - thetaXPlus_iMinus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED diagonal.
 
@@ -2714,8 +2518,8 @@ cout << "First product solved.\n";
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
             thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2735,7 +2539,7 @@ cout << "First product solved.\n";
                 rightPlus1Upper[1] = (*v)[vi.index()+3*(_d_width+4)];
                 rightPlus1Upper[2] = (*u)[ui.index()];
                 rightPlus1Upper[3] = (*u)[ui.index()+3*(_d_width+4)];
- 
+
 
             }
             if(ui.index()>=0/*6*(_d_width+4)*/ && ui.index()<=ui_END.index()-6*(_d_width+4))
@@ -2744,11 +2548,10 @@ cout << "First product solved.\n";
                 rightPlus1Lower[1] = (*v)[vi.index()+6*(_d_width+4)];
                 rightPlus1Lower[2] = (*u)[ui.index()+3*(_d_width+4)];
                 rightPlus1Lower[3] = (*u)[ui.index()+6*(_d_width+4)];
-               
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_iPlus1_j;
             if(minusLower!=0)
             {
@@ -2768,9 +2571,6 @@ cout << "First product solved.\n";
                 rightPlus1Upper[1] = (*v)[vi.index()];
                 rightPlus1Upper[2] = (*u)[ui.index()-3*(_d_width+4)];
                 rightPlus1Upper[3] = (*u)[ui.index()];
-               
-
-
 
             }
             if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<ui_END.index()-/*6*/3*(_d_width+4))
@@ -2779,11 +2579,10 @@ cout << "First product solved.\n";
                 rightPlus1Lower[1] = (*v)[vi.index()+3*(_d_width+4)];
                 rightPlus1Lower[2] = (*u)[ui.index()];
                 rightPlus1Lower[3] = (*u)[ui.index()+3*(_d_width+4)];
-               
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
 
             if(minusLower!=0)
             {
@@ -2797,9 +2596,9 @@ cout << "First product solved.\n";
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m2bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m2bandPlus1[ui.index()] = -(_delta_t / (4*_delta_y)) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
-            m4bandPlus1[ui.index()] = -(_delta_t / 4*_delta_x) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m4bandPlus1[ui.index()] = (*_d)[k]*(_delta_t / (4*_delta_y)) * (2 - thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
                                                        thetaXMinus_i_j_limited );
             //FINISHED band_+1.
 
@@ -2811,21 +2610,21 @@ cout << "First product solved.\n";
                 rightPlus2Upper[1] = (*v)[vi.index()+3*(_d_width+4)];
                 rightPlus2Upper[2] = (*u)[ui.index()];
                 rightPlus2Upper[3] = (*u)[ui.index()+3*(_d_width+4)];
- 
+
             }
             DenseVector<WorkPrec_> rightPlus2Lower(ulint(4), ulint(0));
- 
+
             if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-6*(_d_width+4))
             {
                 rightPlus2Lower[0] = (*v)[vi.index()+3*(_d_width+4)];
                 rightPlus2Lower[1] = (*v)[vi.index()+6*(_d_width+4)];
                 rightPlus2Lower[2] = (*u)[ui.index()+3*(_d_width+4)];
                 rightPlus2Lower[3] = (*u)[ui.index()+6*(_d_width+4)];
-                 
+
             }
             //Compute ScalarProducts and Theta - value for band_+2:
-            minusUpper = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = ScalarProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {
@@ -2839,8 +2638,8 @@ cout << "First product solved.\n";
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Compute matrix element value:
-            m2bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
-            m4bandPlus2[ui.index()] = (_delta_t / 4*_delta_x) * (thetaXMinus_iPlus1_j_limited);
+            m2bandPlus2[ui.index()] = (_delta_t / (4*_delta_x)) * (thetaXMinus_iPlus1_j_limited);
+            m4bandPlus2[ui.index()] = -(*_d)[k]*(_delta_t / (4*_delta_x)) * (thetaXMinus_iPlus1_j_limited);
             //FINISHED band_+2.
 
             //Iterate:
@@ -2864,18 +2663,19 @@ cout << "First product solved.\n";
         m4.insert_band(3*(_d_width +4), m4bandPlus1.copy());
         m4.insert_band(6*(_d_width +4), m4bandPlus2.copy());
         m4.insert_band(-3*(_d_width +4), m4bandMinus1.copy());
-        
+
         cout << "M_2:" << stringify(m2.band(ulint(0))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(3*(_d_width +4)))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(6*(_d_width +4)))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(-3*(_d_width +4)))) << endl;
         std::cout << "Finished Matrix Assembly 2.\n";
- 
+
     }
 
     /** Implementation of a simple postprocessing method generating a file for GNUPLOT>splot
      *  to display the heightfield in one timestep. The fileformat is "default", which means, that
-     *  for each row, a block with tripels is written to the file: <x, y, value>. The row-blocks 
+     *  for each row, a block with tripels is written to the file: <x, y, value>. The row-blocks
+     *
      *  are separated by empty records within the file. When reading the file without plotting, be careful to
      *  have in mind, that a step of 1 from one row to the other means a step of one in x -direction so we
      *  have the "scalarfield" -point of view and not the "matrix" -point of view.
@@ -2889,8 +2689,8 @@ cout << "First product solved.\n";
      *
      * \param every In order to not have an overload of files, we do not need, one can specify the number by which _solve_time has to be able to be divided by restlessly - obviously this will slow down the computation, so the common use case will be to set every to _solve_time, so that we render only the data for the last timestep.
      *
-     * 
-     **/ 
+     *
+     **/
     template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_do_postprocessing(int every)
     {
@@ -2899,7 +2699,6 @@ cout << "First product solved.\n";
             string filename;
             ofstream file;
             filename = "rsolverfield" + stringify(_solve_time) + ".dat";
-            
             file.open(filename.c_str());
 
             ///For every column, traverse elements and write record to file:
@@ -2917,7 +2716,6 @@ cout << "First product solved.\n";
         }
         cout <<"Finished postprocessing." << endl;
     }
- 
 
 }
 #endif

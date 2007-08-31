@@ -34,7 +34,7 @@
  *
  * \ingroup grplibswe
  */
-namespace pg512
+namespace honei
 {
     using std::max;
     using std::min;

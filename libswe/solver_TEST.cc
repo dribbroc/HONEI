@@ -25,7 +25,7 @@
 #include <string>
 #include <iostream>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 using namespace std;
 
@@ -41,15 +41,19 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            ulint dwidth =4;
-            ulint dheight =4;
-            ulint timesteps =20;
- 
+            ulint dwidth =41;
+            ulint dheight =41;
+            ulint timesteps =1;
+
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
             for(ulint i = 0; i< height.rows(); ++i)
             {
-                (height)[0][i] = DataType_(5);
+                for(ulint j=0; j<height.columns()-10; ++j)
+                {
+                    height[i][j] = DataType_(10);
+                }
+                 //(height)[0][i] = DataType_(10);
             }
             //END SCENARIO setup
             DenseMatrix<DataType_> bottom(dheight, dwidth, DataType_(1));
@@ -61,22 +65,29 @@ class RelaxSolverQuickTest :
             DenseVector<DataType_> w(entries, DataType_(1)); 
             DenseVector<DataType_> bx (entries/3, DataType_(0));
             DenseVector<DataType_> by (entries/3, DataType_(0));
-            DenseVector<DataType_> c (3,DataType_(5e-200));
-            DenseVector<DataType_> d (3,DataType_(5e-200));
-            
-            DataType_ deltax = .01;                       
-            DataType_ deltay = .01;
-            DataType_ deltat = .1;
+            DenseVector<DataType_> c (3,DataType_(5));
+            DenseVector<DataType_> d (3,DataType_(5));
+            //SCENARIO setup:
+            c[0] = 10;
+            c[1] = 6;
+            c[2] = 11;
+            d[0] = 10;
+            d[1] = 5;
+            d[2] = 11;
 
-            double eps = 1e-256;                  
+            DataType_ deltax = 5;
+            DataType_ deltay = 5;
+            DataType_ deltat = 5./22.;
+
+            double eps = 10e-6;
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
-                (&height, &bottom, &u1, &u2, &u, &v, &w, 
+                (&height, &bottom, &u1, &u2, &u, &v, &w,
                 dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
             relax_solver.do_preprocessing();
             cout << "Height -field after preprocessing:\n";
             string outHeight = stringify(height);
             cout <<  outHeight;
-            for (ulint i = 1; i <= timesteps; ++i) 
+            for (ulint i = 1; i <= timesteps; ++i)
             {
                 relax_solver.solve();
             }
