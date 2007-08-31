@@ -148,6 +148,8 @@ namespace honei
         template <typename DT_>
         static DT_ value(const Vector<DT_> & vector)
         {
+            CONTEXT("When reducing Vector to Scalar by sum:");
+
             DT_ result(0);
 
             for (typename Vector<DT_>::ConstElementIterator i(vector.begin_elements()), i_end(vector.end_elements()) ;
@@ -162,6 +164,8 @@ namespace honei
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & vector)
         {
+            CONTEXT("When reducing SparseVector to Scalar by sum:");
+
             DT_ result(0);
 
             for (typename Vector<DT_>::ConstElementIterator i(vector.begin_non_zero_elements()), i_end(vector.end_non_zero_elements()) ;

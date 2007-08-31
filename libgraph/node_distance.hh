@@ -1,4 +1,4 @@
-* vim: set sw=4 sts=4 et nofoldenable : */
+/* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>

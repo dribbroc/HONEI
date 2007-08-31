@@ -290,7 +290,8 @@ namespace honei
     template <typename DataType_> bool operator== (const Vector<DataType_> & left, const Vector<DataType_> & right)
     {
         bool result(true);
-
+        if (left.size() != right.size())
+            return false;
         for (typename Vector<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
                 j(right.begin_elements()) ; i != i_end ; ++i)
         {

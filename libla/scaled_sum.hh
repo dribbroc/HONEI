@@ -68,6 +68,8 @@ namespace honei
         template <typename DT1_, typename DT2_, typename DT3_>
         static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const DenseVector<DT2_> & right, DT3_ scalar)
         {
+            CONTEXT("When calculating ScaledSum (DenseVector, DenseVector, scalar):");
+
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
@@ -85,6 +87,8 @@ namespace honei
         template <typename DT1_, typename DT2_, typename DT3_>
         static SparseVector<DT1_> & value(SparseVector<DT1_> & left, const SparseVector<DT2_> & right, DT3_ scalar)
         {
+            CONTEXT("When calculating ScaledSum (SparseVector, SparseVector, scalar):");
+
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
@@ -114,6 +118,7 @@ namespace honei
         template <typename DT1_, typename DT2_, typename DT3_>
         static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const SparseVector<DT2_> & right, DT3_ scalar)
         {
+            CONTEXT("When calculating ScaledSum (DenseVector, SparseVector, scalar):");
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 

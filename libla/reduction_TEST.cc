@@ -29,6 +29,7 @@
 using namespace honei;
 using namespace tests;
 
+CONTEXT("When testing reduction:");
 template <typename DT_>
 class BandedMatrixReductionToSumTest :
     public BaseTest
@@ -92,7 +93,7 @@ class DenseMatrixReductionToSumTest :
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size + 1, DT_(1));
-                DenseVector<DT_> dv1(size, DT_(size + 1));
+                DenseVector<DT_> dv1(size + 1, DT_(size + 1));
                 DenseVector<DT_> sum(Reduction<rt_sum>::value(dm1));
 
                 TEST_CHECK_EQUAL(sum, dv1);
@@ -140,7 +141,7 @@ class SparseMatrixReductionToSumTest :
             for (unsigned long size(11) ; size < (1 << 12) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1);
-                DenseVector<DT_> dv1(size, DT_(0));
+                DenseVector<DT_> dv1(size + 1, DT_(0));
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
@@ -173,7 +174,7 @@ class SparseMatrixReductionQuickTest :
         {
             unsigned long size(22);
             SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1);
-            DenseVector<DT_> dv1(size, DT_(0));
+            DenseVector<DT_> dv1(size + 1, DT_(0));
             for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
@@ -299,7 +300,7 @@ class SparseVectorReductionToSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(22);
             DT_ s1(0);
             SparseVector<DT_> sv1(size, size / 8 + 1);
             for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
