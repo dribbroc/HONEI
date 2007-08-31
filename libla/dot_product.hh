@@ -18,8 +18,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_SCALAR_PRODUCT_HH
-#define LIBLA_GUARD_SCALAR_PRODUCT_HH 1
+#ifndef LIBLA_GUARD_DOT_PRODUCT_HH
+#define LIBLA_GUARD_DOT_PRODUCT_HH 1
 
 #include <libutil/tags.hh>
 #include <libla/dense_vector.hh>
@@ -29,34 +29,32 @@
 /**
  * \file
  *
- * Templatized definitions of operation ScalarProduct.
+ * Templatized definitions of operation DotProduct.
  *
  * \ingroup grpoperations
- * \ingroup grpreductions
  */
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
-     * ScalarProduct is the class template for the operation
+     * DotProduct is the class template for the operation
      * \f[
-     *     ScalarProduct(x, y): \quad r \leftarrow x \cdot y,
+     *     DotProduct(x, y): \quad r \leftarrow x \cdot y,
      * \f]
      * which yields the scalar or inner product of the given vectors x and y.
      *
      * \ingroup grpoperations
+     * \ingroup grpvectoroperations
      * \ingroup grpreductions
      */
-    template <typename Tag_ = tags::CPU> struct ScalarProduct
+    template <typename Tag_ = tags::CPU> struct DotProduct
     {
         /**
-         * Returns the scalar (or inner) product of two given vectors.
+         * Returns the dot- (or inner) product of two given vectors.
          *
-         * \param x One of the vectors of which the scalar product shall be
-         *          computed.
+         * \param x One of the vectors of which the scalar product shall be computed.
          * \param y idem
          *
-         * \retval Will return a static instance of the used data type
-         *         containing the scalar product.
+         * \retval r Will return an instance of the used data type containing the scalar product.
          *
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
@@ -65,6 +63,8 @@ namespace pg512 ///< \todo Namespace name?
         template <typename DT1_, typename DT2_>
         static DT1_ value(const Vector<DT1_> & left, const Vector<DT2_> & right)
         {
+            CONTEXT("When calculating Vector-Vector dot product:");
+
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
@@ -82,6 +82,8 @@ namespace pg512 ///< \todo Namespace name?
         template <typename DT1_, typename DT2_>
         static DT1_ value(const SparseVector<DT1_> & left, const Vector<DT2_> & right)
         {
+            CONTEXT("When calculating SparseVector-Vector dot product:");
+
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
@@ -99,6 +101,8 @@ namespace pg512 ///< \todo Namespace name?
         template <typename DT1_, typename DT2_>
         static DT1_ value(const SparseVector<DT1_> & left, const SparseVector<DT2_> & right)
         {
+            CONTEXT("When calculating SparseVector-SparseVector dot product:");
+
             if (left.size() != right.size())
                 throw VectorSizeDoesNotMatch(right.size(), left.size());
 
@@ -130,6 +134,8 @@ namespace pg512 ///< \todo Namespace name?
         static typename IT1_::value_type value(IT1_ & left, const IT1_ & left_end,
                 IT2_ & right, const IT2_ & right_end)
         {
+            CONTEXT("When calculating iterator-based dot product:");
+
             typename IT1_::value_type result(0);
 
             for ( ; (left != left_end) && (right != right_end) ; ++left, ++right)

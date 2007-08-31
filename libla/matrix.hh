@@ -38,7 +38,7 @@
  *
  * \ingroup grpmatrix
  **/
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * \brief Matrix is the abstract base class for all matrix-like types used.

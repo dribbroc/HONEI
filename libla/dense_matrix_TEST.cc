@@ -17,14 +17,14 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/dense_matrix.hh>
 #include <libla/vector.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
 
-using namespace pg512;
+using namespace honei;
 using  namespace tests;
 
 template <typename DataType_>
@@ -194,7 +194,7 @@ class DenseMatrixQuickTest :
 
             DenseMatrix<DataType_> dm2(3, 4, DataType_(2));
             DenseMatrix<DataType_> dm3(3, 5, DataType_(2));
-            DenseMatrix<DataType_> dm4(4, 5, DataType_(2));            
+            DenseMatrix<DataType_> dm4(4, 5, DataType_(2));
             TEST_CHECK_THROWS(dm2==dm3, MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(dm3==dm4, MatrixColumnsDoNotMatch);
 

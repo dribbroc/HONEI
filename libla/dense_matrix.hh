@@ -38,7 +38,7 @@
  *
  * \ingroup grpmatrix
  */
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * \brief DenseMatrix is a matrix with O(column * row) non-zero elements which keeps its data

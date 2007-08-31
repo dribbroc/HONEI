@@ -19,13 +19,13 @@
 #ifndef LIBLA_GUARD_RESIDUAL_HH
 #define LIBLA_GUARD_RESIDUAL_HH 1
 
-#include <libutil/tags.hh>
-#include <libla/dense_vector.hh>
 #include <libla/dense_matrix.hh>
+#include <libla/dense_vector.hh>
+#include <libla/dot_product.hh>
 #include <libla/matrix_error.hh>
-#include <libla/scalar_product.hh>
 #include <libla/sparse_matrix.hh>
 #include <libla/vector_error.hh>
+#include <libutil/tags.hh>
 
 /**
  * \file
@@ -34,7 +34,7 @@
  *
  * \ingroup grpoperations
  */
-namespace pg512
+namespace honei
 {
     /**
      * \brief Residual of a system of linear equations.
@@ -64,10 +64,11 @@ namespace pg512
          * \param x The vector of approximative solutions to the system of linear
          *          equations.
          *
-         * \retval Will modify b and return it.
+         * \retval b Will modify b and return it.
          */
 
         /// \{
+
         template <typename DT1_, typename DT2_, typename VT_>
         static DenseVector<DT1_> value(DenseVector<DT1_> & b,
                 const DenseMatrix<DT2_> & a,
@@ -87,7 +88,7 @@ namespace pg512
             for (typename Vector<DT1_>::ElementIterator i(b.begin_elements()),
                     i_end(b.end_elements()) ; i != i_end ; ++i)
             {
-                *i -= ScalarProduct<>::value(a[i.index()], x);
+                *i -= DotProduct<>::value(a[i.index()], x);
             }
 
             return b;
@@ -112,11 +113,12 @@ namespace pg512
             for (typename Vector<DT1_>::ElementIterator i(b.begin_elements()),
                     i_end(b.end_elements()) ; i != i_end ; ++i)
             {
-                *i -= ScalarProduct<>::value(a[i.index()], x);
+                *i -= DotProduct<>::value(a[i.index()], x);
             }
 
             return b;
         }
+
         /// \}
     };
 }

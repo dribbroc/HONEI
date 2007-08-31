@@ -41,7 +41,7 @@
  *
  * \ingroup grpmatrix
  **/
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * \brief BandedMatrix is a square matrix with O(size) non-zero bands which keeps its data

@@ -22,7 +22,7 @@
 
 #include <string>
 
-using namespace pg512;
+using namespace honei;
 
 VectorError::VectorError(const std::string & message) throw () :
     Exception(message)

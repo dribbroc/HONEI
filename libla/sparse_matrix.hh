@@ -35,7 +35,7 @@
  *
  * \ingroup grpmatrix
  **/
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * \brief SparseMatrix is a matrix with O(rows) sparse row-vectors.

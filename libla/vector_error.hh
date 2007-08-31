@@ -31,7 +31,7 @@
  *
  * \ingroup grpvectorexceptions
  **/
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * A VectorError is the base class for all Vector related exceptions.

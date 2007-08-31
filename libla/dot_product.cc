@@ -17,13 +17,14 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <libla/scalar_product.hh>
+#include <libla/dot_product.hh>
 
 #include <string>
 #include <iostream>
 
-using namespace pg512;
-/*
+using namespace honei;
+
+#if 0
 template <>
 float ScalarProduct<tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right)
 {
@@ -31,4 +32,4 @@ float ScalarProduct<tags::Cell>::value(const DenseVector<float> & left, const De
 
     return 0;
 }
-*/
+#endif

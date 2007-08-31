@@ -2,9 +2,9 @@
 
 /*
  * Copyright (c) 2007 Andre Matuschek <andre@matuschek.org>
- * Copyright (c) 2007 David Gies      <david-gies@gmx.de> 
- * Copyright (c) 2007 Danny van Dyk   <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Dirk Ribbrock   <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 David Gies <david-gies@gmx.de>
+ * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,7 +19,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #ifndef UNITTEST_GUARD_UNITTEST_HH
 #define UNITTEST_GUARD_UNITTEST_HH 1
 
@@ -35,7 +35,7 @@
  *
  * \ingroup tests
  **/
- 
+
 namespace tests
 {
     /**
@@ -66,7 +66,7 @@ namespace tests
              * Runs the test case.
              *
              * Called by unittest framework only.
-             * \ingroup tests         
+             * \ingroup tests
              */
             virtual void run() const = 0;
 
@@ -184,7 +184,7 @@ namespace tests
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception "+ pg512::stringify(test_e.what()) + \
+                    "Test threw unexpected exception "+ honei::stringify(test_e.what()) + \
                     " inside a TEST_CHECK_EQUAL block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
@@ -206,14 +206,14 @@ namespace tests
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception "+ pg512::stringify(test_e.what()) + \
+                    "Test threw unexpected exception "+ honei::stringify(test_e.what()) + \
                     " inside a TEST_CHECK_NOT_EQUAL block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected unknown exception inside a TEST_CHECK_NOT_EQUAL block"); \
         } \
     } while (false)
-    
+
 /**
  * Check that stringify(a) == stringify(b).
  */
@@ -229,7 +229,7 @@ namespace tests
             throw; \
         } catch (const exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception  "+ pg512::stringify(test_e.what()) + \
+                    "Test threw unexpected exception  "+ honei::stringify(test_e.what()) + \
                     " inside a TEST_CHECK_STRINGIFY_EQUAL block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
@@ -249,7 +249,7 @@ namespace tests
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception "+ pg512::stringify(test_e.what()) + \
+                    "Test threw unexpected exception "+ honei::stringify(test_e.what()) + \
                     " inside a TEST_CHECK block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
@@ -274,7 +274,7 @@ namespace tests
             throw; \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception "+ pg512::stringify(test_e.what()) + \
+                    "Test threw unexpected exception "+ honei::stringify(test_e.what()) + \
                     " inside a TEST_CHECK_THROWS block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
@@ -296,7 +296,7 @@ namespace tests
             throw;  \
         } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Test threw unexpected exception  "+ pg512::stringify(test_e.what()) + \
+                    "Test threw unexpected exception  "+ honei::stringify(test_e.what()) + \
                     " inside a TEST_CHECK_EQUAL_WITHIN_EPS block"); \
         } catch (...) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \

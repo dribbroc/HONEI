@@ -6,7 +6,7 @@
 #include <string>
 #include <tr1/memory>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 
 template <typename DataType_>

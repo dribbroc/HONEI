@@ -17,57 +17,58 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_MATRIX_DIFFERENCE_HH
-#define LIBLA_GUARD_MATRIX_DIFFERENCE_HH 1
+#ifndef LIBLA_GUARD_DIFFERENCE_HH
+#define LIBLA_GUARD_DIFFERENCE_HH 1
 
-#include <libutil/tags.hh>
-#include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
-#include <libla/sparse_matrix.hh>
+#include <libla/dense_matrix.hh>
+#include <libla/difference.hh>
 #include <libla/matrix_error.hh>
-#include <libla/scalar_vector_product.hh>
-#include <libla/vector_difference.hh>
-#include <iostream>
+#include <libla/product.hh>
+#include <libla/scale.hh>
+#include <libla/sparse_matrix.hh>
+#include <libutil/tags.hh>
 
 /**
  * \file
  *
- * Templatized definitions of operation MatrixDifference.
+ * Templatized definitions of operation Difference.
  *
  * \ingroup grpoperations
  */
-namespace pg512
+namespace honei
 {
     /**
-     * \brief Difference of two matrices.
+     * \brief Difference of two entities.
      *
-     * MatrixDifference is the class template for the subtraction operation
+     * Difference is the class template for the subtraction operation
      * \f[
-     *     MatrixDifference(a, b): \quad r \leftarrow a - b,
+     *     Difference(a, b): \quad r \leftarrow a - b,
      * \f]
-     * which yields r, the difference of matrices a and b.
+     * which yields r, the difference of entities a and b.
      *
      * Usually, the return value is the minuend a after modification. However,
      * there are signatures for which b is returned. For these cases a short
      * notice is added.
      *
      * \ingroup grpoperations
+     * \ingroup grpmatrixoperations
+     * \ingroup grpvectoroperations
      */
-
-    template <typename Tag_ = tags::CPU> struct MatrixDifference
+    template <typename Tag_ = tags::CPU> struct Difference
     {
         /**
-         * \brief Returns the the difference of two given matrices.
+         * \brief Returns the the difference of two given matrices
          *
-         * \param a The matrix that is the minuend of the operation.
-         * \param b The matrix that is the subtrahend of the operation.
+         * \param a The entity that is the minuend of the operation.
+         * \param b The entity that is the subtrahend of the operation.
          *
-         * \retval Will modify the minuend a and return it.
+         * \retval r Will modify the minuend a and return it.
          *
          * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
          * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
          * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
-         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         * \exception MatrixIsNotSquare is thrown if a RowAccessMatrix's number of rows does not equal its number of columns.
          */
 
         /// \{
@@ -111,7 +112,8 @@ namespace pg512
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()), r_end(b.end_non_zero_elements());
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()), 
+                     r_end(b.end_non_zero_elements());
             for ( ; r != r_end ; ++r )
             {
                 a[r.row()][r.column()] -= *r;
@@ -159,8 +161,7 @@ namespace pg512
         }
 
         template <typename DT1_, typename DT2_>
-        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a,
-                const BandedMatrix<DT2_> & b)
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             CONTEXT("When subtracting BandedMatrix from BandedMatrix:");
 
@@ -177,9 +178,9 @@ namespace pg512
                     continue;
 
                 if (l.exists())
-                    VectorDifference<>::value(*l, *r);
+                    Difference<>::value(*l, *r);
                 else
-                    a.band(r.index()) = ScalarVectorProduct<>::value(DT1_(-1), *((*r).copy()));
+                    a.band(r.index()) = Scale<>::value(DT1_(-1), *((*r).copy()));
             }
 
             return a;
@@ -192,7 +193,11 @@ namespace pg512
          * \param a The matrix that is the minuend of the operation.
          * \param b The matrix that is the subtrahend of the operation.
          *
-         * \retval Will modify the subtrahend b and return it.
+         * \retval b Will modify the subtrahend b and return it.
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          */
 
         /// \{
@@ -245,7 +250,90 @@ namespace pg512
             return b;
         }
         /// \}
+
+        /**
+         * \brief Returns the the difference of two given vectors.
+         *
+         * \param a The vector that is the left-hand minuend of the operation.
+         * \param b The vector that is the right-hand subtrahend of the operation.
+         *
+         * \retval a Will modify the minuend a and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
+        /// \{
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const DenseVector<DT2_> & right)
+        {
+            CONTEXT("When subtracting DenseVector from DenseVector:");
+
+            if (left.size() != right.size())
+                throw VectorSizeDoesNotMatch(right.size(), left.size());
+
+            typename Vector<DT2_>::ConstElementIterator r(right.begin_elements());
+            for (typename Vector<DT1_>::ElementIterator l(left.begin_elements()),
+                    l_end(left.end_elements()) ; l != l_end ; ++l)
+            {
+                *l -= *r;
+                ++r;
+            }
+
+            return left;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseVector<DT1_> & value(SparseVector<DT1_> & left, const SparseVector<DT2_> & right)
+        {
+            CONTEXT("When subtracting SparseVector from SparseVector:");
+
+            if (left.size() != right.size())
+                throw VectorSizeDoesNotMatch(right.size(), left.size());
+
+            typename Vector<DT1_>::ElementIterator l(left.begin_non_zero_elements());
+            for (typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; )
+            {
+                if (r.index() < l.index())
+                {
+                    left[r.index()] = -(*r);
+                    ++r;
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
+                    *l -= *r;
+                    ++l; ++r;
+                }
+            }
+            return left;
+            ///\todo: perhaps sparsify - i.e. substraction of 7 and 7 possible.
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & left, const SparseVector<DT2_> & right)
+        {
+            CONTEXT("When subtracting SparseVector from DenseVector:");
+
+            if (left.size() != right.size())
+                throw VectorSizeDoesNotMatch(right.size(), left.size());
+
+            DenseVector<DT1_> result(left.size(),0, 0, 1);
+
+            for (typename Vector<DT2_>::ConstElementIterator r(right.begin_non_zero_elements()),
+                    r_end(right.end_non_zero_elements()) ; r != r_end ; ++r)
+            {
+                left[r.index()] -= *r;
+            }
+
+            return left;
+        }
+
+        /// \}
     };
 }
-
 #endif

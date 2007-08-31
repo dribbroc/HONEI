@@ -40,7 +40,7 @@
  *
  * \ingroup grpvector
  **/
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * \brief SparseVector is a vector with O(1) non-zero elements which keeps its data
@@ -589,7 +589,7 @@ namespace pg512 ///< \todo Namespace name?
             virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
             {
                 return ((&_vector == other.parent()) && (_index == other.index()));
-
+            }
 
             /// Comparison operator for inequality.
             virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const

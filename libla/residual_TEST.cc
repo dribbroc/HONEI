@@ -18,13 +18,13 @@
  */
 
 #include <libla/residual.hh>
-#include <libla/matrix_vector_product.hh>
+#include <libla/product.hh>
 #include <unittest/unittest.hh>
 
 #include <limits>
 #include <iostream>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 
 template <typename DataType_>

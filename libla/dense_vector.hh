@@ -36,7 +36,7 @@
  *
  * \ingroup grpvector
  **/
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     template <typename DataType_> class DenseMatrix;
 

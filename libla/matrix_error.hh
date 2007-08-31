@@ -29,7 +29,7 @@
  *
  * \ingroup grpmatrixexceptions
  */
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * MatrixError is the base class for all Matrix related exceptions.

@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Andre Matuschek <andre@matuschek.org>
- * Copyright (c) 2007 David Gies      <david-gies@gmx.de> 
+ * Copyright (c) 2007 David Gies      <david-gies@gmx.de>
  * Copyright (c) 2007 Danny van Dyk   <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock   <dirk.ribbrock@uni-dortmund.de>
  *
@@ -19,7 +19,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <unittest/unittest.hh>
 
 #include <cstdlib>
@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 
 class TestList
@@ -107,8 +107,8 @@ QuickTest::is_quick_test() const
 
 TestFailedException::TestFailedException(const char * const function, const char * const file,
         const long line, const std::string & message) throw () :
-    _message(pg512::stringify(file) + ":" + pg512::stringify(line) + ": in " +
-            pg512::stringify(function) + ": " + message )
+    _message(honei::stringify(file) + ":" + honei::stringify(line) + ": in " +
+            honei::stringify(function) + ": " + message )
 {
 }
 
@@ -116,7 +116,7 @@ TestFailedException::~TestFailedException() throw ()
 {
 }
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
     int result(EXIT_SUCCESS);
     bool quick(false);

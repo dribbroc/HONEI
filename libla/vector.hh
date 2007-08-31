@@ -38,7 +38,7 @@
  *
  * \ingroup grpvector
  **/
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     /**
      * \brief Vector is the abstract baseclass for all vector-like types used.
@@ -285,8 +285,8 @@ namespace pg512 ///< \todo Namespace name?
     /**
      * \brief Compare two Vectors for equality.
      *
-     * \ingroup grpvectoroperations.
-     **/
+     * \ingroup grpvectoroperations
+     */
     template <typename DataType_> bool operator== (const Vector<DataType_> & left, const Vector<DataType_> & right)
     {
         bool result(true);
@@ -310,8 +310,8 @@ namespace pg512 ///< \todo Namespace name?
     /**
      * \brief Output our Vector to an ostream.
      *
-     * \ingroup grpvectoroperations.
-     **/
+     * \ingroup grpvectoroperations
+     */
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Vector<DataType_> & v)
     {
         lhs << "[ ";

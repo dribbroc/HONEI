@@ -33,7 +33,7 @@
  *
  * \ingroup grpvectoroperations
  **/
-namespace pg512
+namespace honei
 {
     /**
      * \brief VectorMaskedMaxIndex retrieves the index of the maximum element of a vector.

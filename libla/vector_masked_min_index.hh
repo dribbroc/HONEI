@@ -35,7 +35,7 @@
  *
  * \ingroup grpvectoroperations
  **/
-namespace pg512
+namespace honei
 {
     /**
      * \brief VectorMaskedMinIndex retrieves the index of the minimum element of a vector.

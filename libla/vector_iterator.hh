@@ -25,7 +25,7 @@
 #include <iterator>
 #include <tr1/memory>
 
-namespace pg512 ///< \todo Namespace name?
+namespace honei
 {
     class VectorIteratorTraits
     {

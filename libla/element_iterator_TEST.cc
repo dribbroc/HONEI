@@ -17,7 +17,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/element_iterator.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
@@ -26,7 +26,7 @@
 
 #include <string>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 
 template <typename DataType_>
@@ -51,14 +51,14 @@ class BandedMatrixElementIterationTest :
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
                 }
-                
+
                 BandedMatrix<DataType_> bm2(size);
                 for (typename BandedMatrix<DataType_>::ConstVectorIterator cb(bm2.begin_bands()), cb_end(bm2.end_bands()) ;
                     cb != cb_end ; ++cb)
                 {
                     DenseVector<DataType_>  dv = *cb;
-                        for (typename Vector<DataType_>::ConstElementIterator i(dv.begin_elements()), 
-                            i_end(dv.end_elements()) ; i != i_end ; ++i)                    
+                        for (typename Vector<DataType_>::ConstElementIterator i(dv.begin_elements()),
+                            i_end(dv.end_elements()) ; i != i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                         }
@@ -177,7 +177,7 @@ class SparseVectorElementIterationTest :
                 for (unsigned long i(0) ; i < size ; ++i, ++e)
                 {
                     TEST_CHECK_EQUAL(e.index(), i);
-                    if (i % 10 == 0) 
+                    if (i % 10 == 0)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*e, 10, std::numeric_limits<DataType_>::epsilon());
                         *e = 222;

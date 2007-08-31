@@ -17,17 +17,17 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #include <libla/dense_vector.hh>
+#include <libla/norm.hh>
 #include <libla/sparse_vector.hh>
-#include <libla/vector_norm.hh>
 #include <unittest/unittest.hh>
 
 #include <limits>
 #include <tr1/memory>
 #include <iostream>
 
-using namespace pg512;
+using namespace honei;
 using  namespace tests;
 
 template <typename DataType_>
@@ -53,16 +53,16 @@ class DenseVectorNormValueTest :
 
                 DataType_ s(size);
 
-                DataType_ vmax(VectorNorm<DataType_, vnt_max>::value(dv));
+                DataType_ vmax(Norm<vnt_max>::value(dv));
                 DataType_ smax(s / 1.23456789);
                 TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
-                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(dv));
+                DataType_ v1(Norm<vnt_l_one>::value(dv));
                 DataType_ s1(s * (s + 1) / 2 / 1.23456789);
                 DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-                DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(dv));
+                DataType_ v2(Norm<vnt_l_two, false>::value(dv));
                 DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
                 DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
@@ -95,16 +95,16 @@ class DenseVectorNormQuickTest :
 
             DataType_ s(size);
 
-            DataType_ vmax(VectorNorm<DataType_, vnt_max>::value(dv));
+            DataType_ vmax(Norm<vnt_max>::value(dv));
             DataType_ smax(s / 1.23456789);
             TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
-            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(dv));
+            DataType_ v1(Norm<vnt_l_one>::value(dv));
             DataType_ s1(s * (s + 1) / 2 / 1.23456789);
             DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-            DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(dv));
+            DataType_ v2(Norm<vnt_l_two, false>::value(dv));
             DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
             DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
@@ -129,8 +129,8 @@ class SparseVectorNormValueTest :
             {
                 SparseVector<DataType_> sv(size, size / 4 + 1);
                 DataType_ smax(0);
-                DataType_ s1(0);                
-                DataType_ s2(0);                      
+                DataType_ s1(0);
+                DataType_ s2(0);
                 for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()),
                         i_end(sv.end_elements()) ; i != i_end ; ++i)
                 {
@@ -140,17 +140,17 @@ class SparseVectorNormValueTest :
                         smax = DataType_((i.index() + 1) / 1.23456789);
                         s1 += DataType_((i.index() + 1) / 1.23456789);
                         s2 += DataType_((( i.index() + 1) / 1.23456789) * (( i.index() + 1) / 1.23456789));
-                    }   
+                    }
                 }
 
-                DataType_ vmax(VectorNorm<DataType_, vnt_max>::value(sv));
+                DataType_ vmax(Norm<vnt_max>::value(sv));
                 TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
-                DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv));
+                DataType_ v1(Norm<vnt_l_one>::value(sv));
                 DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-                DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(sv));
+                DataType_ v2(Norm<vnt_l_two, false>::value(sv));
                 DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
             }
@@ -175,8 +175,8 @@ class SparseVectorNormQuickTest :
             unsigned long size(5);
             SparseVector<DataType_> sv(size, size / 4 + 1);
             DataType_ smax(0);
-            DataType_ s1(0);                
-            DataType_ s2(0);                      
+            DataType_ s1(0);
+            DataType_ s2(0);
             for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()),
                     i_end(sv.end_elements()) ; i != i_end ; ++i)
             {
@@ -186,17 +186,17 @@ class SparseVectorNormQuickTest :
                     smax = DataType_((i.index() + 1) / 1.23456789);
                     s1 += DataType_((i.index() + 1) / 1.23456789);
                     s2 += DataType_((( i.index() + 1) / 1.23456789) * (( i.index() + 1) / 1.23456789));
-                }   
+                }
             }
 
-            DataType_ vmax(VectorNorm<DataType_, vnt_max>::value(sv));
+            DataType_ vmax(Norm<vnt_max>::value(sv));
             TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
-            DataType_ v1(VectorNorm<DataType_, vnt_l_one>::value(sv));
+            DataType_ v1(Norm<vnt_l_one>::value(sv));
             DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-            DataType_ v2(VectorNorm<DataType_, vnt_l_two, false>::value(sv));
+            DataType_ v2(Norm<vnt_l_two, false>::value(sv));
             DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
         }

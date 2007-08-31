@@ -17,15 +17,14 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_MATRIX_SUM_HH
-#define LIBLA_GUARD_MATRIX_SUM_HH 1
+#ifndef LIBLA_GUARD_SUM_HH
+#define LIBLA_GUARD_SUM_HH 1
 
-#include <libutil/tags.hh>
-#include <libla/dense_matrix.hh>
-#include <libla/sparse_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/dense_matrix.hh>
 #include <libla/matrix_error.hh>
-#include <libla/vector_sum.hh>
+#include <libla/sparse_matrix.hh>
+#include <libutil/tags.hh>
 
 #include <algorithm>
 
@@ -36,39 +35,42 @@
  *
  * \ingroup grpoperations
  **/
-namespace pg512
+namespace honei
 {
     /**
-     * \brief Sum of two matrices.
+     * \brief Sum of two entities
      *
-     * MatrixSum is the class template for the addition operation
+     * Sum is the class template for the addition operation
      * \f[
-     *     MatrixSum(a, b): \quad r \leftarrow a + b,
+     *     Sum(a, b): \quad r \leftarrow a + b,
      * \f]
-     * which yields r, the sum of matrices a and b.
+     * which yields r, the sum of entities a and b.
      *
      * The return value is the summand a after modification.
      *
      * \ingroup grpoperations
+     * \ingroup grpmatrixoperations
+     * \ingroup grpvectoroperations
      */
-
-    template <typename Tag_ = tags::CPU> struct MatrixSum
+    template <typename Tag_ = tags::CPU> struct Sum
     {
         /**
-         * \brief Returns the the sum of two given matrices.
+         * \brief Returns the the sum of two given entities.
          *
-         * \param a The matrix that is the left-hand summand of the operation.
-         * \param b The matrix that is the right-hand summand of the operation.
+         * \param a The entity that is the left-hand summand of the operation.
+         * \param b The entity that is the right-hand summand of the operation.
          *
-         * \retval Will modify the summand a and return it.
+         * \retval a Will modify the summand a and return it.
          *
          * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
          * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
          * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
          * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
 
         /// \{
+
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
@@ -174,7 +176,7 @@ namespace pg512
                     continue;
 
                 if (l.exists())
-                    VectorSum<>::value(*l, *r);
+                    Sum<>::value(*l, *r);
                 else
                     a.band(r.index()) = *((*r).copy());
             }
@@ -239,20 +241,147 @@ namespace pg512
             }
 
             typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements());
-            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements()) ; r != r_end ; ++r )
+            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements()) ;
+                    r != r_end ; ++r)
             {
                 if (r.index() < l.index())
                 {
                     a[r.row()][r.column()] = *r;
                 }
                 else // l.index() < r.index() not possible
-                *l += *r;
+                *l += *r; /// \todo check. possible bug?
                 ++l;
             }
 
             return a;
         }
+
         /// \}
+
+        /**
+         * Returns the matrix after adding a scalar to every element.
+         *
+         * \param a The DenseMatrix to be used.
+         * \param b The scalar to be added.
+         *
+         * \retval a The referenced matrix is changed by adding the given scalar to each of its elements.
+         */
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DT2_ b)
+        {
+            CONTEXT("When adding scalar to DenseMatrix:");
+
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
+            {
+                *l += b;
+            }
+
+            return a;
+        }
+
+        /**
+         * \brief Returns the the sum of two given vectors.
+         *
+         * \param a The vector that is the left-hand summand of the operation.
+         * \param b The vector that is the right-hand summand of the operation.
+         *
+         * \retval Will modify the summand a and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
+        /// \ingroup grpvectoroperations
+        /// \{
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        {
+            CONTEXT("When adding DenseVector to DenseVector:");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+            typename Vector<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
+            {
+                *l += *r;
+                ++r;
+            }
+
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            CONTEXT("When adding SparseVector to SparseVector:");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+            typename Vector<DT1_>::ElementIterator l(a.begin_non_zero_elements());
+            for (typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; )
+            {
+                if (r.index() < l.index())
+                {
+                    a[r.index()] = *r;
+                    ++r;
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
+                    *l += *r;
+                    ++l; ++r;
+                }
+            }
+            ///\todo: perhaps sparsify - i.e. addition of -7 and 7 possible
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+            for (typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r )
+            {
+                a[r.index()] += *r;
+            }
+
+            return a;
+        }
+
+        /// \}
+
+        /**
+         * Returns the vector after adding a scalar to every element.
+         *
+         * \param x The Vector that shall be added.
+         * \param a The scalar that shall be added.
+         *
+         * \retval x Will return x after modification.
+         */
+        template <typename DT_>
+        static DenseVector<DT_> & value(const DT_ scalar, DenseVector<DT_> & vector)
+        {
+            CONTEXT("When adding scalar to DenseVector:");
+
+            for (typename Vector<DT_>::ElementIterator l(vector.begin_elements()),
+                    l_end(vector.end_elements()) ; l != l_end ; ++l)
+            {
+                *l += scalar;
+            }
+
+            return vector;
+        }
     };
 }
 #endif
