@@ -34,7 +34,7 @@
  *
  * \ingroup grplibgraph
 **/
-namespace pg512
+namespace honei
 {
     /**
      * \brief Dijkstra computes the graph distances between nodes (and the previous nodes of the shortest path).

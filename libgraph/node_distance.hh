@@ -1,4 +1,4 @@
-/* vim: set sw=4 sts=4 et nofoldenable : */
+* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
@@ -23,22 +23,22 @@
 #ifndef LIBGRAPH_GUARD_NODE_DISTANCE_HH
 #define LIBGRAPH_GUARD_NODE_DISTANCE_HH 1
 
-#include <libutil/tags.hh>
-#include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
+#include <libla/difference.hh>
 #include <libla/matrix_error.hh>
-#include <libla/vector_norm.hh>
-#include <libla/vector_difference.hh>
+#include <libla/norm.hh>
+#include <libutil/tags.hh>
 
 /**
  * \file
  *
- * Implementation of NodeDistance. </br>
+ * Implementation of NodeDistance.
  *
  * \ingroup grplibgraph
  **/
-namespace pg512
+namespace honei
 {
     /**
      * \brief NodeDistance is used in the algorithm of Kamada-Kawai.
@@ -77,7 +77,7 @@ namespace pg512
                     // Now calculate difference tmp = v - w for each pair of nodes and
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
-                    DataType_ d = VectorNorm<DataType_>::value(VectorDifference<>::value(*v.copy(), w));
+                    DataType_ d = Norm<>::value(Difference<>::value(*v.copy(), w));
                     *e = d;
                 }
             }

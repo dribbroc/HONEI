@@ -25,7 +25,7 @@
 #include <string>
 #include <iostream>
 
-using namespace pg512;
+using namespace honei;
 using  namespace tests;
 
 template <typename DataType_>

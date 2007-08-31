@@ -28,20 +28,18 @@
 #include <libgraph/node_distance_inverse.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
-#include <libla/matrix_difference.hh>
+#include <libla/difference.hh>
+#include <libla/element_inverse.hh>
+#include <libla/element_product.hh>
 #include <libla/matrix_error.hh>
-#include <libla/matrix_element_inverse.hh>
-#include <libla/matrix_elementwise_product.hh>
-#include <libla/matrix_product.hh>
-#include <libla/matrix_row_sum_vector.hh>
-#include <libla/matrix_sum.hh>
-#include <libla/scalar_matrix_product.hh>
-#include <libla/scalar_matrix_sum.hh>
+#include <libla/product.hh>
+#include <libla/reduction.hh>
+#include <libla/sum.hh>
+#include <libla/scale.hh>
 #include <libla/vector.hh>
 
-#include <iostream>
-#include <tr1/memory>
 #include <cmath>
+#include <tr1/memory>
 
 /**
  * \file
@@ -50,7 +48,7 @@
  *
  * \ingroup grplibgraph
  **/
- namespace pg512
+ namespace honei
 {
     namespace methods
     {
@@ -107,7 +105,7 @@
                     throw GraphError("Edge length must be positive");
 #endif
             }
-            Positions(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes, 
+            Positions(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes,
                     DenseMatrix<DataType_> & weights_of_edges) :
                 _imp(new methods::Implementation<DataType_, GraphTag_>(coordinates, weights_of_nodes, weights_of_edges))
             {
@@ -163,7 +161,7 @@
                     _coordinates(coordinates),
                     _neighbours(neighbours),
                     _edge_length(edge_length)
-                { 
+                {
                 }
 
                 DataType_ value(const DataType_ & eps)
@@ -173,47 +171,47 @@
 
                     // Having inv_square_dist, mask it and invert each element to get square_dist
                     DenseMatrix<DataType_> square_dist(*inv_square_dist.copy());
-                    MatrixElementwiseProduct<>::value(square_dist, _neighbours);
-                    MatrixElementInverse<>::value(square_dist);
+                    ElementProduct<>::value(square_dist, _neighbours);
+                    ElementInverse<>::value(square_dist);
 
                     // Calculate the single diagonal matrix containing the row sum vector of square_dist
-                    DenseVector<DataType_> & sum_vec(*MatrixRowSumVector<DataType_>::value(square_dist));
+                    DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum>::value(square_dist)));
 
                     // Calculate the same stuff for inv_square_dist
-                    DenseVector<DataType_> & sum_vec_inv(*MatrixRowSumVector<DataType_>::value(inv_square_dist));
+                    DenseVector<DataType_> * sum_vec_inv(new DenseVector<DataType_>(Reduction<rt_sum>::value(inv_square_dist)));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec.size(), &sum_vec);
-                    MatrixDifference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
-                    ScalarMatrixProduct<>::value(DataType_(-1), square_dist);
+                    BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
+                    Difference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
+                    Scale<>::value(DataType_(-1), square_dist);
 
                     // Calculating attractive_forces = (_coordinates * square_dist)
-                    DenseMatrix<DataType_> attractive_forces(MatrixProduct<>::value(_coordinates, square_dist));
+                    DenseMatrix<DataType_> attractive_forces(Product<>::value(_coordinates, square_dist));
 
                     // Calculating attractive_forces = (1/k^2 * attractive_forces)
-                    ScalarMatrixProduct<>::value(DataType_(1 / (_edge_length * _edge_length)), attractive_forces);
+                    Scale<>::value(DataType_(1 / (_edge_length * _edge_length)), attractive_forces);
 
                     // Calculating inv_square_dist <- -inv_square_dist
-                    ScalarMatrixProduct<DataType_>::value(DataType_(-1), inv_square_dist);
+                    Scale<DataType_>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
-                    BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), &sum_vec_inv);
-                    DenseMatrix<DataType_> diff(MatrixSum<>::value(inv_square_dist, inv_diag));
+                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), sum_vec_inv);
+                    DenseMatrix<DataType_> diff(Sum<>::value(inv_square_dist, inv_diag));
 
                     // Calculating repulsive_forces = (_coordinates * diff)
-                    DenseMatrix<DataType_> repulsive_forces(MatrixProduct<>::value(_coordinates, diff));
+                    DenseMatrix<DataType_> repulsive_forces(Product<>::value(_coordinates, diff));
 
                     // Calculating repulsive_forces = (k^2 * repulsive_forces)
-                    ScalarMatrixProduct<>::value(_edge_length * _edge_length, repulsive_forces);
+                    Scale<>::value(_edge_length * _edge_length, repulsive_forces);
 
                     // Calculate the maximal force and the result forces
-                    MatrixSum<>::value(attractive_forces, repulsive_forces);
+                    Sum<>::value(attractive_forces, repulsive_forces);
                     DataType_ result(0);
                     DenseVector<DataType_> resulting_forces(_coordinates.columns(), DataType_(0));
                     for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements()) ;
                         i != i_end ; ++i)
                     {
-                        *i = VectorNorm<DataType_, vnt_l_two, true>::value(attractive_forces.column(i.index()));
+                        *i = Norm<vnt_l_two, true>::value(attractive_forces.column(i.index()));
                         result = std::max(result, *i);
                     }
 
@@ -234,10 +232,10 @@
             private:
                 ///  position matrix - the coordinates of each node
                 DenseMatrix<DataType_> & _coordinates;
-            
+
                 ///  weight vector - the weights of each node
                 DenseVector<DataType_> & _weights_of_nodes;
-            
+
                 ///  edge weight matrix - the weights of each edge
                 DenseMatrix<DataType_> & _weights_of_edges;
 
@@ -253,7 +251,7 @@
             public:
                 friend class Positions<DataType_, weighted_FruchtermanReingold>;
 
-                Implementation(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes, 
+                Implementation(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes,
                     DenseMatrix<DataType_> & weights_of_edges) :
                     _coordinates(coordinates),
                     _weights_of_nodes(weights_of_nodes),
@@ -280,7 +278,7 @@
 
                     // Calculate parameter matrix for attractive forces
                     for (typename MutableMatrix<DataType_>::ElementIterator e(_attractive_force_parameter.begin_elements()),
-                        e_end(_attractive_force_parameter.end_elements()), g(_weights_of_edges.begin_elements()); e != e_end ; ++e, ++g)                                               
+                        e_end(_attractive_force_parameter.end_elements()), g(_weights_of_edges.begin_elements()); e != e_end ; ++e, ++g)
                     {
                         *e = *g * *g * *g / (_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]);
                     }
@@ -290,50 +288,50 @@
                 {
                     // Calculate inv_square_dist = (1 / d(i,j)^2)
                     DenseMatrix<DataType_> inv_square_dist(NodeDistanceInverse<>::value(_coordinates));
-                
+
                     // Having inv_square_dist, mask it and invert each element to get square_dist
                     DenseMatrix<DataType_> square_dist(*inv_square_dist.copy());
-                    MatrixElementwiseProduct<>::value(square_dist, _neighbours);
-                    MatrixElementInverse<>::value(square_dist);
+                    ElementProduct<>::value(square_dist, _neighbours);
+                    ElementInverse<>::value(square_dist);
 
                     // Calculate inv_square_dist = Mul(inv_square_dist,  _repulsive_force_parameter)
-                    MatrixElementwiseProduct<>::value(inv_square_dist, _repulsive_force_parameter);
+                    ElementProduct<>::value(inv_square_dist, _repulsive_force_parameter);
 
                     // Calculate square_dist = Mul(square_dist,  _attractive_force_parameter)
-                    MatrixElementwiseProduct<>::value(square_dist, _attractive_force_parameter);
+                    ElementProduct<>::value(square_dist, _attractive_force_parameter);
 
                     // Calculate the single diagonal matrix containing the row sum vector of square_dist
-                    DenseVector<DataType_> & sum_vec(*MatrixRowSumVector<DataType_>::value(square_dist));
+                    DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum>::value(square_dist)));
 
                     // Calculate the same stuff for inv_square_dist
-                    DenseVector<DataType_> & sum_vec_inv(*MatrixRowSumVector<DataType_>::value(inv_square_dist));
+                    DenseVector<DataType_> * sum_vec_inv(new DenseVector<DataType_>(Reduction<rt_sum>::value(inv_square_dist)));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec.size(), &sum_vec);
-                    MatrixDifference<>::value(diag, square_dist);
-                    ScalarMatrixProduct<>::value(DataType_(-1), square_dist);
+                    BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
+                    Difference<>::value(diag, square_dist);
+                    Scale<>::value(DataType_(-1), square_dist);
 
                     // Calculating attractive_forces = (_coordinates * square_dist)
-                    DenseMatrix<DataType_> attractive_forces(MatrixProduct<>::value(_coordinates, square_dist));
+                    DenseMatrix<DataType_> attractive_forces(Product<>::value(_coordinates, square_dist));
 
                     // Calculating inv_square_dist <- -inv_square_dist
-                    ScalarMatrixProduct<DataType_>::value(DataType_(-1), inv_square_dist);
+                    Scale<DataType_>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating inv_square_dist = (diag(sum_vec_inv) - inv_square_dist)
-                    BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), &sum_vec_inv);
-                    DenseMatrix<DataType_> diff(MatrixSum<>::value(inv_square_dist, inv_diag));
+                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), sum_vec_inv);
+                    DenseMatrix<DataType_> diff(Sum<>::value(inv_square_dist, inv_diag));
 
                     // Calculating repulsive_forces = (_coordinates * inv_square_dist)
-                    DenseMatrix<DataType_> repulsive_forces(MatrixProduct<>::value(_coordinates, diff));
+                    DenseMatrix<DataType_> repulsive_forces(Product<>::value(_coordinates, diff));
 
                     // Calculate the maximal force and the result forces
-                    MatrixSum<>::value(attractive_forces, repulsive_forces);
+                    Sum<>::value(attractive_forces, repulsive_forces);
                     DataType_ result(0);
-                    DenseVector<DataType_> resulting_forces(_coordinates.columns(), DataType_(0)); 
+                    DenseVector<DataType_> resulting_forces(_coordinates.columns(), DataType_(0));
                     for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements()) ;
                         i != i_end ; ++i)
                     {
-                        *i = VectorNorm<DataType_, vnt_l_two, true>::value(attractive_forces.column(i.index()));
+                        *i = Norm<vnt_l_two, true>::value(attractive_forces.column(i.index()));
                         result = std::max(result, *i);
                     }
 
@@ -385,11 +383,11 @@
                     Dijkstra<DataType_>::value(_attractive_force_parameter);
 
                     // Mul(_attractive_force_parameter, _attractive_force_parameter) * _edge_length^2
-                    MatrixElementwiseProduct<>::value (_attractive_force_parameter, _attractive_force_parameter);
-                    ScalarMatrixProduct<DataType_>::value((_edge_length * _edge_length), _attractive_force_parameter);
+                    ElementProduct<>::value (_attractive_force_parameter, _attractive_force_parameter);
+                    Scale<DataType_>::value((_edge_length * _edge_length), _attractive_force_parameter);
 
                     // Calculate 1 / _attractive_force_parameter
-                    MatrixElementInverse<>::value(_attractive_force_parameter);
+                    ElementInverse<>::value(_attractive_force_parameter);
                 }
 
                 DataType_ value(DataType_ & eps)
@@ -398,19 +396,19 @@
                     DenseMatrix<DataType_> square_dist(NodeDistance<>::value(_coordinates));
 
                     // Mul(square_dist, cost_matrix) -1
-                    MatrixElementwiseProduct<>::value (square_dist, _attractive_force_parameter);
-                    ScalarMatrixSum<>::value (-1, square_dist);
-                    
+                    ElementProduct<>::value (square_dist, _attractive_force_parameter);
+                    Scale<>::value (-1, square_dist);
+
                     // Calculate the single diagonal matrix containing the row sum vector of square_dist
-                    DenseVector<DataType_> & sum_vec(*MatrixRowSumVector<>::value(square_dist));
+                    DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum>::value(square_dist)));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec.size(), &sum_vec);
-                    MatrixDifference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
-                    ScalarMatrixProduct<>::value(DataType_(-1), square_dist);
+                    BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
+                    Difference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
+                    Scale<>::value(DataType_(-1), square_dist);
 
                     // Calculating attractive_forces = (_coordinates * square_dist)
-                    DenseMatrix<DataType_> attractive_forces(MatrixProduct<>::value(_coordinates, square_dist));
+                    DenseMatrix<DataType_> attractive_forces(Product<>::value(_coordinates, square_dist));
 
                     // Calculate the resulting forces, the maximal force and the node with maximal force
                     DataType_ result(0);
@@ -419,7 +417,7 @@
                     for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements()) ;
                         i != i_end ; ++i)
                     {
-                        *i = VectorNorm<DataType_, vnt_l_two, true>::value(attractive_forces.column(i.index()));
+                        *i = Norm<vnt_l_two, true>::value(attractive_forces.column(i.index()));
                         *i > result ? result = *i, max_node = i.index() : 0;
                     }
 
@@ -428,7 +426,7 @@
                     {
                         for (int i(0) ; i != _coordinates.rows() ; ++i)
                         {
-                            _coordinates[i][max_node] = _coordinates[i][max_node] + 
+                            _coordinates[i][max_node] = _coordinates[i][max_node] +
                             1 / (10 * resulting_forces[max_node]) * attractive_forces[i][max_node];
                         }
                     }

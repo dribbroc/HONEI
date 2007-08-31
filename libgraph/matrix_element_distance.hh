@@ -21,20 +21,20 @@
 #ifndef LIBGRAPH_GUARD_MATRIX_ELEMENT_DISTANCE_HH
 #define LIBGRAPH_GUARD_MATRIX_ELEMENT_DISTANCE_HH 1
 
-#include <libutil/tags.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libla/matrix_error.hh>
+#include <libutil/tags.hh>
 
 /**
  * \file
  *
- * Implementation of MatrixElementDistance. </br>
+ * Implementation of MatrixElementDistance.
  *
  * \ingroup grplibgraph \\\todo find group name.
  **/
-namespace pg512
+namespace honei
 {
     /**
      * \brief MatrixElementDistance is used in the algorithm of Fruchterman-Reingold.
@@ -55,8 +55,8 @@ namespace pg512
             if (pos_matrix.rows() != 2)
                 throw MatrixRowsDoNotMatch(2, pos_matrix.rows());
 
-	    DenseMatrix<DataType_> result(pos_matrix.columns(), pos_matrix.columns());
-	    typename MutableMatrix<DataType_>::ElementIterator e(result.begin_elements());
+            DenseMatrix<DataType_> result(pos_matrix.columns(), pos_matrix.columns());
+            typename MutableMatrix<DataType_>::ElementIterator e(result.begin_elements());
 
             for (typename Vector<DataType_>::ConstElementIterator i(pos_matrix[0].begin_elements()),
                     i_end(pos_matrix[0].end_elements()), k(pos_matrix[1].begin_elements()),

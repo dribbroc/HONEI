@@ -7,6 +7,93 @@ see the NEWS file.
 
 2007-08-31 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libgraph/dijkstra.hh, libgraph/dijkstra_TEST.cc,
+	libgraph/matrix_element_distance.hh,
+	libgraph/matrix_element_distance_inverse.hh,
+	libgraph/matrix_element_distance_inverse_TEST.cc,
+	libgraph/matrix_element_distance_TEST.cc, libgraph/node_distance.hh,
+	libgraph/node_distance_inverse.hh, libgraph/position.hh,
+	libgraph/position_TEST.cc: Step 3 of refactoring: Moved libgraph from
+	namespace pg512 to namespace honei. Adjusted libgraph's usage of
+	libla.
+	* libgraph/node_distance.hh: Converted file from CRLF line termination
+	to LF line termination.
+
+2007-08-31 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/banded_matrix.hh, libla/banded_matrix_TEST.cc,
+	libla/dense_matrix.hh, libla/dense_matrix_TEST.cc,
+	libla/dense_vector.hh, libla/dense_vector_TEST.cc,
+	libla/element_iterator.hh, libla/element_iterator_TEST.cc,
+	libla/matrix_error.cc, libla/matrix_error.hh, libla/matrix.hh,
+	libla/sparse_matrix.hh, libla/sparse_matrix_TEST.cc,
+	libla/sparse_vector.hh, libla/sparse_vector_TEST.cc,
+	libla/vector_error.cc, libla/vector_error.hh, libla/vector.hh,
+	libla/vector_iterator.hh, libla/vector_iterator_TEST.cc: Step 2
+	of refactoring: Moved libla's container from namespace pg512 to
+	namespace honei.
+	* libla/files.m4: Recorded the following changes.
+	* +libla/absolute.hh, +libla/absolute_TEST.cc,
+	libla/vector_absolute.cc, -libla/vector_absolute.hh,
+	-libla/vector_absolute_TEST.cc: Renamed VectorAbsolute to Absolute.
+	* +libla/difference.hh, +libla/difference_TEST.cc,
+	-libla/matrix_difference.hh, -libla/matrix_difference_TEST.cc,
+	-libla/vector_difference.hh, -libla/vector_difference_TEST.cc: Merged
+	MatrixDifference and VectorDifference to Difference.
+	* +libla/dot_product.cc, +libla/dot_product.hh,
+	+libla/dot_product_TEST.cc, -libla/scalar_product.cc,
+	-libla/scalar_product.hh, -libla/scalar_product_TEST.cc: Renamed
+	ScalarProduct to DotProduct.
+	* +libla/element_inverse.hh, +libla/element_inverse_TEST.cc,
+	-libla/matrix_element_inverse.hh,
+	-libla/matrix_element_inverse_TEST.cc,
+	-libla/vector_element_inverse.hh,
+	-libla/vector_element_inverse_TEST.cc: Merged MatrixElementInverse and
+	VectorElementInverse into ElementInverse.
+	* +libla/element_product.hh, +libla/element_product_TEST.cc,
+	-libla/matrix_elementwise_product.hh,
+	libla/matrix_elementwise_product_TEST.cc,
+	-libla/vector_elementwise_product.hh,
+	-libla/vector_elementwise_product_TEST.cc: Merged
+	MatrixElementwiseProduct and VectorElementwiseProduct into
+	ElementProduct.
+	* +libla/norm.hh, +libla/norm_TEST.cc, -libla/vector_norm.hh,
+	-libla/vector_norm_TEST.cc: Renamed VectorNorm to Norm.
+	* +libla/product.hh, +libla/product_TEST.cc, -libla/matrix_product.hh,
+	-libla/matrix_product_TEST.cc, -libla/matrix_vector_product.hh,
+	-libla/matrix_vector_product_TEST.cc: Merged MatrixProduct and
+	MatrixVectorProduct into Product.
+	* +libla/reduction.hh, +libla/reduction_TEST.cc,
+	-libla/matrix_element_sum.hh, -libla/matrix_element_sum_TEST.cc,
+	-libla/matrix_row_sum_vector.hh, -libla/matrix_row_sum_vector_TEST.cc,
+	-libla/vector_element_sum.hh, -libla/vector_element_sum_TEST.cc:
+	Merged MatrixRowSumVector and VectorElementSum into Reduction. Removed
+	MatrixElementSum, as it can be computed by two subsequent Reductions
+	of type sum.
+	* libla/residual.hh, libla/residual_TEST.cc: Moved from namespace
+	pg512 to namespace honei.
+	* +libla/scale.hh, libla/scale_TEST.cc,
+	-libla/scalar_matrix_product.hh, -libla/scalar_matrix_product_TEST.cc,
+	-libla/scalar_vector_product.hh, -libla/scalar_vector_product_TEST.cc:
+	Merged ScalarMatrixProduct and ScalarVectorProduct into Scale.
+	* +libla/scaled_sum.hh, +libla/scaled_sum_TEST.cc, -libla/saxpy.hh,
+	-libla/saxpy_TEST.cc: Renamed VectorScaledSum to ScaledSum.
+	* +libla/sum.hh, +libla/sum_TEST.cc, -libla/matrix_sum.hh,
+	-libla/matrix_sum_TEST.cc, -libla/scalar_matrix_sum.hh,
+	-libla/scalar_matrix_sum_TEST.cc, -libla/scalar_vector_sum.hh,
+	-libla/scalar_vector_sum_TEST.cc, -libla/vector_sum.hh,
+	-libla/vector_sum_TEST.cc: Merged MatrixSum, ScalarMatrixSum,
+	ScalarVectorSum and VectorSum into Sum.
+	* libla/vector_masked_max_index.hh,
+	libla/vector_masked_max_index_TEST.cc,
+	libla/vector_masked_min_index.hh, libla/vector_masked_min_index_TEST.cc,
+	* -libla/vector_scaled_sum.hh, -libla/vector_scaled_sum_TEST.cc:
+	Removed obsolete 4 parameter variant of VectorScaledSum.
+	* unittest/unittest.cc, unittest/unittest.hh: Moved from namespace
+	pg512 to namespace honei.
+
+2007-08-31 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libswe/limiter_TEST.cc, libswe/solver.hh, libswe/solver_TEST.cc,
 	libutil/assertion.cc, libutil/assertion.hh, libutil/assertion_TEST.cc,
 	libutil/condition_variable.cc, libutil/condition_variable.hh,

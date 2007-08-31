@@ -22,13 +22,14 @@
 #ifndef LIBGRAPH_GUARD_NODE_DISTANCE_INVERSE_HH
 #define LIBGRAPH_GUARD_NODE_DISTANCE_INVERSE_HH 1
 
-#include <libutil/tags.hh>
-#include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
+#include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
+#include <libla/difference.hh>
 #include <libla/matrix_error.hh>
-#include <libla/vector_norm.hh>
-#include <libla/vector_difference.hh>
+#include <libla/norm.hh>
+#include <libutil/tags.hh>
+
 
 /**
  * \file
@@ -37,7 +38,7 @@
  *
  * \ingroup grplibgraph
  **/
-namespace pg512
+namespace honei
 {
     /**
      * \brief NodeDistanceInverse is used in the algorithm of Fruchterman-Reingold.
@@ -78,7 +79,7 @@ namespace pg512
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     // If d != 0, we put 1/d into the resulting distance matrix, otherwise we write 0.
-                    DataType_ d = VectorNorm<DataType_>::value(VectorDifference<>::value(*v.copy(), w));
+                    DataType_ d = Norm<>::value(Difference<>::value(*v.copy(), w));
                     *e = d == 0 ? 0 : 1 / d;
                 }
             }

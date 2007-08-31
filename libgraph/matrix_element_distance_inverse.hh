@@ -30,11 +30,11 @@
 /**
  * \file
  *
- * Implementation of MatrixElementDistanceInverse. </br>
+ * Implementation of MatrixElementDistanceInverse.
  *
  * \ingroup grplibgraph
  **/
-namespace pg512
+namespace honei
 {
     /**
      * \brief MatrixElementDistanceInverse is used in the algorithm of Fruchterman-Reingold.
@@ -55,8 +55,8 @@ namespace pg512
             if (pos_matrix.rows() != 2)
                 throw MatrixRowsDoNotMatch(2, pos_matrix.rows());
 
-	    DenseMatrix<DataType_> result(pos_matrix.columns(), pos_matrix.columns());
-	    typename MutableMatrix<DataType_>::ElementIterator e(result.begin_elements());
+            DenseMatrix<DataType_> result(pos_matrix.columns(), pos_matrix.columns());
+            typename MutableMatrix<DataType_>::ElementIterator e(result.begin_elements());
 
             for (typename Vector<DataType_>::ConstElementIterator i(pos_matrix[0].begin_elements()),
                     i_end(pos_matrix[0].end_elements()), k(pos_matrix[1].begin_elements()),
