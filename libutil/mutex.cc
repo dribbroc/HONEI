@@ -19,7 +19,7 @@
 
 #include <libutil/mutex.hh>
 
-using namespace pg512;
+using namespace honei;
 
 Mutex::Mutex() :
     _attr(new pthread_mutexattr_t),

@@ -22,7 +22,7 @@
 
 #include <ostream>
 
-namespace pg512 ///< \todo Namespace name?
+namespace honei ///< \todo Namespace name?
 {
     namespace tags
     {

@@ -29,7 +29,7 @@
 #include <map>
 #include <set>
 
-namespace pg512
+namespace honei
 {
     /**
      * MemoryId uniquely identifies remote memory chunks across all backends.

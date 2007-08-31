@@ -16,7 +16,7 @@
 
 #include <libspe2.h>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 
 class CellBackendFunctionTest :

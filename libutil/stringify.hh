@@ -30,7 +30,7 @@
  * \ingroup grpstringify
  */
 
-namespace pg512
+namespace honei
 {
     /**
      * For use by stringify.

@@ -23,7 +23,7 @@
 #include <string>
 #include <list>
 
-namespace pg512 ///< \todo Namespace name?
+namespace honei ///< \todo Namespace name?
 {
     enum LogLevel
     {

@@ -24,7 +24,7 @@
 
 #include <GL/glew.h>
 
-namespace pg512
+namespace honei
 {
     /**
      * GPUBackend is the MemoryBackend for GPU-based calculations.

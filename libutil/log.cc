@@ -26,7 +26,7 @@
 #include <ostream>
 #include <string>
 
-using namespace pg512;
+using namespace honei;
 
 class Log::LogOutput
 {

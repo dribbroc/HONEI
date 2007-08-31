@@ -22,7 +22,7 @@
 
 #include <libutil/mutex.hh>
 
-namespace pg512
+namespace honei
 {
     class Lock
     {

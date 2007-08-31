@@ -25,7 +25,7 @@
 
 #include <cxxabi.h>
 
-using namespace pg512;
+using namespace honei;
 
 namespace
 {

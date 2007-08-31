@@ -25,7 +25,7 @@
 #include <libutil/worker.hh>
 #include <unittest/unittest.hh>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 
 namespace

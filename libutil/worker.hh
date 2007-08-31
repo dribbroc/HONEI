@@ -22,7 +22,7 @@
 
 #include <tr1/functional>
 
-namespace pg512
+namespace honei
 {
     typedef std::tr1::function<void () throw ()> WorkerTask;
 

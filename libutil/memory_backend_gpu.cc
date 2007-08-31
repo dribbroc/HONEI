@@ -28,7 +28,7 @@
 
 #include <cmath>
 
-using namespace pg512;
+using namespace honei;
 
 GPUBackend::Chunk::Chunk(unsigned long our_size) :
     size(our_size),

@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace pg512
+namespace honei
 {
     /**
      * Assertion is thrown when a critical condition is not fulfilled.

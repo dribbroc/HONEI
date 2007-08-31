@@ -28,7 +28,7 @@
 
 #include <errno.h>
 
-using namespace pg512;
+using namespace honei;
 
 struct WorkerThread::Implementation
 {

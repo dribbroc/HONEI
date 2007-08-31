@@ -25,7 +25,7 @@
 
 #include <string>
 
-namespace pg512
+namespace honei
 {
     typedef unsigned long long MemoryId;
 

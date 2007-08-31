@@ -5,6 +5,25 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-08-31 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libswe/limiter_TEST.cc, libswe/solver.hh, libswe/solver_TEST.cc,
+	libutil/assertion.cc, libutil/assertion.hh, libutil/assertion_TEST.cc,
+	libutil/condition_variable.cc, libutil/condition_variable.hh,
+	libutil/exception.cc, libutil/exception.hh, libutil/lock.cc,
+	libutil/lock.hh, libutil/log.cc, libutil/log.hh,
+	libutil/memory_backend.cc, libutil/memory_backend_cell.cc,
+	libutil/memory_backend_cell.hh, libutil/memory_backend_cell_TEST.cc,
+	libutil/memory_backend_gpu.cc, libutil/memory_backend_gpu.hh,
+	libutil/memory_backend.hh, libutil/memory_manager.cc,
+	libutil/memory_manager.hh, libutil/memory_manager_TEST.cc,
+	libutil/mutex.cc, libutil/mutex.hh, libutil/shared_array.cc,
+	libutil/shared_array.hh, libutil/spe_manager.cc,
+	libutil/spe_manager.hh, libutil/spe_manager_TEST.cc,
+	libutil/stringify.hh, libutil/tags.cc, libutil/tags.hh,
+	libutil/worker.cc, libutil/worker.hh, libutil/worker_TEST.cc: Step 1
+	of refactoring: Moved libutil from namespace pg512 to namespace honei.
+
 2007-08-30 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/sparse_vector.hh: Fixed issue, that when resizing capacity it

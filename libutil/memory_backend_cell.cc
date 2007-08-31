@@ -33,7 +33,7 @@
 
 #include <libspe2.h>
 
-using namespace pg512;
+using namespace honei;
 
 /**
  * \todo Implement locking for CellBackend::Implementation::SPEData

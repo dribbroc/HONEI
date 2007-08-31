@@ -20,7 +20,7 @@
 #include <libutil/assertion.hh>
 #include <libutil/memory_manager.hh>
 
-using namespace pg512;
+using namespace honei;
 
 MemoryAddressNotKnown::MemoryAddressNotKnown(const void * address) :
     Exception("No memory id found for address '" + stringify(address) + "'")

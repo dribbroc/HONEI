@@ -19,7 +19,7 @@
 
 #include <libutil/lock.hh>
 
-using namespace pg512;
+using namespace honei;
 
 Lock::Lock(Mutex & m) :
     _mutex(&m)

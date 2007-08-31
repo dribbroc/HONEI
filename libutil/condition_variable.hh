@@ -24,7 +24,7 @@
 
 #include <pthread.h>
 
-namespace pg512
+namespace honei
 {
     class ConditionVariable
     {

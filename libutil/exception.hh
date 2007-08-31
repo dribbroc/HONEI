@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace pg512 ///< \todo Namespace name?
+namespace honei ///< \todo Namespace name?
 {
     /**
      * Backtrace class context.

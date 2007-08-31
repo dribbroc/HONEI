@@ -30,7 +30,7 @@
 #include <libspe2.h>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
 
-using namespace pg512;
+using namespace honei;
 
 SPEError::SPEError(const std::string & msg, const std::string & reason) :
     ExternalError("libspe2", msg + ", reason is " + reason + ".")

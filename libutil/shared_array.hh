@@ -28,7 +28,7 @@
 #include <map>
 #include <iostream>
 
-namespace pg512 ///< \todo Namespace name?
+namespace honei ///< \todo Namespace name?
 {
     /**
      * SharedArrayError is thrown by SharedArray and related classes.

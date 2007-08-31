@@ -19,7 +19,7 @@
 
 #include <libutil/shared_array.hh>
 
-using namespace pg512;
+using namespace honei;
 
 SharedArrayError::SharedArrayError(const std::string & message) throw () :
     Exception(message)

@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-using namespace pg512;
+using namespace honei;
 
 Assertion::Assertion(const char * const function, const char * const file,
         const long line, const std::string & message) :

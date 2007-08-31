@@ -19,7 +19,7 @@
 
 #include <libutil/condition_variable.hh>
 
-using namespace pg512;
+using namespace honei;
 
 ConditionVariable::ConditionVariable() :
     _cond(new pthread_cond_t)

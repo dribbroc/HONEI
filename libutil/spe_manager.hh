@@ -32,7 +32,7 @@
 #include <libspe2.h>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
 
-namespace pg512
+namespace honei
 {
     class SPE;
     class SPEManager;

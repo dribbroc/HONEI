@@ -15,7 +15,7 @@
 #include <map>
 #include <iostream>
 
-using namespace pg512;
+using namespace honei;
 using namespace tests;
 
 namespace

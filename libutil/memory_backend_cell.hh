@@ -22,7 +22,7 @@
 
 #include <libutil/memory_backend.hh>
 
-namespace pg512
+namespace honei
 {
     /**
      * CellBackend is the MemoryBackend for Cell-based calculations.
@@ -188,7 +188,7 @@ namespace pg512
 
 #include <libutil/memory_backend.hh>
 
-namespace pg512
+namespace honei
 {
     /**
      * CellBackend is the MemoryBackend for Cell-based calculations.

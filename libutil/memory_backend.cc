@@ -20,7 +20,7 @@
 #include <libutil/memory_backend.hh>
 #include <libutil/stringify.hh>
 
-using namespace pg512;
+using namespace honei;
 
 MemoryBackendError::MemoryBackendError(const tags::TagValue tag, const DeviceId device, const std::string & msg) :
     Exception(msg + " in '" + stringify(tag) + "'-backend, device '" + stringify(device) + "'")

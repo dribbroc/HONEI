@@ -21,9 +21,9 @@
 #include <libutil/exception.hh>
 #include <libutil/stringify.hh>
 
-using namespace pg512;
+using namespace honei;
 
-std::ostream & pg512::operator<< (std::ostream & left, tags::TagValue value)
+std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
 {
     do
     {
