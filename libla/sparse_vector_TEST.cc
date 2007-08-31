@@ -197,6 +197,8 @@ public:
         TEST_CHECK_EQUAL(sv1.used_elements(), 1);
         TEST_CHECK_EQUAL(sv2.used_elements(), 1);
         TEST_CHECK_EQUAL(sv1, sv2);
+        SparseVector<DataType_> sv4(size + 1, 1);
+        TEST_CHECK_THROWS(sv1 == sv4, VectorSizeDoesNotMatch);
         // Do not test for capacity(), as it's an implementation detail.
 
 

@@ -291,7 +291,8 @@ namespace honei
     {
         bool result(true);
         if (left.size() != right.size())
-            return false;
+            throw VectorSizeDoesNotMatch(left.size(), right.size());
+
         for (typename Vector<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
                 j(right.begin_elements()) ; i != i_end ; ++i)
         {
