@@ -118,7 +118,7 @@ class DenseVectorEqualityTest :
                 TEST_CHECK_EQUAL(dv0, dv1);
 
                 DenseVector<DataType_> dv2(size + 1);
-                TEST_CHECK_THROWS(dv0==dv2, VectorSizeDoesNotMatch);
+                TEST_CHECK_THROWS(dv0 == dv2, VectorSizeDoesNotMatch);
             }
         }
 };

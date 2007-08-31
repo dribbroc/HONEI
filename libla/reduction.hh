@@ -124,6 +124,7 @@ namespace honei
 
             for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
             {
+                /// \ todo use optimized Reduction(SparseVector) instead of Reduction(Vector)
                 result[i] = Reduction<rt_sum>::value(a[i]);
             }
 
