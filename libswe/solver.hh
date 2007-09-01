@@ -1,4 +1,4 @@
-/* VIM: set number sw=4 sts=4 et nofoldenable : */
+/* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
@@ -220,18 +220,28 @@ namespace honei {
               * \param j Access Parameter 2.
               *
               **/
-            template<typename WorkPrec_>
-            DenseVector<WorkPrec_> _flow_x(uint i, uint j);
 
             /** Flow computation.
-              * Used by preprocessing.
+              * Computes flow in x-direction.
               *
-              * \param i Access Parameter 1.
-              * \param j Access Parameter 2.
+              * \param h Height.
+              * \param q1 Velocity in x-direction.
+              * \param q2 Velocity in y-direction.
               *
               **/
             template<typename WorkPrec_>
-            DenseVector<WorkPrec_> _flow_y(uint i, uint j);
+            DenseVector<WorkPrec_> _flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2);
+
+            /** Flow computation.
+              * Computes flow in y-direction.
+              *
+              * \param h Height.
+              * \param q1 Velocity in x-direction.
+              * \param q2 Velocity in y-direction.
+              *
+              **/
+            template<typename WorkPrec_>
+            DenseVector<WorkPrec_> _flow_y(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2);
 
             /** Flow computation.
               *
@@ -245,15 +255,17 @@ namespace honei {
             template<typename WorkPrec_>
             void _flow_y(DenseVector<WorkPrec_> & vector);
 
-
             /** Source Term computation.
               *
-              * \param i Access Parameter 1.
-              * \param j Access Parameter 2.
+              * \param h Given height.
+              * \param q1 Velocity in x-direction.
+              * \param q2 Velocity in y-direction.
+              * \param slope_x Bottom slope in x-direction.
+              * \param slope_y Bottom slope in y-direction.
               *
               **/
             template<typename WorkPrec_>
-            DenseVector<WorkPrec_> _source(uint i, uint j);
+            DenseVector<WorkPrec_> _source(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2, ResPrec_ slope_x, ResPrec_ slope_y);
 
             /** Source Term computation.
              *
@@ -328,7 +340,7 @@ namespace honei {
               * \param m4 Matrix m3 is the second Matrix to be assembled.
               *
               **/
-           
+
             template<typename WorkPrec_>
             void _assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v);
 
@@ -559,7 +571,7 @@ namespace honei {
         cout << stringify(*_v) << endl;
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k3(_w->begin_elements());
-        for (ulint i = 0; i!= u2bound.rows(); ++i) 
+        for (ulint i = 0; i!= u2bound.rows(); ++i)
         {
             DenseVector<ResPrec_> actual_row = u2bound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
@@ -634,10 +646,60 @@ namespace honei {
 
     /**
      *
+     * Flow computation in x-direction for a whole vector.
+     *
+     * This function provides the iteration through and writes back
+     * flow-values computed by function "DenseVector<WorkPrec_> _flow_x(h, q1, q2)"
+     * to the given vector.
+     *
+     * \param vector The vector for which the flow should be computed.
+     *
+     **/
+
+    template <typename ResPrec_,
+              typename PredictionPrec1_,
+              typename PredictionPrec2_,
+              typename InitPrec1_,
+              typename InitPrec2_>
+    template <typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(DenseVector<WorkPrec_> & vector)
+    {
+        typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
+        WorkPrec_ height, velocity1;
+        DenseVector<WorkPrec_> temp(ulint(3), ulint(0));
+        for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator)
+        {
+            // Read height from given vector
+            height = *readelementiterator;
+            ++readelementiterator;
+
+            // Read x-velocity from given vector
+            velocity1 = *readelementiterator;
+            ++readelementiterator;
+
+            // Y-velocity does not have to be fetched explicitly, it can be accessed through *readelementiterator
+
+            // Compute flow on previously read values
+            temp = _flow_x<WorkPrec_>(height, velocity1, *readelementiterator);
+
+            // Write computed values back to the given vector
+            *writeelementiterator = temp[0]; // Write height
+
+            ++writeelementiterator;
+            *writeelementiterator = temp[1]; // Write x-velocity
+
+            ++writeelementiterator;
+            *writeelementiterator = temp[2]; // Write y-velocity
+        }
+    }
+
+
+    /**
+     *
      * Flow computation in x-direction.
      * \param vector The vector, for which the flow is going to be computed.
      **/
-
+/*
     template <typename ResPrec_,
           typename PredictionPrec1_,
           typename PredictionPrec2_,
@@ -669,9 +731,9 @@ namespace honei {
             ++l;
 
             // Compute the influence of the waterflow in X-direction
-        resultcomponentone = *l;
+            resultcomponentone = *l;
             resultcomponenttwo = resultcomponenttwo * (*l) * (*l) + gravterm;
-        resultcomponentthree *= *l;
+            resultcomponentthree *= *l;
             ++l;
 
             // Compute the influence of the waterflow in Y-direction and add the gravition-based term
@@ -692,6 +754,55 @@ namespace honei {
     }
         std::cout << "Finished Flow.\n";
     }
+*/
+
+    /**
+     *
+     * Flow computation in y-direction.
+     *
+     * This function provides the iteration through and writes back
+     * flow-values computed by function "DenseVector<WorkPrec_> _flow_y(h, q1, q2)"
+     * to the given vector.
+     *
+     * \param vector The vector, for which the flow is going to be computed.
+     *
+     **/
+
+    template <typename ResPrec_,
+              typename PredictionPrec1_,
+              typename PredictionPrec2_,
+              typename InitPrec1_,
+              typename InitPrec2_>
+    template <typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(DenseVector<WorkPrec_> & vector)
+    {
+        typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
+        WorkPrec_ height, velocity1;
+        DenseVector<WorkPrec_> temp(ulint(3), ulint(0));
+        for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator)
+        {
+            // Read height from given vector
+            height = *readelementiterator;
+            ++readelementiterator;
+            // Read x-velocity from given vector
+            velocity1 = *readelementiterator;
+            ++readelementiterator;
+
+            // Y-velocity does not have to be fetched explicitly, it can be accessed through *readelementiterator
+
+            // Compute flow on previously read values
+            temp = _flow_y<WorkPrec_>(height, velocity1, *readelementiterator);
+
+            // Write computed values back to the given vector
+            *writeelementiterator = temp[0]; // Write height
+
+            ++writeelementiterator;
+            *writeelementiterator = temp[1]; // Write x-velocity
+
+            ++writeelementiterator;
+            *writeelementiterator = temp[2]; // Write y-velocity
+        }
+    }
 
 
     /**
@@ -700,6 +811,7 @@ namespace honei {
      *
      * \param vector The vector, for which the flow is going to be computed.
      **/
+/*
     template <typename ResPrec_,
           typename PredictionPrec1_,
           typename PredictionPrec2_,
@@ -760,131 +872,82 @@ namespace honei {
     }
         std::cout << "Finished Flow.\n";
     }
+*/
 
     /**
      *
-     * Flow computation in x-direction for a single cell.
+     * Flow computation in x-direction.
      *
-     * This function is used only by the preprocessing stage.
+     * This function computes a flow in x-direction for a height h and velocities q1 (x-directed) and q2 (y-directed).
      *
-     * \param i First coordinate of the processed cell.
-     * \param j Second coordinate of the processed cell.
+     * \param h Given height.
+     * \param q1 Velocity in x-direction.
+     * \param q2 Velocity in y-direction.
      *
      **/
 
     template <typename ResPrec_,
-          typename PredictionPrec1_,
-          typename PredictionPrec2_,
-          typename InitPrec1_,
-          typename InitPrec2_>
+              typename PredictionPrec1_,
+              typename PredictionPrec2_,
+              typename InitPrec1_,
+              typename InitPrec2_>
     template <typename WorkPrec_>
-    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(uint i, uint j)
-    {
-    DenseVector<WorkPrec_> result(ulint(3), ulint(0));
-    WorkPrec_ temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j];
-
-        WorkPrec_ gravterm = 9.81 * temp * temp / 2;
-
-    result[1] = 1 / temp;
-        result[2] = result[1];
-
-    temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 1];
-        result[0] = temp;
-        result[1] *= temp * temp;
-    result[2] *= temp;
-
-        temp = (*_v)[(_d_width + 4) * 3 * i + 3 * j + 2];
-    result[1] += gravterm;
-        result[2] *= temp;
-        std::cout << "Finished Flow x (cell). \n";
-
-    return result;
-    }
-
-    /**
-     *
-     * Flow computation in y-direction for a single cell.
-     *
-     * This function is used only by the preprocessing stage
-     *
-     * \param i First coordinate of the processed cell.
-     * \param j Second coordinate of the processed cell.
-     *
-     **/
-
-    template <typename ResPrec_,
-          typename PredictionPrec1_,
-          typename PredictionPrec2_,
-          typename InitPrec1_,
-          typename InitPrec2_>
-    template <typename WorkPrec_>
-    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(uint i, uint j)
+    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
     {
         DenseVector<WorkPrec_> result(ulint(3), ulint(0));
-    WorkPrec_ temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j];
 
-    WorkPrec_ gravterm = 9.81 * temp * temp / 2;
-
-        result[1] = 1 / temp;
-    result[2] = result[1];
-
-        temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j + 1];
-    result[1] *= temp;
-
-        temp = (*_w)[(_d_width + 4) * 3 * i + 3 * j + 2];
-    result[0] *= temp;
-        result[1] *= temp;
-        result[2] = result[2] * temp * temp + gravterm;
-        std::cout << "Finished Flow y (cell).\n";
-
-    return result;
-
-    }
-
-
-    /**
-     *
-     * Source term computation for a single cell (i, j).
-     *
-     * \param i First coordinate of the processed cell.
-     * \param j Second coordinate of the processed cell.
-     *
-     **/
-
-    template <typename ResPrec_,
-          typename PredictionPrec1_,
-          typename PredictionPrec2_,
-          typename InitPrec1_,
-          typename InitPrec2_>
-    template <typename WorkPrec_>
-    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(uint i, uint j)
-    {
-    DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
-    WorkPrec_ h = (*_u)[(_d_width + 4) * 3 * i + 3 * j];
-    if (h > 0)
-    {
-        WorkPrec_ q1 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 1];
-        WorkPrec_ q2 = (*_u)[(_d_width + 4) * 3 * i + 3 * j + 2];
-
-        result[0] = 0;
-        result[1] = _manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
-        result[2] = result[1];
-
-        result[1] = ((result[1] * q1) - (h * (*_bottom_slopes_x)[(_d_width + 4)* i + j])) * 9.81;
-        result[2] = ((result[2] * q2) - (h * (*_bottom_slopes_y)[(_d_width + 4)* i + j])) * 9.81;
-            std::cout << "Finished simple flow.\n";
-
-        return result;
+        if (h > 0)
+        {
+            result[0] = q1;
+            result[1] = (q1 * q1 / h) + (9.81 * h * h / 2);
+            result[2] = q1 * q2 / h;
         }
         else
         {
             result[0] = 0;
             result[1] = 0;
             result[2] = 0;
-            return result;
         }
-
+        return result;
     }
+
+    /**
+     *
+     * Flow computation in y-direction.
+     *
+     * This function computes a flow in y-direction for a height h and velocities q1(x-directed) and q2 (y-directed).
+     *
+     * \param h Given height.
+     * \param q1 Velocity in x-direction.
+     * \param q2 Velocity in y-direction.
+     *
+     **/
+
+    template <typename ResPrec_,
+              typename PredictionPrec1_,
+              typename PredictionPrec2_,
+              typename InitPrec1_,
+              typename InitPrec2_>
+    template <typename WorkPrec_>
+    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
+    {
+        DenseVector<WorkPrec_> result(ulint(3), ulint(0));
+
+        if (h > 0)
+        {
+            result[0] = q2;
+            result[1] = q1 * q2 / h;
+            result[2] = (q2 * q2 / h) + (9.81 * h * h / 2);
+        }
+        else
+        {
+            result[0] = 0;
+            result[1] = 0;
+            result[2] = 0;
+        }
+        return result;
+    }
+
 
     /**
      *
@@ -893,6 +956,7 @@ namespace honei {
      * \param vector Densevector for which the flow should be computed.
      *
      **/
+/*
     template <typename ResPrec_,
           typename PredictionPrec1_,
           typename PredictionPrec2_,
@@ -953,6 +1017,104 @@ namespace honei {
     std::cout << "Finished Source.\n";
     }
 
+*/
+    /**
+     *
+     * Source term computation.
+     *
+     * This function computes a source term for a given height h and velocities q1 (x-directed) and q2 (y-directed).
+     *
+     * \param h Given height.
+     * \param q1 Velocity in x-direction.
+     * \param q2 Velocity in y-direction.
+     * \param slope_x Bottom slope in x-direction.
+     * \param slope_y Bottom slope in y-direction.
+     **/
+
+    template <typename ResPrec_,
+              typename PredictionPrec1_,
+              typename PredictionPrec2_,
+              typename InitPrec1_,
+              typename InitPrec2_>
+    template <typename WorkPrec_>
+    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2, ResPrec_ slope_x, ResPrec_ slope_y)
+    {
+        DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
+
+        if (h > 0)
+        {
+            result[0] = 0;
+            WorkPrec_ temp = _manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
+
+            result[1] = (temp * q1 - h * slope_x) * 9.81;
+            result[2] = (temp * q2 - h * slope_y) * 9.81;
+
+            return result;
+        }
+        else
+        {
+            result[0] = 0;
+            result[1] = 0;
+            result[2] = 0;
+            return result;
+        }
+    }
+
+
+    /**
+     *
+     * Source term computation for a whole vector.
+     *
+     * This function provides the iteration through and writes back
+     * source-term-values computed by function "DenseVector<WorkPrec_> _source(h, q1, q2, slope_x, slope_y)"
+     * to the given vector.
+     *
+     * \param vector The vector for which the source term should be computed.
+     *
+     **/
+
+    template <typename ResPrec_,
+              typename PredictionPrec1_,
+              typename PredictionPrec2_,
+              typename InitPrec1_,
+              typename InitPrec2_>
+    template <typename WorkPrec_>
+    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
+    {
+        typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
+        typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
+        typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
+        DenseVector<WorkPrec_> temp(ulint(3), ulint(0));
+        WorkPrec_ height, velocity1;
+        for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator, ++bottomslopesxiterator, ++bottomslopesyiterator)
+        {
+            // Read height from given vector
+            height = *readelementiterator;
+            ++readelementiterator;
+
+            // Read velocity in x-direction
+            velocity1 = *readelementiterator;
+            ++readelementiterator;
+
+            // Y-velocity does not have to be fetched explicitly, it can be accessed through *readelementiterator
+
+            // Compute source-term for previously fetched values
+            temp = _source(height, velocity1, *readelementiterator, *bottomslopesxiterator, *bottomslopesyiterator);
+
+            // Write computed values back to the given vector
+            *writeelementiterator = temp[0]; // Write height
+
+            ++writeelementiterator;
+            *writeelementiterator = temp[1]; // Write x-velocity
+
+            ++writeelementiterator;
+            *writeelementiterator = temp[2]; // Write y-velocity
+        }
+    }
+
+
+/// Implementation of matrix-assembly-functions.
+
     /**
      *
      * Matrix assembly.
@@ -975,14 +1137,6 @@ namespace honei {
         DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0)); //one
         DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0)); //two
         DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0));//three
-        m1.band(ulint(0)) = m1diag;
-        m1.band(ulint(3)) = m1bandPlus1;
-        m1.band(ulint(6)) = m1bandPlus2;
-        m1.band(ulint(-3)) = m1bandMinus1;
-        m3.band(ulint(0)) = m3diag;
-        m3.band(ulint(3)) = m3bandPlus1;
-        m3.band(ulint(6)) = m3bandPlus2;
-        m3.band(ulint(-3)) = m3bandMinus1;
 
         ///Necessary values to be temporarily saved.
         DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
@@ -998,7 +1152,7 @@ namespace honei {
         WorkPrec_ phiMinusOld;
         WorkPrec_ temp;
         WorkPrec_ tempTop;
-        WorkPrec_ prefac = _delta_t/4*_delta_x;
+        WorkPrec_ prefac = _delta_t/(4*_delta_x);
 
         ///Needed Iterators.
         typename DenseVector<WorkPrec_>::ElementIterator d(m1diag.begin_elements());
@@ -1014,8 +1168,8 @@ namespace honei {
         for( ; b2.index() < 6*(_d_width+4); ++b2);
         for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);
 
-        //while(i.index() < 3*(_d_width+4) * (_d_height))
-        //{
+        while(i.index() < 3*(_d_width + 4) * (_d_height + 2))
+        {
             for(unsigned long k=0; k<3; ++k)
             {
                 tempPlus[k]= (*v)[i.index()] + (*_c)[k]*(*u)[i.index()];
@@ -1083,7 +1237,7 @@ namespace honei {
                 ++i;
             }
 
-            for(unsigned long x = 0; x < _u->size(); ++x)
+            for(unsigned long x = 0; x < _d_width; ++x)
             {
                 for(unsigned long k =0; k<3; ++k)
                 {
@@ -1092,7 +1246,7 @@ namespace honei {
                     m3bandMinus1[bminus1.index()] =temp * (*_c)[k];
 
                     m1diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
-                    m3diag[d.index()] = (*_c)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
+                    m3diag[d.index()] = -(*_c)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
 
                     phiPlusOld[k]= phiPlusNew[k];
                     phiMinusOld = phiMinusNew[k];
@@ -1127,32 +1281,35 @@ namespace honei {
                     m3bandPlus1[b1.index()] = (*_c)[k]*prefac * (2 - phiPlusOld[k] + phiMinusOld + phiMinusNew[k]);
                     m1bandPlus2[b2.index()] = prefac* phiMinusNew[k];
                     m3bandPlus2[b2.index()] = (*_c)[k] * prefac *(-phiMinusNew[k]);
-                    ++i;//++d;++b1;++b2;++bminus1;
+                    ++i;++d;++b1;++b2;++bminus1;
                 }
-                //}
-                ++d;++b1;++b2;++bminus1;
-                ++d;++b1;++b2;++bminus1;
-                ++d;++b1;++b2;++bminus1;
-                ++d;++b1;++b2;++bminus1;
-                ++d;++b1;++b2;++bminus1;
-                ++d;++b1;++b2;++bminus1;
             }
-
- /*           m1.band(ulint(0)) = m1diag;
-            m1.band(ulint(3)) = m1bandPlus1;
-            m1.band(ulint(6)) = m1bandPlus2;
-            m1.band(ulint(-3)) = m1bandMinus1;
-            m3.band(ulint(0)) = m3diag;
-            m3.band(ulint(3)) = m3bandPlus1;
-            m3.band(ulint(6)) = m3bandPlus2;
-            m3.band(ulint(-3)) = m3bandMinus1;*/
-
-            cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
-            cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
-            cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
-            cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
-            std::cout << "Finished Matrix Assembly 1.\n";
+            // Skip ghost-cells
+            ++d;++b1;++b2;++bminus1;
+            ++d;++b1;++b2;++bminus1;
+            ++d;++b1;++b2;++bminus1;
+            ++d;++b1;++b2;++bminus1;
+            ++d;++b1;++b2;++bminus1;
+            ++d;++b1;++b2;++bminus1;
         }
+
+        m1.insert_band(0, m1diag.copy());
+        m1.insert_band(3, m1bandPlus1.copy());
+        m1.insert_band(6, m1bandPlus2.copy());
+        m1.insert_band((-3), m1bandMinus1.copy());
+        m3.insert_band(0, m3diag.copy());
+        m3.insert_band(3, m3bandPlus1.copy());
+        m3.insert_band(6, m3bandPlus2.copy());
+        m3.insert_band((-3), m3bandMinus1.copy());
+
+        cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
+        cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
+        cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
+        cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
+        std::cout << "Finished Matrix Assembly 1.\n";
+    }
+
+
     /**
       * First setup of values.
       *
@@ -1162,7 +1319,7 @@ namespace honei {
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
-             typename InitPrec2_> 
+             typename InitPrec2_>
     template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
     {
@@ -1223,7 +1380,7 @@ namespace honei {
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
-             typename InitPrec2_> 
+             typename InitPrec2_>
     template<typename WorkPrec_>
         void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
@@ -1332,7 +1489,7 @@ namespace honei {
 
     /** Second setup of values.
      *
-     * \Param predictedu Temp u.
+     * \param predictedu Temp u.
      * \param predictedv Temp v.
      * \param predictedw Temp w.
      **/
@@ -1340,7 +1497,7 @@ namespace honei {
         typename PredictionPrec1_,
         typename PredictionPrec2_,
         typename InitPrec1_,
-        typename InitPrec2_> 
+        typename InitPrec2_>
         template<typename WorkPrec_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
@@ -1394,7 +1551,7 @@ namespace honei {
         DenseVector<WorkPrec_> flow3_c = *flow3;
         delete flow3;
 
-        _flow_x(flow3_c);
+        _flow_y(flow3_c);
 
         DenseVector<WorkPrec_>* w_temp_result(_w_temp->copy());
         DenseVector<WorkPrec_> w_temp_result_c = *w_temp_result;
@@ -1423,7 +1580,7 @@ namespace honei {
         typename PredictionPrec1_,
         typename PredictionPrec2_,
         typename InitPrec1_,
-        typename InitPrec2_> 
+        typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_correction(DenseVector<ResPrec_>& predictedu,
                     DenseVector<ResPrec_>& predictedv,
                     DenseVector<ResPrec_>& predictedw)
@@ -1439,7 +1596,7 @@ namespace honei {
             (*_u)[iter.index()] = 0;
             ++iter;
             (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
-            (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+            (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+
                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
             (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
@@ -1490,7 +1647,7 @@ namespace honei {
                 (*_u)[iter.index()] = 0;
                 ++iter;
                 (*_v)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2];
-                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+ 
+                (*_v)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-2]+
                     (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
@@ -1509,7 +1666,7 @@ namespace honei {
                 (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+                (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
                     (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
                 (*_u)[iter.index()] = 5;
                 ++iter;
@@ -1558,7 +1715,7 @@ namespace honei {
             (*_v)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-3] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
-            (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+ 
+            (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
 
         }
@@ -1652,7 +1809,7 @@ namespace honei {
             WorkPrec_ phiMinusOld;
             WorkPrec_ temp;
             WorkPrec_ tempTop;
-            WorkPrec_ prefac = _delta_t/4*_delta_y;
+            WorkPrec_ prefac = _delta_t/(4*_delta_y);
 
             for(unsigned long s=0; s< _d_width; ++s)
             {
@@ -1770,7 +1927,7 @@ namespace honei {
                         m4bandMinus1[bminus1.index()] =temp * (*_d)[k];
 
                         m2diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
-                        m4diag[d.index()] = (*_d)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
+                        m4diag[d.index()] = (*_d)[k] * prefac *(phiPlusNew[k] + phiPlusOld[k] - phiMinusNew[k] - 4);
 
                         phiPlusOld[k]= phiPlusNew[k];
                         phiMinusOld = phiMinusNew[k];
@@ -1805,15 +1962,15 @@ namespace honei {
                     ++i;++d;++b1;++b2;++bminus1;
                 }
             }
-    }
-        m2.band(ulint(0)) = m2diag;
-        m2.band(ulint(3*(_d_width+4))) = m2bandPlus1;
-        m2.band(ulint(6*(_d_width+4))) = m2bandPlus2;
-        m2.band(ulint((-3)*(_d_width+4))) = m2bandMinus1;
-        m4.band(ulint(0)) = m4diag;
-        m4.band(ulint(3*(_d_width+4))) = m4bandPlus1;
-        m4.band(ulint(6*(_d_width+4))) = m4bandPlus2;
-        m4.band(ulint((-3)*(_d_width+4))) = m4bandMinus1;
+        }
+        m2.insert_band(0, m2diag.copy());
+        m2.insert_band(3*(_d_width+4), m2bandPlus1.copy());
+        m2.insert_band(6*(_d_width+4), m2bandPlus2.copy());
+        m2.insert_band((-3)*(_d_width+4), m2bandMinus1.copy());
+        m4.insert_band(0, m4diag.copy());
+        m4.insert_band(3*(_d_width+4), m4bandPlus1.copy());
+        m4.insert_band(6*(_d_width+4), m4bandPlus2.copy());
+        m4.insert_band((-3)*(_d_width+4), m4bandMinus1.copy());
         std::cout << "Finished Matrix Assembly 2.\n";
     }
 
@@ -2038,6 +2195,10 @@ namespace honei {
             {
                  thetaXPlus_iMinus1_j = minusUpper / minusLower;
             }
+            else
+            {
+                thetaXPlus_iMinus1_j = 0;
+            }
             //Compute limitation of Theta for band_-1:
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
 
@@ -2141,9 +2302,9 @@ namespace honei {
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m1diag[ui.index()] = (_delta_t / (4*_delta_x)) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m1diag[ui.index()] = (_delta_t / (4*_delta_x)) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited +
                                                        thetaXMinus_i_j_limited );
-            m3diag[ui.index()] = -(*_c)[k]*((_delta_t / (4*_delta_x)) * (4 - thetaXPlus_i_j_limited - thetaXPlus_iMinus1_j_limited + 
+            m3diag[ui.index()] = -(*_c)[k]*((_delta_t / (4*_delta_x)) * (4 - thetaXPlus_i_j_limited - thetaXPlus_iMinus1_j_limited +
                                                        thetaXMinus_i_j_limited) );
             //FINISHED diagonal.
 
@@ -2229,8 +2390,8 @@ namespace honei {
                 rightPlus1Lower[3] = (*u)[ui.index()+3];
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {
@@ -2371,7 +2532,7 @@ namespace honei {
                 rightMinus1Upper[3] = (*u)[ui.index()-3*(_d_width+4)];
             }
             DenseVector<WorkPrec_> rightMinus1Lower(ulint(4), ulint(0));
-            if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index()) 
+            if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index())
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3*(_d_width+4)];
                 rightMinus1Lower[1] = (*v)[vi.index()];
@@ -2433,10 +2594,10 @@ namespace honei {
             //Second theta (thetaXPlus_iMinus1_j):
             if(ui.index()>=6*(_d_width+4) && ui.index()<ui_END.index())
             {
-                rightDiagUpper[0] = (*v)[vi.index()-6*(_d_width)];
-                rightDiagUpper[1] = (*v)[vi.index()-3*(_d_width)];
-                rightDiagUpper[2] = (*u)[ui.index()-6*(_d_width)];
-                rightDiagUpper[3] = (*u)[ui.index()-3*_d_width];
+                rightDiagUpper[0] = (*v)[vi.index()-6*(_d_width+4)];
+                rightDiagUpper[1] = (*v)[vi.index()-3*(_d_width+4)];
+                rightDiagUpper[2] = (*u)[ui.index()-6*(_d_width+4)];
+                rightDiagUpper[3] = (*u)[ui.index()-3*(_d_width+4)];
 
             }
             if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index())
@@ -2492,9 +2653,9 @@ namespace honei {
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m2diag[ui.index()] = (_delta_t / (4*_delta_y)) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited + 
+            m2diag[ui.index()] = (_delta_t / (4*_delta_y)) * (thetaXPlus_i_j_limited + thetaXPlus_iMinus1_j_limited +
                                                        thetaXMinus_i_j_limited );
-            m4diag[ui.index()] = -(*_d)[k]*(_delta_t / (4*_delta_y)) * (4-thetaXPlus_i_j_limited - thetaXPlus_iMinus1_j_limited + 
+            m4diag[ui.index()] = -(*_d)[k]*(_delta_t / (4*_delta_y)) * (4-thetaXPlus_i_j_limited - thetaXPlus_iMinus1_j_limited +
                                                        thetaXMinus_i_j_limited );
             //FINISHED diagonal.
 
@@ -2581,8 +2742,8 @@ namespace honei {
                 rightPlus1Lower[3] = (*u)[ui.index()+3*(_d_width+4)];
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {
@@ -2596,9 +2757,9 @@ namespace honei {
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
 
             //Compute matrix element value:
-            m2bandPlus1[ui.index()] = -(_delta_t / (4*_delta_y)) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m2bandPlus1[ui.index()] = -(_delta_t / (4*_delta_y)) * (2 + thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited +
                                                        thetaXMinus_i_j_limited );
-            m4bandPlus1[ui.index()] = (*_d)[k]*(_delta_t / (4*_delta_y)) * (2 - thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited + 
+            m4bandPlus1[ui.index()] = (*_d)[k]*(_delta_t / (4*_delta_y)) * (2 - thetaXPlus_i_j_limited + thetaXMinus_iPlus1_j_limited +
                                                        thetaXMinus_i_j_limited );
             //FINISHED band_+1.
 
@@ -2638,8 +2799,8 @@ namespace honei {
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
 
             //Compute matrix element value:
-            m2bandPlus2[ui.index()] = (_delta_t / (4*_delta_x)) * (thetaXMinus_iPlus1_j_limited);
-            m4bandPlus2[ui.index()] = -(*_d)[k]*(_delta_t / (4*_delta_x)) * (thetaXMinus_iPlus1_j_limited);
+            m2bandPlus2[ui.index()] = (_delta_t / (4*_delta_y)) * (thetaXMinus_iPlus1_j_limited);
+            m4bandPlus2[ui.index()] = -(*_d)[k]*(_delta_t / (4*_delta_y)) * (thetaXMinus_iPlus1_j_limited);
             //FINISHED band_+2.
 
             //Iterate:

@@ -5,7 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+2007-09-01 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libswe/sover.hh: Fixed sign bug and wrong access in assemble1+2_DEBUG;
+	Setup-stage2 now uses proper flow-function for computing w^(n,2);
+	Completed survey of assemble2(non-debug), fixed minor bugs, now working as intended;
+	Completed survey of assemble1(non-debug), corrected loop-conditions
+	for inner and outer loop, fixed minor bugs, now working as intended;
+	Reworked flow- and sourceterm computation completely.
+
+2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* *.TEST.cc: Removed unnecessary #include statements.
 
@@ -17,7 +26,7 @@ see the NEWS file.
 	due to lacking obsolete operation; added dam break scenario to test,
 	adjusted global parameters, cleaned up a lot.
 
-2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector.hh: Added VectorSizeDoesNotMatch exception in  operator==.
 
@@ -37,7 +46,7 @@ see the NEWS file.
 	libutil/memory_manager.hh, libutil/shared_array.hh, libutil/tags.hh:
 	Substantially diminished the number of doxygen warnings.
 
-2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de
+2007-08-31 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector.hh: Fixed operator==.
 	* libla/scaled_sum.hh, libla/reduction.hh: Added context statements.
