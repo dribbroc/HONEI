@@ -99,7 +99,7 @@ namespace honei {
             double _eps;
 
             ///The squared Manning-Coefficient used by the sourceterm computation.
-            static const double _manning_n_squared = 0.000625;
+            ResPrec_ _manning_n_squared;
 
             ///The number of cells in the finite volume descretization grid.
             ulint _n;
@@ -293,7 +293,7 @@ namespace honei {
               *
               **/
             template<typename WorkPrec_>
-            void _do_setup_stage1( DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw);
+            void _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw);
 
             /** Encapsulates the setup for the values utemp, vtemp, wtemp.
               * Uses flow - computations.
@@ -408,7 +408,8 @@ namespace honei {
                         DenseVector<ResPrec_> * bottomx,
                         DenseVector<ResPrec_> * bottomy,
                         DenseVector<ResPrec_> * c,
-                        DenseVector<ResPrec_> * d)
+                        DenseVector<ResPrec_> * d,
+                        ResPrec_ manning_n)
             {
                 this->_height = height;
                 this->_bottom = bottom;
@@ -438,6 +439,7 @@ namespace honei {
 
                 this->_c = c;
                 this->_d = d;
+                this->_manning_n_squared = manning_n * manning_n;
                 _u_temp = _u->copy();
                 _v_temp = _v->copy();
                 _w_temp = _w->copy();
@@ -666,7 +668,7 @@ namespace honei {
     {
         typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
         WorkPrec_ height, velocity1;
-        DenseVector<WorkPrec_> temp(ulint(3), ulint(0));
+        DenseVector<WorkPrec_> temp(ulint(3), WorkPrec_(0));
         for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator)
         {
             // Read height from given vector
@@ -778,7 +780,7 @@ namespace honei {
     {
         typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
         WorkPrec_ height, velocity1;
-        DenseVector<WorkPrec_> temp(ulint(3), ulint(0));
+        DenseVector<WorkPrec_> temp(ulint(3), WorkPrec_(0));
         for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator)
         {
             // Read height from given vector
@@ -894,7 +896,7 @@ namespace honei {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
     {
-        DenseVector<WorkPrec_> result(ulint(3), ulint(0));
+        DenseVector<WorkPrec_> result(ulint(3), WorkPrec_(0));
 
         if (h > 0)
         {
@@ -931,7 +933,7 @@ namespace honei {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
     {
-        DenseVector<WorkPrec_> result(ulint(3), ulint(0));
+        DenseVector<WorkPrec_> result(ulint(3), WorkPrec_(0));
 
         if (h > 0)
         {
@@ -1039,7 +1041,7 @@ namespace honei {
     template <typename WorkPrec_>
     DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2, ResPrec_ slope_x, ResPrec_ slope_y)
     {
-        DenseVector<WorkPrec_> result(ulint(3), ulint(0), ulint(1));
+        DenseVector<WorkPrec_> result(ulint(3), WorkPrec_(0));
 
         if (h > 0)
         {
@@ -1084,7 +1086,7 @@ namespace honei {
         typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
         typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
         typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesyiterator(_bottom_slopes_y->begin_elements());
-        DenseVector<WorkPrec_> temp(ulint(3), ulint(0));
+        DenseVector<WorkPrec_> temp(ulint(3), WorkPrec_(0));
         WorkPrec_ height, velocity1;
         for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator, ++bottomslopesxiterator, ++bottomslopesyiterator)
         {
@@ -1129,25 +1131,25 @@ namespace honei {
         ::_assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_> m3diag(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0));//three
+        DenseVector<WorkPrec_> m1diag(_u->size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), WorkPrec_(0));//three
+        DenseVector<WorkPrec_> m3diag(_u->size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m3bandPlus1(_u->size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m3bandPlus2(_u->size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m3bandMinus1(_u->size(), WorkPrec_(0));//three
 
         ///Necessary values to be temporarily saved.
-        DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> tempPlus(ulint(3), WorkPrec_(0));
+        DenseVector<WorkPrec_> tempTopPlus(ulint(3), WorkPrec_(0));
 
-        DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> phiPlusOld(ulint(3), WorkPrec_(0));
+        DenseVector<WorkPrec_> phiPlusNew(ulint(3), WorkPrec_(0));
+        DenseVector<WorkPrec_> phiMinusNew(ulint(3), WorkPrec_(0));
 
-        DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0));
-        DenseVector<WorkPrec_> tempTopMinus(ulint(3),ulint(0));
+        DenseVector<WorkPrec_> tempMinus(ulint(3), WorkPrec_(0));
+        DenseVector<WorkPrec_> tempTopMinus(ulint(3), WorkPrec_(0));
 
         WorkPrec_ phiMinusOld;
         WorkPrec_ temp;
@@ -1786,25 +1788,25 @@ namespace honei {
         {
 
             ///The bands containing data.
-            DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
-            DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
-            DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
-            DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
-            DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
-            DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
-            DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
-            DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
+            DenseVector<WorkPrec_> m2diag(_u->size(), WorkPrec_(0));      //zero
+            DenseVector<WorkPrec_> m2bandPlus1(_u->size(), WorkPrec_(0)); //one
+            DenseVector<WorkPrec_> m2bandPlus2(_u->size(), WorkPrec_(0)); //two
+            DenseVector<WorkPrec_> m2bandMinus1(_u->size(), WorkPrec_(0));//three
+            DenseVector<WorkPrec_> m4diag(_u->size(), WorkPrec_(0));      //zero
+            DenseVector<WorkPrec_> m4bandPlus1(_u->size(), WorkPrec_(0)); //one
+            DenseVector<WorkPrec_> m4bandPlus2(_u->size(), WorkPrec_(0)); //two
+            DenseVector<WorkPrec_> m4bandMinus1(_u->size(), WorkPrec_(0));//three
 
             ///Necessary values to be temporarily saved.
-            DenseVector<WorkPrec_> tempPlus(ulint(3),ulint(0));
-            DenseVector<WorkPrec_> tempTopPlus(ulint(3),ulint(0));
+            DenseVector<WorkPrec_> tempPlus(ulint(3), WorkPrec_(0));
+            DenseVector<WorkPrec_> tempTopPlus(ulint(3), WorkPrec_(0));
 
-            DenseVector<WorkPrec_> phiPlusOld(ulint(3),ulint(0));
-            DenseVector<WorkPrec_> phiPlusNew(ulint(3),ulint(0));
-            DenseVector<WorkPrec_> phiMinusNew(ulint(3),ulint(0));
+            DenseVector<WorkPrec_> phiPlusOld(ulint(3), WorkPrec_(0));
+            DenseVector<WorkPrec_> phiPlusNew(ulint(3), WorkPrec_(0));
+            DenseVector<WorkPrec_> phiMinusNew(ulint(3), WorkPrec_(0));
 
-            DenseVector<WorkPrec_> tempMinus(ulint(3),ulint(0));
-            DenseVector<WorkPrec_> tempTopMinus(ulint(3), ulint(0));
+            DenseVector<WorkPrec_> tempMinus(ulint(3), WorkPrec_(0));
+            DenseVector<WorkPrec_> tempTopMinus(ulint(3), WorkPrec_(0));
 
             WorkPrec_ phiMinusOld;
             WorkPrec_ temp;
@@ -2135,14 +2137,14 @@ namespace honei {
         ::_assemble_matrix1_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m1diag(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_> m3diag(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_> m3bandPlus1(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_> m3bandPlus2(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_> m3bandMinus1(_u->size(),ulint( 0));//three
+        DenseVector<WorkPrec_> m1diag(_u->size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), WorkPrec_(0));//three
+        DenseVector<WorkPrec_> m3diag(_u->size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m3bandPlus1(_u->size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m3bandPlus2(_u->size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m3bandMinus1(_u->size(), WorkPrec_(0));//three
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2151,9 +2153,9 @@ namespace honei {
 
         unsigned int k = 0;
         //Preparing left operand for all scalar products
-        DenseVector<WorkPrec_> constantVector(ulint(4), ulint(0));
+        DenseVector<WorkPrec_> constantVector(ulint(4), WorkPrec_(0));
         //Preparing left operand for all scalar products
-        DenseVector<WorkPrec_> constantVectorMinus(ulint(4), ulint(0));
+        DenseVector<WorkPrec_> constantVectorMinus(ulint(4), WorkPrec_(0));
 
         while(ui!=ui_END)
         {
@@ -2169,7 +2171,7 @@ namespace honei {
 
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
-            DenseVector<WorkPrec_> rightMinus1Upper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightMinus1Upper(ulint(4), WorkPrec_(0));
             if(ui.index()>=6 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightMinus1Upper[0] = (*v)[vi.index()-6];
@@ -2178,7 +2180,7 @@ namespace honei {
                 rightMinus1Upper[3] = (*u)[ui.index()-3];
             }
 
-            DenseVector<WorkPrec_> rightMinus1Lower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightMinus1Lower(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/3 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3];
@@ -2209,7 +2211,7 @@ namespace honei {
 
             //Prepare right operands for diagonal:
             //First Theta - value (thetaXPlus_i_j)
-            DenseVector<WorkPrec_> rightDiagUpper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightDiagUpper(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/3 && ui.index()<ui_END.index()/*-6*/)
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3];
@@ -2217,7 +2219,7 @@ namespace honei {
                 rightDiagUpper[2] = (*u)[ui.index()-3];
                 rightDiagUpper[3] = (*u)[ui.index()];
             }
-            DenseVector<WorkPrec_> rightDiagLower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightDiagLower(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/0 && ui.index()<ui_END.index())
             {
                 rightDiagLower[0] = (*v)[vi.index()];
@@ -2310,7 +2312,7 @@ namespace honei {
 
             //Prepare right operands for band_+1:
             //First Theta - value (thetaXPlus_i_j)
-            DenseVector<WorkPrec_> rightPlus1Upper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus1Upper(ulint(4), WorkPrec_(0));
             if(ui.index()>= 3 && ui.index()<ui_END.index())
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3];
@@ -2319,7 +2321,7 @@ namespace honei {
                 rightPlus1Upper[3] = (*u)[ui.index()];
 
             }
-            DenseVector<WorkPrec_> rightPlus1Lower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus1Lower(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-3)
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
@@ -2412,7 +2414,7 @@ namespace honei {
             //FINISHED band_+1.
 
             //band_+2 (thetaXMinus_iPlus1_j):
-            DenseVector<WorkPrec_> rightPlus2Upper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus2Upper(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()-3)
             {
                 rightPlus2Upper[0] = (*v)[vi.index()];
@@ -2420,7 +2422,7 @@ namespace honei {
                 rightPlus2Upper[2] = (*u)[ui.index()];
                 rightPlus2Upper[3] = (*u)[ui.index()+3];
             }
-            DenseVector<WorkPrec_> rightPlus2Lower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus2Lower(ulint(4), WorkPrec_(0));
 
             if(ui.index()>=/*6*/0 && ui.index()<=ui_END.index()/*-6*/-6)
             {
@@ -2491,14 +2493,14 @@ namespace honei {
         ::_assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m2diag(_u->size(), ulint(0));      //zero
-        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), ulint(0)); //one
-        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), ulint(0)); //two
-        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), ulint(0));//three
-        DenseVector<WorkPrec_> m4diag(_u->size(),ulint( 0));      //zero
-        DenseVector<WorkPrec_> m4bandPlus1(_u->size(),ulint (0)); //one
-        DenseVector<WorkPrec_> m4bandPlus2(_u->size(),ulint (0)); //two
-        DenseVector<WorkPrec_> m4bandMinus1(_u->size(),ulint( 0));//three
+        DenseVector<WorkPrec_> m2diag(_u->size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), WorkPrec_(0));//three
+        DenseVector<WorkPrec_> m4diag(_u->size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m4bandPlus1(_u->size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m4bandPlus2(_u->size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m4bandMinus1(_u->size(), WorkPrec_(0));//three
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2506,9 +2508,9 @@ namespace honei {
         typename DenseVector<WorkPrec_>::ElementIterator vi_END(u->end_elements());
         unsigned int k = 0;
         //Preparing left operand for all scalar products
-        DenseVector<WorkPrec_> constantVector(ulint(4), ulint(0));
+        DenseVector<WorkPrec_> constantVector(ulint(4), WorkPrec_(0));
                //Preparing left operand for all scalar products
-        DenseVector<WorkPrec_> constantVectorMinus(ulint(4), ulint(0));
+        DenseVector<WorkPrec_> constantVectorMinus(ulint(4), WorkPrec_(0));
 
         while(ui!=ui_END)
         {
@@ -2523,7 +2525,7 @@ namespace honei {
 
             //Prepare right operands for band_-1:
             //thetaXPlus_iMinus1_j
-            DenseVector<WorkPrec_> rightMinus1Upper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightMinus1Upper(ulint(4), WorkPrec_(0));
             if(ui.index()>=6*(_d_width+4) && ui.index()<ui_END.index())
             {
                 rightMinus1Upper[0] = (*v)[vi.index()-6*(_d_width+4)];
@@ -2531,7 +2533,7 @@ namespace honei {
                 rightMinus1Upper[2] = (*u)[ui.index()-6*(_d_width+4)];
                 rightMinus1Upper[3] = (*u)[ui.index()-3*(_d_width+4)];
             }
-            DenseVector<WorkPrec_> rightMinus1Lower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightMinus1Lower(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index())
             {
                 rightMinus1Lower[0] = (*v)[vi.index()-3*(_d_width+4)];
@@ -2558,7 +2560,7 @@ namespace honei {
 
             //Prepare right operands for diagonal:
             //First Theta - value (thetaXPlus_i_j)
-            DenseVector<WorkPrec_> rightDiagUpper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightDiagUpper(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index())
             {
                 rightDiagUpper[0] = (*v)[vi.index()-3*(_d_width+4)];
@@ -2567,7 +2569,7 @@ namespace honei {
                 rightDiagUpper[3] = (*u)[ui.index()];
             }
 
-            DenseVector<WorkPrec_> rightDiagLower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightDiagLower(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*(_d_width+4)*/ 0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4))
             {
                 rightDiagLower[0] = (*v)[vi.index()];
@@ -2661,7 +2663,7 @@ namespace honei {
 
             //Prepare right operands for band_+1:
             //First Theta - value (thetaXPlus_i_j)
-            DenseVector<WorkPrec_> rightPlus1Upper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus1Upper(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*/3*(_d_width+4) && ui.index()<ui_END.index())
             {
                 rightPlus1Upper[0] = (*v)[vi.index()-3*(_d_width+4)];
@@ -2669,7 +2671,7 @@ namespace honei {
                 rightPlus1Upper[2] = (*u)[ui.index()-3*(_d_width+4)];
                 rightPlus1Upper[3] = (*u)[ui.index()];
             }
-            DenseVector<WorkPrec_> rightPlus1Lower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus1Lower(ulint(4), WorkPrec_(0));
             if(ui.index()>=0/*6 *(_d_width+4)*/ && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4))
             {
                 rightPlus1Lower[0] = (*v)[vi.index()];
@@ -2764,7 +2766,7 @@ namespace honei {
             //FINISHED band_+1.
 
             //band_+2 (thetaXMinus_iPlus1_j):
-            DenseVector<WorkPrec_> rightPlus2Upper(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus2Upper(ulint(4), WorkPrec_(0));
             if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-/*6*/3*(_d_width+4))
             {
                 rightPlus2Upper[0] = (*v)[vi.index()];
@@ -2773,7 +2775,7 @@ namespace honei {
                 rightPlus2Upper[3] = (*u)[ui.index()+3*(_d_width+4)];
 
             }
-            DenseVector<WorkPrec_> rightPlus2Lower(ulint(4), ulint(0));
+            DenseVector<WorkPrec_> rightPlus2Lower(ulint(4), WorkPrec_(0));
 
             if(ui.index()>=/*6*(_d_width+4)*/0 && ui.index()<=ui_END.index()-6*(_d_width+4))
             {

@@ -7,7 +7,14 @@ see the NEWS file.
 
 2007-09-01 Volker Jung <volker.jung@uni-dortmund.de>
 
-	* libswe/sover.hh: Fixed sign bug and wrong access in assemble1+2_DEBUG;
+	* libswe/solver.hh: Extended constructor, now an additional parameter
+	"manning_n" is needed. All solver-functions now make use of the proper
+	DenseVector- an DenseMatrix-constructor.
+	* libswe/solver_TEST.cc: Updated with respect to constructor-changes.
+
+2007-09-01 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libswe/solver.hh: Fixed sign bug and wrong access in assemble1+2_DEBUG;
 	Setup-stage2 now uses proper flow-function for computing w^(n,2);
 	Completed survey of assemble2(non-debug), fixed minor bugs, now working as intended;
 	Completed survey of assemble1(non-debug), corrected loop-conditions

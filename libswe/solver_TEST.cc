@@ -1,4 +1,4 @@
-/* vim: set number sw=4 sts=4 et foldmethod=syntax : */
+/* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
@@ -79,9 +79,11 @@ class RelaxSolverQuickTest :
             DataType_ deltat = 5./22.;
 
             double eps = 10e-6;
+            DataType_ manning = 0;
+
             RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (&height, &bottom, &u1, &u2, &u, &v, &w,
-                dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d);
+                dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d, manning);
             relax_solver.do_preprocessing();
             cout << "Height -field after preprocessing:\n";
             string outHeight = stringify(height);
@@ -111,5 +113,3 @@ class RelaxSolverQuickTest :
 };
 //RelaxSolverQuickTest<float> relax_solver_quick_test_float("float");
 RelaxSolverQuickTest<double> relax_solver_quick_test_double("double");
-
-
