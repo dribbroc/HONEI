@@ -112,7 +112,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()), 
+            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
                      r_end(b.end_non_zero_elements());
             for ( ; r != r_end ; ++r )
             {
@@ -257,7 +257,7 @@ namespace honei
          * \param a The vector that is the left-hand minuend of the operation.
          * \param b The vector that is the right-hand subtrahend of the operation.
          *
-         * \retval a Will modify the minuend a and return it.
+         * \retval a Will normally modify the minuend a and return it. Only for Difference(SparseVector, DenseVector) the subtrahend b is modified and returned.
          *
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
@@ -331,6 +331,22 @@ namespace honei
             }
 
             return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        {
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+            typename Vector<DT1_>::ConstElementIterator l(a.begin_elements());
+            for (typename Vector<DT2_>::ElementIterator r(b.begin_elements()),
+                    r_end(b.end_elements()) ; r != r_end ; ++r)
+            {
+                *r = (-1) * *r + *l;
+            }
+
+            return b;
         }
 
         /// \}

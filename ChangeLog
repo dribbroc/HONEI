@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-02 Sven Mallach <sven.mallach@uni-dortmund.de>
+	* libla/product.hh: Added implementations for matrix products Banded *
+	Sparse, Sparse * Banded, Dense * Banded, that were developed when svn
+	was locked. Resolved naming conflicts that arose because of renamings
+	from "left" to "a" and "right" to "b".
+	* libla/product_TEST.cc: Added rough tests for added implementations.
+	Should be reworked by test group.
+	* libla/difference: Added implementation for SparseVector -
+	DenseVector.
+
 2007-09-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/vector_masked_max_index.hh, libla/vector_masked_min_index.hh
