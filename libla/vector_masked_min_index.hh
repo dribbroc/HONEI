@@ -54,6 +54,7 @@ namespace honei
         template <typename DataType_>
         static unsigned long value(const DenseVector<DataType_> & vector, const Vector<bool> & mask)
         {
+            CONTEXT("When calculating the minimum element of a masked DenseVector");
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
@@ -83,6 +84,7 @@ namespace honei
         template <typename DataType_>
         static unsigned long value(const SparseVector<DataType_> & vector, const Vector<bool> & mask)
         {
+            CONTEXT("When calculating the minimum element of a masked SparseVector");
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 

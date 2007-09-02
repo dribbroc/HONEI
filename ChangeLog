@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-02 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/vector_masked_max_index.hh, libla/vector_masked_min_index.hh
+	libla/scale.hh: Added context statements.
+
 2007-09-01 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Extended constructor, now an additional parameter

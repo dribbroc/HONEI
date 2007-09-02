@@ -63,6 +63,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT2_> & value(const DT1_ a, DenseMatrix<DT2_> & x)
         {
+            CONTEXT("When scaling DenseMatrix");
             for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
@@ -75,6 +76,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT2_> & value(const DT1_ a, SparseMatrix<DT2_> & x)
         {
+            CONTEXT("When scaling SparseMatrix");
             for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
@@ -87,6 +89,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT2_> & value(const DT1_ a, BandedMatrix<DT2_> & x)
         {
+            CONTEXT("When scaling BandedMatrix");
             for (typename BandedMatrix<DT2_>::VectorIterator l(x.begin_bands()),
                     l_end(x.end_bands()) ; l != l_end ; ++l)
             {
@@ -99,6 +102,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseVector<DT2_> & value(const DT1_ a, DenseVector<DT2_> & x)
         {
+            CONTEXT("When scaling DenseVector");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
@@ -111,6 +115,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseVector<DT2_> & value(const DT1_ a, SparseVector<DT2_> & x)
         {
+            CONTEXT("When scaling SparseMatrix");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
