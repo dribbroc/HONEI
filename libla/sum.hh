@@ -31,7 +31,7 @@
 /**
  * \file
  *
- * Templatized definitions of operation MatrixSum.
+ * Templatized definitions of operation Sum.
  *
  * \ingroup grpoperations
  **/
@@ -249,8 +249,10 @@ namespace honei
                     a[r.row()][r.column()] = *r;
                 }
                 else // l.index() < r.index() not possible
-                *l += *r; /// \todo check. possible bug?
+                {
+                *l += *r;
                 ++l;
+                }
             }
 
             return a;
