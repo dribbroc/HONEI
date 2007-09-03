@@ -127,7 +127,7 @@ int main(int argc, char** argv)
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
             i != i_end ; ++i)
     {
-        CONTEXT("When running test case '" + (i)->id() + "':");
+        CONTEXT("When running test case '" + (*i)->id() + "':");
         try
         {
             if (quick && (!(*i)->is_quick_test()) )
