@@ -83,6 +83,7 @@ namespace honei
         template <typename DT_>
         static DT_ value(const DenseVector<DT_> & x)
         {
+            CONTEXT("When calculating norm of a DenseVector:");
             DT_ result(0);
 
             result = Norm<norm_type_, root_>::value(x);
@@ -93,6 +94,7 @@ namespace honei
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
+            CONTEXT("When calculating norm of a DenseVector:");
             DT_ result(0);
 
             result = Norm<norm_type_, root_>::value(x);
