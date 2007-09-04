@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-04 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	*  libla/sparse_vector.hh: Added termination element in insert_element.
+	
 2007-09-03 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	*  unittest/unittest.cc, Makefile.am: Added context statement when

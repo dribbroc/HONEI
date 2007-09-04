@@ -73,7 +73,7 @@ namespace honei
                         stringify(index) + "':");
 
                 bool realloc(_imp->_capacity <= _imp->_used_elements + 1);
-                unsigned long capacity(realloc ? std::min(_imp->_capacity + 10, _imp->_size) : _imp->_capacity);
+                unsigned long capacity(realloc ? std::min(_imp->_capacity + 10, _imp->_size + 1) : _imp->_capacity);
                 DataType_ * elements(realloc ? new DataType_[capacity] : _imp->_elements.get());
                 unsigned long * indices(realloc ? new unsigned long[capacity] : _imp->_indices.get());
 
