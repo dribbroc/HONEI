@@ -158,36 +158,34 @@ class DenseVectorSparseVectorScaledSumQuickTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            unsigned long size (22);
+            DenseVector<DataType_> dv1(size, DataType_(0));
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                    i != i_end ; ++i)
             {
-                DenseVector<DataType_> dv1(size, DataType_(0));
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
-                        i != i_end ; ++i)
-                {
-                    if (i.index() % 10 == 0) *i = DataType_(2);
-                }
-                SparseVector<DataType_> sv2(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
-                        i != i_end ; ++i)
-                {
-                    if (i.index() % 7 == 0) *i = DataType_(3);
-                }
-
-                DataType_ scal(2);
-
-                DenseVector<DataType_> sum2(size, DataType_(0));
-                for (typename Vector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
-                        i != i_end ; ++i)
-                {
-                    if (i.index() % 7 == 0) *i = DataType_(6);
-                    if (i.index() % 10 == 0) *i = DataType_(2);
-                    if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
-                }
-
-                DenseVector<DataType_> sum1(ScaledSum<>::value(dv1, sv2, scal));
-
-                TEST_CHECK_EQUAL(sum1, sum2);
+                if (i.index() % 10 == 0) *i = DataType_(2);
             }
+            SparseVector<DataType_> sv2(size, size / 8 + 1);
+            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 7 == 0) *i = DataType_(3);
+            }
+
+            DataType_ scal(2);
+
+            DenseVector<DataType_> sum2(size, DataType_(0));
+            for (typename Vector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (i.index() % 7 == 0) *i = DataType_(6);
+                if (i.index() % 10 == 0) *i = DataType_(2);
+                if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
+            }
+
+            DenseVector<DataType_> sum1(ScaledSum<>::value(dv1, sv2, scal));
+
+            TEST_CHECK_EQUAL(sum1, sum2);
 
             DenseVector<DataType_> sv00(1);
             SparseVector<DataType_> sv01(2, 1);
@@ -206,8 +204,8 @@ class SparseVectorScaledSumTest :
     public:
         SparseVectorScaledSumTest(const std::string & type) :
             BaseTest("sparse_vector_scaled_sum_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -259,8 +257,8 @@ class SparseVectorScaledSumQuickTest :
     public:
         SparseVectorScaledSumQuickTest(const std::string & type) :
             QuickTest("sparse_vector_scaled_sum_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {

@@ -774,7 +774,7 @@ class BandedMatrixDenseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(25);
+            unsigned long size(11);
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
             DenseVector<DataType_> * dv4 (new DenseVector<DataType_>(size, DataType_(6)));
@@ -817,7 +817,7 @@ class BandedMatrixSparseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(30);
+            unsigned long size(11);
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
             DenseVector<DataType_> * dv4 (new DenseVector<DataType_>(size, DataType_(6)));
@@ -878,7 +878,7 @@ class DenseMatrixBandedMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(25);
+            unsigned long size(11);
 
             DenseMatrix<DataType_> dm1(size, size, DataType_(0));
             for (int i = 0; i < size; ++i)
@@ -930,7 +930,7 @@ class SparseMatrixBandedMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(25);
+            unsigned long size(11);
 
             SparseMatrix<DataType_> sm1(size, size);
             for (int i = 0; i < size; ++i)
