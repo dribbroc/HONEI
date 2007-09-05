@@ -164,6 +164,21 @@ namespace honei
                 SharedArrayCounter<DataType_>::instance()->increase(_array);
             }
 
+            /// Assignment-operator.
+            SharedArray<DataType_> & operator= (const SharedArray<DataType_> & other)
+            {
+                CONTEXT("When assigning SharedArray to SharedArray:");
+                ASSERT(SharedArrayCounter<DataType_>::instance()->count(_array) >= 0, "reference counter for other's "
+                        "array is below zero!");
+
+                // Increase first to avoid race conditions like 'A.reset(A.get())'
+                SharedArrayCounter<DataType_>::instance()->increase(other._array);
+                SharedArrayCounter<DataType_>::instance()->decrease(_array);
+
+                _array = other._array;
+                _size = other._size;
+            }
+
             /// Destructor.
             ~SharedArray()
             {
