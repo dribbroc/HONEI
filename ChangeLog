@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-05 Mathias Kadolsky <mathkad@gmx.de>
+
+	* libgraph/position.hh:	bug fixed. 
+
 2007-09-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 	* libla/product_TEST.cc, libla/scaled_sum_TEST.cc:
 	Corrected some test sizes.

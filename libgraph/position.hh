@@ -397,7 +397,7 @@
 
                     // Mul(square_dist, cost_matrix) -1
                     ElementProduct<>::value (square_dist, _attractive_force_parameter);
-                    Scale<>::value (-1, square_dist);
+                    Sum<>::value (square_dist, -1);
 
                     // Calculate the single diagonal matrix containing the row sum vector of square_dist
                     DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum>::value(square_dist)));
@@ -405,7 +405,7 @@
                     // Calculating square_dist = (square_dist - diag(sum_vec))
                     BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
                     Difference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
-                    Scale<>::value(DataType_(-1), square_dist);
+                    Scale<>::value (-1, square_dist);
 
                     // Calculating attractive_forces = (_coordinates * square_dist)
                     DenseMatrix<DataType_> attractive_forces(Product<>::value(_coordinates, square_dist));
