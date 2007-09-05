@@ -2,17 +2,15 @@
 
 #ifndef ALLBENCH
 #include <benchmark/benchmark.cc>
-#include <libla/dense_matrix.hh>
-#include <libla/matrix_error.cc>
 #include <tr1/memory>
 #include <string>
 #endif
 
-#include <libla/matrix_element_inverse.hh>
- 
+#include <libla/element_inverse.hh>
+
 using namespace std;
-using namespace pg512;
- 
+using namespace honei;
+
 
 template <typename DataType_>
 
@@ -35,13 +33,12 @@ class DenseMatrixElementInverseBench :
         {
             for(int i = 0; i < _count; ++i)
         {
-
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > dm0(new DenseMatrix<DataType_>(_size, _size, DataType_(12)) );
-            BENCHMARK(MatrixElementInverse<DataType_>::value(*dm0));
+            DenseMatrix<DataType_> dm0(_size, _size, DataType_(12));
+            BENCHMARK(ElementInverse<>::value(dm0));
         }
         evaluate(_size * _size);
     }
 };
 
-DenseMatrixElementInverseBench<float>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 1000x1000, float",  1000, 10);
-DenseMatrixElementInverseBench<double> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 1000x1000, double", 1000, 10);
+DenseMatrixElementInverseBench<float>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 100x100, float",  100, 10);
+DenseMatrixElementInverseBench<double> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 100x100, double", 100, 10);
