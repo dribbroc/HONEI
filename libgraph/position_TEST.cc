@@ -147,8 +147,8 @@ class weightedFruchtermanReingoldPositionsQuickTest :
 
             DataType_ node_weights[] =  {2, 2};
 
-            DataType_ edge_weights[] =  {0, 2,
-                                         2, 0};
+            DataType_ edge_weights[] =  {0, 1,
+                                         1, 0};
 
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
@@ -179,8 +179,8 @@ class weightedFruchtermanReingoldPositionsQuickTest :
 
             // update the positions 
             position.update(0.01,85);
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 2.5, 85 * std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 3.5, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 2, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 4, 85 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, 85 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, 85 * std::numeric_limits<DataType_>::epsilon());
         }
@@ -188,3 +188,63 @@ class weightedFruchtermanReingoldPositionsQuickTest :
 
 weightedFruchtermanReingoldPositionsQuickTest<float> weighted_fruchterman_reingold_positions_quick_test_float("float");
 weightedFruchtermanReingoldPositionsQuickTest<double> weighted_fruchterman_reingold_positions_quick_test_double("double");
+
+template <typename DataType_>
+class weightedKamadaKawaiPositionsQuickTest :
+    public QuickTest
+{
+    public:
+        weightedKamadaKawaiPositionsQuickTest(const std::string & type) :
+            QuickTest("weighted_kamada_kawai_positions_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            // Creating test scenario
+            DataType_ pos[] = {-2, 8,
+                                1, 1};
+
+            DataType_ node_weights[] =  {2, 2};
+
+            DataType_ edge_weights[] =  {0, 1,
+                                         1, 0};
+
+            // Now, fill that numbers into the real matrices
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
+            int i(0);
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
+                    e_end(pPosition->end_elements());e != e_end ; ++e)
+            {
+                *e = pos[i++]; 
+            }
+
+            i = 0;
+            std::tr1::shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(2));
+            for (typename Vector<DataType_>::ElementIterator e(pNode_Weights->begin_elements()),
+                    e_end(pNode_Weights->end_elements()); e != e_end ; ++e)
+            {
+                *e = node_weights[i++];
+            }
+
+            i = 0;
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pEdge_Weights(new DenseMatrix<DataType_>(2,2));
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
+                    e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
+            {
+                *e = edge_weights[i++];
+            }
+            // Creating a Positions object with the test scenario
+            Positions<DataType_, methods::weighted_KamadaKawai> position(*pPosition, *pNode_Weights, *pEdge_Weights);
+
+            // update the positions 
+            position.update(0.01,85);
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 6, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 8, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, 85 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, 85 * std::numeric_limits<DataType_>::epsilon());
+        }
+};
+
+weightedKamadaKawaiPositionsQuickTest<float> weighted_kamada_kawai_positions_quick_test_float("float");
+weightedKamadaKawaiPositionsQuickTest<double> weighted_kamada_kawai_positions_quick_test_double("double");

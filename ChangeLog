@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-06 Mathias Kadolsky <mathkad@gmx.de>
+
+	* libgraph/position.hh: Weighted KamadaKawai added and weighted FruchtermanReingold
+	corrected.
+	* libgraph/position_TEST.cc: Weighted KamadaKawai test added and weighted 
+	FruchtermanReingold test corrected.
+
 2007-09-05 David Gies <David-Gies@gmx.de>
 
         * libla/bench.cc, libla/dot_product_BENCHMARK.cc, libla/element_inverse_BENCHMARK.cc,
