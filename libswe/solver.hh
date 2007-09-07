@@ -1533,7 +1533,7 @@ namespace honei {
 
         Sum<>::value<>(innersum1, innersum2);
         ///Scale sum:
-        Scale<>::value(1/(_eps+_delta_t), predictedv);
+        Scale<>::value(1/(_eps+_delta_t), innersum1);
 
         ///Repeat for w:
         DenseVector<WorkPrec_>* flow2(predictedu.copy());
@@ -1564,7 +1564,7 @@ namespace honei {
         DenseVector<WorkPrec_>innersum22 = Sum<>::value<>(w_temp_result_c, flow3_c);
 
         Sum<>::value<>(innersum11, innersum22);
-        Scale<>::value(1/(_eps + _delta_t), predictedw);
+        Scale<>::value(1/(_eps + _delta_t), innersum11);
 
         predictedv = *(innersum1.copy());
         predictedw = *(innersum11.copy());
