@@ -14,4 +14,6 @@ add(`matrix_element_distance_inverse',  `hh', `test')
 add(`node_distance',                    `hh')
 add(`node_distance',                    `hh')
 add(`position',                         `hh', `test')
-
+add(`node',               	            `hh')
+add(`graph',                            `hh', `test')
+add(`evolving_graph',                   `hh', `test')

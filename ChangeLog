@@ -6,7 +6,16 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
-2007-09-07 Volker Jung <volker.jung@uni-dortmund.de>
+2007-09-05 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+        * libgraph/{graph.hh, graph_TEST.cc, node.hh, evolving_graph.hh,
+        evolving_graph_TEST.cc}:
+        Added classes to handle graphs and evolving graphs. Still needs some
+        careful look on dynamic memory management. And someone shold ensure
+        that the headers are only included once. I've no idea how to work with
+        compiler directives in C.
+
+
+2006-09-07 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Resolved bug in setup stage 2.
 
