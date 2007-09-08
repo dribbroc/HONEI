@@ -46,16 +46,10 @@ namespace honei
             ~ConditionVariable();
 
             /// Broadcast a wake-up to all waiting threads.
-            void broadcast()
-            {
-                pthread_cond_broadcast(_cond);
-            }
+            void broadcast();
 
             /// Sign a wake-up to the waiting thread.
-            void signal()
-            {
-                pthread_cond_signal(_cond);
-            }
+            void signal();
 
             /// Acquire a lock for signaling.
             void acquire_then_signal(Mutex &);

@@ -33,4 +33,20 @@ ConditionVariable::~ConditionVariable()
     delete _cond;
 }
 
+void
+ConditionVariable::broadcast()
+{
+    pthread_cond_broadcast(_cond);
+}
 
+void
+ConditionVariable::signal()
+{
+    pthread_cond_signal(_cond);
+}
+
+void
+ConditionVariable::wait(Mutex & m)
+{
+    pthread_cond_wait(_cond, m.mutex());
+}

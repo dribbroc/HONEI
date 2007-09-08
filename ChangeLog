@@ -5,22 +5,27 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-08 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/condition_variable.cc, libutil/condition_variable.hh: Moved
+	implementation to .cc file. Added implementation for wait() member.
+
 2007-09-07 Mathias Kadolsky <mathkad@gmx.de>
-	* libgraph/{graph.hh, graph_TEST.cc, node.hh, evolving_graph.hh,
-	evolving_graph_TEST.cc}: Commit for Thorsten.
-	Added classes to handle graphs and evolving graphs. Still needs some
-	careful look on dynamic memory management. And someone shold ensure
-	that the headers are only included once. I've no idea how to work with
-	compiler directives in C.
+	* libgraph/graph.hh, libgraph/graph_TEST.cc, libgraph/node.hh,
+	libgraph/evolving_graph.hh, libgraph/evolving_graph_TEST.cc: Commit
+	for Thorsten. Added classes to handle graphs and evolving graphs.
+	Still needs some careful look on dynamic memory management. And
+	someone shold ensure that the headers are only included once. I've no
+	idea how to work with compiler directives in C.
 
 2007-09-07 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
-        * libgraph/{graph.hh, graph_TEST.cc, node.hh, evolving_graph.hh,
-        evolving_graph_TEST.cc}:
-        Added classes to handle graphs and evolving graphs. Still needs some
-        careful look on dynamic memory management. And someone shold ensure
-        that the headers are only included once. I've no idea how to work with
-        compiler directives in C.
 
+	* libgraph/graph.hh, libgraph/graph_TEST.cc, libgraph/node.hh,
+	libgraph/evolving_graph.hh, libgraph/evolving_graph_TEST.cc: Added
+	classes to handle graphs and evolving graphs. Still needs some careful
+	look on dynamic memory management. And someone shold ensure that the
+	headers are only included once. I've no idea how to work with compiler
+	directives in C.
 
 2006-09-07 Volker Jung <volker.jung@uni-dortmund.de>
 
@@ -33,32 +38,43 @@ see the NEWS file.
 	* libgraph/position_TEST.cc: Weighted KamadaKawai test added and weighted 
 	FruchtermanReingold test corrected.
 
+2007-09-05 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/shared_array.hh: Fixed SharedArray assignments by
+	implementing an assignment operator that modifies the counter.
+
 2007-09-05 David Gies <David-Gies@gmx.de>
 
-        * libla/bench.cc, libla/dot_product_BENCHMARK.cc, libla/element_inverse_BENCHMARK.cc,
-          libla/element_product_BENCHMARK.cc, libla/product_BENCHMARK.cc, 
-          libla/reduction_BENCHMARK.cc, libla/scale_BENCHMARK.cc, libla/sum_BENCHMARK.cc: 
-        Benchmarks should be working again.
+	* libla/bench.cc, libla/dot_product_BENCHMARK.cc,
+	libla/element_inverse_BENCHMARK.cc,
+	libla/element_product_BENCHMARK.cc, libla/product_BENCHMARK.cc,
+	libla/reduction_BENCHMARK.cc, libla/scale_BENCHMARK.cc,
+	libla/sum_BENCHMARK.cc: Benchmarks should be working again.
 
 2007-09-05 Mathias Kadolsky <mathkad@gmx.de>
 
-	* libgraph/position.hh:	bug fixed. 
+	* libgraph/position.hh: Bug fixed.
 
 2007-09-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/product_TEST.cc, libla/scaled_sum_TEST.cc:
 	Corrected some test sizes.
 
 2007-09-04 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/norm.hh: Added context statements.
 
 2007-09-04 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
-	*  libla/sparse_vector.hh: Added termination element in insert_element.
+
+	* libla/sparse_vector.hh: Added termination element in insert_element.
 
 2007-09-03 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
-	*  unittest/unittest.cc, Makefile.am: Added context statement when
+
+	* unittest/unittest.cc, Makefile.am: Added context statement when
 	running unittests.
 
 2007-09-02 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/sum.hh: Cleaned up with possible bug. Was a bug that did not
 	be recognized because there is no test case for Banded Matrix * Sparse
 	Matrix. Fixed a small typo.
