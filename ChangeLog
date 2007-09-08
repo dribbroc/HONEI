@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-08 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/product.hh: Commit of buggy code for Product(Banded,Banded) to
+	allow debugging by more than one person. Please concentrate on case
+	"lower/diag" because of band-output at that place.
+	* libla/product_TEST.cc: Added a quicktest for Product(Banded,Banded)
+	which is not capable as end-version, only to enable testing the case
+	mentioned above. Must be reworked later.
+	* libla/banded_matrix.hh: Added VectorIterator-Access-Function
+	"band_at(index)", needed for efficient implementation of
+	Product(Banded,Banded) and later optimizations of other banded-cases.
+	With band_at, in every case at least three ifs will be obsolete.
+
 2007-09-08 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sum_TEST.cc, libla/difference_TEST.cc:

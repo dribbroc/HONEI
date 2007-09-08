@@ -32,6 +32,9 @@
 #include <libla/sum.hh>
 #include <libutil/tags.hh>
 
+#include <cmath>
+#include <iostream>
+
 /**
  * \file
  *
@@ -416,11 +419,203 @@ namespace honei
         {
             CONTEXT("When multiplying BandedMatrix with BandedMatrix:");
 
-            if (a.columns() != b.rows())
-                throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+            if (a.size() != b.size())
+                throw MatrixSizeDoesNotMatch(b.size(), a.size());
 
-            BandedMatrix<DT1_> result(a.rows());
-            ///\todo: Implement when BandIterator ready
+            BandedMatrix<DT1_> result(a.size());
+            unsigned long diag_index = a.size() -1;
+
+
+            for(typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()), vi_end(a.end_bands()) ; vi != vi_end ; ++vi)
+            {
+                if (vi.index() == diag_index) // We are on diagonal of a
+                {
+                    for(typename BandedMatrix<DT1_>::ConstVectorIterator vj(b.begin_bands()), vj_end(b.end_bands()) ; vj != vj_end ; ++vj)
+                    {
+                        if (vj.index() == diag_index) // We are on diagonal of b
+                        {
+                            std::cout << "Diag / Diag" << std::endl;
+                            result.band(0) = Sum<>::value(ElementProduct<>::value(*(vi->copy()),*vj), result.band(0));
+                            std::cout << result << std::endl;
+                        }
+                        else if (vj.index() > diag_index) // We are above diagonal of b
+                        {
+                            signed long result_band_index = vj.index();
+                            result_band_index -= diag_index; //index based on diag = 0
+                            std::cout << "Diag / Upper: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+                            typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements());
+                            typename Vector<DT1_>::ConstElementIterator i(vi->begin_elements());
+                            for(typename Vector<DT2_>::ConstElementIterator j(vj->begin_elements()), j_end(vj->element_at(vj->size() - result_band_index)) ; j != j_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                            }
+                        }
+
+                        else if (vj.index() < diag_index) // We are below diagonal of b
+                        {
+                            signed long result_band_index = vj.index();
+                            result_band_index -= diag_index; //index based on diag = 0
+                            std::cout << "Diag / Lower: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+                            typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(abs(result_band_index)));
+                            typename Vector<DT1_>::ConstElementIterator i(vi->element_at(abs(result_band_index)));
+                            for(typename Vector<DT2_>::ConstElementIterator j(vj->element_at(abs(result_band_index))), j_end(vj->end_elements()) ; j != j_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                            }
+                        }
+                    }
+                }
+                else if (vi.index() > diag_index) // We are above diagonal of a
+                {   // We only go on until band_index of b is equal to [numbers of bands] - actual band_index of a (zero_based).
+                    unsigned long iteration_end((2*b.size())-1);
+                    iteration_end -= (vi.index() - diag_index);
+                    std::cout << "end_of_bands_to_iterate: " << iteration_end << std::endl;
+                    for(typename BandedMatrix<DT1_>::ConstVectorIterator vj(b.begin_bands()), vj_end(b.band_at(iteration_end)) ; vj != vj_end ; ++vj)
+                    {
+                        if (vj.index() == diag_index) // We are on diagonal of b
+                        {
+                            signed long result_band_index = vi.index();
+                            result_band_index -= diag_index; //index based on diag = 0
+                            std::cout << "Upper / Diag: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+                            typename Vector<DT1_>::ConstElementIterator i(vi->begin_elements());
+                            typename Vector<DT2_>::ConstElementIterator j(vj->element_at(result_band_index));
+                            for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()), r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r != r_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                            }
+                        }
+                        else if (vj.index() > diag_index) // We are above diagonal of b
+                        {
+                            signed long diag_based_index_a = vi.index() - diag_index;
+                            signed long diag_based_index_b = vj.index() - diag_index;
+                            signed long result_band_index(diag_based_index_a + diag_based_index_b);
+                            //result_band_index -= (2 * diag_index); //index based on diag = 0
+                            std::cout << "Upper / Upper: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+                            typename Vector<DT1_>::ConstElementIterator i(vi->begin_elements());
+                            unsigned long shift = vi.index();
+                            shift -= diag_index;
+                            typename Vector<DT2_>::ConstElementIterator j(vj->element_at(shift));
+                            for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()), r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r != r_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                            }
+                        }
+
+                        else if (vj.index() < diag_index) // We are below diagonal of b
+                        {
+                            signed long diag_based_index_a = vi.index() - diag_index;
+                            signed long diag_based_index_b = vj.index() - diag_index;
+                            signed long result_band_index(diag_based_index_a + diag_based_index_b);
+                            //result_band_index -= diag_index; //index based on diag = 0
+                            std::cout << "Upper / Lower: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+
+                            long res_start(0);
+                            if (result_band_index < 0)
+                                res_start = abs(result_band_index);
+                            typename Vector<DT1_>::ConstElementIterator i(vi->element_at(res_start));
+                            long vj_start(0);
+                            if (result_band_index >= 0)
+                            {
+                                vj_start = vi.index();
+                                vj_start -= diag_index;
+                            }
+                            else
+                            {
+                                vj_start = abs(result_band_index);
+                                vj_start += vi.index();
+                                vj_start -= diag_index;
+                            }
+                            typename Vector<DT2_>::ConstElementIterator j(vj->element_at(vj_start));
+                            long res_end(2*result.size());
+                            res_end -= 1;
+                            res_end -= vi.index();
+                            for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(res_start)), r_end(result.band(result_band_index).element_at(res_end)) ; r != r_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                            }
+                        }
+                    }
+                }
+                else if (vi.index() < diag_index) // We are below diagonal of a
+                {   // We start at zero_based band_index of b which is equal to abs(band_index(a) - diag_index)
+                    unsigned long iteration_start(abs(vi.index() - diag_index));
+                    std::cout << "start_band_to_iterate_from: " << iteration_start << std::endl;
+                    for(typename BandedMatrix<DT1_>::ConstVectorIterator vj(b.band_at(iteration_start)), vj_end(b.end_bands()) ; vj != vj_end ; ++vj)
+                    {
+                        if (vj.index() == diag_index) // We are on diagonal of b
+                        {
+                            signed long result_band_index = vi.index();
+                            result_band_index -= diag_index; //index based on diag = 0
+                            std::cout << "Lower / Diag: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+                            typename Vector<DT1_>::ConstElementIterator i(vi->element_at(abs(result_band_index)));
+                            typename Vector<DT2_>::ConstElementIterator j(vj->begin_elements());
+                            for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(abs(result_band_index))), r_end(result.band(result_band_index).end_elements()) ; r != r_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                                std::cout << result.band(result_band_index) << std::endl;
+                            }
+                        }
+                        else if (vj.index() > diag_index) // We are above diagonal of b
+                        {
+                            signed long diag_based_index_a = vi.index() - diag_index;
+                            signed long diag_based_index_b = vj.index() - diag_index;
+                            signed long result_band_index(diag_based_index_a + diag_based_index_b);
+                            std::cout << "Lower / Upper: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+                            unsigned long shift(diag_index - vi.index());
+                            typename Vector<DT1_>::ConstElementIterator i(vi->element_at(shift));
+                            typename Vector<DT2_>::ConstElementIterator j(vj->begin_elements());
+                            long res_end(0);
+                            if (result_band_index <= 0)
+                            {
+                                res_end = result.size();
+                            }
+                            else
+                            {
+                                res_end = result.size() - result_band_index;
+                            }
+                            for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(shift)), r_end(result.band(result_band_index).element_at(res_end)) ; r != r_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                            }
+                        }
+
+                        else if (vj.index() < diag_index) // We are below diagonal of b
+                        {
+                            signed long diag_based_index_a = vi.index() - diag_index;
+                            signed long diag_based_index_b = vj.index() - diag_index;
+                            signed long result_band_index(diag_based_index_a + diag_based_index_b);
+                            //result_band_index -= diag_index; //index based on diag = 0
+                            std::cout << "Lower / Lower: vi / vj / rbi: " << vi.index() << " / " << vj.index() << " / " << result_band_index << std::endl;
+                            unsigned long shift = diag_index;
+                            shift -= vj.index();
+                            typename Vector<DT1_>::ConstElementIterator i(vi->element_at(abs(result_band_index)));
+                            typename Vector<DT2_>::ConstElementIterator j(vj->element_at(shift));
+                            for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(abs(result_band_index))), r_end(result.band(result_band_index).end_elements()) ; r != r_end ; ++j, ++i, ++r)
+                            {
+                                *r += *i * *j;
+                                std::cout << " r / i / j / *r : " << r.index() << " / " << i.index() << " / " << j.index() << " / " << *r << std::endl;
+                                std::cout << result << std::endl;
+                            }
+                        }
+                    }
+
+                }
+            }
+
             return result;
         }
 
