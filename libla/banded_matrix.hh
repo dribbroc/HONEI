@@ -152,6 +152,12 @@ namespace honei
                 return VectorIterator(new BandIterator<DataType_>(*this, 0));
             }
 
+            /// Returns iterator pointing to a given band of the matrix.
+            VectorIterator band_at(unsigned long index)
+            {
+                return VectorIterator(new BandIterator<DataType_>(*this, index));
+            }
+
             /// Returns iterator pointing behind the last band of the matrix.
             VectorIterator end_bands()
             {
@@ -162,6 +168,12 @@ namespace honei
             ConstVectorIterator begin_bands() const
             {
                 return ConstVectorIterator(new BandIterator<DataType_>(*this, 0));
+            }
+
+            /// Returns iterator pointing to a given band of the matrix.
+            ConstVectorIterator band_at(unsigned long index) const
+            {
+                return VectorIterator(new BandIterator<DataType_>(*this, index));
             }
 
             /// Returns iterator pointing behind the last band of the matrix.
