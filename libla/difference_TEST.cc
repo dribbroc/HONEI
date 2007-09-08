@@ -21,7 +21,6 @@
 #include <libla/dense_matrix.hh>
 #include <libla/difference.hh>
 #include <libla/matrix_error.hh>
-#include <libla/norm.hh>
 #include <unittest/unittest.hh>
 
 #include <limits>
@@ -559,8 +558,7 @@ class DenseVectorDifferenceTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                DenseVector<DT_> dv1(size);
-                DenseVector<DT_> dv2(size);
+                DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
 
                 for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                         i != i_end ; ++i)
@@ -573,8 +571,7 @@ class DenseVectorDifferenceTest :
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
                 }
                 DenseVector<DT_> difference1(Difference<>::value(dv1, dv2));
-                DT_ v1(Norm<vnt_l_one>::value(difference1));
-                TEST_CHECK_EQUAL(v1, 0);
+                TEST_CHECK_EQUAL(difference1, dv3);
             }
 
             DenseVector<DT_> dv00(1, DT_(1));
@@ -592,14 +589,13 @@ class DenseVectorDifferenceQuickTest :
     public:
         DenseVectorDifferenceQuickTest(const std::string & type) :
             QuickTest("dense_vector_difference_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DT_> dv1(size);
-            DenseVector<DT_> dv2(size);
+            DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
 
             for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                     i != i_end ; ++i)
@@ -612,8 +608,7 @@ class DenseVectorDifferenceQuickTest :
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
             }
             DenseVector<DT_> difference1(Difference<>::value(dv1, dv2));
-            DT_ v1(Norm<vnt_l_one>::value(difference1));
-            TEST_CHECK_EQUAL(v1, 0);
+            TEST_CHECK_EQUAL(difference1, dv3);
 
             DenseVector<DT_> dv00(1, DT_(1));
             DenseVector<DT_> dv01(5, DT_(1));
@@ -631,8 +626,8 @@ class DenseVectorSparseVectorDifferenceTest :
     public:
         DenseVectorSparseVectorDifferenceTest(const std::string & type) :
             BaseTest("dense_vector_sparse_vector_difference_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -641,7 +636,7 @@ class DenseVectorSparseVectorDifferenceTest :
                 DenseVector<DT_> dv1(size, DT_(0)), dv3(size, DT_(0));
                 SparseVector<DT_> sv2(size, size / 7 + 1);
                 for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                    j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                        j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0) 
                     {
@@ -659,8 +654,8 @@ class DenseVectorSparseVectorDifferenceTest :
                     }
                 }
 
-            DenseVector<DT_> difference1(Difference<>::value(dv1, sv2));
-            TEST_CHECK_EQUAL(difference1, dv3);
+                DenseVector<DT_> difference1(Difference<>::value(dv1, sv2));
+                TEST_CHECK_EQUAL(difference1, dv3);
             }
 
             DenseVector<DT_> dv00(1);
@@ -678,8 +673,8 @@ class DenseVectorSparseVectorDifferenceQuickTest :
     public:
         DenseVectorSparseVectorDifferenceQuickTest(const std::string & type) :
             QuickTest("dense_vector_sparse_vector_difference_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -687,7 +682,7 @@ class DenseVectorSparseVectorDifferenceQuickTest :
             DenseVector<DT_> dv1(size, DT_(0)), dv3(size, DT_(0));
             SparseVector<DT_> sv2(size, size / 7 + 1);
             for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                    j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0) 
                 {

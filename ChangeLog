@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-08 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/sum_TEST.cc, libla/difference_TEST.cc:
+	Removed norm, where not nessecary.
+
 2007-09-08 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libutil/condition_variable.cc, libutil/condition_variable.hh: Moved

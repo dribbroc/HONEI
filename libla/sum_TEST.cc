@@ -20,7 +20,6 @@
 
 #include <libla/dense_matrix.hh>
 #include <libla/matrix_error.hh>
-#include <libla/norm.hh>
 #include <libla/sum.hh>
 #include <unittest/unittest.hh>
 
@@ -585,15 +584,12 @@ class DenseVectorSumTest :
         {
             for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2));
-
+                DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
+                    dv3(size, DataType_(3));
                 Sum<>::value(dv1, dv2);
-
-                DataType_ v1(Norm<vnt_l_one>::value(dv1));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size, std::numeric_limits<DataType_>::epsilon());
-
-                DenseVector<DataType_> dv3(size + 1), dv4(size);
-                TEST_CHECK_THROWS(Sum<>::value(dv3, dv4), VectorSizeDoesNotMatch);
+                TEST_CHECK_EQUAL(dv1, dv3);
+                DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
+                TEST_CHECK_THROWS(Sum<>::value(dv01, dv02), VectorSizeDoesNotMatch);
             }
         }
 };
@@ -614,14 +610,13 @@ class DenseVectorSumQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2));
+            DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
+                dv3(size, DataType_(3));
 
             Sum<>::value(dv1, dv2);
-            DataType_ v1(Norm<vnt_l_one>::value(dv1));
-            TEST_CHECK_EQUAL_WITHIN_EPS(v1, 3 * size, std::numeric_limits<DataType_>::epsilon());
-
-            DenseVector<DataType_> dv3(6, DataType_(1)), dv4(4, DataType_(1));
-            TEST_CHECK_THROWS(Sum<>::value(dv3, dv4), VectorSizeDoesNotMatch);
+            TEST_CHECK_EQUAL(dv1, dv3);
+            DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
+            TEST_CHECK_THROWS(Sum<>::value(dv01, dv02), VectorSizeDoesNotMatch);
         }
 };
 DenseVectorSumQuickTest<float>  dense_vector_sum_quick_test_float("float");
