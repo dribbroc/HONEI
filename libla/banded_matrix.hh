@@ -102,6 +102,7 @@ namespace honei
                 _size(size),
                 _zero_vector(size, DataType_(0))
             {
+                CONTEXT("When creating BandedMatrix:");
             }
 
             /**
@@ -115,6 +116,7 @@ namespace honei
                 _size(size),
                 _zero_vector(size, DataType_(0))
             {
+                CONTEXT("When creating BandedMatrix with initial band:");
                 if (diagonal->size() != size)
                     throw VectorSizeDoesNotMatch(diagonal->size(), size);
 
@@ -228,6 +230,7 @@ namespace honei
             /// Returns a copy of the matrix.
             virtual BandedMatrix * copy() const
             {
+                CONTEXT("When creating copy() of a BandedMatrix:");
                 BandedMatrix * result(new BandedMatrix(_size));
 
                 for (unsigned long i(0) ; i < 2 * _size - 1 ; ++i)

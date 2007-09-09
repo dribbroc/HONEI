@@ -68,7 +68,7 @@ class BandedMatrixQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(20);
+            unsigned long size(11);
 
             DenseVector<DataType_> * dv1 = new DenseVector<DataType_>(size, DataType_(1));
             BandedMatrix<DataType_> bm1(size), bm2(size, dv1);
@@ -85,6 +85,11 @@ class BandedMatrixQuickTest :
 
             DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, DataType_(1)));
             TEST_CHECK_THROWS(BandedMatrix<DataType_> bm3(6, dv2), VectorSizeDoesNotMatch);
+
+            //use one dense-vector-pointer in two banded-matrices
+            DenseVector<DataType_> * dv11 = new DenseVector<DataType_>(size, DataType_(1));
+            BandedMatrix<DataType_> bm11(size, dv11), bm12(size, dv11);
+            TEST_CHECK(true);
         }
 };
 BandedMatrixQuickTest<float>  banded_matrix_quick_test_float("float");
