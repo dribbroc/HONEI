@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-09 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/banded_matrix.hh: Fixed internal bug in BandedElementIterator
+	concerning indices into bands, causing wrong assembly and output.
+	* libla/product.hh: Found and corrected hopefully all bugs, removed
+	outputs to cout, optimized a bit.
+	* libla/product_TEST.cc: Minor changes to BandedProductTest.
+
 2007-09-09 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/product_TEST.cc: Corrected exception tests.

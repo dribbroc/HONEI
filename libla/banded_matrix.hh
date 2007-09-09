@@ -329,7 +329,7 @@ namespace honei
                     _matrix._bands[_band_index() + _matrix._size - 1].reset(new DenseVector<DataType_>(_matrix._size, DataType_(0)));
                 }
 
-                return (*_matrix._bands[_band_index() + _matrix._size - 1])[row() + _band_index()];
+                return (*_matrix._bands[_band_index() + _matrix._size - 1])[row()];
             }
 
             /// Dereference operator that returns an unassignable reference.
@@ -343,7 +343,7 @@ namespace honei
                 }
                 else
                 {
-                    return (*_matrix._bands[_band_index() + _matrix._size - 1])[row() + _band_index()];
+                    return (*_matrix._bands[_band_index() + _matrix._size - 1])[row()];
                 }
             }
 

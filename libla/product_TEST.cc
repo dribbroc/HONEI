@@ -474,7 +474,7 @@ class BandedMatrixProductQuickTest :
             TEST_CHECK_EQUAL(prod, bm3);
             */
 
-            unsigned long size(4);
+            unsigned long size(20);
             DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
             DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
             DenseVector<DataType_> * dv4 (new DenseVector<DataType_>(size, DataType_(6)));
@@ -497,10 +497,11 @@ class BandedMatrixProductQuickTest :
             {
                 sm1[i][i] = DataType_(3);
             }
-
+            /*
             std::cout << "bm1 : " << bm1 << std::endl;
             std::cout << "bm2 : " << bm2 << std::endl;
             std::cout << "sm1 : " << sm1 << std::endl;
+            */
             //Calculate products for banded * banded and banded * sparse and check equality.
             BandedMatrix<DataType_> prod(Product<DataType_>::value(bm1, bm2));
             DenseMatrix<DataType_> prod2(Product<DataType_>::value(bm1, sm1));
@@ -1007,4 +1008,3 @@ class SparseMatrixBandedMatrixProductQuickTest :
 };
 SparseMatrixBandedMatrixProductQuickTest<float> sparse_matrix_banded_matrix_product_quick_test_float("float");
 SparseMatrixBandedMatrixProductQuickTest<double> sparse_matrix_banded_matrix_product_quick_test_double("double");
-
