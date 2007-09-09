@@ -830,9 +830,11 @@ class BandedMatrixDenseMatrixProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, bm3);
 
-            BandedMatrix<DataType_> bm01(5), bm02(6);
+            BandedMatrix<DataType_> bm01(5);
+            DenseMatrix<DataType_> dm02(5, 6), dm03(6, 5);
 
-            TEST_CHECK_THROWS(Product<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Product<DataType_>::value(bm01, dm02), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Product<DataType_>::value(bm01, dm03), MatrixRowsDoNotMatch);
         }
 };
 BandedMatrixDenseMatrixProductQuickTest<float> banded_matrix_dense_matrix_product_quick_test_float("float");
@@ -891,9 +893,11 @@ class BandedMatrixSparseMatrixProductQuickTest :
             DenseMatrix<DataType_> prod2(Product<DataType_>::value(dm1, sm1));
             TEST_CHECK_EQUAL(prod, prod2);
 
-            BandedMatrix<DataType_> bm01(5), bm02(6);
+            BandedMatrix<DataType_> bm01(5);
+            SparseMatrix<DataType_> sm02(5, 6), sm03(6, 5);
 
-            TEST_CHECK_THROWS(Product<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Product<DataType_>::value(bm01, sm02), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Product<DataType_>::value(bm01, sm03), MatrixRowsDoNotMatch);
         }
 };
 BandedMatrixSparseMatrixProductQuickTest<float> banded_matrix_sparse_matrix_product_quick_test_float("float");
@@ -943,9 +947,10 @@ class DenseMatrixBandedMatrixProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, bm3);
 
-            BandedMatrix<DataType_> bm01(5), bm02(6);
+            DenseMatrix<DataType_> dm03(6, 5);
+            BandedMatrix<DataType_> bm01(5);
 
-            TEST_CHECK_THROWS(Product<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Product<DataType_>::value(dm03, bm01), MatrixRowsDoNotMatch);
         }
 };
 DenseMatrixBandedMatrixProductQuickTest<float> dense_matrix_banded_matrix_product_quick_test_float("float");
@@ -988,16 +993,16 @@ class SparseMatrixBandedMatrixProductQuickTest :
 
             DenseVector<DataType_> * dv5 (new DenseVector<DataType_>(size, DataType_(18)));
             DenseVector<DataType_> * dv6 (new DenseVector<DataType_>(size, DataType_(18)));
-
             bm3.insert_band(1, dv5->copy());
             bm3.insert_band(-2, dv5->copy());
             DenseMatrix<DataType_> prod(Product<DataType_>::value(sm1, bm1));
 
             TEST_CHECK_EQUAL(prod, bm3);
 
-            BandedMatrix<DataType_> bm01(5), bm02(6);
+            SparseMatrix<DataType_> sm03(6, 5);
+            BandedMatrix<DataType_> bm01(5);
 
-            TEST_CHECK_THROWS(Product<DataType_>::value(bm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Product<DataType_>::value(sm03, bm01), MatrixRowsDoNotMatch);
         }
 };
 SparseMatrixBandedMatrixProductQuickTest<float> sparse_matrix_banded_matrix_product_quick_test_float("float");
