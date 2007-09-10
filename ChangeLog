@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* autogen.bash, configure.ac, libmath/files.m4,
+	libmath/Makefile.am.m4, Makefile.am: Added infrastructure for libmath.
+	* libmath/quadrature.hh, libmath/quadrature_TEST.cc: Added Quadrature
+	and simple test case that doesn't pass yet.
+
 2007-09-09 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/banded_matrix_TEST.cc: Added simple one dv pointer,

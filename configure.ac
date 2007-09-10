@@ -191,8 +191,9 @@ AC_OUTPUT(
 	doc/Makefile
 	libgraph/Makefile
 	libla/Makefile
+	libmath/Makefile
 	libswe/Makefile
 	libutil/Makefile
 	unittest/Makefile
-	benchmark/Makefile	
+	benchmark/Makefile
 )
