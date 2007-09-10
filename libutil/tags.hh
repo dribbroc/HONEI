@@ -43,19 +43,43 @@ namespace honei
          * Tag-type for generic/C++-based operations.
          *
          * \ingroup grptagscpu
-         **/
+         */
         struct CPU
         {
             const static TagValue tag_value = tv_cpu;
 
             /**
+             * Tag-type for SSE1/2-optimised operations.
+             *
+             * \ingroup grptagscpusse
+             */
+            struct SSE
+            {
+                const static TagValue tag_value = tv_cpu;
+            };
+
+            /**
              * Tag-type for multithreaded/C++-based operations.
              *
              * \ingroup grptagscpumulticore
-             **/
+             */
             struct MultiCore
             {
                 const static TagValue tag_value = tv_cpu_multi_core;
+
+                typedef tags::CPU DelegateTo;
+
+                /**
+                 * Tag-type for SSE1/2-optimised multithreaded operations.
+                 *
+                 * \ingroup grptagscpumulticore
+                 */
+                struct SSE
+                {
+                    const static TagValue tag_value = tv_cpu_multi_core;
+
+                    typedef tags::CPU::SSE DelegateTo;
+                };
             };
         };
 
@@ -63,7 +87,7 @@ namespace honei
          * Tag-type for Cell-based operations.
          *
          * \ingroup grptagscell
-         **/
+         */
         struct Cell
         {
             const static TagValue tag_value = tv_cell;
