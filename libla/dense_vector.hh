@@ -113,10 +113,10 @@ namespace honei
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
-        {
-            CONTEXT("When creating DenseVector:");
-            ASSERT(size > 0, "size is zero!");
-        }
+            {
+                CONTEXT("When creating DenseVector:");
+                ASSERT(size > 0, "size is zero!");
+            }
 
             /**
              * Constructor.
@@ -132,13 +132,13 @@ namespace honei
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
-        {
-            CONTEXT("When creating DenseVector:");
-            ASSERT(size > 0, "size is zero!");
+            {
+                CONTEXT("When creating DenseVector:");
+                ASSERT(size > 0, "size is zero!");
 
-            for (unsigned long i(_offset) ; i < (_stepsize * _size + _offset) ; i += _stepsize)
-                _elements[i] = value;
-        }
+                for (unsigned long i(_offset) ; i < (_stepsize * _size + _offset) ; i += _stepsize)
+                    _elements[i] = value;
+            }
 
             /**
              * Constructor.
@@ -153,21 +153,21 @@ namespace honei
                 _size(size),
                 _offset(0),
                 _stepsize(1)
-        {
-            CONTEXT("When creating DenseVector:");
-            ASSERT(size > 0, "size is zero!");
-
-            if  (start + size > source.size())
             {
-                throw VectorSizeDoesNotMatch(start + size, source.size());
-            }
+                CONTEXT("When creating DenseVector:");
+                ASSERT(size > 0, "size is zero!");
 
-            for (int i = 0 ; i < size ; ++i)
-            {
-                _elements[i] = source._elements[i + start];
-            }
+                if  (start + size > source.size())
+                {
+                    throw VectorSizeDoesNotMatch(start + size, source.size());
+                }
 
-        }
+                for (int i = 0 ; i < size ; ++i)
+                {
+                    _elements[i] = source._elements[i + start];
+                }
+
+            }
 
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other) :
@@ -175,8 +175,8 @@ namespace honei
                 _size(other._size),
                 _offset(other._offset),
                 _stepsize(other._stepsize)
-        {
-        }
+            {
+            }
 
             /// \}
 
@@ -283,15 +283,15 @@ namespace honei
                 DenseElementIterator(const DenseVector<DataType_> & vector, unsigned long index) :
                     _vector(vector),
                     _index(index)
-            {
-            }
+                {
+                }
 
                 /// Copy-constructor.
                 DenseElementIterator(DenseElementIterator<DataType_> const & other) :
                     _vector(other._vector),
                     _index(other._index)
-            {
-            }
+                {
+                }
 
                 /// Destructor.
                 virtual ~DenseElementIterator()
