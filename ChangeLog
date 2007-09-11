@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/Makefile.am.m4: Added 'sse' as an files.m4 file type.
+	* libla/sum.cc: Added sse specialisation of DenseVector<float>,
+	DenseVector<float> sum.
+
 2007-09-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* autogen.bash, configure.ac, libmath/files.m4,
