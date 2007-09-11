@@ -83,10 +83,10 @@ namespace honei
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
-            {
-                CONTEXT("When creating DenseVector:");
-                ASSERT(size > 0, "size is zero!");
-            }
+        {
+            CONTEXT("When creating DenseVector:");
+            ASSERT(size > 0, "size is zero!");
+        }
 
         public:
             friend class DenseElementIterator<DataType_>;
@@ -113,10 +113,10 @@ namespace honei
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
-            {
-                CONTEXT("When creating DenseVector:");
-                ASSERT(size > 0, "size is zero!");
-            }
+        {
+            CONTEXT("When creating DenseVector:");
+            ASSERT(size > 0, "size is zero!");
+        }
 
             /**
              * Constructor.
@@ -132,13 +132,13 @@ namespace honei
                 _size(size),
                 _offset(offset),
                 _stepsize(stepsize)
-            {
-                CONTEXT("When creating DenseVector:");
-                ASSERT(size > 0, "size is zero!");
+        {
+            CONTEXT("When creating DenseVector:");
+            ASSERT(size > 0, "size is zero!");
 
-                for (unsigned long i(_offset) ; i < (_stepsize * _size + _offset) ; i += _stepsize)
-                    _elements[i] = value;
-            }
+            for (unsigned long i(_offset) ; i < (_stepsize * _size + _offset) ; i += _stepsize)
+                _elements[i] = value;
+        }
 
             /**
              * Constructor.
@@ -153,21 +153,21 @@ namespace honei
                 _size(size),
                 _offset(0),
                 _stepsize(1)
+        {
+            CONTEXT("When creating DenseVector:");
+            ASSERT(size > 0, "size is zero!");
+
+            if  (start + size > source.size())
             {
-                CONTEXT("When creating DenseVector:");
-                ASSERT(size > 0, "size is zero!");
-
-                if  (start + size > source.size())
-                {
-                    throw VectorSizeDoesNotMatch(start + size, source.size());
-                }
-
-                for (int i = 0 ; i < size ; ++i)
-                {
-                    _elements[i] = source._elements[i + start];
-                }
-
+                throw VectorSizeDoesNotMatch(start + size, source.size());
             }
+
+            for (int i = 0 ; i < size ; ++i)
+            {
+                _elements[i] = source._elements[i + start];
+            }
+
+        }
 
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other) :
@@ -175,8 +175,8 @@ namespace honei
                 _size(other._size),
                 _offset(other._offset),
                 _stepsize(other._stepsize)
-            {
-            }
+        {
+        }
 
             /// \}
 
@@ -234,6 +234,16 @@ namespace honei
                 return _elements[_stepsize * index + _offset];
             }
 
+            inline DataType_ * elements()
+            {
+                return _elements.get();
+            }
+
+            inline const DataType_ * elements() const
+            {
+                return _elements.get();
+            }
+
             /// Return a copy to the Vector.
             virtual DenseVector * copy() const
             {
@@ -252,120 +262,120 @@ namespace honei
      **/
     template <> template <typename DataType_> class DenseVector<DataType_>::DenseElementIterator<DataType_> :
         public VectorElementIterator
-    {
-        private:
-            /// Our parent vector.
-            const DenseVector<DataType_> & _vector;
+        {
+            private:
+                /// Our parent vector.
+                const DenseVector<DataType_> & _vector;
 
-            /// Our index.
-            unsigned long _index;
+                /// Our index.
+                unsigned long _index;
 
-        public:
-            /// \name Constructors
-            /// \{
+            public:
+                /// \name Constructors
+                /// \{
 
-            /**
-             * Constructor.
-             *
-             * \param vector The parent vector that is referenced by the iterator.
-             * \param index The index into the vector.
-             **/
-            DenseElementIterator(const DenseVector<DataType_> & vector, unsigned long index) :
-                _vector(vector),
-                _index(index)
+                /**
+                 * Constructor.
+                 *
+                 * \param vector The parent vector that is referenced by the iterator.
+                 * \param index The index into the vector.
+                 **/
+                DenseElementIterator(const DenseVector<DataType_> & vector, unsigned long index) :
+                    _vector(vector),
+                    _index(index)
             {
             }
 
-            /// Copy-constructor.
-            DenseElementIterator(DenseElementIterator<DataType_> const & other) :
-                _vector(other._vector),
-                _index(other._index)
+                /// Copy-constructor.
+                DenseElementIterator(DenseElementIterator<DataType_> const & other) :
+                    _vector(other._vector),
+                    _index(other._index)
             {
             }
 
-            /// Destructor.
-            virtual ~DenseElementIterator()
-            {
-            }
+                /// Destructor.
+                virtual ~DenseElementIterator()
+                {
+                }
 
-            /// \}
+                /// \}
 
-            /// \name Forward iterator interface
-            /// \{
+                /// \name Forward iterator interface
+                /// \{
 
-            /// Preincrement operator.
-            virtual DenseElementIterator<DataType_> & operator++ ()
-            {
-                CONTEXT("When incrementing iterator by one:");
+                /// Preincrement operator.
+                virtual DenseElementIterator<DataType_> & operator++ ()
+                {
+                    CONTEXT("When incrementing iterator by one:");
 
-                ++_index;
+                    ++_index;
 
-                return *this;
-            }
+                    return *this;
+                }
 
-            /// In-place-add operator.
-            virtual DenseElementIterator<DataType_> & operator+= (const unsigned long step)
-            {
-                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+                /// In-place-add operator.
+                virtual DenseElementIterator<DataType_> & operator+= (const unsigned long step)
+                {
+                    CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
 
-                _index += step;
+                    _index += step;
 
-                return *this;
-            }
+                    return *this;
+                }
 
-            /// Dereference operator that returns an assignable reference.
-            virtual DataType_ & operator* ()
-            {
-                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
+                /// Dereference operator that returns an assignable reference.
+                virtual DataType_ & operator* ()
+                {
+                    CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
 
-                return _vector._elements[_vector._stepsize * _index + _vector._offset];
-            }
+                    return _vector._elements[_vector._stepsize * _index + _vector._offset];
+                }
 
-            /// Dereference operator that returns an unassignable reference.
-            virtual const DataType_ & operator* () const
-            {
-                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
+                /// Dereference operator that returns an unassignable reference.
+                virtual const DataType_ & operator* () const
+                {
+                    CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
 
-                return _vector._elements[_vector._stepsize * _index + _vector._offset];
-            }
+                    return _vector._elements[_vector._stepsize * _index + _vector._offset];
+                }
 
-            /// Less-than operator.
-            virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return _index < other.index();
-            }
+                /// Less-than operator.
+                virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+                {
+                    return _index < other.index();
+                }
 
-            /// Equality operator.
-            virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return ((&_vector == other.parent()) && (_index == other.index()));
-            }
+                /// Equality operator.
+                virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+                {
+                    return ((&_vector == other.parent()) && (_index == other.index()));
+                }
 
-            /// Inequality operator.
-            virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return ((&_vector != other.parent()) || (_index != other.index()));
-            }
+                /// Inequality operator.
+                virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const
+                {
+                    return ((&_vector != other.parent()) || (_index != other.index()));
+                }
 
-            /// \}
+                /// \}
 
-            /// \name IteratorTraits interface
-            /// \{
+                /// \name IteratorTraits interface
+                /// \{
 
-            /// Returns our index.
-            virtual unsigned long index() const
-            {
-                return _index;
-            }
+                /// Returns our index.
+                virtual unsigned long index() const
+                {
+                    return _index;
+                }
 
-            /// Returns a pointer to our parent container.
-            virtual const Vector<DataType_> * parent() const
-            {
-                return &_vector;
-            }
+                /// Returns a pointer to our parent container.
+                virtual const Vector<DataType_> * parent() const
+                {
+                    return &_vector;
+                }
 
-            /// \}
-    };
+                /// \}
+        };
 }
 
 #endif
