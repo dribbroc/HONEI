@@ -385,5 +385,12 @@ namespace honei
             return x;
         }
     };
+
+   //testwise sse implementiation 
+    template <>
+    struct Sum<tags::CPU::SSE>
+    {
+        static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+    };
 }
 #endif
