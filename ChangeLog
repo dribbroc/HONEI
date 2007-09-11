@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-09-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/dense_vector.hh: Added elements() to directly
+	access the vectors data in the shared array.
+
+2007-09-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* libla/Makefile.am.m4: Added 'sse' as an files.m4 file type.
 	* libla/sum.cc: Added sse specialisation of DenseVector<float>,
 	DenseVector<float> sum.
