@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/product.hh: Highly optimized all banded-products by using
+	band_at(index) which saves at least one, up to four branches per
+	loop-iteration. Applied coding conventions where appropriate, made a
+	lot of variables const, fixed some minor things. Still some things to
+	optimize, for instance Sparse matrix-matrix-cases.
+
 2007-09-12 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/matrix.hh, libla/vector.hh: Added operator+= and operator<
