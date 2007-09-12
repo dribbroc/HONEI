@@ -151,10 +151,24 @@ namespace honei
                 return *this;
             }
 
+            /// In-place-add operator.
+            virtual ElementIteratorWrapper<DataType_> & operator+= (unsigned int step)
+            {
+                *_iterator += step;
+
+                return *this;
+            }
+
             /// Dereference operator that returns an assignable reference.
             virtual DataType_ & operator* ()
             {
                 return *(*_iterator);
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const ElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator < *other._iterator);
             }
 
             /// Comparison operator for equality.
@@ -242,12 +256,26 @@ namespace honei
                 return *this;
             }
 
+            /// In-place-add operator.
+            virtual ConstElementIteratorWrapper<DataType_> & operator+= (unsigned int step)
+            {
+                *_iterator += step;
+
+                return *this;
+            }
+
             /// Dereference operator that returns an unassignable reference.
             virtual const DataType_ & operator* () const
             {
                 const ElementIteratorBase<DataType_> & iterator(*_iterator);
 
                 return *iterator;
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const ElementIteratorWrapper<DataType_> & other) const
+            {
+                return (*_iterator < *other._iterator);
             }
 
             /// Comparison operator for equality.
