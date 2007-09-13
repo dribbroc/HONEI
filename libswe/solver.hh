@@ -493,7 +493,7 @@ namespace honei {
         //{
             ///If assuming, that all input fields are exactly of the same size, we can do all the work within
             ///one loop - pair:
-            for (unsigned long i = 0; i!= hbound.rows(); ++i)
+            /*for (unsigned long i = 0; i!= hbound.rows(); ++i)
             {
                 DenseVector<ResPrec_> actual_row = hbound[i];
                 for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
@@ -516,7 +516,82 @@ namespace honei {
                         u2bound[i][j.index()] =(*_y_veloc)[i-2][(j.index())-2];
                     }
                 }
+            }*/
+
+            //if(this->_usage_reflect && this->_simple_bound)
+            //{
+            //Boundary Map
+            //0 0 1 1 1 1 0 0
+            //0 0 2 2 2 2 0 0
+            //3 4 x x x x 5 6
+            //3 4 x x x x 5 6
+            //3 4 x x x x 5 6
+            //3 4 x x x x 5 6
+            //0 0 7 7 7 7 0 0
+            //0 0 8 8 8 8 0 0
+            //
+            for (unsigned long j = 0; j< _d_width; ++j)
+            {
+                //Setting boundary 1 to second matrix row
+                hbound[0][j+2] = (*_height)[1][j];
+                bbound[0][j+2] = (*_bottom)[1][j];
+                u1bound[0][j+2] = (*_x_veloc)[1][j];
+                u2bound[0][j+2] = (*_y_veloc)[1][j];
+                //Setting boundary 2 to first matrix row
+                hbound[1][j+2] = (*_height)[0][j];
+                bbound[1][j+2] = (*_bottom)[0][j];
+                u1bound[1][j+2] = (*_x_veloc)[0][j];
+                u2bound[1][j+2] = (*_y_veloc)[0][j];
             }
+
+            for (unsigned long i = 0; i< _d_height; ++i)
+            {
+                //Setting boundary 3 to second matrix column
+                hbound[i+2][0] = (*_height)[i][1];
+                bbound[i+2][0] = (*_bottom)[i][1];
+                u1bound[i+2][0] = (*_x_veloc)[i][1];
+                u2bound[i+2][0] = (*_y_veloc)[i][1];
+                //Setting boundary 4 to first matrix column
+                hbound[i+2][1] = (*_height)[i][0];
+                bbound[i+2][1] = (*_bottom)[i][0];
+                u1bound[i+2][1] = (*_x_veloc)[i][0];
+                u2bound[i+2][1] = (*_y_veloc)[i][0];
+            
+                //Take over inner values
+                for(unsigned long j=0; j< _d_width; ++j)
+                {
+                    hbound[i+2][j+2] = (*_height)[i][j];
+                    bbound[i+2][j+2] = (*_bottom)[i][j];
+                    u1bound[i+2][j+2] = (*_x_veloc)[i][j];
+                    u2bound[i+2][j+2] = (*_y_veloc)[i][j];
+                }
+                //Setting boundary 5 to rightmost matrix column
+                hbound[i+2][_d_width+2] = (*_height)[i][_d_width-1];
+                bbound[i+2][_d_width+2] = (*_bottom)[i][_d_width-1];
+                u1bound[i+2][_d_width+2] = (*_x_veloc)[i][_d_width-1];
+                u2bound[i+2][_d_width+2] = (*_y_veloc)[i][_d_width-1];
+                //Setting boundary 6 to rightmost-1 matrix column
+                hbound[i+2][_d_width+3] = (*_height)[i][_d_width-2];
+                bbound[i+2][_d_width+3] = (*_bottom)[i][_d_width-2];
+                u1bound[i+2][_d_width+3] = (*_x_veloc)[i][_d_width-2];
+                u2bound[i+2][_d_width+3] = (*_y_veloc)[i][_d_width-2];
+            
+            }
+
+            for(unsigned long j=0; j< _d_width; ++j)
+            {
+                //Setting boundary 7 to last matrix row
+                hbound[_d_height+2][j+2] = (*_height)[_d_height-1][j];
+                bbound[_d_height+2][j+2] = (*_bottom)[_d_height-1][j];
+                u1bound[_d_height+2][j+2] = (*_x_veloc)[_d_height-1][j];
+                u2bound[_d_height+2][j+2] = (*_y_veloc)[_d_height-1][j];
+                //Setting boundary 8 to last-1 matrix row
+                hbound[_d_height+3][j+2] = (*_height)[_d_height-2][j];
+                bbound[_d_height+3][j+2] = (*_bottom)[_d_height-2][j];
+                u1bound[_d_height+3][j+2] = (*_x_veloc)[_d_height-2][j];
+                u2bound[_d_height+3][j+2] = (*_y_veloc)[_d_height-2][j];
+            } 
+
             std::cout << "Preproc: Mapping done.\n";
             cout << stringify(hbound) << endl;
             cout << stringify(bbound) << endl;
@@ -1485,6 +1560,52 @@ namespace honei {
         predictedv = *(v_c.copy());
         predictedw = *(w_c.copy());
 
+        //Correction of reflective boundaries
+        for (unsigned long j = 0; j< 3*_d_width; ++j)
+            {
+            predictedu [(j+6)] = predictedu [(j+6+9*(_d_width+4))];
+            predictedv [(j+6)] = predictedv [(j+6+9*(_d_width+4))];
+            predictedw [(j+6)] = predictedw [(j+6+9*(_d_width+4))];
+                
+            predictedu [(3*(_d_width+4)+j+6)] = predictedu [(j+6+6*(_d_width+4))];
+            predictedv [(3*(_d_width+4)+j+6)] = predictedv [(j+6+6*(_d_width+4))];
+            predictedw [(3*(_d_width+4)+j+6)] = predictedw [(j+6+6*(_d_width+4))];
+            }
+
+        for (unsigned long i = 0; i< _d_height; ++i)
+            {
+            for (unsigned long k =0; k <3; ++k)
+                {
+            
+                predictedu [((i+2)*3*(_d_width+4)+k)] = predictedu [((i+2)*3*(_d_width+4)+9+k)];
+                predictedv [((i+2)*3*(_d_width+4)+k)] = predictedv [((i+2)*3*(_d_width+4)+9+k)];
+                predictedw [((i+2)*3*(_d_width+4)+k)] = predictedw [((i+2)*3*(_d_width+4)+9+k)];
+    
+                predictedu [((i+2)*3*(_d_width+4)+3+k)] = predictedu [((i+2)*3*(_d_width+4)+6+k)];
+                predictedv [((i+2)*3*(_d_width+4)+3+k)] = predictedv [((i+2)*3*(_d_width+4)+6+k)];
+                predictedw [((i+2)*3*(_d_width+4)+3+k)] = predictedw [((i+2)*3*(_d_width+4)+6+k)];
+                
+                predictedu [((i+3)*3*(_d_width+4)-3+k)] = predictedu [((i+3)*3*(_d_width+4)-12+k)];
+                predictedv [((i+3)*3*(_d_width+4)-3+k)] = predictedv [((i+3)*3*(_d_width+4)-12+k)];
+                predictedw [((i+3)*3*(_d_width+4)-3+k)] = predictedw [((i+3)*3*(_d_width+4)-12+k)];
+    
+                predictedu [((i+3)*3*(_d_width+4)-6+k)] = predictedu [((i+3)*3*(_d_width+4)-9+k)];
+                predictedv [((i+3)*3*(_d_width+4)-6+k)] = predictedv [((i+3)*3*(_d_width+4)-9+k)];
+                predictedw [((i+3)*3*(_d_width+4)-6+k)] = predictedw [((i+3)*3*(_d_width+4)-9+k)];
+                }
+            }    
+
+        for (unsigned long j=0; j< 3*_d_width; ++j)
+            {
+            predictedu [((_d_height+3)*3*(_d_width+4)+6+j)] = predictedu [(_d_height*3*(_d_width+4)+6+j)];
+            predictedv [((_d_height+3)*3*(_d_width+4)+6+j)] = predictedv [(_d_height*3*(_d_width+4)+6+j)];
+            predictedw [((_d_height+3)*3*(_d_width+4)+6+j)] = predictedw [(_d_height*3*(_d_width+4)+6+j)];
+    
+            predictedu [((_d_height+2)*3*(_d_width+4)+6+j)] = predictedu [((_d_height+1)*3*(_d_width+4)+6+j)];
+            predictedv [((_d_height+2)*3*(_d_width+4)+6+j)] = predictedv [((_d_height+1)*3*(_d_width+4)+6+j)];
+            predictedw [((_d_height+2)*3*(_d_width+4)+6+j)] = predictedw [((_d_height+1)*3*(_d_width+4)+6+j)];
+            }
+
         std::cout << "Finished Prediction.\n";
 
     }
@@ -1591,6 +1712,8 @@ namespace honei {
         typename DenseVector<ResPrec_>::ElementIterator iter(_u->begin_elements());
         while(iter.index()<(6*(_d_width+4)+6))
         {
+            ++iter;
+          /*
             (*_u)[iter.index()] = 5;
             ++iter;
             (*_u)[iter.index()] = 0;
@@ -1605,8 +1728,7 @@ namespace honei {
             (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
             (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
-
-
+         */
         }
         cout << stringify(iter.index()) << endl;
 
@@ -1641,7 +1763,7 @@ namespace honei {
                 ++iter;
             }
             else
-            {
+            {/*
                 (*_u)[iter.index()] = 5;
                 ++iter;
                 (*_u)[iter.index()] = 0;
@@ -1698,10 +1820,16 @@ namespace honei {
                 (*_w)[iter.index()-2] = (*_u)[iter.index()-3]*(*_u)[iter.index()-2]*(*_u)[iter.index()-1];
                 (*_w)[iter.index()-1] = (*_u)[iter.index()-3]*(*_u)[iter.index()-1]*(*_u)[iter.index()-1]+
                     (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
+             */ 
+                for (unsigned long k=0; k<12; ++k)
+                {
+                    ++iter;
+                }    
                 count = 0;
             }
             cout << stringify(count)<<endl;
         }
+        /*
         typename DenseVector<ResPrec_>::ElementIterator iter_END(_u->end_elements());
         while(iter!=iter_END)
         {
@@ -1721,6 +1849,7 @@ namespace honei {
                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
 
         }
+        */
         std::cout << "Finished Correction.\n";
     }
 
@@ -2004,7 +2133,7 @@ namespace honei {
         for( ; b2.index() < 6*(_d_width+4); ++b2);
         for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);
 
-        while(d.index() < 3*(_d_width+4)*(_d_height-2))
+        while(d.index() < 3*(_d_width+4)*(_d_height+2))
         {
             ++d; ++d; ++d; ++d; ++d; ++d;
             ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
@@ -2022,7 +2151,7 @@ namespace honei {
             *b1 *= c_squared[1];
             *b2 *= c_squared[1];
             *bminus1 *= c_squared[1];
-            ++d; ++b1; ++b2; bminus1;
+            ++d; ++b1; ++b2; ++bminus1;
             *d *= c_squared[2];
             *b1 *= c_squared[2];
             *b2 *= c_squared[2];
@@ -2080,7 +2209,7 @@ namespace honei {
         for( ; b2.index() < 6*(_d_width + 4); ++b2);
         for( ; bminus1.index() < 6*(_d_width + 4); ++bminus1);
 
-        while(d.index() < 3*(_d_width+4)*(_d_height-2))
+        while(d.index() < 3*(_d_width+4)*(_d_height+2))
         {
             ++d; ++d; ++d; ++d; ++d; ++d;
             ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
@@ -2098,7 +2227,7 @@ namespace honei {
             *b1 *= d_squared[1];
             *b2 *= d_squared[1];
             *bminus1 *= d_squared[1];
-            ++d; ++b1; ++b2; bminus1;
+            ++d; ++b1; ++b2; ++bminus1;
             *d *= d_squared[2];
             *b1 *= d_squared[2];
             *b2 *= d_squared[2];
