@@ -68,20 +68,20 @@ class DenseVectorSumBench :
 
         virtual void run()
         {
+            DenseVector<DataType_> dv0(_size);//, DataType_(rand()));
+            DenseVector<DataType_> dv1(_size);//, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                DenseVector<DataType_> dv0(_size, static_cast<DataType_>(rand()));
-                DenseVector<DataType_> dv1(_size, static_cast<DataType_>(rand()));
                 BENCHMARK(DenseVector<DataType_> sum1(Sum<Tag_>::value(dv0, dv1)));
             }
             evaluate(3*_size);
         }
 };
 
-DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 10,000, float", 10000, 10);
+DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 64^4, float", 64*64*64*64, 10);
 DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 10,000, double", 10000, 10);
 #ifdef HONEI_SSE
-DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 640,000, float", 640000, 1);
+DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64*64*64*64, 10);
 #endif
 //DenseVectorSumBench<float> DVSBenchfloat2("Dense Vector Scaled Sum Benchmark - vector size: 10,000,000, float", 10000000, 10);
 //DenseVectorScaledSumBench<double> DVSSBenchdouble2("Dense Vector Scaled Sum Benchmark - vector size: 10,000,000, double", 10000000, 10);
