@@ -18,10 +18,10 @@ class DenseMatrixRowSumVectorBench :
     public Benchmark
 {
     private:
-        int _size;
+        unsigned long _size;
         int _count;
     public:
-        DenseMatrixRowSumVectorBench(const std::string & id, int size, int count) :
+        DenseMatrixRowSumVectorBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             _size = size;

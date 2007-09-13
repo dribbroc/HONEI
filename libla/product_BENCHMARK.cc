@@ -18,10 +18,10 @@ class DenseMatrixProductBench :
     public Benchmark
 {
     private:
-        int _size;
+        unsigned long _size;
         int _count;
     public:
-        DenseMatrixProductBench(const std::string & id, int size, int count) :
+        DenseMatrixProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             _size = size;

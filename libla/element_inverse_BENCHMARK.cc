@@ -18,11 +18,11 @@ class DenseMatrixElementInverseBench :
     public Benchmark
 {
     private:
-        int _size;
+        unsigned long _size;
         int _count;
 
     public:
-        DenseMatrixElementInverseBench(const std::string & id, int size, int count) :
+        DenseMatrixElementInverseBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             _size  = size;

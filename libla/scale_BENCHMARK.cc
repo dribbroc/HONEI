@@ -18,11 +18,11 @@ class ScalarDenseMatrixScaleBench :
     public Benchmark
 {
     private:
-        int _size;
+        unsigned long _size;
         int _count;
 
     public:
-        ScalarDenseMatrixScaleBench(const std::string & id, int size, int count) :
+        ScalarDenseMatrixScaleBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             _size  = size;

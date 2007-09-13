@@ -18,10 +18,10 @@ class DotProductBench :
     public Benchmark
 {
     private:
-        int _size;
+        unsigned long _size;
         int _count;
     public:
-        DotProductBench(const std::string & id, int size, int count) :
+        DotProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             _size = size;
@@ -44,5 +44,5 @@ class DotProductBench :
 
 // ScalarProductBench<float> SPBenchfloat1("Scalar Product Benchmark - vector size: 1,000,000, float", 1000000, 10);
 // ScalarProductBench<double> SPBenchdouble1("Scalar Product Benchmark - vector size: 1,000,000, double", 1000000, 10);
-DotProductBench<float> DPBenchfloat("Dot Product Benchmark - vector size: 100,000 float", 100000, 10);
-DotProductBench<double> DPBenchdouble("Dot Product Benchmark - vector size: 100,000 double", 100000, 10);
+DotProductBench<float> DPBenchfloat("Dot Product Benchmark - vector size: 10,000 float", 10000, 10);
+DotProductBench<double> DPBenchdouble("Dot Product Benchmark - vector size: 10,000 double", 10000, 10);

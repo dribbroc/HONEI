@@ -95,7 +95,7 @@ void Benchmark::evaluate()
     }
 }
 
-void Benchmark::evaluate(int flop)
+void Benchmark::evaluate(unsigned long flop)
 {
     int x = 0;
     double total = 0;
