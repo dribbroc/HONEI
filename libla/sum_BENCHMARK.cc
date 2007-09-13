@@ -50,7 +50,7 @@ ScalarDenseMatrixSumBench<double> SDMSBenchdouble("MatrixShift Benchmark: size: 
 
 
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 
 class DenseVectorSumBench :
     public Benchmark
@@ -72,13 +72,14 @@ class DenseVectorSumBench :
             {
                 DenseVector<DataType_> dv0(_size, static_cast<DataType_>(rand()));
                 DenseVector<DataType_> dv1(_size, static_cast<DataType_>(rand()));
-                BENCHMARK(DenseVector<DataType_> sum1(Sum<>::value(dv0, dv1)));
+                BENCHMARK(DenseVector<DataType_> sum1(Sum<Tag_>::value(dv0, dv1)));
             }
             evaluate(3*_size);
         }
 };
 
-DenseVectorSumBench<float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 10,000, float", 10000, 10);
-DenseVectorSumBench<double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 10,000, double", 10000, 10);
+DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 10,000, float", 10000, 10);
+DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 10,000, double", 10000, 10);
+DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 640,000, float", 640000, 1);
 //DenseVectorSumBench<float> DVSBenchfloat2("Dense Vector Scaled Sum Benchmark - vector size: 10,000,000, float", 10000000, 10);
 //DenseVectorScaledSumBench<double> DVSSBenchdouble2("Dense Vector Scaled Sum Benchmark - vector size: 10,000,000, double", 10000000, 10);

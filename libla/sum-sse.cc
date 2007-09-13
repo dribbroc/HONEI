@@ -23,7 +23,6 @@
 
 using namespace honei;
 
-//testwise sse implementiation
 DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When adding DenseVector to DenseVector with SSE:");
@@ -44,7 +43,7 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
     float __attribute__((aligned(16))) b3_data[4];
     float __attribute__((aligned(16))) a4_data[4];
     float __attribute__((aligned(16))) b4_data[4];
-    for (unsigned long index = 0 ; index < a.size() ; index += 16)
+    for (unsigned long index = 0 ; index < a.size() ; index += 16) 
     {
         for (int i = 0 ; i < 4 ; ++i)
         {

@@ -570,7 +570,7 @@ ScalarDenseMatrixSumQuickTest<double> scalar_dense_matrix_sum_quick_test_double(
 
 // Test cases for vector operations
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorSumTest :
     public BaseTest
 {
@@ -593,11 +593,10 @@ class DenseVectorSumTest :
             }
         }
 };
+DenseVectorSumTest<tags::CPU, float> dense_vector_sum_test_float("float");
+DenseVectorSumTest<tags::CPU, double> dense_vector_sum_test_double("double");
 
-DenseVectorSumTest<float> dense_vector_sum_test_float("float");
-DenseVectorSumTest<double> dense_vector_sum_test_double("double");
-
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorSumQuickTest :
     public QuickTest
 {
@@ -609,18 +608,18 @@ class DenseVectorSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(128);
             DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
                 dv3(size, DataType_(3));
-
             Sum<>::value(dv1, dv2);
             TEST_CHECK_EQUAL(dv1, dv3);
             DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
-            TEST_CHECK_THROWS(Sum<>::value(dv01, dv02), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dv01, dv02), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorSumQuickTest<float>  dense_vector_sum_quick_test_float("float");
-DenseVectorSumQuickTest<double> dense_vector_sum_quick_test_double("double");
+DenseVectorSumQuickTest<tags::CPU, float> dense_vector_sum_quick_test_float("float");
+DenseVectorSumQuickTest<tags::CPU, double> dense_vector_sum_quick_test_double("double");
+DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
 
 template <typename DataType_>
 class DenseVectorSparseVectorSumTest :
