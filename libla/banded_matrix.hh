@@ -111,16 +111,16 @@ namespace honei
              * \param size Size of the new banded matrix.
              * \param diagonal Diagonal of the new banded matrix.
              **/
-            BandedMatrix(unsigned long size, DenseVector<DataType_> * diagonal) :
+            BandedMatrix(unsigned long size, const DenseVector<DataType_> & diagonal) :
                 _bands(2 * size - 1),
                 _size(size),
                 _zero_vector(size, DataType_(0))
             {
                 CONTEXT("When creating BandedMatrix with initial band:");
-                if (diagonal->size() != size)
-                    throw VectorSizeDoesNotMatch(diagonal->size(), size);
+                if (diagonal.size() != size)
+                    throw VectorSizeDoesNotMatch(diagonal.size(), size);
 
-                _bands[size - 1].reset(diagonal);
+                _bands[size - 1].reset(new DenseVector<DataType_>(diagonal));
             }
             /// \}
 
@@ -203,14 +203,15 @@ namespace honei
             }
 
             /// Inserts a new Band in the matrix.
-            void insert_band(signed long index, DenseVector<DataType_> * vector)
+            void insert_band(signed long index, const DenseVector<DataType_> & vector)
             {
-                if (_size != vector->size())
+                if (_size != vector.size())
                 {
-                    throw VectorSizeDoesNotMatch(_size, vector->size());
+                    throw VectorSizeDoesNotMatch(_size, vector.size());
                 }
 
-                    _bands[index + _size - 1].reset(vector);
+                std::tr1::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(vector));
+                _bands[index + _size - 1] = temp;
 
             }
 
@@ -236,7 +237,11 @@ namespace honei
                 for (unsigned long i(0) ; i < 2 * _size - 1 ; ++i)
                 {
                     if (_bands[i])
-                        result->_bands[i].reset(_bands[i]->copy());
+                    {
+                        std::tr1::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(
+                                    _bands[i]->copy()));
+                        result->_bands[i] = temp;
+                    }
                 }
 
                 return result;

@@ -113,8 +113,8 @@ class DenseMatrixEqualityTest :
             }
         }
 };
-DenseMatrixEqualityTest<bool> dense_matrix_equality_test_float("float");
-DenseMatrixEqualityTest<int> dense_matrix_equality_test_double("double");
+DenseMatrixEqualityTest<float> dense_matrix_equality_test_float("float");
+DenseMatrixEqualityTest<double> dense_matrix_equality_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixLayoutTest :

@@ -43,13 +43,13 @@ class BandedMatrixCreationTest :
                 BandedMatrix<DataType_> bm1(size);
                 TEST_CHECK(true);
 
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(1)));
-                BandedMatrix<DataType_> bm2(size,dv1);
+                DenseVector<DataType_> dv1(size, DataType_(1));
+                BandedMatrix<DataType_> bm2(size, dv1);
                 TEST_CHECK(true);
             }
 
-            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, DataType_(1)));
-            TEST_CHECK_THROWS (BandedMatrix<DataType_> bm3(6, dv2), VectorSizeDoesNotMatch);
+            DenseVector<DataType_> dv2(5, DataType_(1));
+            TEST_CHECK_THROWS(BandedMatrix<DataType_> bm3(6, dv2), VectorSizeDoesNotMatch);
         }
 };
 
@@ -70,7 +70,7 @@ class BandedMatrixQuickTest :
         {
             unsigned long size(11);
 
-            DenseVector<DataType_> * dv1 = new DenseVector<DataType_>(size, DataType_(1));
+            DenseVector<DataType_> dv1(size, DataType_(1));
             BandedMatrix<DataType_> bm1(size), bm2(size, dv1);
 
             DenseVector<DataType_> dv4(size, DataType_(0));
@@ -78,16 +78,16 @@ class BandedMatrixQuickTest :
             DenseVector<DataType_> dv3 = bm2.band(3);
             dv3[size / 2] = DataType_(5);
 
-            TEST_CHECK_EQUAL(bm2.band(0), *dv1);
+            TEST_CHECK_EQUAL(bm2.band(0), dv1);
             TEST_CHECK_EQUAL(bm2.band(3), dv4);
             TEST_CHECK_EQUAL(bm2.rows(), size);
             TEST_CHECK_EQUAL(bm2.columns(), size);
 
-            DenseVector<DataType_> * dv2(new DenseVector<DataType_>(5, DataType_(1)));
+            DenseVector<DataType_> dv2(5, DataType_(1));
             TEST_CHECK_THROWS(BandedMatrix<DataType_> bm3(6, dv2), VectorSizeDoesNotMatch);
 
             //use one dense-vector-pointer in two banded-matrices
-            DenseVector<DataType_> * dv11 = new DenseVector<DataType_>(size, DataType_(1));
+            DenseVector<DataType_> dv11(size, DataType_(1));
             BandedMatrix<DataType_> bm11(size, dv11), bm12(size, dv11);
             TEST_CHECK(true);
         }

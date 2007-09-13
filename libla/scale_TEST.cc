@@ -45,25 +45,24 @@ class ScalarBandedMatrixProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
+                DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 BandedMatrix<DataType_> & prod(Scale<>::value(DataType_(3), bm1));
-                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()), ce_end(prod.end_bands()) ;
-                    ce != ce_end ; ++ce)
+                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()),
+                        ce_end(prod.end_bands()) ; ce != ce_end ; ++ce)
                 {
-                    DenseVector<DataType_>  dv3 = *ce;
                     if (ce.index() != size - 1 )
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                            i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            i_end(ce->end_elements()) ; i != i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                         }
                     }
                     else
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                            i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            i_end(ce->end_elements()) ; i != i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 6, std::numeric_limits<DataType_>::epsilon());
                         }
@@ -88,25 +87,24 @@ class ScalarBandedMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
             BandedMatrix<DataType_> & prod(Scale<>::value(DataType_(3), bm1));
-            for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()), ce_end(prod.end_bands()) ;
-                ce != ce_end ; ++ce)
+            for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()),
+                    ce_end(prod.end_bands()) ; ce != ce_end ; ++ce)
             {
-                DenseVector<DataType_>  dv3 = *ce;
                 if (ce.index() != size - 1 )
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                        i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            i_end(ce->end_elements()) ; i != i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     }
                 }
                 else
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                        i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            i_end(ce->end_elements()) ; i != i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 6, std::numeric_limits<DataType_>::epsilon());
                     }

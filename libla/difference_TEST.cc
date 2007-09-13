@@ -45,7 +45,7 @@ class BandedMatrixDenseMatrixDifferenceTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DT_> * dv1(new DenseVector<DT_>(size, DT_(2)));
+                DenseVector<DT_> dv1(size, DT_(2));
                 BandedMatrix<DT_> bm1(size, dv1);
                 DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
@@ -86,7 +86,7 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
         virtual void run() const
         {
             unsigned long size (11);
-            DenseVector<DT_> * dv1(new DenseVector<DT_>(size, DT_(2)));
+            DenseVector<DT_> dv1(size, DT_(2));
             BandedMatrix<DT_> bm1(size, dv1);
             DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
@@ -127,9 +127,9 @@ class BandedMatrixDifferenceTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DT_> * dv1(new DenseVector<DT_>(size, DT_(2)));
-                DenseVector<DT_> * dv2(new DenseVector<DT_>(size, DT_(3)));
-                DenseVector<DT_> * dv3(new DenseVector<DT_>(size, DT_(-1)));
+                DenseVector<DT_> dv1(size, DT_(2));
+                DenseVector<DT_> dv2(size, DT_(3));
+                DenseVector<DT_> dv3(size, DT_(-1));
                 BandedMatrix<DT_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
                 BandedMatrix<DT_> & difference(Difference<>::value(bm1, bm2));
 
@@ -157,9 +157,7 @@ class BandedMatrixDifferenceQuickTest :
         virtual void run() const
         {
             unsigned long size (5);
-            DenseVector<DT_> * dv1(new DenseVector<DT_>(size, DT_(2))),
-                * dv2(new DenseVector<DT_>(size, DT_(3))),
-                * dv3(new DenseVector<DT_>(size, DT_(-1)));
+            DenseVector<DT_> dv1(size, DT_(2)), dv2(size, DT_(3)), dv3(size, DT_(-1));
             BandedMatrix<DT_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
 
             BandedMatrix<DT_> & diff(Difference<>::value(bm1, bm2));
@@ -192,7 +190,7 @@ class BandedMatrixSparseMatrixDifferenceTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DT_> * dv1(new DenseVector<DT_>(size, DT_(2)));
+                DenseVector<DT_> dv1(size, DT_(2));
                 BandedMatrix<DT_> bm1(size, dv1);
                 SparseMatrix<DT_> sm2(size, size, size / 8 + 1),
                         sm3(size, size, size / 8 + 1);
@@ -247,7 +245,7 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            DenseVector<DT_> * dv1(new DenseVector<DT_>(size, DT_(2)));
+            DenseVector<DT_> dv1(size, DT_(2));
             BandedMatrix<DT_> bm1(size, dv1);
             SparseMatrix<DT_> sm2(size, size, size / 8 + 1),
                     sm3(size, size, size / 8 + 1);

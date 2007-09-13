@@ -178,7 +178,7 @@ namespace honei
                 if (l.exists())
                     Sum<>::value(*l, *r);
                 else
-                    a.band(r.index()) = *((*r).copy());
+                    a.band(r.index()) = r->copy();
             }
 
             return a;

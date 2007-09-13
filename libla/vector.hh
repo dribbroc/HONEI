@@ -86,9 +86,6 @@ namespace honei
 
             /// Retrieves element by index, zero-based, assignable
             virtual DataType_ & operator[] (unsigned long index) = 0;
-
-            /// Returns a pointer to a copy.
-            virtual Vector * copy() const = 0;
     };
 
     /**

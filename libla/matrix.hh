@@ -394,6 +394,8 @@ namespace honei
      **/
     template <typename DataType_> bool operator== (const Matrix<DataType_> & left, const Matrix<DataType_> & right)
     {
+        CONTEXT("When comparing two matrices:");
+
         bool result(true);
         if (left.columns() != right.columns())
         {
@@ -408,6 +410,8 @@ namespace honei
         for (typename Matrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
                 j(right.begin_elements()) ; i != i_end ; ++i)
         {
+            CONTEXT("When comparing elements at index '" + stringify(i.index()) + "':");
+
             if (fabs((*i - *j)) <= std::numeric_limits<DataType_>::epsilon())
             {
                 ++j;

@@ -48,8 +48,6 @@ class DenseVectorCreationTest :
 };
 DenseVectorCreationTest<float> dense_vector_creation_test_float("float");
 DenseVectorCreationTest<double> dense_vector_creation_test_double("double");
-DenseVectorCreationTest<bool> dense_vector_creation_test_bool("bool");
-DenseVectorCreationTest<int> dense_vector_creation_test_int("int");
 
 template <typename DataType_>
 class DenseVectorCopyTest :
@@ -66,7 +64,7 @@ class DenseVectorCopyTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, static_cast<DataType_>(0)), dv2(size, static_cast<DataType_>(1));
-                std::tr1::shared_ptr<DenseVector<DataType_> > c(dv1.copy());
+                std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dv1.copy()));
 
                 for (typename Vector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
                         i != i_end ; ++i)
@@ -184,10 +182,11 @@ class DenseVectorQuickTest :
             TEST_CHECK_EQUAL(dv.size(), 4711);
             TEST_CHECK_EQUAL(dv, dv);
             TEST_CHECK_EQUAL_WITHIN_EPS((dv)[4710] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
-            DataType_ s = static_cast<DataType_>(1.2345);
+            DataType_ s = DataType_(1.2345);
             (dv)[333] = s;
             TEST_CHECK_EQUAL_WITHIN_EPS((dv)[333] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));
 
+        #if 0
             DenseVector<DataType_> dv2(10);
             for (int i = 0 ; i < 10 ; ++i)
             {
@@ -200,7 +199,7 @@ class DenseVectorQuickTest :
             }
             DenseVector<DataType_> dv4(dv2, 3, 5);
             TEST_CHECK_EQUAL(dv3, dv4);
-
+        #endif
         }
 };
 DenseVectorQuickTest<float>  dense_vector_quick_test_float("float");

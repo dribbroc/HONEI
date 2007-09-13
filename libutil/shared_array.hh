@@ -216,6 +216,12 @@ namespace honei
 
             /// \}
 
+            /// Return our size.
+            inline unsigned long size() const
+            {
+                return _size;
+            }
+
             /// Return our POA.
             inline DataType_ * get() const
             {

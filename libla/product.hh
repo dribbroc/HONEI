@@ -435,14 +435,18 @@ namespace honei
 
                 // We start at the zero_based band_index of b that is equal to abs(band_index(a) - diag_index)
                     unsigned long iteration_start(abs(vi.index() - diag_index));
-                    for(typename BandedMatrix<DT1_>::ConstVectorIterator vj(b.band_at(iteration_start)), vj_end(b.end_bands()) ; vj != vj_end ; ++vj)
+                    for(typename BandedMatrix<DT1_>::ConstVectorIterator vj(b.band_at(iteration_start)),
+                            vj_end(b.end_bands()) ; vj != vj_end ; ++vj)
                     {
                         if (vj.index() == diag_index) // We are on diagonal of b
                         {
                             signed long result_band_index(vi.index() - diag_index); //index based on diag = 0
                             typename Vector<DT1_>::ConstElementIterator i(vi->element_at(abs(result_band_index)));
                             typename Vector<DT2_>::ConstElementIterator j(vj->begin_elements());
-                            for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(abs(result_band_index))), r_end(result.band(result_band_index).end_elements()) ; r != r_end ; ++j, ++i, ++r)
+                            for (typename Vector<DT1_>::ElementIterator
+                                    r(result.band(result_band_index).element_at(abs(result_band_index))),
+                                    r_end(result.band(result_band_index).end_elements()) ; r != r_end ;
+                                    ++j, ++i, ++r)
                             {
                                 *r += *i * *j;
                             }
@@ -505,12 +509,13 @@ namespace honei
 
                 // Diagonal of b
                 for(typename BandedMatrix<DT2_>::ConstVectorIterator vj(b.band_at(diag_index)),
-                        vj_end(b.band_at(diag_index+1)) ; vj != vj_end ; ++vj)
+                        vj_end(b.band_at(diag_index + 1)) ; vj != vj_end ; ++vj)
                 {
                         if (! vj.exists())
                             continue;
 
-                        result.band(0) = Sum<>::value(ElementProduct<>::value(*(vi->copy()),*vj), result.band(0));
+                        DenseVector<DT1_> temp(vi->copy());
+                        result.band(0) = Sum<>::value(ElementProduct<>::value(temp, *vj), result.band(0));
                 }
 
                 // Upper part of b
@@ -640,7 +645,8 @@ namespace honei
             {
                 for (unsigned int s = 0 ; s < b.columns() ; ++s)
                 {
-                    Sum<>::value(result.column(s), ElementProduct<>::value(*(b.column(s).copy()), *vi));
+                    DenseVector<DT2_> temp(b.column(s).copy());
+                    Sum<>::value(result.column(s), ElementProduct<>::value(temp, *vi));
                 }
             }
 
@@ -653,7 +659,9 @@ namespace honei
 
                 for (unsigned int s = 0 ; s < b.columns() ; ++s)
                 {
-                    DenseVector<DT2_> temp(b.rows(), DT2_(0)); // Temporary container for efficient calculation of elementwise vector product.
+                    // Temporary container for efficient calculation of elementwise vector product.
+                    DenseVector<DT2_> temp(b.rows(), DT2_(0));
+
                     unsigned long real_index(vi.index() - middle_index);
                     typename Vector<DT2_>::ConstElementIterator c(b.column(s).element_at(real_index)),
                             d(vi->begin_elements());

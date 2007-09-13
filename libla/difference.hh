@@ -180,7 +180,10 @@ namespace honei
                 if (l.exists())
                     Difference<>::value(*l, *r);
                 else
-                    a.band(r.index()) = Scale<>::value(DT1_(-1), *((*r).copy()));
+                {
+                    DenseVector<DT2_> band(r->copy());
+                    a.band(r.index()) = Scale<>::value(DT1_(-1), band);
+                }
             }
 
             return a;

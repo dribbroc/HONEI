@@ -44,14 +44,14 @@ class BandedMatrixDenseVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
+                DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
-                DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
-                DenseVector<DataType_> * dv5 = dv4->copy();
+                DenseVector<DataType_> dv4(size, DataType_(2));
+                DenseVector<DataType_> dv5(dv4.copy());
                 bm1.insert_band(1, dv4);
                 bm1.insert_band(-1, dv5);
 
-                DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
+                DenseVector<DataType_> dv2(size, DataType_(3)), dv3(size, DataType_(6 * 3));
                 (dv3)[0]= DataType_(12);
                 (dv3)[size-1]= DataType_(12);
                 DenseVector<DataType_> prod (Product<DataType_>::value(bm1, dv2));
@@ -80,17 +80,17 @@ class BandedMatrixDenseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
-            DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
-            DenseVector<DataType_> * dv5 = dv4->copy();
+            DenseVector<DataType_> dv4(size, DataType_(2));
+            DenseVector<DataType_> dv5(dv4.copy());
             bm1.insert_band(1, dv4);
-            bm1.insert_band(-1 ,dv5);
+            bm1.insert_band(-1, dv5);
 
-            DenseVector<DataType_> dv2(size, DataType_(3)),  dv3(size, DataType_(6 * 3));
+            DenseVector<DataType_> dv2(size, DataType_(3)), dv3(size, DataType_(6 * 3));
             (dv3)[0]= DataType_(12);
             (dv3)[size-1]= DataType_(12);
-            DenseVector<DataType_> prod (Product<DataType_>::value(bm1, dv2));
+            DenseVector<DataType_> prod(Product<DataType_>::value(bm1, dv2));
 
             TEST_CHECK_EQUAL(prod, dv3);
 
@@ -116,10 +116,10 @@ class BandedMatrixSparseVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
+                DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
-                DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
-                DenseVector<DataType_> * dv5 = dv4->copy();
+                DenseVector<DataType_> dv4(size, DataType_(2));
+                DenseVector<DataType_> dv5(dv4.copy());
                 bm1.insert_band(1, dv4);
                 bm1.insert_band(-1, dv5);
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
@@ -167,10 +167,10 @@ class BandedMatrixSparseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
-            DenseVector<DataType_> * dv4 = new DenseVector<DataType_>(size, DataType_(2));
-            DenseVector<DataType_> * dv5 = dv4->copy();
+            DenseVector<DataType_> dv4(size, DataType_(2));
+            DenseVector<DataType_> dv5(dv4.copy());
             bm1.insert_band(1, dv4);
             bm1.insert_band(-1, dv5);
             SparseVector<DataType_> sv1(size, size / 8 + 1);
@@ -436,9 +436,9 @@ class BandedMatrixProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
-                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));
-                DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
+                DenseVector<DataType_> dv1(size, DataType_(2));
+                DenseVector<DataType_> dv2(size, DataType_(3));
+                DenseVector<DataType_> dv3(size, DataType_(6));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
                 BandedMatrix<DataType_> prod(Product<DataType_>::value(bm1, bm2));
 
@@ -464,29 +464,19 @@ class BandedMatrixProductQuickTest :
 
         virtual void run() const
         {
-         /*   unsigned long size(3);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
-            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
-            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-            BandedMatrix<DataType_> prod(Product<DataType_>::value(bm1, bm2));
-
-            TEST_CHECK_EQUAL(prod, bm3);
-            */
-
             unsigned long size(20);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
-            DenseVector<DataType_> * dv4 (new DenseVector<DataType_>(size, DataType_(6)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            DenseVector<DataType_> dv3(size, DataType_(6));
+            DenseVector<DataType_> dv4(size, DataType_(6));
 
             BandedMatrix<DataType_> bm1(size, dv1);
-            bm1.insert_band(1, dv3->copy());
-            bm1.insert_band(-2, dv4->copy());
+            bm1.insert_band(1, dv3.copy());
+            bm1.insert_band(-2, dv4.copy());
 
-            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));
-            BandedMatrix<DataType_> bm2(size, dv2->copy());
-            bm2.insert_band(size-1, dv2->copy());
-            bm2.insert_band(-size+1, dv2->copy());
+            DenseVector<DataType_> dv2(size, DataType_(3));
+            BandedMatrix<DataType_> bm2(size, dv2.copy());
+            bm2.insert_band(size - 1, dv2.copy());
+            bm2.insert_band(1 - size, dv2.copy());
 
             //SparseMatrix equal to bm2
             SparseMatrix<DataType_> sm1(size, size);
@@ -497,11 +487,7 @@ class BandedMatrixProductQuickTest :
             {
                 sm1[i][i] = DataType_(3);
             }
-            /*
-            std::cout << "bm1 : " << bm1 << std::endl;
-            std::cout << "bm2 : " << bm2 << std::endl;
-            std::cout << "sm1 : " << sm1 << std::endl;
-            */
+
             //Calculate products for banded * banded and banded * sparse and check equality.
             BandedMatrix<DataType_> prod(Product<DataType_>::value(bm1, bm2));
             DenseMatrix<DataType_> prod2(Product<DataType_>::value(bm1, sm1));
@@ -809,21 +795,20 @@ class BandedMatrixDenseMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
-            DenseVector<DataType_> * dv4 (new DenseVector<DataType_>(size, DataType_(6)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            DenseVector<DataType_> dv3(size, DataType_(6));
+            DenseVector<DataType_> dv4(size, DataType_(6));
             DenseMatrix<DataType_> dm1(size, size, DataType_(0));
             for(int i=0 ; i < size ; ++i)
             {
                 dm1[i][i] = DataType_(3);
             }
-            //std::cout << dm1 << std::endl;
             BandedMatrix<DataType_> bm1(size, dv1), bm3(size, dv3);
-            bm1.insert_band(1, dv3->copy());
-            bm1.insert_band(-2, dv4->copy());
+            bm1.insert_band(1, dv3.copy());
+            bm1.insert_band(-2, dv4.copy());
 
-            DenseVector<DataType_> * dv5 (new DenseVector<DataType_>(size, DataType_(18)));
-            DenseVector<DataType_> * dv6 (new DenseVector<DataType_>(size, DataType_(18)));
+            DenseVector<DataType_> dv5(size, DataType_(18));
+            DenseVector<DataType_> dv6(size, DataType_(18));
 
             bm3.insert_band(1, dv5);
             bm3.insert_band(-2, dv6);
@@ -854,9 +839,9 @@ class BandedMatrixSparseMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
-            DenseVector<DataType_> * dv4 (new DenseVector<DataType_>(size, DataType_(6)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            DenseVector<DataType_> dv3(size, DataType_(6));
+            DenseVector<DataType_> dv4(size, DataType_(6));
 
             SparseMatrix<DataType_> sm1(size, size);
             sm1[0][size-1] = DataType_(3);
@@ -868,8 +853,8 @@ class BandedMatrixSparseMatrixProductQuickTest :
             }
 
             BandedMatrix<DataType_> bm1(size, dv1);
-            bm1.insert_band(1, dv3->copy());
-            bm1.insert_band(-2, dv4->copy());
+            bm1.insert_band(1, dv3.copy());
+            bm1.insert_band(-2, dv4.copy());
 
             // Create a DenseMatrix that equals the BandedMatrix:
 
@@ -933,17 +918,15 @@ class DenseMatrixBandedMatrixProductQuickTest :
                         dm1[i][j] = DataType_(6);
                 }
             }
-            //std::cout << dm1 << std::endl;
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
+            DenseVector<DataType_> dv1 (size, DataType_(3));
+            DenseVector<DataType_> dv3 (size, DataType_(6));
 
             BandedMatrix<DataType_> bm1(size, dv1), bm3(size, dv3);
 
-            DenseVector<DataType_> * dv5 (new DenseVector<DataType_>(size, DataType_(18)));
-            DenseVector<DataType_> * dv6 (new DenseVector<DataType_>(size, DataType_(18)));
+            DenseVector<DataType_> dv5 (size, DataType_(18));
 
             bm3.insert_band(1, dv5);
-            bm3.insert_band(-2, dv6);
+            bm3.insert_band(-2, dv5);
             DenseMatrix<DataType_> prod(Product<DataType_>::value(dm1, bm1));
 
             TEST_CHECK_EQUAL(prod, bm3);
@@ -986,16 +969,15 @@ class SparseMatrixBandedMatrixProductQuickTest :
                         sm1[i][j] = DataType_(6);
                 }
             }
-            //std::cout << dm1 << std::endl;
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(3)));
-            DenseVector<DataType_> * dv3 (new DenseVector<DataType_>(size, DataType_(6)));
+            DenseVector<DataType_> dv1(size, DataType_(3));
+            DenseVector<DataType_> dv3(size, DataType_(6));
 
             BandedMatrix<DataType_> bm1(size, dv1), bm3(size, dv3);
 
-            DenseVector<DataType_> * dv5 (new DenseVector<DataType_>(size, DataType_(18)));
-            DenseVector<DataType_> * dv6 (new DenseVector<DataType_>(size, DataType_(18)));
-            bm3.insert_band(1, dv5->copy());
-            bm3.insert_band(-2, dv5->copy());
+            DenseVector<DataType_> dv5(size, DataType_(18));
+            DenseVector<DataType_> dv6(size, DataType_(18));
+            bm3.insert_band(1, dv5.copy());
+            bm3.insert_band(-2, dv5.copy());
             DenseMatrix<DataType_> prod(Product<DataType_>::value(sm1, bm1));
 
             TEST_CHECK_EQUAL(prod, bm3);

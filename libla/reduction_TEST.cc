@@ -43,11 +43,11 @@ class BandedMatrixReductionToSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DT_> * dv1 (new DenseVector<DT_>(size, DT_(2)));
+                DenseVector<DT_> dv1(size, DT_(2));
                 BandedMatrix<DT_> bm1(size, dv1);
                 DenseVector<DT_> sum(Reduction<rt_sum>::value(bm1));
 
-                TEST_CHECK_EQUAL(sum, *dv1);
+                TEST_CHECK_EQUAL(sum, dv1);
             }
         }
 };
@@ -67,11 +67,11 @@ class BandedMatrixReductionQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DT_> * dv1 (new DenseVector<DT_>(size, DT_(2)));
+            DenseVector<DT_> dv1(size, DT_(2));
             BandedMatrix<DT_> bm1(size, dv1);
             DenseVector<DT_> sum(Reduction<rt_sum>::value(bm1));
 
-            TEST_CHECK_EQUAL(sum, *dv1);
+            TEST_CHECK_EQUAL(sum, dv1);
         }
 };
 BandedMatrixReductionQuickTest<float> banded_matrix_reduction_to_sum_quick_test_float("float");

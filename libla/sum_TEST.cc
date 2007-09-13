@@ -45,7 +45,7 @@ class BandedMatrixDenseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1(new DenseVector<DataType_>(size, DataType_(2)));
+                DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 DenseMatrix<DataType_> dm2(size, size, DataType_(1)), dm3(size, size, DataType_(1));
 
@@ -85,7 +85,7 @@ class BandedMatrixDenseMatrixSumQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            DenseVector<DataType_> * dv1(new DenseVector<DataType_>(size, DataType_(2)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseMatrix<DataType_> dm2(size, size, DataType_(1)), dm3(size, size, DataType_(1));
 
@@ -125,7 +125,7 @@ class BandedMatrixSparseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1(new DenseVector<DataType_>(size, DataType_(2)));
+                DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 SparseMatrix<DataType_> sm2(size, size, size / 8 + 1),
                         sm3(size, size, size / 8 + 1);
@@ -179,26 +179,25 @@ class BandedMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
-                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));
+                DenseVector<DataType_> dv1(size, DataType_(2));
+                DenseVector<DataType_> dv2(size, DataType_(3));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
                 BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
-                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()), ce_end(sum.end_bands()) ;
-                    ce != ce_end ; ++ce)
+                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()),
+                        ce_end(sum.end_bands()) ; ce != ce_end ; ++ce)
                 {
-                    DenseVector<DataType_>  dv3 = *ce;
                     if (ce.index() != size - 1 )
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                            i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            i_end(ce->end_elements()) ; i != i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                         }
                     }
                     else
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                            i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            i_end(ce->end_elements()) ; i != i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 5, std::numeric_limits<DataType_>::epsilon());
                         }
@@ -227,26 +226,25 @@ class BandedMatrixSumQuickTest :
         virtual void run() const
         {
             unsigned long size(22);
-            DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size, DataType_(2)));
-            DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size, DataType_(3)));
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            DenseVector<DataType_> dv2(size, DataType_(3));
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
             BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
             for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()), ce_end(sum.end_bands()) ;
                 ce != ce_end ; ++ce)
             {
-                DenseVector<DataType_>  dv3 = *ce;
                 if (ce.index() != size - 1 )
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                        i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                        i_end(ce->end_elements()) ; i != i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     }
                 }
                 else
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(dv3.begin_elements()),
-                        i_end(dv3.end_elements()) ; i != i_end ; ++i)
+                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                        i_end(ce->end_elements()) ; i != i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 5, std::numeric_limits<DataType_>::epsilon());
                     }

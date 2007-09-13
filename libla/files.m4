@@ -11,7 +11,7 @@ dnl on this file at present...
 add(`absolute',                  `hh', `cc', `test')
 add(`banded_matrix',             `hh', `test')
 add(`dense_matrix',              `hh', `test')
-add(`dense_vector',              `hh', `test')
+add(`dense_vector',              `hh', `cc', `test')
 add(`difference',                `hh', `test')
 add(`dot_product',               `hh', `cc', `test', `benchmark')
 add(`element_inverse',           `hh', `test', `benchmark')

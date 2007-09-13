@@ -163,13 +163,13 @@ class BandedMatrixElementInverseTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size));
-                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size));
-                for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()),
-                        j(dv2->begin_elements()) ; i != i_end ; ++i)
+                DenseVector<DataType_> dv1(size);
+                DenseVector<DataType_> dv2(size);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() + 1;
-                    *j = 1 / static_cast<DataType_>(i.index() + 1);
+                    *j = 1 / DataType_(i.index() + 1);
                     ++j;
                 }
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
@@ -193,13 +193,13 @@ class BandedMatrixElementInverseQuickTest :
         virtual void run() const
         {
                 unsigned long size(11);
-                DenseVector<DataType_> * dv1 (new DenseVector<DataType_>(size));
-                DenseVector<DataType_> * dv2 (new DenseVector<DataType_>(size));
-                for (typename Vector<DataType_>::ElementIterator i(dv1->begin_elements()), i_end(dv1->end_elements()),
-                        j(dv2->begin_elements()) ; i != i_end ; ++i)
+                DenseVector<DataType_> dv1(size);
+                DenseVector<DataType_> dv2(size);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() + 1;
-                    *j = 1 / static_cast<DataType_>(i.index() + 1);
+                    *j = 1 / DataType_(i.index() + 1);
                     ++j;
                 }
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
@@ -230,7 +230,7 @@ class DenseMatrixElementInverseTest :
                         j(dm2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() + 1;
-                    *j = 1 / static_cast<DataType_>(i.index() + 1);
+                    *j = 1 / DataType_(i.index() + 1);
                     ++j;
                 }
 
