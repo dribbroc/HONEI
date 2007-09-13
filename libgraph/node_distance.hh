@@ -77,7 +77,8 @@ namespace honei
                     // Now calculate difference tmp = v - w for each pair of nodes and
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
-                    DataType_ d = Norm<>::value(Difference<>::value(*v.copy(), w));
+                    DenseVector<DataType_> v_copy = v.copy();
+                    DataType_ d = Norm<>::value(Difference<>::value(v_copy, w));
                     *e = d;
                 }
             }

@@ -20,14 +20,14 @@
 
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
-#include <libla/vector_masked_max_index.hh>
+#include <libgraph/vector_masked_max_index.hh>
 #include <libla/vector_error.hh>
 #include <unittest/unittest.hh>
 
 #include <limits>
 #include <tr1/memory>
 
-using namespace pg512;
+using namespace honei;
 using  namespace tests;
 
 template <typename DataType_>

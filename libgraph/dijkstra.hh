@@ -24,8 +24,9 @@
 #include <libla/dense_matrix.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_vector.hh>
+#include <libla/dense_vector-impl.hh>
 #include <libla/matrix_error.hh>
-#include <libla/vector_masked_min_index.hh>
+#include <libgraph/vector_masked_min_index.hh>
 
 /**
  * \file

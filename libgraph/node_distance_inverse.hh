@@ -79,7 +79,8 @@ namespace honei
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     // If d != 0, we put 1/d into the resulting distance matrix, otherwise we write 0.
-                    DataType_ d = Norm<>::value(Difference<>::value(*v.copy(), w));
+                    DenseVector<DataType_> v_copy = v.copy();
+                    DataType_ d = Norm<>::value(Difference<>::value(v_copy, w));
                     *e = d == 0 ? 0 : 1 / d;
                 }
             }

@@ -188,7 +188,7 @@
                     DenseVector<DataType_> * sum_vec_inv(new DenseVector<DataType_>(Reduction<rt_sum>::value(inv_square_dist)));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
                     Difference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<>::value(DataType_(-1), square_dist);
 
@@ -202,7 +202,7 @@
                     Scale<DataType_>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
-                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), sum_vec_inv);
+                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), *sum_vec_inv);
                     DenseMatrix<DataType_> diff(Sum<>::value(inv_square_dist, inv_diag));
 
                     // Calculating repulsive_forces = (_coordinates * diff)
@@ -313,7 +313,7 @@
                     DenseVector<DataType_> * sum_vec_inv(new DenseVector<DataType_>(Reduction<rt_sum>::value(inv_square_dist)));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
                     Difference<>::value(diag, square_dist);
                     Scale<>::value(DataType_(-1), square_dist);
 
@@ -324,7 +324,7 @@
                     Scale<DataType_>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating inv_square_dist = (diag(sum_vec_inv) - inv_square_dist)
-                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), sum_vec_inv);
+                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), *sum_vec_inv);
                     DenseMatrix<DataType_> diff(Sum<>::value(inv_square_dist, inv_diag));
 
                     // Calculating repulsive_forces = (_coordinates * inv_square_dist)
@@ -409,7 +409,7 @@
                     DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum>::value(square_dist)));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
                     Difference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<>::value(DataType_(-1), square_dist);
 
@@ -523,7 +523,7 @@
                     DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum>::value(square_dist)));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
                     Difference<>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<>::value(DataType_(-1), square_dist);
 

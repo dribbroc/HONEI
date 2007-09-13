@@ -31,6 +31,3 @@ add(`sum',                       `hh', `sse', `test', `benchmark')
 add(`vector',                    `hh')
 add(`vector_error',              `hh', `cc')
 add(`vector_iterator',           `hh', `test')
-dnl Scheduled to be moved to a different library:
-dnl add(`vector_masked_max_index',   `hh', `test')
-dnl add(`vector_masked_min_index',   `hh', `test')

@@ -20,7 +20,7 @@
 
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
-#include <libla/vector_masked_min_index.hh>
+#include <libgraph/vector_masked_min_index.hh>
 #include <libla/vector_error.hh>
 #include <unittest/unittest.hh>
 

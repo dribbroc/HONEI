@@ -3,11 +3,11 @@
 /*
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
- * This file is part of the LA C++ library. LibLa is free software;
+ * This file is part of the Graph C++ library. LibGraph is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLa is distributed in the hope that it will be useful, but WITHOUT ANY
+ * LibGraph is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -22,6 +22,7 @@
 
 #include <libutil/tags.hh>
 #include <libla/dense_vector.hh>
+#include <libla/dense_vector-impl.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/vector.hh>
 #include <libla/vector_error.hh>

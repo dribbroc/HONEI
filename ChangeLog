@@ -5,6 +5,23 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	*libla/reduction.hh: Implemented reductions from matrix to vector.
+	*libla/reduction_TEST.cc: Added tests for it.
+	*libgraph/vector_masked_min_index.hh,
+	libla/vector_masked_max_index.hh: Corrected GPL-Header.
+	*libgraph/evolving_graph.hh, graph.hh: Corrected GPL-Header.
+	*libla/files.m4: Removed moved files.
+	*libgraph/files.m4: Added moved files.
+	*libgraph/node_distance_inverse.hh, libgraph/node_distance.hh,
+	libgraph/graph.hh, libgraph/position.hh,
+	libgraph/vector_masked_min_index_TEST.cc,
+	libgraph/vector_masked_max_index_TEST.cc,
+	libgraph/evolving_graph.hh,libgraph/dijkstra.hh,
+	libgraph/vector_masked_min_index.hh: Fixed issues, that arose because
+	of the changes in commit 647.
+
 2007-09-13 Danny van Dyk <kugelfang@gentoo.org>
 
 	* +libla/dense_vector-impl.hh, +libla/dense_vector.cc,

@@ -95,7 +95,7 @@ namespace honei
          *
          * \param a The entity to be reduced.
          *
-         * \retval x Will return scalar x.
+         * \retval x If a is a matrix, a vector will be returned, else it will be a scalar.
          *
          * \note This operation cannot throw exceptions.
          */
@@ -189,16 +189,59 @@ namespace honei
          *
          * \param a The entity to be reduced.
          *
-         * \retval x Will return scalar x.
+         * \retval x If a is a matrix, a vector will be returned, else it will be a scalar.
          *
          * \note This operation cannot throw exceptions.
          */
 
         /// \{
                 template <typename DT_>
+        static DenseVector<DT_> value(const DenseMatrix<DT_> & matrix)
+        {
+            CONTEXT("When reducing DenseMatrix to Vector by max");
+
+            DenseVector<DT_> result(matrix.rows());
+            for (unsigned int i(0); i < matrix.rows() ; ++i)
+            {
+                    result[i] = Reduction<rt_max>::value(matrix[i]);
+            }
+
+            return result;
+        }
+
+                template <typename DT_>
+        static DenseVector<DT_> value(const SparseMatrix<DT_> & matrix)
+        {
+            CONTEXT("When reducing SparseMatrix to Vector by max");
+
+            DenseVector<DT_> result(matrix.rows());
+            for (unsigned int i(0); i < matrix.rows() ; ++i)
+            {
+                    result[i] = Reduction<rt_max>::value(matrix[i]);
+            }
+
+            return result;
+        }
+
+                template <typename DT_>
+        static DenseVector<DT_> value(const BandedMatrix<DT_> & matrix)
+        {
+            CONTEXT("When reducing BandedMatrix to Vector by max");
+
+            DenseVector<DT_> result(matrix.rows(), std::numeric_limits<DT_>::min());
+            for (typename Matrix<DT_>::ConstElementIterator i(matrix.begin_elements()),
+                    i_end(matrix.end_elements()) ; i != i_end ; ++i)
+            {
+                if (*i > result[i.row()])
+                    result[i.row()] = *i;
+            }
+            return result;
+        }
+
+                template <typename DT_>
         static DT_ value(const DenseVector<DT_> & vector)
         {
-            CONTEXT("When reducing SparseVector to Scalar by max");
+            CONTEXT("When reducing DenseVector to Scalar by max");
 
             DT_ result(std::numeric_limits<DT_>::min());
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
@@ -248,10 +291,54 @@ namespace honei
          */
 
         /// \{
+
+                        template <typename DT_>
+        static DenseVector<DT_> value(const DenseMatrix<DT_> & matrix)
+        {
+            CONTEXT("When reducing DenseMatrix to Vector by min");
+
+            DenseVector<DT_> result(matrix.rows());
+            for (unsigned int i(0); i < matrix.rows() ; ++i)
+            {
+                    result[i] = Reduction<rt_min>::value(matrix[i]);
+            }
+
+            return result;
+        }
+
+                template <typename DT_>
+        static DenseVector<DT_> value(const SparseMatrix<DT_> & matrix)
+        {
+            CONTEXT("When reducing SparseMatrix to Vector by min");
+
+            DenseVector<DT_> result(matrix.rows());
+            for (unsigned int i(0); i < matrix.rows() ; ++i)
+            {
+                    result[i] = Reduction<rt_min>::value(matrix[i]);
+            }
+
+            return result;
+        }
+
+                template <typename DT_>
+        static DenseVector<DT_> value(const BandedMatrix<DT_> & matrix)
+        {
+            CONTEXT("When reducing BandedMatrix to Vector by max");
+
+            DenseVector<DT_> result(matrix.rows(), std::numeric_limits<DT_>::max());
+            for (typename Matrix<DT_>::ConstElementIterator i(matrix.begin_elements()),
+                    i_end(matrix.end_elements()) ; i != i_end ; ++i)
+            {
+                if (*i < result[i.row()])
+                    result[i.row()] = *i;
+            }
+            return result;
+        }
+
         template <typename DT_>
         static DT_ value(const DenseVector<DT_> & vector)
         {
-            CONTEXT("When reducing SparseVector to Scalar by min");
+            CONTEXT("When reducing DenseVector to Scalar by min");
 
             DT_ result(std::numeric_limits<DT_>::max());
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
