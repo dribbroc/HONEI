@@ -45,11 +45,16 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
-	$(DEBUGDEF)
+	$(DEBUGDEF) $(SSEDEF)
 
 lib_LTLIBRARIES = libla.la
 
+if SSE
 libla_la_SOURCES = filelist sselist
+else
+libla_la_SOURCES = filelist
+endif
+
 libla_la_LIBADD = \
 	$(top_builddir)/libutil/libutil.la
 
