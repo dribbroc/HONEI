@@ -195,7 +195,7 @@ AC_SUBST([ENABLE_SSE])
 AM_CONDITIONAL([SSE], test "x$ENABLE_SSE" = "xyes")
 if test "x$ENABLE_SSE" = "xyes" ; then
     dnl {{{ enable sse support
-    CXXFLAGS="$CXXFLAGS -msse"
+dnl    CXXFLAGS="$CXXFLAGS -msse"
 	SSEDEF="-DHONEI_SSE"
     dnl }}}
 fi
