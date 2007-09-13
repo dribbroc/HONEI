@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	*libla/difference_TEST.cc: Fixed exception test for Banded/Dense.
+
+2007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	*libla/reduction.hh: Implemented reductions from matrix to vector.
 	*libla/reduction_TEST.cc: Added tests for it.
 	*libgraph/vector_masked_min_index.hh,

@@ -63,11 +63,11 @@ class BandedMatrixDenseMatrixDifferenceTest :
                 TEST_CHECK_EQUAL(difference, dm3);
             }
 
-            BandedMatrix<DT_> bm01(5); 
-            DenseMatrix<DT_> dm02(6, 5), dm03(5, 6);
+            BandedMatrix<DT_> bm01(5);
+            DenseMatrix<DT_> dm02(4, 4), dm03(5, 6);
 
-            TEST_CHECK_THROWS(Difference<>::value(bm01, dm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Difference<>::value(bm01, dm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Difference<>::value(bm01, dm03), MatrixIsNotSquare);
+            TEST_CHECK_THROWS(Difference<>::value(bm01, dm02), MatrixRowsDoNotMatch);
         }
 };
 BandedMatrixDenseMatrixDifferenceTest<float> banded_matrix_dense_matrix_difference_test_float("float");
@@ -103,7 +103,7 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
 
             TEST_CHECK_EQUAL(difference, dm3);
 
-            BandedMatrix<DT_> bm01(5); 
+            BandedMatrix<DT_> bm01(5);
             DenseMatrix<DT_> dm02(6, 6), dm03(5, 6);
 
             TEST_CHECK_THROWS(Difference<>::value(bm01, dm03), MatrixIsNotSquare);
@@ -276,7 +276,7 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
             SparseMatrix<DT_> & difference(Difference<>::value(bm1, sm2));
             TEST_CHECK_EQUAL(difference, sm3);
 
-            BandedMatrix<DT_> bm01(5); 
+            BandedMatrix<DT_> bm01(5);
             SparseMatrix<DT_> sm02(6, 5, 1), sm03(6, 6, 1);
 
             TEST_CHECK_THROWS(Difference<>::value(bm01, sm03), MatrixRowsDoNotMatch);
@@ -636,12 +636,12 @@ class DenseVectorSparseVectorDifferenceTest :
                 for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
-                    if (i.index() % 10 == 0) 
+                    if (i.index() % 10 == 0)
                     {
                         *i = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
                         *k = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
                     }
-                    if (i.index() % 7 == 0) 
+                    if (i.index() % 7 == 0)
                     {
                         *j = static_cast<DT_>((i.index() +1) / 1.23456789);
                         *k = static_cast<DT_>((i.index() +1) / -1.23456789);
@@ -682,12 +682,12 @@ class DenseVectorSparseVectorDifferenceQuickTest :
             for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
-                if (i.index() % 10 == 0) 
+                if (i.index() % 10 == 0)
                 {
                     *i = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
                     *k = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
                 }
-                if (i.index() % 7 == 0) 
+                if (i.index() % 7 == 0)
                 {
                     *j = static_cast<DT_>((i.index() +1) / 1.23456789);
                     *k = static_cast<DT_>((i.index() +1) / -1.23456789);
@@ -733,12 +733,12 @@ class SparseVectorDifferenceTest :
                         *j = DT_(((i.index() +1) * 2) / 1.23456789);
                         *k = -*i;
                     }
-                    else if (i.index() % 7 == 0) 
+                    else if (i.index() % 7 == 0)
                     {
                         *i = DT_((i.index() +1) / 1.23456789);
                         *k = *i;
                     }
-                    else if (i.index() % 10 == 0) 
+                    else if (i.index() % 10 == 0)
                     {
                         *j = DT_(((i.index() +1) * 2) / 1.23456789);
                         *k = -*j;
@@ -779,12 +779,12 @@ class SparseVectorDifferenceQuickTest :
                     *j = DT_(((i.index() +1) * 2) / 1.23456789);
                     *k = -*i;
                 }
-                else if (i.index() % 7 == 0) 
+                else if (i.index() % 7 == 0)
                 {
                     *i = DT_((i.index() +1) / 1.23456789);
                     *k = *i;
                 }
-                else if (i.index() % 10 == 0) 
+                else if (i.index() % 10 == 0)
                 {
                     *j = DT_(((i.index() +1) * 2) / 1.23456789);
                     *k = -*j;
