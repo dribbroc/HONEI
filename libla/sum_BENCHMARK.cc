@@ -80,6 +80,6 @@ class DenseVectorSumBench :
 
 DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 10,000, float", 10000, 10);
 DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 10,000, double", 10000, 10);
-DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 640,000, float", 640000, 1);
+//DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 640,000, float", 640000, 1);
 //DenseVectorSumBench<float> DVSBenchfloat2("Dense Vector Scaled Sum Benchmark - vector size: 10,000,000, float", 10000000, 10);
 //DenseVectorScaledSumBench<double> DVSSBenchdouble2("Dense Vector Scaled Sum Benchmark - vector size: 10,000,000, double", 10000000, 10);

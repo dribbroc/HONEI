@@ -619,7 +619,7 @@ class DenseVectorSumQuickTest :
 };
 DenseVectorSumQuickTest<tags::CPU, float> dense_vector_sum_quick_test_float("float");
 DenseVectorSumQuickTest<tags::CPU, double> dense_vector_sum_quick_test_double("double");
-DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
+//DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
 
 template <typename DataType_>
 class DenseVectorSparseVectorSumTest :
