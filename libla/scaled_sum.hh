@@ -134,5 +134,12 @@ namespace honei
 
         /// \}
     };
+
+    /// SSE implementation.
+    template <>
+    struct ScaledSum<tags::CPU::SSE>
+    {
+        static DenseVector<float> & value(DenseVector<float> & x, const DenseVector<float> & y, float b);
+    };
 }
 #endif

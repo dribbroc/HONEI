@@ -14,4 +14,5 @@
 #include <libla/product_BENCHMARK.cc>
 #include <libla/reduction_BENCHMARK.cc>
 #include <libla/scale_BENCHMARK.cc>
+#include <libla/scaled_sum_BENCHMARK.cc>
 #include <libla/sum_BENCHMARK.cc>

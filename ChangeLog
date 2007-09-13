@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-09-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
+	* libla/files.m4, libla/scaled_sum.hh, libla/scaled_sum-sse.cc
+	libla/scaled_sum_BENCHMARK.cc libla/scaled_sum_TEST.cc:
+	Added SSE version of ScaledSum(dv,dv).
+
+2007-09-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
 	* configure.ac, libla/Makefile.am.m4, libla/files.m4:
 	Completed sse support in the build framework.
 
