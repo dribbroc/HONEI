@@ -179,7 +179,10 @@ namespace honei
         }
 
         /// \}
+    };
 
+    template <> struct Reduction<rt_max>
+    {
         /**
          * \brief Returns the scalar which is the maximum of
          * \brief all elements of a given entity.
@@ -192,8 +195,47 @@ namespace honei
          */
 
         /// \{
-        /// \}
+                template <typename DT_>
+        static DT_ value(const DenseVector<DT_> & vector)
+        {
+            CONTEXT("When reducing SparseVector to Scalar by max");
 
+            DT_ result(std::numeric_limits<DT_>::min());
+            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+                    l_end(vector.end_elements()) ; l != l_end ; ++l)
+            {
+                if (*l > result)
+                {
+                    result = *l;
+                }
+            }
+
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const SparseVector<DT_> & vector)
+        {
+            CONTEXT("When reducing SparseVector to Scalar by max");
+
+            DT_ result(std::numeric_limits<DT_>::min());
+            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+                    l_end(vector.end_elements()) ; l != l_end ; ++l)
+            {
+                if (*l > result)
+                {
+                    result = *l;
+                }
+            }
+
+            return result;
+        }
+
+        /// \}
+    };
+
+    template <> struct Reduction<rt_min>
+    {
         /**
          * \brief Returns the scalar which is the minimum of
          * \brief all elements of a given entity.
@@ -206,8 +248,45 @@ namespace honei
          */
 
         /// \{
+        template <typename DT_>
+        static DT_ value(const DenseVector<DT_> & vector)
+        {
+            CONTEXT("When reducing SparseVector to Scalar by min");
+
+            DT_ result(std::numeric_limits<DT_>::max());
+            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+                    l_end(vector.end_elements()) ; l != l_end ; ++l)
+            {
+                if (*l < result)
+                {
+                    result = *l;
+                }
+            }
+
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const SparseVector<DT_> & vector)
+        {
+            CONTEXT("When reducing SparseVector to Scalar by min");
+
+            DT_ result(std::numeric_limits<DT_>::max());
+            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+                    l_end(vector.end_elements()) ; l != l_end ; ++l)
+            {
+                if (*l < result)
+                {
+                    result = *l;
+                }
+            }
+
+            return result;
+        }
+
         /// \}
     };
+
 
     /// \}
 }

@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	*libla/reduction.hh: Implemented reductions from vector to sum.
+	*libla/reduction_TEST.cc: Added tests for it.
+	*libla/vector_masked_min_index.hh, _TEST.cc: Moved to libgraph.
+	*libla/vector_masked_max_index.hh, _TEST.cc: Moved to libgraph.
+
 2007-09-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* configure.ac: Added sse support via --enable-sse.

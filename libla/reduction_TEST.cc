@@ -317,3 +317,236 @@ class SparseVectorReductionToSumQuickTest :
 
 SparseVectorReductionToSumQuickTest<float> sparse_reduction_to_sum_quick_test_float("float");
 SparseVectorReductionToSumQuickTest<double> sparse_reduction_to_sum_quick_test_double("double");
+
+template <typename DT_>
+class DenseVectorReductionToMinTest :
+    public BaseTest
+{
+    public:
+        DenseVectorReductionToMinTest(const std::string & type) :
+            BaseTest("dense_vector_reduction_to_min_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                DenseVector<DT_> dv1(size);
+                for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = i.index();
+                }
+
+                DT_ v1(Reduction<rt_min>::value(dv1));
+                TEST_CHECK_EQUAL(v1, 0);
+            }
+        }
+};
+
+DenseVectorReductionToMinTest<float> dense_vector_reduction_to_min_test_float("float");
+DenseVectorReductionToMinTest<double> dense_vector_reduction_to_min_test_double("double");
+
+template <typename DT_>
+class DenseVectorReductionToMinQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorReductionToMinQuickTest(const std::string & type) :
+            QuickTest("dense_vector_reduction_to_min_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DenseVector<DT_> dv1(size);
+            for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = i.index();
+            }
+
+            DT_ v1(Reduction<rt_min>::value(dv1));
+            TEST_CHECK_EQUAL(v1, 0);
+        }
+};
+
+DenseVectorReductionToMinQuickTest<float> dense_reduction_to_min_quick_test_float("float");
+DenseVectorReductionToMinQuickTest<double> dense_reduction_to_min_quick_test_double("double");
+
+template <typename DT_>
+class SparseVectorReductionToMinTest :
+    public BaseTest
+{
+    public:
+        SparseVectorReductionToMinTest(const std::string & type) :
+            BaseTest("sparse_vector_reduction_to_min_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                SparseVector<DT_> sv1(size, size / 8 + 1);
+                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = i.index();
+                }
+
+                DT_ v1(Reduction<rt_min>::value(sv1));
+                TEST_CHECK_EQUAL(v1, 0);
+            }
+        }
+};
+
+SparseVectorReductionToMinTest<float> sparse_vector_reduction_to_min_test_float("float");
+SparseVectorReductionToMinTest<double> sparse_vector_reduction_to_min_test_double("double");
+
+template <typename DT_>
+class SparseVectorReductionToMinQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorReductionToMinQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_reduction_to_min_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            SparseVector<DT_> sv1(size, size / 8 + 1);
+            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = i.index();
+            }
+
+            DT_ v1(Reduction<rt_min>::value(sv1));
+            TEST_CHECK_EQUAL(v1, 0);
+        }
+};
+
+SparseVectorReductionToMinQuickTest<float> sparse_reduction_to_min_quick_test_float("float");
+SparseVectorReductionToMinQuickTest<double> sparse_reduction_to_min_quick_test_double("double");
+
+template <typename DT_>
+class DenseVectorReductionToMaxTest :
+    public BaseTest
+{
+    public:
+        DenseVectorReductionToMaxTest(const std::string & type) :
+            BaseTest("dense_vector_reduction_to_max_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                DenseVector<DT_> dv1(size, size / 8 + 1);
+                for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = i.index();
+                }
+
+                DT_ v1(Reduction<rt_max>::value(dv1));
+                TEST_CHECK_EQUAL(v1, size-1);
+            }
+        }
+};
+
+DenseVectorReductionToMaxTest<float> dense_vector_reduction_to_max_test_float("float");
+DenseVectorReductionToMaxTest<double> dense_vector_reduction_to_max_test_double("double");
+
+template <typename DT_>
+class DenseVectorReductionToMaxQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorReductionToMaxQuickTest(const std::string & type) :
+            QuickTest("dense_vector_reduction_to_max_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DenseVector<DT_> dv1(size, size / 8 + 1);
+            for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = i.index();
+            }
+
+            DT_ v1(Reduction<rt_max>::value(dv1));
+            TEST_CHECK_EQUAL(v1, size-1);
+        }
+};
+
+DenseVectorReductionToMaxQuickTest<float> dense_reduction_to_max_quick_test_float("float");
+DenseVectorReductionToMaxQuickTest<double> dense_reduction_to_max_quick_test_double("double");
+
+
+template <typename DT_>
+class SparseVectorReductionToMaxTest :
+    public BaseTest
+{
+    public:
+        SparseVectorReductionToMaxTest(const std::string & type) :
+            BaseTest("sparse_vector_reduction_to_max_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            {
+                SparseVector<DT_> sv1(size, size / 8 + 1);
+                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = i.index();
+                }
+
+                DT_ v1(Reduction<rt_max>::value(sv1));
+                TEST_CHECK_EQUAL(v1, size-1);
+            }
+        }
+};
+
+SparseVectorReductionToMaxTest<float> sparse_vector_reduction_to_max_test_float("float");
+SparseVectorReductionToMaxTest<double> sparse_vector_reduction_to_max_test_double("double");
+
+template <typename DT_>
+class SparseVectorReductionToMaxQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorReductionToMaxQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_reduction_to_max_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            SparseVector<DT_> sv1(size, size / 8 + 1);
+            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = i.index();
+            }
+
+            DT_ v1(Reduction<rt_max>::value(sv1));
+            TEST_CHECK_EQUAL(v1, size-1);
+        }
+};
+
+SparseVectorReductionToMaxQuickTest<float> sparse_reduction_to_max_quick_test_float("float");
+SparseVectorReductionToMaxQuickTest<double> sparse_reduction_to_max_quick_test_double("double");
