@@ -232,6 +232,12 @@ namespace honei
                 return *_column_vectors[column];
             }
 
+            /// Returns a pointer to our data array.
+            inline DataType_ * elements() const
+            {
+                return _elements.get();
+            }
+
             /// Returns a copy of the matrix.
             virtual DenseMatrix * copy() const
             {
