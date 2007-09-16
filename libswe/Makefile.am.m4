@@ -31,6 +31,8 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = Makefile.am.m4 files.m4
+DEFS = \
+	$(DEBUGDEF) $(SSEDEF)
 
 lib_LTLIBRARIES = libswe.la
 
@@ -51,7 +53,6 @@ bench:
 
 quickcheck: $(TESTS)
 	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check
-	
 Makefile.am : Makefile.am.m4 files.m4
 	$(top_srcdir)/misc/do_m4.bash Makefile.am
 
