@@ -30,6 +30,7 @@
 #include <libutil/shared_array.hh>
 
 #include <algorithm>
+#include <cstring>
 #include <iterator>
 
 /**
@@ -103,13 +104,14 @@ namespace honei
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
 
+        DataType_ *  target(_imp->elements.get());
         for (unsigned long i(offset) ; i < (stepsize * size + offset) ; i += stepsize)
-            _imp->elements[i] = value;
+            target[i] = value;
     }
 
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const DenseVector<DataType_> & other) :
-        _imp(other._imp)
+        _imp(new Implementation(other._imp->elements, other._imp->size, other._imp->offset, other._imp->stepsize))
     {
     }
 
@@ -177,8 +179,13 @@ namespace honei
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
         DenseVector result(_imp->size);
-
-        std::copy(begin_elements(), end_elements(), result._imp->elements.get());
+        DataType_ * source(_imp->elements.get());
+        DataType_ * target(result._imp->elements.get());
+        for (unsigned long i(0) ; i < _imp->size ; i++)
+        {
+            target[i] = source[_imp->stepsize * i + _imp->offset];
+        }
+        //memcpy(result._imp->elements.get(), _imp->elements.get(), _imp->size * sizeof(DataType_));
 
         return result;
     }
