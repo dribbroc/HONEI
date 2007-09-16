@@ -37,7 +37,7 @@ class DenseVectorElementInverseTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
@@ -97,7 +97,7 @@ class SparseVectorElementInverseTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
@@ -161,7 +161,7 @@ class BandedMatrixElementInverseTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size);
                 DenseVector<DataType_> dv2(size);
@@ -222,7 +222,7 @@ class DenseMatrixElementInverseTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size, DataType_(0)),
                         dm2(size, size, DataType_(0));
@@ -281,7 +281,7 @@ class SparseMatrixElementInverseTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1);

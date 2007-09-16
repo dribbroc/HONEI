@@ -42,7 +42,7 @@ class BandedMatrixDenseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
@@ -114,7 +114,7 @@ class BandedMatrixSparseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
@@ -213,7 +213,7 @@ class DenseMatrixDenseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
                 DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
@@ -273,7 +273,7 @@ class DenseMatrixSparseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(11) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
@@ -434,7 +434,7 @@ class BandedMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 DenseVector<DataType_> dv2(size, DataType_(3));
@@ -513,7 +513,7 @@ class DenseMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size + 1, size, DataType_(3)),
                     dm3(size+1, size+1, DataType_(6 * size));
@@ -570,7 +570,7 @@ class DenseMatrixSparseMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
                 SparseMatrix<DataType_> sm2(size, size + 1, size / 8 + 1);
@@ -638,7 +638,7 @@ class SparseMatrixDenseMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm2(size + 1, size, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1);
@@ -706,7 +706,7 @@ class SparseMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size + 1, size, size / 7 + 1), sm3(size + 1, size + 1, size / 7 + 1);

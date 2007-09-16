@@ -41,7 +41,7 @@ class DenseVectorAbsoluteValueTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size), dv2(size);
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
@@ -98,7 +98,7 @@ class SparseVectorAbsoluteValueTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),

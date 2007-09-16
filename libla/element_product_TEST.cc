@@ -41,7 +41,7 @@ class DenseVectorElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                     dv3(size, DataType_(6));
@@ -100,7 +100,7 @@ class SparseVectorDenseVectorElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 7 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
@@ -183,7 +183,7 @@ class SparseVectorElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 7 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
@@ -272,7 +272,7 @@ class BandedMatrixDenseMatrixElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size, DataType_(3));
                 DenseVector<DataType_> dv2(size, DataType_(2));
@@ -338,7 +338,7 @@ class BandedMatrixElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(3));
                 DenseVector<DataType_> dv2(size, DataType_(2));
@@ -398,7 +398,7 @@ class BandedMatrixSparseMatrixElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(3));
                 BandedMatrix<DataType_> bm1(size, dv1),  bm3(size);
@@ -484,7 +484,7 @@ class DenseMatrixElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(3)),
                     dm3(size, size + 1, DataType_(6));
@@ -544,7 +544,7 @@ class SparseMatrixDenseMatrixElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
                 SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 7 + 1);
@@ -624,7 +624,7 @@ class SparseMatrixBandedMatrixElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv2(size, DataType_(3));
                 BandedMatrix<DataType_> bm2(size, dv2);
@@ -710,7 +710,7 @@ class SparseMatrixElementProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );

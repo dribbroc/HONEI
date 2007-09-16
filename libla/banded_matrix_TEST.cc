@@ -38,7 +38,7 @@ class BandedMatrixCreationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 BandedMatrix<DataType_> bm1(size);
                 TEST_CHECK(true);

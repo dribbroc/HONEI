@@ -40,7 +40,7 @@ class SparseVectorCopyTest :
 
         virtual void run() const
         {
-            for (unsigned long size(20) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(20) ; size < (1 << 8) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 10);
                 std::auto_ptr<SparseVector<DataType_> > c(sv1.copy());
@@ -78,7 +78,7 @@ public:
 
     virtual void run() const
     {
-        for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+        for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
         {
             SparseVector<DataType_> sv1(size, size);
             SparseVector<DataType_> sv2(size, 1);
@@ -103,7 +103,7 @@ public:
 
     virtual void run() const
     {
-        for (unsigned long size(30) ; size < (1 << 10) ; size <<= 1)
+        for (unsigned long size(30) ; size < (1 << 8) ; size <<= 1)
         {
             SparseVector<DataType_> sv1(size, size);
             SparseVector<DataType_> sv2(size, size / 4 + 1);
@@ -146,7 +146,7 @@ public:
 
     virtual void run() const
     {
-        for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+        for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
         {
             SparseVector<DataType_> sv1(size, size / 3 + 1);
 
@@ -232,7 +232,7 @@ public:
 
     virtual void run() const
     {
-        for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+        for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
         {
             CONTEXT("When using size '" + stringify(size) + "':");
 

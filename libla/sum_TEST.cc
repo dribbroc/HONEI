@@ -43,7 +43,7 @@ class BandedMatrixDenseMatrixSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
@@ -123,7 +123,7 @@ class BandedMatrixSparseMatrixSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
@@ -177,7 +177,7 @@ class BandedMatrixSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 DenseVector<DataType_> dv2(size, DataType_(3));
@@ -271,7 +271,7 @@ class DenseMatrixSparseMatrixSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(0)),
                         dm3(size, size + 1, DataType_(0));
@@ -371,7 +371,7 @@ class DenseMatrixSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(-3)),
                     dm3(size, size + 1, DataType_(-1));
@@ -429,7 +429,7 @@ class SparseMatrixSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
@@ -525,7 +525,7 @@ class ScalarDenseMatrixSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(5));
                 DenseMatrix<DataType_> & prod(Sum<>::value(dm1, DataType_(3)));
@@ -580,7 +580,7 @@ class DenseVectorSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
                     dv3(size, DataType_(3));
@@ -633,7 +633,7 @@ class DenseVectorSparseVectorSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
                 SparseVector<DataType_> sv2(size, size / 7 + 1);
@@ -727,7 +727,7 @@ class SparseVectorSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 7 + 1), sv3(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),

@@ -21,7 +21,7 @@ class SparseMatrixCopyTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 unsigned long columns(2 * size), rows(size);
                 SparseMatrix<DataType_> sm1(columns, rows, size / 10 + 1);
@@ -63,7 +63,7 @@ class SparseMatrixCreationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 unsigned long columns(size + 1), rows(size);
                 SparseMatrix<DataType_> sv1(columns, rows, columns * rows);
@@ -89,7 +89,7 @@ class SparseMatrixLayoutTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 unsigned long columns(size + 1), rows(size);
 

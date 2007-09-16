@@ -43,7 +43,7 @@ class ScalarBandedMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
@@ -127,7 +127,7 @@ class ScalarDenseMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(6));
                 DenseMatrix<DataType_> & prod(Scale<>::value(DataType_(3), dm1));
@@ -180,7 +180,7 @@ class ScalarSparseMatrixProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1);
@@ -248,7 +248,7 @@ class ScalarDenseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(3));
 
@@ -297,7 +297,7 @@ class ScalarSparseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(11) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(11) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
                 for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;

@@ -41,7 +41,7 @@ class BandedMatrixReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DT_> * dv1 (new DenseVector<DT_>(size, DT_(2)));
                 BandedMatrix<DT_> bm1(size, *dv1);
@@ -89,7 +89,7 @@ class DenseMatrixReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size + 1, DT_(1));
                 DenseVector<DT_> dv1(size + 1, DT_(size + 1));
@@ -137,7 +137,7 @@ class SparseMatrixReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(11) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1);
                 DenseVector<DT_> dv1(size + 1, DT_(0));
@@ -203,7 +203,7 @@ class DenseVectorReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DT_> dv(size);
                 for (typename Vector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
@@ -266,7 +266,7 @@ class SparseVectorReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DT_ s1(0);
                 SparseVector<DT_> sv1(size, size / 8 + 1);
@@ -330,7 +330,7 @@ class DenseMatrixReductionToMinTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
@@ -388,7 +388,7 @@ class SparseMatrixReductionToMinTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
@@ -446,7 +446,7 @@ class BandedMatrixReductionToMinTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 BandedMatrix<DT_> bm1(size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
@@ -505,7 +505,7 @@ class DenseVectorReductionToMinTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size);
                 for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
@@ -563,7 +563,7 @@ class SparseVectorReductionToMinTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DT_> sv1(size, size / 8 + 1);
                 for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
@@ -621,7 +621,7 @@ class DenseMatrixReductionToMaxTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
@@ -679,7 +679,7 @@ class SparseMatrixReductionToMaxTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
@@ -737,7 +737,7 @@ class BandedMatrixReductionToMaxTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 BandedMatrix<DT_> bm1(size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
@@ -795,7 +795,7 @@ class DenseVectorReductionToMaxTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size);
                 for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
@@ -854,7 +854,7 @@ class SparseVectorReductionToMaxTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DT_> sv1(size, size / 8 + 1);
                 for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;

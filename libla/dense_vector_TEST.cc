@@ -39,7 +39,7 @@ class DenseVectorCreationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv(size, DataType_(0));
                 TEST_CHECK(true);
@@ -61,7 +61,7 @@ class DenseVectorCopyTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, static_cast<DataType_>(0)), dv2(size, static_cast<DataType_>(1));
                 std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dv1.copy()));
@@ -102,7 +102,7 @@ class DenseVectorEqualityTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv0(size, DataType_(1.23456));
                 DenseVector<DataType_> dv1(size, DataType_(1.23456));
@@ -135,7 +135,7 @@ class DenseVectorFunctionsTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv(size);
                 for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;

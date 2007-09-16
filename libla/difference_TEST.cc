@@ -43,7 +43,7 @@ class BandedMatrixDenseMatrixDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size, DT_(2));
                 BandedMatrix<DT_> bm1(size, dv1);
@@ -125,7 +125,7 @@ class BandedMatrixDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size, DT_(2));
                 DenseVector<DT_> dv2(size, DT_(3));
@@ -188,7 +188,7 @@ class BandedMatrixSparseMatrixDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size, DT_(2));
                 BandedMatrix<DT_> bm1(size, dv1);
@@ -298,7 +298,7 @@ class DenseMatrixDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size + 1, DT_(2)), dm2(size, size + 1, DT_(3)),
                     dm3(size, size + 1, DT_(-1));
@@ -356,7 +356,7 @@ class DenseMatrixSparseMatrixDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size + 1, DT_(0)),
                         dm3(size, size + 1, DT_(0));
@@ -456,7 +456,7 @@ class SparseMatrixDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 12) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
@@ -554,7 +554,7 @@ class DenseVectorDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
 
@@ -629,7 +629,7 @@ class DenseVectorSparseVectorDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size, DT_(0)), dv3(size, DT_(0));
                 SparseVector<DT_> sv2(size, size / 7 + 1);
@@ -721,7 +721,7 @@ class SparseVectorDifferenceTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DT_> sv1(size, size / 8 + 1), sv2(size, size / 7 + 1), sv3(size, size / 8 + 1);
                 for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),

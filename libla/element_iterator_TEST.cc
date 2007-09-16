@@ -41,7 +41,7 @@ class BandedMatrixElementIterationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 BandedMatrix<DataType_> bm(size);
 
@@ -82,7 +82,7 @@ class DenseMatrixElementIterationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm(size, size, DataType_(10));
 
@@ -125,7 +125,7 @@ class DenseVectorElementIterationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv(size, DataType_(10));
 
@@ -162,7 +162,7 @@ class SparseVectorElementIterationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 SparseVector<DataType_> sv(size, (size / 5) + 1);
 

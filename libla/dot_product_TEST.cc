@@ -42,7 +42,7 @@ class DenseDotProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 
@@ -125,7 +125,7 @@ class SparseDenseDotProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DataType_ p1(0);
                 SparseVector<DataType_> sv1(size, size / 7 + 1);
@@ -217,7 +217,7 @@ class SparseDotProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DataType_ p1(0);
                 SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);

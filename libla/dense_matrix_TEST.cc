@@ -39,7 +39,7 @@ class DenseMatrixCreationTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm(size, size, DataType_(0));
                 TEST_CHECK(true);
@@ -104,7 +104,7 @@ class DenseMatrixEqualityTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm0(size, size, DataType_(1));
                 DenseMatrix<DataType_> dm1(size, size, DataType_(1));
@@ -128,7 +128,7 @@ class DenseMatrixLayoutTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 unsigned long columns(size + 1), rows(size);
 
