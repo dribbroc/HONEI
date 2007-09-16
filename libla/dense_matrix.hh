@@ -29,6 +29,7 @@
 #include <libutil/shared_array.hh>
 
 #include <algorithm>
+#include <cstring>
 #include <iterator>
 
 /**
@@ -118,7 +119,9 @@ namespace honei
                 _rows(rows),
                 _row_vectors(rows)
             {
-                std::fill_n(_elements.get(), rows * columns, value);
+                DataType_ *  target(_elements.get());
+                for (unsigned long i(0) ; i < (rows * columns) ; i++)
+                    target[i] = value;
             }
 
             /**
@@ -243,7 +246,8 @@ namespace honei
             {
                 DenseMatrix * result(new DenseMatrix(_columns, _rows));
 
-                std::copy(_elements.get(), _elements.get() + _columns * _rows, result->_elements.get());
+                memcpy(result->_elements.get(), _elements.get(), _columns * _rows * sizeof(DataType_));
+                //std::copy(_elements.get(), _elements.get() + _columns * _rows, result->_elements.get());
 
                 return result;
             }
