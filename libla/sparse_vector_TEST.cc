@@ -215,6 +215,23 @@ public:
             TEST_CHECK_EQUAL(i.index() % 4, 0);
             TEST_CHECK_EQUAL(*i, DataType_(5));
         }
+
+        SparseVector<DataType_> sv5(size, 2);
+        sv5[0] = DataType_(1);
+        sv5[5] = DataType_(2);
+        sv5[9] = DataType_(3);
+        DataType_ counter(1);
+        for (typename Vector<DataType_>::ElementIterator i(sv5.begin_non_zero_elements()),
+                i_end(sv5.end_non_zero_elements()) ; i != i_end ; ++i)
+        {
+            TEST_CHECK_EQUAL(*i, counter);
+            if (*i == DataType_(2)) 
+            {
+                sv5[2] = DataType_(9);
+            }
+            TEST_CHECK_EQUAL(*i, counter);
+            ++counter;
+        }
     }
 };
 SparseVectorQuickTest<float> sparse_vector_quick_test_float("float");

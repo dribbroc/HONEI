@@ -542,10 +542,27 @@ namespace honei
             virtual NonZeroElementIterator<DataType_> & operator++ ()
             {
                 CONTEXT("When incrementing iterator by one:");
+                if (_vector._imp->_indices[_pos] == _index)
+                {
+                    ++_pos;
+                }
+                else if (_vector._imp->_indices[_pos] < _index)
+                {
+                    while (_vector._imp->_indices[_pos] <= _index)
+                    {
+                        ++_pos;
+                    }
+                }
+                else if (_vector._imp->_indices[_pos] > _index)
+                {
+                    while (_vector._imp->_indices[_pos] > _index)
+                    {
+                        --_pos;
+                    }
+                    ++_pos;
+                }
 
-                ++_pos;
                 _index = _vector._imp->_indices[_pos];
-
                 return *this;
             }
 
@@ -553,6 +570,23 @@ namespace honei
             virtual NonZeroElementIterator<DataType_> & operator+= (const unsigned long step)
             {
                 CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+
+                //Restore position if the vector was modified
+
+                if (_vector._imp->_indices[_pos] < _index)
+                {
+                    while (_vector._imp->_indices[_pos] < _index)
+                    {
+                        _pos++;
+                    }
+                }
+                else if (_vector._imp->_indices[_pos] > _index)
+                {
+                    while (_vector._imp->_indices[_pos] > _index)
+                    {
+                        _pos--;
+                    }
+                }
 
                 _pos += step;
                 if (_pos < _vector.capacity())
@@ -568,6 +602,21 @@ namespace honei
             {
                 CONTEXT("When accessing assignable element at position '" + stringify(_pos) + "':");
 
+                //Restore position if the vector was modified
+                if (_vector._imp->_indices[_pos] < _index)
+                {
+                    while (_vector._imp->_indices[_pos] < _index)
+                    {
+                        ++_pos;
+                    }
+                }
+                else if (_vector._imp->_indices[_pos] > _index)
+                {
+                    while (_vector._imp->_indices[_pos] > _index)
+                    {
+                        --_pos;
+                    }
+                }
                 return _vector._imp->_elements[_pos];
             }
 
@@ -576,7 +625,23 @@ namespace honei
             {
                 CONTEXT("When accessing unassignable element at position '" + stringify(_pos) + "':");
 
-                return _vector._imp->_elements[_pos];
+                //Restore position if the vector was modified
+                unsigned long temp_pos(_pos);
+                if (_vector._imp->_indices[temp_pos] < _index)
+                {
+                    while (_vector._imp->_indices[temp_pos] < _index)
+                    {
+                        ++temp_pos;
+                    }
+                }
+                else if (_vector._imp->_indices[temp_pos] > _index)
+                {
+                    while (_vector._imp->_indices[temp_pos] > _index)
+                    {
+                        --temp_pos;
+                    }
+                }
+                return _vector._imp->_elements[temp_pos];
             }
 
             /// Comparison operator for less-than.
