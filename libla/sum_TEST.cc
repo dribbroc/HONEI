@@ -118,8 +118,8 @@ class BandedMatrixSparseMatrixSumTest :
     public:
         BandedMatrixSparseMatrixSumTest(const std::string & type) :
             BaseTest("banded_matrix_sparse_matrix_sum_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -128,11 +128,11 @@ class BandedMatrixSparseMatrixSumTest :
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 SparseMatrix<DataType_> sm2(size, size, size / 8 + 1),
-                        sm3(size, size, size / 8 + 1);
+                    sm3(size, size, size / 8 + 1);
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
-                    i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
-                    i != i_end ; ++i, ++k)
+                        i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
+                        i != i_end ; ++i, ++k)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -142,18 +142,80 @@ class BandedMatrixSparseMatrixSumTest :
                 }
 
                 typename MutableMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
+                typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
                 for (typename Matrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
-                    i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
+                        i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k, ++j)
                 {
-                    if (*i != DataType_(0))
+                    if (*i != DataType_(0) && *j != DataType_(0))
                     {
                         *k = DataType_(3);
+                    }
+                    else if (*i != DataType_(0))
+                    {
+                        *k = DataType_(2);
                     }
                 }
                 SparseMatrix<DataType_> & sum(Sum<>::value(sm2, bm1));
 
                 TEST_CHECK_EQUAL(sum, sm3);
+
+                BandedMatrix<DataType_> bm01(5);
+                SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
+
+                TEST_CHECK_THROWS(Sum<>::value(sm03, bm01), MatrixRowsDoNotMatch);
+                TEST_CHECK_THROWS(Sum<>::value(sm02, bm01), MatrixColumnsDoNotMatch);
             }
+        }
+};
+BandedMatrixSparseMatrixSumTest<float> banded_matrix_sparse_matrix_sum_test_float("float");
+BandedMatrixSparseMatrixSumTest<double> banded_matrix_sparse_matrix_sum_test_double("double");
+
+template <typename DataType_>
+class BandedMatrixSparseMatrixSumQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixSparseMatrixSumQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_sparse_matrix_sum_quick_test<" + type + ">")
+    {
+    }
+
+        virtual void run() const
+        {
+            unsigned long size(20); 
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            BandedMatrix<DataType_> bm1(size, dv1);
+            SparseMatrix<DataType_> sm2(size, size, size / 8 + 1),
+                sm3(size, size, size / 8 + 1);
+
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                    i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
+                    i != i_end ; ++i, ++k)
+            {
+                if (i.index() % 10 == 0)
+                {
+                    *i = DataType_(1);
+                    *k = DataType_(1);
+                }
+            }
+
+            typename MutableMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
+            typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
+            for (typename Matrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
+                    i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k, ++j)
+            {
+                if (*i != DataType_(0) && *j != DataType_(0))
+                {
+                    *k = DataType_(3);
+                }
+                else if (*i != DataType_(0))
+                {
+                    *k = DataType_(2);
+                }
+            }
+            SparseMatrix<DataType_> & sum(Sum<>::value(sm2, bm1));
+
+            TEST_CHECK_EQUAL(sum, sm3);
 
             BandedMatrix<DataType_> bm01(5);
             SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
@@ -162,8 +224,8 @@ class BandedMatrixSparseMatrixSumTest :
             TEST_CHECK_THROWS(Sum<>::value(sm02, bm01), MatrixColumnsDoNotMatch);
         }
 };
-BandedMatrixSparseMatrixSumTest<float> banded_matrix_sparse_matrix_sum_test_float("float");
-BandedMatrixSparseMatrixSumTest<double> banded_matrix_sparse_matrix_sum_test_double("double");
+BandedMatrixSparseMatrixSumQuickTest<float> banded_matrix_sparse_matrix_sum_quick_test_float("float");
+BandedMatrixSparseMatrixSumQuickTest<double> banded_matrix_sparse_matrix_sum_quick_test_double("double");
 
 template <typename DataType_>
 class BandedMatrixSumTest :
@@ -172,8 +234,8 @@ class BandedMatrixSumTest :
     public:
         BandedMatrixSumTest(const std::string & type) :
             BaseTest("banded_matrix_sum_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -189,55 +251,55 @@ class BandedMatrixSumTest :
                     if (ce.index() != size - 1 )
                     {
                         for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                            i_end(ce->end_elements()) ; i != i_end ; ++i)
+                                i_end(ce->end_elements()) ; i != i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                         }
-                    }
-                    else
-                    {
-                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                            i_end(ce->end_elements()) ; i != i_end ; ++i)
+                        }
+                        else
                         {
-                            TEST_CHECK_EQUAL_WITHIN_EPS(*i, 5, std::numeric_limits<DataType_>::epsilon());
+                            for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                                    i_end(ce->end_elements()) ; i != i_end ; ++i)
+                            {
+                                TEST_CHECK_EQUAL_WITHIN_EPS(*i, 5, std::numeric_limits<DataType_>::epsilon());
+                            }
                         }
                     }
                 }
+
+                BandedMatrix<DataType_> bm01(5), bm02(6);
+
+                TEST_CHECK_THROWS(Sum<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
             }
+    };
+        BandedMatrixSumTest<float> banded_matrix_sum_test_float("float");
+        BandedMatrixSumTest<double> banded_matrix_sum_test_double("double");
 
-            BandedMatrix<DataType_> bm01(5), bm02(6);
-
-            TEST_CHECK_THROWS(Sum<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
-        }
-};
-BandedMatrixSumTest<float> banded_matrix_sum_test_float("float");
-BandedMatrixSumTest<double> banded_matrix_sum_test_double("double");
-
-template <typename DataType_>
-class BandedMatrixSumQuickTest :
-    public QuickTest
-{
-    public:
-        BandedMatrixSumQuickTest(const std::string & type) :
-            QuickTest("banded_matrix_sum_quick_test<" + type + ">")
+        template <typename DataType_>
+            class BandedMatrixSumQuickTest :
+                public QuickTest
+    {
+        public:
+            BandedMatrixSumQuickTest(const std::string & type) :
+                QuickTest("banded_matrix_sum_quick_test<" + type + ">")
         {
         }
 
-        virtual void run() const
-        {
-            unsigned long size(22);
-            DenseVector<DataType_> dv1(size, DataType_(2));
-            DenseVector<DataType_> dv2(size, DataType_(3));
-            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-            BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
-            for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()), ce_end(sum.end_bands()) ;
-                ce != ce_end ; ++ce)
+            virtual void run() const
             {
-                if (ce.index() != size - 1 )
+                unsigned long size(22);
+                DenseVector<DataType_> dv1(size, DataType_(2));
+                DenseVector<DataType_> dv2(size, DataType_(3));
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
+                BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
+                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()), ce_end(sum.end_bands()) ;
+                        ce != ce_end ; ++ce)
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                        i_end(ce->end_elements()) ; i != i_end ; ++i)
+                    if (ce.index() != size - 1 )
                     {
+                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                                i_end(ce->end_elements()) ; i != i_end ; ++i)
+                        {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     }
                 }
@@ -606,7 +668,7 @@ class DenseVectorSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(128);
+            unsigned long size(129);
             DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
                 dv3(size, DataType_(3));
             Sum<>::value(dv1, dv2);
