@@ -56,11 +56,11 @@ class QuadratureTest :
         virtual void run() const
         {
             DataType_ step_size(0.05);
-            // Integral of exp over [0,1] with step size 0.1 is ";
-            float v(make_quadrature<tags::Trapezoid>(Exp(), step_size)(DataType_(0), DataType_(1))),
+            // Integral of exp over [0,1] with step size 0.1 should be e - 1
+            DataType_ v(make_quadrature<tags::Trapezoid>(Exp(), step_size)(DataType_(0), DataType_(1))),
                   s(::exp(1) - ::exp(0));
 
-            TEST_CHECK_EQUAL_WITHIN_EPS(v, s, std::numeric_limits<DataType_>::epsilon() / (step_size * step_size));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v, s, 1 / DataType_(12 * 12 * 12));
         }
 };
 
