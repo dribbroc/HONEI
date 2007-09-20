@@ -92,7 +92,7 @@ class DenseMatrixReductionToSumTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size + 1, DT_(1));
-                DenseVector<DT_> dv1(size + 1, DT_(size + 1));
+                DenseVector<DT_> dv1(size + 1, DT_(size ));
                 DenseVector<DT_> sum(Reduction<rt_sum>::value(dm1));
 
                 TEST_CHECK_EQUAL(sum, dv1);

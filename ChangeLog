@@ -5,9 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/sum_TEST.cc, libla/product_TEST.cc, libla/reduction_TEST.cc:
+	Fixed a few exception errors.
+
 2007-09-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* libla/sum_TEST.c: Fixed result assembly.
+	* libla/sum_TEST.cc: Fixed result assembly.
 
 2007-09-19 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 

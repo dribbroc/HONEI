@@ -66,7 +66,7 @@ class BandedMatrixDenseMatrixSumTest :
             BandedMatrix<DataType_> bm01(5);
             DenseMatrix<DataType_> dm02(6, 6);
 
-            TEST_CHECK_THROWS(Sum<>::value(dm02, bm01), MatrixSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Sum<>::value(dm02, bm01), MatrixRowsDoNotMatch);
         }
 };
 BandedMatrixDenseMatrixSumTest<float> banded_matrix_dense_matrix_sum_test_float("float");
@@ -160,10 +160,10 @@ class BandedMatrixSparseMatrixSumTest :
                 TEST_CHECK_EQUAL(sum, sm3);
 
                 BandedMatrix<DataType_> bm01(5);
-                SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
+                SparseMatrix<DataType_> sm02(6, 6, 1), sm03(5, 6, 1);
 
-                TEST_CHECK_THROWS(Sum<>::value(sm03, bm01), MatrixRowsDoNotMatch);
-                TEST_CHECK_THROWS(Sum<>::value(sm02, bm01), MatrixColumnsDoNotMatch);
+                TEST_CHECK_THROWS(Sum<>::value(sm02, bm01), MatrixRowsDoNotMatch);
+                TEST_CHECK_THROWS(Sum<>::value(sm03, bm01), MatrixIsNotSquare);
             }
         }
 };
@@ -218,10 +218,10 @@ class BandedMatrixSparseMatrixSumQuickTest :
             TEST_CHECK_EQUAL(sum, sm3);
 
             BandedMatrix<DataType_> bm01(5);
-            SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
+            SparseMatrix<DataType_> sm02(6, 6, 1), sm03(5, 6, 1);
 
-            TEST_CHECK_THROWS(Sum<>::value(sm03, bm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Sum<>::value(sm02, bm01), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<>::value(sm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<>::value(sm03, bm01), MatrixIsNotSquare);
         }
 };
 BandedMatrixSparseMatrixSumQuickTest<float> banded_matrix_sparse_matrix_sum_quick_test_float("float");
