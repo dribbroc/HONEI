@@ -74,10 +74,11 @@ class DenseVectorMaskedMinIndexTest :
                 TEST_CHECK_EQUAL(result3, 2);
             }
 
-            DenseVector<bool> mask1(2, false);
+            DenseVector<bool> mask01(2, false), mask02(3, false);
             DenseVector<DataType_> dv1(3, DataType_(1));
 
-            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(dv1, mask1), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(dv1, mask01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(dv1, mask02), MaskIsZeroException);
         }
 };
 DenseVectorMaskedMinIndexTest<float> dense_vector_masked_min_index_test_float("float");
@@ -126,10 +127,11 @@ class DenseVectorMaskedMinIndexQuickTest :
             TEST_CHECK_EQUAL(result3, 2);
 
 
-            DenseVector<bool> mask1(2, false);
+            DenseVector<bool> mask01(2, false), mask02(3, false);
             DenseVector<DataType_> dv1(3, DataType_(1));
 
-            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(dv1, mask1), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(dv1, mask01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(dv1, mask02), MaskIsZeroException);
         }
 };
 DenseVectorMaskedMinIndexQuickTest<float>  dense_vector_masked_min_index_quick_test_float("float");
@@ -157,7 +159,7 @@ class SparseVectorMaskedMinIndexTest :
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
-                }                 
+                }
 
                 for (typename Vector<bool>::ElementIterator i(mask.begin_elements()),
                     i_end(mask.end_elements()) ; i != i_end ; ++i)
@@ -175,10 +177,11 @@ class SparseVectorMaskedMinIndexTest :
                 TEST_CHECK_EQUAL(result3, 2);
             }
 
-            DenseVector<bool> mask01(2, false);
+            DenseVector<bool> mask01(2, false), mask02(3, false);
             SparseVector<DataType_> sv01(3, 1);
 
             TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(sv01, mask01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(sv01, mask02), MaskIsZeroException);
         }
 };
 SparseVectorMaskedMinIndexTest<float> sparse_vector_masked_min_index_test_float("float");
@@ -205,7 +208,7 @@ class SparseVectorMaskedMinIndexQuickTest :
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
-            }                 
+            }
 
             for (typename Vector<bool>::ElementIterator i(mask.begin_elements()),
                 i_end(mask.end_elements()) ; i != i_end ; ++i)
@@ -223,10 +226,11 @@ class SparseVectorMaskedMinIndexQuickTest :
             TEST_CHECK_EQUAL(result3, 2);
 
 
-            DenseVector<bool> mask01(2, false);
+            DenseVector<bool> mask01(2, false), mask02(3, false);
             SparseVector<DataType_> sv01(3, 1);
 
             TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(sv01, mask01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMinIndex<DataType_>::value(sv01, mask02), MaskIsZeroException);
         }
 };
 SparseVectorMaskedMinIndexQuickTest<float> sparse_vector_masked_min_index_quick_test_float("float");

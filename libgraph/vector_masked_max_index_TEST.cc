@@ -67,10 +67,11 @@ class DenseVectorMaskedMaxIndexTest :
                 TEST_CHECK_EQUAL(result, 2);
             }
 
-            DenseVector<bool> mask1(2, false);
+            DenseVector<bool> mask1(2, false), mask2(3, false);
             DenseVector<DataType_> dv1(3, DataType_(1));
 
             TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(dv1, mask1), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(dv1, mask2), MaskIsZeroException);
         }
 };
 DenseVectorMaskedMaxIndexTest<float> dense_vector_masked_max_index_test_float("float");
@@ -112,10 +113,11 @@ class DenseVectorMaskedMaxIndexQuickTest :
             TEST_CHECK_EQUAL(result, 2);
 
 
-            DenseVector<bool> mask1(2, false);
+            DenseVector<bool> mask1(2, false), mask2(3, false);
             DenseVector<DataType_> dv1(3, static_cast<DataType_>(1));
 
             TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(dv1, mask1), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(dv1, mask2), MaskIsZeroException);
         }
 };
 DenseVectorMaskedMaxIndexQuickTest<float>  dense_vector_masked_max_index_quick_test_float("float");
@@ -157,10 +159,11 @@ class SparseVectorMaskedMaxIndexTest :
                 TEST_CHECK_EQUAL(result, 2);
             }
 
-            DenseVector<bool> mask01(2, false);
+            DenseVector<bool> mask01(2, false), mask02(3, false);
             SparseVector<DataType_> sv01(3, 1);
 
             TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(sv01, mask01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(sv01, mask02), MaskIsZeroException);
         }
 };
 SparseVectorMaskedMaxIndexTest<float> sparse_vector_masked_max_index_test_float("float");
@@ -201,10 +204,11 @@ class SparseVectorMaskedMaxIndexQuickTest :
             unsigned long result(VectorMaskedMaxIndex<DataType_>::value(sv1, mask));
             TEST_CHECK_EQUAL(result, 2);
 
-            DenseVector<bool> mask01(2, false);
+            DenseVector<bool> mask01(2, false), mask02(3, false);
             SparseVector<DataType_> sv01(3, 1);
 
             TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(sv01, mask01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(VectorMaskedMaxIndex<DataType_>::value(sv01, mask02), MaskIsZeroException);
         }
 };
 SparseVectorMaskedMaxIndexQuickTest<float> sparse_vector_masked_max_index_quick_test_float("float");

@@ -5,15 +5,30 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libgraph/mask_error.hh, libgraph/mask_error.cc: Added new Exception
+	"MaskIsZeroException" because if we don't make a distinction here,
+	results that equal zero may be misinterpreted (index zero holds min/max
+	or there is no index holding a value).
+	* libgraph/vector_masked_min_index.hh,
+	libgraph/vector_masked_max_index.hh,
+	libgraph/vector_masked_max_index_TEST.cc,
+	libgraph/vector_masked_min_index_TEST.cc: Applied Dirk's corrections
+	to redcution by min/max also to these operations. Added a throw of
+	MaskIsZeroException where necessary.
+	* libgraph/files.m4: Added mask_error.hh and .cc.
+
 2007-09-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/reduction.hh:
 	Removed usage of std::numeric_limits<DT_>::min().
 
-2007-09-20 Andre Matusche <andre@matuschek.org>
+2007-09-20 Andre Matuschek <andre@matuschek.org>
 
 	* libla/residual_TEST.cc: Added testcase for sparse matrices.
-	* libla/residual.hh: Removed surplus dereferenciation in square check for sparse matrices.
+	* libla/residual.hh: Removed surplus dereferenciation in square check
+	for sparse matrices.
 
 2007-09-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 

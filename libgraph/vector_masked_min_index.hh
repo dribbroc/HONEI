@@ -17,17 +17,16 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_GUARD_VECTOR_MASKED_MIN_INDEX_HH
-#define LIBLA_GUARD_VECTOR_MASKED_MIN_INDEX_HH 1
+#ifndef LIBGRAPH_GUARD_VECTOR_MASKED_MIN_INDEX_HH
+#define LIBGRAPH_GUARD_VECTOR_MASKED_MIN_INDEX_HH 1
 
+#include <libgraph/mask_error.hh>
 #include <libutil/tags.hh>
 #include <libla/dense_vector.hh>
 #include <libla/dense_vector-impl.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/vector.hh>
 #include <libla/vector_error.hh>
-
-#include <limits>
 
 /**
  * \file
@@ -59,11 +58,19 @@ namespace honei
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-            unsigned long result(-1);
-            DataType_ temp(std::numeric_limits<DataType_>::max());
+            unsigned long result(0);
+            int i(0);
+            for( ; i < mask.size() ; ++i)
+            {
+                if (mask[i] == 1)
+                    break;
+                if (i == mask.size()-1 && mask[i] == 0)
+                    throw MaskIsZeroException();
+            }
+            DataType_ temp(vector[i]);
             Vector<bool>::ConstElementIterator r(mask.begin_elements());
 
-            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.element_at(i)), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 if (*r && *l < temp)
                 {
@@ -89,11 +96,19 @@ namespace honei
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-            unsigned long result(-1);
-            DataType_ temp(std::numeric_limits<DataType_>::max());
+            unsigned long result(0);
+            int i(0);
+            for( ; i < mask.size() ; ++i)
+            {
+                if (mask[i] == 1)
+                    break;
+                if (i == mask.size()-1 && mask[i] == 0)
+                    throw MaskIsZeroException();
+            }
+            DataType_ temp(vector[i]);
             Vector<bool>::ConstElementIterator r(mask.begin_elements());
 
-            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.element_at(i)), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 if (*r && *l < temp)
                 {
