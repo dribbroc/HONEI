@@ -227,12 +227,14 @@ namespace honei
         static DenseVector<DT_> value(const BandedMatrix<DT_> & matrix)
         {
             CONTEXT("When reducing BandedMatrix to Vector by max");
-
-            DenseVector<DT_> result(matrix.rows(), std::numeric_limits<DT_>::min());
+            /// \todo Use band interator.
+            DenseVector<DT_> result(matrix.rows());
             for (typename Matrix<DT_>::ConstElementIterator i(matrix.begin_elements()),
                     i_end(matrix.end_elements()) ; i != i_end ; ++i)
             {
-                if (*i > result[i.row()])
+                if (i.column()==0)
+                    result[i.row()] = *i;
+                else if (*i > result[i.row()])
                     result[i.row()] = *i;
             }
             return result;
@@ -243,7 +245,7 @@ namespace honei
         {
             CONTEXT("When reducing DenseVector to Scalar by max");
 
-            DT_ result(std::numeric_limits<DT_>::min());
+            DT_ result(vector[0]);
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -261,7 +263,7 @@ namespace honei
         {
             CONTEXT("When reducing SparseVector to Scalar by max");
 
-            DT_ result(std::numeric_limits<DT_>::min());
+            DT_ result(vector[0]);
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -324,12 +326,15 @@ namespace honei
         static DenseVector<DT_> value(const BandedMatrix<DT_> & matrix)
         {
             CONTEXT("When reducing BandedMatrix to Vector by max");
+            /// \todo Use band interator.
 
-            DenseVector<DT_> result(matrix.rows(), std::numeric_limits<DT_>::max());
+            DenseVector<DT_> result(matrix.rows());
             for (typename Matrix<DT_>::ConstElementIterator i(matrix.begin_elements()),
                     i_end(matrix.end_elements()) ; i != i_end ; ++i)
             {
-                if (*i < result[i.row()])
+                if (i.column()==0)
+                    result[i.row()] = *i;
+                else if (*i < result[i.row()])
                     result[i.row()] = *i;
             }
             return result;
@@ -340,7 +345,7 @@ namespace honei
         {
             CONTEXT("When reducing DenseVector to Scalar by min");
 
-            DT_ result(std::numeric_limits<DT_>::max());
+            DT_ result(vector[0]);
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -358,7 +363,7 @@ namespace honei
         {
             CONTEXT("When reducing SparseVector to Scalar by min");
 
-            DT_ result(std::numeric_limits<DT_>::max());
+            DT_ result(vector[0]);
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
