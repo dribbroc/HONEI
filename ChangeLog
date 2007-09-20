@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-20 Andre Matusche <andre@matuschek.org>
+
+	* libla/residual_TEST.cc: Added testcase for sparse matrices.
+	* libla/residual.hh: Removed surplus dereferenciation in square check for sparse matrices.
+
 2007-09-20 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/sum_TEST.cc, libla/product_TEST.cc, libla/reduction_TEST.cc:

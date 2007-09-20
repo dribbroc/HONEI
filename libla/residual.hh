@@ -108,7 +108,7 @@ namespace honei
                 throw VectorSizeDoesNotMatch(b.size(), a.rows());
 
             if (! a.square())
-                throw MatrixIsNotSquare(a->rows(), a.columns());
+                throw MatrixIsNotSquare(a.rows(), a.columns());
 
             for (typename Vector<DT1_>::ElementIterator i(b.begin_elements()),
                     i_end(b.end_elements()) ; i != i_end ; ++i)
