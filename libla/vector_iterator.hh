@@ -52,10 +52,10 @@ namespace honei
             virtual bool operator!= (const VectorIteratorBase<DataType_, VectorType_> &) const = 0;
 
             /// Dereference operator (mutable).
-            virtual VectorType_ & operator* () = 0;
+            virtual VectorType_ operator* () = 0;
 
             /// Dereference operator (const).
-            virtual const VectorType_ & operator* () const = 0;
+            virtual const VectorType_ operator* () const = 0;
 
             /// Returns our parent.
             virtual const Matrix<DataType_> * parent() const = 0;
@@ -106,7 +106,7 @@ namespace honei
             }
 
             /// Dereference operator (return reference to type).
-            virtual VectorType_ & operator* ()
+            virtual VectorType_ operator* ()
             {
                 return **_iterator;
             }
@@ -183,7 +183,7 @@ namespace honei
             }
 
             /// Dereference operator (return reference to type).
-            virtual const VectorType_ & operator* () const
+            virtual const VectorType_ operator* () const
             {
                 const VectorIteratorBase<DataType_, VectorType_> & iterator(*_iterator);
 
@@ -195,7 +195,7 @@ namespace honei
             {
                 const VectorIteratorBase<DataType_, VectorType_> & iterator(*_iterator);
 
-                return &(*iterator);
+                return iterator.operator->();
             }
 
             /// Returns true if the referenced vector already exists.

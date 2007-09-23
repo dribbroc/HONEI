@@ -85,7 +85,7 @@ namespace honei
     stringify(const T_ & item)
     {
         /* check that we're not trying to stringify a pointer or somesuch */
-        int check_for_stringifying_silly_things = stringify_internals::CheckType<T_>::value;
+        int check_for_stringifying_silly_things(stringify_internals::CheckType<T_>::value);
 
         std::ostringstream s;
         s << item;

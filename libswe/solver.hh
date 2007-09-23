@@ -144,12 +144,12 @@ namespace honei {
 
             ///Vectors _u, _v, _w pointers are the relaxation vectors. size is 3N, where N is the total number of grid cells.
             ///If using boundary-mapping, the size is 3N + 4(w + h + 4).
-            DenseVector<ResPrec_> * _u;
-            DenseVector<ResPrec_> * _v;
-            DenseVector<ResPrec_> * _w;
-            DenseVector<ResPrec_> * _u_temp;
-            DenseVector<ResPrec_> * _v_temp;
-            DenseVector<ResPrec_> * _w_temp;
+            DenseVector<ResPrec_> _u;
+            DenseVector<ResPrec_> _v;
+            DenseVector<ResPrec_> _w;
+            DenseVector<ResPrec_> _u_temp;
+            DenseVector<ResPrec_> _v_temp;
+            DenseVector<ResPrec_> _w_temp;
 
 
             ///Vectors for the bottom slopes.
@@ -409,15 +409,18 @@ namespace honei {
                         DenseVector<ResPrec_> * bottomy,
                         DenseVector<ResPrec_> * c,
                         DenseVector<ResPrec_> * d,
-                        ResPrec_ manning_n)
+                        ResPrec_ manning_n) :
+                _u(*u),
+                _v(*v),
+                _w(*w),
+                _u_temp(u->copy()),
+                _v_temp(v->copy()),
+                _w_temp(v->copy())
             {
                 this->_height = height;
                 this->_bottom = bottom;
                 this->_x_veloc = u1;
                 this->_y_veloc = u2;
-                this->_u = u;
-                this->_v = v;
-                this->_w = w;
                 this->_d_width = dwidth;
                 this->_d_height = dheight;
                 this->_delta_x = deltax;
@@ -425,7 +428,6 @@ namespace honei {
                 this->_delta_t = deltat;
                 this->_eps = eps;
                 this->_solve_time = 0;
-
                 this->_simple_bound = true;
                 this->_usage_reflect = true;
                 this->_usage_constant = false;
@@ -440,9 +442,6 @@ namespace honei {
                 this->_c = c;
                 this->_d = d;
                 this->_manning_n_squared = manning_n * manning_n;
-                _u_temp = _u->copy();
-                _v_temp = _v->copy();
-                _w_temp = _w->copy();
             }
             /** Encapsulates computation in one timestep. In the driver-application, one
               * can simply write a loop in which solve is called at first and then the
@@ -474,6 +473,7 @@ namespace honei {
              typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::do_preprocessing()
     {
+
         /// Setting up initial conditions:
         /// v_0(x,y) = F(u_0(x,y)) using flowX(),
         /// w_0(x,y) = G(u_0(x,y)) using flowY().
@@ -556,7 +556,6 @@ namespace honei {
                 bbound[i+2][1] = (*_bottom)[i][0];
                 u1bound[i+2][1] = (*_x_veloc)[i][0];
                 u2bound[i+2][1] = (*_y_veloc)[i][0];
-            
                 //Take over inner values
                 for(unsigned long j=0; j< _d_width; ++j)
                 {
@@ -575,7 +574,6 @@ namespace honei {
                 bbound[i+2][_d_width+3] = (*_bottom)[i][_d_width-2];
                 u1bound[i+2][_d_width+3] = (*_x_veloc)[i][_d_width-2];
                 u2bound[i+2][_d_width+3] = (*_y_veloc)[i][_d_width-2];
-            
             }
 
             for(unsigned long j=0; j< _d_width; ++j)
@@ -590,7 +588,7 @@ namespace honei {
                 bbound[_d_height+3][j+2] = (*_bottom)[_d_height-2][j];
                 u1bound[_d_height+3][j+2] = (*_x_veloc)[_d_height-2][j];
                 u2bound[_d_height+3][j+2] = (*_y_veloc)[_d_height-2][j];
-            } 
+            }
 
             std::cout << "Preproc: Mapping done.\n";
             cout << stringify(hbound) << endl;
@@ -603,7 +601,7 @@ namespace honei {
         ///Building up the relaxation - vectors by concatenating the maps` rows.
         ///We need to compute u first in order to be able to compute the initial flows. After this, by using
         ///forward iterators, the v and w vectors can be set up.
-        typename DenseVector<ResPrec_>::ElementIterator k(_u->begin_elements());
+        typename DenseVector<ResPrec_>::ElementIterator k(_u.begin_elements());
         for (ulint i= 0; i!= hbound.rows(); ++i)
         {
 
@@ -614,14 +612,14 @@ namespace honei {
                                                             //k((*_u).begin_elements());
                                                                 j!= j_END; ++j)
             {
-                (*_u)[k.index()] = hbound[i][j.index()];
-                (*_u)[(k.index())+1] = u1bound[i][j.index()] * hbound[i][j.index()];
-                (*_u)[(k.index())+2] = u2bound[i][j.index()] * hbound[i][j.index()];
+                _u[k.index()] = hbound[i][j.index()];
+                _u[(k.index())+1] = u1bound[i][j.index()] * hbound[i][j.index()];
+                _u[(k.index())+2] = u2bound[i][j.index()] * hbound[i][j.index()];
                 ++k; ++k; ++k;
             }
         }
         cout << "u^T after building:\n";
-        cout << stringify(*_u) << endl;
+        cout << stringify(_u) << endl;
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k2(_v->begin_elements());
         for (ulint i = 0; i!= u1bound.rows(); ++i)
@@ -641,11 +639,12 @@ namespace honei {
             }
         }
         */
-        DenseVector<ResPrec_> *uFlow = _u->copy();
-        _flow_x(*uFlow);
-        _v = uFlow;
+        cout<<"here"<<endl; cout.flush();
+        DenseVector<ResPrec_> uFlow(_u.copy());
+        _flow_x(uFlow);
+        (_v) = uFlow;
         cout << "v^T after building:\n";
-        cout << stringify(*_v) << endl;
+        cout << stringify(_v) << endl;
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k3(_w->begin_elements());
         for (ulint i = 0; i!= u2bound.rows(); ++i)
@@ -666,11 +665,11 @@ namespace honei {
         }
         */
 
-        DenseVector<ResPrec_>* u2Flow = _u->copy();
-        _flow_y(*u2Flow);
+        DenseVector<ResPrec_> u2Flow(_u.copy());
+        _flow_y(u2Flow);
         _w = u2Flow;
         cout << "w^T after building:\n";
-        cout << stringify(*_w) << endl;
+        cout << stringify(_w) << endl;
 
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to
         ///compute the bottom slopes.
@@ -1409,15 +1408,9 @@ namespace honei {
         {
         cout << "prefac is invalid!\n";
         }
-        DenseVector<WorkPrec_> *v(_v->copy());
-        DenseVector<WorkPrec_> vc = *v;
-        delete v;
-        DenseVector<WorkPrec_> *u1(_u->copy());
-        DenseVector<WorkPrec_> u1_c = *u1;
-        delete u1;
-        DenseVector<WorkPrec_> *u2(_u->copy());
-        DenseVector<WorkPrec_> u2_c = *u2;
-        delete u2;
+        DenseVector<WorkPrec_> vc(_v.copy());
+        DenseVector<WorkPrec_> u1_c(_u.copy());
+        DenseVector<WorkPrec_> u2_c(_u.copy());
 
         _flow_x<WorkPrec_>(u1_c);
 
@@ -1426,9 +1419,7 @@ namespace honei {
         DenseVector<WorkPrec_> tempsum = Sum<>::value<WorkPrec_,WorkPrec_>(vc, u1_c);
 
         Scale<>::value(prefac,tempsum);
-        DenseVector<WorkPrec_> *w(_w->copy());
-        DenseVector<WorkPrec_> wc = *w;
-        delete w;
+        DenseVector<WorkPrec_> wc(_w.copy());
         _flow_y<WorkPrec_>(u2_c);
 
         Scale<>::value(_eps,wc);
@@ -1438,13 +1429,13 @@ namespace honei {
         Scale<>::value(prefac,tempsum2);
 
         cout << "Temp relax vectors after building:\n";
-        cout << stringify(*_u_temp) << endl;
-        cout << stringify(*_v_temp) << endl;
-        cout << stringify(*_w_temp) << endl;
+        cout << stringify(_u_temp) << endl;
+        cout << stringify(_v_temp) << endl;
+        cout << stringify(_w_temp) << endl;
         std::cout << "Finished Setup 1.\n";
 
-        sv = *(tempsum.copy());
-        sw = *(tempsum2.copy());
+        sv = tempsum;
+        sw = tempsum2;
     }
 
     /** The prediction stage.
@@ -1461,41 +1452,37 @@ namespace honei {
     template<typename WorkPrec_>
         void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
-        BandedMatrix<WorkPrec_> m1(_u->size());
-        BandedMatrix<WorkPrec_> m2(_u->size());
-        BandedMatrix<WorkPrec_> m3(_u->size());
-        BandedMatrix<WorkPrec_> m4(_u->size());
+        std::cout << "When predicting:" << std::endl;
+        BandedMatrix<WorkPrec_> m1(_u.size());
+        BandedMatrix<WorkPrec_> m2(_u.size());
+        BandedMatrix<WorkPrec_> m3(_u.size());
+        BandedMatrix<WorkPrec_> m4(_u.size());
 
+        std::cout << "Before assemble matrix" << std::endl;
         _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
+        std::cout << "After first assemble matrix" << std::endl;
         _assemble_matrix2_DEBUG<WorkPrec_>(m2, m4, &predictedu, &predictedw);
+        std::cout << "After assemble matrix" << std::endl;
 
         BandedMatrix<WorkPrec_>* m5(m3.copy());
         BandedMatrix<WorkPrec_> m5c = *m5;
         delete m5;
 
-        BandedMatrix<WorkPrec_> m6(_u->size());
+        BandedMatrix<WorkPrec_> m6(_u.size());
         _quick_assemble_matrix2<WorkPrec_>(m1, m6);
 
         BandedMatrix<WorkPrec_>* m7(m4.copy());
         BandedMatrix<WorkPrec_> m7c = *m7;
         delete m7;
 
-        BandedMatrix<WorkPrec_> m8(_u->size());
+        BandedMatrix<WorkPrec_> m8(_u.size());
         _quick_assemble_matrix4<WorkPrec_>(m2, m8);
         cout << "Prediction: Finished assembly.\n";
 
-        DenseVector<WorkPrec_>* temp_u(predictedu.copy());
-        DenseVector<WorkPrec_>* temp_v(predictedv.copy());
-        DenseVector<WorkPrec_>* temp_u2(predictedu.copy());
-        DenseVector<WorkPrec_>* temp_w(predictedw.copy());
-        DenseVector<WorkPrec_> temp_u_c = *temp_u;
-        DenseVector<WorkPrec_> temp_v_c = *temp_v;
-        DenseVector<WorkPrec_> temp_w_c = *temp_w;
-        DenseVector<WorkPrec_> temp_u2_c = *temp_u2;
-        delete temp_u;
-        delete temp_v;
-        delete temp_w;
-        delete temp_u2;
+        DenseVector<WorkPrec_> temp_u_c(predictedu.copy());
+        DenseVector<WorkPrec_> temp_v_c(predictedv.copy());
+        DenseVector<WorkPrec_> temp_u2_c(predictedu.copy());
+        DenseVector<WorkPrec_> temp_w_c(predictedw.copy());
 
         cout << "Prediction: Before matrix*vector.\n";
         DenseVector<WorkPrec_> temp1 = Product<>::value<WorkPrec_,WorkPrec_>(m1,temp_v_c);
@@ -1508,16 +1495,12 @@ namespace honei {
         DenseVector<WorkPrec_> temp4 = Product<>::value<WorkPrec_,WorkPrec_>(m4,temp_u2_c);
         cout << "Fourth product solved.\n";
 
-        DenseVector<WorkPrec_>* source(predictedu.copy());
-        DenseVector<WorkPrec_> source_c = *source;
-        delete source;
+        DenseVector<WorkPrec_> source_c(predictedu.copy());
 
         _source(source_c);
 
         cout << "Source solved.\n";
-        DenseVector<WorkPrec_>* predicted_u_temp(predictedu.copy());
-        DenseVector<WorkPrec_> predicted_u_temp_c = *predicted_u_temp;
-        delete predicted_u_temp;
+        DenseVector<WorkPrec_> predicted_u_temp_c(predictedu.copy());
 
         Sum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp1);
         Sum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp2);
@@ -1526,39 +1509,27 @@ namespace honei {
         Sum<>::value(predicted_u_temp_c, source_c);
         cout << "First accu solved.\n";
 
-        DenseVector<WorkPrec_>* temp_u3(predictedu.copy());
-        DenseVector<WorkPrec_>* temp_v2(predictedv.copy());
-        DenseVector<WorkPrec_>* temp_w2(predictedw.copy());
-        DenseVector<WorkPrec_>* temp_u4(predictedu.copy());
-        DenseVector<WorkPrec_> temp_u3_c = *temp_u3;
-        DenseVector<WorkPrec_> temp_v2_c = *temp_v2;
-        DenseVector<WorkPrec_> temp_w2_c = *temp_w2;
-        DenseVector<WorkPrec_> temp_u4_c = *temp_u4;
-        delete temp_u3;
-        delete temp_v2;
-        delete temp_w2;
-        delete temp_u4;
+        DenseVector<WorkPrec_> temp_u3_c(predictedu.copy());
+        DenseVector<WorkPrec_> temp_v2_c(predictedv.copy());
+        DenseVector<WorkPrec_> temp_w2_c(predictedw.copy());
+        DenseVector<WorkPrec_> temp_u4_c(predictedu.copy());
 
         DenseVector<WorkPrec_> temp11 = Product<>::value(m5c,temp_v2_c);
         DenseVector<WorkPrec_> temp22 = Product<>::value(m6, temp_u3_c);
         DenseVector<WorkPrec_> temp33 = Product<>::value(m7c,temp_w2_c);
         DenseVector<WorkPrec_> temp44 = Product<>::value(m8, temp_u4_c);
 
-        DenseVector<WorkPrec_>* v(predictedv.copy());
-        DenseVector<WorkPrec_>* w(predictedw.copy());
-        DenseVector<WorkPrec_> v_c = *v;
-        DenseVector<WorkPrec_> w_c = *w;
-        delete v;
-        delete w;
+        DenseVector<WorkPrec_> v_c(predictedv.copy());
+        DenseVector<WorkPrec_> w_c(predictedw.copy());
 
         Sum<>::value(v_c, temp11);
         Sum<>::value(v_c, temp22);
         Sum<>::value(w_c, temp33);
         Sum<>::value(w_c, temp44);
 
-        predictedu = *(predicted_u_temp_c.copy());
-        predictedv = *(v_c.copy());
-        predictedw = *(w_c.copy());
+        predictedu = predicted_u_temp_c;
+        predictedv = v_c;
+        predictedw = w_c;
 
         //Correction of reflective boundaries
         for (unsigned long j = 0; j< 3*_d_width; ++j)
@@ -1566,7 +1537,6 @@ namespace honei {
             predictedu [(j+6)] = predictedu [(j+6+9*(_d_width+4))];
             predictedv [(j+6)] = predictedv [(j+6+9*(_d_width+4))];
             predictedw [(j+6)] = predictedw [(j+6+9*(_d_width+4))];
-                
             predictedu [(3*(_d_width+4)+j+6)] = predictedu [(j+6+6*(_d_width+4))];
             predictedv [(3*(_d_width+4)+j+6)] = predictedv [(j+6+6*(_d_width+4))];
             predictedw [(3*(_d_width+4)+j+6)] = predictedw [(j+6+6*(_d_width+4))];
@@ -1593,7 +1563,7 @@ namespace honei {
                 predictedv [((i+3)*3*(_d_width+4)-6+k)] = predictedv [((i+3)*3*(_d_width+4)-9+k)];
                 predictedw [((i+3)*3*(_d_width+4)-6+k)] = predictedw [((i+3)*3*(_d_width+4)-9+k)];
                 }
-            }    
+            }
 
         for (unsigned long j=0; j< 3*_d_width; ++j)
             {
@@ -1625,28 +1595,20 @@ namespace honei {
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
         ///Apply flow to newest u:
-        DenseVector<WorkPrec_>* f(predictedu.copy());
-        DenseVector<WorkPrec_> f_c = *f;
-        delete f;
+        DenseVector<WorkPrec_> f_c(predictedu.copy());
         _flow_x(f_c);
 
         ///Compute linear combinations und accumulate:
-        DenseVector<WorkPrec_>* v_result(predictedv.copy());
-        DenseVector<WorkPrec_> v_result_c = *v_result;
-        delete v_result;
+        DenseVector<WorkPrec_> v_result_c(predictedv.copy());
         Scale<>::value(_eps,v_result_c);
         Scale<>::value(_delta_t,f_c);
         DenseVector<WorkPrec_> innersum1 = Sum<>::value<>(v_result_c,f_c);
 
         ///Apply flow to old u:
-        DenseVector<WorkPrec_>* flow(_u_temp->copy());
-        DenseVector<WorkPrec_> flow_c = *flow;
-        delete flow;
+        DenseVector<WorkPrec_> flow_c(_u_temp.copy());
         _flow_x(flow_c);
 
-        DenseVector<WorkPrec_>* v_temp_result(_v_temp->copy());
-        DenseVector<WorkPrec_> v_temp_result_c = *v_temp_result;
-        delete v_temp_result;
+        DenseVector<WorkPrec_> v_temp_result_c(_v_temp.copy());
 
         Scale<>::value(-2*_delta_t,v_temp_result_c);
         Scale<>::value(2*_delta_t, flow_c);
@@ -1657,28 +1619,20 @@ namespace honei {
         Scale<>::value(1/(_eps+_delta_t), innersum1);
 
         ///Repeat for w:
-        DenseVector<WorkPrec_>* flow2(predictedu.copy());
-        DenseVector<WorkPrec_> flow2_c = *flow2;
-        delete flow2;
+        DenseVector<WorkPrec_> flow2_c(predictedu.copy());
         _flow_y(flow2_c);
 
-        DenseVector<WorkPrec_>* w_result(predictedw.copy());
-        DenseVector<WorkPrec_> w_result_c = *w_result;
-        delete w_result;
+        DenseVector<WorkPrec_> w_result_c(predictedw.copy());
 
         Scale<>::value(_eps, w_result_c);
         Scale<>::value(_delta_t,flow2_c);
         DenseVector<WorkPrec_>innersum11 = Sum<>::value<>(w_result_c, flow2_c);
 
-        DenseVector<WorkPrec_>* flow3(_u_temp->copy());
-        DenseVector<WorkPrec_> flow3_c = *flow3;
-        delete flow3;
+        DenseVector<WorkPrec_> flow3_c(_u_temp.copy());
 
         _flow_y(flow3_c);
 
-        DenseVector<WorkPrec_>* w_temp_result(_w_temp->copy());
-        DenseVector<WorkPrec_> w_temp_result_c = *w_temp_result;
-        delete w_temp_result;
+        DenseVector<WorkPrec_> w_temp_result_c(_w_temp.copy());
 
         Scale<>::value(-2*_delta_t,w_temp_result_c);
         Scale<>::value(2*_delta_t, flow3_c);
@@ -1687,8 +1641,8 @@ namespace honei {
         Sum<>::value<>(innersum11, innersum22);
         Scale<>::value(1/(_eps + _delta_t), innersum11);
 
-        predictedv = *(innersum1.copy());
-        predictedw = *(innersum11.copy());
+        predictedv = innersum1;
+        predictedw = innersum11;
         std::cout << "Finished Setup 2.\n";
     }
 
@@ -1709,7 +1663,7 @@ namespace honei {
                     DenseVector<ResPrec_>& predictedw)
     {
         ///correct first 2(w+4)+2 ghost cells (tripels)
-        typename DenseVector<ResPrec_>::ElementIterator iter(_u->begin_elements());
+        typename DenseVector<ResPrec_>::ElementIterator iter(_u.begin_elements());
         while(iter.index()<(6*(_d_width+4)+6))
         {
             ++iter;
@@ -1742,24 +1696,24 @@ namespace honei {
               cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;*/
             if(count < _d_width)
             {
-                PredictionPrec2_ a = (*_u)[iter.index()];
-                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
-                cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;
+                PredictionPrec2_ a = _u[iter.index()];
+                _u[iter.index()] = 0.5*(predictedu[iter.index()] + a);
+                cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify(_u[iter.index()] )<<endl;
 
-                *h = (*_u)[iter.index()];
+                *h = _u[iter.index()];
                 ++h;
                 ++count;
 
-                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                _v[iter.index()] = 0.5*(predictedv[iter.index()]+ _v[iter.index()]);
+                _w[iter.index()] = 0.5*(predictedw[iter.index()]+ _w[iter.index()]);
                 ++iter;
-                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
-                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                _u[iter.index()] = 0.5*(predictedu[iter.index()]+ _u[iter.index()]);
+                _v[iter.index()] = 0.5*(predictedv[iter.index()]+ _v[iter.index()]);
+                _w[iter.index()] = 0.5*(predictedw[iter.index()]+ _w[iter.index()]);
                 ++iter;
-                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
-                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                _u[iter.index()] = 0.5*(predictedu[iter.index()]+ _u[iter.index()]);
+                _v[iter.index()] = 0.5*(predictedv[iter.index()]+ _v[iter.index()]);
+                _w[iter.index()] = 0.5*(predictedw[iter.index()]+ _w[iter.index()]);
                 ++iter;
             }
             else
@@ -1824,7 +1778,7 @@ namespace honei {
                 for (unsigned long k=0; k<12; ++k)
                 {
                     ++iter;
-                }    
+                }
                 count = 0;
             }
             cout << stringify(count)<<endl;
@@ -1864,41 +1818,47 @@ namespace honei {
         typename InitPrec2_>
     void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: solve()
     {
-        _u_temp = _u->copy();
-        _v_temp = _v->copy();
-        _w_temp = _w->copy();
+        CONTEXT("When solving:");
+        /*DenseVector<ResPrec_> u_temp(_u->size());
+        DenseVector<ResPrec_> v_temp(_u->size());
+        DenseVector<ResPrec_> w_temp(_u->size());
 
-        _do_setup_stage1<InitPrec1_>(*_u_temp, *_v_temp, *_w_temp );
+        (*_u_temp) = u_temp;
+        (*_v_temp) = v_temp;
+        (*_w_temp) = w_temp;
+        */
+        _u_temp = DenseVector<ResPrec_>(_u.size());
+        _v_temp = DenseVector<ResPrec_>(_u.size());
+        _w_temp = DenseVector<ResPrec_>(_u.size());
 
-        DenseVector<PredictionPrec1_>* predictedu(_u_temp->copy());
-        DenseVector<PredictionPrec1_>* predictedv(_v_temp->copy());
-        DenseVector<PredictionPrec1_>* predictedw(_w_temp->copy());
-        DenseVector<PredictionPrec1_> predictedu_c = *predictedu;
-        DenseVector<PredictionPrec1_> predictedv_c = *predictedv;
-        DenseVector<PredictionPrec1_> predictedw_c = *predictedw;
-        delete predictedu;
-        delete predictedv;
-        delete predictedw;
 
+
+        _do_setup_stage1<InitPrec1_>(_u_temp, _v_temp, _w_temp );
+
+        DenseVector<PredictionPrec1_> predictedu_c(_u_temp.copy());
+        DenseVector<PredictionPrec1_> predictedv_c(_v_temp.copy());
+        DenseVector<PredictionPrec1_> predictedw_c(_w_temp.copy());
+
+        std::cout << "Before prediction" << std::endl;
         _do_prediction<PredictionPrec1_>(predictedu_c, predictedv_c, predictedw_c);
+        std::cout << "After prediction" << std::endl;
 
+        std::cout << "Before stage2" << std::endl;
         _do_setup_stage2<InitPrec2_>(predictedu_c, predictedv_c, predictedw_c);
+        std::cout << "After stage2" << std::endl;
 
         _do_prediction<PredictionPrec2_>(predictedu_c, predictedv_c, predictedw_c);
 
         cout << "Predicted u:\n";
         cout << stringify(predictedu_c)<< endl;
         cout << "u before correction:\n";
-        cout << stringify(*_u)<<endl;
+        cout << stringify(_u)<<endl;
 
         _do_correction(predictedu_c, predictedv_c, predictedw_c);
         ++_solve_time;
 
-        delete _u_temp;
-        delete _v_temp;
-        delete _w_temp;
         cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
-        cout << stringify(*_u)<<endl;
+        cout << stringify(_u)<<endl;
         _do_postprocessing(1);
     }
 
@@ -1917,14 +1877,14 @@ namespace honei {
         {
 
             ///The bands containing data.
-            DenseVector<WorkPrec_> m2diag(_u->size(), WorkPrec_(0));      //zero
-            DenseVector<WorkPrec_> m2bandPlus1(_u->size(), WorkPrec_(0)); //one
-            DenseVector<WorkPrec_> m2bandPlus2(_u->size(), WorkPrec_(0)); //two
-            DenseVector<WorkPrec_> m2bandMinus1(_u->size(), WorkPrec_(0));//three
-            DenseVector<WorkPrec_> m4diag(_u->size(), WorkPrec_(0));      //zero
-            DenseVector<WorkPrec_> m4bandPlus1(_u->size(), WorkPrec_(0)); //one
-            DenseVector<WorkPrec_> m4bandPlus2(_u->size(), WorkPrec_(0)); //two
-            DenseVector<WorkPrec_> m4bandMinus1(_u->size(), WorkPrec_(0));//three
+            DenseVector<WorkPrec_> m2diag(_u.size(), WorkPrec_(0));      //zero
+            DenseVector<WorkPrec_> m2bandPlus1(_u.size(), WorkPrec_(0)); //one
+            DenseVector<WorkPrec_> m2bandPlus2(_u.size(), WorkPrec_(0)); //two
+            DenseVector<WorkPrec_> m2bandMinus1(_u.size(), WorkPrec_(0));//three
+            DenseVector<WorkPrec_> m4diag(_u.size(), WorkPrec_(0));      //zero
+            DenseVector<WorkPrec_> m4bandPlus1(_u.size(), WorkPrec_(0)); //one
+            DenseVector<WorkPrec_> m4bandPlus2(_u.size(), WorkPrec_(0)); //two
+            DenseVector<WorkPrec_> m4bandMinus1(_u.size(), WorkPrec_(0));//three
 
             ///Necessary values to be temporarily saved.
             DenseVector<WorkPrec_> tempPlus(ulint(3), WorkPrec_(0));
@@ -2115,17 +2075,17 @@ namespace honei {
     /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result)
     {
         ///Bands of the matrix which will be assembled.
-        DenseVector<WorkPrec_>* m6diag = (m1.band(ulint(0))).copy();
-        DenseVector<WorkPrec_>* m6bandplus3 = (m1.band(ulint(3))).copy();
-        DenseVector<WorkPrec_>* m6bandplus6 = (m1.band(ulint(6))).copy();
-        DenseVector<WorkPrec_>* m6bandminus3 = (m1.band(ulint(-3))).copy();
+        DenseVector<WorkPrec_> m6diag = (m1.band(ulint(0))).copy();
+        DenseVector<WorkPrec_> m6bandplus3 = (m1.band(ulint(3))).copy();
+        DenseVector<WorkPrec_> m6bandplus6 = (m1.band(ulint(6))).copy();
+        DenseVector<WorkPrec_> m6bandminus3 = (m1.band(ulint(-3))).copy();
         ///Needed Iterators.
-        typename DenseVector<WorkPrec_>::ElementIterator d(m6diag->begin_elements());//, d_END(m6diag->end_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3->begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b2(m6bandplus6->begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator d(m6diag.begin_elements());//, d_END(m6diag->end_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3.begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b2(m6bandplus6.begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3.begin_elements());
         //MIGHTBEBUG:
-        DenseVector<WorkPrec_> c_squared(*(_c->copy()));
+        DenseVector<WorkPrec_> c_squared((_c->copy()));
         ElementProduct<WorkPrec_>::value(c_squared, (*_c));
 
         for( ; d.index() < 6*(_d_width+4); ++d);
@@ -2191,17 +2151,17 @@ namespace honei {
         DenseVector<WorkPrec_> m8bandminus3(_u->size(), ulint(0) ,ulint(1));//three
         */
 
-        DenseVector<WorkPrec_>* m8diag = (m2.band(ulint(0))).copy();
-        DenseVector<WorkPrec_>* m8bandplus3 = (m2.band(ulint(3*(_d_width +4)))).copy();
-        DenseVector<WorkPrec_>* m8bandplus6 = (m2.band(ulint(6*(_d_width +4)))).copy();
-        DenseVector<WorkPrec_>* m8bandminus3 = (m2.band(ulint((-3)*(_d_width +4)))).copy();
+        DenseVector<WorkPrec_> m8diag = (m2.band(ulint(0))).copy();
+        DenseVector<WorkPrec_> m8bandplus3 = (m2.band(ulint(3*(_d_width +4)))).copy();
+        DenseVector<WorkPrec_> m8bandplus6 = (m2.band(ulint(6*(_d_width +4)))).copy();
+        DenseVector<WorkPrec_> m8bandminus3 = (m2.band(ulint((-3)*(_d_width +4)))).copy();
         ///Needed Iterators.
-        typename DenseVector<WorkPrec_>::ElementIterator d(m8diag->begin_elements()); //, d_END(m8diag->end_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3->begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6->begin_elements());
-        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3->begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator d(m8diag.begin_elements()); //, d_END(m8diag->end_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3.begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6.begin_elements());
+        typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3.begin_elements());
         //MIGHTBEBUG:
-        DenseVector<WorkPrec_> d_squared((*(_d->copy())));
+        DenseVector<WorkPrec_> d_squared(((_d->copy())));
         ElementProduct<WorkPrec_>::value(d_squared, (*_d));
 
         for( ; d.index() < 6*(_d_width + 4); ++d);
@@ -2266,14 +2226,16 @@ namespace honei {
         ::_assemble_matrix1_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m1diag(_u->size(), WorkPrec_(0));      //zero
-        DenseVector<WorkPrec_> m1bandPlus1(_u->size(), WorkPrec_(0)); //one
-        DenseVector<WorkPrec_> m1bandPlus2(_u->size(), WorkPrec_(0)); //two
-        DenseVector<WorkPrec_> m1bandMinus1(_u->size(), WorkPrec_(0));//three
-        DenseVector<WorkPrec_> m3diag(_u->size(), WorkPrec_(0));      //zero
-        DenseVector<WorkPrec_> m3bandPlus1(_u->size(), WorkPrec_(0)); //one
-        DenseVector<WorkPrec_> m3bandPlus2(_u->size(), WorkPrec_(0)); //two
-        DenseVector<WorkPrec_> m3bandMinus1(_u->size(), WorkPrec_(0));//three
+        std::cout << "Before DenseVector filling" << std::endl;
+        DenseVector<WorkPrec_> m1diag(_u.size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m1bandPlus1(_u.size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m1bandPlus2(_u.size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m1bandMinus1(_u.size(), WorkPrec_(0));//three
+        DenseVector<WorkPrec_> m3diag(_u.size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m3bandPlus1(_u.size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m3bandPlus2(_u.size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m3bandMinus1(_u.size(), WorkPrec_(0));//three
+        std::cout << "After DenseVector filling" << std::endl;
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2286,8 +2248,10 @@ namespace honei {
         //Preparing left operand for all scalar products
         DenseVector<WorkPrec_> constantVectorMinus(ulint(4), WorkPrec_(0));
 
-        while(ui!=ui_END)
+        std::cout << "Before loop" << std::endl;
+        while(ui.index() + 6 < ui_END.index())
         {
+            std::cout << "Loop head" << std::endl;
             constantVector[0] = WorkPrec_(-1);
             constantVector[1] = WorkPrec_(1);
             constantVector[2] = WorkPrec_(-((*_c)[k]));
@@ -2459,6 +2423,8 @@ namespace honei {
                 rightPlus1Lower[3] = (*u)[ui.index()+3];
             }
 
+            std::cout << "Loop middle" << std::endl;
+
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
             minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
             minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
@@ -2622,14 +2588,14 @@ namespace honei {
         ::_assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
-        DenseVector<WorkPrec_> m2diag(_u->size(), WorkPrec_(0));      //zero
-        DenseVector<WorkPrec_> m2bandPlus1(_u->size(), WorkPrec_(0)); //one
-        DenseVector<WorkPrec_> m2bandPlus2(_u->size(), WorkPrec_(0)); //two
-        DenseVector<WorkPrec_> m2bandMinus1(_u->size(), WorkPrec_(0));//three
-        DenseVector<WorkPrec_> m4diag(_u->size(), WorkPrec_(0));      //zero
-        DenseVector<WorkPrec_> m4bandPlus1(_u->size(), WorkPrec_(0)); //one
-        DenseVector<WorkPrec_> m4bandPlus2(_u->size(), WorkPrec_(0)); //two
-        DenseVector<WorkPrec_> m4bandMinus1(_u->size(), WorkPrec_(0));//three
+        DenseVector<WorkPrec_> m2diag(_u.size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m2bandPlus1(_u.size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m2bandPlus2(_u.size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m2bandMinus1(_u.size(), WorkPrec_(0));//three
+        DenseVector<WorkPrec_> m4diag(_u.size(), WorkPrec_(0));      //zero
+        DenseVector<WorkPrec_> m4bandPlus1(_u.size(), WorkPrec_(0)); //one
+        DenseVector<WorkPrec_> m4bandPlus2(_u.size(), WorkPrec_(0)); //two
+        DenseVector<WorkPrec_> m4bandMinus1(_u.size(), WorkPrec_(0));//three
 
         typename DenseVector<WorkPrec_>::ElementIterator ui(u->begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator ui_END(u->end_elements());
@@ -2641,7 +2607,7 @@ namespace honei {
                //Preparing left operand for all scalar products
         DenseVector<WorkPrec_> constantVectorMinus(ulint(4), WorkPrec_(0));
 
-        while(ui!=ui_END)
+        while(ui.index() + 6 * (_d_width + 4) < ui_END.index())
         {
             constantVector[0] = WorkPrec_(-1);
             constantVector[1] = WorkPrec_(1);

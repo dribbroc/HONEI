@@ -26,6 +26,9 @@
 #include <limits>
 #include <tr1/memory>
 
+// XXX Remove this
+#include <iostream>
+
 using namespace honei;
 using namespace tests;
 
@@ -90,15 +93,20 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
             BandedMatrix<DT_> bm1(size, dv1);
             DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
+            std::cout << "before loop" << std::endl;
+            std::cout << "size = " << size << ", expect max band index to be " << size - 1 << std::endl;
             typename MutableMatrix<DT_>::ElementIterator k(dm3.begin_elements());
             for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                 i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
             {
+                std::cout << "i.index = " << i.index() << std::endl;
+                std::cout << "-> row = " << i.row() << ", col = " << i.column() << std::endl;
                 if (*i != DT_(0))
                 {
                     *k = DT_(1);
                 }
             }
+            std::cout << "end loop" << std::endl;
             DenseMatrix<DT_> & difference(Difference<>::value(bm1, dm2));
 
             TEST_CHECK_EQUAL(difference, dm3);
