@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-23 Danny van Dyk <kugelfang@gentoo.org>
+
+	* AUTHORS, doc/bee.svg, doc/bee_270.png: Added the bee logo as SVG and
+	PNG. Logo has been kindly contributed by David Shakaryan.
+
 2007-09-20 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libmath/quadrature_TEST.cc: Fixed the error term for trapezoid
