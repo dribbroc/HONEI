@@ -201,8 +201,7 @@ namespace honei
             /// Subscript operator, return element at given index.
             DataType_ & operator[] (std::ptrdiff_t index) const
             {
-                CONTEXT("When accessing SharedArray-element at index '" + stringify(index) + "' in array of size'" +
-                        stringify(_size) + "':");
+                CONTEXT("When accessing SharedArray-element at index '" + stringify(index) + "':");
                 ASSERT(index >= 0, "index '" + stringify(index) + "' is out of bounds!");
                 ASSERT(index < _size, "index '" + stringify(index) + "' is out of bounds!");
 

@@ -63,25 +63,26 @@ class DenseVectorCopyTest :
         {
             for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(0));
-                DenseVector<DataType_> dv2(dv1.copy());
+                DenseVector<DataType_> dv1(size, static_cast<DataType_>(0)), dv2(size, static_cast<DataType_>(1));
+                std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dv1.copy()));
 
-                TEST_CHECK_EQUAL(dv1.size(), dv2.size());
-
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                        j(dv2.begin_elements()); i != i_end ; ++i, ++j)
+                for (typename Vector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
+                        i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*j, 0, std::numeric_limits<DataType_>::epsilon());
-                    *i = DataType_(1);
-                    *j = DataType_(2);
+                    *i = 1;
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()), j(dv2.begin_elements()),
-                        i_end(dv1.end_elements()) ; i != i_end ; ++i, ++j)
+                for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
+                        i_end(dv1.end_elements()) ; i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
+                }
+
+                for (typename Vector<DataType_>::ConstElementIterator i(dv2.begin_elements()),
+                        i_end(dv2.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 1, std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*j, 2, std::numeric_limits<DataType_>::epsilon());
                 }
             }
         }

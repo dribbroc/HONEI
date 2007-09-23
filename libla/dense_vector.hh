@@ -33,7 +33,6 @@
  **/
 namespace honei
 {
-    template <typename DataType_> class BandedMatrix;
     template <typename DataType_> class DenseMatrix;
 
     /**
@@ -55,9 +54,6 @@ namespace honei
 
             typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
 
-            /// \name Private constructors
-            /// \{
-
             /**
              * Constructor.
              *
@@ -71,24 +67,9 @@ namespace honei
             DenseVector(const unsigned long size, const SharedArray<DataType_> & elements, unsigned long offset = 0,
                     unsigned stepsize = 1);
 
-            /**
-             * Constructor.
-             *
-             * For use by BandedMatrix.
-             *
-             * \param imp Implementation for the new dense vector.
-             */
-            DenseVector(Implementation * imp);
-
-            /// \}
-
         public:
-            /// \name Users of our implementations
-            /// \{
-            friend class BandedMatrix<DataType_>;
             friend class DenseElementIterator<DataType_>;
             friend class DenseMatrix<DataType_>;
-            /// \}
 
             /// Type of the const iterator over our elements.
             typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;

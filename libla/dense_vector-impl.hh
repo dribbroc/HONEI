@@ -76,20 +76,6 @@ namespace honei
             stepsize(ss)
         {
         }
-
-        // Return a copy of us.
-        inline Implementation * copy() const
-        {
-            Implementation * result(new Implementation(size, offset, stepsize));
-
-            for (DataType_ * i(elements.get() + offset), * i_end(elements.get() + offset + size * stepsize),
-                    * j(result->elements.get()) ; i != i_end ; i += stepsize)
-            {
-                *j = *i;
-            }
-
-            return result;
-        }
     };
 
     template <typename DataType_>
@@ -126,12 +112,6 @@ namespace honei
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const DenseVector<DataType_> & other) :
         _imp(new Implementation(other._imp->elements, other._imp->size, other._imp->offset, other._imp->stepsize))
-    {
-    }
-
-    template <typename DataType_>
-    DenseVector<DataType_>::DenseVector(Implementation * imp) :
-        _imp(imp)
     {
     }
 
@@ -198,7 +178,16 @@ namespace honei
     template <typename DataType_>
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
-        return DenseVector(_imp->copy());
+        DenseVector result(_imp->size);
+        DataType_ * source(_imp->elements.get());
+        DataType_ * target(result._imp->elements.get());
+        for (unsigned long i(0) ; i < _imp->size ; i++)
+        {
+            target[i] = source[_imp->stepsize * i + _imp->offset];
+        }
+        //memcpy(result._imp->elements.get(), _imp->elements.get(), _imp->size * sizeof(DataType_));
+
+        return result;
     }
 
     /**

@@ -75,7 +75,7 @@ class BandedMatrixQuickTest :
 
             DenseVector<DataType_> dv4(size, DataType_(0));
             dv4[size / 2] = DataType_(5);
-            DenseVector<DataType_> dv3(bm2.band(3));
+            DenseVector<DataType_> dv3 = bm2.band(3);
             dv3[size / 2] = DataType_(5);
 
             TEST_CHECK_EQUAL(bm2.band(0), dv1);

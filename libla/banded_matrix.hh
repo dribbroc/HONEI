@@ -4,6 +4,7 @@
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
+ *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
@@ -23,13 +24,13 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/matrix.hh>
-#include <libla/dense_vector-impl.hh>
+#include <libla/dense_vector.hh>
 #include <libla/vector_iterator.hh>
 #include <libla/vector_error.hh>
 #include <libutil/shared_array.hh>
 #include <libutil/log.hh>
 
-#include <algorithm>
+#include <string.h>
 #include <iterator>
 #include <tr1/memory>
 
@@ -39,7 +40,7 @@
  * Implementation of BandedMatrix and related classes.
  *
  * \ingroup grpmatrix
- */
+ **/
 namespace honei
 {
     /**
@@ -47,13 +48,13 @@ namespace honei
      * \brief non-sequential.
      *
      * \ingroup grpmatrix
-     */
+     **/
     template <typename DataType_> class BandedMatrix :
         public Matrix<DataType_>
     {
         private:
             /// Array of pointers to our band-data.
-            SharedArray<std::tr1::shared_ptr<typename DenseVector<DataType_>::Implementation> > _bands;
+            SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > _bands;
 
             /// Our size.
             unsigned long _size;
@@ -62,7 +63,7 @@ namespace honei
             static const DataType_ _zero_element;
 
             /// Our zero vector.
-            typename DenseVector<DataType_>::Implementation _zero_vector;
+            DenseVector<DataType_> _zero_vector;
 
             /// Our implementation of ElementIteratorBase.
             template <typename ElementType_> class BandedElementIterator;
@@ -95,15 +96,13 @@ namespace honei
              * Constructor.
              *
              * \param size Size of the new banded matrix.
-             */
+             **/
             BandedMatrix(unsigned long size) :
                 _bands(2 * size - 1),
                 _size(size),
-                _zero_vector(size, 0, 1)
+                _zero_vector(size, DataType_(0))
             {
                 CONTEXT("When creating BandedMatrix:");
-
-                std::fill_n(_zero_vector.elements.get(), size, DataType_(0));
             }
 
             /**
@@ -111,18 +110,17 @@ namespace honei
              *
              * \param size Size of the new banded matrix.
              * \param diagonal Diagonal of the new banded matrix.
-             */
+             **/
             BandedMatrix(unsigned long size, const DenseVector<DataType_> & diagonal) :
                 _bands(2 * size - 1),
                 _size(size),
-                _zero_vector(size, 0, 1)
+                _zero_vector(size, DataType_(0))
             {
                 CONTEXT("When creating BandedMatrix with initial band:");
                 if (diagonal.size() != size)
                     throw VectorSizeDoesNotMatch(diagonal.size(), size);
 
-                std::fill_n(_zero_vector.elements.get(), size, DataType_(0));
-                _bands[size - 1] = diagonal._imp;
+                _bands[size - 1].reset(new DenseVector<DataType_>(diagonal));
             }
             /// \}
 
@@ -212,20 +210,22 @@ namespace honei
                     throw VectorSizeDoesNotMatch(_size, vector.size());
                 }
 
-                _bands[index + _size - 1] = vector._imp;
+                std::tr1::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(vector));
+                _bands[index + _size - 1] = temp;
+
             }
 
             /// Returns a band-vector by index.
-            DenseVector<DataType_> band(signed long index) const
+            DenseVector<DataType_> & band(signed long index) const
             {
                 CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '"
                         + stringify(_size) + "':");
                 ASSERT(std::abs(index) < _size, "index out of bounds!");
 
                 if (! _bands[index + _size - 1])
-                    _bands[index + _size - 1].reset(_zero_vector.copy());
+                    _bands[index + _size - 1].reset(new DenseVector<DataType_>(_size, DataType_(0)));
 
-                return DenseVector<DataType_>(_bands[index + _size - 1].get());
+                return *_bands[index + _size - 1];
             }
 
             /// Returns a copy of the matrix.
@@ -238,7 +238,9 @@ namespace honei
                 {
                     if (_bands[i])
                     {
-                        result->_bands[i].reset(_bands[i]->copy());
+                        std::tr1::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(
+                                    _bands[i]->copy()));
+                        result->_bands[i] = temp;
                     }
                 }
 
@@ -252,7 +254,7 @@ namespace honei
      * \brief BandedMatrix::BandedElementIterator is a simple iterator implementation for banded matrices.
      *
      * \ingroup grpmatrix
-     */
+     **/
     template <> template <typename DataType_> class BandedMatrix<DataType_>::BandedElementIterator<DataType_> :
         public MatrixElementIterator
     {
@@ -286,7 +288,7 @@ namespace honei
              *
              * \param matrix The parent matrix that is referenced by the iterator.
              * \param index The index into the matrix.
-             */
+             **/
             BandedElementIterator(const BandedMatrix<DataType_> & matrix, unsigned long index) :
                 _matrix(matrix),
                 _index(index)
@@ -332,10 +334,10 @@ namespace honei
 
                 if (! _matrix._bands[_band_index() + _matrix._size - 1])
                 {
-                    _matrix._bands[_band_index() + _matrix._size - 1].reset(_matrix._zero_vector.copy());
+                    _matrix._bands[_band_index() + _matrix._size - 1].reset(new DenseVector<DataType_>(_matrix._size, DataType_(0)));
                 }
 
-                return _matrix._bands[_band_index() + _matrix._size - 1]->elements[row()];
+                return (*_matrix._bands[_band_index() + _matrix._size - 1])[row()];
             }
 
             /// Dereference operator that returns an unassignable reference.
@@ -349,7 +351,7 @@ namespace honei
                 }
                 else
                 {
-                    return _matrix._bands[_band_index() + _matrix._size - 1]->elements[row()];
+                    return (*_matrix._bands[_band_index() + _matrix._size - 1])[row()];
                 }
             }
 
@@ -422,7 +424,8 @@ namespace honei
              *
              * \param matrix The parent matrix that is referenced by the iterator.
              * \param index The index into the matrix.
-             */
+             **/
+
             BandIterator(const BandedMatrix<DataType_> & matrix, unsigned long index) :
                 _matrix(matrix),
                 _index(index)
@@ -462,26 +465,26 @@ namespace honei
             }
 
             /// Dereference operator that returns an assignable reference.
-            virtual DenseVector<DataType_> operator* ()
+            virtual DenseVector<DataType_> & operator* ()
             {
                 if (!_matrix._bands[_index])
                 {
                     _matrix._bands[_index].reset(new DenseVector<DataType_>(_matrix._size, DataType_(0)));
                 }
 
-                return DenseVector<DataType_>(_matrix._bands[_index]);
+                return (*_matrix._bands[_index]);
             }
 
             /// Dereference operator that returns an unassignable reference.
-            virtual const DenseVector<DataType_> operator* () const
+            virtual const DenseVector<DataType_> & operator* () const
             {
                 if (! _matrix._bands[_index])
                 {
-                    return DenseVector<DataType_>(_matrix._zero_vector);
+                    return _matrix._zero_vector;
                 }
                 else
                 {
-                    return DenseVector<DataType_>(_matrix._bands[_index]);
+                    return (*_matrix._bands[_index]);
                 }
             }
 

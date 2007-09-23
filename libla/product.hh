@@ -226,7 +226,6 @@ namespace honei
                     }
                 }
             }
-            std::cout << "XXX After 2nd loop" << std::endl;
 
             return result;
         }

@@ -178,15 +178,11 @@ namespace honei
                     continue;
 
                 if (l.exists())
-                {
-                    DenseVector<DT1_> band(*l);
-                    Difference<>::value(band, *r);
-                }
+                    Difference<>::value(*l, *r);
                 else
                 {
                     DenseVector<DT2_> band(r->copy());
-                    Scale<>::value(DT1_(-1), band);
-                    a.insert_band(r.index(), band);
+                    a.band(r.index()) = Scale<>::value(DT1_(-1), band);
                 }
             }
 
