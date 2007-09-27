@@ -31,7 +31,6 @@
 #include <libla/sparse_vector.hh>
 #include <libla/sum.hh>
 #include <libutil/tags.hh>
-#include <libla/algorithm.hh>
 
 #include <cmath>
 

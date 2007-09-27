@@ -7,7 +7,6 @@
 #endif
 
 #include <libla/product.hh>
-#include <libla/algorithm.hh>
 
 //using namespace std;
 using namespace honei;
