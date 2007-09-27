@@ -74,7 +74,7 @@ class DenseVectorScaledSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(12);
+            unsigned long size(65);
             DenseVector<DataType_> dv1(size, DataType_(2));
             DenseVector<DataType_> dv2(size, DataType_(3));
             DataType_ scal(DataType_(2));

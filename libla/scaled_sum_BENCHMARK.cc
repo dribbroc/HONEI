@@ -30,19 +30,19 @@ class DenseVectorScaledSumBench :
 
         virtual void run()
         {
-            for(int i = 0; i < _count; ++i)
-            {
                 DenseVector<DataType_> dv0(_size);//, static_cast<DataType_>(rand()));
                 DenseVector<DataType_> dv1(_size);//, static_cast<DataType_>(rand()));
                 DataType_ b(1234.56789);
+            for(int i = 0; i < _count; ++i)
+            {
                 BENCHMARK(DenseVector<DataType_> sum1(ScaledSum<Tag_>::value(dv0, dv1, b)));
             }
-            evaluate(3*_size);
+            evaluate(2*_size);
         }
 };
 
-DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat1("Dense Vector ScaledSum Benchmark - vector size: 64^4 * 3, float", 64*64*64*64*3, 10);
+DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat1("Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorScaledSumBench<tags::CPU, double> DVSSBenchdouble1("Dense Vector ScaledSum Benchmark - vector size: 10,000, double", 10000, 10);
 #ifdef HONEI_SSE
-DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat1("SSE Dense Vector ScaledSum Benchmark - vector size: 64^4 * 3, float", 64*64*64*64*3, 10);
+DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat1("SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 #endif

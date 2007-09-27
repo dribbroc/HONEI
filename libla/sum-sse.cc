@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+ * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -27,12 +27,10 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
 {
     CONTEXT("When adding DenseVector to DenseVector with SSE:");
 
-    if (a.size() % 16 != 0 )
-        throw VectorSizeDoesNotMatch(a.size(), a.size()+ (a.size() % 16));
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
-    
+
 
     __m128 m1, m2, m3, m4, m5, m6, m7, m8;
     float __attribute__((aligned(16))) a1_data[4];
@@ -43,6 +41,9 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
     float __attribute__((aligned(16))) b3_data[4];
     float __attribute__((aligned(16))) a4_data[4];
     float __attribute__((aligned(16))) b4_data[4];
+
+    unsigned long quad_end(a.size() - (b.size() % 16));
+
     for (unsigned long index = 0 ; index < a.size() ; index += 16) 
     {
         for (int i = 0 ; i < 4 ; ++i)
@@ -82,6 +83,11 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
             (a.elements())[index + i + 8] = a3_data[i];
             (a.elements())[index + i + 12] = a4_data[i];
         }
+    }
+
+    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    {
+        a.elements()[index] += b.elements()[index];
     }
     return a;
 }

@@ -31,6 +31,7 @@
 #include <libla/sparse_vector.hh>
 #include <libla/sum.hh>
 #include <libutil/tags.hh>
+#include <libla/algorithm.hh>
 
 #include <cmath>
 
@@ -949,5 +950,12 @@ namespace honei
             }
         };
 #endif
+
+   /// SSE implementiation.
+    template <>
+    struct Product<tags::CPU::SSE>
+    {
+        static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVector<float> & b);
+    };
 }
 #endif

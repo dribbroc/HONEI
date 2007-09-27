@@ -120,22 +120,23 @@ void Benchmark::evaluate(unsigned long flop)
     string fl = " FLOPS";
     if (total > 0)
         f = ((x/total)*flop);
-    if (f > 100000000)
+    if (f > 100000000.)
     {
-        f /= 1000000000;
+        f /= 1000000000.;
         fl = " GFLOPS";
     }
-    else if (f > 100000)
+    else if (f > 100000.)
     {
-        f /= 1000000;
+        f /= 1000000.;
         fl = " MFLOPS";
     }
-    else if (f > 100)
+    else if (f > 100.)
     {
-        f /= 1000;
+        f /= 1000.;
         fl = " KFLOPS";
     }
-    cout << f << fl << endl;                
+    cout <<"FUCK " << flop << endl;
+    cout << f << fl << endl;
     ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
     if (!ofs)
         cout << "Can't write to file!" << endl;
