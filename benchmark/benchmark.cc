@@ -97,7 +97,7 @@ void Benchmark::evaluate()
 
 void Benchmark::evaluate(unsigned long flop)
 {
-    int x = 0;
+    unsigned long x = 0;
     double total = 0;
     double min = _benchlist.front();
     double max = _benchlist.front();
@@ -135,7 +135,6 @@ void Benchmark::evaluate(unsigned long flop)
         f /= 1000.;
         fl = " KFLOPS";
     }
-    cout <<"FUCK " << flop << endl;
     cout << f << fl << endl;
     ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
     if (!ofs)

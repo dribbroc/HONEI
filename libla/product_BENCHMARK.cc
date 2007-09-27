@@ -30,7 +30,6 @@ class BandedMatrixDenseVectorProductBench :
         virtual void run()
         {
             DenseVector<DataType_> dv1(_size, DataType_(2));
-            std::cout<<_size<< "bla";
             BandedMatrix<DataType_> bm1(_size, dv1);
             DenseVector<DataType_> dv4(_size, DataType_(3));
             DenseVector<DataType_> dv5(dv4.copy());
