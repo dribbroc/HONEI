@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-27 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh: Reimplemented data movement due to changes of
+	return type (DenseVector::copy()), resolved numerical bugs in flow
+	computations, resolved index bugs in boundary treatment, resolved
+	vector initialization bug in solve(), RelaxSolver is up again.
+
 2007-09-27 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/product-sse.cc, scaled_sum-sse.cc, sum-sse.cc:
