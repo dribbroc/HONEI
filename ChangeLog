@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-29 Danny van Dyk <kugelfang@gentoo.org>
+
+	* libutil/files.m4: Fixed entry for type_traits. Added SharedArray
+	test file.
+	* libutil/shared_array_TEST.cc: Added alignment test case.
+
+	+ Fixes: ticket:1
+
 2007-09-28 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/type_traits.hh: Added TypeTraits class template.
