@@ -80,8 +80,8 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             m4 = _mm_mul_ps(m4, m5);
             m4 = _mm_add_ps(m4, m6);
 
-            _mm_store_ps(result1_data, m1);
-            _mm_store_ps(result2_data, m4);
+            _mm_stream_ps(result1_data, m1);
+            _mm_stream_ps(result2_data, m4);
 
             for (int i = 0 ; i < 4 ; ++i)
             {
@@ -112,8 +112,8 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             {
                 band1_data[i] = vi->elements()[start + index + i];
                 band2_data[i] = vi->elements()[start + index + i + 4];
-                vector1_data[i] = b.elements()[start + index + i];
-                vector2_data[i] = b.elements()[start + index + i + 4];
+                vector1_data[i] = b.elements()[index + i];
+                vector2_data[i] = b.elements()[index + i + 4];
                 result1_data[i] = result.elements()[start + index + i];
                 result2_data[i] = result.elements()[start + index + i + 4];
             }
@@ -129,8 +129,8 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             m4 = _mm_mul_ps(m4, m5);
             m4 = _mm_add_ps(m4, m6);
 
-            _mm_store_ps(result1_data, m1);
-            _mm_store_ps(result2_data, m4);
+            _mm_stream_ps(result1_data, m1);
+            _mm_stream_ps(result2_data, m4);
 
             for (int i = 0 ; i < 4 ; ++i)
             {
@@ -141,7 +141,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
 
         for (unsigned long index = quad_end ; index < end ; index++)
         {
-            result.elements()[index] += vi->elements()[index] * b.elements()[index];
+            result.elements()[index] += vi->elements()[index] * b.elements()[index-start];
         }
     }
     return result;
@@ -170,13 +170,11 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     unsigned long middle_index(a.rows() - 1);
 
     // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
-    std::cout<<"AAA"<<middle_index<<std::endl;
     for (BandedMatrix<double>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
             vi != vi_end ; ++vi)
     {
         if (! vi.exists())
             continue;
-        std::cout<<vi.index()<<", ";
         unsigned long end(vi->size() - (vi.index() - middle_index)); //Calculation of the element-index to stop in iteration!
         unsigned long quad_end(end - (end % 4));
 
@@ -203,8 +201,8 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
             m4 = _mm_mul_pd(m4, m5);
             m4 = _mm_add_pd(m4, m6);
 
-            _mm_store_pd(result1_data, m1);
-            _mm_store_pd(result2_data, m4);
+            _mm_stream_pd(result1_data, m1);
+            _mm_stream_pd(result2_data, m4);
 
             for (int i = 0 ; i < 2 ; ++i)
             {
@@ -252,8 +250,8 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
             m4 = _mm_mul_pd(m4, m5);
             m4 = _mm_add_pd(m4, m6);
 
-            _mm_store_pd(result1_data, m1);
-            _mm_store_pd(result2_data, m4);
+            _mm_stream_pd(result1_data, m1);
+            _mm_stream_pd(result2_data, m4);
 
             for (int i = 0 ; i < 2 ; ++i)
             {
@@ -264,7 +262,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 
         for (unsigned long index = quad_end ; index < end ; index++)
         {
-            result.elements()[index] += vi->elements()[start + index] * b.elements()[index];
+            result.elements()[index] += vi->elements()[index] * b.elements()[index-start];
         }
     }
     return result;

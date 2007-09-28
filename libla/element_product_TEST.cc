@@ -29,7 +29,7 @@
 using namespace honei;
 using namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorElementProductTest :
     public BaseTest
 {
@@ -45,7 +45,7 @@ class DenseVectorElementProductTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                     dv3(size, DataType_(6));
-                DenseVector<DataType_> prod(ElementProduct<>::value(dv1, dv2));
+                DenseVector<DataType_> prod(ElementProduct<Tag_>::value(dv1, dv2));
 
                 TEST_CHECK_EQUAL(prod, dv3);
             }
@@ -56,10 +56,14 @@ class DenseVectorElementProductTest :
         }
 };
 
-DenseVectorElementProductTest<float> dense_vector_elementwise_product_test_float("float");
-DenseVectorElementProductTest<double> dense_vector_elementwise_product_test_double("double");
+DenseVectorElementProductTest<tags::CPU, float> dense_vector_elementwise_product_test_float("float");
+DenseVectorElementProductTest<tags::CPU, double> dense_vector_elementwise_product_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorElementProductTest<tags::CPU::SSE, float> sse_dense_vector_elementwise_product_test_float("sse float");
+DenseVectorElementProductTest<tags::CPU::SSE, double> sse_dense_vector_elementwise_product_test_double("sse double");
+#endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorElementProductQuickTest :
     public QuickTest
 {
@@ -74,7 +78,7 @@ class DenseVectorElementProductQuickTest :
             unsigned long size(5);
             DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                 dv3(size, DataType_(6));
-            DenseVector<DataType_> prod(ElementProduct<>::value(dv1, dv2));
+            DenseVector<DataType_> prod(ElementProduct<Tag_>::value(dv1, dv2));
 
             TEST_CHECK_EQUAL(prod, dv3);
 
@@ -85,8 +89,12 @@ class DenseVectorElementProductQuickTest :
 
         }
 };
-DenseVectorElementProductQuickTest<float> dense_vector_elementwise_product_quick_test_float("float");
-DenseVectorElementProductQuickTest<double> dense_vector_elementwise_product_quick_test_double("double");
+DenseVectorElementProductQuickTest<tags::CPU, float> dense_vector_elementwise_product_quick_test_float("float");
+DenseVectorElementProductQuickTest<tags::CPU, double> dense_vector_elementwise_product_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorElementProductQuickTest<tags::CPU, float> sse_dense_vector_elementwise_product_quick_test_float("sse float");
+DenseVectorElementProductQuickTest<tags::CPU, double> sse_dense_vector_elementwise_product_quick_test_double("sse double");
+#endif
 
 template <typename DataType_>
 class SparseVectorDenseVectorElementProductTest :

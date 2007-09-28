@@ -236,7 +236,7 @@ ScalarSparseMatrixProductQuickTest<double> scalar_sparse_matrix_product_quick_te
 
 // Test cases for scaling vectors
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class ScalarDenseVectorProductTest :
     public BaseTest
 {
@@ -252,17 +252,21 @@ class ScalarDenseVectorProductTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(3));
 
-                DenseVector<DataType_> prod1(Scale<>::value(DataType_(2), dv1));
+                DenseVector<DataType_> prod1(Scale<Tag_>::value(DataType_(2), dv1));
                 DataType_ v1(Norm<vnt_l_one>::value(prod1));
                 TEST_CHECK_EQUAL(v1, 6 * size);
             }
         }
 };
 
-ScalarDenseVectorProductTest<float> scalar_dense_vector_product_test_float("float");
-ScalarDenseVectorProductTest<double> scalar_dense_vector_product_test_double("double");
+ScalarDenseVectorProductTest<tags::CPU, float> scalar_dense_vector_product_test_float("float");
+ScalarDenseVectorProductTest<tags::CPU, double> scalar_dense_vector_product_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseVectorProductTest<tags::CPU::SSE, float> sse_scalar_dense_vector_product_test_float("sse float");
+ScalarDenseVectorProductTest<tags::CPU::SSE, double> sse_scalar_dense_vector_product_test_double("sse double");
+#endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class ScalarDenseVectorProductQuickTest :
     public QuickTest
 {
@@ -277,13 +281,17 @@ class ScalarDenseVectorProductQuickTest :
             unsigned long size(5);
             DenseVector<DataType_> dv1(size, DataType_(3));
 
-            DenseVector<DataType_> prod1(Scale<>::value(DataType_(2), dv1));
+            DenseVector<DataType_> prod1(Scale<Tag_>::value(DataType_(2), dv1));
             DataType_ v1(Norm<vnt_l_one>::value(prod1));
             TEST_CHECK_EQUAL(v1, 6 * size);
         }
 };
-ScalarDenseVectorProductQuickTest<float>  scalar_dense_vector_product_quick_test_float("float");
-ScalarDenseVectorProductQuickTest<double> scalar_dense_vector_product_quick_test_double("double");
+ScalarDenseVectorProductQuickTest<tags::CPU, float>  scalar_dense_vector_product_quick_test_float("float");
+ScalarDenseVectorProductQuickTest<tags::CPU, double> scalar_dense_vector_product_quick_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseVectorProductQuickTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_product_quick_test_float("sse float");
+ScalarDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_product_quick_test_double("sse double");
+#endif
 
 template <typename DataType_>
 class ScalarSparseVectorProductTest :

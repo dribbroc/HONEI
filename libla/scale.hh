@@ -127,5 +127,13 @@ namespace honei
 
         /// \}
     };
+
+   //SSE implementiation 
+    template <>
+    struct Scale<tags::CPU::SSE>
+    {
+        static DenseVector<float> & value(const float a, DenseVector<float> & x);
+        static DenseVector<double> & value(const double a, DenseVector<double> & x);
+    };
 }
 #endif

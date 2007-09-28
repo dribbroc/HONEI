@@ -21,6 +21,7 @@
 #include <libla/scaled_sum.hh>
 
 #include <xmmintrin.h>
+#include <emmintrin.h>
 
 using namespace honei;
 
@@ -39,6 +40,7 @@ DenseVector<float> & ScaledSum<tags::CPU::SSE>::value(DenseVector<float> & x, co
     float __attribute__((aligned(16))) y3_data[4];
     float __attribute__((aligned(16))) b_data;
     b_data = b;
+    m7 = _mm_load1_ps(&b_data);
 
     unsigned long quad_end(x.size() - (y.size() % 12));
 
@@ -60,7 +62,6 @@ DenseVector<float> & ScaledSum<tags::CPU::SSE>::value(DenseVector<float> & x, co
         m4 = _mm_load_ps(y2_data);
         m5 = _mm_load_ps(x3_data);
         m6 = _mm_load_ps(y3_data);
-        m7 = _mm_load1_ps(&b_data);
 
         m2 = _mm_mul_ps(m2, m7);
         m4 = _mm_mul_ps(m4, m7);
@@ -70,9 +71,9 @@ DenseVector<float> & ScaledSum<tags::CPU::SSE>::value(DenseVector<float> & x, co
         m3 = _mm_add_ps(m3, m4);
         m5 = _mm_add_ps(m5, m6);
 
-        _mm_store_ps(x1_data, m1);
-        _mm_store_ps(x2_data, m3);
-        _mm_store_ps(x3_data, m5);
+        _mm_stream_ps(x1_data, m1);
+        _mm_stream_ps(x2_data, m3);
+        _mm_stream_ps(x3_data, m5);
         for (int i = 0 ; i < 4 ; ++i)
 
         {
@@ -94,15 +95,16 @@ DenseVector<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector<double> & x, 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
 
-    __m128 m1, m2, m3, m4, m5, m6, m7;
-    float __attribute__((aligned(16))) x1_data[4];
-    float __attribute__((aligned(16))) y1_data[4];
-    float __attribute__((aligned(16))) x2_data[4];
-    float __attribute__((aligned(16))) y2_data[4];
-    float __attribute__((aligned(16))) x3_data[4];
-    float __attribute__((aligned(16))) y3_data[4];
-    float __attribute__((aligned(16))) b_data;
+    __m128d m1, m2, m3, m4, m5, m6, m7;
+    double __attribute__((aligned(16))) x1_data[4];
+    double __attribute__((aligned(16))) y1_data[4];
+    double __attribute__((aligned(16))) x2_data[4];
+    double __attribute__((aligned(16))) y2_data[4];
+    double __attribute__((aligned(16))) x3_data[4];
+    double __attribute__((aligned(16))) y3_data[4];
+    double __attribute__((aligned(16))) b_data;
     b_data = b;
+    m7 = _mm_load1_pd(&b_data);
 
     unsigned long quad_end(x.size() - (y.size() % 6));
 
@@ -118,25 +120,24 @@ DenseVector<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector<double> & x, 
             y3_data[i] = y.elements()[index + i + 4];
         }
 
-        m1 = _mm_load_ps(x1_data);
-        m2 = _mm_load_ps(y1_data);
-        m3 = _mm_load_ps(x2_data);
-        m4 = _mm_load_ps(y2_data);
-        m5 = _mm_load_ps(x3_data);
-        m6 = _mm_load_ps(y3_data);
-        m7 = _mm_load1_ps(&b_data);
+        m1 = _mm_load_pd(x1_data);
+        m2 = _mm_load_pd(y1_data);
+        m3 = _mm_load_pd(x2_data);
+        m4 = _mm_load_pd(y2_data);
+        m5 = _mm_load_pd(x3_data);
+        m6 = _mm_load_pd(y3_data);
 
-        m2 = _mm_mul_ps(m2, m7);
-        m4 = _mm_mul_ps(m4, m7);
-        m6 = _mm_mul_ps(m6, m7);
+        m2 = _mm_mul_pd(m2, m7);
+        m4 = _mm_mul_pd(m4, m7);
+        m6 = _mm_mul_pd(m6, m7);
 
-        m1 = _mm_add_ps(m1, m2);
-        m3 = _mm_add_ps(m3, m4);
-        m5 = _mm_add_ps(m5, m6);
+        m1 = _mm_add_pd(m1, m2);
+        m3 = _mm_add_pd(m3, m4);
+        m5 = _mm_add_pd(m5, m6);
 
-        _mm_store_ps(x1_data, m1);
-        _mm_store_ps(x2_data, m3);
-        _mm_store_ps(x3_data, m5);
+        _mm_stream_pd(x1_data, m1);
+        _mm_stream_pd(x2_data, m3);
+        _mm_stream_pd(x3_data, m5);
         for (int i = 0 ; i < 2 ; ++i)
 
         {
