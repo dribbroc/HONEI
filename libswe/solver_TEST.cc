@@ -112,4 +112,9 @@ class RelaxSolverQuickTest :
         }
 };
 //RelaxSolverQuickTest<float> relax_solver_quick_test_float("float");
+//#ifndef HONEI_SSE
 RelaxSolverQuickTest<tags::CPU, double> relax_solver_quick_test_double("double");
+/*#endif
+#ifdef HONEI_SSE
+RelaxSolverQuickTest<tags::CPU::SSE, double> relax_solver_quick_test_double("sse double");
+#endif*/

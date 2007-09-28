@@ -1421,19 +1421,19 @@ namespace honei {
         DenseVector<WorkPrec_> u2_c(_u->copy());
         _flow_x<WorkPrec_>(u1_c);
 
-        Scale<>::value(_eps,vc);
-        Scale<>::value(-_delta_t, u1_c);
-        DenseVector<WorkPrec_> tempsum = Sum<>::value<WorkPrec_,WorkPrec_>(vc, u1_c);
+        Scale<Tag_>::value(_eps,vc);
+        Scale<Tag_>::value(-_delta_t, u1_c);
+        DenseVector<WorkPrec_> tempsum = Sum<Tag_>::value(vc, u1_c);
 
-        Scale<>::value(prefac,tempsum);
+        Scale<Tag_>::value(prefac,tempsum);
         DenseVector<WorkPrec_> wc(_w->copy());
         _flow_y<WorkPrec_>(u2_c);
 
-        Scale<>::value(_eps,wc);
-        Scale<>::value(-_delta_t, u2_c);
-        DenseVector<WorkPrec_> tempsum2 = Sum<>::value(wc, u2_c);
+        Scale<Tag_>::value(_eps,wc);
+        Scale<Tag_>::value(-_delta_t, u2_c);
+        DenseVector<WorkPrec_> tempsum2 = Sum<Tag_>::value(wc, u2_c);
 
-        Scale<>::value(prefac,tempsum2);
+        Scale<Tag_>::value(prefac,tempsum2);
 
         cout << "Temp relax vectors after building:\n";
         cout << stringify(*_u_temp) << endl;
@@ -1491,14 +1491,14 @@ namespace honei {
         DenseVector<WorkPrec_> temp_u2_c(predictedu.copy());
         DenseVector<WorkPrec_> temp_w_c(predictedw.copy());
 
-        DenseVector<WorkPrec_> temp1 = Product<>::value(m1,temp_v_c);
+        DenseVector<WorkPrec_> temp1 = Product<Tag_>::value(m1,temp_v_c);
         cout << "First product solved.\n";
-        DenseVector<WorkPrec_> temp2 = Product<>::value<WorkPrec_,WorkPrec_>(m2,temp_w_c);
+        DenseVector<WorkPrec_> temp2 = Product<Tag_>::value(m2,temp_w_c);
         cout << "Second product solved.\n";
 
-        DenseVector<WorkPrec_> temp3 = Product<>::value<WorkPrec_,WorkPrec_>(m3,temp_u_c);
+        DenseVector<WorkPrec_> temp3 = Product<Tag_>::value(m3,temp_u_c);
         cout << "Third product solved.\n";
-        DenseVector<WorkPrec_> temp4 = Product<>::value<WorkPrec_,WorkPrec_>(m4,temp_u2_c);
+        DenseVector<WorkPrec_> temp4 = Product<Tag_>::value(m4,temp_u2_c);
         cout << "Fourth product solved.\n";
 
         DenseVector<WorkPrec_> source_c(predictedu.copy());
@@ -1507,11 +1507,11 @@ namespace honei {
 
         DenseVector<WorkPrec_> predicted_u_temp_c(predictedu.copy());
 
-        Sum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp1);
-        Sum<>::value<WorkPrec_,WorkPrec_>(predicted_u_temp_c, temp2);
-        Sum<>::value(predicted_u_temp_c, temp3);
-        Sum<>::value(predicted_u_temp_c, temp4);
-        Sum<>::value(predicted_u_temp_c, source_c);
+        Sum<Tag_>::value(predicted_u_temp_c, temp1);
+        Sum<Tag_>::value(predicted_u_temp_c, temp2);
+        Sum<Tag_>::value(predicted_u_temp_c, temp3);
+        Sum<Tag_>::value(predicted_u_temp_c, temp4);
+        Sum<Tag_>::value(predicted_u_temp_c, source_c);
         cout << "First accu solved.\n";
 
         DenseVector<WorkPrec_> temp_u3_c(predictedu.copy());
@@ -1519,18 +1519,18 @@ namespace honei {
         DenseVector<WorkPrec_> temp_w2_c(predictedw.copy());
         DenseVector<WorkPrec_> temp_u4_c(predictedu.copy());
 
-        DenseVector<WorkPrec_> temp11 = Product<>::value(m5c,temp_v2_c);
-        DenseVector<WorkPrec_> temp22 = Product<>::value(m6, temp_u3_c);
-        DenseVector<WorkPrec_> temp33 = Product<>::value(m7c,temp_w2_c);
-        DenseVector<WorkPrec_> temp44 = Product<>::value(m8, temp_u4_c);
+        DenseVector<WorkPrec_> temp11 = Product<Tag_>::value(m5c,temp_v2_c);
+        DenseVector<WorkPrec_> temp22 = Product<Tag_>::value(m6, temp_u3_c);
+        DenseVector<WorkPrec_> temp33 = Product<Tag_>::value(m7c,temp_w2_c);
+        DenseVector<WorkPrec_> temp44 = Product<Tag_>::value(m8, temp_u4_c);
 
         DenseVector<WorkPrec_> v_c(predictedv.copy());
         DenseVector<WorkPrec_> w_c(predictedw.copy());
 
-        Sum<>::value(v_c, temp11);
-        Sum<>::value(v_c, temp22);
-        Sum<>::value(w_c, temp33);
-        Sum<>::value(w_c, temp44);
+        Sum<Tag_>::value(v_c, temp11);
+        Sum<Tag_>::value(v_c, temp22);
+        Sum<Tag_>::value(w_c, temp33);
+        Sum<Tag_>::value(w_c, temp44);
 
 
         predictedu = predicted_u_temp_c.copy();
@@ -1613,9 +1613,9 @@ namespace honei {
 
         ///Compute linear combinations und accumulate:
         DenseVector<WorkPrec_> v_result_c(predictedv.copy());
-        Scale<>::value(_eps,v_result_c);
-        Scale<>::value(_delta_t,f_c);
-        DenseVector<WorkPrec_> innersum1 = Sum<>::value<>(v_result_c,f_c);
+        Scale<Tag_>::value(_eps,v_result_c);
+        Scale<Tag_>::value(_delta_t,f_c);
+        DenseVector<WorkPrec_> innersum1 = Sum<Tag_>::value(v_result_c,f_c);
 
         ///Apply flow to old u:
 
@@ -1624,14 +1624,14 @@ namespace honei {
 
         DenseVector<WorkPrec_> v_temp_result_c(_v_temp->copy());
 
-        Scale<>::value(-2*_delta_t,v_temp_result_c);
-        Scale<>::value(2*_delta_t, flow_c);
-        DenseVector<WorkPrec_> innersum2 = Sum<>::value<>(v_temp_result_c, flow_c);
+        Scale<Tag_>::value(-2*_delta_t,v_temp_result_c);
+        Scale<Tag_>::value(2*_delta_t, flow_c);
+        DenseVector<WorkPrec_> innersum2 = Sum<Tag_>::value(v_temp_result_c, flow_c);
 
-        Sum<>::value<>(innersum1, innersum2);
+        Sum<Tag_>::value(innersum1, innersum2);
 
         ///Scale sum:
-        Scale<>::value(1/(_eps+_delta_t), innersum1);
+        Scale<Tag_>::value(1/(_eps+_delta_t), innersum1);
 
         ///Repeat for w:
         DenseVector<WorkPrec_> flow2_c(predictedu.copy());
@@ -1639,9 +1639,9 @@ namespace honei {
 
         DenseVector<WorkPrec_> w_result_c(predictedw.copy());
 
-        Scale<>::value(_eps, w_result_c);
-        Scale<>::value(_delta_t,flow2_c);
-        DenseVector<WorkPrec_>innersum11 = Sum<>::value<>(w_result_c, flow2_c);
+        Scale<Tag_>::value(_eps, w_result_c);
+        Scale<Tag_>::value(_delta_t,flow2_c);
+        DenseVector<WorkPrec_>innersum11 = Sum<Tag_>::value(w_result_c, flow2_c);
 
         DenseVector<WorkPrec_> flow3_c(_u_temp->copy());
 
@@ -1649,12 +1649,12 @@ namespace honei {
 
         DenseVector<WorkPrec_> w_temp_result_c(_w_temp->copy());
 
-        Scale<>::value(-2*_delta_t,w_temp_result_c);
-        Scale<>::value(2*_delta_t, flow3_c);
-        DenseVector<WorkPrec_>innersum22 = Sum<>::value<>(w_temp_result_c, flow3_c);
+        Scale<Tag_>::value(-2*_delta_t,w_temp_result_c);
+        Scale<Tag_>::value(2*_delta_t, flow3_c);
+        DenseVector<WorkPrec_>innersum22 = Sum<Tag_>::value(w_temp_result_c, flow3_c);
 
-        Sum<>::value<>(innersum11, innersum22);
-        Scale<>::value(1/(_eps + _delta_t), innersum11);
+        Sum<Tag_>::value(innersum11, innersum22);
+        Scale<Tag_>::value(1/(_eps + _delta_t), innersum11);
 
         predictedv = innersum1.copy();
         predictedw = innersum11.copy();
@@ -2098,7 +2098,7 @@ namespace honei {
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3.begin_elements());
         //MIGHTBEBUG:
         DenseVector<WorkPrec_> c_squared((_c->copy()));
-        ElementProduct<WorkPrec_>::value(c_squared, (*_c));
+        ElementProduct<Tag_>::value(c_squared, (*_c));
 
         for( ; d.index() < 6*(_d_width+4); ++d);
         for( ; b1.index() < 6*(_d_width+4); ++b1);
@@ -2175,7 +2175,7 @@ namespace honei {
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3.begin_elements());
         //MIGHTBEBUG:
         DenseVector<WorkPrec_> d_squared(((_d->copy())));
-        ElementProduct<WorkPrec_>::value(d_squared, (*_d));
+        ElementProduct<Tag_>::value(d_squared, (*_d));
 
         for( ; d.index() < 6*(_d_width + 4); ++d);
         for( ; b1.index() < 6*(_d_width + 4); ++b1);
