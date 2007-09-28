@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-09-28 Markus Geveler <apryde@gmx.de>
 
+	* libla/product-sse.cc: Reimplemented SSE version of
+	Banded*Vector(double). Achieved a nice speedup TODO: (float).
+	
+2007-09-28 Markus Geveler <apryde@gmx.de>
+
 	* libswe/solver.hh, libswe/solver_TEST.cc: Prepared RelaxSolver's
 	template structure for multi - architecture, adjusted test
 	accordingly.
