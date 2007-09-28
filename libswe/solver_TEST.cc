@@ -28,7 +28,7 @@ using namespace honei;
 using namespace tests;
 using namespace std;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class RelaxSolverQuickTest :
     public QuickTest
 {
@@ -40,9 +40,9 @@ class RelaxSolverQuickTest :
 
         virtual void run() const
         {
-            ulint dwidth =41;
-            ulint dheight =41;
-            ulint timesteps =1;
+            ulint dwidth =11;
+            ulint dheight =11;
+            ulint timesteps =2;
 
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
@@ -81,7 +81,7 @@ class RelaxSolverQuickTest :
             double eps = 10e-6;
             DataType_ manning = 0;
 
-            RelaxSolver<DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
+            RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (&height, &bottom, &u1, &u2, &u, &v, &w,
                 dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d, manning);
             relax_solver.do_preprocessing();
@@ -112,4 +112,4 @@ class RelaxSolverQuickTest :
         }
 };
 //RelaxSolverQuickTest<float> relax_solver_quick_test_float("float");
-RelaxSolverQuickTest<double> relax_solver_quick_test_double("double");
+RelaxSolverQuickTest<tags::CPU, double> relax_solver_quick_test_double("double");

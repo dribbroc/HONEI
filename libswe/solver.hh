@@ -49,17 +49,15 @@
 
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
-#include <libla/sparse_vector.hh>
 #include <libla/banded_matrix.hh>
 #include <cmath>
 #include <libswe/limiter.hh>
-#include <libla/scaled_sum.hh>
 #include <libla/scale.hh>
 #include <libla/dot_product.hh>
 #include <libla/sum.hh>
 #include <libla/element_product.hh>
 #include <libla/product.hh>
-//#include <libutil/tags.hh>
+#include <libutil/tags.hh>
 #include <iostream>
 #include <fstream>
 
@@ -71,7 +69,8 @@ namespace honei {
     typedef unsigned int uint;
     typedef unsigned short usint;
 
-    template<typename ResPrec_,
+    template<typename Tag_,
+             typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
@@ -467,12 +466,13 @@ namespace honei {
      * The preprocessing stage`s third task is to compute the bottom slopes.
      *
      **/
-    template<typename ResPrec_,
+    template<typename Tag_,
+             typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::do_preprocessing()
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::do_preprocessing()
     {
 
         /// Setting up initial conditions:
@@ -733,13 +733,14 @@ namespace honei {
      *
      **/
 
-    template <typename ResPrec_,
+    template <typename Tag_,
+              typename ResPrec_,
               typename PredictionPrec1_,
               typename PredictionPrec2_,
               typename InitPrec1_,
               typename InitPrec2_>
     template <typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(DenseVector<WorkPrec_> & vector)
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(DenseVector<WorkPrec_> & vector)
     {
         typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
         WorkPrec_ height, velocity1;
@@ -845,13 +846,14 @@ namespace honei {
      *
      **/
 
-    template <typename ResPrec_,
+    template <typename Tag_,
+              typename ResPrec_,
               typename PredictionPrec1_,
               typename PredictionPrec2_,
               typename InitPrec1_,
               typename InitPrec2_>
     template <typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(DenseVector<WorkPrec_> & vector)
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(DenseVector<WorkPrec_> & vector)
     {
         typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
         WorkPrec_ height, velocity1;
@@ -963,13 +965,14 @@ namespace honei {
      *
      **/
 
-    template <typename ResPrec_,
+    template <typename Tag_,
+              typename ResPrec_,
               typename PredictionPrec1_,
               typename PredictionPrec2_,
               typename InitPrec1_,
               typename InitPrec2_>
     template <typename WorkPrec_>
-    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
+    DenseVector<WorkPrec_> RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
     {
         DenseVector<WorkPrec_> result(ulint(3), WorkPrec_(0));
 
@@ -1000,13 +1003,14 @@ namespace honei {
      *
      **/
 
-    template <typename ResPrec_,
+    template <typename Tag_,
+              typename ResPrec_,
               typename PredictionPrec1_,
               typename PredictionPrec2_,
               typename InitPrec1_,
               typename InitPrec2_>
     template <typename WorkPrec_>
-    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
+    DenseVector<WorkPrec_> RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_flow_y(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
     {
         DenseVector<WorkPrec_> result(ulint(3), WorkPrec_(0));
 
@@ -1108,13 +1112,14 @@ namespace honei {
      * \param slope_y Bottom slope in y-direction.
      **/
 
-    template <typename ResPrec_,
+    template <typename Tag_,
+              typename ResPrec_,
               typename PredictionPrec1_,
               typename PredictionPrec2_,
               typename InitPrec1_,
               typename InitPrec2_>
     template <typename WorkPrec_>
-    DenseVector<WorkPrec_> RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2, ResPrec_ slope_x, ResPrec_ slope_y)
+    DenseVector<WorkPrec_> RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2, ResPrec_ slope_x, ResPrec_ slope_y)
     {
         DenseVector<WorkPrec_> result(ulint(3), WorkPrec_(0));
 
@@ -1150,13 +1155,14 @@ namespace honei {
      *
      **/
 
-    template <typename ResPrec_,
+    template <typename Tag_,
+              typename ResPrec_,
               typename PredictionPrec1_,
               typename PredictionPrec2_,
               typename InitPrec1_,
               typename InitPrec2_>
     template <typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_source(DenseVector<WorkPrec_>& vector)
     {
         typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
         typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(_bottom_slopes_x->begin_elements());
@@ -1200,9 +1206,9 @@ namespace honei {
      * \param  m3 The second matrix to assemble.
      *
      **/
-    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    template<typename Tag_, typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     template<typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
         ::_assemble_matrix1(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
@@ -1392,13 +1398,14 @@ namespace honei {
       *
       *
       **/
-    template<typename ResPrec_,
+    template<typename Tag_,
+             typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_>
     template<typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
     {
         WorkPrec_ prefac;
         if(_eps != _delta_t)
@@ -1447,13 +1454,14 @@ namespace honei {
       * \param predictedv Temp v.
       * \param predictedw Temp w.
       **/
-    template<typename ResPrec_,
+    template<typename Tag_,
+             typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_>
     template<typename WorkPrec_>
-        void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
+        void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_prediction(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
         BandedMatrix<WorkPrec_> m1(_u->size());
         BandedMatrix<WorkPrec_> m2(_u->size());
@@ -1588,13 +1596,14 @@ namespace honei {
      * \param predictedv Temp v.
      * \param predictedw Temp w.
      **/
-    template<typename ResPrec_,
-        typename PredictionPrec1_,
-        typename PredictionPrec2_,
-        typename InitPrec1_,
-        typename InitPrec2_>
+    template<typename Tag_,
+             typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_>
         template<typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
         int i;
 
@@ -1659,12 +1668,13 @@ namespace honei {
      *\param predictedw Temp w.
      *
      **/
-    template<typename ResPrec_,
-        typename PredictionPrec1_,
-        typename PredictionPrec2_,
-        typename InitPrec1_,
-        typename InitPrec2_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_correction(DenseVector<ResPrec_>& predictedu,
+    template<typename Tag_,
+             typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_>
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_correction(DenseVector<ResPrec_>& predictedu,
                     DenseVector<ResPrec_>& predictedv,
                     DenseVector<ResPrec_>& predictedw)
     {
@@ -1817,16 +1827,17 @@ namespace honei {
      *
      *
      **/
-    template<typename ResPrec_,
-        typename PredictionPrec1_,
-        typename PredictionPrec2_,
-        typename InitPrec1_,
-        typename InitPrec2_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: solve()
+    template<typename Tag_,
+             typename ResPrec_,
+             typename PredictionPrec1_,
+             typename PredictionPrec2_,
+             typename InitPrec1_,
+             typename InitPrec2_>
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: solve()
     {
-        DenseVector<ResPrec_> u_temp(_u->copy());//(ResPrec_(0),_u->size());
-        DenseVector<ResPrec_> v_temp(_v->copy());//(ResPrec_(0),_u->size());
-        DenseVector<ResPrec_> w_temp(_w->copy());//(ResPrec_(0),_u->size());
+        DenseVector<ResPrec_> u_temp(_u->copy());//(_u->size());
+        DenseVector<ResPrec_> v_temp(_v->copy());//(_u->size());
+        DenseVector<ResPrec_> w_temp(_w->copy());//(_u->size());
 
         _u_temp = &u_temp;
         _v_temp = &v_temp;
@@ -1870,9 +1881,9 @@ namespace honei {
      * \param  m4 The second matrix to assemble.
      *
      **/
-    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    template<typename Tag_, typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
         template<typename WorkPrec_>
-        void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
+        void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
         ::_assemble_matrix2(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* w)
         {
 
@@ -2066,13 +2077,14 @@ namespace honei {
     }
 
 
-    template<typename ResPrec_,
+    template<typename Tag_,
+             typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_>
     template<typename WorkPrec_>
-    /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result)
+    /*BandedMatrix<WorkPrec_>*/void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix2(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& result)
     {
         ///Bands of the matrix which will be assembled.
         DenseVector<WorkPrec_> m6diag = (m1.band(ulint(0))).copy();
@@ -2136,13 +2148,14 @@ namespace honei {
 
     }
 
-    template<typename ResPrec_,
+    template<typename Tag_,
+             typename ResPrec_,
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_>
     template<typename WorkPrec_>
-    /*BandedMatrix<WorkPrec_>*/void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& result)
+    /*BandedMatrix<WorkPrec_>*/void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_quick_assemble_matrix4(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& result)
     {
         ///Bands of the matrix which will be assembled.
         /*DenseVector<WorkPrec_> m8diag(_u->size(), ulint(0) ,ulint( 1));      //zero
@@ -2220,9 +2233,9 @@ namespace honei {
      * \param  m3 The second matrix to assemble.
      *
      **/
-    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    template<typename Tag_, typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     template<typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
         ::_assemble_matrix1_DEBUG(BandedMatrix<WorkPrec_>& m1, BandedMatrix<WorkPrec_>& m3, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
@@ -2576,9 +2589,9 @@ namespace honei {
      * \param  m4 The second matrix to assemble.
      *
      **/
-    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    template<typename Tag_, typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
     template<typename WorkPrec_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>
         ::_assemble_matrix2_DEBUG(BandedMatrix<WorkPrec_>& m2, BandedMatrix<WorkPrec_>& m4, DenseVector<WorkPrec_>* u, DenseVector<WorkPrec_>* v)
     {
         ///The bands containing data.
@@ -2943,8 +2956,8 @@ namespace honei {
      *
      *
      **/
-    template<typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
-    void RelaxSolver<ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_do_postprocessing(int every)
+    template<typename Tag_, typename ResPrec_ , typename PredictionPrec1_, typename PredictionPrec2_, typename InitPrec1_, typename InitPrec2_>
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>::_do_postprocessing(int every)
     {
         if(_solve_time % every == 0 || _solve_time == 0)
         {
