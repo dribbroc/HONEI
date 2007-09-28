@@ -140,6 +140,7 @@ namespace honei
     struct ScaledSum<tags::CPU::SSE>
     {
         static DenseVector<float> & value(DenseVector<float> & x, const DenseVector<float> & y, float b);
+        static DenseVector<double> & value(DenseVector<double> & x, const DenseVector<double> & y, double b);
     };
 }
 #endif

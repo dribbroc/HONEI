@@ -646,7 +646,7 @@ class DenseVectorSumTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
                     dv3(size, DataType_(3));
-                Sum<>::value(dv1, dv2);
+                Sum<Tag_>::value(dv1, dv2);
                 TEST_CHECK_EQUAL(dv1, dv3);
                 DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
                 TEST_CHECK_THROWS(Sum<>::value(dv01, dv02), VectorSizeDoesNotMatch);
@@ -655,6 +655,10 @@ class DenseVectorSumTest :
 };
 DenseVectorSumTest<tags::CPU, float> dense_vector_sum_test_float("float");
 DenseVectorSumTest<tags::CPU, double> dense_vector_sum_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorSumTest<tags::CPU::SSE, float> sse_dense_vector_sum_test_float("SSE float");
+DenseVectorSumTest<tags::CPU::SSE, double> sse_dense_vector_sum_test_double("SSE double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorSumQuickTest :
@@ -681,6 +685,7 @@ DenseVectorSumQuickTest<tags::CPU, float> dense_vector_sum_quick_test_float("flo
 DenseVectorSumQuickTest<tags::CPU, double> dense_vector_sum_quick_test_double("double");
 #ifdef HONEI_SSE
 DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
+DenseVectorSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_sum_quick_test_double("SSE double");
 #endif
 
 template <typename DataType_>

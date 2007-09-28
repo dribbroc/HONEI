@@ -87,3 +87,67 @@ DenseVector<float> & ScaledSum<tags::CPU::SSE>::value(DenseVector<float> & x, co
     }
     return x; 
 }
+
+DenseVector<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector<double> & x, const DenseVector<double> & y, double b)
+{
+    CONTEXT("When calculating ScaledSum form DenseVector<float> with SSE:");
+    if (x.size() != y.size())
+        throw VectorSizeDoesNotMatch(x.size(), y.size());
+
+    __m128 m1, m2, m3, m4, m5, m6, m7;
+    float __attribute__((aligned(16))) x1_data[4];
+    float __attribute__((aligned(16))) y1_data[4];
+    float __attribute__((aligned(16))) x2_data[4];
+    float __attribute__((aligned(16))) y2_data[4];
+    float __attribute__((aligned(16))) x3_data[4];
+    float __attribute__((aligned(16))) y3_data[4];
+    float __attribute__((aligned(16))) b_data;
+    b_data = b;
+
+    unsigned long quad_end(x.size() - (y.size() % 6));
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 6)
+    {
+        for (int i = 0 ; i < 2 ; ++i)
+        {
+            x1_data[i] = x.elements()[index + i];
+            x2_data[i] = x.elements()[index + i + 2];
+            x3_data[i] = x.elements()[index + i + 4];
+            y1_data[i] = y.elements()[index + i];
+            y2_data[i] = y.elements()[index + i + 2];
+            y3_data[i] = y.elements()[index + i + 4];
+        }
+
+        m1 = _mm_load_ps(x1_data);
+        m2 = _mm_load_ps(y1_data);
+        m3 = _mm_load_ps(x2_data);
+        m4 = _mm_load_ps(y2_data);
+        m5 = _mm_load_ps(x3_data);
+        m6 = _mm_load_ps(y3_data);
+        m7 = _mm_load1_ps(&b_data);
+
+        m2 = _mm_mul_ps(m2, m7);
+        m4 = _mm_mul_ps(m4, m7);
+        m6 = _mm_mul_ps(m6, m7);
+
+        m1 = _mm_add_ps(m1, m2);
+        m3 = _mm_add_ps(m3, m4);
+        m5 = _mm_add_ps(m5, m6);
+
+        _mm_store_ps(x1_data, m1);
+        _mm_store_ps(x2_data, m3);
+        _mm_store_ps(x3_data, m5);
+        for (int i = 0 ; i < 2 ; ++i)
+
+        {
+            x.elements()[index + i] = x1_data[i];
+            x.elements()[index + i + 2] = x2_data[i];
+            x.elements()[index + i + 4] = x3_data[i];
+        }
+    }
+    for (unsigned long index = quad_end ; index < x.size() ; index++)
+    {
+        x.elements()[index] += y.elements()[index] * b;
+    }
+    return x; 
+}

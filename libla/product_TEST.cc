@@ -30,7 +30,7 @@
 using namespace honei;
 using namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixDenseVectorProductTest :
     public BaseTest
 {
@@ -54,7 +54,7 @@ class BandedMatrixDenseVectorProductTest :
                 DenseVector<DataType_> dv2(size, DataType_(3)), dv3(size, DataType_(6 * 3));
                 (dv3)[0]= DataType_(12);
                 (dv3)[size-1]= DataType_(12);
-                DenseVector<DataType_> prod (Product<DataType_>::value(bm1, dv2));
+                DenseVector<DataType_> prod (Product<Tag_>::value(bm1, dv2));
 
                 TEST_CHECK_EQUAL(prod, dv3);
             }
@@ -64,8 +64,12 @@ class BandedMatrixDenseVectorProductTest :
             TEST_CHECK_THROWS(Product<DataType_>::value(bm01, dv01), MatrixRowsDoNotMatch);
         }
 };
-BandedMatrixDenseVectorProductTest<float> banded_matrix_dense_vector_product_test_float("float");
-BandedMatrixDenseVectorProductTest<double> banded_matrix_dense_vector_product_test_double("double");
+BandedMatrixDenseVectorProductTest<tags::CPU::SSE, float> banded_matrix_dense_vector_product_test_float("float");
+BandedMatrixDenseVectorProductTest<tags::CPU::SSE, double> banded_matrix_dense_vector_product_test_double("double");
+#ifdef HONEI_SSE
+BandedMatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_banded_matrix_dense_vector_product_test_float("SSE float");
+BandedMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_banded_matrix_dense_vector_product_test_double("SSE double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class BandedMatrixDenseVectorProductQuickTest :
@@ -103,6 +107,7 @@ BandedMatrixDenseVectorProductQuickTest<tags::CPU, float> banded_matrix_dense_ve
 BandedMatrixDenseVectorProductQuickTest<tags::CPU, double> banded_matrix_dense_vector_product_quick_test_double("double");
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_banded_matrix_dense_vector_product_quick_test_float("SSE float");
+BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_banded_matrix_dense_vector_product_quick_test_double("SSE double");
 #endif
 
 template <typename DataType_>

@@ -955,6 +955,7 @@ namespace honei
     struct Product<tags::CPU::SSE>
     {
         static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVector<float> & b);
+        static DenseVector<double> value(const BandedMatrix<double> & a, const DenseVector<double> & b);
     };
 }
 #endif

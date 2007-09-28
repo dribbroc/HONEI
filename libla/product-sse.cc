@@ -145,3 +145,124 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
     }
     return result;
 }
+
+DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & a, const DenseVector<double> & b)
+{
+    CONTEXT("When multiplying BandedMatrix with DenseVector with SSE:");
+
+
+    if (a.size() != b.size())
+        throw MatrixSizeDoesNotMatch(b.size(), a.size());
+
+    DenseVector<double> result(a.rows(), double(0));
+
+    __m128 m1, m2, m3, m4, m5, m6;
+
+    float __attribute__((aligned(16))) band1_data[2];
+    float __attribute__((aligned(16))) band2_data[2];
+    float __attribute__((aligned(16))) vector1_data[2];
+    float __attribute__((aligned(16))) vector2_data[2];
+    float __attribute__((aligned(16))) result1_data[2];
+    float __attribute__((aligned(16))) result2_data[2];
+
+
+    unsigned long middle_index(a.rows() - 1);
+
+    // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+    for (BandedMatrix<double>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
+            vi != vi_end ; ++vi)
+    {
+        if (! vi.exists())
+            continue;
+        unsigned long end(vi->size() - (vi.index() - middle_index)); //Calculation of the element-index to stop in iteration!
+        unsigned long quad_end(end - (end % 4));
+
+        for (unsigned long index = 0 ; index < quad_end ; index+=4)
+        {
+            for (int i = 0 ; i < 2 ; ++i)
+            {
+                band1_data[i] = vi->elements()[index + i];
+                band2_data[i] = vi->elements()[index + i + 2];
+                vector1_data[i] = b.elements()[index + i];
+                vector2_data[i] = b.elements()[index + i + 2];
+                result1_data[i] = result.elements()[index + i];
+                result2_data[i] = result.elements()[index + i + 2];
+            }
+            m1 = _mm_load_ps(band1_data);
+            m2 = _mm_load_ps(vector1_data);
+            m3 = _mm_load_ps(result1_data);
+            m4 = _mm_load_ps(band2_data);
+            m5 = _mm_load_ps(vector2_data);
+            m6 = _mm_load_ps(result2_data);
+
+            m1 = _mm_mul_ps(m1, m2);
+            m1 = _mm_add_ps(m1, m3);
+            m4 = _mm_mul_ps(m4, m5);
+            m4 = _mm_add_ps(m4, m6);
+
+            _mm_store_ps(result1_data, m1);
+            _mm_store_ps(result2_data, m4);
+
+            for (int i = 0 ; i < 2 ; ++i)
+            {
+                result.elements()[index + i] = result1_data[i];
+                result.elements()[index + i + 2] = result2_data[i];
+            }
+        }
+
+        for (unsigned long index = quad_end ; index < end ; index++) 
+        {
+            result.elements()[index] += vi->elements()[index] * b.elements()[index];
+        }
+    }
+
+    // If we are below the diagonal band, we start at Element index and go on until the last element.
+    for (BandedMatrix<double>::ConstVectorIterator vi(a.begin_bands()), vi_end(a.band_at(middle_index)) ;
+            vi != vi_end ; ++vi)
+    {
+        if (! vi.exists())
+            continue;
+        unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
+        unsigned long end(a.size());
+        unsigned long quad_end(end - ((end - start) % 4));
+
+        for (unsigned long index = 0 ; index < quad_end - start ; index+=4)
+        {
+            for (int i = 0 ; i < 2 ; ++i)
+            {
+                band1_data[i] = vi->elements()[start + index + i];
+                band2_data[i] = vi->elements()[start + index + i + 2];
+                vector1_data[i] = b.elements()[start + index + i];
+                vector2_data[i] = b.elements()[start + index + i + 2];
+                result1_data[i] = result.elements()[start + index + i];
+                result2_data[i] = result.elements()[start + index + i + 2];
+            }
+            m1 = _mm_load_ps(band1_data);
+            m2 = _mm_load_ps(vector1_data);
+            m3 = _mm_load_ps(result1_data);
+            m4 = _mm_load_ps(band2_data);
+            m5 = _mm_load_ps(vector2_data);
+            m6 = _mm_load_ps(result2_data);
+
+            m1 = _mm_mul_ps(m1, m2);
+            m1 = _mm_add_ps(m1, m3);
+            m4 = _mm_mul_ps(m4, m5);
+            m4 = _mm_add_ps(m4, m6);
+
+            _mm_store_ps(result1_data, m1);
+            _mm_store_ps(result2_data, m4);
+
+            for (int i = 0 ; i < 2 ; ++i)
+            {
+                result.elements()[start + index + i] = result1_data[i];
+                result.elements()[start + index + i + 2] = result2_data[i];
+            }
+        }
+
+        for (unsigned long index = quad_end ; index < end ; index++)
+        {
+            result.elements()[index] += vi->elements()[index] * b.elements()[index];
+        }
+    }
+    return result;
+}
