@@ -64,8 +64,8 @@ class BandedMatrixDenseVectorProductTest :
             TEST_CHECK_THROWS(Product<DataType_>::value(bm01, dv01), MatrixRowsDoNotMatch);
         }
 };
-BandedMatrixDenseVectorProductTest<tags::CPU::SSE, float> banded_matrix_dense_vector_product_test_float("float");
-BandedMatrixDenseVectorProductTest<tags::CPU::SSE, double> banded_matrix_dense_vector_product_test_double("double");
+BandedMatrixDenseVectorProductTest<tags::CPU, float> banded_matrix_dense_vector_product_test_float("float");
+BandedMatrixDenseVectorProductTest<tags::CPU, double> banded_matrix_dense_vector_product_test_double("double");
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_banded_matrix_dense_vector_product_test_float("SSE float");
 BandedMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_banded_matrix_dense_vector_product_test_double("SSE double");
