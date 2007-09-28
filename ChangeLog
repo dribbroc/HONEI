@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-28 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/type_traits.hh: Added TypeTraits class template.
+	* libutil/Makefile.am.m4, libutil/shared_array-impl.hh,
+	libutil/shared_array.cc, libutil/shared_array.hh: Introduced private
+	implementation pattern. Converted to use type traits. SharedArray will
+	now be aligned. Allocated memory will have a size that is an integral
+	multiple of 16 bytes.
+	* libla/banded_matrix.hh, libla/dense_matrix.hh,
+	libla/dense_vector-impl.hh, libla/sparse_vector.hh: Fixed include
+	statements. Include SharedArray's implementation header where needed.
+
 2007-09-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libswe/solver.hh, solver_TEST.cc: Added arch-tag to all operations.
@@ -20,13 +32,13 @@ see the NEWS file.
 
 	* libla/product-sse.cc: Reimplemented SSE version of
 	Banded*Vector(double). Achieved a nice speedup TODO: (float).
-	
+
 2007-09-28 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Prepared RelaxSolver's
 	template structure for multi - architecture, adjusted test
 	accordingly.
-	
+
 2007-09-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/product-sse.cc, scaled_sum-sse.cc, sum-sse.cc:

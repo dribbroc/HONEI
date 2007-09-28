@@ -26,7 +26,8 @@
 #include <libla/matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libla/matrix_error.hh>
-#include <libutil/shared_array.hh>
+#include <libutil/shared_array-impl.hh>
+#include <libutil/stringify.hh>
 
 #include <algorithm>
 #include <cstring>

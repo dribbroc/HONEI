@@ -20,13 +20,10 @@
 #ifndef LIBUTIL_GUARD_SHARED_ARRAY_HH
 #define LIBUTIL_GUARD_SHARED_ARRAY_HH 1
 
-#include <libutil/assertion.hh>
 #include <libutil/exception.hh>
-#include <libutil/log.hh>
-#include <libutil/stringify.hh>
 
-#include <map>
-#include <iostream>
+#include <string>
+#include <tr1/memory>
 
 namespace honei
 {
@@ -44,154 +41,28 @@ namespace honei
     };
 
     /**
-     * SharedArrayCounter is the counter class template for SharedArray.
-     *
-     * \warning For internal use by SharedArray only!
-     */
-    template <typename DataType_> class SharedArrayCounter
-    {
-        private:
-            /// \name Constructors
-            /// \{
-
-            /// Constructor.
-            SharedArrayCounter()
-            {
-            }
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            SharedArrayCounter(const SharedArrayCounter<DataType_> &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            SharedArrayCounter<DataType_> & operator= (const SharedArrayCounter<DataType_> &);
-
-            /// \}
-
-            /// Our map of reference counters.
-            std::map<DataType_ *, signed long> _counter_map;
-
-        public:
-            /// Return the only instance of SharedArrayCounter.
-            static SharedArrayCounter<DataType_> * instance()
-            {
-                static SharedArrayCounter<DataType_> result;
-
-                return &result;
-            }
-
-            /// Increase counter for given pointer.
-            void increase(DataType_ * entry)
-            {
-                CONTEXT("When increasing counter for entry '" + stringify(entry) + "':");
-
-                if (_counter_map.find(entry) == _counter_map.end())
-                    _counter_map[entry] = 0;
-
-                ++_counter_map[entry];
-            }
-
-            /// Decrease counter for given pointer.
-            void decrease(DataType_ * entry)
-            {
-                CONTEXT("When decreasing counter for entry '" + stringify(entry) + "':");
-
-                if (_counter_map.find(entry) == _counter_map.end())
-                    _counter_map[entry] = 0;
-
-                --_counter_map[entry];
-            }
-
-            signed long count(DataType_ * entry)
-            {
-                CONTEXT("When retrieving counter value for entry '" + stringify(entry) + "':");
-
-                if (_counter_map.find(entry) == _counter_map.end())
-                    return 0;
-                else
-                    return _counter_map[entry];
-            }
-    };
-
-    /**
      * SharedArray is a class template that allows sharing one array among several owners.
      */
     template <typename DataType_> class SharedArray
     {
         private:
-            /// Our data.
-            mutable DataType_ *_array;
+            struct Implementation;
 
-            /// Our size.
-            mutable unsigned long _size;
+            /// Our implementation.
+            std::tr1::shared_ptr<Implementation> _imp;
 
         public:
             /// \name Constructors and destructor.
             /// \{
 
             /// (Explicit) constructor.
-            explicit SharedArray(unsigned long size) :
-                _array(new DataType_[size]),
-                _size(size)
-            {
-                CONTEXT("When creating SharedArray of size '" + stringify(size) + "' with default elements:");
-                ASSERT(SharedArrayCounter<DataType_>::instance()->count(_array) == 0, "reference counter for array '" +
-                    stringify(_array) + "' is not zero!");
-
-                SharedArrayCounter<DataType_>::instance()->increase(_array);
-            }
-
-            /// Constructor.
-            SharedArray(unsigned long size, DataType_ * array) :
-                _array(array),
-                _size(size)
-            {
-                CONTEXT("When creating SharedArray of size '" + stringify(size) + "' with given POA:");
-                ASSERT(SharedArrayCounter<DataType_>::instance()->count(_array) >= 0, "reference counter for array '" +
-                    stringify(_array) + "' is below zero!");
-
-                SharedArrayCounter<DataType_>::instance()->increase(_array);
-            }
+            explicit SharedArray(unsigned long size);
 
             /// Copy-constructor.
-            SharedArray(const SharedArray<DataType_> & other) :
-                _array(other._array),
-                _size(other._size)
-            {
-                CONTEXT("When creating SharedArray of size '" + stringify(_size) + "' from given SharedArray:");
-                ASSERT(SharedArrayCounter<DataType_>::instance()->count(_array) >= 0, "reference counter for array '" +
-                    stringify(other._array) + "' is below zero!");
-
-                SharedArrayCounter<DataType_>::instance()->increase(_array);
-            }
-
-            /// Assignment-operator.
-            SharedArray<DataType_> & operator= (const SharedArray<DataType_> & other)
-            {
-                CONTEXT("When assigning SharedArray to SharedArray:");
-                ASSERT(SharedArrayCounter<DataType_>::instance()->count(_array) >= 0, "reference counter for other's "
-                        "array is below zero!");
-
-                // Increase first to avoid race conditions like 'A.reset(A.get())'
-                SharedArrayCounter<DataType_>::instance()->increase(other._array);
-                SharedArrayCounter<DataType_>::instance()->decrease(_array);
-
-                _array = other._array;
-                _size = other._size;
-            }
+            SharedArray(const SharedArray<DataType_> & other);
 
             /// Destructor.
-            ~SharedArray()
-            {
-                CONTEXT("When destroying SharedArray of size '" + stringify(_size) + "':");
-
-                SharedArrayCounter<DataType_>::instance()->decrease(_array);
-
-                signed long count(SharedArrayCounter<DataType_>::instance()->count(_array));
-                ASSERT(count >= 0, "reference counter for array '" + stringify(_array) + "' is below zero!");
-
-                if (count == 0)
-                    delete[] _array;
-            }
+            ~SharedArray();
 
             /// \}
 
@@ -199,58 +70,34 @@ namespace honei
             /// \{
 
             /// Subscript operator, return element at given index.
-            DataType_ & operator[] (std::ptrdiff_t index) const
-            {
-                CONTEXT("When accessing SharedArray-element at index '" + stringify(index) + "':");
-                ASSERT(index >= 0, "index '" + stringify(index) + "' is out of bounds!");
-                ASSERT(index < _size, "index '" + stringify(index) + "' is out of bounds!");
-
-                return _array[index];
-            }
+            DataType_ & operator[] (std::ptrdiff_t index) const;
 
             /// Return whether we hold any data.
-            inline bool operator! () const
-            {
-                return _array == 0;
-            }
+            bool operator! () const;
 
             /// \}
 
             /// Return our size.
-            inline unsigned long size() const
-            {
-                return _size;
-            }
+            unsigned long size() const;
 
             /// Return our POA.
-            inline DataType_ * get() const
-            {
-                return _array;
-            }
+            DataType_ * get() const;
 
             /// Reset us with a new size and a new POA.
-            void reset(unsigned long size, DataType_ * array) const
-            {
-                CONTEXT("When resetting SharedArray of size '" + stringify(_size) + "' with POA '" +
-                        stringify(array) + "':");
-                ASSERT(_array != array, "new array is identical with old array!");
-                ASSERT(SharedArrayCounter<DataType_>::instance()->count(array) == 0,
-                        "reference counter for new array '" + stringify(array) + "' is not zero!");
-
-                // Increase first to avoid race conditions like 'A.reset(A.get())'
-                SharedArrayCounter<DataType_>::instance()->increase(array);
-                SharedArrayCounter<DataType_>::instance()->decrease(_array);
-
-                signed long count(SharedArrayCounter<DataType_>::instance()->count(_array));
-                ASSERT(count >= 0, "reference counter for new array '" + stringify(_array) + "' is below zero!");
-
-                if (count == 0)
-                    delete[] _array;
-
-                _array = array;
-                _size = size;
-            }
+            void reset(unsigned long size, DataType_ * array) const;
     };
+
+    extern template class SharedArray<float>;
+
+    extern template class SharedArray<double>;
+
+    extern template class SharedArray<int>;
+
+    extern template class SharedArray<unsigned int>;
+
+    extern template class SharedArray<long>;
+
+    extern template class SharedArray<unsigned long>;
 }
 
 #endif

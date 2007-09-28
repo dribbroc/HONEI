@@ -28,6 +28,7 @@
 #include <libla/vector.hh>
 #include <libutil/assertion.hh>
 #include <libutil/shared_array.hh>
+#include <libutil/stringify.hh>
 
 #include <algorithm>
 #include <cstring>

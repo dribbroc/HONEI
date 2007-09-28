@@ -27,10 +27,11 @@
 #include <libla/dense_vector.hh>
 #include <libla/vector_iterator.hh>
 #include <libla/vector_error.hh>
-#include <libutil/shared_array.hh>
+#include <libutil/assertion.hh>
 #include <libutil/log.hh>
+#include <libutil/shared_array-impl.hh>
+#include <libutil/stringify.hh>
 
-#include <string.h>
 #include <iterator>
 #include <tr1/memory>
 

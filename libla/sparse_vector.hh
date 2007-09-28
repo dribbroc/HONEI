@@ -24,14 +24,15 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/vector.hh>
+#include <libutil/assertion.hh>
 #include <libutil/exception.hh>
 #include <libutil/log.hh>
-#include <libutil/shared_array.hh>
+#include <libutil/shared_array-impl.hh>
+#include <libutil/stringify.hh>
 
 #include <iterator>
 #include <ostream>
 #include <string>
-#include <string.h>
 
 /**
  * \file

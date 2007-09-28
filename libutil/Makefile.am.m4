@@ -21,9 +21,11 @@ $2_TEST_LDADD = \
 $2_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
 define(`addhh', `define(`$1_filelist', $1_filelist `$2.hh')define(`$1_headerlist', $1_headerlist `$2.hh')')dnl
+define(`addimpl', `define(`$1_filelist', $1_filelist `$2-impl.hh')')dnl
 define(`addcc', `define(`$1_filelist', $1_filelist `$2.cc')')dnl
 define(`addthis', `dnl
 ifelse(`$3', `hh', `addhh(`$1',`$2')', `')dnl
+ifelse(`$3', `impl', `addimpl(`$1', `$2')', `')dnl
 ifelse(`$3', `cc', `addcc(`$1',`$2')', `')dnl
 ifelse(`$3', `test', `addtest(`$1',`$2')', `')')dnl
 define(`add', `addthis(`$1',`$2',`$3')addthis(`$1',`$2',`$4')addthis(`$1',`$2',`$5')')dnl

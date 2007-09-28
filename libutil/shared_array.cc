@@ -17,11 +17,24 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <libutil/shared_array.hh>
+#include <libutil/shared_array-impl.hh>
 
-using namespace honei;
-
-SharedArrayError::SharedArrayError(const std::string & message) throw () :
-    Exception(message)
+namespace honei
 {
+    SharedArrayError::SharedArrayError(const std::string & message) throw () :
+        Exception(message)
+    {
+    }
+
+    template class SharedArray<float>;
+
+    template class SharedArray<double>;
+
+    template class SharedArray<int>;
+
+    template class SharedArray<unsigned int>;
+
+    template class SharedArray<long>;
+
+    template class SharedArray<unsigned long>;
 }
