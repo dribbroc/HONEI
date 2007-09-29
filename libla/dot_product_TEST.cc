@@ -30,7 +30,7 @@
 using namespace honei;
 using namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseDotProductTest :
     public BaseTest
 {
@@ -59,7 +59,7 @@ class DenseDotProductTest :
                 }
 
                 DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
-                DataType_ p2(DotProduct<>::value(dv2, dv2));
+                DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, sqrt(std::numeric_limits<DataType_>::epsilon()));
             }
 
@@ -70,10 +70,14 @@ class DenseDotProductTest :
         }
 };
 
-DenseDotProductTest<float> dense_scalar_product_test_float("float");
-DenseDotProductTest<double> dense_scalar_product_test_double("double");
+DenseDotProductTest<tags::CPU, float> dense_scalar_product_test_float("float");
+DenseDotProductTest<tags::CPU, double> dense_scalar_product_test_double("double");
+#ifdef HONEI_SSE
+DenseDotProductTest<tags::CPU::SSE, float> sse_dense_scalar_product_test_float("SSE float");
+DenseDotProductTest<tags::CPU::SSE, double> sse_dense_scalar_product_test_double("SSE double");
+#endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseDotProductQuickTest :
     public QuickTest
 {
@@ -101,7 +105,7 @@ class DenseDotProductQuickTest :
             }
 
             DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
-            DataType_ p2(DotProduct<>::value(dv2, dv2));
+            DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
             TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, sqrt(std::numeric_limits<DataType_>::epsilon()));
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -110,8 +114,12 @@ class DenseDotProductQuickTest :
             TEST_CHECK_THROWS(DotProduct<>::value(dv00, dv01), VectorSizeDoesNotMatch);
         }
 };
-DenseDotProductQuickTest<float>  dense_scalar_product_quick_test_float("float");
-DenseDotProductQuickTest<double> dense_scalar_product_quick_test_double("double");
+DenseDotProductQuickTest<tags::CPU, float> dense_scalar_product_quick_test_float("float");
+DenseDotProductQuickTest<tags::CPU, double> dense_scalar_product_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseDotProductQuickTest<tags::CPU::SSE, float> sse_dense_scalar_product_quick_test_float("SSE float");
+DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_test_double("SSE double");
+#endif
 
 template <typename DataType_>
 class SparseDenseDotProductTest :

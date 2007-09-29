@@ -148,6 +148,13 @@ namespace honei
 
         /// \}
     };
+   //SSE implementiation 
+    template <>
+    struct DotProduct<tags::CPU::SSE>
+    {
+        static float value(const DenseVector<float> & a, const DenseVector<float> & b);
+        static double value(const DenseVector<double> & a, const DenseVector<double> & b);
+    };
 }
 
 #endif

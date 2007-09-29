@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-28 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* ilibla/*-sse.cc: Removed manual alignment. Shared array data is now
+	already aligned.
+
 2007-09-29 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libutil/files.m4: Fixed entry for type_traits. Added SharedArray

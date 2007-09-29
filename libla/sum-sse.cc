@@ -26,64 +26,26 @@ using namespace honei;
 
 DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const DenseVector<float> & b)
 {
-    CONTEXT("When adding DenseVector to DenseVector with SSE:");
+    CONTEXT("When adding DenseVector<float> to DenseVector<float> with SSE:");
 
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
 
-    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-    float __attribute__((aligned(16))) a1_data[4];
-    float __attribute__((aligned(16))) b1_data[4];
-    float __attribute__((aligned(16))) a2_data[4];
-    float __attribute__((aligned(16))) b2_data[4];
-    float __attribute__((aligned(16))) a3_data[4];
-    float __attribute__((aligned(16))) b3_data[4];
-    float __attribute__((aligned(16))) a4_data[4];
-    float __attribute__((aligned(16))) b4_data[4];
+    __m128 m1, m2;
 
-    unsigned long quad_end(a.size() - (b.size() % 16));
+    unsigned long quad_end(a.size() - (a.size() % 4));
 
-    for (unsigned long index = 0 ; index < quad_end ; index += 16) 
+    for (unsigned long index = 0 ; index < quad_end ; index += 4) 
     {
-        for (int i = 0 ; i < 4 ; ++i)
-        {
-            a1_data[i] = (a.elements())[index + i];
-            a2_data[i] = (a.elements())[index + i + 4];
-            a3_data[i] = (a.elements())[index + i + 8];
-            a4_data[i] = (a.elements())[index + i + 12];
-            b1_data[i] = (b.elements())[index + i];
-            b2_data[i] = (b.elements())[index + i + 4];
-            b3_data[i] = (b.elements())[index + i + 8];
-            b4_data[i] = (b.elements())[index + i + 12];
-        }
-        m1 = _mm_load_ps(a1_data);
-        m2 = _mm_load_ps(b1_data);
-        m3 = _mm_load_ps(a2_data);
-        m4 = _mm_load_ps(b2_data);
-        m5 = _mm_load_ps(a3_data);
-        m6 = _mm_load_ps(b3_data);
-        m7 = _mm_load_ps(a4_data);
-        m8 = _mm_load_ps(b4_data);
+        m1 = _mm_load_ps(&a.elements()[index]);
+        m2 = _mm_load_ps(&b.elements()[index]);
 
         m1 = _mm_add_ps(m1, m2);
-        m3 = _mm_add_ps(m3, m4);
-        m5 = _mm_add_ps(m5, m6);
-        m7 = _mm_add_ps(m7, m8);
 
-        _mm_stream_ps(a1_data, m1);
-        _mm_stream_ps(a2_data, m3);
-        _mm_stream_ps(a3_data, m5);
-        _mm_stream_ps(a4_data, m7);
+        _mm_stream_ps(&a.elements()[index], m1);
 
-        for (int i = 0 ; i < 4 ; ++i)
-        {
-            (a.elements())[index + i] = a1_data[i];
-            (a.elements())[index + i + 4] = a2_data[i];
-            (a.elements())[index + i + 8] = a3_data[i];
-            (a.elements())[index + i + 12] = a4_data[i];
-        }
     }
 
     for (unsigned long index = quad_end ; index < a.size() ; index++)
@@ -95,64 +57,26 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
 
 DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const DenseVector<double> & b)
 {
-    CONTEXT("When adding DenseVector to DenseVector with SSE:");
+    CONTEXT("When adding DenseVector<double> to DenseVector<double> with SSE:");
 
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
 
-    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-    double __attribute__((aligned(16))) a1_data[2];
-    double __attribute__((aligned(16))) b1_data[2];
-    double __attribute__((aligned(16))) a2_data[2];
-    double __attribute__((aligned(16))) b2_data[2];
-    double __attribute__((aligned(16))) a3_data[2];
-    double __attribute__((aligned(16))) b3_data[2];
-    double __attribute__((aligned(16))) a4_data[2];
-    double __attribute__((aligned(16))) b4_data[2];
+    __m128d m1, m2;
 
-    unsigned long quad_end(a.size() - (b.size() % 8));
+    unsigned long quad_end(a.size() - (a.size() % 2));
 
-    for (unsigned long index = 0 ; index < quad_end ; index += 8) 
+    for (unsigned long index = 0 ; index < quad_end ; index += 2) 
     {
-        for (int i = 0 ; i < 2 ; ++i)
-        {
-            a1_data[i] = (a.elements())[index + i];
-            a2_data[i] = (a.elements())[index + i + 2];
-            a3_data[i] = (a.elements())[index + i + 4];
-            a4_data[i] = (a.elements())[index + i + 6];
-            b1_data[i] = (b.elements())[index + i];
-            b2_data[i] = (b.elements())[index + i + 2];
-            b3_data[i] = (b.elements())[index + i + 4];
-            b4_data[i] = (b.elements())[index + i + 6];
-        }
-        m1 = _mm_load_pd(a1_data);
-        m2 = _mm_load_pd(b1_data);
-        m3 = _mm_load_pd(a2_data);
-        m4 = _mm_load_pd(b2_data);
-        m5 = _mm_load_pd(a3_data);
-        m6 = _mm_load_pd(b3_data);
-        m7 = _mm_load_pd(a4_data);
-        m8 = _mm_load_pd(b4_data);
+        m1 = _mm_load_pd(&a.elements()[index]);
+        m2 = _mm_load_pd(&b.elements()[index]);
 
         m1 = _mm_add_pd(m1, m2);
-        m3 = _mm_add_pd(m3, m4);
-        m5 = _mm_add_pd(m5, m6);
-        m7 = _mm_add_pd(m7, m8);
 
-        _mm_stream_pd(a1_data, m1);
-        _mm_stream_pd(a2_data, m3);
-        _mm_stream_pd(a3_data, m5);
-        _mm_stream_pd(a4_data, m7);
+        _mm_stream_pd(&a.elements()[index], m1);
 
-        for (int i = 0 ; i < 2 ; ++i)
-        {
-            (a.elements())[index + i] = a1_data[i];
-            (a.elements())[index + i + 2] = a2_data[i];
-            (a.elements())[index + i + 4] = a3_data[i];
-            (a.elements())[index + i + 6] = a4_data[i];
-        }
     }
 
     for (unsigned long index = quad_end ; index < a.size() ; index++)
