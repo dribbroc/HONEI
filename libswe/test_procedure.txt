@@ -1,0 +1,68 @@
+TEST PROCEDURE FOR ALL COMPONENTS OF LibSWE
+
+This textfile is a brief description of the test procedure, which is
+strongly recommended for the library components of LibSWE in general
+and for the SWE - solvers in special.
+
+Before any commit, new components and changes to old components have to 
+undergo the following stages of testing, which are described in detail 
+later on:
+
+1. Numerical stability
+######################
+2. Runtime stability
+######################
+3. Correctness
+######################
+4. Usability
+######################
+
+1.
+We have to perform changes with respect to the NUMERICAL STABILITY. This is
+due to the underlying floating point system. That means, that we can not assume,
+that computations do automatically cope with the numerical limits of the floating point system. In detail, this means, that a test has to verify the following:
+
+	a) Computed numbers may not exceed the range of the floating point
+	system, (which includes POSITIVE INFINITY, NEGATIVE INFINITY or any
+	other NAN value). In particular: We can not deal with FP - numbers as
+	we do with integers!
+
+	b) Even std's (or any other's) library - functions as for example sqrt()
+	or pow() can compute NANs. Due to this fact, we have to control input
+	sets directly or intercept such values.
+
+	c) We have to think about other possibilities of influences of changes
+	on the numerical stability. In other words, care has to be taken for 
+	computations, that may produce suboptimal values for the simulation
+	model.
+
+2.
+We must perform a lot of testing concerning the stability of the application.
+It is totally insufficient to only run a test on a fixed input size, or on a fixed
+number of timesteps. With our latest SSE implementations of the LibLa operations, the solver is quite fast and can perfectly be tested for large fields and even huge
+ amounts of timesteps. The rules for testing stability are, as of this moment:
+
+ 	a) Solvers have to be tested in DEBUG MODE at least at
+		a1) one timestep and a size of 11+x11+
+		a2) 20 timesteps and a size of 11+x11+
+		a3) one timestep and a size of 41+x41+
+		a4) 10 timesteps and a size of 41+x41+
+	b) Solvers have to be tested in NORMAL mode at least at
+		b1) one timestep and a size of 65+x65+
+		b2) 100+ timesteps and a size of 41+x41+
+		b3) one timestep and a size of 257+x257+
+		b4) 200+ timesteps and a size of 11+x11+
+	c) Solvers have to be tested at non - quadratic fileds (e.g. 11+x41+)
+
+As it should be clear, every scalarfield has to be inspected, if the last one is
+suboptimal.
+
+3.
+We have to perform tests concerning correctness: As analytical reference solutions 
+are missing, we can only verify correctness by optical examination of the output!
+
+4.
+The usability of any changes have to be checked. This includes, checking, wether
+an implemented feature is worth overwriting an existing solution for the same
+feature. In general, features must be implemented WITHOUT overwriting existing ones.
+

@@ -42,7 +42,7 @@ class RelaxSolverQuickTest :
         {
             ulint dwidth =11;
             ulint dheight =11;
-            ulint timesteps =2;
+            ulint timesteps =1;
 
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
