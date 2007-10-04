@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-10-04 Markus Geveler <apryde@gmx.de>
 
+	* libswe/implicit_solver.hh: Added ImplicitSolver interface to LibSWE.
+
+2007-10-04 Markus Geveler <apryde@gmx.de>
+
 	* libmath/conjugate_gradients.hh: Improved numerical behaviour of the
 	CG solver.
 
