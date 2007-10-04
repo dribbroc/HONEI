@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-04 Markus Geveler <apryde@gmx.de>
+
+	* libmath/conjugate_gradients.hh: Improved numerical behaviour of the
+	CG solver.
+
 2007-10-01 Markus Geveler <apryde@gmx.de>
 
 	* libmath/conjugate_gradients.hh, libmath/conjugate_gradients_TEST.cc:

@@ -59,12 +59,20 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
-                ///Compute x_i+1: (in energyand implementation of a Conjugate Gradients Solver)
+                ///Compute x_i+1: (in energy)
                 DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
-                energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
+                }
+                else
+                {
+                    energy = Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
+
+                }
                 Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
                 DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
@@ -73,7 +81,14 @@ namespace honei
                 ///Compute new utility
                 upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
                 lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
-                Scale<Tag_>::value(DT1_(upper/lower), utility);
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    Scale<Tag_>::value(DT1_(upper/lower), utility);
+                }
+                else
+                {
+                    Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
+                }
                 Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
@@ -90,7 +105,14 @@ namespace honei
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
-                energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
+                }
+                else
+                {
+                    energy = Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
+                }
                 Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
                 DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
@@ -99,7 +121,14 @@ namespace honei
                 ///Compute new utility
                 upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
                 lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
-                Scale<Tag_>::value(DT1_(upper/lower), utility);
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    Scale<Tag_>::value(DT1_(upper/lower), utility);
+                }
+                else
+                {
+                    Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
+                }
                 Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
@@ -116,7 +145,14 @@ namespace honei
                 SparseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
-                energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
+                }
+                else
+                {
+                    energy = Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
+                }
                 Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
                 SparseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
@@ -125,7 +161,14 @@ namespace honei
                 ///Compute new utility
                 upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
                 lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
-                Scale<Tag_>::value(DT1_(upper/lower), utility);
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    Scale<Tag_>::value(DT1_(upper/lower), utility);
+                }
+                else
+                {
+                    Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
+                }
                 Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
