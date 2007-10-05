@@ -354,5 +354,13 @@ namespace honei
 
         /// \}
     };
+
+   //SSE implementiation 
+    template <>
+    struct Difference<tags::CPU::SSE>
+    {
+        static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+        static DenseVector<double> & value(DenseVector<double> & a, const DenseVector<double> & b);
+    };
 }
 #endif

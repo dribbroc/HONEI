@@ -40,6 +40,7 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVector<float> & a, const Dens
     } m1, m2, m8;
 
     unsigned long quad_end(a.size() - (b.size() % 4));
+    m8.m = _mm_setzero_ps();
 
     for (unsigned long index = 0 ; index < quad_end ; index += 4) 
     {
@@ -73,6 +74,7 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVector<double> & a, const De
     } m1, m2, m8;
 
     unsigned long quad_end(a.size() - (b.size() % 2));
+    m8.m = _mm_setzero_pd();
 
     for (unsigned long index = 0 ; index < quad_end ; index += 2) 
     {

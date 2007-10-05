@@ -56,7 +56,7 @@ class DenseVectorScaledSumTest :
             DenseVector<DataType_> dv01(2, DataType_(1));
             DataType_ scal00(DataType_(2));
 
-            TEST_CHECK_THROWS(ScaledSum<>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
         }
 };
 DenseVectorScaledSumTest<tags::CPU, float> dense_vector_scaled_sum_test_float("float");
@@ -91,7 +91,7 @@ class DenseVectorScaledSumQuickTest :
             DenseVector<DataType_> dv01(2, DataType_(1));
             DataType_ scal00(DataType_(2));
 
-            TEST_CHECK_THROWS(ScaledSum<>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
         }
 };
 DenseVectorScaledSumQuickTest<tags::CPU, float> dense_vector_scaled_sum_quick_test_float("float");

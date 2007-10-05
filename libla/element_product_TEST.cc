@@ -52,7 +52,7 @@ class DenseVectorElementProductTest :
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(dv02, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
         }
 };
 
@@ -85,7 +85,7 @@ class DenseVectorElementProductQuickTest :
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(dv02, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
 
         }
 };

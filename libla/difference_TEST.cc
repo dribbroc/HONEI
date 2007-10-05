@@ -542,7 +542,7 @@ SparseMatrixDifferenceQuickTest<double> sparse_matrix_difference_quick_test_doub
 
 // Test cases for vector operations
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorDifferenceTest :
     public BaseTest
 {
@@ -568,19 +568,23 @@ class DenseVectorDifferenceTest :
                 {
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
                 }
-                DenseVector<DT_> difference1(Difference<>::value(dv1, dv2));
+                DenseVector<DT_> difference1(Difference<Tag_>::value(dv1, dv2));
                 TEST_CHECK_EQUAL(difference1, dv3);
             }
 
             DenseVector<DT_> dv00(1, DT_(1));
             DenseVector<DT_> dv01(5, DT_(1));
-            TEST_CHECK_THROWS(Difference<DT_>::value(dv00, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(dv00, dv01), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorDifferenceTest<float> dense_vector_difference_test_float("float");
-DenseVectorDifferenceTest<double> dense_vector_difference_test_double("double");
+DenseVectorDifferenceTest<tags::CPU, float> dense_vector_difference_test_float("float");
+DenseVectorDifferenceTest<tags::CPU, double> dense_vector_difference_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorDifferenceTest<tags::CPU::SSE, float> sse_dense_vector_difference_test_float("SSE float");
+DenseVectorDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_difference_test_double("SSE double");
+#endif
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorDifferenceQuickTest :
     public QuickTest
 {
@@ -605,17 +609,21 @@ class DenseVectorDifferenceQuickTest :
             {
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
             }
-            DenseVector<DT_> difference1(Difference<>::value(dv1, dv2));
+            DenseVector<DT_> difference1(Difference<Tag_>::value(dv1, dv2));
             TEST_CHECK_EQUAL(difference1, dv3);
 
             DenseVector<DT_> dv00(1, DT_(1));
             DenseVector<DT_> dv01(5, DT_(1));
 
-            TEST_CHECK_THROWS(Difference<DT_>::value(dv00, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(dv00, dv01), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorDifferenceQuickTest<float>  dense_vector_difference_quick_test_float("float");
-DenseVectorDifferenceQuickTest<double> dense_vector_difference_quick_test_double("double");
+DenseVectorDifferenceQuickTest<tags::CPU, float>  dense_vector_difference_quick_test_float("float");
+DenseVectorDifferenceQuickTest<tags::CPU, double> dense_vector_difference_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorDifferenceQuickTest<tags::CPU, float>  sse_dense_vector_difference_quick_test_float("SSE float");
+DenseVectorDifferenceQuickTest<tags::CPU, double> sse_dense_vector_difference_quick_test_double("SSE double");
+#endif
 
 template <typename DT_>
 class DenseVectorSparseVectorDifferenceTest :

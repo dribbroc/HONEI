@@ -17,14 +17,14 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <libla/sum.hh>
+#include <libla/difference.hh>
 
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
 using namespace honei;
 
-DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const DenseVector<float> & b)
+DenseVector<float> & Difference<tags::CPU::SSE>::value(DenseVector<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When adding DenseVector<float> to DenseVector<float> with SSE:");
 
@@ -48,10 +48,10 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
         m6 = _mm_load_ps(&b.elements()[index+8]);
         m8 = _mm_load_ps(&b.elements()[index+12]);
 
-        m1 = _mm_add_ps(m1, m2);
-        m3 = _mm_add_ps(m3, m4);
-        m5 = _mm_add_ps(m5, m6);
-        m7 = _mm_add_ps(m7, m8);
+        m1 = _mm_sub_ps(m1, m2);
+        m3 = _mm_sub_ps(m3, m4);
+        m5 = _mm_sub_ps(m5, m6);
+        m7 = _mm_sub_ps(m7, m8);
 
         _mm_stream_ps(&a.elements()[index], m1);
         _mm_stream_ps(&a.elements()[index+4], m3);
@@ -62,12 +62,12 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
 
     for (unsigned long index = quad_end ; index < a.size() ; index++)
     {
-        a.elements()[index] += b.elements()[index];
+        a.elements()[index] -= b.elements()[index];
     }
     return a;
 }
 
-DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const DenseVector<double> & b)
+DenseVector<double> & Difference<tags::CPU::SSE>::value(DenseVector<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When adding DenseVector<double> to DenseVector<double> with SSE:");
 
@@ -91,10 +91,10 @@ DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const 
         m6 = _mm_load_pd(&b.elements()[index+4]);
         m8 = _mm_load_pd(&b.elements()[index+6]);
 
-        m1 = _mm_add_pd(m1, m2);
-        m3 = _mm_add_pd(m3, m4);
-        m5 = _mm_add_pd(m5, m6);
-        m7 = _mm_add_pd(m7, m8);
+        m1 = _mm_sub_pd(m1, m2);
+        m3 = _mm_sub_pd(m3, m4);
+        m5 = _mm_sub_pd(m5, m6);
+        m7 = _mm_sub_pd(m7, m8);
 
         _mm_stream_pd(&a.elements()[index], m1);
         _mm_stream_pd(&a.elements()[index+2], m3);
@@ -105,7 +105,7 @@ DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const 
 
     for (unsigned long index = quad_end ; index < a.size() ; index++)
     {
-        a.elements()[index] += b.elements()[index];
+        a.elements()[index] -= b.elements()[index];
     }
     return a;
 }

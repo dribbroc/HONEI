@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-09-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/difference-sse.cc: Added dv,dv difference with sse.
+	* libla/product-sse.cc: Added dm,dv product with sse.
+	* libla/norm.hh: Added l2 norm with sse.
+	* libmath/conjugate_gradients_TEST.cc: Added sse tests.
+
 2007-10-04 Markus Geveler <apryde@gmx.de>
 
 	* libmath/: Added missing Tag_ statements.

@@ -2292,8 +2292,8 @@ namespace honei {
             }
 
             //Compute ScalarProducts and Theta - value for band_-1:
-            WorkPrec_ minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Upper, constantVector );
-            WorkPrec_ minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Lower, constantVector );
+            WorkPrec_ minusUpper = DotProduct<Tag_>::value( rightMinus1Upper, constantVector );
+            WorkPrec_ minusLower = DotProduct<Tag_>::value( rightMinus1Lower, constantVector );
             WorkPrec_ thetaXPlus_iMinus1_j;
             if(minusLower!=0)
             {
@@ -2331,8 +2331,8 @@ namespace honei {
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
             WorkPrec_ thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2361,8 +2361,8 @@ namespace honei {
                 rightDiagLower[3] = (*u)[ui.index()];
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
 
             if(minusLower!=0)
             {
@@ -2391,8 +2391,8 @@ namespace honei {
                 rightDiagLower[3] = (*u)[ui.index()+3];
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_i_j;
             if(minusLower!=0)
             {
@@ -2433,8 +2433,8 @@ namespace honei {
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<Tag_>::value(rightDiagUpper, constantVector );
+            minusLower = DotProduct<Tag_>::value(rightDiagLower, constantVector );
             thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2463,8 +2463,8 @@ namespace honei {
                 rightPlus1Lower[3] = (*u)[ui.index()+6];
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value(rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value(rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_iPlus1_j;
             if(minusLower!=0)
             {
@@ -2494,8 +2494,8 @@ namespace honei {
                 rightPlus1Lower[3] = (*u)[ui.index()+3];
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value(rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value(rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {
@@ -2534,8 +2534,8 @@ namespace honei {
                 rightPlus2Lower[3] = (*u)[ui.index()+6];
             }
             //Compute ScalarProducts and Theta - value for band_+2:
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {
@@ -2645,8 +2645,8 @@ namespace honei {
             }
 
             //Compute ScalarProducts and Theta - value for band_-1:
-            WorkPrec_ minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Upper, constantVector );
-            WorkPrec_ minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightMinus1Lower, constantVector );
+            WorkPrec_ minusUpper = DotProduct<Tag_>::value( rightMinus1Upper, constantVector );
+            WorkPrec_ minusLower = DotProduct<Tag_>::value( rightMinus1Lower, constantVector );
             WorkPrec_ thetaXPlus_iMinus1_j;
             if(minusLower!=0)
             {
@@ -2681,8 +2681,8 @@ namespace honei {
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
             WorkPrec_ thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2712,8 +2712,8 @@ namespace honei {
                 rightDiagLower[3] = (*u)[ui.index()];
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
 
             if(minusLower!=0)
             {
@@ -2742,8 +2742,8 @@ namespace honei {
                 rightDiagLower[3] = (*u)[ui.index()+3*(_d_width+4)];
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_i_j;
             if(minusLower!=0)
             {
@@ -2783,8 +2783,8 @@ namespace honei {
             }
 
             //Compute ScalarProducts and Theta - value for diagonal (first theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVector );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVector );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
             thetaXPlus_i_j;
             if(minusLower!=0)
             {
@@ -2815,8 +2815,8 @@ namespace honei {
                 rightPlus1Lower[3] = (*u)[ui.index()+6*(_d_width+4)];
             }
             //Compute ScalarProducts and Theta - value for diagonal (second theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_iPlus1_j;
             if(minusLower!=0)
             {
@@ -2846,8 +2846,8 @@ namespace honei {
                 rightPlus1Lower[3] = (*u)[ui.index()+3*(_d_width+4)];
             }
             //Compute ScalarProducts and Theta - value for diagonal (third theta):
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {
@@ -2888,8 +2888,8 @@ namespace honei {
 
             }
             //Compute ScalarProducts and Theta - value for band_+2:
-            minusUpper = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagUpper, constantVectorMinus );
-            minusLower = DotProduct<>::value<WorkPrec_, WorkPrec_>( rightDiagLower, constantVectorMinus );
+            minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
+            minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
 
             if(minusLower!=0)
             {

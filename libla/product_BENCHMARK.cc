@@ -48,6 +48,7 @@ BandedMatrixDenseVectorProductBench<tags::CPU, float> BMDVPBenchfloat("Banded Ma
 BandedMatrixDenseVectorProductBench<tags::CPU, double> BMDVPBenchdouble("Banded Matrix Dense Vector Product Benchmark - matrix size: 32x32, double", 32, 10);
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEBMDVPBenchfloat("SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+BandedMatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEBMDVPBenchdouble("SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
 #endif
 
 template <typename DataType_>

@@ -23,6 +23,7 @@
 #include <libla/norm.hh>
 #include <libla/sparse_vector.hh>
 #include <unittest/unittest.hh>
+#include <iostream>
 
 #include <limits>
 #include <tr1/memory>
@@ -60,13 +61,13 @@ class DenseDotProductTest :
 
                 DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
                 DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, sqrt(std::numeric_limits<DataType_>::epsilon()));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, size * sqrt(sqrt(std::numeric_limits<DataType_>::epsilon())));
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
 
-            TEST_CHECK_THROWS(DotProduct<>::value(dv00, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(DotProduct<Tag_>::value(dv00, dv01), VectorSizeDoesNotMatch);
         }
 };
 
@@ -111,7 +112,7 @@ class DenseDotProductQuickTest :
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
 
-            TEST_CHECK_THROWS(DotProduct<>::value(dv00, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(DotProduct<Tag_>::value(dv00, dv01), VectorSizeDoesNotMatch);
         }
 };
 DenseDotProductQuickTest<tags::CPU, float> dense_scalar_product_quick_test_float("float");

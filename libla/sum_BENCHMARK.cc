@@ -68,8 +68,8 @@ class DenseVectorSumBench :
 
         virtual void run()
         {
-            DenseVector<DataType_> dv0(_size);//, DataType_(rand()));
-            DenseVector<DataType_> dv1(_size);//, DataType_(rand()));
+            DenseVector<DataType_> dv0(_size, DataType_(rand()));
+            DenseVector<DataType_> dv1(_size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(DenseVector<DataType_> sum1(Sum<Tag_>::value(dv0, dv1)));

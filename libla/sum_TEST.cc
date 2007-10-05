@@ -649,7 +649,7 @@ class DenseVectorSumTest :
                 Sum<Tag_>::value(dv1, dv2);
                 TEST_CHECK_EQUAL(dv1, dv3);
                 DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
-                TEST_CHECK_THROWS(Sum<>::value(dv01, dv02), VectorSizeDoesNotMatch);
+                TEST_CHECK_THROWS(Sum<Tag_>::value(dv01, dv02), VectorSizeDoesNotMatch);
             }
         }
 };
