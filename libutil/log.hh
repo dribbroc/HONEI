@@ -20,6 +20,8 @@
 #ifndef LIBUTIL_GUARD_LOG_HH
 #define LIBUTIL_GUARD_LOG_HH 1
 
+#include <libutil/mutex.hh>
+
 #include <string>
 #include <list>
 
@@ -39,6 +41,9 @@ namespace honei
 
             /// Our list of outputs.
             std::list<LogOutput> _outputs;
+
+            /// Our mutex.
+            Mutex * const _mutex;
 
             /// Constructor.
             Log();

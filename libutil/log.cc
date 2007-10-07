@@ -18,6 +18,7 @@
  */
 
 #include <libutil/log.hh>
+#include <libutil/lock.hh>
 #include <libutil/exception.hh>
 
 #include <list>
@@ -79,7 +80,8 @@ class Log::LogOutput
         }
 };
 
-Log::Log()
+Log::Log() :
+    _mutex(new Mutex)
 {
     _outputs.push_back(LogOutput(ll_minimal, &std::cerr));
 }
@@ -95,6 +97,8 @@ Log::instance()
 void
 Log::message(const LogLevel level, const std::string & message)
 {
+    Lock l(*_mutex);
+
     for (std::list<LogOutput>::iterator o(_outputs.begin()), o_end(_outputs.end()) ;
             o != o_end ; ++o)
     {
