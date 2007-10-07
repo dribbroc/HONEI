@@ -22,6 +22,7 @@
 #include <libutil/stringify.hh>
 
 #include <libebt/libebt.hh>
+#include <libebt/libebt_pthread_threads.hh>
 
 #include <cxxabi.h>
 
@@ -30,6 +31,14 @@ using namespace honei;
 namespace
 {
     struct ContextTag;
+}
+
+namespace libebt
+{
+    template <> struct BacktraceContextHolder<ContextTag> :
+        public PthreadBacktraceContextHolder<ContextTag>
+    {
+    };
 }
 
 struct Context::ContextData

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/exception.cc: Made Context thread-safe by using
+	PthreadBacktraceContextHolder as provided by libebt.
+
 2007-09-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/difference-sse.cc: Added dv,dv difference with sse.
