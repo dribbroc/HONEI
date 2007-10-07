@@ -7,6 +7,15 @@ see the NEWS file.
 
 2007-10-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/files.m4, libutil/thread.cc, libutil/thread.hh,
+	libutil/thread_TEST.cc: Added class Thread and test case.
+
+2007-10-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/log.cc, libutil/log.hh: Made Log thread-safe.
+
+2007-10-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/exception.cc: Made Context thread-safe by using
 	PthreadBacktraceContextHolder as provided by libebt.
 
