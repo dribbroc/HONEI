@@ -17,10 +17,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <iostream>
+#ifndef LIBGRAPH_GUARD_GRAPH
+#define LIBGRAPH_GUARD_GRAPH 1
+
 #include <tr1/memory>
-#include <iostream>
-#include <cmath>
 #include <libla/dense_vector.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/sparse_matrix.hh>
@@ -168,3 +168,6 @@ namespace honei
         }
     };
 }
+
+#endif
+

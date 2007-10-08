@@ -17,10 +17,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <iostream>
+#ifndef LIBGRAPH_GUARD_EVOLVING_GRAPH
+#define LIBGRAPH_GUARD_EVOLVING_GRAPH 1
+
 #include <tr1/memory>
-#include <iostream>
-#include <cmath>
 #include <libla/dense_vector.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/sparse_matrix.hh>
@@ -91,7 +91,6 @@ namespace honei
         /// creates and returns the complete coordinate matrix for the whole evolving graph
         DM * getCoordinates()
         {
-            std::cout << "Total Nodes: " << _totalNodeCount << "\n";
             DM * coordinates = new DM(_totalNodeCount, _coordinateDimensions);
             for (int t(0); t < sliceCount(); ++t)
             {
@@ -110,7 +109,6 @@ namespace honei
         DV * getNodeWeights()
         {
             DV * nodeWeights = new DV(_totalNodeCount);
-
             for (int t(0); t < sliceCount(); ++t)
             {
                 int offset = _sliceOffset[t];
@@ -182,3 +180,5 @@ namespace honei
         }
     };
 }
+#endif
+

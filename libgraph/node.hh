@@ -17,7 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+#ifndef LIBGRAPH_GUARD_NODE
+#define LIBGRAPH_GUARD_NODE 1
 
 #include <iostream>
 #include <tr1/memory>
@@ -101,3 +102,6 @@ namespace honei
         }
     };
 }
+
+#endif
+
