@@ -37,6 +37,8 @@
 #include <libla/sum.hh>
 #include <libla/scale.hh>
 #include <libla/vector.hh>
+#include <libgraph/graph.hh>
+#include <libgraph/graph_error.hh>
 
 #include <cmath>
 #include <tr1/memory>
@@ -94,6 +96,7 @@
             methods::Implementation<DataType_, GraphTag_> * _imp;
 
         public:
+
             Positions(DenseMatrix<DataType_> & coordinates, const DenseMatrix<bool> & neighbours, DataType_ edge_length) :
                 _imp(new methods::Implementation<DataType_, GraphTag_>(coordinates, neighbours, edge_length))
             {
@@ -106,11 +109,9 @@
                 \todo Implement Trace
                 if (Trace<>::value(neighbours) > false)
                     throw MatrixHasNonVanishingTrace;
-
-                if (edge_length <= std::numeric_limits<DataType_>::epsilon())
-                    \todo Implement GraphError
-                    throw GraphError("Edge length must be positive");
 #endif
+                if (edge_length <= std::numeric_limits<DataType_>::epsilon())
+                    throw GraphError("Edge length must be positive");
             }
             Positions(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes,
                     DenseMatrix<DataType_> & weights_of_edges) :

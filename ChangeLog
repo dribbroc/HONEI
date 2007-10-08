@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-08 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+	* libgraph/files.m4, graph_error.hh, graph_error.cc: Added GraphError
+	class for handling graph-specific errors
+	* libgraph/position.hh: Throws now GraphError if edge_length < 0
+	* libgraph/{node.hh, graph.hh, evolving_graph.hh}: Now include
+	#ifndef/#define/#endif to ensure that header is only added once. Also
+	removed some debugging cout.
+	
 2007-10-07 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/files.m4, libutil/thread.cc, libutil/thread.hh,
