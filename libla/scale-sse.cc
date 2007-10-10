@@ -36,11 +36,11 @@ DenseVector<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVector<flo
     unsigned long quad_end(x.size() - (x.size() % 4));
     for (unsigned long index = 0 ; index < quad_end ; index += 4) 
     {
-        m1 = _mm_load_ps(&x.elements()[index]);
+        m1 = _mm_load_ps(x.elements() + index);
 
         m1 = _mm_mul_ps(m1, m8);
 
-        _mm_stream_ps(&x.elements()[index], m1);
+        _mm_stream_ps(x.elements() + index, m1);
     }
 
     for (unsigned long index = quad_end ; index < x.size() ; index++)
@@ -62,11 +62,11 @@ DenseVector<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVector<d
     unsigned long quad_end(x.size() - (x.size() % 2));
     for (unsigned long index = 0 ; index < quad_end ; index += 2) 
     {
-        m1 = _mm_load_pd(&x.elements()[index]);
+        m1 = _mm_load_pd(x.elements() + index);
 
         m1 = _mm_mul_pd(m1, m8);
 
-        _mm_stream_pd(&x.elements()[index], m1);
+        _mm_stream_pd(x.elements() + index, m1);
     }
 
     for (unsigned long index = quad_end ; index < x.size() ; index++)

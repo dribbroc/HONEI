@@ -61,7 +61,7 @@ class DenseDotProductTest :
 
                 DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
                 DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, size * sqrt(sqrt(std::numeric_limits<DataType_>::epsilon())));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, size * sqrt(std::numeric_limits<DataType_>::epsilon()));
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));

@@ -621,8 +621,8 @@ class DenseVectorDifferenceQuickTest :
 DenseVectorDifferenceQuickTest<tags::CPU, float>  dense_vector_difference_quick_test_float("float");
 DenseVectorDifferenceQuickTest<tags::CPU, double> dense_vector_difference_quick_test_double("double");
 #ifdef HONEI_SSE
-DenseVectorDifferenceQuickTest<tags::CPU, float>  sse_dense_vector_difference_quick_test_float("SSE float");
-DenseVectorDifferenceQuickTest<tags::CPU, double> sse_dense_vector_difference_quick_test_double("SSE double");
+DenseVectorDifferenceQuickTest<tags::CPU::SSE, float>  sse_dense_vector_difference_quick_test_float("SSE float");
+DenseVectorDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_difference_quick_test_double("SSE double");
 #endif
 
 template <typename DT_>

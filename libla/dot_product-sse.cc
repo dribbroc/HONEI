@@ -44,8 +44,8 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVector<float> & a, const Dens
 
     for (unsigned long index = 0 ; index < quad_end ; index += 4) 
     {
-        m1.m = _mm_load_ps(&a.elements()[index]);
-        m2.m = _mm_load_ps(&b.elements()[index]);
+        m1.m = _mm_load_ps(a.elements() + index);
+        m2.m = _mm_load_ps(b.elements() + index);
 
         m1.m = _mm_mul_ps(m1.m, m2.m);
         m8.m = _mm_add_ps(m1.m, m8.m);
@@ -78,8 +78,8 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVector<double> & a, const De
 
     for (unsigned long index = 0 ; index < quad_end ; index += 2) 
     {
-        m1.m = _mm_load_pd(&a.elements()[index]);
-        m2.m = _mm_load_pd(&b.elements()[index]);
+        m1.m = _mm_load_pd(a.elements() + index);
+        m2.m = _mm_load_pd(b.elements() + index);
 
         m1.m = _mm_mul_pd(m1.m, m2.m);
         m8.m = _mm_add_pd(m1.m, m8.m);

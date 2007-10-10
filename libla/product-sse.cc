@@ -68,10 +68,10 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             {
                 vector2_data[i] = b.elements()[index + (vi.index()- middle_index) + i + 4];
             }
-            m1 = _mm_load_ps(&vi->elements()[index]);
-            m4 = _mm_load_ps(&vi->elements()[index + 4]);
-            m3 = _mm_load_ps(&result.elements()[index]);
-            m6 = _mm_load_ps(&result.elements()[index + 4]);
+            m1 = _mm_load_ps(vi->elements() + index);
+            m4 = _mm_load_ps(vi->elements() + index + 4);
+            m3 = _mm_load_ps(result.elements() + index);
+            m6 = _mm_load_ps(result.elements() + index + 4);
             m2 = _mm_load_ps(vector1_data);
             m5 = _mm_load_ps(vector2_data);
 
@@ -80,8 +80,8 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             m4 = _mm_mul_ps(m4, m5);
             m4 = _mm_add_ps(m4, m6);
 
-            _mm_store_ps(&result.elements()[index], m1);
-            _mm_store_ps(&result.elements()[index + 4], m4);
+            _mm_store_ps(result.elements() + index, m1);
+            _mm_store_ps(result.elements() + index + 4, m4);
         }
 
         for (unsigned long index = quad_end ; index < end ; index++) 
@@ -196,10 +196,10 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
                 vector1_data[i] = b.elements()[index + (vi.index() - middle_index) + i];
                 vector2_data[i] = b.elements()[index + (vi.index()- middle_index) + i + 2];
             }
-            m1 = _mm_load_pd(&vi->elements()[index]);
-            m4 = _mm_load_pd(&vi->elements()[index + 2]);
-            m3 = _mm_load_pd(&result.elements()[index]);
-            m6 = _mm_load_pd(&result.elements()[index + 2]);
+            m1 = _mm_load_pd(vi->elements() + index);
+            m4 = _mm_load_pd(vi->elements() + index + 2);
+            m3 = _mm_load_pd(result.elements() + index);
+            m6 = _mm_load_pd(result.elements() + index + 2);
             m2 = _mm_load_pd(vector1_data);
             m5 = _mm_load_pd(vector2_data);
 
@@ -208,8 +208,8 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
             m4 = _mm_mul_pd(m4, m5);
             m4 = _mm_add_pd(m4, m6);
 
-            _mm_store_pd(&result.elements()[index], m1);
-            _mm_store_pd(&result.elements()[index + 2], m4);
+            _mm_store_pd(result.elements() + index, m1);
+            _mm_store_pd(result.elements() + index + 2, m4);
         }
 
         for (unsigned long index = quad_end ; index < end ; index++) 

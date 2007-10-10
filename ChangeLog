@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-10 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* libla/files.m4: Reorderd sse and cc statements.
+	* libla/difference_TEST.cc: Added sse flag to sse tests.
+	* libla/dot_product_TEST.cc: Replaced static error bound by a size
+	dependend error bound in DenseVectorDotProductTest.
+	* libla/*-sse.cc: Removed unnecessary & operators.
+
 2007-10-08 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
 	* libgraph/files.m4, graph_error.hh, graph_error.cc: Added GraphError
 	class for handling graph-specific errors
@@ -27,7 +35,7 @@ see the NEWS file.
 	* libutil/exception.cc: Made Context thread-safe by using
 	PthreadBacktraceContextHolder as provided by libebt.
 
-2007-09-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+2007-10-05 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/difference-sse.cc: Added dv,dv difference with sse.
 	* libla/product-sse.cc: Added dm,dv product with sse.

@@ -41,14 +41,14 @@ DenseVector<float> & ScaledSum<tags::CPU::SSE>::value(DenseVector<float> & x, co
     for (unsigned long index = 0 ; index < quad_end ; index += 4)
     {
 
-        m1 = _mm_load_ps(&x.elements()[index]);
-        m2 = _mm_load_ps(&y.elements()[index]);
+        m1 = _mm_load_ps(x.elements() + index);
+        m2 = _mm_load_ps(y.elements() + index);
 
         m2 = _mm_mul_ps(m2, m8);
 
         m1 = _mm_add_ps(m1, m2);
 
-        _mm_stream_ps(&x.elements()[index], m1);
+        _mm_stream_ps(x.elements() + index, m1);
     }
     for (unsigned long index = quad_end ; index < x.size() ; index++)
     {
@@ -73,14 +73,14 @@ DenseVector<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector<double> & x, 
     for (unsigned long index = 0 ; index < quad_end ; index += 2)
     {
 
-        m1 = _mm_load_pd(&x.elements()[index]);
-        m2 = _mm_load_pd(&y.elements()[index]);
+        m1 = _mm_load_pd(x.elements() + index);
+        m2 = _mm_load_pd(y.elements() + index);
 
         m2 = _mm_mul_pd(m2, m8);
 
         m1 = _mm_add_pd(m1, m2);
 
-        _mm_stream_pd(&x.elements()[index], m1);
+        _mm_stream_pd(x.elements() + index, m1);
     }
     for (unsigned long index = quad_end ; index < x.size() ; index++)
     {
