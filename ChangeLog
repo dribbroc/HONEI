@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-10 Danny van Dyk <kugelfang@gentoo.org>
+
+	* doc/doxygen.conf, libutil/assertion.hh, libutil/exception.hh: Fixed
+	doxygen documentation for C preprocessor definitions.
+
 2007-10-10 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
 	* libla/files.m4: Reorderd sse and cc statements.
