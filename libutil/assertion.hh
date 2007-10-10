@@ -50,7 +50,8 @@ namespace honei
 /**
  * \def ASSERT
  *
- * Convenience definition that provides a way to throw Assertion Exceptions.
+ * \brief Convenience definition that provides a way to throw Assertion exceptions.
+ *
  * The thrown Assertion will be automatically provided with the correct filename,
  * line number and function name.
  *

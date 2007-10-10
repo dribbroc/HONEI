@@ -64,9 +64,11 @@ namespace honei
 /**
  * \def CONTEXT
  *
- * Convenience definition that provides a way to declare uniquely-named
- * instances of class Context. The created Context will be automatically
- * provided with the correct filename and line number.
+ * \brief Convenience definition that provides a way to declare uniquely-named
+ * instances of class Context.
+ *
+ * The created Context will be automatically provided with the correct filename and
+ * line number.
  *
  * \param s Context message that can be display by an exception-triggered backtrace.
  *
@@ -75,7 +77,7 @@ namespace honei
  * \ingroup grpdebug
  */
 #if defined (DEBUG)
-// C Preprocessor abomination following...
+// C preprocessor abomination following...
 #define CONTEXT_NAME_(x) ctx_##x
 #define CONTEXT_NAME(x) CONTEXT_NAME_(x)
 #define CONTEXT(s) \
