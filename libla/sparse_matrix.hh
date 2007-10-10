@@ -22,8 +22,8 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/matrix.hh>
-#include <libla/sparse_vector.hh>
-#include <libutil/shared_array.hh>
+#include <libla/sparse_vector-impl.hh>
+#include <libutil/shared_array-impl.hh>
 
 #include <iterator>
 #include <vector>
@@ -197,7 +197,7 @@ namespace honei
                 for (unsigned long i(0) ; i < _rows ; ++i)
                 {
                     if (_row_vectors[i])
-                        result->_row_vectors[i].reset(_row_vectors[i]->copy());
+                        result->_row_vectors[i].reset(new SparseVector<DataType_>(_row_vectors[i]->copy()));
                 }
 
                 return result;

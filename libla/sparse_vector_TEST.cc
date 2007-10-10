@@ -19,6 +19,7 @@
  */
 
 #include <libla/sparse_vector.hh>
+#include <libla/sparse_vector-impl.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -43,9 +44,9 @@ class SparseVectorCopyTest :
             for (unsigned long size(20) ; size < (1 << 8) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 10);
-                std::auto_ptr<SparseVector<DataType_> > c(sv1.copy());
+                SparseVector<DataType_> c(sv1.copy());
 
-                for (typename Vector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
+                for (typename Vector<DataType_>::ElementIterator i(c.begin_elements()), i_end(c.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     typename Vector<DataType_>::ConstElementIterator ci(i);

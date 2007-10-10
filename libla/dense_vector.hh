@@ -30,7 +30,7 @@
  * Implementation of DenseVector and related classes.
  *
  * \ingroup grpvector
- **/
+ */
 namespace honei
 {
     template <typename DataType_> class DenseMatrix;
@@ -40,12 +40,12 @@ namespace honei
      * \brief sequential.
      *
      * \ingroup grpvector
-     **/
+     */
     template <typename DataType_> class DenseVector :
         public Vector<DataType_>
     {
         private:
-            struct Implementation;
+            class Implementation;
 
             std::tr1::shared_ptr<Implementation> _imp;
 
@@ -63,7 +63,7 @@ namespace honei
              * \param elements SharedArray of the vector's elements.
              * \param offset Offset of the vector's data inside the shared array.
              * \param stepsize Stepsize between two of the vector's elements inside the shared array.
-             **/
+             */
             DenseVector(const unsigned long size, const SharedArray<DataType_> & elements, unsigned long offset = 0,
                     unsigned stepsize = 1);
 
@@ -86,7 +86,7 @@ namespace honei
              * \param size Size of the new dense vector.
              * \param offset Offset of the vector's data inside the shared array.
              * \param stepsize Stepsize between two of the vector's elements inside the shared array.
-             **/
+             */
             DenseVector(const unsigned long size, const unsigned long offset = 0, const unsigned long stepsize = 1);
 
             /**
@@ -96,7 +96,7 @@ namespace honei
              * \param value Default value for all of the vector's elements.
              * \param offset Offset of the vector's data inside the shared array.
              * \param stepsize Stepsize between two of the vector's elements inside the shared array.
-             **/
+             */
             DenseVector(const unsigned long size, DataType_ value, unsigned long offset = 0,
                     unsigned long stepsize = 1);
 

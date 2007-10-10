@@ -7,6 +7,18 @@ see the NEWS file.
 
 2007-10-10 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/dense_vector-impl.hh: Hid unwanted operations in
+	DenseVector::Implementation by making them private.
+	* libla/dense_vector.hh: Fixed doxygen comment terminators.
+	* libla/files.m4, libla/sparse_vector-impl.hh, libla/sparse_vector.hh,
+	libla/sparse_vector_TEST.cc: Spread SparseVector on
+	interface/implementation headers. Switched SparseVector::copy()'s
+	return type from SparseVector * to SparseVector.
+	* libla/sparse_matrix.hh: Adjusted SparseMatrix to change of
+	SparseVector::copy()'s return type.
+
+2007-10-10 Danny van Dyk <kugelfang@gentoo.org>
+
 	* doc/doxygen.conf, libutil/assertion.hh, libutil/exception.hh: Fixed
 	doxygen documentation for C preprocessor definitions.
 

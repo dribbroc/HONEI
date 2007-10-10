@@ -23,16 +23,13 @@
 #define LIBLA_GUARD_DENSE_VECTOR_IMPL_HH 1
 
 #include <libla/dense_vector.hh>
-
 #include <libla/element_iterator.hh>
-#include <libla/vector.hh>
 #include <libutil/assertion.hh>
 #include <libutil/shared_array.hh>
 #include <libutil/stringify.hh>
 
 #include <algorithm>
-#include <cstring>
-#include <iterator>
+#include <string>
 
 /**
  * \file
@@ -45,38 +42,50 @@ namespace honei
 {
     template <typename DataType_> class DenseMatrix;
 
-    /// Implementation for DenseVector template.
-    template <typename DataType_> struct DenseVector<DataType_>::Implementation
+    /**
+     * \brief DenseVector::Implementation is the private implementation class for DenseVector.
+     *
+     * \ingroup grpvector
+     */
+    template <typename DataType_> class DenseVector<DataType_>::Implementation
     {
-        /// Pointer to our elements.
-        SharedArray<DataType_> elements;
+        private:
+            /// Unwanted copy-constructor: Do not implement. See EffC++, Item 27.
+            Implementation(const Implementation &);
 
-        /// Our size.
-        const unsigned long size;
+            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
+            Implementation & operator= (const Implementation &);
 
-        /// Our offset.
-        const unsigned long offset;
+        public:
+            /// Our elements.
+            SharedArray<DataType_> elements;
 
-        /// Our stepsize.
-        const unsigned long stepsize;
+            /// Our size.
+            const unsigned long size;
 
-        /// Constructor.
-        Implementation(unsigned long s, unsigned long o, unsigned long ss) :
-            elements(o + ss * (s + 1) - 1),
-            size(s),
-            offset(o),
-            stepsize(ss)
-        {
-        }
+            /// Our offset.
+            const unsigned long offset;
 
-        /// Constructor.
-        Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o, unsigned long ss) :
-            elements(e),
-            size(s),
-            offset(o),
-            stepsize(ss)
-        {
-        }
+            /// Our stepsize.
+            const unsigned long stepsize;
+
+            /// Constructor.
+            Implementation(unsigned long s, unsigned long o, unsigned long ss) :
+                elements(o + ss * (s + 1) - 1),
+                size(s),
+                offset(o),
+                stepsize(ss)
+            {
+            }
+
+            /// Constructor.
+            Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o, unsigned long ss) :
+                elements(e),
+                size(s),
+                offset(o),
+                stepsize(ss)
+            {
+            }
     };
 
     template <typename DataType_>
