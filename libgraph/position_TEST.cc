@@ -64,6 +64,17 @@ class FruchtermanReingoldPositionsQuickTest :
             {
                 *e = adj[i++];
             }
+            // Trying to throw a GraphError
+            try
+            {
+                Positions<DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, -5);
+                TEST_CHECK(false);
+            }
+            catch (GraphError e)
+            {
+                TEST_CHECK(true);
+            }                
+
             // Creating a Positions object with the test scenario
             Positions<DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
 
@@ -168,14 +179,14 @@ class weightedFruchtermanReingoldPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pEdge_Weights(new DenseMatrix<DataType_>(2,2));
+            std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
             for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
                     e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
             {
                 *e = edge_weights[i++];
             }
             // Creating a Positions object with the test scenario
-            Positions<DataType_, methods::weighted_FruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
+            Positions<DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
 
             // update the positions 
             position.update(0.01,85);
@@ -228,14 +239,14 @@ class weightedKamadaKawaiPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pEdge_Weights(new DenseMatrix<DataType_>(2,2));
+            std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
             for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
                     e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
             {
                 *e = edge_weights[i++];
             }
             // Creating a Positions object with the test scenario
-            Positions<DataType_, methods::weighted_KamadaKawai> position(*pPosition, *pNode_Weights, *pEdge_Weights);
+            Positions<DataType_, methods::WeightedKamadaKawai> position(*pPosition, *pNode_Weights, *pEdge_Weights);
 
             // update the positions 
             position.update(0.01,85);

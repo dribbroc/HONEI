@@ -23,6 +23,7 @@
 
 
 #include <libgraph/evolving_graph.hh>
+#include <libgraph/position.hh>
 
 #include <string>
 #include <iostream>
@@ -34,7 +35,7 @@ template <typename DataType_>
 // our PositionsTest is a BaseTest. 
 class EvolvingGraphTest :
     public BaseTest
-{
+ {
     private:
         typedef Node<DataType_> NodeType;
     public:
@@ -45,9 +46,9 @@ class EvolvingGraphTest :
         }
 
     virtual void run() const
-        {
+         {
             // create evolving graph and some nodes
-            EvolvingGraph<DataType_> eg(2,8);
+            EvolvingGraph<DataType_> eg(2,1);
             eg.addNode(new NodeType(1, 1, 1, 1));
             eg.addNode(new NodeType(2, 2, 2, 2));
             eg.addNode(new NodeType(3, 3, 3, 3));
@@ -95,8 +96,11 @@ class EvolvingGraphTest :
             std::cout << " NodeWeights: " << std::endl;
             std::cout << *eg.getNodeWeights() << std::endl;
             std::cout << "Edges: " << std::endl;
-            std::cout << *eg.getEdges();
+            std::cout << *eg.getEdges() << std::endl;
 
+            Positions<DataType_, methods::WeightedKamadaKawai> positions(*eg.getCoordinates(), *eg.getNodeWeights(), *eg.getEdges());
+            positions.update(0.01, 10);
+            std::cout << positions.coordinates() << std::endl;
             TEST_CHECK(true);
     }
 };

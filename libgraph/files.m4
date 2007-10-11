@@ -10,10 +10,8 @@ dnl on this file at present...
 
 add(`dijkstra',                         `hh', `test')
 add(`mask_error',                       `hh', `cc')
-add(`matrix_element_distance',          `hh', `test')
-add(`matrix_element_distance_inverse',  `hh', `test')
 add(`node_distance',                    `hh')
-add(`node_distance',                    `hh')
+add(`node_distance_inverse',            `hh')
 add(`position',                         `hh', `test')
 add(`node',                             `hh')
 add(`graph',                            `hh', `test')

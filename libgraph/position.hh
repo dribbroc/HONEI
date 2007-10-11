@@ -28,6 +28,7 @@
 #include <libgraph/node_distance_inverse.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
+#include <libla/sparse_matrix.hh>
 #include <libla/difference.hh>
 #include <libla/element_inverse.hh>
 #include <libla/element_product.hh>
@@ -42,7 +43,7 @@
 
 #include <cmath>
 #include <tr1/memory>
-
+#include <iostream>
 /**
  * \file
  *
@@ -71,14 +72,14 @@
         /**
          * Implementation tag for weighted Fruchterman-Reingold method.
          */
-        struct weighted_FruchtermanReingold
+        struct WeightedFruchtermanReingold
         {
         };
 
         /**
          * Implementation tag for weighted Kamada-Kawai method.
          */
-        struct weighted_KamadaKawai
+        struct WeightedKamadaKawai
         {
         };
 
@@ -87,6 +88,7 @@
          */
         template <typename DataType_, typename Tag_>
         class Implementation;
+
     }
 
     template <typename DataType_, typename GraphTag_> class Positions
@@ -113,8 +115,9 @@
                 if (edge_length <= std::numeric_limits<DataType_>::epsilon())
                     throw GraphError("Edge length must be positive");
             }
+
             Positions(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes,
-                    DenseMatrix<DataType_> & weights_of_edges) :
+                    SparseMatrix<DataType_> & weights_of_edges) :
                 _imp(new methods::Implementation<DataType_, GraphTag_>(coordinates, weights_of_nodes, weights_of_edges))
             {
                 if (coordinates.columns() != weights_of_edges.columns())
@@ -134,6 +137,7 @@
 
             void update(DataType_ eps, int timeout)
             {
+                _imp->init();
                 do
                 {
                     --timeout;
@@ -170,7 +174,7 @@
                     _neighbours(neighbours),
                     _edge_length(edge_length)
                 {
-                }
+                } 
 
                 DataType_ value(const DataType_ & eps)
                 {
@@ -232,10 +236,15 @@
 
                     return result;
                 }
+
+                void init()
+                {
+                }
+
         };
 
         template <typename DataType_>
-        class Implementation<DataType_, weighted_FruchtermanReingold>
+        class Implementation<DataType_, WeightedFruchtermanReingold>
         {
             private:
                 ///  position matrix - the coordinates of each node
@@ -245,7 +254,7 @@
                 DenseVector<DataType_> & _weights_of_nodes;
 
                 ///  edge weight matrix - the weights of each edge
-                DenseMatrix<DataType_> & _weights_of_edges;
+                SparseMatrix<DataType_> & _weights_of_edges;
 
                 /// adjacence matrix - which nodes are neighbours?
                 DenseMatrix<bool> _neighbours;
@@ -257,10 +266,10 @@
                 DenseMatrix<DataType_> _attractive_force_parameter;
 
             public:
-                friend class Positions<DataType_, weighted_FruchtermanReingold>;
+                friend class Positions<DataType_, WeightedFruchtermanReingold>;
 
                 Implementation(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes,
-                    DenseMatrix<DataType_> & weights_of_edges) :
+                    SparseMatrix<DataType_> & weights_of_edges) :
                     _coordinates(coordinates),
                     _weights_of_nodes(weights_of_nodes),
                     _weights_of_edges(weights_of_edges),
@@ -350,6 +359,11 @@
                     }
                     return result;
                 }
+
+                void init()
+                {
+                }
+
         };
 
         template <typename DataType_>
@@ -397,6 +411,12 @@
                     ElementInverse<>::value(_attractive_force_parameter);
                 }
 
+                void init()
+                {
+                    //TODO: Implement KamadaKawai initialisation
+                }
+
+
                 DataType_ value(DataType_ & eps)
                 {
                     // Calculate square_dist = d(i,j)^2
@@ -442,7 +462,7 @@
         };
 
         template <typename DataType_>
-        class Implementation<DataType_, weighted_KamadaKawai>
+        class Implementation<DataType_, WeightedKamadaKawai>
         {
             private:
                 /// position matrix - the coordinates of each node
@@ -452,16 +472,16 @@
                 DenseVector<DataType_> & _weights_of_nodes;
 
                 /// edge weight matrix - the weights of each edge
-                DenseMatrix<DataType_> & _weights_of_edges;
+                SparseMatrix<DataType_> & _weights_of_edges;
 
                 /// parameter matrix for forces - square optimal distance
                 DenseMatrix<DataType_> _force_parameter;
 
             public:
-                friend class Positions<DataType_, weighted_KamadaKawai>;
-
+                friend class Positions<DataType_, WeightedKamadaKawai>;
+                
                 Implementation(DenseMatrix<DataType_> & coordinates, DenseVector<DataType_> & weights_of_nodes,
-                    DenseMatrix<DataType_> & weights_of_edges) :
+                    SparseMatrix<DataType_> & weights_of_edges) :
                     _coordinates(coordinates),
                     _weights_of_nodes(weights_of_nodes),
                     _weights_of_edges(weights_of_edges),
@@ -499,6 +519,11 @@
                     }
 
                     ElementProduct<>::value (_force_parameter, _force_parameter);
+                }
+
+                void init()
+                {
+                    // TODO: Implement weighted KamadaKawai initialisaton
                 }
 
                 DataType_ value(DataType_ & eps)
