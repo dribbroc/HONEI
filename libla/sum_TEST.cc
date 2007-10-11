@@ -630,6 +630,53 @@ ScalarDenseMatrixSumQuickTest<double> scalar_dense_matrix_sum_quick_test_double(
 
 // Test cases for vector operations
 
+template <typename DataType_>
+class ScalarDenseVectorSumTest :
+    public BaseTest
+{
+    public:
+        ScalarDenseVectorSumTest(const std::string & type) :
+            BaseTest("scalar_dense_vector_sum_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(5));
+                DenseVector<DataType_> & prod(Sum<>::value(dv1, DataType_(3)));
+
+                TEST_CHECK_EQUAL(prod, dv2);
+            }
+        }
+};
+ScalarDenseMatrixSumTest<float> scalar_dense_vector_sum_test_float("float");
+ScalarDenseMatrixSumTest<double> scalar_dense_vector_sum_test_double("double");
+
+template <typename DataType_>
+class ScalarDenseVectorSumQuickTest :
+    public BaseTest
+{
+    public:
+        ScalarDenseVectorSumQuickTest(const std::string & type) :
+            QuickTest("scalar_dense_vector_sum_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size = 18;
+            DenseVector<DataType_> dv1(size, DataType_(4)), dv2(size, DataType_(5));
+            DenseVector<DataType_> & prod(Sum<>::value(dv1, DataType_(9)));
+
+            TEST_CHECK_EQUAL(prod, dv2);
+        }
+};
+ScalarDenseMatrixSumQuickTest<float>  scalar_dense_vector_sum_quick_test_float("float");
+ScalarDenseMatrixSumQuickTest<double> scalar_dense_vector_sum_quick_test_double("double");
+
+
 template <typename Tag_, typename DataType_>
 class DenseVectorSumTest :
     public BaseTest

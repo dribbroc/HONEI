@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+007-10-11 Andre Matuschek <andre@matuschek.org>
+
+	* libla/sum_TEST.cc: Added missing testcase for scalar and dense vector sum.
+
 2007-10-10 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/dense_vector-impl.hh: Hid unwanted operations in
