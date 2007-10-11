@@ -590,9 +590,9 @@ class ScalarDenseMatrixSumTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(5));
-                DenseMatrix<DataType_> & prod(Sum<>::value(dm1, DataType_(3)));
+                DenseMatrix<DataType_> & sum(Sum<>::value(dm1, DataType_(3)));
 
-                TEST_CHECK_EQUAL(prod, dm2);
+                TEST_CHECK_EQUAL(sum, dm2);
             }
         }
 };
@@ -613,7 +613,7 @@ class ScalarDenseMatrixSumQuickTest :
         {
             unsigned long size(5);
             DenseMatrix<DataType_> dm(size, size + 1, DataType_(2));
-            DenseMatrix<DataType_> prod1(Sum<>::value(dm, DataType_(3)));
+            DenseMatrix<DataType_> sum1(Sum<>::value(dm, DataType_(3)));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
@@ -645,18 +645,18 @@ class ScalarDenseVectorSumTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(5));
-                DenseVector<DataType_> & prod(Sum<>::value(dv1, DataType_(3)));
+                DenseVector<DataType_> & sum(Sum<>::value(DataType_(3), dv1));
 
-                TEST_CHECK_EQUAL(prod, dv2);
+                TEST_CHECK_EQUAL(sum, dv2);
             }
         }
 };
-ScalarDenseMatrixSumTest<float> scalar_dense_vector_sum_test_float("float");
-ScalarDenseMatrixSumTest<double> scalar_dense_vector_sum_test_double("double");
+ScalarDenseVectorSumTest<float>  scalar_dense_vector_sum_test_float("float");
+ScalarDenseVectorSumTest<double> scalar_dense_vector_sum_test_double("double");
 
 template <typename DataType_>
 class ScalarDenseVectorSumQuickTest :
-    public BaseTest
+    public QuickTest
 {
     public:
         ScalarDenseVectorSumQuickTest(const std::string & type) :
@@ -668,13 +668,13 @@ class ScalarDenseVectorSumQuickTest :
         {
             unsigned long size = 18;
             DenseVector<DataType_> dv1(size, DataType_(4)), dv2(size, DataType_(5));
-            DenseVector<DataType_> & prod(Sum<>::value(dv1, DataType_(9)));
+            DenseVector<DataType_> & sum(Sum<>::value(DataType_(9), dv1));
 
-            TEST_CHECK_EQUAL(prod, dv2);
+            TEST_CHECK_EQUAL(sum, dv2);
         }
 };
-ScalarDenseMatrixSumQuickTest<float>  scalar_dense_vector_sum_quick_test_float("float");
-ScalarDenseMatrixSumQuickTest<double> scalar_dense_vector_sum_quick_test_double("double");
+ScalarDenseVectorSumQuickTest<float>  scalar_dense_vector_sum_quick_test_float("float");
+ScalarDenseVectorSumQuickTest<double> scalar_dense_vector_sum_quick_test_double("double");
 
 
 template <typename Tag_, typename DataType_>
