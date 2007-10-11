@@ -5,7 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-007-10-11 Andre Matuschek <andre@matuschek.org>
+2007-10-11 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+	* libgraph/position.hh: Added init() to method implementation classes
+	and changed names (coding conventions)
+	* evolving_graph_TEST.cc, position_TEST.cc: Changed to reflect class
+	name changes in position.hh
+	* matrix_element_distance.hh, matrix_element_inverse_distance.hh: I
+	hope they are deleted now.
+
+2007-10-11 Andre Matuschek <andre@matuschek.org>
 
 	* libla/sum_TEST.cc: Added missing testcase for scalar and dense vector sum.
 
