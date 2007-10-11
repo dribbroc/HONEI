@@ -25,6 +25,7 @@
 #include <libla/element_iterator.hh>
 #include <libla/matrix.hh>
 #include <libla/dense_vector.hh>
+#include <libla/sparse_matrix.hh>
 #include <libla/matrix_error.hh>
 #include <libutil/shared_array-impl.hh>
 #include <libutil/stringify.hh>
@@ -104,6 +105,7 @@ namespace honei
                 _rows(rows),
                 _row_vectors(rows)
             {
+                CONTEXT("When creating DenseMatrix:");
             }
 
             /**
@@ -120,9 +122,37 @@ namespace honei
                 _rows(rows),
                 _row_vectors(rows)
             {
+                CONTEXT("When creating DenseMatrix:");
                 DataType_ *  target(_elements.get());
                 for (unsigned long i(0) ; i < (rows * columns) ; i++)
                     target[i] = value;
+            }
+
+            /**
+             * Constructor.
+             *
+             * \param other The SparseMatrix to densify.
+             */
+            DenseMatrix(const SparseMatrix<DataType_> & other) :
+                _elements(other.rows() * other.columns()),
+                _columns(other.columns()),
+                _column_vectors(other.columns()),
+                _rows(other.rows()),
+                _row_vectors(other.rows())
+            {
+                CONTEXT("When creating DenseMatrix form SparseMatrix:");
+
+                /// \todo Use TypeTraits::zero()
+                DataType_ *  target(_elements.get());
+                DataType_ value(0);
+                for (unsigned long i(0) ; i < (other.rows() * other.columns()) ; i++)
+                    target[i] = value;
+
+                for (typename Matrix<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
+                        i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)
+                {
+                    (*this)(i.row(),i.column()) = *i;
+                }
             }
 
             /**
@@ -216,6 +246,18 @@ namespace honei
                     _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
 
                 return *_row_vectors[row];
+            }
+
+            /// Retrieves element at (row, column), unassignable.
+            virtual const DataType_ & operator() (unsigned long row, unsigned long column) const
+            {
+                return _elements.get()[column + row * _columns]; 
+            }
+
+            /// Retrieves element at (row, column), assignable.
+            virtual DataType_ & operator() (unsigned long row, unsigned long column)
+            {
+                return _elements.get()[column + row * _columns]; 
             }
 
             /// Retrieves column vector by index, zero-based, unassignable.

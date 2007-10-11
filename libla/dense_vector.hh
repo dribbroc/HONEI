@@ -23,6 +23,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_HH 1
 
 #include <libla/vector.hh>
+#include <libla/sparse_vector.hh>
 
 /**
  * \file
@@ -99,6 +100,13 @@ namespace honei
              */
             DenseVector(const unsigned long size, DataType_ value, unsigned long offset = 0,
                     unsigned long stepsize = 1);
+
+            /**
+             * Constructor.
+             *
+             * \param other The SparseVector to densify.
+             */
+            DenseVector(const SparseVector<DataType_> & other);
 
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other);

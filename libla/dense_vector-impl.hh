@@ -120,6 +120,26 @@ namespace honei
     }
 
     template <typename DataType_>
+    DenseVector<DataType_>::DenseVector(const SparseVector<DataType_> & other) :
+        _imp(new Implementation(other.size(), 0, 1))
+    {
+        CONTEXT("When creating DenseVector form SparseVector:");
+        ASSERT(other.size() > 0, "size is zero!");
+
+        /// \todo Use TypeTraits::zero()
+        DataType_ *  target(_imp->elements.get());
+        DataType_ value(0);
+        for (unsigned long i(0) ; i < (other.size()) ; ++i)
+            target[i] = value;
+
+        for (typename Vector<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
+                i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)
+        {
+            (*this)[i.index()] = *i;
+        }
+    }
+
+    template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const DenseVector<DataType_> & other) :
         _imp(new Implementation(other._imp->elements, other._imp->size, other._imp->offset, other._imp->stepsize))
     {

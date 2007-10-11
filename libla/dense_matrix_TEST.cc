@@ -93,6 +93,40 @@ DenseMatrixCopyTest<float> dense_matrix_copy_test_float("float");
 DenseMatrixCopyTest<double> dense_matrix_copy_test_double("double");
 
 template <typename DataType_>
+class DenseMatrixDensifyQuickTest :
+    public QuickTest
+{
+    public:
+        DenseMatrixDensifyQuickTest(const std::string & type) :
+            QuickTest("dense_matrix_densify_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+                unsigned long size(47);
+                DenseMatrix<DataType_> dm0(size, size + 2, DataType_(0));
+                SparseMatrix<DataType_> sm0(size, size + 2, size / 8 + 1);
+
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), j(sm0.begin_elements()),
+                    i_end(dm0.end_elements()) ; i != i_end ; ++i , ++j)
+                {
+                    if (i.index() % 7 == 0)
+                    {
+                        *i = i.index();
+                        *j = i.index();
+                    }
+                }
+                DenseMatrix<DataType_> dm1(sm0);
+
+                TEST_CHECK_EQUAL(dm1, dm0);
+
+            }
+};
+DenseMatrixDensifyQuickTest<float> dense_matrix_densify_quick_test_float("float");
+DenseMatrixDensifyQuickTest<double> dense_matrix_densify_quick_test_double("double");
+
+template <typename DataType_>
 class DenseMatrixEqualityTest :
     public BaseTest
 {

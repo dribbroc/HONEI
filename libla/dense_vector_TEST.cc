@@ -19,6 +19,7 @@
  */
 
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -89,6 +90,40 @@ class DenseVectorCopyTest :
 };
 DenseVectorCopyTest<float> dense_vector_copy_test_float("float");
 DenseVectorCopyTest<double> dense_vector_copy_test_double("double");
+
+template <typename DataType_>
+class DenseVectorDensifyQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorDensifyQuickTest(const std::string & type) :
+            QuickTest("dense_vector_densify_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+                unsigned long size(4711);
+                DenseVector<DataType_> dv0(size, DataType_(0));
+                SparseVector<DataType_> sv0(size, size / 8 + 1);
+
+                for (typename Vector<DataType_>::ElementIterator i(dv0.begin_elements()), j(sv0.begin_elements()),
+                    i_end(dv0.end_elements()) ; i != i_end ; ++i , ++j)
+                {
+                    if (i.index() % 7 == 0)
+                    {
+                        *i = i.index();
+                        *j = i.index();
+                    }
+                }
+                DenseVector<DataType_> dv1(sv0);
+
+                TEST_CHECK_EQUAL(dv1, dv0);
+
+            }
+};
+DenseVectorDensifyQuickTest<float> dense_vector_densify_quick_test_float("float");
+DenseVectorDensifyQuickTest<double> dense_vector_densify_quick_test_double("double");
 
 template <typename DataType_>
 class DenseVectorEqualityTest :
