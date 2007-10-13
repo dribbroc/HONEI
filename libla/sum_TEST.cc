@@ -644,8 +644,8 @@ class ScalarDenseVectorSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(5));
-                DenseVector<DataType_> & sum(Sum<>::value(DataType_(3), dv1));
+                DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(9));
+                DenseVector<DataType_> & sum(Sum<>::value(DataType_(7), dv1));
 
                 TEST_CHECK_EQUAL(sum, dv2);
             }
@@ -667,8 +667,8 @@ class ScalarDenseVectorSumQuickTest :
         virtual void run() const
         {
             unsigned long size = 18;
-            DenseVector<DataType_> dv1(size, DataType_(4)), dv2(size, DataType_(5));
-            DenseVector<DataType_> & sum(Sum<>::value(DataType_(9), dv1));
+            DenseVector<DataType_> dv1(size, DataType_(4)), dv2(size, DataType_(9));
+            DenseVector<DataType_> & sum(Sum<>::value(DataType_(5), dv1));
 
             TEST_CHECK_EQUAL(sum, dv2);
         }

@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-14 Andre Matuschek <andre@matuschek.org>
+
+	* libla/sum_TEST.cc: Fixed error in ScalarDenseVectorSumTest.
+
 2007-10-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* configure.ac: Moved SSE parts in line with other backend parts.
