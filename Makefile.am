@@ -15,6 +15,18 @@ bench-am:
 
 quickcheck: 
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-recursive" quickcheck-recursive
+quickcheck-sse: 
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-sse-recursive" quickcheck-sse-recursive
+quickcheck-cell: 
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-cell-recursive" quickcheck-cell-recursive
+quickcheck-mc: 
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-recursive" quickcheck-recursive
+check-sse: 
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="check-sse-recursive" check-sse-recursive
+check-cell: 
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="check-cell-recursive" check-sse-recursive
+check-mc: 
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="check-mc-recursive" check-mc-recursive
 
 doxygen:
 	$(MAKE) -C doc $@

@@ -38,6 +38,7 @@ class BandedMatrixDenseVectorProductTest :
         BandedMatrixDenseVectorProductTest(const std::string & type) :
             BaseTest("banded_matrix_dense_vector_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -79,6 +80,7 @@ class BandedMatrixDenseVectorProductQuickTest :
         BandedMatrixDenseVectorProductQuickTest(const std::string & type) :
             QuickTest("banded_matrix_dense_vector_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -217,6 +219,7 @@ class DenseMatrixDenseVectorProductTest :
         DenseMatrixDenseVectorProductTest(const std::string & type) :
             BaseTest("dense_matrix_dense_vector_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -252,6 +255,7 @@ class DenseMatrixDenseVectorProductQuickTest :
         DenseMatrixDenseVectorProductQuickTest(const std::string & type) :
             QuickTest("dense_matrix_dense_vector_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const

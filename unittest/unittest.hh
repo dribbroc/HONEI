@@ -25,6 +25,7 @@
 
 #include <libutil/stringify.hh>
 #include <libutil/exception.hh>
+#include <libutil/tags.hh>
 
 #include <string>
 #include <exception>
@@ -36,6 +37,7 @@
  *
  * \ingroup tests
  **/
+using namespace honei;
 
 namespace tests
 {
@@ -47,6 +49,7 @@ namespace tests
     {
         protected:
             const std::string _id;
+            std::string _tag_name;
 
         public:
             /**
@@ -73,6 +76,12 @@ namespace tests
 
             /// Returns whether we are a quick-test.
             virtual bool is_quick_test() const;
+
+            /// Register our target platform.
+            virtual void register_tag(std::string tag_name);
+
+            /// Returns our target platform.
+            virtual std::string get_tag_name();
 
             /**
              * Utility class used by TEST_CHECK_EQUAL.

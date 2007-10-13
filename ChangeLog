@@ -5,10 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-13 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
+
+	* Makefile.am: Added new make targets to test only specific backends.
+
 2007-10-11 David Gies <david-gies@gmx.de>
 
         * libla/product_TEST.cc: Added missing testcases.
-
 
 2007-10-11 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
@@ -19,6 +22,7 @@ see the NEWS file.
 	from a SparseVector.
 
 2007-10-11 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+
 	* libgraph/position.hh: Added init() to method implementation classes
 	and changed names (coding conventions)
 	* evolving_graph_TEST.cc, position_TEST.cc: Changed to reflect class
@@ -56,6 +60,7 @@ see the NEWS file.
 	* libla/*-sse.cc: Removed unnecessary & operators.
 
 2007-10-08 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+
 	* libgraph/files.m4, graph_error.hh, graph_error.cc: Added GraphError
 	class for handling graph-specific errors
 	* libgraph/position.hh: Throws now GraphError if edge_length < 0

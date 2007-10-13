@@ -34,6 +34,7 @@ class ConjugateGradientsTestDense:
         ConjugateGradientsTestDense(const std::string & tag) :
             BaseTest("Conjugate gradients solver test (Dense system)<" + tag + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -84,6 +85,7 @@ class ConjugateGradientsTestBanded:
         ConjugateGradientsTestBanded(const std::string & tag) :
             BaseTest("Conjugate gradients solver test (Banded system)<" + tag + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const

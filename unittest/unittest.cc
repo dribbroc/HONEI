@@ -70,7 +70,8 @@ class TestList
 std::list<BaseTest *> TestList::_tests;
 
 BaseTest::BaseTest(const std::string & id) :
-    _id(id)
+    _id(id),
+    _tag_name(tags::CPU::name)
 {
     TestList::instance()->register_test(this);
 }
@@ -92,6 +93,18 @@ bool
 BaseTest::is_quick_test() const
 {
     return false;
+}
+
+void
+BaseTest::register_tag(std::string tag_name)
+{
+    _tag_name = tag_name;
+}
+
+std::string
+BaseTest::get_tag_name()
+{
+    return _tag_name;
 }
 
 QuickTest::QuickTest(const std::string & id) :
@@ -120,10 +133,25 @@ int main(int argc, char** argv)
 {
     int result(EXIT_SUCCESS);
     bool quick(false);
-
-    if ((argc == 2) && (stringify(argv[1]) == "quick"))
-            quick=true;
-
+    bool sse(false);
+    bool cell(false);
+    bool mc(false);
+    if ((argc > 1) && (stringify(argv[1]) == "quick"))
+    {
+        quick = true;
+    }
+    if ((argc == 3) && (stringify(argv[2]) == "sse"))
+    {
+        sse = true;
+    }
+    if ((argc == 3) && (stringify(argv[2]) == "cell"))
+    {
+        cell = true;
+    }
+    if ((argc == 3) && (stringify(argv[2]) == "mc"))
+    {
+        mc = true;
+    }
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
             i != i_end ; ++i)
     {
@@ -131,6 +159,12 @@ int main(int argc, char** argv)
         try
         {
             if (quick && (!(*i)->is_quick_test()) )
+                continue;
+            if (sse && (!((*i)->get_tag_name()=="sse")))
+                continue;
+            if (cell && (!((*i)->get_tag_name()=="cell")))
+                continue;
+            if (mc && (!((*i)->get_tag_name()=="mc")))
                 continue;
 
             std::cout << (*i)->id() + ": \n";

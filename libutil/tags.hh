@@ -47,6 +47,7 @@ namespace honei
         struct CPU
         {
             const static TagValue tag_value = tv_cpu;
+            const static std::string name;
 
             /**
              * Tag-type for SSE1/2-optimised operations.
@@ -56,6 +57,7 @@ namespace honei
             struct SSE
             {
                 const static TagValue tag_value = tv_cpu;
+                const static std::string name;
             };
 
             /**
@@ -66,6 +68,7 @@ namespace honei
             struct MultiCore
             {
                 const static TagValue tag_value = tv_cpu_multi_core;
+                const static std::string name;
 
                 typedef tags::CPU DelegateTo;
 
@@ -77,6 +80,7 @@ namespace honei
                 struct SSE
                 {
                     const static TagValue tag_value = tv_cpu_multi_core;
+                    const static std::string name;
 
                     typedef tags::CPU::SSE DelegateTo;
                 };
@@ -91,6 +95,7 @@ namespace honei
         struct Cell
         {
             const static TagValue tag_value = tv_cell;
+            const static std::string name;
         };
 
         /**
@@ -101,6 +106,7 @@ namespace honei
         struct GPU
         {
             const static TagValue tag_value = tv_gpu;
+            const static std::string name;
         };
     }
 

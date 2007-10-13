@@ -23,6 +23,13 @@
 
 using namespace honei;
 
+const std::string tags::CPU::name = "cpu";
+const std::string tags::CPU::SSE::name = "sse";
+const std::string tags::CPU::MultiCore::name = "mc";
+const std::string tags::CPU::MultiCore::SSE::name = "mc";
+const std::string tags::Cell::name = "cell";
+const std::string tags::GPU::name = "gpu";
+
 std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
 {
     do

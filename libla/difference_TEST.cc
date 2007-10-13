@@ -550,6 +550,7 @@ class DenseVectorDifferenceTest :
         DenseVectorDifferenceTest(const std::string & type) :
             BaseTest("dense_vector_difference_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -592,6 +593,7 @@ class DenseVectorDifferenceQuickTest :
         DenseVectorDifferenceQuickTest(const std::string & type) :
             QuickTest("dense_vector_difference_quick_test<" + type + ">")
     {
+            register_tag(Tag_::name);
     }
 
         virtual void run() const

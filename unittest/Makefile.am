@@ -11,6 +11,13 @@ libunittest_a_SOURCES = \
 	unittest.cc unittest.hh
 
 bench:
-quickcheck:		
+quickcheck:
+quickcheck-sse:
+quickcheck-cell:
+quickcheck-mc:
+check-sse:
+check-cell:
+check-mc:
+
 DEFS = \
 	$(DEBUGDEF)

@@ -32,25 +32,32 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVector<float> & a, const Dens
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-    float result(0);
-    union sse4
-    {
-        __m128 m;
-        float f[4];
-    } m1, m2, m8;
+    float __attribute__((aligned(16))) result(0);
+    __m128 m1, m2, m8, m4, m5;
 
     unsigned long quad_end(a.size() - (b.size() % 4));
-    m8.m = _mm_setzero_ps();
+    m8 = _mm_setzero_ps();
+    m4 = _mm_setzero_ps();
+    m5 = _mm_setzero_ps();
 
     for (unsigned long index = 0 ; index < quad_end ; index += 4) 
     {
-        m1.m = _mm_load_ps(a.elements() + index);
-        m2.m = _mm_load_ps(b.elements() + index);
+        m1 = _mm_load_ps(a.elements() + index);
+        m2 = _mm_load_ps(b.elements() + index);
 
-        m1.m = _mm_mul_ps(m1.m, m2.m);
-        m8.m = _mm_add_ps(m1.m, m8.m);
+        m1 = _mm_mul_ps(m1, m2);
+        m8 = _mm_add_ps(m1, m8);
     }
-    result = m8.f[0] + m8.f[1] + m8.f[2] + m8.f[3];
+
+    //move the 4 m8 floats to the lower m4 field and sum them up in m5
+    m5 = _mm_add_ss(m5, m8);
+    m4 = _mm_shuffle_ps(m8, m8, 0x1);
+    m5 = _mm_add_ss(m5, m4);
+    m4 = _mm_shuffle_ps(m8, m8, 0x2);
+    m5 = _mm_add_ss(m5, m4);
+    m4 = _mm_shuffle_ps(m8, m8, 0x3);
+    m5 = _mm_add_ss(m5, m4);
+    _mm_store_ss(&result, m5);
 
     for (unsigned long index = quad_end ; index < a.size() ; index++)
     {
@@ -66,7 +73,7 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVector<double> & a, const De
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-    double result(0);
+    double __attribute__((aligned(16))) result(0);
     union sse2
     {
         __m128d m;

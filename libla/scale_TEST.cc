@@ -244,6 +244,7 @@ class ScalarDenseVectorProductTest :
         ScalarDenseVectorProductTest(const std::string & type) :
             BaseTest("scalar_dense_vector_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -274,6 +275,7 @@ class ScalarDenseVectorProductQuickTest :
         ScalarDenseVectorProductQuickTest(const std::string & type) :
             QuickTest("scalar_dense_vector_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const

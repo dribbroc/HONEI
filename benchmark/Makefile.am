@@ -10,4 +10,10 @@ libbenchmark_a_SOURCES = \
 	benchmark.cc benchmark.hh
 
 bench:
-quickcheck:		
+quickcheck:
+quickcheck-sse:
+quickcheck-cell:
+quickcheck-mc:
+check-sse:
+check-cell:
+check-mc:

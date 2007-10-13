@@ -39,6 +39,7 @@ class DenseDotProductTest :
         DenseDotProductTest(const std::string & type) :
             BaseTest("dense_scalar_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -86,6 +87,7 @@ class DenseDotProductQuickTest :
         DenseDotProductQuickTest(const std::string & type) :
             QuickTest("dense_scalar_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
