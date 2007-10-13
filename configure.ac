@@ -167,6 +167,23 @@ if test "x$ENABLE_GPU" = "xyes" ; then
 	dnl }}}
 fi
 dnl }}}
+dnl {{{ check for SSE support
+AC_MSG_CHECKING([whether to build SSE support])
+AC_ARG_ENABLE([sse],
+	AS_HELP_STRING([--enable-sse], [Build SSE support]),
+		[ENABLE_SSE=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_SSE=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_SSE])
+AM_CONDITIONAL([SSE], test "x$ENABLE_SSE" = "xyes")
+if test "x$ENABLE_SSE" = "xyes" ; then
+	dnl {{{ enable sse support
+	SSEDEF="-DHONEI_SSE"
+	dnl }}}
+fi
+AC_SUBST([SSEDEF])
+dnl }}}
 dnl {{{ check for debug support
 AC_MSG_CHECKING([whether to build debug support])
 AC_ARG_ENABLE([debug],
@@ -183,24 +200,6 @@ AC_SUBST([DEBUGDEF])
 AM_CONDITIONAL([DEBUG], test "x$ENABLE_DEBUG" = "xyes")
 dnl }}}
 
-dnl {{{ check for sse support
-AC_MSG_CHECKING([whether to build sse support])
-AC_ARG_ENABLE([sse],
-	AS_HELP_STRING([--enable-sse], [Build SSE support]),
-		[ENABLE_SSE=$enableval
-		  AC_MSG_RESULT([$enableval])],
-		[ENABLE_SSE=no
-		  AC_MSG_RESULT([no])])
-AC_SUBST([ENABLE_SSE])
-AM_CONDITIONAL([SSE], test "x$ENABLE_SSE" = "xyes")
-if test "x$ENABLE_SSE" = "xyes" ; then
-    dnl {{{ enable sse support
-dnl    CXXFLAGS="$CXXFLAGS -msse"
-	SSEDEF="-DHONEI_SSE"
-    dnl }}}
-fi
-AC_SUBST([SSEDEF])
-dnl }}}
 dnl }}}
 
 dnl output
