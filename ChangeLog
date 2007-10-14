@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-10-14 Volker Jung <volker.jung@uni-dortmund.de>
 
+	* libla/dense_vector_range_TEST.cc: Fixed minor bug.
+	* libla/dense_vector.hh, libla/dense_vector-impl.hh:
+	Added necessary changes for DenseVectorRange.
+
+2007-10-14 Volker Jung <volker.jung@uni-dortmund.de>
+
 	* libla/dense_vector_range.hh, dense_vector_range-impl.hh,
 	dense_vector_range_TEST.cc, dense_vector_range.cc: Added
 	DenseVectorRange implementation.

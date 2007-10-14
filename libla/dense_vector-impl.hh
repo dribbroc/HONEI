@@ -41,6 +41,7 @@
 namespace honei
 {
     template <typename DataType_> class DenseMatrix;
+    template <typename DataType_> class DenseVectorRange;
 
     /**
      * \brief DenseVector::Implementation is the private implementation class for DenseVector.
