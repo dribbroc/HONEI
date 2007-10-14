@@ -13,19 +13,25 @@ bench:
 
 bench-am:
 
-quickcheck: 
+quickcheck:
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-recursive" quickcheck-recursive
-quickcheck-sse: 
+quickcheck-sse-am:
+quickcheck-sse:
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-sse-recursive" quickcheck-sse-recursive
-quickcheck-cell: 
+quickcheck-cell-am:
+quickcheck-cell:
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-cell-recursive" quickcheck-cell-recursive
-quickcheck-mc: 
-	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-recursive" quickcheck-recursive
-check-sse: 
+quickcheck-mc-am:
+quickcheck-mc:
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="quickcheck-mc-recursive" quickcheck-mc-recursive
+check-sse-am:
+check-sse:
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="check-sse-recursive" check-sse-recursive
-check-cell: 
-	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="check-cell-recursive" check-sse-recursive
-check-mc: 
+check-cell-am:
+check-cell:
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="check-cell-recursive" check-cell-recursive
+check-mc-am:
+check-mc:
 	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="check-mc-recursive" check-mc-recursive
 
 doxygen:

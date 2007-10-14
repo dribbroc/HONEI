@@ -29,12 +29,12 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DataType_>
-class RelaxSolverQuickTest :
-    public QuickTest
+class RelaxSolverTest :
+    public BaseTest
 {
     public:
-        RelaxSolverQuickTest(const std::string & type) :
-            QuickTest("relax_solver_quick_test<" + type + ">")
+        RelaxSolverTest(const std::string & type) :
+            BaseTest("relax_solver_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
@@ -112,9 +112,9 @@ class RelaxSolverQuickTest :
             TEST_CHECK(true);
         }
 };
-//RelaxSolverQuickTest<float> relax_solver_quick_test_float("float");
-RelaxSolverQuickTest<tags::CPU, double> relax_solver_quick_test_double("double");
+//RelaxSolverTest<float> relax_solver_test_float("float");
+RelaxSolverTest<tags::CPU, double> relax_solver_test_double("double");
 #ifdef HONEI_SSE
-RelaxSolverQuickTest<tags::CPU::SSE, double> sse_relax_solver_quick_test_double("sse double");
+RelaxSolverTest<tags::CPU::SSE, double> sse_relax_solver_test_double("sse double");
 #endif
 
