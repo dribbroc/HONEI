@@ -181,7 +181,7 @@ class DenseVectorRangeFunctionsTest :
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS((dv)[i], DataType_(1.234), std::numeric_limits<DataType_>::epsilon());
                 }
-                for (typename Vector<DataType_>::ConstElementIterator ri(dv.element_at(3)), ri_end(dv.element_at(size - 22));
+                for (typename Vector<DataType_>::ConstElementIterator ri(dv.element_at(3)), ri_end(dv.element_at(size - 2));
                         ri != ri_end; ++ri)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ri, DataType_(3.98765421), std::numeric_limits<DataType_>::epsilon());
