@@ -39,8 +39,5 @@ class DenseMatrixRowSumVectorBench :
             evaluate(_size*_size);
         }
 };
-
-DenseMatrixRowSumVectorBench<float> DMRSVBenchfloat1("Dense Matrix Row Sum Vector Benchmark - matrix size: 256x256, float", 256, 10);
-DenseMatrixRowSumVectorBench<double> DMRSVBenchdouble1("Dense Matrix Row Sum Vector Benchmark - matrix size: 256x256, double", 256, 10);
-//DenseMatrixRowSumVectorBench<float> DMRSVBenchfloat2("Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-//DenseMatrixRowSumVectorBench<double> DMRSVBenchdouble2("Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+DenseMatrixRowSumVectorBench<float> DMRSVBenchfloat2("Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+DenseMatrixRowSumVectorBench<double> DMRSVBenchdouble2("Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);

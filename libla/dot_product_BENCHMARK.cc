@@ -37,12 +37,48 @@ class DotProductBench :
                 DenseVector<DataType_> dv1(_size, DataType_(rand()));
                 BENCHMARK(p0 = DotProduct<DataType_>::value(dv1,dv0));
             }
-            cout << endl;
             evaluate(2*_size);
         }
 };
+DotProductBench<float> DPBenchfloat("Dot Product Benchmark dense/dense - vector size: 10,000,000 float", 10000000, 10);
+DotProductBench<double> DPBenchdouble("Dot Product Benchmark dense/dense - vector size: 10,000,000 double", 10000000, 10);
 
-// ScalarProductBench<float> SPBenchfloat1("Scalar Product Benchmark - vector size: 1,000,000, float", 1000000, 10);
-// ScalarProductBench<double> SPBenchdouble1("Scalar Product Benchmark - vector size: 1,000,000, double", 1000000, 10);
-DotProductBench<float> DPBenchfloat("Dot Product Benchmark - vector size: 10,000 float", 10000, 10);
-DotProductBench<double> DPBenchdouble("Dot Product Benchmark - vector size: 10,000 double", 10000, 10);
+
+template <typename DataType_>
+
+class SparseDotProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        SparseDotProductBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DataType_ p0;
+            for(int i = 0; i < _count; ++i)
+            {
+                SparseVector<DataType_> sv(_size, (unsigned long)(_size/10));
+                for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()), i_end(sv.end_elements()) ; i != i_end ; ++i) 
+                {
+                    if (i.index() % 10 == 0)
+                    {
+                        *i = DataType_(rand());
+                    }
+                }
+                DenseVector<DataType_> dv(_size, DataType_(rand()));
+                BENCHMARK(p0 = DotProduct<DataType_>::value(sv,dv));
+            }
+            evaluate((unsigned long)((2*_size)/10));
+        }
+};
+SparseDotProductBench<float> SDPBenchfloat("Dot Product Benchmark sparse/dense - vector size: 10,000,000 float", 10000000, 10);
+SparseDotProductBench<double> SDPBenchdouble("Dot Product Benchmark sparse/dense - vector size: 10,000,000 double", 10000000, 10);
+

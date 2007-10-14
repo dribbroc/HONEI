@@ -78,8 +78,82 @@ class DenseMatrixProductBench :
             evaluate(_size*_size*_size*2);
         }
 };
+DenseMatrixProductBench<float> DMPBenchfloat2("Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
+DenseMatrixProductBench<double> DMPBenchdouble2("Matrix Product Benchmark dense/dense - matrix size: 256x256, double", 256, 10);
 
-DenseMatrixProductBench<float> DMPBenchfloat("Dense Matrix Product Benchmark - matrix size: 32x32, float", 32, 10);
-DenseMatrixProductBench<double> DMPBenchdouble("Dense Matrix Product Benchmark - matrix size: 32x32, double", 32, 10);
-//DenseMatrixProductBench<float> DMPBenchfloat2("Dense Matrix Product Benchmark - matrix size: 256x256, float", 256, 10);
-//DenseMatrixProductBench<double> DMPBenchdouble2("Dense Matrix Product Benchmark - matrix size: 256x256, double", 256, 10);
+
+template <typename DataType_>
+class SparseMatrixProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        SparseMatrixProductBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DataType_ p0;
+            for(int i = 0; i < _count; ++i)
+            { 
+                SparseMatrix<DataType_> sm(_size, _size, (unsigned long)((_size*_size)/10));
+                for (typename MutableMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 10 == 0)
+                    {
+                        *i = DataType_(rand());
+                    }
+                }                
+                DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
+                BENCHMARK(Product<>::value(sm, dm));
+            }
+            evaluate((unsigned long)(_size*_size*_size*2/10)); 
+        }
+};
+SparseMatrixProductBench<float> SMPBenchfloat2("Matrix Product Benchmark sparse/dense - matrix size: 256x256, float", 256, 10);
+SparseMatrixProductBench<double> SMPBenchdouble2("Matrix Product Benchmark sparse/dense - matrix size: 256x256, double", 256, 10);
+
+
+template <typename DataType_>
+class BandedMatrixProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        BandedMatrixProductBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DataType_ p0;
+            for(int i = 0; i < _count; ++i)
+            { 
+                DenseVector<DataType_> dv(_size, DataType_(rand()));
+                BandedMatrix<DataType_> bm(_size, dv);
+                bm.insert_band(1, dv);
+                bm.insert_band(-1, dv);
+                bm.insert_band(2, dv);
+                bm.insert_band(-2, dv);
+                bm.insert_band(5, dv);
+                bm.insert_band(-5, dv);
+                DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
+                BENCHMARK(Product<>::value(bm, dm));
+            }
+            evaluate(_size*_size*((_size*7-16)/_size)*2);
+        }
+};
+BandedMatrixProductBench<float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);
+BandedMatrixProductBench<double> BMPBenchdouble2("Matrix Product Benchmark banded/dense - matrix size: 256x256, double", 256, 10);
+

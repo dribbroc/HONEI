@@ -42,6 +42,5 @@ class ScalarDenseMatrixScaleBench :
         evaluate(_size * _size);
     }
 };
-
-ScalarDenseMatrixScaleBench<float>  SMPBenchfloat ("Matrixscalierung Benchmark: size: 400x400, float",  400, 10);
-ScalarDenseMatrixScaleBench<double> SMPBenchdouble("Matrixscalierung Benchmark: size: 400x400, double", 400, 10);
+ScalarDenseMatrixScaleBench<float>  SMPBenchfloat ("Matrixscalierung Benchmark: size: 4096x4096, float",  4096, 10);
+ScalarDenseMatrixScaleBench<double> SMPBenchdouble("Matrixscalierung Benchmark: size: 4096x4096, double", 4096, 10);

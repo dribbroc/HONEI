@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-14 David Gies <david-gies@gmx.de>
+
+        * libla/dot_product_BENCHMARK.cc, element_inverse_BENCHMARK.cc,
+        element_product_BENCHMARK.cc, product_BENCHMARK.cc, reduction_BENCHMARK.cc
+        scale_BENCHMARK.cc, sum_BENCHMARK.cc: Adjusted operand size and added some
+        sparse and banded benchmarks.
+
 2007-10-14 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libla/dense_vector_range_TEST.cc: Fixed minor bug.

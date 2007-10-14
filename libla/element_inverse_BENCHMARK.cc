@@ -40,5 +40,5 @@ class DenseMatrixElementInverseBench :
     }
 };
 
-DenseMatrixElementInverseBench<float>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 100x100, float",  100, 10);
-DenseMatrixElementInverseBench<double> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 100x100, double", 100, 10);
+DenseMatrixElementInverseBench<float>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
+DenseMatrixElementInverseBench<double> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);

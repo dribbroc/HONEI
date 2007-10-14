@@ -43,9 +43,8 @@ class ScalarDenseMatrixSumBench :
         evaluate(_size * _size);
     }
 };
-
-ScalarDenseMatrixSumBench<float>  SDMSBenchfloat ("MatrixShift Benchmark: size: 200x200, float",  200, 12);
-ScalarDenseMatrixSumBench<double> SDMSBenchdouble("MatrixShift Benchmark: size: 200x200, double", 200, 12);
+ScalarDenseMatrixSumBench<float>  SDMSBenchfloat ("MatrixShift Benchmark - size: 4096x4096, float",  4096, 12);
+ScalarDenseMatrixSumBench<double> SDMSBenchdouble("MatrixShift Benchmark - size: 4096x4096, double", 4096, 12);
 
 
 
