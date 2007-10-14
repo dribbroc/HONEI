@@ -365,11 +365,11 @@ DenseMatrixSparseVectorProductQuickTest<double> dense_matrix_sparse_vector_produ
 
 template <typename DataType_>
 class SparseMatrixDenseVectorProductTest :
-    public QuickTest
+    public BaseTest
 {
     public:
         SparseMatrixDenseVectorProductTest(const std::string & type) :
-            QuickTest("sparse_matrix_dense_vector_product_test<" + type + ">")
+            BaseTest("sparse_matrix_dense_vector_product_test<" + type + ">")
         {
         }
 
@@ -434,11 +434,11 @@ SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_produ
 
 template <typename DataType_>
 class SparseMatrixSparseVectorProductTest :
-    public QuickTest
+    public BaseTest
 {
     public:
         SparseMatrixSparseVectorProductTest(const std::string & type) :
-            QuickTest("sparse__matrix_sparse_vector_product_test<" + type + ">")
+            BaseTest("sparse__matrix_sparse_vector_product_test<" + type + ">")
         {
         }
 
@@ -884,11 +884,11 @@ SparseMatrixProductQuickTest<double> sparse_matrix_product_quick_test_double("do
 
 template <typename DataType_>
 class BandedMatrixDenseMatrixProductTest :
-    public QuickTest
+    public BaseTest
 {
     public:
         BandedMatrixDenseMatrixProductTest(const std::string & type) :
-            QuickTest("banded_matrix_dense_matrix_product_test<" + type + ">")
+            BaseTest("banded_matrix_dense_matrix_product_test<" + type + ">")
         {
         }
 
@@ -974,11 +974,11 @@ BandedMatrixDenseMatrixProductQuickTest<double> banded_matrix_dense_matrix_produ
 
 template <typename DataType_>
 class BandedMatrixSparseMatrixProductTest :
-    public QuickTest
+    public BaseTest
 {
     public:
         BandedMatrixSparseMatrixProductTest(const std::string & type) :
-            QuickTest("banded_matrix_sparse_matrix_product_test<" + type + ">")
+            BaseTest("banded_matrix_sparse_matrix_product_test<" + type + ">")
         {
         }
 
@@ -1102,11 +1102,11 @@ BandedMatrixSparseMatrixProductQuickTest<double> banded_matrix_sparse_matrix_pro
 
 template <typename DataType_>
 class DenseMatrixBandedMatrixProductTest :
-    public QuickTest
+    public BaseTest
 {
     public:
         DenseMatrixBandedMatrixProductTest(const std::string & type) :
-            QuickTest("dense_matrix_banded_matrix_product_test<" + type + ">")
+            BaseTest("dense_matrix_banded_matrix_product_test<" + type + ">")
         {
         }
 
@@ -1205,11 +1205,11 @@ DenseMatrixBandedMatrixProductQuickTest<double> dense_matrix_banded_matrix_produ
 
 template <typename DataType_>
 class SparseMatrixBandedMatrixProductTest :
-    public QuickTest
+    public BaseTest
 {
     public:
         SparseMatrixBandedMatrixProductTest(const std::string & type) :
-            QuickTest("sparse_matrix_banded_matrix_product_test<" + type + ">")
+            BaseTest("sparse_matrix_banded_matrix_product_test<" + type + ">")
         {
         }
 
