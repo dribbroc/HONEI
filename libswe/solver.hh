@@ -1123,9 +1123,9 @@ namespace honei {
     {
         DenseVector<WorkPrec_> result(ulint(3), WorkPrec_(0));
 
-        if (h > 0)
+        if (fabs(h) >= std::numeric_limits<WorkPrec_>::epsilon())
         {
-            result[0] = 0;
+            result[0] = WorkPrec_(0);
             WorkPrec_ temp = _manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
 
             result[1] = (temp * q1 - h * slope_x) * 9.81;
@@ -1135,9 +1135,9 @@ namespace honei {
         }
         else
         {
-            result[0] = 0;
-            result[1] = 0;
-            result[2] = 0;
+            result[0] = WorkPrec_(0);
+            result[1] = WorkPrec_(0);
+            result[2] = WorkPrec_(0);
             return result;
         }
     }

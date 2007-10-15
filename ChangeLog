@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-15 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libswe/solver.hh: Fixed numerical behaviour of the source term
+	computation.
+
 2007-10-14 David Gies <david-gies@gmx.de>
 
         * libla/dot_product_BENCHMARK.cc, element_inverse_BENCHMARK.cc,
