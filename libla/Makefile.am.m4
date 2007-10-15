@@ -76,6 +76,7 @@ EXTRA_PROGRAMS = benchmark $(BENCHMARKS)
 
 bench: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libla/benchmark
 
 check_PROGRAMS = $(TESTS)
 
