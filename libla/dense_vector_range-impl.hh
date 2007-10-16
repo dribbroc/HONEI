@@ -37,7 +37,7 @@
  * Implementation of DenseVectorRange and related classes.
  *
  * \ingroup grpvector
- **/
+ */
 namespace honei
 {
     /**
@@ -173,7 +173,7 @@ namespace honei
      * \brief DenseVectorRange::DenseElementIterator is a simple iterator implementation for dense vector ranges.
      *
      * \ingroup grpvector
-     **/
+     */
     template <> template <typename DataType_> class DenseVectorRange<DataType_>::DenseElementIterator<DataType_> :
         public VectorElementIterator
         {
@@ -193,7 +193,7 @@ namespace honei
                  *
                  * \param vector The parent vector that is referenced by the iterator.
                  * \param index The index into the vector.
-                 **/
+                 */
                 DenseElementIterator(const DenseVectorRange<DataType_> & vector, unsigned long index) :
                     _vector(vector),
                     _index(index)

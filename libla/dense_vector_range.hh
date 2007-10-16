@@ -35,8 +35,8 @@
 namespace honei
 {
     /**
-     * \brief DenseVectorRange is a vector with O(size) non-zero elements which keeps its data
-     * \brief sequential.
+     * \brief DenseVectorRange is a vector which provides access to a contiguous part
+     * \brief of a DenseVector and allows to manipulate the accessed part.
      *
      * \ingroup grpvector
      */
@@ -66,9 +66,9 @@ namespace honei
             /**
              * Constructor.
              *
-             * \param size Size of the new dense vector.
-             * \param offset Offset of the vector's data inside the shared array.
-             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
+             * \param source The DenseVector the range provides access to.
+             * \param size Size of the new dense vector range.
+             * \param offset Offset of the vector's data inside the DenseVector's shared array.
              */
             DenseVectorRange(const DenseVector<DataType_> & source, const unsigned long size, const unsigned long offset = 0);
 
@@ -77,28 +77,28 @@ namespace honei
 
             /// \}
 
-            /// Returns const iterator pointing to the first element of the vector.
+            /// Returns const iterator pointing to the first element of the range.
             virtual ConstElementIterator begin_elements() const;
 
-            /// Returns const iterator pointing behind the last element of the vector.
+            /// Returns const iterator pointing behind the last element of the range.
             virtual ConstElementIterator end_elements() const;
 
-            /// Returns const iterator pointing to a given element of the vector.
+            /// Returns const iterator pointing to a given element of the range.
             virtual ConstElementIterator element_at(unsigned long index) const;
 
-            /// Returns iterator pointing to the first element of the vector.
+            /// Returns iterator pointing to the first element of the range.
             virtual ElementIterator begin_elements();
 
-            /// Returns iterator pointing behind the last element of the vector.
+            /// Returns iterator pointing behind the last element of the range.
             virtual ElementIterator end_elements();
 
-            /// Returns iterator pointing to a given element of the vector.
+            /// Returns iterator pointing to a given element of the range.
             virtual ElementIterator element_at(unsigned long index);
 
             /// Returns our size.
             virtual unsigned long size() const;
 
-            /// Retrieves element by index, zero-based, assignable.
+            /// Retrieves element by index, zero-based, unassignable.
             virtual const DataType_ & operator[] (unsigned long index) const;
 
             /// Retrieves element by index, zero-based, assignable.

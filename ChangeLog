@@ -5,9 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-16 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libla/dense_vector_range.hh: Corrected comments.
+	* libla/dense_vector_range-impl.hh: Fixed doxygen comment terminators.
+
 2007-10-15 Dirk Ribbrock <dirk.ribbrock@cs.uni-dortmund.de>
 
-	* ilibla/Makefile.am.m4: Added workaround to run the benchmark
+	* libla/Makefile.am.m4: Added workaround to run the benchmark
 	with 'make bench'.
 
 2007-10-15 Volker Jung <volker.jung@uni-dortmund.de>
