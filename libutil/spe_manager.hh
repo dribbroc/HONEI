@@ -21,9 +21,11 @@
 #define LIBUTIL_GUARD_SPE_MANAGER_HH 1
 
 #include <libutil/assertion.hh>
+#include <libutil/cell.hh>
 #include <libutil/exception.hh>
 #include <libutil/memory_backend.hh>
 #include <libutil/stringify.hh>
+#include <libutil/spe.hh>
 
 #include <string>
 #include <tr1/memory>
@@ -34,82 +36,7 @@
 
 namespace honei
 {
-    class SPE;
-    class SPEManager;
-
-    /**
-     * SPEError is thrown by SPEManager and related classes whenever an error
-     * occurs in interfacing Libspe2.
-     *
-     * \ingroup grpexceptions
-     * \ingroup grpcell
-     */
-    struct SPEError :
-        public ExternalError
-    {
-        /**
-         * Constructor.
-         *
-         * \param msg The error message.
-         * \param reason The reason for the error message.
-         */
-        SPEError(const std::string & msg, const std::string & reason);
-    };
-
-    /**
-     * SPETask is the type for any task that shall be executable by SPE.
-     */
-    typedef std::tr1::function<void (const SPE &) throw ()> SPETask;
-
-    /**
-     * An instance of SPE encapsulates one of the system's Synergistic
-     * Processing Elements.
-     *
-     * \ingroup grpcell
-     */
-    class SPE
-    {
-        private:
-            /// Our implementation class.
-            class Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
-            /// Constructor.
-            SPE();
-
-        public:
-            friend class SPEManager;
-
-            /// Copy-constructor.
-            SPE(const SPE & other);
-
-            /// Destructor.
-            ~SPE();
-
-            /// \name Iteration over our queued threads.
-            /// \{
-
-            typedef libwrapiter::ForwardIterator<SPE, SPETask> Iterator;
-
-            Iterator begin() const;
-            Iterator end() const;
-
-            /// \}
-
-            /// Return out libspe2 context.
-            spe_context_ptr_t context() const;
-
-            /// Enqueue an SPETask.
-            void enqueue(SPETask &);
-
-            /// Return our device id.
-            DeviceId id() const;
-
-            /// Return true if we idle.
-            bool idle() const;
-    };
+    class SPEInstruction;
 
     /**
      * SPEManager handles all available SPEs and dispatches tasks to them.
@@ -143,6 +70,8 @@ namespace honei
             /// \}
 
         public:
+            friend class SPEInstruction;
+
             /// Return the only instance of SPEManager.
             static SPEManager * instance();
 
@@ -153,14 +82,15 @@ namespace honei
 
             Iterator begin() const;
             Iterator end() const;
+            unsigned int spe_count() const;
 
             /// \}
 
-            /// Dispatch an SPETask to the specified SPE.
-            void dispatch(const DeviceId, SPETask &);
+            /// Dispatch an Instruction to the specified SPE.
+            void dispatch(const DeviceId, Instruction);
 
             /// Dispatch an SPETask to all SPEs.
-            void dispatch(SPETask &);
+            void dispatch(const SPEInstruction & instruction);
     };
 }
 

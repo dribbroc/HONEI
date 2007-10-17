@@ -121,9 +121,6 @@ AC_ARG_ENABLE([cell],
 AC_SUBST([ENABLE_CELL])
 AM_CONDITIONAL([CELL], test "x$ENABLE_CELL" = "xyes")
 if test "x$ENABLE_CELL" = "xyes" ; then
-    dnl {{{ enable 64bit support
-    CXXFLAGS="$CXXFLAGS -m64"
-    dnl }}}
 	dnl {{{ check for libspe2
 	AC_CHECK_LIB(spe2, spe_context_create,
 		[have_spe2=yes])
@@ -131,7 +128,11 @@ if test "x$ENABLE_CELL" = "xyes" ; then
 		AC_MSG_ERROR([libspe2 (http://sourceforge.net/projects/libspe) is required for CELL BE support.])
 	fi
 	dnl }}}
+	dnl {{{ enable CELL support
+	CELLDEF="-DHONEI_CELL"
+	dnl }}}
 fi
+AC_SUBST([CELLDEF])
 dnl }}}
 dnl {{{ check for GPU support
 AC_MSG_CHECKING([whether to build GPU support])
@@ -209,6 +210,7 @@ AC_OUTPUT(
 	doc/Makefile
 	libgraph/Makefile
 	libla/Makefile
+	libla/cell/Makefile
 	libmath/Makefile
 	libswe/Makefile
 	libutil/Makefile

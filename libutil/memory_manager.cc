@@ -184,6 +184,20 @@ MemoryManager::get_id_by_address(const void * address) const
     return a->first;
 }
 
+MemoryInfo
+MemoryManager::get_info_by_id(const MemoryId id) const
+{
+    CONTEXT("When obtaining information on memory id '" + stringify(id) + "':");
+
+    if (! _id_used(id))
+        throw MemoryIdNotKnown(id);
+
+    InfoMap::const_iterator i(_info_map.find(id)), i_end(_info_map.end());
+    ASSERT(i_end != i, "no information found for memory id '" + stringify(id) + "':");
+
+    return *i->second;
+}
+
 void
 MemoryManager::swap(const MemoryId left, const MemoryId right)
 {

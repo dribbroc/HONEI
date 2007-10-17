@@ -374,7 +374,7 @@ namespace honei
         template <typename DT_>
         static DenseVector<DT_> & value(const DT_ a, DenseVector<DT_> & x)
         {
-            CONTEXT("When adding a to DenseVector:");
+            CONTEXT("When adding scalar to DenseVector:");
 
             for (typename Vector<DT_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
@@ -386,7 +386,11 @@ namespace honei
         }
     };
 
-   //SSE implementiation 
+    template <> struct Sum<tags::Cell>
+    {
+        static DenseVector<float> value(DenseVector<float> & a, const DenseVector<float> & b);
+    };
+
     template <>
     struct Sum<tags::CPU::SSE>
     {
@@ -394,4 +398,5 @@ namespace honei
         static DenseVector<double> & value(DenseVector<double> & a, const DenseVector<double> & b);
     };
 }
+
 #endif

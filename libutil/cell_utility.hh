@@ -17,18 +17,16 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <libla/dot_product.hh>
+#ifndef LIBLA_CELL_GUARD_CELL_UTILITY_HH
+#define LIBLA_CELL_GUARD_CELL_UTILITY_HH 1
 
-#include <string>
+inline unsigned multiple_of_sixteen(unsigned u) __attribute__((always_inline));
 
-using namespace honei;
-
-#if 0
-template <>
-float ScalarProduct<tags::Cell>::value(const DenseVector<float> & left, const DenseVector<float> & right)
+unsigned multiple_of_sixteen(unsigned u)
 {
-    std::cout << "Yay! Cell-specilisation!" << std::endl;
+    unsigned r(u & 0xF);
 
-    return 0;
+    return (r > 0) ? u + 16 - r : u;
 }
+
 #endif

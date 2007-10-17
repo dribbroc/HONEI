@@ -20,155 +20,23 @@
 #include <libutil/lock.hh>
 #include <libutil/log.hh>
 #include <libutil/mutex.hh>
+#include <libutil/spe_instruction.hh>
+#include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/worker.hh>
 
 #include <list>
 #include <string>
-#include <tr1/functional> 
+#include <tr1/functional>
 
 #include <libspe2.h>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 using namespace honei;
 
-SPEError::SPEError(const std::string & msg, const std::string & reason) :
-    ExternalError("libspe2", msg + ", reason is " + reason + ".")
+extern "C"
 {
-}
-
-struct SPE::Implementation
-{
-    /// Our thread.
-    WorkerThread * thread;
-
-    /// Our libspe context.
-    spe_context_ptr_t context;
-
-    /// Our device id.
-    const DeviceId device;
-
-    /// Return the next device id.
-    inline DeviceId next_device_id()
-    {
-        static DeviceId result(0);
-
-        return result++;
-    }
-
-    inline void enqueue(WorkerTask & task)
-    {
-        thread->enqueue(task);
-    }
-
-    /// Constructor.
-    Implementation() :
-        context(spe_context_create(0, 0)),
-        device(next_device_id()),
-        thread(new WorkerThread)
-    {
-        if (! context)
-        {
-            std::string reason;
-            switch (errno)
-            {
-                case ENOMEM:
-                    reason = "lack of system resources (ENOMEM)";
-                    break;
-
-                case EPERM:
-                    reason = "insufficient permissions to create context (EPERM)";
-                    break;
-
-                case EFAULT:
-                    reason = "internal error (EFAULT)";
-                    break;
-
-                default:
-                    reason = "unknown error (errno = " + stringify(errno) + ")";
-            }
-
-            throw SPEError("Could not create SPE context", reason);
-        }
-    }
-
-    /// Destructor.
-    ~Implementation()
-    {
-        // Kill the thread.
-        delete thread;
-
-        // Release the context.
-        int retval(spe_context_destroy(context)), counter(5);
-
-        while ((retval == -1) && (errno == EAGAIN) && (counter > 0))
-        {
-            Log::instance()->message(ll_minimal, "SPE '" + stringify(device)
-                    + "' has still running threads on destruction.");
-            usleep(1000);
-            --counter;
-        }
-
-        if (retval == -1)
-        {
-            std::string reason;
-            switch (errno)
-            {
-                case ESRCH:
-                    reason = "invalid context (ESRCH)";
-                    break;
-
-                case EFAULT:
-                    reason = "internal error (EFAULT)";
-                    break;
-
-                default:
-                    reason = "unknown error (errno = " + stringify(errno) + ")";
-            }
-
-            Log::instance()->message(ll_minimal, "Could not destroy SPE context " + reason + ".");
-        }
-    }
-};
-
-SPE::SPE() :
-    _imp(new Implementation)
-{
-}
-
-SPE::SPE(const SPE & other) :
-    _imp(other._imp)
-{
-}
-
-SPE::~SPE()
-{
-}
-
-spe_context_ptr_t
-SPE::context() const
-{
-    return _imp->context;
-}
-
-void
-SPE::enqueue(SPETask & task)
-{
-    WorkerTask t(std::tr1::bind(task, *this));
-
-    _imp->enqueue(t);
-}
-
-DeviceId
-SPE::id() const
-{
-    return _imp->device;
-}
-
-bool
-SPE::idle() const
-{
-    return _imp->thread->idle();
+    extern spe_program_handle_t kernel_reference;
 }
 
 struct SPEManager::Implementation
@@ -184,14 +52,14 @@ struct SPEManager::Implementation
     /// Out list of SPEs.
     SPEList spe_list;
 
-    /// Dispatch an SPETask to all SPEs.
-    inline void dispatch(SPETask & task)
+    /// Dispatch an SPEInstruction to an SPEs.
+    inline void dispatch(const SPEInstruction & instruction)
     {
-        for (SPEList::iterator i(spe_list.begin()), i_end(spe_list.end()) ; i != i_end ; ++i)
-        {
-            i->enqueue(task);
-        }
+        /// \todo Find matching kernel, enqueue with that kernel
+        instruction.enqueue_with(spe_list.begin()->kernel());
     }
+
+    static Environment environment __attribute__((aligned(16)));
 
     /// Constructor.
     Implementation() :
@@ -207,14 +75,22 @@ struct SPEManager::Implementation
     }
 };
 
+Environment
+SPEManager::Implementation::environment = { 0x4000, 0x3F000 };
+
 SPEManager::SPEManager() :
     _imp(new Implementation)
 {
+    Lock l(*_imp->mutex);
+
     unsigned count(_imp->spe_count);
     while(count-- > 0)
     {
-        _imp->spe_list.push_back(SPE());
+        SPE spe;
+//        spe.run(SPEKernel(kernel_reference, &Implementation::environment));
+        _imp->spe_list.push_front(spe);
     }
+    _imp->spe_list.begin()->run(SPEKernel(kernel_reference, &Implementation::environment));
 }
 
 SPEManager::~SPEManager()
@@ -232,17 +108,30 @@ SPEManager::instance()
 SPEManager::Iterator
 SPEManager::begin() const
 {
+    Lock l(*_imp->mutex);
+
     return Iterator(_imp->spe_list.begin());
 }
 
 SPEManager::Iterator
 SPEManager::end() const
 {
+    Lock l(*_imp->mutex);
+
     return Iterator(_imp->spe_list.end());
 }
 
-void
-SPEManager::dispatch(SPETask & task)
+unsigned int
+SPEManager::spe_count() const
 {
-    _imp->dispatch(task);
+    return _imp->spe_count;
 }
+
+void
+SPEManager::dispatch(const SPEInstruction & instruction)
+{
+    Lock l(*_imp->mutex);
+
+    _imp->dispatch(instruction);
+}
+

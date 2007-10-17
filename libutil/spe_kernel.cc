@@ -1,0 +1,306 @@
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
+
+/*
+ * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ *
+ * This file is part of the Utility C++ library. LibUtil is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License version 2, as published by the Free Software Foundation.
+ *
+ * LibUtil is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include <libutil/assertion.hh>
+#include <libutil/condition_variable.hh>
+#include <libutil/exception.hh>
+#include <libutil/lock.hh>
+#include <libutil/mutex.hh>
+#include <libutil/spe_event.hh>
+#include <libutil/spe_kernel.hh>
+#include <libutil/spe_manager.hh>
+
+namespace honei
+{
+    struct SPEKernel::Implementation
+    {
+        /// Our SPE program.
+        spe_program_handle_t handle;
+
+        /// \name Shared data
+        /// \{
+
+        /// Our program's environment.
+        Environment * const environment;
+
+        /// Our queue of instructions.
+        Instruction * instructions;
+
+        /// Our index on the currently executed instruction.
+        unsigned spe_instruction_index;
+
+        /// Our index on the next free instruction.
+        unsigned next_free_index;
+
+        /// Our counter for enqueued instructions.
+        unsigned enqueued_counter;
+
+        /// Our counter for finished instructions.
+        unsigned finished_counter;
+
+        /// \}
+
+        /// \name Synchronization data and PPE-side kernel thread
+        /// \{
+
+        /// Our mutex.
+        Mutex * const mutex;
+
+        /// Our SPE-part-has-been-loaded condition.
+        ConditionVariable * kernel_loaded;
+
+        /// Our instruction-has-finished condition variable.
+        ConditionVariable * instruction_finished;
+
+        /// Our PPE-side kernel thread.
+        pthread_t * const thread;
+
+        /// Our PPE-side kernel thread's attributes.
+        pthread_attr_t * const attr;
+
+        /// \}
+
+        /// Our SPE.
+        SPE * spe;
+
+        static void * kernel_thread(void * argument)
+        {
+            Implementation * imp(static_cast<Implementation *>(argument));
+
+            SPE * spe(0);
+            {
+                Lock l(*imp->mutex);
+
+                imp->kernel_loaded->wait(*imp->mutex);
+                spe = imp->spe;
+            }
+
+            SPEEvent event(*imp->spe, SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED);
+            Instruction current_instruction;
+
+            do
+            {
+                spe_event_unit_t * e(event.wait(-1));
+                ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)), "unexpected event happened!");
+
+                if (e->events & SPE_EVENT_OUT_INTR_MBOX)
+                {
+                    unsigned mail(0);
+
+                    int retval(spe_out_intr_mbox_read(spe->context(), &mail, 1, SPE_MBOX_ALL_BLOCKING));
+                    ASSERT(1 == retval, "weird return value in spe_*_mbox_read!");
+
+                    do
+                    {
+                        switch (mail)
+                        {
+                            case km_result_dword:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    spe_out_mbox_read(spe->context(),
+                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].c.ea), 1);
+                                }
+                                continue;
+
+                            case km_result_qword:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    spe_out_mbox_read(imp->spe->context(),
+                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].c.ea), 2);
+                                }
+                                continue;
+
+                            case km_instruction_finished:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    imp->instructions[imp->spe_instruction_index].opcode = oc_noop;
+                                    ++imp->finished_counter;
+                                    ++imp->spe_instruction_index;
+                                    imp->spe_instruction_index %= 8; /// \todo remove hardcoded numbers
+                                    current_instruction = imp->instructions[imp->spe_instruction_index];
+                                    imp->instruction_finished->broadcast();
+                                }
+                                continue;
+                            case km_unknown_opcode:
+                                continue;;
+                        }
+
+                        throw InternalError("Unexpected mail received in interrupt mailbox!");
+                    } while (false);
+                }
+                else if (e->events & SPE_EVENT_SPE_STOPPED)
+                {
+                    Lock ll(*imp->mutex);
+
+                    imp->instruction_finished->broadcast();
+                    break;
+                }
+                else
+                {
+                    /// \todo Do we need some sort of idle iterations counter?
+                }
+            } while (true);
+
+            pthread_exit(0);
+        }
+
+        Implementation(const spe_program_handle_t & h, Environment * const e) :
+            handle(h),
+            environment(e),
+            instructions(0),
+            spe_instruction_index(0),
+            next_free_index(0),
+            enqueued_counter(0),
+            finished_counter(0),
+            mutex(new Mutex),
+            kernel_loaded(new ConditionVariable),
+            instruction_finished(new ConditionVariable),
+            thread(new pthread_t),
+            attr(new pthread_attr_t)
+        {
+            int retval(0);
+
+            if (0 != posix_memalign(reinterpret_cast<void **>(&instructions), 128, 8 * sizeof(Instruction))) /// \todo remove hardcoded numbers
+                throw std::bad_alloc(); /// \todo exception hierarchy
+
+            if (0 != (retval = pthread_attr_init(attr)))
+                throw ExternalError("libpthread", "pthread_attr_init failed, " + stringify(strerror(retval)));
+
+            if (0 != (retval = pthread_attr_setdetachstate(attr, PTHREAD_CREATE_JOINABLE)))
+                throw ExternalError("libpthread", "pthread_attr_setdetachstate failed," + stringify(strerror(retval)));
+
+            if (0 != (retval = pthread_create(thread, 0, &kernel_thread, this)))
+                throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
+        }
+
+        ~Implementation()
+        {
+            int retval(0);
+
+            if (0 != (retval = pthread_join(*thread, 0)))
+                throw ExternalError("libpthread", "pthread_join failed, " + stringify(strerror(retval)));
+
+            free(instructions);
+
+            if (0 != (retval = pthread_attr_destroy(attr)))
+                throw ExternalError("libpthread", "pthread_attr_destroy failed, " + stringify(strerror(retval)));
+
+            delete attr;
+            delete thread;
+            delete instruction_finished;
+            delete kernel_loaded;
+            delete mutex;
+        }
+
+    };
+
+    SPEKernel::SPEKernel(const spe_program_handle_t & handle, Environment * const environment) :
+        _imp(new Implementation(handle, environment))
+    {
+    }
+
+    SPEKernel::Iterator
+    SPEKernel::begin() const
+    {
+        return Iterator(_imp->instructions);
+    }
+
+    SPEKernel::Iterator
+    SPEKernel::end() const
+    {
+        return Iterator(_imp->instructions + 8); /// \todo remove hardcoded numbers
+    }
+
+    unsigned
+    SPEKernel::enqueue(const Instruction & instruction)
+    {
+        CONTEXT("When enqueueing instruction:");
+        unsigned result;
+        Lock l(*_imp->mutex);
+
+        while (_imp->spe_instruction_index == (_imp->next_free_index + 1) % 8) /// \todo remove hardcoded numbers
+        {
+            _imp->instruction_finished->wait(*_imp->mutex);
+        }
+
+        _imp->instructions[_imp->next_free_index] = instruction;
+        result = _imp->enqueued_counter;
+        ++_imp->next_free_index;
+        ++_imp->enqueued_counter;
+        _imp->next_free_index %= 8; /// \todo remove hardcoded numbers
+        if (_imp->spe)
+        {
+            _imp->spe->signal();
+        }
+        else
+        {
+        }
+
+        return result;
+    }
+
+
+    void
+    SPEKernel::wait(unsigned instruction_index) const
+    {
+        CONTEXT("When waiting until instruction '" + stringify(instruction_index) + "' has finished:");
+        Lock l(*_imp->mutex);
+
+        while (instruction_index >= _imp->finished_counter)
+        {
+            _imp->instruction_finished->wait(*_imp->mutex);
+        }
+    }
+
+    void
+    SPEKernel::load(const SPE & spe) const
+    {
+        CONTEXT("When loading kernel into SPE #" + stringify(spe.id()) + ":");
+        Lock l(*_imp->mutex);
+
+        if (0 != spe_program_load(spe.context(), &_imp->handle))
+        {
+            throw ExternalError("libspe2", "spe_program_load failed, " + stringify(strerror(errno)));
+        }
+
+        _imp->spe = new SPE(spe);
+        if (_imp->enqueued_counter > 0)
+        {
+            _imp->spe->signal();
+        }
+        _imp->kernel_loaded->signal();
+    }
+
+    void * SPEKernel::argument() const
+    {
+        Lock l(*_imp->mutex);
+
+        return _imp->instructions;
+    }
+
+    void * const SPEKernel::environment() const
+    {
+        Lock l(*_imp->mutex);
+
+        return _imp->environment;
+    }
+}

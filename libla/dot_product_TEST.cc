@@ -23,8 +23,8 @@
 #include <libla/norm.hh>
 #include <libla/sparse_vector.hh>
 #include <unittest/unittest.hh>
-#include <iostream>
 
+#include <iostream>
 #include <limits>
 #include <tr1/memory>
 
@@ -104,12 +104,12 @@ class DenseDotProductQuickTest :
             for (typename Vector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
                     i != i_end ; ++i)
             {
-                *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                *i = DataType_((i.index() + 1) / 1.23456789);
             }
 
             DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
             DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-            TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, 2 * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
@@ -122,6 +122,9 @@ DenseDotProductQuickTest<tags::CPU, double> dense_scalar_product_quick_test_doub
 #ifdef HONEI_SSE
 DenseDotProductQuickTest<tags::CPU::SSE, float> sse_dense_scalar_product_quick_test_float("SSE float");
 DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseDotProductQuickTest<tags::Cell, float> sse_dense_dot_product_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>

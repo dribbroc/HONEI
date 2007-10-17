@@ -5,6 +5,7 @@ dnl vim: set ft=m4 noet :
 
 define(`benchmarklist', `')dnl
 define(`filelist', `')dnl
+define(`celllist', `')dnl
 define(`headerlist', `')dnl
 define(`sselist', `')dnl
 define(`testlist', `')dnl
@@ -13,6 +14,7 @@ $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	libla.la \
+	$(top_builddir)/libla/cell/libla_ppe.a \
 	$(top_builddir)/libutil/libutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -29,11 +31,13 @@ $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 define(`addhh', `define(`filelist', filelist `$1.hh')define(`headerlist', headerlist `$1.hh')')dnl
 define(`addimpl', `define(`filelist', filelist `$1-impl.hh')define(`headerlist', headerlist `$1-impl.hh')')dnl
 define(`addcc', `define(`filelist', filelist `$1.cc')')dnl
+define(`addcell', `define(`celllist', celllist `$1-cell.cc')')dnl
 define(`addsse', `define(`sselist', sselist `$1-sse.cc')')dnl
 define(`addthis', `dnl
 ifelse(`$2', `hh', `addhh(`$1')', `')dnl
 ifelse(`$2', `impl', `addimpl(`$1')', `')dnl
 ifelse(`$2', `cc', `addcc(`$1')', `')dnl
+ifelse(`$2', `cell', `addcell(`$1')', `')dnl
 ifelse(`$2', `sse', `addsse(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')dnl
 ifelse(`$2', `benchmark', `addbench(`$1')', `')')dnl
@@ -41,24 +45,38 @@ define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1
 
 include(`libla/files.m4')
 
+if CELL
+
+CELLDIR = cell
+CELLLIB = $(top_builddir)/libla/cell/libla_ppe.a
+CELLFILES = celllist
+
+endif
+
+if SSE
+
+SSEFILES = sselist
+
+endif
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = Makefile.am.m4 files.m4
+SUBDIRS = $(CELLDIR) .
+
 DEFS = \
-	$(DEBUGDEF) $(SSEDEF)
+	$(CELLDEF) \
+	$(SSEDEF) \
+	$(DEBUGDEF)
 
 lib_LTLIBRARIES = libla.la
 
-if SSE
-libla_la_SOURCES = filelist sselist
-else
-libla_la_SOURCES = filelist
-endif
-
+libla_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libla_la_LIBADD = \
-	$(top_builddir)/libutil/libutil.la
+	$(top_builddir)/libutil/libutil.la \
+	$(CELLLIB)
 
 pg512_includedir = $(includedir)/pg512/
 pg512_include_HEADERS = headerlist

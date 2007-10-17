@@ -297,6 +297,14 @@ namespace honei
             const MemoryId get_id_by_address(const void * address) const;
 
             /**
+             * Loop up the memory information that is associated with a given
+             * memory id.
+             *
+             * \param id Memory id that identifies a remote memory chunk.
+             */
+            MemoryInfo get_info_by_id(const MemoryId id) const;
+
+            /**
              * Swap all memory information of two memory ids.
              *
              * \warning Both ids need to describe memory chunks of identical size.

@@ -23,10 +23,9 @@
 #include <libutil/stringify.hh>
 #include <libutil/worker.hh>
 
-#include <iostream>
 #include <list>
 
-#include <errno.h>
+#include <cerrno>
 
 using namespace honei;
 

@@ -1,0 +1,67 @@
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
+
+/*
+ * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ *
+ * This file is part of the Utility C++ library. LibUtil is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License version 2, as published by the Free Software Foundation.
+ *
+ * LibUtil is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include <libutil/assertion.hh>
+#include <libutil/spe_instruction.hh>
+#include <libutil/spe_kernel.hh>
+
+namespace honei
+{
+    SPEInstruction::SPEInstruction(const OpCode opcode, const unsigned size, const Operand a,
+            const Operand b, const Operand c, const Operand d,
+            const Operand e, const Operand f, const Operand g) :
+        _kernel(0),
+        _index(0)
+    {
+        _instruction.opcode = opcode;
+        _instruction.size = size;
+        _instruction.a = a;
+        _instruction.b = b;
+        _instruction.c = c;
+        _instruction.d = d;
+        _instruction.e = e;
+        _instruction.f = f;
+        _instruction.g = g;
+    }
+
+    SPEInstruction::~SPEInstruction()
+    {
+        wait();
+    }
+
+    void
+    SPEInstruction::enqueue_with(SPEKernel * kernel) const
+    {
+        _kernel = kernel;
+        _index = kernel->enqueue(_instruction);
+    }
+
+    void
+    SPEInstruction::wait()
+    {
+        if (_kernel)
+        {
+            _kernel->wait(_index);
+            _kernel = 0;
+        }
+    }
+
+    const Operand
+    SPEInstruction::empty = { 0 };
+}

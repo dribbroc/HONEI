@@ -25,6 +25,13 @@
 
 #include <limits>
 #include <tr1/memory>
+#include <iostream>
+
+#ifdef HONEI_CELL
+# include <libutil/spe_kernel.hh>
+# include <libutil/spe_manager.hh>
+# include <libspe2.h>
+#endif
 
 using namespace honei;
 using namespace tests;
@@ -234,8 +241,8 @@ class BandedMatrixSumTest :
     public:
         BandedMatrixSumTest(const std::string & type) :
             BaseTest("banded_matrix_sum_test<" + type + ">")
-    {
-    }
+        {
+        }
 
         virtual void run() const
         {
@@ -270,36 +277,36 @@ class BandedMatrixSumTest :
                 BandedMatrix<DataType_> bm01(5), bm02(6);
 
                 TEST_CHECK_THROWS(Sum<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
-            }
-    };
-        BandedMatrixSumTest<float> banded_matrix_sum_test_float("float");
-        BandedMatrixSumTest<double> banded_matrix_sum_test_double("double");
+        }
+};
+BandedMatrixSumTest<float> banded_matrix_sum_test_float("float");
+BandedMatrixSumTest<double> banded_matrix_sum_test_double("double");
 
-        template <typename DataType_>
-            class BandedMatrixSumQuickTest :
-                public QuickTest
-    {
-        public:
-            BandedMatrixSumQuickTest(const std::string & type) :
-                QuickTest("banded_matrix_sum_quick_test<" + type + ">")
+template <typename DataType_>
+class BandedMatrixSumQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixSumQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_sum_quick_test<" + type + ">")
         {
         }
 
-            virtual void run() const
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            DenseVector<DataType_> dv2(size, DataType_(3));
+            BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
+            BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
+            for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()), ce_end(sum.end_bands()) ;
+                    ce != ce_end ; ++ce)
             {
-                unsigned long size(22);
-                DenseVector<DataType_> dv1(size, DataType_(2));
-                DenseVector<DataType_> dv2(size, DataType_(3));
-                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-                BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
-                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()), ce_end(sum.end_bands()) ;
-                        ce != ce_end ; ++ce)
+                if (ce.index() != size - 1 )
                 {
-                    if (ce.index() != size - 1 )
+                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            i_end(ce->end_elements()) ; i != i_end ; ++i)
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                                i_end(ce->end_elements()) ; i != i_end ; ++i)
-                        {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     }
                 }
@@ -735,6 +742,9 @@ DenseVectorSumQuickTest<tags::CPU, double> dense_vector_sum_quick_test_double("d
 #ifdef HONEI_SSE
 DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
 DenseVectorSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_sum_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sum_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>

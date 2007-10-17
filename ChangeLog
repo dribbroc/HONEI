@@ -5,6 +5,52 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* configure.ac: Removed addition of "-m64" CXXFLAG.
+	* autogen.bash, configure.ac, libla/cell/files.m4,
+	libla/cell/Makefile.am.m4: Added subdirectory for LibLA's Cell
+	backend.
+	* libla/cell/allocator.cc, libla/cell/allocator.hh: Added simple
+	allocator that supports storing user data.
+	* libla/cell/dense_dense_float_dot_product.cc,
+	libla/cell/dense_dense_float_sum.cc: Added code for operations
+	DotProduct and Sum in the dense/dense/float case.
+	* libla/cell/kernel.cc.in, misc/make_sk.bash: Added framework for SPE
+	kernels.
+	* libla/cell/kernel_reference.sk: Added reference kernel for first
+	implementations.
+	* libla/cell/kernel_test.sk: Added test kernel for libutil's SPEKernel
+	class.
+	* -libla/dot_product.cc: Removed.
+	* libla/dot_product.hh, libla/dot_product-cell.cc,
+	libla/dot_product_TEST.cc, libla/files.m4: Added PPE side of
+	DotProduct (dense/dense/float).
+	* libla/Makefile.am.m4: Added libla_ppe.a to the libraries that test
+	cases need to link against.
+	* libla/sum.hh, libla/sum-cell.cc, libla/sum_TEST.cc: Added PPE side
+	of Sum (dense/dense/float).
+	* libutil/cell.hh, libutil/cell_opcodes.hh, libutil/cell_traits.hh,
+	libutil/cell_utility.hh: Added some headers which are shared between
+	SPE and PPE code.
+	* libutil/Makefile.am.m4: Added libla_ppe.a to the libraries that test
+	cases need to link against.
+	* libutil/spe.cc, libutil/spe.hh, libutil/spe_manager.cc,
+	libutil/spe_manager.hh: Split SPE from SPEManager files. Adjusted to
+	usage of SPEInstruction/SPEKernel respectively.
+	* libutil/spe_manager_TEST.cc: Removed the threading test.
+	* libutil/spe_event.cc, libutil/spe_event.hh: Added class SPEEvent,
+	handles events caused by the SPEs.
+	* libutil/spe_instruction.cc, libutil/spe_instruction.hh: Added class
+	SPEInstruction, handles enqueueing instructions and waiting for their
+	completion.
+	* libutil/spe_kernel.cc, libutil/spe_kernel.hh,
+	libutil/spe_kernel_TEST.cc: Added class SPEKernel, handles
+	synchronisation, enqueueing and waiting for completion of
+	instructions.
+	* libutil/tags.hh: Added subtags SPE and PPE for tags::Cell.
+	* libutil/worker.cc: Fixed includes.
+
 2007-10-16 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libla/dense_vector_range.hh: Corrected comments.
@@ -22,10 +68,10 @@ see the NEWS file.
 
 2007-10-14 David Gies <david-gies@gmx.de>
 
-        * libla/dot_product_BENCHMARK.cc, element_inverse_BENCHMARK.cc,
-        element_product_BENCHMARK.cc, product_BENCHMARK.cc, reduction_BENCHMARK.cc
-        scale_BENCHMARK.cc, sum_BENCHMARK.cc: Adjusted operand size and added some
-        sparse and banded benchmarks.
+	* libla/dot_product_BENCHMARK.cc, element_inverse_BENCHMARK.cc,
+	element_product_BENCHMARK.cc, product_BENCHMARK.cc,
+	reduction_BENCHMARK.cc, scale_BENCHMARK.cc, sum_BENCHMARK.cc: Adjusted
+	operand size and added some sparse and banded benchmarks.
 
 2007-10-14 Volker Jung <volker.jung@uni-dortmund.de>
 

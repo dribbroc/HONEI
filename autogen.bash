@@ -19,6 +19,7 @@ get() {
 
 misc/do_m4.bash libgraph/Makefile.am || exit $?
 misc/do_m4.bash libla/Makefile.am || exit $?
+misc/do_m4.bash libla/cell/Makefile.am || exit $?
 misc/do_m4.bash libmath/Makefile.am || exit $?
 misc/do_m4.bash libswe/Makefile.am || exit $?
 misc/do_m4.bash libutil/Makefile.am || exit $?

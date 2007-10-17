@@ -95,6 +95,11 @@ namespace honei
         struct Cell
         {
             const static TagValue tag_value = tv_cell;
+
+            struct SPE;
+
+            struct PPE;
+
             const static std::string name;
         };
 

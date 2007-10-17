@@ -1,0 +1,6 @@
+# vim: set sw=4 sts=4 et tw=0 ft=bash :
+
+halt
+return_void     dense_dense_float_sum                       dense_dense_float_sum
+return_dword    dense_dense_float_dot_product               dense_dense_float_dot_product
+#return void     dense_dense_float_matrix_vector_product     dense_dense_float_matrix_vector_product
