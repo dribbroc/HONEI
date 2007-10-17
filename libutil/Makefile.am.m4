@@ -16,7 +16,7 @@ define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
 $2_TEST_SOURCES = $2_TEST.cc
 $2_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
-	$(top_builddir)/libla/cell/libla_ppe.a \
+	$(CELLTESTLIBS) \
 	libutil.la \
 	$(DYNAMIC_LD_LIBS)
 $2_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -63,6 +63,7 @@ CELLSOURCES = cell_filelist
 CELLTESTS = cell_testlist
 CELLHEADERS = cell_headerlist
 CELLLIBS = -lspe2
+CELLTESTLIBS = $(top_srcdir)/libla/cell/libla_ppe.a
 
 else
 
@@ -70,6 +71,7 @@ CELLSOURCES =
 CELLTESTS =
 CELLHEADERS =
 CELLLIBS =
+CELLTESTLIBS =
 
 endif
 
@@ -79,7 +81,8 @@ libutil_la_SOURCES = general_filelist $(GPUSOURCES) $(CELLSOURCES)
 libutil_la_LIBADD = \
 	-lpthread \
 	$(GPULIBS) \
-	$(CELLLIBS)
+	$(CELLLIBS) \
+	$(CELLTESTLIBS)
 
 pg512_includedir = $(includedir)/pg512/
 pg512_include_HEADERS = general_headerlist $(GPUHEADERS) $(CELLHEADERS)
