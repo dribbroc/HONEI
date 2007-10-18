@@ -50,6 +50,7 @@ CELLDIR = cell
 CELLLIB = $(top_builddir)/libla/cell/libla_ppe.a
 CELLFILES = celllist
 
+#SUBDIRS = $(CELLDIR)
 endif
 
 if SSE
@@ -63,7 +64,6 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = Makefile.am.m4 files.m4
-SUBDIRS = $(CELLDIR) .
 
 DEFS = \
 	$(CELLDEF) \
