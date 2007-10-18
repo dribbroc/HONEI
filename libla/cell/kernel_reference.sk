@@ -3,4 +3,5 @@
 halt
 return_void     dense_dense_float_sum                       dense_dense_float_sum
 return_dword    dense_dense_float_dot_product               dense_dense_float_dot_product
+return_void     dense_dense_float_element_product           dense_dense_float_element_product
 #return void     dense_dense_float_matrix_vector_product     dense_dense_float_matrix_vector_product

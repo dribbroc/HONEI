@@ -388,7 +388,7 @@ namespace honei
 
     template <> struct Sum<tags::Cell>
     {
-        static DenseVector<float> value(DenseVector<float> & a, const DenseVector<float> & b);
+        static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
     };
 
     template <>

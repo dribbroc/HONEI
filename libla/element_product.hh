@@ -376,6 +376,14 @@ namespace honei
         /// \}
     };
 
+   /// Cell implementation.
+    template <>
+    struct ElementProduct<tags::Cell>
+    {
+        static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+    };
+
+
    //SSE implementiation 
     template <>
     struct ElementProduct<tags::CPU::SSE>

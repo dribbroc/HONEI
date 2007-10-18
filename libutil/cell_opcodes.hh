@@ -28,6 +28,7 @@ enum OpCode
     oc_dense_dense_float_sum = 1 << 4,
     oc_dense_dense_float_dot_product,
     oc_dense_dense_float_matrix_vector_product,
+    oc_dense_dense_float_element_product,
 
     oc_test_instruction_finished = unsigned(1 << 30),
     oc_test_result_dword,

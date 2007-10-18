@@ -715,6 +715,11 @@ DenseVectorSumTest<tags::CPU::SSE, float> sse_dense_vector_sum_test_float("SSE f
 DenseVectorSumTest<tags::CPU::SSE, double> sse_dense_vector_sum_test_double("SSE double");
 #endif
 
+#ifdef HONEI_CELL
+DenseVectorSumTest<tags::Cell, float> cell_dense_vector_sum_test_float("Cell float");
+#endif
+
+
 template <typename Tag_, typename DataType_>
 class DenseVectorSumQuickTest :
     public QuickTest

@@ -25,6 +25,7 @@
 
 #include <limits>
 #include <tr1/memory>
+#include <iostream>
 
 using namespace honei;
 using namespace tests;
@@ -46,14 +47,14 @@ class DenseVectorElementProductTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                     dv3(size, DataType_(6));
-                DenseVector<DataType_> prod(ElementProduct<Tag_>::value(dv1, dv2));
+                DenseVector<DataType_> prod(ElementProduct<>::value(dv1, dv2));
 
                 TEST_CHECK_EQUAL(prod, dv3);
             }
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
-            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<>::value(dv02, dv01), VectorSizeDoesNotMatch);
         }
 };
 
@@ -63,6 +64,10 @@ DenseVectorElementProductTest<tags::CPU, double> dense_vector_elementwise_produc
 DenseVectorElementProductTest<tags::CPU::SSE, float> sse_dense_vector_elementwise_product_test_float("sse float");
 DenseVectorElementProductTest<tags::CPU::SSE, double> sse_dense_vector_elementwise_product_test_double("sse double");
 #endif
+#ifdef HONEI_CELL
+//DenseVectorElementProductTest<tags::Cell, float> cell_dense_vector_element_product_test_float("Cell float");
+#endif
+
 
 template <typename Tag_, typename DataType_>
 class DenseVectorElementProductQuickTest :
@@ -80,14 +85,14 @@ class DenseVectorElementProductQuickTest :
             unsigned long size(5);
             DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                 dv3(size, DataType_(6));
-            DenseVector<DataType_> prod(ElementProduct<Tag_>::value(dv1, dv2));
+            DenseVector<DataType_> prod(ElementProduct<>::value(dv1, dv2));
 
             TEST_CHECK_EQUAL(prod, dv3);
 
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
-            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<>::value(dv02, dv01), VectorSizeDoesNotMatch);
 
         }
 };
@@ -97,6 +102,10 @@ DenseVectorElementProductQuickTest<tags::CPU, double> dense_vector_elementwise_p
 DenseVectorElementProductQuickTest<tags::CPU, float> sse_dense_vector_elementwise_product_quick_test_float("sse float");
 DenseVectorElementProductQuickTest<tags::CPU, double> sse_dense_vector_elementwise_product_quick_test_double("sse double");
 #endif
+#ifdef HONEI_CELL
+DenseVectorElementProductQuickTest<tags::Cell, float> cell_dense_vector_element_product_quick_test_float("Cell float");
+#endif
+
 
 template <typename DataType_>
 class SparseVectorDenseVectorElementProductTest :

@@ -27,7 +27,7 @@
 
 namespace honei
 {
-    DenseVector<float>
+    DenseVector<float> &
     Sum<tags::Cell>::value(DenseVector<float> & a, const DenseVector<float> & b)
     {
         CONTEXT("When adding DenseVector<float> to DenseVector<float> (Cell):");
