@@ -58,7 +58,6 @@ namespace honei
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-            unsigned long result(0);
             int i(0);
             for( ; i < mask.size() ; ++i)
             {
@@ -67,8 +66,10 @@ namespace honei
                 if (i == mask.size()-1 && mask[i] == 0)
                     throw MaskIsZeroException();
             }
+            
+            unsigned long result(i);
             DataType_ temp(vector[i]);
-            Vector<bool>::ConstElementIterator r(mask.begin_elements());
+            Vector<bool>::ConstElementIterator r(mask.element_at(i));
 
             for (typename Vector<DataType_>::ConstElementIterator l(vector.element_at(i)), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -96,7 +97,6 @@ namespace honei
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-            unsigned long result(0);
             int i(0);
             for( ; i < mask.size() ; ++i)
             {
@@ -105,8 +105,10 @@ namespace honei
                 if (i == mask.size()-1 && mask[i] == 0)
                     throw MaskIsZeroException();
             }
+
+            unsigned long result(i);
             DataType_ temp(vector[i]);
-            Vector<bool>::ConstElementIterator r(mask.begin_elements());
+            Vector<bool>::ConstElementIterator r(mask.element_at(i));
 
             for (typename Vector<DataType_>::ConstElementIterator l(vector.element_at(i)), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {

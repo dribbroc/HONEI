@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-18 Mathias Kadolsky <mathkad@gmx>
+
+	* libgraph/vector_masked_*.hh: Some bugs fixed.
+
 2007-10-18 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/Makefile.am.m4, libutil/Makefile.am.m4: Fixed building with
