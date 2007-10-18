@@ -950,6 +950,7 @@ namespace honei
         };
 #endif
 
+   /// SSE Implementation.
     template <>
     struct Product<tags::CPU::SSE>
     {

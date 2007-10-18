@@ -10,7 +10,9 @@ see the NEWS file.
 	* libla/cell/files.m4, libla/cell/kernel_reference.sk,
 	libla/element_product.hh, libla/element_product_TEST.cc,
 	libla/files.m4, libla/product.hh, libla/sum-cell.cc, libla/sum.hh,
-	libla/sum_TEST.cc, libutil/cell_opcodes.hh: Added operation
+	libla/sum_TEST.cc, libutil/cell_opcodes.hh,
+	libla/element_product-cell.cc,
+	libla/cell/dense_dense_float_element_product.cc: Added operation
 	dense_dense_float_element_product.
 
 2007-10-18 Danny van Dyk <kugelfang@gentoo.org>
