@@ -736,7 +736,7 @@ class DenseVectorSumQuickTest :
             unsigned long size(129);
             DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
                 dv3(size, DataType_(3));
-            Sum<>::value(dv1, dv2);
+            Sum<Tag_>::value(dv1, dv2);
             TEST_CHECK_EQUAL(dv1, dv3);
             DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
             TEST_CHECK_THROWS(Sum<Tag_>::value(dv01, dv02), VectorSizeDoesNotMatch);

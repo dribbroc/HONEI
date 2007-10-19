@@ -85,14 +85,14 @@ class DenseVectorElementProductQuickTest :
             unsigned long size(5);
             DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                 dv3(size, DataType_(6));
-            DenseVector<DataType_> prod(ElementProduct<>::value(dv1, dv2));
+            DenseVector<DataType_> prod(ElementProduct<Tag_>::value(dv1, dv2));
 
             TEST_CHECK_EQUAL(prod, dv3);
 
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(dv02, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
 
         }
 };

@@ -37,7 +37,7 @@ class DenseDotProductTest :
 {
     public:
         DenseDotProductTest(const std::string & type) :
-            BaseTest("dense_scalar_product_test<" + type + ">")
+            BaseTest("dense_dot_product_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
@@ -48,8 +48,8 @@ class DenseDotProductTest :
             {
                 DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 
-                DataType_ p0(DotProduct<>::value(dv1, dv0));
-                DataType_ p1(DotProduct<>::value(dv1, dv1));
+                DataType_ p0(DotProduct<Tag_>::value(dv1, dv0));
+                DataType_ p1(DotProduct<Tag_>::value(dv1, dv1));
                 TEST_CHECK_EQUAL(p0, 0);
                 TEST_CHECK_EQUAL(p1, size);
 
@@ -85,7 +85,7 @@ class DenseDotProductQuickTest :
 {
     public:
         DenseDotProductQuickTest(const std::string & type) :
-            QuickTest("dense_scalar_product_quick_test<" + type + ">")
+            QuickTest("dense_dot_product_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
@@ -95,8 +95,8 @@ class DenseDotProductQuickTest :
             unsigned long size(22);
             DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 
-            DataType_ p0(DotProduct<>::value(dv1, dv0));
-            DataType_ p1(DotProduct<>::value(dv1, dv1));
+            DataType_ p0(DotProduct<Tag_>::value(dv1, dv0));
+            DataType_ p1(DotProduct<Tag_>::value(dv1, dv1));
             TEST_CHECK_EQUAL(p0, 0);
             TEST_CHECK_EQUAL(p1, size);
 
@@ -133,7 +133,7 @@ class SparseDenseDotProductTest :
 {
     public:
         SparseDenseDotProductTest(const std::string & type) :
-            BaseTest("sparse_dense_scalar_product_test<" + type + ">")
+            BaseTest("sparse_dense_dot_product_test<" + type + ">")
         {
         }
 
