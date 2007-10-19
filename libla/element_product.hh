@@ -257,7 +257,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseMatrix and BandedMatrix elements");
+            CONTEXT("When calculating the product of BandedMatrix and a DenseMatrix elements");
 
             if (a.columns() != b.columns())
             {

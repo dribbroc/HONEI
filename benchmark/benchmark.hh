@@ -34,7 +34,7 @@ class Benchmark
         void evaluate();
 
         ///generates a standard benchmark output with flop being the number of floating point operations of the benchmarked function
-        void evaluate(unsigned long flop);
+        void evaluate(unsigned long flop, int datasize = sizeof(float), int transfersperflop = 3);
 };
 
 /**

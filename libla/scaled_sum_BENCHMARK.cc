@@ -37,7 +37,7 @@ class DenseVectorScaledSumBench :
             {
                 BENCHMARK(DenseVector<DataType_> sum1(ScaledSum<Tag_>::value(dv0, dv1, b)));
             }
-            evaluate(2*_size);
+            evaluate(2*_size, sizeof(DataType_));
         }
 };
 

@@ -95,7 +95,7 @@ void Benchmark::evaluate()
     }
 }
 
-void Benchmark::evaluate(unsigned long flop)
+void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
 {
     unsigned long x = 0;
     double total = 0;
@@ -115,7 +115,9 @@ void Benchmark::evaluate(unsigned long flop)
     cout << "Runtime - lowest: " << min << "sec" << endl;
     cout << "Runtime - highest: " << max << "sec" << endl;
     double avg = (total/x);
-    cout << "Runtime - average: " << avg << "sec" << endl;
+    cout << "Runtime - average: " << avg << "sec" << endl; 
+    double tp = ((double)flop / (1024 * 1024)) * transfersperflop * datasize * x / total;
+    cout << "Throughput: " << tp << "MB/s" << endl;
     double f = 0;
     string fl = " FLOPS";
     if (total > 0)
@@ -148,6 +150,7 @@ void Benchmark::evaluate(unsigned long flop)
         ofs << "Runtime - lowest: " << min << "sec" << endl;
         ofs << "Runtime - highest: " << max << "sec" << endl;
         ofs << "Runtime - average: " << avg << "sec" << endl;
+        ofs << "Throughput: " << tp << "MB/s" << endl;
         ofs << f << fl << endl;
         ofs << endl << endl << endl;
     }

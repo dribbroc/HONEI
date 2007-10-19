@@ -40,7 +40,7 @@ class ScalarDenseMatrixSumBench :
                 DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
                 BENCHMARK(Sum<>::value(dm0, DataType_ (alpha)));
             }
-        evaluate(_size * _size);
+        evaluate(_size * _size, sizeof(DataType_));
     }
 };
 ScalarDenseMatrixSumBench<float>  SDMSBenchfloat ("MatrixShift Benchmark - size: 4096x4096, float",  4096, 12);
@@ -73,7 +73,7 @@ class DenseVectorSumBench :
             {
                 BENCHMARK(DenseVector<DataType_> sum1(Sum<Tag_>::value(dv0, dv1)));
             }
-            evaluate(2ul * _size);
+            evaluate(2ul * _size, sizeof(DataType_));
         }
 };
 
