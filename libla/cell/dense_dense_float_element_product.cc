@@ -53,7 +53,7 @@ int dense_dense_float_element_product(const Instruction & inst)
 
     for (unsigned j(0) ; j < inst.size % 4 ; j += 1)
     {
-        a.typed[i * 4 + j] += b.typed[i * 4 + j];
+        a.typed[i * 4 + j] *= b.typed[i * 4 + j];
     }
 
     mfc_put(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
