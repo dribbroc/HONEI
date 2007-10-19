@@ -23,8 +23,6 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
 
-#include <iostream>
-
 namespace honei
 {
     DenseVector<float> &

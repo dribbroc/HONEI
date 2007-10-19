@@ -85,7 +85,7 @@ struct SPE::Implementation
 
         if (retval < 0)
         {
-            /// \todo throw exception!
+            throw ExternalError("libspe2", "spe_context_run failed, " + stringify(strerror(errno)));
         }
     }
 

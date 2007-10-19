@@ -95,8 +95,8 @@ class DenseDotProductQuickTest :
             unsigned long size(22);
             DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 
-            DataType_ p0(DotProduct<Tag_>::value(dv1, dv0));
-            DataType_ p1(DotProduct<Tag_>::value(dv1, dv1));
+            DataType_ p0(DotProduct<>::value(dv1, dv0));
+            DataType_ p1(DotProduct<>::value(dv1, dv1));
             TEST_CHECK_EQUAL(p0, 0);
             TEST_CHECK_EQUAL(p1, size);
 

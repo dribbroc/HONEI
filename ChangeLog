@@ -5,10 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-19 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/dot_product_TEST.cc: Removed Tag_ for some of the calls to
+	DotProduct in the dense/dense case.
+	* libla/sum-cell.cc: Removed unused iostream header.
+	* libutil/spe.cc: Added exception when spe_context_run fails.
+	* libutil/spe_manager.cc: Added workaround for ppu-g++ bug that
+	discards alignment for static const members.
+
 2007-10-18 David Gies <david-gies@gmx.de>
 
-        * benchmark/benchmark.cc: Added output of memorythroughput to evaluate function.
-
+	* benchmark/benchmark.cc: Added output of memory throughput to evaluate function.
 
 2007-10-18 Sven Mallach <sven.mallach@uni-dortmund.de>
 

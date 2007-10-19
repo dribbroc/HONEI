@@ -39,6 +39,7 @@ extern "C"
     extern spe_program_handle_t kernel_reference;
 }
 
+
 struct SPEManager::Implementation
 {
     typedef std::list<SPE> SPEList;
@@ -59,8 +60,6 @@ struct SPEManager::Implementation
         instruction.enqueue_with(spe_list.begin()->kernel());
     }
 
-    static Environment environment __attribute__((aligned(16)));
-
     /// Constructor.
     Implementation() :
         mutex(new Mutex),
@@ -75,8 +74,7 @@ struct SPEManager::Implementation
     }
 };
 
-Environment
-SPEManager::Implementation::environment = { 0x4000, 0x3F000 };
+static Environment environment __attribute__((aligned(16))) = { 0x4000, 0x3F000 };
 
 SPEManager::SPEManager() :
     _imp(new Implementation)
@@ -90,7 +88,7 @@ SPEManager::SPEManager() :
 //        spe.run(SPEKernel(kernel_reference, &Implementation::environment));
         _imp->spe_list.push_front(spe);
     }
-    _imp->spe_list.begin()->run(SPEKernel(kernel_reference, &Implementation::environment));
+    _imp->spe_list.begin()->run(SPEKernel(kernel_reference, &environment));
 }
 
 SPEManager::~SPEManager()
