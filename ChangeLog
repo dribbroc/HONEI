@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/memory_backend_cell_TEST.cc:
+	Removed obsolete test stuff, concerning memory tranfer issues, as
+	the cell backend no longer does real memory transfers.
+
 2007-10-19 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dot_product_TEST.cc: Removed Tag_ for some of the calls to
