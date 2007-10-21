@@ -1,8 +1,8 @@
-CLEANFILES = *~ cleanauthors cleancontributors
+CLEANFILES = *~ cleanauthors cleanauthorstex cleancontributors
 
 MAINTAINERCLEANFILES = Makefile.in
 
-doxygen: doxygen.conf htmlpages
+doxygen: doxygen.conf htmlpages texfiles
 	doxygen $(top_srcdir)/doc/doxygen.conf
 	cp powered-by-*.png $(top_srcdir)/doc/html/
 
@@ -48,5 +48,21 @@ licence.html: licence.html.skel ../COPYING header.html footer.html
 	    -e '/@COPYING@/d' \
 	    < $(srcdir)/licence.html.skel > licence.html
 
+cleanauthorstex: $(top_srcdir)/AUTHORS
+	sed -e '1,3d' \
+	    -e '/^Contributions/,$$d' \
+	    -e 's,<,$$\\langle$$,g' -e 's,>,$$\\rangle$$,g' -e 's,@, at ,g' \
+	    -e '/^    \(.*\)/d' \
+	    -e 's,^\([^ <].*\),{\\large \1}\\\\,' \
+	    < $(top_srcdir)/AUTHORS > cleanauthorstex
 
+TEXFILES = \
+	header.tex
+
+texfiles: $(TEXFILES)
+
+header.tex: header.tex.in cleanauthorstex
+	sed -e '/@AUTHORS@/r cleanauthorstex' -e '/@AUTHORS@/d' \
+	    -e 's/@VERSION@/Prerelease/' \
+	    < $(srcdir)/header.tex.in > header.tex
 

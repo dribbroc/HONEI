@@ -28,33 +28,31 @@
 
 #include <algorithm>
 
-/**
- * \file
- *
- * Templatized definitions of operation Sum.
- *
- * \ingroup grpoperations
- **/
 namespace honei
 {
+    template <typename Tag_ = tags::CPU> struct Sum;
+
     /**
      * \brief Sum of two entities
      *
      * Sum is the class template for the addition operation
      * \f[
-     *     Sum(a, b): \quad r \leftarrow a + b,
+     *     \texttt{Sum}(a, b): \quad r \leftarrow a + b,
      * \f]
      * which yields r, the sum of entities a and b.
      *
      * The return value is the summand a after modification.
      *
-     * \ingroup grpoperations
-     * \ingroup grpmatrixoperations
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
      */
-    template <typename Tag_ = tags::CPU> struct Sum
+    template <> struct Sum<tags::CPU>
     {
         /**
+         * \name Sums of two matrices
+         * \{
+         *
          * \brief Returns the the sum of two given entities.
          *
          * \param a The entity that is the left-hand summand of the operation.
@@ -68,8 +66,6 @@ namespace honei
          * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
-
-        /// \{
 
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
@@ -261,6 +257,9 @@ namespace honei
         /// \}
 
         /**
+         * \name Sums of scalar and matrix
+         * \{
+         *
          * Returns the matrix after adding a scalar to every element.
          *
          * \param a The DenseMatrix to be used.
@@ -268,6 +267,7 @@ namespace honei
          *
          * \retval a The referenced matrix is changed by adding the given scalar to each of its elements.
          */
+
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DT2_ b)
         {
@@ -282,7 +282,12 @@ namespace honei
             return a;
         }
 
+        /// \}
+
         /**
+         * \name Sums of two vectors
+         * \{
+         *
          * \brief Returns the the sum of two given vectors.
          *
          * \param a The vector that is the left-hand summand of the operation.
@@ -292,9 +297,6 @@ namespace honei
          *
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
-
-        /// \ingroup grpvectoroperations
-        /// \{
 
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
@@ -364,6 +366,9 @@ namespace honei
         /// \}
 
         /**
+         * \name Sums of scalar and vector
+         * \{
+         *
          * Returns the vector after adding a scalar to every element.
          *
          * \param x The Vector that shall be added.
@@ -371,6 +376,7 @@ namespace honei
          *
          * \retval x Will return x after modification.
          */
+
         template <typename DT_>
         static DenseVector<DT_> & value(const DT_ a, DenseVector<DT_> & x)
         {
@@ -384,18 +390,82 @@ namespace honei
 
             return x;
         }
+
+        /// \}
     };
 
+    /**
+     * \brief Sum of two entities
+     *
+     * Sum is the class template for the addition operation
+     * \f[
+     *     \texttt{Sum}(a, b): \quad r \leftarrow a + b,
+     * \f]
+     * which yields r, the sum of entities a and b.
+     *
+     * The return value is the summand a after modification.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct Sum<tags::Cell>
     {
+        /**
+         * \name Sums of two vectors
+         * \{
+         *
+         * \brief Returns the the sum of two given vectors.
+         *
+         * \param a The vector that is the left-hand summand of the operation.
+         * \param b The vector that is the right-hand summand of the operation.
+         *
+         * \retval Will modify the summand a and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+
+        /// \}
     };
 
-    template <>
-    struct Sum<tags::CPU::SSE>
+    /**
+     * \brief Sum of two entities
+     *
+     * Sum is the class template for the addition operation
+     * \f[
+     *     \texttt{Sum}(a, b): \quad r \leftarrow a + b,
+     * \f]
+     * which yields r, the sum of entities a and b.
+     *
+     * The return value is the summand a after modification.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <> struct Sum<tags::CPU::SSE>
     {
+        /**
+         * \name Sums of two vectors
+         * \{
+         *
+         * \brief Returns the the sum of two given vectors.
+         *
+         * \param a The vector that is the left-hand summand of the operation.
+         * \param b The vector that is the right-hand summand of the operation.
+         *
+         * \retval Will modify the summand a and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+
         static DenseVector<double> & value(DenseVector<double> & a, const DenseVector<double> & b);
+
+        /// \}
     };
 }
 

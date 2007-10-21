@@ -27,23 +27,15 @@
 
 #include <cmath>
 
-/**
- * \file
- *
- * Templatized definitions of operation Norm.
- *
- * \ingroup grpoperations
- **/
 namespace honei
 {
-
     /**
      * A VectorNormType is a template tag parameter for the VectorNorm class
      * template. It governs the type of the (mathematical) norm that shall be
      * computed.
      *
-     * \ingroup grpoperations
-     **/
+     * \ingroup grplaoperations
+     */
     enum VectorNormType {
         vnt_max = 0, /// < Maximum or infinity norm.
         vnt_l_one, /// < One norm.
@@ -51,34 +43,34 @@ namespace honei
         // Extend here if higher norms are needed
     };
 
+
     /**
      * \brief Norm of an entity.
      *
      * Norm is the class template for the operation
      * \f[
-     *     Norm(x): \quad r \leftarrow norm(x[0], \dots, x[size - 1]),
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_2,
      * \f]
      * which yields c, the norm of entity x.
      *
      * The referenced containers are invariant under this operation.
      * In every case, a new object is created and returned.
      *
-     * \ingroup grpoperations
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
      */
-
-    /// \{
-
     template <VectorNormType norm_type_ = vnt_l_two, bool root_ = false, typename Tag_ = tags::CPU> struct Norm
     {
         /**
+         * \name Norms
+         * \{
+         *
          * \brief Returns the given norm of a vector.
          *
          * \param x The vector whose norm is to be computed.
          *
          * \retval r Will create a new object of type DT_ and return it.
          */
-        /// \{
 
         template <typename DT_>
         static DT_ value(const DenseVector<DT_> & x)
@@ -105,17 +97,33 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief Norm of an entity.
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_{\infty},
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <bool root_> struct Norm<vnt_max, root_, tags::CPU>
     {
         /**
-         * \brief Returns the maximum norm of a vector.
+         * \name Norms
+         * \{
+         *
+         * \brief Returns the L-Infinity (maximum) norm of a vector.
          *
          * \param x The entity whose norm is to be computed.
          *
          * \retval r Will create a new object of type DT_ and return it.
          */
-
-        /// \{
 
         template <typename DT_>
         static DT_ value(const DenseVector<DT_> & x)
@@ -154,9 +162,27 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief Norm of an entity.
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_1,
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <bool root_> struct Norm<vnt_l_one, root_, tags::CPU>
     {
         /**
+         * \name Norms
+         * \{
+         *
          * \brief Returns the L1 norm of a vector.
          *
          * \param x The entity whose norm is to be computed.
@@ -164,8 +190,6 @@ namespace honei
          * \retval r Will create a new object of type DT_ and return it.
          */
 
-        /// \{
-
         template <typename DT_>
         static DT_ value(const DenseVector<DT_> & x)
         {
@@ -197,9 +221,27 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief Norm of an entity.
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_2,
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct Norm<vnt_l_two, false, tags::CPU>
     {
         /**
+         * \name Norms
+         * \{
+         *
          * \brief Returns the L2 norm of a vector.
          *
          * \param x The entity whose norm is to be computed.
@@ -207,8 +249,6 @@ namespace honei
          * \retval r Will create a new object of type DT_ and return it.
          */
 
-        /// \{
-
         template <typename DT_>
         static DT_ value(const DenseVector<DT_> & x)
         {
@@ -224,9 +264,27 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief Norm of an entity.
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_2,
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct Norm<vnt_l_two, true, tags::CPU>
     {
         /**
+         * \name Norms
+         * \{
+         *
          * \brief Returns the square root of the L2 norm of a vector.
          *
          * \param x The entity whose norm is to be computed.
@@ -234,8 +292,6 @@ namespace honei
          * \retval r Will create a new object of type DT_ and return it.
          */
 
-        /// \{
-
         template <typename DT_>
         static DT_ value(const DenseVector<DT_> & x)
         {
@@ -251,17 +307,33 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief Norm of an entity.
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_n,
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <VectorNormType norm_type_> struct Norm<norm_type_, true, tags::CPU>
     {
         /**
+         * \name Norms
+         * \{
+         *
          * \brief Returns the square root of the given norm of a vector.
          *
          * \param x The entity whose norm is to be computed.
          *
          * \retval r Will create a new object of type DT_ and return it.
          */
-
-        /// \{
 
         template <typename DT_>
         static DT_ value (const DenseVector<DT_> & x)
@@ -298,18 +370,46 @@ namespace honei
 
         /// \}
     };
-   //SSE implementiation 
-    template <>
-    struct Norm<vnt_l_two, false, tags::CPU::SSE>
+
+    /**
+     * \brief Norm of an entity.
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_2,
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
+    template <> struct Norm<vnt_l_two, false, tags::CPU::SSE>
     {
+        /**
+         * \name Norms
+         * \{
+         *
+         * \brief Returns the square root of the given norm of a vector.
+         *
+         * \param x The entity whose norm is to be computed.
+         *
+         * \retval r Will create a new object of type DT_ and return it.
+         */
+
         static float value(const DenseVector<float> & x)
         {
             return DotProduct<tags::CPU::SSE>::value(x, x);
         };
+
         static double value(const DenseVector<double> & x)
         {
             return DotProduct<tags::CPU::SSE>::value(x, x);
         };
+
+        /// \}
     };
 }
 

@@ -28,33 +28,28 @@
 #include <libla/vector_error.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Templatized definitions of elementwise vector products.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
     /**
-     * \brief Multiplication of the elements of the given entities.
+     * \brief Multiplication of the elements of two given entities.
      *
      * ElementProduct is the template for the multiplication of the elements 
      * \f[
-     *     ElementProduct(a,b): \quad a \leftarrow a[i]*b[i],
+     *     \texttt{ElementProduct}(a,b): \quad a \leftarrow a[i] \cdot b[i],
      * \f]
      *
      * of a given entity.
      *
-     *
-     * \ingroup grpoperations
-     * \ingroup grpmatrixoperations
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
      */
     template <typename Tag_ = tags::CPU> struct ElementProduct
     {
         /**
+         * \name Element products
+         * \{
+         *
          * \brief Returns the the result of elementwise multiplication of two entities.
          *
          * \param a Entity that is a factor of the operation.
@@ -67,8 +62,6 @@ namespace honei
          * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
          * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          */
-
-        /// \{
 
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
@@ -376,20 +369,82 @@ namespace honei
         /// \}
     };
 
-   /// Cell implementation.
-    template <>
-    struct ElementProduct<tags::Cell>
+    /**
+     * \brief Multiplication of the elements of two given entities.
+     *
+     * ElementProduct is the template for the multiplication of the elements 
+     * \f[
+     *     \texttt{ElementProduct}(a,b): \quad a \leftarrow a[i] \cdot b[i],
+     * \f]
+     *
+     * of a given entity.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <> struct ElementProduct<tags::Cell>
     {
+        /**
+         * \name Element products
+         * \{
+         *
+         * \brief Returns the the result of elementwise multiplication of two entities.
+         *
+         * \param a Entity that is a factor of the operation.
+         * \param b idem
+         *
+         * \retval a Will modify the factor a and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         */
+
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+
+        /// \}
     };
 
-
-   //SSE implementiation 
-    template <>
-    struct ElementProduct<tags::CPU::SSE>
+    /**
+     * \brief Multiplication of the elements of two given entities.
+     *
+     * ElementProduct is the template for the multiplication of the elements 
+     * \f[
+     *     \texttt{ElementProduct}(a,b): \quad a \leftarrow a[i] \cdot b[i],
+     * \f]
+     *
+     * of a given entity.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <> struct ElementProduct<tags::CPU::SSE>
     {
+        /**
+         * \name Element products
+         * \{
+         *
+         * \brief Returns the the result of elementwise multiplication of two entities.
+         *
+         * \param a Entity that is a factor of the operation.
+         * \param b idem
+         *
+         * \retval a Will modify the factor a and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         */
+
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+
         static DenseVector<double> & value(DenseVector<double> & a, const DenseVector<double> & b);
+
+        /// \}
     };
 }
 #endif

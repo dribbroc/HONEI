@@ -309,8 +309,6 @@ namespace honei
 
     /**
      * \brief Compare two Vectors for equality.
-     *
-     * \ingroup grpvectoroperations
      */
     template <typename DataType_> bool operator== (const Vector<DataType_> & left, const Vector<DataType_> & right)
     {
@@ -336,8 +334,6 @@ namespace honei
 
     /**
      * \brief Output our Vector to an ostream.
-     *
-     * \ingroup grpvectoroperations
      */
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Vector<DataType_> & v)
     {

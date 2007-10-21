@@ -24,33 +24,27 @@
 #include <libla/sparse_vector.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Templatized definitions of operation Absolute.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
+    template <typename Tag_ = tags::CPU> struct Absolute;
+
     /**
      * \brief Returns the absolute of the given entity.
      *
      * Absolute is the template for the computation of the entity's absolute,
      * \f[
-     *     Absolute(a): \quad a[i] \leftarrow \vert a[i] \vert.
+     *     \texttt{Absolute}(a): \quad a[i] \leftarrow \vert a[i] \vert.
      * \f]
      *
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
      */
-
-    /// \{
-
-    template <typename Tag_ = tags::CPU> struct Absolute;
-
     template <> struct Absolute<tags::CPU>
     {
         /**
+         * \name Vector absolutes
+         * \{
+         *
          * \brief Returns the absolute of a given vector.
          *
          * \param x The vectors whose elements' absolute values shall be computed.
@@ -58,32 +52,26 @@ namespace honei
          * \retval x Will modify the vector x and return it.
          */
 
-        /// \{
-
         template <typename DT_>
-        static DenseVector<DT_> & value(DenseVector<DT_> & x);
+        static DenseVector<DT_> & value(DenseVector<DT_> & x)
+        {
+            CONTEXT("When calculating the absolute value of DenseVector elements");
+
+            for (typename Vector<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                if (*i < DT_(0))
+                    *i *= DT_(-1);
+            }
+
+            return x;
+        }
 
         template <typename DT_>
         static SparseVector<DT_> & value(SparseVector<DT_> & x);
 
-
         /// \}
     };
-
-    template <typename DT_>
-    DenseVector<DT_> & Absolute<tags::CPU>::value(DenseVector<DT_> & x)
-    {
-        CONTEXT("When calculating the absolute value of DenseVector elements");
-
-        for (typename Vector<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
-                i != i_end ; ++i)
-        {
-            if (*i < DT_(0))
-                *i *= -1;
-        }
-
-        return x;
-    }
 
     template <>
     DenseVector<float> & Absolute<tags::CPU>::value(DenseVector<float> & x);
@@ -96,8 +84,6 @@ namespace honei
 
     template <>
     SparseVector<double> & Absolute<tags::CPU>::value(SparseVector<double> & x);
-
-    /// \}
 }
 
 #endif

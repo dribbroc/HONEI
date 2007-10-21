@@ -29,21 +29,16 @@
 #include <libla/sparse_matrix.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Templatized definitions of operation Difference.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
+    template <typename Tag_ = tags::CPU> struct Difference;
+
     /**
      * \brief Difference of two entities.
      *
      * Difference is the class template for the subtraction operation
      * \f[
-     *     Difference(a, b): \quad r \leftarrow a - b,
+     *     \texttt{Difference}(a, b): \quad r \leftarrow a - b,
      * \f]
      * which yields r, the difference of entities a and b.
      *
@@ -51,13 +46,16 @@ namespace honei
      * there are signatures for which b is returned. For these cases a short
      * notice is added.
      *
-     * \ingroup grpoperations
-     * \ingroup grpmatrixoperations
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
      */
-    template <typename Tag_ = tags::CPU> struct Difference
+    template <> struct Difference<tags::CPU>
     {
         /**
+         * \name Matrix differences that return minuend
+         * \{
+         *
          * \brief Returns the the difference of two given matrices
          *
          * \param a The entity that is the minuend of the operation.
@@ -71,7 +69,6 @@ namespace honei
          * \exception MatrixIsNotSquare is thrown if a RowAccessMatrix's number of rows does not equal its number of columns.
          */
 
-        /// \{
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
@@ -188,22 +185,26 @@ namespace honei
 
             return a;
         }
+
         /// \}
 
         /**
+         * \name Matrix differences that return subtrahend
+         * \{
+         *
          * \brief Returns the the difference of two given matrices.
          *
          * \param a The matrix that is the minuend of the operation.
          * \param b The matrix that is the subtrahend of the operation.
          *
          * \retval b Will modify the subtrahend b and return it.
+         *
          * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
          * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
          * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
          * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          */
 
-        /// \{
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
@@ -252,20 +253,23 @@ namespace honei
 
             return b;
         }
+
         /// \}
 
         /**
+         * \name Vector differences
+         * \{
+         *
          * \brief Returns the the difference of two given vectors.
          *
          * \param a The vector that is the left-hand minuend of the operation.
          * \param b The vector that is the right-hand subtrahend of the operation.
          *
-         * \retval a Will normally modify the minuend a and return it. Only for Difference(SparseVector, DenseVector) the subtrahend b is modified and returned.
+         * \retval a Will normally modify the minuend a and return it. Only for
+         *           Difference(SparseVector, DenseVector) the subtrahend b is modified and returned.
          *
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
-
-        /// \{
 
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
@@ -355,12 +359,46 @@ namespace honei
         /// \}
     };
 
-   //SSE implementiation 
+    /**
+     * \brief Difference of two entities.
+     *
+     * Difference is the class template for the subtraction operation
+     * \f[
+     *     \texttt{Difference}(a, b): \quad r \leftarrow a - b,
+     * \f]
+     * which yields r, the difference of entities a and b.
+     *
+     * Usually, the return value is the minuend a after modification. However,
+     * there are signatures for which b is returned. For these cases a short
+     * notice is added.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
     template <>
     struct Difference<tags::CPU::SSE>
     {
+        /**
+         * \name Vector differences
+         * \{
+         *
+         * \brief Returns the the difference of two given vectors.
+         *
+         * \param a The vector that is the left-hand minuend of the operation.
+         * \param b The vector that is the right-hand subtrahend of the operation.
+         *
+         * \retval a Will normally modify the minuend a and return it. Only for
+         *           Difference(SparseVector, DenseVector) the subtrahend b is modified and returned.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+
         static DenseVector<double> & value(DenseVector<double> & a, const DenseVector<double> & b);
+
+        /// \}
     };
 }
 #endif

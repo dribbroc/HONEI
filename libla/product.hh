@@ -34,13 +34,6 @@
 
 #include <cmath>
 
-/**
- * \file
- *
- * Templatized definitions of operation Product.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
     /**
@@ -48,34 +41,35 @@ namespace honei
      *
      * MatrixProduct is the class template for the product operation
      * \f[
-     *     Product(a, b): \quad c \leftarrow a * b,
+     *     \texttt{Product}(a, b): \quad c \leftarrow a * b,
      * \f]
      * which yields c, the product of entities a and b.
      *
      * The referenced containers are invariant under this operation.
      * In every case, a new object is created and returned.
      *
-     * \ingroup grpmatrixoperations
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
      */
     template <typename Tag_ = tags::CPU> struct Product
     {
         /**
-         * \brief Returns the the product of two given entities.
+         * \name Matrix-Vector products
+         * \{
          *
-         * \param a The entity that is the first factor of the operation.
-         * \param b The entity that is the second factor of the operation.
+         * \brief Returns the product of a Matrix and a Vector.
          *
-         * \retval c Will create a new entity with Datatype of the first factor and return it.
+         * \param a The matrix that is the first factor of the operation.
+         * \param b The vector that is the second factor of the operation.
          *
-         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \retval c Will create a new vector with Datatype of the first factor and return it.
+         *
          * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
          * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
          * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          * \exception VectorSizeDoesNotMatch is thrown if two vectors do not have the same size.
          */
-
-        /// \{
 
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
@@ -301,6 +295,26 @@ namespace honei
             ///\todo: perhaps sparsify (*c can be zero)
             return result;
         }
+
+        /// \}
+
+        /**
+         * \name Matrix-Matrix products
+         * \{
+         *
+         * \brief Returns the the product of two \link<Matrix>matrices\endlink.
+         *
+         * \param a The matrix that is the first factor of the operation.
+         * \param b The vector that is the second factor of the operation.
+         *
+         * \retval c Will create a new matrix with Datatype of the first factor and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         * \exception VectorSizeDoesNotMatch is thrown if two vectors do not have the same size.
+         */
 
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
@@ -915,50 +929,54 @@ namespace honei
             return result;
         }
 
+        /// \}
     };
 
-#if 0
-        /// Use the following algorithm for Cell processor, cause of optimized multiply-accumulate.
-
-        template <> struct MatrixProduct<tags::Cell>
-        {
-            template <typename DT1_, typename DT2_> static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & left, const DenseMatrix<DT2_> & right)
-            {
-                if (left.columns() != right.rows())
-                    throw MatrixRowsDoNotMatch(right.rows(), left.columns());
-
-                DenseMatrix<DT1_> result(right.columns(), left.rows());
-                typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
-
-                for (unsigned int s(0) ; s < left.rows() ; ++s)
-                {
-                    const DenseVector<DT1_> left_row(left[s]);
-                    for (unsigned int t=0; t < right.columns() ; ++t)
-                    {
-                        const DenseVector<DT2_> right_column(right.column(t));
-                        typename Vector<DT2_>::ConstElementIterator r(right_column.begin_elements());
-                        for (typename Vector<DT1_>::ConstElementIterator l(left_row.begin_elements()),
-                                l_end(left_row.end_elements()) ; l != l_end ; ++l, ++r)
-                        {
-                            *i += (*l) * (*r);
-                        }
-                        ++i;
-                    }
-                }
-                return result;
-            }
-        };
-#endif
-
-   /// SSE Implementation.
-    template <>
-    struct Product<tags::CPU::SSE>
+    /**
+     * \brief Product of two entities.
+     *
+     * MatrixProduct is the class template for the product operation
+     * \f[
+     *     \texttt{Product}(a, b): \quad c \leftarrow a * b,
+     * \f]
+     * which yields c, the product of entities a and b.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <> struct Product<tags::CPU::SSE>
     {
+        /**
+         * \name Products
+         * \{
+         *
+         * \brief Returns the product of a Matrix and a Vector.
+         *
+         * \param a The matrix that is the first factor of the operation.
+         * \param b The vector that is the second factor of the operation.
+         *
+         * \retval c Will create a new entity with Datatype of the first factor and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         * \exception VectorSizeDoesNotMatch is thrown if two vectors do not have the same size.
+         */
+
         static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVector<float> & b);
+
         static DenseVector<double> value(const BandedMatrix<double> & a, const DenseVector<double> & b);
 
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
+
         static DenseVector<double> value(const DenseMatrix<double> & a, const DenseVector<double> & b);
+
+        /// \}
     };
 }
 #endif

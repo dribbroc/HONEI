@@ -34,7 +34,7 @@ namespace honei
     /**
      * GraphError is the generic base class for all Graph related exceptions.
      *
-     * \ingroup ?
+     * \ingroup libgraph
      */
     class GraphError :
         public Exception

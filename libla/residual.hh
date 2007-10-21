@@ -27,13 +27,6 @@
 #include <libla/vector_error.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Templatized definitions of operation Residual.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
     /**
@@ -41,7 +34,7 @@ namespace honei
      *
      * Residual is the class template for the operation
      * \f[
-     *     Residual(b, A, x): \quad b \leftarrow b - A \cdot x,
+     *    \texttt{Residual}(b, A, x): \quad b \leftarrow b - A \cdot x,
      * \f]
      * which yields the residual or defect of a given approximative solution to
      * the system of linear equations
@@ -49,12 +42,14 @@ namespace honei
      *     A \cdot x = b.
      * \f]
      *
-     * \ingroup grpoperations
+     * \ingroup grplaoperations
      */
-    template <typename Tag_ = tags::CPU>
-    struct Residual
+    template <typename Tag_ = tags::CPU> struct Residual
     {
         /**
+         * \name Residuals
+         * \{
+         *
          * Returns the the residual or defect of a given approximative solution
          * to a linear equation.
          *
@@ -66,8 +61,6 @@ namespace honei
          *
          * \retval b Will modify b and return it.
          */
-
-        /// \{
 
         template <typename DT1_, typename DT2_, typename VT_>
         static DenseVector<DT1_> value(DenseVector<DT1_> & b,

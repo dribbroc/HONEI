@@ -7,6 +7,20 @@ see the NEWS file.
 
 2007-10-21 Danny van Dyk <kugelfang@gentoo.org>
 
+	* doc/Makefile.am, doc/doxygen.conf, doc/header.tex.in: Switched to
+	Using custom header file for LaTeX documentation.
+	* doc/doc_groups.doxygen, libgraph/graph_error.hh, libla/absolute.hh,
+	libla/difference.hh, libla/dot_product.hh, libla/element_inverse.hh,
+	libla/element_product.hh, libla/matrix.hh, libla/norm.hh,
+	libla/product.hh, libla/reduction.hh, libla/residual.hh,
+	libla/scale.hh, libla/scaled_sum.hh, libla/sum.hh, libla/vector.hh:
+	Unified doxygen documentation, moved LibLA operations to grpla*. Fixed
+	LaTeX errors in formulas. Extended documentation to all
+	specialisations and member functions. I hate doxygen!
+	* libla/difference_TEST.cc, libla/product_TEST.cc: Fixed invalid tags.
+
+2007-10-21 Danny van Dyk <kugelfang@gentoo.org>
+
 	* configure.ac: Added statement on needed packages for SSE support.
 
 2007-10-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>

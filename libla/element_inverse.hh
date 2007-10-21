@@ -29,13 +29,6 @@
 #include <libla/vector_error.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Templatized definitions of operation ElementInverse.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
     /**
@@ -43,26 +36,27 @@ namespace honei
      *
      * ElementInverse is the template for the inversion of the elements
      * \f[
-     *     ElementInverse(a): \quad a \leftarrow a[i]^{-1},
+     *     \texttt{ElementInverse}(a): \quad a \leftarrow a[i]^{-1},
      * \f]
      *
      * of a given entity.
      *
-     * \ingroup grpoperations
-     * \ingroup grpmatrixoperations
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
      */
     template <typename Tag_ = tags::CPU> struct ElementInverse
     {
         /**
+         * \name Element inversions
+         * \{
+         *
          * \brief Returns the inverse values of all of an entity's elements.
          *
          * \param x The entity whose elements' inverse values shall be computed.
          *
          * \retval x Will modify the entity x and return it.
          */
-
-        /// \{
 
         template <typename DataType_>
         static DenseVector<DataType_> & value(DenseVector<DataType_> & x)

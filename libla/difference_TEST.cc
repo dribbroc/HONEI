@@ -668,7 +668,7 @@ class DenseVectorSparseVectorDifferenceTest :
 
             DenseVector<DT_> dv00(1);
             SparseVector<DT_> sv01(5, 1);
-            TEST_CHECK_THROWS(Difference<DT_>::value(dv00, sv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<>::value(dv00, sv01), VectorSizeDoesNotMatch);
         }
 };
 DenseVectorSparseVectorDifferenceTest<float> dense_vector_sparse_vector_difference_test_float("float");
@@ -713,7 +713,7 @@ class DenseVectorSparseVectorDifferenceQuickTest :
 
             DenseVector<DT_> dv00(1);
             SparseVector<DT_> sv01(5, 1);
-            TEST_CHECK_THROWS(Difference<DT_>::value(dv00, sv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<>::value(dv00, sv01), VectorSizeDoesNotMatch);
         }
 };
 DenseVectorSparseVectorDifferenceQuickTest<float> dense_vector_sparse_vector_difference_quick_test_float("float");
@@ -760,7 +760,7 @@ class SparseVectorDifferenceTest :
             }
 
             SparseVector<DT_> sv00(1, 1), sv01(5, 1);
-            TEST_CHECK_THROWS(Difference<DT_>::value(sv00, sv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<>::value(sv00, sv01), VectorSizeDoesNotMatch);
         }
 };
 SparseVectorDifferenceTest<float> sparse_vector_difference_test_float("float");
@@ -805,7 +805,7 @@ class SparseVectorDifferenceQuickTest :
             TEST_CHECK_EQUAL(difference1, sv3);
 
             SparseVector<DT_> sv00(1, 1), sv01(5, 1);
-            TEST_CHECK_THROWS(Difference<DT_>::value(sv00, sv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<>::value(sv00, sv01), VectorSizeDoesNotMatch);
         }
 };
 SparseVectorDifferenceQuickTest<float> sparse_vector_difference_quick_test_float("float");

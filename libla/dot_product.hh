@@ -26,32 +26,29 @@
 #include <libla/sparse_vector.hh>
 #include <libla/vector_error.hh>
 
-/**
- * \file
- *
- * Templatized definitions of operation DotProduct.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
+    template <typename Tag_ = tags::CPU> struct DotProduct;
+
     /**
+     * \brief DotProduct of two vectors.
+     *
      * DotProduct is the class template for the operation
      * \f[
-     *     DotProduct(x, y): \quad r \leftarrow x \cdot y,
+     *     \texttt{DotProduct}(x, y): \quad r \leftarrow x \cdot y,
      * \f]
-     * which yields the scalar or inner product of the given vectors x and y.
+     * which yields the dor or inner product of the given vectors x and y.
      *
-     * \ingroup grpvectoroperations
-     * \ingroup grpreductions
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
      */
-
-    /// \{
-
-    template <typename Tag_ = tags::CPU> struct DotProduct
+    template <> struct DotProduct<tags::CPU>
     {
         /**
-         * Returns the dot- (or inner) product of two given vectors.
+         * \name Dot products
+         * \{
+         *
+         * Returns the dot product of two given vectors.
          *
          * \param x One of the vectors of which the scalar product shall be computed.
          * \param y idem
@@ -60,8 +57,6 @@ namespace honei
          *
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
-
-        /// \{
 
         template <typename DT1_, typename DT2_>
         static DT1_ value(const Vector<DT1_> & x, const Vector<DT2_> & y)
@@ -152,18 +147,72 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief DotProduct of two vectors.
+     *
+     * DotProduct is the class template for the operation
+     * \f[
+     *     \texttt{DotProduct}(x, y): \quad r \leftarrow x \cdot y,
+     * \f]
+     * which yields the dot or inner product of the given vectors x and y.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct DotProduct<tags::Cell>
     {
+        /**
+         * \name Dot products
+         * \{
+         *
+         * Returns the dot product of two given vectors.
+         *
+         * \param x One of the vectors of which the dot product shall be computed.
+         * \param y idem
+         *
+         * \retval r Will return an instance of the used data type containing the scalar product.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
         static float value(const DenseVector<float> & a, const DenseVector<float> & b);
+
+        /// \}
     };
 
+    /**
+     * \brief DotProduct of two vectors.
+     *
+     * DotProduct is the class template for the operation
+     * \f[
+     *     \texttt{DotProduct}(x, y): \quad r \leftarrow x \cdot y,
+     * \f]
+     * which yields the dot or inner product of the given vectors x and y.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct DotProduct<tags::CPU::SSE>
     {
-        static float value(const DenseVector<float> & a, const DenseVector<float> & b);
-        static double value(const DenseVector<double> & a, const DenseVector<double> & b);
-    };
+        /**
+         * \{
+         *
+         * Returns the dot product of two given vectors.
+         *
+         * \param x One of the vectors of which the dot product shall be computed.
+         * \param y idem
+         *
+         * \retval r Will return an instance of the used data type containing the scalar product.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
 
-    /// \}
+        static float value(const DenseVector<float> & a, const DenseVector<float> & b);
+
+        static double value(const DenseVector<double> & a, const DenseVector<double> & b);
+
+        /// \}
+    };
 }
 
 #endif

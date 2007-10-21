@@ -363,8 +363,6 @@ namespace honei
 
     /**
      * \brief Output our Matrix to an ostream.
-     *
-     * \ingroup grpmatrixoperations
      **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const Matrix<DataType_> & m)
     {

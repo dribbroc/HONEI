@@ -48,7 +48,7 @@
  */
 
 /**
- * \defgroup grpoperations Operations
+ * \defgroup grplaoperations Operations
  *
  * \ingroup grplibla
  */
@@ -60,9 +60,9 @@
  */
 
 /**
- * \defgroup grpvectoroperations Operations that work on Vector types
+ * \defgroup grplavectoroperations Operations that work on Vector types
  *
- * \ingroup grpoperations
+ * \ingroup grplaoperations
  */
 
 /**
@@ -78,9 +78,9 @@
  */
 
 /**
- * \defgroup grpmatrixoperations Operations that work on Matrix types
+ * \defgroup grplamatrixoperations Operations that work on Matrix types
  *
- * \ingroup grpoperations
+ * \ingroup grplaoperations
  */
 
 // ----- LibUtil Groups -----

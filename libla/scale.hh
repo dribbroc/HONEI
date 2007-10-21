@@ -25,31 +25,29 @@
 #include <libla/sparse_matrix.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Templatized definitions of operation Scale.
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
+    template <typename Tag_ = tags::CPU> struct Scale;
+
     /**
      * \brief Result of scaling an entity by a scalar factor.
      *
      * Scale is the class template for the operation
      * \f[
-     *     Scale(a, x): \quad x \leftarrow a * x,
+     *     \texttt{Scale}(a, x): \quad x[i] \leftarrow a \cdot x[i],
      * \f]
      * which yields the former entity scaled by a scalar factor.
      *
-     * \ingroup grpoperations
-     * \ingroup grpmatrixoperations
-     * \ingroup grpvectoroperations
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
      */
-    template <typename Tag_ = tags::CPU> struct Scale
+    template <> struct Scale<tags::CPU>
     {
         /**
+         * \name Scales
+         * \{
+         *
          * \brief Returns the product of a scalar factor and a given entity.
          *
          * \param a The scalar factor.
@@ -57,8 +55,6 @@ namespace honei
          *
          * \retval x Will modify the entity x and return it.
          */
-
-        /// \{
 
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT2_> & value(const DT1_ a, DenseMatrix<DT2_> & x)
@@ -128,12 +124,39 @@ namespace honei
         /// \}
     };
 
-   //SSE implementiation 
+    /**
+     * \brief Result of scaling an entity by a scalar factor.
+     *
+     * Scale is the class template for the operation
+     * \f[
+     *     \texttt{Scale}(a, x): \quad x[i] \leftarrow a \cdot x[i],
+     * \f]
+     * which yields the former entity scaled by a scalar factor.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
     template <>
     struct Scale<tags::CPU::SSE>
     {
+        /**
+         * \name Scales
+         * \{
+         *
+         * \brief Returns the product of a scalar factor and a given entity.
+         *
+         * \param a The scalar factor.
+         * \param x The entity that shall be scaled.
+         *
+         * \retval x Will modify the entity x and return it.
+         */
+
         static DenseVector<float> & value(const float a, DenseVector<float> & x);
+
         static DenseVector<double> & value(const double a, DenseVector<double> & x);
+
+        /// \}
     };
 }
 #endif

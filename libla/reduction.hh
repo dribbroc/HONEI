@@ -29,15 +29,6 @@
 #include <libla/matrix_error.hh>
 #include <libutil/tags.hh>
 
-///\todo: write min/max operations
-
-/**
- * \file
- *
- * Templatized definitions of operation reduction
- *
- * \ingroup grpoperations
- */
 namespace honei
 {
     /**
@@ -45,7 +36,7 @@ namespace honei
      * template. It governs the type of the (mathematical) reduction that shall
      * be computed.
      *
-     * \ingroup grpoperations
+     * \ingroup grplaoperations
      */
     enum ReductionType
     {
@@ -54,42 +45,32 @@ namespace honei
         rt_min
     };
 
+    template <ReductionType type_, typename Tag_ = tags::CPU> struct Reduction;
+
     /**
-     * \brief Reduction of two entities.
+     * \brief Reduction of an entity to the sum of its elements.
      *
-     * Reduction is the class template for all types of reductions.
-     * Supported are reductions to the minimum element, the maximum
-     * element and to the sum of all elements. Every Reduction means
+     * Reduction is the class template for all types of reductions
+     * to the sum of an entity's elements. Every Reduction means
      * the loss of one dimension to the entity, i.e. a Matrix is reduced
      * to a Vector, and a Vector is reduced to a scalar.
      *
      * \f[
-     *     Reduction(a): \quad x \leftarrow \sum(a_0, \dots, a_{size - 1}),
+     *     \texttt{Reduction}(a): \quad x \leftarrow \sum(a_0, \dots, a_{size - 1}),
      * \f]
      *
-     * \f[
-     *     Reduction(a): \quad x \leftarrow \max(a_0, \dots, a_{size - 1}),
-     * \f]
+     * which yields the entity x, the reduction.
      *
-     * \f[
-     *     Reduction(a): \quad x \leftarrow \min(a_0, \dots, a_{size - 1}),
-     * \f]
-     *
-     * which yield the entity x, the reduction.
-     *
-     * \ingroup grpoperations
-     * \ingroup grpmatrixoperations
-     * \ingroup grpvectoroperations
-     * \ingroup grpreductions
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
      */
-
-    /// \{
-
-    template <ReductionType type_, typename Tag_ = tags::CPU> struct Reduction;
-
     template <> struct Reduction<rt_sum>
     {
         /**
+         * \name Reductions
+         * \{
+         *
          * \brief Returns the scalar which is the sum of
          * \brief all elements of a given entity.
          *
@@ -97,10 +78,7 @@ namespace honei
          *
          * \retval x If a is a matrix, a vector will be returned, else it will be a scalar.
          *
-         * \note This operation cannot throw exceptions.
          */
-
-        /// \{
 
         template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
@@ -181,6 +159,24 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief Reduction of an entity to the maximum of its elements.
+     *
+     * Reduction is the class template for all types of reductions
+     * to the maximum of an entity's elements. Every Reduction means
+     * the loss of one dimension to the entity, i.e. a Matrix is reduced
+     * to a Vector, and a Vector is reduced to a scalar.
+     *
+     * \f[
+     *     \texttt{Reduction}(a): \quad x \leftarrow \max(a_0, \dots, a_{size - 1}),
+     * \f]
+     *
+     * which yields the entity x, the reduction.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct Reduction<rt_max>
     {
         /**
@@ -190,17 +186,16 @@ namespace honei
          * \param a The entity to be reduced.
          *
          * \retval x If a is a matrix, a vector will be returned, else it will be a scalar.
-         *
-         * \note This operation cannot throw exceptions.
          */
 
         /// \{
-                template <typename DT_>
+        template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & matrix)
         {
             CONTEXT("When reducing DenseMatrix to Vector by max");
 
             DenseVector<DT_> result(matrix.rows());
+
             for (unsigned int i(0); i < matrix.rows() ; ++i)
             {
                     result[i] = Reduction<rt_max>::value(matrix[i]);
@@ -215,6 +210,7 @@ namespace honei
             CONTEXT("When reducing SparseMatrix to Vector by max");
 
             DenseVector<DT_> result(matrix.rows());
+
             for (unsigned int i(0); i < matrix.rows() ; ++i)
             {
                     result[i] = Reduction<rt_max>::value(matrix[i]);
@@ -229,6 +225,7 @@ namespace honei
             CONTEXT("When reducing BandedMatrix to Vector by max");
             /// \todo Use band interator.
             DenseVector<DT_> result(matrix.rows());
+
             for (typename Matrix<DT_>::ConstElementIterator i(matrix.begin_elements()),
                     i_end(matrix.end_elements()) ; i != i_end ; ++i)
             {
@@ -246,6 +243,7 @@ namespace honei
             CONTEXT("When reducing DenseVector to Scalar by max");
 
             DT_ result(vector[0]);
+
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -264,6 +262,7 @@ namespace honei
             CONTEXT("When reducing SparseVector to Scalar by max");
 
             DT_ result(vector[0]);
+
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -279,27 +278,45 @@ namespace honei
         /// \}
     };
 
+    /**
+     * \brief Reduction of an entity to the minimum of its elements.
+     *
+     * Reduction is the class template for all types of reductions
+     * to the minimum of an entity's elements. Every Reduction means
+     * the loss of one dimension to the entity, i.e. a Matrix is reduced
+     * to a Vector, and a Vector is reduced to a scalar.
+     *
+     * \f[
+     *     \texttt{Reduction}(a): \quad x \leftarrow \min(a_0, \dots, a_{size - 1}),
+     * \f]
+     *
+     * which yields the entity x, the reduction.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct Reduction<rt_min>
     {
         /**
+         * \name Reductions
+         * \{
+         *
          * \brief Returns the scalar which is the minimum of
          * \brief all elements of a given entity.
          *
          * \param a The entity to be reduced.
          *
          * \retval x Will return scalar x.
-         *
-         * \note This operation cannot throw exceptions.
          */
 
-        /// \{
-
-                        template <typename DT_>
+        template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & matrix)
         {
             CONTEXT("When reducing DenseMatrix to Vector by min");
 
             DenseVector<DT_> result(matrix.rows());
+
             for (unsigned int i(0); i < matrix.rows() ; ++i)
             {
                     result[i] = Reduction<rt_min>::value(matrix[i]);
@@ -308,12 +325,13 @@ namespace honei
             return result;
         }
 
-                template <typename DT_>
+        template <typename DT_>
         static DenseVector<DT_> value(const SparseMatrix<DT_> & matrix)
         {
             CONTEXT("When reducing SparseMatrix to Vector by min");
 
             DenseVector<DT_> result(matrix.rows());
+
             for (unsigned int i(0); i < matrix.rows() ; ++i)
             {
                     result[i] = Reduction<rt_min>::value(matrix[i]);
@@ -322,20 +340,25 @@ namespace honei
             return result;
         }
 
-                template <typename DT_>
+        template <typename DT_>
         static DenseVector<DT_> value(const BandedMatrix<DT_> & matrix)
         {
             CONTEXT("When reducing BandedMatrix to Vector by max");
             /// \todo Use band interator.
 
             DenseVector<DT_> result(matrix.rows());
+
             for (typename Matrix<DT_>::ConstElementIterator i(matrix.begin_elements()),
                     i_end(matrix.end_elements()) ; i != i_end ; ++i)
             {
-                if (i.column()==0)
+                if (i.column() == 0)
+                {
                     result[i.row()] = *i;
+                }
                 else if (*i < result[i.row()])
+                {
                     result[i.row()] = *i;
+                }
             }
             return result;
         }
@@ -346,6 +369,7 @@ namespace honei
             CONTEXT("When reducing DenseVector to Scalar by min");
 
             DT_ result(vector[0]);
+
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -364,6 +388,7 @@ namespace honei
             CONTEXT("When reducing SparseVector to Scalar by min");
 
             DT_ result(vector[0]);
+
             for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -378,8 +403,5 @@ namespace honei
 
         /// \}
     };
-
-
-    /// \}
 }
 #endif
