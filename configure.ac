@@ -171,7 +171,7 @@ dnl }}}
 dnl {{{ check for SSE support
 AC_MSG_CHECKING([whether to build SSE support])
 AC_ARG_ENABLE([sse],
-	AS_HELP_STRING([--enable-sse], [Build SSE support]),
+	AS_HELP_STRING([--enable-sse], [Build SSE support (needs packages: none)]),
 		[ENABLE_SSE=$enableval
 		  AC_MSG_RESULT([$enableval])],
 		[ENABLE_SSE=no

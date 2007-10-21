@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-21 Danny van Dyk <kugelfang@gentoo.org>
+
+	* configure.ac: Added statement on needed packages for SSE support.
+
 2007-10-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libutil/memory_backend_cell_TEST.cc:
