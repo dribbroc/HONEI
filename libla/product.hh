@@ -65,10 +65,8 @@ namespace honei
          *
          * \retval c Will create a new vector with Datatype of the first factor and return it.
          *
-         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
-         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
-         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
-         * \exception VectorSizeDoesNotMatch is thrown if two vectors do not have the same size.
+         * \exception VectorSizeDoesNotMatch is thrown if the vector's size does not match the matrix's number
+         *            of columns.
          */
 
         template <typename DT1_, typename DT2_>
@@ -78,7 +76,7 @@ namespace honei
 
             if (b.size() != a.columns())
             {
-                throw MatrixRowsDoNotMatch(a.columns(), b.size());
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
             DenseVector<DT1_> result(a.rows());
@@ -100,7 +98,7 @@ namespace honei
 
             if (b.size() != a.columns())
             {
-                throw MatrixRowsDoNotMatch(a.columns(), b.size());
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
             DenseVector<DT1_> result(a.rows());
@@ -122,7 +120,7 @@ namespace honei
 
             if (b.size() != a.columns())
             {
-                throw MatrixRowsDoNotMatch(a.columns(), b.size());
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
             SparseVector<DT1_> result(a.rows(),1);
@@ -144,7 +142,7 @@ namespace honei
 
             if (b.size() != a.columns())
             {
-                throw MatrixRowsDoNotMatch(a.columns(), b.size());
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
             SparseVector<DT1_> result(a.rows(), a.rows());
@@ -166,7 +164,7 @@ namespace honei
 
             if (b.size() != a.columns())
             {
-                throw MatrixRowsDoNotMatch(a.columns(), b.size());
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
             DenseVector<DT1_> result(a.rows(), DT1_(0));
@@ -231,7 +229,7 @@ namespace honei
 
             if (b.size() != a.columns())
             {
-                throw MatrixRowsDoNotMatch(a.columns(), b.size());
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
             SparseVector<DT1_> result(b.size(), b.capacity());
@@ -310,10 +308,8 @@ namespace honei
          * \retval c Will create a new matrix with Datatype of the first factor and return it.
          *
          * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
-         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
-         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
-         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
-         * \exception VectorSizeDoesNotMatch is thrown if two vectors do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if the second matrix's number of rows does not match the
+         *            first matrix's number of columns.
          */
 
         template <typename DT1_, typename DT2_>
@@ -621,9 +617,6 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            if (b.columns() != a.rows())
-                throw MatrixRowsDoNotMatch(a.rows(), b.columns());
-
             DenseMatrix<DT2_> result(b.columns(), b.rows(), DT2_(0));
             unsigned long middle_index(a.size() -1);
 
@@ -702,10 +695,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            if (b.columns() != a.rows())
-                throw MatrixRowsDoNotMatch(a.rows(), b.columns());
-
-            DenseMatrix<DT2_> result(a.columns(), a.rows(), DT2_(0));
+            DenseMatrix<DT2_> result(b.columns(), a.rows(), DT2_(0));
             unsigned long middle_index(a.size() -1);
 
             // Calculation for lower part

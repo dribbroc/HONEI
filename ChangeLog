@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-10-21 Danny van Dyk <kugelfang@gentoo.org>
 
+	* libla/product.hh: Fixed exceptions and their documentation.
+	* libla/product_TEST.cc: Adjusted test cases.
+
+2007-10-21 Danny van Dyk <kugelfang@gentoo.org>
+
 	* doc/Makefile.am, doc/doxygen.conf, doc/header.tex.in: Switched to
 	Using custom header file for LaTeX documentation.
 	* doc/doc_groups.doxygen, libgraph/graph_error.hh, libla/absolute.hh,
