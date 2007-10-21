@@ -26,6 +26,7 @@
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
 
+#include <iostream>
 namespace honei
 {
     struct SPEKernel::Implementation
@@ -90,17 +91,21 @@ namespace honei
                 imp->kernel_loaded->wait(*imp->mutex);
                 spe = imp->spe;
             }
+            std::cout << "SPEKernel: loaded-signal received!" << std::endl;
 
             SPEEvent event(*imp->spe, SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED);
             Instruction current_instruction;
 
             do
             {
+                std::cout << "SPEKernel: Waiting for event!" << std::endl;
                 spe_event_unit_t * e(event.wait(-1));
+                std::cout << "SPEKernel: Event occured!" << std::endl;
                 ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)), "unexpected event happened!");
 
                 if (e->events & SPE_EVENT_OUT_INTR_MBOX)
                 {
+                    std::cout << "SPEKernel: mail pending" << std::endl;
                     unsigned mail(0);
 
                     int retval(spe_out_intr_mbox_read(spe->context(), &mail, 1, SPE_MBOX_ALL_BLOCKING));
@@ -111,6 +116,7 @@ namespace honei
                         switch (mail)
                         {
                             case km_result_dword:
+                                std::cout << "SPEKernel: km_result_dword received!" << std::endl;
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -129,6 +135,7 @@ namespace honei
                                 continue;
 
                             case km_instruction_finished:
+                                std::cout << "SPEKernel: km_instruction_finished received!" << std::endl;
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -141,7 +148,9 @@ namespace honei
                                 }
                                 continue;
                             case km_unknown_opcode:
-                                continue;;
+                                std::cout << "SPEKernel: invalid opcode!" << std::endl;
+                                throw std::string("Eek");
+                                continue;
                         }
 
                         throw InternalError("Unexpected mail received in interrupt mailbox!");
@@ -149,6 +158,7 @@ namespace honei
                 }
                 else if (e->events & SPE_EVENT_SPE_STOPPED)
                 {
+                    std::cout << "SPEKernel: SPE stopped" << std::endl;
                     Lock ll(*imp->mutex);
 
                     imp->instruction_finished->broadcast();
@@ -156,7 +166,7 @@ namespace honei
                 }
                 else
                 {
-                    /// \todo Do we need some sort of idle iterations counter?
+                    std::cout << "SPEKernel: neither mail event nor stop event!" << std::endl;
                 }
             } while (true);
 
@@ -190,6 +200,9 @@ namespace honei
 
             if (0 != (retval = pthread_create(thread, 0, &kernel_thread, this)))
                 throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
+
+            Instruction noop = { oc_noop };
+            std::fill(instructions, instructions + 8, noop);
         }
 
         ~Implementation()

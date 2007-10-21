@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/cell/dense_dense_float_matrix_vector_product.cc,
+	libla/cell/files.m4: Added Product(Matrix, Vector) for the
+	dense/dense/float case.
+	* libla/cell/kernel_reference.sk: Added new instruction to the
+	reference kernel.
+	* libla/files.m4, libla/product.hh, libla/product_TEST.cc: Added PPU
+	side of operation Product(DenseMatrix, DenseVector).
+	* libutil/spe_kernel.cc: Added some debug output for the time being.
+
 2007-10-21 Danny van Dyk <kugelfang@gentoo.org>
 
 	* libla/product.hh: Fixed exceptions and their documentation.

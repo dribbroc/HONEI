@@ -968,5 +968,12 @@ namespace honei
 
         /// \}
     };
+
+    template <>
+    struct Product<tags::Cell>
+    {
+        static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
+    };
+
 }
 #endif

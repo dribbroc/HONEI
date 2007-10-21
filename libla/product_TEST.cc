@@ -260,7 +260,7 @@ class DenseMatrixDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(4);
             DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
             DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
             DenseVector<DataType_> prod(Product<Tag_>::value(dm1, dv1));
@@ -280,6 +280,10 @@ DenseMatrixDenseVectorProductQuickTest<tags::CPU, double> dense_matrix_dense_vec
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_dense_matrix_dense_vector_product_quick_test_float("SSE float");
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_quick_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
+#endif
+
 
 template <typename DataType_>
 class DenseMatrixSparseVectorProductTest :
