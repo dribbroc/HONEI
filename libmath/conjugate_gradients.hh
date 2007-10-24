@@ -201,7 +201,7 @@ namespace honei
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
-                Difference<DT1_>::value(g, right_hand_side);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
                 DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 for(unsigned long i = 0; i<iter_number; ++i)
@@ -230,7 +230,7 @@ namespace honei
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
-                Difference<DT1_>::value(g, right_hand_side);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
                 DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 DenseVector<DT1_> x_last(x.copy());
@@ -272,7 +272,7 @@ namespace honei
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
-                Difference<DT1_>::value(g, right_hand_side);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
                 DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 for(unsigned long i = 0; i<iter_number; ++i)
@@ -301,7 +301,7 @@ namespace honei
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
-                Difference<DT1_>::value(g, right_hand_side);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
                 DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 DenseVector<DT1_> x_last(x.copy());
