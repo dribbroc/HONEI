@@ -41,6 +41,7 @@ int dense_sparse_float_sum(const Instruction & inst)
     mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 1, 0, 0);
     mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen(inst.size * sizeof(float)), 2, 0, 0);
     mfc_get(c.untyped, inst.c.ea, multiple_of_sixteen(inst.size * sizeof(unsigned long long)), 3, 0, 0);
+
     mfc_write_tag_mask(1 << 3);
     mfc_read_tag_status_all();
     mfc_write_tag_mask(1 << 2);
@@ -48,14 +49,10 @@ int dense_sparse_float_sum(const Instruction & inst)
     mfc_write_tag_mask(1 << 1);
     mfc_read_tag_status_all();
 
-    unsigned long long ctr(0);
-    for(unsigned long long i(0); i < inst.size ; ++i)
-    {
-        if (i < c.typed[ctr])
-            continue;
 
-        a.typed[i] += b.typed[ctr];
-        ctr++;
+    for (unsigned long long i(0); i < inst.d.u ; i++)
+    {
+        a.typed[c.typed[i]] += b.typed[i];
     }
 
     mfc_put(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 4, 0, 0);

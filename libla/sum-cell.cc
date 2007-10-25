@@ -55,7 +55,9 @@ DenseVector<float> &
         Operand oa = { a.elements() };
         Operand ob = { b.elements() };
         Operand oc = { b.indices() };
-        SPEInstruction instruction(oc_dense_sparse_float_sum, a.size(), oa, ob, oc);
+        Operand od;
+        od.u = b.used_elements();
+        SPEInstruction instruction(oc_dense_sparse_float_sum, a.size(), oa, ob, oc, od);
 
         SPEManager::instance()->dispatch(instruction);
 
