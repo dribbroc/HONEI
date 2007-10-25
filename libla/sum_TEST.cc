@@ -749,7 +749,7 @@ DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_f
 DenseVectorSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_sum_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-//DenseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sum_quick_test_float("Cell float");
+DenseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sum_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>
@@ -833,11 +833,6 @@ class DenseVectorSparseVectorSumQuickTest :
                 {
                     *k = DataType_(3);
                 }
-            }
-
-            for(int i(0); i < sv2.used_elements() ; i++)
-            {
-                std::cout << sv2.indices()[i] << std::endl;
             }
 
             Sum<Tag_>::value(dv1, sv2);
