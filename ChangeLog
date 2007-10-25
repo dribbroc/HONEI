@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-25 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* libla/cell/dense_sparse_float_sum.cc, libla/cell/files.m4,
+	libla/cell/kernel.cc.in, libla/cell/kernel_reference.sk,
+	libla/sparse_vector.hh, libla/sparse_vector-impl.hh,
+	libla/sum-cell.cc, libla/sum.hh, libla/sum_TEST.cc, libutil/cell.hh,
+	libutil/cell_opcodes.hh, libutil/files.m4: Added first partial sparse
+	operation on Cell BE: dense_sparse_float_sum 
+
 2007-10-24 Markus Geveler <apryde@gmx.de>
 
 	* libmath/conjugate_gradients.hh: Fixed Tag - bug revealed by

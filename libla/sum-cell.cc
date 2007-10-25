@@ -43,4 +43,26 @@ namespace honei
 
         return a;
     }
+
+DenseVector<float> &
+    Sum<tags::Cell>::value(DenseVector<float> & a, const SparseVector<float> & b)
+    {
+        CONTEXT("When adding DenseVector<float> to SparseVector<float> (Cell):");
+
+        if (b.size() != a.size())
+            throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+        Operand oa = { a.elements() };
+        Operand ob = { b.elements() };
+        Operand oc = { b.indices() };
+        SPEInstruction instruction(oc_dense_sparse_float_sum, a.size(), oa, ob, oc);
+
+        SPEManager::instance()->dispatch(instruction);
+
+        instruction.wait();
+
+        return a;
+    }
+
+
 }

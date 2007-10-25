@@ -244,6 +244,18 @@ namespace honei
     }
 
     template <typename DataType_>
+    inline DataType_ * SparseVector<DataType_>::elements() const
+    {
+        return _imp->_elements.get();
+    }
+
+    template <typename DataType_>
+    inline unsigned long * SparseVector<DataType_>::indices() const
+    {
+        return _imp->_indices.get();
+    }
+
+    template <typename DataType_>
     const DataType_ & SparseVector<DataType_>::operator[] (unsigned long index) const
     {
         CONTEXT("When accessing unassignable element at index '" + stringify(index) + "':");

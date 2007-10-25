@@ -143,6 +143,12 @@ namespace honei
             /// Returns our size.
             virtual unsigned long size() const;
 
+            /// Return a pointer to our elements.
+            DataType_ * elements() const;
+
+            /// Return a pointer to our indices.
+            unsigned long * indices() const;
+
             /// Retrieves element by index, zero-based, unassignable.
             virtual const DataType_ & operator[] (unsigned long index) const;
 

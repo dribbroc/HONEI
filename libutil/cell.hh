@@ -47,6 +47,14 @@ template <> union Pointer<float>
     vector float * volatile vectorised;
 };
 
+template <> union Pointer<unsigned long long>
+{
+    void * volatile untyped;
+    unsigned long long * volatile typed;
+    vector unsigned long long * volatile vectorised;
+};
+
+
 template <typename T_> union Subscriptable;
 
 template <> union Subscriptable<float>

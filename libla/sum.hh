@@ -426,6 +426,7 @@ namespace honei
          */
 
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+        static DenseVector<float> & value(DenseVector<float> & a, const SparseVector<float> & b);
 
         /// \}
     };

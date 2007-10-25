@@ -9,6 +9,7 @@ dnl Note that there isn't much error checking done on this file at present...
 
 add(`allocator',                               `cc')
 add(`dense_dense_float_sum',                   `cc')
+add(`dense_sparse_float_sum',                  `cc')
 add(`dense_dense_float_dot_product',           `cc')
 add(`dense_dense_float_element_product',       `cc')
 add(`dense_dense_float_matrix_vector_product', `cc')
