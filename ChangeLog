@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-10-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/Makefile.am, cell/libutil/Makefila.am, cell/libla/Makefile.am:
+	Oops, forgot to add these files.
+
+2007-10-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* cell/kernels/files.m4, cell/kernels/Makefile.am.m4,
 	cell/kernels/kernel.cc.in, cell/kernel_reference.sk,
 	cell/kernel_test.sk: Forgot to add these files in the previous commit.
