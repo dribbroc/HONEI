@@ -204,7 +204,7 @@
                     Scale<>::value(DataType_(1 / (_edge_length * _edge_length)), attractive_forces);
 
                     // Calculating inv_square_dist <- -inv_square_dist
-                    Scale<DataType_>::value(DataType_(-1), inv_square_dist);
+                    Scale<>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
                     BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), *sum_vec_inv);
@@ -331,7 +331,7 @@
                     DenseMatrix<DataType_> attractive_forces(Product<>::value(_coordinates, square_dist));
                    
                     // Calculating inv_square_dist <- -inv_square_dist
-                    Scale<DataType_>::value(DataType_(-1), inv_square_dist);
+                    Scale<>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating inv_square_dist = (diag(sum_vec_inv) - inv_square_dist)
                     BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), *sum_vec_inv);
@@ -405,7 +405,7 @@
 
                     // Mul(_attractive_force_parameter, _attractive_force_parameter) * _edge_length^2
                     ElementProduct<>::value(_attractive_force_parameter, _attractive_force_parameter);
-                    Scale<DataType_>::value(DataType_(_edge_length * _edge_length), _attractive_force_parameter);
+                    Scale<>::value(DataType_(_edge_length * _edge_length), _attractive_force_parameter);
 
                     // Calculate 1 / _attractive_force_parameter
                     ElementInverse<>::value(_attractive_force_parameter);

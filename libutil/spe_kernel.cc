@@ -296,6 +296,7 @@ namespace honei
         }
 
         _imp->spe = new SPE(spe);
+        /// \todo Use a panding_counter instead of enqueued_counter.
         if (_imp->enqueued_counter > 0)
         {
             _imp->spe->signal();

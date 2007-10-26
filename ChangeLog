@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-10-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libgraph/evolving_graph_TEST.cc, libgraph/graph_TEST.cc, libgraph/position.hh:
+	Fixed compile errors.
+
+2007-10-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* cell/kernels/kernel.cc.in: Hardcoded iteration over exactly 8
 	instructions per signal1.
 	* cell/libla/dense_dense_float_element_product.cc, cell/libla/dense_dense_float_matrix_vector_product.cc,
