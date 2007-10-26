@@ -18,8 +18,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <libla/cell/allocator.hh>
-#include <libutil/cell.hh>
+#include <cell/cell.hh>
+#include <cell/libutil/allocator.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -27,9 +27,9 @@
 
 using namespace honei;
 
-int dense_dense_float_sum(const Instruction & inst)
+unsigned dense_dense_float_dot_product(const Instruction & inst)
 {
-    printf("dense_dense_float_sum:\n");
+    printf("dense_dense_float_dot_product:\n");
 
     allocator::Allocation * block_a(allocator::acquire_block());
     allocator::Allocation * block_b(allocator::acquire_block());
@@ -39,27 +39,26 @@ int dense_dense_float_sum(const Instruction & inst)
 
     mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 1, 0, 0);
     mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen(inst.size * sizeof(float)), 2, 0, 0);
-    mfc_write_tag_mask(1 << 2);
+    mfc_write_tag_mask(1 << 2 | 1 << 1);
     mfc_read_tag_status_all();
-    mfc_write_tag_mask(1 << 1);
-    mfc_read_tag_status_all();
+
+    Subscriptable<float> t = { spu_splats(0.0f) };
 
     unsigned i(0);
     for ( ; i < inst.size / 4 ; ++i)
     {
-        printf("%03u: a = %f, b = %f\n", i, a.typed[4 * i], b.typed[4 * i]);
-        a.vectorised[i] = spu_add(a.vectorised[i], b.vectorised[i]);
+        t.value = spu_madd(a.vectorised[i], b.vectorised[i], t.value);
     }
 
     for (unsigned j(0) ; j < inst.size % 4 ; j += 1)
     {
-        a.typed[i * 4 + j] += b.typed[i * 4 + j];
+        t.array[0] += a.typed[i * 4 + j] * b.typed[i * 4 + j];
     }
 
-    mfc_put(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
-    mfc_write_tag_mask(1 << 3);
-    mfc_read_tag_status_all();
+    t.array[0] += t.array[1] + t.array[2] + t.array[3];
 
+    MailableResult<float> result;
+    result.value = t.array[0];
 
-    return 0;
+    return result.mail;
 }

@@ -20,7 +20,7 @@
 #ifndef LIBUTIL_GUARD_SPE_INSTRUCTION_HH
 #define LIBUTIL_GUARD_SPE_INSTRUCTION_HH 1
 
-#include <libutil/cell.hh>
+#include <cell/cell.hh>
 #include <libutil/spe_manager.hh>
 
 namespace honei

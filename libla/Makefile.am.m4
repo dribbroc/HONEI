@@ -46,8 +46,6 @@ include(`libla/files.m4')
 
 if CELL
 
-CELLDIR = cell
-CELLLIB = $(top_builddir)/libla/cell/libla_ppe.a
 CELLFILES = celllist
 
 endif
@@ -63,7 +61,6 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = Makefile.am.m4 files.m4
-SUBDIRS = $(CELLDIR) .
 
 DEFS = \
 	$(CELLDEF) \

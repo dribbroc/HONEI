@@ -17,12 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBUTIL_GUARD_CELL_HH
-#define LIBUTIL_GUARD_CELL_HH 1
+#ifndef CELL_GUARD_CELL_HH
+#define CELL_GUARD_CELL_HH 1
 
-#include <libutil/cell_opcodes.hh>
-#include <libutil/cell_utility.hh>
-#include <libutil/cell_traits.hh>
+#include <cell/opcodes.hh>
+#include <cell/traits.hh>
+#include <cell/libutil/transfer.hh>
 
 #if defined(__PPU__)
 
@@ -53,7 +53,6 @@ template <> union Pointer<unsigned long long>
     unsigned long long * volatile typed;
     vector unsigned long long * volatile vectorised;
 };
-
 
 template <typename T_> union Subscriptable;
 

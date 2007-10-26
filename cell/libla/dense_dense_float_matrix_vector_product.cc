@@ -19,8 +19,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <libla/cell/allocator.hh>
-#include <libutil/cell.hh>
+#include <cell/cell.hh>
+#include <cell/libutil/allocator.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>

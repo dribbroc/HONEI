@@ -207,10 +207,13 @@ dnl output
 AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 	Makefile
+	cell/Makefile
+	cell/kernels/Makefile
+	cell/libla/Makefile
+	cell/libutil/Makefile
 	doc/Makefile
 	libgraph/Makefile
 	libla/Makefile
-	libla/cell/Makefile
 	libmath/Makefile
 	libswe/Makefile
 	libutil/Makefile

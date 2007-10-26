@@ -20,8 +20,8 @@
 #ifndef LIBUTIL_GUARD_SPE_MANAGER_HH
 #define LIBUTIL_GUARD_SPE_MANAGER_HH 1
 
+#include <cell/cell.hh>
 #include <libutil/assertion.hh>
-#include <libutil/cell.hh>
 #include <libutil/exception.hh>
 #include <libutil/memory_backend.hh>
 #include <libutil/stringify.hh>

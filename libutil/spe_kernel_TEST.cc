@@ -5,7 +5,7 @@
 #define DEBUG 1
 #endif
 
-#include <libutil/cell.hh>
+#include <cell/cell.hh>
 #include <libutil/spe_kernel.hh>
 #include <unittest/unittest.hh>
 

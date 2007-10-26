@@ -5,6 +5,31 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* autogen.bash, +cell/cell.hh, +cell/cell_traits.hh,
+	+cell/libla, +cell/libla/dense_dense_float_dot_product.cc,
+	+cell/libla/dense_dense_float_element_product.cc,
+	+cell/libla/dense_dense_float_matrix_vector_product.cc,
+	+cell/libla/dense_dense_float_sum.cc,
+	+cell/libla/dense_sparse_float_sum.cc, -cell/libla/files.m4,
+	+cell/libutil, +cell/libutil/allocator.cc, +cell/libutil/allocator.hh,
+	+cell/libutil/transfer.hh, cell/opcodes.hh, configure.ac, -libla/cell,
+	-libla/cell/allocator.cc, -libla/cell/allocator.hh,
+	-libla/cell/dense_dense_float_dot_product.cc,
+	-libla/cell/dense_dense_float_element_product.cc,
+	-libla/cell/dense_dense_float_matrix_vector_product.cc,
+	-libla/cell/dense_dense_float_sum.cc,
+	-libla/cell/dense_sparse_float_sum.cc, -libla/cell/files.m4,
+	-libla/cell/kernel.cc.in, -libla/cell/kernel_reference.sk,
+	-libla/cell/kernel_test.sk, -libla/cell/Makefile.am.m4,
+	libla/dot_product-cell.cc, libla/element_product-cell.cc,
+	libla/Makefile.am.m4, libla/product-cell.cc, libla/sum-cell.cc,
+	-libutil/cell.hh, -libutil/cell_opcodes.hh, -libutil/cell_traits.hh,
+	-libutil/cell_utility.hh, libutil/files.m4, libutil/Makefile.am.m4,
+	libutil/spe_instruction.hh, libutil/spe_kernel.hh,
+	libutil/spe_kernel_TEST.cc, libutil/spe_manager.hh, Makefile.am: Moved
+	from deep cell directory hierarchy to a flatter one.
 
 2007-10-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 

@@ -16,10 +16,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_CELL_GUARD_ALLOCATOR_HH
-#define LIBLA_CELL_GUARD_ALLOCATOR_HH 1
+#ifndef CELL_LIBUTIL_GUARD_ALLOCATOR_HH
+#define CELL_LIBUTIL_GUARD_ALLOCATOR_HH 1
 
-#include <libutil/cell.hh>
+#include <cell/cell.hh>
 
 namespace allocator
 {
@@ -45,7 +45,7 @@ namespace allocator
 
     inline void init(const Environment & env)
     {
-        char * last_address(static_cast<char *>(env.begin));
+        char * last_address(const_cast<char *>(reinterpret_cast<const char *>(env.begin)));
 
         for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ;
                 i != i_end ; ++i)

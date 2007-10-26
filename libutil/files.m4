@@ -10,9 +10,6 @@ dnl on this file at present...
 
 add(`general', `assertion',                 `hh', `cc', `test')
 add(`general', `condition_variable',        `hh', `cc')
-add(`cell',    `cell',                      `hh')
-add(`cell',    `cell_opcodes',              `hh')
-add(`cell',    `cell_utility',              `hh')
 add(`general', `exception',                 `hh', `cc')
 add(`general', `lock',                      `hh', `cc')
 add(`general', `log',                       `hh', `cc')
