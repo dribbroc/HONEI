@@ -29,10 +29,9 @@ using namespace honei;
 
 int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp)
 {
-    printf("SPE: kernel started!");
+    printf("SPE: Kernel started!\n");
     Environment env __attribute__((aligned(16)));
     Instruction instructions[8] __attribute__((aligned(16)));
-    unsigned instruction_index(0);
 
     // Set up our environment
     mfc_get(&env, envp, multiple_of_sixteen(sizeof(Environment)), 0, 0, 0);
@@ -41,7 +40,7 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
     allocator::init(env);
 
     spu_read_signal1();
-    printf("SPE: Received signal 1!");
+    printf("SPE: Received initial signal 1!\n");
 
     mfc_get(instructions, argp, sizeof(Instruction) * 8, 0, 0, 0);
 
@@ -49,9 +48,8 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
     {
         mfc_write_tag_mask(1 << 0);
         mfc_read_tag_status_any();
-        unsigned instruction_end((instruction_index + 7) % 8);
 
-        for ( ; instruction_index != instruction_end ; ++instruction_index, instruction_index %= 8)
+        for (unsigned long instruction_index(0) ; instruction_index != 8 ; ++instruction_index)
         {
             unsigned long long retval;
             switch (instructions[instruction_index].opcode)
@@ -61,19 +59,17 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
                     break;
 
                 default:
+                    printf("SPE: Unknown opcode!\n");
                     spu_write_out_intr_mbox(km_unknown_opcode);
                     spu_stop(0);
             }
         }
 
-        printf("waiting for signal1\n");
+        printf("SPE: Waiting for follow up signal1\n");
         spu_read_signal1();
-        printf("got signal1\n");
+        printf("SPE: Got follow up signal1\n");
 
         mfc_get(instructions, argp, sizeof(Instruction) * 8, 0, 0, 0);
-
-        ++instruction_index;
-        instruction_index %= 8;
     }
     while (true);
 

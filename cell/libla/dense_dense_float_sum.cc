@@ -47,7 +47,6 @@ int dense_dense_float_sum(const Instruction & inst)
     unsigned i(0);
     for ( ; i < inst.size / 4 ; ++i)
     {
-        printf("%03u: a = %f, b = %f\n", i, a.typed[4 * i], b.typed[4 * i]);
         a.vectorised[i] = spu_add(a.vectorised[i], b.vectorised[i]);
     }
 
@@ -59,7 +58,6 @@ int dense_dense_float_sum(const Instruction & inst)
     mfc_put(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
     mfc_write_tag_mask(1 << 3);
     mfc_read_tag_status_all();
-
 
     return 0;
 }

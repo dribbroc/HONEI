@@ -47,7 +47,6 @@ void dense_dense_float_matrix_vector_product(const Instruction & inst)
 
     for (unsigned row(0) ; row < inst.d.u ; ++row)
     {
-        printf("row: %u\n", row);
         Subscriptable<float> t = { spu_splats(0.0f) };
         for (unsigned i(0) ; i < inst.size / 4 ; ++i)
         {
@@ -55,7 +54,6 @@ void dense_dense_float_matrix_vector_product(const Instruction & inst)
         }
 
         t.array[0] += t.array[1] + t.array[2] + t.array[3];
-        printf("value = %f\n", t.array[0]);
         r.typed[row] = t.array[0];
     }
 
