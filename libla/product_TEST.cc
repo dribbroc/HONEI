@@ -922,10 +922,9 @@ class BandedMatrixDenseMatrixProductTest :
                 TEST_CHECK_EQUAL(prod, bm3);
 
                 BandedMatrix<DataType_> bm01(5);
-                DenseMatrix<DataType_> dm02(5, 6), dm03(6, 5);
+                DenseMatrix<DataType_> dm02(5, 6);
 
                 TEST_CHECK_THROWS(Product<>::value(bm01, dm02), MatrixRowsDoNotMatch);
-                TEST_CHECK_THROWS(Product<>::value(bm01, dm03), MatrixRowsDoNotMatch);
             }
         }
 };

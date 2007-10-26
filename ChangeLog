@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+
+2007-10-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/dense_matrix_TEST.cc,
+	libla/product-sse.cc, libla/product_TEST.cc:
+	Corrected exception throwing and testing.
+
 2007-10-25 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* libla/cell/dense_sparse_float_sum.cc, libla/cell/files.m4,

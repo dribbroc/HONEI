@@ -177,8 +177,8 @@ class DenseMatrixLayoutTest :
                 TEST_CHECK_EQUAL(dm.columns(), columns);
                 TEST_CHECK_EQUAL(dm.rows(), rows);
 
-                Vector<DataType_> & row1 = dm[0];
-                Vector<DataType_> & col1 = dm.column(0);
+                DenseVector<DataType_> row1 = dm[0];
+                DenseVector<DataType_> col1 = dm.column(0);
 
                 TEST_CHECK_EQUAL(row1.size(), columns);
                 TEST_CHECK_EQUAL(col1.size(), rows);
@@ -220,8 +220,8 @@ class DenseMatrixQuickTest :
             TEST_CHECK_EQUAL(dm.columns(), columns);
             TEST_CHECK_EQUAL(dm.rows(), rows);
 
-            Vector<DataType_> & row1 = (dm)[0];
-            Vector<DataType_> & col1 = dm.column(0);
+            DenseVector<DataType_> row1 = (dm)[0];
+            DenseVector<DataType_> col1 = dm.column(0);
 
             TEST_CHECK_EQUAL(row1.size(), columns);
             TEST_CHECK_EQUAL(col1.size(), rows);

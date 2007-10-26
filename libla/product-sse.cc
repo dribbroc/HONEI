@@ -30,10 +30,9 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
 {
     CONTEXT("When multiplying BandedMatrixi<float> with DenseVector<float> with SSE:");
 
-
     if (b.size() != a.columns())
     {
-        throw MatrixRowsDoNotMatch(a.columns(), b.size());
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
 
     DenseVector<float> result(a.rows(), float(0));
@@ -160,10 +159,9 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 {
     CONTEXT("When multiplying BandedMatrix<double> with DenseVector<double> with SSE:");
 
-
     if (b.size() != a.columns())
     {
-        throw MatrixRowsDoNotMatch(a.columns(), b.size());
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
 
     DenseVector<double> result(a.rows(), double(0));
@@ -275,7 +273,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
 
     if (b.size() != a.columns())
     {
-        throw MatrixRowsDoNotMatch(a.columns(), b.size());
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
 
     DenseVector<float> result(a.rows());
@@ -297,7 +295,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
 
     if (b.size() != a.columns())
     {
-        throw MatrixRowsDoNotMatch(a.columns(), b.size());
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
 
     DenseVector<double> result(a.rows());
