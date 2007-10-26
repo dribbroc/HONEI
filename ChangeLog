@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-10-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* -cell/cell_traits.hh, +cell/traits.hh: Forgot to rename
+	cell_traits.hh to traits.hh.
+
+2007-10-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* cell/Makefile.am, cell/libutil/Makefila.am, cell/libla/Makefile.am:
 	Oops, forgot to add these files.
 
