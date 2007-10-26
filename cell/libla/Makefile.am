@@ -10,3 +10,12 @@ libla_spe_a_SOURCES = \
 	dense_dense_float_sum.cc \
 	dense_dense_float_matrix_vector_product.cc \
 	dense_sparse_float_sum.cc
+
+bench:
+quickcheck:
+quickcheck-sse:
+quickcheck-cell:
+quickcheck-mc:
+check-sse:
+check-cell:
+check-mc:

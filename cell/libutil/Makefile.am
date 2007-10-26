@@ -7,3 +7,12 @@ noinst_LIBRARIES = libutil_spe.a
 
 libutil_spe_a_SOURCES = \
     allocator.cc
+
+bench:
+quickcheck:
+quickcheck-sse:
+quickcheck-cell:
+quickcheck-mc:
+check-sse:
+check-cell:
+check-mc:
