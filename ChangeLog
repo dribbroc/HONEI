@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-10-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/kernels/files.m4, cell/kernels/Makefile.am.m4,
+	cell/kernels/kernel.cc.in, cell/kernel_reference.sk,
+	cell/kernel_test.sk: Forgot to add these files in the previous commit.
+	* autogen.bash: Removed cell/libla from list of generated automake
+	files.
+
+2007-10-26 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* autogen.bash, +cell/cell.hh, +cell/cell_traits.hh,
 	+cell/libla, +cell/libla/dense_dense_float_dot_product.cc,
 	+cell/libla/dense_dense_float_element_product.cc,
