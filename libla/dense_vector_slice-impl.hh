@@ -21,6 +21,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_SLICE_IMPL_HH 1
 
 //#include <libla/dense_matrix_tile.hh>
+#include <libla/dense_vector-impl.hh>
 #include <libla/dense_vector_slice.hh>
 #include <libla/element_iterator.hh>
 #include <libla/vector.hh>
