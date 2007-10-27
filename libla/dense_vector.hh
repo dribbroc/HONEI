@@ -36,6 +36,7 @@ namespace honei
 {
     template <typename DataType_> class DenseMatrix;
     template <typename DataType_> class DenseVectorRange;
+    template <typename DataType_> class DenseVectorSlice;
     /**
      * \brief DenseVector is a vector with O(size) non-zero elements which keeps its data
      * \brief sequential.
@@ -48,6 +49,7 @@ namespace honei
         private:
             class Implementation;
 
+            /// Our implementation.
             std::tr1::shared_ptr<Implementation> _imp;
 
             /// Our implementation of ElementIteratorBase.
@@ -72,6 +74,7 @@ namespace honei
             friend class DenseElementIterator<DataType_>;
             friend class DenseMatrix<DataType_>;
             friend class DenseVectorRange<DataType_>;
+            friend class DenseVectorSlice<DataType_>;
 
             /// Type of the const iterator over our elements.
             typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;

@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-27 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* +libla/dense_vector_slice.hh, +libla/dense_vector_slice-impl.hh,
+	+libla/dense_vector_slice.cc, +libla/dense_vector_slice_TEST.cc: Added
+	DenseVectorSlice implementation.
+	* libla/dense_vector.hh: Added necessary changes for DenseVectorSlice.
+	* libla/files.m4: Added DenseVectorSlice.
+
 2007-10-27 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libutil/spe_kernel.cc: Replaced enqueue_counter by
