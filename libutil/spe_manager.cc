@@ -25,7 +25,8 @@
 #include <libutil/spe_manager.hh>
 #include <libutil/worker.hh>
 
-#include <list>
+#include <iostream>
+#include <vector>
 #include <string>
 #include <tr1/functional>
 
@@ -42,7 +43,7 @@ extern "C"
 
 struct SPEManager::Implementation
 {
-    typedef std::list<SPE> SPEList;
+    typedef std::vector<SPE> SPEList;
 
     /// Our mutex.
     Mutex * const mutex;
@@ -53,11 +54,19 @@ struct SPEManager::Implementation
     /// Out list of SPEs.
     SPEList spe_list;
 
+    /// Iterator pointing to next work-free SPE
+    std::vector<SPE>::iterator next_spe;
+
     /// Dispatch an SPEInstruction to an SPEs.
     inline void dispatch(const SPEInstruction & instruction)
     {
         /// \todo Find matching kernel, enqueue with that kernel
-        instruction.enqueue_with(spe_list.begin()->kernel());
+        //Round Robin dispatching
+        std::cout << "SPEManager: Dispatching to spe "<< next_spe - spe_list.begin()<<std::endl;
+        instruction.enqueue_with(next_spe->kernel());
+        next_spe ++;
+        if (next_spe == spe_list.end())
+            next_spe = spe_list.begin();
     }
 
     /// Constructor.
@@ -81,14 +90,18 @@ SPEManager::SPEManager() :
 {
     Lock l(*_imp->mutex);
 
-    unsigned count(_imp->spe_count);
+    //unsigned count(_imp->spe_count);
+    unsigned count (2);
     while(count-- > 0)
     {
         SPE spe;
-//        spe.run(SPEKernel(kernel_reference, &Implementation::environment));
-        _imp->spe_list.push_front(spe);
+        _imp->spe_list.push_back(spe);
     }
-    _imp->spe_list.begin()->run(SPEKernel(kernel_reference, &environment));
+    for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
+    {
+        i->run(SPEKernel(kernel_reference, &environment));
+    }
+    _imp->next_spe = _imp->spe_list.begin();
 }
 
 SPEManager::~SPEManager()

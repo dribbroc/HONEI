@@ -58,7 +58,6 @@ skskeleton=${2}
 
     return_dword() {
         echo "                case oc_${1}:"
-        echo "                    printf(\"SPE: Next instruction is oc_${1}\");"
         echo "                    retval = ${2}(instructions[instruction_index]);"
         echo "                    spu_write_out_intr_mbox(km_result_dword);"
         echo "                    spu_write_out_mbox(retval & 0xFFFFFFFF);"

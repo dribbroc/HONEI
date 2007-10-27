@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-27 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* cell/kernels/kernel.cc.in, libutil/spe_kernel.cc, libutil/spe_manager.cc, misc/make_sk.bash:
+	Added round robin instruction dispatching. Reduced spe number to 2 for
+	better debuging.
+
 2007-10-27 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* +libla/dense_vector_slice.hh, +libla/dense_vector_slice-impl.hh,

@@ -29,7 +29,7 @@ using namespace honei;
 
 int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp)
 {
-    printf("SPE: Kernel started!\n");
+    printf("SPE %llu : Kernel started!\n", spe_id);
     Environment env __attribute__((aligned(16)));
     Instruction instructions[8] __attribute__((aligned(16)));
 
@@ -40,7 +40,7 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
     allocator::init(env);
 
     spu_read_signal1();
-    printf("SPE: Received initial signal 1!\n");
+    printf("SPE %llu : Received initial signal 1!\n", spe_id);
 
     mfc_get(instructions, argp, sizeof(Instruction) * 8, 0, 0, 0);
 
@@ -65,9 +65,9 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
             }
         }
 
-        printf("SPE: Waiting for follow up signal1\n");
+        printf("SPE %llu : Waiting for follow up signal1\n", spe_id);
         spu_read_signal1();
-        printf("SPE: Got follow up signal1\n");
+        printf("SPE %llu : Got follow up signal1\n", spe_id);
 
         mfc_get(instructions, argp, sizeof(Instruction) * 8, 0, 0, 0);
     }
