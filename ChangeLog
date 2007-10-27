@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-27 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/spe_kernel.cc: Replaced enqueue_counter by
+	initial_instructions when detecting, if some instructions were
+	enqueued before loading the kernel into the spe.
+
 2007-10-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libgraph/evolving_graph_TEST.cc, libgraph/graph_TEST.cc, libgraph/position.hh:

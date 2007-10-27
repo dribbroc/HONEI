@@ -55,6 +55,8 @@ namespace honei
         /// Our counter for finished instructions.
         unsigned finished_counter;
 
+        /// Were there instructions enqueued before loading the kernel in the spe.
+        bool initial_instructions;
         /// \}
 
         /// \name Synchronization data and PPE-side kernel thread
@@ -181,6 +183,7 @@ namespace honei
             next_free_index(0),
             enqueued_counter(0),
             finished_counter(0),
+            initial_instructions(false),
             mutex(new Mutex),
             kernel_loaded(new ConditionVariable),
             instruction_finished(new ConditionVariable),
@@ -266,6 +269,7 @@ namespace honei
         }
         else
         {
+            _imp->initial_instructions = true;
         }
 
         return result;
@@ -296,8 +300,7 @@ namespace honei
         }
 
         _imp->spe = new SPE(spe);
-        /// \todo Use a panding_counter instead of enqueued_counter.
-        if (_imp->enqueued_counter > 0)
+        if (_imp->initial_instructions)
         {
             _imp->spe->signal();
         }
