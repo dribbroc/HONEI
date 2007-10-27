@@ -87,6 +87,15 @@ namespace honei
     }
 
     template <typename DataType_>
+    DenseVectorRange<DataType_>::DenseVectorRange(const SharedArray<DataType_> & e, const unsigned long size,
+            const unsigned long offset) :
+        _imp(new Implementation(e, size, offset))
+    {
+        CONTEXT("When creating DenseVectorRange:");
+        ASSERT(size > 0, "size is zero!");
+    }
+
+    template <typename DataType_>
     DenseVectorRange<DataType_>::DenseVectorRange(const DenseVectorRange<DataType_> & other) :
         _imp(new Implementation(other._imp->elements, other._imp->size, other._imp->offset))
     {

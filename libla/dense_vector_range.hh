@@ -34,6 +34,8 @@
  */
 namespace honei
 {
+    template <typename DataType_> class DenseMatrixTile;
+
     /**
      * \brief DenseVectorRange is a vector which provides access to a contiguous part
      * \brief of a DenseVector and allows to manipulate the accessed part.
@@ -53,7 +55,21 @@ namespace honei
 
             typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
 
+            /**
+             * Constructor.
+             *
+             * For use by DenseMatrixTile.
+             *
+             * \param source The shared array the range provides access to.
+             * \param size Size of the new dense vector range.
+             * \param offset Offset of the vector's data inside the shared array.
+             */
+            DenseVectorRange(const SharedArray<DataType_> & source, const unsigned long size, const unsigned long offset);
+
         public:
+            friend class DenseElementIterator<DataType_>;
+            friend class DenseMatrixTile<DataType_>;
+
             /// Type of the const iterator over our elements.
             typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
 
@@ -70,7 +86,7 @@ namespace honei
              * \param size Size of the new dense vector range.
              * \param offset Offset of the vector's data inside the DenseVector's shared array.
              */
-            DenseVectorRange(const DenseVector<DataType_> & source, const unsigned long size, const unsigned long offset = 0);
+            DenseVectorRange(const DenseVector<DataType_> & source, const unsigned long size, const unsigned long offset);
 
             /// Copy-constructor.
             DenseVectorRange(const DenseVectorRange<DataType_> & other);

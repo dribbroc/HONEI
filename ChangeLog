@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-27 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* +libla/dense_matrix_tile.hh, +libla/dense_matrix_tile_TEST.cc: Added
+	DenseMatrixTile implementation.
+	* libla/matrix.hh: Removed copy-function.
+	* libla/dense_matrix.hh, libla/files.m4: Applied necessary changes for
+	DenseMatrixTile.
+	* libla/dense_vector_range.hh,
+	libla/dense_vector_range-impl.hh, libla/dense_vector_slice.hh,
+	libla/dense_vector_slice-impl.hh: Added new constructor to
+	DenseVectorSlice and DenseVectorRange, which is necessary for
+	DenseMatrixTile.
+
 2007-10-27 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/kernels/kernel.cc.in, libutil/spe_kernel.cc, libutil/spe_manager.cc, misc/make_sk.bash:

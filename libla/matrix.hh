@@ -67,9 +67,6 @@ namespace honei
             /// Returns the number of our rows.
             virtual unsigned long rows() const = 0;
 
-            /// Returns a copy of the matrix.
-            virtual Matrix * copy() const = 0;
-
             /// Returns true if the matrix is square.
             virtual inline bool square() const
             {

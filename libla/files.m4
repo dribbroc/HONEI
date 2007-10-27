@@ -11,6 +11,7 @@ dnl on this file at present...
 add(`absolute',                  `hh', `cc', `test')
 add(`banded_matrix',             `hh', `test')
 add(`dense_matrix',              `hh', `test')
+add(`dense_matrix_tile',         `hh', `test')
 add(`dense_vector',              `hh', `cc', `test')
 add(`dense_vector_range',        `hh', `cc', `test')
 add(`dense_vector_slice',        `hh', `cc', `test')

@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_SLICE_HH
 #define LIBLA_GUARD_DENSE_VECTOR_SLICE_HH 1
 
-//#include <libla/dense_matrix_tile.hh>
+#include <libla/dense_matrix_tile.hh>
 #include <libla/dense_vector.hh>
 #include <libla/vector.hh>
 
@@ -33,7 +33,7 @@
  */
 namespace honei
 {
-//    template <typename DataType_> class DenseMatrixTile;
+    template <typename DataType_> class DenseMatrixTile;
 
     /**
      * \brief DenseVectorSlice is a vector with O(size) non-zero elements which
@@ -65,12 +65,12 @@ namespace honei
              * \param offset Offset of the slice's data inside the shared array.
              * \param stepsize Stepsize between two of the vector's elements inside the shared array.
              */
-/*            DenseVectorSlice(const SharedArray<DataType_> & elements, const unsigned long size, const unsigned long offset,
+            DenseVectorSlice(const SharedArray<DataType_> & elements, const unsigned long size, const unsigned long offset,
                     const unsigned long stepsize);
-*/
+
         public:
             friend class DenseElementIterator<DataType_>;
-//            friend class DenseMatrixTile<DataType_>;
+            friend class DenseMatrixTile<DataType_>;
 
             /// Type of the const iterator over our elements.
             typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;

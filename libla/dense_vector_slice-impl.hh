@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_SLICE_IMPL_HH
 #define LIBLA_GUARD_DENSE_VECTOR_SLICE_IMPL_HH 1
 
-//#include <libla/dense_matrix_tile.hh>
+#include <libla/dense_matrix_tile.hh>
 #include <libla/dense_vector-impl.hh>
 #include <libla/dense_vector_slice.hh>
 #include <libla/element_iterator.hh>
@@ -40,7 +40,7 @@
  **/
 namespace honei
 {
-//    template <typename DataType_> class DenseMatrixTile;
+    template <typename DataType_> class DenseMatrixTile;
 
     /// Implementation for DenseVectorSlice template.
     template <typename DataType_> struct DenseVectorSlice<DataType_>::Implementation
@@ -66,7 +66,7 @@ namespace honei
         {
         }
     };
-/*
+
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const SharedArray<DataType_> & elements, const unsigned long size,
             const unsigned long offset, const unsigned long stepsize) :
@@ -75,7 +75,7 @@ namespace honei
         CONTEXT("When creating DenseVectorSlice:");
         ASSERT(size > 0, "size is zero!");
     }
-*/
+
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVector<DataType_> & source, const unsigned long size,
             const unsigned long offset, const unsigned long stepsize) :
