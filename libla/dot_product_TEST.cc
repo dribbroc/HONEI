@@ -162,7 +162,7 @@ class SparseDenseDotProductTest :
                 }
 
                 DataType_ p0(DotProduct<>::value(sv1, dv2));
-                TEST_CHECK_EQUAL(p0, p1);
+                TEST_CHECK_EQUAL_WITHIN_EPS(p0, p1, 2 * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
              }
 
             SparseVector<DataType_> sv00(1, 1);
@@ -253,7 +253,7 @@ class SparseDotProductTest :
                 }
 
                 DataType_ p0(DotProduct<>::value(sv1, sv2));
-                TEST_CHECK_EQUAL(p0, p1);
+                TEST_CHECK_EQUAL_WITHIN_EPS(p0, p1, std::numeric_limits<DataType_>::epsilon());
             }
 
             SparseVector<DataType_> sv00(1, 1);

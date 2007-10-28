@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/dot_product_TEST.cc: Adjusted numerical error tolerance in
+	dot_product_TEST.
+
+
 2007-10-27 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* +libla/dense_matrix_tile.hh, +libla/dense_matrix_tile_TEST.cc: Added
