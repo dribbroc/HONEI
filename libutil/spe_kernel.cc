@@ -191,7 +191,8 @@ namespace honei
             kernel_loaded(new SyncPoint(2)),
             instruction_finished(new ConditionVariable),
             thread(new pthread_t),
-            attr(new pthread_attr_t)
+            attr(new pthread_attr_t),
+            spe(NULL)
         {
             int retval(0);
 
@@ -308,6 +309,13 @@ namespace honei
         {
             _imp->spe->signal();
         }
+    }
+
+    unsigned 
+    SPEKernel::instruction_load() const
+    {
+        Lock l (*_imp->mutex);
+        return (_imp->next_free_index - _imp->spe_instruction_index) % 8; /// \todo remove hardcoded numbers
     }
 
     void * SPEKernel::argument() const

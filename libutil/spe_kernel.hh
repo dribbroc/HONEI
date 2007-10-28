@@ -85,6 +85,11 @@ namespace honei
              * \param spe The SPE into which the kernel shall be loaded.
              */
             void load(const SPE & spe) const;
+
+            /**
+             * Return the number of unfinished enqueued instructions.
+             */
+            unsigned instruction_load() const;
     };
 }
 
