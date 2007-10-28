@@ -25,6 +25,7 @@
 #include <libutil/spe_event.hh>
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
+#include <libutil/sync_point.hh>
 
 #include <iostream>
 namespace honei
@@ -55,8 +56,9 @@ namespace honei
         /// Our counter for finished instructions.
         unsigned finished_counter;
 
-        /// Were there instructions enqueued before loading the kernel in the spe.
+        /// Were there instructions enqueued before loading the kernel in the spe?
         bool initial_instructions;
+
         /// \}
 
         /// \name Synchronization data and PPE-side kernel thread
@@ -65,8 +67,8 @@ namespace honei
         /// Our mutex.
         Mutex * const mutex;
 
-        /// Our SPE-part-has-been-loaded condition.
-        ConditionVariable * kernel_loaded;
+        /// Our SPE-part-has-been-loaded synchronisation point.
+        SyncPoint * kernel_loaded;
 
         /// Our instruction-has-finished condition variable.
         ConditionVariable * instruction_finished;
@@ -84,31 +86,31 @@ namespace honei
 
         static void * kernel_thread(void * argument)
         {
-            std::cout << "Anonymous kernel_thread startet"<<std::endl;
+            std::cout << "Anonymous kernel_thread startet" << std::endl;
             Implementation * imp(static_cast<Implementation *>(argument));
 
             SPE * spe(0);
             {
                 Lock l(*imp->mutex);
 
-                imp->kernel_loaded->wait(*imp->mutex);
+                imp->kernel_loaded->signal_and_wait(imp->mutex);
                 spe = imp->spe;
             }
-            std::cout << "SPEKernel "<< imp->spe->id()<<": loaded-signal received!" << std::endl;
+            std::cout << "SPEKernel " << imp->spe->id()<< ": loaded-signal received!" << std::endl;
 
             SPEEvent event(*imp->spe, SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED);
             Instruction current_instruction;
 
             do
             {
-                std::cout << "SPEKernel "<< imp->spe->id()<<": Waiting for event!" << std::endl;
+                std::cout << "SPEKernel " << imp->spe->id() << ": Waiting for event!" << std::endl;
                 spe_event_unit_t * e(event.wait(-1));
-                std::cout << "SPEKernel "<< imp->spe->id()<<": Event occured!" << std::endl;
+                std::cout << "SPEKernel " << imp->spe->id() << ": Event occured!" << std::endl;
                 ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)), "unexpected event happened!");
 
                 if (e->events & SPE_EVENT_OUT_INTR_MBOX)
                 {
-                    std::cout << "SPEKernel "<< imp->spe->id()<<": mail pending" << std::endl;
+                    std::cout << "SPEKernel " << imp->spe->id() << ": mail pending" << std::endl;
                     unsigned mail(0);
 
                     int retval(spe_out_intr_mbox_read(spe->context(), &mail, 1, SPE_MBOX_ALL_BLOCKING));
@@ -119,7 +121,7 @@ namespace honei
                         switch (mail)
                         {
                             case km_result_dword:
-                                std::cout << "SPEKernel "<< imp->spe->id()<<": km_result_dword received!" << std::endl;
+                                std::cout << "SPEKernel " << imp->spe->id() << ": km_result_dword received!" << std::endl;
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -138,7 +140,7 @@ namespace honei
                                 continue;
 
                             case km_instruction_finished:
-                                std::cout << "SPEKernel "<< imp->spe->id()<<": km_instruction_finished received!" << std::endl;
+                                std::cout << "SPEKernel " << imp->spe->id() << ": km_instruction_finished received!" << std::endl;
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -151,7 +153,7 @@ namespace honei
                                 }
                                 continue;
                             case km_unknown_opcode:
-                                std::cout << "SPEKernel "<< imp->spe->id()<<": invalid opcode!" << std::endl;
+                                std::cout << "SPEKernel " << imp->spe->id() << ": invalid opcode!" << std::endl;
                                 throw std::string("Eek");
                                 continue;
                         }
@@ -161,7 +163,7 @@ namespace honei
                 }
                 else if (e->events & SPE_EVENT_SPE_STOPPED)
                 {
-                    std::cout << "SPEKernel: "<< imp->spe->id()<<" SPE stopped" << std::endl;
+                    std::cout << "SPEKernel: " << imp->spe->id() << " SPE stopped" << std::endl;
                     Lock ll(*imp->mutex);
 
                     imp->instruction_finished->broadcast();
@@ -169,7 +171,7 @@ namespace honei
                 }
                 else
                 {
-                    std::cout << "SPEKernel "<< imp->spe->id()<<": neither mail event nor stop event!" << std::endl;
+                    std::cout << "SPEKernel " << imp->spe->id() << ": neither mail event nor stop event!" << std::endl;
                 }
             } while (true);
 
@@ -186,7 +188,7 @@ namespace honei
             finished_counter(0),
             initial_instructions(false),
             mutex(new Mutex),
-            kernel_loaded(new ConditionVariable),
+            kernel_loaded(new SyncPoint(2)),
             instruction_finished(new ConditionVariable),
             thread(new pthread_t),
             attr(new pthread_attr_t)
@@ -293,7 +295,6 @@ namespace honei
     SPEKernel::load(const SPE & spe) const
     {
         CONTEXT("When loading kernel into SPE #" + stringify(spe.id()) + ":");
-        sleep (5);
         Lock l(*_imp->mutex);
         if (0 != spe_program_load(spe.context(), &_imp->handle))
         {
@@ -301,8 +302,8 @@ namespace honei
         }
 
         _imp->spe = new SPE(spe);
-        _imp->kernel_loaded->signal();
-        std::cout<<"SPEKernel "<<_imp->spe->id()<<" : loading kernel into SPE"<<std::endl;
+        _imp->kernel_loaded->signal_and_wait(_imp->mutex);
+        std::cout << "SPEKernel " << _imp->spe->id() << " : loading kernel into SPE" << std::endl;
         if (_imp->initial_instructions)
         {
             _imp->spe->signal();
