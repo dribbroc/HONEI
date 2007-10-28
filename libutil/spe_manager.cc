@@ -64,7 +64,7 @@ struct SPEManager::Implementation
 
         /// \todo Find matching kernel, enqueue with that kernel
         //Round Robin dispatching
-        std::cout << "SPEManager: Dispatching to spe "<< next_spe - spe_list.begin()<<" with load "<<next_spe->kernel()->instruction_load()<<std::endl;
+        std::cout << "SPEManager: Dispatching to spe " << next_spe - spe_list.begin() << " with load " << next_spe->kernel()->instruction_load() << std::endl;
         instruction.enqueue_with(next_spe->kernel());
         next_spe ++;
         if (next_spe == spe_list.end())
@@ -98,7 +98,6 @@ SPEManager::SPEManager() :
     {
         SPE spe;
         _imp->spe_list.push_back(spe);
-        std::cout.flush();
     }
     for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
     {
