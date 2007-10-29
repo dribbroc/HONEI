@@ -68,6 +68,19 @@ namespace honei
                 ElementProduct<Tag_>::value(temp2, diag_inverted);
                 former_result = temp2.copy();
             }
+
+            template<typename DT1_, typename DT2_>
+            static inline void jacobi_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrix<DT1_> & difference)
+            {
+                DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result.copy());
+
+                DenseVector<DT1_> temp2(right_hand_side.copy());
+
+                Difference<Tag_>::value(temp2, temp);
+                ElementProduct<Tag_>::value(temp2, diag_inverted);
+                former_result = temp2.copy();
+            }
+
         public:
             /**
             * \brief Returns solution of LES with the Jacobi method given by a DenseMatrix and a Vector.
@@ -113,6 +126,54 @@ namespace honei
                 return x;
 
             }
+
+            /**
+            * \brief Returns solution of LES with the Jacobi method given by a BandedMatrix and a Vector.
+            *
+            * \param system_matrix The system matrix.
+            * \param right_hand_side The right hand side of the system.
+            * \param iter_number The fixed number of iterations.
+            *
+            */
+
+            /// \{
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
+            {
+                CONTEXT("When solving dense linear system with Jacobi (fixed # iterations):");
+                DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
+
+                DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
+
+                BandedMatrix<DT1_> difference(*system_matrix.copy());
+                ///Create Diagonal, invert, compute difference on the fly.
+                for(unsigned long i =0; i < diag.size(); ++i)
+                {
+
+                    diag[i] = system_matrix.band(0)[i];
+                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+                    {
+                        diag_inverted[i] = DT1_(1) / diag[i];
+                    }
+                    else
+                    {
+                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                    }
+                    DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
+                    difference.insert_band(0, zeros);
+                }
+
+                DenseVector<DT1_> x(right_hand_side.copy());
+
+                for(unsigned long i = 0; i<iter_number; ++i)
+                {
+                    jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
+                }
+                return x;
+
+            }
+
+
 
     };
 }

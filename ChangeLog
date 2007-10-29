@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-10-29 Markus Geveler <apryde@gmx.de>
 
+	* libmath/jacobi.hh, libmath/jacobi_TEST.cc: Added support for banded
+	systems to Jacobi solver.
+
+2007-10-29 Markus Geveler <apryde@gmx.de>
+
 	* libmath/jacobi.hh, libmath/jacobi_TEST.cc: Added pre-refactoring
 	version of a Jacobi iterative stationary solver for dense LES and its
 	test.
