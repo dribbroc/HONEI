@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-10-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libutil/spe_manager.cc: Replaced round robin by an load
+	balancing dispatcher.
+
+2007-10-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libutil/memory_backend_cell.cc:
 	Adjusted synchronization for read/write access.
 
