@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <tr1/functional>
 
@@ -54,21 +55,21 @@ struct SPEManager::Implementation
     /// Out list of SPEs.
     SPEList spe_list;
 
-    /// Iterator pointing to next work-free SPE
-    std::vector<SPE>::iterator next_spe;
+    /// Compare two SPE's in terms of instruction_load
+    static inline bool cmp_load(const SPE a, const SPE b)
+    {
+        return a.kernel()->instruction_load() < b.kernel()->instruction_load();
+    }
 
     /// Dispatch an SPEInstruction to an SPE.
     inline void dispatch(const SPEInstruction & instruction)
     {
         CONTEXT("SPEManager: When dispatching Instruction to an SPE");
 
-        /// \todo Find matching kernel, enqueue with that kernel
-        //Round Robin dispatching
-        std::cout << "SPEManager: Dispatching to spe " << next_spe - spe_list.begin() << " with load " << next_spe->kernel()->instruction_load() << std::endl;
-        instruction.enqueue_with(next_spe->kernel());
-        next_spe ++;
-        if (next_spe == spe_list.end())
-            next_spe = spe_list.begin();
+        //Load balanced dispatching
+        sort(spe_list.begin(), spe_list.end(), cmp_load);
+        std::cout << "SPEManager: Dispatching to spe " << spe_list.begin()->id() << " with load " << spe_list.begin()->kernel()->instruction_load() << std::endl;
+        instruction.enqueue_with(spe_list.begin()->kernel());
     }
 
     /// Constructor.
@@ -103,7 +104,6 @@ SPEManager::SPEManager() :
     {
         i->run(SPEKernel(kernel_reference, &environment));
     }
-    _imp->next_spe = _imp->spe_list.begin();
 }
 
 SPEManager::~SPEManager()
