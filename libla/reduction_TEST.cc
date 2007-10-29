@@ -139,7 +139,7 @@ class SparseMatrixReductionToSumTest :
         {
             for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
             {
-                SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1);
+                SparseMatrix<DT_> sm1(size+1, size, size / 8 + 1);
                 DenseVector<DT_> dv1(size + 1, DT_(0));
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
@@ -172,7 +172,7 @@ class SparseMatrixReductionQuickTest :
         virtual void run() const
         {
             unsigned long size(22);
-            SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1);
+            SparseMatrix<DT_> sm1(size+1, size, size / 8 + 1);
             DenseVector<DT_> dv1(size + 1, DT_(0));
             for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)

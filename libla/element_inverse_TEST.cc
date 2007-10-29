@@ -283,8 +283,8 @@ class SparseMatrixElementInverseTest :
         {
             for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
-                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
-                    sm2(size, size + 1, size / 7 + 1);
+                SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
+                    sm2(size+1, size, size / 7 + 1);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), j(sm2.begin_elements());
                     i != i_end ; ++i, ++j)
@@ -316,8 +316,8 @@ class SparseMatrixElementInverseQuickTest :
         virtual void run() const
         {
             unsigned long size (7);
-            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
-                sm2(size, size + 1, size / 7 + 1);
+            SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
+                sm2(size+1, size, size / 7 + 1);
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()), j(sm2.begin_elements());
                 i != i_end ; ++i, ++j)

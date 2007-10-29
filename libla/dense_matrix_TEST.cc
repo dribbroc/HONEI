@@ -106,7 +106,7 @@ class DenseMatrixDensifyQuickTest :
         {
                 unsigned long size(47);
                 DenseMatrix<DataType_> dm0(size+2, size, DataType_(0));
-                SparseMatrix<DataType_> sm0(size, size + 2, size / 8 + 1);
+                SparseMatrix<DataType_> sm0(size+2, size, size / 8 + 1);
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), j(sm0.begin_elements()),
                     i_end(dm0.end_elements()) ; i != i_end ; ++i , ++j)

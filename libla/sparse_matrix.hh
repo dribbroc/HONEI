@@ -95,7 +95,7 @@ namespace honei
              * \param rows Number of rows of the new matrix.
              * \param capacity Initial capacity for non-zero elements.
              **/
-            SparseMatrix(unsigned long columns, unsigned long rows, unsigned long capacity = 1) :
+            SparseMatrix(unsigned long rows, unsigned long columns, unsigned long capacity = 1) :
                 _capacity(capacity),
                 _columns(columns),
                 _rows(rows),

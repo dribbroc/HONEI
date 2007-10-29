@@ -344,7 +344,7 @@ class DenseMatrixSparseMatrixSumTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
                         dm3(size+1, size, DataType_(0));
-                SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1);
+                SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
                     i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
@@ -394,7 +394,7 @@ class DenseMatrixSparseMatrixSumQuickTest :
             unsigned long size (11);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
                     dm3(size+1, size, DataType_(0));
-            SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1);
+            SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1);
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
                 i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
@@ -500,8 +500,8 @@ class SparseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
-                    sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
+                SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
+                    sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 8 + 1 );
                 for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
@@ -526,7 +526,7 @@ class SparseMatrixSumTest :
                 TEST_CHECK_EQUAL(sum, sm3);
             }
 
-            SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
+            SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(Sum<>::value(sm03, sm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Sum<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
@@ -548,8 +548,8 @@ class SparseMatrixSumQuickTest :
         virtual void run() const
         {
             unsigned long size (11);
-            SparseMatrix<DataType_> sm1(size, size + 1, size / 8 + 1),
-                sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
+            SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
+                sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 8 + 1 );
             for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
@@ -573,7 +573,7 @@ class SparseMatrixSumQuickTest :
 
             TEST_CHECK_EQUAL(sum, sm3);
 
-            SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
+            SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(Sum<>::value(sm03, sm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Sum<>::value(sm03, sm02), MatrixColumnsDoNotMatch);

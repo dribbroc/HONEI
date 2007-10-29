@@ -301,7 +301,7 @@ class DenseMatrixDifferenceTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size+1, size, DT_(2)), dm2(size+1, size, DT_(3)),
-                    dm3(size, size + 1, DT_(-1));
+                    dm3(size+1, size, DT_(-1));
                 DenseMatrix<DT_> & difference(Difference<>::value(dm1, dm2));
 
                 TEST_CHECK_EQUAL(difference, dm3);
@@ -360,7 +360,7 @@ class DenseMatrixSparseMatrixDifferenceTest :
             {
                 DenseMatrix<DT_> dm1(size+1, size, DT_(0)),
                         dm3(size+1, size, DT_(0));
-                SparseMatrix<DT_> sm2(size, size + 1, size / 7 + 1);
+                SparseMatrix<DT_> sm2(size+1, size, size / 7 + 1);
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
                     i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
@@ -410,7 +410,7 @@ class DenseMatrixSparseMatrixDifferenceQuickTest :
             unsigned long size (10);
             DenseMatrix<DT_> dm1(size+1, size, DT_(0)),
                     dm3(size+1, size, DT_(0));
-            SparseMatrix<DT_> sm2(size, size + 1, size / 7 + 1);
+            SparseMatrix<DT_> sm2(size+1, size, size / 7 + 1);
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
                 i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
@@ -458,7 +458,7 @@ class SparseMatrixDifferenceTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1),
+                SparseMatrix<DT_> sm1(size+1, size, size / 8 + 1),
                     sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
@@ -484,7 +484,7 @@ class SparseMatrixDifferenceTest :
                 TEST_CHECK_EQUAL(difference, sm3);
             }
 
-            SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
+            SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(Difference<>::value(sm03, sm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Difference<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
@@ -506,8 +506,8 @@ class SparseMatrixDifferenceQuickTest :
         virtual void run() const
         {
             unsigned long size (11);
-            SparseMatrix<DT_> sm1(size, size + 1, size / 8 + 1),
-                sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
+            SparseMatrix<DT_> sm1(size+1, size, size / 8 + 1),
+                sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 8 + 1 );
             for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
@@ -531,7 +531,7 @@ class SparseMatrixDifferenceQuickTest :
 
             TEST_CHECK_EQUAL(difference, sm3);
 
-            SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
+            SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
             TEST_CHECK_THROWS(Difference<>::value(sm03, sm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Difference<>::value(sm03, sm02), MatrixColumnsDoNotMatch);

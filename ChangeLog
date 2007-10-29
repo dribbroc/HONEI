@@ -8,6 +8,16 @@ see the NEWS file.
 
 2007-10-29 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/dense_matrix_TEST.cc, libla/difference_TEST.cc,
+	libla/element_inverse_TEST.cc, libla/element_product_TEST.cc,
+	libla/product-cell.cc, libla/product_TEST.cc, libla/reduction_TEST.cc,
+	libla/residual_TEST.cc, libla/scale_TEST.cc, libla/sparse_matrix.hh,
+	libla/sparse_matrix_TEST.cc, libla/sum_TEST.cc: Fixed some bugs that
+	arose with change of DenseMatrix-Constructor and changed
+	SparseMatrix(columns,rows) to SparseMatrix(rows,columns).
+
+2007-10-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* cell/kernels/kernel_reference.sk,
 	cell/libla/dense_dense_float_matrix_product.cc,
 	cell/libla/Makefile.am, cell/opcodes.hh, libla/product-cell.cc,

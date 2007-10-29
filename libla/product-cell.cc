@@ -22,7 +22,6 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-#include <iostream>
 
 namespace honei
 {
