@@ -23,6 +23,7 @@
 #include <libutil/memory_manager.hh>
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/mutex.hh>
+#include <libutil/condition_variable.hh>
 #include <libutil/lock.hh>
 #include <libutil/log.hh>
 #include <libutil/spe_manager.hh>
@@ -63,15 +64,20 @@ struct CellBackend::Implementation
     /// Our counters.
     SPECounters spe_counters;
 
+    /// Our one access-has-finished condition variable.
+    ConditionVariable * access_finished;
+
     Implementation() :
         mutex(new Mutex),
-        spe_counters(SPEManager::instance()->spe_count())
+        spe_counters(SPEManager::instance()->spe_count()),
+        access_finished(new ConditionVariable())
     {
     }
 
     ~Implementation()
     {
         delete mutex;
+        delete access_finished;
     }
 
     inline void swap(const MemoryId left, const MemoryId right, const DeviceId device)
@@ -121,6 +127,10 @@ CellBackend::read_enable(const DeviceId device_id)
 {
     CONTEXT("When enabling reading for SPE '" + stringify(device_id) + "':");
     Lock l(*_imp->mutex);
+    while (_spe_counters.at(device_id)._write_count > 0)
+    {
+        _imp->access_finished->wait(*_imp->mutex);
+    }
     _spe_counters.at(device_id)._read_count++;
 }
 
@@ -137,6 +147,7 @@ CellBackend::read_disable(const DeviceId device_id)
     else
     {
         _spe_counters.at(device_id)._read_count--;
+        _imp->access_finished->broadcast();
     }
 }
 
@@ -147,6 +158,10 @@ CellBackend::write_enable(const DeviceId device_id)
     CONTEXT("When enabling writing for SPE '" + stringify(device_id) + "':");
     Lock l(*_imp->mutex);
 
+    while (_spe_counters.at(device_id)._read_count > 0 && _spe_counters.at(device_id)._read_count > 0)
+    {
+        _imp->access_finished->wait(*_imp->mutex);
+    }
     _spe_counters.at(device_id)._write_count++;
 }
 
@@ -163,6 +178,7 @@ CellBackend::write_disable(const DeviceId device_id)
     else
     {
         _spe_counters.at(device_id)._write_count--;
+        _imp->access_finished->broadcast();
     }
 }
 

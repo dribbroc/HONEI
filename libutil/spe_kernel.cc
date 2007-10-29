@@ -192,7 +192,7 @@ namespace honei
             instruction_finished(new ConditionVariable),
             thread(new pthread_t),
             attr(new pthread_attr_t),
-            spe(NULL)
+            spe(0)
         {
             int retval(0);
 
@@ -308,6 +308,7 @@ namespace honei
         if (_imp->initial_instructions)
         {
             _imp->spe->signal();
+            _imp->initial_instructions = false;
         }
     }
 

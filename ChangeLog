@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/memory_backend_cell.cc:
+	Adjusted synchronization for read/write access.
+
 2007-10-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libutil/spe_kernel.cc, libutil/spe_kernel.hh: Added method
