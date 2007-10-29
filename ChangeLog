@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-10-29 Markus Geveler <apryde@gmx.de>
+
+	* libmath/jacobi.hh, libmath/jacobi_TEST.cc: Added pre-refactoring
+	version of a Jacobi iterative stationary solver for dense LES and its
+	test.
 
 2007-10-29 Sven Mallach <sven.mallach@uni-dortmund.de>
 

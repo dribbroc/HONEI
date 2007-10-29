@@ -9,4 +9,5 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`conjugate_gradients', `hh', `test')
+add(`jacobi',              `hh', `test')
 add(`quadrature',          `hh', `test')
