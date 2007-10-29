@@ -66,14 +66,14 @@ class JacobiTestDense:
             x_analytical[1] = DT1_(5./6.);
             x_analytical[2] = DT1_(-1./3.);
             DT1_ x_analytical_n = Norm< vnt_l_two, false, DT1_>::value(x_analytical);
-            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
 
-/*            DenseVector<DT1_> result_2 = Jacobi<Tag_>::value(A,b,double(0.1));
+            DenseVector<DT1_> result_2 = Jacobi<Tag_>::value(A,b,double(0.0001));
             cout<<"RESULT(v2):"<<result_2<<endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, DT1_>::value(result_2);
-            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
-*/
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.001));
+
         }
 };
 
