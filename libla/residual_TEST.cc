@@ -71,7 +71,7 @@ class DenseResidualTest :
 
                 DenseVector<DataType_> b1(size + 1), b2(size);
                 DenseVector<DataType_> x1(size), x2(size + 1);
-                DenseMatrix<DataType_> a1(size + 1, size + 1), a2(size, size + 1);
+                DenseMatrix<DataType_> a1(size + 1, size + 1), a2(size+1, size);
                 TEST_CHECK_THROWS(Residual<>::value(b1, a1, x1), VectorSizeDoesNotMatch);
                 TEST_CHECK_THROWS(Residual<>::value(b2, a1, x2), VectorSizeDoesNotMatch);
                 TEST_CHECK_THROWS(Residual<>::value(b1, a2, x2), MatrixIsNotSquare);
@@ -124,7 +124,7 @@ class DenseResidualQuickTest :
 
                 DenseVector<DataType_> b1(size + 1), b2(size);
                 DenseVector<DataType_> x1(size), x2(size + 1);
-                DenseMatrix<DataType_> a1(size + 1, size + 1), a2(size, size + 1);
+                DenseMatrix<DataType_> a1(size + 1, size + 1), a2(size+1, size);
                 TEST_CHECK_THROWS(Residual<>::value(b1, a1, x1), VectorSizeDoesNotMatch);
                 TEST_CHECK_THROWS(Residual<>::value(b2, a1, x2), VectorSizeDoesNotMatch);
                 TEST_CHECK_THROWS(Residual<>::value(b1, a2, x2), MatrixIsNotSquare);
@@ -234,7 +234,7 @@ class SparseResidualQuickTest :
 
                 DenseVector<DataType_> b1(size + 1), b2(size);
                 DenseVector<DataType_> x1(size), x2(size + 1);
-                DenseMatrix<DataType_> a1(size + 1, size + 1), a2(size, size + 1);
+                DenseMatrix<DataType_> a1(size + 1, size + 1), a2(size+1, size);
                 TEST_CHECK_THROWS(Residual<>::value(b1, a1, x1), VectorSizeDoesNotMatch);
                 TEST_CHECK_THROWS(Residual<>::value(b2, a1, x2), VectorSizeDoesNotMatch);
                 TEST_CHECK_THROWS(Residual<>::value(b1, a2, x2), MatrixIsNotSquare);

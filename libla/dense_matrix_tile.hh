@@ -221,7 +221,7 @@ namespace honei
             /// Returns a copy of the matrix.
             virtual DenseMatrix<DataType_> copy() const
             {
-                DenseMatrix<DataType_> result(_columns, _rows);
+                DenseMatrix<DataType_> result(_rows, _columns);
                 DataType_ * source(_elements.get());
                 DataType_ * target(result.elements());
 

@@ -483,10 +483,10 @@ namespace honei {
         /// Then apply boundary conditions.
 
         ///Provide maps.
-        DenseMatrix<ResPrec_> hbound((this->_d_width)+4,  (this->_d_height)+4, 0);
-        DenseMatrix<ResPrec_> u1bound((this->_d_width)+4, (this->_d_height)+4, 0);
-        DenseMatrix<ResPrec_> u2bound((this->_d_width)+4, (this->_d_height)+4, 0);
-        DenseMatrix<ResPrec_> bbound((this->_d_width)+4,  (this->_d_height)+4, 0);
+        DenseMatrix<ResPrec_> hbound((this->_d_height)+4,  (this->_d_width)+4, 0);
+        DenseMatrix<ResPrec_> u1bound((this->_d_height)+4, (this->_d_width)+4, 0);
+        DenseMatrix<ResPrec_> u2bound((this->_d_height)+4, (this->_d_width)+4, 0);
+        DenseMatrix<ResPrec_> bbound((this->_d_height)+4,  (this->_d_width)+4, 0);
         std::cout << "Preproc: Maps provided.\n";
 
         ///Do the mapping by applying boundary - usage.

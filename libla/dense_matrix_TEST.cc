@@ -105,7 +105,7 @@ class DenseMatrixDensifyQuickTest :
         virtual void run() const
         {
                 unsigned long size(47);
-                DenseMatrix<DataType_> dm0(size, size + 2, DataType_(0));
+                DenseMatrix<DataType_> dm0(size+2, size, DataType_(0));
                 SparseMatrix<DataType_> sm0(size, size + 2, size / 8 + 1);
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), j(sm0.begin_elements()),
@@ -166,7 +166,7 @@ class DenseMatrixLayoutTest :
             {
                 unsigned long columns(size + 1), rows(size);
 
-                DenseMatrix<DataType_> dm(columns, rows);
+                DenseMatrix<DataType_> dm(rows, columns);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                         i != i_end ; ++i)
                 {
@@ -214,7 +214,7 @@ class DenseMatrixQuickTest :
         virtual void run() const
         {
             unsigned long columns(3), rows(2);
-            DenseMatrix<DataType_> dm(columns, rows, DataType_(1));
+            DenseMatrix<DataType_> dm(rows, columns, DataType_(1));
 
             TEST_CHECK_EQUAL(dm, dm);
             TEST_CHECK_EQUAL(dm.columns(), columns);
@@ -226,9 +226,9 @@ class DenseMatrixQuickTest :
             TEST_CHECK_EQUAL(row1.size(), columns);
             TEST_CHECK_EQUAL(col1.size(), rows);
 
-            DenseMatrix<DataType_> dm2(3, 4, DataType_(2));
-            DenseMatrix<DataType_> dm3(3, 5, DataType_(2));
-            DenseMatrix<DataType_> dm4(4, 5, DataType_(2));
+            DenseMatrix<DataType_> dm2(4, 3, DataType_(2));
+            DenseMatrix<DataType_> dm3(5, 3, DataType_(2));
+            DenseMatrix<DataType_> dm4(5, 4, DataType_(2));
             TEST_CHECK_THROWS(dm2==dm3, MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(dm3==dm4, MatrixColumnsDoNotMatch);
 

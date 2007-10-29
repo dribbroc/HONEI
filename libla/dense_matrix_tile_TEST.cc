@@ -132,7 +132,7 @@ class DenseMatrixTileLayoutTest :
             {
                 unsigned long columns(size + 1), rows(size);
 
-                DenseMatrix<DataType_> dm(columns, rows);
+                DenseMatrix<DataType_> dm(rows, columns);
                 DenseMatrixTile<DataType_> dmt(dm, size - 6, size - 8, 3, 7);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                         i != i_end ; ++i)
@@ -200,7 +200,7 @@ class DenseMatrixTileQuickTest :
         virtual void run() const
         {
             unsigned long columns(3), rows(2);
-            DenseMatrix<DataType_> dm(columns, rows, DataType_(1));
+            DenseMatrix<DataType_> dm(rows, columns, DataType_(1));
             DenseMatrixTile<DataType_> dmt(dm, rows - 1, columns - 1, 0, 1);
 
             TEST_CHECK_EQUAL(dm, dm);
@@ -224,8 +224,8 @@ class DenseMatrixTileQuickTest :
             dmt(1, 1)= DataType_(5);
             TEST_CHECK_EQUAL_WITHIN_EPS(dm(1, 2), DataType_(5), std::numeric_limits<DataType_>::epsilon());
 
-            DenseMatrix<DataType_> dm2(3, 4, DataType_(2));
-            DenseMatrix<DataType_> dm3(3, 5, DataType_(2));
+            DenseMatrix<DataType_> dm2(4, 3, DataType_(2));
+            DenseMatrix<DataType_> dm3(5, 3, DataType_(2));
             DenseMatrixTile<DataType_> dmt2(dm2, 2, 2, 0, 0);
             DenseMatrixTile<DataType_> dmt3(dm3, 1, 1, 1, 1);
             TEST_CHECK_THROWS(dmt2==dmt, MatrixRowsDoNotMatch);

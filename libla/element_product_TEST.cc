@@ -335,7 +335,7 @@ class BandedMatrixDenseMatrixElementProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, bm3);
 
-            DenseMatrix<DataType_> dm01(5, 6), dm03(6, 5);
+            DenseMatrix<DataType_> dm01(6, 5), dm03(5, 6);
             BandedMatrix<DataType_> bm02(6);
 
             TEST_CHECK_THROWS(ElementProduct<>::value(bm02, dm03), MatrixRowsDoNotMatch);
@@ -505,14 +505,14 @@ class DenseMatrixElementProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(3)),
-                    dm3(size, size + 1, DataType_(6));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(3)),
+                    dm3(size+1, size, DataType_(6));
                 DenseMatrix<DataType_> & prod(ElementProduct<>::value(dm1, dm2));
 
                 TEST_CHECK_EQUAL(prod, dm3);
             }
 
-            DenseMatrix<DataType_> dm01(2, 3, static_cast<DataType_>(1)), dm02(3, 4, static_cast<DataType_>(1)),
+            DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(3, 4, static_cast<DataType_>(1)),
                 dm03(2, 4, static_cast<DataType_>(1));
 
             TEST_CHECK_THROWS(ElementProduct<>::value(dm03, dm01), MatrixRowsDoNotMatch);
@@ -535,14 +535,14 @@ class DenseMatrixElementProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(3)),
-                dm3(size, size + 1, DataType_(6));
+            DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(3)),
+                dm3(size+1, size, DataType_(6));
             DenseMatrix<DataType_> & prod(ElementProduct<>::value(dm1, dm2));
 
             TEST_CHECK_EQUAL(prod, dm3);
 
-            DenseMatrix<DataType_> dm01(2, 3, static_cast<DataType_>(1)), dm02(3, 4, DataType_(1)),
-                dm03(2, 4, DataType_(1));
+            DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(4, 3, DataType_(1)),
+                dm03(4, 2, DataType_(1));
 
             TEST_CHECK_THROWS(ElementProduct<>::value(dm03, dm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(ElementProduct<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
@@ -565,7 +565,7 @@ class SparseMatrixDenseMatrixElementProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
                 SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 7 + 1);
                 for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
                     k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
@@ -582,7 +582,7 @@ class SparseMatrixDenseMatrixElementProductTest :
                 TEST_CHECK_EQUAL(prod, sm3);
             }
 
-            DenseMatrix<DataType_> dm03(5, 6);
+            DenseMatrix<DataType_> dm03(6, 5);
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
             TEST_CHECK_THROWS(ElementProduct<>::value(sm01, dm03), MatrixRowsDoNotMatch);
@@ -605,7 +605,7 @@ class SparseMatrixDenseMatrixElementProductQuickTest :
         virtual void run() const
         {
             unsigned long size (11);
-            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2));
+            DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
             SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 7 + 1);
             for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
                 k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
@@ -621,7 +621,7 @@ class SparseMatrixDenseMatrixElementProductQuickTest :
 
             TEST_CHECK_EQUAL(prod, sm3);
 
-            DenseMatrix<DataType_> dm03(5, 6);
+            DenseMatrix<DataType_> dm03(6, 5);
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(5, 6, 1);
 
             TEST_CHECK_THROWS(ElementProduct<>::value(sm01, dm03), MatrixRowsDoNotMatch);

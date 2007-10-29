@@ -22,6 +22,7 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
+#include <iostream>
 
 namespace honei
 {
@@ -48,4 +49,32 @@ namespace honei
 
         return result;
     }
+
+    DenseMatrix<float>
+    Product<tags::Cell>::value(const DenseMatrix<float> & a, const DenseMatrix<float> & b)
+    {
+        CONTEXT("When calculating DenseMatrix<float>-DenseMatrix<float> product (Cell):");
+
+        if (a.columns() != b.rows())
+            throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+        DenseMatrix<float> result(a.rows(), b.columns(), float(0));
+
+        Operand oa = { a.elements() };
+        Operand ob = { b.elements() };
+        Operand oc = { result.elements() };
+        Operand od;
+        Operand oe;
+        od.u = a.columns();
+        oe.u = b.rows();
+
+        SPEInstruction instruction(oc_dense_dense_float_matrix_product, a.rows(), oa, ob, oc, od, oe);
+
+        SPEManager::instance()->dispatch(instruction);
+
+        instruction.wait();
+
+        return result;
+    }
 }
+

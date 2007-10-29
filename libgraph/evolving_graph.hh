@@ -91,7 +91,7 @@ namespace honei
         /// creates and returns the complete coordinate matrix for the whole evolving graph
         DM * getCoordinates()
         {
-            DM * coordinates = new DM(_totalNodeCount, _coordinateDimensions);
+            DM * coordinates = new DM(_coordinateDimensions, _totalNodeCount);
             for (int t(0); t < sliceCount(); ++t)
             {
                 int offset = _sliceOffset[t];

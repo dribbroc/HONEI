@@ -1,9 +1,30 @@
-hangeLog for HONEI
+ChangeLog for HONEI
 ===================
 
 This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
+
+
+2007-10-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* cell/kernels/kernel_reference.sk,
+	cell/libla/dense_dense_float_matrix_product.cc,
+	cell/libla/Makefile.am, cell/opcodes.hh, libla/product-cell.cc,
+	libla/product.hh, libla/product_TEST.cc: Added operation
+	Product(DenseMatrix, DenseMatrix) on cell. Not completely working yet.
+	Can be used to apply necessary row-vectorisation which is coming up
+	soon.
+	* libgraph/dijkstra.hh, libgraph/dijkstra_TEST.cc,
+	libgraph/evolving_graph.hh, libgraph/graph.hh, libla/dense_matrix.hh,
+	libla/dense_matrix_TEST.cc, libla/dense_matrix_tile.hh,
+	libla/dense_matrix_tile_TEST.cc, libla/difference_TEST.cc,
+	libla/dot_product_TEST.cc, libla/element_product_TEST.cc,
+	libla/reduction_TEST.cc, libla/residual_TEST.cc, libla/scale_TEST.cc,
+	libla/sum_TEST.cc, libswe/solver.hh: Changed Constructors of
+	DenseMatrix from (columns,rows) to (rows, columns): Todo for
+	SparseMatrix!
+
 
 2007-10-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 

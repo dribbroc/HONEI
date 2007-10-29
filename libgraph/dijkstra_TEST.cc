@@ -47,7 +47,7 @@ class DijkstraQuickTest :
                                  14, 14, 1, 14, 14, 1, 14,
                                  14, 14, 14, 14, 1, 14, 1,
                                  14, 14, 14, 14, 14, 1, 14};
-            
+
             // Now, fill that numbers into the real matrices
             int i(0);
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost(new DenseMatrix<DataType_>(7,7));
@@ -68,7 +68,7 @@ class DijkstraQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[0][4], 3, std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[3][4], 2, std::numeric_limits<DataType_>::epsilon());
 
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost3(new DenseMatrix<DataType_>(2, 3));
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost3(new DenseMatrix<DataType_>(3, 2));
             TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost3), MatrixRowsDoNotMatch);
 
             // Creating an empty node matrix to compute the previous node matrix
@@ -87,13 +87,13 @@ class DijkstraQuickTest :
             TEST_CHECK_EQUAL((*pNodes)[3][4], 2);
             TEST_CHECK_EQUAL((*pNodes)[6][4], 5);
 
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost4(new DenseMatrix<DataType_>(7, 3));
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost4(new DenseMatrix<DataType_>(3, 7));
             TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost4, *pNodes), MatrixRowsDoNotMatch);
 
-            std::tr1::shared_ptr<DenseMatrix<int> > pNodes2(new DenseMatrix<int>(3, 7));
+            std::tr1::shared_ptr<DenseMatrix<int> > pNodes2(new DenseMatrix<int>(7, 3));
             TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost2, *pNodes2), MatrixColumnsDoNotMatch);
 
-            std::tr1::shared_ptr<DenseMatrix<int> > pNodes3(new DenseMatrix<int>(7, 3));
+            std::tr1::shared_ptr<DenseMatrix<int> > pNodes3(new DenseMatrix<int>(3, 7));
             TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost2, *pNodes3), MatrixRowsDoNotMatch);
             
         }

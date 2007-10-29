@@ -59,7 +59,7 @@ namespace honei
             _maxNodes(nodes)
         {
             _nodes = new NodeType*[nodes];
-            _coordinates = new DenseMatrix<DataType_>(nodes, coordinateDimensions);
+            _coordinates = new DenseMatrix<DataType_>(coordinateDimensions, nodes);
             _edges = new SparseMatrix<DataType_>(nodes, nodes);
             _nodeWeights = new DenseVector<DataType_>(nodes, (DataType_)1);
         }

@@ -342,8 +342,8 @@ class DenseMatrixSparseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(0)),
-                        dm3(size, size + 1, DataType_(0));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
+                        dm3(size+1, size, DataType_(0));
                 SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
                     i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
@@ -370,7 +370,7 @@ class DenseMatrixSparseMatrixSumTest :
             }
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1);
-            DenseMatrix<DataType_> dm03(5, 6);
+            DenseMatrix<DataType_> dm03(6, 5);
 
             TEST_CHECK_THROWS(Sum<>::value(dm03, sm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Sum<>::value(dm03, sm02), MatrixColumnsDoNotMatch);
@@ -392,8 +392,8 @@ class DenseMatrixSparseMatrixSumQuickTest :
         virtual void run() const
         {
             unsigned long size (11);
-            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(0)),
-                    dm3(size, size + 1, DataType_(0));
+            DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
+                    dm3(size+1, size, DataType_(0));
             SparseMatrix<DataType_> sm2(size, size + 1, size / 7 + 1);
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
                 i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
@@ -419,7 +419,7 @@ class DenseMatrixSparseMatrixSumQuickTest :
             TEST_CHECK_EQUAL(sum, dm3);
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1);
-            DenseMatrix<DataType_> dm03(5, 6);
+            DenseMatrix<DataType_> dm03(6, 5);
 
             TEST_CHECK_THROWS(Sum<>::value(dm03, sm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Sum<>::value(dm03, sm02), MatrixColumnsDoNotMatch);
@@ -442,14 +442,14 @@ class DenseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(-3)),
-                    dm3(size, size + 1, DataType_(-1));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(-3)),
+                    dm3(size+1, size, DataType_(-1));
                 DenseMatrix<DataType_> & sum(Sum<>::value(dm1, dm2));
 
                 TEST_CHECK_EQUAL(sum, dm3);
             }
 
-            DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
+            DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
 
             TEST_CHECK_THROWS(Sum<>::value(dm03, dm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Sum<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
@@ -471,13 +471,13 @@ class DenseMatrixSumQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(-3)),
-                dm3(size, size + 1, DataType_(-1));
+            DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(-3)),
+                dm3(size+1, size, DataType_(-1));
             DenseMatrix<DataType_> & sum(Sum<>::value(dm1, dm2));
 
             TEST_CHECK_EQUAL(sum, dm3);
 
-            DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
+            DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
 
             TEST_CHECK_THROWS(Sum<>::value(dm03, dm01), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(Sum<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
@@ -596,7 +596,7 @@ class ScalarDenseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(5));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(5));
                 DenseMatrix<DataType_> & sum(Sum<>::value(dm1, DataType_(3)));
 
                 TEST_CHECK_EQUAL(sum, dm2);
@@ -619,7 +619,7 @@ class ScalarDenseMatrixSumQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm(size, size + 1, DataType_(2));
+            DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
             DenseMatrix<DataType_> sum1(Sum<>::value(dm, DataType_(3)));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));

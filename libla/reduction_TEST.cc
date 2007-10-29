@@ -91,7 +91,7 @@ class DenseMatrixReductionToSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DT_> dm1(size, size + 1, DT_(1));
+                DenseMatrix<DT_> dm1(size+1, size, DT_(1));
                 DenseVector<DT_> dv1(size + 1, DT_(size ));
                 DenseVector<DT_> sum(Reduction<rt_sum>::value(dm1));
 
@@ -115,7 +115,7 @@ class DenseMatrixReductionQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DT_> dm1(size, size + 1, DT_(1));
+            DenseMatrix<DT_> dm1(size+1, size, DT_(1));
             DenseVector<DT_> dv1(size + 1, DT_(size));
             DenseVector<DT_> sum(Reduction<rt_sum>::value(dm1));
 
@@ -214,7 +214,7 @@ class DenseVectorReductionToSumTest :
 
                 DT_ v1(Reduction<rt_sum>::value(dv));
                 DT_ s1(size * (size + 1) / 2 / 1.23456789);
-                // Behavious similar to size^2 * eps
+                // Behaviour similar to size^2 * eps
                 DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
             }
@@ -246,7 +246,7 @@ class DenseVectorReductionToSumQuickTest :
 
             DT_ v1(Reduction<rt_sum>::value(dv));
             DT_ s1(size * (size + 1) / 2 / 1.23456789);
-            // Behavious similar to size^2 * eps
+            // Behaviour similar to size^2 * eps
             DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
         }

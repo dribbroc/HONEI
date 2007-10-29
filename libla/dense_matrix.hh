@@ -102,7 +102,7 @@ namespace honei
              * \param columns Number of columns of the new matrix.
              * \param rows Number of rows of the new matrix.
              */
-            DenseMatrix(unsigned long columns, unsigned long rows) :
+            DenseMatrix(unsigned long rows, unsigned long columns) :
                 _elements(rows * columns),
                 _columns(columns),
                 _column_vectors(columns),
@@ -119,7 +119,7 @@ namespace honei
              * \param rows Number of rows of the new matrix.
              * \param value Default value of each of the new matrice's elements.
              */
-            DenseMatrix(unsigned long columns, unsigned long rows, DataType_ value) :
+            DenseMatrix(unsigned long rows, unsigned long columns, DataType_ value) :
                 _elements(rows * columns),
                 _columns(columns),
                 _column_vectors(columns),

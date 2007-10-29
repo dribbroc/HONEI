@@ -124,7 +124,7 @@ DenseDotProductQuickTest<tags::CPU::SSE, float> sse_dense_scalar_product_quick_t
 DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-DenseDotProductQuickTest<tags::Cell, float> sse_dense_dot_product_quick_test_float("Cell float");
+DenseDotProductQuickTest<tags::Cell, float> cell_dense_dot_product_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>

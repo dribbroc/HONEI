@@ -129,7 +129,7 @@ class ScalarDenseMatrixProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size + 1, DataType_(2)), dm2(size, size + 1, DataType_(6));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(6));
                 DenseMatrix<DataType_> & prod(Scale<>::value(DataType_(3), dm1));
 
                 TEST_CHECK_EQUAL(prod, dm2);
@@ -152,7 +152,7 @@ class ScalarDenseMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm(size, size + 1, DataType_(2));
+            DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
             DenseMatrix<DataType_> prod1(Scale<>::value(DataType_(3), dm));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));

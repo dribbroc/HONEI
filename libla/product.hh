@@ -320,7 +320,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT1_> result(b.columns(), a.rows());
+            DenseMatrix<DT1_> result(a.rows(), b.columns());
             typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
 
             for (unsigned int s(0) ; s < a.rows() ; ++s)
@@ -345,7 +345,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT1_> result(b.columns(), a.rows(), DT1_(0));
+            DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
             typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
 
             ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
@@ -377,7 +377,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            SparseMatrix<DT1_> result(b.columns(), a.rows());
+            SparseMatrix<DT1_> result(a.rows(), b.columns());
             typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
             ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
             for (unsigned int l_row(0) ; l_row < a.rows() ; ++l_row)
@@ -408,7 +408,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT1_> result(b.columns(), a.rows());
+            DenseMatrix<DT1_> result(a.rows(), b.columns());
             typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
 
             for (unsigned int s(0) ; s < a.rows() ; ++s)
@@ -617,7 +617,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT2_> result(b.columns(), b.rows(), DT2_(0));
+            DenseMatrix<DT2_> result(b.rows(), b.columns(), DT2_(0));
             unsigned long middle_index(a.size() -1);
 
             // Calculation for lower part
@@ -695,7 +695,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT2_> result(b.columns(), a.rows(), DT2_(0));
+            DenseMatrix<DT2_> result(a.rows(), b.columns(), DT2_(0));
             unsigned long middle_index(a.size() -1);
 
             // Calculation for lower part
@@ -773,7 +773,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT1_> result(b.columns(), a.rows(), DT1_(0));
+            DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
 
             unsigned long middle_index(b.size() -1);
 
@@ -850,7 +850,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT1_> result(b.columns(), a.rows(), DT1_(0));
+            DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
 
             unsigned long middle_index(b.size() -1);
 
@@ -973,6 +973,7 @@ namespace honei
     struct Product<tags::Cell>
     {
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
+        static DenseMatrix<float> value(const DenseMatrix<float> & a, const DenseMatrix<float> & b);
     };
 
 }
