@@ -8,6 +8,11 @@ see the NEWS file.
 2007-10-29 Markus Geveler <apryde@gmx.de>
 
 	* libmath/jacobi.hh, libmath/jacobi_TEST.cc: Added convergence control
+	for Jacobi (banded systems).
+
+2007-10-29 Markus Geveler <apryde@gmx.de>
+
+	* libmath/jacobi.hh, libmath/jacobi_TEST.cc: Added convergence control
 	for Jacobi (dense systems).
 
 2007-10-29 Markus Geveler <apryde@gmx.de>

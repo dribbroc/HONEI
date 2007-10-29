@@ -138,12 +138,12 @@ class JacobiTestBanded:
             cout<<"RESULT(v1):"<<result<<endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-/*            DenseVector<DT1_> result_2 = ConjugateGradients<Tag_>::value(A,b,double(0.1));
+            DenseVector<DT1_> result_2 = Jacobi<Tag_>::value(A,b,double(0.1));
             DT1_ x_n_2 = Norm< vnt_l_two, false, DT1_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
 
             cout<<"RESULT(v2):"<<result_2<<endl;
-*/
+
         }
 };
 
