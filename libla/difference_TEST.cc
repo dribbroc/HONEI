@@ -459,7 +459,7 @@ class SparseMatrixDifferenceTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size+1, size, size / 8 + 1),
-                    sm2(size, size + 1, size / 7 + 1), sm3(size, size + 1, size / 8 + 1 );
+                    sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 8 + 1 );
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
