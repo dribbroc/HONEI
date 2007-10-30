@@ -5,12 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-10-29 Markus Geveler <apryde@gmx.de>
+2007-10-30 Markus Geveler <apryde@gmx.de>
+
+	* iterative_refinement_TEST.cc:
+	Adjusted convergence parameters.
+
+2007-10-30 Markus Geveler <apryde@gmx.de>
 
 	* libmath/iterative_refinement.hh, iterative_refinement_TEST.cc:
 	Resolved sign bug in both specializations.
 
-2007-10-29 Markus Geveler <apryde@gmx.de>
+2007-10-30 Markus Geveler <apryde@gmx.de>
 
 	* libmath/iterative_refinement.hh,
 	libmath/iterative_refinement_TEST.cc, methods.hh: Added explicit
