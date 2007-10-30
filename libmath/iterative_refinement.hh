@@ -22,6 +22,7 @@
 
 #include <libmath/conjugate_gradients.hh>
 #include <libmath/jacobi.hh>
+#include <libmath/methods.hh>
 /**
  * \file
  *
@@ -32,8 +33,14 @@
  */
 
 using namespace std;
+using namespace methods;
 namespace honei
 {
+    template<typename Method_, typename Tag_>
+    struct IterativeRefinement
+    {
+    };
+
     /**
      * \brief Solution of LES with Iterative Refinement using CG as inner solver.
      *
@@ -43,8 +50,8 @@ namespace honei
      * \ingroup grpmatrixoperations
      * \ingroup grpvectoroperations
      */
-    template <typename Tag_>
-    struct IterativeRefinement
+    template <>
+    struct IterativeRefinement<methods::CG, tags::CPU>
     {
         public:
             template<typename DT1_>
@@ -59,9 +66,9 @@ namespace honei
                 ///Initialize defect and its norm
                 //TODO: use libla/residual(?)
 
-                DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
-                defect = Difference<Tag_>::value(defect, right_hand_side);
-                DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
+                DenseVector<DT1_> defect = Product<tags::CPU>::value(system_matrix, x_actual);
+                defect = Difference<tags::CPU>::value(defect, right_hand_side);
+                DT1_ initial_defectnorm = Norm<vnt_l_two, false, tags::CPU>::value(defect);
 
                 unsigned long iter_number = 0;
 
@@ -73,11 +80,11 @@ namespace honei
                     {
                         if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                         {
-                            Scale<Tag_>::value(DT1_(1./alpha), defect);
+                            Scale<tags::CPU>::value(DT1_(1./alpha), defect);
                         }
                         else
                         {
-                            Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                            Scale<tags::CPU>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
                         }
                     }
 
@@ -98,8 +105,7 @@ namespace honei
                         ++j_inner; ++j_outer;
                     }
 
-                    inner_defect = ConjugateGradients<Tag_>::value(inner_system, inner_defect, eps_inner);
-                    //defect = ConjugateGradients<Tag_>::value(system_matrix, defect, eps_inner);
+                    inner_defect = ConjugateGradients<tags::CPU>::value(inner_system, inner_defect, eps_inner);
 
                     typename DenseMatrix<DT1_>::ElementIterator a_outer(system_matrix.begin_elements()), a_end(system_matrix.end_elements());
                     typename DenseMatrix<float>::ConstElementIterator a_inner(inner_system.begin_elements());
@@ -118,13 +124,13 @@ namespace honei
                     }
 
                     ///Update solution:
-                    DenseVector<DT1_> c_scaled = Scale<Tag_>::value(alpha, defect);
-                    x_actual = Sum<Tag_>::value(x_actual, defect);
+                    DenseVector<DT1_> c_scaled = Scale<tags::CPU>::value(alpha, defect);
+                    x_actual = Sum<tags::CPU>::value(x_actual, defect);
 
-                    defect = Product<Tag_>::value(system_matrix, x_actual);
-                    defect = Difference<Tag_>::value(defect, right_hand_side);
+                    defect = Product<tags::CPU>::value(system_matrix, x_actual);
+                    defect = Difference<tags::CPU>::value(defect, right_hand_side);
 
-                    alpha = Norm<vnt_l_two, false, Tag_>::value(defect);
+                    alpha = Norm<vnt_l_two, false, tags::CPU>::value(defect);
                     ++iter_number;
                 }
                 while(alpha < eps_outer*initial_defectnorm);

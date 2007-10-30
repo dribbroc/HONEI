@@ -56,7 +56,7 @@ class IterativeRefinementTestDense:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<Tag_>::value(A,b,double(0.01), double(0.01)));
+            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(0.01), double(0.01)));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;

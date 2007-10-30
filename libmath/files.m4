@@ -11,4 +11,5 @@ dnl on this file at present...
 add(`conjugate_gradients',  `hh', `test')
 add(`iterative_refinement', `hh', `test')
 add(`jacobi',               `hh', `test')
+add(`methods',              `hh')
 add(`quadrature',           `hh', `test')
