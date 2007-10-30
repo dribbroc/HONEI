@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-10-29 Markus Geveler <apryde@gmx.de>
 
+	* libmath/iterative_refinement.hh, iterative_refinement_TEST.cc:
+	Resolved sign bug in both specializations.
+
+2007-10-29 Markus Geveler <apryde@gmx.de>
+
 	* libmath/iterative_refinement.hh,
 	libmath/iterative_refinement_TEST.cc, methods.hh: Added explicit
 	template specialization for iterative refinement with CG and CPU.
