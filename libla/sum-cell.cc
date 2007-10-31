@@ -22,7 +22,7 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-
+#include <iostream>
 namespace honei
 {
     DenseVector<float> &
@@ -35,7 +35,12 @@ namespace honei
 
         Operand oa = { a.elements() };
         Operand ob = { b.elements() };
-        SPEInstruction instruction(oc_dense_dense_float_sum, a.size(), oa, ob);
+        Operand oc, od;
+        // hardcode transfer buffer size for now.
+        oc.u = a.size() / (1024 * 4);
+        od.u = a.size() % (1024 * 4);
+
+        SPEInstruction instruction(oc_dense_dense_float_sum, 16 * 1024, oa, ob, oc, od);
 
         SPEManager::instance()->dispatch(instruction);
 
@@ -44,7 +49,7 @@ namespace honei
         return a;
     }
 
-DenseVector<float> &
+    DenseVector<float> &
     Sum<tags::Cell>::value(DenseVector<float> & a, const SparseVector<float> & b)
     {
         CONTEXT("When adding DenseVector<float> to SparseVector<float> (Cell):");

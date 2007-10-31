@@ -27,37 +27,82 @@
 
 using namespace honei;
 
-int dense_dense_float_sum(const Instruction & inst)
+/*
+ * dense_dense_float_sum
+ *
+ * Calculate the sum of two dense entities.
+ *
+ * \size Default transfer buffer size in bytes.
+ * \operand a Base address of first entity.
+ * \operand b Base address of second entity.
+ * \operand c Number of transfers needed.
+ * \operand d Last transfer buffer size in bytes.
+ */
+void dense_dense_float_sum(const Instruction & inst)
 {
     printf("dense_dense_float_sum:\n");
+    printf("inst.size = %u\n", inst.size);
+    printf("inst.a = %llx\n", inst.a.ea);
+    printf("inst.b = %llx\n", inst.b.ea);
+    printf("inst.c = %llx\n", inst.c.u);
+    printf("inst.d = %llx\n", inst.d.u);
 
-    allocator::Allocation * block_a(allocator::acquire_block());
-    allocator::Allocation * block_b(allocator::acquire_block());
+    EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_result(inst.a.ea);
+    unsigned counter(inst.c.u);
 
-    Pointer<float> a = { block_a->address };
-    Pointer<float> b = { block_b->address };
+    allocator::Allocation * block_a[2] = { allocator::acquire_block(), allocator::acquire_block() };
+    allocator::Allocation * block_b[2] = { allocator::acquire_block(), allocator::acquire_block() };
 
-    mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 1, 0, 0);
-    mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen(inst.size * sizeof(float)), 2, 0, 0);
-    mfc_write_tag_mask(1 << 2);
-    mfc_read_tag_status_all();
-    mfc_write_tag_mask(1 << 1);
+    Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
+    Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
+
+    unsigned current(1), next(2);
+    printf("XXX: Before the first get\n");
+    printf("XXX: ea_a = %llx, ea_b = %llx\n", ea_a, ea_b);
+    mfc_get(a[0].untyped, ea_a, inst.size, 1, 0, 0);
+    mfc_get(b[0].untyped, ea_b, inst.size, 1, 0, 0);
+
+    do
+    {
+        ea_a += inst.size;
+        ea_b += inst.size;
+        printf("XXX: counter = %u\n", counter);
+        printf("XXX: ea_a = %llx, ea_b = %llx\n", ea_a, ea_b);
+        mfc_get(a[next - 1].untyped, ea_a, inst.size, next, 0, 0);
+        mfc_get(b[next - 1].untyped, ea_b, inst.size, next, 0, 0);
+
+        mfc_write_tag_mask(1 << current);
+        mfc_read_tag_status_all();
+
+        unsigned i(0);
+        for ( ; i < inst.size / sizeof(vector float) ; ++i)
+        {
+            a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
+        }
+
+        printf("ea_result = %llx\n", ea_result);
+        mfc_putb(a[current - 1].untyped, ea_result, inst.size, next, 0, 0);
+
+        --counter;
+        ea_result += inst.size;
+
+        unsigned temp(next);
+        next = current;
+        current = temp;
+    } while (counter > 0);
+    printf("XXX: After loop\n");
+    mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
     unsigned i(0);
-    for ( ; i < inst.size / 4 ; ++i)
+    for ( ; i < inst.d.u / sizeof(vector float) ; ++i)
     {
-        a.vectorised[i] = spu_add(a.vectorised[i], b.vectorised[i]);
+        a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
     }
 
-    for (unsigned j(0) ; j < inst.size % 4 ; j += 1)
-    {
-        a.typed[i * 4 + j] += b.typed[i * 4 + j];
-    }
+    printf("ea_result = %llx\n", ea_result);
+    mfc_putb(a[current - 1].untyped, ea_result, inst.size, next, 0, 0);
 
-    mfc_put(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
-    mfc_write_tag_mask(1 << 3);
+    mfc_write_tag_mask(1 << next);
     mfc_read_tag_status_all();
-
-    return 0;
 }

@@ -733,7 +733,7 @@ class DenseVectorSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(129);
+            unsigned long size(16 * 1024);
             DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
                 dv3(size, DataType_(3));
             Sum<Tag_>::value(dv1, dv2);
