@@ -60,7 +60,7 @@ Benchmark::Benchmark(const std::string & id) :
 
 void Benchmark::evaluate()
 {
-    int x = 0;
+    int x(0), xmin(1), xmax(1);
     double total = 0;
     double min = _benchlist.front();
     double max = _benchlist.front();
@@ -68,15 +68,21 @@ void Benchmark::evaluate()
     {
         total += *i;
         ++x;
-        if (*i < min) 
+        if (*i < min)
+        {  
             min = *i;
+            xmin = x;
+        }
         else if (*i > max) 
+        {
             max = *i;
+            xmax = x;
+        } 
     }
     cout << "Function Calls: " << x << endl;
     cout << "Runtime - total: " << total << "sec" << endl;
-    cout << "Runtime - lowest: " << min << "sec" << endl;
-    cout << "Runtime - highest: " << max << "sec" << endl;
+    cout << "Runtime - lowest: " << min << "sec (" << xmin << ".)" << endl;
+    cout << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
     double avg = (total/x);
     cout << "Runtime - average: " << avg << "sec" << endl;
     ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
@@ -84,12 +90,14 @@ void Benchmark::evaluate()
         cout << "Can't write to file!" << endl;
     else
     {
-        ofs << _id  << " - " << __DATE__ << " - " << __TIME__ << endl << endl;
+        time_t t;
+        time(&t);
+        ofs << _id  << " - " << ctime(&t) << endl << endl;
         ofs << "Result:"<< endl;
         ofs << "Function Calls: " << x << endl;
         ofs << "Runtime - total: " << total << "sec" << endl;
-        ofs << "Runtime - lowest: " << min << "sec" << endl;
-        ofs << "Runtime - highest: " << max << "sec" << endl;
+        ofs << "Runtime - lowest: " << min << "sec (" << xmin << ".)" << endl;
+        ofs << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
         ofs << "Runtime - average: " << avg << "sec" << endl;
         ofs << endl << endl << endl;
     }
@@ -97,7 +105,7 @@ void Benchmark::evaluate()
 
 void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
 {
-    unsigned long x = 0;
+    int x(0), xmin(1), xmax(1);
     double total = 0;
     double min = _benchlist.front();
     double max = _benchlist.front();
@@ -105,15 +113,21 @@ void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
     {
         total += *i;
         ++x;
-        if (*i < min) 
+        if (*i < min)
+        {  
             min = *i;
-        else if (*i > max) 
+            xmin = x;
+        }   
+        else if (*i > max)
+        { 
             max = *i;
+            xmax = x;
+        }
     }
     cout << "Function Calls: " << x << endl;
     cout << "Runtime - total: " << total << "sec" << endl;
-    cout << "Runtime - lowest: " << min << "sec" << endl;
-    cout << "Runtime - highest: " << max << "sec" << endl;
+    cout << "Runtime - lowest: " << min << "sec (" << xmin << ".)" << endl;
+    cout << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
     double avg = (total/x);
     cout << "Runtime - average: " << avg << "sec" << endl; 
     double tp = ((double)flop / (1024 * 1024)) * transfersperflop * datasize * x / total;
@@ -143,12 +157,14 @@ void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
         cout << "Can't write to file!" << endl;
     else
     {
-        ofs << _id  << " - " << __DATE__ << " - " << __TIME__ << endl << endl;
+        time_t t;
+        time(&t);
+        ofs << _id  << " - " << ctime(&t) << endl << endl;
         ofs << "Result:"<< endl;
         ofs << "Function Calls: " << x << endl;
         ofs << "Runtime - total: " << total << "sec" << endl;
-        ofs << "Runtime - lowest: " << min << "sec" << endl;
-        ofs << "Runtime - highest: " << max << "sec" << endl;
+        ofs << "Runtime - lowest: " << min << "sec (" << xmin << ".)" << endl;
+        ofs << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
         ofs << "Runtime - average: " << avg << "sec" << endl;
         ofs << "Throughput: " << tp << "MB/s" << endl;
         ofs << f << fl << endl;
