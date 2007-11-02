@@ -242,6 +242,11 @@ class DenseMatrixDenseVectorProductTest :
 
 DenseMatrixDenseVectorProductTest<tags::CPU, float> dense_matrix_dense_vector_product_test_float("float");
 DenseMatrixDenseVectorProductTest<tags::CPU, double> dense_matrix_dense_vector_product_test_double("double");
+// MultiCore
+DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore, float> mc_dense_matrix_dense_vector_product_test_float("MC float");
+DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_dense_vector_product_test_double("MC double");
+//DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_matrix_dense_vector_product_test_float("MC SSE float");
+//DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_matrix_dense_vector_product_test_double("MC SSE double");
 #ifdef HONEI_SSE
 DenseMatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_dense_matrix_dense_vector_product_test_float("SSE float");
 DenseMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_test_double("SSE double");
@@ -276,6 +281,11 @@ class DenseMatrixDenseVectorProductQuickTest :
 };
 DenseMatrixDenseVectorProductQuickTest<tags::CPU, float> dense_matrix_dense_vector_product_quick_test_float("float");
 DenseMatrixDenseVectorProductQuickTest<tags::CPU, double> dense_matrix_dense_vector_product_quick_test_double("double");
+// MultiCore
+DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_dense_vector_product_quick_test_float("MC float");
+DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_dense_vector_product_quick_test_double("MC double");
+//DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_matrix_dense_vector_product_quick_test_float("MC SSE float");
+//DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_matrix_dense_vector_product_quick_test_double("MC SSE double");
 #ifdef HONEI_SSE
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_dense_matrix_dense_vector_product_quick_test_float("SSE float");
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_quick_test_double("SSE double");

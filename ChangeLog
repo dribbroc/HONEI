@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/product_BENCHMARK.cc, libla/product_TEST.cc:
+	Added MultiCore tests and benchmarks.
+
 2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/kernels/env.cc.in, cell/kernels/Makefile.am.m4: Added means to
@@ -30,7 +35,6 @@ see the NEWS file.
 	benchmark.
 	libla/product-sse.cc: Rewrote double banded matrix dense vector
 	product without any memcopies.
-
 
 2007-11-02 Volker Jung <volker.jung@uni-dortmunde.de>
 
