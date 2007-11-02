@@ -20,7 +20,7 @@
  */
 
 #include <libla/product.hh>
-#include <cstring>
+#include <iostream>
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
@@ -166,17 +166,10 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 
     DenseVector<double> result(a.rows(), double(0));
 
-    __m128d m1, m2, m3, m4, m5, m6;
-
-    double __attribute__((aligned(16))) band1_data[2];
-    double __attribute__((aligned(16))) band2_data[2];
-    double __attribute__((aligned(16))) vector1_data[2];
-    double __attribute__((aligned(16))) vector2_data[2];
-    double __attribute__((aligned(16))) result1_data[2];
-    double __attribute__((aligned(16))) result2_data[2];
-
+    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
     unsigned long middle_index(a.rows() - 1);
+    unsigned long quad_end, end, quad_start, start, x_offset, op_offset;
 
     // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
     for (BandedMatrix<double>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
@@ -184,35 +177,28 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     {
         if (! vi.exists())
             continue;
-        unsigned long end(vi->size() - (vi.index() - middle_index)); //Calculation of the element-index to stop in iteration!
-        unsigned long quad_end(end - (end % 4));
+        op_offset = vi.index() - middle_index;
+        end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
+        quad_end = end - (end % 2);
+        x_offset = op_offset % 2;
 
-        for (unsigned long index = 0 ; index < quad_end ; index += 4)
+        for (unsigned long index = 0 ; index < quad_end ; index += 2)
         {
-            for (int i = 0 ; i < 2 ; ++i)
-            {
-                vector1_data[i] = b.elements()[index + (vi.index() - middle_index) + i];
-                vector2_data[i] = b.elements()[index + (vi.index()- middle_index) + i + 2];
-            }
             m1 = _mm_load_pd(vi->elements() + index);
-            m4 = _mm_load_pd(vi->elements() + index + 2);
+            m2 = _mm_load_pd(b.elements() + index + op_offset - x_offset); //eins davor!
+            m4 = _mm_load_pd(b.elements() + index + op_offset + x_offset); // eins dahinter!
+            m2 = _mm_shuffle_pd(m2, m4, 1 << 0 | 1); // zweite von m2 und erste von m4
             m3 = _mm_load_pd(result.elements() + index);
-            m6 = _mm_load_pd(result.elements() + index + 2);
-            m2 = _mm_load_pd(vector1_data);
-            m5 = _mm_load_pd(vector2_data);
 
             m1 = _mm_mul_pd(m1, m2);
             m1 = _mm_add_pd(m1, m3);
-            m4 = _mm_mul_pd(m4, m5);
-            m4 = _mm_add_pd(m4, m6);
 
             _mm_store_pd(result.elements() + index, m1);
-            _mm_store_pd(result.elements() + index + 2, m4);
         }
 
         for (unsigned long index = quad_end ; index < end ; index++) 
         {
-            result.elements()[index] += vi->elements()[index] * b.elements()[index + (vi.index() - middle_index)];
+            result.elements()[index] += vi->elements()[index] * b.elements()[index + op_offset];
         }
     }
 
@@ -222,46 +208,34 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     {
         if (! vi.exists())
             continue;
-        unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
-        unsigned long end(a.size());
-        unsigned long quad_end(end - ((end - start) % 4));
+        op_offset = middle_index - vi.index();
+        start = op_offset; //Calculation of the element-index to start in iteration!
+        quad_start = start + (start % 2);
+        end = a.size();
+        quad_end = end - (end % 2);
+        x_offset = op_offset % 2;
 
-        for (unsigned long index = 0 ; index < quad_end - start ; index += 4)
+        for (unsigned long index = quad_start ; index < quad_end ; index += 2)
         {
-            for (int i = 0 ; i < 2 ; ++i)
-            {
-                band1_data[i] = vi->elements()[start + index + i];
-                band2_data[i] = vi->elements()[start + index + i + 2];
-                vector1_data[i] = b.elements()[index + i];
-                vector2_data[i] = b.elements()[index + i + 2];
-                result1_data[i] = result.elements()[start + index + i];
-                result2_data[i] = result.elements()[start + index + i + 2];
-            }
-            m1 = _mm_load_pd(band1_data);
-            m2 = _mm_load_pd(vector1_data);
-            m3 = _mm_load_pd(result1_data);
-            m4 = _mm_load_pd(band2_data);
-            m5 = _mm_load_pd(vector2_data);
-            m6 = _mm_load_pd(result2_data);
+            m1 = _mm_load_pd(vi->elements() + index);
+            m2 = _mm_load_pd(b.elements() + index - op_offset - x_offset);
+            m4 = _mm_load_pd(b.elements() + index - op_offset + x_offset);
+            m2 = _mm_shuffle_pd(m2, m4, 1 << 0 | 1); // zweite von m2 und erste von m4
+            m3 = _mm_load_pd(result.elements() + index);
 
             m1 = _mm_mul_pd(m1, m2);
             m1 = _mm_add_pd(m1, m3);
-            m4 = _mm_mul_pd(m4, m5);
-            m4 = _mm_add_pd(m4, m6);
 
-            _mm_store_pd(result1_data, m1);
-            _mm_store_pd(result2_data, m4);
-
-            for (int i = 0 ; i < 2 ; ++i)
-            {
-                result.elements()[start + index + i] = result1_data[i];
-                result.elements()[start + index + i + 2] = result2_data[i];
-            }
+            _mm_store_pd(result.elements() + index, m1);
         }
 
+        for (unsigned long index = start ; index < quad_start ; index++)
+        {
+            result.elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
+        }
         for (unsigned long index = quad_end ; index < end ; index++)
         {
-            result.elements()[index] += vi->elements()[index] * b.elements()[index-start];
+            result.elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
         }
     }
     return result;

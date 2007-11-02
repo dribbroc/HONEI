@@ -35,7 +35,7 @@ class DotProductBench :
             {
                 DenseVector<DataType_> dv0(_size, DataType_(rand()));
                 DenseVector<DataType_> dv1(_size, DataType_(rand()));
-                BENCHMARK(p0 = DotProduct<DataType_>::value(dv1,dv0));
+                BENCHMARK(p0 = DotProduct<>::value(dv1,dv0));
             }
             evaluate(2*_size, sizeof(DataType_));
         }
@@ -74,7 +74,7 @@ class SparseDotProductBench :
                     }
                 }
                 DenseVector<DataType_> dv(_size, DataType_(rand()));
-                BENCHMARK(p0 = DotProduct<DataType_>::value(sv,dv));
+                BENCHMARK(p0 = DotProduct<>::value(sv,dv));
             }
             evaluate((unsigned long)((2*_size)/10), sizeof(DataType_));
         }

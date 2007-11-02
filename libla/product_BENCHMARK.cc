@@ -7,6 +7,7 @@
 #endif
 
 #include <libla/product.hh>
+#include <iostream>
 
 //using namespace std;
 using namespace honei;
@@ -81,6 +82,39 @@ class DenseMatrixProductBench :
 DenseMatrixProductBench<float> DMPBenchfloat2("Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
 DenseMatrixProductBench<double> DMPBenchdouble2("Matrix Product Benchmark dense/dense - matrix size: 256x256, double", 256, 10);
 
+template <typename Tag_, typename DataType_>
+class DenseMatrixDenseVectorProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        DenseMatrixDenseVectorProductBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DataType_ p0;
+            DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
+            DenseVector<DataType_> dv0(_size, DataType_(rand()));
+            for(int i = 0; i < _count; ++i)
+            {
+                BENCHMARK(Product<Tag_>::value(dm0, dv0));
+            }
+            evaluate(_size*_size*_size*2, sizeof(DataType_));
+        }
+};
+DenseMatrixDenseVectorProductBench<tags::CPU, float> DMDVPBenchfloat("Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, float", 64ul*64, 10);
+DenseMatrixDenseVectorProductBench<tags::CPU, double> DMDVPBenchdouble("Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, double", 64ul*64, 10);
+#ifdef HONEI_SSE
+DenseMatrixDenseVectorProductBench<tags::CPU::SSE, float> DMDVPBenchfloatSSE("SSE: Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, float", 64ul*64, 10);
+DenseMatrixDenseVectorProductBench<tags::CPU::SSE, double> DMDVPBenchdoubleSSE("SSE: Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, double", 64ul*64, 10);
+#endif
 
 template <typename DataType_>
 class SparseMatrixProductBench :
