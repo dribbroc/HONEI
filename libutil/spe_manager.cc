@@ -34,8 +34,6 @@
 #include <libspe2.h>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
 
-using namespace honei;
-
 extern "C"
 {
     extern spe_program_handle_t kernel_reference;
@@ -43,108 +41,115 @@ extern "C"
 
 extern const Environment kernel_reference_environment;
 
-struct SPEManager::Implementation
+namespace
 {
-    typedef std::vector<SPE> SPEList;
-
-    /// Our mutex.
-    Mutex * const mutex;
-
-    /// Our number of available SPEs.
-    unsigned spe_count;
-
-    /// Out list of SPEs.
-    SPEList spe_list;
-
-    /// Compare two SPE's in terms of instruction_load
-    static inline bool cmp_load(const SPE a, const SPE b)
+    /// Compare two SPEs in terms of instruction_load
+    static inline bool compare_by_load(const honei::SPE a, const honei::SPE b)
     {
         return a.kernel()->instruction_load() < b.kernel()->instruction_load();
     }
+}
 
-    /// Dispatch an SPEInstruction to an SPE.
-    inline void dispatch(const SPEInstruction & instruction)
+namespace honei
+{
+    struct SPEManager::Implementation
     {
-        CONTEXT("SPEManager: When dispatching Instruction to an SPE");
+        typedef std::vector<SPE> SPEList;
 
-        //Load balanced dispatching
-        sort(spe_list.begin(), spe_list.end(), cmp_load);
-        std::cout << "SPEManager: Dispatching to spe " << spe_list.begin()->id() << " with load " << spe_list.begin()->kernel()->instruction_load() << std::endl;
-        instruction.enqueue_with(spe_list.begin()->kernel());
+        /// Our mutex.
+        Mutex * const mutex;
+
+        /// Our number of available SPEs.
+        unsigned spe_count;
+
+        /// Out list of SPEs.
+        SPEList spe_list;
+
+        /// Dispatch an SPEInstruction to an SPE.
+        inline void dispatch(const SPEInstruction & instruction)
+        {
+            CONTEXT("SPEManager: When dispatching Instruction to an SPE");
+
+            //Load balanced dispatching
+            sort(spe_list.begin(), spe_list.end(), compare_by_load);
+
+            Log::instance()->message(ll_minimal, "Dispatching to SPE #" + stringify(spe_list.begin()->id()) +
+                    " (load = " + stringify(spe_list.begin()->kernel()->instruction_load()) + ")");
+            instruction.enqueue_with(spe_list.begin()->kernel());
+        }
+
+        /// Constructor.
+        Implementation() :
+            mutex(new Mutex),
+            spe_count(spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1)) /// \todo USABLE or PHYSICAL?
+        {
+        }
+
+        /// Destructor.
+        ~Implementation()
+        {
+            delete mutex;
+        }
+    };
+
+    SPEManager::SPEManager() :
+        _imp(new Implementation)
+    {
+        Lock l(*_imp->mutex);
+
+        //unsigned count(_imp->spe_count);
+        unsigned count (1);
+        while(count-- > 0)
+        {
+            SPE spe;
+            _imp->spe_list.push_back(spe);
+        }
+
+        for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
+        {
+            i->run(SPEKernel(kernel_reference, &kernel_reference_environment));
+        }
     }
 
-    /// Constructor.
-    Implementation() :
-        mutex(new Mutex),
-        spe_count(spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1)) /// \todo USABLE or PHYSICAL?
+    SPEManager::~SPEManager()
     {
     }
 
-    /// Destructor.
-    ~Implementation()
+    SPEManager *
+    SPEManager::instance()
     {
-        delete mutex;
-    }
-};
+        static SPEManager result;
 
-SPEManager::SPEManager() :
-    _imp(new Implementation)
-{
-    Lock l(*_imp->mutex);
-
-    //unsigned count(_imp->spe_count);
-    unsigned count (1);
-    while(count-- > 0)
-    {
-        SPE spe;
-        _imp->spe_list.push_back(spe);
+        return &result;
     }
 
-    for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
+    SPEManager::Iterator
+    SPEManager::begin() const
     {
-        i->run(SPEKernel(kernel_reference, &kernel_reference_environment));
+        Lock l(*_imp->mutex);
+
+        return Iterator(_imp->spe_list.begin());
+    }
+
+    SPEManager::Iterator
+    SPEManager::end() const
+    {
+        Lock l(*_imp->mutex);
+
+        return Iterator(_imp->spe_list.end());
+    }
+
+    unsigned int
+    SPEManager::spe_count() const
+    {
+        return _imp->spe_count;
+    }
+
+    void
+    SPEManager::dispatch(const SPEInstruction & instruction)
+    {
+        Lock l(*_imp->mutex);
+
+        _imp->dispatch(instruction);
     }
 }
-
-SPEManager::~SPEManager()
-{
-}
-
-SPEManager *
-SPEManager::instance()
-{
-    static SPEManager result;
-
-    return &result;
-}
-
-SPEManager::Iterator
-SPEManager::begin() const
-{
-    Lock l(*_imp->mutex);
-
-    return Iterator(_imp->spe_list.begin());
-}
-
-SPEManager::Iterator
-SPEManager::end() const
-{
-    Lock l(*_imp->mutex);
-
-    return Iterator(_imp->spe_list.end());
-}
-
-unsigned int
-SPEManager::spe_count() const
-{
-    return _imp->spe_count;
-}
-
-void
-SPEManager::dispatch(const SPEInstruction & instruction)
-{
-    Lock l(*_imp->mutex);
-
-    _imp->dispatch(instruction);
-}
-

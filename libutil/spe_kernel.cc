@@ -28,7 +28,6 @@
 #include <libutil/spe_manager.hh>
 #include <libutil/sync_point.hh>
 
-#include <iostream>
 namespace honei
 {
     struct SPEKernel::Implementation
@@ -87,7 +86,7 @@ namespace honei
 
         static void * kernel_thread(void * argument)
         {
-            std::cout << "Anonymous kernel_thread startet" << std::endl;
+            Log::instance()->message(ll_minimal, "SPEKernel: Kernel thread startet (anonymous)");
             Implementation * imp(static_cast<Implementation *>(argument));
 
             SPE * spe(0);
@@ -97,21 +96,25 @@ namespace honei
                 imp->kernel_loaded->signal_and_wait(imp->mutex);
                 spe = imp->spe;
             }
-            std::cout << "SPEKernel " << imp->spe->id()<< ": loaded-signal received!" << std::endl;
+
+            Log::instance()->message(ll_minimal, "SPEKernel: Revceived have-been-loaded signal from SPE #" + stringify(spe->id()));
+            CONTEXT("When handling SPE events for SPE #" + stringify(spe->id()));
 
             SPEEvent event(*imp->spe, SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED);
             Instruction current_instruction;
 
             do
             {
-                std::cout << "SPEKernel " << imp->spe->id() << ": Waiting for event!" << std::endl;
+                Log::instance()->message(ll_minimal, "SPEKernel: Waiting for event");
+
                 spe_event_unit_t * e(event.wait(-1));
-                std::cout << "SPEKernel " << imp->spe->id() << ": Event occured!" << std::endl;
+
+                Log::instance()->message(ll_minimal, "SPEKernel: Event occured");
                 ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)), "unexpected event happened!");
 
                 if (e->events & SPE_EVENT_OUT_INTR_MBOX)
                 {
-                    std::cout << "SPEKernel " << imp->spe->id() << ": mail pending" << std::endl;
+                    Log::instance()->message(ll_minimal, "SPEKernel: Mail event pending");
                     unsigned mail(0);
 
                     int retval(spe_out_intr_mbox_read(spe->context(), &mail, 1, SPE_MBOX_ALL_BLOCKING));
@@ -122,7 +125,7 @@ namespace honei
                         switch (mail)
                         {
                             case km_result_dword:
-                                std::cout << "SPEKernel " << imp->spe->id() << ": km_result_dword received!" << std::endl;
+                                Log::instance()->message(ll_minimal, "SPEKernel: km_result_dword received");
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -132,6 +135,7 @@ namespace honei
                                 continue;
 
                             case km_result_qword:
+                                Log::instance()->message(ll_minimal, "SPEKernel: km_result_qword received");
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -141,7 +145,7 @@ namespace honei
                                 continue;
 
                             case km_instruction_finished:
-                                std::cout << "SPEKernel " << imp->spe->id() << ": km_instruction_finished received!" << std::endl;
+                                Log::instance()->message(ll_minimal, "SPEKernel: km_instruction_finished received");
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -155,8 +159,7 @@ namespace honei
                                 continue;
 
                             case km_unknown_opcode:
-                                std::cout << "SPEKernel " << imp->spe->id() << ": invalid opcode!" << std::endl;
-                                throw std::string("Eek");
+                                throw InternalError("SPEKernel: Kernel reported invalid opcode");
                                 continue;
 
                             case km_debug:
@@ -165,16 +168,16 @@ namespace honei
 
                                     unsigned debug_mail(0);
                                     spe_out_mbox_read(spe->context(), &debug_mail, 1);
-                                    Log::instance()->message(ll_minimal, "Debug mail '" + stringify(debug_mail) + "'");
+                                    Log::instance()->message(ll_minimal, "SPEKernel: Debug mail '" + stringify(debug_mail) + "'");
                                 }
                                 continue;
 
                             case km_debug_enter:
-                                Log::instance()->message(ll_minimal, "DEBUG: SPE entering instruction!");
+                                Log::instance()->message(ll_minimal, "SPEKernel: SPE entering instruction");
                                 continue;
 
                             case km_debug_leave:
-                                Log::instance()->message(ll_minimal, "DEBUG: SPE leaving instruction!");
+                                Log::instance()->message(ll_minimal, "SPEKernel: SPE leaving instruction");
                                 continue;
                         }
 
@@ -183,7 +186,7 @@ namespace honei
                 }
                 else if (e->events & SPE_EVENT_SPE_STOPPED)
                 {
-                    std::cout << "SPEKernel: " << imp->spe->id() << " SPE stopped" << std::endl;
+                    Log::instance()->message(ll_minimal, "SPEKernel: SPE stopped and signaled");
                     Lock ll(*imp->mutex);
 
                     imp->instruction_finished->broadcast();
@@ -191,7 +194,7 @@ namespace honei
                 }
                 else
                 {
-                    std::cout << "SPEKernel " << imp->spe->id() << ": neither mail event nor stop event!" << std::endl;
+                    Log::instance()->message(ll_minimal, "SPEKernel: Neither mail event nor stop event");
                 }
             } while (true);
 
@@ -225,13 +228,13 @@ namespace honei
             *environment = *e;
 
             if (0 != (retval = pthread_attr_init(attr)))
-                throw ExternalError("libpthread", "pthread_attr_init failed, " + stringify(strerror(retval)));
+                throw PThreadError("pthread_attr_init", retval);
 
             if (0 != (retval = pthread_attr_setdetachstate(attr, PTHREAD_CREATE_JOINABLE)))
-                throw ExternalError("libpthread", "pthread_attr_setdetachstate failed," + stringify(strerror(retval)));
+                throw PThreadError("pthread_attr_setdetachstate", retval);
 
             if (0 != (retval = pthread_create(thread, 0, &kernel_thread, this)))
-                throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
+                throw PThreadError("pthread_create failed", retval);
 
             Instruction noop = { oc_noop };
             std::fill(instructions, instructions + 8, noop);
@@ -242,13 +245,13 @@ namespace honei
             int retval(0);
 
             if (0 != (retval = pthread_join(*thread, 0)))
-                throw ExternalError("libpthread", "pthread_join failed, " + stringify(strerror(retval)));
+                throw PThreadError("pthread_join", retval);
 
             free(instructions);
             free(environment);
 
             if (0 != (retval = pthread_attr_destroy(attr)))
-                throw ExternalError("libpthread", "pthread_attr_destroy failed, " + stringify(strerror(retval)));
+                throw PThreadError("pthread_attr_destroy", retval);
 
             delete attr;
             delete thread;
@@ -293,6 +296,7 @@ namespace honei
         ++_imp->next_free_index;
         ++_imp->enqueued_counter;
         _imp->next_free_index %= 8; /// \todo remove hardcoded numbers
+
         if (_imp->spe)
         {
             _imp->spe->signal();
@@ -325,12 +329,14 @@ namespace honei
         Lock l(*_imp->mutex);
         if (0 != spe_program_load(spe.context(), &_imp->handle))
         {
-            throw ExternalError("libspe2", "spe_program_load failed, " + stringify(strerror(errno)));
+            throw SPEError("spe_program_load", errno);
         }
 
         _imp->spe = new SPE(spe);
         _imp->kernel_loaded->signal_and_wait(_imp->mutex);
-        std::cout << "SPEKernel " << _imp->spe->id() << " : loading kernel into SPE" << std::endl;
+
+        Log::instance()->message(ll_minimal, "SPEKernel: Loading kernel into SPE");
+
         if (_imp->initial_instructions)
         {
             _imp->spe->signal();

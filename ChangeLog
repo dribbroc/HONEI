@@ -7,6 +7,16 @@ see the NEWS file.
 
 2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/exception.cc, libutil/exception.hh: Moved all ExternalError
+	descendants. Enhanced what() by adding message().
+	* libutil/spe.cc, libutil/spe.hh: Converted to use new SPEError
+	exception.
+	* libutil/spe_instruction.cc: Added logging to enqueue_with().
+	* libutil/spe_kernel.cc, libutil/spe_manager.cc: Converted cout
+	statements into calls to Log.
+
+2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* cell/libla/Makefile.am, cell/libutil/Makefile.am: Readded proper SPU
 	CXXFLAGS, including -fno-rtti and -fno-exceptions.
 

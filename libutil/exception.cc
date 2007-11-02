@@ -25,7 +25,7 @@
 #include <libebt/libebt_pthread_threads.hh>
 
 #include <cxxabi.h>
-
+#include <iostream>
 using namespace honei;
 
 namespace
@@ -99,6 +99,7 @@ Exception::message() const throw ()
 std::string
 Exception::backtrace(const std::string & delimiter) const
 {
+    std::cout << "Exception: " << _context_data->backtrace(delimiter) << std::endl;
     return _context_data->backtrace(delimiter);
 }
 
@@ -113,6 +114,7 @@ Exception::what() const throw ()
         if (0 == status)
         {
             _what_str = name;
+            _what_str += " (" + message() + ")";
             std::free(name);
         }
     }
@@ -128,5 +130,15 @@ InternalError::InternalError(const std::string & message) throw () :
 
 ExternalError::ExternalError(const std::string & library, const std::string & message) throw () :
     Exception("External error in '" + library + "': " + message)
+{
+}
+
+PThreadError::PThreadError(const std::string & function, int errno) throw () :
+    ExternalError("libpthread", function + " failed, " + stringify(strerror(errno)))
+{
+}
+
+SPEError::SPEError(const std::string & function, int errno) throw () :
+    ExternalError("libspe2", function + " failed, " + stringify(strerror(errno)))
 {
 }

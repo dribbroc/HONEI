@@ -18,6 +18,7 @@
  */
 
 #include <libutil/assertion.hh>
+#include <libutil/log.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_kernel.hh>
 
@@ -48,6 +49,14 @@ namespace honei
     void
     SPEInstruction::enqueue_with(SPEKernel * kernel) const
     {
+        std::string msg("Enqueing SPEInstruction, opcode = " + stringify(_instruction.opcode) +
+                ", size = " + stringify(_instruction.size) + "\n");
+        msg += "a = " + stringify(_instruction.a.ea) + ", b = " + stringify(_instruction.b.ea) + "\n";
+        msg += "c = " + stringify(_instruction.c.ea) + ", d = " + stringify(_instruction.d.ea) + "\n";
+        msg += "e = " + stringify(_instruction.e.ea) + ", f = " + stringify(_instruction.f.ea) + "\n";
+        msg += "g = " + stringify(_instruction.g.ea) + "\n";
+        Log::instance()->message(ll_minimal, msg);
+
         _kernel = kernel;
         _index = kernel->enqueue(_instruction);
     }

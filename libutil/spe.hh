@@ -37,25 +37,6 @@ namespace honei
     class SPEKernel;
 
     /**
-     * SPEError is thrown by SPEManager and related classes whenever an error
-     * occurs in interfacing Libspe2.
-     *
-     * \ingroup grpexceptions
-     * \ingroup grpcell
-     */
-    struct SPEError :
-        public ExternalError
-    {
-        /**
-         * Constructor.
-         *
-         * \param msg The error message.
-         * \param reason The reason for the error message.
-         */
-        SPEError(const std::string & msg, const std::string & reason);
-    };
-
-    /**
      * An instance of SPE encapsulates one of the system's Synergistic
      * Processing Elements.
      *

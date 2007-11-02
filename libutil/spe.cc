@@ -30,13 +30,9 @@
 
 #include <libspe2.h>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
-
+#include <iostream>
 using namespace honei;
 
-SPEError::SPEError(const std::string & msg, const std::string & reason) :
-    ExternalError("libspe2", msg + ", reason is " + reason + ".")
-{
-}
 
 struct SPE::Implementation
 {
@@ -76,16 +72,24 @@ struct SPE::Implementation
 
         imp->kernel->load(SPE(imp));
 
-        do
+        try
         {
-            retval = spe_context_run(imp->context, &entry_point, 0, imp->kernel->argument(),
-                    imp->kernel->environment(), 0);
-        }
-        while (retval > 0);
+            do
+            {
+                retval = spe_context_run(imp->context, &entry_point, 0, imp->kernel->argument(),
+                        imp->kernel->environment(), 0);
+            }
+            while (retval > 0);
 
-        if (retval < 0)
+            if (retval < 0)
+            {
+                throw SPEError("spe_context_run", errno);
+            }
+        }
+        catch (Exception & e)
         {
-            throw ExternalError("libspe2", "spe_context_run failed, " + stringify(strerror(errno)));
+            std::cout << e.backtrace("\n") << std::endl;
+            throw;
         }
     }
 
@@ -100,26 +104,7 @@ struct SPE::Implementation
     {
         if (! context)
         {
-            std::string reason;
-            switch (errno)
-            {
-                case ENOMEM:
-                    reason = "lack of system resources (ENOMEM)";
-                    break;
-
-                case EPERM:
-                    reason = "insufficient permissions to create context (EPERM)";
-                    break;
-
-                case EFAULT:
-                    reason = "internal error (EFAULT)";
-                    break;
-
-                default:
-                    reason = "unknown error (errno = " + stringify(errno) + ")";
-            }
-
-            throw SPEError("Could not create SPE context", reason);
+            throw SPEError("spe_context_create", errno);
         }
     }
 
@@ -145,22 +130,7 @@ struct SPE::Implementation
 
         if (retval == -1)
         {
-            std::string reason;
-            switch (errno)
-            {
-                case ESRCH:
-                    reason = "invalid context (ESRCH)";
-                    break;
-
-                case EFAULT:
-                    reason = "internal error (EFAULT)";
-                    break;
-
-                default:
-                    reason = "unknown error (errno = " + stringify(errno) + ")";
-            }
-
-            Log::instance()->message(ll_minimal, "Could not destroy SPE context " + reason + ".");
+            Log::instance()->message(ll_minimal, "spe_context_destroy failed, " + stringify(strerror(errno)));
         }
     }
 };
