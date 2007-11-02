@@ -8,6 +8,7 @@ noinst_LIBRARIES = libutil_spe.a
 libutil_spe_a_SOURCES = \
     allocator.cc \
     transfer.cc
+libutil_spe_a_CXXFLAGS = -msafe-dma -fno-exceptions -fno-rtti
 
 bench:
 quickcheck:
