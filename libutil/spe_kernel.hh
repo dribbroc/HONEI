@@ -45,7 +45,7 @@ namespace honei
             void * argument() const;
 
             /// Return a pointer to our environment.
-            void * const environment() const;
+            void * environment() const;
 
             /// Signal that the SPE part has been loaded.
             void signal() const;
@@ -54,7 +54,7 @@ namespace honei
             friend class SPE::Implementation;
 
             /// Constructor.
-            SPEKernel(const spe_program_handle_t & handle, Environment * const environment);
+            SPEKernel(const spe_program_handle_t & handle, const Environment * environment);
 
             /// \name Iteration over our queued instructions.
             /// \{

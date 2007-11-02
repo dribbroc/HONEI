@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/kernels/env.cc.in, cell/kernels/Makefile.am.m4: Added means to
+	generate a kernel's environment on the fly.
+	* libutil/spe_kernel.cc, libutil/spe_kernel.hh,
+	libutil/spe_manager.cc: Adjusted to use external environments.
+
+	+ Fixes: ticket:16
+
 2007-11-02 Joachim Messer <joachim.messer@uni-dortmunde.de>
 
 	* libla/product.hh: Implemented Product of DenseMatrix with 

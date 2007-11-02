@@ -41,6 +41,7 @@ extern "C"
     extern spe_program_handle_t kernel_reference;
 }
 
+extern const Environment kernel_reference_environment;
 
 struct SPEManager::Implementation
 {
@@ -86,23 +87,22 @@ struct SPEManager::Implementation
     }
 };
 
-static Environment environment __attribute__((aligned(16))) = { 0x4000, 0x3F000 };
-
 SPEManager::SPEManager() :
     _imp(new Implementation)
 {
     Lock l(*_imp->mutex);
 
     //unsigned count(_imp->spe_count);
-    unsigned count (2);
+    unsigned count (1);
     while(count-- > 0)
     {
         SPE spe;
         _imp->spe_list.push_back(spe);
     }
+
     for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
     {
-        i->run(SPEKernel(kernel_reference, &environment));
+        i->run(SPEKernel(kernel_reference, &kernel_reference_environment));
     }
 }
 

@@ -21,6 +21,7 @@
 #include <libutil/condition_variable.hh>
 #include <libutil/exception.hh>
 #include <libutil/lock.hh>
+#include <libutil/log.hh>
 #include <libutil/mutex.hh>
 #include <libutil/spe_event.hh>
 #include <libutil/spe_kernel.hh>
@@ -39,7 +40,7 @@ namespace honei
         /// \{
 
         /// Our program's environment.
-        Environment * const environment;
+        Environment * environment;
 
         /// Our queue of instructions.
         Instruction * instructions;
@@ -152,9 +153,28 @@ namespace honei
                                     imp->instruction_finished->broadcast();
                                 }
                                 continue;
+
                             case km_unknown_opcode:
                                 std::cout << "SPEKernel " << imp->spe->id() << ": invalid opcode!" << std::endl;
                                 throw std::string("Eek");
+                                continue;
+
+                            case km_debug:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    unsigned debug_mail(0);
+                                    spe_out_mbox_read(spe->context(), &debug_mail, 1);
+                                    Log::instance()->message(ll_minimal, "Debug mail '" + stringify(debug_mail) + "'");
+                                }
+                                continue;
+
+                            case km_debug_enter:
+                                Log::instance()->message(ll_minimal, "DEBUG: SPE entering instruction!");
+                                continue;
+
+                            case km_debug_leave:
+                                Log::instance()->message(ll_minimal, "DEBUG: SPE leaving instruction!");
                                 continue;
                         }
 
@@ -178,9 +198,9 @@ namespace honei
             pthread_exit(0);
         }
 
-        Implementation(const spe_program_handle_t & h, Environment * const e) :
+        Implementation(const spe_program_handle_t & h, const Environment * e) :
             handle(h),
-            environment(e),
+            environment(0),
             instructions(0),
             spe_instruction_index(0),
             next_free_index(0),
@@ -198,6 +218,11 @@ namespace honei
 
             if (0 != posix_memalign(reinterpret_cast<void **>(&instructions), 128, 8 * sizeof(Instruction))) /// \todo remove hardcoded numbers
                 throw std::bad_alloc(); /// \todo exception hierarchy
+
+            if (0 != posix_memalign(reinterpret_cast<void **>(&environment), 16, sizeof(Environment)))
+                throw std::bad_alloc(); /// \todo exception hierarchy
+
+            *environment = *e;
 
             if (0 != (retval = pthread_attr_init(attr)))
                 throw ExternalError("libpthread", "pthread_attr_init failed, " + stringify(strerror(retval)));
@@ -220,6 +245,7 @@ namespace honei
                 throw ExternalError("libpthread", "pthread_join failed, " + stringify(strerror(retval)));
 
             free(instructions);
+            free(environment);
 
             if (0 != (retval = pthread_attr_destroy(attr)))
                 throw ExternalError("libpthread", "pthread_attr_destroy failed, " + stringify(strerror(retval)));
@@ -233,7 +259,7 @@ namespace honei
 
     };
 
-    SPEKernel::SPEKernel(const spe_program_handle_t & handle, Environment * const environment) :
+    SPEKernel::SPEKernel(const spe_program_handle_t & handle, const Environment * environment) :
         _imp(new Implementation(handle, environment))
     {
     }
@@ -326,7 +352,7 @@ namespace honei
         return _imp->instructions;
     }
 
-    void * const SPEKernel::environment() const
+    void * SPEKernel::environment() const
     {
         Lock l(*_imp->mutex);
 
