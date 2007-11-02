@@ -33,3 +33,5 @@ add(`general', `thread',                    `hh', `cc', `test')
 add(`general', `thread_pool',               `hh',       `test')
 add(`general', `type_traits',               `hh')
 add(`general', `worker',                    `hh', `cc', `test')
+add(`general', `wrapper',                   `hh')
+

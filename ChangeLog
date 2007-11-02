@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-02 Joachim Messer <joachim.messer@uni-dortmunde.de>
+
+	* +libutil/wrapper.hh: Added Wrapper Implementation
+	* libutil/files.m4: Added Wrapper
+
 2007-11-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product_BENCHMARK.cc: Added dense matrix vector product
