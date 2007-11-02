@@ -281,7 +281,7 @@ DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_dense_matrix_d
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-/DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
+DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
 #endif
 
 
