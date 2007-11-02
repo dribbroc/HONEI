@@ -985,7 +985,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
         { 
-            CONTEXT("When multiplying DenseMatrix with DenseVector:");
+            CONTEXT("When multiplying DenseMatrix with DenseVector (MultiCore):");
 
             if (b.size() != a.columns())
             {
