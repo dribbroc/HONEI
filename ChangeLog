@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-02 Volker Jung <volker.jung@uni-dortmunde.de>
+
+	* +libutil/thread_pool.hh, +libutil/thread_pool_TEST.cc,
+	+libutil/pool_thread.hh, +libutil/pool_thread.cc,
+	+libutil/pool_thread_TEST.cc, +libutil/pool_task.hh,
+	+libutil/pool_task_TEST.cc: Added ThreadPool implementation.
+	* libutil/files.m4: Applied necessary changes for ThreadPool.
+
 2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/libutil/Makefile.am, cell/libutil/transfer.cc,
