@@ -107,7 +107,10 @@ enum KernelMessages
     km_instruction_finished = 1 << 0,
     km_result_dword,
     km_result_qword,
-    km_unknown_opcode
+    km_unknown_opcode,
+    km_debug,
+    km_debug_enter,
+    km_debug_leave
 };
 
 #endif

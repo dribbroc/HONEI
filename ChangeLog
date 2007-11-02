@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/cell.hh, libutil/spe_kernel.cc: Added debug kernel messages to
+	work around using printf on SPU.
+
 2007-11-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product_BENCHMARK.cc, libla/product_TEST.cc:
