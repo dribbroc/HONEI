@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-11-02 Joachim Messer <joachim.messer@uni-dortmunde.de>
 
+	* libla/product.hh: Implemented Product of DenseMatrix with 
+	DenseVector for MultiCore.
+
+2007-11-02 Joachim Messer <joachim.messer@uni-dortmunde.de>
+
 	* +libutil/wrapper.hh: Added Wrapper Implementation
 	* libutil/files.m4: Added Wrapper
 

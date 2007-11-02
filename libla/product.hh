@@ -31,7 +31,11 @@
 #include <libla/sparse_vector.hh>
 #include <libla/sum.hh>
 #include <libutil/tags.hh>
+#include <libutil/wrapper.hh>
+#include <libutil/thread_pool.hh>
+#include <libutil/pool_task.hh>
 
+#include <tr1/functional>
 #include <cmath>
 
 namespace honei
@@ -975,6 +979,39 @@ namespace honei
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
         static DenseMatrix<float> value(const DenseMatrix<float> & a, const DenseMatrix<float> & b);
     };
+    
+    template <> struct Product<tags::CPU::MultiCore>
+    {
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
+        { 
+            CONTEXT("When multiplying DenseMatrix with DenseVector:");
 
+            if (b.size() != a.columns())
+            {
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
+            }
+
+            DenseVector<DT1_> result(a.rows());
+            typename Vector<DT1_>::ElementIterator l(result.begin_elements());
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+
+            TwoArgWrapper< DotProduct<tags::CPU::MultiCore::DelegateTo>, DT1_, DenseVector<DT1_>, DenseVector<DT2_> > mywrapper; 
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i] = p->dispatch(std::tr1::bind(mywrapper, &(*l), a[i], b));
+                ++l;
+            }
+
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+
+            return result;
+        }
+    };
 }
 #endif
