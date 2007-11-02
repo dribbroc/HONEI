@@ -33,8 +33,6 @@
 
 #define DEFAULT_NUM_THREADS 4
 
-using namespace std;
-
 namespace honei
 {
     typedef std::tr1::function<void () throw ()> WorkerTask;

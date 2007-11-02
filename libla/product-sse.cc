@@ -20,7 +20,6 @@
  */
 
 #include <libla/product.hh>
-#include <iostream>
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
