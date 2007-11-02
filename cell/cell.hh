@@ -22,7 +22,6 @@
 
 #include <cell/opcodes.hh>
 #include <cell/traits.hh>
-#include <cell/libutil/transfer.hh>
 
 #if defined(__PPU__)
 
@@ -43,6 +42,7 @@ template <typename T_> union Pointer;
 template <> union Pointer<float>
 {
     void * volatile untyped;
+    unsigned adjustable;
     float * volatile typed;
     vector float * volatile vectorised;
 };
@@ -50,6 +50,7 @@ template <> union Pointer<float>
 template <> union Pointer<unsigned long long>
 {
     void * volatile untyped;
+    unsigned adjustable;
     unsigned long long * volatile typed;
     vector unsigned long long * volatile vectorised;
 };

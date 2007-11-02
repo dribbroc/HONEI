@@ -38,7 +38,7 @@ using namespace honei;
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
  */
-void dense_dense_float_sum(const Instruction & inst)
+int dense_dense_float_sum(const Instruction & inst)
 {
     printf("dense_dense_float_sum:\n");
     printf("inst.size = %u\n", inst.size);
@@ -72,6 +72,7 @@ void dense_dense_float_sum(const Instruction & inst)
         mfc_get(b[next - 1].untyped, ea_b, inst.size, next, 0, 0);
 
         mfc_write_tag_mask(1 << current);
+        printf("XXX: waiting for tag %d\n", current);
         mfc_read_tag_status_all();
 
         unsigned i(0);
@@ -89,11 +90,15 @@ void dense_dense_float_sum(const Instruction & inst)
         unsigned temp(next);
         next = current;
         current = temp;
-    } while (counter > 0);
+    } while (counter > 1);
     printf("XXX: After loop\n");
+
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
+    printf("XXX: After waiting for loop data\n");
+
+#if 0
     unsigned i(0);
     for ( ; i < inst.d.u / sizeof(vector float) ; ++i)
     {
@@ -105,4 +110,5 @@ void dense_dense_float_sum(const Instruction & inst)
 
     mfc_write_tag_mask(1 << next);
     mfc_read_tag_status_all();
+#endif
 }

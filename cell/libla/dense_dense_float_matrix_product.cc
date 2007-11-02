@@ -17,8 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <cell/libutil/allocator.hh>
 #include <cell/cell.hh>
+#include <cell/libutil/allocator.hh>
+#include <cell/libutil/transfer.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>

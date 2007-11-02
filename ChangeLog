@@ -5,15 +5,27 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/libutil/Makefile.am, cell/libutil/transfer.cc,
+	cell/libutil/transfer.hh: Added means to extract unaligned data.
+	* cell/cell.hh, cell/kernels/kernel.cc.in,
+	cell/libla/dense_dense_float_dot_product.cc,
+	cell/libla/dense_dense_float_element_product.cc,
+	cell/libla/dense_dense_float_matrix_product.cc,
+	cell/libla/dense_dense_float_matrix_vector_product.cc,
+	cell/libla/dense_dense_float_sum.cc,
+	cell/libla/dense_sparse_float_sum.cc: Fixed includes.
+
 2007-11-01 David Gies <david-gies@gmx.de>
 
-        * benchmark/benchmark.cc: Adjusted benchmark output.        
+	* benchmark/benchmark.cc: Adjusted benchmark output.
 
 2007-10-31 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
-	* cell/libla/dense_dense_float_sum.cc, libla/sum-cell.cc: Implement
+	* cell/libla/dense_dense_float_sum.cc, libla/sum-cell.cc: Implemented
 	double buffering.
-	* libla/sum_TEST.cc: Adjust sum's quick test for our currently crude approach
+	* libla/sum_TEST.cc: Adjusted sum's quick test for our currently crude approach
 	to double buffering.
 
 2007-10-30 Markus Geveler <apryde@gmx.de>
