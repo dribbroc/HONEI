@@ -20,6 +20,7 @@
 
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
+#include <cell/libutil/debug.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -40,13 +41,7 @@ using namespace honei;
  */
 int dense_dense_float_sum(const Instruction & inst)
 {
-    printf("dense_dense_float_sum:\n");
-    printf("inst.size = %u\n", inst.size);
-    printf("inst.a = %llx\n", inst.a.ea);
-    printf("inst.b = %llx\n", inst.b.ea);
-    printf("inst.c = %llx\n", inst.c.u);
-    printf("inst.d = %llx\n", inst.d.u);
-
+    debug_dump();
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_result(inst.a.ea);
     unsigned counter(inst.c.u);
 
@@ -57,31 +52,31 @@ int dense_dense_float_sum(const Instruction & inst)
     Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
 
     unsigned current(1), next(2);
-    printf("XXX: Before the first get\n");
-    printf("XXX: ea_a = %llx, ea_b = %llx\n", ea_a, ea_b);
-    mfc_get(a[0].untyped, ea_a, inst.size, 1, 0, 0);
-    mfc_get(b[0].untyped, ea_b, inst.size, 1, 0, 0);
+    debug_get(ea_a, a[current - 1].untyped, inst.size);
+    mfc_get(a[current - 1].untyped, ea_a, inst.size, current, 0, 0);
+    debug_get(ea_b, b[current - 1].untyped, inst.size);
+    mfc_get(b[current - 1].untyped, ea_b, inst.size, current, 0, 0);
 
-    do
+    while (counter > 1)
     {
         ea_a += inst.size;
         ea_b += inst.size;
-        printf("XXX: counter = %u\n", counter);
-        printf("XXX: ea_a = %llx, ea_b = %llx\n", ea_a, ea_b);
+
+        debug_get(ea_a, a[next - 1].untyped, inst.size);
         mfc_get(a[next - 1].untyped, ea_a, inst.size, next, 0, 0);
+        debug_get(ea_b, b[next - 1].untyped, inst.size);
         mfc_get(b[next - 1].untyped, ea_b, inst.size, next, 0, 0);
 
         mfc_write_tag_mask(1 << current);
-        printf("XXX: waiting for tag %d\n", current);
         mfc_read_tag_status_all();
+        debug_dump();
 
-        unsigned i(0);
-        for ( ; i < inst.size / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < inst.size / sizeof(vector float) ; ++i)
         {
             a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
         }
 
-        printf("ea_result = %llx\n", ea_result);
+        debug_put(ea_result, a[current - 1].untyped, inst.size);
         mfc_putb(a[current - 1].untyped, ea_result, inst.size, next, 0, 0);
 
         --counter;
@@ -90,25 +85,56 @@ int dense_dense_float_sum(const Instruction & inst)
         unsigned temp(next);
         next = current;
         current = temp;
-    } while (counter > 1);
-    printf("XXX: After loop\n");
+    }
+
+    ea_a += inst.size;
+    ea_b += inst.size;
+
+    if (inst.d.u > 0)
+    {
+        debug_get(ea_a, a[next - 1].untyped, inst.d.u);
+        mfc_get(a[next - 1].untyped, ea_a, inst.d.u, next, 0, 0);
+        debug_get(ea_b, b[next - 1].untyped, inst.d.u);
+        mfc_get(b[next - 1].untyped, ea_b, inst.d.u, next, 0, 0);
+    }
 
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    printf("XXX: After waiting for loop data\n");
-
-#if 0
-    unsigned i(0);
-    for ( ; i < inst.d.u / sizeof(vector float) ; ++i)
+    for (unsigned i(0) ; i < inst.size / sizeof(vector float) ; ++i)
     {
         a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
     }
 
-    printf("ea_result = %llx\n", ea_result);
+    debug_put(ea_result, a[current - 1].untyped, inst.size);
     mfc_putb(a[current - 1].untyped, ea_result, inst.size, next, 0, 0);
 
-    mfc_write_tag_mask(1 << next);
-    mfc_read_tag_status_all();
-#endif
+    --counter;
+    ea_result += inst.size;
+
+    unsigned temp(next);
+    next = current;
+    current = temp;
+
+    if (inst.d.u > 0)
+    {
+        mfc_write_tag_mask(1 << current);
+        mfc_read_tag_status_all();
+
+        for (unsigned i(0) ; i < inst.d.u / sizeof(vector float) ; ++i)
+        {
+            a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
+        }
+
+        debug_put(ea_result, a[current - 1].untyped, inst.d.u);
+        mfc_putb(a[current - 1].untyped, ea_result, inst.d.u, next, 0, 0);
+
+        mfc_write_tag_mask(1 << next);
+        mfc_read_tag_status_all();
+    }
+
+    allocator::release_block(*block_a[0]);
+    allocator::release_block(*block_a[1]);
+    allocator::release_block(*block_b[0]);
+    allocator::release_block(*block_b[1]);
 }

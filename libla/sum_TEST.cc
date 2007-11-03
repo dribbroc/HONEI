@@ -733,11 +733,26 @@ class DenseVectorSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(16 * 1024);
-            DenseVector<DataType_> dv1(size, DataType_(1)), dv2(size, DataType_(2)),
-                dv3(size, DataType_(3));
+            unsigned long size(16 * 1024 + 3);
+
+            DenseVector<DataType_> dv1(size), dv2(size);
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                *i = (i.index() + 1) / 1.23456789;
+                *j = 2 * *i;
+            }
+
             Sum<Tag_>::value(dv1, dv2);
-            TEST_CHECK_EQUAL(dv1, dv3);
+            Sum<Tag_>::value(dv1, dv2);
+
+            for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
+                    i_end(dv1.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 5 / 1.23456789),
+                        std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 1) * 5 / 1.23456789);
+            }
+
             DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
             TEST_CHECK_THROWS(Sum<Tag_>::value(dv01, dv02), VectorSizeDoesNotMatch);
         }
@@ -849,7 +864,6 @@ DenseVectorSparseVectorSumQuickTest<tags::CPU, double> dense_vector_sparse_vecto
 #ifdef HONEI_CELL
 DenseVectorSparseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sparse_vector_sum_quick_test_float("Cell float");
 #endif
-
 
 template <typename DataType_>
 class SparseVectorSumTest :

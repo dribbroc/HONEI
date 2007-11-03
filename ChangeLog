@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/libla/dense_dense_float_sum.cc, libla/sum-cell.cc: Implemented
+	Sum (dense/dense/float) using double buffering for arbitrary container
+	size. Still uses a hardcoded transfersize of 16kB.
+	* libla/sum_TEST.cc: Adjusted test case to use sizes that are not a
+	multiple of 4096. Switched to use non-uniform vectors.
+
+2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* misc/make_sk.bash: Added debug messages to signal entering and
 	leaving of instructions.
 

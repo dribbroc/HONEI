@@ -38,11 +38,18 @@ namespace honei
         Operand oc, od;
         // hardcode transfer buffer size for now.
         oc.u = a.size() / (1024 * 4);
-        od.u = a.size() % (1024 * 4);
+        od.u = a.size() % (1024 * 4) & ~0xF;
 
         SPEInstruction instruction(oc_dense_dense_float_sum, 16 * 1024, oa, ob, oc, od);
 
         SPEManager::instance()->dispatch(instruction);
+
+        Vector<float>::ConstElementIterator j(b.element_at(oc.u * 4096 + od.u));
+        for (Vector<float>::ElementIterator i(a.element_at(oc.u * 4096 + od.u)), i_end(a.end_elements()) ;
+                i != i_end ; ++i, ++j)
+        {
+            *i += *j;
+        }
 
         instruction.wait();
 
