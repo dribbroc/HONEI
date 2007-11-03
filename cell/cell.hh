@@ -108,9 +108,13 @@ enum KernelMessages
     km_result_dword,
     km_result_qword,
     km_unknown_opcode,
-    km_debug,
+    km_debug_get,
+    km_debug_put,
     km_debug_enter,
-    km_debug_leave
+    km_debug_leave,
+    km_debug_acquire_block,
+    km_debug_release_block,
+    km_debug_dump
 };
 
 #endif

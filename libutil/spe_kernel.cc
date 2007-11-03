@@ -27,7 +27,7 @@
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/sync_point.hh>
-
+#include <fstream>
 namespace honei
 {
     struct SPEKernel::Implementation
@@ -162,13 +162,45 @@ namespace honei
                                 throw InternalError("SPEKernel: Kernel reported invalid opcode");
                                 continue;
 
-                            case km_debug:
+                            case km_debug_put:
                                 {
                                     Lock ll(*imp->mutex);
 
-                                    unsigned debug_mail(0);
-                                    spe_out_mbox_read(spe->context(), &debug_mail, 1);
-                                    Log::instance()->message(ll_minimal, "SPEKernel: Debug mail '" + stringify(debug_mail) + "'");
+                                    union
+                                    {
+                                        EffectiveAddress ea;
+                                        unsigned u[2];
+                                    } ea = { 0 };
+                                    LocalStoreAddress lsa(0);
+                                    unsigned size(0);
+
+                                    spe_out_mbox_read(spe->context(), ea.u, 2);
+                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    spe_out_mbox_read(spe->context(), &size, 1);
+                                    Log::instance()->message(ll_minimal, "SPEKernel: PUT transfer started, ea = " +
+                                            stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
+                                            stringify(size));
+                                }
+                                continue;
+
+                            case km_debug_get:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    union
+                                    {
+                                        EffectiveAddress ea;
+                                        unsigned u[2];
+                                    } ea = { 0 };
+                                    LocalStoreAddress lsa(0);
+                                    unsigned size(0);
+
+                                    spe_out_mbox_read(spe->context(), ea.u, 2);
+                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    spe_out_mbox_read(spe->context(), &size, 1);
+                                    Log::instance()->message(ll_minimal, "SPEKernel: GET transfer started, ea = " +
+                                            stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
+                                            stringify(size));
                                 }
                                 continue;
 
@@ -178,6 +210,47 @@ namespace honei
 
                             case km_debug_leave:
                                 Log::instance()->message(ll_minimal, "SPEKernel: SPE leaving instruction");
+                                continue;
+
+                            case km_debug_acquire_block:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    LocalStoreAddress lsa(0);
+                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    Log::instance()->message(ll_minimal, "SPEKernel: Acquired block at " +
+                                            stringify(lsa));
+                                }
+                                continue;
+
+                            case km_debug_release_block:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    LocalStoreAddress lsa(0);
+                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    Log::instance()->message(ll_minimal, "SPEKernel: Released block at " +
+                                            stringify(lsa));
+                                }
+                                continue;
+
+                            case km_debug_dump:
+                                static unsigned counter(0);
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    std::string name("spu-dump-" + stringify(counter));
+                                    std::fstream file(name.c_str(), std::ios::out);
+                                    char * area(static_cast<char *>(spe_ls_area_get(spe->context())));
+                                    for (char * c(area), * c_end(area + 256 * 1024) ; c != c_end ; ++c)
+                                    {
+                                        file << *c;
+                                    }
+                                    Log::instance()->message(ll_minimal, "SPEKernel: Dumped LS content to file '" +
+                                            name + "'");
+                                    ++counter;
+                                    spe->signal();
+                                }
                                 continue;
                         }
 

@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/stringify.hh: Added stringification of Cell specific types.
+	* cell/cell.hh, libutil/spe_kernel.cc: Added kernel messages for
+	debugging block acquiration and release, as well as to dump the SPE's
+	LS.
+
 2007-11-03 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libutil/pool_task.hh, libutil/pool_thread.cc,

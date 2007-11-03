@@ -20,6 +20,10 @@
 #ifndef LIBUTIL_GUARD_STRINGIFY_HH
 #define LIBUTIL_GUARD_STRINGIFY_HH 1
 
+#ifdef HONEI_CELL
+# include <cell/cell.hh>
+#endif
+
 #include <sstream>
 #include <string>
 #include <tr1/memory>
@@ -147,6 +151,34 @@ namespace honei
     {
         return std::string(item);
     }
+
+#ifdef HONEI_CELL
+    /**
+     * Convert item to a string (overload for EffectiveAddress).
+     *
+     * \ingroup grpstringify
+     */
+    inline std::string
+    stringify(const EffectiveAddress & item)
+    {
+        std::ostringstream s;
+        s << std::hex << item;
+        return s.str();
+    }
+
+    /**
+     * Convert item to a string (overload for LocalStoreAddress).
+     *
+     * \ingroup grpstringify
+     */
+    inline std::string
+    stringify(const LocalStoreAddress & item)
+    {
+        std::ostringstream s;
+        s << std::hex << item;
+        return s.str();
+    }
+#endif
 }
 
 #endif
