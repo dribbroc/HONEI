@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <libutil/assertion.hh>
 #include <libutil/condition_variable.hh>
 #include <libutil/exception.hh>
 #include <libutil/lock.hh>
@@ -38,6 +39,7 @@ struct PoolThread::Implementation
         /// Our thread.
         pthread_t * const _thread;
 
+        /// The PoolThread we belong to.
         PoolThread * const _pool_thread;
 
         /// Our mutex for read/write access to a PoolThread instance.
@@ -61,17 +63,21 @@ struct PoolThread::Implementation
         /// Set task and wake up this thread for computation.
         inline void run(PoolTask * task)
         {
+            CONTEXT("In PoolThread, when performing run(PoolTask):");
+
             Lock l(*_mutex);
 
             _task = task;
             _task_has_run = false;
 
-            _wake_up->signal(); //Notify this thread that new work is waiting.
+            _wake_up->signal(); //Notify our thread that new work is waiting.
         }
 
         /// Our thread's main function.
         static void * thread_function(void * argument)
         {
+            CONTEXT("In PoolThread::thread_function :");
+
             Implementation * imp(static_cast<Implementation *>(argument));
             bool exit(false);
             do
@@ -110,6 +116,8 @@ struct PoolThread::Implementation
             _wake_up(new ConditionVariable),
             _task(0)
         {
+            CONTEXT("When creating PoolThread::Implementation :");
+
             int retval;
             if (0 != (retval = pthread_create(_thread, 0, &thread_function, this)))
                 throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
@@ -117,6 +125,8 @@ struct PoolThread::Implementation
 
         ~Implementation()
         {
+            CONTEXT("When destroying PoolThrad::Implementation :");
+
             // Flag for exit.
             {
                 Lock l(*_mutex);
@@ -134,15 +144,18 @@ struct PoolThread::Implementation
 PoolThread::PoolThread(ThreadPool * pool) :
     _imp(new Implementation(pool, this))
 {
+    CONTEXT("When creating PoolThread :");
 }
 
 PoolThread::~PoolThread()
 {
+    CONTEXT("When destroying PoolThread :");
     delete _imp;
 }
 
 void
 PoolThread::run(PoolTask * task)
 {
+    CONTEXT("In PoolThread::run(PoolTask) :");
     _imp->run(task);
 }

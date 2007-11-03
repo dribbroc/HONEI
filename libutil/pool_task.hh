@@ -20,6 +20,7 @@
 #ifndef LIBUTIL_GUARD_POOL_TASK_HH
 #define LIBUTIL_GUARD_POOL_TASK_HH 1
 
+#include <libutil/assertion.hh>
 #include <libutil/condition_variable.hh>
 #include <libutil/lock.hh>
 #include <libutil/mutex.hh>
@@ -50,6 +51,7 @@ namespace honei
             PoolTask() :
                 _mutex(new Mutex)
             {
+                CONTEXT("When creating PoolTask:");
             }
 
             PoolTask(WorkerTask & task) :
@@ -58,17 +60,22 @@ namespace honei
                 _task_finished(new ConditionVariable),
                 _task_finished_flag(false)
             {
+                CONTEXT("When creating PoolTask:");
             }
 
             ///Destructor. (todo)
             ~PoolTask()
             {
+                CONTEXT("When destroying PoolTask:");
+
                 delete _mutex;
                 delete _task_finished;
             }
 
             void operator() ()
             {
+                CONTEXT("In PoolTask, when executing operator()");
+
                 Lock l(*_mutex);
 
                 _task();
@@ -78,6 +85,8 @@ namespace honei
 
             void wait_on()
             {
+                CONTEXT("In PoolTask, when performing wait_on():");
+
                 Lock l(*_mutex);
                 if (! _task_finished_flag)
                     _task_finished->wait(*_mutex);

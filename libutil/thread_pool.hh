@@ -21,6 +21,7 @@
 #ifndef LIBUTIL_GUARD_THREAD_POOL_HH
 #define LIBUTIL_GUARD_THREAD_POOL_HH 1
 
+#include <libutil/assertion.hh>
 #include <libutil/condition_variable.hh>
 #include <libutil/lock.hh>
 #include <libutil/mutex.hh>
@@ -64,6 +65,8 @@ namespace honei
                 _mutex(new Mutex),
                 _available(new ConditionVariable)
             {
+                CONTEXT("When creating ThreadPool:");
+
                 for (unsigned long i(0); i < num_threads; ++i)
                 {
                     PoolThread * poolthread(new PoolThread(this));
@@ -79,6 +82,8 @@ namespace honei
             //If it doesn't exist yet, it is created with numThreads threads. numThreads is ignored otherwise.
             static ThreadPool * get_instance(unsigned long num_threads)
             {
+                CONTEXT("When getting ThreadPool:");
+
                 static ThreadPool result(num_threads);
                 return &result;
             }
@@ -87,6 +92,8 @@ namespace honei
             //If it doesn't exist yet, it is created with a default number of threads. Useful for convenience.
             static ThreadPool * get_instance()
             {
+                CONTEXT("When getting ThreadPool:");
+
                 static ThreadPool result(DEFAULT_NUM_THREADS);
                 return &result;
             }
@@ -94,6 +101,8 @@ namespace honei
            ///Destructor.
             ~ThreadPool()
             {
+                CONTEXT("When destroying ThreadPool:");
+
                 delete _mutex;
                 delete _available;
             }
@@ -101,6 +110,8 @@ namespace honei
             ///Processes incoming tasks.
             PoolTask * dispatch(WorkerTask task)
             {
+                CONTEXT("When dispatching in ThreadPool:");
+
                 Lock l(*_mutex);
 
                 PoolTask * pt(new PoolTask(task));
@@ -121,6 +132,8 @@ namespace honei
 
             void notify(PoolThread * returning_thread)
             {
+                CONTEXT("When notifying ThreadPool:");
+
                 Lock l(*_mutex);
 
                 if(! _task_list.empty())

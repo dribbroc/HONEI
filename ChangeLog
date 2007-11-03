@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-03 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libutil/pool_task.hh, libutil/pool_thread.cc,
+	libutil/thread_pool.hh: Added context-statements to all functions.
+
 2007-11-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/exception.cc, libutil/exception.hh: Moved all ExternalError
