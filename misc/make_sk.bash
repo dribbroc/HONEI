@@ -50,7 +50,9 @@ skskeleton=${2}
 
     return_void() {
         echo "                case oc_${1}:"
+        echo "                    spu_write_out_intr_mbox(km_debug_enter);"
         echo "                    ${2}(instructions[instruction_index]);"
+        echo "                    spu_write_out_intr_mbox(km_debug_leave);"
         echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
         echo "                    break;"
         echo
@@ -58,7 +60,9 @@ skskeleton=${2}
 
     return_dword() {
         echo "                case oc_${1}:"
+        echo "                    spu_write_out_intr_mbox(km_debug_enter);"
         echo "                    retval = ${2}(instructions[instruction_index]);"
+        echo "                    spu_write_out_intr_mbox(km_debug_leave);"
         echo "                    spu_write_out_intr_mbox(km_result_dword);"
         echo "                    spu_write_out_mbox(retval & 0xFFFFFFFF);"
         echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
@@ -68,7 +72,9 @@ skskeleton=${2}
 
     return_qword() {
         echo "                case oc_${1}:"
+        echo "                    spu_write_out_intr_mbox(km_debug_enter);"
         echo "                    retval = ${2}(instructions[instruction_index]);"
+        echo "                    spu_write_out_intr_mbox(km_debug_leave);"
         echo "                    spu_write_out_intr_mbox(km_result_dword);"
         echo "                    spu_write_out_mbox(retval & 0xFFFFFFFF);"
         echo "                    spu_write_out_mbox(retval >> 32);"

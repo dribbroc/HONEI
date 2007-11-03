@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* misc/make_sk.bash: Added debug messages to signal entering and
+	leaving of instructions.
+
+2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* cell/kernels/kernel.cc.in: Removed printf statements as they can
 	harm debugging when DMA transfers go awry.
 	* cell/kernels/Makefile.am.m4: Fixed missing dependency.
