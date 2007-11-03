@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/spe.cc: Added handling of SPE's stop reason.
+
+2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/stringify.hh: Added stringification of Cell specific types.
 	* cell/cell.hh, libutil/spe_kernel.cc: Added kernel messages for
 	debugging block acquiration and release, as well as to dump the SPE's

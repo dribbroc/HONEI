@@ -24,13 +24,12 @@
 #include <libutil/spe_manager.hh>
 #include <libutil/thread.hh>
 
-#include <cerrno>
 #include <string>
 #include <tr1/functional>
 
 #include <libspe2.h>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
-#include <iostream>
+
 using namespace honei;
 
 
@@ -68,6 +67,7 @@ struct SPE::Implementation
         CONTEXT("When running execution thread for SPE #" + stringify(imp->device) + ":");
 
         unsigned int entry_point(SPE_DEFAULT_ENTRY);
+        spe_stop_info_t stop_info;
         signed int retval(0);
 
         imp->kernel->load(SPE(imp));
@@ -77,18 +77,60 @@ struct SPE::Implementation
             do
             {
                 retval = spe_context_run(imp->context, &entry_point, 0, imp->kernel->argument(),
-                        imp->kernel->environment(), 0);
+                        imp->kernel->environment(), &stop_info);
             }
             while (retval > 0);
 
             if (retval < 0)
             {
+                Log::instance()->message(ll_minimal, "SPE #" + stringify(imp->device) + " stopped "
+                        "at " + stringify(reinterpret_cast<void *>(entry_point)));
+
+                std::string msg("Reason: ");
+                switch (stop_info.stop_reason)
+                {
+                    case SPE_RUNTIME_ERROR:
+                        msg += "SPE runtime error";
+                        break;
+
+                    case SPE_RUNTIME_EXCEPTION:
+                        msg += "SPE runtime exception due to ";
+                        switch (stop_info.result.spe_runtime_exception)
+                        {
+                            case SPE_DMA_ALIGNMENT:
+                                msg += "DMA alignment error";
+                                break;
+
+                            case SPE_DMA_SEGMENTATION:
+                                msg += "DMA segmentation error";
+                                break;
+
+                            case SPE_DMA_STORAGE:
+                                msg += "DMA storage error";
+
+                            case SPE_INVALID_DMA:
+                                msg += "; Invalid DMA error reported!";
+                        }
+                        break;
+
+                    case SPE_RUNTIME_FATAL:
+                        msg += "SPE runtime fatal error";
+                        break;
+
+                    case SPE_CALLBACK_ERROR:
+                        msg += "SPE callback error";
+                        break;
+
+                    default:
+                        msg += "unknown error (" + stringify(stop_info.stop_reason) + ")";
+                }
+                Log::instance()->message(ll_minimal, msg);
                 throw SPEError("spe_context_run", errno);
             }
         }
         catch (Exception & e)
         {
-            std::cout << e.backtrace("\n") << std::endl;
+            Log::instance()->message(ll_minimal, e.message());
             throw;
         }
     }
