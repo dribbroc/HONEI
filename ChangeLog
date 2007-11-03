@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/libutil/allocator.hh: Added release_all_blocks(). Added
+	debugging by using new kernel messages.
+
+2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/spe.cc: Added handling of SPE's stop reason.
 
 2007-11-03 Danny van Dyk <danny.dyk@uni-dortmund.de>

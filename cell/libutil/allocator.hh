@@ -20,6 +20,7 @@
 #define CELL_LIBUTIL_GUARD_ALLOCATOR_HH 1
 
 #include <cell/cell.hh>
+#include <cell/libutil/debug.hh>
 
 namespace allocator
 {
@@ -30,8 +31,9 @@ namespace allocator
             unsigned user_data : 31;
         public:
             friend void init(const Environment & env);
-            friend Allocation * acquire_block(Allocation * i);
+            friend Allocation * acquire_block();
             friend void release_block(Allocation & i);
+            friend void release_all_blocks();
             friend unsigned get_user_data(const Allocation & i);
             friend void set_user_data(Allocation & i, unsigned data);
 
@@ -57,26 +59,39 @@ namespace allocator
         }
     }
 
-    inline Allocation * acquire_block(Allocation * i = intern::allocations)
+    inline Allocation * acquire_block()
     {
         Allocation * result(0);
-        unsigned c(0);
 
-        for (Allocation * i_end(intern::allocations + 16) ; i != i_end ; ++i, ++c)
+        for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ; i != i_end ; ++i)
         {
             if (i->used == 1)
                 continue;
 
             result = i;
             result->used = 1;
+            debug_acquire(result->address);
             break;
         }
 
         return result;
     }
 
+    inline void release_all_blocks()
+    {
+        for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ; i != i_end ; ++i)
+        {
+            if (i->used)
+                debug_release(i->address);
+
+            i->user_data = 0;
+            i->used = 0;
+        }
+    }
+
     inline void release_block(Allocation & i)
     {
+        debug_release(i.address);
         i.user_data = 0;
         i.used = 0;
     }
