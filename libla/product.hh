@@ -30,10 +30,10 @@
 #include <libla/sparse_matrix.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/sum.hh>
-#include <libutil/tags.hh>
-#include <libutil/wrapper.hh>
-#include <libutil/thread_pool.hh>
 #include <libutil/pool_task.hh>
+#include <libutil/tags.hh>
+#include <libutil/thread_pool.hh>
+#include <libutil/wrapper.hh>
 
 #include <tr1/functional>
 #include <cmath>
@@ -980,7 +980,7 @@ namespace honei
         static DenseMatrix<float> value(const DenseMatrix<float> & a, const DenseMatrix<float> & b);
     };
     
-    template <> struct Product<tags::CPU::MultiCore>
+    template <typename TAG_> struct MCProduct 
     {
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
@@ -998,14 +998,14 @@ namespace honei
             ThreadPool * p(ThreadPool::get_instance());
             PoolTask * pt[a.rows()];
 
-            TwoArgWrapper< DotProduct<tags::CPU::MultiCore::DelegateTo>, DT1_, DenseVector<DT1_>, DenseVector<DT2_> > mywrapper; 
+            TwoArgWrapper< DotProduct<typename TAG_::DelegateTo>, DT1_, DenseVector<DT1_>, DenseVector<DT2_> > mywrapper; 
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i] = p->dispatch(std::tr1::bind(mywrapper, &(*l), a[i], b));
                 ++l;
             }
 
-            for (unsigned long i = 0; i < a.rows(); ++i)
+            for (unsigned long i = 0; i < a.rows();  ++i)
             {
                 pt[i]->wait_on();
             }
@@ -1013,5 +1013,8 @@ namespace honei
             return result;
         }
     };
+    template <> struct Product <tags::CPU::MultiCore> : MCProduct <tags::CPU::MultiCore> {};
+    template <> struct Product <tags::CPU::MultiCore::SSE> : MCProduct <tags::CPU::MultiCore::SSE> {};
+
 }
 #endif

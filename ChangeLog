@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-04 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* libla/product.hh: Added possibility to use SSE for MultiCore
+	* libla/product_TEST.cc, libla/product_BENCHMARK.cc: Added
+	MultiCore::SSE tests and benchmarks. 
+
 2007-11-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/libutil/debug.hh: Oops. Forgot to add this file in a previous
