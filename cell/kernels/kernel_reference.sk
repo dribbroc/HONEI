@@ -7,3 +7,4 @@ return_dword    dense_dense_float_dot_product               dense_dense_float_do
 return_void     dense_dense_float_element_product           dense_dense_float_element_product
 return_void     dense_dense_float_matrix_vector_product     dense_dense_float_matrix_vector_product
 return_dword    dense_dense_float_matrix_product            dense_dense_float_matrix_product
+return_dword    dense_float_vector_reduction_sum            dense_float_vector_reduction_sum  

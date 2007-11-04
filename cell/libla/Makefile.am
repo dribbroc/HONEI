@@ -10,7 +10,8 @@ libla_spe_a_SOURCES = \
 	dense_dense_float_matrix_product.cc \
 	dense_dense_float_sum.cc \
 	dense_dense_float_matrix_vector_product.cc \
-	dense_sparse_float_sum.cc
+	dense_sparse_float_sum.cc \
+    dense_float_vector_reduction_sum.cc
 libla_spe_a_CXXFLAGS = -msafe-dma -fno-exceptions -fno-rtti
 
 bench:

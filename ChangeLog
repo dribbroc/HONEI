@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-04 Till Barz <till.barz@udo.edu>
+	* cell/libla/dense_float_vector_reduction_sum.cc: Implementation of
+	Reduction  (Sum) for DenseVectors added.
+	* libla/reduction-cell.cc: Related PPU-Part for the above Operation
+	added.
+
 2007-11-04 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* libla/product.hh: Added possibility to use SSE for MultiCore

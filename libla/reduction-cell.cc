@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,27 +18,33 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_CELL_GUARD_CELL_OPCODES_HH
-#define LIBLA_CELL_GUARD_CELL_OPCODES_HH 1
+#include <cell/cell.hh>
+#include <libla/reduction.hh>
+#include <libutil/memory_backend_cell.hh>
+#include <libutil/spe_instruction.hh>
+#include <libutil/spe_manager.hh>
 
-enum OpCode
+namespace honei
 {
-    oc_noop = 1 << 0,
-    oc_halt,
+    float 
+    Reduction<rt_sum,tags::Cell>::value(const DenseVector<float> & a)
+    {
+        CONTEXT("When reducing DenseVector<float> to Scalar by Sum (Cell):");
 
-    oc_dense_dense_float_sum = 1 << 4,
-    oc_dense_dense_float_dot_product,
-    oc_dense_dense_float_matrix_product,
-    oc_dense_dense_float_matrix_vector_product,
-    oc_dense_dense_float_element_product,
-    oc_dense_sparse_float_sum,
-    oc_dense_float_vector_reduction_sum,
+        float result;
+        
+        Operand oa = { a.elements() };
+        Operand ob = { &result };
+        
+        SPEInstruction instruction(oc_dense_float_vector_reduction_sum, a.size(), oa, ob);
 
-    oc_test_instruction_finished = unsigned(1 << 30),
-    oc_test_result_dword,
-    oc_test_result_qword,
+        SPEManager::instance()->dispatch(instruction);
 
-    oc_last = oc_test_result_qword
-};
+        instruction.wait();
+       
+        return result;
+    }
+    
 
-#endif
+
+}
