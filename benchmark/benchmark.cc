@@ -130,28 +130,25 @@ void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
     cout << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
     double avg = (total/x);
     cout << "Runtime - average: " << avg << "sec" << endl; 
+    string pf = " KMGTPEZY";
     double tp = ((double)flop / (1024 * 1024)) * transfersperflop * datasize * x / total;
-    cout << "Throughput: " << tp << "MB/s" << endl;
+    int i = 2;
+    while (tp > 1024 && i < 9)
+    {
+        tp /= 1024;
+        ++i;
+    }
+    cout << "Throughput: " << tp << pf[i] << "B/s" << endl;
     double f = 0;
-    string fl = " FLOPS";
     if (total > 0)
         f = ((x/total)*flop);
-    if (f > 100000000.)
+    int j = 0;
+    while (f > 1024 && j < 9)
     {
-        f /= 1000000000.;
-        fl = " GFLOPS";
+        f /= 1024;
+        ++j;
     }
-    else if (f > 100000.)
-    {
-        f /= 1000000.;
-        fl = " MFLOPS";
-    }
-    else if (f > 100.)
-    {
-        f /= 1000.;
-        fl = " KFLOPS";
-    }
-    cout << f << fl << endl;
+    cout << f << " " << pf[j] << "FLOPS" << endl;
     ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
     if (!ofs)
         cout << "Can't write to file!" << endl;
@@ -166,8 +163,8 @@ void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
         ofs << "Runtime - lowest: " << min << "sec (" << xmin << ".)" << endl;
         ofs << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
         ofs << "Runtime - average: " << avg << "sec" << endl;
-        ofs << "Throughput: " << tp << "MB/s" << endl;
-        ofs << f << fl << endl;
+        ofs << "Throughput: " << tp << pf[i] << "B/s"  << endl;
+        ofs << f << " " << pf[j] << "FLOPS" << endl;
         ofs << endl << endl << endl;
     }
 }
