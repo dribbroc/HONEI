@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-11-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/libla/dense_dense_float_sum.cc: Rewrite: Switched to using
+	double buffering.
+	* libla/sum-cell.cc: Adjusted to new calling conventions of SPE part.
+	* libla/sum_BENCHMARK.cc: Added Cell benchmark.
+	* libla/sum_TEST.cc: Modified test case to catch corner cases.
+
+2007-11-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/exception.cc: Moved filename and line number to the tail of
 	context strings.
 	* libutil/log.cc: Made Log thread-aware.

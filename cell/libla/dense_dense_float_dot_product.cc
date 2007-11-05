@@ -20,7 +20,7 @@
 
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
-#include <cell/libutil/transfer.hh>
+#include <cell/libutil/debug.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -28,38 +28,104 @@
 
 using namespace honei;
 
+/*
+ * dense_dense_float_dot_product
+ *
+ * Calculate the dot product of two dense vectors.
+ *
+ * \size Default transfer buffer size in bytes.
+ * \operand a Address of return value.
+ * \operand b Base address of first vector.
+ * \operand c Base address of second vector.
+ * \operand d Number of transfers needed.
+ * \operand e Last transfer buffer size in bytes.
+ */
 unsigned dense_dense_float_dot_product(const Instruction & inst)
 {
-    printf("dense_dense_float_dot_product:\n");
+    EffectiveAddress ea_a(inst.b.ea), ea_b(inst.c.ea);
+    unsigned counter(inst.d.u);
 
-    allocator::Allocation * block_a(allocator::acquire_block());
-    allocator::Allocation * block_b(allocator::acquire_block());
+    allocator::Allocation * block_a[2] = { allocator::acquire_block(), allocator::acquire_block() };
+    allocator::Allocation * block_b[2] = { allocator::acquire_block(), allocator::acquire_block() };
 
-    Pointer<float> a = { block_a->address };
-    Pointer<float> b = { block_b->address };
-
-    mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 1, 0, 0);
-    mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen(inst.size * sizeof(float)), 2, 0, 0);
-    mfc_write_tag_mask(1 << 2 | 1 << 1);
-    mfc_read_tag_status_all();
-
-    Subscriptable<float> t = { spu_splats(0.0f) };
-
-    unsigned i(0);
-    for ( ; i < inst.size / 4 ; ++i)
-    {
-        t.value = spu_madd(a.vectorised[i], b.vectorised[i], t.value);
-    }
-
-    for (unsigned j(0) ; j < inst.size % 4 ; j += 1)
-    {
-        t.array[0] += a.typed[i * 4 + j] * b.typed[i * 4 + j];
-    }
-
-    t.array[0] += t.array[1] + t.array[2] + t.array[3];
+    Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
+    Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
 
     MailableResult<float> result;
-    result.value = t.array[0];
+    Subscriptable<float> intermediate = { spu_splats(0.0f) };
+
+    unsigned current(1), next(2);
+    //debug_get(ea_a, a[current - 1].untyped, inst.size);
+    mfc_get(a[current - 1].untyped, ea_a, inst.size, current, 0, 0);
+    //debug_get(ea_b, b[current - 1].untyped, inst.size);
+    mfc_get(b[current - 1].untyped, ea_b, inst.size, current, 0, 0);
+
+    while (counter > 1)
+    {
+        ea_a += inst.size;
+        ea_b += inst.size;
+
+        //debug_get(ea_a, a[next - 1].untyped, inst.size);
+        mfc_get(a[next - 1].untyped, ea_a, inst.size, next, 0, 0);
+        //debug_get(ea_b, b[next - 1].untyped, inst.size);
+        mfc_get(b[next - 1].untyped, ea_b, inst.size, next, 0, 0);
+
+        mfc_write_tag_mask(1 << current);
+        mfc_read_tag_status_all();
+
+        for (unsigned i(0) ; i < inst.size / sizeof(vector float) ; ++i)
+        {
+            intermediate.value = spu_madd(a[current - 1].vectorised[i], b[current - 1].vectorised[i], intermediate.value);
+        }
+
+
+        --counter;
+
+        unsigned temp(next);
+        next = current;
+        current = temp;
+    }
+
+    ea_a += inst.size;
+    ea_b += inst.size;
+
+    if (inst.e.u > 0)
+    {
+        //debug_get(ea_a, a[next - 1].untyped, inst.d.u);
+        mfc_get(a[next - 1].untyped, ea_a, inst.d.u, next, 0, 0);
+        //debug_get(ea_b, b[next - 1].untyped, inst.d.u);
+        mfc_get(b[next - 1].untyped, ea_b, inst.d.u, next, 0, 0);
+    }
+
+    mfc_write_tag_mask(1 << current);
+    mfc_read_tag_status_all();
+
+    for (unsigned i(0) ; i < inst.size / sizeof(vector float) ; ++i)
+    {
+        intermediate.value = spu_madd(a[current - 1].vectorised[i], b[current - 1].vectorised[i], intermediate.value);
+    }
+
+    unsigned temp(next);
+    next = current;
+    current = temp;
+
+    if (inst.e.u > 0)
+    {
+        mfc_write_tag_mask(1 << current);
+        mfc_read_tag_status_all();
+
+        for (unsigned i(0) ; i < inst.e.u / sizeof(vector float) ; ++i)
+        {
+            intermediate.value = spu_madd(a[current - 1].vectorised[i], b[current - 1].vectorised[i], intermediate.value);
+        }
+    }
+
+    result.value = intermediate.array[0] + intermediate.array[1] + intermediate.array[2] + intermediate.array[3];
+
+    allocator::release_block(*block_a[0]);
+    allocator::release_block(*block_a[1]);
+    allocator::release_block(*block_b[0]);
+    allocator::release_block(*block_b[1]);
 
     return result.mail;
 }

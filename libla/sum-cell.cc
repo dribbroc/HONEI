@@ -22,7 +22,8 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-#include <iostream>
+#include <libutil/stringify.hh>
+
 namespace honei
 {
     DenseVector<float> &
@@ -38,20 +39,43 @@ namespace honei
         Operand oc, od;
         // hardcode transfer buffer size for now.
         oc.u = a.size() / (1024 * 4);
-        od.u = a.size() % (1024 * 4) & ~0xF;
+        od.u = a.size() % (1024 * 4);
+        od.u &= ~0xF;
+
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
 
         SPEInstruction instruction(oc_dense_dense_float_sum, 16 * 1024, oa, ob, oc, od);
 
-        SPEManager::instance()->dispatch(instruction);
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
 
-        Vector<float>::ConstElementIterator j(b.element_at(oc.u * 4096 + od.u));
-        for (Vector<float>::ElementIterator i(a.element_at(oc.u * 4096 + od.u)), i_end(a.end_elements()) ;
-                i != i_end ; ++i, ++j)
+        Vector<float>::ConstElementIterator j(b.element_at(rest_index));
+        Vector<float>::ElementIterator i(a.element_at(rest_index)), i_end(a.end_elements());
+        for ( ; i != i_end ; ++i, ++j)
         {
             *i += *j;
         }
 
-        instruction.wait();
+        if (use_spe)
+            instruction.wait();
 
         return a;
     }

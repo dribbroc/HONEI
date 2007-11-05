@@ -82,4 +82,7 @@ DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchma
 #ifdef HONEI_SSE
 DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
 #endif
-//DenseVectorSumBench<float> DVSBenchfloat2("Dense Vector Scaled Sum Benchmark - vector size: 10,000,000, float", 10000000, 10);
+#ifdef HONEI_CELL
+DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float",
+        64ul * 64 * 64 * 64, 10);
+#endif
