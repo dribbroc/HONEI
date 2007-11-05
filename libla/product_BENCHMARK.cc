@@ -106,7 +106,7 @@ class DenseMatrixDenseVectorProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(dm0, dv0));
             }
-            evaluate(_size*_size*_size*2, sizeof(DataType_));
+            evaluate(size*_size, sizeof(DataType_));
         }
 };
 DenseMatrixDenseVectorProductBench<tags::CPU, float> DMDVPBenchfloat("Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, float", 64ul*64, 10);
