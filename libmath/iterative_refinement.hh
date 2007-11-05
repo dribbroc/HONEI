@@ -45,7 +45,7 @@ namespace honei
      * \brief Solution of LES with Iterative Refinement using CG as inner solver.
      *
      * The referenced containers are invariant under this operation.
-     * In every case, a new object is created and returned.
+     * In every case, a new object (the solution) is created and returned.
      *
      * \ingroup grpmatrixoperations
      * \ingroup grpvectoroperations
@@ -57,6 +57,8 @@ namespace honei
             template<typename DT1_>
             static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
             {
+                CONTEXT("When solving dense LES with iterative refinement (CG)");
+
                 DT1_ alpha = DT1_(1.0);
                 DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
                 //inner allocation:
@@ -73,6 +75,16 @@ namespace honei
                 DT1_ initial_defectnorm = Norm<vnt_l_two, false, tags::CPU>::value(defect);
 
                 unsigned long iter_number = 0;
+
+                ///Do conversion of system matrix once
+                typename DenseMatrix<DT1_>::ConstElementIterator i_outer(system_matrix.begin_elements()), i_end(system_matrix.end_elements());
+                typename DenseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
+                while(i_outer != i_end)
+                {
+                    *i_inner = float(*i_outer);
+                    ++i_inner; ++i_outer;
+                }
+
 
                 ///Main loop:
                 do
@@ -91,14 +103,6 @@ namespace honei
                     }
 
                     ///Do conversion and solve inner system:
-                    typename DenseMatrix<DT1_>::ConstElementIterator i_outer(system_matrix.begin_elements()), i_end(system_matrix.end_elements());
-                    typename DenseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
-                    while(i_outer != i_end)
-                    {
-                        *i_inner = float(*i_outer);
-                        ++i_inner; ++i_outer;
-                    }
-
                     typename DenseVector<DT1_>::ConstElementIterator j_outer(defect.begin_elements()), j_end(defect.end_elements());
                     typename DenseVector<float>::ElementIterator j_inner(inner_defect.begin_elements());
                     while(j_outer != j_end )
@@ -109,14 +113,6 @@ namespace honei
 
                     inner_defect = ConjugateGradients<tags::CPU>::value(inner_system, inner_defect, eps_inner);
 
-                    typename DenseMatrix<DT1_>::ElementIterator a_outer(system_matrix.begin_elements()), a_end(system_matrix.end_elements());
-                    typename DenseMatrix<float>::ConstElementIterator a_inner(inner_system.begin_elements());
-                    while(a_outer != a_end)
-                    {
-                        *a_outer = DT1_(*a_inner);
-                        ++a_inner; ++a_outer;
-                    }
-
                     typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
                     typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
                     while(b_outer != b_end )
@@ -126,7 +122,7 @@ namespace honei
                     }
 
                     ///Update solution:
-                    DenseVector<DT1_> c_scaled = Scale<tags::CPU>::value(alpha, defect);
+                    Scale<tags::CPU>::value(alpha, defect);
                     x_actual = Sum<tags::CPU>::value(x_actual, defect);
 
                     defect = Product<tags::CPU>::value(system_matrix, x_actual);
@@ -139,6 +135,7 @@ namespace honei
 
                 return x_actual;
             }
+
     };
 
     /**
@@ -157,6 +154,8 @@ namespace honei
             template<typename DT1_>
             static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
             {
+
+                CONTEXT("When solving dense LES with iterative refinement (Jacobi)");
                 DT1_ alpha = DT1_(1.0);
                 DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
                 //inner allocation:
@@ -173,6 +172,13 @@ namespace honei
                 DT1_ initial_defectnorm = Norm<vnt_l_two, false, tags::CPU>::value(defect);
 
                 unsigned long iter_number = 0;
+                typename DenseMatrix<DT1_>::ConstElementIterator i_outer(system_matrix.begin_elements()), i_end(system_matrix.end_elements());
+                typename DenseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
+                while(i_outer != i_end)
+                {
+                    *i_inner = float(*i_outer);
+                    ++i_inner; ++i_outer;
+                }
 
                 ///Main loop:
                 do
@@ -191,14 +197,6 @@ namespace honei
                     }
 
                     ///Do conversion and solve inner system:
-                    typename DenseMatrix<DT1_>::ConstElementIterator i_outer(system_matrix.begin_elements()), i_end(system_matrix.end_elements());
-                    typename DenseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
-                    while(i_outer != i_end)
-                    {
-                        *i_inner = float(*i_outer);
-                        ++i_inner; ++i_outer;
-                    }
-
                     typename DenseVector<DT1_>::ConstElementIterator j_outer(defect.begin_elements()), j_end(defect.end_elements());
                     typename DenseVector<float>::ElementIterator j_inner(inner_defect.begin_elements());
                     while(j_outer != j_end )
@@ -209,14 +207,6 @@ namespace honei
 
                     inner_defect = Jacobi<tags::CPU>::value(inner_system, inner_defect, eps_inner);
 
-                    typename DenseMatrix<DT1_>::ElementIterator a_outer(system_matrix.begin_elements()), a_end(system_matrix.end_elements());
-                    typename DenseMatrix<float>::ConstElementIterator a_inner(inner_system.begin_elements());
-                    while(a_outer != a_end)
-                    {
-                        *a_outer = DT1_(*a_inner);
-                        ++a_inner; ++a_outer;
-                    }
-
                     typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
                     typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
                     while(b_outer != b_end )
@@ -226,7 +216,7 @@ namespace honei
                     }
 
                     ///Update solution:
-                    DenseVector<DT1_> c_scaled = Scale<tags::CPU>::value(alpha, defect);
+                    Scale<tags::CPU>::value(alpha, defect);
                     x_actual = Sum<tags::CPU>::value(x_actual, defect);
 
                     defect = Product<tags::CPU>::value(system_matrix, x_actual);

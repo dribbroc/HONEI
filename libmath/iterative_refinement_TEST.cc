@@ -65,7 +65,7 @@ class IterativeRefinementTestDenseCG:
             x_analytical[1] = DT1_(5./6.);
             x_analytical[2] = DT1_(-1./3.);
             DT1_ x_analytical_n = Norm< vnt_l_two, false, DT1_>::value(x_analytical);
-            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
 
         }
 };
@@ -100,7 +100,7 @@ class IterativeRefinementTestDenseJAC:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<JAC, tags::CPU>::value(A,b,double(0.000001), double(0.000001)));
+            DenseVector<DT1_> result(IterativeRefinement<JAC, tags::CPU>::value(A,b,double(0.00000001), double(0.00000001)));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -109,7 +109,7 @@ class IterativeRefinementTestDenseJAC:
             x_analytical[1] = DT1_(5./6.);
             x_analytical[2] = DT1_(-1./3.);
             DT1_ x_analytical_n = Norm< vnt_l_two, false, DT1_>::value(x_analytical);
-            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
 
         }
 };

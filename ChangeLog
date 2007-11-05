@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-05 Markus Geveler <apryde@gmx.de>
+
+	* iterative_refinement_TEST.cc, iterative_refinement_TEST.cc:
+	Restructured dense case for both inner solvers, adjusted tests.
+
 2007-11-05 David Gies <david-gies@gmx.de>
 
         * benchmark/benchmark.cc: Minor output changes.
