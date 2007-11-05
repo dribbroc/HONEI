@@ -27,7 +27,7 @@ namespace honei
     class SPEEvent
     {
         private:
-            /// Our pthread condition variable.
+            /// Our event handler.
             spe_event_handler_ptr_t _handler;
 
             /// Our event interests.

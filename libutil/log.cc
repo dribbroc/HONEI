@@ -20,12 +20,15 @@
 #include <libutil/log.hh>
 #include <libutil/lock.hh>
 #include <libutil/exception.hh>
+#include <libutil/stringify.hh>
 
 #include <list>
 #include <fstream>
 #include <iostream>
 #include <ostream>
 #include <string>
+
+#include <syscall.h>
 
 using namespace honei;
 
@@ -95,7 +98,7 @@ Log::instance()
 }
 
 void
-Log::message(const LogLevel level, const std::string & message)
+Log::message(const LogLevel level, const std::string & msg)
 {
     Lock l(*_mutex);
 
@@ -105,11 +108,12 @@ Log::message(const LogLevel level, const std::string & message)
         if (level <= o->level())
         {
             static std::string previous_context;
-            std::string context(Context::backtrace("\n"));
+            std::string context("In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " +
+                    Context::backtrace("\n ... "));
             if (previous_context == context)
-                (*o) << "(same context) " << message << std::endl;
+                (*o) << "(same context) " << msg << std::endl;
             else
-                (*o) << context << message << std::endl;
+                (*o) << context << msg << std::endl;
             previous_context = context;
         }
     }

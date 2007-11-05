@@ -46,7 +46,7 @@ struct Context::ContextData
     libebt::BacktraceContext<ContextTag> context;
 
     ContextData(const char * const file, const long line, const std::string & s) :
-        context(stringify(file) + ":" + stringify(line) + ": " + s)
+        context(s + " (" + stringify(file) + ":" + stringify(line) + ")")
     {
     }
 };

@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/exception.cc: Moved filename and line number to the tail of
+	context strings.
+	* libutil/log.cc: Made Log thread-aware.
+	* libutil/spe.cc: Removed handling of SPE_INVALID_DMA due to version
+	mismatch with used libspe2.
+	* libutil/spe_event.cc: Switched to using SPEError exceptions.
+	* libutil/spe_event.hh: Fixed comment.
+
 2007-11-05 Markus Geveler <apryde@gmx.de>
 
 	* iterative_refinement_TEST.cc, iterative_refinement_TEST.cc:
@@ -12,7 +22,7 @@ see the NEWS file.
 
 2007-11-05 David Gies <david-gies@gmx.de>
 
-        * benchmark/benchmark.cc: Minor output changes.
+	* benchmark/benchmark.cc: Minor output changes.
 
 2007-11-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 

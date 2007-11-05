@@ -18,10 +18,12 @@
  */
 
 #include <libutil/assertion.hh>
+#include <libutil/exception.hh>
 #include <libutil/spe_event.hh>
+#include <libutil/stringify.hh>
 
-#include <cstring>
 #include <cerrno>
+#include <cstring>
 
 namespace honei
 {
@@ -30,12 +32,18 @@ namespace honei
     {
         CONTEXT("When creating SPEEvent for SPE #" + stringify(spe.id()) + ":");
 
+        if (0 == _handler)
+        {
+            throw SPEError("spe_event_handler_create", errno);
+        }
+
         _events.events = events;
         _events.spe = spe.context();
 
-        if (0 != spe_event_handler_register(_handler, &_events))
+        unsigned retval;
+        if (0 != (retval = spe_event_handler_register(_handler, &_events)))
         {
-            /// \todo check for ENOTSUP
+            throw SPEError("spe_event_handler_register", retval);
         }
     }
 
@@ -43,9 +51,10 @@ namespace honei
     {
         int result(0);
 
-        if (0 != spe_event_handler_deregister(_handler, &_events))
+        unsigned retval;
+        if (0 != (retval = spe_event_handler_deregister(_handler, &_events)))
         {
-            /// \todo check for ENOTSUP
+            throw SPEError("spe_event_handler_deregister", retval);
         }
 
         do
@@ -54,7 +63,8 @@ namespace honei
         }
         while ((-1 == result) && (EAGAIN == errno));
 
-        ASSERT(0 == result, "spe_event_handler_destroy returned '" + stringify(strerror(errno)) + "'!");
+        if (-1 == result)
+            throw SPEError("spe_event_handler_destroy", errno);
     }
 
     spe_event_unit_t *

@@ -107,9 +107,6 @@ struct SPE::Implementation
 
                             case SPE_DMA_STORAGE:
                                 msg += "DMA storage error";
-
-                            case SPE_INVALID_DMA:
-                                msg += "; Invalid DMA error reported!";
                         }
                         break;
 
