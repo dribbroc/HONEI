@@ -29,6 +29,10 @@ namespace methods
     {
     };
 
+    class NONE
+    {
+    };
+
 }
 
 #endif
