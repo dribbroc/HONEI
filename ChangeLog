@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/sum_TEST.cc: Fixed include statements.
+
 2007-11-06 Markus Geveler <apryde@gmx.de>
 
 	* libmath/methods.hh:
@@ -23,6 +27,12 @@ see the NEWS file.
 	cell/libutil/transfer.cc, cell/libutil/transfer.hh,
 	libla/product-cell.cc: Made Product<float>(DenseMatrix,DenseMatrix)
 	work on Cell.
+
+2007-11-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/libla/dense_dense_float_dot_product.cc,
+	cell/libla/dense_dense_float_sum.cc: Reverted DotProduct changes and
+	committed Sum changes as intended by previous commit.
 
 2007-11-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 

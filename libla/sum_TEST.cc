@@ -23,8 +23,6 @@
 #include <libla/sum.hh>
 #include <unittest/unittest.hh>
 
-#include <libutil/spe_manager.hh>
-
 #include <limits>
 #include <tr1/memory>
 #include <iostream>
