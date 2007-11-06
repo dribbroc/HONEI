@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-06 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* cell/cell.hh, cell/kernels/kernel_reference.sk,
+	cell/libla/dense_dense_float_matrix_product.cc,
+	cell/libutil/transfer.cc, cell/libutil/transfer.hh,
+	libla/product-cell.cc: Made Product<float>(DenseMatrix,DenseMatrix)
+	work on Cell.
+
 2007-11-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/libla/dense_dense_float_sum.cc: Rewrite: Switched to using

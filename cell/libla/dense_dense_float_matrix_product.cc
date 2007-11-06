@@ -29,10 +29,10 @@ using namespace honei;
 
 void dense_dense_float_matrix_product(const Instruction & inst)
 {
-    printf("dense_dense_float_matrix_product:\n");
-    // inst.size = a.rows() = b.columns()
-    // inst.d.u = a.columns()
-    // inst.e.u = b.rows()
+    //printf("dense_dense_float_matrix_product:\n");
+    // inst.size = a.columns() = b.rows()
+    // inst.d.u = a.rows()
+    // inst.e.u = b.columns()
 
     allocator::Allocation * block_a(allocator::acquire_block());
     allocator::Allocation * block_b(allocator::acquire_block());
@@ -48,39 +48,103 @@ void dense_dense_float_matrix_product(const Instruction & inst)
     mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen(inst.size * inst.e.u * sizeof(float)), 2, 0, 0);
     mfc_write_tag_mask(1 << 2);
     mfc_read_tag_status_any();
-    mfc_get(r.untyped, inst.c.ea, multiple_of_sixteen(inst.size * inst.size * sizeof(float)), 3, 0, 0);
+    mfc_get(r.untyped, inst.c.ea, multiple_of_sixteen(inst.d.u * inst.e.u * sizeof(float)), 3, 0, 0);
     mfc_write_tag_mask(1 << 3);
     mfc_read_tag_status_any();
 
-    printf("a.rows: %lu, a.columns: %llu, b.rows: %llu, b.columns: %u \n ", inst.size, inst.d.u, inst.e.u, inst.size);
+    unsigned long b_offset(inst.e.u % 4); // The number of elements BEHIND the last complete vector in every column.
+
+    union {
+        unsigned long v;
+        float f;
+    } u = {~0}; // im 2er-Kompl ist Negation von 0 = -1 = 111...111 (umweg ueber ~0 noetig da unsigned)
+
+    const vector float mask_vector[4] = { // b_offset is the index into this vector
+        { u.f, u.f, u.f, u.f },
+        { u.f, 0x0000, 0x0000, 0x0000 },
+        { u.f, u.f, 0x0000, 0x0000 },
+        { u.f, u.f, u.f, 0x0000 }
+    };
+
+    // shuffle-offsets depend on b.columns() % 4 = b_offset and actual row in b % 4
+    const unsigned int extract_offsets[4][4] = {  // [b_offset][b_row % 4]
+        { 0, 0, 0, 0 }, // b_offset = 0, b_row % 4 = 0 - 3
+        { 0, 1, 2, 3 }, // b_offset = 1, ...
+        { 0, 2, 0, 2 },
+        { 0, 3, 2, 1 }
+    };
+
+    // the indices-offset of the FIRST vector that contains elements of a row in b assuming size < 4
+    const unsigned int vector_indices[4][4] = { // [b_offset][b_row % 4]
+        { 0, 0, 0, 0 },
+        { 0, 0, 0, 0 },
+        { 0, 0, 1, 1 },
+        { 0, 0, 1, 2 }
+    };
+
+    // the number of vectors in a row of b for b.columns() % 4 assuming size < 4
+    const unsigned int vectors_per_row[4][4] = {  // [b_offset][b_row % 4]
+        { 0, 0, 0, 0},
+        { 1, 1, 1, 1},
+        { 1, 1, 1, 1},
+        { 1, 1, 1, 1}
+    };
 
     unsigned long a_elem(0); // The actual considered element of matrix a
-    for (unsigned a_row(0) ; a_row < inst.size ; ++a_row) // Go through all rows of a
+
+    for( ; a_elem < inst.d.u * inst.size ; a_elem++)
     {
-        for(unsigned b_row(0) ; b_row < inst.e.u ; ++b_row) // Go through all rows of b
+        unsigned long act_a_row = a_elem / inst.size; // a_elem is in row a_elem / inst.size = a.columns()
+        unsigned long act_b_row = a_elem % inst.size; // The row to multiply with is the index of a_elem modulo the number of rows of b
+
+        unsigned long vecs_in_act_b_row = vectors_per_row[b_offset][act_b_row % 4] + (inst.e.u / 4); // Number of vectors in actual row of b
+        unsigned long b_vec_idx = (act_b_row * (inst.e.u / 4)) + ((act_b_row / 4) * b_offset) + vector_indices[b_offset][act_b_row % 4];
+
+        unsigned long r_vec_idx = (act_a_row * (inst.e.u / 4)) + ((act_a_row / 4) * b_offset) + vector_indices[b_offset][act_a_row % 4];
+
+        for(unsigned i(0) ; i < vecs_in_act_b_row - 1 ; i++) // Make all computations except the last
         {
-            unsigned b_vecs(0);
-            for( ; b_vecs < inst.size / 4 ; ++b_vecs) // Take all vectors of row b_row
-            {
-                r.vectorised[b_vecs + (a_row * inst.size / 4)] = spu_madd(spu_splats(a.typed[a_elem]), b.vectorised[b_vecs + (b_row * inst.size / 4)],
-                        r.vectorised[b_vecs + (a_row * inst.size / 4)]); // Multiply-add a_elem with all elements of the current vector of matrix b.
+            //r_vec_idx += i;
 
-                /* printf("Writing: a_row: %u, b_row: %u, b_vecs: %u, a_elem: %lu, vector in R: %lu, vector in B: %lu \n ", 
-                        a_row, b_row, b_vecs, a_elem, a_row*inst.size/4 + b_vecs, b_row*inst.size/4 + b_vecs); */
-            }
+            vector float temp = b.vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
+            Subscriptable<float> r_temp = { r.vectorised[r_vec_idx + i] }; // result matrix must either never be changed!
+            extract(temp, b.vectorised[b_vec_idx+1], extract_offsets[b_offset][act_b_row % 4]);
+            extract(r_temp.value, r.vectorised[r_vec_idx + i + 1], extract_offsets[b_offset][act_a_row % 4]);
 
-            for(unsigned b_vecs2(0) ; b_vecs2 < inst.size % 4 ; ++b_vecs2) // Take elements behind last complete vector of row b_row
-            {
-               unsigned index_a( (inst.size * a_row) + (b_vecs * 4) + b_vecs2 );
-               unsigned index_b( (inst.size * b_row) + (b_vecs * 4) + b_vecs2 );
-                //printf("Out of vector: a_elem: %lu, b_vecs: %u, b_vecs2: %u, index_r: %u, index_b: %u \n", a_elem, b_vecs, b_vecs2, index_a, index_b);
-                r.typed[index_a] += a.typed[a_elem] *  b.typed[index_b]; // Multiply-add a_elem with all elements of the current vector of matrix b.
-            }
-            a_elem++; // After completing one row in b we can go on for the next element of matrix a.
+            r_temp.value = spu_madd(spu_splats(a.typed[a_elem]), temp, r_temp.value);
+
+            r.typed[(r_vec_idx + i) * 4 + extract_offsets[b_offset][act_a_row % 4]] = r_temp.array[0];
+            r.typed[(r_vec_idx + i) * 4 + extract_offsets[b_offset][act_a_row % 4] + 1] = r_temp.array[1];
+            r.typed[(r_vec_idx + i) * 4 + extract_offsets[b_offset][act_a_row % 4] + 2] = r_temp.array[2];
+            r.typed[(r_vec_idx + i) * 4 + extract_offsets[b_offset][act_a_row % 4] + 3] = r_temp.array[3];
+
+            b_vec_idx++;
         }
+        // Now we handle the last vector in row where we perhaps must cut some elements that don't belong to the current row
+
+        r_vec_idx += (vecs_in_act_b_row - 1); // Take vector for the last computation of the possibly incomplete vector
+
+        vector float temp = b.vectorised[b_vec_idx];
+        Subscriptable<float> r_temp = { r.vectorised[r_vec_idx] };
+        extract(temp, b.vectorised[b_vec_idx+1], extract_offsets[b_offset][act_b_row % 4]);
+        extract(r_temp.value, r.vectorised[r_vec_idx+1], extract_offsets[b_offset][act_a_row % 4]);
+
+        Subscriptable<float> v = { spu_and(temp, mask_vector[b_offset]) };
+
+        r_temp.value = spu_madd(spu_splats(a.typed[a_elem]), v.value, r_temp.value);
+
+        r.typed[r_vec_idx * 4 + extract_offsets[b_offset][act_a_row % 4]] = r_temp.array[0];
+        r.typed[r_vec_idx * 4 + extract_offsets[b_offset][act_a_row % 4] + 1] = r_temp.array[1];
+        r.typed[r_vec_idx * 4 + extract_offsets[b_offset][act_a_row % 4] + 2] = r_temp.array[2];
+        r.typed[r_vec_idx * 4 + extract_offsets[b_offset][act_a_row % 4] + 3] = r_temp.array[3];
     }
 
-    mfc_put(r.untyped, inst.c.ea, multiple_of_sixteen(inst.size * inst.size * sizeof(float)), 4, 0, 0);
+    mfc_put(r.untyped, inst.c.ea, multiple_of_sixteen(inst.d.u * inst.e.u * sizeof(float)), 4, 0, 0);
     mfc_write_tag_mask(1 << 4);
     mfc_read_tag_status_any();
+
+    allocator::release_block(*block_a);
+    allocator::release_block(*block_b);
+    allocator::release_block(*block_r);
+
 }

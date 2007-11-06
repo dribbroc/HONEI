@@ -24,7 +24,7 @@
 
 namespace intern
 {
-    extern const vector unsigned char extract_patterns[3];
+    extern const vector unsigned char extract_patterns[4];
 }
 
 inline unsigned multiple_of_sixteen(unsigned u) __attribute__((always_inline));

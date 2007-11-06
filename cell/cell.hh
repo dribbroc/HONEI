@@ -63,6 +63,12 @@ template <> union Subscriptable<float>
     float array[4];
 };
 
+template <> union Subscriptable<unsigned long>
+{
+    vector unsigned long value;
+    unsigned long array[4];
+};
+
 #else
 #  error "You should not include this header in anything but Cell source code!"
 #endif

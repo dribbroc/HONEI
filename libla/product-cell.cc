@@ -64,10 +64,10 @@ namespace honei
         Operand oc = { result.elements() };
         Operand od;
         Operand oe;
-        od.u = a.columns();
-        oe.u = b.rows();
+        od.u = a.rows();
+        oe.u = b.columns();
 
-        SPEInstruction instruction(oc_dense_dense_float_matrix_product, a.rows(), oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_dense_dense_float_matrix_product, a.columns(), oa, ob, oc, od, oe);
 
         SPEManager::instance()->dispatch(instruction);
 
