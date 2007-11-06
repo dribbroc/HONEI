@@ -419,7 +419,7 @@ namespace honei
     template <> struct Reduction<rt_sum,tags::Cell>
     {
         /**
-         * \name Dot products
+         * \name Reduction
          * \{
          *
          * Returns the sum-reduction of a given vector.

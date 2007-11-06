@@ -34,9 +34,9 @@ namespace honei
         float result;
         
         Operand oa = { a.elements() };
-        Operand ob = { &result };
+        Operand oc = { &result };
         
-        SPEInstruction instruction(oc_dense_float_vector_reduction_sum, a.size(), oa, ob);
+        SPEInstruction instruction(oc_dense_float_vector_reduction_sum, a.size(), oa, oc);
 
         SPEManager::instance()->dispatch(instruction);
 
