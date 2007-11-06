@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/libla/dense_dense_float_sum.cc: Fixed bogus transfer tag.
+
 2007-11-06 Till Barz <till.barz@udo.edu>
 
 	* libla/reduction-cell.cc: Changed the operand for result from ob to oc.

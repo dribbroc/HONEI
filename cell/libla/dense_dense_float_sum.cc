@@ -76,7 +76,7 @@ int dense_dense_float_sum(const Instruction & inst)
             a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
         }
 
-        mfc_putb(a[current - 1].untyped, ea_result, size, next, 0, 0);
+        mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
         ea_result += size;
 
         --counter;
