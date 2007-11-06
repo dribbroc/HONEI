@@ -691,7 +691,6 @@ class DenseVectorSumTest :
 
         virtual void run() const
         {
-            SPEManager::instance();
             for (unsigned long size(1) ; size < (1 << 15) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size + 3), dv2(size + 3);
