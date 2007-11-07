@@ -104,8 +104,6 @@ void dense_dense_float_matrix_product(const Instruction & inst)
 
         for(unsigned i(0) ; i < vecs_in_act_b_row - 1 ; i++) // Make all computations except the last
         {
-            //r_vec_idx += i;
-
             vector float temp = b.vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
             Subscriptable<float> r_temp = { r.vectorised[r_vec_idx + i] }; // result matrix must either never be changed!
             extract(temp, b.vectorised[b_vec_idx+1], extract_offsets[b_offset][act_b_row % 4]);

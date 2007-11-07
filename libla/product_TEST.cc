@@ -265,7 +265,7 @@ class DenseMatrixDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(4);
+            unsigned long size(31);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
             DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
             DenseVector<DataType_> prod(Product<Tag_>::value(dm1, dv1));
@@ -656,7 +656,7 @@ class DenseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(16);
+            unsigned long size(31);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
                 dm3(size+1, size+1, DataType_(6 * size));
 

@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* cell/libla/dense_dense_float_matrix_product.cc: Removed comment.
+	* cell/libla/dense_dense_float_matrix_vector_product.cc: Made Dense
+	Matrix * Dense Vector work for arbitrary sizes respecting the actual
+	transfer limit of 16 KB.
+	* libla/productTEST.cc: Raised sizes for Cell Product-Tests.
+
 2007-11-06 Markus Geveler <apryde@gmx.de>
 
 	* libmath/methods.hh, libmath/conjugate_gradients.hh,
