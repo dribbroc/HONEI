@@ -97,8 +97,6 @@ void dense_dense_float_matrix_vector_product(const Instruction & inst)
             extract(temp, a.vectorised[a_vec_idx + i + 1], extract_offsets[offset][a_row % 4]);
 
             res.value = spu_madd(temp, x.vectorised[i], res.value);
-            Subscriptable<float> ausgabe = { temp };
-            Subscriptable<float> ausgabe2 = { x.vectorised[i] };
        }
         // Now we handle the last vector in row where we perhaps must cut some elements that don't belong to the current row
         unsigned i = (vecs_in_a_row - 1); // Take vector for the last computation of the possibly incomplete vector
@@ -109,7 +107,6 @@ void dense_dense_float_matrix_vector_product(const Instruction & inst)
         Subscriptable<float> v = { spu_and(x.vectorised[i], mask_vector[offset]) };
 
         res.value = spu_madd(temp, v.value, res.value);
-        Subscriptable<float> ausgabe = { temp };
 
         // Finished computation for one row of a -> one element of r: Cleaning up
         r.typed[r_elem] = res.array[0] + res.array[1] + res.array[2] + res.array[3];
