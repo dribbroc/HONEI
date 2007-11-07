@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-06 Markus Geveler <apryde@gmx.de>
+
+	* libmath/methods.hh, libmath/conjugate_gradients.hh,
+	libmath/conjugate_gradients_TEST.cc, libmath/iterative_refinement.hh,
+	libmath/iterative_refinement_TEST.cc:
+	Adjusted CG and iterative Refinement for preconditioning, added PCG
+	tag.
+
 2007-11-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/libla/dense_dense_float_sum.cc: Fixed bogus transfer tag.

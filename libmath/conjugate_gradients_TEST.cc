@@ -57,7 +57,7 @@ class ConjugateGradientsTestDense:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result = ConjugateGradients<Tag_>::value(A,b,long(2));
+            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,long(2));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -68,7 +68,7 @@ class ConjugateGradientsTestDense:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, DT1_>::value(x_analytical);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2 = ConjugateGradients<Tag_>::value(A,b,double(0.1));
+            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,double(0.1));
             cout<<"RESULT(v2):"<<result_2<<endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, DT1_>::value(result_2);
@@ -127,7 +127,7 @@ class ConjugateGradientsTestBanded:
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
 
-            DenseVector<DT1_> result = ConjugateGradients<Tag_>::value(A,b,long(2));
+            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,long(2));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(1));
             x_analytical[0] = DT1_(2./3.);
@@ -138,7 +138,7 @@ class ConjugateGradientsTestBanded:
             cout<<"RESULT(v1):"<<result<<endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2 = ConjugateGradients<Tag_>::value(A,b,double(0.1));
+            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,double(0.1));
             DT1_ x_n_2 = Norm< vnt_l_two, false, DT1_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
 

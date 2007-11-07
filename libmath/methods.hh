@@ -33,6 +33,10 @@ namespace methods
     {
     };
 
+    class PCG
+    {
+    };
+
 }
 
 #endif
