@@ -8,6 +8,12 @@ see the NEWS file.
 2007-11-08 Markus Geveler <apryde@gmx.de>
 
 	* libmath/conjugate_gradients_TEST.cc, libmath/conjugate_gradients.hh:
+	Added implementation of JACOBI - preconditioned CG for banded systems
+	and its test.
+
+2007-11-08 Markus Geveler <apryde@gmx.de>
+
+	* libmath/conjugate_gradients_TEST.cc, libmath/conjugate_gradients.hh:
 	Added implementation of JACOBI - preconditioned CG for dense systems
 	and its test.
 
