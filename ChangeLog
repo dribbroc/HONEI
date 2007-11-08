@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/sum-cell.cc: Fixed off-by-one bug.
+
 2007-11-08 Markus Geveler <apryde@gmx.de>
 
 	* libmath/methods.hh, libmath/iterative_refinement_TEST.cc,
@@ -55,6 +59,7 @@ see the NEWS file.
 	Adjusted CG and iterative Refinement for preconditioning, added PCG
 	tag.
 
+>>>>>>> .r858
 2007-11-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/libla/dense_dense_float_sum.cc: Fixed bogus transfer tag.

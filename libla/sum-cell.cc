@@ -59,6 +59,10 @@ namespace honei
                 use_spe = false;
             }
         }
+        else
+        {
+            ++oc.u;
+        }
 
         SPEInstruction instruction(oc_dense_dense_float_sum, 16 * 1024, oa, ob, oc, od);
 
