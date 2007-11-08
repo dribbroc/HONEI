@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-11-08 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* cell/libla/dense_dense_float_matrix_product.cc,
+	cell/libla/dense_dense_float_matrix_vector_product.cc: Applied a
+	simple optimization and added some more conventional comments.
+
+2007-11-08 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* cell/kernels/kernel_reference.sk,
 	cell/libla/dense_float_matrix_scale.cc,cell/libla/dense_float_vector_scale.cc
 	cell/libla/Makefile.am, cell/opcodes.hh, libla/files.m4,
