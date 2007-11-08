@@ -139,21 +139,22 @@ class ScalarDenseMatrixProductTest :
 ScalarDenseMatrixProductTest<float> scalar_dense_matrix_product_test_float("float");
 ScalarDenseMatrixProductTest<double> scalar_dense_matrix_product_test_double("double");
 
-template <typename DataType_>
-class ScalarDenseMatrixProductQuickTest :
+template <typename Tag_, typename DataType_>
+class DenseMatrixScaleQuickTest :
     public QuickTest
 {
     public:
-        ScalarDenseMatrixProductQuickTest(const std::string & type) :
-            QuickTest("scalar_dense_matrix_product_quick_test<" + type + ">")
+        DenseMatrixScaleQuickTest(const std::string & type) :
+            QuickTest("dense_matrix_scale_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
             unsigned long size(5);
             DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
-            DenseMatrix<DataType_> prod1(Scale<>::value(DataType_(3), dm));
+            DenseMatrix<DataType_> prod1(Scale<Tag_>::value(DataType_(3), dm));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
@@ -165,8 +166,11 @@ class ScalarDenseMatrixProductQuickTest :
                 std::numeric_limits<DataType_>::epsilon());
         }
 };
-ScalarDenseMatrixProductQuickTest<float> scalar_dense_matrix_product_quick_test_float("float");
-ScalarDenseMatrixProductQuickTest<double> scalar_dense_matrix_product_quick_test_double("double");
+DenseMatrixScaleQuickTest<tags::CPU, float> dense_matrix_scale_quick_test_float("float");
+DenseMatrixScaleQuickTest<tags::CPU, double> dense_matrix_scale_quick_test_double("double");
+#ifdef HONEI_CELL
+DenseMatrixScaleQuickTest<tags::Cell, float> cell_dense_matrix_scale_test_float("Cell float");
+#endif
 
 template <typename DataType_>
 class ScalarSparseMatrixProductTest :
@@ -293,6 +297,9 @@ ScalarDenseVectorProductQuickTest<tags::CPU, double> scalar_dense_vector_product
 #ifdef HONEI_SSE
 ScalarDenseVectorProductQuickTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_product_quick_test_float("sse float");
 ScalarDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_product_quick_test_double("sse double");
+#endif
+#ifdef HONEI_CELL
+ScalarDenseVectorProductQuickTest<tags::Cell, float> cell_scalar_dense_vector_product_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>

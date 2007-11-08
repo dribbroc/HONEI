@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-08 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* cell/kernels/kernel_reference.sk,
+	cell/libla/dense_float_matrix_scale.cc,cell/libla/dense_float_vector_scale.cc
+	cell/libla/Makefile.am, cell/opcodes.hh, libla/files.m4,
+	libla/scale-cell.cc, libla/scale.hh, libla/scale_TEST.cc: Added
+	Scale-Operations for DenseMatrix and DenseVector on Cell.
+
 2007-11-07 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* cell/libla/dense_dense_float_matrix_product.cc: Removed comment.

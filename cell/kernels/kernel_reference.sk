@@ -8,3 +8,5 @@ return_void     dense_dense_float_element_product           dense_dense_float_el
 return_void     dense_dense_float_matrix_vector_product     dense_dense_float_matrix_vector_product
 return_void     dense_dense_float_matrix_product            dense_dense_float_matrix_product
 return_dword    dense_float_vector_reduction_sum            dense_float_vector_reduction_sum
+return_void     dense_float_matrix_scale                    dense_float_matrix_scale
+return_void     dense_float_vector_scale                    dense_float_vector_scale
