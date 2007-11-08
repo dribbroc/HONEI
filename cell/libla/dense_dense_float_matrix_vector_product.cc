@@ -27,12 +27,21 @@
 
 using namespace honei;
 
+/*
+ * dense_dense_float_matrix_vector_product
+ *
+ * Calculate the product of a dense matrix and
+ * a dense vector.
+ *
+ * \size The size of the vector and the number of columns of the matrix.
+ * \operand a Base address of first entity.
+ * \operand b Base address of second entity.
+ * \operand d The number of rows of the matrix.
+ */
+
 void dense_dense_float_matrix_vector_product(const Instruction & inst)
 {
     //printf("dense_dense_float_matrix_vector_product:\n");
-
-    // inst.size = vector.size = matrix.columns
-    // inst.d.u = matrix.rows
 
     allocator::Allocation * block_a(allocator::acquire_block());
     allocator::Allocation * block_x(allocator::acquire_block());
@@ -77,18 +86,13 @@ void dense_dense_float_matrix_vector_product(const Instruction & inst)
     };
 
     // the number of vectors in a row of a for a.columns() % 4 assuming size < 4
-    const unsigned int vectors_per_row[4][4] = {  // [offset][a_row % 4]
-        { 0, 0, 0, 0},
-        { 1, 1, 1, 1},
-        { 1, 1, 1, 1},
-        { 1, 1, 1, 1}
-    };
+    const unsigned int vectors_per_row[4] = { 0, 1, 1, 1 }; // Use offset as index into this array.
 
     unsigned long r_elem(0); // The actual considered element of the result vector
     unsigned long a_row(0);
     for( ; r_elem < inst.d.u ; r_elem++)
     {
-        unsigned long vecs_in_a_row = vectors_per_row[offset][a_row % 4] + (inst.size / 4); // Number of vectors in actual row of a
+        unsigned long vecs_in_a_row = vectors_per_row[offset] + (inst.size / 4); // Number of vectors in actual row of a
         unsigned long a_vec_idx = (a_row * (inst.size / 4)) + ((a_row / 4) * offset) + vector_indices[offset][a_row % 4];
         Subscriptable<float> res = { spu_splats(0.0f) };
         for(unsigned i(0) ; i < vecs_in_a_row - 1 ; i++) // Make all computations except the last

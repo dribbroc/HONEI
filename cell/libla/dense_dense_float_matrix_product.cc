@@ -26,13 +26,21 @@
 #include <stdio.h>
 
 using namespace honei;
+/*
+ * dense_dense_float_matrix_product
+ *
+ * Calculate the product of two dense matrices.
+ *
+ * \size Equals a's number of columns and b's number of rows.
+ * \operand a Base address of first entity.
+ * \operand b Base address of second entity.
+ * \operand d Equals a's number of rows.
+ * \operand e Equals b's number of columns.
+ */
 
 void dense_dense_float_matrix_product(const Instruction & inst)
 {
     //printf("dense_dense_float_matrix_product:\n");
-    // inst.size = a.columns() = b.rows()
-    // inst.d.u = a.rows()
-    // inst.e.u = b.columns()
 
     allocator::Allocation * block_a(allocator::acquire_block());
     allocator::Allocation * block_b(allocator::acquire_block());
@@ -83,12 +91,7 @@ void dense_dense_float_matrix_product(const Instruction & inst)
     };
 
     // the number of vectors in a row of b for b.columns() % 4 assuming size < 4
-    const unsigned int vectors_per_row[4][4] = {  // [b_offset][b_row % 4]
-        { 0, 0, 0, 0},
-        { 1, 1, 1, 1},
-        { 1, 1, 1, 1},
-        { 1, 1, 1, 1}
-    };
+    const unsigned int vectors_per_row[4] = { 0, 1, 1, 1}; // Use b_offset as index into this array.
 
     unsigned long a_elem(0); // The actual considered element of matrix a
 
@@ -97,7 +100,7 @@ void dense_dense_float_matrix_product(const Instruction & inst)
         unsigned long act_a_row = a_elem / inst.size; // a_elem is in row a_elem / inst.size = a.columns()
         unsigned long act_b_row = a_elem % inst.size; // The row to multiply with is the index of a_elem modulo the number of rows of b
 
-        unsigned long vecs_in_act_b_row = vectors_per_row[b_offset][act_b_row % 4] + (inst.e.u / 4); // Number of vectors in actual row of b
+        unsigned long vecs_in_act_b_row = vectors_per_row[b_offset] + (inst.e.u / 4); // Number of vectors in actual row of b
         unsigned long b_vec_idx = (act_b_row * (inst.e.u / 4)) + ((act_b_row / 4) * b_offset) + vector_indices[b_offset][act_b_row % 4];
 
         unsigned long r_vec_idx = (act_a_row * (inst.e.u / 4)) + ((act_a_row / 4) * b_offset) + vector_indices[b_offset][act_a_row % 4];
@@ -144,5 +147,4 @@ void dense_dense_float_matrix_product(const Instruction & inst)
     allocator::release_block(*block_a);
     allocator::release_block(*block_b);
     allocator::release_block(*block_r);
-
 }
