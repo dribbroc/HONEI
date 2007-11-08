@@ -233,6 +233,198 @@ namespace honei
 
 
     };
+    /**
+     * \brief Solution of LES with Iterative Refinement using PCG- Jacobi as inner solver.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object (the solution) is created and returned.
+     *
+     * \ingroup grpmatrixoperations
+     * \ingroup grpvectoroperations
+     */
+    template <>
+    struct IterativeRefinement<methods::PCG::JAC, tags::CPU>
+    {
+        public:
+            template<typename DT1_>
+            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
+            {
+                CONTEXT("When solving dense LES with iterative refinement (CG)");
+
+                DT1_ alpha = DT1_(1.0);
+                DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
+                //inner allocation:
+                DenseMatrix<float> inner_system(right_hand_side.size(), right_hand_side.size(), float(0));
+                DenseVector<float> inner_defect(right_hand_side.size(), float(0));
+
+                ///Initialize defect and its norm
+                //TODO: use libla/residual(?)
+
+                DenseVector<DT1_> defect = Product<tags::CPU>::value(system_matrix, x_actual);
+                Difference<tags::CPU>::value(defect, right_hand_side);
+
+                Scale<tags::CPU>::value(DT1_(-1.), defect);
+                DT1_ initial_defectnorm = Norm<vnt_l_two, false, tags::CPU>::value(defect);
+
+                unsigned long iter_number = 0;
+
+                ///Do conversion of system matrix once
+                typename DenseMatrix<DT1_>::ConstElementIterator i_outer(system_matrix.begin_elements()), i_end(system_matrix.end_elements());
+                typename DenseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
+                while(i_outer != i_end)
+                {
+                    *i_inner = float(*i_outer);
+                    ++i_inner; ++i_outer;
+                }
+
+
+                ///Main loop:
+                do
+                {
+                    ///Scale defect:
+                    if(iter_number != 0)
+                    {
+                        if(fabs(alpha) > std::numeric_limits<double>::epsilon())
+                        {
+                            Scale<tags::CPU>::value(DT1_(1./alpha), defect);
+                        }
+                        else
+                        {
+                            Scale<tags::CPU>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                        }
+                    }
+
+                    ///Do conversion and solve inner system:
+                    typename DenseVector<DT1_>::ConstElementIterator j_outer(defect.begin_elements()), j_end(defect.end_elements());
+                    typename DenseVector<float>::ElementIterator j_inner(inner_defect.begin_elements());
+                    while(j_outer != j_end )
+                    {
+                        *j_inner = float(*j_outer);
+                        ++j_inner; ++j_outer;
+                    }
+
+                    inner_defect = ConjugateGradients<tags::CPU, methods::JAC>::value(inner_system, inner_defect, eps_inner);
+
+                    typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
+                    typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
+                    while(b_outer != b_end )
+                    {
+                        *b_outer = DT1_(*b_inner);
+                        ++b_inner; ++b_outer;
+                    }
+
+                    ///Update solution:
+                    Scale<tags::CPU>::value(alpha, defect);
+                    x_actual = Sum<tags::CPU>::value(x_actual, defect);
+
+                    defect = Product<tags::CPU>::value(system_matrix, x_actual);
+                    Difference<tags::CPU>::value(defect, right_hand_side);
+
+                    alpha = Norm<vnt_l_two, false, tags::CPU>::value(defect);
+                    ++iter_number;
+                }
+                while(alpha < eps_outer*initial_defectnorm);
+
+                return x_actual;
+            }
+
+            ///Banded System:
+            template<typename DT1_>
+                static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
+                {
+                    CONTEXT("When solving banded LES with iterative refinement (CG)");
+
+                    DT1_ alpha = DT1_(1.0);
+                    DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
+                    //inner allocation:
+                    BandedMatrix<float> inner_system(right_hand_side.size());
+                    DenseVector<float> inner_defect(right_hand_side.size(), float(0));
+
+                    ///Initialize defect and its norm
+                    //TODO: use libla/residual(?)
+
+                    DenseVector<DT1_> defect = Product<tags::CPU>::value(system_matrix, x_actual);
+                    Difference<tags::CPU>::value(defect, right_hand_side);
+
+                    Scale<tags::CPU>::value(DT1_(-1.), defect);
+                    DT1_ initial_defectnorm = Norm<vnt_l_two, false, tags::CPU>::value(defect);
+
+                    unsigned long iter_number = 0;
+                    ///Do conversion of system matrix once:
+                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_bands()), i_end(system_matrix.end_bands());
+                    for(; i != i_end; ++i)
+                    {
+                        DenseVector<float> band(right_hand_side.size());
+                        typename DenseVector<DT1_>::ConstElementIterator j(i->begin_elements()), j_end(i->end_elements());
+                        typename DenseVector<float>::ElementIterator j_inner(band.begin_elements());
+                        while(j != j_end)
+                        {
+                            *j_inner = float(*j);
+                            ++j;
+                            ++j_inner;
+                        }
+
+                        //insert band into inner system: (We have to compute the logical index used by insert_band out of the iterator's index)
+
+                        inner_system.insert_band(i.index() -right_hand_side.size() +1, band);
+
+                    }
+
+                    ///Main loop:
+                    do
+                    {
+                        ///Scale defect:
+                        if(iter_number != 0)
+                        {
+                            if(fabs(alpha) > std::numeric_limits<double>::epsilon())
+                            {
+                                Scale<tags::CPU>::value(DT1_(1./alpha), defect);
+                            }
+                            else
+                            {
+                                Scale<tags::CPU>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                            }
+                        }
+
+                        ///Do conversion and solve inner system:
+                        typename DenseVector<DT1_>::ConstElementIterator d_outer(defect.begin_elements()), d_end(defect.end_elements());
+                        typename DenseVector<float>::ElementIterator d_inner(inner_defect.begin_elements());
+                        while(d_outer != d_end )
+                        {
+                            *d_inner = float(*d_outer);
+                            ++d_inner; ++d_outer;
+                        }
+
+                        inner_defect = ConjugateGradients<tags::CPU, methods::JAC>::value(inner_system, inner_defect, eps_inner);
+                        //reconvert
+                        typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
+                        typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
+                        while(b_outer != b_end )
+                        {
+                            *b_outer = DT1_(*b_inner);
+                            ++b_inner; ++b_outer;
+                        }
+
+                        ///Update solution:
+                        Scale<tags::CPU>::value(alpha, defect);
+                        x_actual = Sum<tags::CPU>::value(x_actual, defect);
+
+                        defect = Product<tags::CPU>::value(system_matrix, x_actual);
+                        defect = Difference<tags::CPU>::value(defect, right_hand_side);
+
+                        alpha = Norm<vnt_l_two, false, tags::CPU>::value(defect);
+                        ++iter_number;
+
+
+
+                    }
+                    while(alpha < eps_outer*initial_defectnorm);
+
+                    return x_actual;
+                }
+
+
+    };
 
     /**
      * \brief Solution of LES with Iterative Refinement using Jacobi as inner solver.

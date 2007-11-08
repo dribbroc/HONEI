@@ -35,6 +35,7 @@ namespace methods
 
     class PCG
     {
+        class JAC;
     };
 
 }

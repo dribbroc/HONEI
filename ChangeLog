@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-11-08 Markus Geveler <apryde@gmx.de>
 
+	* libmath/methods.hh, libmath/iterative_refinement_TEST.cc,
+	libmath/iterative_refinement.hh:
+	Added implementation of Iterative Refinement with JACOBI -
+	preconditioned CG for dense and banded systems
+	and their tests.
+
+2007-11-08 Markus Geveler <apryde@gmx.de>
+
 	* libmath/conjugate_gradients_TEST.cc, libmath/conjugate_gradients.hh:
 	Added implementation of JACOBI - preconditioned CG for banded systems
 	and its test.
