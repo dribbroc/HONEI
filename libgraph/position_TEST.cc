@@ -31,7 +31,7 @@
 using namespace honei;
 using  namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class FruchtermanReingoldPositionsQuickTest :
     public QuickTest
 {
@@ -58,39 +58,48 @@ class FruchtermanReingoldPositionsQuickTest :
                 *e = pos[i++];
             }
             i = 0;
-            std::tr1::shared_ptr<DenseMatrix<bool> > pNeighbour(new DenseMatrix<bool>(2,2));
+            std::tr1::shared_ptr<SparseMatrix<bool> > pNeighbour(new SparseMatrix<bool>(2,2));
             for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
                 e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
-                *e = adj[i++];
+                if (adj[i] > std::numeric_limits<DataType_>::epsilon()) 
+                {
+                    *e = adj[i];
+                }
+                i++;
             }
+
             // Trying to throw a GraphError
             try
             {
-                Positions<DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, -5);
+                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, -5);
                 TEST_CHECK(false);
             }
             catch (GraphError e)
             {
                 TEST_CHECK(true);
-            }                
+            }
 
             // Creating a Positions object with the test scenario
-            Positions<DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
+            Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
 
             // update the positions 
-            position.update(0.01,85);
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 2, 85*std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 4, 85*std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, 85*std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, 85*std::numeric_limits<DataType_>::epsilon());
+            position.update(0.01,25);
+
+            //std::cout << "positions of FR  "<< position.coordinates() << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1] - position.coordinates()[0][0], 2, 50 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1] - position.coordinates()[1][0], 0, 50 * std::numeric_limits<DataType_>::epsilon());
         }
 };
 
-FruchtermanReingoldPositionsQuickTest<float> fruchterman_reingold_positions_quick_test_float("float");
-FruchtermanReingoldPositionsQuickTest<double> fruchterman_reingold_positions_quick_test_double("double");
+FruchtermanReingoldPositionsQuickTest<tags::CPU, float> fruchterman_reingold_positions_quick_test_float("float");
+FruchtermanReingoldPositionsQuickTest<tags::CPU, double> fruchterman_reingold_positions_quick_test_double("double");
 
-template <typename DataType_>
+FruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, float> sse_fruchterman_reingold_positions_quick_test_float("SSE float");
+FruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_fruchterman_reingold_positions_quick_test_double("SSE double");
+
+
+template <typename Tag_, typename DataType_>
 class KamadaKawaiPositionsQuickTest :
     public QuickTest
 {
@@ -118,29 +127,46 @@ class KamadaKawaiPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<DenseMatrix<bool> > pNeighbour(new DenseMatrix<bool>(2,2));
+            std::tr1::shared_ptr<SparseMatrix<bool> > pNeighbour(new SparseMatrix<bool>(2,2));
             for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
-                    e_end(pNeighbour->end_elements()); e != e_end ; ++e)
+                e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
-                *e = adj[i++];
+                if (adj[i] > std::numeric_limits<DataType_>::epsilon()) 
+                {
+                    *e = adj[i];
+                }
+                i++;
+            }
+
+            // Trying to throw a GraphError
+            try
+            {
+                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, -5);
+                TEST_CHECK(false);
+            }
+            catch (GraphError e)
+            {
+                TEST_CHECK(true);
             }
 
             // Creating a Positions object with the test scenario
-            Positions<DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
+            Positions<Tag_, DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
 
             // update the positions 
-            position.update(0.01,85);
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][0], 6, 85 * std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1], 8, 85 * std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][0], 1, 85 * std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1], 1, 85 * std::numeric_limits<DataType_>::epsilon());
+            position.update(0.01,50);
+            // std::cout << "positions of KK  "<< position.coordinates() << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[0][1] - position.coordinates()[0][0], 2, 50 * std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(position.coordinates()[1][1] - position.coordinates()[1][0], 0, 50 * std::numeric_limits<DataType_>::epsilon());
         }
 };
 
-KamadaKawaiPositionsQuickTest<float> kamada_kawai_positions_quick_test_float("float");
-KamadaKawaiPositionsQuickTest<double> kamada_kawai_positions_quick_test_double("double");
+KamadaKawaiPositionsQuickTest<tags::CPU, float> kamada_kawai_positions_quick_test_float("float");
+KamadaKawaiPositionsQuickTest<tags::CPU, double> kamada_kawai_positions_quick_test_double("double");
 
-template <typename DataType_>
+//KamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_kamada_kawai_positions_quick_test_float("SSE float");
+//KamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_kamada_kawai_positions_quick_test_double("SSE double");
+
+template <typename Tag_, typename DataType_>
 class weightedFruchtermanReingoldPositionsQuickTest :
     public QuickTest
 {
@@ -186,7 +212,7 @@ class weightedFruchtermanReingoldPositionsQuickTest :
                 *e = edge_weights[i++];
             }
             // Creating a Positions object with the test scenario
-            Positions<DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
+            Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
 
             // update the positions 
             position.update(0.01,85);
@@ -197,10 +223,13 @@ class weightedFruchtermanReingoldPositionsQuickTest :
         }
 };
 
-weightedFruchtermanReingoldPositionsQuickTest<float> weighted_fruchterman_reingold_positions_quick_test_float("float");
-weightedFruchtermanReingoldPositionsQuickTest<double> weighted_fruchterman_reingold_positions_quick_test_double("double");
+weightedFruchtermanReingoldPositionsQuickTest<tags::CPU, float> weighted_fruchterman_reingold_positions_quick_test_float("float");
+weightedFruchtermanReingoldPositionsQuickTest<tags::CPU, double> weighted_fruchterman_reingold_positions_quick_test_double("double");
 
-template <typename DataType_>
+weightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_quick_test_float("SSE float");
+weightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_quick_test_double("SSE double");
+
+template <typename Tag_, typename DataType_>
 class weightedKamadaKawaiPositionsQuickTest :
     public QuickTest
 {
@@ -246,7 +275,7 @@ class weightedKamadaKawaiPositionsQuickTest :
                 *e = edge_weights[i++];
             }
             // Creating a Positions object with the test scenario
-            Positions<DataType_, methods::WeightedKamadaKawai> position(*pPosition, *pNode_Weights, *pEdge_Weights);
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*pPosition, *pNode_Weights, *pEdge_Weights);
 
             // update the positions 
             position.update(0.01,85);
@@ -257,5 +286,8 @@ class weightedKamadaKawaiPositionsQuickTest :
         }
 };
 
-weightedKamadaKawaiPositionsQuickTest<float> weighted_kamada_kawai_positions_quick_test_float("float");
-weightedKamadaKawaiPositionsQuickTest<double> weighted_kamada_kawai_positions_quick_test_double("double");
+weightedKamadaKawaiPositionsQuickTest<tags::CPU, float> weighted_kamada_kawai_positions_quick_test_float("float");
+weightedKamadaKawaiPositionsQuickTest<tags::CPU, double> weighted_kamada_kawai_positions_quick_test_double("double");
+
+weightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_quick_test_float("SSE float");
+weightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_quick_test_double("SSE double");
