@@ -40,7 +40,8 @@ class ScalarDenseMatrixSumBench :
                 DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
                 BENCHMARK(Sum<>::value(dm0, DataType_ (alpha)));
             }
-        evaluate(_size * _size, sizeof(DataType_));
+            BenchmarkInfo info(Sum<>::get_benchmark_info<DataType_, DataType_>(1, _size, _size));
+            evaluate(info);
     }
 };
 ScalarDenseMatrixSumBench<float>  SDMSBenchfloat ("MatrixShift Benchmark - size: 4096x4096, float",  4096, 12);
@@ -73,12 +74,13 @@ class DenseVectorSumBench :
             {
                 BENCHMARK(DenseVector<DataType_> sum1(Sum<Tag_>::value(dv0, dv1)));
             }
-            evaluate(2ul * _size, sizeof(DataType_));
+            BenchmarkInfo info(Sum<>::get_benchmark_info<DataType_, DataType_>(0, _size));
+            evaluate(info);
         }
 };
 
 DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 10,000, double", 10000, 10);
+DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 10,000,000, double", 10000000, 10);
 #ifdef HONEI_SSE
 DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
 #endif

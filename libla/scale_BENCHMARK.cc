@@ -39,7 +39,8 @@ class ScalarDenseMatrixScaleBench :
                 DenseMatrix<DataType_> dm0(_size, _size, DataType_(23));
                 BENCHMARK(Scale<>::value(DataType_ (alpha), dm0));
             }
-        evaluate(_size * _size, sizeof(DataType_));
+            BenchmarkInfo info(Scale<>::get_benchmark_info<DataType_, DataType_>(_size, _size));
+            evaluate(info);
     }
 };
 ScalarDenseMatrixScaleBench<float>  SMPBenchfloat ("Matrixscalierung Benchmark: size: 4096x4096, float",  4096, 10);

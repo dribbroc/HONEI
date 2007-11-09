@@ -7,6 +7,29 @@
 #include <sys/time.h>
 #include <iostream>
 
+struct BenchmarkInfo
+{
+    unsigned long flops;
+    unsigned long load;
+    unsigned long store;
+    
+    BenchmarkInfo operator+(const BenchmarkInfo a) 
+    {
+        flops += a.flops;
+        load += a.load;
+        store += a.store;
+        return *this;
+    }
+
+    BenchmarkInfo operator*(int a) 
+    {
+        flops *= a;
+        load *= a;
+        store *= a;
+        return *this;
+    }
+};
+
 using namespace std;
 /**
  * Baseclass for all testingclasses
@@ -33,8 +56,8 @@ class Benchmark
         ///generates a standard benchmark output
         void evaluate();
 
-        ///generates a standard benchmark output with flop being the number of floating point operations of the benchmarked function
-        void evaluate(unsigned long flop, int datasize = sizeof(float), int transfersperflop = 3);
+        ///generates a benchmark output with FLOPS and data transfer rate information.
+        void evaluate(BenchmarkInfo info);
 };
 
 /**

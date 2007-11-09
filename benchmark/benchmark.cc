@@ -103,7 +103,7 @@ void Benchmark::evaluate()
     }
 }
 
-void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
+void Benchmark::evaluate(BenchmarkInfo info)
 {
     int x(0), xmin(1), xmax(1);
     double total = 0;
@@ -131,21 +131,21 @@ void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
     double avg = (total/x);
     cout << "Runtime - average: " << avg << "sec" << endl; 
     string pf = " KMGTPEZY";
-    double tp = ((double)flop / (1024 * 1024)) * transfersperflop * datasize * x / total;
+    double tp = ((double)(info.load + info.store) / (1024 * 1024)) * x / total;
     int i = 2;
-    while (tp > 1024 && i < 9)
+    while (tp > 1024 && i < 8)
     {
         tp /= 1024;
         ++i;
     }
-    cout << "Throughput: " << tp << pf[i] << "B/s" << endl;
+    cout << "Transfer rate: " << tp << pf[i] << "B/s" << endl;
     double f = 0;
     if (total > 0)
-        f = ((x/total)*flop);
+        f = ((x/total)*info.flops);
     int j = 0;
-    while (f > 1024 && j < 9)
+    while (f > 1000 && j < 8)
     {
-        f /= 1024;
+        f /= 1000;
         ++j;
     }
     cout << f << " " << pf[j] << "FLOPS" << endl;
@@ -163,7 +163,7 @@ void Benchmark::evaluate(unsigned long flop, int datasize, int transfersperflop)
         ofs << "Runtime - lowest: " << min << "sec (" << xmin << ".)" << endl;
         ofs << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
         ofs << "Runtime - average: " << avg << "sec" << endl;
-        ofs << "Throughput: " << tp << pf[i] << "B/s"  << endl;
+        ofs << "Transfer rate: " << tp << pf[i] << "B/s"  << endl;
         ofs << f << " " << pf[j] << "FLOPS" << endl;
         ofs << endl << endl << endl;
     }
@@ -241,7 +241,7 @@ int main(int argc, char** argv)
                 {
                     std::cout << (*i)->id() << ": " << std::endl << std::endl;
                     (*i)->run();
-                    std::cout << "Finished '" << (*i)->id() << "' succesfull!" << endl << endl;
+                    std::cout << "'" << (*i)->id() << "' finished successfully!" << endl << endl;
                 }
                 catch (BenchFailedException & e)
                 {

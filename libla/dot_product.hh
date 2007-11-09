@@ -59,6 +59,18 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(unsigned long x, double nonzero_a = 1, double nonzero_b = 1)
+        {
+            BenchmarkInfo result;
+            result.flops = (unsigned long) (2*x*nonzero_a*nonzero_b);
+            result.load = (unsigned long) ((x*sizeof(DT1_) + x*sizeof(DT2_))*nonzero_a*nonzero_b);
+            result.store = 1;
+            cout << endl << "!! DotProduct BenchmarkInfo probably not correct !!" << endl;
+
+            return result; 
+        }       
+
+        template <typename DT1_, typename DT2_>
         static DT1_ value(const Vector<DT1_> & x, const Vector<DT2_> & y)
         {
             CONTEXT("When calculating Vector-Vector dot product:");

@@ -41,7 +41,8 @@ class BandedMatrixDenseVectorProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(bm1, dv2));
             }
-            evaluate(_size*_size, sizeof(DataType_));
+            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_ >(_size, _size));
+            evaluate(info);
         }
 };
 
@@ -76,7 +77,8 @@ class DenseMatrixProductBench :
                 DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
                 BENCHMARK(Product<>::value(dm0, dm1));
             }
-            evaluate(_size*_size*_size*2, sizeof(DataType_));
+            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size, _size));
+            evaluate(info);
         }
 };
 DenseMatrixProductBench<float> DMPBenchfloat2("Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
@@ -106,7 +108,8 @@ class DenseMatrixDenseVectorProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(dm0, dv0));
             }
-            evaluate(_size*_size, sizeof(DataType_));
+            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size));
+            evaluate(info);
         }
 };
 DenseMatrixDenseVectorProductBench<tags::CPU, float> DMDVPBenchfloat("Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, float", 64ul*64, 10);
@@ -151,7 +154,8 @@ class SparseMatrixProductBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(Product<>::value(sm, dm));
             }
-            evaluate((unsigned long)(_size*_size*_size*2/10), sizeof(DataType_)); 
+            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size, _size, (double)0.1));
+            evaluate(info);
         }
 };
 SparseMatrixProductBench<float> SMPBenchfloat2("Matrix Product Benchmark sparse/dense - matrix size: 256x256, float", 256, 10);
@@ -189,7 +193,8 @@ class BandedMatrixProductBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(Product<>::value(bm, dm));
             }
-            evaluate(_size*_size*((_size*7-16)/_size)*2, sizeof(DataType_));
+            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size, _size, (double)_size * 7 / (_size * _size)));
+            evaluate(info);
         }
 };
 BandedMatrixProductBench<float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);

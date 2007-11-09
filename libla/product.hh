@@ -74,6 +74,16 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(unsigned long a_rows, unsigned long a_columns, unsigned long b_columns = 1,  double nonzero_a = 1, double nonzero_b = 1)
+        {
+            BenchmarkInfo result;
+            result = DotProduct<>::get_benchmark_info<DT1_, DT2_>(a_columns, nonzero_a, nonzero_b)*a_rows*b_columns;
+            cout << endl << "!! Product Benchmarkinfo probably not correct !!" << endl;
+
+            return result; 
+        }
+
+        template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
         {
             CONTEXT("When multiplying DenseMatrix with DenseVector:");

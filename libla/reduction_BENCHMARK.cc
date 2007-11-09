@@ -36,7 +36,8 @@ class DenseMatrixRowSumVectorBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(dv = Reduction<rt_sum>::value(dm));
             }
-            evaluate(_size*_size, sizeof(DataType_));
+            BenchmarkInfo info(Reduction<rt_sum>::get_benchmark_info<DataType_>(_size, _size));
+            evaluate(info);
         }
 };
 DenseMatrixRowSumVectorBench<float> DMRSVBenchfloat2("Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);

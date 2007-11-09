@@ -80,6 +80,16 @@ namespace honei
          *
          */
 
+        template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(unsigned long rows, unsigned long columns = 1, double nonzero = 1)
+        {
+            BenchmarkInfo result;
+            result.flops = 0;
+            result.load = 0;
+            result.store = 0;
+            cout << endl << "!! No detailed benchmark info available !!" << endl;
+        }
+
         template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
         {
