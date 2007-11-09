@@ -64,7 +64,7 @@ namespace honei
             BenchmarkInfo result;
             result.flops = (unsigned long) (2*x*nonzero_a*nonzero_b);
             result.load = (unsigned long) ((x*sizeof(DT1_) + x*sizeof(DT2_))*nonzero_a*nonzero_b);
-            result.store = 1;
+            result.store = sizeof(DT1_);
             cout << endl << "!! DotProduct BenchmarkInfo probably not correct !!" << endl;
 
             return result; 
