@@ -62,18 +62,6 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long size,  double nonzero_a = 1, double nonzero_b = 1)
-        {
-            BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
-            cout << endl << "!! No detailed benchmark info available !!" << endl;
-
-            return result; 
-        }
-
-        template <typename DT1_, typename DT2_, typename DT3_>
         static DenseVector<DT1_> & value(DenseVector<DT1_> & x, const DenseVector<DT2_> & y, DT3_ b)
         {
             CONTEXT("When calculating ScaledSum (DenseVector, DenseVector, scalar):");
@@ -141,6 +129,20 @@ namespace honei
         }
 
         /// \}
+
+        #ifdef BENCHM
+        template <typename DT1_, typename DT2_, typename DT3_>
+        static inline BenchmarkInfo get_benchmark_info(unsigned long size,  double nonzero_a = 1, double nonzero_b = 1)
+        {
+            BenchmarkInfo result;
+            result.flops = 0;
+            result.load = 0;
+            result.store = 0;
+            cout << endl << "!! No detailed benchmark info available !!" << endl;
+
+            return result; 
+        }
+        #endif
     };
 
     /**

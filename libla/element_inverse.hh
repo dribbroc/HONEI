@@ -58,18 +58,6 @@ namespace honei
          * \retval x Will modify the entity x and return it.
          */
 
-        template <typename DT1_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long a_rows, unsigned long a_columns = 1, double nonzero = 1)
-        {
-            BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
-            cout << endl << "!! No detailed benchmark info available !!" << endl;
-
-            return result; 
-        }
-
         template <typename DataType_>
         static DenseVector<DataType_> & value(DenseVector<DataType_> & x)
         {
@@ -176,6 +164,20 @@ namespace honei
         }
 
         /// \}
+
+        #ifdef BENCHM
+        template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(unsigned long a_rows, unsigned long a_columns = 1, double nonzero = 1)
+        {
+            BenchmarkInfo result;
+            result.flops = 0;
+            result.load = 0;
+            result.store = 0;
+            cout << endl << "!! No detailed benchmark info available !!" << endl;
+
+            return result; 
+        }
+        #endif
     };
 }
 #endif

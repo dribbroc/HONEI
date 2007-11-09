@@ -64,18 +64,6 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long rows, unsigned long columns = 1, double nonzero_a = 1, double nonzero_b = 1)
-        {
-            BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
-            cout << endl << "!! No detailed benchmark info available !!" << endl;
-
-            return result; 
-        }
-
-        template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
         {
             CONTEXT("When calculating the product of DenseVectors elements");
@@ -379,6 +367,20 @@ namespace honei
         }
 
         /// \}
+
+        #ifdef BENCHM
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(unsigned long rows, unsigned long columns = 1, double nonzero_a = 1, double nonzero_b = 1)
+        {
+            BenchmarkInfo result;
+            result.flops = 0;
+            result.load = 0;
+            result.store = 0;
+            cout << endl << "!! No detailed benchmark info available !!" << endl;
+
+            return result; 
+        }
+        #endif
     };
 
     /**
