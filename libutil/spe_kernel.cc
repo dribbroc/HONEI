@@ -28,6 +28,7 @@
 #include <libutil/spe_manager.hh>
 #include <libutil/sync_point.hh>
 #include <fstream>
+
 namespace honei
 {
     struct SPEKernel::Implementation
@@ -97,7 +98,8 @@ namespace honei
                 spe = imp->spe;
             }
 
-            Log::instance()->message(ll_minimal, "SPEKernel: Revceived have-been-loaded signal from SPE #" + stringify(spe->id()));
+            Log::instance()->message(ll_minimal, "SPEKernel: Revceived have-been-loaded signal from SPE #" +
+                    stringify(spe->id()));
             CONTEXT("When handling SPE events for SPE #" + stringify(spe->id()));
 
             SPEEvent event(*imp->spe, SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED);
@@ -110,7 +112,8 @@ namespace honei
                 spe_event_unit_t * e(event.wait(-1));
 
                 Log::instance()->message(ll_minimal, "SPEKernel: Event occured");
-                ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)), "unexpected event happened!");
+                ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)),
+                        "unexpected event happened!");
 
                 if (e->events & SPE_EVENT_OUT_INTR_MBOX)
                 {
@@ -130,7 +133,7 @@ namespace honei
                                     Lock ll(*imp->mutex);
 
                                     spe_out_mbox_read(spe->context(),
-                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].c.ea), 1);
+                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 1);
                                 }
                                 continue;
 
@@ -140,7 +143,7 @@ namespace honei
                                     Lock ll(*imp->mutex);
 
                                     spe_out_mbox_read(imp->spe->context(),
-                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].c.ea), 2);
+                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 2);
                                 }
                                 continue;
 

@@ -22,28 +22,66 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-
 namespace honei
 {
     float
     DotProduct<tags::Cell>::value(const DenseVector<float> & a, const DenseVector<float> & b)
     {
-        CONTEXT("When calculating DenseVector<float>-DenseVector<float> dot product (Cell):");
+        CONTEXT("When adding DenseVector<float> to DenseVector<float> (Cell):");
 
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        float result;
+        float result(0.0f);
+        Operand oa = { &result };
+        Operand ob = { a.elements() };
+        Operand oc = { b.elements() };
+        Operand od, oe;
+        // hardcode transfer buffer size for now.
+        od.u = a.size() / (1024 * 4);
+        oe.u = a.size() % (1024 * 4);
+        oe.u &= ~0xF;
 
-        Operand oa = { a.elements() };
-        Operand ob = { b.elements() };
-        Operand oc = { &result };
-        SPEInstruction instruction(oc_dense_dense_float_dot_product, a.size(), oa, ob, oc);
+        unsigned rest_index(od.u * 4096 + oe.u);
 
-        SPEManager::instance()->dispatch(instruction);
+        oe.u *= 4;
 
-        instruction.wait();
+        bool use_spe(true);
 
-        return result;
+        if (0 == oe.u)
+        {
+            if (od.u > 0)
+            {
+                oe.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++od.u;
+        }
+
+        SPEInstruction instruction(oc_dense_dense_float_dot_product, 16 * 1024, oa, ob, oc, od, oe);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        float rest_result(0.0f);
+
+        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()),
+                j(b.element_at(rest_index)) ; i != i_end ; ++i, ++j)
+        {
+            rest_result += *i * *j;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return result + rest_result;
     }
 }

@@ -50,8 +50,8 @@ class DenseDotProductTest :
 
                 DataType_ p0(DotProduct<Tag_>::value(dv1, dv0));
                 DataType_ p1(DotProduct<Tag_>::value(dv1, dv1));
-                TEST_CHECK_EQUAL(p0, 0);
-                TEST_CHECK_EQUAL(p1, size);
+                TEST_CHECK_EQUAL_WITHIN_EPS(p0, 0, std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
 
                 DenseVector<DataType_> dv2(size);
                 for (typename Vector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
@@ -62,7 +62,7 @@ class DenseDotProductTest :
 
                 DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
                 DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, size * sqrt(std::numeric_limits<DataType_>::epsilon()));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, size * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -78,6 +78,10 @@ DenseDotProductTest<tags::CPU, double> dense_scalar_product_test_double("double"
 DenseDotProductTest<tags::CPU::SSE, float> sse_dense_scalar_product_test_float("SSE float");
 DenseDotProductTest<tags::CPU::SSE, double> sse_dense_scalar_product_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+DenseDotProductTest<tags::Cell, float> cell_dense_scalar_product_test_float("Cell float");
+#endif
+
 
 template <typename Tag_, typename DataType_>
 class DenseDotProductQuickTest :
@@ -95,10 +99,10 @@ class DenseDotProductQuickTest :
             unsigned long size(22);
             DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 
-            DataType_ p0(DotProduct<>::value(dv1, dv0));
-            DataType_ p1(DotProduct<>::value(dv1, dv1));
-            TEST_CHECK_EQUAL(p0, 0);
-            TEST_CHECK_EQUAL(p1, size);
+            DataType_ p0(DotProduct<Tag_>::value(dv1, dv0));
+            DataType_ p1(DotProduct<Tag_>::value(dv1, dv1));
+            TEST_CHECK_EQUAL_WITHIN_EPS(p0, 0, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
 
             DenseVector<DataType_> dv2(size);
             for (typename Vector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
