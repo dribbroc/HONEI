@@ -36,7 +36,7 @@ class DenseMatrixElementInverseBench :
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(12));
             BENCHMARK(ElementInverse<>::value(dm0));
         }
-        BenchmarkInfo info(ElementInverse<>::get_benchmark_info<DataType_>(_size, _size));
+        BenchmarkInfo info(ElementInverse<>::get_benchmark_info<DenseMatrix<DataType_> >(_size, _size));
         evaluate(info);
     }
 };

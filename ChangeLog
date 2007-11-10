@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-10 David Gies <david-gies@gmx.de>
+
+        * libla/dot_product.hh, libla/product.hh, libla/element_inverse.hh,
+        libla/element_product.hh, libla/reduction.hh, libla/scale.hh,
+        libla/scaled_sum.hh, libla/sum.hh: Template Parameters for the
+        get_benchmark_info functions now specify the used Containers.  
+        * libla/vector.hh, libla/matrix.hh: Added public attribut DataType.
+
 2007-11-09 David Gies <david-gies@gmx.de>
 
         * libla/dot_product.hh, libla/product.hh, libla/element_inverse.hh,

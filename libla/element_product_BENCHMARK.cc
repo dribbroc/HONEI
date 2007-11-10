@@ -37,7 +37,7 @@ class DenseMatrixElementProductBench :
                 DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
                 BENCHMARK(ElementProduct<DataType_>::value(dm0, dm1));
             }
-            BenchmarkInfo info(ElementProduct<>::get_benchmark_info<DataType_, DataType_>(_size, _size));
+            BenchmarkInfo info(ElementProduct<>::get_benchmark_info<DenseMatrix<DataType_>, DenseMatrix<DataType_> >(_size, _size));
             evaluate(info);
         }
 };
@@ -77,7 +77,7 @@ class SparseMatrixElementProductBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(ElementProduct<DataType_>::value(sm, dm));
             }
-            BenchmarkInfo info(ElementProduct<>::get_benchmark_info<DataType_, DataType_>(_size, _size, (double)0.1));
+            BenchmarkInfo info(ElementProduct<>::get_benchmark_info<SparseMatrix<DataType_>, DenseMatrix<DataType_> >(_size, _size, (double)0.1));
             evaluate(info);
         }
 };
@@ -117,7 +117,7 @@ class BandedMatrixElementProductBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(ElementProduct<DataType_>::value(bm, dm));
             }
-        BenchmarkInfo info(ElementProduct<>::get_benchmark_info<DataType_, DataType_ >(_size, _size, (double)7 * _size / (_size * _size)));
+        BenchmarkInfo info(ElementProduct<>::get_benchmark_info<BandedMatrix<DataType_ >, DenseMatrix<DataType_> >(_size, _size, (double)7 * _size / (_size * _size)));
         evaluate(info);
         }
 };

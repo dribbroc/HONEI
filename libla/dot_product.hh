@@ -151,9 +151,10 @@ namespace honei
         static inline BenchmarkInfo get_benchmark_info(unsigned long x, double nonzero_a = 1, double nonzero_b = 1)
         {
             BenchmarkInfo result;
-            result.flops = (unsigned long) (2*x*nonzero_a*nonzero_b);
-            result.load = (unsigned long) ((x*sizeof(DT1_) + x*sizeof(DT2_))*nonzero_a*nonzero_b);
-            result.store = sizeof(DT1_);
+            result.flops = static_cast<unsigned long>(2 * x * nonzero_a * nonzero_b);
+            result.load = static_cast<unsigned long>((x * sizeof(typename DT1_::DataType) + x * sizeof(typename DT2_::DataType)) * nonzero_a * 
+nonzero_b);
+            result.store = sizeof(typename DT1_::DataType);
             cout << endl << "!! DotProduct BenchmarkInfo probably not correct !!" << endl;
 
             return result; 

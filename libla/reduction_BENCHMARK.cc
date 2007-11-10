@@ -36,7 +36,7 @@ class DenseMatrixRowSumVectorBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(dv = Reduction<rt_sum>::value(dm));
             }
-            BenchmarkInfo info(Reduction<rt_sum>::get_benchmark_info<DataType_>(_size, _size));
+            BenchmarkInfo info(Reduction<rt_sum>::get_benchmark_info<DenseMatrix<DataType_> >(_size, _size));
             evaluate(info);
         }
 };

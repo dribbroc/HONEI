@@ -86,6 +86,9 @@ namespace honei
 
             /// Retrieves element by index, zero-based, assignable
             virtual DataType_ & operator[] (unsigned long index) = 0;
+
+            /// Type of our elements.
+            typedef DataType_ DataType;
     };
 
     /**

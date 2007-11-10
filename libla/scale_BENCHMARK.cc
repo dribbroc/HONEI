@@ -39,7 +39,7 @@ class ScalarDenseMatrixScaleBench :
                 DenseMatrix<DataType_> dm0(_size, _size, DataType_(23));
                 BENCHMARK(Scale<>::value(DataType_ (alpha), dm0));
             }
-            BenchmarkInfo info(Scale<>::get_benchmark_info<DataType_, DataType_>(_size, _size));
+            BenchmarkInfo info(Scale<>::get_benchmark_info<DataType_, DenseMatrix<DataType_> >(_size, _size));
             evaluate(info);
     }
 };

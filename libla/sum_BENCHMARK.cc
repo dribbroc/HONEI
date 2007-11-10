@@ -40,7 +40,7 @@ class ScalarDenseMatrixSumBench :
                 DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
                 BENCHMARK(Sum<>::value(dm0, DataType_ (alpha)));
             }
-            BenchmarkInfo info(Sum<>::get_benchmark_info<DataType_, DataType_>(1, _size, _size));
+            BenchmarkInfo info(Sum<>::get_benchmark_info<DenseMatrix<DataType_>, DataType_>(1, _size, _size));
             evaluate(info);
     }
 };
@@ -74,7 +74,7 @@ class DenseVectorSumBench :
             {
                 BENCHMARK(DenseVector<DataType_> sum1(Sum<Tag_>::value(dv0, dv1)));
             }
-            BenchmarkInfo info(Sum<>::get_benchmark_info<DataType_, DataType_>(0, _size));
+            BenchmarkInfo info(Sum<>::get_benchmark_info<DenseVector<DataType_>, DenseVector<DataType_> >(0, _size));
             evaluate(info);
         }
 };

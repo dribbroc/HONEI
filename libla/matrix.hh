@@ -72,6 +72,9 @@ namespace honei
             {
                 return rows() == columns();
             }
+
+            /// Type of our elements.
+            typedef DataType_ DataType;
     };
 
     /**

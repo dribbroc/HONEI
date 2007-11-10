@@ -41,7 +41,7 @@ class BandedMatrixDenseVectorProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(bm1, dv2));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_ >(_size, _size));
+            BenchmarkInfo info(Product<>::get_benchmark_info<BandedMatrix<DataType_>, DenseVector<DataType_> >(_size, _size));
             evaluate(info);
         }
 };
@@ -77,7 +77,7 @@ class DenseMatrixProductBench :
                 DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
                 BENCHMARK(Product<>::value(dm0, dm1));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size, _size));
+            BenchmarkInfo info(Product<>::get_benchmark_info<DenseMatrix<DataType_>, DenseMatrix<DataType_> >(_size, _size, _size));
             evaluate(info);
         }
 };
@@ -108,7 +108,7 @@ class DenseMatrixDenseVectorProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(dm0, dv0));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size));
+            BenchmarkInfo info(Product<>::get_benchmark_info<DenseMatrix<DataType_>, DenseVector<DataType_> >(_size, _size));
             evaluate(info);
         }
 };
@@ -154,7 +154,7 @@ class SparseMatrixProductBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(Product<>::value(sm, dm));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size, _size, (double)0.1));
+            BenchmarkInfo info(Product<>::get_benchmark_info<SparseMatrix<DataType_>, DenseMatrix<DataType_> >(_size, _size, _size, (double)0.1));
             evaluate(info);
         }
 };
@@ -193,7 +193,7 @@ class BandedMatrixProductBench :
                 DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(Product<>::value(bm, dm));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info<DataType_, DataType_>(_size, _size, _size, (double)_size * 7 / (_size * _size)));
+            BenchmarkInfo info(Product<>::get_benchmark_info<BandedMatrix<DataType_>, DenseMatrix<DataType_> >(_size, _size, _size, (double)_size * 7 / (_size * _size)));
             evaluate(info);
         }
 };
