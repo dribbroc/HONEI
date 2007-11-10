@@ -30,7 +30,7 @@
 using namespace honei;
 using namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 // our PositionsTest is a BaseTest. 
 class EvolvingGraphTest :
     public BaseTest
@@ -97,7 +97,7 @@ class EvolvingGraphTest :
             std::cout << "Edges: " << std::endl;
             std::cout << *eg.getEdges() << std::endl;
 
-            Positions<DataType_, methods::WeightedKamadaKawai> positions(*eg.getCoordinates(), *eg.getNodeWeights(), *eg.getEdges());
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(*eg.getCoordinates(), *eg.getNodeWeights(), *eg.getEdges());
             positions.update(0.01, 10);
             std::cout << positions.coordinates() << std::endl;
             TEST_CHECK(true);
@@ -105,5 +105,5 @@ class EvolvingGraphTest :
 };
 
 // instantiate test cases
-EvolvingGraphTest<float> evolving_graph_test_float("float");
-EvolvingGraphTest<double> evolving_graph_test_doube("double");
+EvolvingGraphTest<tags::CPU, float> evolving_graph_test_float("float");
+EvolvingGraphTest<tags::CPU, double> evolving_graph_test_doube("double");
