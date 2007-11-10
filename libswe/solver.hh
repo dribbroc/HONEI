@@ -2295,13 +2295,13 @@ namespace honei {
             WorkPrec_ minusUpper = DotProduct<Tag_>::value( rightMinus1Upper, constantVector );
             WorkPrec_ minusLower = DotProduct<Tag_>::value( rightMinus1Lower, constantVector );
             WorkPrec_ thetaXPlus_iMinus1_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_iMinus1_j = minusUpper / minusLower;
             }
             else
             {
-                thetaXPlus_iMinus1_j = 0;
+                thetaXPlus_iMinus1_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for band_-1:
             WorkPrec_ thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
@@ -2334,7 +2334,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
             WorkPrec_ thetaXPlus_i_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_i_j = minusUpper / minusLower;
             }
@@ -2364,7 +2364,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
 
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_iMinus1_j = minusUpper / minusLower;
             }
@@ -2394,7 +2394,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_i_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_i_j = minusUpper / minusLower;
             }
@@ -2436,7 +2436,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value(rightDiagUpper, constantVector );
             minusLower = DotProduct<Tag_>::value(rightDiagLower, constantVector );
             thetaXPlus_i_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_i_j = minusUpper / minusLower;
             }
@@ -2466,7 +2466,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value(rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value(rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_iPlus1_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_iPlus1_j = minusUpper / minusLower;
             }
@@ -2497,7 +2497,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value(rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value(rightDiagLower, constantVectorMinus );
 
-            if(minusLower!=0)
+            if(fabs(minusLower)  > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_i_j = minusUpper / minusLower;
             }
@@ -2537,7 +2537,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
 
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_iPlus1_j = minusUpper / minusLower;
             }
@@ -2648,7 +2648,7 @@ namespace honei {
             WorkPrec_ minusUpper = DotProduct<Tag_>::value( rightMinus1Upper, constantVector );
             WorkPrec_ minusLower = DotProduct<Tag_>::value( rightMinus1Lower, constantVector );
             WorkPrec_ thetaXPlus_iMinus1_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_iMinus1_j = minusUpper / minusLower;
             }
@@ -2684,7 +2684,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
             WorkPrec_ thetaXPlus_i_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_i_j = minusUpper / minusLower;
             }
@@ -2715,7 +2715,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
 
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_iMinus1_j = minusUpper / minusLower;
             }
@@ -2745,7 +2745,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_i_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_i_j = minusUpper / minusLower;
             }
@@ -2786,7 +2786,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVector );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVector );
             thetaXPlus_i_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXPlus_i_j = minusUpper / minusLower;
             }
@@ -2818,7 +2818,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
             WorkPrec_ thetaXMinus_iPlus1_j;
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_iPlus1_j = minusUpper / minusLower;
             }
@@ -2849,7 +2849,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
 
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_i_j = minusUpper / minusLower;
             }
@@ -2891,7 +2891,7 @@ namespace honei {
             minusUpper = DotProduct<Tag_>::value( rightDiagUpper, constantVectorMinus );
             minusLower = DotProduct<Tag_>::value( rightDiagLower, constantVectorMinus );
 
-            if(minusLower!=0)
+            if(fabs(minusLower) > std::numeric_limits<WorkPrec_>::epsilon())
             {
                  thetaXMinus_iPlus1_j = minusUpper / minusLower;
             }

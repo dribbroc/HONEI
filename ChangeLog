@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-10 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver.hh, libswe/solver_TEST.cc: Resolved minor potential
+	numerical labilities in assembly (DEBUG).
+
 2007-11-10 David Gies <david-gies@gmx.de>
 
         * libla/dot_product.hh, libla/product.hh, libla/element_inverse.hh,
