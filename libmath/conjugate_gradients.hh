@@ -245,7 +245,7 @@ namespace honei
                 DT1_ norm_x_last = DT1_(0);
                 DT1_ norm_x = DT1_(1);
 
-                while(norm_x - norm_x_last > konv_rad)
+                while(fabs(norm_x - norm_x_last) > konv_rad)
                 {
 
                     cg_kernel(system_matrix, right_hand_side, g, x, u);

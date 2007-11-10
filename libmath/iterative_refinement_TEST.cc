@@ -349,6 +349,66 @@ class IterativeRefinementTestBandedPCGJAC:
 
         }
 };
+template <typename Tag_, typename DT1_>
+class IterativeRefinementTestDensePCGJAC_big:
+    public BaseTest
+{
+    public:
+        IterativeRefinementTestDensePCGJAC_big(const std::string & tag) :
+            BaseTest("Iterative Refinement with PCG (Jacobi) solver BIG!!!! test (Banded system)<" + tag + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+
+            unsigned long size = 1000;
+            DenseMatrix<DT1_> A(size,size, DT1_(1));
+            DenseVector<DT1_> b(size, DT1_(1));
+
+            //std::cout<<"A:"<<A<<endl;
+            //std::cout<<"b:"<<b<<endl;
+            DenseVector<DT1_> result(IterativeRefinement<PCG::JAC, tags::CPU>::value(A,b,double(0.00000000000001), double(0.00000000000001)));
+            DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
+            DenseVector<DT1_> x_analytical(size, DT1_(0.001));
+            //cout<<"RESULT(v1):"<<result<<endl;
+
+            DT1_ x_analytical_n = Norm< vnt_l_two, false, DT1_>::value(x_analytical);
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
+
+        }
+};
+
+template <typename Tag_, typename DT1_>
+class IterativeRefinementTestDenseCG_big:
+    public BaseTest
+{
+    public:
+        IterativeRefinementTestDenseCG_big(const std::string & tag) :
+            BaseTest("Iterative Refinement with CG  solver BIG!!!! test (Banded system)<" + tag + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+
+            unsigned long size = 1000;
+            DenseMatrix<DT1_> A(size,size, DT1_(1));
+            DenseVector<DT1_> b(size, DT1_(1));
+
+            //std::cout<<"A:"<<A<<endl;
+            //std::cout<<"b:"<<b<<endl;
+            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(0.00000000000001), double(0.00000000000001)));
+            DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
+            DenseVector<DT1_> x_analytical(size, DT1_(0.001));
+            //cout<<"RESULT(v1):"<<result<<endl;
+
+            DT1_ x_analytical_n = Norm< vnt_l_two, false, DT1_>::value(x_analytical);
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
+
+        }
+};
+
 
 
 IterativeRefinementTestDenseCG<tags::CPU, double> iterref_test_double_denseCG("double");
@@ -359,3 +419,5 @@ IterativeRefinementTestBandedJacobi<tags::CPU, double> iterref_test_double_bande
 IterativeRefinementTestDensePCGJAC<tags::CPU, double> iterref_test_double_densePCGJAC("double");
 IterativeRefinementTestBandedPCGJAC<tags::CPU, double> iterref_test_double_bandedPCGJAC("double");
 
+IterativeRefinementTestDensePCGJAC_big<tags::CPU, double> iterref_test_double_densePCGJAC_big("double");
+IterativeRefinementTestDenseCG_big<tags::CPU, double> iterref_test_double_denseCG_big("double");

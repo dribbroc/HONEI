@@ -206,7 +206,7 @@ namespace honei
                 }
 
 
-                while(norm_x - norm_x_last > konv_rad)
+                while(fabs(norm_x - norm_x_last) > konv_rad)
                 {
 
                     jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
@@ -251,7 +251,7 @@ namespace honei
                 }
 
 
-                while(norm_x - norm_x_last > konv_rad)
+                while(fabs(norm_x - norm_x_last) > konv_rad)
                 {
 
                     jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
