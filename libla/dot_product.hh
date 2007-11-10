@@ -152,8 +152,7 @@ namespace honei
         {
             BenchmarkInfo result;
             result.flops = static_cast<unsigned long>(2 * x * nonzero_a * nonzero_b);
-            result.load = static_cast<unsigned long>((x * sizeof(typename DT1_::DataType) + x * sizeof(typename DT2_::DataType)) * nonzero_a * 
-nonzero_b);
+            result.load = static_cast<unsigned long>((x * sizeof(typename DT1_::DataType) + x * sizeof(typename DT2_::DataType)) * nonzero_a * nonzero_b);
             result.store = sizeof(typename DT1_::DataType);
             cout << endl << "!! DotProduct BenchmarkInfo probably not correct !!" << endl;
 
