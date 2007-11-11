@@ -30,6 +30,7 @@
 #include <libla/matrix_error.hh>
 #include <libutil/shared_array-impl.hh>
 #include <libutil/stringify.hh>
+#include <libutil/type_traits.hh>
 
 #include <algorithm>
 #include <cstring>
@@ -293,8 +294,7 @@ namespace honei
             {
                 DenseMatrix * result(new DenseMatrix(_columns, _rows));
 
-                memcpy(result->_elements.get(), _elements.get(), _columns * _rows * sizeof(DataType_));
-                //std::copy(_elements.get(), _elements.get() + _columns * _rows, result->_elements.get());
+                TypeTraits<DataType_>::copy(_elements.get(), result->_elements.get(), _columns * _rows);
 
                 return result;
             }

@@ -31,7 +31,7 @@ add(`general', `sync_point',                `hh')
 add(`general', `tags',                      `hh', `cc')
 add(`general', `thread',                    `hh', `cc', `test')
 add(`general', `thread_pool',               `hh',       `test')
-add(`general', `type_traits',               `hh')
+add(`general', `type_traits',               `hh', `cc')
 add(`general', `worker',                    `hh', `cc', `test')
 add(`general', `wrapper',                   `hh')
 

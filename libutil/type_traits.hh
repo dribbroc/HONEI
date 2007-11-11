@@ -21,6 +21,7 @@
 #define LIBUTIL_GUARD_TYPE_TRAITS_HH 1
 
 #include <cstdlib>
+#include <new>
 
 namespace honei
 {
@@ -73,6 +74,15 @@ namespace honei
             static inline void create(DT_ * location, std::size_t count, const DT_ & proto = DT_(0))
             {
             }
+
+            /**
+             * Copy count instance of DT_ from source to dest.
+             *
+             * \param source Memory location whence to copy.
+             * \param dest Memory location whither to copy.
+             * \param count Count on instances that shall be copied.
+             */
+            static void copy(const DT_ * source, DT_ * dest, std::size_t count);
 
             /**
              * Destroy count instances of DT_ at location.
@@ -143,6 +153,22 @@ namespace honei
             }
 
             /**
+             * Copy count instance of DT_ from source to dest.
+             *
+             * \param source Memory location whence to copy.
+             * \param dest Memory location whither to copy.
+             * \param count Count on instances that shall be copied.
+             */
+            static inline void copy(const DT_ * source, DT_ * dest, std::size_t count)
+            {
+                const DT_ * s(source);
+                for (DT_ * d(dest), * d_end(dest + count) ; d != d_end ; ++d, ++s)
+                {
+                    *d = *s;
+                }
+            }
+
+            /**
              * Destroy count instances of DT_ at location.
              *
              * \param location Memory location where instances of DT_
@@ -181,11 +207,6 @@ namespace honei
 
     template <typename DT_> struct TypeTraits :
         public intern::DefaultTraits<DT_>
-    {
-    };
-
-    template <typename DT_> struct TypeTraits<DT_ *> :
-        public intern::PODTraits<DT_>
     {
     };
 

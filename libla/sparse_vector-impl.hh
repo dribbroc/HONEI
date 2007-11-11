@@ -29,6 +29,7 @@
 #include <libutil/log.hh>
 #include <libutil/shared_array-impl.hh>
 #include <libutil/stringify.hh>
+#include <libutil/type_traits.hh>
 
 #include <iterator>
 #include <string>
@@ -127,8 +128,8 @@ namespace honei
             // Write out the terminating elements.
             std::fill_n(indices, capacity, _imp->_size);
 
-            std::copy(_imp->_elements.get(), _imp->_elements.get() + position + 1, elements);
-            std::copy(_imp->_indices.get(), _imp->_indices.get() + position + 1, indices);
+            TypeTraits<DataType_>::copy(_imp->_elements.get(), elements, position + 1);
+            TypeTraits<unsigned long>::copy(_imp->_indices.get(), indices, position + 1);
         }
 
         // Relies on capactiy >= used_elements + 1.
@@ -298,10 +299,8 @@ namespace honei
         SparseVector result(_imp->_size, _imp->_capacity);
 
         result._imp->_used_elements = _imp->_used_elements;
-        std::copy(_imp->_elements.get(), _imp->_elements.get() + _imp->_used_elements,
-                result._imp->_elements.get());
-        std::copy(_imp->_indices.get(), _imp->_indices.get() + _imp->_used_elements,
-                result._imp->_indices.get());
+        TypeTraits<DataType_>::copy(_imp->_elements.get(), result._imp->_elements.get(), _imp->_used_elements);
+        TypeTraits<unsigned long>::copy(_imp->_indices.get(), result._imp->_indices.get(), _imp->_used_elements);
 
         return result;
     }
