@@ -991,8 +991,8 @@ namespace honei
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
         static DenseMatrix<float> value(const DenseMatrix<float> & a, const DenseMatrix<float> & b);
     };
-    
-    template <typename TAG_> struct MCProduct 
+
+    template <typename Tag_> struct MCProduct
     {
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
@@ -1010,10 +1010,11 @@ namespace honei
             ThreadPool * p(ThreadPool::get_instance());
             PoolTask * pt[a.rows()];
 
-            TwoArgWrapper< DotProduct<typename TAG_::DelegateTo>, DT1_, DenseVector<DT1_>, DenseVector<DT2_> > mywrapper; 
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
-                pt[i] = p->dispatch(std::tr1::bind(mywrapper, &(*l), a[i], b));
+                TwoArgWrapper< DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVector<DT1_>,
+                    const DenseVector<DT2_> > mywrapper(*l, a[i], b);
+                pt[i] = p->dispatch(mywrapper);
                 ++l;
             }
 

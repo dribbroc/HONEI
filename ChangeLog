@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-11 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libutil/wrapper.hh: Reworked wrapper to handle upcoming baseclasses
+	for dense container.
+	* libla/product.hh: Applied necessary changes to MultiCore-product.
+
 2007-11-11 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/algorithm.hh, libla/files.m4: Added copy algorithm.

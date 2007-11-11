@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Joachim Messer <joachim.messer@uni-dortmund.de>
+ * Copyright (c) 2007 Volker Jung <volker.jung@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,34 +21,34 @@
 #ifndef LIBLA_GUARD_WRAPPER_HH
 #define LIBLA_GUARD_WRAPPER_HH 1
 
-#include <libutil/lock.hh>
-#include <libutil/mutex.hh>
-
 namespace honei
 {
     template < typename Tag_, typename DT1_, typename DT2_, typename DT3_>
         class TwoArgWrapper
         {
+            private:
+                DT1_ * _result;
+
+                DT2_ * _a;
+
+                DT3_ * _b;
+
+
             public:
 
                 typedef void result_type;
 
-                TwoArgWrapper()
+                TwoArgWrapper(DT1_ & result, DT2_ & a, const DT3_ & b):
+                    _result(&result),
+                    _a(&a),
+                    _b(&b)
                 {
                 }
 
-                void operator()(DT1_ * result, DT2_ & a, const DT3_ & b)
+                void operator() ()
                 {
-                    *result = Tag_::value(a, b);
+                    *_result = Tag_::value(*_a, *_b);
                 }
-                
-                void operator()(DT1_ * result, DT2_ & a, const DT3_ & b, Mutex * mutex)
-                {
-                    DT1_ temp = Tag_value(a,b);
-                    Lock l(*mutex);
-                    *result += temp;
-                }
-                
         };
 }
 #endif
