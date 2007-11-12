@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+
+
+2007-11-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* cell/kernels/kernel_reference.sk,
+	-cell/libla/dense_float_matrix_scale.cc,
+	cell/libla/dense_float_scale.cc,
+	-cell/libla/dense_float_vector_scale.cc, cell/libla/Makefile.am,
+	cell/opcodes.hh, libla/dense_matrix.hh, libla/scale-cell.cc,
+	libla/scale_TEST.cc: Merged Scale(DV) and Scale(DM) and implemented
+	double buffering. Raised TEST size above 16 KB.
+
 2007-11-11 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libutil/wrapper.hh: Reworked wrapper to handle upcoming baseclasses

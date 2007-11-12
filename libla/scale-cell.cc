@@ -32,14 +32,50 @@ namespace honei
 
         Operand oa = { b.elements() };
         Operand ob;
-        ob.u = b.columns();
+        ob.u = (b.rows() * b.columns()) / (1024 * 4);
         Operand oc;
-        oc.f = a;
-        SPEInstruction instruction(oc_dense_float_matrix_scale, b.rows(), oa, ob, oc);
+        oc.u = (b.rows() * b.columns()) % (1024 * 4);
+        oc.u &= ~0xF;
+        Operand od;
+        od.f = a;
 
-        SPEManager::instance()->dispatch(instruction);
+        unsigned rest_index(ob.u * 4096 + oc.u);
 
-        instruction.wait();
+        oc.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == oc.u)
+        {
+            if (ob.u > 0)
+            {
+                oc.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++ob.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_scale, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        MutableMatrix<float>::ElementIterator i(b.element_at(rest_index)), i_end(b.end_elements());
+        for ( ; i != i_end ; ++i)
+        {
+            *i *= od.f;
+        }
+
+        if (use_spe)
+            instruction.wait();
 
         return b;
     }
@@ -51,12 +87,50 @@ namespace honei
 
         Operand oa = { b.elements() };
         Operand ob;
-        ob.f = a;
-        SPEInstruction instruction(oc_dense_float_vector_scale, b.size(), oa, ob);
+        ob.u = b.size() / (1024 * 4);
+        Operand oc;
+        oc.u = b.size() % (1024 * 4);
+        oc.u &= ~0xF;
+        Operand od;
+        od.f = a;
 
-        SPEManager::instance()->dispatch(instruction);
+        unsigned rest_index(ob.u * 4096 + oc.u);
 
-        instruction.wait();
+        oc.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == oc.u)
+        {
+            if (ob.u > 0)
+            {
+                oc.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++ob.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_scale, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        Vector<float>::ElementIterator i(b.element_at(rest_index)), i_end(b.end_elements());
+        for ( ; i != i_end ; ++i)
+        {
+            *i *= od.f;
+        }
+
+        if (use_spe)
+            instruction.wait();
 
         return b;
     }

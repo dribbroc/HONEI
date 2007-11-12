@@ -205,6 +205,12 @@ namespace honei
                 return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));
             }
 
+            /// Returns iterator pointing to a given element of the matrix.
+            virtual ConstElementIterator element_at(unsigned long index) const
+            {
+                 return ConstElementIterator(new DenseElementIterator<DataType_>(*this, index));
+            }
+
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const
             {
@@ -217,7 +223,13 @@ namespace honei
                 return ElementIterator(new DenseElementIterator<DataType_>(*this, 0));
             }
 
-            /// Returns iterator pointing behind the last element of the matrix.
+            /// Returns iterator pointing to a given element of the matrix.
+            virtual ElementIterator element_at(unsigned long index)
+            {
+                 return ElementIterator(new DenseElementIterator<DataType_>(*this, index));
+            }
+
+           /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements()
             {
                 return ElementIterator(new DenseElementIterator<DataType_>(*this, _rows * _columns));

@@ -152,7 +152,7 @@ class DenseMatrixScaleQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(100);
             DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
             DenseMatrix<DataType_> prod1(Scale<Tag_>::value(DataType_(3), dm));
 
