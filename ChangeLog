@@ -5,7 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-12 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* cell/libla/dense_dense_float_element_product.cc,
+	libla/element_product-cell.cc, libla/element_product.hh,
+	libla/element_product_TEST.cc: Implemented double buffering and added
+	support for DenseMatrix, included Base- and QuickTests.
+	* libla/scale_TEST.cc: Also included a BaseTest.
 
 2007-11-12 Sven Mallach <sven.mallach@uni-dortmund.de>
 

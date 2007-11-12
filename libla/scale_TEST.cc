@@ -115,14 +115,15 @@ class ScalarBandedMatrixProductQuickTest :
 ScalarBandedMatrixProductQuickTest<float> scalar_banded_matrix_product_quick_test_float("float");
 ScalarBandedMatrixProductQuickTest<double> scalar_banded_matrix_product_quick_test_double("double");
 
-template <typename DataType_>
-class ScalarDenseMatrixProductTest :
+template <typename Tag_, typename DataType_>
+class DenseMatrixScaleTest :
     public BaseTest
 {
     public:
-        ScalarDenseMatrixProductTest(const std::string & type) :
-            BaseTest("scalar_dense_matrix_product_test<" + type + ">")
+        DenseMatrixScaleTest(const std::string & type) :
+            BaseTest("dense_matrix_scale_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -130,14 +131,17 @@ class ScalarDenseMatrixProductTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(6));
-                DenseMatrix<DataType_> & prod(Scale<>::value(DataType_(3), dm1));
+                DenseMatrix<DataType_> & prod(Scale<Tag_>::value(DataType_(3), dm1));
 
                 TEST_CHECK_EQUAL(prod, dm2);
             }
         }
 };
-ScalarDenseMatrixProductTest<float> scalar_dense_matrix_product_test_float("float");
-ScalarDenseMatrixProductTest<double> scalar_dense_matrix_product_test_double("double");
+DenseMatrixScaleTest<tags::CPU, float> scalar_dense_matrix_product_test_float("float");
+DenseMatrixScaleTest<tags::CPU, double> scalar_dense_matrix_product_test_double("double");
+#ifdef HONEI_CELL
+DenseMatrixScaleTest<tags::Cell, float> cell_dense_matrix_scale_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixScaleQuickTest :
@@ -169,7 +173,7 @@ class DenseMatrixScaleQuickTest :
 DenseMatrixScaleQuickTest<tags::CPU, float> dense_matrix_scale_quick_test_float("float");
 DenseMatrixScaleQuickTest<tags::CPU, double> dense_matrix_scale_quick_test_double("double");
 #ifdef HONEI_CELL
-DenseMatrixScaleQuickTest<tags::Cell, float> cell_dense_matrix_scale_test_float("Cell float");
+DenseMatrixScaleQuickTest<tags::Cell, float> cell_dense_matrix_scale_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>
