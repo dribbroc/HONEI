@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-12 Markus Geveler <apryde@gmx.de>
+
+	* libmath/parser.hh, libmath/parser_TEST.cc,
+	libmath/parser_test_float.txt, libmath/parser_test_float_m.txt: Added
+	implementation of a parser for DenseVectors and -matrices, added
+	test-files.
+
 2007-11-12 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* cell/libla/dense_dense_float_element_product.cc,
