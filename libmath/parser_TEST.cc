@@ -48,6 +48,12 @@ class ParserTest:
             }
 
             DenseMatrix<DT_> resultm = Parser<DT_>::parse("parser_test_float_m.txt", 9, 3);
+            for(int i = 0; i < 9; i++)
+            {
+                TEST_CHECK_EQUAL(resultm[0][i],i);
+            }
+
+
             TEST_CHECK(true);
         }
 };
