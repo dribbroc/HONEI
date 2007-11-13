@@ -264,7 +264,35 @@ class ConjugateGradientsTestBandedJAC:
             cout<<"RESULT(v2):"<<result_2<<endl;
         }
 };
+template <typename Tag_, typename DT1_>
+class ConjugateGradientsTestDense_big:
+    public BaseTest
+{
+    public:
+        ConjugateGradientsTestDense_big(const std::string & tag) :
+            BaseTest("CG  solver BIG!!!! test (dense system)<" + tag + ">")
+        {
+        }
 
+        virtual void run() const
+        {
+
+            unsigned long size = 1000;
+            DenseMatrix<DT1_> A(size,size, DT1_(1));
+            DenseVector<DT1_> b(size, DT1_(1));
+
+            //std::cout<<"A:"<<A<<endl;
+            //std::cout<<"b:"<<b<<endl;
+            DenseVector<DT1_> result(ConjugateGradients<tags::CPU, NONE>::value(A,b,double(0.00000000000001)));
+            DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
+            DenseVector<DT1_> x_analytical(size, DT1_(0.001));
+            //cout<<"RESULT(v1):"<<result<<endl;
+
+            DT1_ x_analytical_n = Norm< vnt_l_two, false, DT1_>::value(x_analytical);
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
+
+        }
+};
 
 
 ConjugateGradientsTestDense<tags::CPU, float> cg_test_float_dense("float");
@@ -275,6 +303,9 @@ ConjugateGradientsTestDenseJAC<tags::CPU, float> cg_test_float_dense_jac("float"
 ConjugateGradientsTestDenseJAC<tags::CPU, double> cg_test_double_dense_jac("double");
 ConjugateGradientsTestBandedJAC<tags::CPU, float> cg_test_float_banded_jac("float");
 ConjugateGradientsTestBandedJAC<tags::CPU, double> cg_test_double_banded_jac("double");
+ConjugateGradientsTestDense_big<tags::CPU, float> cg_test_float_dense_big("float");
+ConjugateGradientsTestDense_big<tags::CPU, double> cg_test_double_dense_big("double");
+
 
 #ifdef HONEI_SSE
 ConjugateGradientsTestDense<tags::CPU::SSE, float> sse_cg_test_float_dense("SSE float");

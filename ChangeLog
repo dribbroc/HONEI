@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-11-13 Markus Geveler <apryde@gmx.de>
 
+	* libmath/iterative_refinement_TEST.cc,
+	libmath/conjugate_gradients_TEST.cc: Added some tests, adjusted error
+	output.
+
+2007-11-13 Markus Geveler <apryde@gmx.de>
+
 	* libmath/parser_TEST.cc, libmath/parser_test_float_m.txt: Adjusted
 	tests.
 

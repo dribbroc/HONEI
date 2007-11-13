@@ -355,7 +355,7 @@ class IterativeRefinementTestDensePCGJAC_big:
 {
     public:
         IterativeRefinementTestDensePCGJAC_big(const std::string & tag) :
-            BaseTest("Iterative Refinement with PCG (Jacobi) solver BIG!!!! test (Banded system)<" + tag + ">")
+            BaseTest("Iterative Refinement with PCG (Jacobi) solver BIG!!!! test (dense system)<" + tag + ">")
         {
         }
 
@@ -385,7 +385,7 @@ class IterativeRefinementTestDenseCG_big:
 {
     public:
         IterativeRefinementTestDenseCG_big(const std::string & tag) :
-            BaseTest("Iterative Refinement with CG  solver BIG!!!! test (Banded system)<" + tag + ">")
+            BaseTest("Iterative Refinement with CG  solver BIG!!!! test (dense system)<" + tag + ">")
         {
         }
 
@@ -410,7 +410,6 @@ class IterativeRefinementTestDenseCG_big:
 };
 
 
-
 IterativeRefinementTestDenseCG<tags::CPU, double> iterref_test_double_denseCG("double");
 IterativeRefinementTestDenseJAC<tags::CPU, double> iterref_test_double_denseJAC("double");
 
@@ -421,3 +420,4 @@ IterativeRefinementTestBandedPCGJAC<tags::CPU, double> iterref_test_double_bande
 
 IterativeRefinementTestDensePCGJAC_big<tags::CPU, double> iterref_test_double_densePCGJAC_big("double");
 IterativeRefinementTestDenseCG_big<tags::CPU, double> iterref_test_double_denseCG_big("double");
+
