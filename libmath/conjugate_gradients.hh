@@ -59,44 +59,44 @@ namespace honei
      * \ingroup grpvectoroperations
      */
 
-    template <>
-    struct ConjugateGradients<tags::CPU, methods::NONE>
+    template <typename Tag_>
+    struct ConjugateGradients<Tag_, methods::NONE>
     {
         private:
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
                 ///Compute x_i+1:
-                DT1_ upper = DotProduct<>::value(former_gradient, former_gradient);
-                DenseVector<DT1_> energy = Product<>::value(system_matrix, utility);
-                DT1_ lower = DotProduct<>::value(energy, utility);
+                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
+                DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
+                DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
-                    energy = Scale<>::value(DT1_(upper/lower), u_c);
+                    energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
                 }
                 else
                 {
-                    energy = Scale<>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
+                    energy = Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
 
                 }
-                Sum<>::value(energy, former_result);
+                Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
-                DenseVector<DT1_> new_gradient = Product<>::value(system_matrix, energy);
-                Difference<>::value(new_gradient, right_hand_side);
+                DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
+                Difference<Tag_>::value(new_gradient, right_hand_side);
 
                 ///Compute new utility
-                upper = DotProduct<>::value(new_gradient, new_gradient);
-                lower = DotProduct<>::value(former_gradient, former_gradient);
+                upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
+                lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
-                    Scale<>::value(DT1_(upper/lower), utility);
+                    Scale<Tag_>::value(DT1_(upper/lower), utility);
                 }
                 else
                 {
-                    Scale<>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
+                    Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
                 }
-                Difference<>::value(utility, new_gradient);
+                Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
                 former_gradient = new_gradient.copy();
@@ -108,35 +108,35 @@ namespace honei
             static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
                 ///Compute x_i+1: (in energy)
-                DT1_ upper = DotProduct<>::value(former_gradient, former_gradient);
-                DenseVector<DT1_> energy = Product<>::value(system_matrix, utility);
-                DT1_ lower = DotProduct<>::value(energy, utility);
+                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
+                DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
+                DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
-                    energy = Scale<>::value(DT1_(upper/lower), u_c);
+                    energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
                 }
                 else
                 {
-                    energy = Scale<>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
+                    energy = Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
                 }
-                Sum<>::value(energy, former_result);
+                Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
-                DenseVector<DT1_> new_gradient = Product<>::value(system_matrix, energy);
-                Difference<>::value(new_gradient, right_hand_side);
+                DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
+                Difference<Tag_>::value(new_gradient, right_hand_side);
 
                 ///Compute new utility
-                upper = DotProduct<>::value(new_gradient, new_gradient);
-                lower = DotProduct<>::value(former_gradient, former_gradient);
+                upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
+                lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
-                    Scale<>::value(DT1_(upper/lower), utility);
+                    Scale<Tag_>::value(DT1_(upper/lower), utility);
                 }
                 else
                 {
-                    Scale<>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
+                    Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
                 }
-                Difference<>::value(utility, new_gradient);
+                Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
                 former_gradient = new_gradient.copy();
@@ -148,35 +148,35 @@ namespace honei
             static inline void cg_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
                 ///Compute x_i+1: (in energy)
-                DT1_ upper = DotProduct<>::value(former_gradient, former_gradient);
-                SparseVector<DT1_> energy = Product<>::value(system_matrix, utility);
-                DT1_ lower = DotProduct<>::value(energy, utility);
+                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
+                SparseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
+                DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
-                    energy = Scale<>::value(DT1_(upper/lower), u_c);
+                    energy = Scale<Tag_>::value(DT1_(upper/lower), u_c);
                 }
                 else
                 {
-                    energy = Scale<>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
+                    energy = Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), u_c);
                 }
-                Sum<>::value(energy, former_result);
+                Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
-                SparseVector<DT1_> new_gradient = Product<>::value(system_matrix, energy);
-                Difference<>::value(new_gradient, right_hand_side);
+                SparseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
+                Difference<Tag_>::value(new_gradient, right_hand_side);
 
                 ///Compute new utility
-                upper = DotProduct<>::value(new_gradient, new_gradient);
-                lower = DotProduct<>::value(former_gradient, former_gradient);
+                upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
+                lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
-                    Scale<>::value(DT1_(upper/lower), utility);
+                    Scale<Tag_>::value(DT1_(upper/lower), utility);
                 }
                 else
                 {
-                    Scale<>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
+                    Scale<Tag_>::value(DT1_(upper/std::numeric_limits<DT1_>::epsilon()), utility);
                 }
-                Difference<>::value(utility, new_gradient);
+                Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
                 former_gradient = new_gradient.copy();
@@ -207,10 +207,10 @@ namespace honei
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                DenseVector<DT1_> g = Product<>::value(system_matrix, x);
-                Difference<>::value(g, right_hand_side);
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
-                DenseVector<DT1_> u = Scale<>::value(DT1_(-1.), g_c);
+                DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
@@ -236,10 +236,10 @@ namespace honei
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                DenseVector<DT1_> g = Product<>::value(system_matrix, x);
-                Difference<>::value(g, right_hand_side);
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
-                DenseVector<DT1_> u = Scale<>::value(DT1_(-1.), g_c);
+                DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 DenseVector<DT1_> x_last(x.copy());
 
                 DT1_ norm_x_last = DT1_(0);
@@ -249,8 +249,8 @@ namespace honei
                 {
 
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
-                    norm_x = Norm<vnt_l_two, false, tags::CPU>::value(x);
-                    norm_x_last = Norm<vnt_l_two, false, tags::CPU>::value(x_last);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
                 return x;
@@ -278,10 +278,10 @@ namespace honei
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                DenseVector<DT1_> g = Product<>::value(system_matrix, x);
-                Difference<>::value(g, right_hand_side);
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
-                DenseVector<DT1_> u = Scale<>::value(DT1_(-1.), g_c);
+                DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
@@ -307,10 +307,10 @@ namespace honei
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                DenseVector<DT1_> g = Product<>::value(system_matrix, x);
-                Difference<>::value(g, right_hand_side);
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
-                DenseVector<DT1_> u = Scale<>::value(DT1_(-1.), g_c);
+                DenseVector<DT1_> u = Scale<Tag_>::value(DT1_(-1.), g_c);
                 DenseVector<DT1_> x_last(x.copy());
 
                 DT1_ norm_x_last = DT1_(0);
@@ -320,8 +320,8 @@ namespace honei
                 {
 
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
-                    norm_x = Norm<vnt_l_two, false, tags::CPU>::value(x);
-                    norm_x_last = Norm<vnt_l_two, false, tags::CPU>::value(x_last);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
                 return x;
@@ -340,8 +340,8 @@ namespace honei
      * \ingroup grpvectoroperations
      */
 
-    template <>
-    struct ConjugateGradients<tags::CPU, methods::JAC>
+    template <typename Tag_>
+    struct ConjugateGradients<Tag_, methods::JAC>
     {
         private:
             template<typename DT1_, typename DT2_>
@@ -349,9 +349,9 @@ namespace honei
             {
 
                 DT1_ alpha, beta, upper, lower;
-                upper = DotProduct<>::value(former_residual, former_gradient);
-                DenseVector<DT1_> temp = Product<>::value(system_matrix, utility);
-                lower = DotProduct<>::value(temp, utility);
+                upper = DotProduct<Tag_>::value(former_residual, former_gradient);
+                DenseVector<DT1_> temp = Product<Tag_>::value(system_matrix, utility);
+                lower = DotProduct<Tag_>::value(temp, utility);
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
                     alpha = upper/lower;
@@ -361,19 +361,19 @@ namespace honei
                     alpha = upper/ std::numeric_limits<DT1_>::epsilon();
                 }
                 ///Compute new result:
-                DenseVector<DT1_> temp2 = Scale<>::value(alpha, utility);
-                Sum<>::value(former_result, temp2);
+                DenseVector<DT1_> temp2 = Scale<Tag_>::value(alpha, utility);
+                Sum<Tag_>::value(former_result, temp2);
 
                 ///Compute new residual:
-                DenseVector<DT1_> temp3 = Scale<>::value(alpha, temp);
-                Difference<>::value(former_residual, temp3);
+                DenseVector<DT1_> temp3 = Scale<Tag_>::value(alpha, temp);
+                Difference<Tag_>::value(former_residual, temp3);
                 ///Compute new gradient:
                 DenseVector<DT1_> r_c = former_residual.copy();
-                former_gradient = ElementProduct<>::value(r_c, diag_inverted);
+                former_gradient = ElementProduct<Tag_>::value(r_c, diag_inverted);
 
                 ///Compute new utility:
                 DT1_ upper_2;
-                upper_2 = DotProduct<>::value(former_gradient, former_residual);
+                upper_2 = DotProduct<Tag_>::value(former_gradient, former_residual);
                 lower = upper;
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
@@ -384,8 +384,8 @@ namespace honei
                     beta = upper_2/ std::numeric_limits<DT1_>::epsilon();
                 }
 
-                Scale<>::value(beta, utility);
-                Sum<>::value(utility, former_gradient);
+                Scale<Tag_>::value(beta, utility);
+                Sum<Tag_>::value(utility, former_gradient);
             }
 
             template<typename DT1_, typename DT2_>
@@ -393,9 +393,9 @@ namespace honei
             {
 
                 DT1_ alpha, beta, upper, lower;
-                upper = DotProduct<>::value(former_residual, former_gradient);
-                DenseVector<DT1_> temp = Product<>::value(system_matrix, utility);
-                lower = DotProduct<>::value(temp, utility);
+                upper = DotProduct<Tag_>::value(former_residual, former_gradient);
+                DenseVector<DT1_> temp = Product<Tag_>::value(system_matrix, utility);
+                lower = DotProduct<Tag_>::value(temp, utility);
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
                     alpha = upper/lower;
@@ -405,19 +405,19 @@ namespace honei
                     alpha = upper/ std::numeric_limits<DT1_>::epsilon();
                 }
                 ///Compute new result:
-                DenseVector<DT1_> temp2 = Scale<>::value(alpha, utility);
-                Sum<>::value(former_result, temp2);
+                DenseVector<DT1_> temp2 = Scale<Tag_>::value(alpha, utility);
+                Sum<Tag_>::value(former_result, temp2);
 
                 ///Compute new residual:
-                DenseVector<DT1_> temp3 = Scale<>::value(alpha, temp);
-                Difference<>::value(former_residual, temp3);
+                DenseVector<DT1_> temp3 = Scale<Tag_>::value(alpha, temp);
+                Difference<Tag_>::value(former_residual, temp3);
                 ///Compute new gradient:
                 DenseVector<DT1_> r_c = former_residual.copy();
-                former_gradient = ElementProduct<>::value(r_c, diag_inverted);
+                former_gradient = ElementProduct<Tag_>::value(r_c, diag_inverted);
 
                 ///Compute new utility:
                 DT1_ upper_2;
-                upper_2 = DotProduct<>::value(former_gradient, former_residual);
+                upper_2 = DotProduct<Tag_>::value(former_gradient, former_residual);
                 lower = upper;
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
@@ -428,8 +428,8 @@ namespace honei
                     beta = upper_2/ std::numeric_limits<DT1_>::epsilon();
                 }
 
-                Scale<>::value(beta, utility);
-                Sum<>::value(utility, former_gradient);
+                Scale<Tag_>::value(beta, utility);
+                Sum<Tag_>::value(utility, former_gradient);
             }
 
         public:
@@ -451,9 +451,9 @@ namespace honei
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                DenseVector<DT1_> r = Product<>::value(system_matrix, x);
-                Difference<>::value(r, right_hand_side);
-                Scale<>::value(DT1_(-1.), r);
+                DenseVector<DT1_> r = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(r, right_hand_side);
+                Scale<Tag_>::value(DT1_(-1.), r);
 
                 ///PCG - Jacobi part:
                 //TODO: remove diag, we dont need it really
@@ -476,7 +476,7 @@ namespace honei
                 ///Now, we have computed "C¯1" alias diag_inverted.
                 ///g has to be multiplied elementwisely by diag_inverted:
                 DenseVector<DT1_> temp(r.copy());
-                DenseVector<DT1_> g(ElementProduct<tags::CPU>::value(temp,diag_inverted));
+                DenseVector<DT1_> g(ElementProduct<Tag_>::value(temp,diag_inverted));
                 DenseVector<DT1_> u(g.copy());
 
                 ///End of the PCG part, we will give diag_inverted to the kernel, in order not to be forced to compute it again.
@@ -489,8 +489,8 @@ namespace honei
                 {
 
                     cg_kernel(system_matrix, right_hand_side, g, x, u, r, diag_inverted);
-                    norm_x = Norm<vnt_l_two, false, tags::CPU>::value(x);
-                    norm_x_last = Norm<vnt_l_two, false, tags::CPU>::value(x_last);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
                 return x;
@@ -516,9 +516,9 @@ namespace honei
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                DenseVector<DT1_> r = Product<>::value(system_matrix, x);
-                Difference<>::value(r, right_hand_side);
-                Scale<>::value(DT1_(-1.), r);
+                DenseVector<DT1_> r = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(r, right_hand_side);
+                Scale<Tag_>::value(DT1_(-1.), r);
 
                 ///PCG - Jacobi part:
                 //TODO: remove diag, we dont need it really
@@ -540,7 +540,7 @@ namespace honei
                 ///Now, we have computed "C¯1" alias diag_inverted.
                 ///g has to be multiplied elementwisely by diag_inverted:
                 DenseVector<DT1_> temp(r.copy());
-                DenseVector<DT1_> g(ElementProduct<tags::CPU>::value(temp,diag_inverted));
+                DenseVector<DT1_> g(ElementProduct<Tag_>::value(temp,diag_inverted));
                 DenseVector<DT1_> u(g.copy());
 
                 ///End of the PCG part, we will give diag_inverted to the kernel, in order not to be forced to compute it again.
@@ -553,8 +553,8 @@ namespace honei
                 {
 
                     cg_kernel(system_matrix, right_hand_side, g, x, u, r, diag_inverted);
-                    norm_x = Norm<vnt_l_two, false, tags::CPU>::value(x);
-                    norm_x_last = Norm<vnt_l_two, false, tags::CPU>::value(x_last);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
                 return x;

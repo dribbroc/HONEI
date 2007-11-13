@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-11-13 Markus Geveler <apryde@gmx.de>
 
+	* libmath/iterative_refinement.hh,
+	libmath/conjugate_gradients.hh: Switched to partial explicit template
+	specialization in implementation of iterative refinement and CG.
+
+2007-11-13 Markus Geveler <apryde@gmx.de>
+
 	* libmath/iterative_refinement_TEST.cc,
 	libmath/conjugate_gradients_TEST.cc: Added some tests, adjusted error
 	output.
