@@ -23,7 +23,6 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-#include <iostream>
 
 namespace honei
 {
@@ -122,7 +121,6 @@ namespace honei
 
             SPEManager::instance()->dispatch(instruction);
             instruction.wait();
-            std::cout << "start "<<start<<" quad_start "<<quad_start<<std::endl;
             for (unsigned long index = start ; index < quad_start ; index++)
             {
                 result.elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
