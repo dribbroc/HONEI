@@ -6,6 +6,7 @@ return_void     dense_sparse_float_sum                      dense_sparse_float_s
 return_dword    dense_dense_float_dot_product               dense_dense_float_dot_product
 return_void     dense_dense_float_element_product           dense_dense_float_element_product
 return_void     dense_dense_float_matrix_vector_product     dense_dense_float_matrix_vector_product
+return_void     banded_dense_float_matrix_vector_product    banded_dense_float_matrix_vector_product
 return_void     dense_dense_float_matrix_product            dense_dense_float_matrix_product
 return_dword    dense_float_vector_reduction_sum            dense_float_vector_reduction_sum
 return_void     dense_float_scale                           dense_float_scale

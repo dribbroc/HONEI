@@ -85,7 +85,7 @@ class BandedMatrixDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(47);
+            unsigned long size(43);
             DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseVector<DataType_> dv4(size, DataType_(2));
@@ -110,6 +110,9 @@ BandedMatrixDenseVectorProductQuickTest<tags::CPU, double> banded_matrix_dense_v
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_banded_matrix_dense_vector_product_quick_test_float("SSE float");
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_banded_matrix_dense_vector_product_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+BandedMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_banded_matrix_dense_vector_product_quick_test_float("CELL float");
 #endif
 
 template <typename DataType_>

@@ -93,6 +93,7 @@ union Operand
     unsigned long long u;
     double d;
     float f;
+    long long s;
 };
 
 struct __attribute__((packed)) Instruction

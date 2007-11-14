@@ -117,4 +117,7 @@ RelaxSolverTest<tags::CPU, double> relax_solver_test_double("double");
 #ifdef HONEI_SSE
 RelaxSolverTest<tags::CPU::SSE, double> sse_relax_solver_test_double("sse double");
 #endif
+#ifdef HONEI_CELL
+RelaxSolverTest<tags::Cell, float> cell_relax_solver_test_double("cell float");
+#endif
 

@@ -29,6 +29,7 @@ enum OpCode
     oc_dense_dense_float_dot_product,
     oc_dense_dense_float_matrix_product,
     oc_dense_dense_float_matrix_vector_product,
+    oc_banded_dense_float_matrix_vector_product,
     oc_dense_dense_float_element_product,
     oc_dense_sparse_float_sum,
     oc_dense_float_vector_reduction_sum,

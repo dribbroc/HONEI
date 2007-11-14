@@ -32,7 +32,9 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
-	$(DEBUGDEF) $(SSEDEF)
+	$(CELLDEF) \
+	$(SSEDEF) \
+	$(DEBUGDEF)
 
 lib_LTLIBRARIES = libswe.la
 

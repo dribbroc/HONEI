@@ -98,7 +98,7 @@ namespace honei
         Lock l(*_imp->mutex);
 
         //unsigned count(_imp->spe_count);
-        unsigned count (1);
+        unsigned count (2);
         while(count-- > 0)
         {
             SPE spe;

@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-14 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* cell/cell.hh, cell/kernels/kernel_reference.sk,
+	cell/libla/banded_dense_float_matrix_vector_product.cc,
+	cell/libla/Makefile.am, cell/opcodes.hh, libla/product-cell.cc,
+	libla/product.hh, libla/product_TEST.cc: Added
+	banded_dense_float_matrix_vector_product without double buffering.
+	libswe/Makefile.am.m4, libswe/solver_TEST.cc: Added initial cell
+	version of RelaxSolver without double buffering.
+
 2007-11-14 Markus Geveler <apryde@gmx.de>
 
 	* libmath/parser.hh, libmath/parser_TEST.cc: Resolved hidden index
