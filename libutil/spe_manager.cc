@@ -73,7 +73,7 @@ namespace honei
             //Load balanced dispatching
             sort(spe_list.begin(), spe_list.end(), compare_by_load);
 
-            Log::instance()->message(ll_minimal, "Dispatching to SPE #" + stringify(spe_list.begin()->id()) +
+            LOGMESSAGE(ll_minimal, "Dispatching to SPE #" + stringify(spe_list.begin()->id()) +
                     " (load = " + stringify(spe_list.begin()->kernel()->instruction_load()) + ")");
             instruction.enqueue_with(spe_list.begin()->kernel());
         }

@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/log.cc, libutil/log.hh: Converted Singleton based Log class
+	into thread safe Active Object based LogMessage and LogQueue.
+	* libutil/spe.cc, libutil/spe_instruction.cc, libutil/spe_kernel.cc,
+	libutil/spe_manager.cc: Adjusted users of Log.
+
 2007-11-14 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/cell.hh, cell/kernels/kernel_reference.sk,

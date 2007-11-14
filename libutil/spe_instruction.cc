@@ -55,7 +55,7 @@ namespace honei
         msg += "c = " + stringify(_instruction.c.ea) + ", d = " + stringify(_instruction.d.ea) + "\n";
         msg += "e = " + stringify(_instruction.e.ea) + ", f = " + stringify(_instruction.f.ea) + "\n";
         msg += "g = " + stringify(_instruction.g.ea) + "\n";
-        Log::instance()->message(ll_minimal, msg);
+        LOGMESSAGE(ll_minimal, msg);
 
         _kernel = kernel;
         _index = kernel->enqueue(_instruction);

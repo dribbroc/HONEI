@@ -87,7 +87,7 @@ namespace honei
 
         static void * kernel_thread(void * argument)
         {
-            Log::instance()->message(ll_minimal, "SPEKernel: Kernel thread startet (anonymous)");
+            LOGMESSAGE(ll_minimal, "SPEKernel: Kernel thread startet (anonymous)");
             Implementation * imp(static_cast<Implementation *>(argument));
 
             SPE * spe(0);
@@ -98,7 +98,7 @@ namespace honei
                 spe = imp->spe;
             }
 
-            Log::instance()->message(ll_minimal, "SPEKernel: Revceived have-been-loaded signal from SPE #" +
+            LOGMESSAGE(ll_minimal, "SPEKernel: Revceived have-been-loaded signal from SPE #" +
                     stringify(spe->id()));
             CONTEXT("When handling SPE events for SPE #" + stringify(spe->id()));
 
@@ -107,17 +107,17 @@ namespace honei
 
             do
             {
-                Log::instance()->message(ll_minimal, "SPEKernel: Waiting for event");
+                LOGMESSAGE(ll_minimal, "SPEKernel: Waiting for event");
 
                 spe_event_unit_t * e(event.wait(-1));
 
-                Log::instance()->message(ll_minimal, "SPEKernel: Event occured");
+                LOGMESSAGE(ll_minimal, "SPEKernel: Event occured");
                 ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)),
                         "unexpected event happened!");
 
                 if (e->events & SPE_EVENT_OUT_INTR_MBOX)
                 {
-                    Log::instance()->message(ll_minimal, "SPEKernel: Mail event pending");
+                    LOGMESSAGE(ll_minimal, "SPEKernel: Mail event pending");
                     unsigned mail(0);
 
                     int retval(spe_out_intr_mbox_read(spe->context(), &mail, 1, SPE_MBOX_ALL_BLOCKING));
@@ -128,7 +128,7 @@ namespace honei
                         switch (mail)
                         {
                             case km_result_dword:
-                                Log::instance()->message(ll_minimal, "SPEKernel: km_result_dword received");
+                                LOGMESSAGE(ll_minimal, "SPEKernel: km_result_dword received");
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -138,7 +138,7 @@ namespace honei
                                 continue;
 
                             case km_result_qword:
-                                Log::instance()->message(ll_minimal, "SPEKernel: km_result_qword received");
+                                LOGMESSAGE(ll_minimal, "SPEKernel: km_result_qword received");
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -148,7 +148,7 @@ namespace honei
                                 continue;
 
                             case km_instruction_finished:
-                                Log::instance()->message(ll_minimal, "SPEKernel: km_instruction_finished received");
+                                LOGMESSAGE(ll_minimal, "SPEKernel: km_instruction_finished received");
                                 {
                                     Lock ll(*imp->mutex);
 
@@ -180,7 +180,7 @@ namespace honei
                                     spe_out_mbox_read(spe->context(), ea.u, 2);
                                     spe_out_mbox_read(spe->context(), &lsa, 1);
                                     spe_out_mbox_read(spe->context(), &size, 1);
-                                    Log::instance()->message(ll_minimal, "SPEKernel: PUT transfer started, ea = " +
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: PUT transfer started, ea = " +
                                             stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
                                             stringify(size));
                                 }
@@ -201,18 +201,18 @@ namespace honei
                                     spe_out_mbox_read(spe->context(), ea.u, 2);
                                     spe_out_mbox_read(spe->context(), &lsa, 1);
                                     spe_out_mbox_read(spe->context(), &size, 1);
-                                    Log::instance()->message(ll_minimal, "SPEKernel: GET transfer started, ea = " +
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: GET transfer started, ea = " +
                                             stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
                                             stringify(size));
                                 }
                                 continue;
 
                             case km_debug_enter:
-                                Log::instance()->message(ll_minimal, "SPEKernel: SPE entering instruction");
+                                LOGMESSAGE(ll_minimal, "SPEKernel: SPE entering instruction");
                                 continue;
 
                             case km_debug_leave:
-                                Log::instance()->message(ll_minimal, "SPEKernel: SPE leaving instruction");
+                                LOGMESSAGE(ll_minimal, "SPEKernel: SPE leaving instruction");
                                 continue;
 
                             case km_debug_acquire_block:
@@ -221,7 +221,7 @@ namespace honei
 
                                     LocalStoreAddress lsa(0);
                                     spe_out_mbox_read(spe->context(), &lsa, 1);
-                                    Log::instance()->message(ll_minimal, "SPEKernel: Acquired block at " +
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: Acquired block at " +
                                             stringify(lsa));
                                 }
                                 continue;
@@ -232,7 +232,7 @@ namespace honei
 
                                     LocalStoreAddress lsa(0);
                                     spe_out_mbox_read(spe->context(), &lsa, 1);
-                                    Log::instance()->message(ll_minimal, "SPEKernel: Released block at " +
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: Released block at " +
                                             stringify(lsa));
                                 }
                                 continue;
@@ -249,7 +249,7 @@ namespace honei
                                     {
                                         file << *c;
                                     }
-                                    Log::instance()->message(ll_minimal, "SPEKernel: Dumped LS content to file '" +
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: Dumped LS content to file '" +
                                             name + "'");
                                     ++counter;
                                     spe->signal();
@@ -262,7 +262,7 @@ namespace honei
                 }
                 else if (e->events & SPE_EVENT_SPE_STOPPED)
                 {
-                    Log::instance()->message(ll_minimal, "SPEKernel: SPE stopped and signaled");
+                    LOGMESSAGE(ll_minimal, "SPEKernel: SPE stopped and signaled");
                     Lock ll(*imp->mutex);
 
                     imp->instruction_finished->broadcast();
@@ -270,7 +270,7 @@ namespace honei
                 }
                 else
                 {
-                    Log::instance()->message(ll_minimal, "SPEKernel: Neither mail event nor stop event");
+                    LOGMESSAGE(ll_minimal, "SPEKernel: Neither mail event nor stop event");
                 }
             } while (true);
 
@@ -411,7 +411,7 @@ namespace honei
         _imp->spe = new SPE(spe);
         _imp->kernel_loaded->signal_and_wait(_imp->mutex);
 
-        Log::instance()->message(ll_minimal, "SPEKernel: Loading kernel into SPE");
+        LOGMESSAGE(ll_minimal, "SPEKernel: Loading kernel into SPE");
 
         if (_imp->initial_instructions)
         {

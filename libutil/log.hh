@@ -20,13 +20,15 @@
 #ifndef LIBUTIL_GUARD_LOG_HH
 #define LIBUTIL_GUARD_LOG_HH 1
 
-#include <libutil/mutex.hh>
-
 #include <string>
-#include <list>
 
 namespace honei
 {
+    struct LogQueue;
+
+    /**
+     * LogLevel governs the severity of a given LogMessage.
+     */
     enum LogLevel
     {
         ll_full, ///< Output everything, even structure contents.
@@ -34,32 +36,81 @@ namespace honei
         ll_minimal ///< Output only minimal data.
     };
 
-    class Log
+    /**
+     * LogMessage enqueues a log message with the LogMessageQueue.
+     */
+    class LogMessage
     {
         private:
-            class LogOutput;
+            /// Our context.
+            std::string _context;
 
-            /// Our list of outputs.
-            std::list<LogOutput> _outputs;
+            /// Our log level.
+            LogLevel _level;
 
-            /// Our mutex.
-            Mutex * const _mutex;
+            /// Our message.
+            std::string _message;
 
-            /// Constructor.
-            Log();
+            /// Default constructor.
+            LogMessage();
 
         public:
-            /// Return the singleton instance of Log.
-            static Log * instance();
+            friend struct LogQueue;
 
             /**
-             * Log a message.
+             * Constructor.
              *
              * \param level Log-level of the message.
-             * \param msg Message to be logged.
-             **/
-            void message(const LogLevel level, const std::string & msg);
+             * \param messag Message to be logged.
+             */
+            LogMessage(const LogLevel level, const std::string & message);
+
+            /// Return our context.
+            std::string context() const
+            {
+                return _context;
+            }
+
+            /// Return our log level.
+            LogLevel level() const
+            {
+                return _level;
+            }
+
+            /// Return our message.
+            std::string message() const
+            {
+                return _message;
+            }
     };
+
+    /// Log a message.
+    static inline void log(LogLevel level, const std::string & message)
+    {
+        LogMessage(level, message);
+    }
+
+/**
+ * \def LOGMESSAGE
+ *
+ * \brief Convenience definition that provides a way to declare uniquely-named
+ * instances of class LogMessage.
+ *
+ * The created LogMessage will be automatically enqueued with the LogQueue and written.
+ *
+ * \param l Log level of the message.
+ * \param m The message.
+ *
+ * \warning Will only be compiled in when debug support is enabled.
+ *
+ * \ingroup grpdebug
+ */
+#if defined (DEBUG)
+// C preprocessor abomination following...
+#define LOGMESSAGE(l, m) log(l, m)
+#else
+#define LOGMESSAGE(l, m)
+#endif
 }
 
 #endif

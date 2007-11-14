@@ -17,104 +17,122 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <libutil/condition_variable.hh>
 #include <libutil/log.hh>
 #include <libutil/lock.hh>
 #include <libutil/exception.hh>
 #include <libutil/stringify.hh>
+#include <libutil/thread.hh>
 
-#include <list>
-#include <fstream>
 #include <iostream>
-#include <ostream>
+#include <list>
 #include <string>
+#include <tr1/functional>
 
 #include <syscall.h>
 
-using namespace honei;
-
-class Log::LogOutput
+namespace honei
 {
-    private:
-        /// Our log level.
-        LogLevel _level;
-
-        /// Our output stream.
-        std::ostream * _output;
-
-    public:
-        /**
-         * Constructor.
-         *
-         * \param level Log level for this output.
-         * \param name Filename for this output.
-         **/
-        LogOutput(LogLevel level, const std::string & name) :
-            _level(level),
-            _output(new std::fstream(name.c_str(), std::fstream::out))
-        {
-        }
-
-        /**
-         * Constructor.
-         *
-         * \param level Log level for this output.
-         * \param stream Stream for this output.
-         **/
-        LogOutput(LogLevel level, std::ostream * stream) :
-            _level(level),
-            _output(stream)
-        {
-        }
-
-        /**
-         * Out output operator.
-         *
-         * \param message Message to be logged.
-         **/
-        std::ostream & operator<< (const std::string & message)
-        {
-            return (*_output << message);
-        }
-
-        /// Returns our loglevel.
-        const LogLevel level() const
-        {
-            return _level;
-        }
-};
-
-Log::Log() :
-    _mutex(new Mutex)
-{
-    _outputs.push_back(LogOutput(ll_minimal, &std::cerr));
-}
-
-Log *
-Log::instance()
-{
-    static Log result;
-
-    return &result;
-}
-
-void
-Log::message(const LogLevel level, const std::string & msg)
-{
-    Lock l(*_mutex);
-
-    for (std::list<LogOutput>::iterator o(_outputs.begin()), o_end(_outputs.end()) ;
-            o != o_end ; ++o)
+    /**
+     * LogQueue prints LogMessages using a single thread.
+     */
+    struct LogQueue
     {
-        if (level <= o->level())
+        /// Our mutex.
+        Mutex * const mutex;
+
+        /// Our work-pending condition variable.
+        ConditionVariable * const work_pending;
+
+        /// Our finish-the-thread flag.
+        bool finish;
+
+        /// Our logging thread.
+        Thread * thread;
+
+        /// Our list of log messages.
+        std::list<LogMessage> messages;
+
+        /// Write out our log messages.
+        void log_function()
         {
             static std::string previous_context;
-            std::string context("In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " +
-                    Context::backtrace("\n ... "));
-            if (previous_context == context)
-                (*o) << "(same context) " << msg << std::endl;
-            else
-                (*o) << context << msg << std::endl;
-            previous_context = context;
+
+            while (true)
+            {
+                LogMessage message;
+
+                {
+                    Lock l(*mutex);
+
+                    if (messages.empty())
+                    {
+                        if (finish)
+                            break;
+
+                        work_pending->wait(*mutex);
+                        continue;
+                    }
+                    else
+                    {
+                        message = messages.front();
+                        messages.pop_front();
+                    }
+                }
+
+                if (previous_context == message.context())
+                    std::cerr << "(same context) " << message.message() << std::endl;
+                else
+                    std::cerr << message.context() << message.message() << std::endl;
+                previous_context = message.context();
+            }
         }
+
+        LogQueue() :
+            mutex(new Mutex),
+            work_pending(new ConditionVariable),
+            finish(false),
+            thread(new Thread(std::tr1::bind(std::tr1::mem_fn(&LogQueue::log_function), this)))
+        {
+        }
+
+        ~LogQueue()
+        {
+            {
+                Lock l(*mutex);
+
+                finish = true;
+                work_pending->signal();
+            }
+
+            delete thread;
+            delete work_pending;
+            delete mutex;
+        }
+
+        void enqueue(const LogMessage & message)
+        {
+            Lock l(*mutex);
+
+            messages.push_back(message);
+            work_pending->signal();
+        }
+    };
+
+    namespace intern
+    {
+        static LogQueue log_queue;
+    }
+
+    LogMessage::LogMessage(const LogLevel level, const std::string & message) :
+        _context("In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " + Context::backtrace("\n ... ")),
+        _level(level),
+        _message(message)
+    {
+        intern::log_queue.enqueue(*this);
+    }
+
+    LogMessage::LogMessage()
+    {
     }
 }

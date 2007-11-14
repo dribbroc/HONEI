@@ -83,8 +83,8 @@ struct SPE::Implementation
 
             if (retval < 0)
             {
-                Log::instance()->message(ll_minimal, "SPE #" + stringify(imp->device) + " stopped "
-                        "at " + stringify(reinterpret_cast<void *>(entry_point)));
+                LOGMESSAGE(ll_minimal, "SPE #" + stringify(imp->device) + " stopped at " +
+                        stringify(reinterpret_cast<void *>(entry_point)));
 
                 std::string msg("Reason: ");
                 switch (stop_info.stop_reason)
@@ -121,13 +121,13 @@ struct SPE::Implementation
                     default:
                         msg += "unknown error (" + stringify(stop_info.stop_reason) + ")";
                 }
-                Log::instance()->message(ll_minimal, msg);
+                LOGMESSAGE(ll_minimal, msg);
                 throw SPEError("spe_context_run", errno);
             }
         }
         catch (Exception & e)
         {
-            Log::instance()->message(ll_minimal, e.message());
+            LOGMESSAGE(ll_minimal, e.message());
             throw;
         }
     }
@@ -161,7 +161,7 @@ struct SPE::Implementation
 
         while ((retval == -1) && (errno == EAGAIN) && (counter > 0))
         {
-            Log::instance()->message(ll_minimal, "SPE '" + stringify(device)
+            LOGMESSAGE(ll_minimal, "SPE '" + stringify(device)
                     + "' has still running threads on destruction.");
             usleep(1000);
             --counter;
@@ -169,7 +169,7 @@ struct SPE::Implementation
 
         if (retval == -1)
         {
-            Log::instance()->message(ll_minimal, "spe_context_destroy failed, " + stringify(strerror(errno)));
+            LOGMESSAGE(ll_minimal, "spe_context_destroy failed, " + stringify(strerror(errno)));
         }
     }
 };
