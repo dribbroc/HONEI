@@ -160,7 +160,6 @@ namespace honei
                     linescount++;
                 }
                 ifs.close();
-
                 for(unsigned long i = 0; i < height; ++i)
                 {
                     unsigned long lineprogress = 0;
@@ -171,12 +170,15 @@ namespace honei
                     {
                         if(lines[i][j] == ' ' || lines[i][j] == '/')
                         {
-                            result[i][lineprogress] = Parser<float>::parse(s1.c_str());
-                            ++lineprogress;
-                            tempprogress = 0;
-                            for(int a = 0; a < width*100; a++)
+                            if(lineprogress < width) 
                             {
-                                s1[a] = ' ';
+                                result[i][lineprogress] = Parser<float>::parse(s1.c_str());
+                                ++lineprogress;
+                                tempprogress = 0;
+                                for(int a = 0; a < width*100; a++)
+                                {
+                                    s1[a] = ' ';
+                                }
                             }
 
                         }
@@ -309,12 +311,15 @@ namespace honei
                     {
                         if(lines[i][j] == ' ' || lines[i][j] == '/')
                         {
-                            result[i][lineprogress] = Parser<double>::parse(s1.c_str());
-                            ++lineprogress;
-                            tempprogress = 0;
-                            for(int a = 0; a < width*50; a++)
+                            if(lineprogress < width)
                             {
-                                s1[a] = ' ';
+                                result(i,lineprogress) = Parser<double>::parse(s1.c_str());
+                                ++lineprogress;
+                                tempprogress = 0;
+                                for(int a = 0; a < width*50; a++)
+                                {
+                                    s1[a] = ' ';
+                                }
                             }
 
                         }

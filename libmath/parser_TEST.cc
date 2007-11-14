@@ -52,7 +52,7 @@ class ParserTest:
             {
                 TEST_CHECK_EQUAL(resultm[0][i],i);
             }
-
+            cout<<resultm<<endl;
 
             TEST_CHECK(true);
         }
