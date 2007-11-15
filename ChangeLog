@@ -6,6 +6,12 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
+2007-11-15 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* cell/libla/dense_dense_float_dot_product.cc, misc/make_sk.bash:
+	Debug mails from spe's now depend on DEBUG-flag.
+
+
 2007-11-14 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libla/residual.hh: Changed returntype. Residual now returns

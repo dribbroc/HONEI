@@ -20,7 +20,6 @@
 
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
-#include <cell/libutil/debug.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -55,9 +54,7 @@ unsigned dense_dense_float_dot_product(const Instruction & inst)
     unsigned nextsize;
     unsigned current(0), next(1);
 
-    debug_get(ea_a, a[current].untyped, size);
     mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
-    debug_get(ea_b, b[current].untyped, size);
     mfc_get(b[current].untyped, ea_b, size, current, 0, 0);
     ea_a += size;
     ea_b += size;
@@ -68,9 +65,7 @@ unsigned dense_dense_float_dot_product(const Instruction & inst)
     {
         nextsize = (counter == 2 ? inst.e.u : inst.size);
 
-        debug_get(ea_a, a[next].untyped, nextsize);
         mfc_get(a[next].untyped, ea_a, nextsize, next, 0, 0);
-        debug_get(ea_b, b[next].untyped, nextsize);
         mfc_get(b[next].untyped, ea_b, nextsize, next, 0, 0);
         ea_a += nextsize;
         ea_b += nextsize;
