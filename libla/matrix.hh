@@ -368,19 +368,19 @@ namespace honei
     {
         unsigned long row(0);
 
-        lhs << "[ " << std::endl;
+        lhs << "[ " << std::endl << " [";
         for (typename Matrix<DataType_>::ConstElementIterator i(m.begin_elements()), i_end(m.end_elements()) ;
                 i != i_end ; ++i)
         {
             if (row != i.row())
             {
-                lhs << std::endl;
+                lhs << " ]" << std::endl << " [";
                 row = i.row();
             }
             lhs << " " << *i;
         }
 
-        lhs << "]" << std::endl << "]";
+        lhs << " ]" << std::endl << "]";
 
         return lhs;
     }
@@ -437,7 +437,7 @@ namespace honei
 
             lhs << " " << v << std::endl;
         }
-        lhs << "]";
+        lhs << "]" << std::endl;
 
         return lhs;
     }
