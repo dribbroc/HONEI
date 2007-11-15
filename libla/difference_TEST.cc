@@ -309,8 +309,8 @@ class DenseMatrixDifferenceTest :
 
             DenseMatrix<DT_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
 
-            TEST_CHECK_THROWS(Difference<>::value(dm03, dm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Difference<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Difference<>::value(dm03, dm02), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Difference<>::value(dm03, dm01), MatrixColumnsDoNotMatch);
         }
 };
 DenseMatrixDifferenceTest<float> dense_matrix_difference_test_float("float");

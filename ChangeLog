@@ -5,6 +5,9 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-15 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* libla/difference_TEST.cch: Fixed small error.
 
 2007-11-15 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
