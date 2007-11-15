@@ -368,7 +368,7 @@ namespace honei
     {
         unsigned long row(0);
 
-        lhs << "[ " << std::endl << " [";
+        lhs << "[" << std::endl << " [";
         for (typename Matrix<DataType_>::ConstElementIterator i(m.begin_elements()), i_end(m.end_elements()) ;
                 i != i_end ; ++i)
         {
@@ -430,7 +430,7 @@ namespace honei
      **/
     template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const RowAccessMatrix<DataType_> & m)
     {
-        lhs << "[ " << std::endl;
+        lhs << "[" << std::endl;
         for (unsigned long r(0) ; r < m.rows() ; ++r) ///< \todo Add row-iteration to RowAccessMatrix.
         {
             const Vector<DataType_> & v(m[r]);
