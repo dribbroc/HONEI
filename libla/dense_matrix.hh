@@ -304,7 +304,7 @@ namespace honei
             /// Returns a copy of the matrix.
             DenseMatrix * copy() const
             {
-                DenseMatrix * result(new DenseMatrix(_columns, _rows));
+                DenseMatrix * result(new DenseMatrix(_rows, _columns));
 
                 TypeTraits<DataType_>::copy(_elements.get(), result->_elements.get(), _columns * _rows);
 

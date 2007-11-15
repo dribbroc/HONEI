@@ -64,8 +64,8 @@ class DenseMatrixCopyTest :
         {
             for (unsigned long size(10) ; size < (1 << 4) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size, DataType_(0)),
-                    dm2(size, size, static_cast<DataType_>(1));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
+                    dm2(size+1, size, static_cast<DataType_>(1));
                 std::tr1::shared_ptr<DenseMatrix<DataType_> > c(dm1.copy());
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(c->begin_elements()),

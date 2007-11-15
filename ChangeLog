@@ -6,6 +6,11 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
+2007-11-15 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libla/dense_matrix.hh, libla/dense_matrix_TEST.cc: Fixed order of
+	length arguments in copy-function and adjusted testcase.
+
 2007-11-15 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/libla/dense_dense_float_dot_product.cc, misc/make_sk.bash:
