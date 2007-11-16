@@ -123,7 +123,7 @@ namespace honei
 
                     ///Update solution:
                     Scale<Tag_>::value(alpha, defect);
-                    x_actual = Sum<Tag_>::value(x_actual, defect);
+                    Sum<Tag_>::value(x_actual, defect);
 
                     defect = Product<Tag_>::value(system_matrix, x_actual);
                     Difference<Tag_>::value(defect, right_hand_side);
@@ -215,10 +215,10 @@ namespace honei
 
                         ///Update solution:
                         Scale<Tag_>::value(alpha, defect);
-                        x_actual = Sum<Tag_>::value(x_actual, defect);
+                        Sum<Tag_>::value(x_actual, defect);
 
                         defect = Product<Tag_>::value(system_matrix, x_actual);
-                        defect = Difference<Tag_>::value(defect, right_hand_side);
+                        Difference<Tag_>::value(defect, right_hand_side);
 
                         alpha = Norm<vnt_l_two, false, Tag_>::value(defect);
                         ++iter_number;
@@ -315,7 +315,7 @@ namespace honei
 
                     ///Update solution:
                     Scale<Tag_>::value(alpha, defect);
-                    x_actual = Sum<Tag_>::value(x_actual, defect);
+                    Sum<Tag_>::value(x_actual, defect);
 
                     defect = Product<Tag_>::value(system_matrix, x_actual);
                     Difference<Tag_>::value(defect, right_hand_side);
@@ -407,10 +407,10 @@ namespace honei
 
                         ///Update solution:
                         Scale<Tag_>::value(alpha, defect);
-                        x_actual = Sum<Tag_>::value(x_actual, defect);
+                        Sum<Tag_>::value(x_actual, defect);
 
                         defect = Product<Tag_>::value(system_matrix, x_actual);
-                        defect = Difference<Tag_>::value(defect, right_hand_side);
+                        Difference<Tag_>::value(defect, right_hand_side);
 
                         alpha = Norm<vnt_l_two, false, Tag_>::value(defect);
                         ++iter_number;
@@ -454,7 +454,7 @@ namespace honei
                         //TODO: use libla/residual(?)
 
                         DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
-                        defect = Difference<Tag_>::value(defect, right_hand_side);
+                        Difference<Tag_>::value(defect, right_hand_side);
                         Scale<Tag_>::value(DT1_(-1.), defect);
 
                         DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
@@ -505,10 +505,10 @@ namespace honei
 
                             ///Update solution:
                             Scale<Tag_>::value(alpha, defect);
-                            x_actual = Sum<Tag_>::value(x_actual, defect);
+                            Sum<Tag_>::value(x_actual, defect);
 
                             defect = Product<Tag_>::value(system_matrix, x_actual);
-                            defect = Difference<Tag_>::value(defect, right_hand_side);
+                            Difference<Tag_>::value(defect, right_hand_side);
 
                             alpha = Norm<vnt_l_two, false, Tag_>::value(defect);
                             ++iter_number;
@@ -596,10 +596,10 @@ namespace honei
 
                         ///Update solution:
                         Scale<Tag_>::value(alpha, defect);
-                        x_actual = Sum<Tag_>::value(x_actual, defect);
+                        Sum<Tag_>::value(x_actual, defect);
 
                         defect = Product<Tag_>::value(system_matrix, x_actual);
-                        defect = Difference<Tag_>::value(defect, right_hand_side);
+                        Difference<Tag_>::value(defect, right_hand_side);
 
                         alpha = Norm<vnt_l_two, false, Tag_>::value(defect);
                         ++iter_number;
