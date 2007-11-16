@@ -41,6 +41,17 @@ namespace honei
 
             static const Operand empty;
 
+            /// \name Unwanted operations
+            /// \{
+
+            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
+            SPEInstruction(const SPEInstruction &);
+
+            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
+            SPEInstruction & operator= (const SPEInstruction &);
+
+            /// \}
+
             /// Enqueue us with a given kernel.
             void enqueue_with(SPEKernel * kernel) const;
 
@@ -50,7 +61,9 @@ namespace honei
             /// Constructor.
             SPEInstruction(const OpCode opcode, const unsigned size, const Operand a = empty,
                     const Operand b = empty, const Operand c = empty, const Operand d = empty,
-                    const Operand e = empty, const Operand f = empty, const Operand g = empty);
+                    const Operand e = empty, const Operand f = empty, const Operand g = empty,
+                    const Operand h = empty, const Operand i = empty, const Operand j = empty,
+                    const Operand k = empty);
 
             /// Destructor.
             ~SPEInstruction();

@@ -25,8 +25,9 @@
 namespace honei
 {
     SPEInstruction::SPEInstruction(const OpCode opcode, const unsigned size, const Operand a,
-            const Operand b, const Operand c, const Operand d,
-            const Operand e, const Operand f, const Operand g) :
+            const Operand b, const Operand c, const Operand d, const Operand e,
+            const Operand f, const Operand g, const Operand h, const Operand i,
+            const Operand j, const Operand k) :
         _kernel(0),
         _index(0)
     {
@@ -39,6 +40,10 @@ namespace honei
         _instruction.e = e;
         _instruction.f = f;
         _instruction.g = g;
+        _instruction.h = h;
+        _instruction.i = i;
+        _instruction.j = j;
+        _instruction.k = k;
     }
 
     SPEInstruction::~SPEInstruction()
@@ -54,7 +59,9 @@ namespace honei
         msg += "a = " + stringify(_instruction.a.ea) + ", b = " + stringify(_instruction.b.ea) + "\n";
         msg += "c = " + stringify(_instruction.c.ea) + ", d = " + stringify(_instruction.d.ea) + "\n";
         msg += "e = " + stringify(_instruction.e.ea) + ", f = " + stringify(_instruction.f.ea) + "\n";
-        msg += "g = " + stringify(_instruction.g.ea) + "\n";
+        msg += "g = " + stringify(_instruction.g.ea) + ", h = " + stringify(_instruction.h.ea) + "\n";
+        msg += "i = " + stringify(_instruction.i.ea) + ", j = " + stringify(_instruction.j.ea) + "\n";
+        msg += "k = " + stringify(_instruction.k.ea) + "\n";
         LOGMESSAGE(ll_minimal, msg);
 
         _kernel = kernel;
