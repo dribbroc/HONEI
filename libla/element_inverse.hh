@@ -59,9 +59,9 @@ namespace honei
          */
 
         template <typename DataType_>
-        static DenseVector<DataType_> & value(DenseVector<DataType_> & x)
+        static DenseVectorBase<DataType_> & value(DenseVectorBase<DataType_> & x)
         {
-            CONTEXT("When calculating the inverse DenseVector elements");
+            CONTEXT("When calculating the inverse DenseVectorBase elements");
 
             for (typename Vector<DataType_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)

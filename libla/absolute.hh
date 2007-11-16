@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_ABSOLUTE_HH
 #define LIBLA_GUARD_ABSOLUTE_HH 1
 
-#include <libla/dense_vector.hh>
+#include <libla/dense_vector_base.hh>
 #include <libla/sparse_vector.hh>
 #include <libutil/tags.hh>
 
@@ -53,9 +53,9 @@ namespace honei
          */
 
         template <typename DT_>
-        static DenseVector<DT_> & value(DenseVector<DT_> & x)
+        static DenseVectorBase<DT_> & value(DenseVectorBase<DT_> & x)
         {
-            CONTEXT("When calculating the absolute value of DenseVector elements");
+            CONTEXT("When calculating the absolute value of DenseVectorBase elements");
 
             for (typename Vector<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
                     i != i_end ; ++i)
@@ -74,13 +74,13 @@ namespace honei
     };
 
     template <>
-    DenseVector<float> & Absolute<tags::CPU>::value(DenseVector<float> & x);
+    DenseVectorBase<float> & Absolute<tags::CPU>::value(DenseVectorBase<float> & x);
 
     template <>
     SparseVector<float> & Absolute<tags::CPU>::value(SparseVector<float> & x);
 
     template <>
-    DenseVector<double> & Absolute<tags::CPU>::value(DenseVector<double> & x);
+    DenseVectorBase<double> & Absolute<tags::CPU>::value(DenseVectorBase<double> & x);
 
     template <>
     SparseVector<double> & Absolute<tags::CPU>::value(SparseVector<double> & x);

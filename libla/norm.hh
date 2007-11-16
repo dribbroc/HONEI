@@ -73,9 +73,9 @@ namespace honei
          */
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & x)
+        static DT_ value(const DenseVectorBase<DT_> & x)
         {
-            CONTEXT("When calculating norm of a DenseVector:");
+            CONTEXT("When calculating norm of a DenseVectorBase:");
             DT_ result(0);
 
             result = Norm<norm_type_, root_>::value(x);
@@ -126,8 +126,10 @@ namespace honei
          */
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & x)
+        static DT_ value(const DenseVectorBase<DT_> & x)
         {
+            CONTEXT("When calculating norm of a DenseVectorBase:");
+
             DT_ result(0);
 
             for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
@@ -145,6 +147,8 @@ namespace honei
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
+            CONTEXT("When calculating norm of a SparseVector:");
+
             DT_ result(0);
 
             for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
@@ -191,8 +195,10 @@ namespace honei
          */
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & x)
+        static DT_ value(const DenseVectorBase<DT_> & x)
         {
+            CONTEXT("When calculating norm of a DenseVectorBase:");
+
             DT_ result(0);
 
             for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
@@ -207,6 +213,7 @@ namespace honei
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
+            CONTEXT("When calculating norm of a SparseVector:");
             DT_ result(0);
 
             for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
@@ -250,14 +257,16 @@ namespace honei
          */
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & x)
+        static DT_ value(const DenseVectorBase<DT_> & x)
         {
+            CONTEXT("When calculating norm of a DenseVectorBase:");
             return DotProduct<tags::CPU>::value(x, x);
         }
 
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
+            CONTEXT("When calculating norm of a SparseVector:");
             return DotProduct<tags::CPU>::value(x, x);
         }
 
@@ -293,14 +302,16 @@ namespace honei
          */
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & x)
+        static DT_ value(const DenseVectorBase<DT_> & x)
         {
+            CONTEXT("When calculating norm of a DenseVectorBase:");
             return sqrt(Norm<vnt_l_two, false>::value(x));
         }
 
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
+            CONTEXT("When calculating norm of a SparseVector:");
             return sqrt(Norm<vnt_l_two, false>::value(x));
         }
 
@@ -336,8 +347,9 @@ namespace honei
          */
 
         template <typename DT_>
-        static DT_ value (const DenseVector<DT_> & x)
+        static DT_ value (const DenseVectorBase<DT_> & x)
         {
+            CONTEXT("When calculating norm of a DenseVectorBase:");
             DT_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
@@ -356,6 +368,7 @@ namespace honei
         template <typename DT_>
         static DT_ value (const SparseVector<DT_> & x)
         {
+            CONTEXT("When calculating norm of a SparseVector:");
             DT_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 

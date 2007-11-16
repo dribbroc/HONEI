@@ -47,9 +47,9 @@ class ScalarBandedMatrixProductTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
-                BandedMatrix<DataType_> & prod(Scale<>::value(DataType_(3), bm1));
-                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()),
-                        ce_end(prod.end_bands()) ; ce != ce_end ; ++ce)
+                Scale<>::value(DataType_(3), bm1);
+                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()),
+                        ce_end(bm1.end_bands()) ; ce != ce_end ; ++ce)
                 {
                     if (ce.index() != size - 1 )
                     {
@@ -89,9 +89,9 @@ class ScalarBandedMatrixProductQuickTest :
             unsigned long size(20);
             DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
-            BandedMatrix<DataType_> & prod(Scale<>::value(DataType_(3), bm1));
-            for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(prod.begin_bands()),
-                    ce_end(prod.end_bands()) ; ce != ce_end ; ++ce)
+            Scale<>::value(DataType_(3), bm1);
+            for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()),
+                    ce_end(bm1.end_bands()) ; ce != ce_end ; ++ce)
             {
                 if (ce.index() != size - 1 )
                 {
@@ -131,9 +131,9 @@ class DenseMatrixScaleTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(6));
-                DenseMatrix<DataType_> & prod(Scale<Tag_>::value(DataType_(3), dm1));
+                Scale<Tag_>::value(DataType_(3), dm1);
 
-                TEST_CHECK_EQUAL(prod, dm2);
+                TEST_CHECK_EQUAL(dm1, dm2);
             }
         }
 };
@@ -158,7 +158,7 @@ class DenseMatrixScaleQuickTest :
         {
             unsigned long size(100);
             DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
-            DenseMatrix<DataType_> prod1(Scale<Tag_>::value(DataType_(3), dm));
+            Scale<Tag_>::value(DataType_(3), dm);
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
@@ -201,9 +201,9 @@ class ScalarSparseMatrixProductTest :
                         *j = DataType_(6);
                     }
                 }
-                SparseMatrix<DataType_> & prod(Scale<>::value(DataType_(3), sm1));
+                Scale<>::value(DataType_(3), sm1);
 
-                TEST_CHECK_EQUAL(prod, sm2);
+                TEST_CHECK_EQUAL(sm1, sm2);
             }
         }
 };
@@ -234,9 +234,9 @@ class ScalarSparseMatrixProductQuickTest :
                     *j = DataType_(6);
                 }
             }
-            SparseMatrix<DataType_> & prod(Scale<>::value(DataType_(3), sm1));
+            Scale<>::value(DataType_(3), sm1);
 
-            TEST_CHECK_EQUAL(prod, sm2);
+            TEST_CHECK_EQUAL(sm1, sm2);
         }
 };
 ScalarSparseMatrixProductQuickTest<float> scalar_sparse_matrix_product_quick_test_float("float");
@@ -261,8 +261,8 @@ class ScalarDenseVectorProductTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(3));
 
-                DenseVector<DataType_> prod1(Scale<Tag_>::value(DataType_(2), dv1));
-                DataType_ v1(Norm<vnt_l_one>::value(prod1));
+                Scale<Tag_>::value(DataType_(2), dv1);
+                DataType_ v1(Norm<vnt_l_one>::value(dv1));
                 TEST_CHECK_EQUAL(v1, 6 * size);
             }
         }
@@ -291,8 +291,8 @@ class ScalarDenseVectorProductQuickTest :
             unsigned long size(5);
             DenseVector<DataType_> dv1(size, DataType_(3));
 
-            DenseVector<DataType_> prod1(Scale<Tag_>::value(DataType_(2), dv1));
-            DataType_ v1(Norm<vnt_l_one>::value(prod1));
+            Scale<Tag_>::value(DataType_(2), dv1);
+            DataType_ v1(Norm<vnt_l_one>::value(dv1));
             TEST_CHECK_EQUAL(v1, 6 * size);
         }
 };
@@ -326,8 +326,8 @@ class ScalarSparseVectorProductTest :
                 {
                     if (i.index() % 10 == 0) *i = 3;
                 }
-                SparseVector<DataType_> prod1(Scale<>::value(static_cast<DataType_>(2), sv1));
-                DataType_ v1(Norm<vnt_l_one>::value(prod1));
+                Scale<>::value(static_cast<DataType_>(2), sv1);
+                DataType_ v1(Norm<vnt_l_one>::value(sv1));
                 TEST_CHECK_EQUAL(v1, 6 * (size / 10 + 1));
             }
         }
@@ -355,8 +355,8 @@ class ScalarSparseVectorProductQuickTest :
             {
                 if (i.index() % 10 == 0) *i = 3;
             }
-            SparseVector<DataType_> prod1(Scale<>::value(static_cast<DataType_>(2), sv1));
-            DataType_ v1(Norm<vnt_l_one>::value(prod1));
+            Scale<>::value(static_cast<DataType_>(2), sv1);
+            DataType_ v1(Norm<vnt_l_one>::value(sv1));
             TEST_CHECK_EQUAL(v1, 6 * (size / 10 + 1));
         }
 };

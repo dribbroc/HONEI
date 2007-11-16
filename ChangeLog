@@ -5,6 +5,35 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+
+2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* +libla/dense_vector_base.hh: Added DenseVectorBase implementation.
+	* +libla/dense_vector_continuous_base.hh: Added
+	DenseVectorContinuousBase implementation.
+	* libla/dense_vector_slice.hh: DenseVectorSlice now inherits from
+	DenseVectorBase instead of Vector.
+	* libla/dense_vector.hh, libla/dense_vector_range.hh: DenseVector and
+	DenseVectorRange now inherit from DenseVectorContinuousBase instead of
+	Vector.
+	* libla/files.m4: Added DenseVectorBase and DenseVectorContinuousBase.
+	* libla/absolute.hh, libla/absolute_TEST.cc, libla/absolute.cc,
+	libla/difference.hh, libla/difference_TEST.cc,
+	libla/element_inverse.hh, libla/element_inverse_TEST.cc,
+	libla/element_product.hh, libla/element_product_TEST.cc,
+	libla/norm.hh, libla/residual.hh, libla/reduction.hh,
+	libla/scaled_sum.hh, libla/scaled_sum_TEST.cc, libla/scale.hh,
+	libla/scale_TEST.cc, libla/product.hh, libla/product_TEST.cc,
+	libla/sum.hh, libla/sum_TEST.cc: Changed arguments of type
+	'DenseVector<...>' to arguments of type 'DenseVectorBase<...>'.
+	Changed returntypes of type 'DenseVector<...> &' to type
+	'DenseVectorBase<...> &'. Applied necessary modifications to tests and
+	header.
+	* libla/sum.hh, libla/element_product.hh: Commented out
+	MultiCore-functionality because current wrapper-implementation is not
+	capable of handling operations with returntype 'DenseVectorBase<...>
+	&'.
+
 2007-11-16 David Gies <david-gies@gmx.de>
 
 	* libla/sum.hh, libla/sum_TEST.cc, libla/sum_BENCHMARK.cc

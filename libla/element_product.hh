@@ -68,9 +68,9 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When calculating the product of DenseVectors elements");
+            CONTEXT("When calculating the product of DenseVectorBases elements");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -118,9 +118,9 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseVector and DenseVector elements");
+            CONTEXT("When calculating the product of SparseVector and DenseVectorBase elements");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -244,7 +244,7 @@ namespace honei
                     continue;
                 }
 
-                *l = ElementProduct<>::value(*l, *r);
+                ElementProduct<>::value(*l, *r);
                 ++r;
             }
 
@@ -466,12 +466,13 @@ namespace honei
         /// \}
     };
 
+#if 0
     template <typename Tag_> struct MCElementProduct
     {
 
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
-        { 
+        {
             CONTEXT("When calculating the product of BandedMatrix elements (MultiCore):");
 
             if (a.rows() != b.rows())
@@ -506,9 +507,9 @@ namespace honei
 
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
-        { 
+        {
             CONTEXT("When calculating the product of DenseMatrix elements (MultiCore):");
-            
+
             if (a.columns() != b.columns())
             {
                 throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
@@ -535,9 +536,9 @@ namespace honei
 
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
-        { 
+        {
             CONTEXT("When calculating the product of SparseMatrix and DenseMatrix elements (MultiCore):");
-            
+
             if (a.columns() != b.columns())
             {
                 throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
@@ -564,9 +565,9 @@ namespace honei
 
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
-        { 
+        {
             CONTEXT("When calculating the product of SparseMatrix elements (MulitCore):");
-            
+
             if (a.columns() != b.columns())
             {
                 throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
@@ -594,5 +595,6 @@ namespace honei
     };
     template <> struct ElementProduct <tags::CPU::MultiCore> : MCElementProduct <tags::CPU::MultiCore> {};
     template <> struct ElementProduct <tags::CPU::MultiCore::SSE> : MCElementProduct <tags::CPU::MultiCore::SSE> {};
+#endif
 }
 #endif

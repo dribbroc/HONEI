@@ -179,7 +179,8 @@ namespace honei
                 else
                 {
                     DenseVector<DT2_> band(r->copy());
-                    a.band(r.index()) = Scale<>::value(DT1_(-1), band);
+                    Scale<>::value(DT1_(-1), band);
+                    a.band(r.index()) = band;
                 }
             }
 
@@ -272,9 +273,9 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When subtracting DenseVector from DenseVector:");
+            CONTEXT("When subtracting DenseVectorBase from DenseVectorBase:");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -322,14 +323,12 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const SparseVector<DT2_> & b)
         {
-            CONTEXT("When subtracting SparseVector from DenseVector:");
+            CONTEXT("When subtracting SparseVector from DenseVectorBase:");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
-
-            DenseVector<DT1_> result(a.size(),0, 0, 1);
 
             for (typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
@@ -341,7 +340,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVectorBase<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());

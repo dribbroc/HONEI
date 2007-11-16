@@ -63,7 +63,7 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_, typename VT_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & b,
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & b,
                 const DenseMatrix<DT2_> & a,
                 const VT_ & x)
         {
@@ -88,7 +88,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_, typename VT_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & b,
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & b,
                 const SparseMatrix<DT2_> & a,
                 const VT_ & x)
         {

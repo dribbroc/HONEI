@@ -47,8 +47,8 @@ class DenseVectorElementInverseTest :
                     *j = 1 / static_cast<DataType_>(i.index() + 1);
                     ++j;
                 }
-
-                TEST_CHECK_EQUAL(ElementInverse<>::value(dv1), dv2);
+                ElementInverse<>::value(dv1);
+                TEST_CHECK_EQUAL(dv1, dv2);
             }
         }
 };
@@ -77,8 +77,8 @@ class DenseVectorElementInverseQuickTest :
                 *j = 1 / static_cast<DataType_>(i.index() + 1);
                 ++j;
             }
-
-            TEST_CHECK_EQUAL(ElementInverse<>::value(dv1), dv2);
+            ElementInverse<>::value(dv1);
+            TEST_CHECK_EQUAL(dv1, dv2);
         }
 };
 DenseVectorElementInverseQuickTest<float>  dense_vector_element_inverse_quick_test_float("float");

@@ -89,16 +89,16 @@ namespace honei
             for (typename BandedMatrix<DT2_>::VectorIterator l(x.begin_bands()),
                     l_end(x.end_bands()) ; l != l_end ; ++l)
             {
-                *l = Scale<>::value(a, *l);
+                Scale<>::value(a, *l);
             }
 
             return x;
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT2_> & value(const DT1_ a, DenseVector<DT2_> & x)
+        static DenseVectorBase<DT2_> & value(const DT1_ a, DenseVectorBase<DT2_> & x)
         {
-            CONTEXT("When scaling DenseVector");
+            CONTEXT("When scaling DenseVectorBase");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
@@ -111,7 +111,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseVector<DT2_> & value(const DT1_ a, SparseVector<DT2_> & x)
         {
-            CONTEXT("When scaling SparseMatrix");
+            CONTEXT("When scaling SparseVector");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {

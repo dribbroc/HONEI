@@ -22,10 +22,10 @@
 using namespace honei;
 
 template <>
-DenseVector<float> &
-Absolute<tags::CPU>::value(DenseVector<float> & x)
+DenseVectorBase<float> &
+Absolute<tags::CPU>::value(DenseVectorBase<float> & x)
 {
-    CONTEXT("When calculating the absolute value of DenseVector<float> elements");
+    CONTEXT("When calculating the absolute value of DenseVectorBase<float> elements");
 
     for (Vector<float>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
             i != i_end ; ++i)
@@ -52,10 +52,10 @@ Absolute<tags::CPU>::value(SparseVector<float> & x)
 }
 
 template <>
-DenseVector<double> &
-Absolute<tags::CPU>::value(DenseVector<double> & x)
+DenseVectorBase<double> &
+Absolute<tags::CPU>::value(DenseVectorBase<double> & x)
 {
-    CONTEXT("When calculating the absolute value of DenseVector<double> elements");
+    CONTEXT("When calculating the absolute value of DenseVectorBase<double> elements");
 
     for (Vector<double>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
             i != i_end ; ++i)

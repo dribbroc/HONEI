@@ -48,8 +48,8 @@ class DenseVectorScaledSumTest :
                 DenseVector<DataType_> dv2(size, DataType_(3));
                 DataType_ scal(DataType_(2));
 
-                DenseVector<DataType_> sum1(ScaledSum<Tag_>::value(dv1, dv2, scal));
-                DataType_ v1(Norm<vnt_l_one>::value(sum1));
+                ScaledSum<Tag_>::value(dv1, dv2, scal);
+                DataType_ v1(Norm<vnt_l_one>::value(dv1));
                 TEST_CHECK_EQUAL(v1, 8 * size);
             }
 
@@ -85,9 +85,8 @@ class DenseVectorScaledSumQuickTest :
             DenseVector<DataType_> dv2(size, DataType_(3));
             DataType_ scal(DataType_(2));
             DenseVector<DataType_> dv3(size, DataType_(8));
-
-            DenseVector<DataType_> sum1(ScaledSum<Tag_>::value(dv1, dv2, scal));
-            TEST_CHECK_EQUAL(sum1, dv3);
+            ScaledSum<Tag_>::value(dv1, dv2, scal);
+            TEST_CHECK_EQUAL(dv1, dv3);
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
@@ -141,9 +140,9 @@ class DenseVectorSparseVectorScaledSumTest :
                     if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
                 }
 
-                DenseVector<DataType_> sum1(ScaledSum<>::value(dv1, sv2, scal));
+                ScaledSum<>::value(dv1, sv2, scal);
 
-                TEST_CHECK_EQUAL(sum1, sum2);
+                TEST_CHECK_EQUAL(dv1, sum2);
             }
 
             DenseVector<DataType_> sv00(1);
@@ -193,9 +192,9 @@ class DenseVectorSparseVectorScaledSumQuickTest :
                 if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
             }
 
-            DenseVector<DataType_> sum1(ScaledSum<>::value(dv1, sv2, scal));
+            ScaledSum<>::value(dv1, sv2, scal);
 
-            TEST_CHECK_EQUAL(sum1, sum2);
+            TEST_CHECK_EQUAL(dv1, sum2);
 
             DenseVector<DataType_> sv00(1);
             SparseVector<DataType_> sv01(2, 1);
@@ -245,9 +244,9 @@ class SparseVectorScaledSumTest :
                     if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
                 }
 
-                SparseVector<DataType_> sum1(ScaledSum<>::value(sv1, sv2, scal));
+                ScaledSum<>::value(sv1, sv2, scal);
 
-                TEST_CHECK_EQUAL(sum1, sum2);
+                TEST_CHECK_EQUAL(sv1, sum2);
             }
 
             SparseVector<DataType_> sv00(1, 1);
@@ -296,9 +295,9 @@ class SparseVectorScaledSumQuickTest :
                 if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
             }
 
-            SparseVector<DataType_> sum1(ScaledSum<>::value(sv1, sv2, scal));
+            ScaledSum<>::value(sv1, sv2, scal);
 
-            TEST_CHECK_EQUAL(sum1, sum2);
+            TEST_CHECK_EQUAL(sv1, sum2);
 
             SparseVector<DataType_> sv00(1, 1);
             SparseVector<DataType_> sv01(2, 1);

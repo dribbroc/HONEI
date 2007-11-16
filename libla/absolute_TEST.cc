@@ -51,7 +51,8 @@ class DenseVectorAbsoluteValueTest :
                     *j = DataType_(i.index() / 0.987654321);
                 }
 
-                TEST_CHECK_EQUAL(Absolute<>::value(dv1), dv2);
+                Absolute<>::value(dv1);
+                TEST_CHECK_EQUAL(dv1, dv2);
             }
         }
 };
@@ -79,8 +80,8 @@ class DenseVectorAbsoluteQuickTest :
                 *i = DataType_(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
                 *j = DataType_(i.index() / 0.987654321);
             }
-
-            TEST_CHECK_EQUAL(Absolute<>::value(dv1), dv2);
+            Absolute<>::value(dv1);
+            TEST_CHECK_EQUAL(dv1, dv2);
         }
 };
 DenseVectorAbsoluteQuickTest<float>  dense_vector_absolute_quick_test_float("float");
@@ -110,8 +111,8 @@ class SparseVectorAbsoluteValueTest :
                         *j = DataType_(i.index() / 0.987654321);
                     }
                 }
-
-                TEST_CHECK_EQUAL(Absolute<>::value(sv1), sv2);
+                Absolute<>::value(sv1);
+                TEST_CHECK_EQUAL(sv1, sv2);
             }
         }
 };
@@ -142,8 +143,8 @@ class SparseVectorAbsoluteValueQuickTest :
                     *j = DataType_(i.index() / 0.987654321);
                 }
             }
-
-            TEST_CHECK_EQUAL(Absolute<>::value(sv1), sv2);
+            Absolute<>::value(sv1);
+            TEST_CHECK_EQUAL(sv1, sv2);
         }
 };
 

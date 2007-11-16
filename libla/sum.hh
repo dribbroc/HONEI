@@ -303,9 +303,9 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When adding DenseVector to DenseVector:");
+            CONTEXT("When adding DenseVectorBase to DenseVectorBase:");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -353,8 +353,10 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const SparseVector<DT2_> & b)
         {
+            CONTEXT("When adding DenseVectorBase to SparseVector:");
+
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
@@ -382,9 +384,9 @@ namespace honei
          */
 
         template <typename DT_>
-        static DenseVector<DT_> & value(const DT_ a, DenseVector<DT_> & x)
+        static DenseVectorBase<DT_> & value(const DT_ a, DenseVectorBase<DT_> & x)
         {
-            CONTEXT("When adding scalar to DenseVector:");
+            CONTEXT("When adding scalar to DenseVectorBase:");
 
             for (typename Vector<DT_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
@@ -486,7 +488,7 @@ namespace honei
 
         /// \}
     };
-
+#if 0
     template <typename Tag_> struct MCSum
     {
 
@@ -617,7 +619,7 @@ namespace honei
     };
     template <> struct Sum <tags::CPU::MultiCore> : MCSum <tags::CPU::MultiCore> {};
     template <> struct Sum <tags::CPU::MultiCore::SSE> : MCSum <tags::CPU::MultiCore::SSE> {};
-
+#endif
 }
 
 #endif

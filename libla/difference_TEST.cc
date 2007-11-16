@@ -58,9 +58,9 @@ class BandedMatrixDenseMatrixDifferenceTest :
                         *k = DT_(1);
                     }
                 }
-                DenseMatrix<DT_> & difference(Difference<>::value(bm1, dm2));
+                Difference<>::value(bm1, dm2);
 
-                TEST_CHECK_EQUAL(difference, dm3);
+                TEST_CHECK_EQUAL(dm2, dm3);
             }
 
             BandedMatrix<DT_> bm01(5);
@@ -99,9 +99,9 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
                     *k = DT_(1);
                 }
             }
-            DenseMatrix<DT_> & difference(Difference<>::value(bm1, dm2));
+            Difference<>::value(bm1, dm2);
 
-            TEST_CHECK_EQUAL(difference, dm3);
+            TEST_CHECK_EQUAL(dm2, dm3);
 
             BandedMatrix<DT_> bm01(5);
             DenseMatrix<DT_> dm02(6, 6), dm03(5, 6);
@@ -131,9 +131,9 @@ class BandedMatrixDifferenceTest :
                 DenseVector<DT_> dv2(size, DT_(3));
                 DenseVector<DT_> dv3(size, DT_(-1));
                 BandedMatrix<DT_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-                BandedMatrix<DT_> & difference(Difference<>::value(bm1, bm2));
+                Difference<>::value(bm1, bm2);
 
-                TEST_CHECK_EQUAL(difference, bm3);
+                TEST_CHECK_EQUAL(bm1, bm3);
             }
 
             BandedMatrix<DT_> bm01(5), bm02(6);
@@ -160,10 +160,10 @@ class BandedMatrixDifferenceQuickTest :
             DenseVector<DT_> dv1(size, DT_(2)), dv2(size, DT_(3)), dv3(size, DT_(-1));
             BandedMatrix<DT_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
 
-            BandedMatrix<DT_> & diff(Difference<>::value(bm1, bm2));
+            Difference<>::value(bm1, bm2);
 
-            for (typename Matrix<DT_>::ConstElementIterator i(diff.begin_elements()),
-                    i_end(diff.end_elements()), j(bm3.begin_elements()) ; i != i_end ; ++i, ++j)
+            for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
+                    i_end(bm1.end_elements()), j(bm3.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
             }
@@ -217,9 +217,9 @@ class BandedMatrixSparseMatrixDifferenceTest :
                             *k = DT_(1);
                     }
                 }
-                SparseMatrix<DT_> & difference(Difference<>::value(bm1, sm2));
+                Difference<>::value(bm1, sm2);
 
-                TEST_CHECK_EQUAL(difference, sm3);
+                TEST_CHECK_EQUAL(sm2, sm3);
             }
 
             BandedMatrix<DT_> bm01(5);
@@ -273,8 +273,8 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
                 }
             }
 
-            SparseMatrix<DT_> & difference(Difference<>::value(bm1, sm2));
-            TEST_CHECK_EQUAL(difference, sm3);
+            Difference<>::value(bm1, sm2);
+            TEST_CHECK_EQUAL(sm2, sm3);
 
             BandedMatrix<DT_> bm01(5);
             SparseMatrix<DT_> sm02(6, 5, 1), sm03(6, 6, 1);
@@ -302,9 +302,9 @@ class DenseMatrixDifferenceTest :
             {
                 DenseMatrix<DT_> dm1(size+1, size, DT_(2)), dm2(size+1, size, DT_(3)),
                     dm3(size+1, size, DT_(-1));
-                DenseMatrix<DT_> & difference(Difference<>::value(dm1, dm2));
+                Difference<>::value(dm1, dm2);
 
-                TEST_CHECK_EQUAL(difference, dm3);
+                TEST_CHECK_EQUAL(dm1, dm3);
             }
 
             DenseMatrix<DT_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
@@ -331,9 +331,9 @@ class DenseMatrixDifferenceQuickTest :
             unsigned long size(5);
             DenseMatrix<DT_> dm1(size+1, size, DT_(2)), dm2(size+1, size, DT_(3)),
                 dm3(size+1, size, DT_(-1));
-            DenseMatrix<DT_> & difference(Difference<>::value(dm1, dm2));
+            Difference<>::value(dm1, dm2);
 
-            TEST_CHECK_EQUAL(difference, dm3);
+            TEST_CHECK_EQUAL(dm1, dm3);
 
             DenseMatrix<DT_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
 
@@ -380,9 +380,9 @@ class DenseMatrixSparseMatrixDifferenceTest :
                         *k = DT_((i.index() +1) / 1.23456789);
                     }
                 }
-                DenseMatrix<DT_> & difference(Difference<>::value(dm1, sm2));
+                Difference<>::value(dm1, sm2);
 
-                TEST_CHECK_EQUAL(difference, dm3);
+                TEST_CHECK_EQUAL(dm1, dm3);
             }
 
             SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1);
@@ -430,9 +430,9 @@ class DenseMatrixSparseMatrixDifferenceQuickTest :
                     *k = DT_((i.index() +1) / 1.23456789);
                 }
             }
-            DenseMatrix<DT_> & difference(Difference<>::value(dm1, sm2));
+            Difference<>::value(dm1, sm2);
 
-            TEST_CHECK_EQUAL(difference, dm3);
+            TEST_CHECK_EQUAL(dm1, dm3);
 
             SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1);
             DenseMatrix<DT_> dm03(6, 5);
@@ -479,9 +479,9 @@ class SparseMatrixDifferenceTest :
                         *k = DT_((i.index() +1) / 1.23456789);
                     }
                 }
-                SparseMatrix<DT_> & difference(Difference<>::value(sm1, sm2));
+                Difference<>::value(sm1, sm2);
 
-                TEST_CHECK_EQUAL(difference, sm3);
+                TEST_CHECK_EQUAL(sm1, sm3);
             }
 
             SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
@@ -527,9 +527,9 @@ class SparseMatrixDifferenceQuickTest :
                     *k = DT_((i.index() +1) / 1.23456789);
                 }
             }
-            SparseMatrix<DT_> & difference(Difference<>::value(sm1, sm2));
+            Difference<>::value(sm1, sm2);
 
-            TEST_CHECK_EQUAL(difference, sm3);
+            TEST_CHECK_EQUAL(sm1, sm3);
 
             SparseMatrix<DT_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
@@ -569,8 +569,8 @@ class DenseVectorDifferenceTest :
                 {
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
                 }
-                DenseVector<DT_> difference1(Difference<Tag_>::value(dv1, dv2));
-                TEST_CHECK_EQUAL(difference1, dv3);
+                Difference<Tag_>::value(dv1, dv2);
+                TEST_CHECK_EQUAL(dv1, dv3);
             }
 
             DenseVector<DT_> dv00(1, DT_(1));
@@ -611,8 +611,8 @@ class DenseVectorDifferenceQuickTest :
             {
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
             }
-            DenseVector<DT_> difference1(Difference<Tag_>::value(dv1, dv2));
-            TEST_CHECK_EQUAL(difference1, dv3);
+            Difference<Tag_>::value(dv1, dv2);
+            TEST_CHECK_EQUAL(dv1, dv3);
 
             DenseVector<DT_> dv00(1, DT_(1));
             DenseVector<DT_> dv01(5, DT_(1));
@@ -661,9 +661,8 @@ class DenseVectorSparseVectorDifferenceTest :
                         *k = static_cast<DT_>((i.index() +1) / 1.23456789);
                     }
                 }
-
-                DenseVector<DT_> difference1(Difference<>::value(dv1, sv2));
-                TEST_CHECK_EQUAL(difference1, dv3);
+                Difference<>::value(dv1, sv2);
+                TEST_CHECK_EQUAL(dv1, dv3);
             }
 
             DenseVector<DT_> dv00(1);
@@ -707,9 +706,8 @@ class DenseVectorSparseVectorDifferenceQuickTest :
                     *k = static_cast<DT_>((i.index() +1) / 1.23456789);
                 }
             }
-
-            DenseVector<DT_> difference1(Difference<>::value(dv1, sv2));
-            TEST_CHECK_EQUAL(difference1, dv3);
+            Difference<>::value(dv1, sv2);
+            TEST_CHECK_EQUAL(dv1, dv3);
 
             DenseVector<DT_> dv00(1);
             SparseVector<DT_> sv01(5, 1);
@@ -755,8 +753,8 @@ class SparseVectorDifferenceTest :
                     }
                 }
 
-                SparseVector<DT_> difference1(Difference<>::value(sv1, sv2));
-                TEST_CHECK_EQUAL(difference1, sv3);
+                Difference<>::value(sv1, sv2);
+                TEST_CHECK_EQUAL(sv1, sv3);
             }
 
             SparseVector<DT_> sv00(1, 1), sv01(5, 1);
@@ -801,8 +799,8 @@ class SparseVectorDifferenceQuickTest :
                 }
             }
 
-            SparseVector<DT_> difference1(Difference<>::value(sv1, sv2));
-            TEST_CHECK_EQUAL(difference1, sv3);
+            Difference<>::value(sv1, sv2);
+            TEST_CHECK_EQUAL(sv1, sv3);
 
             SparseVector<DT_> sv00(1, 1), sv01(5, 1);
             TEST_CHECK_THROWS(Difference<>::value(sv00, sv01), VectorSizeDoesNotMatch);

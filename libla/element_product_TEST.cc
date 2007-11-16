@@ -47,9 +47,9 @@ class DenseVectorElementProductTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                     dv3(size, DataType_(6));
-                DenseVector<DataType_> prod(ElementProduct<>::value(dv1, dv2));
+                ElementProduct<>::value(dv1, dv2);
 
-                TEST_CHECK_EQUAL(prod, dv3);
+                TEST_CHECK_EQUAL(dv1, dv3);
             }
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
@@ -85,9 +85,9 @@ class DenseVectorElementProductQuickTest :
             unsigned long size(5);
             DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                 dv3(size, DataType_(6));
-            DenseVector<DataType_> prod(ElementProduct<Tag_>::value(dv1, dv2));
+            ElementProduct<Tag_>::value(dv1, dv2);
 
-            TEST_CHECK_EQUAL(prod, dv3);
+            TEST_CHECK_EQUAL(dv1, dv3);
 
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
@@ -136,9 +136,9 @@ class SparseVectorDenseVectorElementProductTest :
                         *i = static_cast<DataType_>(6);
                 }
 
-                SparseVector<DataType_> prod(ElementProduct<>::value(sv1, dv2));
+                ElementProduct<>::value(sv1, dv2);
 
-                TEST_CHECK_EQUAL(prod, sv3);
+                TEST_CHECK_EQUAL(sv1, sv3);
             }
 
             SparseVector<DataType_> sv01(3, 1);
@@ -177,9 +177,9 @@ class SparseVectorDenseVectorElementProductQuickTest :
                 if (i.index() % 7 == 0)
                     *i = static_cast<DataType_>(6);
             }
-            SparseVector<DataType_> prod(ElementProduct<>::value(sv1, dv2));
+            ElementProduct<>::value(sv1, dv2);
 
-            TEST_CHECK_EQUAL(prod, sv3);
+            TEST_CHECK_EQUAL(sv1, sv3);
 
             SparseVector<DataType_> sv01(3, 1);
             DenseVector<DataType_> dv02(4);
@@ -223,9 +223,9 @@ class SparseVectorElementProductTest :
                     if (i.index() % 10 == 0 && i.index() % 7 == 0)
                         *i = static_cast<DataType_>(6);
                 }
-                SparseVector<DataType_> prod(ElementProduct<>::value(sv1, sv2));
+                ElementProduct<>::value(sv1, sv2);
 
-                TEST_CHECK_EQUAL(prod, sv3);
+                TEST_CHECK_EQUAL(sv1, sv3);
             }
 
             SparseVector<DataType_> sv01(3, 1), sv02(4, 1);
@@ -268,9 +268,9 @@ class SparseVectorElementProductQuickTest :
                 if (i.index() % 10 == 0 && i.index() % 7 == 0)
                     *i = static_cast<DataType_>(6);
             }
-            SparseVector<DataType_> prod(ElementProduct<>::value(sv1, sv2));
+            ElementProduct<>::value(sv1, sv2);
 
-            TEST_CHECK_EQUAL(prod, sv3);
+            TEST_CHECK_EQUAL(sv1, sv3);
 
             SparseVector<DataType_> sv01(3, 1), sv02(4, 1);
 
@@ -300,9 +300,9 @@ class BandedMatrixDenseMatrixElementProductTest :
                 DenseVector<DataType_> dv3(size, DataType_(6));
                 BandedMatrix<DataType_> bm2(size, dv2),  bm3(size, dv3);
 
-                BandedMatrix<DataType_> & prod(ElementProduct<Tag_>::value(bm2, dm1));
+                ElementProduct<Tag_>::value(bm2, dm1);
 
-                TEST_CHECK_EQUAL(prod, bm3);
+                TEST_CHECK_EQUAL(bm2, bm3);
             }
 
             DenseMatrix<DataType_> dm01(6, 5), dm03(5, 6);
@@ -334,9 +334,9 @@ class BandedMatrixDenseMatrixElementProductQuickTest :
             DenseVector<DataType_> dv3(size, DataType_(6));
             BandedMatrix<DataType_> bm2(size, dv2),  bm3(size, dv3);
 
-            BandedMatrix<DataType_> & prod(ElementProduct<Tag_>::value(bm2, dm1));
+            ElementProduct<Tag_>::value(bm2, dm1);
 
-            TEST_CHECK_EQUAL(prod, bm3);
+            TEST_CHECK_EQUAL(bm2, bm3);
 
             DenseMatrix<DataType_> dm01(6, 5), dm03(5, 6);
             BandedMatrix<DataType_> bm02(6);
@@ -366,9 +366,10 @@ class BandedMatrixElementProductTest :
                 DenseVector<DataType_> dv2(size, DataType_(2));
                 DenseVector<DataType_> dv3(size, DataType_(6));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-                BandedMatrix<DataType_> & prod(ElementProduct<Tag_>::value(bm1, bm2));
 
-                TEST_CHECK_EQUAL(prod, bm3);
+                ElementProduct<>::value(bm1, bm2);
+
+                TEST_CHECK_EQUAL(bm1, bm3);
             }
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
@@ -398,9 +399,10 @@ class BandedMatrixElementProductQuickTest :
             DenseVector<DataType_> dv2(size, DataType_(2));
             DenseVector<DataType_> dv3(size, DataType_(6));
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-            BandedMatrix<DataType_> & prod(ElementProduct<Tag_>::value(bm1, bm2));
 
-            TEST_CHECK_EQUAL(prod, bm3);
+            ElementProduct<>::value(bm1, bm2);
+
+            TEST_CHECK_EQUAL(bm1, bm3);
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
@@ -441,9 +443,9 @@ class BandedMatrixSparseMatrixElementProductTest :
                         *k = DataType_(6);
                 }
 
-                BandedMatrix<DataType_> & prod(ElementProduct<>::value(bm1, sm2));
+                ElementProduct<>::value(bm1, sm2);
 
-                TEST_CHECK_EQUAL(prod, bm3);
+                TEST_CHECK_EQUAL(bm1, bm3);
             }
 
             BandedMatrix<DataType_> bm01(5);
@@ -484,9 +486,9 @@ class BandedMatrixSparseMatrixElementProductQuickTest :
                     *k = DataType_(6);
             }
 
-            BandedMatrix<DataType_> & prod(ElementProduct<>::value(bm1, sm2));
+            ElementProduct<>::value(bm1, sm2);
 
-            TEST_CHECK_EQUAL(prod, bm3);
+            TEST_CHECK_EQUAL(bm1, bm3);
 
             BandedMatrix<DataType_> bm01(5);
             SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
@@ -515,9 +517,9 @@ class DenseMatrixElementProductTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(3)),
                     dm3(size+1, size, DataType_(6));
-                DenseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(dm1, dm2));
+                ElementProduct<Tag_>::value(dm1, dm2);
 
-                TEST_CHECK_EQUAL(prod, dm3);
+                TEST_CHECK_EQUAL(dm1, dm3);
             }
 
             DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1)),
@@ -551,9 +553,9 @@ class DenseMatrixElementProductQuickTest :
             unsigned long size(5);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(3)),
                 dm3(size+1, size, DataType_(6));
-            DenseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(dm1, dm2));
+            ElementProduct<Tag_>::value(dm1, dm2);
 
-            TEST_CHECK_EQUAL(prod, dm3);
+            TEST_CHECK_EQUAL(dm1, dm3);
 
             DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(4, 3, DataType_(1)),
                 dm03(4, 2, DataType_(1));
@@ -596,9 +598,9 @@ class SparseMatrixDenseMatrixElementProductTest :
                     }
                 }
 
-                SparseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(sm2, dm1));
+                ElementProduct<>::value(sm2, dm1);
 
-                TEST_CHECK_EQUAL(prod, sm3);
+                TEST_CHECK_EQUAL(sm2, sm3);
             }
 
             DenseMatrix<DataType_> dm03(6, 5);
@@ -638,9 +640,9 @@ class SparseMatrixDenseMatrixElementProductQuickTest :
                 }
             }
 
-            SparseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(sm2, dm1));
+            ElementProduct<>::value(sm2, dm1);
 
-            TEST_CHECK_EQUAL(prod, sm3);
+            TEST_CHECK_EQUAL(sm2, sm3);
 
             DenseMatrix<DataType_> dm03(6, 5);
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
@@ -683,9 +685,9 @@ class SparseMatrixBandedMatrixElementProductTest :
                     }
                 }
 
-                SparseMatrix<DataType_> & prod(ElementProduct<>::value(sm1, bm2));
+                ElementProduct<>::value(sm1, bm2);
 
-                TEST_CHECK_EQUAL(prod, sm3);
+                TEST_CHECK_EQUAL(sm1, sm3);
             }
 
             BandedMatrix<DataType_> bm01(5);
@@ -726,9 +728,9 @@ class SparseMatrixBandedMatrixElementProductQuickTest :
                 }
             }
 
-            SparseMatrix<DataType_> & prod(ElementProduct<>::value(sm1, bm2));
+            ElementProduct<>::value(sm1, bm2);
 
-            TEST_CHECK_EQUAL(prod, sm3);
+            TEST_CHECK_EQUAL(sm1, sm3);
 
             BandedMatrix<DataType_> bm01(5);
             SparseMatrix<DataType_> sm02(6, 5, 1), sm03(5, 6, 1);
@@ -774,9 +776,9 @@ class SparseMatrixElementProductTest :
                     }
                 }
 
-                SparseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(sm1, sm2));
+                ElementProduct<>::value(sm1, sm2);
 
-                TEST_CHECK_EQUAL(prod, sm3);
+                TEST_CHECK_EQUAL(sm1, sm3);
             }
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
@@ -823,9 +825,9 @@ class SparseMatrixElementProductQuickTest :
                 }
             }
 
-            SparseMatrix<DataType_> & prod(ElementProduct<>::value(sm1, sm2));
+            ElementProduct<>::value(sm1, sm2);
 
-            TEST_CHECK_EQUAL(prod, sm3);
+            TEST_CHECK_EQUAL(sm1, sm3);
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 

@@ -74,9 +74,9 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When multiplying DenseMatrix with DenseVector:");
+            CONTEXT("When multiplying DenseMatrix with DenseVector(Base):");
 
             if (b.size() != a.columns())
             {
@@ -118,9 +118,9 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT1_> value(const SparseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
+        static SparseVector<DT1_> value(const SparseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When multiplying SparseMatrix with DenseVector:");
+            CONTEXT("When multiplying SparseMatrix with DenseVectorBase:");
 
             if (b.size() != a.columns())
             {
@@ -162,9 +162,9 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When multiplying BandedMatrix with DenseVector:");
+            CONTEXT("When multiplying BandedMatrix with DenseVector(Base):");
 
             if (b.size() != a.columns())
             {
@@ -529,7 +529,7 @@ namespace honei
                             continue;
 
                         DenseVector<DT1_> temp(vi->copy());
-                        result.band(0) = Sum<>::value(ElementProduct<>::value(temp, *vj), result.band(0));
+                        Sum<>::value(result.band(0), ElementProduct<>::value(temp, *vj));
                 }
 
                 // Upper part of b
@@ -996,16 +996,16 @@ namespace honei
     template <typename Tag_> struct MCProduct
     {
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
-        { 
-            CONTEXT("When multiplying DenseMatrix with DenseVector (MultiCore):");
+        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            CONTEXT("When multiplying DenseMatrix with DenseVector(Base) (MultiCore):");
 
             if (b.size() != a.columns())
             {
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
-            DenseVector<DT1_> result(a.rows());
+            DenseVector<DT1_> result(a.rows(), DT1_(0));
             typename Vector<DT1_>::ElementIterator l(result.begin_elements());
 
             ThreadPool * p(ThreadPool::get_instance());
@@ -1013,9 +1013,11 @@ namespace honei
 
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
-                TwoArgWrapper< DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVector<DT1_>,
-                    const DenseVector<DT2_> > mywrapper(*l, a[i], b);
+
+                TwoArgWrapper< DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorBase<DT1_>,
+                    const DenseVectorBase<DT2_> > mywrapper(*l, a[i], b);
                 pt[i] = p->dispatch(mywrapper);
+
                 ++l;
             }
 
@@ -1023,7 +1025,6 @@ namespace honei
             {
                 pt[i]->wait_on();
             }
-
             return result;
         }
     };

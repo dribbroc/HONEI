@@ -250,9 +250,9 @@ namespace honei
         }
 
                 template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & vector)
+        static DT_ value(const DenseVectorBase<DT_> & vector)
         {
-            CONTEXT("When reducing DenseVector to Scalar by max");
+            CONTEXT("When reducing DenseVectorBase to Scalar by max");
 
             DT_ result(vector[0]);
 
@@ -376,7 +376,7 @@ namespace honei
         }
 
         template <typename DT_>
-        static DT_ value(const DenseVector<DT_> & vector)
+        static DT_ value(const DenseVectorBase<DT_> & vector)
         {
             CONTEXT("When reducing DenseVector to Scalar by min");
 

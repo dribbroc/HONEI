@@ -238,6 +238,8 @@ class DenseMatrixDenseVectorProductTest :
 
             DenseMatrix<DataType_> dm01(4, 3, DataType_(1));
             DenseVector<DataType_> dv01(4, DataType_(1));
+            DenseVectorRange<DataType_> dvr(dv01, 3, 0);
+            DenseVectorSlice<DataType_> dvs(dv01, 3, 0, 1);
 
             TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dv01), VectorSizeDoesNotMatch);
         }
@@ -276,7 +278,13 @@ class DenseMatrixDenseVectorProductQuickTest :
             TEST_CHECK_EQUAL(prod, dv2);
 
             DenseMatrix<DataType_> dm01(4, 3, DataType_(1));
+            DenseMatrixTile<DataType_> dmt(dm01, 3, 3, 0, 0);
             DenseVector<DataType_> dv01(4, DataType_(1));
+            DenseVectorRange<DataType_> dvr(dv01, 3, 0);
+            DenseVectorSlice<DataType_> dvs(dv01, 3, 1, 1);
+
+            DenseVector<DataType_> prod2(Product<Tag_>::value(dm01, dvr));
+            prod2 = Product<Tag_>::value(dm01, dvs);
 
             TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dv01), VectorSizeDoesNotMatch);
 
