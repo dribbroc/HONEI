@@ -23,7 +23,6 @@
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
-#include <stdio.h>
 
 using namespace honei;
 
@@ -57,7 +56,6 @@ void dense_float_scale(const Instruction & inst)
 
     while (counter > 1)
     {
-        printf("Looping: counter == : %u \n", counter);
         nextsize = (counter == 2 ? inst.c.u : inst.size);
 
         mfc_get(m[next - 1].untyped, ea_m, nextsize, next, 0, 0);
