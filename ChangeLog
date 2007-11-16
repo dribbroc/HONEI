@@ -7,6 +7,17 @@ see the NEWS file.
 
 2007-11-16 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libla/product-cell.cc: spe_count now controls the number of spe's
+	used.
+	* libutil/spe_instruction.hh: instruction() now returns our
+	instruction.
+
+2007-11-16 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/spe_manager.cc: Activated all available spe's
+
+2007-11-16 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/product-cell.cc: Extended calculation to up to four spe's.
 	* libutil/spe_instruction.hh: Removed private copy contructor.
 

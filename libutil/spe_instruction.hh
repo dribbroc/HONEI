@@ -59,6 +59,12 @@ namespace honei
 
             /// Wait until we have been executed.
             void wait();
+
+            /// Returns our instruction
+            Instruction instruction()
+            {
+                return _instruction;
+            }
     };
 }
 

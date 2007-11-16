@@ -24,8 +24,6 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
 
-#include <libla/sum.hh>
-
 namespace honei
 {
     DenseVector<float>
@@ -60,14 +58,15 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
+        unsigned int spe_count = 3;
+
         typedef std::vector<SPEInstruction> InstList;
         InstList inst_list;
-        DenseVector<float> * results[4] = {   new DenseVector<float>(b.size(), float(0)),
-                                        new DenseVector<float>(b.size(), float(0)),
-                                        new DenseVector<float>(b.size(), float(0)),
-                                        new DenseVector<float>(b.size(), float(0))};
+        DenseVector<float> * results[4] = { new DenseVector<float>(b.size(), float(0)),
+                                            new DenseVector<float>(b.size(), float(0)),
+                                            new DenseVector<float>(b.size(), float(0)),
+                                            new DenseVector<float>(b.size(), float(0)) };
 
-        //DenseVector<float> result(a.rows(), float(0));
         unsigned int counter = 0;
 
         unsigned long middle_index(a.rows() - 1);
@@ -90,22 +89,21 @@ namespace honei
             Operand oa = { vi->elements() };
             Operand ob = { b.elements() };
             Operand oc = { results[counter]->elements() };
-            Operand od, oe, of, og;
+            Operand od, oe, of, og, oh;
             od.u = quad_start;
             oe.u = quad_end;
             of.s = (signed)op_offset;
             og.u = op_offset % 4;
-            SPEInstruction instruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og);
+            oh.u = end;
+            SPEInstruction instruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og, oh);
 
-            //SPEManager::instance()->dispatch(instruction);
             inst_list.push_back(instruction);
-            //instruction.wait();
 
-            for (unsigned long index = quad_end ; index < end ; index++) 
+            /*for (unsigned long index = quad_end ; index < end ; index++) 
             {
                 results[counter]->elements()[index] += vi->elements()[index] * b.elements()[index + op_offset];
-            }
-            counter = (counter + 1) % 4;
+            }*/
+            counter = (counter + 1) % spe_count;
         }
 
         // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
@@ -123,54 +121,151 @@ namespace honei
             Operand oa = { vi->elements() };
             Operand ob = { b.elements() };
             Operand oc = { results[counter]->elements() };
-            Operand od, oe, of, og;
+            Operand od, oe, of, og, oh;
             od.u = quad_start;
             oe.u = quad_end;
             of.s = -1 * (signed)op_offset;
             og.u = (4 - (op_offset % 4)) % 4;
-            SPEInstruction instruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og);
+            oh.u = end;
+            SPEInstruction instruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og, oh);
 
-            //SPEManager::instance()->dispatch(instruction);
             inst_list.push_back(instruction);
-            //instruction.wait();
+
             for (unsigned long index = start ; index < quad_start ; index++)
             {
                 results[counter]->elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
             }
-            for (unsigned long index = quad_end ; index < end ; index++)
+            /*for (unsigned long index = quad_end ; index < end ; index++)
             {
                 results[counter]->elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
-            }
-            counter = (counter + 1) % 4;
+            }*/
+            counter = (counter + 1) % spe_count;
         }
 
         // dispatch instructions to spe's
-        for (unsigned long i = 0 ; i < inst_list.size() - (inst_list.size() % 4) ; i = i + 4)
+        for (unsigned long i = 0 ; i < inst_list.size() - (inst_list.size() % spe_count) ; i = i + spe_count)
+        {
+            for (unsigned long j = 0 ; j < spe_count ; j++)
+            {
+                SPEManager::instance()->dispatch(inst_list.at(i + j));
+            }
+            for (unsigned long j = 0 ; j < spe_count ; j++)
+            {
+                for (unsigned long index = inst_list.at(i + j).instruction().e.u ; index < inst_list.at(i).instruction().h.u ; index++) 
+                {
+                    results[j]->elements()[index] += 
+                        ((float *)(inst_list.at(i + j).instruction().a.ea))[index] *
+                        ((float *)(inst_list.at(i + j).instruction().b.ea))[index + inst_list.at(i + j).instruction().f.s];
+                }
+            }
+            for (unsigned long j = 0 ; j < spe_count ; j++)
+            {
+            inst_list.at(i + j).wait();
+            }
+        }
+
+        for (unsigned long i = inst_list.size() - (inst_list.size() % spe_count) ; i < inst_list.size() ; ++i)
         {
             SPEManager::instance()->dispatch(inst_list.at(i));
-            SPEManager::instance()->dispatch(inst_list.at(i + 1));
-            SPEManager::instance()->dispatch(inst_list.at(i + 2));
-            SPEManager::instance()->dispatch(inst_list.at(i + 3));
-            inst_list.at(i).wait();
-            inst_list.at(i + 1).wait();
-            inst_list.at(i + 2).wait();
-            inst_list.at(i + 3).wait();
         }
-
-        for (unsigned long i = inst_list.size() - (inst_list.size() % 4) ; i < inst_list.size() ; ++i)
+        for (unsigned long i = inst_list.size() - (inst_list.size() % spe_count) ; i < inst_list.size() ; ++i)
         {
-            SPEManager::instance()->dispatch(inst_list.at(i));
+            for (unsigned long index = inst_list.at(i).instruction().e.u ; index < inst_list.at(i).instruction().h.u ; index++) 
+            {
+                ((float *)(inst_list.at(i).instruction().c.ea))[index] += 
+                    ((float *)(inst_list.at(i).instruction().a.ea))[index] * 
+                    ((float *)(inst_list.at(i).instruction().b.ea))[index + inst_list.at(i).instruction().f.s];
+            }
         }
-        for (unsigned long i = inst_list.size() - (inst_list.size() % 4) ; i < inst_list.size() ; ++i)
+        for (unsigned long i = inst_list.size() - (inst_list.size() % spe_count) ; i < inst_list.size() ; ++i)
         {
             inst_list.at(i).wait();
         }
 
 
-        /// \todo run sums parallel
-        Sum<tags::Cell>::value(*results[0], *results[1]);
-        Sum<tags::Cell>::value(*results[2], *results[3]);
-        Sum<tags::Cell>::value(*results[0], *results[2]);
+        // 0 + 1
+        // 2 + 3
+        // 0 + 2
+        Operand orc, ord;
+        // hardcode transfer buffer size for now.
+        orc.u = b.size() / (1024 * 4);
+        ord.u = b.size() % (1024 * 4);
+        ord.u &= ~0xF;
+
+        unsigned result_rest_index(orc.u * 4096 + ord.u);
+
+        ord.u *= 4;
+
+        bool result_use_spe(true);
+
+        if (0 == ord.u)
+        {
+            if (orc.u > 0)
+            {
+                ord.u = 16 * 1024;
+            }
+            else
+            {
+                result_use_spe = false;
+            }
+        }
+        else
+        {
+            ++orc.u;
+        }
+
+        Operand or0 = { results[0]->elements() };
+        Operand or1 = { results[1]->elements() };
+        Operand or2 = { results[2]->elements() };
+        Operand or3 = { results[3]->elements() };
+        SPEInstruction result_x_instruction(oc_dense_dense_float_sum, 16 * 1024, or0, or1, orc, ord);
+        SPEInstruction result_y_instruction(oc_dense_dense_float_sum, 16 * 1024, or2, or3, orc, ord);
+
+        if (result_use_spe)
+        {
+            SPEManager::instance()->dispatch(result_x_instruction);
+            SPEManager::instance()->dispatch(result_y_instruction);
+        }
+
+        Vector<float>::ConstElementIterator j1(results[1]->element_at(result_rest_index));
+        Vector<float>::ConstElementIterator j3(results[3]->element_at(result_rest_index));
+        Vector<float>::ElementIterator i0(results[0]->element_at(result_rest_index)), i0_end(results[0]->end_elements());
+        Vector<float>::ElementIterator i2(results[2]->element_at(result_rest_index)), i2_end(results[2]->end_elements());
+        for ( ; i0 != i0_end ; ++i0, ++j1)
+        {
+            *i0 += *j1;
+        }
+        for ( ; i2 != i2_end ; ++i2, ++j3)
+        {
+            *i2 += *j3;
+        }
+
+        if (result_use_spe)
+        {
+            result_x_instruction.wait();
+            result_y_instruction.wait();
+        }
+
+
+        SPEInstruction result_z_instruction(oc_dense_dense_float_sum, 16 * 1024, or0, or2, orc, ord);
+
+        if (result_use_spe)
+        {
+            SPEManager::instance()->dispatch(result_z_instruction);
+        }
+
+        Vector<float>::ConstElementIterator j2(results[2]->element_at(result_rest_index));
+        i0 = results[0]->element_at(result_rest_index); i0_end = results[0]->end_elements();
+        for ( ; i0 != i0_end ; ++i0, ++j2)
+        {
+            *i0 += *j2;
+        }
+
+        if (result_use_spe)
+        {
+            result_z_instruction.wait();
+        }
+
         return *results[0];
     }
 
