@@ -238,8 +238,6 @@ class DenseMatrixDenseVectorProductTest :
 
             DenseMatrix<DataType_> dm01(4, 3, DataType_(1));
             DenseVector<DataType_> dv01(4, DataType_(1));
-            DenseVectorRange<DataType_> dvr(dv01, 3, 0);
-            DenseVectorSlice<DataType_> dvs(dv01, 3, 0, 1);
 
             TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dv01), VectorSizeDoesNotMatch);
         }
@@ -251,8 +249,6 @@ DenseMatrixDenseVectorProductTest<tags::CPU, double> dense_matrix_dense_vector_p
 DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore, float> mc_dense_matrix_dense_vector_product_test_float("MC float");
 DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_dense_vector_product_test_double("MC double");
 #ifdef HONEI_SSE
-DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_matrix_dense_vector_product_test_float("MC SSE float");
-DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_matrix_dense_vector_product_test_double("MC SSE double");
 DenseMatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_dense_matrix_dense_vector_product_test_float("SSE float");
 DenseMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_test_double("SSE double");
 #endif
@@ -278,13 +274,7 @@ class DenseMatrixDenseVectorProductQuickTest :
             TEST_CHECK_EQUAL(prod, dv2);
 
             DenseMatrix<DataType_> dm01(4, 3, DataType_(1));
-            DenseMatrixTile<DataType_> dmt(dm01, 3, 3, 0, 0);
             DenseVector<DataType_> dv01(4, DataType_(1));
-            DenseVectorRange<DataType_> dvr(dv01, 3, 0);
-            DenseVectorSlice<DataType_> dvs(dv01, 3, 1, 1);
-
-            DenseVector<DataType_> prod2(Product<Tag_>::value(dm01, dvr));
-            prod2 = Product<Tag_>::value(dm01, dvs);
 
             TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dv01), VectorSizeDoesNotMatch);
 
@@ -296,8 +286,6 @@ DenseMatrixDenseVectorProductQuickTest<tags::CPU, double> dense_matrix_dense_vec
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_dense_vector_product_quick_test_float("MC float");
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_dense_vector_product_quick_test_double("MC double");
 #ifdef HONEI_SSE
-DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_matrix_dense_vector_product_quick_test_float("MC SSE float");
-DenseMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_matrix_dense_vector_product_quick_test_double("MC SSE double");
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_dense_matrix_dense_vector_product_quick_test_float("SSE float");
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_quick_test_double("SSE double");
 #endif
