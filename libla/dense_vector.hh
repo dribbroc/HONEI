@@ -22,7 +22,7 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_HH
 #define LIBLA_GUARD_DENSE_VECTOR_HH 1
 
-#include <libla/vector.hh>
+#include <libla/dense_vector_continuous_base.hh>
 #include <libla/sparse_vector.hh>
 
 /**
@@ -44,7 +44,7 @@ namespace honei
      * \ingroup grpvector
      */
     template <typename DataType_> class DenseVector :
-        public Vector<DataType_>
+        public DenseVectorContinuousBase<DataType_>
     {
         private:
             class Implementation;

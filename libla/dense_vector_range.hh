@@ -22,7 +22,7 @@
 
 #include <libla/dense_vector.hh>
 #include <libla/dense_vector-impl.hh>
-#include <libla/vector.hh>
+#include <libla/dense_vector_continuous_base.hh>
 #include <libla/sparse_vector.hh>
 
 /**
@@ -43,7 +43,7 @@ namespace honei
      * \ingroup grpvector
      */
     template <typename DataType_> class DenseVectorRange :
-        public Vector<DataType_>
+        public DenseVectorContinuousBase<DataType_>
     {
         private:
             class Implementation;

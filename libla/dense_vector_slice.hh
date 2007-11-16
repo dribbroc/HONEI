@@ -22,7 +22,7 @@
 
 #include <libla/dense_matrix_tile.hh>
 #include <libla/dense_vector.hh>
-#include <libla/vector.hh>
+#include <libla/dense_vector_base.hh>
 
 /**
  * \file
@@ -42,7 +42,7 @@ namespace honei
      * \ingroup grpvector
      */
     template <typename DataType_> class DenseVectorSlice :
-        public Vector<DataType_>
+        public DenseVectorBase<DataType_>
     {
         private:
             struct Implementation;
