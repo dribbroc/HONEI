@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-16 David Gies <david-gies@gmx.de>
+
+	* libla/sum.hh, libla/sum_TEST.cc, libla/sum_BENCHMARK.cc
+	libla/element_product.hh, libla/element_product_TEST.cc
+	libla/element_product_BENCHMARK.cc: Added banded-banded,
+	dense-dense-, sparse-dense- and sparse-sparse-Matrix sum
+	and element_product for Multicore including Tests and Benchmarks.
+
 2007-11-16 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product-cell.cc: spe_count now controls the number of spe's

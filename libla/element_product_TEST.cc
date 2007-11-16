@@ -348,7 +348,7 @@ class BandedMatrixDenseMatrixElementProductQuickTest :
 BandedMatrixDenseMatrixElementProductQuickTest<tags::CPU, float> banded_matrix_dense_matrix_elementwise_product_quick_test_float("float");
 BandedMatrixDenseMatrixElementProductQuickTest<tags::CPU, double> banded_matrix_dense_matrix_elementwise_product_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixElementProductTest :
     public BaseTest
 {
@@ -366,20 +366,22 @@ class BandedMatrixElementProductTest :
                 DenseVector<DataType_> dv2(size, DataType_(2));
                 DenseVector<DataType_> dv3(size, DataType_(6));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-                BandedMatrix<DataType_> & prod(ElementProduct<>::value(bm1, bm2));
+                BandedMatrix<DataType_> & prod(ElementProduct<Tag_>::value(bm1, bm2));
 
                 TEST_CHECK_EQUAL(prod, bm3);
             }
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
-BandedMatrixElementProductTest<float> banded_matrix_elementwise_product_test_float("float");
-BandedMatrixElementProductTest<double> banded_matrix_elementwise_product_test_double("double");
+BandedMatrixElementProductTest<tags::CPU, float> banded_matrix_elementwise_product_test_float("float");
+BandedMatrixElementProductTest<tags::CPU, double> banded_matrix_elementwise_product_test_double("double");
+BandedMatrixElementProductTest<tags::CPU::MultiCore, float> mc_banded_matrix_elementwise_product_test_float("float");
+BandedMatrixElementProductTest<tags::CPU::MultiCore, double> mc_banded_matrix_elementwise_product_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixElementProductQuickTest :
     public QuickTest
 {
@@ -396,17 +398,19 @@ class BandedMatrixElementProductQuickTest :
             DenseVector<DataType_> dv2(size, DataType_(2));
             DenseVector<DataType_> dv3(size, DataType_(6));
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-            BandedMatrix<DataType_> & prod(ElementProduct<>::value(bm1, bm2));
+            BandedMatrix<DataType_> & prod(ElementProduct<Tag_>::value(bm1, bm2));
 
             TEST_CHECK_EQUAL(prod, bm3);
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
-BandedMatrixElementProductQuickTest<float> banded_matrix_elementwise_product_quick_test_float("float");
-BandedMatrixElementProductQuickTest<double> banded_matrix_elementwise_product_quick_test_double("double");
+BandedMatrixElementProductQuickTest<tags::CPU, float> banded_matrix_elementwise_product_quick_test_float("float");
+BandedMatrixElementProductQuickTest<tags::CPU, double> banded_matrix_elementwise_product_quick_test_double("double");
+BandedMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_elementwise_product_quick_test_float("float");
+BandedMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_elementwise_product_quick_test_double("double");
 
 template <typename DataType_>
 class BandedMatrixSparseMatrixElementProductTest :
@@ -525,6 +529,8 @@ class DenseMatrixElementProductTest :
 };
 DenseMatrixElementProductTest<tags::CPU, float> dense_matrix_elementwise_product_test_float("float");
 DenseMatrixElementProductTest<tags::CPU, double> dense_matrix_elementwise_product_test_double("double");
+DenseMatrixElementProductTest<tags::CPU::MultiCore, float> mc_dense_matrix_elementwise_product_test_float("float");
+DenseMatrixElementProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_elementwise_product_test_double("double");
 #ifdef HONEI_CELL
 DenseMatrixElementProductTest<tags::Cell, float> cell_dense_matrix_element_product_test_float("Cell float");
 #endif
@@ -558,11 +564,13 @@ class DenseMatrixElementProductQuickTest :
 };
 DenseMatrixElementProductQuickTest<tags::CPU, float> dense_matrix_elementwise_product_quick_test_float("float");
 DenseMatrixElementProductQuickTest<tags::CPU, double> dense_matrix_elementwise_product_quick_test_double("double");
+DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_elementwise_product_quick_test_float("float");
+DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_elementwise_product_quick_test_double("double");
 #ifdef HONEI_CELL
 DenseMatrixElementProductQuickTest<tags::Cell, float> cell_dense_matrix_element_product_quick_test_float("Cell float");
 #endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixDenseMatrixElementProductTest :
     public BaseTest
 {
@@ -588,7 +596,7 @@ class SparseMatrixDenseMatrixElementProductTest :
                     }
                 }
 
-                SparseMatrix<DataType_> & prod(ElementProduct<>::value(sm2, dm1));
+                SparseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(sm2, dm1));
 
                 TEST_CHECK_EQUAL(prod, sm3);
             }
@@ -596,14 +604,16 @@ class SparseMatrixDenseMatrixElementProductTest :
             DenseMatrix<DataType_> dm03(6, 5);
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm01, dm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm02, dm03), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm01, dm03), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm02, dm03), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixDenseMatrixElementProductTest<float> sparse_matrix_dense_matrix_elementwise_product_test_float("float");
-SparseMatrixDenseMatrixElementProductTest<double> sparse_matrix_dense_matrix_elementwise_product_test_double("double");
+SparseMatrixDenseMatrixElementProductTest<tags::CPU, float> sparse_matrix_dense_matrix_elementwise_product_test_float("float");
+SparseMatrixDenseMatrixElementProductTest<tags::CPU, double> sparse_matrix_dense_matrix_elementwise_product_test_double("double");
+SparseMatrixDenseMatrixElementProductTest<tags::CPU::MultiCore, float> mc_sparse_matrix_dense_matrix_elementwise_product_test_float("float");
+SparseMatrixDenseMatrixElementProductTest<tags::CPU::MultiCore, double> mc_sparse_matrix_dense_matrix_elementwise_product_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixDenseMatrixElementProductQuickTest :
     public QuickTest
 {
@@ -628,19 +638,21 @@ class SparseMatrixDenseMatrixElementProductQuickTest :
                 }
             }
 
-            SparseMatrix<DataType_> & prod(ElementProduct<>::value(sm2, dm1));
+            SparseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(sm2, dm1));
 
             TEST_CHECK_EQUAL(prod, sm3);
 
             DenseMatrix<DataType_> dm03(6, 5);
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm01, dm03), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm02, dm03), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm01, dm03), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm02, dm03), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixDenseMatrixElementProductQuickTest<float> sparse_matrix_dense_matrix_elementwise_product_quick_test_float("float");
-SparseMatrixDenseMatrixElementProductQuickTest<double> sparse_matrix_dense_matrix_elementwise_product_quick_test_double("double");
+SparseMatrixDenseMatrixElementProductQuickTest<tags::CPU, float> sparse_matrix_dense_matrix_elementwise_product_quick_test_float("float");
+SparseMatrixDenseMatrixElementProductQuickTest<tags::CPU, double> sparse_matrix_dense_matrix_elementwise_product_quick_test_double("double");
+SparseMatrixDenseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_dense_matrix_elementwise_product_quick_test_float("float");
+SparseMatrixDenseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_dense_matrix_elementwise_product_quick_test_double("double");
 
 template <typename DataType_>
 class SparseMatrixBandedMatrixElementProductTest :
@@ -728,7 +740,7 @@ class SparseMatrixBandedMatrixElementProductQuickTest :
 SparseMatrixBandedMatrixElementProductQuickTest<float> sparse_matrix_banded_matrix_elementwise_product_quick_test_float("float");
 SparseMatrixBandedMatrixElementProductQuickTest<double> sparse_matrix_banded_matrix_elementwise_product_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixElementProductTest :
     public BaseTest
 {
@@ -762,21 +774,23 @@ class SparseMatrixElementProductTest :
                     }
                 }
 
-                SparseMatrix<DataType_> & prod(ElementProduct<>::value(sm1, sm2));
+                SparseMatrix<DataType_> & prod(ElementProduct<Tag_>::value(sm1, sm2));
 
                 TEST_CHECK_EQUAL(prod, sm3);
             }
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixElementProductTest<float> sparse_matrix_elementwise_product_test_float("float");
-SparseMatrixElementProductTest<double> sparse_matrix_elementwise_product_test_double("double");
+SparseMatrixElementProductTest<tags::CPU, float> sparse_matrix_elementwise_product_test_float("float");
+SparseMatrixElementProductTest<tags::CPU, double> sparse_matrix_elementwise_product_test_double("double");
+SparseMatrixElementProductTest<tags::CPU::MultiCore, float> mc_sparse_matrix_elementwise_product_test_float("float");
+SparseMatrixElementProductTest<tags::CPU::MultiCore, double> mc_sparse_matrix_elementwise_product_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixElementProductQuickTest :
     public QuickTest
 {
@@ -819,5 +833,7 @@ class SparseMatrixElementProductQuickTest :
             TEST_CHECK_THROWS(ElementProduct<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixElementProductQuickTest<float> sparse_matrix_elementwise_product_quick_test_float("float");
-SparseMatrixElementProductQuickTest<double> sparse_matrix_elementwise_product_quick_test_double("double");
+SparseMatrixElementProductQuickTest<tags::CPU, float> sparse_matrix_elementwise_product_quick_test_float("float");
+SparseMatrixElementProductQuickTest<tags::CPU, double> sparse_matrix_elementwise_product_quick_test_double("double");
+SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_elementwise_product_quick_test_float("float");
+SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_elementwise_product_quick_test_double("double");

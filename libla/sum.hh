@@ -26,6 +26,10 @@
 #include <libla/sparse_matrix.hh>
 #include <libutil/tags.hh>
 
+#include <libutil/pool_task.hh>
+#include <libutil/thread_pool.hh>
+#include <libutil/wrapper.hh>
+
 #include <algorithm>
 
 namespace honei
@@ -482,6 +486,138 @@ namespace honei
 
         /// \}
     };
+
+    template <typename Tag_> struct MCSum
+    {
+
+        template <typename DT1_, typename DT2_>
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
+        {
+            CONTEXT("When adding BandedMatrix to BandedMatrix (MultiCore):");
+
+            if (a.size() != b.size())
+            {
+                throw MatrixSizeDoesNotMatch(b.size(), a.size());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[2*a.rows()-1];
+            int taskcount(0);
+            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
+            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
+            for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
+            {
+                if (! r.exists())
+                    continue;
+
+                if (l.exists())
+                {
+                    TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *l, *r);
+                    pt[taskcount] = p->dispatch(mywrapper);
+                    ++taskcount; 
+                }
+                else
+                    a.band(r.index()) = r->copy();
+            }
+            for (unsigned long j = 0; j < taskcount; ++j)           
+            {
+                pt[j]->wait_on();
+            }
+
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When adding DenseMatrix to DenseMatrix (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When adding DenseMatrix to SparseMatrix (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When adding SparseMatrix to SparseMatrix (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, SparseVector<DT1_>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+    };
+    template <> struct Sum <tags::CPU::MultiCore> : MCSum <tags::CPU::MultiCore> {};
+    template <> struct Sum <tags::CPU::MultiCore::SSE> : MCSum <tags::CPU::MultiCore::SSE> {};
+
 }
 
 #endif

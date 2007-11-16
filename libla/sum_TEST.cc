@@ -228,7 +228,7 @@ class BandedMatrixSparseMatrixSumQuickTest :
 BandedMatrixSparseMatrixSumQuickTest<float> banded_matrix_sparse_matrix_sum_quick_test_float("float");
 BandedMatrixSparseMatrixSumQuickTest<double> banded_matrix_sparse_matrix_sum_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixSumTest :
     public BaseTest
 {
@@ -245,7 +245,7 @@ class BandedMatrixSumTest :
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 DenseVector<DataType_> dv2(size, DataType_(3));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-                BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
+                BandedMatrix<DataType_> & sum(Sum<Tag_>::value(bm1, bm2));
                 for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()),
                         ce_end(sum.end_bands()) ; ce != ce_end ; ++ce)
                 {
@@ -270,13 +270,15 @@ class BandedMatrixSumTest :
 
                 BandedMatrix<DataType_> bm01(5), bm02(6);
 
-                TEST_CHECK_THROWS(Sum<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
+                TEST_CHECK_THROWS(Sum<Tag_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
-BandedMatrixSumTest<float> banded_matrix_sum_test_float("float");
-BandedMatrixSumTest<double> banded_matrix_sum_test_double("double");
+BandedMatrixSumTest<tags::CPU, float> banded_matrix_sum_test_float("float");
+BandedMatrixSumTest<tags::CPU, double> banded_matrix_sum_test_double("double");
+BandedMatrixSumTest<tags::CPU::MultiCore, float> mc_banded_matrix_sum_test_float("float");
+BandedMatrixSumTest<tags::CPU::MultiCore, double> mc_banded_matrix_sum_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixSumQuickTest :
     public QuickTest
 {
@@ -292,7 +294,7 @@ class BandedMatrixSumQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(2));
             DenseVector<DataType_> dv2(size, DataType_(3));
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-            BandedMatrix<DataType_> & sum(Sum<>::value(bm1, bm2));
+            BandedMatrix<DataType_> & sum(Sum<Tag_>::value(bm1, bm2));
             for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(sum.begin_bands()), ce_end(sum.end_bands()) ;
                     ce != ce_end ; ++ce)
             {
@@ -316,13 +318,15 @@ class BandedMatrixSumQuickTest :
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(Sum<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
-BandedMatrixSumQuickTest<float> banded_matrix_sum_quick_test_float("float");
-BandedMatrixSumQuickTest<double> banded_matrix_sum_quick_test_double("double");
+BandedMatrixSumQuickTest<tags::CPU, float> banded_matrix_sum_quick_test_float("float");
+BandedMatrixSumQuickTest<tags::CPU, double> banded_matrix_sum_quick_test_double("double");
+BandedMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_sum_quick_test_float("float");
+BandedMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_sum_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixSparseMatrixSumTest :
     public BaseTest
 {
@@ -358,7 +362,7 @@ class DenseMatrixSparseMatrixSumTest :
                         *k = DataType_((i.index() +1) * 2 / 1.23456789);
                     }
                 }
-                DenseMatrix<DataType_> & sum(Sum<>::value(dm1, sm2));
+                DenseMatrix<DataType_> & sum(Sum<Tag_>::value(dm1, sm2));
 
                 TEST_CHECK_EQUAL(sum, dm3);
             }
@@ -366,14 +370,16 @@ class DenseMatrixSparseMatrixSumTest :
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1);
             DenseMatrix<DataType_> dm03(6, 5);
 
-            TEST_CHECK_THROWS(Sum<>::value(dm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Sum<>::value(dm03, sm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSparseMatrixSumTest<float> dense_matrix_sparse_matrix_sum_test_float("float");
-DenseMatrixSparseMatrixSumTest<double> dense_matrix_sparse_matrix_sum_test_double("double");
+DenseMatrixSparseMatrixSumTest<tags::CPU, float> dense_matrix_sparse_matrix_sum_test_float("float");
+DenseMatrixSparseMatrixSumTest<tags::CPU, double> dense_matrix_sparse_matrix_sum_test_double("double");
+DenseMatrixSparseMatrixSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_sparse_matrix_sum_test_float("float");
+DenseMatrixSparseMatrixSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_sum_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixSparseMatrixSumQuickTest :
     public QuickTest
 {
@@ -408,21 +414,23 @@ class DenseMatrixSparseMatrixSumQuickTest :
                     *k = DataType_((i.index() +1) * 2 / 1.23456789);
                 }
             }
-            DenseMatrix<DataType_> & sum(Sum<>::value(dm1, sm2));
+            DenseMatrix<DataType_> & sum(Sum<Tag_>::value(dm1, sm2));
 
             TEST_CHECK_EQUAL(sum, dm3);
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1);
             DenseMatrix<DataType_> dm03(6, 5);
 
-            TEST_CHECK_THROWS(Sum<>::value(dm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Sum<>::value(dm03, sm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSparseMatrixSumQuickTest<float> dense_matrix_sparse_matrix_sum_quick_test_float("float");
-DenseMatrixSparseMatrixSumQuickTest<double> dense_matrix_sparse_matrix_sum_quick_test_double("double");
+DenseMatrixSparseMatrixSumQuickTest<tags::CPU, float> dense_matrix_sparse_matrix_sum_quick_test_float("float");
+DenseMatrixSparseMatrixSumQuickTest<tags::CPU, double> dense_matrix_sparse_matrix_sum_quick_test_double("double");
+DenseMatrixSparseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_sparse_matrix_sum_quick_test_float("float");
+DenseMatrixSparseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_sum_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixSumTest :
     public BaseTest
 {
@@ -438,21 +446,23 @@ class DenseMatrixSumTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(-3)),
                     dm3(size+1, size, DataType_(-1));
-                DenseMatrix<DataType_> & sum(Sum<>::value(dm1, dm2));
+                DenseMatrix<DataType_> & sum(Sum<Tag_>::value(dm1, dm2));
 
                 TEST_CHECK_EQUAL(sum, dm3);
             }
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
 
-            TEST_CHECK_THROWS(Sum<>::value(dm03, dm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Sum<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, dm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, dm02), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSumTest<float> dense_matrix_sum_test_float("float");
-DenseMatrixSumTest<double> dense_matrix_sum_test_double("double");
+DenseMatrixSumTest<tags::CPU, float> dense_matrix_sum_test_float("float");
+DenseMatrixSumTest<tags::CPU, double> dense_matrix_sum_test_double("double");
+DenseMatrixSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_sum_test_float("float");
+DenseMatrixSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_sum_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixSumQuickTest :
     public QuickTest
 {
@@ -467,20 +477,22 @@ class DenseMatrixSumQuickTest :
             unsigned long size(11);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(-3)),
                 dm3(size+1, size, DataType_(-1));
-            DenseMatrix<DataType_> & sum(Sum<>::value(dm1, dm2));
+            DenseMatrix<DataType_> & sum(Sum<Tag_>::value(dm1, dm2));
 
             TEST_CHECK_EQUAL(sum, dm3);
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
 
-            TEST_CHECK_THROWS(Sum<>::value(dm03, dm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Sum<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, dm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm03, dm02), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSumQuickTest<float> dense_matrix_sum_quick_test_float("float");
-DenseMatrixSumQuickTest<double> dense_matrix_sum_quick_test_double("double");
+DenseMatrixSumQuickTest<tags::CPU, float> dense_matrix_sum_quick_test_float("float");
+DenseMatrixSumQuickTest<tags::CPU, double> dense_matrix_sum_quick_test_double("double");
+DenseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_sum_quick_test_float("float");
+DenseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_sum_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixSumTest :
     public BaseTest
 {
@@ -515,21 +527,23 @@ class SparseMatrixSumTest :
                         *k = DataType_(-1);
                     }
                 }
-                SparseMatrix<DataType_> & sum(Sum<>::value(sm1, sm2));
+                SparseMatrix<DataType_> & sum(Sum<Tag_>::value(sm1, sm2));
 
                 TEST_CHECK_EQUAL(sum, sm3);
             }
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
-            TEST_CHECK_THROWS(Sum<>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Sum<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixSumTest<float> sparse_matrix_sum_test_float("float");
-SparseMatrixSumTest<double> sparse_matrix_sum_test_double("double");
+SparseMatrixSumTest<tags::CPU, float> sparse_matrix_sum_test_float("float");
+SparseMatrixSumTest<tags::CPU, double> sparse_matrix_sum_test_double("double");
+SparseMatrixSumTest<tags::CPU::MultiCore, float> mc_sparse_matrix_sum_test_float("float");
+SparseMatrixSumTest<tags::CPU::MultiCore, double> mc_sparse_matrix_sum_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixSumQuickTest :
     public QuickTest
 {
@@ -563,18 +577,20 @@ class SparseMatrixSumQuickTest :
                     *k = DataType_(-1);
                 }
             }
-            SparseMatrix<DataType_> & sum(Sum<>::value(sm1, sm2));
+            SparseMatrix<DataType_> & sum(Sum<Tag_>::value(sm1, sm2));
 
             TEST_CHECK_EQUAL(sum, sm3);
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
-            TEST_CHECK_THROWS(Sum<>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(Sum<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixSumQuickTest<float> sparse_matrix_sum_quick_test_float("float");
-SparseMatrixSumQuickTest<double> sparse_matrix_sum_quick_test_double("double");
+SparseMatrixSumQuickTest<tags::CPU, float> sparse_matrix_sum_quick_test_float("float");
+SparseMatrixSumQuickTest<tags::CPU, double> sparse_matrix_sum_quick_test_double("double");
+SparseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_sum_quick_test_float("float");
+SparseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_sum_quick_test_double("double");
 
 template <typename DataType_>
 class ScalarDenseMatrixSumTest :

@@ -28,6 +28,10 @@
 #include <libla/vector_error.hh>
 #include <libutil/tags.hh>
 
+#include <libutil/pool_task.hh>
+#include <libutil/thread_pool.hh>
+#include <libutil/wrapper.hh>
+
 namespace honei
 {
     /**
@@ -223,7 +227,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseVector elements");
+            CONTEXT("When calculating the product of BandedMatrix elements");
 
             if (a.rows() != b.rows())
             {
@@ -461,5 +465,134 @@ namespace honei
 
         /// \}
     };
+
+    template <typename Tag_> struct MCElementProduct
+    {
+
+        template <typename DT1_, typename DT2_>
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
+        { 
+            CONTEXT("When calculating the product of BandedMatrix elements (MultiCore):");
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[2 * a.size()-1];
+            int taskcount(0);
+            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands());
+            for (typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()),
+                    l_end(a.end_bands()) ; l != l_end ; ++l)
+            {
+                if (! r.exists())
+                {
+                    ++r;
+                    continue;
+                }
+
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *l, *r);
+                pt[taskcount] = p->dispatch(mywrapper);
+                ++r;
+                ++taskcount;
+            }
+            for (int j = 0 ; j < taskcount ; ++j )
+            {
+                pt[j]->wait_on();
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When calculating the product of DenseMatrix elements (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When calculating the product of SparseMatrix and DenseMatrix elements (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, SparseVector<DT1_>, SparseVector<DT1_>, const DenseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When calculating the product of SparseMatrix elements (MulitCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, SparseVector<DT1_>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+    };
+    template <> struct ElementProduct <tags::CPU::MultiCore> : MCElementProduct <tags::CPU::MultiCore> {};
+    template <> struct ElementProduct <tags::CPU::MultiCore::SSE> : MCElementProduct <tags::CPU::MultiCore::SSE> {};
 }
 #endif
