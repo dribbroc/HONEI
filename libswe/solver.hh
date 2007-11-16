@@ -1423,7 +1423,8 @@ namespace honei {
 
         Scale<Tag_>::value(_eps,vc);
         Scale<Tag_>::value(-_delta_t, u1_c);
-        DenseVector<WorkPrec_> tempsum = Sum<Tag_>::value(vc, u1_c);
+        Sum<Tag_>::value(vc, u1_c);
+        DenseVector<WorkPrec_> tempsum(vc.copy());
 
         Scale<Tag_>::value(prefac,tempsum);
         DenseVector<WorkPrec_> wc(_w->copy());
@@ -1431,7 +1432,8 @@ namespace honei {
 
         Scale<Tag_>::value(_eps,wc);
         Scale<Tag_>::value(-_delta_t, u2_c);
-        DenseVector<WorkPrec_> tempsum2 = Sum<Tag_>::value(wc, u2_c);
+        Sum<Tag_>::value(wc, u2_c);
+        DenseVector<WorkPrec_> tempsum2(wc.copy());
 
         Scale<Tag_>::value(prefac,tempsum2);
 
@@ -1615,7 +1617,8 @@ namespace honei {
         DenseVector<WorkPrec_> v_result_c(predictedv.copy());
         Scale<Tag_>::value(_eps,v_result_c);
         Scale<Tag_>::value(_delta_t,f_c);
-        DenseVector<WorkPrec_> innersum1 = Sum<Tag_>::value(v_result_c,f_c);
+        Sum<Tag_>::value(v_result_c,f_c);
+        DenseVector<WorkPrec_> innersum1(v_result_c.copy());
 
         ///Apply flow to old u:
 
@@ -1626,7 +1629,8 @@ namespace honei {
 
         Scale<Tag_>::value(-2*_delta_t,v_temp_result_c);
         Scale<Tag_>::value(2*_delta_t, flow_c);
-        DenseVector<WorkPrec_> innersum2 = Sum<Tag_>::value(v_temp_result_c, flow_c);
+        Sum<Tag_>::value(v_temp_result_c, flow_c);
+        DenseVector<WorkPrec_> innersum2(v_temp_result_c.copy());
 
         Sum<Tag_>::value(innersum1, innersum2);
 
@@ -1641,7 +1645,8 @@ namespace honei {
 
         Scale<Tag_>::value(_eps, w_result_c);
         Scale<Tag_>::value(_delta_t,flow2_c);
-        DenseVector<WorkPrec_>innersum11 = Sum<Tag_>::value(w_result_c, flow2_c);
+        Sum<Tag_>::value(w_result_c, flow2_c);
+        DenseVector<WorkPrec_> innersum11(w_result_c.copy());
 
         DenseVector<WorkPrec_> flow3_c(_u_temp->copy());
 
@@ -1651,7 +1656,8 @@ namespace honei {
 
         Scale<Tag_>::value(-2*_delta_t,w_temp_result_c);
         Scale<Tag_>::value(2*_delta_t, flow3_c);
-        DenseVector<WorkPrec_>innersum22 = Sum<Tag_>::value(w_temp_result_c, flow3_c);
+        Sum<Tag_>::value(w_temp_result_c, flow3_c);
+        DenseVector<WorkPrec_>innersum22(w_temp_result_c.copy());
 
         Sum<Tag_>::value(innersum11, innersum22);
         Scale<Tag_>::value(1/(_eps + _delta_t), innersum11);

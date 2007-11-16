@@ -8,6 +8,11 @@ see the NEWS file.
 
 2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
 
+	* libswe/solver.hh: Modified calls to functions, whose returntype was
+	affected by implementation of DenseVectorBase.
+
+2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
+
 	* libmath/iterative_refinement.hh, libmath/conjugate_gradients.hh:
 	Modified calls to functions, whose returntype was affected by
 	implementation of DenseVectorBase.
