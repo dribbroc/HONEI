@@ -176,9 +176,9 @@ namespace honei
             }
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-                for (unsigned long index = task_list.at(i + j).quad_end ; index < task_list.at(i).end ; index++) 
+                for (unsigned long index = task_list.at(i + j).quad_end ; index < task_list.at(i + j).end ; index++) 
                 {
-                    results[i + j]->elements()[index] += 
+                    results[task_list.at(i + j).result_counter]->elements()[index] +=
                         task_list.at(i + j).band[index] *
                         b.elements()[index + task_list.at(i + j).spe_instruction.instruction().f.s];
                 }
