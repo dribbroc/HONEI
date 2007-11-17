@@ -6,7 +6,12 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
-2007-11-17 Volker Jung <volker.jung@uni-dortmund>
+2007-11-17 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libswe/solver.hh: Improved numerical stability by handling value
+	'zero' properly.
+
+2007-11-17 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libla/sum_BENCHMARK.cc, libla/scaled_sum_BENCHMARK.cc: Modified
 	calls to functions, whose returntype was affected by implementation of

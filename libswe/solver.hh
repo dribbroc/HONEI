@@ -1022,9 +1022,9 @@ namespace honei {
         }
         else
         {
-            result[0] = 0;
-            result[1] = 0;
-            result[2] = 0;
+            result[0] = WorkPrec_(0);
+            result[1] = WorkPrec_(0);
+            result[2] = WorkPrec_(0);
         }
         return result;
     }
@@ -1278,7 +1278,7 @@ namespace honei {
                 tempMinus[k] = temp;
                 temp= (*v)[i.index()] + (*_c)[k]*(*u)[i.index()];
                 tempTop = temp - tempPlus[k];
-                if(tempTop != 0)
+                if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon() )
                 {
                     phiPlusOld[k] = min_mod_limiter(tempTopPlus[k]/tempTop);
                 }
@@ -1295,7 +1295,7 @@ namespace honei {
             {
                 temp = (*v)[i.index()] - (*_c)[k]*((*u)[i.index()]); //temp = v(i) - c(k)*u(i);
                 tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
-                if(tempTop != 0)
+                if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon() )
                 {
                     phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
                 }
@@ -1307,13 +1307,13 @@ namespace honei {
                 tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
                 temp  = (*v)[i.index()] + (*_c)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                 tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
-                if(tempTop != 0)
+                if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon() )
                 {
                     phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
                 }
                 else
                 {
-                    phiPlusNew[k] = 0;
+                    phiPlusNew[k] = WorkPrec_(0);
                 }
                 tempPlus[k]= temp;//switch(temp, temp_plus(k));
                 tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
@@ -1336,7 +1336,7 @@ namespace honei {
                     temp = (*v)[i.index()] - (*_c)[k]*(*u)[i.index()]; //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
 
-                    if(tempTop != 0)
+                    if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon() )
                     {
                         phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
                     }
@@ -1349,13 +1349,13 @@ namespace honei {
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
                     temp  = (*v)[i.index()] + (*_c)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                     tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
-                    if(tempTop != 0)
+                    if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon() )
                     {
                         phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
                     }
                     else
                     {
-                        phiPlusNew[k] = 0;
+                        phiPlusNew[k] = WorkPrec_(0);
                     }
 
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
@@ -1607,8 +1607,6 @@ namespace honei {
         template<typename WorkPrec_>
     void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage2(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw)
     {
-        int i;
-
         ///Apply flow to newest u:
         DenseVector<WorkPrec_> f_c(predictedu.copy());
         _flow_x(f_c);
@@ -1994,7 +1992,7 @@ namespace honei {
                 {
                     temp = (*w)[i.index()] - (*_d)[k]*((*u)[i.index()]); //temp = v(i) - c(k)*u(i);
                     tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
-                    if(tempTop != 0)
+                    if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon())
                     {
                         phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
                     }
@@ -2006,13 +2004,13 @@ namespace honei {
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
                     temp  = (*w)[i.index()] + (*_d)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                     tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
-                    if(tempTop != 0)
+                    if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon())
                     {
                         phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
                     }
                     else
                     {
-                        phiPlusNew[k] = 0;
+                        phiPlusNew[k] = WorkPrec_(0);
                     }
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
                     tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
@@ -2041,7 +2039,7 @@ namespace honei {
                         phiMinusOld = phiMinusNew[k];
                         temp = (*w)[i.index()] - (*_d)[k]*(*u)[i.index()]; //temp = v(i) - c(k)*u(i);
                         tempTop = temp - tempMinus[k]; //temp_top = temp - temp_minus(k);
-                    if(tempTop != 0)
+                    if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon())
                     {
                         phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/tempTop);//phi_minus_new(k) = Limiter(temp_top_minus(k) / temp_top);
                     }
@@ -2053,13 +2051,13 @@ namespace honei {
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
                     temp  = (*w)[i.index()] + (*_d)[k]* (*u)[i.index()];//temp = v(i) + c(k)*u(i);
                     tempTop = temp - tempPlus[k];//temp_top = temp - temp_plus(k);
-                    if(tempTop != 0)
+                    if( fabs(tempTop) >= std::numeric_limits<WorkPrec_>::epsilon())
                     {
                         phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/tempTop);//phi_plus_new(k) = Limiter(temp_top_plus(k) / temp_top);
                     }
                     else
                     {
-                        phiPlusNew[k] = 0;
+                        phiPlusNew[k] = WorkPrec_(0);
                     }
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
                     tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
@@ -2346,7 +2344,7 @@ namespace honei {
             }
             else
             {
-                thetaXPlus_i_j = 0;
+                thetaXPlus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (first theta):
             WorkPrec_ thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
@@ -2376,7 +2374,7 @@ namespace honei {
             }
             else
             {
-                thetaXPlus_iMinus1_j = 0;
+                thetaXPlus_iMinus1_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (second theta):
             thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
@@ -2406,7 +2404,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_i_j = 0;
+                thetaXMinus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (third theta):
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
@@ -2448,7 +2446,7 @@ namespace honei {
             }
             else
             {
-                thetaXPlus_i_j = 0;
+                thetaXPlus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (first theta):
             thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
@@ -2478,7 +2476,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_iPlus1_j = 0;
+                thetaXMinus_iPlus1_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (second theta):
             WorkPrec_ thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
@@ -2509,7 +2507,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_i_j = 0;
+                thetaXMinus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (third theta):
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
@@ -2549,7 +2547,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_iPlus1_j = 0;
+                thetaXMinus_iPlus1_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for band_+2:
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
@@ -2696,7 +2694,7 @@ namespace honei {
             }
             else
             {
-                thetaXPlus_i_j = 0;
+                thetaXPlus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (first theta):
             WorkPrec_ thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
@@ -2727,7 +2725,7 @@ namespace honei {
             }
             else
             {
-                thetaXPlus_iMinus1_j = 0;
+                thetaXPlus_iMinus1_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (second theta):
             thetaXPlus_iMinus1_j_limited = min_mod_limiter(thetaXPlus_iMinus1_j);
@@ -2757,7 +2755,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_i_j = 0;
+                thetaXMinus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (third theta):
             WorkPrec_ thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
@@ -2798,7 +2796,7 @@ namespace honei {
             }
             else
             {
-                thetaXPlus_i_j = 0;
+                thetaXPlus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (first theta):
             thetaXPlus_i_j_limited = min_mod_limiter(thetaXPlus_i_j);
@@ -2830,7 +2828,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_iPlus1_j = 0;
+                thetaXMinus_iPlus1_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (second theta):
             WorkPrec_ thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
@@ -2861,7 +2859,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_i_j = 0;
+                thetaXMinus_i_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for diagonal (third theta):
             thetaXMinus_i_j_limited = min_mod_limiter(thetaXMinus_i_j);
@@ -2903,7 +2901,7 @@ namespace honei {
             }
             else
             {
-                thetaXMinus_iPlus1_j = 0;
+                thetaXMinus_iPlus1_j = WorkPrec_(0);
             }
             //Compute limitation of Theta for band_+2:
             thetaXMinus_iPlus1_j_limited = min_mod_limiter(thetaXMinus_iPlus1_j);
