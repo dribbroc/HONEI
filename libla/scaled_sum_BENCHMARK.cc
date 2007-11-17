@@ -35,7 +35,7 @@ class DenseVectorScaledSumBench :
                 DataType_ b(1234.56789);
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(DenseVector<DataType_> sum1(ScaledSum<Tag_>::value(dv0, dv1, b)));
+                BENCHMARK(ScaledSum<Tag_>::value(dv0, dv1, b));
             }
             BenchmarkInfo info(ScaledSum<>::get_benchmark_info<DenseVector<DataType_>, DenseVector<DataType_>, DataType_ >(_size));
             evaluate(info);

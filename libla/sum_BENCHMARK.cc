@@ -72,7 +72,7 @@ class DenseVectorSumBench :
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(DenseVector<DataType_> sum1(Sum<Tag_>::value(dv0, dv1)));
+                BENCHMARK(Sum<Tag_>::value(dv0, dv1));
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info<DenseVector<DataType_>, DenseVector<DataType_> >(0, _size));
             evaluate(info);
@@ -111,7 +111,7 @@ class DenseMatrixSumBench :
             DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(DenseMatrix<DataType_> sum1(Sum<Tag_>::value(dm0, dm1)));
+                BENCHMARK(Sum<Tag_>::value(dm0, dm1));
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info<DenseMatrix<DataType_>, DenseMatrix<DataType_> >(0, _size));
             evaluate(info);
@@ -120,5 +120,7 @@ class DenseMatrixSumBench :
 
 DenseMatrixSumBench<tags::CPU, float> DMSBenchfloat1("Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
 DenseMatrixSumBench<tags::CPU, double> DMSBenchdouble1("Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+#if 0
 DenseMatrixSumBench<tags::CPU::MultiCore, float> DMSBenchfloat1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore, double> DMSBenchdouble1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+#endif

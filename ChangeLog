@@ -6,6 +6,12 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
+2007-11-17 Volker Jung <volker.jung@uni-dortmund>
+
+	* libla/sum_BENCHMARK.cc, libla/scaled_sum_BENCHMARK.cc: Modified
+	calls to functions, whose returntype was affected by implementation of
+	DenseVectorBase and associated modifications.
+
 2007-11-17 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/libla/banded_dense_float_matrix_vector_product.cc,
