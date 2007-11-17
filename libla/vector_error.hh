@@ -63,6 +63,25 @@ namespace honei
              **/
             VectorSizeDoesNotMatch(unsigned long size, unsigned long expected_size) throw ();
     };
+
+    /**
+     * A VectorAlignmentDoesNotMatch is thrown when the Alignment of a Vector
+     * does not match the expected Alignment.
+     *
+     * \ingroup grpvectorexceptions
+     **/
+    class VectorAlignmentDoesNotMatch :
+        public VectorError
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param align Alignment of the vector that arose the problem.
+             * \param expected_align Alignment that was expected by the operation.
+             **/
+            VectorAlignmentDoesNotMatch(unsigned long align, unsigned long expected_align) throw ();
+    };
 }
 
 #endif

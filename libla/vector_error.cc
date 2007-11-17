@@ -34,3 +34,9 @@ VectorSizeDoesNotMatch::VectorSizeDoesNotMatch(unsigned long size, unsigned long
             + stringify(expected_size) + "'")
 {
 }
+
+VectorAlignmentDoesNotMatch::VectorAlignmentDoesNotMatch(unsigned long align, unsigned long expected_align) throw () :
+    VectorError("Vector alignment '" + stringify(align) + "' does not match expected alignment '"
+            + stringify(expected_align) + "'")
+{
+}

@@ -6,6 +6,11 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
+2007-11-17 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/difference-sse.cc, libla/vector_error.cc, libla/vector_error.hh:
+	Added an example implementation for offset handling.
+
 2007-11-17 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Improved numerical stability by handling value

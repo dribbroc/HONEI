@@ -28,6 +28,12 @@ DenseVector<float> & Difference<tags::CPU::SSE>::value(DenseVector<float> & a, c
 {
     CONTEXT("When subtracting DenseVector<float> to DenseVector<float> with SSE:");
 
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 8;
+    unsigned long b_address = (unsigned long)b.elements();
+    unsigned long b_offset = b_address % 8;
+    if(a_offset != b_offset)
+        throw VectorAlignmentDoesNotMatch(b_offset, a_offset);
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -35,9 +41,10 @@ DenseVector<float> & Difference<tags::CPU::SSE>::value(DenseVector<float> & a, c
 
     __m128 m1, m2, m3, m4, m5, m6, m7, m8;
 
-    unsigned long quad_end(a.size() - (a.size() % 16));
+    unsigned long quad_start = a_offset;
+    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 16));
 
-    for (unsigned long index = 0 ; index < quad_end ; index += 16) 
+    for (unsigned long index = quad_start ; index < quad_end ; index += 16) 
     {
         m1 = _mm_load_ps(a.elements() + index);
         m3 = _mm_load_ps(a.elements() + index+4);
@@ -60,6 +67,10 @@ DenseVector<float> & Difference<tags::CPU::SSE>::value(DenseVector<float> & a, c
 
     }
 
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        a.elements()[index] -= b.elements()[index];
+    }
     for (unsigned long index = quad_end ; index < a.size() ; index++)
     {
         a.elements()[index] -= b.elements()[index];
@@ -71,6 +82,12 @@ DenseVector<double> & Difference<tags::CPU::SSE>::value(DenseVector<double> & a,
 {
     CONTEXT("When subtacting DenseVector<double> to DenseVector<double> with SSE:");
 
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 16;
+    unsigned long b_address = (unsigned long)b.elements();
+    unsigned long b_offset = b_address % 16;
+    if(a_offset != b_offset)
+        throw VectorAlignmentDoesNotMatch(b_offset, a_offset);
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -78,9 +95,10 @@ DenseVector<double> & Difference<tags::CPU::SSE>::value(DenseVector<double> & a,
 
     __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
-    unsigned long quad_end(a.size() - (a.size() % 8));
+    unsigned long quad_start = a_offset;
+    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 8));
 
-    for (unsigned long index = 0 ; index < quad_end ; index += 8) 
+    for (unsigned long index = quad_start ; index < quad_end ; index += 8) 
     {
         m1 = _mm_load_pd(a.elements() + index);
         m3 = _mm_load_pd(a.elements() + index+2);
@@ -103,6 +121,10 @@ DenseVector<double> & Difference<tags::CPU::SSE>::value(DenseVector<double> & a,
 
     }
 
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        a.elements()[index] -= b.elements()[index];
+    }
     for (unsigned long index = quad_end ; index < a.size() ; index++)
     {
         a.elements()[index] -= b.elements()[index];
