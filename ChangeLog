@@ -6,6 +6,13 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
+2007-11-17 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* cell/libla/banded_dense_float_matrix_vector_product.cc,
+	libla/product_BENCHMARK.cc, libla/product-cell.cc:
+	Added spe_count to control the number of spe's used. Reduced the
+	amount of transferd data. Added benchmark.
+
 2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libswe/solver.hh: Modified calls to functions, whose returntype was
@@ -113,7 +120,7 @@ see the NEWS file.
 2007-11-14 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/cell.hh, cell/kernels/kernel_reference.sk,
-	cell/libla/banded_dense_float_matrix_vector_product.cc,
+	* cell/libla/banded_dense_float_matrix_vector_product.cc,
 	cell/libla/Makefile.am, cell/opcodes.hh, libla/product-cell.cc,
 	libla/product.hh, libla/product_TEST.cc: Added
 	banded_dense_float_matrix_vector_product without double buffering.

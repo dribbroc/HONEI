@@ -24,6 +24,17 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
 
+namespace bm_dv_product
+{
+    struct SPETask
+    {
+        honei::SPEInstruction spe_instruction;
+        float * band;
+        unsigned long start;
+        unsigned long end;
+    };
+}
+
 namespace honei
 {
     DenseVector<float>
@@ -50,6 +61,7 @@ namespace honei
         return result;
     }
 
+
     DenseVector<float>
     Product<tags::Cell>::value(const BandedMatrix<float> & a, const DenseVector<float> & b)
     {
@@ -60,8 +72,9 @@ namespace honei
 
         unsigned int spe_count = 3;
 
-        typedef std::vector<SPEInstruction> InstList;
-        InstList inst_list;
+
+        typedef std::vector<bm_dv_product::SPETask> TaskList;
+        TaskList task_list;
         DenseVector<float> * results[4] = { new DenseVector<float>(b.size(), float(0)),
                                             new DenseVector<float>(b.size(), float(0)),
                                             new DenseVector<float>(b.size(), float(0)),
@@ -86,18 +99,20 @@ namespace honei
             end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
             quad_end = end - (end % 4);
 
-            Operand oa = { vi->elements() };
+            Operand oa = { vi->elements() + quad_start };
             Operand ob = { b.elements() };
-            Operand oc = { results[counter]->elements() };
-            Operand od, oe, of, og, oh;
+            Operand oc = { results[counter]->elements() + quad_start };
+            Operand od, oe, of, og;
             od.u = quad_start;
             oe.u = quad_end;
             of.s = (signed)op_offset;
             og.u = op_offset % 4;
-            oh.u = end;
-            SPEInstruction instruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og, oh);
-
-            inst_list.push_back(instruction);
+            bm_dv_product::SPETask task;
+            task.band = vi->elements();
+            task.start = start;
+            task.end = end;
+            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og);
+            task_list.push_back(task);
 
             /*for (unsigned long index = quad_end ; index < end ; index++) 
             {
@@ -118,18 +133,20 @@ namespace honei
             quad_start = start + ((4 - (start % 4)) % 4);
             end = vi->size();
             quad_end = end - (end % 4);
-            Operand oa = { vi->elements() };
+            Operand oa = { vi->elements() + quad_start};
             Operand ob = { b.elements() };
-            Operand oc = { results[counter]->elements() };
-            Operand od, oe, of, og, oh;
+            Operand oc = { results[counter]->elements() + quad_start};
+            Operand od, oe, of, og;
             od.u = quad_start;
             oe.u = quad_end;
             of.s = -1 * (signed)op_offset;
             og.u = (4 - (op_offset % 4)) % 4;
-            oh.u = end;
-            SPEInstruction instruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og, oh);
-
-            inst_list.push_back(instruction);
+            bm_dv_product::SPETask task;
+            task.band = vi->elements();
+            task.start = start;
+            task.end = end;
+            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og);
+            task_list.push_back(task);
 
             for (unsigned long index = start ; index < quad_start ; index++)
             {
@@ -143,43 +160,43 @@ namespace honei
         }
 
         // dispatch instructions to spe's
-        for (unsigned long i = 0 ; i < inst_list.size() - (inst_list.size() % spe_count) ; i = i + spe_count)
+        for (unsigned long i = 0 ; i < task_list.size() - (task_list.size() % spe_count) ; i = i + spe_count)
         {
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-                SPEManager::instance()->dispatch(inst_list.at(i + j));
+                SPEManager::instance()->dispatch(task_list.at(i + j).spe_instruction);
             }
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-                for (unsigned long index = inst_list.at(i + j).instruction().e.u ; index < inst_list.at(i).instruction().h.u ; index++) 
+                for (unsigned long index = task_list.at(i + j).spe_instruction.instruction().e.u ; index < task_list.at(i).end ; index++) 
                 {
                     results[j]->elements()[index] += 
-                        ((float *)(inst_list.at(i + j).instruction().a.ea))[index] *
-                        ((float *)(inst_list.at(i + j).instruction().b.ea))[index + inst_list.at(i + j).instruction().f.s];
+                        task_list.at(i + j).band[index] *
+                        b.elements()[index + task_list.at(i + j).spe_instruction.instruction().f.s];
                 }
             }
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-            inst_list.at(i + j).wait();
+            task_list.at(i + j).spe_instruction.wait();
             }
         }
 
-        for (unsigned long i = inst_list.size() - (inst_list.size() % spe_count) ; i < inst_list.size() ; ++i)
+        for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
-            SPEManager::instance()->dispatch(inst_list.at(i));
+            SPEManager::instance()->dispatch(task_list.at(i).spe_instruction);
         }
-        for (unsigned long i = inst_list.size() - (inst_list.size() % spe_count) ; i < inst_list.size() ; ++i)
+        for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
-            for (unsigned long index = inst_list.at(i).instruction().e.u ; index < inst_list.at(i).instruction().h.u ; index++) 
+            for (unsigned long index = task_list.at(i).spe_instruction.instruction().e.u ; index < task_list.at(i).end ; index++)
             {
-                ((float *)(inst_list.at(i).instruction().c.ea))[index] += 
-                    ((float *)(inst_list.at(i).instruction().a.ea))[index] * 
-                    ((float *)(inst_list.at(i).instruction().b.ea))[index + inst_list.at(i).instruction().f.s];
+                ((float *)(task_list.at(i).spe_instruction.instruction().c.ea))[index] += 
+                    task_list.at(i).band[index] * 
+                    b.elements()[index + task_list.at(i).spe_instruction.instruction().f.s];
             }
         }
-        for (unsigned long i = inst_list.size() - (inst_list.size() % spe_count) ; i < inst_list.size() ; ++i)
+        for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
-            inst_list.at(i).wait();
+            task_list.at(i).spe_instruction.wait();
         }
 
 

@@ -48,6 +48,9 @@ namespace honei
             friend class SPEManager::Implementation;
 
             /// Constructor.
+            SPEInstruction() { }
+
+            /// Constructor.
             SPEInstruction(const OpCode opcode, const unsigned size, const Operand a = empty,
                     const Operand b = empty, const Operand c = empty, const Operand d = empty,
                     const Operand e = empty, const Operand f = empty, const Operand g = empty,
