@@ -8,6 +8,11 @@ see the NEWS file.
 
 2007-11-17 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* cell/libla/banded_dense_float_matrix_vector_product.cc, libla/product-cell.cc:
+	Simplified the code in preparation for double buffering.
+
+2007-11-17 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/difference-sse.cc, libla/vector_error.cc, libla/vector_error.hh:
 	Added an example implementation for offset handling.
 

@@ -30,8 +30,11 @@ namespace bm_dv_product
     {
         honei::SPEInstruction spe_instruction;
         float * band;
+        unsigned int result_counter;
         unsigned long start;
         unsigned long end;
+        unsigned long quad_start;
+        unsigned long quad_end;
     };
 }
 
@@ -61,7 +64,6 @@ namespace honei
         return result;
     }
 
-
     DenseVector<float>
     Product<tags::Cell>::value(const BandedMatrix<float> & a, const DenseVector<float> & b)
     {
@@ -70,7 +72,7 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        unsigned int spe_count = 3;
+        unsigned int spe_count = 4;
 
 
         typedef std::vector<bm_dv_product::SPETask> TaskList;
@@ -100,18 +102,21 @@ namespace honei
             quad_end = end - (end % 4);
 
             Operand oa = { vi->elements() + quad_start };
-            Operand ob = { b.elements() };
+            Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
             Operand oc = { results[counter]->elements() + quad_start };
             Operand od, oe, of, og;
-            od.u = quad_start;
-            oe.u = quad_end;
+            //od.u = quad_start;
+            //oe.u = quad_end;
             of.s = (signed)op_offset;
             og.u = op_offset % 4;
             bm_dv_product::SPETask task;
+            task.result_counter = counter;
             task.band = vi->elements();
             task.start = start;
             task.end = end;
-            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og);
+            task.quad_start = quad_start;
+            task.quad_end = quad_end;
+            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
             /*for (unsigned long index = quad_end ; index < end ; index++) 
@@ -134,18 +139,21 @@ namespace honei
             end = vi->size();
             quad_end = end - (end % 4);
             Operand oa = { vi->elements() + quad_start};
-            Operand ob = { b.elements() };
+            Operand ob = { b.elements() + quad_start - op_offset - (4 - (op_offset % 4)) };
             Operand oc = { results[counter]->elements() + quad_start};
             Operand od, oe, of, og;
-            od.u = quad_start;
-            oe.u = quad_end;
+            //od.u = quad_start;
+            //oe.u = quad_end;
             of.s = -1 * (signed)op_offset;
             og.u = (4 - (op_offset % 4)) % 4;
             bm_dv_product::SPETask task;
+            task.result_counter = counter;
             task.band = vi->elements();
             task.start = start;
             task.end = end;
-            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, b.size(), oa, ob, oc, od, oe, of, og);
+            task.quad_start = quad_start;
+            task.quad_end = quad_end;
+            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
             for (unsigned long index = start ; index < quad_start ; index++)
@@ -168,9 +176,9 @@ namespace honei
             }
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-                for (unsigned long index = task_list.at(i + j).spe_instruction.instruction().e.u ; index < task_list.at(i).end ; index++) 
+                for (unsigned long index = task_list.at(i + j).quad_end ; index < task_list.at(i).end ; index++) 
                 {
-                    results[j]->elements()[index] += 
+                    results[i + j]->elements()[index] += 
                         task_list.at(i + j).band[index] *
                         b.elements()[index + task_list.at(i + j).spe_instruction.instruction().f.s];
                 }
@@ -187,10 +195,10 @@ namespace honei
         }
         for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
-            for (unsigned long index = task_list.at(i).spe_instruction.instruction().e.u ; index < task_list.at(i).end ; index++)
+            for (unsigned long index = task_list.at(i).quad_end ; index < task_list.at(i).end ; index++)
             {
-                ((float *)(task_list.at(i).spe_instruction.instruction().c.ea))[index] += 
-                    task_list.at(i).band[index] * 
+                results[task_list.at(i).result_counter]->elements()[index] +=
+                    task_list.at(i).band[index] *
                     b.elements()[index + task_list.at(i).spe_instruction.instruction().f.s];
             }
         }

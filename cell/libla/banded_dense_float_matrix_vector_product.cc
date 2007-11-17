@@ -37,26 +37,26 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
     Pointer<float> b = { block_b->address };
     Pointer<float> r = { block_r->address };
 
-    unsigned start(inst.d.u);
-    unsigned end(inst.e.u);
+    //unsigned start(inst.d.u);
+    //unsigned end(inst.e.u);
     signed op_offset(inst.f.s);
     unsigned x_offset(inst.g.u);
     unsigned y_offset((4 - x_offset) % 4);
 
-    mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen((end - start) * sizeof(float)), 1, 0, 0);
-    mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen(inst.size * sizeof(float)), 2, 0, 0);
-    mfc_get(r.untyped, inst.c.ea, multiple_of_sixteen((end - start) * sizeof(float)), 3, 0, 0);
+    mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 1, 0, 0);
+    mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen((inst.size + x_offset + y_offset) * sizeof(float)), 2, 0, 0);
+    mfc_get(r.untyped, inst.c.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
     mfc_write_tag_mask(1 << 3 | 1 << 2 | 1 << 1);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < end - start ; i+=4)
+    for (unsigned i(0) ; i < inst.size / 4 ; i++)
     {
-        vector float temp = b.vectorised[(i + start + op_offset - x_offset)/4]; // temp version needed?
-        extract(temp, b.vectorised[(i + start + op_offset + y_offset)/4], x_offset);
-        r.vectorised[i/4] = spu_madd(a.vectorised[i/4], temp, r.vectorised[i/4]);
+        vector float temp = b.vectorised[i]; // temp version needed?
+        extract(temp, b.vectorised[i + 1], x_offset);
+        r.vectorised[i] = spu_madd(a.vectorised[i], temp, r.vectorised[i]);
     }
 
-    mfc_put(r.untyped, inst.c.ea, multiple_of_sixteen((end - start) * sizeof(float)), 3, 0, 0);
+    mfc_put(r.untyped, inst.c.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
     mfc_write_tag_mask(1 << 3);
     mfc_read_tag_status_all();
 
