@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/files.m4: Fixed category of hdf5 files.
+
+2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libgraph/dijkstra.hh, libgraph/graph_error.hh,
 	libgraph/mask_error.hh, libgraph/matrix_element_distance.hh,
 	libgraph/matrix_element_distance_inverse.hh,
