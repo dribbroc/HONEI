@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/log.cc: Fixed rare segmentation fault when assigning to
+	static string.
+
+2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/files.m4: Fixed category of hdf5 files.
 
 2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>

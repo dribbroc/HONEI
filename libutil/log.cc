@@ -53,11 +53,12 @@ namespace honei
         /// Our list of log messages.
         std::list<LogMessage> messages;
 
+        /// Our previous context.
+        std::string previous_context;
+
         /// Write out our log messages.
         void log_function()
         {
-            static std::string previous_context;
-
             while (true)
             {
                 LogMessage message;
