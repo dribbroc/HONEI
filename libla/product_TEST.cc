@@ -626,8 +626,8 @@ class DenseMatrixProductTest :
         }
 
         virtual void run() const
-        { // 2 ^ 7 = 128
-            for (unsigned long size(2) ; size < (1 << 7) ; size <<= 1)
+        {
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
                     dm3(size+1, size+1, DataType_(6 * size));
@@ -643,9 +643,38 @@ class DenseMatrixProductTest :
 };
 DenseMatrixProductTest<tags::CPU, float> dense_matrix_product_test_float("float");
 DenseMatrixProductTest<tags::CPU, double> dense_matrix_product_test_double("double");
+
+template <typename Tag_, typename DataType_>
+class DenseMatrixProductCellTest :
+    public BaseTest
+{
+    public:
+        DenseMatrixProductCellTest(const std::string & type) :
+            BaseTest("dense_matrix_product_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(2) ; size < (1 << 7) ; size <<= 1)
+            {
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
+                    dm3(size+1, size+1, DataType_(6 * size));
+                DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
+                TEST_CHECK_EQUAL(prod, dm3);
+            }
+
+            DenseMatrix<DataType_> dm01(3, 4, DataType_(1)), dm02(3, 3, DataType_(1));
+
+            TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dm02), MatrixRowsDoNotMatch);
+        }
+};
+
 #ifdef HONEI_CELL
-DenseMatrixProductTest<tags::Cell, float> cell_dense_matrix_product_test_float("Cell float");
+DenseMatrixProductCellTest<tags::Cell, float> cell_dense_matrix_product_test_float("Cell float");
 #endif
+
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixProductQuickTest :
@@ -677,6 +706,7 @@ class DenseMatrixProductQuickTest :
 };
 DenseMatrixProductQuickTest<tags::CPU, float> dense_matrix_product_quick_test_float("float");
 DenseMatrixProductQuickTest<tags::CPU, double> dense_matrix_product_quick_test_double("double");
+
 #ifdef HONEI_CELL
 DenseMatrixProductQuickTest<tags::Cell, float> cell_dense_matrix_product_quick_test_float("Cell float");
 #endif

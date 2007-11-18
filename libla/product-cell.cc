@@ -358,7 +358,7 @@ namespace honei
         Operand oh; // Will transfer the size of a last transfer for a,
         Operand oi; // Will transfer the size of a last transfer for b.
         Operand oj; // Will transfer the size of a last transfer for r.
-        Operand ok; // Will transfer the number of full transfers for r.
+        Operand ok; // Will transfer the default transfer size for r.
 
         unsigned a_row_bytes(a_tile_columns * 4); // Bytes per row
         unsigned a_rows_per_transfer(16384 / a_row_bytes);
@@ -375,6 +375,7 @@ namespace honei
         unsigned a_def_t_size(rows_per_transfer * a_tile_columns * 4);
 
         std::cout << "Starting for-loop." << std::endl;
+
         for ( ; ; ) // Need two default aligned transfer size as closest to 16384 as possible.
         {
             if (a_def_t_size % 16 == 0 && r_def_t_size % 16 == 0)
@@ -387,11 +388,9 @@ namespace honei
             if (a_def_t_size <= 0 || r_def_t_size <= 0)
             {
                 std::cout << "Could not find an alignment" << std::endl;
-                return result;
             }
         }
         std::cout << "Finished for-loop." << std::endl;
-
 
         of.u = a_tile_rows / rows_per_transfer;
         og.u = (b_tile_rows * b_tile_columns * 4) / 16384;
@@ -402,7 +401,15 @@ namespace honei
 
         // If there is a rest for a and r to transfer, we need one more transfer...
         // Else if there is no rest, the last transfer size is equal to the normal one.
-        0 != oh.u ? of.u++ : oh.u = a_def_t_size;
+        if (0 != oh.u || 0 != oj.u)
+        {
+            of.u++;
+        }
+        else
+        {
+            oh.u = a_def_t_size;
+            oj.u = r_def_t_size;
+        }
 
         // If a fits into one transfer, we should say that it is one transfer needed and set last size.
         if (0 == of.u)
@@ -411,11 +418,7 @@ namespace honei
             oh.u = a_row_bytes * a_tile_columns;
         }
 
-        if (0 == og.u) // if matrix b has less than 64 rows -> we only need one allocation block.
-        {
-            og.u++;
-        }
-        else if (oi.u != 0) // if we need one more block for rest rows of b.
+        if (oi.u != 0) // if we need one more block for rest rows of b.
         {
             og.u++;
         }
