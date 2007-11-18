@@ -28,7 +28,6 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVector<float> & a, const Dens
 {
     CONTEXT("When calculating dot-product of DenseVector<float> with DenseVector<float> with SSE:");
 
-
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
@@ -40,7 +39,7 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVector<float> & a, const Dens
     m4 = _mm_setzero_ps();
     m5 = _mm_setzero_ps();
 
-    for (unsigned long index = 0 ; index < quad_end ; index += 4) 
+    for (unsigned long index(0) ; index < quad_end ; index += 4) 
     {
         m1 = _mm_load_ps(a.elements() + index);
         m2 = _mm_load_ps(b.elements() + index);
@@ -59,10 +58,11 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVector<float> & a, const Dens
     m5 = _mm_add_ss(m5, m4);
     _mm_store_ss(&result, m5);
 
-    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    for (unsigned long index(quad_end) ; index < a.size() ; index++)
     {
         result += a.elements()[index] * b.elements()[index];
     }
+
     return result;
 }
 
@@ -98,6 +98,23 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVector<double> & a, const De
     {
         result += a.elements()[index] * b.elements()[index];
     }
-    return result;
 
+    return result;
 }
+
+float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> with SSE:");
+    LOGMESSAGE(ll_minimal, "Forwarding to CPU operation.");
+
+    return DotProduct<tags::CPU>::value(a, b);
+}
+
+double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> with SSE:");
+    LOGMESSAGE(ll_minimal, "Forwarding to CPU operation.");
+
+    return DotProduct<tags::CPU>::value(a, b);
+}
+

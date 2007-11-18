@@ -87,7 +87,7 @@ namespace honei
             typename Vector<DT1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < a.rows(); ++i)
             {
-                DenseVector<DT1_> dv(a[i]);
+                DenseVectorRange<DT1_> dv(a[i]);
                 *l = DotProduct<Tag_>::value(b, dv);
                 ++l;
             }
@@ -109,7 +109,7 @@ namespace honei
             typename Vector<DT1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < a.rows(); ++i)
             {
-                DenseVector<DT1_> dv(a[i]);
+                DenseVectorRange<DT1_> dv(a[i]);
                 *l = DotProduct<Tag_>::value(b, dv);
                 ++l;
             }
@@ -153,7 +153,7 @@ namespace honei
             typename SparseVector<DT1_>::ElementIterator l(result.begin_elements());
             for (unsigned long i=0; i < a.rows(); ++i)
             {
-                const Vector<DT1_> & v(a[i]);
+                const SparseVector<DT1_> v(a[i]);
                 *l = DotProduct<Tag_>::value(b, v);
                 ++l;
             }
@@ -329,11 +329,11 @@ namespace honei
 
             for (unsigned int s(0) ; s < a.rows() ; ++s)
             {
-                const DenseVector<DT1_> a_row(a[s]);
+                const DenseVectorRange<DT1_> a_row(a[s]);
                 for (unsigned int t(0); t < b.columns() ; ++t)
                 {
                     const DenseVector<DT2_> b_column(b.column(t));
-                    *i = DotProduct<>::value(a_row, b_column);
+                    *i = DotProduct<>::value(b_column, a_row);
                     ++i;
                 }
 
@@ -355,7 +355,7 @@ namespace honei
             ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
             for (unsigned int l_row(0) ; l_row < a.rows() ; ++l_row)
             {
-                const DenseVector<DT1_> a_row(a[l_row]);
+                const DenseVectorRange<DT1_> a_row(a[l_row]);
                 for (unsigned int r_column(0); r_column < b.columns() ; ++r_column)
                 {
                     typename Vector<DT1_>::ConstElementIterator l(a_row.begin_elements());
@@ -421,7 +421,7 @@ namespace honei
                 for (unsigned int t(0); t < b.columns() ; ++t)
                 {
                     const DenseVector<DT2_> b_column(b.column(t));
-                    *i = DotProduct<>::value(b_column, a_row);
+                    *i = DotProduct<>::value(a_row, b_column);
                     ++i;
                 }
 
@@ -792,7 +792,8 @@ namespace honei
 
                 for (unsigned int z(0) ; z < a.rows() ; ++z)
                 {
-                    const DenseVector<DT1_> row(a[z]);
+                    /// \todo RowIterator
+                    const DenseVectorRange<DT1_> row(a[z]);
                     typename Vector<DT1_>::ConstElementIterator c(row.begin_elements());
                     typename Vector<DT1_>::ElementIterator x(result[z].element_at(real_index));
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->begin_elements()),
@@ -810,7 +811,7 @@ namespace honei
             {
                 for (unsigned int z(0) ; z < a.rows() ; ++z)
                 {
-                    const DenseVector<DT1_> row(a[z]);
+                    const DenseVectorRange<DT1_> row(a[z]);
                     typename Vector<DT1_>::ConstElementIterator c(row.begin_elements());
                     typename Vector<DT1_>::ElementIterator x(result[z].begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->begin_elements()),
@@ -832,7 +833,7 @@ namespace honei
 
                 for (unsigned int z(0) ; z < a.rows() ; ++z)
                 {
-                    const DenseVector<DT1_> row(a[z]);
+                    const DenseVectorRange<DT1_> row(a[z]);
                     typename Vector<DT1_>::ConstElementIterator c(row.element_at(real_index));
                     typename Vector<DT1_>::ElementIterator x(result[z].begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->element_at(real_index)),

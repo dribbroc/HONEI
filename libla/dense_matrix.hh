@@ -24,9 +24,9 @@
 
 #include <libla/element_iterator.hh>
 #include <libla/matrix.hh>
-#include <libla/dense_matrix_tile.hh>
 #include <libla/dense_vector.hh>
-#include <libla/sparse_matrix.hh>
+#include <libla/dense_vector_range.hh>
+#include <libla/dense_vector_slice.hh>
 #include <libla/matrix_error.hh>
 #include <libutil/shared_array-impl.hh>
 #include <libutil/stringify.hh>
@@ -38,11 +38,13 @@
 
 namespace honei
 {
+    // Forward declarations
     template <typename DataType_> class DenseMatrixTile;
+    template <typename DataType_> class SparseMatrix;
 
     /**
-     * \brief DenseMatrix is a matrix with O(column * row) non-zero elements which keeps its data
-     * \brief continuous.
+     * DenseMatrix is a matrix with O(column * row) non-zero elements which keeps its data
+     * aligned and continuous.
      *
      * \ingroup grpmatrix
      */
@@ -61,7 +63,7 @@ namespace honei
             unsigned long _rows;
 
             /// Our row-vectors.
-            SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > _row_vectors;
+            SharedArray<std::tr1::shared_ptr<DenseVectorRange<DataType_> > > _row_vectors;
 
             /// Our column-vectors.
             SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > _column_vectors;
@@ -121,9 +123,9 @@ namespace honei
                 _row_vectors(rows)
             {
                 CONTEXT("When creating DenseMatrix:");
-                DataType_ *  target(_elements.get());
-                for (unsigned long i(0) ; i < (rows * columns) ; i++)
-                    target[i] = value;
+
+                /// \todo Use TypeTraits::fill()
+                std::fill_n(_elements.get(), rows * columns, value);
             }
 
             /**
@@ -141,15 +143,12 @@ namespace honei
                 CONTEXT("When creating DenseMatrix form SparseMatrix:");
 
                 /// \todo Use TypeTraits::zero()
-                DataType_ *  target(_elements.get());
-                DataType_ value(0);
-                for (unsigned long i(0) ; i < (other.rows() * other.columns()) ; i++)
-                    target[i] = value;
+                std::fill_n(_elements.get(), _rows * _columns, DataType_(0));
 
                 for (typename Matrix<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
                         i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)
                 {
-                    (*this)(i.row(),i.column()) = *i;
+                    (*this)(i.row(), i.column()) = *i;
                 }
             }
 
@@ -241,19 +240,19 @@ namespace honei
             }
 
             /// Retrieves row vector by index, zero-based, unassignable.
-            virtual const DenseVector<DataType_> & operator[] (unsigned long row) const
+            virtual const DenseVectorRange<DataType_> & operator[] (unsigned long row) const
             {
                 if (! _row_vectors[row])
-                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
+                    _row_vectors[row].reset(new DenseVectorRange<DataType_>(_elements, _columns, row * _columns));
 
                 return *_row_vectors[row];
             }
 
             /// Retrieves row vector by index, zero-based, assignable.
-            virtual DenseVector<DataType_> & operator[] (unsigned long row)
+            virtual DenseVectorRange<DataType_> & operator[] (unsigned long row)
             {
                 if (! _row_vectors[row])
-                    _row_vectors[row].reset(new DenseVector<DataType_>(_columns, _elements, row * _columns, 1));
+                    _row_vectors[row].reset(new DenseVectorRange<DataType_>(_elements, _columns, row * _columns));
 
                 return *_row_vectors[row];
             }

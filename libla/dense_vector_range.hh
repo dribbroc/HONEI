@@ -50,7 +50,7 @@ namespace honei
             /**
              * Constructor.
              *
-             * For use by DenseMatrixTile.
+             * For use by DenseMatrix and DenseMatrixTile.
              *
              * \param source The shared array the range provides access to.
              * \param size Size of the new dense vector range.
@@ -60,6 +60,7 @@ namespace honei
 
         public:
             friend class DenseElementIterator<DataType_>;
+            friend class DenseMatrix<DataType_>;
             friend class DenseMatrixTile<DataType_>;
 
             /// Type of the const iterator over our elements.
@@ -74,7 +75,7 @@ namespace honei
             /**
              * Constructor.
              *
-             * \param source The DenseVector the range provides access to.
+             * \param source The DenseVector that is accessed by the range.
              * \param size Size of the new dense vector range.
              * \param offset Offset of the vector's data inside the DenseVector's shared array.
              */

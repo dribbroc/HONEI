@@ -21,10 +21,12 @@
 #ifndef LIBLA_GUARD_DOT_PRODUCT_HH
 #define LIBLA_GUARD_DOT_PRODUCT_HH 1
 
-#include <libutil/tags.hh>
+#include <libla/vector.hh>
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/vector_error.hh>
+#include <libutil/tags.hh>
+
 
 namespace honei
 {
@@ -59,9 +61,9 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static DT1_ value(const Vector<DT1_> & x, const Vector<DT2_> & y)
+        static DT1_ value(const DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y)
         {
-            CONTEXT("When calculating Vector-Vector dot product:");
+            CONTEXT("When calculating DenseVectorBase-DenseVectorBase dot product:");
 
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
@@ -78,7 +80,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DT1_ value(const SparseVector<DT1_> & x, const Vector<DT2_> & y)
+        static DT1_ value(const SparseVector<DT1_> & x, const DenseVectorBase<DT2_> & y)
         {
             CONTEXT("When calculating SparseVector-Vector dot product:");
 
@@ -224,6 +226,10 @@ namespace honei
         static float value(const DenseVector<float> & a, const DenseVector<float> & b);
 
         static double value(const DenseVector<double> & a, const DenseVector<double> & b);
+
+        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static double value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
         /// \}
     };

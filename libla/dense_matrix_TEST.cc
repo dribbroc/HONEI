@@ -19,6 +19,7 @@
  */
 
 #include <libla/dense_matrix.hh>
+#include <libla/sparse_matrix.hh>
 #include <libla/vector.hh>
 #include <unittest/unittest.hh>
 
@@ -105,8 +106,8 @@ class DenseMatrixDensifyQuickTest :
         virtual void run() const
         {
                 unsigned long size(47);
-                DenseMatrix<DataType_> dm0(size+2, size, DataType_(0));
-                SparseMatrix<DataType_> sm0(size+2, size, size / 8 + 1);
+                DenseMatrix<DataType_> dm0(size + 2, size, DataType_(0));
+                SparseMatrix<DataType_> sm0(size + 2, size, size / 8 + 1);
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), j(sm0.begin_elements()),
                     i_end(dm0.end_elements()) ; i != i_end ; ++i , ++j)
@@ -177,8 +178,8 @@ class DenseMatrixLayoutTest :
                 TEST_CHECK_EQUAL(dm.columns(), columns);
                 TEST_CHECK_EQUAL(dm.rows(), rows);
 
-                DenseVector<DataType_> row1 = dm[0];
-                DenseVector<DataType_> col1 = dm.column(0);
+                DenseVectorRange<DataType_> row1(dm[0]);
+                DenseVector<DataType_> col1(dm.column(0));
 
                 TEST_CHECK_EQUAL(row1.size(), columns);
                 TEST_CHECK_EQUAL(col1.size(), rows);
@@ -220,8 +221,8 @@ class DenseMatrixQuickTest :
             TEST_CHECK_EQUAL(dm.columns(), columns);
             TEST_CHECK_EQUAL(dm.rows(), rows);
 
-            DenseVector<DataType_> row1 = (dm)[0];
-            DenseVector<DataType_> col1 = dm.column(0);
+            DenseVectorRange<DataType_> row1((dm)[0]);
+            DenseVector<DataType_> col1(dm.column(0));
 
             TEST_CHECK_EQUAL(row1.size(), columns);
             TEST_CHECK_EQUAL(col1.size(), rows);
@@ -229,8 +230,8 @@ class DenseMatrixQuickTest :
             DenseMatrix<DataType_> dm2(4, 3, DataType_(2));
             DenseMatrix<DataType_> dm3(5, 3, DataType_(2));
             DenseMatrix<DataType_> dm4(5, 4, DataType_(2));
-            TEST_CHECK_THROWS(dm2==dm3, MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(dm3==dm4, MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(dm2 == dm3, MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(dm3 == dm4, MatrixColumnsDoNotMatch);
 
         }
 };

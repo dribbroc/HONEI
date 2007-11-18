@@ -252,13 +252,11 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
     DenseVector<float> result(a.rows());
 
     /// \todo Hardcode M*V product.
-    Vector<float>::ElementIterator l(result.begin_elements());
-    for (unsigned long i=0; i < a.rows(); ++i)
+    for (Vector<float>::ElementIterator l(result.begin_elements()), l_end(result.end_elements()) ; l != l_end ; ++l)
     {
-        DenseVector<float> dv(a[i]);
-        *l = DotProduct<tags::CPU::SSE>::value(b, dv);
-        ++l;
+        *l = DotProduct<tags::CPU::SSE>::value(b, a[l.index()]);
     }
+
     return result;
 }
 
@@ -274,12 +272,10 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
     DenseVector<double> result(a.rows());
 
     /// \todo Hardcode M*V product.
-    Vector<double>::ElementIterator l(result.begin_elements());
-    for (unsigned long i=0; i < a.rows(); ++i)
+    for (Vector<double>::ElementIterator l(result.begin_elements()), l_end(result.end_elements()) ; l != l_end ; ++l)
     {
-        DenseVector<double> dv(a[i]);
-        *l = DotProduct<tags::CPU::SSE>::value(b, dv);
-        ++l;
+        *l = DotProduct<tags::CPU::SSE>::value(b, a[l.index()]);
     }
+
     return result;
 }

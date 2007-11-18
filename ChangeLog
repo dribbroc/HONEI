@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/dense_matrix.hh, libla/dense_vector_range.hh: Converted row
+	vectors to DenseVectorRange. Tidied up constructors a bit.
+	* libla/difference.hh: Removed recursive include statement.
+	* libla/dot_product.hh, libla/dot_product-sse.cc: Added forwarding
+	calls to CPU operation for unimplemented but used cases.
+	* libla/product-sse.cc: Fixed calls to DotProduct.
+	* libla/product.hh, libla/dense_matrix_TEST.cc: Adjusted for row
+	vector changes.
+
+
 2007-11-18 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* cell/cell.hh, libutil/spe_instruction.cc,

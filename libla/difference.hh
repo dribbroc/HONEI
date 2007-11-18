@@ -22,7 +22,6 @@
 
 #include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
-#include <libla/difference.hh>
 #include <libla/matrix_error.hh>
 #include <libla/product.hh>
 #include <libla/scale.hh>
