@@ -28,12 +28,6 @@
 #include <string>
 #include <tr1/memory>
 
-/** \file
- * Stringify functions.
- *
- * \ingroup grpstringify
- */
-
 namespace honei
 {
     /**

@@ -31,13 +31,6 @@
 #include <algorithm>
 #include <string>
 
-/**
- * \file
- *
- * Implementation of DenseVector and related classes.
- *
- * \ingroup grpvector
- **/
 namespace honei
 {
     template <typename DataType_> class DenseMatrix;

@@ -31,13 +31,6 @@
 #include <limits>
 #include <ostream>
 
-/**
- * \file
- *
- * Interface declarations for Vector-based types.
- *
- * \ingroup grpvector
- **/
 namespace honei
 {
     /**

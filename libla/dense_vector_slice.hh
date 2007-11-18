@@ -24,13 +24,6 @@
 #include <libla/dense_vector.hh>
 #include <libla/dense_vector_base.hh>
 
-/**
- * \file
- *
- * Implementation of DenseVectorSlice and related classes.
- *
- * \ingroup grpvector
- */
 namespace honei
 {
     template <typename DataType_> class DenseMatrixTile;

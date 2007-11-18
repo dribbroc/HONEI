@@ -23,14 +23,6 @@
 #include <libmath/conjugate_gradients.hh>
 #include <libmath/jacobi.hh>
 #include <libmath/methods.hh>
-/**
- * \file
- *
- * Templatized definition and implementation of a Mixed Precision Iterative
- * Refinement solver.
- *
- * \ingroup grpoperations
- */
 
 using namespace std;
 using namespace methods;

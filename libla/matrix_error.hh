@@ -22,13 +22,6 @@
 
 #include <libutil/exception.hh>
 
-/**
- * \file
- *
- * Declaration of exception classes which are related to Matrix.
- *
- * \ingroup grpmatrixexceptions
- */
 namespace honei
 {
     /**

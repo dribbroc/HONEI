@@ -31,14 +31,6 @@
 #include <libla/norm.hh>
 #include <iostream>
 
-/**
- * \file
- *
- * Templatized definition and implementation of a Jacobi Solver.
- *
- * \ingroup grpoperations
- */
-
 using namespace std;
 
 namespace honei

@@ -30,13 +30,6 @@
 
 #include <iterator>
 
-/**
- * \file
- *
- * Implementation of DenseMatrixTile and related classes.
- *
- * \ingroup grpmatrix
- */
 namespace honei
 {
     /**

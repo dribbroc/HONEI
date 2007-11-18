@@ -25,13 +25,6 @@
 #include <libla/dense_vector_continuous_base.hh>
 #include <libla/sparse_vector.hh>
 
-/**
- * \file
- *
- * Implementation of DenseVector and related classes.
- *
- * \ingroup grpvector
- */
 namespace honei
 {
     template <typename DataType_> class DenseMatrix;

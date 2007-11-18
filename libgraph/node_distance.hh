@@ -31,13 +31,6 @@
 #include <libla/norm.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Implementation of NodeDistance.
- *
- * \ingroup grplibgraph
- **/
 namespace honei
 {
     /**

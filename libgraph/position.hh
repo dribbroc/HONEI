@@ -45,14 +45,8 @@
 #include <cmath>
 #include <tr1/memory>
 #include <iostream>
-/**
- * \file
- *
- * Interface declarations for position calculation classes.
- *
- * \ingroup grplibgraph
- **/
- namespace honei
+
+namespace honei
 {
     namespace methods
     {

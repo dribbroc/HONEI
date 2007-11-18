@@ -22,13 +22,6 @@
 
 #include <libutil/exception.hh>
 
-/**
- * \file
- *
- * Declaration of exceptions related to graphs. 
- *
- * 
- * */
 namespace honei
 {
     /**

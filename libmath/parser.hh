@@ -20,14 +20,6 @@
 #ifndef LIBUTIL_GUARD_PARSER_HH
 #define LIBUTIL_GUARD_PARSER_HH 1
 
-/**
- * \file
- *
- * Templatized definition and implementation of a parser for Vectors and Matrices.
- *
- * \ingroup grpdebug
- */
-
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
 #include <iostream>

@@ -24,13 +24,6 @@
 
 #include <string>
 
-/**
- * \file
- *
- * Declaration of exception classes which are related to Vector.
- *
- * \ingroup grpvectorexceptions
- **/
 namespace honei
 {
     /**

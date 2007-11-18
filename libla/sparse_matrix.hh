@@ -28,13 +28,6 @@
 #include <iterator>
 #include <vector>
 
-/**
- * \file
- *
- * Implementation of SparseMatrix and related classes.
- *
- * \ingroup grpmatrix
- **/
 namespace honei
 {
     /**

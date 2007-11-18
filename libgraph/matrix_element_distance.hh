@@ -27,13 +27,6 @@
 #include <libla/matrix_error.hh>
 #include <libutil/tags.hh>
 
-/**
- * \file
- *
- * Implementation of MatrixElementDistance.
- *
- * \ingroup grplibgraph \\\todo find group name.
- **/
 namespace honei
 {
     /**

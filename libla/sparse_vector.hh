@@ -34,13 +34,6 @@
 #include <ostream>
 #include <string>
 
-/**
- * \file
- *
- * Implementation of SparseVector and related classes.
- *
- * \ingroup grpvector
- */
 namespace honei
 {
     /**

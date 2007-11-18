@@ -5,6 +5,24 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libgraph/dijkstra.hh, libgraph/graph_error.hh,
+	libgraph/mask_error.hh, libgraph/matrix_element_distance.hh,
+	libgraph/matrix_element_distance_inverse.hh,
+	libgraph/node_distance.hh, libgraph/node_distance_inverse.hh,
+	libgraph/position.hh, libgraph/vector_masked_max_index.hh,
+	libgraph/vector_masked_min_index.hh, libla/banded_matrix.hh,
+	libla/dense_matrix.hh, libla/dense_matrix_tile.hh,
+	libla/dense_vector-impl.hh, libla/dense_vector.hh,
+	libla/dense_vector_range-impl.hh, libla/dense_vector_range.hh,
+	libla/dense_vector_slice-impl.hh, libla/dense_vector_slice.hh,
+	libla/matrix.hh, libla/matrix_error.hh, libla/sparse_matrix.hh,
+	libla/sparse_vector-impl.hh, libla/sparse_vector.hh, libla/vector.hh,
+	libla/vector_error.hh, libmath/conjugate_gradients.hh,
+	libmath/iterative_refinement.hh, libmath/jacobi.hh, libmath/parser.hh,
+	libswe/limiter.hh, libutil/stringify.hh: Removed all remaining
+	deprecated doxygen comments that refer to the file.
 
 2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 

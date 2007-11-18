@@ -27,13 +27,6 @@
 #include <libla/dense_vector.hh>
 #include <libla/matrix_error.hh>
 
-/**
- * \file
- *
- * Implementation of MatrixElementDistanceInverse.
- *
- * \ingroup grplibgraph
- **/
 namespace honei
 {
     /**

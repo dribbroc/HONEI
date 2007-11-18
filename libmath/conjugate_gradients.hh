@@ -32,13 +32,6 @@
 #include <iostream>
 #include <libmath/methods.hh>
 #include <libla/element_product.hh>
-/**
- * \file
- *
- * Templatized definition and implementation of a Conjugate Gradients Solver.
- *
- * \ingroup grpoperations
- */
 
 using namespace std;
 using namespace methods;

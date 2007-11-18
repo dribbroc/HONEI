@@ -28,13 +28,6 @@
 #include <libla/matrix_error.hh>
 #include <libgraph/vector_masked_min_index.hh>
 
-/**
- * \file
- *
- * Implementation of Dijkstra's algorithm.
- *
- * \ingroup grplibgraph
-**/
 namespace honei
 {
     /**

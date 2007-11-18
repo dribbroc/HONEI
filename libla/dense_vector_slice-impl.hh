@@ -31,13 +31,6 @@
 
 #include <iterator>
 
-/**
- * \file
- *
- * Implementation of DenseVectorSlice and related classes.
- *
- * \ingroup grpvector
- **/
 namespace honei
 {
     template <typename DataType_> class DenseMatrixTile;

@@ -28,13 +28,6 @@
 #include <libla/vector.hh>
 #include <libla/vector_error.hh>
 
-/**
- * \file
- *
- * Implementation of VectorMaskedMinIndex.
- *
- * \ingroup grpvectoroperations
- **/
 namespace honei
 {
     /**

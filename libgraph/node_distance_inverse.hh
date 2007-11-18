@@ -30,14 +30,6 @@
 #include <libla/norm.hh>
 #include <libutil/tags.hh>
 
-
-/**
- * \file
- *
- * Implementation of NodeDistanceInverse.
- *
- * \ingroup grplibgraph
- **/
 namespace honei
 {
     /**

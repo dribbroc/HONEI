@@ -35,13 +35,6 @@
 #include <iterator>
 #include <tr1/memory>
 
-/**
- * \file
- *
- * Implementation of BandedMatrix and related classes.
- *
- * \ingroup grpmatrix
- **/
 namespace honei
 {
     /**

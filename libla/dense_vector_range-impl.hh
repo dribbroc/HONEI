@@ -31,13 +31,6 @@
 #include <algorithm>
 #include <string>
 
-/**
- * \file
- *
- * Implementation of DenseVectorRange and related classes.
- *
- * \ingroup grpvector
- */
 namespace honei
 {
     /**

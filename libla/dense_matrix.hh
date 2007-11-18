@@ -36,13 +36,6 @@
 #include <cstring>
 #include <iterator>
 
-/**
- * \file
- *
- * Implementation of DenseMatrix and related classes.
- *
- * \ingroup grpmatrix
- */
 namespace honei
 {
     template <typename DataType_> class DenseMatrixTile;

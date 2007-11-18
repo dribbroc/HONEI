@@ -31,13 +31,6 @@
 #include <ostream>
 #include <cmath>
 
-/**
- * \file
- *
- * Interface declarations for Matrix-based types.
- *
- * \ingroup grpmatrix
- **/
 namespace honei
 {
     /**

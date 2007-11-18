@@ -27,13 +27,6 @@
 
 #include <algorithm>
 
-/**
- * \file
- *
- * Implementations of Limiter classes.
- *
- * \ingroup grplibswe
- */
 namespace honei
 {
     using std::max;

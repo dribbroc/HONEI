@@ -34,13 +34,6 @@
 #include <iterator>
 #include <string>
 
-/**
- * \file
- *
- * Implementation of SparseVector and related classes.
- *
- * \ingroup grpvector
- */
 namespace honei
 {
     template <typename DataType_> const DataType_ SparseVector<DataType_>::_zero_element = 0;
