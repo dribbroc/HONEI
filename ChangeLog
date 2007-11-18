@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-18 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* cell/cell.hh, libutil/spe_instruction.cc,
+	libutil/spe_instruction.hh: Appended Instruction to take 13 Operands.
+	It is now exactly 128 Bytes long which corresponds to one cache line.
+	* cell/libla/dense_dense_float_matrix_product.cc,
+	libla/product-cell.cc: Implemented a dirty hack of double buffering.
+	* libla/product_TEST.cc: Added also a BaseTest for MatrixProduct that
+	goes until size = 128, cause actually 191x191 is the maximum possible
+	size that fits into the SPE's LS.
+	* libutil/spe_kernel.cc: Fixed typo.
+
 2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/absolute.hh, libla/dense_vector-impl.hh,

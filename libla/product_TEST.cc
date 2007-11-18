@@ -22,6 +22,7 @@
 #include <libla/sparse_vector.hh>
 #include <libla/product.hh>
 #include <libla/matrix_error.cc>
+#include <libla/reduction.hh>
 #include <unittest/unittest.hh>
 
 #include <limits>
@@ -613,7 +614,7 @@ class BandedMatrixProductQuickTest :
 BandedMatrixProductQuickTest<float> banded_matrix_product_quick_test_float("float");
 BandedMatrixProductQuickTest<double> banded_matrix_product_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixProductTest :
     public BaseTest
 {
@@ -621,26 +622,30 @@ class DenseMatrixProductTest :
         DenseMatrixProductTest(const std::string & type) :
             BaseTest("dense_matrix_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
-        {
-            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
+        { // 2 ^ 7 = 128
+            for (unsigned long size(2) ; size < (1 << 7) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
                     dm3(size+1, size+1, DataType_(6 * size));
-                DenseMatrix<DataType_> prod(Product<>::value(dm1, dm2));
+                DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
 
                 TEST_CHECK_EQUAL(prod, dm3);
             }
 
             DenseMatrix<DataType_> dm01(3, 4, DataType_(1)), dm02(3, 3, DataType_(1));
 
-            TEST_CHECK_THROWS(Product<>::value(dm01, dm02), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dm02), MatrixRowsDoNotMatch);
         }
 };
-DenseMatrixProductTest<float> dense_matrix_product_test_float("float");
-DenseMatrixProductTest<double> dense_matrix_product_test_double("double");
+DenseMatrixProductTest<tags::CPU, float> dense_matrix_product_test_float("float");
+DenseMatrixProductTest<tags::CPU, double> dense_matrix_product_test_double("double");
+#ifdef HONEI_CELL
+DenseMatrixProductTest<tags::Cell, float> cell_dense_matrix_product_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixProductQuickTest :
@@ -655,9 +660,10 @@ class DenseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(31);
-            DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
-                dm3(size+1, size+1, DataType_(6 * size));
+            unsigned long size(191);
+
+            DenseMatrix<DataType_> dm1(size, size, DataType_(2)), dm2(size, size, DataType_(3)),
+                dm3(size, size, DataType_(6 * size));
 
             DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
 

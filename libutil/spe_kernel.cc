@@ -87,7 +87,8 @@ namespace honei
 
         static void * kernel_thread(void * argument)
         {
-            LOGMESSAGE(ll_minimal, "SPEKernel: Kernel thread startet (anonymous)");
+            LOGMESSAGE(ll_minimal, "SPEKernel: Kernel thread started (anonymous)");
+
             Implementation * imp(static_cast<Implementation *>(argument));
 
             SPE * spe(0);

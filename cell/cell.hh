@@ -111,6 +111,10 @@ struct __attribute__((packed)) Instruction
     Operand i;
     Operand j;
     Operand k;
+    Operand l;
+    Operand m;
+    Operand n;
+    Operand o;
 };
 
 enum KernelMessages

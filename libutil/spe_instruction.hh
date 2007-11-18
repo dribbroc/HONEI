@@ -55,7 +55,8 @@ namespace honei
                     const Operand b = empty, const Operand c = empty, const Operand d = empty,
                     const Operand e = empty, const Operand f = empty, const Operand g = empty,
                     const Operand h = empty, const Operand i = empty, const Operand j = empty,
-                    const Operand k = empty);
+                    const Operand k = empty, const Operand l = empty, const Operand m = empty,
+                    const Operand n = empty, const Operand o = empty);
 
             /// Destructor.
             ~SPEInstruction();

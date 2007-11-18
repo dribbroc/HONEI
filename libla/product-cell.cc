@@ -23,7 +23,7 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-
+#include <iostream>
 namespace bm_dv_product
 {
     struct SPETask
@@ -302,17 +302,125 @@ namespace honei
         if (a.columns() != b.rows())
             throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-        DenseMatrix<float> result(a.rows(), b.columns(), float(0));
+        /* \\\todo: Tiling. */
 
-        Operand oa = { a.elements() };
-        Operand ob = { b.elements() };
-        Operand oc = { result.elements() };
-        Operand od;
-        Operand oe;
-        od.u = a.rows();
-        oe.u = b.columns();
+        /* We assume to have complete matrices or complete matrix tiles
+         * at ths point. So later here will be another for-loop that calls the
+         * spe program for every pair (triple with result) of tiles.
+         * This for loop will be responsible for transfering the logically
+         * correct pairs of tiles to the spe.
+         * The spe program itself can then compute the same way, as if it would
+         * do, if it got complete matrices as operands.
+         */
 
-        SPEInstruction instruction(oc_dense_dense_float_matrix_product, a.columns(), oa, ob, oc, od, oe);
+        unsigned a_tile_rows;
+        unsigned a_tile_columns;
+        unsigned b_tile_rows;
+        unsigned b_tile_columns;
+        unsigned r_tile_rows;
+        unsigned r_tile_columns;
+
+        // Beginning of double buffering.
+
+        /* For the first source Matrix (a) and the result Matrix (r) we apply double buffering,
+         * while we always transfer the whole second source Matrix (b).
+         * For a and r we always pull as many complete rows that fit into 16 KB.
+         */
+
+        a_tile_rows = a.rows(); // Later use tiles' rows here
+        a_tile_columns = a.columns(); // Later use tiles' columns here
+        b_tile_rows = b.rows(); // Later user tiles' rows here
+        b_tile_columns = b.columns(); // Later use tiles' columns here
+
+        DenseMatrix<float> result(a_tile_rows, b_tile_columns, float(0));
+
+        r_tile_rows = result.rows(); // Later use tiles' rows here
+        r_tile_columns = result.columns(); // Later use tiles' columns here.
+
+        Operand oa = { a.elements() }; // Later use tiles' elements here
+        Operand ob = { b.elements() }; // Later use tiles' elements here
+        Operand oc = { result.elements() }; // Later use tiles' elements here
+        Operand od, oe;
+        od.u = a.columns(); // Later use tiles' columns here
+        oe.u = b.columns(); // Later use tiles' columns here
+
+        // We now need to know how much of the tiles we can transfer at most
+        // using one dma transfer.
+        // For the tile of a the number of columns decides, because we can then see
+        // how many rows we can transfer within 16 KB. We do the same for the tile of r.
+        // There is only one problem. Because r can have less or more columns as a, we
+        // can have different default transfer sizes for them. But we need exactly the
+        // same number of rows of a and r to let the spe-program work correctly.
+        // So we need a # of rows, for that both transfersizes are % 16 == 0.
+
+        Operand of; // Will transfer the number of full transfers for a.
+        Operand og; // Will transfer the number of blocks to reserve for b.
+        Operand oh; // Will transfer the size of a last transfer for a,
+        Operand oi; // Will transfer the size of a last transfer for b.
+        Operand oj; // Will transfer the size of a last transfer for r.
+        Operand ok; // Will transfer the number of full transfers for r.
+
+        unsigned a_row_bytes(a_tile_columns * 4); // Bytes per row
+        unsigned a_rows_per_transfer(16384 / a_row_bytes);
+
+        unsigned r_row_bytes(r_tile_columns * 4);
+        unsigned r_rows_per_transfer(16384 / r_row_bytes);
+
+        // r can have more or less columns than a.
+        // We must start with the bigger one to assure that we don't
+        // exceed 16 KB.
+        unsigned rows_per_transfer;
+        a_tile_columns > r_tile_columns ? rows_per_transfer = a_rows_per_transfer : rows_per_transfer = r_rows_per_transfer;
+        unsigned r_def_t_size(rows_per_transfer * r_tile_columns * 4);
+        unsigned a_def_t_size(rows_per_transfer * a_tile_columns * 4);
+
+        std::cout << "Starting for-loop." << std::endl;
+        for ( ; ; ) // Need two default aligned transfer size as closest to 16384 as possible.
+        {
+            if (a_def_t_size % 16 == 0 && r_def_t_size % 16 == 0)
+            {
+                break;
+            }
+            a_def_t_size -= a_row_bytes;
+            r_def_t_size -= r_row_bytes;
+            rows_per_transfer--;
+            if (a_def_t_size <= 0 || r_def_t_size <= 0)
+            {
+                std::cout << "Could not find an alignment" << std::endl;
+                return result;
+            }
+        }
+        std::cout << "Finished for-loop." << std::endl;
+
+
+        of.u = a_tile_rows / rows_per_transfer;
+        og.u = (b_tile_rows * b_tile_columns * 4) / 16384;
+        oh.u = (a_tile_rows % rows_per_transfer) * a_tile_columns * 4;
+        oi.u = (b_tile_rows * b_tile_columns * 4) % 16384;
+        oj.u = (r_tile_rows % rows_per_transfer) * r_tile_columns * 4;
+        ok.u = r_def_t_size;
+
+        // If there is a rest for a and r to transfer, we need one more transfer...
+        // Else if there is no rest, the last transfer size is equal to the normal one.
+        0 != oh.u ? of.u++ : oh.u = a_def_t_size;
+
+        // If a fits into one transfer, we should say that it is one transfer needed and set last size.
+        if (0 == of.u)
+        {
+            of.u++;
+            oh.u = a_row_bytes * a_tile_columns;
+        }
+
+        if (0 == og.u) // if matrix b has less than 64 rows -> we only need one allocation block.
+        {
+            og.u++;
+        }
+        else if (oi.u != 0) // if we need one more block for rest rows of b.
+        {
+            og.u++;
+        }
+
+        SPEInstruction instruction(oc_dense_dense_float_matrix_product, a_def_t_size, oa, ob, oc, od, oe, of, og, oh, oi, oj, ok);
 
         SPEManager::instance()->dispatch(instruction);
 
