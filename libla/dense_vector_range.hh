@@ -21,13 +21,12 @@
 #define LIBLA_GUARD_DENSE_VECTOR_RANGE_HH 1
 
 #include <libla/dense_vector.hh>
-#include <libla/dense_vector-impl.hh>
-#include <libla/dense_vector_continuous_base.hh>
-#include <libla/sparse_vector.hh>
 
 namespace honei
 {
+    // Forward declarations.
     template <typename DataType_> class DenseMatrixTile;
+    template <typename DataType_> class SparseVector;
 
     /**
      * \brief DenseVectorRange is a vector which provides access to a contiguous part
@@ -86,6 +85,11 @@ namespace honei
 
             /// \}
 
+            /**
+             * \name Functions inherited by Vector
+             * \{
+             */
+
             /// Returns const iterator pointing to the first element of the range.
             virtual ConstElementIterator begin_elements() const;
 
@@ -113,10 +117,19 @@ namespace honei
             /// Retrieves element by index, zero-based, assignable.
             virtual DataType_ & operator[] (unsigned long index);
 
-            /// Return a pointer to our elements.
-            DataType_ * elements() const;
+            /// \}
 
-            /// Return a copy to the Vector.
+            /**
+             * \name Functions inherited by DenseVectorContinousBase
+             * \{
+             */
+
+            /// Return a pointer to our elements.
+            virtual DataType_ * elements() const;
+
+            /// \}
+
+            /// Return a copy of the Vector.
             DenseVector<DataType_> copy() const;
     };
 

@@ -7,6 +7,15 @@ see the NEWS file.
 
 2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libla/absolute.hh, libla/dense_vector-impl.hh,
+	libla/dense_vector.hh, libla/dense_vector_range.hh,
+	libla/dense_vector_slice.hh, libla/files.m4, libla/vector.hh,
+	-libla/dense_vector_base.hh, -libla/dense_vector_continuous_base.hh:
+	Moved DenseVectorBase and DenseVectorContinousBase to vector.hh. Moved
+	elements() member to DenseVectorContinousBase and made it virtual.
+
+2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/log.cc: Fixed rare segmentation fault when assigning to
 	static string.
 

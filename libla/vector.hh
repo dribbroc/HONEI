@@ -34,7 +34,7 @@
 namespace honei
 {
     /**
-     * \brief Vector is the abstract baseclass for all vector-like types used.
+     * Vector is the abstract baseclass for all vector-like types used.
      *
      * \ingroup grpvector
      **/
@@ -82,6 +82,31 @@ namespace honei
 
             /// Type of our elements.
             typedef DataType_ DataType;
+    };
+
+    /**
+     * DenseVectorBase is the abstract base class for all dense vectors, i.e. vector
+     * with O(size) elements.
+     *
+     * \ingroup grpvector
+     */
+    template <typename DataType_> class DenseVectorBase :
+        public Vector<DataType_>
+    {
+    };
+
+    /**
+     * DenseVectorContinousBase is the abstract base class for all dense vectors which
+     * keep their data continous in memory.
+     *
+     * \ingroup grpvector
+     */
+    template <typename DataType_> class DenseVectorContinuousBase :
+        public DenseVectorBase<DataType_>
+    {
+        public:
+            /// Return a pointer to our elements.
+            virtual DataType_ * elements() const = 0;
     };
 
     /**

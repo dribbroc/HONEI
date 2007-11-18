@@ -20,9 +20,7 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_SLICE_HH
 #define LIBLA_GUARD_DENSE_VECTOR_SLICE_HH 1
 
-#include <libla/dense_matrix_tile.hh>
 #include <libla/dense_vector.hh>
-#include <libla/dense_vector_base.hh>
 
 namespace honei
 {
@@ -90,6 +88,11 @@ namespace honei
 
             /// \}
 
+            /**
+             * \name Functions inherited by Vector
+             * \{
+             */
+
             /// Returns const iterator pointing to the first element of the slice.
             virtual ConstElementIterator begin_elements() const;
 
@@ -117,14 +120,24 @@ namespace honei
             /// Returns our size.
             virtual unsigned long size() const;
 
+            /// \}
+
+            /**
+             * \name Functions inherited by DenseVectorContinousBase
+             * \{
+             */
+
+            /// Return a pointer to our elements.
+            virtual DataType_ * elements() const;
+
+            /// \}
+
+            /// Return a copy of the slice.
+            DenseVector<DataType_> copy() const;
+
             /// Returns our offset.
             unsigned long offset() const;
 
-            /// Return a pointer to our elements.
-            DataType_ * elements() const;
-
-            /// Return a copy to the slice.
-            DenseVector<DataType_> copy() const;
     };
 
     extern template class DenseVectorSlice<float>;

@@ -23,6 +23,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_IMPL_HH 1
 
 #include <libla/dense_vector.hh>
+#include <libla/sparse_vector.hh>
 #include <libla/element_iterator.hh>
 #include <libutil/assertion.hh>
 #include <libutil/shared_array.hh>
@@ -33,6 +34,7 @@
 
 namespace honei
 {
+    // Forward declarations.
     template <typename DataType_> class DenseMatrix;
     template <typename DataType_> class DenseVectorRange;
 

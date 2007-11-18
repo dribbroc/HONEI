@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_ABSOLUTE_HH
 #define LIBLA_GUARD_ABSOLUTE_HH 1
 
-#include <libla/dense_vector_base.hh>
+#include <libla/vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libutil/tags.hh>
 
