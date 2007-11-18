@@ -6,6 +6,14 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
+2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* configure.ac, doc/doc_groups.doxygen, libutil/files.m4,
+	libutil/Makefile.am.m4: Added build and doxygen support for HDF5
+	wrapper classes.
+	* libutil/hdf5.cc, libutil/hdf5.hh, libutil/hdf5_TEST.cc: Added HDF5
+	basic wrapper classes and test cases.
+
 2007-11-17 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/libla/banded_dense_float_matrix_vector_product.cc, libla/product-cell.cc:

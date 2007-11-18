@@ -12,6 +12,9 @@ define(`gpu_headerlist', `')dnl
 define(`cell_filelist', `')dnl
 define(`cell_testlist', `')dnl
 define(`cell_headerlist', `')dnl
+define(`hdf5_filelist', `')dnl
+define(`hdf5_testlist', `')dnl
+define(`hdf5_headerlist', `')dnl
 define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
 $2_TEST_SOURCES = $2_TEST.cc
 $2_TEST_LDADD = \
@@ -75,19 +78,31 @@ CELLTESTLIBS =
 
 endif
 
+if HDF5
+
+HDF5SOURCES = hdf5_filelist
+HDF5TESTS = hdf5_testlist
+HDF5HEADERS = hdf5_headerlist
+HDF5LIBS = -lhdf5
+
+else
+
+endif
+
 lib_LTLIBRARIES = libutil.la
 
-libutil_la_SOURCES = general_filelist $(GPUSOURCES) $(CELLSOURCES)
+libutil_la_SOURCES = general_filelist $(GPUSOURCES) $(CELLSOURCES) $(HDF5SOURCES)
 libutil_la_LIBADD = \
 	-lpthread \
 	$(GPULIBS) \
 	$(CELLLIBS) \
-	$(CELLTESTLIBS)
+	$(CELLTESTLIBS) \
+	$(HDF5LIBS)
 
 pg512_includedir = $(includedir)/pg512/
-pg512_include_HEADERS = general_headerlist $(GPUHEADERS) $(CELLHEADERS)
+pg512_include_HEADERS = general_headerlist $(GPUHEADERS) $(CELLHEADERS) $(HDF5HEADERS)
 
-TESTS = general_testlist $(GPUTESTS) $(CELLTESTS)
+TESTS = general_testlist $(GPUTESTS) $(CELLTESTS) $(HDF5TESTS)
 TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)

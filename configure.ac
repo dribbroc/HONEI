@@ -200,7 +200,29 @@ fi
 AC_SUBST([DEBUGDEF])
 AM_CONDITIONAL([DEBUG], test "x$ENABLE_DEBUG" = "xyes")
 dnl }}}
+dnl }}}
 
+dnl {{{ check for optional packages
+dnl {{{ check for HDF5 support
+AC_MSG_CHECKING([whether to build HDF5 wrappers])
+AC_ARG_WITH([hdf5],
+	AS_HELP_STRING([--with-hdf5], [Build HDF5 wrappers (needs packages: libhdf5)]),
+		[WITH_HDF5=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_HDF5=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_HDF5])
+AM_CONDITIONAL([HDF5], test "x$WITH_HDF5" = "xyes")
+if test "x$WITH_HDF5" = "xyes"; then
+	dnl {{{ check for libhdf5
+	AC_CHECK_LIB(hdf5, H5open,
+		[have_hdf5=yes])
+	if test "x$have_hdf5" != "xyes" ; then
+		AC_MSG_ERROR([libhdf5 (hdf.ncsa.uiuc.edu/HDF5/) not found.])
+	fi
+	dnl }}}
+fi
+dnl }}}
 dnl }}}
 
 dnl output

@@ -98,6 +98,12 @@
  */
 
 /**
+ * \defgroup grphdf5 HDF5 wrapper classes
+ *
+ * \ingroup grplibutil
+ */
+
+/**
  * \defgroup grpmemorymanager Memory Manager and its utilities
  *
  * \ingroup grplibutil
