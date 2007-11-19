@@ -26,7 +26,7 @@
 
 using namespace honei;
 
-unsigned dense_float_vector_reduction_min(const Instruction & inst)
+unsigned dense_float_vector_reduction_max(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 
@@ -61,7 +61,7 @@ unsigned dense_float_vector_reduction_min(const Instruction & inst)
         tmpVector.value = a[current - 1].vectorised[0];
         for (unsigned i(1) ; i < size / 4 ; ++i)
         {
-            bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i],tmpVector.value);
+            bitMaskGT = spu_cmpgt(tmpVector.value,a[current - 1].vectorised[i]);
             tmpVector.value  = spu_sel(a[current - 1].vectorised[i],tmpVector.value,bitMaskGT);
         }
 

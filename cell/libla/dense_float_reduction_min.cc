@@ -26,7 +26,7 @@
 
 using namespace honei;
 
-unsigned dense_float_vector_reduction_min(const Instruction & inst)
+unsigned dense_float_reduction_min(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 

@@ -31,20 +31,53 @@ namespace honei
     {
         CONTEXT("When reducing DenseVector<float> to Scalar by Sum (Cell):");
 
-        float result;
-        
-        Operand oa = { a.elements() };
-        Operand oc = { &result };
-        
-        SPEInstruction instruction(oc_dense_float_vector_reduction_sum, a.size(), oa, oc);
+        float result(0.0f);
 
-        SPEManager::instance()->dispatch(instruction);
+        Operand oa = { &result };
+        Operand ob = { a.elements() };
+        Operand oc, od;
+        oc.u = a.size() / 4096;
+        od.u = a.size() % 4096;
+        od.u &= ~0xF;
 
-        instruction.wait();
-       
-        return result;
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++oc.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_reduction_sum, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        float rest_result(0.0f);
+        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            rest_result += *i;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return result + rest_result;
     }
-    
-
-
 }
