@@ -26,7 +26,8 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
+
 /*
  * dense_dense_float_element_product
  *
@@ -38,14 +39,13 @@ using namespace honei;
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
  */
-
 int dense_dense_float_element_product(const Instruction & inst)
 {
     //printf("dense_dense_float_element_product:\n");
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_result(inst.a.ea);
 
-    allocator::Allocation * block_a[2] = { allocator::acquire_block(), allocator::acquire_block() };
-    allocator::Allocation * block_b[2] = { allocator::acquire_block(), allocator::acquire_block() };
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
+    Allocation * block_b[2] = { acquire_block(), acquire_block() };
 
     Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
     Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
@@ -103,10 +103,10 @@ int dense_dense_float_element_product(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    allocator::release_block(*block_a[0]);
-    allocator::release_block(*block_a[1]);
-    allocator::release_block(*block_b[0]);
-    allocator::release_block(*block_b[1]);
+    release_block(*block_a[0]);
+    release_block(*block_a[1]);
+    release_block(*block_b[0]);
+    release_block(*block_b[1]);
 
     return 0;
 }

@@ -24,7 +24,7 @@
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
 @FUNC@
 
@@ -38,7 +38,7 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
     mfc_get(&env, envp, multiple_of_sixteen(sizeof(Environment)), 0, 0, 0);
     mfc_write_tag_mask(1 << 0);
     mfc_read_tag_status_any();
-    allocator::init(env);
+    init(env);
 
     spu_read_signal1();
     //printf("SPE %llu : Received initial signal 1!\n", spe_id);

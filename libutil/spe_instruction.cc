@@ -72,7 +72,7 @@ namespace honei
         LOGMESSAGE(ll_minimal, msg);
 
         _kernel = kernel;
-        _index = kernel->enqueue(_instruction);
+        _index = kernel->enqueue(*this);
     }
 
     void
@@ -85,6 +85,6 @@ namespace honei
         }
     }
 
-    const Operand
+    const SPEInstruction::Operand
     SPEInstruction::empty = { 0 };
 }

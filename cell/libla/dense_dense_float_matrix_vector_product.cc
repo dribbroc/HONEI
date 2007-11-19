@@ -25,7 +25,7 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
 /*
  * dense_dense_float_matrix_vector_product
@@ -38,14 +38,11 @@ using namespace honei;
  * \operand b Base address of second entity.
  * \operand d The number of rows of the matrix.
  */
-
 void dense_dense_float_matrix_vector_product(const Instruction & inst)
 {
-    //printf("dense_dense_float_matrix_vector_product:\n");
-
-    allocator::Allocation * block_a(allocator::acquire_block());
-    allocator::Allocation * block_x(allocator::acquire_block());
-    allocator::Allocation * block_r(allocator::acquire_block());
+    Allocation * block_a(acquire_block());
+    Allocation * block_x(acquire_block());
+    Allocation * block_r(acquire_block());
 
     Pointer<float> a = { block_a->address };
     Pointer<float> x = { block_x->address };

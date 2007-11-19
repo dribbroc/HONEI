@@ -24,13 +24,16 @@
 
 namespace honei
 {
-    template <typename T_> struct CellTraits;
-
-    template <> struct CellTraits<tags::Cell::SPE>
+    namespace cell
     {
-        /// MFC Traits
-        static const unsigned mfc_max_transfer_size = (1 << 14);
-    };
+        template <typename T_> struct Traits;
+
+        template <> struct Traits<honei::tags::Cell::SPE>
+        {
+            /// MFC Traits
+            static const unsigned mfc_max_transfer_size = (1 << 14);
+        };
+    }
 }
 
 #endif

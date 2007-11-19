@@ -22,54 +22,60 @@
 
 #include <spu_mfcio.h>
 
-inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress volatile & lsa, const unsigned & size)
-__attribute__((always_inline));
-
-inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress volatile & lsa, const unsigned & size)
+namespace honei
 {
-    spu_write_out_intr_mbox(km_debug_get);
-    spu_write_out_mbox(ea >> 32);
-    spu_write_out_mbox(ea & 0xFFFFFFFF);
-    spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
-    spu_write_out_mbox(size);
-}
+    namespace cell
+    {
+        inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
+                const unsigned & size) __attribute__((always_inline));
 
-inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress volatile & lsa, const unsigned & size)
-__attribute__((always_inline));
+        inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
+                const unsigned & size) __attribute__((always_inline));
 
-inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress volatile & lsa, const unsigned & size)
-{
-    spu_write_out_intr_mbox(km_debug_put);
-    spu_write_out_mbox(ea >> 32);
-    spu_write_out_mbox(ea & 0xFFFFFFFF);
-    spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
-    spu_write_out_mbox(size);
-}
+        inline void debug_acquire(const LocalStoreAddress & lsa) __attribute__((always_inline));
 
-inline void debug_acquire(const LocalStoreAddress & lsa)
-__attribute__((always_inline));
+        inline void debug_release(const LocalStoreAddress & lsa) __attribute__((always_inline));
 
-inline void debug_acquire(const LocalStoreAddress & lsa)
-{
-    spu_write_out_intr_mbox(km_debug_acquire_block);
-    spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
-}
+        inline void debug_dump() __attribute__((always_inline));
 
-inline void debug_release(const LocalStoreAddress & lsa)
-__attribute__((always_inline));
+        inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
+                const unsigned & size)
+        {
+            spu_write_out_intr_mbox(km_debug_get);
+            spu_write_out_mbox(ea >> 32);
+            spu_write_out_mbox(ea & 0xFFFFFFFF);
+            spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+            spu_write_out_mbox(size);
+        }
 
-inline void debug_release(const LocalStoreAddress & lsa)
-{
-    spu_write_out_intr_mbox(km_debug_release_block);
-    spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
-}
+        inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
+                const unsigned & size)
+        {
+            spu_write_out_intr_mbox(km_debug_put);
+            spu_write_out_mbox(ea >> 32);
+            spu_write_out_mbox(ea & 0xFFFFFFFF);
+            spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+            spu_write_out_mbox(size);
+        }
 
-inline void debug_dump() __attribute__((always_inline));
+        inline void debug_acquire(const LocalStoreAddress & lsa)
+        {
+            spu_write_out_intr_mbox(km_debug_acquire_block);
+            spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+        }
 
-inline void debug_dump()
-{
-    spu_write_out_intr_mbox(km_debug_dump);
-    spu_read_signal1();
+        inline void debug_release(const LocalStoreAddress & lsa)
+        {
+            spu_write_out_intr_mbox(km_debug_release_block);
+            spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+        }
+
+        inline void debug_dump()
+        {
+            spu_write_out_intr_mbox(km_debug_dump);
+            spu_read_signal1();
+        }
+    }
 }
 
 #endif

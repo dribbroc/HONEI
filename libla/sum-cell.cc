@@ -26,6 +26,8 @@
 
 namespace honei
 {
+    using namespace cell;
+
     DenseVector<float> &
     Sum<tags::Cell>::value(DenseVector<float> & a, const DenseVector<float> & b)
     {

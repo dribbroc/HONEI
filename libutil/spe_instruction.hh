@@ -29,6 +29,11 @@ namespace honei
 
     class SPEInstruction
     {
+        public:
+            typedef honei::cell::Instruction Instruction;
+            typedef honei::cell::Operand Operand;
+            typedef honei::cell::OpCode OpCode;
+
         private:
             /// Our kernel.
             mutable SPEKernel * _kernel;
@@ -65,7 +70,7 @@ namespace honei
             void wait();
 
             /// Returns our instruction
-            Instruction instruction()
+            Instruction instruction() const
             {
                 return _instruction;
             }

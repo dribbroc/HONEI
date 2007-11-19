@@ -25,7 +25,8 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
+
 /*
  * dense_dense_float_matrix_product
  *
@@ -44,32 +45,31 @@ using namespace honei;
  * \operand j Size of the last transfer for r
  * \operand k default transfer size for r
  */
-
 void dense_dense_float_matrix_product(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_r(inst.c.ea);
     EffectiveAddress ea_r_start(inst.c.ea);
 
-    allocator::Allocation * block_a[2] = { allocator::acquire_block(), allocator::acquire_block() };
-    allocator::Allocation * block_r[2] = { allocator::acquire_block(), allocator::acquire_block() };
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
+    Allocation * block_r[2] = { acquire_block(), acquire_block() };
 
     Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
     Pointer<float> r[2] = { block_r[0]->address, block_r[1]->address };
 
     unsigned b_last_t_size(multiple_of_sixteen(inst.i.u));
-    allocator::Allocation * block_b[inst.g.u];
+    Allocation * block_b[inst.g.u];
     Pointer<float> b[inst.g.u];
     unsigned b_size(16384);
     for (unsigned i(0) ; i < inst.g.u - 1 ; i++)
     {
-        block_b[i] = allocator::acquire_block();
+        block_b[i] = acquire_block();
         b[i].untyped = block_b[i]->address;
 
         mfc_get(b[i].untyped, ea_b, b_size, 1, 0, 0);
         debug_get(ea_b, b[i].untyped, b_size);
         ea_b += b_size;
     }
-    block_b[inst.g.u - 1] = allocator::acquire_block();
+    block_b[inst.g.u - 1] = acquire_block();
     b[inst.g.u - 1].untyped = block_b[inst.g.u - 1]->address;
     mfc_get(b[inst.g.u-1].untyped, ea_b, b_last_t_size, 1, 0, 0);
     debug_get(ea_b, b[inst.g.u - 1].untyped, b_last_t_size);
@@ -254,5 +254,5 @@ void dense_dense_float_matrix_product(const Instruction & inst)
     debug_put(ea_r_start, r[current -1].untyped, r_size);
     mfc_put(r[current - 1].untyped, ea_r_start, r_size, current, 0, 0);
 
-    allocator::release_all_blocks();
+    release_all_blocks();
 }

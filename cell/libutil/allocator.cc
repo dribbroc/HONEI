@@ -18,11 +18,14 @@
 
 #include <cell/libutil/allocator.hh>
 
-namespace allocator
+namespace honei
 {
-    namespace intern
+    namespace cell
     {
-        Allocation allocations[16]; /// \todo remove hardcoded numbers
+        namespace intern
+        {
+            Allocation allocations[16]; /// \todo remove hardcoded numbers
+        }
     }
 }
 

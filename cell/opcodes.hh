@@ -20,28 +20,34 @@
 #ifndef LIBLA_CELL_GUARD_CELL_OPCODES_HH
 #define LIBLA_CELL_GUARD_CELL_OPCODES_HH 1
 
-enum OpCode
+namespace honei
 {
-    oc_noop = 1 << 0,
-    oc_halt,
+    namespace cell
+    {
+        enum OpCode
+        {
+            oc_noop = 1 << 0,
+            oc_halt,
 
-    oc_dense_dense_float_sum = 1 << 4,
-    oc_dense_dense_float_dot_product,
-    oc_dense_dense_float_matrix_product,
-    oc_dense_dense_float_matrix_vector_product,
-    oc_banded_dense_float_matrix_vector_product,
-    oc_dense_dense_float_element_product,
-    oc_dense_sparse_float_sum,
-    oc_dense_float_reduction_sum,
-    oc_dense_float_reduction_max,
-    oc_dense_float_reduction_min,
-    oc_dense_float_scale,
+            oc_dense_dense_float_sum = 1 << 4,
+            oc_dense_dense_float_dot_product,
+            oc_dense_dense_float_matrix_product,
+            oc_dense_dense_float_matrix_vector_product,
+            oc_banded_dense_float_matrix_vector_product,
+            oc_dense_dense_float_element_product,
+            oc_dense_sparse_float_sum,
+            oc_dense_float_reduction_sum,
+            oc_dense_float_reduction_max,
+            oc_dense_float_reduction_min,
+            oc_dense_float_scale,
 
-    oc_test_instruction_finished = unsigned(1 << 30),
-    oc_test_result_dword,
-    oc_test_result_qword,
+            oc_test_instruction_finished = 1 << 30,
+            oc_test_result_dword,
+            oc_test_result_qword,
 
-    oc_last = oc_test_result_qword
-};
+            oc_last = oc_test_result_qword
+        };
+    }
+}
 
 #endif

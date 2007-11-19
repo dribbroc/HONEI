@@ -25,15 +25,13 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
 int dense_sparse_float_sum(const Instruction & inst)
 {
-    printf("dense_sparse_float_sum:\n");
-
-    allocator::Allocation * block_a(allocator::acquire_block()); // a's elements
-    allocator::Allocation * block_b(allocator::acquire_block()); // b's elements
-    allocator::Allocation * block_c(allocator::acquire_block()); // b's indices
+    Allocation * block_a(acquire_block()); // a's elements
+    Allocation * block_b(acquire_block()); // b's elements
+    Allocation * block_c(acquire_block()); // b's indices
 
     Pointer<float> a = { block_a->address };
     Pointer<float> b = { block_b->address };
@@ -58,6 +56,10 @@ int dense_sparse_float_sum(const Instruction & inst)
     mfc_put(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 4, 0, 0);
     mfc_write_tag_mask(1 << 4);
     mfc_read_tag_status_all();
+
+    release_block(*block_a);
+    release_block(*block_b);
+    release_block(*block_c);
 
     return 0;
 }

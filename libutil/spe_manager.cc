@@ -39,7 +39,7 @@ extern "C"
     extern spe_program_handle_t kernel_reference;
 }
 
-extern const Environment kernel_reference_environment;
+extern const honei::cell::Environment kernel_reference_environment;
 
 namespace
 {

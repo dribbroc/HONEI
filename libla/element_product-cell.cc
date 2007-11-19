@@ -23,10 +23,9 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
 
-#include <iostream>
-
 namespace honei
 {
+    using namespace cell;
 
     DenseMatrix<float> &
     ElementProduct<tags::Cell>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)

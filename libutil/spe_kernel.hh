@@ -24,17 +24,20 @@
 #include <libutil/spe_manager.hh>
 
 #include <tr1/memory>
-
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
 #include <libspe2-types.h>
 
 namespace honei
 {
+    class SPEInstruction;
+
     /**
      * \ingroup grpcell
      */
     class SPEKernel
     {
+        public:
+            typedef honei::cell::Environment Environment;
+
         private:
             struct Implementation;
 
@@ -56,18 +59,8 @@ namespace honei
             /// Constructor.
             SPEKernel(const spe_program_handle_t & handle, const Environment * environment);
 
-            /// \name Iteration over our queued instructions.
-            /// \{
-
-            typedef libwrapiter::ForwardIterator<SPEKernel, Instruction> Iterator;
-
-            Iterator begin() const;
-            Iterator end() const;
-
-            /// \}
-
             /// Enqueue an instruction.
-            unsigned int enqueue(const Instruction & instruction);
+            unsigned int enqueue(const SPEInstruction & instruction);
 
             /// Execute the kernel's PPE part.
             void operator() () throw ();

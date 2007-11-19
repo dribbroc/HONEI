@@ -25,13 +25,13 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
 unsigned dense_float_reduction_sum(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 
-    allocator::Allocation * block_a[2] = { allocator::acquire_block(), allocator::acquire_block() };
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
 
     Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
 
@@ -79,10 +79,12 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
         acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
     }
 
-    allocator::release_block(*block_a[0]);
-    allocator::release_block(*block_a[1]);
+    release_block(*block_a[0]);
+    release_block(*block_a[1]);
 
-    return acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3];
+    MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
+
+    return result.mail;
 }
 
 #if 0
@@ -90,7 +92,7 @@ unsigned dense_float_vector_reduction_sum(const Instruction & inst)
 {
     printf("dense_float_vector_reduction_sum:\n");
 
-    allocator::Allocation * block_a(allocator::acquire_block());
+    Allocation * block_a(acquire_block());
 
     Pointer<float> a = { block_a->address };
 

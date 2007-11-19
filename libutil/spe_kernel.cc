@@ -24,6 +24,7 @@
 #include <libutil/log.hh>
 #include <libutil/mutex.hh>
 #include <libutil/spe_event.hh>
+#include <libutil/spe_instruction.hh>
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/sync_point.hh>
@@ -31,6 +32,8 @@
 
 namespace honei
 {
+    using namespace cell;
+
     struct SPEKernel::Implementation
     {
         /// Our SPE program.
@@ -344,20 +347,8 @@ namespace honei
     {
     }
 
-    SPEKernel::Iterator
-    SPEKernel::begin() const
-    {
-        return Iterator(_imp->instructions);
-    }
-
-    SPEKernel::Iterator
-    SPEKernel::end() const
-    {
-        return Iterator(_imp->instructions + 8); /// \todo remove hardcoded numbers
-    }
-
     unsigned
-    SPEKernel::enqueue(const Instruction & instruction)
+    SPEKernel::enqueue(const SPEInstruction & instruction)
     {
         CONTEXT("When enqueueing instruction:");
         unsigned result;
@@ -368,7 +359,7 @@ namespace honei
             _imp->instruction_finished->wait(*_imp->mutex);
         }
 
-        _imp->instructions[_imp->next_free_index] = instruction;
+        _imp->instructions[_imp->next_free_index] = instruction.instruction();
         result = _imp->enqueued_counter;
         ++_imp->next_free_index;
         ++_imp->enqueued_counter;

@@ -5,6 +5,30 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/cell.hh, cell/kernels/env.cc.in,
+	cell/kernels/stand_alone-kernel.cc.in,
+	cell/libla/banded_dense_float_matrix_vector_product.cc,
+	cell/libla/dense_dense_float_dot_product.cc,
+	cell/libla/dense_dense_float_element_product.cc,
+	cell/libla/dense_dense_float_matrix_product.cc,
+	cell/libla/dense_dense_float_matrix_vector_product.cc,
+	cell/libla/dense_dense_float_sum.cc,
+	cell/libla/dense_float_reduction_max.cc,
+	cell/libla/dense_float_reduction_min.cc,
+	cell/libla/dense_float_reduction_sum.cc,
+	cell/libla/dense_float_scale.cc, cell/libla/dense_sparse_float_sum.cc,
+	cell/libutil/allocator.cc, cell/libutil/allocator.hh,
+	cell/libutil/debug.hh, cell/opcodes.hh, cell/traits.hh,
+	libla/dot_product-cell.cc, libla/element_product-cell.cc,
+	libla/product-cell.cc, libla/reduction-cell.cc, libla/scale-cell.cc,
+	libla/sum-cell.cc, libutil/spe_instruction.cc,
+	libutil/spe_instruction.hh, libutil/spe_kernel.cc,
+	libutil/spe_kernel.hh, libutil/spe_manager.cc, libutil/spe_manager.hh,
+	libutil/stringify.hh: Swapped up: Cleaned up namespace usagem, fixed
+	return types.
+
 2007-11-19 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/kernels/files.m4, -cell/kernels/kernel.cc.in,

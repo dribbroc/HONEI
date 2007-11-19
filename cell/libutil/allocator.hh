@@ -22,88 +22,91 @@
 #include <cell/cell.hh>
 #include <cell/libutil/debug.hh>
 
-namespace allocator
+namespace honei
 {
-    class Allocation
+    namespace cell
     {
-        private:
-            unsigned used : 1;
-            unsigned user_data : 31;
-        public:
-            friend void init(const Environment & env);
-            friend Allocation * acquire_block();
-            friend void release_block(Allocation & i);
-            friend void release_all_blocks();
-            friend unsigned get_user_data(const Allocation & i);
-            friend void set_user_data(Allocation & i, unsigned data);
-
-            void * address;
-    };
-
-    namespace intern
-    {
-        extern Allocation allocations[16]; /// \todo remove hardcoded numbers
-    }
-
-    inline void init(const Environment & env)
-    {
-        char * last_address(const_cast<char *>(reinterpret_cast<const char *>(env.begin)));
-
-        for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ;
-                i != i_end ; ++i)
+        class Allocation
         {
-            i->used = 0;
-            i->user_data = 0;
-            i->address = last_address;
-            last_address += honei::CellTraits<honei::tags::Cell::SPE>::mfc_max_transfer_size;
-        }
-    }
+            private:
+                unsigned used : 1;
+                unsigned user_data : 31;
+            public:
+                friend void init(const Environment & env);
+                friend Allocation * acquire_block();
+                friend void release_block(Allocation & i);
+                friend void release_all_blocks();
+                friend unsigned get_user_data(const Allocation & i);
+                friend void set_user_data(Allocation & i, unsigned data);
 
-    inline Allocation * acquire_block()
-    {
-        Allocation * result(0);
+                void * address;
+        };
 
-        for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ; i != i_end ; ++i)
+        namespace intern
         {
-            if (i->used == 1)
-                continue;
-
-            result = i;
-            result->used = 1;
-            debug_acquire(result->address);
-            break;
+            extern Allocation allocations[16]; /// \todo remove hardcoded numbers
         }
 
-        return result;
-    }
-
-    inline void release_all_blocks()
-    {
-        for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ; i != i_end ; ++i)
+        inline void init(const Environment & env)
         {
-            if (i->used)
-                debug_release(i->address);
+            char * last_address(const_cast<char *>(reinterpret_cast<const char *>(env.begin)));
 
-            i->user_data = 0;
-            i->used = 0;
+            for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ;
+                    i != i_end ; ++i)
+            {
+                i->used = 0;
+                i->user_data = 0;
+                i->address = last_address;
+                last_address += Traits<honei::tags::Cell::SPE>::mfc_max_transfer_size;
+            }
         }
-    }
 
-    inline void release_block(Allocation & i)
-    {
-        debug_release(i.address);
-        i.user_data = 0;
-        i.used = 0;
-    }
+        inline Allocation * acquire_block()
+        {
+            Allocation * result(0);
 
-    inline unsigned get_user_data(const Allocation & i)
-    {
-        return i.user_data;
-    }
+            for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ; i != i_end ; ++i)
+            {
+                if (i->used == 1)
+                    continue;
 
-    inline void set_user_data(Allocation & i, unsigned data)
-    {
-        i.user_data = data & ~(1 << 31);
+                result = i;
+                result->used = 1;
+                debug_acquire(result->address);
+                break;
+            }
+
+            return result;
+        }
+
+        inline void release_all_blocks()
+        {
+            for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ; i != i_end ; ++i)
+            {
+                if (i->used)
+                    debug_release(i->address);
+
+                i->user_data = 0;
+                i->used = 0;
+            }
+        }
+
+        inline void release_block(Allocation & i)
+        {
+            debug_release(i.address);
+            i.user_data = 0;
+            i.used = 0;
+        }
+
+        inline unsigned get_user_data(const Allocation & i)
+        {
+            return i.user_data;
+        }
+
+        inline void set_user_data(Allocation & i, unsigned data)
+        {
+            i.user_data = data & ~(1 << 31);
+        }
     }
 }
 

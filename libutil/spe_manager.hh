@@ -87,7 +87,7 @@ namespace honei
             /// \}
 
             /// Dispatch an Instruction to the specified SPE.
-            void dispatch(const DeviceId, Instruction);
+            void dispatch(const DeviceId, const SPEInstruction & );
 
             /// Dispatch an SPETask to all SPEs.
             void dispatch(const SPEInstruction & instruction);

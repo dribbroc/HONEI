@@ -25,7 +25,7 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
 /*
  * dense_dense_float_dot_product
@@ -43,8 +43,8 @@ unsigned dense_dense_float_dot_product(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea), ea_b(inst.c.ea);
 
-    allocator::Allocation * block_a[2] = { allocator::acquire_block(), allocator::acquire_block() };
-    allocator::Allocation * block_b[2] = { allocator::acquire_block(), allocator::acquire_block() };
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
+    Allocation * block_b[2] = { acquire_block(), acquire_block() };
 
     Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
     Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
@@ -95,10 +95,10 @@ unsigned dense_dense_float_dot_product(const Instruction & inst)
         acc.value = spu_madd(a[current].vectorised[i], b[current].vectorised[i], acc.value);
     }
 
-    allocator::release_block(*block_a[0]);
-    allocator::release_block(*block_a[1]);
-    allocator::release_block(*block_b[0]);
-    allocator::release_block(*block_b[1]);
+    release_block(*block_a[0]);
+    release_block(*block_a[1]);
+    release_block(*block_b[0]);
+    release_block(*block_b[1]);
 
     MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
 

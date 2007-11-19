@@ -24,10 +24,8 @@
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
-void dense_float_scale(const Instruction & inst)
-{
 /*
  * dense_float_scale
  *
@@ -39,9 +37,11 @@ void dense_float_scale(const Instruction & inst)
  * \operand c Last transfer buffer size in bytes.
  * \operand d The scalar to use.
  */
-
+void dense_float_scale(const Instruction & inst)
+{
     EffectiveAddress ea_m(inst.a.ea), ea_r(inst.a.ea);
-    allocator::Allocation * block_m[2] = { allocator::acquire_block(), allocator::acquire_block() };
+
+    Allocation * block_m[2] = { acquire_block(), acquire_block() };
     Pointer<float> m[2] = { block_m[0]->address, block_m[1]->address };
 
     unsigned counter(inst.b.u);
@@ -95,6 +95,6 @@ void dense_float_scale(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    allocator::release_block(*block_m[0]);
-    allocator::release_block(*block_m[1]);
+    release_block(*block_m[0]);
+    release_block(*block_m[1]);
 }

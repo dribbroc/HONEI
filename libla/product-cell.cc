@@ -40,6 +40,8 @@ namespace bm_dv_product
 
 namespace honei
 {
+    using namespace cell;
+
     DenseVector<float>
     Product<tags::Cell>::value(const DenseMatrix<float> & a, const DenseVector<float> & x)
     {

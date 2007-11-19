@@ -25,13 +25,13 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
 void banded_dense_float_matrix_vector_product(const Instruction & inst)
 {
-    allocator::Allocation * block_a(allocator::acquire_block());
-    allocator::Allocation * block_b(allocator::acquire_block());
-    allocator::Allocation * block_r(allocator::acquire_block());
+    Allocation * block_a(acquire_block());
+    Allocation * block_b(acquire_block());
+    Allocation * block_r(acquire_block());
 
     Pointer<float> a = { block_a->address };
     Pointer<float> b = { block_b->address };
@@ -60,7 +60,7 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
     mfc_write_tag_mask(1 << 3);
     mfc_read_tag_status_all();
 
-    allocator::release_block(*block_a);
-    allocator::release_block(*block_b);
-    allocator::release_block(*block_r);
+    release_block(*block_a);
+    release_block(*block_b);
+    release_block(*block_r);
 }

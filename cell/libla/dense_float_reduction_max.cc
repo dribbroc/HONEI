@@ -24,13 +24,13 @@
 #include <spu_mfcio.h>
 #include <stdio.h>
 
-using namespace honei;
+using namespace honei::cell;
 
 unsigned dense_float_reduction_max(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 
-    allocator::Allocation * block_a[2] = { allocator::acquire_block(), allocator::acquire_block() };
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
 
     Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
 
@@ -43,7 +43,6 @@ unsigned dense_float_reduction_max(const Instruction & inst)
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
 
-    MailableResult<float> result;
     vector unsigned int bitMaskGT;
     Subscriptable<float> tmpVector = { spu_splats(0.0f) };
 
@@ -84,11 +83,13 @@ unsigned dense_float_reduction_max(const Instruction & inst)
     }
 
 
-    allocator::release_block(*block_a[0]);
-    allocator::release_block(*block_a[1]);
+    release_block(*block_a[0]);
+    release_block(*block_a[1]);
 
     tmpVector.array[0] =  tmpVector.array[0]>tmpVector.array[1]?tmpVector.array[1]:tmpVector.array[0];
     tmpVector.array[2] =  tmpVector.array[2]>tmpVector.array[3]?tmpVector.array[3]:tmpVector.array[2];
 
-    return tmpVector.array[0]>tmpVector.array[2]?tmpVector.array[2]:tmpVector.array[0];
+    MailableResult<float> result = { tmpVector.array[0]>tmpVector.array[2]?tmpVector.array[2]:tmpVector.array[0] };
+
+    return result.mail;
 }

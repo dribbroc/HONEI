@@ -153,7 +153,7 @@ namespace honei
      * \ingroup grpstringify
      */
     inline std::string
-    stringify(const EffectiveAddress & item)
+    stringify(const cell::EffectiveAddress & item)
     {
         std::ostringstream s;
         s << std::hex << item;
@@ -166,7 +166,7 @@ namespace honei
      * \ingroup grpstringify
      */
     inline std::string
-    stringify(const LocalStoreAddress & item)
+    stringify(const cell::LocalStoreAddress & item)
     {
         std::ostringstream s;
         s << std::hex << item;

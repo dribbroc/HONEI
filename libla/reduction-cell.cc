@@ -26,7 +26,9 @@
 
 namespace honei
 {
-    float 
+    using namespace cell;
+
+    float
     Reduction<rt_sum,tags::Cell>::value(const DenseVector<float> & a)
     {
         CONTEXT("When reducing DenseVector<float> to Scalar by Sum (Cell):");

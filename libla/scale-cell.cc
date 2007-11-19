@@ -25,6 +25,8 @@
 
 namespace honei
 {
+    using namespace cell;
+
     DenseMatrix<float> &
     Scale<tags::Cell>::value(const float a, DenseMatrix<float> & b)
     {

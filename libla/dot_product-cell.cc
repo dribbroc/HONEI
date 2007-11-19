@@ -22,8 +22,11 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
+
 namespace honei
 {
+    using namespace cell;
+
     float
     DotProduct<tags::Cell>::value(const DenseVector<float> & a, const DenseVector<float> & b)
     {
