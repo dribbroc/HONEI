@@ -607,7 +607,7 @@ namespace honei {
         {
 
 
-            DenseVector<ResPrec_> actual_row = hbound[i];
+            DenseVectorRange<ResPrec_> actual_row = hbound[i];
             for(typename DenseVector<ResPrec_>::ElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements());
                                                             //k((*_u).begin_elements());
@@ -678,7 +678,7 @@ namespace honei {
         typename DenseVector<ResPrec_>::ElementIterator k4(_bottom_slopes_y->begin_elements());
         for (ulint i = 0; i!= bbound.rows(); ++i)
         {
-            DenseVector<ResPrec_> actual_row = bbound[i];
+            DenseVectorRange<ResPrec_> actual_row = bbound[i];
             for(typename DenseVector<ResPrec_>::ConstElementIterator j(actual_row.begin_elements()),
                                                             j_END(actual_row.end_elements());
                                                             //k((*_bottom_slopes_x).begin_elements()),
