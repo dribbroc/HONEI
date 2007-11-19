@@ -43,4 +43,9 @@ template <> inline void extract<vector float>(vector float & first, const vector
     first = spu_shuffle(first, second, intern::extract_patterns[offset]);
 }
 
+template <> inline void extract<vector double>(vector double & first, const vector double & second, unsigned offset)
+{
+    first = spu_shuffle(first, second, intern::extract_patterns[offset + 1]);
+}
+
 #endif

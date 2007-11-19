@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* cell/libutil/transfer.hh: Added double version of extract.
+
 2007-11-18 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/dense_matrix.hh, libla/dense_vector_range.hh: Converted row
