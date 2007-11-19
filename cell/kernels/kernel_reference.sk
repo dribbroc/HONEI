@@ -10,5 +10,5 @@ return_void     banded_dense_float_matrix_vector_product    banded_dense_float_m
 return_void     dense_dense_float_matrix_product            dense_dense_float_matrix_product
 return_dword    dense_float_reduction_sum                   dense_float_reduction_sum
 return_dword    dense_float_reduction_min                   dense_float_reduction_min
-return_dword    dense_float_reduction_max                   dense_flaot_reduction_max
+return_dword    dense_float_reduction_max                   dense_float_reduction_max
 return_void     dense_float_scale                           dense_float_scale

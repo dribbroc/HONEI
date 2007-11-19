@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-19 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/kernels/files.m4, -cell/kernels/kernel.cc.in,
+	+cell/kernels/stand_alone-kernel.cc.in, cell/kernels/Makefile.am.m4:
+	Made changes to buildsystem for accomodating other types of kernels
+	than stand-alone kernels.
+	* cell/kernels/kernel_reference.sk,
+	cell/libla/dense_float_reduction_max.cc: Fixed typos.
+
 2007-11-19 Markus Geveler <apryde@gmx.de>
 
 	* libmath/conjugate_gradients_TEST.cc, libmath/jacobi_TEST.cc,
@@ -30,7 +39,6 @@ see the NEWS file.
 	* libla/product-sse.cc: Fixed calls to DotProduct.
 	* libla/product.hh, libla/dense_matrix_TEST.cc: Adjusted for row
 	vector changes.
-
 
 2007-11-18 Sven Mallach <sven.mallach@uni-dortmund.de>
 
