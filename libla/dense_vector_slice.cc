@@ -29,5 +29,7 @@ namespace honei
     template class DenseVectorSlice<int>;
 
     template class DenseVectorSlice<long>;
+
+    template class DenseVectorSlice<bool>;
 }
 
