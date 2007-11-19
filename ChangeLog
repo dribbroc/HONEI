@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-19 Markus Geveler <apryde@gmx.de>
+
+	* libmath/conjugate_gradients_TEST.cc, libmath/jacobi_TEST.cc,
+	libmath/iterative_refinement_TEST.cc: Enhanced all test cases for the
+	solvers, tests pass for all compile time optimisation levels now.
+
 2007-11-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libutil/files.m4, libutil/transfer.cc, libutil/transfer.hh:

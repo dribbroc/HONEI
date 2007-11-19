@@ -56,7 +56,7 @@ class IterativeRefinementTestDenseCG:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(0.00001), double(0.00001)));
+            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -100,7 +100,7 @@ class IterativeRefinementTestDenseJAC:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<JAC, tags::CPU>::value(A,b,double(0.00000001), double(0.00000001)));
+            DenseVector<DT1_> result(IterativeRefinement<JAC, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -164,7 +164,7 @@ class IterativeRefinementTestBandedCG:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(0.00001), double(0.00001)));
+            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -228,7 +228,7 @@ class IterativeRefinementTestBandedJacobi:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<JAC, tags::CPU>::value(A,b,double(0.0000001), double(0.0000001)));
+            DenseVector<DT1_> result(IterativeRefinement<JAC, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -272,7 +272,7 @@ class IterativeRefinementTestDensePCGJAC:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<PCG::JAC, tags::CPU>::value(A,b,double(0.00000001), double(0.00000001)));
+            DenseVector<DT1_> result(IterativeRefinement<PCG::JAC, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -336,7 +336,7 @@ class IterativeRefinementTestBandedPCGJAC:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<PCG::JAC, tags::CPU>::value(A,b,double(0.00000001), double(0.00000001)));
+            DenseVector<DT1_> result(IterativeRefinement<PCG::JAC, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -368,7 +368,7 @@ class IterativeRefinementTestDensePCGJAC_big:
 
             //std::cout<<"A:"<<A<<endl;
             //std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<PCG::JAC, tags::CPU>::value(A,b,double(0.00000000000001), double(0.00000000000001)));
+            DenseVector<DT1_> result(IterativeRefinement<PCG::JAC, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(size, DT1_(0.001));
             //cout<<"RESULT(v1):"<<result<<endl;
@@ -398,7 +398,7 @@ class IterativeRefinementTestDenseCG_big:
 
             //std::cout<<"A:"<<A<<endl;
             //std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(0.00000000000001), double(0.00000000000001)));
+            DenseVector<DT1_> result(IterativeRefinement<CG, tags::CPU>::value(A,b,double(std::numeric_limits<double>::epsilon()), double(std::numeric_limits<double>::epsilon())));
             DT1_ x_n = Norm< vnt_l_two, false, DT1_>::value(result);
             DenseVector<DT1_> x_analytical(size, DT1_(0.001));
             //cout<<"RESULT(v1):"<<result<<endl;
