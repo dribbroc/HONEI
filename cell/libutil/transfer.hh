@@ -45,7 +45,8 @@ template <> inline void extract<vector float>(vector float & first, const vector
 
 template <> inline void extract<vector double>(vector double & first, const vector double & second, unsigned offset)
 {
-    first = spu_shuffle(first, second, intern::extract_patterns[offset + 1]);
+    /// \todo Should we use an own lookup pattern for double version to avoid multiplication?
+    first = spu_shuffle(first, second, intern::extract_patterns[offset * 2]);
 }
 
 #endif
