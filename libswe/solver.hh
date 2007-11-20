@@ -487,8 +487,9 @@ namespace honei {
         DenseMatrix<ResPrec_> u1bound((this->_d_height)+4, (this->_d_width)+4, 0);
         DenseMatrix<ResPrec_> u2bound((this->_d_height)+4, (this->_d_width)+4, 0);
         DenseMatrix<ResPrec_> bbound((this->_d_height)+4,  (this->_d_width)+4, 0);
+#ifdef  SOLVER_VERBOSE
         std::cout << "Preproc: Maps provided.\n";
-
+#endif
         ///Do the mapping by applying boundary - usage.
         //if(this->_usage_reflect && this->_simple_bound)
         //{
@@ -590,8 +591,9 @@ namespace honei {
                 u1bound[_d_height+3][j+2] = (*_x_veloc)[_d_height-2][j];
                 u2bound[_d_height+3][j+2] = (*_y_veloc)[_d_height-2][j];
             }
-
+#ifdef SOLVER_VERBOSE
             std::cout << "Preproc: Mapping done.\n";
+#endif
             cout << stringify(hbound) << endl;
             cout << stringify(bbound) << endl;
             cout << stringify(u1bound) << endl;
@@ -619,8 +621,10 @@ namespace honei {
                 ++k; ++k; ++k;
             }
         }
+#ifdef SOLVER_VERBOSE
         cout << "u^T after building:\n";
         cout << stringify(*_u) << endl;
+#endif
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k2(_v->begin_elements());
         for (ulint i = 0; i!= u1bound.rows(); ++i)
@@ -640,12 +644,13 @@ namespace honei {
             }
         }
         */
-        cout<<"here"<<endl; cout.flush();
         DenseVector<ResPrec_> uFlow = _u->copy();
         _flow_x(uFlow);
         (*_v) = uFlow;
+#ifdef SOLVER_VERBOSE
         cout << "v^T after building:\n";
         cout << stringify(*_v) << endl;
+#endif
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k3(_w->begin_elements());
         for (ulint i = 0; i!= u2bound.rows(); ++i)
@@ -669,9 +674,10 @@ namespace honei {
         DenseVector<ResPrec_> u2Flow = _u->copy();
         _flow_y(u2Flow);
         (*_w) = u2Flow;
+#ifdef SOLVER_VERBOSE
         cout << "w^T after building:\n";
         cout << stringify(*_w) << endl;
-
+#endif
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to
         ///compute the bottom slopes.
         typename DenseVector<ResPrec_>::ElementIterator l(_bottom_slopes_x->begin_elements());
@@ -713,10 +719,12 @@ namespace honei {
                 ++l;
             }
         }
+#ifdef SOLVER_VERBOSE
         cout << "Slopes after building:\n";
         cout << stringify(*_bottom_slopes_x) << endl;
         cout << stringify(*_bottom_slopes_y) << endl;
         std::cout << "Finished preprocessing.\n";
+#endif
     }
 
 ///Implementation of flow-processing functions.
@@ -1384,12 +1392,13 @@ namespace honei {
         m3.insert_band(3, m3bandPlus1.copy());
         m3.insert_band(6, m3bandPlus2.copy());
         m3.insert_band((-3), m3bandMinus1.copy());
-
+#ifdef SOLVER_VERBOSE
         cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
         std::cout << "Finished Matrix Assembly 1.\n";
+#endif
     }
 
 
@@ -1436,13 +1445,13 @@ namespace honei {
         DenseVector<WorkPrec_> tempsum2(wc.copy());
 
         Scale<Tag_>::value(prefac,tempsum2);
-
+#ifdef SOLVER_VERBOSE
         cout << "Temp relax vectors after building:\n";
         cout << stringify(*_u_temp) << endl;
         cout << stringify(*_v_temp) << endl;
         cout << stringify(*_w_temp) << endl;
         std::cout << "Finished Setup 1.\n";
-
+#endif
         sv = tempsum.copy();
         sw = tempsum2.copy();
 
@@ -1471,8 +1480,8 @@ namespace honei {
         BandedMatrix<WorkPrec_> m4(_u->size());
 
 
-        _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
-        _assemble_matrix2_DEBUG<WorkPrec_>(m2, m4, &predictedu, &predictedw);
+        _assemble_matrix1<WorkPrec_>(m1, m3, &predictedu, &predictedv);
+        _assemble_matrix2<WorkPrec_>(m2, m4, &predictedu, &predictedw);
 
         BandedMatrix<WorkPrec_>* m5(m3.copy());
         BandedMatrix<WorkPrec_> m5c = *m5;
@@ -1494,14 +1503,10 @@ namespace honei {
         DenseVector<WorkPrec_> temp_w_c(predictedw.copy());
 
         DenseVector<WorkPrec_> temp1 = Product<Tag_>::value(m1,temp_v_c);
-        cout << "First product solved.\n";
         DenseVector<WorkPrec_> temp2 = Product<Tag_>::value(m2,temp_w_c);
-        cout << "Second product solved.\n";
 
         DenseVector<WorkPrec_> temp3 = Product<Tag_>::value(m3,temp_u_c);
-        cout << "Third product solved.\n";
         DenseVector<WorkPrec_> temp4 = Product<Tag_>::value(m4,temp_u2_c);
-        cout << "Fourth product solved.\n";
 
         DenseVector<WorkPrec_> source_c(predictedu.copy());
 
@@ -1514,8 +1519,9 @@ namespace honei {
         Sum<Tag_>::value(predicted_u_temp_c, temp3);
         Sum<Tag_>::value(predicted_u_temp_c, temp4);
         Sum<Tag_>::value(predicted_u_temp_c, source_c);
+#ifdef SOLVER_VERBOSE
         cout << "First accu solved.\n";
-
+#endif
         DenseVector<WorkPrec_> temp_u3_c(predictedu.copy());
         DenseVector<WorkPrec_> temp_v2_c(predictedv.copy());
         DenseVector<WorkPrec_> temp_w2_c(predictedw.copy());
@@ -1539,9 +1545,9 @@ namespace honei {
         predictedv = v_c.copy();
         predictedw = w_c.copy();
 
-
+#ifdef SOLVER_VERBOSE
         cout << "Second accu solved.\n";
-
+#endif
         //Correction of reflective boundaries
         for (unsigned long j = 0; j< 3*_d_width; ++j)
             {
@@ -1587,9 +1593,9 @@ namespace honei {
             predictedw [((_d_height+2)*3*(_d_width+4)+6+j)] = predictedw [((_d_height+1)*3*(_d_width+4)+6+j)];
             }
 
-
+#ifdef SOLVER_VERBOSE
         std::cout << "Finished Prediction.\n";
-
+#endif
     }
 
     /** Second setup of values.
@@ -1662,7 +1668,9 @@ namespace honei {
 
         predictedv = innersum1.copy();
         predictedw = innersum11.copy();
+#ifdef SOLVER_VERBOSE
         std::cout << "Finished Setup 2.\n";
+#endif
     }
 
     /** Implementation of the correction stage.
@@ -1704,8 +1712,9 @@ namespace honei {
                 (0.5*9.81*(*_u)[iter.index()-3]*(*_u)[iter.index()-3]);
          */
         }
+#ifdef SOLVER_VERBOSE
         cout << stringify(iter.index()) << endl;
-
+#endif
         unsigned long count =0;//if made w steps, ignore four.
         ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
         typename DenseMatrix<ResPrec_>::ElementIterator h(_height->begin_elements());
@@ -1717,9 +1726,11 @@ namespace honei {
             if(count < _d_width)
             {
                 PredictionPrec2_ a = (*_u)[iter.index()];
-                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()] + a);
-                cout << stringify(predictedu[iter.index()])<< "+" << stringify(a) << "/2 =" << stringify((*_u)[iter.index()] )<<endl;
+                bool warning = false;
+                if(predictedu[iter.index()] + a)
+                    warning = true;
 
+                (*_u)[iter.index()] = fabs(0.5*(predictedu[iter.index()] + a));
                 *h = (*_u)[iter.index()];
                 ++h;
                 ++count;
@@ -1727,11 +1738,19 @@ namespace honei {
                 (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
                 (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
-                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+                if(warning)
+                    (*_u)[iter.index()] = fabs(0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]));
+                else
+                    (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+
                 (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
                 (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
-                (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+                if(warning)
+                    (*_u)[iter.index()] = fabs(0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]));
+                else
+                    (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+
                 (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
                 (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
@@ -1801,7 +1820,9 @@ namespace honei {
                 }
                 count = 0;
             }
+#ifdef SOLVER_VERBOSE
             cout << stringify(count)<<endl;
+#endif
         }
         /*
         typename DenseVector<ResPrec_>::ElementIterator iter_END(_u->end_elements());
@@ -1824,7 +1845,9 @@ namespace honei {
 
         }
         */
+#ifdef SOLVER_VERBOSE
         std::cout << "Finished Correction.\n";
+#endif
     }
 
     /** Capsule for the solution- computation in one timestep.
@@ -1872,8 +1895,11 @@ namespace honei {
         delete _v_temp;
         delete _w_temp;
         */
+
         cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
+#ifdef SOLVER_VERBOSE
         cout << stringify(*_u)<<endl;
+#endif
         _do_postprocessing(1);
     }
 
@@ -2077,7 +2103,9 @@ namespace honei {
         m4.insert_band(3*(_d_width+4), m4bandPlus1.copy());
         m4.insert_band(6*(_d_width+4), m4bandPlus2.copy());
         m4.insert_band((-3)*(_d_width+4), m4bandMinus1.copy());
+#ifdef SOLVER_VERBOSE
         std::cout << "Finished Matrix Assembly 2.\n";
+#endif
     }
 
 
@@ -2145,9 +2173,9 @@ namespace honei {
     result.insert_band(3, m6bandplus3);
     result.insert_band(6, m6bandplus6);
     result.insert_band(-3, m6bandminus3);
-
+#ifdef SOLVER_VERBOSE
     std::cout << "Finished Quick Assembly m2.\n";
-
+#endif
     //return result;
 
     }
@@ -2224,8 +2252,9 @@ namespace honei {
     result.insert_band(3*(_d_width +4), m8bandplus3);
     result.insert_band(6*(_d_width +4), m8bandplus6);
     result.insert_band((-3)*(_d_width +4),m8bandminus3);
+#ifdef SOLVER_VERBOSE
     std::cout << "Finished Quick Assembly m4.\n";
-
+#endif
     //return result;
 
     }
@@ -2577,13 +2606,13 @@ namespace honei {
         m3.insert_band(3, m3bandPlus1.copy());
         m3.insert_band(6, m3bandPlus2.copy());
         m3.insert_band(-3,m3bandMinus1.copy());
-
+#ifdef SOLVER_VERBOSE
         cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
         cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
         std::cout << "Finished Matrix Assembly 1.\n";
-
+#endif
     }
     /**
      *
@@ -2932,13 +2961,13 @@ namespace honei {
         m4.insert_band(3*(_d_width +4), m4bandPlus1.copy());
         m4.insert_band(6*(_d_width +4), m4bandPlus2.copy());
         m4.insert_band(-3*(_d_width +4), m4bandMinus1.copy());
-
+#ifdef SOLVER_VERBOSE
         cout << "M_2:" << stringify(m2.band(ulint(0))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(3*(_d_width +4)))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(6*(_d_width +4)))) << endl;
         cout << "M_2:" << stringify(m2.band(ulint(-3*(_d_width +4)))) << endl;
         std::cout << "Finished Matrix Assembly 2.\n";
-
+#endif
     }
 
     /** Implementation of a simple postprocessing method generating a file for GNUPLOT>splot
@@ -2983,7 +3012,10 @@ namespace honei {
             }
             file.close();
         }
+#ifdef SOLVER_VERBOSE
         cout <<"Finished postprocessing." << endl;
+#endif
+
     }
 
 }

@@ -24,6 +24,8 @@
 #include <libutil/stringify.hh>
 #include <string>
 
+#include <sys/time.h>
+
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -41,15 +43,15 @@ class RelaxSolverTest :
 
         virtual void run() const
         {
-            ulint dwidth =11;
-            ulint dheight =11;
-            ulint timesteps =5;
+            ulint dwidth =21;
+            ulint dheight =21;
+            ulint timesteps =10000;
 
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
             for(ulint i = 0; i< height.rows(); ++i)
             {
-                for(ulint j=0; j<height.columns()-10; ++j)
+                for(ulint j=height.columns()-10; j<height.columns(); ++j)
                 {
                     height[i][j] = DataType_(10);
                 }
@@ -57,6 +59,22 @@ class RelaxSolverTest :
             }
             //END SCENARIO setup
             DenseMatrix<DataType_> bottom(dheight, dwidth, DataType_(1));
+            for(ulint i = 0; i< bottom.rows(); ++i)
+            {
+                for(ulint j=0; j<bottom.columns()-10; ++j)
+                {
+                    bottom[i][j] = DataType_(1);
+                    if(j>4 && j< bottom.columns()-9)
+                    {
+                        if(i < 6 || i > 11)
+                            bottom[i][j] = DataType_(3);
+                        else
+                            bottom[i][j] = DataType_(1);
+                    }
+                }
+            }
+            std::cout<<bottom<<std::endl;
+
             DenseMatrix<DataType_> u1(dheight, dwidth, DataType_(0));
             DenseMatrix<DataType_> u2(dheight, dwidth, DataType_(0));
             unsigned long entries = 3*((dwidth*dheight)+4*(dwidth+dheight+4));
@@ -80,7 +98,7 @@ class RelaxSolverTest :
             DataType_ deltat = 5./22.;
 
             double eps = 10e-6;
-            DataType_ manning = 0;
+            DataType_ manning = DataType_(0);
 
             RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_> relax_solver
                 (&height, &bottom, &u1, &u2, &u, &v, &w,
@@ -89,9 +107,15 @@ class RelaxSolverTest :
             cout << "Height -field after preprocessing:\n";
             string outHeight = stringify(height);
             cout <<  outHeight;
+
+            timeval start, end;
             for (ulint i = 1; i <= timesteps; ++i)
             {
+                gettimeofday(&start, 0);
                 relax_solver.solve();
+                gettimeofday(&end, 0);
+                cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
+                cout << "Solvetime: "<< end.tv_sec - start.tv_sec << " " << end.tv_usec - start.tv_usec<<endl;
             }
             cout << "Height -field after solve():\n";
             cout << stringify(height);
