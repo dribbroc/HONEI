@@ -83,6 +83,11 @@ namespace honei
              * Return the number of unfinished enqueued instructions.
              */
             unsigned instruction_load() const;
+
+            /**
+             * Return the timepoint of the last finished instruction.
+             */
+            timeval last_finished() const;
     };
 }
 

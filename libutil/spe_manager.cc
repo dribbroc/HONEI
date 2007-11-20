@@ -48,6 +48,11 @@ namespace
     {
         return a.kernel()->instruction_load() < b.kernel()->instruction_load();
     }
+    /// Compare two SPEs in terms of last usage time
+    static inline bool compare_by_last_finished(const honei::SPE a, const honei::SPE b)
+    {
+        return a.kernel()->last_finished().tv_sec < b.kernel()->last_finished().tv_sec;
+    }
 }
 
 namespace honei
@@ -70,7 +75,14 @@ namespace honei
         {
             CONTEXT("SPEManager: When dispatching Instruction to an SPE");
 
-            //Load balanced dispatching
+            //todo
+            //schauen ob ein freier kernel op unterstuetzt.
+            //ansonsten einen kernel per LRU rauswerfen und neuen kernel der op beherrscht einladen.
+            //wenn alle kernel beschaeftigt sind, evtl kann ein kernel op der noch am rechnen ist?
+            //sonst einfach blockieren und warten bis ein kernel frei wird,
+            //wenn 6 spe's rechnen koennte der user eh nicht mehr viel mehr machen
+
+            ////Load balanced dispatching
             sort(spe_list.begin(), spe_list.end(), compare_by_load);
 
             LOGMESSAGE(ll_minimal, "Dispatching to SPE #" + stringify(spe_list.begin()->id()) +

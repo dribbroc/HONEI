@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-20 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/spe_kernel.cc, libutil/spe_kernel.hh, libutil/spe_manager.cc:
+	Added last_finished() to determine which kernel was least used in
+	preparation for LRU kernel replacement.
+
 2007-11-20 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Enhanced numerical stability in

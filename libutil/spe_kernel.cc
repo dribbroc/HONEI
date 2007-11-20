@@ -28,6 +28,9 @@
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/sync_point.hh>
+
+#include <limits>
+#include <sys/time.h>
 #include <fstream>
 
 namespace honei
@@ -62,6 +65,9 @@ namespace honei
 
         /// Were there instructions enqueued before loading the kernel in the spe?
         bool initial_instructions;
+
+        /// The timepoint we finished our last instruction
+        timeval last_finished;
 
         /// \}
 
@@ -162,6 +168,7 @@ namespace honei
                                     imp->spe_instruction_index %= 8; /// \todo remove hardcoded numbers
                                     current_instruction = imp->instructions[imp->spe_instruction_index];
                                     imp->instruction_finished->broadcast();
+                                    gettimeofday(&(imp->last_finished), 0);
                                 }
                                 continue;
 
@@ -318,6 +325,8 @@ namespace honei
 
             Instruction noop = { oc_noop };
             std::fill(instructions, instructions + 8, noop);
+
+            gettimeofday(&(last_finished), 0);
         }
 
         ~Implementation()
@@ -412,11 +421,25 @@ namespace honei
         }
     }
 
-    unsigned 
+    unsigned
     SPEKernel::instruction_load() const
     {
         Lock l (*_imp->mutex);
         return (_imp->next_free_index - _imp->spe_instruction_index) % 8; /// \todo remove hardcoded numbers
+    }
+
+    timeval
+    SPEKernel::last_finished() const
+    {
+        Lock l (*_imp->mutex);
+        if ((_imp->next_free_index - _imp->spe_instruction_index) % 8 != 0)
+        {
+            timeval max;
+            max.tv_sec = LONG_MAX;
+            max.tv_usec = LONG_MAX;
+            return max;
+        }
+        return _imp->last_finished;
     }
 
     void * SPEKernel::argument() const
