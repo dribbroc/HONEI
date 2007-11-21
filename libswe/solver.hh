@@ -1479,10 +1479,13 @@ namespace honei {
         BandedMatrix<WorkPrec_> m3(_u->size());
         BandedMatrix<WorkPrec_> m4(_u->size());
 
-
+#ifdef SOLVER_ASSEMBLY_DEBUG
+        _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
+        _assemble_matrix2_DEBUG<WorkPrec_>(m2, m4, &predictedu, &predictedw);
+#else
         _assemble_matrix1<WorkPrec_>(m1, m3, &predictedu, &predictedv);
         _assemble_matrix2<WorkPrec_>(m2, m4, &predictedu, &predictedw);
-
+#endif
         BandedMatrix<WorkPrec_>* m5(m3.copy());
         BandedMatrix<WorkPrec_> m5c = *m5;
         delete m5;
