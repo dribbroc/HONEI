@@ -5,11 +5,30 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/cell.hh, cell/interface.hh, cell/opcodes.hh, cell/traits.hh,
+	cell/types.hh: Split cell header into smaller parts for general types
+	and the PPE-SPE interface. Added Capabilities and KernelType.
+	* cell/kernels/Makefile.am.m4, misc/make_sk.bash: Added means to
+	generate kernel capabilities.
+	* libutil/spe_kernel.cc, libutil/spe_kernel.hh,
+	libutil/spe_manager.cc: Adjusted to make use of kernel capabilities.
+	* libutil/files.m4, libutil/spe_kernel.hh, libutil/spe_kernel.cc,
+	libutil/spe_manager.cc, libutil/time_stamp.hh,
+	libutil/time_stamp_TEST.cc: Added TimeStamp and replaced usage of
+	gettimeofday().
+
 2007-11-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libla/difference.hh, libla/difference-sse.cc, libla/dot_product-sse.cc, libla/element_product.hh, libla/element_product-sse.cc, libla/scaled_sum.hh, libla/scaled_sum-sse.cc, libla/scale.hh, libla/scale-sse.cc, libla/sum.hh, libla/sum-sse.cc, libutil/files.m4, -libutil/transfer.cc, -libutil/transfer.hh:
-	Added DenseVectorContinuousBase SSE operations. Removed obsolete
-	shuffle code.
+	* libla/difference.hh, libla/difference-sse.cc,
+	libla/dot_product-sse.cc, libla/element_product.hh,
+	libla/element_product-sse.cc, libla/scaled_sum.hh,
+	libla/scaled_sum-sse.cc, libla/scale.hh, libla/scale-sse.cc,
+	libla/sum.hh, libla/sum-sse.cc, libutil/files.m4,
+	-libutil/transfer.cc, -libutil/transfer.hh: Added
+	DenseVectorContinuousBase SSE operations. Removed obsolete shuffle
+	code.
 
 2007-11-12 Markus Geveler <apryde@gmx.de>
 

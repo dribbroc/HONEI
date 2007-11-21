@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBUTIL_GUARD_CELL_TRAITS_HH
-#define LIBUTIL_GUARD_CELL_TRAITS_HH 1
+#ifndef CELL_GUARD_TRAITS_HH
+#define CELL_GUARD_TRAITS_HH 1
 
 #include <libutil/tags.hh>
 

@@ -28,10 +28,11 @@
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/sync_point.hh>
+#include <libutil/time_stamp.hh>
 
 #include <limits>
-#include <sys/time.h>
 #include <fstream>
+#include <set>
 
 namespace honei
 {
@@ -41,6 +42,9 @@ namespace honei
     {
         /// Our SPE program.
         spe_program_handle_t handle;
+
+        /// Our set of supported opcodes.
+        std::set<OpCode> supported_opcodes;
 
         /// \name Shared data
         /// \{
@@ -63,13 +67,13 @@ namespace honei
         /// Our counter for finished instructions.
         unsigned finished_counter;
 
-        /// Were there instructions enqueued before loading the kernel in the spe?
+        /// \}
+
+        /// Our flag on whether instructions had been enqueued before loading the kernel in any spe.
         bool initial_instructions;
 
-        /// The timepoint we finished our last instruction
-        timeval last_finished;
-
-        /// \}
+        /// Our timestamp of finishing the last instruction.
+        TimeStamp last_finished;
 
         /// \name Synchronization data and PPE-side kernel thread
         /// \{
@@ -167,8 +171,9 @@ namespace honei
                                     ++imp->spe_instruction_index;
                                     imp->spe_instruction_index %= 8; /// \todo remove hardcoded numbers
                                     current_instruction = imp->instructions[imp->spe_instruction_index];
+
                                     imp->instruction_finished->broadcast();
-                                    gettimeofday(&(imp->last_finished), 0);
+                                    imp->last_finished.take();
                                 }
                                 continue;
 
@@ -288,7 +293,7 @@ namespace honei
             pthread_exit(0);
         }
 
-        Implementation(const spe_program_handle_t & h, const Environment * e) :
+        Implementation(const spe_program_handle_t & h, const Environment * e, const Capabilities * c) :
             handle(h),
             environment(0),
             instructions(0),
@@ -326,7 +331,13 @@ namespace honei
             Instruction noop = { oc_noop };
             std::fill(instructions, instructions + 8, noop);
 
-            gettimeofday(&(last_finished), 0);
+            ASSERT(kt_stand_alone == c->type, "trying to use an unrecognised kernel type!");
+            for (unsigned i(0) ; i < c->opcode_count ; ++i)
+            {
+                supported_opcodes.insert(c->opcodes[i]);
+            }
+
+            last_finished.take();
         }
 
         ~Implementation()
@@ -351,9 +362,21 @@ namespace honei
 
     };
 
-    SPEKernel::SPEKernel(const spe_program_handle_t & handle, const Environment * environment) :
-        _imp(new Implementation(handle, environment))
+    SPEKernel::SPEKernel(const spe_program_handle_t & handle, const Environment * environment, const Capabilities * capabilities) :
+        _imp(new Implementation(handle, environment, capabilities))
     {
+    }
+
+    SPEKernel::OpCodeIterator
+    SPEKernel::begin_supported_opcodes() const
+    {
+        return OpCodeIterator(_imp->supported_opcodes.begin());
+    }
+
+    SPEKernel::OpCodeIterator
+    SPEKernel::end_supported_opcodes() const
+    {
+        return OpCodeIterator(_imp->supported_opcodes.end());
     }
 
     unsigned
@@ -428,17 +451,11 @@ namespace honei
         return (_imp->next_free_index - _imp->spe_instruction_index) % 8; /// \todo remove hardcoded numbers
     }
 
-    timeval
+    TimeStamp
     SPEKernel::last_finished() const
     {
         Lock l (*_imp->mutex);
-        if ((_imp->next_free_index - _imp->spe_instruction_index) % 8 != 0)
-        {
-            timeval max;
-            max.tv_sec = LONG_MAX;
-            max.tv_usec = LONG_MAX;
-            return max;
-        }
+
         return _imp->last_finished;
     }
 

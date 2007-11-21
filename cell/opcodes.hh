@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBLA_CELL_GUARD_CELL_OPCODES_HH
-#define LIBLA_CELL_GUARD_CELL_OPCODES_HH 1
+#ifndef LIBLA_CELL_GUARD_OPCODES_HH
+#define LIBLA_CELL_GUARD_OPCODES_HH 1
 
 namespace honei
 {

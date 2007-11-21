@@ -23,11 +23,8 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_manager.hh>
-#include <libutil/worker.hh>
 
-#include <iostream>
 #include <vector>
-#include <algorithm>
 #include <string>
 #include <tr1/functional>
 
@@ -40,6 +37,7 @@ extern "C"
 }
 
 extern const honei::cell::Environment kernel_reference_environment;
+extern const honei::cell::Capabilities kernel_reference_capabilities;
 
 namespace
 {
@@ -48,10 +46,11 @@ namespace
     {
         return a.kernel()->instruction_load() < b.kernel()->instruction_load();
     }
+
     /// Compare two SPEs in terms of last usage time
     static inline bool compare_by_last_finished(const honei::SPE a, const honei::SPE b)
     {
-        return a.kernel()->last_finished().tv_sec < b.kernel()->last_finished().tv_sec;
+        return a.kernel()->last_finished() < b.kernel()->last_finished();
     }
 }
 
@@ -73,7 +72,7 @@ namespace honei
         /// Dispatch an SPEInstruction to an SPE.
         inline void dispatch(const SPEInstruction & instruction)
         {
-            CONTEXT("SPEManager: When dispatching Instruction to an SPE");
+            CONTEXT("When dispatching Instruction to an SPE");
 
             //todo
             //schauen ob ein freier kernel op unterstuetzt.
@@ -118,7 +117,7 @@ namespace honei
 
         for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
         {
-            i->run(SPEKernel(kernel_reference, &kernel_reference_environment));
+            i->run(SPEKernel(kernel_reference, &kernel_reference_environment, &kernel_reference_capabilities));
         }
     }
 

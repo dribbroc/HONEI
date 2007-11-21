@@ -4,8 +4,41 @@
 sksource=${1}
 skbody=${1%.sk}.body
 skfunctions=${1%.sk}.func
+skcapabilities=${1%.sk}.caps
 skfile=${1%.sk}.cc
 skskeleton=${2}
+
+(
+    opcodes=( )
+    inline_function() {
+        :
+    }
+
+    halt() {
+        opcodes=( ${opcodes[@]} "oc_halt" )
+    }
+
+    return_void() {
+        opcodes=( ${opcodes[@]} "oc_$1" )
+    }
+
+    return_dword() {
+        opcodes=( ${opcodes[@]} "oc_$1" )
+    }
+
+    return_qword() {
+        opcodes=( ${opcodes[@]} "oc_$1" )
+    }
+
+    source ${sksource}
+
+    echo -e "${opcodes[@]}" > ${skcapabilities}
+
+    sed -i \
+        -e 's/ /,\n    /g' \
+        -e 's/^/    /' \
+        ${skcapabilities}
+)
 
 (
     inline_function() {

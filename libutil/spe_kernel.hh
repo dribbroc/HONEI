@@ -20,8 +20,9 @@
 #ifndef LIBUTIL_GUARD_SPE_KERNEL_HH
 #define LIBUTIL_GUARD_SPE_KERNEL_HH 1
 
-#include <cell/cell.hh>
+#include <cell/interface.hh>
 #include <libutil/spe_manager.hh>
+#include <libutil/time_stamp.hh>
 
 #include <tr1/memory>
 #include <libspe2-types.h>
@@ -36,6 +37,8 @@ namespace honei
     class SPEKernel
     {
         public:
+            typedef honei::cell::Capabilities Capabilities;
+
             typedef honei::cell::Environment Environment;
 
         private:
@@ -57,7 +60,18 @@ namespace honei
             friend class SPE::Implementation;
 
             /// Constructor.
-            SPEKernel(const spe_program_handle_t & handle, const Environment * environment);
+            SPEKernel(const spe_program_handle_t & handle, const Environment * environment, const Capabilities * capabilities);
+
+            /// \name Iteration over supported opcodes.
+            /// \{
+
+            typedef libwrapiter::ForwardIterator<SPEKernel, const cell::OpCode> OpCodeIterator;
+
+            OpCodeIterator begin_supported_opcodes() const;
+
+            OpCodeIterator end_supported_opcodes() const;
+
+            /// \}
 
             /// Enqueue an instruction.
             unsigned int enqueue(const SPEInstruction & instruction);
@@ -87,7 +101,7 @@ namespace honei
             /**
              * Return the timepoint of the last finished instruction.
              */
-            timeval last_finished() const;
+            TimeStamp last_finished() const;
     };
 }
 
