@@ -84,6 +84,15 @@ namespace honei
             /// Copy-constructor.
             DenseVectorRange(const DenseVectorRange<DataType_> & other);
 
+            /**
+             * Constructor.
+             *
+             * \param source The DenseVectorRange our range is build of.
+             * \param size Size of the new dense vector range.
+             * \param offset Offset in the data array.
+             */
+            DenseVectorRange(const DenseVectorRange<DataType_> & source, const unsigned long size, const unsigned long offset);
+
             /// \}
 
             /**

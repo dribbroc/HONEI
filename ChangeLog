@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-21 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libla/dense_vector_rangee.hh, libla/dense_vector_range-impl.hh:
+	Added new constructor to be able to create a range of a range.
+	* libla/dense_vector_range_TEST.cc: Added tests for new constructor.
+
 2007-11-21 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* cell/libutil/transfer.hh: Wrote a spe-side "fill"-function. It can 

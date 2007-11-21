@@ -91,6 +91,17 @@ namespace honei
     }
 
     template <typename DataType_>
+    DenseVectorRange<DataType_>::DenseVectorRange(const DenseVectorRange<DataType_> & source, const unsigned long size,
+            const unsigned long offset) :
+        _imp(new Implementation(source._imp->elements, size, offset + source._imp->offset))
+    {
+        CONTEXT("When creating DenseVectorRange:");
+        ASSERT(size > 0, "size is zero!");
+        ASSERT(size <= source._imp->size, "size is bigger than size of source!");
+        ASSERT(offset <= source._imp->size, "offset is out of bounds!");
+        ASSERT(offset + size <= source._imp->size, "end of range is out of bounds!");
+    }
+    template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVectorRange<DataType_>::begin_elements() const
     {
         return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));

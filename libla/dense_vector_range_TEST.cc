@@ -42,6 +42,7 @@ class DenseVectorRangeCreationTest :
             {
                 DenseVector<DataType_> dv(size, DataType_(0));
                 DenseVectorRange<DataType_> dvr(dv, size - 1, 0);
+                DenseVectorRange<DataType_> dvr_c(dvr, size - 3, 1);
                 TEST_CHECK(true);
             }
         }
@@ -112,7 +113,7 @@ class DenseVectorRangeEqualityTest :
                 DenseVectorRange<DataType_> dvr1(dv1, size - 1, 1);
 
                 for (typename Vector<DataType_>::ElementIterator i(dvr0.begin_elements()), j(dvr1.begin_elements()),
-                    i_end(dvr0.end_elements()) ; i != i_end ; ++i , ++j)
+                        i_end(dvr0.end_elements()) ; i != i_end ; ++i , ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
                 }
@@ -120,6 +121,15 @@ class DenseVectorRangeEqualityTest :
                 TEST_CHECK_EQUAL(dv0, dv1);
 
                 DenseVectorRange<DataType_> dvr2(dv0, size, 0);
+                DenseVectorRange<DataType_> dvr3(dvr0, size - 3, 2), dvr4(dvr1, size - 3, 1);
+                for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()), j(dvr4.begin_elements()),
+                        i_end(dvr3.end_elements()) ; i != i_end; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+                }
+
+                TEST_CHECK_EQUAL(dv0, dv1);
+
                 TEST_CHECK_THROWS(dvr0 == dvr2, VectorSizeDoesNotMatch);
             }
         }
@@ -211,12 +221,14 @@ class DenseVectorRangeQuickTest :
         {
             DenseVector<DataType_> dv(4711, DataType_(123.987));
             DenseVectorRange<DataType_> dvr(dv, 238, 3101);
+            DenseVectorRange<DataType_> dvr2(dvr, 113, 35);
             TEST_CHECK_EQUAL(dvr.size(), 238);
             TEST_CHECK_EQUAL(dvr, dvr);
             TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[79] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
             DataType_ s = DataType_(1.2345);
-            (dvr)[3] = s;
-            TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[3] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            (dvr)[39] = s;
+            TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[39] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS((dvr2)[4] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));
 
         #if 0
             DenseVectorRange<DataType_> dv2(10);
