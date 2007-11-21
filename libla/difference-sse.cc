@@ -28,43 +28,85 @@ DenseVector<float> & Difference<tags::CPU::SSE>::value(DenseVector<float> & a, c
 {
     CONTEXT("When subtracting DenseVector<float> to DenseVector<float> with SSE:");
 
-    unsigned long a_address = (unsigned long)a.elements();
-    unsigned long a_offset = a_address % 8;
-    unsigned long b_address = (unsigned long)b.elements();
-    unsigned long b_offset = b_address % 8;
-    if(a_offset != b_offset)
-        throw VectorAlignmentDoesNotMatch(b_offset, a_offset);
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+
+    __m128 m1, m2;
+
+    unsigned long quad_end(a.size() - (a.size() % 4));
+
+    for (unsigned long index(0) ; index < quad_end ; index += 4) 
+    {
+        m1 = _mm_load_ps(a.elements() + index);
+        m2 = _mm_load_ps(b.elements() + index);
+
+        m1 = _mm_sub_ps(m1, m2);
+
+        _mm_stream_ps(a.elements() + index, m1);
+    }
+
+    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    {
+        a.elements()[index] -= b.elements()[index];
+    }
+    return a;
+}
+
+DenseVector<double> & Difference<tags::CPU::SSE>::value(DenseVector<double> & a, const DenseVector<double> & b)
+{
+    CONTEXT("When subtacting DenseVector<double> to DenseVector<double> with SSE:");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
 
-    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128d m1, m2;
 
-    unsigned long quad_start = a_offset;
-    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 16));
+    unsigned long quad_end(a.size() - (a.size() % 2));
 
-    for (unsigned long index = quad_start ; index < quad_end ; index += 16) 
+    for (unsigned long index(0) ; index < quad_end ; index += 2) 
+    {
+        m1 = _mm_load_pd(a.elements() + index);
+        m2 = _mm_load_pd(b.elements() + index);
+
+        m1 = _mm_sub_pd(m1, m2);
+
+        _mm_stream_pd(a.elements() + index, m1);
+    }
+
+    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    {
+        a.elements()[index] -= b.elements()[index];
+    }
+    return a;
+}
+
+DenseVectorContinuousBase<float> & Difference<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When subtracting DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> with SSE:");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    __m128 m1, m2;
+
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 8;
+
+    unsigned long x_offset((4-a_offset)%4);
+
+    unsigned long quad_start = x_offset;
+    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 4));
+
+    for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
     {
         m1 = _mm_load_ps(a.elements() + index);
-        m3 = _mm_load_ps(a.elements() + index+4);
-        m5 = _mm_load_ps(a.elements() + index+8);
-        m7 = _mm_load_ps(a.elements() + index+12);
-        m2 = _mm_load_ps(b.elements() + index);
-        m4 = _mm_load_ps(b.elements() + index+4);
-        m6 = _mm_load_ps(b.elements() + index+8);
-        m8 = _mm_load_ps(b.elements() + index+12);
+        m2 = _mm_loadu_ps(b.elements() + index);
 
         m1 = _mm_sub_ps(m1, m2);
-        m3 = _mm_sub_ps(m3, m4);
-        m5 = _mm_sub_ps(m5, m6);
-        m7 = _mm_sub_ps(m7, m8);
 
         _mm_stream_ps(a.elements() + index, m1);
-        _mm_stream_ps(a.elements() + index+4, m3);
-        _mm_stream_ps(a.elements() + index+8, m5);
-        _mm_stream_ps(a.elements() + index+12, m7);
-
     }
 
     for (unsigned long index = 0 ; index < quad_start ; index++)
@@ -78,47 +120,31 @@ DenseVector<float> & Difference<tags::CPU::SSE>::value(DenseVector<float> & a, c
     return a;
 }
 
-DenseVector<double> & Difference<tags::CPU::SSE>::value(DenseVector<double> & a, const DenseVector<double> & b)
+DenseVectorContinuousBase<double> & Difference<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When subtacting DenseVector<double> to DenseVector<double> with SSE:");
-
-    unsigned long a_address = (unsigned long)a.elements();
-    unsigned long a_offset = a_address % 16;
-    unsigned long b_address = (unsigned long)b.elements();
-    unsigned long b_offset = b_address % 16;
-    if(a_offset != b_offset)
-        throw VectorAlignmentDoesNotMatch(b_offset, a_offset);
+    CONTEXT("When subtacting DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> with SSE:");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
+    __m128d m1,m2;
 
-    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 16;
 
-    unsigned long quad_start = a_offset;
-    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 8));
+    unsigned long x_offset((2 - a_offset) % 2);
 
-    for (unsigned long index = quad_start ; index < quad_end ; index += 8) 
+    unsigned long quad_start = x_offset;
+    unsigned long quad_end(a.size() - ((a.size() - quad_start) % 2));
+
+    for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
     {
         m1 = _mm_load_pd(a.elements() + index);
-        m3 = _mm_load_pd(a.elements() + index+2);
-        m5 = _mm_load_pd(a.elements() + index+4);
-        m7 = _mm_load_pd(a.elements() + index+6);
-        m2 = _mm_load_pd(b.elements() + index);
-        m4 = _mm_load_pd(b.elements() + index+2);
-        m6 = _mm_load_pd(b.elements() + index+4);
-        m8 = _mm_load_pd(b.elements() + index+6);
+        m2 = _mm_loadu_pd(b.elements() + index);
 
         m1 = _mm_sub_pd(m1, m2);
-        m3 = _mm_sub_pd(m3, m4);
-        m5 = _mm_sub_pd(m5, m6);
-        m7 = _mm_sub_pd(m7, m8);
 
         _mm_stream_pd(a.elements() + index, m1);
-        _mm_stream_pd(a.elements() + index+2, m3);
-        _mm_stream_pd(a.elements() + index+4, m5);
-        _mm_stream_pd(a.elements() + index+6, m7);
-
     }
 
     for (unsigned long index = 0 ; index < quad_start ; index++)

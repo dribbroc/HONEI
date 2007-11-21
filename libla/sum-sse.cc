@@ -109,3 +109,79 @@ DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const 
     }
     return a;
 }
+
+DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> with SSE:");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    __m128 m1, m2;
+
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 8;
+
+    unsigned long x_offset((4 - a_offset) % 4);
+
+    unsigned long quad_start = x_offset;
+    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 4));
+
+    for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
+    {
+        m1 = _mm_load_ps(a.elements() + index);
+        m2 = _mm_loadu_ps(b.elements() + index);
+
+        m1 = _mm_add_ps(m1, m2);
+
+        _mm_stream_ps(a.elements() + index, m1);
+    }
+
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        a.elements()[index] += b.elements()[index];
+    }
+    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    {
+        a.elements()[index] += b.elements()[index];
+    }
+    return a;
+}
+
+DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> with SSE:");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    __m128d m1,m2;
+
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 16;
+
+    unsigned long x_offset((2 - a_offset) % 2);
+
+    unsigned long quad_start = x_offset;
+    unsigned long quad_end(a.size() - ((a.size() - quad_start) % 2));
+
+    for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
+    {
+        m1 = _mm_load_pd(a.elements() + index);
+        m2 = _mm_loadu_pd(b.elements() + index);
+
+        m1 = _mm_add_pd(m1, m2);
+
+        _mm_stream_pd(a.elements() + index, m1);
+    }
+
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        a.elements()[index] += b.elements()[index];
+    }
+    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    {
+        a.elements()[index] += b.elements()[index];
+    }
+    return a;
+}

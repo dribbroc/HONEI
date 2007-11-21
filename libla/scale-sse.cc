@@ -75,3 +75,77 @@ DenseVector<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVector<d
     }
     return x;
 }
+
+DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVectorContinuousBase<float> & x)
+{
+    CONTEXT("When scaling DenseVectorContinuousBase<float> by float with SSE:");
+
+    __m128 m1, m8;
+    float __attribute__((aligned(16))) a_data;
+    a_data= a;
+    m8 = _mm_load_ps1(&a_data);
+
+    unsigned long x_address = (unsigned long)x.elements();
+    unsigned long x_offset = x_address % 8;
+
+    unsigned long z_offset((4 - x_offset) % 4);
+
+    unsigned long quad_start = z_offset;
+    unsigned long quad_end(x.size() - ((x.size()-quad_start) % 4));
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 4) 
+    {
+        m1 = _mm_load_ps(x.elements() + index);
+
+        m1 = _mm_mul_ps(m1, m8);
+
+        _mm_stream_ps(x.elements() + index, m1);
+    }
+
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        x.elements()[index] *= a;
+    }
+    for (unsigned long index = quad_end ; index < x.size() ; index++)
+    {
+        x.elements()[index] *= a;
+    }
+    return x;
+}
+
+DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVectorContinuousBase<double> & x)
+{
+    CONTEXT("When scaling DenseVectorContinuousBase<double> by double with SSE:");
+
+    __m128d m1, m8;
+    double __attribute__((aligned(16))) a_data;
+    a_data= a;
+    m8 = _mm_load_pd1(&a_data);
+
+    unsigned long x_address = (unsigned long)x.elements();
+    unsigned long x_offset = x_address % 16;
+
+    unsigned long z_offset((2 - x_offset) % 2);
+
+    unsigned long quad_start = z_offset;
+    unsigned long quad_end(x.size() - ((x.size()-quad_start) % 2));
+
+    for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
+    {
+        m1 = _mm_load_pd(x.elements() + index);
+
+        m1 = _mm_mul_pd(m1, m8);
+
+        _mm_stream_pd(x.elements() + index, m1);
+    }
+
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        x.elements()[index] *= a;
+    }
+    for (unsigned long index = quad_end ; index < x.size() ; index++)
+    {
+        x.elements()[index] *= a;
+    }
+    return x;
+}

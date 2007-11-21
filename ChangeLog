@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/difference.hh, libla/difference-sse.cc, libla/dot_product-sse.cc, libla/element_product.hh, libla/element_product-sse.cc, libla/scaled_sum.hh, libla/scaled_sum-sse.cc, libla/scale.hh, libla/scale-sse.cc, libla/sum.hh, libla/sum-sse.cc, libutil/files.m4, -libutil/transfer.cc, -libutil/transfer.hh:
+	Added DenseVectorContinuousBase SSE operations. Removed obsolete
+	shuffle code.
+
 2007-11-12 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Added debug branch in RelaxSolver, calmed down test.

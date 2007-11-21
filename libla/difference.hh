@@ -26,6 +26,8 @@
 #include <libla/product.hh>
 #include <libla/scale.hh>
 #include <libla/sparse_matrix.hh>
+#include <libla/dense_vector.hh>
+#include <libla/vector.hh>
 #include <libutil/tags.hh>
 
 namespace honei
@@ -395,6 +397,10 @@ namespace honei
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
 
         static DenseVector<double> & value(DenseVector<double> & a, const DenseVector<double> & b);
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
         /// \}
     };
