@@ -57,15 +57,11 @@ namespace honei
             /// Our offset.
             const unsigned long offset;
 
-            /// Our stepsize.
-            const unsigned long stepsize;
-
             /// Constructor.
             Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o) :
                 elements(e),
                 size(s),
-                offset(o),
-                stepsize(1)
+                offset(o)
             {
             }
     };
@@ -162,7 +158,7 @@ namespace honei
         DataType_ * target(result.elements());
         for (unsigned long i(0) ; i < _imp->size ; i++)
         {
-            target[i] = source[_imp->stepsize * i + _imp->offset];
+            target[i] = source[i + _imp->offset];
         }
 
         /// \todo: Use TypeTraits<DataType_>::copy()

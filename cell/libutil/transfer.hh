@@ -20,6 +20,8 @@
 #ifndef CELL_GUARD_UTIL_TRANSFER_HH
 #define CELL_GUARD_UTIL_TRANSFER_HH 1
 
+#include <cell/cell.hh>
+
 #include <spu_intrinsics.h>
 
 namespace intern
@@ -49,4 +51,40 @@ template <> inline void extract<vector double>(vector double & first, const vect
     first = spu_shuffle(first, second, intern::extract_patterns[offset * 2]);
 }
 
+template <typename DT_> inline void fill(void * address, unsigned long size, DT_ value) __attribute__((always_inline));
+
+template <> inline void fill<float>(void * address, unsigned long size, float value)
+{
+    honei::cell::Pointer<float> p = { address };
+    vector float v(spu_splats(value));
+
+    unsigned i(0);
+    for ( ; i < size / sizeof(float) ; ++i)
+    {
+        p.vectorised[i] = v;
+    }
+
+    for (unsigned j(0) ; j < size % sizeof(float) ; j++)
+    {
+        p.typed[i * 4 + j] = value;
+    }
+}
+
+template <> inline void fill<double>(void * address, unsigned long size, double value)
+{
+    honei::cell::Pointer<double> p = { address };
+    vector double v(spu_splats(value));
+
+    unsigned i(0);
+    for ( ; i < size / sizeof(double) ; ++i)
+    {
+        p.vectorised[i] = v;
+    }
+
+    for (unsigned j(0) ; j < size % sizeof(double) ; j++)
+    {
+        p.typed[i * 2 + j] = value;
+    }
+}
 #endif
+
