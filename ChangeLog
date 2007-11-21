@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-11-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/kernels/capabilities.cc.in: Oops. Forgot to add in the last
+	commit.
+
+2007-11-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* cell/cell.hh, cell/interface.hh, cell/opcodes.hh, cell/traits.hh,
 	cell/types.hh: Split cell header into smaller parts for general types
 	and the PPE-SPE interface. Added Capabilities and KernelType.
