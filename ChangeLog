@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-11-21 Sven Mallach <sven.mallach@uni-dortmund.de>
 
+	* libla/dense_vector_slice.hh, libla/dense_vector_slice-impl.hh: Added
+	member function stepsize(). Without it the use of function
+	elements() does not make much sense because we don't now where our
+	next element is...
+
+2007-11-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+
 	* libla/product_TEST.cc: Reduced the size of the DM * DM Cell
 	QuickTest as after the last kernel-changes the maximum possible size
 	seems to have dropped seriously. Also divided QuickTests into

@@ -138,6 +138,8 @@ namespace honei
             /// Returns our offset.
             unsigned long offset() const;
 
+            /// Returns our stepsize.
+            unsigned long stepsize() const;
     };
 
     extern template class DenseVectorSlice<float>;

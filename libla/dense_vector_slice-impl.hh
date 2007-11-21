@@ -122,6 +122,12 @@ namespace honei
     }
 
     template <typename DataType_>
+    unsigned long DenseVectorSlice<DataType_>::stepsize() const
+    {
+        return _imp->stepsize;
+    }
+
+    template <typename DataType_>
     unsigned long DenseVectorSlice<DataType_>::size() const
     {
         return _imp->size;
