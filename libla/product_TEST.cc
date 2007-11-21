@@ -645,6 +645,37 @@ DenseMatrixProductTest<tags::CPU, float> dense_matrix_product_test_float("float"
 DenseMatrixProductTest<tags::CPU, double> dense_matrix_product_test_double("double");
 
 template <typename Tag_, typename DataType_>
+class DenseMatrixProductQuickTest :
+    public QuickTest
+{
+    public:
+        DenseMatrixProductQuickTest(const std::string & type) :
+            QuickTest("dense_matrix_product_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(15);
+
+            DenseMatrix<DataType_> dm1(size, size, DataType_(2)), dm2(size, size, DataType_(3)),
+                dm3(size, size, DataType_(6 * size));
+
+            DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
+
+            TEST_CHECK_EQUAL(prod, dm3);
+
+            DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
+
+            TEST_CHECK_THROWS(Product<Tag_>::value(dm02, dm01), MatrixRowsDoNotMatch);
+
+        }
+};
+DenseMatrixProductQuickTest<tags::CPU, float> dense_matrix_product_quick_test_float("float");
+DenseMatrixProductQuickTest<tags::CPU, double> dense_matrix_product_quick_test_double("double");
+
+template <typename Tag_, typename DataType_>
 class DenseMatrixProductCellTest :
     public BaseTest
 {
@@ -677,11 +708,11 @@ DenseMatrixProductCellTest<tags::Cell, float> cell_dense_matrix_product_test_flo
 
 
 template <typename Tag_, typename DataType_>
-class DenseMatrixProductQuickTest :
+class DenseMatrixProductCellQuickTest :
     public QuickTest
 {
     public:
-        DenseMatrixProductQuickTest(const std::string & type) :
+        DenseMatrixProductCellQuickTest(const std::string & type) :
             QuickTest("dense_matrix_product_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
@@ -689,7 +720,7 @@ class DenseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(191);
+            unsigned long size(145);
 
             DenseMatrix<DataType_> dm1(size, size, DataType_(2)), dm2(size, size, DataType_(3)),
                 dm3(size, size, DataType_(6 * size));
@@ -704,11 +735,8 @@ class DenseMatrixProductQuickTest :
 
         }
 };
-DenseMatrixProductQuickTest<tags::CPU, float> dense_matrix_product_quick_test_float("float");
-DenseMatrixProductQuickTest<tags::CPU, double> dense_matrix_product_quick_test_double("double");
-
 #ifdef HONEI_CELL
-DenseMatrixProductQuickTest<tags::Cell, float> cell_dense_matrix_product_quick_test_float("Cell float");
+DenseMatrixProductCellQuickTest<tags::Cell, float> cell_dense_matrix_product_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>
