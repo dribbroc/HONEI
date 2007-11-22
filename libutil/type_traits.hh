@@ -91,7 +91,7 @@ namespace honei
              *                 shall be destroyed.
              * \param count Count of instances that shall be destroyed.
              *
-             * \note Empty fo plain old data types (POD).
+             * \note Empty for plain old data types (POD).
              */
             static inline void destroy(DT_ * location, std::size_t count)
             {

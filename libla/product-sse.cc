@@ -165,7 +165,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 
     DenseVector<double> result(a.rows(), double(0));
 
-    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128d m1, m2, m3, m4, m5;
 
     unsigned long middle_index(a.rows() - 1);
     unsigned long quad_end, end, quad_start, start, x_offset, op_offset;
@@ -184,9 +184,10 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
         for (unsigned long index = 0 ; index < quad_end ; index += 2)
         {
             m1 = _mm_load_pd(vi->elements() + index);
-            m2 = _mm_load_pd(b.elements() + index + op_offset - x_offset); //eins davor!
-            m4 = _mm_load_pd(b.elements() + index + op_offset + x_offset); // eins dahinter!
-            m2 = _mm_shuffle_pd(m2, m4, 1 << 0 | 1); // zweite von m2 und erste von m4
+            //m2 = _mm_load_pd(b.elements() + index + op_offset - x_offset); //eins davor!
+            //m4 = _mm_load_pd(b.elements() + index + op_offset + x_offset); // eins dahinter!
+            //m2 = _mm_shuffle_pd(m2, m4, (0 << 1) | 1); // zweite von m2 und erste von m4
+            m2 = _mm_loadu_pd(b.elements() + index + op_offset);
             m3 = _mm_load_pd(result.elements() + index);
 
             m1 = _mm_mul_pd(m1, m2);
@@ -217,9 +218,10 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
         for (unsigned long index = quad_start ; index < quad_end ; index += 2)
         {
             m1 = _mm_load_pd(vi->elements() + index);
-            m2 = _mm_load_pd(b.elements() + index - op_offset - x_offset);
-            m4 = _mm_load_pd(b.elements() + index - op_offset + x_offset);
-            m2 = _mm_shuffle_pd(m2, m4, 1 << 0 | 1); // zweite von m2 und erste von m4
+            //m2 = _mm_load_pd(b.elements() + index - op_offset - x_offset);
+            //m2 = _mm_load_pd(b.elements() + index - op_offset + x_offset);
+            //m2 = _mm_shuffle_pd(m2, m4, (0 << 1) | 1); // zweite von m2 und erste von m4
+            m2 = _mm_loadu_pd(b.elements() + index - op_offset);
             m3 = _mm_load_pd(result.elements() + index);
 
             m1 = _mm_mul_pd(m1, m2);

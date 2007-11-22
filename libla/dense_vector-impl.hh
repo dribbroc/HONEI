@@ -205,13 +205,7 @@ namespace honei
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
         DenseVector result(_imp->size);
-        DataType_ * source(_imp->elements.get());
-        DataType_ * target(result._imp->elements.get());
-        for (unsigned long i(0) ; i < _imp->size ; i++)
-        {
-            target[i] = source[_imp->stepsize * i + _imp->offset];
-        }
-        //memcpy(result._imp->elements.get(), _imp->elements.get(), _imp->size * sizeof(DataType_));
+        TypeTraits<DataType_>::copy( _imp->elements.get(), result._imp->elements.get(), _imp->size);
 
         return result;
     }

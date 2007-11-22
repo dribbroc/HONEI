@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/dense_vector-impl.hh: Copy-constructor now uses
+	TypeTraits::copy.
+	* libla/product-sse.cc: Added a workaround to bypass the ugly
+	sse shuffle.
+
 2007-11-21 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libla/dense_vector_rangee.hh, libla/dense_vector_range-impl.hh:
