@@ -518,7 +518,7 @@ namespace honei
                     }
 
                     // Calculate the new _spring_force_parameters
-                    DenseVector<DataType_> _spring_force_parameters_of_max_node(_spring_force_parameters.column(max_node));
+                    DenseVectorSlice<DataType_> _spring_force_parameters_of_max_node(_spring_force_parameters.column(max_node));
                     for (int i(0) ; i != _spring_force_parameters_of_max_node.size() ; ++i)
                     {
                         DenseVector<DataType_> auxiliary(_coordinates.column(i).copy());

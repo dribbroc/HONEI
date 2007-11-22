@@ -5,12 +5,26 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+
+2007-11-22 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libla/dense_matrix.hh: Converted columns to DenseVectorSlice.
+	* libla/dense_matrix_TEST.cc: Adjusted for column vector changes.
+	* libla/dense_vector_slice.hh: Applied changes necessary for column
+	vector conversion.
+	* libla/product.hh, libgraph/vector_masked_max_index.hh,
+	libgraph/vector_masked_min_index.hh,
+	libgraph/node_distance_inverse.hh, libgraph/node_distance.hh,
+	libgraph/position.hh, libgraph/dijkstra.hh: Applied necessary changes
+	which arose from column vector conversion.
+
 2007-11-22 Till Barz <till.barz@udo.de>
 
 	* cell/libla/reduction_TEST.cc, cell/libla/reduction.hh,
 	cell/libla/reduction_cell.cc: Added quickcheck-tests for
 	vector-reduction operations.
 	
+
 2007-11-22 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* cell/kernels/kernel_reference.sk, cell/libla/Makefile.am,

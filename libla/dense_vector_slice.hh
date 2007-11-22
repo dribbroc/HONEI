@@ -61,6 +61,7 @@ namespace honei
 
         public:
             friend class DenseElementIterator<DataType_>;
+            friend class DenseMatrix<DataType_>;
             friend class DenseMatrixTile<DataType_>;
 
             /// Type of the const iterator over our elements.

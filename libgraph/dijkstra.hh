@@ -66,7 +66,7 @@ namespace honei
             for (int i(0); i < cost_matrix.columns(); ++i)
             {
                 // The column-vector represents the graph distances between node i and the other nodes, so we grab them from the matrix
-                DenseVector<DataType_> v(cost_matrix.column(i));
+                DenseVectorSlice<DataType_> v(cost_matrix.column(i));
 
                 // Set the boolean vector representing the active set of nodes
                 for (int j(0); j < v.size(); ++j)
@@ -143,10 +143,10 @@ namespace honei
             for (int i(0); i < cost_matrix.columns(); ++i)
             {
                 // The column-vector represents the graph distances between node i and the other nodes, so we grab them from the matrix
-                DenseVector<DataType_> v(graph_distance_matrix.column(i));
+                DenseVectorSlice<DataType_> v(graph_distance_matrix.column(i));
 
                 // The column-vector represents the previous nodes. If i, p1, p2, j is the shortest path from node i to node j then p(j) = p2.
-                DenseVector<int> p(previous_nodes.column(i));
+                DenseVectorSlice<int> p(previous_nodes.column(i));
 
                 // Set the boolean vector representing the active set of nodes
                 for (int j(0); j < v.size(); ++j)

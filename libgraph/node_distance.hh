@@ -59,14 +59,14 @@ namespace honei
             for (int i =  0; i < pos_matrix.columns(); ++i)
             {
                 // The column-vector represents all n coordinates of node i, so we grab them from the matrix
-                DenseVector<DataType_> v = pos_matrix.column(i);
+                DenseVectorSlice<DataType_> v = pos_matrix.column(i);
 
                 // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
                 // distance matrix is symmetric, result(i,j) equals result(j,i) and so were waiting for symmetric matrices
                 // to gain performance. So long, the trivial loops.
                 for (int j = 0; j < pos_matrix.columns(); ++j, ++e)
                 {
-                    DenseVector<DataType_> w = pos_matrix.column(j);
+                    DenseVectorSlice<DataType_> w = pos_matrix.column(j);
                     // Now calculate difference tmp = v - w for each pair of nodes and
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")

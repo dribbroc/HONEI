@@ -45,7 +45,7 @@ namespace honei
          * \param mask Vector<bool> to be used for masking.
          **/
         template <typename DataType_>
-        static unsigned long value(const DenseVector<DataType_> & vector, const Vector<bool> & mask)
+        static unsigned long value(const DenseVectorBase<DataType_> & vector, const Vector<bool> & mask)
         {
             CONTEXT("When calculating the minimum element of a masked DenseVector");
             if (vector.size() != mask.size())

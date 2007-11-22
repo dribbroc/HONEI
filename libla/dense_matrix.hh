@@ -66,7 +66,7 @@ namespace honei
             SharedArray<std::tr1::shared_ptr<DenseVectorRange<DataType_> > > _row_vectors;
 
             /// Our column-vectors.
-            SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > _column_vectors;
+            SharedArray<std::tr1::shared_ptr<DenseVectorSlice<DataType_> > > _column_vectors;
 
             /// Our implementation of ElementIteratorBase.
             template <typename ElementType_> class DenseElementIterator;
@@ -270,19 +270,19 @@ namespace honei
             }
 
             /// Retrieves column vector by index, zero-based, unassignable.
-            virtual const DenseVector<DataType_> & column(unsigned long column) const
+            virtual const DenseVectorSlice<DataType_> & column(unsigned long column) const
             {
                 if (! _column_vectors[column])
-                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
+                    _column_vectors[column].reset(new DenseVectorSlice<DataType_>(_elements, _rows,  column, _columns));
 
                 return *_column_vectors[column];
             }
 
             /// Retrieves column vector by index, zero-based, assignable.
-            virtual DenseVector<DataType_> & column(unsigned long column)
+            virtual DenseVectorSlice<DataType_> & column(unsigned long column)
             {
                 if (! _column_vectors[column])
-                    _column_vectors[column].reset(new DenseVector<DataType_>(_rows, _elements, column, _columns));
+                    _column_vectors[column].reset(new DenseVectorSlice<DataType_>(_elements, _rows, column, _columns));
 
                 return *_column_vectors[column];
             }

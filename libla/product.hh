@@ -332,7 +332,7 @@ namespace honei
                 const DenseVectorRange<DT1_> a_row(a[s]);
                 for (unsigned int t(0); t < b.columns() ; ++t)
                 {
-                    const DenseVector<DT2_> b_column(b.column(t));
+                    const DenseVectorSlice<DT2_> b_column(b.column(t));
                     *i = DotProduct<>::value(b_column, a_row);
                     ++i;
                 }
@@ -420,7 +420,7 @@ namespace honei
                 const SparseVector<DT1_> a_row(a[s]);
                 for (unsigned int t(0); t < b.columns() ; ++t)
                 {
-                    const DenseVector<DT2_> b_column(b.column(t));
+                    const DenseVectorSlice<DT2_> b_column(b.column(t));
                     *i = DotProduct<>::value(a_row, b_column);
                     ++i;
                 }
