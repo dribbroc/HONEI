@@ -254,9 +254,9 @@ class DenseVectorReductionToSumQuickTest :
 };
 DenseVectorReductionToSumQuickTest<tags::CPU, float>  dense_vector_reduction_to_sum_quick_test_float("float");
 DenseVectorReductionToSumQuickTest<tags::CPU, double> dense_vector_reduction_to_sum_quick_test_double("double");
-//#ifdef HONEI_CELL
+#ifdef HONEI_CELL
 DenseVectorReductionToSumQuickTest<tags::Cell, float> dense_vector_reduction_to_sum_quick_test_float_cell("Cell float");
-//#endif
+#endif
 
 
 template <typename DT_>
@@ -558,9 +558,9 @@ class DenseVectorReductionToMinQuickTest :
 DenseVectorReductionToMinQuickTest<tags::CPU, float> dense_reduction_to_min_quick_test_float("float");
 DenseVectorReductionToMinQuickTest<tags::CPU, double> dense_reduction_to_min_quick_test_double("double");
 
-//#ifdef HONEI_CELL
+#ifdef HONEI_CELL
 DenseVectorReductionToMinQuickTest<tags::Cell, float> dense_vector_reduction_to_min_quick_test_float_cell("Cell float");
-//#endif
+#endif
 
 
 
@@ -858,9 +858,9 @@ class DenseVectorReductionToMaxQuickTest :
 
 DenseVectorReductionToMaxQuickTest<tags::CPU, float> dense_reduction_to_max_quick_test_float("float");
 DenseVectorReductionToMaxQuickTest<tags::CPU, double> dense_reduction_to_max_quick_test_double("double");
-//#ifdef HONEI_CELL
+#ifdef HONEI_CELL
 DenseVectorReductionToMaxQuickTest<tags::Cell, float> dense_vector_reduction_to_max_quick_test_float_cell("Cell float");
-//#endif
+#endif
 
 
 
