@@ -448,5 +448,73 @@ namespace honei
 
         /// \}
     };
+
+        /**
+        * \brief reduction of a vector to scalar (min)
+        *
+        * Reduction is the class template for the operation
+        * \f[
+        *     \texttt{Reduction}(x): \quad r \leftarrow \min x_i,
+        * \f]
+        * which yields the reduction of the given vector x .
+        *
+        * \ingroup grplaoperations
+        * \ingroup grplavectoroperations
+        */
+    template <> struct Reduction<rt_min,tags::Cell>
+    {
+        /**
+         * \name Reduction
+         * \{
+         *
+         * Returns the min-reduction of a given vector.
+         *
+         * \param x One vectors of which reduction shall be computed.
+         * 
+         *
+         * \retval r Will return an scalar instance of the used data type.
+         *
+         * 
+         */
+
+        static float value(const DenseVector<float> & a);
+
+        /// \}
+    };
+
+        /**
+        * \brief reduction of a vector to scalar (max)
+        *
+        * Reduction is the class template for the operation
+        * \f[
+        *     \texttt{Reduction}(x): \quad r \leftarrow \max x_i,
+        * \f]
+        * which yields the reduction of the given vector x .
+        *
+        * \ingroup grplaoperations
+        * \ingroup grplavectoroperations
+        */
+    template <> struct Reduction<rt_max,tags::Cell>
+    {
+        /**
+         * \name Reduction
+         * \{
+         *
+         * Returns the max-reduction of a given vector.
+         *
+         * \param x One vectors of which reduction shall be computed.
+         * 
+         *
+         * \retval r Will return an scalar instance of the used data type.
+         *
+         * 
+         */
+
+        static float value(const DenseVector<float> & a);
+
+        /// \}
+    };
+
+
 }
 #endif

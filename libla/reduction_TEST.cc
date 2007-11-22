@@ -224,7 +224,7 @@ class DenseVectorReductionToSumTest :
 DenseVectorReductionToSumTest<float> dense_vector_reduction_to_sum_test_float("float");
 DenseVectorReductionToSumTest<double> dense_vector_reduction_to_sum_test_double("double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToSumQuickTest :
     public QuickTest
 {
@@ -232,11 +232,12 @@ class DenseVectorReductionToSumQuickTest :
         DenseVectorReductionToSumQuickTest(const std::string & type) :
             QuickTest("dense_vector_reduction_to_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(22);
             DenseVector<DT_> dv(size);
             for (typename Vector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                     i != i_end ; ++i)
@@ -244,15 +245,19 @@ class DenseVectorReductionToSumQuickTest :
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
             }
 
-            DT_ v1(Reduction<rt_sum>::value(dv));
+            DT_ v1(Reduction<rt_sum, Tag_>::value(dv));
             DT_ s1(size * (size + 1) / 2 / 1.23456789);
             // Behaviour similar to size^2 * eps
             DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
         }
 };
-DenseVectorReductionToSumQuickTest<float>  dense_vector_reduction_to_sum_quick_test_float("float");
-DenseVectorReductionToSumQuickTest<double> dense_vector_reduction_to_sum_quick_test_double("double");
+DenseVectorReductionToSumQuickTest<tags::CPU, float>  dense_vector_reduction_to_sum_quick_test_float("float");
+DenseVectorReductionToSumQuickTest<tags::CPU, double> dense_vector_reduction_to_sum_quick_test_double("double");
+//#ifdef HONEI_CELL
+DenseVectorReductionToSumQuickTest<tags::Cell, float> dense_vector_reduction_to_sum_quick_test_float_cell("Cell float");
+//#endif
+
 
 template <typename DT_>
 class SparseVectorReductionToSumTest :
@@ -523,7 +528,8 @@ class DenseVectorReductionToMinTest :
 DenseVectorReductionToMinTest<float> dense_vector_reduction_to_min_test_float("float");
 DenseVectorReductionToMinTest<double> dense_vector_reduction_to_min_test_double("double");
 
-template <typename DT_>
+
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToMinQuickTest :
     public QuickTest
 {
@@ -531,6 +537,7 @@ class DenseVectorReductionToMinQuickTest :
         DenseVectorReductionToMinQuickTest(const std::string & type) :
             QuickTest("dense_vector_reduction_to_min_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -543,13 +550,21 @@ class DenseVectorReductionToMinQuickTest :
                 *i = i.index();
             }
 
-            DT_ v1(Reduction<rt_min>::value(dv1));
+            DT_ v1(Reduction<rt_min, Tag_>::value(dv1));
             TEST_CHECK_EQUAL(v1, 0);
         }
 };
 
-DenseVectorReductionToMinQuickTest<float> dense_reduction_to_min_quick_test_float("float");
-DenseVectorReductionToMinQuickTest<double> dense_reduction_to_min_quick_test_double("double");
+DenseVectorReductionToMinQuickTest<tags::CPU, float> dense_reduction_to_min_quick_test_float("float");
+DenseVectorReductionToMinQuickTest<tags::CPU, double> dense_reduction_to_min_quick_test_double("double");
+
+//#ifdef HONEI_CELL
+DenseVectorReductionToMinQuickTest<tags::Cell, float> dense_vector_reduction_to_min_quick_test_float_cell("Cell float");
+//#endif
+
+
+
+
 
 template <typename DT_>
 class SparseVectorReductionToMinTest :
@@ -666,6 +681,7 @@ class DenseMatrixReductionToMaxQuickTest :
 
 DenseMatrixReductionToMaxQuickTest<float> dense_matrix_reduction_to_max_quick_test_float("float");
 DenseMatrixReductionToMaxQuickTest<double> dense_matrix_reduction_to_max_quick_test_double("double");
+
 
 template <typename DT_>
 class SparseMatrixReductionToMaxTest :
@@ -813,7 +829,8 @@ class DenseVectorReductionToMaxTest :
 DenseVectorReductionToMaxTest<float> dense_vector_reduction_to_max_test_float("float");
 DenseVectorReductionToMaxTest<double> dense_vector_reduction_to_max_test_double("double");
 
-template <typename DT_>
+
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToMaxQuickTest :
     public QuickTest
 {
@@ -821,6 +838,7 @@ class DenseVectorReductionToMaxQuickTest :
         DenseVectorReductionToMaxQuickTest(const std::string & type) :
             QuickTest("dense_vector_reduction_to_max_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -833,13 +851,20 @@ class DenseVectorReductionToMaxQuickTest :
                 *i = i.index();
             }
 
-            DT_ v1(Reduction<rt_max>::value(dv1));
+            DT_ v1(Reduction<rt_max,Tag_>::value(dv1));
             TEST_CHECK_EQUAL(v1, size-1);
         }
 };
 
-DenseVectorReductionToMaxQuickTest<float> dense_reduction_to_max_quick_test_float("float");
-DenseVectorReductionToMaxQuickTest<double> dense_reduction_to_max_quick_test_double("double");
+DenseVectorReductionToMaxQuickTest<tags::CPU, float> dense_reduction_to_max_quick_test_float("float");
+DenseVectorReductionToMaxQuickTest<tags::CPU, double> dense_reduction_to_max_quick_test_double("double");
+//#ifdef HONEI_CELL
+DenseVectorReductionToMaxQuickTest<tags::Cell, float> dense_vector_reduction_to_max_quick_test_float_cell("Cell float");
+//#endif
+
+
+
+
 
 
 template <typename DT_>

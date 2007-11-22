@@ -23,15 +23,16 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
+#include <libutil/stringify.hh>
 
 namespace honei
 {
     using namespace cell;
 
     float
-    Reduction<rt_sum,tags::Cell>::value(const DenseVector<float> & a)
+    Reduction<rt_sum, tags::Cell>::value(const DenseVector<float> & a)
     {
-        CONTEXT("When reducing DenseVector<float> to Scalar by Sum (Cell):");
+        CONTEXT("When reducing DenseVector<float> to Scalar by sum (Cell):");
 
         float result(0.0f);
 
@@ -82,4 +83,119 @@ namespace honei
 
         return result + rest_result;
     }
+
+
+    float
+    Reduction<rt_min, tags::Cell>::value(const DenseVector<float> & a)
+    {
+        CONTEXT("When reducing DenseVector<float> to Scalar by minimum (Cell):");
+
+        float result(0.0f);
+
+        Operand oa = { &result };
+        Operand ob = { a.elements() };
+        Operand oc, od;
+        oc.u = a.size() / 4096;
+        od.u = a.size() % 4096;
+        od.u &= ~0xF;
+
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++oc.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_reduction_min, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+
+        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            result = (result > *i)?*i:result;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return result;
+    }
+
+    float
+    Reduction<rt_max, tags::Cell>::value(const DenseVector<float> & a)
+    {
+        CONTEXT("When reducing DenseVector<float> to Scalar by maximum (Cell):");
+
+        float result(0.0f);
+
+        Operand oa = { &result };
+        Operand ob = { a.elements() };
+        Operand oc, od;
+        oc.u = a.size() / 4096;
+        od.u = a.size() % 4096;
+        od.u &= ~0xF;
+
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++oc.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_reduction_max, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+
+        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            result = (result < *i)?*i:result;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return result;
+    }
+
+
+
+
 }
