@@ -584,6 +584,9 @@ DenseVectorDifferenceTest<tags::CPU, double> dense_vector_difference_test_double
 DenseVectorDifferenceTest<tags::CPU::SSE, float> sse_dense_vector_difference_test_float("SSE float");
 DenseVectorDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_difference_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+DenseVectorDifferenceTest<tags::Cell, float> cell_dense_vector_difference_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseVectorDifferenceQuickTest :
@@ -598,7 +601,7 @@ class DenseVectorDifferenceQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(120);
             DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
 
             for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
@@ -625,6 +628,9 @@ DenseVectorDifferenceQuickTest<tags::CPU, double> dense_vector_difference_quick_
 #ifdef HONEI_SSE
 DenseVectorDifferenceQuickTest<tags::CPU::SSE, float>  sse_dense_vector_difference_quick_test_float("SSE float");
 DenseVectorDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_difference_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_quick_test_float("Cell float");
 #endif
 
 template <typename DT_>

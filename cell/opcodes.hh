@@ -30,6 +30,7 @@ namespace honei
             oc_halt,
 
             oc_dense_dense_float_sum = 1 << 4,
+            oc_dense_dense_float_difference,
             oc_dense_dense_float_dot_product,
             oc_dense_dense_float_matrix_product,
             oc_dense_dense_float_matrix_vector_product,

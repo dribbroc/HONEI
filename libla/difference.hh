@@ -404,5 +404,46 @@ namespace honei
 
         /// \}
     };
+
+   /**
+     * \brief Difference of two entities.
+     *
+     * Difference is the class template for the subtraction operation
+     * \f[
+     *     \texttt{Difference}(a, b): \quad r \leftarrow a - b,
+     * \f]
+     * which yields r, the difference of entities a and b.
+     *
+     * Usually, the return value is the minuend a after modification. However,
+     * there are signatures for which b is returned. For these cases a short
+     * notice is added.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <>
+    struct Difference<tags::Cell>
+    {
+        /**
+         * \name Vector differences
+         * \{
+         *
+         * \brief Returns the the difference of two given vectors.
+         *
+         * \param a The vector that is the left-hand minuend of the operation.
+         * \param b The vector that is the right-hand subtrahend of the operation.
+         *
+         * \retval a Will normally modify the minuend a and return it. Only for
+         *           Difference(SparseVector, DenseVector) the subtrahend b is modified and returned.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
+        static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+
+        /// \}
+    };
+
 }
 #endif
