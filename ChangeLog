@@ -11,6 +11,7 @@ see the NEWS file.
 	cell/opcodes.hh, libla/difference.hh, libla/difference_TEST.cc,
 	libla/files.m4: Added Difference(DV,DV) on Cell with double buffering.
 	* +libla/diffrence-cell.cc: Added PPU-part.
+	* +cell/libla/dense_dense_float_difference.cc: Added SPU-part.
 
 2007-11-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
