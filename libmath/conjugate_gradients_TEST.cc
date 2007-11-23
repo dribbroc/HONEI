@@ -306,7 +306,7 @@ class ConjugateGradientsTestSparse:
 
         virtual void run() const
         {
-            DenseMatrix<DT1_> A(3, 3, DT1_(1));
+            SparseMatrix<DT1_> A(3, 3);
             DenseVector<DT1_> b(3, DT1_(1));
             A[0][0] = DT1_(7);
             A[0][1] = DT1_(-2);
