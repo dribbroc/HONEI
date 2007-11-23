@@ -184,9 +184,6 @@ namespace honei
 
             }
 
-
-
-
         public:
             /**
             * \brief Returns solution of LES given by a DenseMatrix and a Vector.
@@ -335,7 +332,7 @@ namespace honei
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
             {
-                CONTEXT("When solving banded linear system with CG (with given convergence parameter):");
+                CONTEXT("When solving sparse linear system with CG (with given convergence parameter):");
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
@@ -554,7 +551,6 @@ namespace honei
             static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
             {
                 CONTEXT("When solving banded linear system with PCG-Jacobi (with given convergence parameter):");
-
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> r = Product<Tag_>::value(system_matrix, x);

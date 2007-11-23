@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-11-22 Markus Geveler <apryde@gmx.de>
 
+	* libmath/conjugate_gradients_TEST.cc, conjugate_gradients.hh:
+	Adjusted sparse Test for CG, cleaned up.
+
+2007-11-22 Markus Geveler <apryde@gmx.de>
+
 	* libmath/conjugate_gradients_TEST.cc:
 	Adjusted sparse Test for CG.
 
