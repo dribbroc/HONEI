@@ -997,7 +997,7 @@ namespace honei
     template <typename Tag_> struct MCProduct
     {
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
         {
             CONTEXT("When multiplying DenseMatrix with DenseVector(Base) (MultiCore):");
 
@@ -1015,8 +1015,8 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
 
-                TwoArgWrapper< DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorBase<DT1_>,
-                    const DenseVectorBase<DT2_> > mywrapper(*l, a[i], b);
+                ResultTwoArgWrapper< DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>,
+                    const DenseVector<DT2_> > mywrapper(*l, a[i], b);
                 pt[i] = p->dispatch(mywrapper);
 
                 ++l;
