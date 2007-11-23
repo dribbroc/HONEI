@@ -32,6 +32,7 @@
 #include <iostream>
 #include <libmath/methods.hh>
 #include <libla/element_product.hh>
+#include <libla/sparse_matrix.hh>
 
 using namespace std;
 using namespace methods;
@@ -146,7 +147,7 @@ namespace honei
             {
                 ///Compute x_i+1: (in energy)
                 DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
-                SparseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
+                DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
@@ -161,7 +162,7 @@ namespace honei
                 }
                 Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
-                SparseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
+                DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
                 Difference<Tag_>::value(new_gradient, right_hand_side);
 
                 ///Compute new utility
@@ -331,6 +332,36 @@ namespace honei
 
 
             }
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            {
+                CONTEXT("When solving banded linear system with CG (with given convergence parameter):");
+
+
+                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
+                DenseVector<DT1_> g_c(g.copy());
+                Scale<Tag_>::value(DT1_(-1.), g_c);
+                DenseVector<DT1_> u(g_c.copy());
+                DenseVector<DT1_> x_last(x.copy());
+
+                DT1_ norm_x_last = DT1_(0);
+                DT1_ norm_x = DT1_(1);
+
+                while(norm_x - norm_x_last > konv_rad)
+                {
+
+                    cg_kernel(system_matrix, right_hand_side, g, x, u);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                    x_last = x.copy();
+                }
+                return x;
+
+
+            }
+
    };
 
     /**
