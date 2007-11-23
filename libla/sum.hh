@@ -493,10 +493,111 @@ namespace honei
 
         /// \}
     };
-#if 0
-    template <typename Tag_> struct MCSum
-    {
 
+    template <typename Tag_> struct MCSum
+    { 
+        template <typename DT1_, typename DT2_>
+        static void value(DenseVectorRange<DT1_> & a, const SparseVector<DT2_> & b, unsigned long offset)
+        {
+            typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            r += offset;
+            offset = r.index();
+            unsigned long limit = r.index() + a.size();
+            while (r.index() < limit)
+            {
+                a[r.index()-offset] += *r;
+                ++r;
+            }
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        {
+            CONTEXT("When adding DenseVector to DenseVector (MultiCore):");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+            unsigned long parts(8);
+            unsigned long div = a.size() / parts;
+        if (div == 0)
+        {
+        Sum<typename Tag_::DelegateTo>::value(a,b);
+        }
+        else
+        {
+        unsigned long modulo = a.size() % parts;
+        ThreadPool * p(ThreadPool::get_instance());
+        PoolTask * pt[parts];
+        for (int i(0); i < modulo; ++i)
+        {
+            DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
+            DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
+            TwoArgWrapper<Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
+            pt[i] = p->dispatch(mywrapper);
+        }
+        for (unsigned long i(modulo); i < parts; ++i)
+        {
+            DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
+            DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+
+                    TwoArgWrapper<Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
+                    pt[i] = p->dispatch(mywrapper);
+
+        }
+        for (unsigned long i(0); i < parts; ++i)
+        {
+            pt[i]->wait_on();
+        }
+            }
+        return a;
+    }
+    template <typename DT1_, typename DT2_>
+    static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+    {
+        CONTEXT("When adding DenseVector to SparseVector (MultiCore):");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+        unsigned long parts(8);
+        unsigned long modulo = b.used_elements() % parts;
+        unsigned long div = b.used_elements() / parts;
+        if (div == 0) 
+        {
+        Sum<typename Tag_::DelegateTo>::value(a, b);
+        }
+        else
+        {
+        ThreadPool * p(ThreadPool::get_instance());
+        PoolTask * pt[parts];
+        typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+        unsigned long offset;
+        for (int i(0); i < modulo; ++i) 
+        {
+            offset = r.index();
+            r += div;
+            DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
+            ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, (i*(div+1)));
+            pt[i] = p->dispatch(mywrapper);
+            ++r;
+        }
+        for (unsigned long i(modulo); i < parts; ++i)
+        {
+            offset = r.index();
+            r+= div-1;
+                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
+            ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, modulo + (i*div));
+            pt[i] = p->dispatch(mywrapper);
+            ++r;
+        }
+        for (unsigned long i = 0; i < parts;  ++i)
+            {
+            pt[i]->wait_on();
+            }
+
+        return a;
+        }
+        }
+#if 0
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
@@ -620,11 +721,10 @@ namespace honei
             }
             return a;
         }
-
+#endif
     };
     template <> struct Sum <tags::CPU::MultiCore> : MCSum <tags::CPU::MultiCore> {};
     template <> struct Sum <tags::CPU::MultiCore::SSE> : MCSum <tags::CPU::MultiCore::SSE> {};
-#endif
 }
 
 #endif

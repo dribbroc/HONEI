@@ -760,6 +760,9 @@ class DenseVectorSumTest :
 };
 DenseVectorSumTest<tags::CPU, float> dense_vector_sum_test_float("float");
 DenseVectorSumTest<tags::CPU, double> dense_vector_sum_test_double("double");
+DenseVectorSumTest<tags::CPU::MultiCore, float> mc_dense_vector_sum_test_float("MC float");
+DenseVectorSumTest<tags::CPU::MultiCore, double> mc_dense_vector_sum_test_double("MC double");
+
 #ifdef HONEI_SSE
 DenseVectorSumTest<tags::CPU::SSE, float> sse_dense_vector_sum_test_float("SSE float");
 DenseVectorSumTest<tags::CPU::SSE, double> sse_dense_vector_sum_test_double("SSE double");
@@ -808,6 +811,8 @@ class DenseVectorSumQuickTest :
 };
 DenseVectorSumQuickTest<tags::CPU, float> dense_vector_sum_quick_test_float("float");
 DenseVectorSumQuickTest<tags::CPU, double> dense_vector_sum_quick_test_double("double");
+DenseVectorSumQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_sum_quick_test_float("MC float");
+DenseVectorSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_sum_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
 DenseVectorSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_sum_quick_test_double("SSE double");
@@ -816,7 +821,7 @@ DenseVectorSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_sum_quick_test_
 DenseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sum_quick_test_float("Cell float");
 #endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorSparseVectorSumTest :
     public BaseTest
 {
@@ -824,6 +829,7 @@ class DenseVectorSparseVectorSumTest :
         DenseVectorSparseVectorSumTest(const std::string & type) :
             BaseTest("dense_vector_sparse_vector_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -858,11 +864,13 @@ class DenseVectorSparseVectorSumTest :
 
             DenseVector<DataType_> dv01(2);
             SparseVector<DataType_> sv02(1, 1);
-            TEST_CHECK_THROWS(Sum<>::value(dv01, sv02), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dv01, sv02), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorSparseVectorSumTest<float> dense_vector_sparse_vector_sum_test_float("float");
-DenseVectorSparseVectorSumTest<double> dense_vector_sparse_vector_sum_test_double("double");
+DenseVectorSparseVectorSumTest<tags::CPU, float> dense_vector_sparse_vector_sum_test_float("float");
+DenseVectorSparseVectorSumTest<tags::CPU, double> dense_vector_sparse_vector_sum_test_double("double");
+DenseVectorSparseVectorSumTest<tags::CPU::MultiCore, float> mc_dense_vector_sparse_vector_sum_test_float("MC float");
+DenseVectorSparseVectorSumTest<tags::CPU::MultiCore, double> mc_dense_vector_sparse_vector_sum_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class DenseVectorSparseVectorSumQuickTest :
@@ -910,6 +918,8 @@ class DenseVectorSparseVectorSumQuickTest :
 };
 DenseVectorSparseVectorSumQuickTest<tags::CPU, float> dense_vector_sparse_vector_sum_quick_test_float("float");
 DenseVectorSparseVectorSumQuickTest<tags::CPU, double> dense_vector_sparse_vector_sum_quick_test_double("double");
+DenseVectorSparseVectorSumQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_sparse_vector_sum_quick_test_float("MC float");
+DenseVectorSparseVectorSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_sparse_vector_sum_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorSparseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sparse_vector_sum_quick_test_float("Cell float");
 #endif

@@ -7,7 +7,13 @@ see the NEWS file.
 
 2007-11-22 Joachim Messer <joachim.messer@uni-dortmund.de>
 
-	* libutil/wrapper.hh: Added implementatin of almost all cases of
+	* libla/sum.hh: Added implementation of sum(DV, DV) and sum(DV, SV)
+	for MultiCore.
+	* libla/sum_TEST.cc: Added testcalls for MultiCore.
+
+2007-11-22 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* libutil/wrapper.hh: Added implementation of almost all cases of
 	calls.
 	* libla/product.hh: Applied necessary changes. 
 
