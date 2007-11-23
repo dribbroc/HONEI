@@ -11,11 +11,11 @@
 using namespace honei;
 using namespace tests;
 
-class SPEKernelTest :
+class TimeStampTest :
     public QuickTest
 {
     public:
-        SPEKernelTest() :
+        TimeStampTest() :
             QuickTest("time_stamp_test")
         {
         }
@@ -45,4 +45,4 @@ class SPEKernelTest :
             TEST_CHECK(c < d);
             TEST_CHECK(d < infinity);
         }
-} spe_kernel_test;
+} time_stamp_test;
