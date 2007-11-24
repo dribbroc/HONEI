@@ -157,16 +157,51 @@ namespace honei
 
         #ifdef BENCHM 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long x, double nonzero_a = 1, double nonzero_b = 1)
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b)
         {
             BenchmarkInfo result;
-            result.flops = static_cast<unsigned long>(2 * x * nonzero_a * nonzero_b);
-            result.load = static_cast<unsigned long>((x * sizeof(typename DT1_::DataType) + x * sizeof(typename DT2_::DataType)) * nonzero_a * nonzero_b);
-            result.store = sizeof(typename DT1_::DataType);
-            cout << endl << "!! DotProduct BenchmarkInfo probably not correct !!" << endl;
-
+            result.flops = 2 * a.size();
+            result.load = a.size() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = sizeof(DT1_);
             return result; 
-        }       
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(SparseVector<DT1_> & a, DenseVectorBase<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = 2 * a.used_elements();
+            result.load = a.used_elements() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = sizeof(DT1_);
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(SparseVector<DT1_> & a, SparseVector<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.store = sizeof(DT1_);
+            typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            for (typename Vector<DT1_>::ConstElementIterator l(a.begin_non_zero_elements()), l_end(a.end_non_zero_elements()) ; l != l_end ; )
+            {
+                if (l.index() == r.index())
+                {
+                    result.flops += 1;
+                    result.load += (sizeof(DT1_) + sizeof(DT2_));
+                    ++l; ++r;
+                }
+                else if (l.index() < r.index())
+                {
+                    ++l;
+                }
+                else
+                {
+                    ++r;
+                }
+            }
+
+        }
+
         #endif
     };
 

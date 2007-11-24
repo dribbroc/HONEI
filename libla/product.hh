@@ -165,7 +165,6 @@ namespace honei
         static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When multiplying BandedMatrix with DenseVector(Base):");
-
             if (b.size() != a.columns())
             {
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
@@ -222,7 +221,6 @@ namespace honei
                     }
                 }
             }
-
             return result;
         }
 
@@ -928,13 +926,59 @@ namespace honei
 
         #ifdef BENCHM
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long a_rows, unsigned long a_columns, unsigned long b_columns = 1,  double nonzero_a = 1, double nonzero_b = 1)
+        static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, DenseVectorBase<DT2_> & b)
         {
             BenchmarkInfo result;
-            result = DotProduct<>::get_benchmark_info<DT1_, DT2_>(a_columns, nonzero_a, nonzero_b)*a_rows*b_columns;
-            cout << endl << "!! Product Benchmarkinfo probably not correct !!" << endl;
-
+            result.flops = a.size() * a.size() * 2;
+            result.load = a.size() * a.size() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.size() * a.size() * sizeof(DT1_);
             return result; 
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            DenseVector<DT1_> temp1(a.columns());
+            DenseVector<DT2_> temp2(b.rows());
+            result = DotProduct<>::get_benchmark_info(temp1, temp2) * (a.rows() * a.columns());
+            return result;
+        }
+        
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DenseVectorBase<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            DenseVector<DT1_> temp(a.columns());
+            result = DotProduct<>::get_benchmark_info(temp, b) * a.rows();
+            return result;
+        }
+        
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            for (unsigned int s(0) ; s < a.rows() ; ++s)
+            {
+                SparseVector<DT1_> a_row(a[s]);
+                for (unsigned int t(0); t < b.columns() ; ++t)
+                {
+                    DenseVectorSlice<DT2_> b_column(b.column(t));
+                    result = result + DotProduct<>::get_benchmark_info(a_row, b_column);
+                }
+
+            }
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = 0;
+            result.load = 0;
+            result.store = 0;
+            return result;
         }
         #endif
     };

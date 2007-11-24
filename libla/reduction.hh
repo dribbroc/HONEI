@@ -29,6 +29,10 @@
 #include <libla/matrix_error.hh>
 #include <libutil/tags.hh>
 
+#include <libutil/pool_task.hh>
+#include <libutil/thread_pool.hh>
+#include <libutil/wrapper.hh>
+
 namespace honei
 {
     /**
@@ -158,15 +162,24 @@ namespace honei
 
         /// \}
 
-       #ifdef BENCHM
+        #ifdef BENCHM
         template <typename DT1_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long rows, unsigned long columns = 1, double nonzero = 1)
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a)
         {
             BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
-            cout << endl << "!! No detailed benchmark info available !!" << endl;
+            DenseVector<DT1_> temp(a.columns());
+            result = Reduction<rt_sum>::get_benchmark_info(temp) * a.rows();
+            return result;
+        }
+
+        template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size();
+            result.load = sizeof(DT1_) * a.size();
+            result.store = sizeof(DT1_);
+            return result;
         }
         #endif
     };
@@ -515,6 +528,54 @@ namespace honei
         /// \}
     };
 
+    template <ReductionType type_, typename Tag_> struct MCReduction;
+    template <typename Tag_> struct MCReduction<rt_sum, Tag_>
+    {
+        template <typename DT_>
+        static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing DenseMatrix to DenseVector by sum (MultiCore):");
+            DenseVector<DT_> result(a.rows());
 
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            typename Vector<DT_>::ElementIterator l(result.begin_elements());
+            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            {
+                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*l, a[i]);
+                pt[i] = p->dispatch(mywrapper);
+                ++l;
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static DenseVector<DT_> value(const SparseMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing SparseMatrix to DenseVector by sum (MultiCore):");
+            DenseVector<DT_> result(a.rows());
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            typename Vector<DT_>::ElementIterator l(result.begin_elements());
+            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            {
+                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const SparseVector<DT_> > mywrapper(*l, a[i]);
+                pt[i] = p->dispatch(mywrapper);
+                ++l;
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+    };
+    template <ReductionType type_> struct Reduction<type_, tags::CPU::MultiCore> : MCReduction<type_, tags::CPU::MultiCore> {};
+    template <ReductionType type_> struct Reduction<type_, tags::CPU::MultiCore::SSE> : MCReduction<type_, tags::CPU::MultiCore::SSE> {};
 }
 #endif

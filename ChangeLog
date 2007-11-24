@@ -5,6 +5,22 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-24 David Gies <david-gies@gmx.de>
+
+	* libla/sum.hh, libla/sum_TEST.hh, libla/element_product.hh,
+	libla/element_product_TEST.hh: Applied Multicore-backend and
+	DenseVector changes to Multicore 
+	* libla/dot_product.hh, libla/dot_product_BENCHMARK.cc,
+	libla/element_inverse.hh, libla/element_inverse_BENCHMARK.cc,
+	libla/element_product.hh, libla/element_product_BENCHMARK.cc,
+	libla/product.hh, libla/product_BENCHMARK.cc, libla/reductin.hh,
+	libla/reduction_BENCHMARK.cc, libla/scaled_sum.hh,
+	libla/scaled_sum_BENCHMARK.cc, libla/sum.hh, libla/sum_BENCHMARK.cc,
+	benchmark/benchmark.hh: Added BenchmarkInfos to most of the available
+	benchmarks.
+	* libla/reduction.hh, libla/reduction_TEST.cc, libla/reduction_BENCHMARK.cc:
+	Added DenseMatrix and SparseMatrix reduction to sum for Multicore.  
+
 2007-11-24 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* libla/dot_product.hh, libla/element_product: Implemented (DV, DV)

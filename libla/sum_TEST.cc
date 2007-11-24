@@ -236,6 +236,7 @@ class BandedMatrixSumTest :
         BandedMatrixSumTest(const std::string & type) :
             BaseTest("banded_matrix_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -275,11 +276,9 @@ class BandedMatrixSumTest :
 };
 BandedMatrixSumTest<tags::CPU, float> banded_matrix_sum_test_float("float");
 BandedMatrixSumTest<tags::CPU, double> banded_matrix_sum_test_double("double");
-#if 0
-// MultiCore
-BandedMatrixSumTest<tags::CPU::MultiCore, float> mc_banded_matrix_sum_test_float("float");
-BandedMatrixSumTest<tags::CPU::MultiCore, double> mc_banded_matrix_sum_test_double("double");
-#endif
+BandedMatrixSumTest<tags::CPU::MultiCore, float> mc_banded_matrix_sum_test_float("MC float");
+BandedMatrixSumTest<tags::CPU::MultiCore, double> mc_banded_matrix_sum_test_double("MC double");
+
 
 template <typename Tag_, typename DataType_>
 class BandedMatrixSumQuickTest :
@@ -289,6 +288,7 @@ class BandedMatrixSumQuickTest :
         BandedMatrixSumQuickTest(const std::string & type) :
             QuickTest("banded_matrix_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -326,11 +326,8 @@ class BandedMatrixSumQuickTest :
 };
 BandedMatrixSumQuickTest<tags::CPU, float> banded_matrix_sum_quick_test_float("float");
 BandedMatrixSumQuickTest<tags::CPU, double> banded_matrix_sum_quick_test_double("double");
-#if 0
-// MultiCore
-BandedMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_sum_quick_test_float("float");
-BandedMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_sum_quick_test_double("double");
-#endif
+BandedMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_sum_quick_test_float("MC float");
+BandedMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_sum_quick_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixSparseMatrixSumTest :
@@ -340,6 +337,7 @@ class DenseMatrixSparseMatrixSumTest :
         DenseMatrixSparseMatrixSumTest(const std::string & type) :
             BaseTest("dense_matrix_sparse_matrix_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -382,10 +380,8 @@ class DenseMatrixSparseMatrixSumTest :
 };
 DenseMatrixSparseMatrixSumTest<tags::CPU, float> dense_matrix_sparse_matrix_sum_test_float("float");
 DenseMatrixSparseMatrixSumTest<tags::CPU, double> dense_matrix_sparse_matrix_sum_test_double("double");
-#if 0
-DenseMatrixSparseMatrixSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_sparse_matrix_sum_test_float("float");
-DenseMatrixSparseMatrixSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_sum_test_double("double");
-#endif
+DenseMatrixSparseMatrixSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_sparse_matrix_sum_test_float("MC float");
+DenseMatrixSparseMatrixSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_sum_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixSparseMatrixSumQuickTest :
@@ -395,6 +391,7 @@ class DenseMatrixSparseMatrixSumQuickTest :
         DenseMatrixSparseMatrixSumQuickTest(const std::string & type) :
             QuickTest("dense_matrix_sparse_matrix_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -435,10 +432,8 @@ class DenseMatrixSparseMatrixSumQuickTest :
 };
 DenseMatrixSparseMatrixSumQuickTest<tags::CPU, float> dense_matrix_sparse_matrix_sum_quick_test_float("float");
 DenseMatrixSparseMatrixSumQuickTest<tags::CPU, double> dense_matrix_sparse_matrix_sum_quick_test_double("double");
-#if 0
-DenseMatrixSparseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_sparse_matrix_sum_quick_test_float("float");
-DenseMatrixSparseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_sum_quick_test_double("double");
-#endif
+DenseMatrixSparseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_sparse_matrix_sum_quick_test_float("MC float");
+DenseMatrixSparseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_sum_quick_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixSumTest :
@@ -448,6 +443,7 @@ class DenseMatrixSumTest :
         DenseMatrixSumTest(const std::string & type) :
             BaseTest("dense_matrix_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -469,10 +465,8 @@ class DenseMatrixSumTest :
 };
 DenseMatrixSumTest<tags::CPU, float> dense_matrix_sum_test_float("float");
 DenseMatrixSumTest<tags::CPU, double> dense_matrix_sum_test_double("double");
-#if 0
-DenseMatrixSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_sum_test_float("float");
-DenseMatrixSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_sum_test_double("double");
-#endif
+DenseMatrixSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_sum_test_float("MC float");
+DenseMatrixSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_sum_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixSumQuickTest :
@@ -482,6 +476,7 @@ class DenseMatrixSumQuickTest :
         DenseMatrixSumQuickTest(const std::string & type) :
             QuickTest("dense_matrix_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -501,10 +496,8 @@ class DenseMatrixSumQuickTest :
 };
 DenseMatrixSumQuickTest<tags::CPU, float> dense_matrix_sum_quick_test_float("float");
 DenseMatrixSumQuickTest<tags::CPU, double> dense_matrix_sum_quick_test_double("double");
-#if 0
-DenseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_sum_quick_test_float("float");
-DenseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_sum_quick_test_double("double");
-#endif
+DenseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_sum_quick_test_float("MC float");
+DenseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_sum_quick_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class SparseMatrixSumTest :
@@ -514,6 +507,7 @@ class SparseMatrixSumTest :
         SparseMatrixSumTest(const std::string & type) :
             BaseTest("sparse_matrix_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -554,10 +548,8 @@ class SparseMatrixSumTest :
 };
 SparseMatrixSumTest<tags::CPU, float> sparse_matrix_sum_test_float("float");
 SparseMatrixSumTest<tags::CPU, double> sparse_matrix_sum_test_double("double");
-#if 0
-SparseMatrixSumTest<tags::CPU::MultiCore, float> mc_sparse_matrix_sum_test_float("float");
-SparseMatrixSumTest<tags::CPU::MultiCore, double> mc_sparse_matrix_sum_test_double("double");
-#endif
+SparseMatrixSumTest<tags::CPU::MultiCore, float> mc_sparse_matrix_sum_test_float("MC float");
+SparseMatrixSumTest<tags::CPU::MultiCore, double> mc_sparse_matrix_sum_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class SparseMatrixSumQuickTest :
@@ -567,6 +559,7 @@ class SparseMatrixSumQuickTest :
         SparseMatrixSumQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_sum_quick_test<" + type + ">")
     {
+            register_tag(Tag_::name);
     }
 
         virtual void run() const
@@ -605,10 +598,8 @@ class SparseMatrixSumQuickTest :
 };
 SparseMatrixSumQuickTest<tags::CPU, float> sparse_matrix_sum_quick_test_float("float");
 SparseMatrixSumQuickTest<tags::CPU, double> sparse_matrix_sum_quick_test_double("double");
-#if 0
-SparseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_sum_quick_test_float("float");
-SparseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_sum_quick_test_double("double");
-#endif
+SparseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_sum_quick_test_float("MC float");
+SparseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_sum_quick_test_double("MC double");
 
 template <typename DataType_>
 class ScalarDenseMatrixSumTest :

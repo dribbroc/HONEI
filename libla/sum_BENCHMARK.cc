@@ -12,7 +12,6 @@
 using namespace std;
 using namespace honei;
 
-
 template <typename DataType_>
 
 class ScalarDenseMatrixSumBench :
@@ -35,12 +34,12 @@ class ScalarDenseMatrixSumBench :
         virtual void run()
         {
             DataType_ alpha = DataType_ (2);
+            DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
             for(int i = 0; i < _count; ++i)
             {
-                DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
                 BENCHMARK(Sum<>::value(dm0, DataType_ (alpha)));
             }
-            BenchmarkInfo info(Sum<>::get_benchmark_info<DenseMatrix<DataType_>, DataType_>(1, _size, _size));
+            BenchmarkInfo info(Sum<>::get_benchmark_info(dm0, alpha));
             evaluate(info);
     }
 };
@@ -74,7 +73,7 @@ class DenseVectorSumBench :
             {
                 BENCHMARK(Sum<Tag_>::value(dv0, dv1));
             }
-            BenchmarkInfo info(Sum<>::get_benchmark_info<DenseVector<DataType_>, DenseVector<DataType_> >(0, _size));
+            BenchmarkInfo info(Sum<>::get_benchmark_info(dv0, dv1));
             evaluate(info);
         }
 };
@@ -88,7 +87,6 @@ DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector S
 DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float",
         64ul * 64 * 64 * 64, 10);
 #endif
-
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixSumBench :
@@ -113,14 +111,12 @@ class DenseMatrixSumBench :
             {
                 BENCHMARK(Sum<Tag_>::value(dm0, dm1));
             }
-            BenchmarkInfo info(Sum<>::get_benchmark_info<DenseMatrix<DataType_>, DenseMatrix<DataType_> >(0, _size));
+            BenchmarkInfo info(Sum<>::get_benchmark_info(dm0, dm1));
             evaluate(info);
         }
 };
 
 DenseMatrixSumBench<tags::CPU, float> DMSBenchfloat1("Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
 DenseMatrixSumBench<tags::CPU, double> DMSBenchdouble1("Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
-#if 0
 DenseMatrixSumBench<tags::CPU::MultiCore, float> DMSBenchfloat1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore, double> DMSBenchdouble1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
-#endif

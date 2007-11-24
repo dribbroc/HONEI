@@ -125,14 +125,12 @@ namespace honei
 
         #ifdef BENCHM
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long rows, unsigned long columns = 1, double nonzero = 1)
+        static inline BenchmarkInfo get_benchmark_info(DT1_ a, DenseMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
-            cout << endl << "!! No detailed benchmark info available !!" << endl;
-
+            result.flops = b.rows() * b.columns();
+            result.load = b.rows() * b.columns() * sizeof(DT2_) + sizeof(DT1_);
+            result.store = b.rows() * b.columns() * sizeof(DT2_);
             return result; 
         }
         #endif

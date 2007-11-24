@@ -31,14 +31,14 @@ class DenseMatrixElementInverseBench :
 
         virtual void run()
         {
+            DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
-        {
-            DenseMatrix<DataType_> dm0(_size, _size, DataType_(12));
-            BENCHMARK(ElementInverse<>::value(dm0));
+            {
+                BENCHMARK(ElementInverse<>::value(dm0));
+            }
+            BenchmarkInfo info(ElementInverse<>::get_benchmark_info(dm0));
+            evaluate(info);
         }
-        BenchmarkInfo info(ElementInverse<>::get_benchmark_info<DenseMatrix<DataType_> >(_size, _size));
-        evaluate(info);
-    }
 };
 
 DenseMatrixElementInverseBench<float>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);

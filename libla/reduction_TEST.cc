@@ -77,7 +77,7 @@ class BandedMatrixReductionQuickTest :
 BandedMatrixReductionQuickTest<float> banded_matrix_reduction_to_sum_quick_test_float("float");
 BandedMatrixReductionQuickTest<double> banded_matrix_reduction_to_sum_quick_test_double("double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixReductionToSumTest :
     public BaseTest
 {
@@ -85,6 +85,7 @@ class DenseMatrixReductionToSumTest :
         DenseMatrixReductionToSumTest(const std::string & type) :
             BaseTest("dense_matrix_reduction_to_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -93,16 +94,18 @@ class DenseMatrixReductionToSumTest :
             {
                 DenseMatrix<DT_> dm1(size+1, size, DT_(1));
                 DenseVector<DT_> dv1(size + 1, DT_(size ));
-                DenseVector<DT_> sum(Reduction<rt_sum>::value(dm1));
+                DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
                 TEST_CHECK_EQUAL(sum, dv1);
             }
         }
 };
-DenseMatrixReductionToSumTest<float> dense_matrix_reduction_to_sum_test_float("float");
-DenseMatrixReductionToSumTest<double> dense_matrix_reduction_to_sum_test_double("double");
+DenseMatrixReductionToSumTest<tags::CPU, float> dense_matrix_reduction_to_sum_test_float("float");
+DenseMatrixReductionToSumTest<tags::CPU, double> dense_matrix_reduction_to_sum_test_double("double");
+DenseMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_sum_test_float("MC float");
+DenseMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_sum_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixReductionQuickTest :
     public QuickTest
 {
@@ -110,6 +113,7 @@ class DenseMatrixReductionQuickTest :
         DenseMatrixReductionQuickTest(const std::string & type) :
             QuickTest("dense_matrix_reduction_to_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -117,15 +121,17 @@ class DenseMatrixReductionQuickTest :
             unsigned long size(5);
             DenseMatrix<DT_> dm1(size+1, size, DT_(1));
             DenseVector<DT_> dv1(size + 1, DT_(size));
-            DenseVector<DT_> sum(Reduction<rt_sum>::value(dm1));
+            DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
             TEST_CHECK_EQUAL(sum, dv1);
         }
 };
-DenseMatrixReductionQuickTest<float> dense_matrix_reduction_to_sum_quick_test_float("float");
-DenseMatrixReductionQuickTest<double> dense_matrix_reduction_to_sum_quick_test_double("double");
+DenseMatrixReductionQuickTest<tags::CPU, float> dense_matrix_reduction_to_sum_quick_test_float("float");
+DenseMatrixReductionQuickTest<tags::CPU, double> dense_matrix_reduction_to_sum_quick_test_double("double");
+DenseMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_sum_quick_test_float("MC float");
+DenseMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_sum_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixReductionToSumTest :
     public BaseTest
 {
@@ -133,6 +139,7 @@ class SparseMatrixReductionToSumTest :
         SparseMatrixReductionToSumTest(const std::string & type) :
             BaseTest("sparse_matrix_reduction_to_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -150,16 +157,18 @@ class SparseMatrixReductionToSumTest :
                         dv1[i.row()] += DT_(2);
                     }
                 }
-                DenseVector<DT_> sum(Reduction<rt_sum>::value(sm1));
+                DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
                 TEST_CHECK_EQUAL(sum, dv1);
             }
         }
 };
-SparseMatrixReductionToSumTest<float> sparse_matrix_reduction_to_sum_test_float("float");
-SparseMatrixReductionToSumTest<double> sparse_matrix_reduction_to_sum_test_double("double");
+SparseMatrixReductionToSumTest<tags::CPU, float> sparse_matrix_reduction_to_sum_test_float("float");
+SparseMatrixReductionToSumTest<tags::CPU, double> sparse_matrix_reduction_to_sum_test_double("double");
+SparseMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_sum_test_float("MC float");
+SparseMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_sum_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixReductionQuickTest :
     public QuickTest
 {
@@ -167,6 +176,7 @@ class SparseMatrixReductionQuickTest :
         SparseMatrixReductionQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_reduction_to_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -183,13 +193,15 @@ class SparseMatrixReductionQuickTest :
                     dv1[i.row()] += DT_(2);
                 }
             }
-            DenseVector<DT_> sum(Reduction<rt_sum>::value(sm1));
+            DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
             TEST_CHECK_EQUAL(sum, dv1);
         }
 };
-SparseMatrixReductionQuickTest<float> sparse_matrix_reduction_to_sum_quick_test_float("float");
-SparseMatrixReductionQuickTest<double> sparse_matrix_reduction_to_sum_quick_test_double("double");
+SparseMatrixReductionQuickTest<tags::CPU, float> sparse_matrix_reduction_to_sum_quick_test_float("float");
+SparseMatrixReductionQuickTest<tags::CPU, double> sparse_matrix_reduction_to_sum_quick_test_double("double");
+SparseMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_sum_quick_test_float("MC float");
+SparseMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_sum_quick_test_double("MC double");
 
 template <typename DT_>
 class DenseVectorReductionToSumTest :

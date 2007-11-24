@@ -239,9 +239,9 @@ int main(int argc, char** argv)
             {
                 try
                 {
-                    std::cout << (*i)->id() << ": " << std::endl << std::endl;
+                    std::cout << (*i)->id() << ": " << std::endl;
                     (*i)->run();
-                    std::cout << "'" << (*i)->id() << "' finished successfully!" << endl << endl;
+                    std::cout << "'" << (*i)->id() << "' finished successfully!" << std::endl << std::endl << std::endl;
                 }
                 catch (BenchFailedException & e)
                 {

@@ -200,7 +200,7 @@ SparseVectorDenseVectorElementProductQuickTest<tags::CPU, double> sparse_vector_
 SparseVectorDenseVectorElementProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_vector_dense_vector_elementwise_product_quick_test_float("MC float");
 SparseVectorDenseVectorElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_vector_dense_vector_elementwise_product_quick_test_double("MC double");
 
-/*
+
 template <typename DataType_>
 class SparseVectorElementProductTest :
     public BaseTest
@@ -367,6 +367,7 @@ class BandedMatrixElementProductTest :
         BandedMatrixElementProductTest(const std::string & type) :
             BaseTest("banded_matrix_elementwise_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -401,6 +402,7 @@ class BandedMatrixElementProductQuickTest :
         BandedMatrixElementProductQuickTest(const std::string & type) :
             QuickTest("banded_matrix_elementwise_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -591,6 +593,7 @@ class SparseMatrixDenseMatrixElementProductTest :
         SparseMatrixDenseMatrixElementProductTest(const std::string & type) :
             BaseTest("sparse_matrix_dense_matrix_elementwise_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -634,6 +637,7 @@ class SparseMatrixDenseMatrixElementProductQuickTest :
         SparseMatrixDenseMatrixElementProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_dense_matrix_elementwise_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -761,6 +765,7 @@ class SparseMatrixElementProductTest :
         SparseMatrixElementProductTest(const std::string & type) :
             BaseTest("sparse_matrix_elementwise_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -811,6 +816,7 @@ class SparseMatrixElementProductQuickTest :
         SparseMatrixElementProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_elementwise_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -849,4 +855,4 @@ class SparseMatrixElementProductQuickTest :
 SparseMatrixElementProductQuickTest<tags::CPU, float> sparse_matrix_elementwise_product_quick_test_float("float");
 SparseMatrixElementProductQuickTest<tags::CPU, double> sparse_matrix_elementwise_product_quick_test_double("double");
 SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_elementwise_product_quick_test_float("float");
-SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_elementwise_product_quick_test_double("double");*/
+SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_elementwise_product_quick_test_double("double");

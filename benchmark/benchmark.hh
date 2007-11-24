@@ -13,6 +13,13 @@ struct BenchmarkInfo
     unsigned long flops;
     unsigned long load;
     unsigned long store;
+
+    BenchmarkInfo()
+    {
+        flops = 0;
+        load = 0;
+        store = 0;
+    }
     
     BenchmarkInfo operator+(const BenchmarkInfo a) 
     {

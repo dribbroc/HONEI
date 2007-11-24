@@ -34,14 +34,14 @@ class ScalarDenseMatrixScaleBench :
         virtual void run()
         {
             DataType_ alpha = 2.0;
+            DenseMatrix<DataType_> dm0(_size, _size, DataType_(23));
             for(int i = 0; i < _count; ++i)
             {
-                DenseMatrix<DataType_> dm0(_size, _size, DataType_(23));
                 BENCHMARK(Scale<>::value(DataType_ (alpha), dm0));
             }
-            BenchmarkInfo info(Scale<>::get_benchmark_info<DataType_, DenseMatrix<DataType_> >(_size, _size));
+            BenchmarkInfo info(Scale<>::get_benchmark_info(alpha, dm0));
             evaluate(info);
     }
 };
-ScalarDenseMatrixScaleBench<float>  SMPBenchfloat ("Matrixscalierung Benchmark: size: 4096x4096, float",  4096, 10);
-ScalarDenseMatrixScaleBench<double> SMPBenchdouble("Matrixscalierung Benchmark: size: 4096x4096, double", 4096, 10);
+ScalarDenseMatrixScaleBench<float>  SMPBenchfloat ("DenseMatrix Scale Benchmark: size: 4096x4096, float",  4096, 10);
+ScalarDenseMatrixScaleBench<double> SMPBenchdouble("DenseMatrix Scale Benchmark: size: 4096x4096, double", 4096, 10);

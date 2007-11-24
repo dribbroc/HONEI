@@ -37,7 +37,7 @@ class DenseVectorScaledSumBench :
             {
                 BENCHMARK(ScaledSum<Tag_>::value(dv0, dv1, b));
             }
-            BenchmarkInfo info(ScaledSum<>::get_benchmark_info<DenseVector<DataType_>, DenseVector<DataType_>, DataType_ >(_size));
+            BenchmarkInfo info(ScaledSum<>::get_benchmark_info(dv0, dv1, b));
             evaluate(info);
         }
 };

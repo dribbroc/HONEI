@@ -375,15 +375,37 @@ namespace honei
 
         #ifdef BENCHM
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(unsigned long rows, unsigned long columns = 1, double nonzero_a = 1, double nonzero_b = 1)
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
-            cout << endl << "!! No detailed benchmark info available !!" << endl;
-
+            result.flops = a.rows() * a.columns();
+            result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.rows() * a.columns() * sizeof(DT1_);
             return result; 
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()); l != l_end ; ++l)
+            {
+                result.flops += 1;
+                result.load += sizeof(DT1_) + sizeof(DT2_);
+                result.store += 1;
+            }
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size() * a.size();
+            result.load = a.size() * a.size() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.size() * a.size() * sizeof(DT1_);
+            return result;
         }
         #endif
     };
@@ -573,7 +595,7 @@ namespace honei
             }
             return a;
         }
-#if 0
+
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
@@ -597,7 +619,7 @@ namespace honei
                     continue;
                 }
 
-                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *l, *r);
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
                 pt[taskcount] = p->dispatch(mywrapper);
                 ++r;
                 ++taskcount;
@@ -628,7 +650,7 @@ namespace honei
             PoolTask * pt[a.rows()];
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
-                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(a[i], b[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < a.rows(); ++i)
@@ -657,7 +679,7 @@ namespace honei
             PoolTask * pt[a.rows()];
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
-                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, SparseVector<DT1_>, SparseVector<DT1_>, const DenseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, SparseVector<DT1_>, const DenseVectorRange<DT2_> > mywrapper(a[i], b[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < a.rows(); ++i)
@@ -686,7 +708,7 @@ namespace honei
             PoolTask * pt[a.rows()];
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
-                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, SparseVector<DT1_>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < a.rows(); ++i)
@@ -695,7 +717,6 @@ namespace honei
             }
             return a;
         }
-#endif
     };
     template <> struct ElementProduct <tags::CPU::MultiCore> : MCElementProduct <tags::CPU::MultiCore> {};
     template <> struct ElementProduct <tags::CPU::MultiCore::SSE> : MCElementProduct <tags::CPU::MultiCore::SSE> {};

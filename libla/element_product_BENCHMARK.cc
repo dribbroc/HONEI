@@ -31,13 +31,13 @@ class DenseMatrixElementProductBench :
         virtual void run()
         {
             DataType_ p0;
+            DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
+            DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
-                DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
                 BENCHMARK(ElementProduct<Tag_>::value(dm0, dm1));
             }
-            BenchmarkInfo info(ElementProduct<>::get_benchmark_info<DenseMatrix<DataType_>, DenseMatrix<DataType_> >(_size, _size));
+            BenchmarkInfo info(ElementProduct<>::get_benchmark_info(dm0, dm1));
             evaluate(info);
         }
 };
@@ -66,20 +66,20 @@ class SparseMatrixElementProductBench :
         virtual void run()
         {
             DataType_ p0;
+            SparseMatrix<DataType_> sm(_size, _size, (unsigned long)(_size/10)); 
+            for (typename MutableMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 10 == 0)
+                {
+                    *i = DataType_(rand());
+                }
+            }
+            DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                SparseMatrix<DataType_> sm(_size, _size, (unsigned long)(_size/10)); 
-                for (typename MutableMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
-                {
-                    if (i.index() % 10 == 0)
-                    {
-                        *i = DataType_(rand()%10);
-                    }
-                }
-                DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()%10));
                 BENCHMARK(ElementProduct<Tag_>::value(sm, dm));
             }
-            BenchmarkInfo info(ElementProduct<>::get_benchmark_info<SparseMatrix<DataType_>, DenseMatrix<DataType_> >(_size, _size, (double)0.1));
+            BenchmarkInfo info(ElementProduct<>::get_benchmark_info(sm, dm));
             evaluate(info);
         }
 };
@@ -107,20 +107,20 @@ class BandedMatrixElementProductBench :
         virtual void run()
         {
             DataType_ p0;
+            DenseVector<DataType_> dv(_size, DataType_(rand()));
+            BandedMatrix<DataType_> bm(_size, dv);
+            bm.insert_band(1, dv);
+            bm.insert_band(-1, dv);
+            bm.insert_band(2, dv);
+            bm.insert_band(-2, dv);
+            bm.insert_band(5, dv);
+            bm.insert_band(-5, dv);
+            DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                DenseVector<DataType_> dv(_size, DataType_(rand()));
-                BandedMatrix<DataType_> bm(_size, dv);
-                bm.insert_band(1, dv);
-                bm.insert_band(-1, dv);
-                bm.insert_band(2, dv);
-                bm.insert_band(-2, dv);
-                bm.insert_band(5, dv);
-                bm.insert_band(-5, dv);
-                DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
                 BENCHMARK(ElementProduct<Tag_>::value(bm, dm));
             }
-        BenchmarkInfo info(ElementProduct<>::get_benchmark_info<BandedMatrix<DataType_ >, DenseMatrix<DataType_> >(_size, _size, (double)7 * _size / (_size * _size)));
+        BenchmarkInfo info(ElementProduct<>::get_benchmark_info(bm, dm));
         evaluate(info);
         }
 };

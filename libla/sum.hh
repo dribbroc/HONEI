@@ -402,16 +402,34 @@ namespace honei
 
         #ifdef BENCHM
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(bool scalar, unsigned long rows, unsigned long columns = 1, double nonzero_a = 1, double nonzero_b = 1)
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
-            cout << endl << "!! No detailed benchmark info available !!" << endl;
-
+            result.flops = a.rows() * a.columns();
+            result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.rows() * a.columns() * sizeof(DT1_);
             return result; 
         }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size();
+            result.load = a.size() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.size() * sizeof(DT1_);
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DT2_ b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.rows() * a.columns();
+            result.load = a.rows() * a.columns() * sizeof(DT1_) + sizeof(DT2_);
+            result.store = a.rows() * a.columns() * sizeof(DT1_);
+            return result;
+        }        
         #endif
     };
 
@@ -596,7 +614,7 @@ namespace honei
             }
             return a;
         }
-#if 0
+
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
@@ -619,7 +637,7 @@ namespace honei
 
                 if (l.exists())
                 {
-                    TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *l, *r);
+                    TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
                     pt[taskcount] = p->dispatch(mywrapper);
                     ++taskcount; 
                 }
@@ -653,7 +671,7 @@ namespace honei
             PoolTask * pt[a.rows()];
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
-                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(a[i], b[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < a.rows(); ++i)
@@ -682,7 +700,7 @@ namespace honei
             PoolTask * pt[a.rows()];
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
-                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, DenseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < a.rows(); ++i)
@@ -711,7 +729,7 @@ namespace honei
             PoolTask * pt[a.rows()];
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
-                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, SparseVector<DT1_>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], a[i], b[i]);
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < a.rows(); ++i)
@@ -720,7 +738,6 @@ namespace honei
             }
             return a;
         }
-#endif
     };
     template <> struct Sum <tags::CPU::MultiCore> : MCSum <tags::CPU::MultiCore> {};
     template <> struct Sum <tags::CPU::MultiCore::SSE> : MCSum <tags::CPU::MultiCore::SSE> {};

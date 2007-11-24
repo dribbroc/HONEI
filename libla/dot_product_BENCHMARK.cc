@@ -30,14 +30,14 @@ class DotProductBench :
 
         virtual void run()
         {
+            DenseVector<DataType_> dv0(_size, DataType_(rand()));
+            DenseVector<DataType_> dv1(_size, DataType_(rand()));
             DataType_ p0;
             for(int i = 0; i < _count; ++i)
             {
-                DenseVector<DataType_> dv0(_size, DataType_(rand()));
-                DenseVector<DataType_> dv1(_size, DataType_(rand()));
-                BENCHMARK(p0 = DotProduct<>::value(dv1,dv0));
+                BENCHMARK(p0 = DotProduct<>::value(dv0, dv1));
             }
-            BenchmarkInfo info(DotProduct<>::get_benchmark_info<DenseVector<DataType_>, DenseVector<DataType_> >(_size));
+            BenchmarkInfo info(DotProduct<>::get_benchmark_info(dv1, dv0));
             evaluate(info);
         }
 };
@@ -64,20 +64,20 @@ class SparseDotProductBench :
         virtual void run()
         {
             DataType_ p0;
+            SparseVector<DataType_> sv(_size, (unsigned long)(_size/10));
+            for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()), i_end(sv.end_elements()) ; i != i_end ; ++i) 
+            {
+                if (i.index() % 10 == 0)
+                {
+                    *i = DataType_(rand());
+                }
+            }
+            DenseVector<DataType_> dv(_size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                SparseVector<DataType_> sv(_size, (unsigned long)(_size/10));
-                for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()), i_end(sv.end_elements()) ; i != i_end ; ++i) 
-                {
-                    if (i.index() % 10 == 0)
-                    {
-                        *i = DataType_(rand());
-                    }
-                }
-                DenseVector<DataType_> dv(_size, DataType_(rand()));
                 BENCHMARK(p0 = DotProduct<>::value(sv,dv));
             }
-            BenchmarkInfo info(DotProduct<>::get_benchmark_info<DenseVector<DataType_>, DenseVector<DataType_> >(_size, (double)0.1));
+            BenchmarkInfo info(DotProduct<>::get_benchmark_info(sv, dv));
             evaluate(info);
         }
 };
