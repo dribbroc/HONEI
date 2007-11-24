@@ -711,6 +711,108 @@ class ScalarDenseVectorSumQuickTest :
 ScalarDenseVectorSumQuickTest<float>  scalar_dense_vector_sum_quick_test_float("float");
 ScalarDenseVectorSumQuickTest<double> scalar_dense_vector_sum_quick_test_double("double");
 
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeSumTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeSumTest(const std::string & type) :
+            BaseTest("dense_vector_range_sum__test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(40) ; size < (1 << 15) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size), dv2(size);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    *i = (i.index() + 1) / 1.23456789;
+                    *j = 2 * *i;
+                }
+
+                DenseVectorRange<DataType_> dvr1 (dv1, size / 2, 5);
+                DenseVectorRange<DataType_> dvr2 (dv2, size / 2, 5);
+                Sum<Tag_>::value(dvr1, dvr2);
+
+                for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
+                        i_end(dvr1.end_elements()) ; i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 5 + 1) * 3 / 1.23456789),
+                            std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 5 + 1) * 3 / 1.23456789);
+                }
+                DenseVectorRange<DataType_> dvr3 (dv1, size / 6, (size / 2) + 2);
+                DenseVectorRange<DataType_> dvr4 (dv2, size / 6, size / 2);
+                Sum<Tag_>::value(dvr3, dvr4);
+            }
+
+            DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
+            DenseVectorRange<DataType_> dvr01(dv01, 4, 2), dvr02(dv02, 3 , 1);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dvr01, dvr02), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorRangeSumTest<tags::CPU, float> dense_vector_range_sum_test_float("float");
+DenseVectorRangeSumTest<tags::CPU, double> dense_vector_range_sum_test_double("double");
+//DenseVectorRangeSumTest<tags::CPU::MultiCore, float> mc_dense_vector_range_sum_test_float("MC float");
+//DenseVectorRangeSumTest<tags::CPU::MultiCore, double> mc_dense_vector_range_sum_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeSumTest<tags::CPU::SSE, float> sse_dense_vector_range_sum__test_float("SSE float");
+DenseVectorRangeSumTest<tags::CPU::SSE, double> sse_dense_vector_range_sum_test_double("SSE double");
+//DenseVectorRangeSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_sum_test_float("MC SSE float");
+//DenseVectorRangeSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_sum_test_double("MC SSE double");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_sum_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(40);
+            DenseVector<DataType_> dv1(size), dv2(size);
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                *i = (i.index() + 1) / 1.23456789;
+                *j = 2 * *i;
+            }
+
+            DenseVectorRange<DataType_> dvr1 (dv1, 11, 5);
+            DenseVectorRange<DataType_> dvr2 (dv2, 11, 5);
+            Sum<Tag_>::value(dvr1, dvr2);
+
+            for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
+                    i_end(dvr1.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 5 + 1) * 3 / 1.23456789),
+                        std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 5 + 1) * 3 / 1.23456789);
+            }
+
+            DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
+            DenseVectorRange<DataType_> dvr01(dv01, 4, 2), dvr02(dv02, 3 , 1);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dvr01, dvr02), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorRangeSumQuickTest<tags::CPU, float> dense_vector_range_sum_quick_test_float("float");
+DenseVectorRangeSumQuickTest<tags::CPU, double> dense_vector_range_sum_quick_test_double("double");
+//DenseVectorRangeSumQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_sum_quick_test_float("MC float");
+//DenseVectorRangeSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_sum_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_sum_quick_test_float("SSE float");
+DenseVectorRangeSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_sum_quick_test_double("SSE double");
+//DenseVectorRangeSumQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_sum_quick_test_float("MC SSE float");
+//DenseVectorRangeSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_sum_quick_test_double("MC SSE double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorSumTest :
@@ -766,6 +868,8 @@ DenseVectorSumTest<tags::CPU::MultiCore, double> mc_dense_vector_sum_test_double
 #ifdef HONEI_SSE
 DenseVectorSumTest<tags::CPU::SSE, float> sse_dense_vector_sum_test_float("SSE float");
 DenseVectorSumTest<tags::CPU::SSE, double> sse_dense_vector_sum_test_double("SSE double");
+DenseVectorSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_sum_test_float("MC SSE float");
+DenseVectorSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_sum_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorSumTest<tags::Cell, float> cell_dense_vector_sum_test_float("Cell float");
@@ -816,6 +920,8 @@ DenseVectorSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_sum_quick_
 #ifdef HONEI_SSE
 DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
 DenseVectorSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_sum_quick_test_double("SSE double");
+DenseVectorSumQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_sum_quick_test_float("MC SSE float");
+DenseVectorSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_sum_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sum_quick_test_float("Cell float");

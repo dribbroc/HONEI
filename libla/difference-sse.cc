@@ -92,9 +92,10 @@ DenseVectorContinuousBase<float> & Difference<tags::CPU::SSE>::value(DenseVector
     __m128 m1, m2;
 
     unsigned long a_address = (unsigned long)a.elements();
-    unsigned long a_offset = a_address % 8;
+    unsigned long a_offset = a_address % 16;
 
-    unsigned long x_offset((4-a_offset)%4);
+    unsigned long x_offset(a_offset / 4);
+    x_offset = (4 - x_offset) % 4;
 
     unsigned long quad_start = x_offset;
     unsigned long quad_end(a.size() - ((a.size()-quad_start) % 4));
@@ -132,7 +133,7 @@ DenseVectorContinuousBase<double> & Difference<tags::CPU::SSE>::value(DenseVecto
     unsigned long a_address = (unsigned long)a.elements();
     unsigned long a_offset = a_address % 16;
 
-    unsigned long x_offset((2 - a_offset) % 2);
+    unsigned long x_offset(a_offset / 2);
 
     unsigned long quad_start = x_offset;
     unsigned long quad_end(a.size() - ((a.size() - quad_start) % 2));
