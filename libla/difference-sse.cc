@@ -99,6 +99,11 @@ DenseVectorContinuousBase<float> & Difference<tags::CPU::SSE>::value(DenseVector
 
     unsigned long quad_start = x_offset;
     unsigned long quad_end(a.size() - ((a.size()-quad_start) % 4));
+    if (quad_end < 4 || quad_end > a.size())
+    {
+        quad_end = a.size();
+        quad_start = a.size();
+    }
 
     for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
     {

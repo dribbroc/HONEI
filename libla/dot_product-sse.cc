@@ -120,6 +120,12 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> &
 
     unsigned long quad_start = x_offset;
     unsigned long quad_end(a.size() - ((a.size() - quad_start) % 4));
+    if (quad_end < 4 || quad_end > a.size())
+    {
+        quad_end = a.size();
+        quad_start = a.size();
+    }
+
     m8 = _mm_setzero_ps();
     m4 = _mm_setzero_ps();
     m5 = _mm_setzero_ps();

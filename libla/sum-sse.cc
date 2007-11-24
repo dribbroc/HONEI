@@ -22,8 +22,6 @@
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
-#include <iostream>
-
 using namespace honei;
 
 DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const DenseVector<float> & b)
@@ -115,7 +113,6 @@ DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const 
 DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> with SSE:");
-
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
@@ -129,7 +126,11 @@ DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinu
 
     unsigned long quad_start = x_offset;
     unsigned long quad_end(a.size() - ((a.size()-quad_start) % 4));
-
+    if (quad_end < 4 || quad_end > a.size())
+    {
+        quad_end = a.size();
+        quad_start = a.size();
+    }
     for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
     {
         m1 = _mm_load_ps(a.elements() + index);

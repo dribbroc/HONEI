@@ -5,6 +5,20 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/difference-sse.cc, libla/dot_product-sse.cc, libla/element_product-sse.cc,
+	libla/scaled_sum-sse.cc, libla/scale-sse.cc, libla/sum-sse.cc:
+	Fixed unsigned long overflow comming from negative modulo results.
+
+2007-11-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/difference-sse.cc, libla/dot_product-sse.cc,
+	libla/element_product-sse.cc, libla/scaled_sum-sse.cc,
+	libla/scale-sse.cc, libla/sum-sse.cc: Changed float alignment from 8
+	to 16 Byte.
+	* libla/sum_TEST.cc: Added DenseVectorRangeSumTest.
+
 2007-11-22 Markus Geveler <apryde@gmx.de>
 
 	* libmath/conjugate_gradients_TEST.cc, conjugate_gradients.hh: Added

@@ -86,12 +86,18 @@ DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, D
     m8 = _mm_load_ps1(&a_data);
 
     unsigned long x_address = (unsigned long)x.elements();
-    unsigned long x_offset = x_address % 8;
+    unsigned long x_offset = x_address % 16;
 
-    unsigned long z_offset((4 - x_offset) % 4);
+    unsigned long z_offset(x_offset / 4);
+    z_offset = (4 - z_offset) % 4;
 
     unsigned long quad_start = z_offset;
     unsigned long quad_end(x.size() - ((x.size()-quad_start) % 4));
+    if (quad_end < 4 || quad_end > x.size())
+    {
+        quad_end = x.size();
+        quad_start = x.size();
+    }
 
     for (unsigned long index = 0 ; index < quad_end ; index += 4) 
     {
@@ -125,7 +131,7 @@ DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a,
     unsigned long x_address = (unsigned long)x.elements();
     unsigned long x_offset = x_address % 16;
 
-    unsigned long z_offset((2 - x_offset) % 2);
+    unsigned long z_offset(x_offset / 2);
 
     unsigned long quad_start = z_offset;
     unsigned long quad_end(x.size() - ((x.size()-quad_start) % 2));
