@@ -21,7 +21,7 @@
 #ifndef LIBLA_GUARD_WRAPPER_HH
 #define LIBLA_GUARD_WRAPPER_HH 1
 
-#include <tr1/functional>
+#include <libutil/lock.hh>
 
 namespace honei
 {
@@ -57,9 +57,9 @@ namespace honei
                 
                 void operator()(Mutex * mutex)
                 {
-                    DT1_ *temp = Tag_::value(_a, _b, _c);
+                    DT1_ temp(Tag_::value(_a, _b, _c));
                     Lock l(*mutex);
-                    _result += *temp;
+                    _result += temp;
                 }
 
         };
@@ -122,9 +122,9 @@ namespace honei
                 
                 void operator()(Mutex * mutex)
                 {
-                    DT1_ *temp = Tag_::value(_a, _b);
+                    DT1_ temp(Tag_::value(_a, _b));
                     Lock l(*mutex);
-                    _result += *temp;
+                    _result += temp;
                 }
 
         };
@@ -181,7 +181,7 @@ namespace honei
                 
                 void operator()(Mutex * mutex)
                 {
-                    DT1_ *temp = Tag_::value(_a);
+                    DT1_ temp(Tag_::value(_a));
                     Lock l(*mutex);
                     _result += *temp;
                 }

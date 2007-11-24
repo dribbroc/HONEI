@@ -74,6 +74,8 @@ class DenseDotProductTest :
 
 DenseDotProductTest<tags::CPU, float> dense_scalar_product_test_float("float");
 DenseDotProductTest<tags::CPU, double> dense_scalar_product_test_double("double");
+DenseDotProductTest<tags::CPU::MultiCore, float> mc_dense_scalar_product_test_float("MC float");
+DenseDotProductTest<tags::CPU::MultiCore, double> mc_dense_scalar_product_test_double("MC double");
 #ifdef HONEI_SSE
 DenseDotProductTest<tags::CPU::SSE, float> sse_dense_scalar_product_test_float("SSE float");
 DenseDotProductTest<tags::CPU::SSE, double> sse_dense_scalar_product_test_double("SSE double");
@@ -123,6 +125,8 @@ class DenseDotProductQuickTest :
 };
 DenseDotProductQuickTest<tags::CPU, float> dense_scalar_product_quick_test_float("float");
 DenseDotProductQuickTest<tags::CPU, double> dense_scalar_product_quick_test_double("double");
+DenseDotProductQuickTest<tags::CPU::MultiCore, float> mc_dense_scalar_product_quick_test_float("MC float");
+DenseDotProductQuickTest<tags::CPU::MultiCore, double> mc_dense_scalar_product_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseDotProductQuickTest<tags::CPU::SSE, float> sse_dense_scalar_product_quick_test_float("SSE float");
 DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_test_double("SSE double");
@@ -131,7 +135,7 @@ DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_
 DenseDotProductQuickTest<tags::Cell, float> cell_dense_dot_product_quick_test_float("Cell float");
 #endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseDenseDotProductTest :
     public BaseTest
 {
@@ -139,6 +143,7 @@ class SparseDenseDotProductTest :
         SparseDenseDotProductTest(const std::string & type) :
             BaseTest("sparse_dense_dot_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -165,7 +170,7 @@ class SparseDenseDotProductTest :
                     }
                 }
 
-                DataType_ p0(DotProduct<>::value(sv1, dv2));
+                DataType_ p0(DotProduct<Tag_>::value(sv1, dv2));
                 TEST_CHECK_EQUAL_WITHIN_EPS(p0, p1, 2 * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
              }
 
@@ -175,10 +180,12 @@ class SparseDenseDotProductTest :
             TEST_CHECK_THROWS(DotProduct<>::value(sv00, dv01), VectorSizeDoesNotMatch);
         }
 };
-SparseDenseDotProductTest<float> sparse_dense_scalar_product_test_float("float");
-SparseDenseDotProductTest<double> sparse_dense_scalar_product_test_double("double");
+SparseDenseDotProductTest<tags::CPU, float> sparse_dense_scalar_product_test_float("float");
+SparseDenseDotProductTest<tags::CPU, double> sparse_dense_scalar_product_test_double("double");
+SparseDenseDotProductTest<tags::CPU::MultiCore, float> mc_sparse_dense_scalar_product_test_float("MC float");
+SparseDenseDotProductTest<tags::CPU::MultiCore, double> mc_sparse_dense_scalar_product_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseDenseDotProductQuickTest :
     public QuickTest
 {
@@ -186,6 +193,7 @@ class SparseDenseDotProductQuickTest :
         SparseDenseDotProductQuickTest(const std::string & type) :
             QuickTest("sparse_dense_scalar_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -217,11 +225,13 @@ class SparseDenseDotProductQuickTest :
             SparseVector<DataType_> sv00(1, 1);
             DenseVector<DataType_> dv01(2);
 
-            TEST_CHECK_THROWS(DotProduct<>::value(sv00, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(DotProduct<Tag_>::value(sv00, dv01), VectorSizeDoesNotMatch);
         }
 };
-SparseDenseDotProductQuickTest<float> sparse_dense_scalar_product_quick_test_float("float");
-SparseDenseDotProductQuickTest<double> sparse_dense_scalar_product_quick_test_double("double");
+SparseDenseDotProductQuickTest<tags::CPU, float> sparse_dense_scalar_product_quick_test_float("float");
+SparseDenseDotProductQuickTest<tags::CPU, double> sparse_dense_scalar_product_quick_test_double("double");
+SparseDenseDotProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_dense_scalar_product_quick_test_float("MC float");
+SparseDenseDotProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_dense_scalar_product_quick_test_double("MC double");
 
 template <typename DataType_>
 class SparseDotProductTest :

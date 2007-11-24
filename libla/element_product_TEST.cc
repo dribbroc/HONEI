@@ -60,6 +60,8 @@ class DenseVectorElementProductTest :
 
 DenseVectorElementProductTest<tags::CPU, float> dense_vector_elementwise_product_test_float("float");
 DenseVectorElementProductTest<tags::CPU, double> dense_vector_elementwise_product_test_double("double");
+DenseVectorElementProductTest<tags::CPU::MultiCore, float> mc_dense_vector_elementwise_product_test_float("MC float");
+DenseVectorElementProductTest<tags::CPU::MultiCore, double> mc_dense_vector_elementwise_product_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorElementProductTest<tags::CPU::SSE, float> sse_dense_vector_elementwise_product_test_float("sse float");
 DenseVectorElementProductTest<tags::CPU::SSE, double> sse_dense_vector_elementwise_product_test_double("sse double");
@@ -98,6 +100,8 @@ class DenseVectorElementProductQuickTest :
 };
 DenseVectorElementProductQuickTest<tags::CPU, float> dense_vector_elementwise_product_quick_test_float("float");
 DenseVectorElementProductQuickTest<tags::CPU, double> dense_vector_elementwise_product_quick_test_double("double");
+DenseVectorElementProductQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_elementwise_product_quick_test_float("MC float");
+DenseVectorElementProductQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_elementwise_product_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorElementProductQuickTest<tags::CPU, float> sse_dense_vector_elementwise_product_quick_test_float("sse float");
 DenseVectorElementProductQuickTest<tags::CPU, double> sse_dense_vector_elementwise_product_quick_test_double("sse double");
@@ -107,7 +111,7 @@ DenseVectorElementProductQuickTest<tags::Cell, float> cell_dense_vector_element_
 #endif
 
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorDenseVectorElementProductTest :
     public BaseTest
 {
@@ -115,6 +119,7 @@ class SparseVectorDenseVectorElementProductTest :
         SparseVectorDenseVectorElementProductTest(const std::string & type) :
             BaseTest("sparse_vector_dense_vector_elementwise_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -136,7 +141,7 @@ class SparseVectorDenseVectorElementProductTest :
                         *i = static_cast<DataType_>(6);
                 }
 
-                ElementProduct<>::value(sv1, dv2);
+                ElementProduct<Tag_>::value(sv1, dv2);
 
                 TEST_CHECK_EQUAL(sv1, sv3);
             }
@@ -147,10 +152,12 @@ class SparseVectorDenseVectorElementProductTest :
             TEST_CHECK_THROWS(ElementProduct<>::value(sv01, dv02), VectorSizeDoesNotMatch);
         }
 };
-SparseVectorDenseVectorElementProductTest<float> sparse_vector_dense_vector_elementwise_product_test_float("float");
-SparseVectorDenseVectorElementProductTest<double> sparse_vector_dense_vector_elementwise_product_test_double("double");
+SparseVectorDenseVectorElementProductTest<tags::CPU, float> sparse_vector_dense_vector_elementwise_product_test_float("float");
+SparseVectorDenseVectorElementProductTest<tags::CPU, double> sparse_vector_dense_vector_elementwise_product_test_double("double");
+SparseVectorDenseVectorElementProductTest<tags::CPU::MultiCore, float> mc_sparse_vector_dense_vector_elementwise_product_test_float("MC float");
+SparseVectorDenseVectorElementProductTest<tags::CPU::MultiCore, double> mc_sparse_vector_dense_vector_elementwise_product_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorDenseVectorElementProductQuickTest :
     public QuickTest
 {
@@ -158,6 +165,7 @@ class SparseVectorDenseVectorElementProductQuickTest :
         SparseVectorDenseVectorElementProductQuickTest(const std::string & type) :
             QuickTest("sparse_vector_dense_vector_elementwise_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -177,7 +185,7 @@ class SparseVectorDenseVectorElementProductQuickTest :
                 if (i.index() % 7 == 0)
                     *i = static_cast<DataType_>(6);
             }
-            ElementProduct<>::value(sv1, dv2);
+            ElementProduct<Tag_>::value(sv1, dv2);
 
             TEST_CHECK_EQUAL(sv1, sv3);
 
@@ -187,9 +195,12 @@ class SparseVectorDenseVectorElementProductQuickTest :
             TEST_CHECK_THROWS(ElementProduct<>::value(sv01, dv02), VectorSizeDoesNotMatch);
         }
 };
-SparseVectorDenseVectorElementProductQuickTest<float> sparse_vector_dense_vector_elementwise_product_quick_test_float("float");
-SparseVectorDenseVectorElementProductQuickTest<double> sparse_vector_dense_vector_elementwise_product_quick_test_double("double");
+SparseVectorDenseVectorElementProductQuickTest<tags::CPU, float> sparse_vector_dense_vector_elementwise_product_quick_test_float("float");
+SparseVectorDenseVectorElementProductQuickTest<tags::CPU, double> sparse_vector_dense_vector_elementwise_product_quick_test_double("double");
+SparseVectorDenseVectorElementProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_vector_dense_vector_elementwise_product_quick_test_float("MC float");
+SparseVectorDenseVectorElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_vector_dense_vector_elementwise_product_quick_test_double("MC double");
 
+/*
 template <typename DataType_>
 class SparseVectorElementProductTest :
     public BaseTest
@@ -838,4 +849,4 @@ class SparseMatrixElementProductQuickTest :
 SparseMatrixElementProductQuickTest<tags::CPU, float> sparse_matrix_elementwise_product_quick_test_float("float");
 SparseMatrixElementProductQuickTest<tags::CPU, double> sparse_matrix_elementwise_product_quick_test_double("double");
 SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_elementwise_product_quick_test_float("float");
-SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_elementwise_product_quick_test_double("double");
+SparseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_elementwise_product_quick_test_double("double");*/

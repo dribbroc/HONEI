@@ -26,6 +26,7 @@
 #include <libla/sparse_matrix.hh>
 #include <libutil/tags.hh>
 
+#include <libla/dense_vector_range.hh>
 #include <libutil/pool_task.hh>
 #include <libutil/thread_pool.hh>
 #include <libutil/wrapper.hh>
@@ -519,83 +520,81 @@ namespace honei
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
             unsigned long parts(8);
             unsigned long div = a.size() / parts;
-        if (div == 0)
-        {
-        Sum<typename Tag_::DelegateTo>::value(a,b);
-        }
-        else
-        {
-        unsigned long modulo = a.size() % parts;
-        ThreadPool * p(ThreadPool::get_instance());
-        PoolTask * pt[parts];
-        for (int i(0); i < modulo; ++i)
-        {
-            DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
-            DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
-            TwoArgWrapper<Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
-            pt[i] = p->dispatch(mywrapper);
-        }
-        for (unsigned long i(modulo); i < parts; ++i)
-        {
-            DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
-            DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
-
+            if (div == 0)
+            {
+                Sum<typename Tag_::DelegateTo>::value(a,b);
+            }
+            else
+            {
+                unsigned long modulo = a.size() % parts;
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[parts];
+                for (int i(0); i < modulo; ++i)
+                {
+                    DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
+                    DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
                     TwoArgWrapper<Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
                     pt[i] = p->dispatch(mywrapper);
-
-        }
-        for (unsigned long i(0); i < parts; ++i)
-        {
-            pt[i]->wait_on();
-        }
+                }
+                for (unsigned long i(modulo); i < parts; ++i)
+                {
+                    DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
+                    DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+                    TwoArgWrapper<Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
+                    pt[i] = p->dispatch(mywrapper);
+                }
+                for (unsigned long i(0); i < parts; ++i)
+                {
+                    pt[i]->wait_on();
+                }
             }
-        return a;
-    }
-    template <typename DT1_, typename DT2_>
-    static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
-    {
-        CONTEXT("When adding DenseVector to SparseVector (MultiCore):");
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            CONTEXT("When adding DenseVector to SparseVector (MultiCore):");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
-        unsigned long parts(8);
-        unsigned long modulo = b.used_elements() % parts;
-        unsigned long div = b.used_elements() / parts;
-        if (div == 0) 
-        {
-        Sum<typename Tag_::DelegateTo>::value(a, b);
-        }
-        else
-        {
-        ThreadPool * p(ThreadPool::get_instance());
-        PoolTask * pt[parts];
-        typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
-        unsigned long offset;
-        for (int i(0); i < modulo; ++i) 
-        {
-            offset = r.index();
-            r += div;
-            DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
-            ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, (i*(div+1)));
-            pt[i] = p->dispatch(mywrapper);
-            ++r;
-        }
-        for (unsigned long i(modulo); i < parts; ++i)
-        {
-            offset = r.index();
-            r+= div-1;
-                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
-            ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, modulo + (i*div));
-            pt[i] = p->dispatch(mywrapper);
-            ++r;
-        }
-        for (unsigned long i = 0; i < parts;  ++i)
+            unsigned long parts(8);
+            unsigned long modulo = b.used_elements() % parts;
+            unsigned long div = b.used_elements() / parts;
+            if (div == 0) 
             {
-            pt[i]->wait_on();
+                Sum<typename Tag_::DelegateTo>::value(a, b);
             }
-
-        return a;
-        }
+            else
+            {
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[parts];
+                typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+                unsigned long offset;
+                for (int i(0); i < modulo; ++i) 
+                {
+                    offset = r.index();
+                    r += div;
+                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
+                    ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, (i*(div+1)));
+                    pt[i] = p->dispatch(mywrapper);
+                    ++r;
+                }
+                for (unsigned long i(modulo); i < parts; ++i)
+                {
+                    offset = r.index();
+                    r+= div-1;
+                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
+                    ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, modulo + (i*div));
+                    pt[i] = p->dispatch(mywrapper);
+                    ++r;
+                }
+                for (unsigned long i = 0; i < parts;  ++i)
+                {
+                    pt[i]->wait_on();
+                }
+            }
+            return a;
         }
 #if 0
         template <typename DT1_, typename DT2_>

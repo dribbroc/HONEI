@@ -27,6 +27,13 @@
 #include <libla/vector_error.hh>
 #include <libutil/tags.hh>
 
+#include <libla/dense_vector_range.hh>
+#include <libutil/lock.hh>
+#include <libutil/pool_task.hh>
+#include <libutil/thread_pool.hh>
+#include <libutil/wrapper.hh>
+#include <tr1/functional>
+
 
 namespace honei
 {
@@ -233,6 +240,117 @@ namespace honei
 
         /// \}
     };
+
+    template <typename Tag_> struct MCDotProduct
+    { 
+        template <typename DT1_, typename DT2_>
+        static DT1_ value(SparseVector<DT1_> & a, const DenseVectorRange<DT2_> & b, unsigned long offset)
+        {
+            DT1_ result(0);
+            typename Vector<DT1_>::ConstElementIterator r(a.begin_non_zero_elements());
+            r += offset;
+            offset = r.index();
+            unsigned long limit = r.index() + b.size();
+            while (r.index() < limit)
+            {
+                result += *r * b[r.index()-offset];
+                ++r;
+            }
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DT1_ value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        {
+            CONTEXT("When calculating DenseVector-DenseVector dot product (MultiCore):");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+            DT1_ result(0);
+            unsigned long parts(8);
+            unsigned long div = a.size() / parts;
+            if (div == 0)
+            {
+                result = DotProduct<typename Tag_::DelegateTo>::value(a,b);
+            }
+            else
+            {
+                Mutex mutex;
+                unsigned long modulo = a.size() % parts;
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[parts];
+                for (int i(0); i < modulo; ++i)
+                {
+                    DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
+                    DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
+                    ResultTwoArgWrapper<DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(result, range_1, range_2);
+                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
+                }
+                for (unsigned long i(modulo); i < parts; ++i)
+                {
+                    DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
+                    DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+                    ResultTwoArgWrapper<DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(result, range_1, range_2);
+                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
+                }
+                for (unsigned long i(0); i < parts; ++i)
+                {
+                    pt[i]->wait_on();
+                }
+            }
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DT1_ value(SparseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        {
+            CONTEXT("When calculating SparseVector-DenseVector dot product (MultiCore):");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+            DT1_ result(0);
+            unsigned long parts(8);
+            unsigned long modulo = a.used_elements() % parts;
+            unsigned long div = a.used_elements() / parts;
+            if (div == 0) 
+            {
+                result = DotProduct<typename Tag_::DelegateTo>::value(a, b);
+            }
+            else
+            {
+                Mutex mutex;
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[parts];
+                typename Vector<DT2_>::ConstElementIterator r(a.begin_non_zero_elements());
+                unsigned long offset;
+                for (int i(0); i < modulo; ++i) 
+                {
+                    offset = r.index();
+                    r += div;
+                    DenseVectorRange<DT2_> range(b, r.index()-offset+1, offset);
+                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_, SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, (i*(div+1)));
+                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
+                    ++r;
+                }
+                for (unsigned long i(modulo); i < parts; ++i)
+                {
+                    offset = r.index();
+                    r+= div-1;
+                    DenseVectorRange<DT2_> range(b, r.index()-offset+1, offset);
+                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_, SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, modulo + (i*div));
+                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
+                    ++r;
+                }
+                for (unsigned long i = 0; i < parts;  ++i)
+                {
+                    pt[i]->wait_on();
+                }
+            }
+            return result;
+        }
+    };
+    template <> struct DotProduct <tags::CPU::MultiCore> : MCDotProduct <tags::CPU::MultiCore> {};
+    template <> struct DotProduct <tags::CPU::MultiCore::SSE> : MCDotProduct <tags::CPU::MultiCore::SSE> {};
 }
 
 #endif
