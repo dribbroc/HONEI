@@ -9,7 +9,7 @@ see the NEWS file.
 
 	* libla/sum.hh, libla/sum_TEST.hh, libla/element_product.hh,
 	libla/element_product_TEST.hh: Applied Multicore-backend and
-	DenseVector changes to Multicore 
+	DenseVector changes to the Matrix-Matrix Multicore implementations. 
 	* libla/dot_product.hh, libla/dot_product_BENCHMARK.cc,
 	libla/element_inverse.hh, libla/element_inverse_BENCHMARK.cc,
 	libla/element_product.hh, libla/element_product_BENCHMARK.cc,
