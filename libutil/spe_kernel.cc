@@ -43,9 +43,6 @@ namespace honei
         /// Our SPE program.
         spe_program_handle_t handle;
 
-        /// Our set of supported opcodes.
-        std::set<OpCode> supported_opcodes;
-
         /// \name Shared data
         /// \{
 
@@ -293,8 +290,8 @@ namespace honei
             pthread_exit(0);
         }
 
-        Implementation(const spe_program_handle_t & h, const Environment * e, const Capabilities * c) :
-            handle(h),
+        Implementation(const SPEKernel::Info & info) :
+            handle(info.handle),
             environment(0),
             instructions(0),
             spe_instruction_index(0),
@@ -317,7 +314,7 @@ namespace honei
             if (0 != posix_memalign(reinterpret_cast<void **>(&environment), 16, sizeof(Environment)))
                 throw std::bad_alloc(); /// \todo exception hierarchy
 
-            *environment = *e;
+            *environment = info.environment;
 
             if (0 != (retval = pthread_attr_init(attr)))
                 throw PThreadError("pthread_attr_init", retval);
@@ -331,11 +328,7 @@ namespace honei
             Instruction noop = { oc_noop };
             std::fill(instructions, instructions + 8, noop);
 
-            ASSERT(kt_stand_alone == c->type, "trying to use an unrecognised kernel type!");
-            for (unsigned i(0) ; i < c->opcode_count ; ++i)
-            {
-                supported_opcodes.insert(c->opcodes[i]);
-            }
+            ASSERT(kt_stand_alone == info.capabilities.type, "trying to use an unrecognised kernel type!");
 
             last_finished.take();
         }
@@ -362,21 +355,9 @@ namespace honei
 
     };
 
-    SPEKernel::SPEKernel(const spe_program_handle_t & handle, const Environment * environment, const Capabilities * capabilities) :
-        _imp(new Implementation(handle, environment, capabilities))
+    SPEKernel::SPEKernel(const SPEKernel::Info & info) :
+        _imp(new Implementation(info))
     {
-    }
-
-    SPEKernel::OpCodeIterator
-    SPEKernel::begin_supported_opcodes() const
-    {
-        return OpCodeIterator(_imp->supported_opcodes.begin());
-    }
-
-    SPEKernel::OpCodeIterator
-    SPEKernel::end_supported_opcodes() const
-    {
-        return OpCodeIterator(_imp->supported_opcodes.end());
     }
 
     unsigned

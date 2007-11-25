@@ -24,12 +24,11 @@
 #include <libutil/spe_manager.hh>
 #include <libutil/time_stamp.hh>
 
-#include <tr1/memory>
-#include <libspe2-types.h>
-
 namespace honei
 {
+    // Forward declarations.
     class SPEInstruction;
+    class SPEKernelRegistrator;
 
     /**
      * \ingroup grpcell
@@ -37,10 +36,7 @@ namespace honei
     class SPEKernel
     {
         public:
-            typedef honei::cell::Capabilities Capabilities;
-
-            typedef honei::cell::Environment Environment;
-
+            typedef cell::KernelInfo Info;
         private:
             struct Implementation;
 
@@ -60,7 +56,7 @@ namespace honei
             friend class SPE::Implementation;
 
             /// Constructor.
-            SPEKernel(const spe_program_handle_t & handle, const Environment * environment, const Capabilities * capabilities);
+            SPEKernel(const SPEKernel::Info & info);
 
             /// \name Iteration over supported opcodes.
             /// \{

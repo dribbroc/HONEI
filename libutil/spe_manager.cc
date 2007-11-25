@@ -22,6 +22,7 @@
 #include <libutil/mutex.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_kernel.hh>
+#include <libutil/spe_kernel_manager.hh>
 #include <libutil/spe_manager.hh>
 
 #include <vector>
@@ -30,14 +31,6 @@
 
 #include <libspe2.h>
 #include <libwrapiter/libwrapiter_forward_iterator.hh>
-
-extern "C"
-{
-    extern spe_program_handle_t kernel_reference;
-}
-
-extern const honei::cell::Environment kernel_reference_environment;
-extern const honei::cell::Capabilities kernel_reference_capabilities;
 
 namespace
 {
@@ -115,9 +108,13 @@ namespace honei
             _imp->spe_list.push_back(spe);
         }
 
+        SPEKernelManager::ListIterator reference(SPEKernelManager::instance()->find("reference"));
+        if (SPEKernelManager::instance()->end() == reference)
+            throw InternalError("Eek!");
+
         for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
         {
-            i->run(SPEKernel(kernel_reference, &kernel_reference_environment, &kernel_reference_capabilities));
+            i->run(SPEKernel(*reference));
         }
     }
 

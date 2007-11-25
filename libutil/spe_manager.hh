@@ -52,8 +52,8 @@ namespace honei
             /// Our implementation.
             Implementation * _imp;
 
-            /// \name Basic Operations. 
-            /// \[
+            /// \name Basic Operations
+            /// \{
 
             /// Constructor.
             SPEManager();

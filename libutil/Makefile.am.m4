@@ -66,7 +66,7 @@ CELLSOURCES = cell_filelist
 CELLTESTS = cell_testlist
 CELLHEADERS = cell_headerlist
 CELLLIBS = -lspe2
-CELLTESTLIBS = $(top_srcdir)/cell/kernels/libcell.a
+CELLTESTLIBS = $(top_srcdir)/cell/libcell.la
 
 else
 

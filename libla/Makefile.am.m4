@@ -15,6 +15,7 @@ $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	libla.la \
 	$(top_builddir)/libutil/libutil.la \
+	$(CELLTESTLIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -47,6 +48,7 @@ include(`libla/files.m4')
 if CELL
 
 CELLFILES = celllist
+CELLTESTLIBS = $(top_builddir)/cell/libcell.la
 
 endif
 

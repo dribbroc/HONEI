@@ -5,6 +5,20 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* autogen.bash, cell/interface.hh, -cell/kernels/capabilities.cc.in,
+	-cell/kernels/env.cc.in, cell/kernels/libtool-hack.in,
+	cell/kernels/Makefile.am.m4, cell/kernels/registrator.cc.in,
+	cell/Makefile.am, cell/Makefile.am.m4, configure.ac,
+	libla/Makefile.am.m4, libutil/files.m4, libutil/Makefile.am.m4,
+	libutil/spe_kernel.cc, libutil/spe_kernel.hh,
+	libutil/spe_kernel_manager.cc, libutil/spe_kernel_manager.hh,
+	libutil/spe_manager.cc, libutil/spe_manager.hh: Added support for
+	kernel registration, rolled all kernel information into one central
+	registrator and info structure, fixed build system to allow for
+	registration via static initialisation, worked around fucking libtool.
+
 2007-11-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/difference-sse.cc, libla/dot_product-sse.cc, libla/element_product-sse.cc,

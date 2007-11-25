@@ -3,7 +3,7 @@
 @HEADER@
 
 /*
- * Copyributght (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Util C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,11 +19,37 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <cell/cell.hh>
+#include <cell/interface.hh>
+#include <libutil/spe_kernel_manager.hh>
 
+using namespace honei;
 using namespace honei::cell;
 
-extern const Environment @NAME@_environment __attribute__((aligned(16))) = {
-    @BEGIN@,
-    @END@
+extern "C"
+{
+    extern const ::spe_program_handle_t @IDENTIFIER@_handle;
+}
+
+const OpCode @IDENTIFIER@_opcodes[] = {
+    @OPCODES@
 };
+
+const KernelInfo @IDENTIFIER@_info = {
+    // Capabilities
+    {
+        @TYPE@,
+        @OPCODECOUNT@,
+        @IDENTIFIER@_opcodes
+    },
+    // Environment
+    {
+        @BEGIN@,
+        @END@
+    },
+    // Handle
+    @IDENTIFIER@_handle,
+    // Name
+    "@NAME@"
+};
+
+static const SPEKernelRegistrator @IDENTIFIER@_registrator(@IDENTIFIER@_info);

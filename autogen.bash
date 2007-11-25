@@ -17,6 +17,7 @@ get() {
     exit 127
 }
 
+misc/do_m4.bash cell/Makefile.am || exit $?
 misc/do_m4.bash cell/kernels/Makefile.am || exit $?
 misc/do_m4.bash libgraph/Makefile.am || exit $?
 misc/do_m4.bash libla/Makefile.am || exit $?

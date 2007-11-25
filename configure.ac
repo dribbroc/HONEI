@@ -11,6 +11,7 @@ dnl {{{ basic toolchain checks
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 dnl }}}
