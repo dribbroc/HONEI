@@ -131,7 +131,7 @@ DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a,
     unsigned long x_address = (unsigned long)x.elements();
     unsigned long x_offset = x_address % 16;
 
-    unsigned long z_offset(x_offset / 2);
+    unsigned long z_offset(x_offset / 8);
 
     unsigned long quad_start = z_offset;
     unsigned long quad_end(x.size() - ((x.size()-quad_start) % 2));

@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/difference-sse.cc, libla/dot_product-sse.cc, libla/element_product-sse.cc,
+	libla/scaled_sum-sse.cc, libla/scale-sse.cc:
+	Fixed one more mod 2 div 8 bug.
+	* libla/dot_product_TEST.cc, libla/element_product_TEST.cc:
+	Added CPU::MC::SSE tests.
+
 2007-11-24 David Gies <david-gies@gmx.de>
 
 	* libla/sum.hh, libla/sum_TEST.hh, libla/element_product.hh,

@@ -160,10 +160,11 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> &
 
     return result;
 }
-
 double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> with SSE:");
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
 
     double __attribute__((aligned(16))) result(0);
     union sse2
@@ -175,7 +176,7 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double>
     unsigned long a_address = (unsigned long)a.elements();
     unsigned long a_offset = a_address % 16;
 
-    unsigned long x_offset(a_offset / 2);
+    unsigned long x_offset(a_offset / 8);
 
     unsigned long quad_start = x_offset;
     unsigned long quad_end(a.size() - ((a.size()-quad_start) % 2));

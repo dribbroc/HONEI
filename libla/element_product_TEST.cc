@@ -54,7 +54,7 @@ class DenseVectorElementProductTest :
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(dv02, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
         }
 };
 
@@ -65,6 +65,8 @@ DenseVectorElementProductTest<tags::CPU::MultiCore, double> mc_dense_vector_elem
 #ifdef HONEI_SSE
 DenseVectorElementProductTest<tags::CPU::SSE, float> sse_dense_vector_elementwise_product_test_float("sse float");
 DenseVectorElementProductTest<tags::CPU::SSE, double> sse_dense_vector_elementwise_product_test_double("sse double");
+DenseVectorElementProductTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_elementwise_product_test_float("MC SSE float");
+DenseVectorElementProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_elementwise_product_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementProductTest<tags::Cell, float> cell_dense_vector_element_product_test_float("Cell float");
@@ -105,6 +107,8 @@ DenseVectorElementProductQuickTest<tags::CPU::MultiCore, double> mc_dense_vector
 #ifdef HONEI_SSE
 DenseVectorElementProductQuickTest<tags::CPU, float> sse_dense_vector_elementwise_product_quick_test_float("sse float");
 DenseVectorElementProductQuickTest<tags::CPU, double> sse_dense_vector_elementwise_product_quick_test_double("sse double");
+DenseVectorElementProductQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_elementwise_product_quick_test_float("MC SSE float");
+DenseVectorElementProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_elementwise_product_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementProductQuickTest<tags::Cell, float> cell_dense_vector_element_product_quick_test_float("Cell float");
@@ -579,8 +583,8 @@ class DenseMatrixElementProductQuickTest :
 };
 DenseMatrixElementProductQuickTest<tags::CPU, float> dense_matrix_elementwise_product_quick_test_float("float");
 DenseMatrixElementProductQuickTest<tags::CPU, double> dense_matrix_elementwise_product_quick_test_double("double");
-DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_elementwise_product_quick_test_float("float");
-DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_elementwise_product_quick_test_double("double");
+DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_elementwise_product_quick_test_float("MC float");
+DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_elementwise_product_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseMatrixElementProductQuickTest<tags::Cell, float> cell_dense_matrix_element_product_quick_test_float("Cell float");
 #endif

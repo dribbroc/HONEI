@@ -79,6 +79,8 @@ DenseDotProductTest<tags::CPU::MultiCore, double> mc_dense_scalar_product_test_d
 #ifdef HONEI_SSE
 DenseDotProductTest<tags::CPU::SSE, float> sse_dense_scalar_product_test_float("SSE float");
 DenseDotProductTest<tags::CPU::SSE, double> sse_dense_scalar_product_test_double("SSE double");
+DenseDotProductTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_scalar_product_test_float("MC SSE float");
+DenseDotProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_product_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseDotProductTest<tags::Cell, float> cell_dense_scalar_product_test_float("Cell float");
@@ -130,6 +132,8 @@ DenseDotProductQuickTest<tags::CPU::MultiCore, double> mc_dense_scalar_product_q
 #ifdef HONEI_SSE
 DenseDotProductQuickTest<tags::CPU::SSE, float> sse_dense_scalar_product_quick_test_float("SSE float");
 DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_test_double("SSE double");
+DenseDotProductQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_scalar_product_quick_test_float("MC SSE float");
+DenseDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_product_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseDotProductQuickTest<tags::Cell, float> cell_dense_dot_product_quick_test_float("Cell float");
