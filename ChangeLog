@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-11-25 Markus Geveler <apryde@gmx.de>
 
+	* libmath/iterative_refinement_TEST.cc: Added fixed precision tests to
+	iterative refinement.
+
+2007-11-25 Markus Geveler <apryde@gmx.de>
+
 	* libmath/iterative_refinement_TEST.cc, iterative_refinement.hh: Added
 	implementation of sparse Iterative Refinement with Jacobi method and its test.
 

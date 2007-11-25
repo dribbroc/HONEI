@@ -538,21 +538,27 @@ class IterativeRefinementTestSparseJAC:
 
         }
 };
-
-
-
 IterativeRefinementTestSparseCG<tags::CPU, double> iterref_test_double_sparseCG("double");
 IterativeRefinementTestSparsePCGJAC<tags::CPU, double> iterref_test_double_sparsePCGJAC("double");
 IterativeRefinementTestSparseJAC<tags::CPU, double> iterref_test_double_sparseJAC("double");
-
 IterativeRefinementTestDenseCG<tags::CPU, double> iterref_test_double_denseCG("double");
 IterativeRefinementTestDenseJAC<tags::CPU, double> iterref_test_double_denseJAC("double");
-
 IterativeRefinementTestBandedCG<tags::CPU, double> iterref_test_double_bandedCG("double");
 IterativeRefinementTestBandedJacobi<tags::CPU, double> iterref_test_double_bandedJAC("double");
 IterativeRefinementTestDensePCGJAC<tags::CPU, double> iterref_test_double_densePCGJAC("double");
 IterativeRefinementTestBandedPCGJAC<tags::CPU, double> iterref_test_double_bandedPCGJAC("double");
-
 IterativeRefinementTestDensePCGJAC_big<tags::CPU, double> iterref_test_double_densePCGJAC_big("double");
 IterativeRefinementTestDenseCG_big<tags::CPU, double> iterref_test_double_denseCG_big("double");
+
+IterativeRefinementTestSparseCG<tags::CPU, float> iterref_test_float_sparseCG("float");
+IterativeRefinementTestSparsePCGJAC<tags::CPU, float> iterref_test_float_sparsePCGJAC("float");
+IterativeRefinementTestSparseJAC<tags::CPU, float> iterref_test_float_sparseJAC("float");
+IterativeRefinementTestDenseCG<tags::CPU, float> iterref_test_float_denseCG("float");
+IterativeRefinementTestDenseJAC<tags::CPU, float> iterref_test_float_denseJAC("float");
+IterativeRefinementTestBandedCG<tags::CPU, float> iterref_test_float_bandedCG("float");
+IterativeRefinementTestBandedJacobi<tags::CPU, float> iterref_test_float_bandedJAC("float");
+IterativeRefinementTestDensePCGJAC<tags::CPU, float> iterref_test_float_densePCGJAC("float");
+IterativeRefinementTestBandedPCGJAC<tags::CPU, float> iterref_test_float_bandedPCGJAC("float");
+IterativeRefinementTestDensePCGJAC_big<tags::CPU, float> iterref_test_float_densePCGJAC_big("float");
+IterativeRefinementTestDenseCG_big<tags::CPU, float> iterref_test_float_denseCG_big("float");
 
