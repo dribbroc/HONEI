@@ -5,7 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-11-25 Volker Jung <volker.jung@uni-dortmunde.de>
+2007-11-25 Volker Jung <volker.jung@uni-dortmund.de>
+
+	* libla/scale.hh: Added multicore-backend implementation.
+	* libla/scale_TEST.cc: Added multicore-backend tests.
+
+2007-11-25 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libla/vector.hh: Added methods to DenseVectorContinuousBase to
 	retrieve the offset and to retrieve a range.
