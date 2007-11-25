@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-11-25 Mathias Kadolsky<mathkad@gmx.de>
 
+	* libgraph/files.m4: evolving_graphs forgotten.
+	
+2007-11-25 Mathias Kadolsky<mathkad@gmx.de>
+
 	* libgraph/position.hh, position_TEST.cc: Layout-methods new structured.
 	* libgraph/node_distance.hh, node_distance_TEST.cc: Node_distance_inverse is calculated
 	in node_distance.hh and repulsive_force_range was added.
