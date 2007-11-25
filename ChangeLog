@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-11-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/kernels/Makefile.am.m4: Fixed *CLEANFILES.
+
+2007-11-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* cell/kernels/Makefile.am.m4, cell/kernels/stand_alone-kernel.cc.in,
 	misc/make_sk.bash: Adjusted kernel creation to registrator creation.
 	make_sk.bash now only creates the intermediate files instead of

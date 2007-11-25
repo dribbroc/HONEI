@@ -9,7 +9,7 @@ define(`cleanlist', `')dnl
 define(`objlist', `')dnl
 define(`add', `define(`filelist', filelist `$1')dnl
 define(`sourceslist', sourceslist `$1.cc' `$1-registrator.cc')dnl
-define(`cleanlist', cleanlist `$1.body' `$1.func' `$1.cc')dnl
+define(`cleanlist', cleanlist `$1.body' `$1.functions' `$1.opcodes' `$1.cc')dnl
 define(`objlist', objlist `libcell-$1.o')dnl
 $1.cc : $1.sk $(top_srcdir)/misc/make_sk.bash $2-kernel.cc.in
 	$(top_srcdir)/misc/make_sk.bash $1.sk
@@ -55,7 +55,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CXX = spu-g++
 
 BUILT_SOURCES = sourceslist objlist
-CLEANFILES = *~ *.body *.caps *.func *.cc *.o
+CLEANFILES = *~ *.body *.functions *.opcodes *.cc *.o
 DISTCLEANFILES = cleanlist
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 
