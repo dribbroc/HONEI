@@ -23,6 +23,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_IMPL_HH 1
 
 #include <libla/dense_vector.hh>
+#include <libla/dense_vector_range.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/element_iterator.hh>
 #include <libutil/assertion.hh>
@@ -193,6 +194,19 @@ namespace honei
     DataType_ & DenseVector<DataType_>::operator[] (unsigned long index)
     {
         return _imp->elements[_imp->stepsize * index + _imp->offset];
+    }
+
+    template <typename DataType_>
+    unsigned long DenseVector<DataType_>::offset() const
+    {
+        return _imp->offset;
+    }
+
+    template <typename DataType_>
+    DenseVectorRange<DataType_> DenseVector<DataType_>::range(unsigned long size, unsigned long offset) const
+    {
+        DenseVectorRange<DataType_> result((*this) , size, offset);
+        return result;
     }
 
     template <typename DataType_>

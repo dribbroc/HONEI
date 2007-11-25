@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-25 Volker Jung <volker.jung@uni-dortmunde.de>
+
+	* libla/vector.hh: Added methods to DenseVectorContinuousBase to
+	retrieve the offset and to retrieve a range.
+	* libla/dense_vector.hh, libla/dense_vector-impl.hh,
+	libla/dense_vector_range.hh, libla/dense_vector_range-impl.hh:
+	Implemented methods mentioned above.
+
 2007-11-25 Mathias Kadolsky<mathkad@gmx.de>
 
 	* libgraph/files.m4: evolving_graphs forgotten.

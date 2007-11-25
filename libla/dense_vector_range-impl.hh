@@ -156,6 +156,19 @@ namespace honei
     }
 
     template <typename DataType_>
+    unsigned long DenseVectorRange<DataType_>::offset() const
+    {
+        return _imp->offset;
+    }
+
+    template <typename DataType_>
+    DenseVectorRange<DataType_> DenseVectorRange<DataType_>::range(unsigned long size, unsigned long offset) const
+    {
+        DenseVectorRange<DataType_> result(*this, size, offset);
+        return result;
+    }
+
+    template <typename DataType_>
     inline DataType_ * DenseVectorRange<DataType_>::elements() const
     {
         return _imp->elements.get() + _imp->offset;

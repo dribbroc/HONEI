@@ -33,6 +33,9 @@
 
 namespace honei
 {
+    // Forward declarations.
+    template <typename DataType_> class DenseVectorRange;
+
     /**
      * Vector is the abstract baseclass for all vector-like types used.
      *
@@ -105,6 +108,12 @@ namespace honei
         public DenseVectorBase<DataType_>
     {
         public:
+            /// Return our offset.
+            virtual unsigned long offset() const = 0;
+
+            /// Return a range of our DenseVectorContinuousBase.
+            virtual DenseVectorRange<DataType_> range(unsigned long size, unsigned long offset) const = 0;
+
             /// Return a pointer to our elements.
             virtual DataType_ * elements() const = 0;
     };

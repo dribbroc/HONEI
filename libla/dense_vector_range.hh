@@ -134,6 +134,12 @@ namespace honei
              * \{
              */
 
+            /// Return our offset.
+            virtual unsigned long offset() const;
+
+            /// Return a range of our DenseVectorRange.
+            virtual DenseVectorRange<DataType_> range(unsigned long size, unsigned long offset) const;
+
             /// Return a pointer to our elements.
             virtual DataType_ * elements() const;
 
