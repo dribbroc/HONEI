@@ -8,6 +8,11 @@ see the NEWS file.
 2007-11-25 Markus Geveler <apryde@gmx.de>
 
 	* libmath/iterative_refinement_TEST.cc, iterative_refinement.hh: Added
+	implementation of sparse Iterative Refinement with preconditioned (Jacobi) CG and its test.
+
+2007-11-25 Markus Geveler <apryde@gmx.de>
+
+	* libmath/iterative_refinement_TEST.cc, iterative_refinement.hh: Added
 	implementation of sparse Iterative Refinement with CG and its test.
 
 2007-11-25 Volker Jung <volker.jung@uni-dortmund.de>
