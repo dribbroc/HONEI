@@ -1,7 +1,9 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax ft=cpp : */
 
+@HEADER@
+
 /*
- * Copyributght (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -26,11 +28,10 @@
 
 using namespace honei::cell;
 
-@FUNC@
+@FUNCTIONS@
 
 int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp)
 {
-    //printf("SPE %llu : Kernel started!\n", spe_id);
     Environment env __attribute__((aligned(16)));
     Instruction instructions[8] __attribute__((aligned(16)));
 
@@ -41,7 +42,6 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
     init(env);
 
     spu_read_signal1();
-    //printf("SPE %llu : Received initial signal 1!\n", spe_id);
 
     mfc_get(instructions, argp, sizeof(Instruction) * 8, 0, 0, 0);
 
@@ -60,15 +60,12 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
                     break;
 
                 default:
-                    //printf("SPE: Unknown opcode!\n");
                     spu_write_out_intr_mbox(km_unknown_opcode);
                     spu_stop(0);
             }
         }
 
-        //printf("SPE %llu : Waiting for follow up signal1\n", spe_id);
         spu_read_signal1();
-        //printf("SPE %llu : Got follow up signal1\n", spe_id);
 
         mfc_get(instructions, argp, sizeof(Instruction) * 8, 0, 0, 0);
     }
