@@ -25,12 +25,19 @@
 
 #include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
-#include <libla/dense_vector.hh>
+#include <libla/vector.hh>
 #include <libla/difference.hh>
 #include <libla/matrix_error.hh>
 #include <libla/norm.hh>
 #include <libutil/tags.hh>
 
+/**
+ * \file
+ *
+ * Implementation of NodeDistance.
+ *
+ * \ingroup grplibgraph
+ **/
 namespace honei
 {
     /**
@@ -40,7 +47,7 @@ namespace honei
      *
      * \ingroup grplibgraph
      **/
-    template <typename Tag_ = tags::CPU> struct NodeDistance
+    template <typename Tag_> struct NodeDistance
     {
         /**
          * Returns the resulting distance matrix.
@@ -50,32 +57,100 @@ namespace honei
         static DenseMatrix<DataType_> value(const DenseMatrix<DataType_> & pos_matrix)
         {
             // Create the result matrix
-            DenseMatrix<DataType_> result(pos_matrix.columns(), pos_matrix.columns());
+            DenseMatrix<DataType_> result(pos_matrix.rows(), pos_matrix.rows());
 
             // Retrieving an ElementIterator e initialized to the first element in the result matrix
             typename MutableMatrix<DataType_>::ElementIterator e(result.begin_elements());
 
             // Iterate over all nodes (=columns) in the given position matrix
-            for (int i =  0; i < pos_matrix.columns(); ++i)
+            for (int i =  0; i < pos_matrix.rows(); ++i)
             {
                 // The column-vector represents all n coordinates of node i, so we grab them from the matrix
-                DenseVectorSlice<DataType_> v = pos_matrix.column(i);
+                DenseVectorRange<DataType_> v(pos_matrix[i]);
 
                 // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
                 // distance matrix is symmetric, result(i,j) equals result(j,i) and so were waiting for symmetric matrices
                 // to gain performance. So long, the trivial loops.
-                for (int j = 0; j < pos_matrix.columns(); ++j, ++e)
+                for (int j = 0; j < pos_matrix.rows(); ++j, ++e)
                 {
-                    DenseVectorSlice<DataType_> w = pos_matrix.column(j);
+                    DenseVectorRange<DataType_> w(pos_matrix[j]);
                     // Now calculate difference tmp = v - w for each pair of nodes and
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
-                    DenseVector<DataType_> v_copy = v.copy();
-                    DataType_ d = Norm<>::value(Difference<>::value(v_copy, w));
+                    DenseVector<DataType_> v_copy(v.copy());
+                    DataType_ d(Norm<>::value(Difference<>::value(v_copy, w)));
                     *e = d;
                 }
             }
             return result;
+        }
+
+        template <typename DataType_>
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<bool> & neighbours, 
+        SparseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
+        const DataType_ repulsive_force_range)
+        {
+            // Initialize ElementIterators
+            typename MutableMatrix<DataType_>::ElementIterator e(inv_square_dist.begin_elements());
+            typename MutableMatrix<DataType_>::ElementIterator f(square_dist.begin_elements());
+            typename Matrix<bool>::ConstElementIterator g(neighbours.begin_elements());
+            DataType_ square_force_range(repulsive_force_range * repulsive_force_range);
+
+            // Iterate over all nodes (=columns) in the given position matrix
+            for (int i =  0; i < pos_matrix.rows(); ++i)
+            {
+                // The column-vector represents all n coordinates of node i, so we grab them from the matrix
+                DenseVectorRange<DataType_> v(pos_matrix[i]);
+
+                // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
+                // distance matrices are symmetric, and so we are waiting for symmetric matrices
+                // to gain performance. So long, the trivial loops.
+                for (int j = 0; j < pos_matrix.rows(); ++j, ++e, ++f, ++g)
+                {
+                    DenseVectorRange<DataType_> w(pos_matrix[j]);
+                    // Now calculate difference tmp = v - w for each pair of nodes and
+                    // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
+                    // l2-norm of tmp without a root. (see template parameter "root")
+                    DenseVector<DataType_> v_copy(v.copy());
+                    DataType_ d(Norm<>::value(Difference<>::value(v_copy, w)));
+                    (d < square_force_range) && (d > std::numeric_limits<DataType_>::epsilon()) ? *e = 1 / d : *e = 0;
+                    if (*g != false) *f = d;
+                }
+            }
+        };
+
+        template <typename DataType_>
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<DataType_> & edge_weights, 
+        SparseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
+        const DataType_ repulsive_force_range)
+        {
+            // Initialize ElementIterators
+            typename MutableMatrix<DataType_>::ElementIterator e(inv_square_dist.begin_elements());
+            typename MutableMatrix<DataType_>::ElementIterator f(square_dist.begin_elements());
+            typename Matrix<DataType_>::ConstElementIterator g(edge_weights.begin_elements());
+            DataType_ square_force_range(repulsive_force_range * repulsive_force_range);
+
+            // Iterate over all nodes (=columns) in the given position matrix
+            for (int i =  0; i < pos_matrix.rows(); ++i)
+            {
+                // The column-vector represents all n coordinates of node i, so we grab them from the matrix
+                DenseVectorRange<DataType_> v(pos_matrix[i]);
+
+                // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
+                // distance matrices are symmetric, and so we are waiting for symmetric matrices
+                // to gain performance. So long, the trivial loops.
+                for (int j = 0; j < pos_matrix.rows(); ++j, ++e, ++f, ++g)
+                {
+                    DenseVectorRange<DataType_> w(pos_matrix[j]);
+                    // Now calculate difference tmp = v - w for each pair of nodes and
+                    // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
+                    // l2-norm of tmp without a root. (see template parameter "root")
+                    DenseVector<DataType_> v_copy(v.copy());
+                    DataType_ d(Norm<>::value(Difference<>::value(v_copy, w)));
+                    (d < square_force_range) && (d > std::numeric_limits<DataType_>::epsilon()) ? *e = 1 / d : *e = 0;
+                    if (*g > std::numeric_limits<DataType_>::epsilon()) *f = d;
+                }
+            }
         }
     };
 }

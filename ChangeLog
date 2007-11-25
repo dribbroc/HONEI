@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-25 Mathias Kadolsky<mathkad@gmx.de>
+
+	* libgraph/position.hh, position_TEST.cc: Layout-methods new structured.
+	* libgraph/node_distance.hh, node_distance_TEST.cc: Node_distance_inverse is calculated
+	in node_distance.hh and repulsive_force_range was added.
+	* libgraph/matrix_element_distance*.*, node_distance_inverse.hh: Deleted, cause they became obsolete. 
+
+
 2007-11-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/kernels/Makefile.am.m4: Fixed *CLEANFILES.
