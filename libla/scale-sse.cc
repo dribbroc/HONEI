@@ -99,7 +99,7 @@ DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, D
         quad_start = x.size();
     }
 
-    for (unsigned long index = 0 ; index < quad_end ; index += 4) 
+    for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
     {
         m1 = _mm_load_ps(x.elements() + index);
 
