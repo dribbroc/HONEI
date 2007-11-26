@@ -273,20 +273,44 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT2_> & value(const DT1_ a, BandedMatrix<DT2_> & x)
         {
-            ///\todo: Avoid scaling padded zeros in bands.
-
             CONTEXT("When scaling BandedMatrix (MultiCore):");
 
             ThreadPool * tp(ThreadPool::get_instance());
 
             std::list< PoolTask* > dispatched_tasks;
 
-            for (typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands()), vi_end(x.end_bands());
-                    vi != vi_end; ++vi)
+            typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands());
+
+            for (typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands()), vi_end(x.band_at(x.size() - 1)) ;
+                    vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
                     continue;
+
+                DenseVectorRange<DT2_> band_range(*vi, vi.index() + 1, x.size() - (vi.index() + 1));
+
+                TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, band_range);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
+            }
+
+            if (vi.exists())
+            {
                 TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVector<DT2_> > wrapper(a, *vi);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
+            }
+            else
+            {
+                ++vi;
+            }
+
+            for (typename BandedMatrix<DT2_>::VectorIterator vi_end(x.end_bands()) ; vi != vi_end ; ++vi)
+            {
+                if (! vi.exists())
+                    continue;
+
+                DenseVectorRange<DT2_> band_range(*vi, 2 * x.size() - vi.index() - 1, 0);
+
+                TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, band_range);
                 dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
 
@@ -428,7 +452,7 @@ namespace honei
         template <typename DT1_, typename IT1_, typename IT2_>
         static void value(const DT1_ a, IT1_ & x, const IT2_ & x_end)
         {
-            CONTEXT("When calculating iterator-based scale (MultiCore):");
+            CONTEXT("When calculating iterator-based scale:");
 
             for ( ; x < x_end; ++x)
             {
