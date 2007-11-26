@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-11-26 Sven Mallach <sven.mallach@honei.org>
 
+	* libla/difference-cell.cc, libla/difference.hh,
+	libla/difference_TEST.cc: Applied missing Test Difference(SV,DV)!
+	Fixed bugs that arose when executing the test. Added Difference(SV,DV)
+	on Cell which only uses Difference(DV,DV) as there will be hardly a
+	speedup when writing an own spe-program for it.
+
+2007-11-26 Sven Mallach <sven.mallach@honei.org>
+
 	* cell/libla/dense_sparse_float_sum.cc, libla/sum-cell.cc,
 	libla/sum_TEST.cc: Added double buffering for Sum(DV,SV) and tests.
 	* cell/libutil/transfer.hh: Generalised usage of fill to both PPU and

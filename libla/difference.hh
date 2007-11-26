@@ -341,7 +341,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorBase<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        static DenseVectorBase<DT1_> & value(const SparseVector<DT1_> & a, DenseVectorBase<DT2_> & b)
         {
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -441,6 +441,7 @@ namespace honei
          */
 
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+        static DenseVector<float> value(const SparseVector<float> & a, const DenseVector<float> & b);
 
         /// \}
     };

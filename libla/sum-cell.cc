@@ -104,7 +104,7 @@ namespace honei
         unsigned long last_index(b.indices()[b.used_elements()-1]);
 
         unsigned a_needed_transfers = ((last_index + 1) * 4) / 16384;
-        unsigned a_rest_transfer_size(((last_index+1) * 4) % 16384);
+        unsigned a_rest_transfer_size(((last_index + 1) * 4) % 16384);
         if (a_rest_transfer_size != 0)
             a_needed_transfers++;
 
