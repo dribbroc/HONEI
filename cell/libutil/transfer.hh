@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -38,6 +39,11 @@ unsigned multiple_of_sixteen(unsigned u)
     return (r > 0) ? u + 16 - r : u;
 }
 
+/* extract
+ * extract is a function that allows extracting one vector out of two by maintaining an offset.
+ * Please note that extract can only be used on SPU-side as it uses spu_intrinsics.h.
+ */
+
 template <typename DT_> inline void extract(DT_ & first, const DT_ & second, unsigned offset) __attribute__((always_inline));
 
 template <> inline void extract<vector float>(vector float & first, const vector float & second, unsigned offset)
@@ -51,12 +57,17 @@ template <> inline void extract<vector double>(vector double & first, const vect
     first = spu_shuffle(first, second, intern::extract_patterns[offset * 2]);
 }
 
+/* fill
+ * fill is a simple function that allows filling a container by maintaining its address, a size and a value to fill with.
+ * Please note that fill can only be used with aligned addresses.
+ */
+
 template <typename DT_> inline void fill(void * address, unsigned long size, DT_ value) __attribute__((always_inline));
 
 template <> inline void fill<float>(void * address, unsigned long size, float value)
 {
     honei::cell::Pointer<float> p = { address };
-    vector float v(spu_splats(value));
+    vector float v = { value, value, value, value };
 
     unsigned i(0);
     for ( ; i < size / sizeof(float) ; ++i)
@@ -73,7 +84,7 @@ template <> inline void fill<float>(void * address, unsigned long size, float va
 template <> inline void fill<double>(void * address, unsigned long size, double value)
 {
     honei::cell::Pointer<double> p = { address };
-    vector double v(spu_splats(value));
+    vector double v = { value, value };
 
     unsigned i(0);
     for ( ; i < size / sizeof(double) ; ++i)

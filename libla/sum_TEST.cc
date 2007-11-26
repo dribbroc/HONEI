@@ -968,6 +968,9 @@ DenseVectorSparseVectorSumTest<tags::CPU, float> dense_vector_sparse_vector_sum_
 DenseVectorSparseVectorSumTest<tags::CPU, double> dense_vector_sparse_vector_sum_test_double("double");
 DenseVectorSparseVectorSumTest<tags::CPU::MultiCore, float> mc_dense_vector_sparse_vector_sum_test_float("MC float");
 DenseVectorSparseVectorSumTest<tags::CPU::MultiCore, double> mc_dense_vector_sparse_vector_sum_test_double("MC double");
+#ifdef HONEI_CELL
+DenseVectorSparseVectorSumTest<tags::Cell, float> cell_dense_vector_sparse_vector_sum_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorSparseVectorSumQuickTest :

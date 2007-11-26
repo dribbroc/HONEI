@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -99,7 +100,39 @@ namespace honei
         Operand oc = { b.indices() };
         Operand od;
         od.u = b.used_elements();
-        SPEInstruction instruction(oc_dense_sparse_float_sum, a.size(), oa, ob, oc, od);
+
+        unsigned long last_index(b.indices()[b.used_elements()-1]);
+
+        unsigned a_needed_transfers = ((last_index + 1) * 4) / 16384;
+        unsigned a_rest_transfer_size(((last_index+1) * 4) % 16384);
+        if (a_rest_transfer_size != 0)
+            a_needed_transfers++;
+
+        if (a_needed_transfers == 0)
+            a_needed_transfers++;
+
+        // We can only transfer half of the B-part, cause indices pointer is 64 bit.
+        unsigned long b_needed_transfers((od.u * 4) / 8192);
+        unsigned b_rest_transfer_size((od.u * 4) % 8192);
+        if (b_rest_transfer_size != 0)
+            b_needed_transfers++;
+
+        if (b_needed_transfers == 0)
+            b_needed_transfers++;
+
+        Operand oe, of, og, oh, oi;
+
+        oe.u = a_needed_transfers;
+        of.u = a_rest_transfer_size;
+        og.u = b_needed_transfers;
+        oh.u = b_rest_transfer_size;
+        // Last index of first transfered elements of A
+        oi.u = a.size() > 4096 ? 4095 : a.size()-1;
+
+        Operand oj;
+        oj.u = a.size();
+
+        SPEInstruction instruction(oc_dense_sparse_float_sum, 16384, oa, ob, oc, od, oe, of, og, oh, oi, oj);
 
         SPEManager::instance()->dispatch(instruction);
 

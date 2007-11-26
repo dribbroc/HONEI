@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-26 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/dense_sparse_float_sum.cc, libla/sum-cell.cc,
+	libla/sum_TEST.cc: Added double buffering for Sum(DV,SV) and tests.
+	* cell/libutil/transfer.hh: Generalised usage of fill to both PPU and
+	SPU. Added some small comments as temporary solution.
+
 2007-11-25 Markus Geveler <apryde@gmx.de>
 
 	* libmath/iterative_refinement_TEST.cc: Added fixed precision tests to
@@ -178,7 +185,7 @@ see the NEWS file.
 	vector-reduction operations.
 	
 
-2007-11-22 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-22 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/kernels/kernel_reference.sk, cell/libla/Makefile.am,
 	cell/opcodes.hh, libla/difference.hh, libla/difference_TEST.cc,
@@ -199,7 +206,7 @@ see the NEWS file.
 	Added new constructor to be able to create a range of a range.
 	* libla/dense_vector_range_TEST.cc: Added tests for new constructor.
 
-2007-11-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-21 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libutil/transfer.hh: Wrote a spe-side "fill"-function. It can 
 	be easily used within spe-programs to fill containers vectorised.
@@ -240,14 +247,14 @@ see the NEWS file.
 
 	* libswe/solver.hh, libswe/solver_TEST.cc: Added debug branch in RelaxSolver, calmed down test.
 	
-2007-11-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-21 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/dense_vector_slice.hh, libla/dense_vector_slice-impl.hh: Added
 	member function stepsize(). Without it the use of function
 	elements() does not make much sense because we don't now where our
 	next element is...
 
-2007-11-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-21 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/product_TEST.cc: Reduced the size of the DM * DM Cell
 	QuickTest as after the last kernel-changes the maximum possible size
@@ -326,7 +333,7 @@ see the NEWS file.
 	* libla/product.hh, libla/dense_matrix_TEST.cc: Adjusted for row
 	vector changes.
 
-2007-11-18 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-18 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/cell.hh, libutil/spe_instruction.cc,
 	libutil/spe_instruction.hh: Appended Instruction to take 13 Operands.
@@ -558,7 +565,7 @@ see the NEWS file.
 	implementation of a parser for DenseVectors and -matrices, added
 	test-files.
 
-2007-11-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-12 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/dense_dense_float_element_product.cc,
 	libla/element_product-cell.cc, libla/element_product.hh,
@@ -566,7 +573,7 @@ see the NEWS file.
 	support for DenseMatrix, included Base- and QuickTests.
 	* libla/scale_TEST.cc: Also included a BaseTest.
 
-2007-11-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-12 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/kernels/kernel_reference.sk,
 	-cell/libla/dense_float_matrix_scale.cc,
@@ -655,13 +662,13 @@ see the NEWS file.
 	Added implementation of JACOBI - preconditioned CG for dense systems
 	and its test.
 
-2007-11-08 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-08 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/dense_dense_float_matrix_product.cc,
 	cell/libla/dense_dense_float_matrix_vector_product.cc: Applied a
 	simple optimization and added some more conventional comments.
 
-2007-11-08 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-08 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/kernels/kernel_reference.sk,
 	cell/libla/dense_float_matrix_scale.cc,cell/libla/dense_float_vector_scale.cc
@@ -669,7 +676,7 @@ see the NEWS file.
 	libla/scale-cell.cc, libla/scale.hh, libla/scale_TEST.cc: Added
 	Scale-Operations for DenseMatrix and DenseVector on Cell.
 
-2007-11-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-07 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/dense_dense_float_matrix_product.cc: Removed comment.
 	* cell/libla/dense_dense_float_matrix_vector_product.cc: Made Dense
@@ -708,7 +715,7 @@ see the NEWS file.
 	Added implementation of iterative refinement for banded systems,
 	resolved minor conversion bug.
 
-2007-11-06 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-11-06 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/cell.hh, cell/kernels/kernel_reference.sk,
 	cell/libla/dense_dense_float_matrix_product.cc,
@@ -917,7 +924,7 @@ see the NEWS file.
 	pre-refactoring mixed precision iterative refinement with CG and a
 	test.
 
-2007-10-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-10-29 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/difference_TEST.cc, libla/element_product_TEST.cc: Last fixes
 	of problems that arose because of constructor-changes. All tests now
@@ -944,7 +951,7 @@ see the NEWS file.
 	version of a Jacobi iterative stationary solver for dense LES and its
 	test.
 
-2007-10-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-10-29 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/dense_matrix_TEST.cc, libla/difference_TEST.cc,
 	libla/element_inverse_TEST.cc, libla/element_product_TEST.cc,
@@ -954,7 +961,7 @@ see the NEWS file.
 	arose with change of DenseMatrix-Constructor and changed
 	SparseMatrix(columns,rows) to SparseMatrix(rows,columns).
 
-2007-10-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-10-29 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/kernels/kernel_reference.sk,
 	cell/libla/dense_dense_float_matrix_product.cc,
@@ -1105,7 +1112,7 @@ see the NEWS file.
 	libla/product-sse.cc, libla/product_TEST.cc:
 	Corrected exception throwing and testing.
 
-2007-10-25 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-10-25 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/cell/dense_sparse_float_sum.cc, libla/cell/files.m4,
 	libla/cell/kernel.cc.in, libla/cell/kernel_reference.sk,
@@ -1172,7 +1179,7 @@ see the NEWS file.
 
 	* benchmark/benchmark.cc: Added output of memory throughput to evaluate function.
 
-2007-10-18 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-10-18 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/cell/files.m4, libla/cell/kernel_reference.sk,
 	libla/element_product.hh, libla/element_product_TEST.cc,
@@ -1470,7 +1477,7 @@ see the NEWS file.
 	* libmath/quadrature_TEST.cc: Fixed the error term for trapezoid
 	test case.
 
-2007-09-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-20 Sven Mallach <sven.mallach@honei.org>
 
 	* libgraph/mask_error.hh, libgraph/mask_error.cc: Added new Exception
 	"MaskIsZeroException" because if we don't make a distinction here,
@@ -1532,11 +1539,11 @@ see the NEWS file.
 
 	* libla/dense_matrix.hh: Added elements method.
 
-2007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-13 Sven Mallach <sven.mallach@honei.org>
 
 	*libla/difference_TEST.cc: Fixed exception test for Banded/Dense.
 
-2007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-13 Sven Mallach <sven.mallach@honei.org>
 
 	*libla/reduction.hh: Implemented reductions from matrix to vector.
 	*libla/reduction_TEST.cc: Added tests for it.
@@ -1581,7 +1588,7 @@ see the NEWS file.
 	* configure.ac, libla/Makefile.am.m4, libla/files.m4:
 	Completed sse support in the build framework.
 
-2007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-13 Sven Mallach <sven.mallach@honei.org>
 
 	*libla/reduction.hh: Implemented reductions from vector to sum.
 	*libla/reduction_TEST.cc: Added tests for it.
@@ -1603,7 +1610,7 @@ see the NEWS file.
 	* libla/sum_TEST.cc, libla/sum_BENCHMARK.cc:
 	Templatized test and benchmark for Sum(dv,dv).
 
-007-09-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+007-09-13 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/product.hh: Highly optimized all banded-products by using
 	band_at(index) which saves at least one, up to four branches per
@@ -1640,7 +1647,7 @@ see the NEWS file.
 	two bandedmatrices test.
 	* libla/banded_matrix.hh: Added some CONTEXT statements.
 
-2007-09-09 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-09 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/banded_matrix.hh: Fixed internal bug in BandedElementIterator
 	concerning indices into bands, causing wrong assembly and output.
@@ -1652,7 +1659,7 @@ see the NEWS file.
 
 	* libla/product_TEST.cc: Corrected exception tests.
 
-2007-09-08 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-08 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/product.hh: Commit of buggy code for Product(Banded,Banded) to
 	allow debugging by more than one person. Please concentrate on case
@@ -1738,13 +1745,13 @@ see the NEWS file.
 	* unittest/unittest.cc, Makefile.am: Added context statement when
 	running unittests.
 
-2007-09-02 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-02 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/sum.hh: Cleaned up with possible bug. Was a bug that did not
 	be recognized because there is no test case for Banded Matrix * Sparse
 	Matrix. Fixed a small typo.
 
-2007-09-02 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-09-02 Sven Mallach <sven.mallach@honei.org>
 	* libla/product.hh: Added implementations for matrix products Banded *
 	Sparse, Sparse * Banded, Dense * Banded, that were developed when svn
 	was locked. Resolved naming conflicts that arose because of renamings
@@ -1919,13 +1926,13 @@ see the NEWS file.
 	libutil/worker.cc, libutil/worker.hh, libutil/worker_TEST.cc: Step 1
 	of refactoring: Moved libutil from namespace pg512 to namespace honei.
 
-2007-08-30 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-30 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/sparse_vector.hh: Fixed issue, that when resizing capacity it
 	was not checked if capacity will then exceed size. Now it is resized
 	to the minimum of size and capacity+10.
 
-2007-08-30 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-30 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector.hh: Added function element_at(index) to interface
 	vector.hh.
@@ -1933,7 +1940,7 @@ see the NEWS file.
 	and working algo for Banded * Dense. Decided, that all Banded * Dense,
 	Banded * Sparse and vice versa shall return dense matrices.
 
-2007-08-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-29 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/sparse_vector.hh: Added iterator element_at(index) also for
 	sparse vector. Of course only for Not-Non-Zero-Iterator.
@@ -2054,7 +2061,7 @@ see the NEWS file.
 	corrected boundary setup, resolved copy - conflicts, resolved memory
 	leaks.
 
-2007-08-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-26 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_elementwise_product.hh: Changed Dense <- Sparse * Dense
 	to Sparse <- Sparse * Dense.
@@ -2103,12 +2110,12 @@ see the NEWS file.
 	libutil/memory_backend_cell.hh, libutil/memory_backend_cell_TEST.cc:
 	Added CellBackend, the MemoryBackend implementation for Cell BE.
 
-2007-08-23 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-23 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_difference_TEST.cc, libla/matrix_sum_TEST.cc: Applied
 	changes to tests due to my changes in thrown exceptions.
 
-2007-08-23 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-23 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_difference.hh, libla/matrix_sum.hh,
 	libla/matrix_elementwise_product.hh, libla/saxpy.hh,
@@ -2126,7 +2133,7 @@ see the NEWS file.
 	libla/scalar_product_TEST.cc, libla/vector_difference_TEST.cc: Added
 	tests for sparse/dense and dense/sparse operations where appropriate.
 
-2007-08-22 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-22 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_difference.hh, libla/matrix_sum.hh: Reworked some
 	sparse-algorithms! Debugged Throwing of Exceptions. Added information
@@ -2165,7 +2172,7 @@ see the NEWS file.
 	implementation, a LAKE AT REST situation will collapse after the first
 	60 timesteps.
 
-2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-20 Sven Mallach <sven.mallach@honei.org>
 
         * libla/saxpy.hh: Fixed some issues, should be okay when
 	Sparse-Iterators are fixed.
@@ -2181,23 +2188,23 @@ see the NEWS file.
 	* libla/saxpy_TEST.cc: Added tests for new VectorScaledSum aka
 	saxpy.
 
-2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-20 Sven Mallach <sven.mallach@honei.org>
 
         * libla/vector_sum.hh, libla/vector_difference.hh,
 	libla/vector_elementwise_product.hh: Some fixes and optimizations.
 
-2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-20 Sven Mallach <sven.mallach@honei.org>
 
         * libla/matrix_sum.hh: Some corrections.
 	* libla/saxpy.hh: Simplified and destupided algorithms.
 
-2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-20 Sven Mallach <sven.mallach@honei.org>
 
         * libla/matrix_sum.hh, libla/matrix_difference.hh: Fixed bugs, made
 	consequent use of new size()-member in BandedMatrix and []-operator
 	for dense matrices.
 
-2007-08-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-20 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/banded_matrix.hh: Added member size().
 	* libla/matrix_difference.hh: Made use of size(), optimized
@@ -2353,7 +2360,7 @@ see the NEWS file.
 
 	* libswe/Makefile.am.m4: Added LibLA to LibSWE's list of dependencies.
 
-2007-08-16 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-16 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_element_inverse.hh: Changed banded-algorithm to use
 	band-iterators instead of element-iterators.
@@ -2408,7 +2415,7 @@ see the NEWS file.
 	after preprocessing in order to test it, adjusted condtructor. See
 	documentation for details of usage.
 
-2007-08-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-13 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_vector_product_TEST.cc: Commented calls to band() out
 	until it is fixed, so that checkmailer.bash can do its work...
@@ -2418,7 +2425,7 @@ see the NEWS file.
 	* libswe/solver.hh: Resolved bad band insertion in matrix assembly
 	(DEBUG).
 
-2007-08-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-12 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_vector_product.hh: Corrected Banded Matrix * Sparse
 	Vector case and tidied the whole file up. Re-switched to band-iterator
@@ -2461,7 +2468,7 @@ see the NEWS file.
 	Second, fixed usage of __LINE__ to allow multiple CONTEXT invocations
 	per block.
 
-2007-08-09 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-09 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/banded_matrix.hh: Changed *-operator for mutable iterators so
 	that the instanciated DenseVector, that is created when an element / a
@@ -2474,14 +2481,14 @@ see the NEWS file.
 	* libla/banded_matrix.hh: Fixed another off-by-one bug in end_bands().
 	Added assertion on index range to bands().
 
-2007-08-09 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-09 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_vector_product.hh: Implemented should-be-working
 	version of Banded Matrix * Dense Vector. Test will not pass, because
 	of problems with a Shared Array Counter, when the function band() (in
 	the TEST.cc) is called. Banded Matrix * Sparse Vector will follow later.
 
-2007-08-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-07 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/dense_vector.hh: Added additional iterator called
 	<<element_at(unsigned long index)>> to be able to create miscellaneous
@@ -2493,7 +2500,7 @@ see the NEWS file.
 	* libla/matrix_vector_product_TEST.cc: Added additional bands to the source
 	banded matrix.
 
-2007-08-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-07 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_product.hh: Fixed SparseVector-Case -> Test passes.
 	* libla/matrix_vector_product.hh: Added a first implementation for
@@ -2516,7 +2523,7 @@ see the NEWS file.
 
 	* libla/matrix_product_TEST.cc: Added SparseMatrixProductQuickTest.
 
-2007-08-06 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-08-06 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_product.hh: Made algorithms compatible to SparseMatrix
 	due to missing column-access. I hope it computes the right thing :-).
@@ -2706,7 +2713,7 @@ see the NEWS file.
 	* libswe/solver.hh: Remanaged preprocessing, stringified relax
 	-vectors, which reveals problems with flow(i,j).
 
-2007-07-17 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-17 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/scalar_vector_product.hh libla/scalar_vector_sum.hh
 	libla/vector_difference.hh libla/vector_sum.hh
@@ -2720,7 +2727,7 @@ see the NEWS file.
 	x[i]>>. To be renamed later. Want to hold vector_scaled_sum.hh because
 	it mind help unittest-group find further errors.
 
-2007-07-17 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-17 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_sum.hh: Fixed some small things, added more Sparse
 	support.
@@ -2736,7 +2743,7 @@ see the NEWS file.
 	* libswe/solver_TEST.cc: Added stringification of scalarfields.
 	* libswe/solver.hh: Resolved preprocessing bug, stringified maps.
 
-2007-07-16 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-16 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/scalar_matrix_product.hh, libla/matrix_vector_product.hh,
 	libla/matrix_sum.hh, libla/matrix_product.hh,
@@ -2748,7 +2755,7 @@ see the NEWS file.
 	libla/vector_sum.hh: Optimized via consequent use of iterators.
 	* libla/matrix_vector_product_TEST.cc: Applied changes to header.
 
-2007-07-15 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-15 Sven Mallach <sven.mallach@honei.org>
 
         * libla/matrix_row_sum_vector.hh: Small fix, needed zero-initialized
 	vector for result to avoid trashed memory bug.
@@ -2757,12 +2764,12 @@ see the NEWS file.
 
 	* libla/matrix_vector_product_TEST.cc: Fixed test reference values.
 
-2007-07-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-12 Sven Mallach <sven.mallach@honei.org>
 
         * libla/matrix_vector_product_TEST.cc: Changed values of row/columns
 	for THROW-Test due to changes in header.
 
-2007-07-12 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-12 Sven Mallach <sven.mallach@honei.org>
 
         * libla/matrix_vector_product.hh: Fixed algorithm. Tests pass for
 	anything except banded cases now.
@@ -2831,7 +2838,7 @@ see the NEWS file.
 	* AUTHORS, COPYING, doc/Makefile.am, doc/footer.html: Added list of
 	authors and redistribution conditions as discussed.
 
-2007-07-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-07 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/banded_matrix.hh: Fixed logical bug and added (in)equality
 	operators.
@@ -2881,7 +2888,7 @@ see the NEWS file.
 	* libswe/solver.hh: Added implementation of prediction stage, updated
 	solver interface.
 
-2007-07-07 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-07 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/banded_matrix.hh: Added BandIterator! At the moment only
 	assignable version, will try const version later! Be careful,
@@ -2913,7 +2920,7 @@ see the NEWS file.
 	* libswe/solver.hh: Added implementation of fundamental
 	matrix assemblation function - still under heavy construction.
 
-2007-07-03 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-03 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_*.hh: Applied interface RowAccessMatrix where
 	applicable.
@@ -2992,7 +2999,7 @@ see the NEWS file.
 	* libswe/solver.hh: Implemented sourceterm computation.
 	* ChangeLog: Changed my email-address to a more public one.
 
-2007-07-02 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-02 Sven Mallach <sven.mallach@honei.org>
 
         * libla/banded_matrix.hh: Added Constructor with initialization of all
 	bands to zero vectors. Needed for MatrixProduct.
@@ -3013,12 +3020,12 @@ see the NEWS file.
 
 	* libla/sparse_vector_TEST.cc: Added SparseVectorReallocQuickTest.
 
-2007-07-01 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-01 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector_elementwise_product.hh Fixed a bug so that tests pass
 	now.
 
-2007-07-01 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-01 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_sum.hh, libla/matrix_difference.hh,
 	libla/matrix_elementwise_product.hh: Added support for
@@ -3029,7 +3036,7 @@ see the NEWS file.
 	to new convention style.
 	* libla/matrix_element_inverse_TEST.cc: Applied changes of header.
 
-2007-07-01 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-07-01 Sven Mallach <sven.mallach@honei.org>
 
 	* +libla/vector_element_inverse.hh: Added this high priority
 	operation for dense and sparse vectors.
@@ -3110,12 +3117,12 @@ see the NEWS file.
 
 	* libla/matrix_vector_product_TEST.cc: Added DenseMatrixSparseVectorProductTest.
 
-2007-06-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-29 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector_elementwise_product.hh: Fixed some bugs hopefully. I
 	will perhaps optimize it a little later.
 
-2007-06-29 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-29 Sven Mallach <sven.mallach@honei.org>
 
 	* -libla/vector_matrix_product.hh,
 	-libla/vector_matrix_product_TEST.cc: Removed.
@@ -3160,7 +3167,7 @@ see the NEWS file.
 
 	* libla/element_iterator_TEST.cc: Added SparseVectorElementIterationTest.
 
-2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-26 Sven Mallach <sven.mallach@honei.org>
 
 	* -libla/vector_product.hh: Is now called vector_elementwise_product.
 	* +libla/vector_elementwise_product.hh: See above.
@@ -3173,16 +3180,16 @@ see the NEWS file.
 	* libla/vector_product_TEST.cc: Added DenseVectorProductTest.
 	* libla/vector_matrix_product_TEST.cc: Added DenseVectorMatrixProductTest.
 
-2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-26 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector_product.hh: Removed overhead, made it more efficient.
 	* libla/vector_sum.hh: Added a missinge reference-&.
 
-2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-26 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/scalar_product.hh: Added missing return statement.
 
-2007-06-26 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-26 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector_sum.hh, libla/vector_difference.hh,
 	libla/vector_scaled_sum.hh: Corrected algorithm for reassembling a
@@ -3233,13 +3240,13 @@ see the NEWS file.
 	Replaced TEST_CHECK_EQUAL_WITHIN_EPS by TEST_CHECK_EQUAL statements.
 
 
-2007-06-24 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-24 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_product.hh: Fixed typo.
 	* libgraph/matrix_element_distance_inverse.hh: Added if-case.
 	* libla/files.m4: Added matrix_product_TEST.cc.
 
-2007-06-24 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-24 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/dense_matrix.hh: Changed return-type of []-operator and
 	column()-method from Vector to DenseVector.
@@ -3292,12 +3299,12 @@ see the NEWS file.
 
 	* libgraph/matrix_element_distance_inverse_TEST.cc: Added DenseMatrixElementDistanceInverseQuickTest.
 
-2007-06-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-21 Sven Mallach <sven.mallach@honei.org>
 
 	* autogen.bash, configure.ac: Tried to add libgraph to autotools
 	system.
 
-2007-06-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-21 Sven Mallach <sven.mallach@honei.org>
 
 	* libgraph/matrix_element_distance.hh: Fixed small things.
 	* libgraph/matrix_element_distance_TEST.cc: Fixed calls to
@@ -3309,7 +3316,7 @@ see the NEWS file.
 	* +libgraph/matrix_element_distance_inverse.hh: Added new operation
 	for kehrqdist.
 
-2007-06-21 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-21 Sven Mallach <sven.mallach@honei.org>
 
 	* -libla/matrix_element_product.hh,
 	libla/matrix_element_product_TEST.cc: Removed.
@@ -3353,13 +3360,13 @@ see the NEWS file.
 	* libla/matrix_product.hh: Changed exception type to
 	MatrixRowsDoNotMatch.
 
-2007-06-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-20 Sven Mallach <sven.mallach@honei.org>
 
 	* -libla/matrix_mask.hh, libla/matrix_mask_TEST.cc: Removed now
 	obsolete operation.
 	* libla/matrix_element_product.hh: Changed annotation.
 
-2007-06-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-20 Sven Mallach <sven.mallach@honei.org>
 
 	* +libla/matrix_product.hh: Added operation for Dense.
 	* +libla/matrix_element_product.hh Added operation.
@@ -3367,7 +3374,7 @@ see the NEWS file.
 	Error-Type: MatrixMultiplicationError.
 	* libla/files.m4: Appended it.
 
-2007-06-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-20 Sven Mallach <sven.mallach@honei.org>
 
 	* +libla/scalar_matrix_sum.hh, libla/scalar_vector_sum.hh,
 	libla/matrix_element_sum: Added these 3 operations.
@@ -3402,11 +3409,11 @@ see the NEWS file.
 	* libla/vector_scaled_sum.hh: Fixed typo - bug.
 	* libla/files.m4 Added test - entry.
 
-2007-06-19 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-19 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/files.m4: Fixed my stupid new entry.
 
-2007-06-19 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-19 Sven Mallach <sven.mallach@honei.org>
 
 	* +libla/matrix_sum.hh, libla/matrix_difference.hh: Added the two new
 	operations using the new conventions.
@@ -3420,7 +3427,7 @@ see the NEWS file.
 	* libla/vector_masked_max_index_TEST.cc, libla/vector_masked_min_index_TEST.cc: 
 	Fixed stupid error, shoult read doxygen before writing tests.
 
-2007-06-19 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-19 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector_masked_min_index.hh, libla/vector_masked_max_index.hh:
 	Fixed a obsolete symbol.
@@ -3439,7 +3446,7 @@ see the NEWS file.
 	* libla/vector_masked_max_index_TEST.cc: Added DenseVectorMaskedMaxIndexTest.
 	* libla/vector_masked_min_index_TEST.cc: Added DenseVectorMaskedMinIndexTest.
 
-2007-06-18 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-18 Sven Mallach <sven.mallach@honei.org>
 
 	* libgraph/matrix_element_distance.hh: Corrected header.
 	* +libgraph/Makefile.am.m4: Added first attempt for Makefile.am.m4
@@ -3498,12 +3505,12 @@ see the NEWS file.
 	* libswe/limiter.hh: Fixed further errors, hopefully improved
 	readability.
 
-2007-06-15 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-15 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/files.m4: Removed tests for VectorMaskedMin/MaxIndex, 
 	because they don't exist.
 
-2007-06-15 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-15 Sven Mallach <sven.mallach@honei.org>
 
 	* +libgraph/files.m4: Added files.m4, appended 
 	matrix_element_distance.hh.
@@ -3529,7 +3536,7 @@ see the NEWS file.
 	* libutil/shared_array.hh: Oops. Forgot to commit reset() support for
 	SharedArray.
 
-2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-14 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/scalar_vector_product.hh: Fixed a missing *-operator.
 	* libla/scalar_matrix_product.hh: Added a reference-&.
@@ -3570,7 +3577,7 @@ see the NEWS file.
 
 	* libla/*_TEST.cc: Unified test names.
 
-2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-14 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/scalar_matrix_product.hh, 
 	libla/scalar_vector_product.hh: Fixed some bugs and 
@@ -3590,14 +3597,14 @@ see the NEWS file.
 
 	* libla/matrix_mask_TEST.cc: Removed a few bugs in MatrixMaskTest.
 
-2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-14 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/files.m4: Added vector_mask.hh, scalar_matrix_product_TEST,
 	fixed syntactic error.
 	* libla/scalar_matrix_product.hh, scalar_vector_product.hh: Made these headers meet new 
 	constraints concerning change of references and return types.
 
-2007-06-14 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-14 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/matrix_mask.hh: Fixed some compilation problems with the 
 	ConstElementIterator for the boolean mask-matrix, so that it 
@@ -3690,7 +3697,7 @@ see the NEWS file.
 	* libutil/exception.cc, libutil/exception.hh: Added exception class
 	InternalError.
 
-2007-06-06 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-06 Sven Mallach <sven.mallach@honei.org>
 
 	* +libla/scalar_matrix_product.hh: Added operation scalar * 
 	matrix for dense and banded matrices.
@@ -3699,7 +3706,7 @@ see the NEWS file.
 	vector_difference.hh: Made some parameters const.
 	* libla/matrix_mask.hh: Added operation for banded matrices.
 
-2007-06-06 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-06 Sven Mallach <sven.mallach@honei.org>
 
 	* +libla/scalar_vector_product.hh: Added operation scalar * 
 	vector.
@@ -3786,12 +3793,12 @@ see the NEWS file.
 	* unittest/unittest.hh: Moved all unittest-classes to namespace tests.
 	* libla/*_TEST.cc: All test cases are now using namespace tests.
 
-2007-06-04 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-04 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector_norm.hh: Changed some "abs()" to "fabs()".
 	* libla/scalar_product.hh: Removed unused iterator.
 
-2007-06-04 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-04 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector_sum.hh: Fixed some bugs, so that
 	vector_sum_TEST.cc passes now.
@@ -3832,7 +3839,7 @@ see the NEWS file.
 	descendants in general, instead of only accepting DenseVector
 	instances.
 
-2007-06-03 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-06-03 Sven Mallach <sven.mallach@honei.org>
 
 	* +libla/vector_sum.hh, libla/files.m4: Added after old file was renamed to vector_element_sum.hh.
 
@@ -3923,7 +3930,7 @@ see the NEWS file.
 	again.
 	* libla/dense_vector.hh: Fixed copy-constructor.
 
-2007-05-24 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-05-24 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/dense_matrix.hh: Added function column() which retrieves column-Vectors
 	for DenseMatrices. Fixed the indexing problem in operator[] and column() methods
@@ -4015,7 +4022,7 @@ see the NEWS file.
 
 	* unittest: Removed obsolete unittest framework.
 
-2007-05-20 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-05-20 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/vector.norm.hh: Added methods for SparseVector.
 	* +libla/matrix_error.hh, +libla/matrix_error.cc: Added exception
@@ -4129,11 +4136,11 @@ see the NEWS file.
 	* libutil/shared_array.hh: Reworked
 	SharedArrayCounter and removed silly unsigned bug.
 
-2007-05-10 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-05-10 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/norm.hh: Some fixes.
 
-2007-05-10 Sven Mallach <sven.mallach@uni-dortmund.de>
+2007-05-10 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/norm.hh: First Version of VectorNorm header.
 
