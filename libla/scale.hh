@@ -281,6 +281,7 @@ namespace honei
 
             typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands());
 
+            // Calculating lower triangular matrix.
             for (typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands()), vi_end(x.band_at(x.size() - 1)) ;
                     vi != vi_end ; ++vi)
             {
@@ -293,16 +294,16 @@ namespace honei
                 dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
 
+            // Calculating diagonal band.
             if (vi.exists())
             {
                 TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVector<DT2_> > wrapper(a, *vi);
                 dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
-            else
-            {
-                ++vi;
-            }
 
+            ++vi;
+
+            // Calculating upper traingular matrix.
             for (typename BandedMatrix<DT2_>::VectorIterator vi_end(x.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -314,6 +315,7 @@ namespace honei
                 dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
 
+            // Wait until all jobs are done.
             while(! dispatched_tasks.empty())
             {
                 PoolTask * pt = dispatched_tasks.front();
