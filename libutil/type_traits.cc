@@ -19,7 +19,7 @@
 
 #include <libutil/type_traits.hh>
 
-#if defined(__ALTIVEC__) || defined(HONEI_CELL)
+#if defined(__ALTIVEC__)
 #  include <altivec.h>
 #  include <cstring>
 #else /* Unoptimised */
@@ -30,7 +30,7 @@ namespace honei
 {
     namespace intern
     {
-#if defined(__ALTIVEC__) || defined(HONEI_CELL)
+#if defined(__ALTIVEC__)
 
         template <> void
         PODTraits<float>::copy(const float * source, float * dest, std::size_t count)
