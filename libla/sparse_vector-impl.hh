@@ -89,7 +89,7 @@ namespace honei
 
                 // Sneak in 'terminating elements', as index can never be size.
                 _elements[0] = DataType_(0);
-                std::fill_n(_indices.get(), capacity, size);
+                TypeTraits<unsigned long>::fill(_indices.get(), capacity, size);
             }
 
             /**
@@ -119,7 +119,7 @@ namespace honei
         if (realloc)
         {
             // Write out the terminating elements.
-            std::fill_n(indices, capacity, _imp->_size);
+            TypeTraits<unsigned long>::fill(indices, capacity, _imp->_size);
 
             TypeTraits<DataType_>::copy(_imp->_elements.get(), elements, position + 1);
             TypeTraits<unsigned long>::copy(_imp->_indices.get(), indices, position + 1);

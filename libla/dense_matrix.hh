@@ -124,8 +124,7 @@ namespace honei
             {
                 CONTEXT("When creating DenseMatrix:");
 
-                /// \todo Use TypeTraits::fill()
-                std::fill_n(_elements.get(), rows * columns, value);
+                TypeTraits<DataType_>::fill(_elements.get(), _rows * _columns, value);
             }
 
             /**
@@ -142,8 +141,7 @@ namespace honei
             {
                 CONTEXT("When creating DenseMatrix form SparseMatrix:");
 
-                /// \todo Use TypeTraits::zero()
-                std::fill_n(_elements.get(), _rows * _columns, DataType_(0));
+                TypeTraits<DataType_>::fill(_elements.get(), _rows * _columns, DataType_(0));
 
                 for (typename Matrix<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
                         i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)

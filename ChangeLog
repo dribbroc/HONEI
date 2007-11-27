@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-27 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/type_traits.cc, libutil/type_traits.hh: Added fill() trait.
+	Implemented AltiVec optimised PODTraits::fill() for float and double.
+	* libla/dense_matrix.hh, libla/dense_vector-impl.hh,
+	libla/sparse_vector-impl.hh: Switched to using TypeTraits where
+	possible.
+
 2007-11-26 Volker Jung <volker.jung@uni-dortmund.de>
 
 	* libla/scale.hh: Improved scaling of banded matrices.

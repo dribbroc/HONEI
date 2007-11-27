@@ -76,13 +76,22 @@ namespace honei
             }
 
             /**
-             * Copy count instance of DT_ from source to dest.
+             * Copy count instances of DT_ from source to dest.
              *
              * \param source Memory location whence to copy.
              * \param dest Memory location whither to copy.
              * \param count Count on instances that shall be copied.
              */
             static void copy(const DT_ * source, DT_ * dest, std::size_t count);
+
+            /**
+             * Fill count instances of DT_ in dest with value.
+             *
+             * \param dest Memory location whither to copy.
+             * \param count Count of instances that shall be filled.
+             * \param proto Prototype for the instances.
+             */
+            static void fill(DT_ * dest, std::size_t count, const DT_ & proto = DT_(0));
 
             /**
              * Destroy count instances of DT_ at location.
@@ -165,6 +174,21 @@ namespace honei
                 for (DT_ * d(dest), * d_end(dest + count) ; d != d_end ; ++d, ++s)
                 {
                     *d = *s;
+                }
+            }
+
+            /**
+             * Fill count instances of DT_ in dest with value.
+             *
+             * \param dest Memory location whither to copy.
+             * \param count Count of instances that shall be filled.
+             * \param proto Prototype for the instances.
+             */
+            static void fill(DT_ * dest, std::size_t count, const DT_ & proto = DT_(0))
+            {
+                for (DT_ * d(dest), * d_end(dest + count) ; d != d_end ; ++d)
+                {
+                    *d = proto;
                 }
             }
 

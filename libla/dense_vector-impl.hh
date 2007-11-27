@@ -111,6 +111,9 @@ namespace honei
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
 
+        /// \todo Replace by the following once DenseVector has lost Range and Slice functionality:
+        // TypeTraits<DataType_>::fill(_imp->elements.get(), size, value);
+
         DataType_ *  target(_imp->elements.get());
         for (unsigned long i(offset) ; i < (stepsize * size + offset) ; i += stepsize)
             target[i] = value;
@@ -123,11 +126,7 @@ namespace honei
         CONTEXT("When creating DenseVector form SparseVector:");
         ASSERT(other.size() > 0, "size is zero!");
 
-        /// \todo Use TypeTraits::zero()
-        DataType_ *  target(_imp->elements.get());
-        DataType_ value(0);
-        for (unsigned long i(0) ; i < (other.size()) ; ++i)
-            target[i] = value;
+        TypeTraits<DataType_>::fill(_imp->elements.get(), other.size(), DataType_(0));
 
         for (typename Vector<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
                 i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)
@@ -219,6 +218,7 @@ namespace honei
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
         DenseVector result(_imp->size);
+
         TypeTraits<DataType_>::copy( _imp->elements.get(), result._imp->elements.get(), _imp->size);
 
         return result;
