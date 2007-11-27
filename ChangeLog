@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/type_traits.cc:
+	Implemented SSE optimised PODTraits::fill().
+
 2007-11-27 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/type_traits.cc, libutil/type_traits.hh: Added fill() trait.

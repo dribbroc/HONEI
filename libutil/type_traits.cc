@@ -22,6 +22,10 @@
 #if defined(__ALTIVEC__)
 #  include <altivec.h>
 #  include <cstring>
+#elif defined(__SSE__)
+#  include <xmmintrin.h>
+#  include <emmintrin.h>
+#  include <cstring>
 #else /* Unoptimised */
 #  include <cstring>
 #endif
@@ -69,7 +73,7 @@ namespace honei
         }
 
         template <> void
-        PODTraits<double>::fill(float * dest, std::size_t count, const double & proto)
+        PODTraits<double>::fill(double * dest, std::size_t count, const double & proto)
         {
             vector double vectorised_proto = { proto, proto, proto, proto };
             vector double * vectorised_dest(reinterpret_cast<vector double *>(ptr));
@@ -89,6 +93,88 @@ namespace honei
             for (unsigned i((n - offset) & ~0x1) ; i < n ; ++i)
             {
                 dest[i] = proto;
+            }
+        }
+
+#elif defined(__SSE__)
+
+        template <> void
+        PODTraits<float>::copy(const float * source, float * dest, std::size_t count)
+        {
+            std::memcpy(dest, source, sizeof(float) * count);
+        }
+
+        template <> void
+        PODTraits<double>::copy(const double * source, double * dest, std::size_t count)
+        {
+            std::memcpy(dest, source, sizeof(double) * count);
+        }
+
+        template <> void
+        PODTraits<float>::fill(float * dest, std::size_t count, const float & v)
+        {
+            __m128 m1;
+            float __attribute__((aligned(16))) v_data;
+            v_data= v;
+            m1 = _mm_load_ps1(&v_data);
+
+            unsigned long dest_address = (unsigned long)dest;
+            unsigned long dest_offset = dest_address % 16;
+
+            unsigned long x_offset(dest_offset / 4);
+            x_offset = (4 - x_offset) % 4;
+
+            unsigned long quad_start = x_offset;
+            unsigned long quad_end(count - ((count-quad_start) % 4));
+            if (quad_end < 4 || quad_end > count)
+            {
+                quad_end = count;
+                quad_start = count;
+            }
+
+            for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
+            {
+                _mm_stream_ps(dest + index, m1);
+            }
+
+            for (unsigned long index (0) ; index < quad_start ; index++)
+            {
+                dest[index] = v;
+            }
+            for (unsigned long index = quad_end ; index < count ; index++)
+            {
+                dest[index] = v;
+            }
+        }
+
+        template <> void
+        PODTraits<double>::fill(double * dest, std::size_t count, const double & v)
+        {
+            __m128d m1;
+            double __attribute__((aligned(16))) v_data;
+            v_data= v;
+            m1 = _mm_load_pd1(&v_data);
+
+            unsigned long dest_address = (unsigned long)dest;
+            unsigned long dest_offset = dest_address % 8;
+
+            unsigned long x_offset(dest_offset / 8);
+
+            unsigned long quad_start = x_offset;
+            unsigned long quad_end(count - ((count-quad_start) % 2));
+
+            for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
+            {
+                _mm_stream_pd(dest + index, m1);
+            }
+
+            for (unsigned long index (0) ; index < quad_start ; index++)
+            {
+                dest[index] = v;
+            }
+            for (unsigned long index = quad_end ; index < count ; index++)
+            {
+                dest[index] = v;
             }
         }
 
