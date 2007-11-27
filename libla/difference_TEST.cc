@@ -851,8 +851,9 @@ class SparseVectorDenseVectorDifferenceTest :
                         *k = static_cast<DT_>((i.index() +1) / 1.23456789);
                     }
                 }
+               // CPU: dv2 is changed. Cell: new DV is returned.
                 Difference<Tag_>::value(sv1, dv2);
-                TEST_CHECK_EQUAL(sv1, dv3);
+                TEST_CHECK_EQUAL(dv2, dv3);
             }
 
             SparseVector<DT_> sv00(5, 1);
@@ -862,18 +863,14 @@ class SparseVectorDenseVectorDifferenceTest :
 };
 SparseVectorDenseVectorDifferenceTest<tags::CPU, float> sparse_vector_dense_vector_difference_test_float("float");
 SparseVectorDenseVectorDifferenceTest<tags::CPU, double> sparse_vector_dense_vector_difference_test_double("double");
-#ifdef HONEI_CELL
-SparseVectorDenseVectorDifferenceTest<tags::Cell, float> cell_sparse_vector_dense_vector_difference_test_float("Cell float");
-#endif
-
 
 template <typename Tag_, typename DT_>
 class SparseVectorDenseVectorDifferenceQuickTest :
-    public BaseTest
+    public QuickTest
 {
     public:
         SparseVectorDenseVectorDifferenceQuickTest(const std::string & type) :
-            BaseTest("sparse_vector_dense_vector_difference_quick_test<" + type + ">")
+            QuickTest("sparse_vector_dense_vector_difference_quick_test<" + type + ">")
     {
         register_tag(Tag_::name);
     }
@@ -902,10 +899,11 @@ class SparseVectorDenseVectorDifferenceQuickTest :
                 {
                     *k = static_cast<DT_>((i.index() +1) / 1.23456789);
                 }
-
-                Difference<Tag_>::value(sv1, dv2);
-                TEST_CHECK_EQUAL(sv1, dv3);
             }
+
+            // CPU: dv2 is changed. Cell: new DV is returned.
+            Difference<Tag_>::value(sv1, dv2);
+            TEST_CHECK_EQUAL(dv2, dv3);
 
             SparseVector<DT_> sv00(5, 1);
             DenseVector<DT_> dv01(6);
@@ -914,7 +912,105 @@ class SparseVectorDenseVectorDifferenceQuickTest :
 };
 SparseVectorDenseVectorDifferenceQuickTest<tags::CPU, float> sparse_vector_dense_vector_difference_quick_test_float("float");
 SparseVectorDenseVectorDifferenceQuickTest<tags::CPU, double> sparse_vector_dense_vector_difference_quick_test_double("double");
+
+template <typename Tag_, typename DT_>
+class SparseVectorDenseVectorDifferenceCellTest :
+    public BaseTest
+{
+    public:
+        SparseVectorDenseVectorDifferenceCellTest(const std::string & type) :
+            BaseTest("sparse_vector_dense_vector_difference_cell_test<" + type + ">")
+    {
+        register_tag(Tag_::name);
+    }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                SparseVector<DT_> sv1(size, size / 7 + 1);
+                DenseVector<DT_> dv2(size, DT_(0)), dv3(size, DT_(0));
+
+                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                        j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                {
+                    if (i.index() % 10 == 0)
+                    {
+                        *i = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
+                        *k = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
+                    }
+                    if (i.index() % 7 == 0)
+                    {
+                        *j = static_cast<DT_>((i.index() +1) / 1.23456789);
+                        *k = static_cast<DT_>((i.index() +1) / -1.23456789);
+                    }
+                    if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                    {
+                        *k = static_cast<DT_>((i.index() +1) / 1.23456789);
+                    }
+                }
+               // CPU: dv2 is changed. Cell: new DV is returned.
+                DenseVector<DT_> diff(Difference<Tag_>::value(sv1, dv2));
+                TEST_CHECK_EQUAL(diff, dv3);
+            }
+
+            SparseVector<DT_> sv00(5, 1);
+            DenseVector<DT_> dv01(6);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(sv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
 #ifdef HONEI_CELL
-SparseVectorDenseVectorDifferenceQuickTest<tags::Cell, float> cell_sparse_vector_dense_vector_difference_quick_test_float("Cell float");
+SparseVectorDenseVectorDifferenceCellTest<tags::Cell, float> cell_sparse_vector_dense_vector_difference_test_float("Cell float");
+#endif
+
+
+template <typename Tag_, typename DT_>
+class SparseVectorDenseVectorDifferenceCellQuickTest :
+    public QuickTest
+{
+    public:
+        SparseVectorDenseVectorDifferenceCellQuickTest(const std::string & type) :
+            QuickTest("sparse_vector_dense_vector_difference_cell_quick_test<" + type + ">")
+    {
+        register_tag(Tag_::name);
+    }
+
+        virtual void run() const
+        {
+           unsigned long size(22);
+
+            SparseVector<DT_> sv1(size, size / 7 + 1);
+            DenseVector<DT_> dv2(size, DT_(0)), dv3(size, DT_(0));
+
+            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                    j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            {
+                if (i.index() % 10 == 0)
+                {
+                    *i = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
+                    *k = static_cast<DT_>(((i.index() +1) * 2) / 1.23456789);
+                }
+                if (i.index() % 7 == 0)
+                {
+                    *j = static_cast<DT_>((i.index() +1) / 1.23456789);
+                    *k = static_cast<DT_>((i.index() +1) / -1.23456789);
+                }
+                if (i.index() % 7 == 0 && i.index() % 10 == 0)
+                {
+                    *k = static_cast<DT_>((i.index() +1) / 1.23456789);
+                }
+            }
+
+            // CPU: dv2 is changed. Cell: new DV is returned.
+            DenseVector<DT_> diff(Difference<Tag_>::value(sv1, dv2));
+            TEST_CHECK_EQUAL(diff, dv3);
+
+            SparseVector<DT_> sv00(5, 1);
+            DenseVector<DT_> dv01(6);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(sv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
+#ifdef HONEI_CELL
+SparseVectorDenseVectorDifferenceCellQuickTest<tags::Cell, float> cell_sparse_vector_dense_vector_difference_quick_test_float("Cell float");
 #endif
 

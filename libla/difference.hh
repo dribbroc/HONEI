@@ -348,9 +348,9 @@ namespace honei
 
             typename Vector<DT1_>::ConstElementIterator l(a.begin_elements());
             for (typename Vector<DT2_>::ElementIterator r(b.begin_elements()),
-                    r_end(b.end_elements()) ; r != r_end ; ++r)
+                    r_end(b.end_elements()) ; r != r_end ; ++r , ++l)
             {
-                *r = (-1) * *r + *l;
+                *r = (-1 * *r) + *l;
             }
 
             return b;
