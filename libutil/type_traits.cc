@@ -101,13 +101,63 @@ namespace honei
         template <> void
         PODTraits<float>::copy(const float * source, float * dest, std::size_t count)
         {
-            std::memcpy(dest, source, sizeof(float) * count);
+            __m128 m1;
+            unsigned long dest_address = (unsigned long)dest;
+            unsigned long dest_offset = dest_address % 16;
+
+            unsigned long x_offset(dest_offset / 4);
+            x_offset = (4 - x_offset) % 4;
+
+            unsigned long quad_start = x_offset;
+            unsigned long quad_end(count - ((count - quad_start) % 4));
+            if (quad_end < 4 || quad_end > count)
+            {
+                quad_end = count;
+                quad_start = count;
+            }
+
+            for (unsigned long index = quad_start ; index < quad_end ; index += 4)
+            {
+                m1 = _mm_loadu_ps(source + index);
+                _mm_stream_ps(dest + index, m1);
+            }
+
+            for (unsigned long index (0) ; index < quad_start ; index++)
+            {
+                dest[index] = source[index];
+            }
+            for (unsigned long index = quad_end ; index < count ; index++)
+            {
+                dest[index] = source[index];
+            }
         }
 
         template <> void
         PODTraits<double>::copy(const double * source, double * dest, std::size_t count)
         {
-            std::memcpy(dest, source, sizeof(double) * count);
+            __m128d m1;
+            unsigned long dest_address = (unsigned long)dest;
+            unsigned long dest_offset = dest_address % 16;
+
+            unsigned long x_offset(dest_offset / 8);
+
+            unsigned long quad_start = x_offset;
+            unsigned long quad_end(count - ((count - quad_start) % 2));
+
+            for (unsigned long index = quad_start ; index < quad_end ; index += 2)
+            {
+                m1 = _mm_loadu_pd(source + index);
+                _mm_stream_pd(dest + index, m1);
+            }
+
+            for (unsigned long index (0) ; index < quad_start ; index++)
+            {
+                dest[index] = source[index];
+            }
+            for (unsigned long index = quad_end ; index < count ; index++)
+            {
+                dest[index] = source[index];
+            }
         }
 
         template <> void
@@ -125,14 +175,14 @@ namespace honei
             x_offset = (4 - x_offset) % 4;
 
             unsigned long quad_start = x_offset;
-            unsigned long quad_end(count - ((count-quad_start) % 4));
+            unsigned long quad_end(count - ((count - quad_start) % 4));
             if (quad_end < 4 || quad_end > count)
             {
                 quad_end = count;
                 quad_start = count;
             }
 
-            for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
+            for (unsigned long index = quad_start ; index < quad_end ; index += 4)
             {
                 _mm_stream_ps(dest + index, m1);
             }
@@ -156,14 +206,14 @@ namespace honei
             m1 = _mm_load_pd1(&v_data);
 
             unsigned long dest_address = (unsigned long)dest;
-            unsigned long dest_offset = dest_address % 8;
+            unsigned long dest_offset = dest_address % 16;
 
             unsigned long x_offset(dest_offset / 8);
 
             unsigned long quad_start = x_offset;
-            unsigned long quad_end(count - ((count-quad_start) % 2));
+            unsigned long quad_end(count - ((count - quad_start) % 2));
 
-            for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
+            for (unsigned long index = quad_start ; index < quad_end ; index += 2)
             {
                 _mm_stream_pd(dest + index, m1);
             }

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/type_traits.cc:
+	Implemented SSE optimised PODTraits::copy().
+
 2007-11-28 Markus Geveler <apryde@gmx.de>
 
 	* libmath/poisson_jac_double_dense_TEST.cc,
