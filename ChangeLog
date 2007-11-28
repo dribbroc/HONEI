@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-28 Volker Jung <volker.jung@honei.org>
+
+	* libla/scale.hh: Fixed multicore-scaling of matrices. All multicore
+	implementations now create a fixed number of partitions instead of
+	creating partitions of a fixed size.
+	* libla/scale_BENCHMARK.cc: Added multicore and multicore-sse
+	benchmarks for scaling a DenseMatrix. Doubled size of test-case.
+
 2007-11-28 Markus Geveler <apryde@gmx.de>
 
 	* libmath/poisson_jac_float_banded_TEST.cc,
@@ -14,7 +22,7 @@ see the NEWS file.
 	libmath/poisson_iteref_pcg_float_banded_TEST.cc: Added poisson
 	tests float and banded systems.
 
-2007-11-28 Sven Mallach <sven.mallach@honei.org
+2007-11-28 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/difference-cell.cc, libla/difference.hh: Applied a different
 	solution to make the return types of CPU- and Cell-version equal.
@@ -70,7 +78,7 @@ see the NEWS file.
 	libla/sparse_vector-impl.hh: Switched to using TypeTraits where
 	possible.
 
-2007-11-26 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-26 Volker Jung <volker.jung@honei.org>
 
 	* libla/scale.hh: Improved scaling of banded matrices.
 
@@ -109,12 +117,12 @@ see the NEWS file.
 	* libmath/iterative_refinement_TEST.cc, iterative_refinement.hh: Added
 	implementation of sparse Iterative Refinement with CG and its test.
 
-2007-11-25 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-25 Volker Jung <volker.jung@honei.org>
 
 	* libla/scale.hh: Added multicore-backend implementation.
 	* libla/scale_TEST.cc: Added multicore-backend tests.
 
-2007-11-25 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-25 Volker Jung <volker.jung@honei.org>
 
 	* libla/vector.hh: Added methods to DenseVectorContinuousBase to
 	retrieve the offset and to retrieve a range.
@@ -243,7 +251,7 @@ see the NEWS file.
 	* libmath/conjugate_gradients.hh, libmath/conjugate_gradients_TEST.cc:
 	Added implementation of CG for sparse systems.
 
-2007-11-22 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-22 Volker Jung <volker.jung@honei.org>
 
 	* libla/dense_matrix.hh: Converted columns to DenseVectorSlice.
 	* libla/dense_matrix_TEST.cc: Adjusted for column vector changes.
@@ -277,7 +285,7 @@ see the NEWS file.
 	* libla/product-sse.cc: Added a workaround to bypass the ugly
 	sse shuffle.
 
-2007-11-21 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-21 Volker Jung <volker.jung@honei.org>
 
 	* libla/dense_vector_rangee.hh, libla/dense_vector_range-impl.hh:
 	Added new constructor to be able to create a range of a range.
@@ -477,12 +485,12 @@ see the NEWS file.
 	* libla/difference-sse.cc, libla/vector_error.cc, libla/vector_error.hh:
 	Added an example implementation for offset handling.
 
-2007-11-17 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-17 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Improved numerical stability by handling value
 	'zero' properly.
 
-2007-11-17 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-17 Volker Jung <volker.jung@honei.org>
 
 	* libla/sum_BENCHMARK.cc, libla/scaled_sum_BENCHMARK.cc: Modified
 	calls to functions, whose returntype was affected by implementation of
@@ -495,24 +503,24 @@ see the NEWS file.
 	Added spe_count to control the number of spe's used. Reduced the
 	amount of transferd data. Added benchmark.
 
-2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-16 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Modified calls to functions, whose returntype was
 	affected by implementation of DenseVectorBase.
 
-2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-16 Volker Jung <volker.jung@honei.org>
 
 	* libmath/iterative_refinement.hh, libmath/conjugate_gradients.hh:
 	Modified calls to functions, whose returntype was affected by
 	implementation of DenseVectorBase.
 
-2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-16 Volker Jung <volker.jung@honei.org>
 
 	* libla/product_TEST.cc: Removed MultiCore-SSE tests, because current
 	implementation is not consistent (SingleCore-SSE implementation only
 	accepts DenseVector as argument).
 
-2007-11-16 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-16 Volker Jung <volker.jung@honei.org>
 
 	* +libla/dense_vector_base.hh: Added DenseVectorBase implementation.
 	* +libla/dense_vector_continuous_base.hh: Added
@@ -577,7 +585,7 @@ see the NEWS file.
 
 	* libla/matrix.hh: Unified matrix stringification.
 
-2007-11-15 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-15 Volker Jung <volker.jung@honei.org>
 
 	* libla/dense_matrix.hh, libla/dense_matrix_TEST.cc: Fixed order of
 	length arguments in copy-function and adjusted testcase.
@@ -587,7 +595,7 @@ see the NEWS file.
 	* cell/libla/dense_dense_float_dot_product.cc, misc/make_sk.bash:
 	Debug mails from spe's now depend on DEBUG-flag.
 
-2007-11-14 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-14 Volker Jung <volker.jung@honei.org>
 
 	* libla/residual.hh: Changed returntype. Residual now returns
 	references.
@@ -660,7 +668,7 @@ see the NEWS file.
 	libla/scale_TEST.cc: Merged Scale(DV) and Scale(DM) and implemented
 	double buffering. Raised TEST size above 16 KB.
 
-2007-11-11 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-11 Volker Jung <volker.jung@honei.org>
 
 	* libutil/wrapper.hh: Reworked wrapper to handle upcoming baseclasses
 	for dense container.
@@ -890,7 +898,7 @@ see the NEWS file.
 	debugging block acquiration and release, as well as to dump the SPE's
 	LS.
 
-2007-11-03 Volker Jung <volker.jung@uni-dortmund.de>
+2007-11-03 Volker Jung <volker.jung@honei.org>
 
 	* libutil/pool_task.hh, libutil/pool_thread.cc,
 	libutil/thread_pool.hh: Added context-statements to all functions.
@@ -1087,7 +1095,7 @@ see the NEWS file.
 	* libla/dot_product_TEST.cc: Adjusted numerical error tolerance in
 	dot_product_TEST.
 
-2007-10-27 Volker Jung <volker.jung@uni-dortmund.de>
+2007-10-27 Volker Jung <volker.jung@honei.org>
 
 	* +libla/dense_matrix_tile.hh, +libla/dense_matrix_tile_TEST.cc: Added
 	DenseMatrixTile implementation.
@@ -1106,7 +1114,7 @@ see the NEWS file.
 	Added round robin instruction dispatching. Reduced spe number to 2 for
 	better debuging.
 
-2007-10-27 Volker Jung <volker.jung@uni-dortmund.de>
+2007-10-27 Volker Jung <volker.jung@honei.org>
 
 	* +libla/dense_vector_slice.hh, +libla/dense_vector_slice-impl.hh,
 	+libla/dense_vector_slice.cc, +libla/dense_vector_slice_TEST.cc: Added
@@ -1330,7 +1338,7 @@ see the NEWS file.
 	* libutil/tags.hh: Added subtags SPE and PPE for tags::Cell.
 	* libutil/worker.cc: Fixed includes.
 
-2007-10-16 Volker Jung <volker.jung@uni-dortmund.de>
+2007-10-16 Volker Jung <volker.jung@honei.org>
 
 	* libla/dense_vector_range.hh: Corrected comments.
 	* libla/dense_vector_range-impl.hh: Fixed doxygen comment terminators.
@@ -1340,7 +1348,7 @@ see the NEWS file.
 	* libla/Makefile.am.m4: Added workaround to run the benchmark
 	with 'make bench'.
 
-2007-10-15 Volker Jung <volker.jung@uni-dortmund.de>
+2007-10-15 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Fixed numerical behaviour of the source term
 	computation.
@@ -1352,13 +1360,13 @@ see the NEWS file.
 	reduction_BENCHMARK.cc, scale_BENCHMARK.cc, sum_BENCHMARK.cc: Adjusted
 	operand size and added some sparse and banded benchmarks.
 
-2007-10-14 Volker Jung <volker.jung@uni-dortmund.de>
+2007-10-14 Volker Jung <volker.jung@honei.org>
 
 	* libla/dense_vector_range_TEST.cc: Fixed minor bug.
 	* libla/dense_vector.hh, libla/dense_vector-impl.hh:
 	Added necessary changes for DenseVectorRange.
 
-2007-10-14 Volker Jung <volker.jung@uni-dortmund.de>
+2007-10-14 Volker Jung <volker.jung@honei.org>
 
 	* libla/dense_vector_range.hh, dense_vector_range-impl.hh,
 	dense_vector_range_TEST.cc, dense_vector_range.cc: Added
@@ -1776,7 +1784,7 @@ see the NEWS file.
 	headers are only included once. I've no idea how to work with compiler
 	directives in C.
 
-2006-09-07 Volker Jung <volker.jung@uni-dortmund.de>
+2006-09-07 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Resolved bug in setup stage 2.
 
@@ -1843,14 +1851,14 @@ see the NEWS file.
 	* libla/vector_masked_max_index.hh, libla/vector_masked_min_index.hh
 	libla/scale.hh: Added context statements.
 
-2007-09-01 Volker Jung <volker.jung@uni-dortmund.de>
+2007-09-01 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Extended constructor, now an additional parameter
 	"manning_n" is needed. All solver-functions now make use of the proper
 	DenseVector- an DenseMatrix-constructor.
 	* libswe/solver_TEST.cc: Updated with respect to constructor-changes.
 
-2007-09-01 Volker Jung <volker.jung@uni-dortmund.de>
+2007-09-01 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Fixed sign bug and wrong access in assemble1+2_DEBUG;
 	Setup-stage2 now uses proper flow-function for computing w^(n,2);
@@ -2863,12 +2871,12 @@ see the NEWS file.
 	* libla/matrix_product_TEST.cc: Added banded matrix tests.
 	* libla/matrix_row_sum_vector_TEST.cc: Added banded matrix tests.
 
-2007-07-10 Volker Jung <volker.jung@uni-dortmund.de>
+2007-07-10 Volker Jung <volker.jung@honei.org>
 
 	* libswe/sover.hh: Added implementations for
 	quick-matrix-assembly.
 
-2007-07-08 Volker Jung <volker.jung@uni-dortmund.de>
+2007-07-08 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Fixed access to iterators in flow- and source term
 	computing functions. Applied coding conventions.
@@ -2955,7 +2963,7 @@ see the NEWS file.
 	SparseVector::capacity(), as this is an implementation detail.
 	Converted SparseVectorReallocQuickTest to an ordinary test.
 
-2007-07-07 Volker Jung <volker.jung@uni-dortmund.de>
+2007-07-07 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Added source term computation for a whole vector,
 	like the ones already available for flow computations.
@@ -3051,7 +3059,7 @@ see the NEWS file.
 	* libla/matrix_element_inverse_BENCHMARK.cc: Implemented benchmark for
 	matrix_element_inverse.hh.
 
-2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
+2007-07-02 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Changed manning-coefficient implementation from
 	double to static const double. Fixed access to vectors _u, _v and _w in
@@ -3061,17 +3069,17 @@ see the NEWS file.
 
 	* libswe/solver.hh: Changed main interface for matrix assemblation.
 
-2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
+2007-07-02 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Changed manning-coefficient implementation from
 	const double to double.
 
-2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
+2007-07-02 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Changed manning-coefficient implementation from
 	define to const double.
 
-2007-07-02 Volker Jung <volker.jung@uni-dortmund.de>
+2007-07-02 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Implemented sourceterm computation.
 	* ChangeLog: Changed my email-address to a more public one.
@@ -3133,7 +3141,7 @@ see the NEWS file.
 	* libswe/solver.hh: Fixed parameter documentation for flow term
 	computation, fixed typo.
 
-2007-06-30 Volker Jung <volker.jung@uni-dortmund.de>
+2007-06-30 Volker Jung <volker.jung@honei.org>
 
 	* libswe/solver.hh: Added implementations for flow computation,
 	changed flow-function signatures to current implementation.
@@ -3576,7 +3584,7 @@ see the NEWS file.
 	* libswe/solver,hh: Added base class for all SWE solvers,
 	added declaration of 2DSWE_Relax_ImExRK_FVMUSCL_Solver.
 
-2007-06-15 Volker Jung <volker.jung@uni-dortmund.de>
+2007-06-15 Volker Jung <volker.jung@honei.org>
 
 	* libswe/limiter_TEST.cc: Removed unnecessary tests.
 	* libswe/limiter.hh: Fixed further errors, hopefully improved
@@ -3595,7 +3603,7 @@ see the NEWS file.
 	implementation of qdist in Fruchterman-Reingold algorithm.
 	* libla/matrix.hh: Corrected doxygen annotation.
 
-2007-06-15 Volker Jung <volker.jung@uni-dortmund.de>
+2007-06-15 Volker Jung <volker.jung@honei.org>
 
 	* libswe/files.m4: Added limiter testfile.
 	* libswe/limiter.hh: Fixed numerous errors and applied coding
@@ -3704,7 +3712,7 @@ see the NEWS file.
 	benchmark/benchmark.cc, benchmark/benchmark.hh: Added console 
 	user interface and improved accuracy of time measurement.
 
-2007-06-13 Volker Jung <volker.jung@uni-dortmund.de>
+2007-06-13 Volker Jung <volker.jung@honei.org>
 
 	* libswe/limiter.hh: Implemented Limiter, MinMod, SuperBee, VanLeer, MC.
 

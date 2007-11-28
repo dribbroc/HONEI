@@ -12,7 +12,7 @@ using namespace std;
 using namespace honei;
 
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 
 class ScalarDenseMatrixScaleBench :
     public Benchmark
@@ -37,11 +37,19 @@ class ScalarDenseMatrixScaleBench :
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(23));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(Scale<>::value(DataType_ (alpha), dm0));
+                BENCHMARK(Scale<Tag_>::value(DataType_ (alpha), dm0));
             }
-            BenchmarkInfo info(Scale<>::get_benchmark_info(alpha, dm0));
+            BenchmarkInfo info(Scale<Tag_>::get_benchmark_info(alpha, dm0));
             evaluate(info);
     }
 };
-ScalarDenseMatrixScaleBench<float>  SMPBenchfloat ("DenseMatrix Scale Benchmark: size: 4096x4096, float",  4096, 10);
-ScalarDenseMatrixScaleBench<double> SMPBenchdouble("DenseMatrix Scale Benchmark: size: 4096x4096, double", 4096, 10);
+ScalarDenseMatrixScaleBench<tags::CPU, float>             SMPBenchfloat   ("DenseMatrix Scale Benchmark: size: 8192x8192, float",      8192, 10);
+ScalarDenseMatrixScaleBench<tags::CPU, double>            SMPBenchdouble  ("DenseMatrix Scale Benchmark: size: 8192x8192, double",     8192, 10);
+ScalarDenseMatrixScaleBench<tags::CPU::MultiCore, float>  SMPBenchfloatMC ("MC: DenseMatrix Scale Benchmark: size: 8192x8192, float",  8192, 10);
+ScalarDenseMatrixScaleBench<tags::CPU::MultiCore, double> SMPBenchdoubleMC("MC: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
+#ifdef HONEI_SSE
+ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, float>
+        SMPBenchfloatMCSSE("MC SSE: DenseMatrix Scale Benchmark: size: 8192x8192, float", 8192, 10);
+ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, double>
+        SMPBenchdoubleMCSSE("MC SSE: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
+#endif

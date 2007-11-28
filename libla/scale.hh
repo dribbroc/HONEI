@@ -34,7 +34,7 @@
 
 ///\todo: Do not use define for setting size of multicore-partitions.
 // For optimization purposes
-#define PARTITION_SIZE 256
+#define PARTS 8
 
 namespace honei
 {
@@ -231,17 +231,33 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            PoolTask * pt[x.rows()];
+            unsigned long rest(x.columns() % PARTS);
+            unsigned long chunk_size(x.columns() / PARTS);
+
+            std::list<PoolTask*> dispatched_tasks;
 
             for (unsigned long i(0); i < x.rows(); ++i)
             {
-                TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, x[i]);
-                pt[i] = tp->dispatch(wrapper);
+                unsigned long j(0);
+                for ( ; j < rest; ++j)
+                {
+                    DenseVectorRange<DT2_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+
+                }
+                for ( ; j < PARTS; ++j)
+                {
+                    DenseVectorRange<DT2_> range(x[i].range(chunk_size, j * chunk_size + rest));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
             }
 
-            for (unsigned long i(0); i < x.rows(); ++i)
+            while(! dispatched_tasks.empty())
             {
-                pt[i]->wait_on();
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
             }
 
             return x;
@@ -254,17 +270,37 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            PoolTask * pt[x.rows()];
+            std::list<PoolTask*> dispatched_tasks;
 
             for (unsigned long i(0); i < x.rows(); ++i)
             {
-                TwoArgWrapper< Scale<Tag_>, const DT1_, SparseVector<DT2_> > wrapper(a, x[i]);
-                pt[i] = tp->dispatch(wrapper);
+                unsigned long chunk_size(x[i].used_elements() / PARTS);
+                unsigned long rest(x[i].used_elements() % PARTS);
+                unsigned long j(0);
+                for ( ; j < rest; ++j)
+                {
+                    typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
+                    start += j * (chunk_size + 1);
+                    stop += (j + 1) * (chunk_size + 1);
+                    ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
+                        wrapper(a, start, stop);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+                for ( ; j < PARTS; ++j)
+                {
+                    typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
+                    start += j * chunk_size + rest;
+                    stop += (j + 1) * chunk_size + rest;
+                    ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
+                        wrapper(a, start, stop);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
             }
 
-            for (unsigned long i(0); i < x.rows(); ++i)
+            while (! dispatched_tasks.empty())
             {
-                pt[i]->wait_on();
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
             }
 
             return x;
@@ -288,17 +324,48 @@ namespace honei
                 if (! vi.exists())
                     continue;
 
-                DenseVectorRange<DT2_> band_range(*vi, vi.index() + 1, x.size() - (vi.index() + 1));
+                unsigned long band_size(x.size() - vi.index() - 1);
+                unsigned long chunk_size(band_size / PARTS);
+                unsigned long rest(band_size % PARTS);
+                unsigned long i(0);
 
-                TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, band_range);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                for ( ; i < rest; ++i)
+                {
+                    DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1) + x.size() - band_size));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                        wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+                for ( ; i < PARTS; ++i)
+                {
+                    DenseVectorRange<DT2_> range((*vi).range(chunk_size, chunk_size + rest + x.size() - band_size));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                        wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
             }
 
             // Calculating diagonal band.
             if (vi.exists())
             {
-                TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVector<DT2_> > wrapper(a, *vi);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                unsigned long chunk_size(x.size() / PARTS);
+                unsigned long rest(x.size() % PARTS);
+                unsigned long i(0);
+
+                for ( ; i < rest; ++i)
+                {
+                    DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                        wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+                for ( ; i < PARTS; ++i)
+                {
+                    DenseVectorRange<DT2_> range((*vi).range(chunk_size, i * chunk_size + rest));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                        wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
             }
 
             ++vi;
@@ -309,18 +376,31 @@ namespace honei
                 if (! vi.exists())
                     continue;
 
-                DenseVectorRange<DT2_> band_range(*vi, 2 * x.size() - vi.index() - 1, 0);
+                unsigned long band_size(2 * x.size() - vi.index() - 1);
+                unsigned long chunk_size(band_size / PARTS);
+                unsigned long rest(band_size % PARTS);
+                unsigned long i(0);
 
-                TwoArgWrapper< Scale<Tag_>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, band_range);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                for ( ; i < rest; ++i)
+                {
+                    DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                        wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+                for ( ; i < PARTS; ++i)
+                {
+                    DenseVectorRange<DT2_> range((*vi).range(chunk_size, i *  chunk_size + rest));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                        wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
             }
-
-            // Wait until all jobs are done.
+                // Wait until all jobs are done.
             while(! dispatched_tasks.empty())
             {
-                PoolTask * pt = dispatched_tasks.front();
+                dispatched_tasks.front()->wait_on();
                 dispatched_tasks.pop_front();
-                pt->wait_on();
             }
 
             return x;
@@ -331,37 +411,34 @@ namespace honei
         {
             CONTEXT("When scaling DenseVectorContinuousBase (MultiCore):");
 
-            unsigned long partition_size(PARTITION_SIZE);
+            unsigned long rest(x.size() % PARTS);
 
-            unsigned long parts(x.size() / partition_size);
+            unsigned long chunk_size(x.size() / PARTS);
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            PoolTask * pt[parts + (x.size() % partition_size ? 1 : 0)];
+            std::list<PoolTask *> dispatched_tasks;
 
-            for (unsigned long i(0); i < parts; ++i)
+            unsigned long i(0);
+            for ( ; i < rest; ++i)
             {
-                DenseVectorRange<DT2_> range(x.range(partition_size, i * partition_size));
+                DenseVectorRange<DT2_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
                 TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
                     wrapper(a, range);
-                pt[i] = tp->dispatch(wrapper);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
-            if (x.size() % partition_size)
+            for ( ; i < PARTS; ++i)
             {
-                DenseVectorRange<DT2_> range(x.range(x.size() % partition_size, parts * partition_size));
+                DenseVectorRange<DT2_> range(x.range(chunk_size, i * chunk_size + rest));
                 TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_,
                     DenseVectorRange<DT2_> > wrapper(a, range);
-                pt[parts] = tp->dispatch(wrapper);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
 
-            for (unsigned long i(0); i < parts; ++i)
+            while(! dispatched_tasks.empty())
             {
-                pt[i]->wait_on();
-            }
-
-            if (x.size() % partition_size)
-            {
-                pt[parts]->wait_on();
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
             }
 
             return x;
@@ -372,40 +449,38 @@ namespace honei
         {
             CONTEXT("When scaling DenseVectorSlice (MultiCore):");
 
-            unsigned long partition_size(PARTITION_SIZE);
+            unsigned long rest(x.size() % PARTS);
 
-            unsigned long parts(x.size() / partition_size);
+            unsigned long chunk_size(x.size() / PARTS);
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            PoolTask * pt[parts + (x.size() % partition_size ? 1 : 0)];
+            std::list<PoolTask *> dispatched_tasks;
 
-            for (unsigned long i(0); i < parts; ++i)
+            unsigned long i(0);
+            for ( ; i < rest; ++i)
             {
                 typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
-                start += i * partition_size;
-                stop += (i + 1) * partition_size;
+                start += i * (chunk_size + 1);
+                stop += (i + 1) * (chunk_size + 1);
                 ThreeArgWrapper< MCScale<Tag_>, const DT1_,
                     typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                pt[i] = tp->dispatch(wrapper);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
-            if (x.size() % partition_size)
+            for ( ; i < PARTS; ++i)
             {
-                typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.end_elements());
-                start += parts * partition_size;
+                typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
+                start += i * chunk_size + rest;
+                stop += (i + 1) * chunk_size + rest;
                 ThreeArgWrapper< MCScale<Tag_>, const DT1_,
                     typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                pt[parts] = tp->dispatch(wrapper);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
 
-            for (unsigned long i(0); i < parts; ++i)
+            while (! dispatched_tasks.empty())
             {
-                pt[i]->wait_on();
-            }
-
-            if (x.size() % partition_size)
-            {
-                pt[parts]->wait_on();
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
             }
 
             return x;
@@ -416,37 +491,38 @@ namespace honei
         {
             CONTEXT("When scaling SparseVector (MultiCore):");
 
-            unsigned long partition_size(PARTITION_SIZE);
-            unsigned long parts(x.used_elements() / partition_size);
+            unsigned long rest(x.used_elements() % PARTS);
+            unsigned long chunk_size(x.used_elements() / PARTS);
             ThreadPool * tp(ThreadPool::get_instance());
 
-            PoolTask * pt[(x.used_elements() % partition_size) ? parts + 1 : parts];
+            std::list<PoolTask *> dispatched_tasks;
 
-            for (unsigned long i(0); i < parts; ++i)
+            unsigned long i(0);
+            for ( ; i < rest; ++i)
             {
                 typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
-                start += i * partition_size;
-                stop += (i + 1) * partition_size;
+                start += i * (chunk_size + 1);
+                stop += (i + 1) * (chunk_size + 1);
                 ThreeArgWrapper< MCScale<Tag_>, const DT1_,
                     typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                pt[i] = tp->dispatch(wrapper);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
 
-            if (x.used_elements() % partition_size)
+            for ( ; i < PARTS; ++i)
             {
-                typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.end_non_zero_elements());
-                start += parts * partition_size;
+                typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
+                start += i * chunk_size + rest;
+                stop += (i + 1) * chunk_size + rest;
                 ThreeArgWrapper< MCScale<Tag_>, const DT1_,
                     typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                pt[parts] = tp->dispatch(wrapper);
+                dispatched_tasks.push_back(tp->dispatch(wrapper));
             }
 
-            for (unsigned long i(0); i < parts; ++i)
+            while (! dispatched_tasks.empty())
             {
-                pt[i]->wait_on();
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
             }
-
-            if (x.used_elements() % partition_size) pt[parts]->wait_on();
 
             return x;
         }
