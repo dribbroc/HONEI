@@ -180,7 +180,7 @@ namespace honei
     {
         for ( ; begin != end ; ++begin)
         {
-            *begin.wait();
+            (*begin).wait();
         }
     }
 }
