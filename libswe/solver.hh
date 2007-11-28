@@ -60,7 +60,7 @@
 #include <libutil/tags.hh>
 #include <iostream>
 #include <fstream>
-
+#include <sys/time.h>
 using namespace std;
 
 namespace honei {
@@ -1499,7 +1499,6 @@ namespace honei {
 
         BandedMatrix<WorkPrec_> m8(_u->size());
         _quick_assemble_matrix4<WorkPrec_>(m2, m8);
-
         DenseVector<WorkPrec_> temp_u_c(predictedu.copy());
         DenseVector<WorkPrec_> temp_v_c(predictedv.copy());
         DenseVector<WorkPrec_> temp_u2_c(predictedu.copy());
@@ -1566,7 +1565,6 @@ namespace honei {
             {
             for (unsigned long k =0; k <3; ++k)
                 {
-            
                 predictedu [((i+2)*3*(_d_width+4)+k)] = predictedu [((i+2)*3*(_d_width+4)+9+k)];
                 predictedv [((i+2)*3*(_d_width+4)+k)] = predictedv [((i+2)*3*(_d_width+4)+9+k)];
                 predictedw [((i+2)*3*(_d_width+4)+k)] = predictedw [((i+2)*3*(_d_width+4)+9+k)];
@@ -1574,7 +1572,6 @@ namespace honei {
                 predictedu [((i+2)*3*(_d_width+4)+3+k)] = predictedu [((i+2)*3*(_d_width+4)+6+k)];
                 predictedv [((i+2)*3*(_d_width+4)+3+k)] = predictedv [((i+2)*3*(_d_width+4)+6+k)];
                 predictedw [((i+2)*3*(_d_width+4)+3+k)] = predictedw [((i+2)*3*(_d_width+4)+6+k)];
-                
                 predictedu [((i+3)*3*(_d_width+4)-3+k)] = predictedu [((i+3)*3*(_d_width+4)-12+k)];
                 predictedv [((i+3)*3*(_d_width+4)-3+k)] = predictedv [((i+3)*3*(_d_width+4)-12+k)];
                 predictedw [((i+3)*3*(_d_width+4)-3+k)] = predictedw [((i+3)*3*(_d_width+4)-12+k)];
@@ -1590,7 +1587,6 @@ namespace honei {
             predictedu [((_d_height+3)*3*(_d_width+4)+6+j)] = predictedu [(_d_height*3*(_d_width+4)+6+j)];
             predictedv [((_d_height+3)*3*(_d_width+4)+6+j)] = predictedv [(_d_height*3*(_d_width+4)+6+j)];
             predictedw [((_d_height+3)*3*(_d_width+4)+6+j)] = predictedw [(_d_height*3*(_d_width+4)+6+j)];
-    
             predictedu [((_d_height+2)*3*(_d_width+4)+6+j)] = predictedu [((_d_height+1)*3*(_d_width+4)+6+j)];
             predictedv [((_d_height+2)*3*(_d_width+4)+6+j)] = predictedv [((_d_height+1)*3*(_d_width+4)+6+j)];
             predictedw [((_d_height+2)*3*(_d_width+4)+6+j)] = predictedw [((_d_height+1)*3*(_d_width+4)+6+j)];
@@ -1903,7 +1899,10 @@ namespace honei {
 #ifdef SOLVER_VERBOSE
         cout << stringify(*_u)<<endl;
 #endif
+
+#ifdef SOLVER_POSTPROCESSING
         _do_postprocessing(1);
+#endif
     }
 
     /**

@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-28 Markus Geveler <apryde@gmx.de>
+
+	* libswe/solver_TEST.cc, libswe/solver.hh: Added symbol
+	SOLVER_POSTPROCESSING to quiet gnuplot postprocessing, when rendering
+	with libVisual, cleaned up the test.
+
 2007-11-28 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/difference.hh, libla/difference_TEST.cc: Fixed Diff(SV,DV)
