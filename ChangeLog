@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-28 Markus Geveler <apryde@gmx.de>
+
+	* libmath/poisson_jac_float_banded_TEST.cc,
+	libmath/poisson_cg_float_banded_TEST.cc,
+	libmath/poisson_pcg_float_banded_TEST.cc,
+	libmath/poisson_iteref_cg_float_banded_TEST.cc,
+	libmath/poisson_iteref_pcg_float_banded_TEST.cc: Added poisson
+	tests float and banded systems.
+
 2007-11-28 Sven Mallach <sven.mallach@honei.org
 
 	* libla/difference-cell.cc, libla/difference.hh: Applied a different
