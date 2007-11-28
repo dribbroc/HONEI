@@ -85,18 +85,18 @@ namespace honei
         return a;
     }
 
-    DenseVector<float>
-    Difference<tags::Cell>::value(const SparseVector<float> & a, const DenseVector<float> & b)
+    DenseVector<float> &
+    Difference<tags::Cell>::value(const SparseVector<float> & a, DenseVector<float> & b)
     {
         CONTEXT("When subtracting SparseVector<float> from DenseVector<float> (Cell):");
 
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        DenseVector<float> result(a);
-        Difference<tags::Cell>::value(result,b);
+        Scale<tags::Cell>::value(-1.0f, b);
+        Sum<tags::Cell>::value(b, a);
 
-        return result;
+        return b;
     }
 
 }

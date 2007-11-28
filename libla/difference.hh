@@ -350,7 +350,7 @@ namespace honei
             for (typename Vector<DT2_>::ElementIterator r(b.begin_elements()),
                     r_end(b.end_elements()) ; r != r_end ; ++r , ++l)
             {
-                *r = (-1 * *r) + *l;
+                *r = *l - *r;
             }
 
             return b;
@@ -441,7 +441,7 @@ namespace honei
          */
 
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
-        static DenseVector<float> value(const SparseVector<float> & a, const DenseVector<float> & b);
+        static DenseVector<float> & value(const SparseVector<float> & a, DenseVector<float> & b);
 
         /// \}
     };
