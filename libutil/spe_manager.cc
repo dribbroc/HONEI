@@ -25,7 +25,6 @@
 #include <libutil/spe_kernel_manager.hh>
 #include <libutil/spe_manager.hh>
 
-#include <vector>
 #include <string>
 #include <tr1/functional>
 
@@ -158,5 +157,30 @@ namespace honei
         Lock l(*_imp->mutex);
 
         _imp->dispatch(instruction);
+    }
+
+    void
+    SPEManager::dispatch(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end)
+    {
+        Lock l(*_imp->mutex);
+        for ( ; begin != end ; ++begin)
+        {
+            _imp->dispatch(*begin);
+        }
+    }
+
+    void
+    SPEManager::wait(SPEInstruction & instruction)
+    {
+        instruction.wait();
+    }
+
+    void
+    SPEManager::wait(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end)
+    {
+        for ( ; begin != end ; ++begin)
+        {
+            *begin.wait();
+        }
     }
 }

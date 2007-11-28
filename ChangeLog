@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-11-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libutil/spe_manager.cc, libutil/spe_manager.hh:
+	Added SPEManager::wait(SPEInstruction). Added iterator based version
+	of wait and dispatch.
+
+2007-11-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libutil/type_traits.cc:
 	Implemented SSE optimised PODTraits::copy().
 
@@ -36,7 +42,12 @@ see the NEWS file.
 	* libutil/type_traits.cc:
 	Implemented SSE optimised PODTraits::fill().
 
->>>>>>> .r986
+2007-11-27 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	*  libutil/Makefile.am.m4, libutil/type_traits.cc:
+	Added SSEDEF and CELLDEF in libutil. Removed CELLDEF in altivec blocks
+	as altivec.hh only runs with ALTIVEC defined.
+
 2007-11-27 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/type_traits.cc, libutil/type_traits.hh: Added fill() trait.

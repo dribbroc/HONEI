@@ -28,6 +28,7 @@
 #include <libutil/spe.hh>
 
 #include <string>
+#include <vector>
 #include <tr1/memory>
 #include <tr1/functional>
 
@@ -86,11 +87,17 @@ namespace honei
 
             /// \}
 
-            /// Dispatch an Instruction to the specified SPE.
-            void dispatch(const DeviceId, const SPEInstruction & );
-
-            /// Dispatch an SPETask to all SPEs.
+            /// Dispatch an SPETask to a SPE.
             void dispatch(const SPEInstruction & instruction);
+
+            // Dispatch all SPEInstructions from begin and before end to a SPE.
+            void dispatch(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end);
+
+            // Wait for a SPEinstructin to be finished.
+            void wait(SPEInstruction & instruction);
+
+            // Wait foR ALL SPEInstrictions from begin and before end to be finished.
+            void wait(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end);
     };
 }
 
