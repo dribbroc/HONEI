@@ -31,7 +31,7 @@ using namespace tests;
 
 // Test cases for matrix operations
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixDenseMatrixDifferenceTest :
     public BaseTest
 {
@@ -39,6 +39,7 @@ class BandedMatrixDenseMatrixDifferenceTest :
         BandedMatrixDenseMatrixDifferenceTest(const std::string & type) :
             BaseTest("banded_matrix_dense_matrix_difference_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -70,10 +71,12 @@ class BandedMatrixDenseMatrixDifferenceTest :
             TEST_CHECK_THROWS(Difference<>::value(bm01, dm02), MatrixRowsDoNotMatch);
         }
 };
-BandedMatrixDenseMatrixDifferenceTest<float> banded_matrix_dense_matrix_difference_test_float("float");
-BandedMatrixDenseMatrixDifferenceTest<double> banded_matrix_dense_matrix_difference_test_double("double");
+BandedMatrixDenseMatrixDifferenceTest<tags::CPU, float> banded_matrix_dense_matrix_difference_test_float("float");
+BandedMatrixDenseMatrixDifferenceTest<tags::CPU, double> banded_matrix_dense_matrix_difference_test_double("double");
+BandedMatrixDenseMatrixDifferenceTest<tags::CPU::MultiCore, float> mc_banded_matrix_dense_matrix_difference_test_float("MC float");
+BandedMatrixDenseMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_banded_matrix_dense_matrix_difference_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixDenseMatrixDifferenceQuickTest :
     public QuickTest
 {
@@ -81,6 +84,7 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
         BandedMatrixDenseMatrixDifferenceQuickTest(const std::string & type) :
             QuickTest("banded_matrix_dense_matrix_difference_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -110,10 +114,13 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
             TEST_CHECK_THROWS(Difference<>::value(bm01, dm02), MatrixRowsDoNotMatch);
         }
 };
-BandedMatrixDenseMatrixDifferenceQuickTest<float> banded_matrix_dense_matrix_difference_quick_test_float("float");
-BandedMatrixDenseMatrixDifferenceQuickTest<double> banded_matrix_dense_matrix_difference_quick_test_double("double");
+BandedMatrixDenseMatrixDifferenceQuickTest<tags::CPU, float> banded_matrix_dense_matrix_difference_quick_test_float("float");
+BandedMatrixDenseMatrixDifferenceQuickTest<tags::CPU, double> banded_matrix_dense_matrix_difference_quick_test_double("double");
+BandedMatrixDenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float>  mc_banded_matrix_dense_matrix_difference_quick_test_float("MC float");
+BandedMatrixDenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_dense_matrix_difference_quick_test_double("MC double");
 
-template <typename DT_>
+
+template <typename Tag_, typename DT_>
 class BandedMatrixDifferenceTest :
     public BaseTest
 {
@@ -121,6 +128,7 @@ class BandedMatrixDifferenceTest :
         BandedMatrixDifferenceTest(const std::string & type) :
             BaseTest("banded_matrix_difference_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -141,10 +149,14 @@ class BandedMatrixDifferenceTest :
             TEST_CHECK_THROWS(Difference<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
-BandedMatrixDifferenceTest<float> banded_matrix_difference_test_float("float");
-BandedMatrixDifferenceTest<double> banded_matrix_difference_test_double("double");
+BandedMatrixDifferenceTest<tags::CPU, float> banded_matrix_difference_test_float("float");
+BandedMatrixDifferenceTest<tags::CPU, double> banded_matrix_difference_test_double("double");
+BandedMatrixDifferenceTest<tags::CPU::MultiCore, float>  mc_banded_matrix_difference_test_float("MC float");
+BandedMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_banded_matrix_difference_test_double("MC double");
 
-template <typename DT_>
+
+
+template <typename Tag_, typename DT_>
 class BandedMatrixDifferenceQuickTest :
     public QuickTest
 {
@@ -152,6 +164,7 @@ class BandedMatrixDifferenceQuickTest :
         BandedMatrixDifferenceQuickTest(const std::string & type) :
             QuickTest("banded_matrix_difference_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -173,8 +186,10 @@ class BandedMatrixDifferenceQuickTest :
             TEST_CHECK_THROWS(Difference<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
-BandedMatrixDifferenceQuickTest<float> banded_matrix_difference_quick_test_float("float");
-BandedMatrixDifferenceQuickTest<double> banded_matrix_difference_quick_test_double("double");
+BandedMatrixDifferenceQuickTest<tags::CPU, float> banded_matrix_difference_quick_test_float("float");
+BandedMatrixDifferenceQuickTest<tags::CPU, double> banded_matrix_difference_quick_test_double("double");
+BandedMatrixDifferenceQuickTest<tags::CPU::MultiCore, float>  mc_banded_matrix_difference_quick_test_float("MC float");
+BandedMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_difference_quick_test_double("MC double");
 
 template <typename DT_>
 class BandedMatrixSparseMatrixDifferenceTest :
@@ -344,7 +359,7 @@ class DenseMatrixDifferenceQuickTest :
 DenseMatrixDifferenceQuickTest<float> dense_matrix_difference_quick_test_float("float");
 DenseMatrixDifferenceQuickTest<double> dense_matrix_difference_quick_test_double("double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixSparseMatrixDifferenceTest :
     public BaseTest
 {
@@ -352,6 +367,7 @@ class DenseMatrixSparseMatrixDifferenceTest :
         DenseMatrixSparseMatrixDifferenceTest(const std::string & type) :
             BaseTest("dense_matrix_sparse_matrix_difference_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -392,10 +408,12 @@ class DenseMatrixSparseMatrixDifferenceTest :
             TEST_CHECK_THROWS(Difference<>::value(dm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSparseMatrixDifferenceTest<float> dense_matrix_sparse_matrix_difference_test_float("float");
-DenseMatrixSparseMatrixDifferenceTest<double> dense_matrix_sparse_matrix_difference_test_double("double");
+DenseMatrixSparseMatrixDifferenceTest<tags::CPU, float> dense_matrix_sparse_matrix_difference_test_float("float");
+DenseMatrixSparseMatrixDifferenceTest<tags::CPU, double> dense_matrix_sparse_matrix_difference_test_double("double");
+DenseMatrixSparseMatrixDifferenceTest<tags::CPU::MultiCore, float>  mc_dense_matrix_sparse_matrix_difference_test_float("MC float");
+DenseMatrixSparseMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_difference_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixSparseMatrixDifferenceQuickTest :
     public QuickTest
 {
@@ -403,6 +421,7 @@ class DenseMatrixSparseMatrixDifferenceQuickTest :
         DenseMatrixSparseMatrixDifferenceQuickTest(const std::string & type) :
             QuickTest("dense_matrix_sparse_matrix_difference_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -441,10 +460,12 @@ class DenseMatrixSparseMatrixDifferenceQuickTest :
             TEST_CHECK_THROWS(Difference<>::value(dm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixSparseMatrixDifferenceQuickTest<float> dense_matrix_sparse_matrix_difference_quick_test_float("float");
-DenseMatrixSparseMatrixDifferenceQuickTest<double> dense_matrix_sparse_matrix_difference_quick_test_double("double");
+DenseMatrixSparseMatrixDifferenceQuickTest<tags::CPU, float> dense_matrix_sparse_matrix_difference_quick_test_float("float");
+DenseMatrixSparseMatrixDifferenceQuickTest<tags::CPU, double> dense_matrix_sparse_matrix_difference_quick_test_double("double");
+DenseMatrixSparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float>  mc_dense_matrix_sparse_matrix_difference_quick_test_float("MC float");
+DenseMatrixSparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_sparse_matrix_difference_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixDifferenceTest :
     public BaseTest
 {
@@ -452,6 +473,7 @@ class SparseMatrixDifferenceTest :
         SparseMatrixDifferenceTest(const std::string & type) :
             BaseTest("sparse_matrix_difference_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -490,10 +512,12 @@ class SparseMatrixDifferenceTest :
             TEST_CHECK_THROWS(Difference<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixDifferenceTest<float> sparse_matrix_difference_test_float("float");
-SparseMatrixDifferenceTest<double> sparse_matrix_difference_test_double("double");
+SparseMatrixDifferenceTest<tags::CPU, float> sparse_matrix_difference_test_float("float");
+SparseMatrixDifferenceTest<tags::CPU, double> sparse_matrix_difference_test_double("double");
+SparseMatrixDifferenceTest<tags::CPU::MultiCore, float>  mc_sparse_matrix_difference_test_float("MC float");
+SparseMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_sparse_matrix_difference_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixDifferenceQuickTest :
     public QuickTest
 {
@@ -501,6 +525,7 @@ class SparseMatrixDifferenceQuickTest :
         SparseMatrixDifferenceQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_difference_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -537,8 +562,10 @@ class SparseMatrixDifferenceQuickTest :
             TEST_CHECK_THROWS(Difference<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
-SparseMatrixDifferenceQuickTest<float> sparse_matrix_difference_quick_test_float("float");
-SparseMatrixDifferenceQuickTest<double> sparse_matrix_difference_quick_test_double("double");
+SparseMatrixDifferenceQuickTest<tags::CPU, float> sparse_matrix_difference_quick_test_float("float");
+SparseMatrixDifferenceQuickTest<tags::CPU, double> sparse_matrix_difference_quick_test_double("double");
+SparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float>  mc_sparse_matrix_difference_quick_test_float("MC float");
+SparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_difference_quick_test_double("MC double");
 
 // Test cases for vector operations
 
@@ -580,9 +607,13 @@ class DenseVectorDifferenceTest :
 };
 DenseVectorDifferenceTest<tags::CPU, float> dense_vector_difference_test_float("float");
 DenseVectorDifferenceTest<tags::CPU, double> dense_vector_difference_test_double("double");
+DenseVectorDifferenceTest<tags::CPU::MultiCore, float>  mc_dense_vector_difference_test_float("MC float");
+DenseVectorDifferenceTest<tags::CPU::MultiCore, double> mc_dense_vector_difference_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorDifferenceTest<tags::CPU::SSE, float> sse_dense_vector_difference_test_float("SSE float");
 DenseVectorDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_difference_test_double("SSE double");
+DenseVectorDifferenceTest<tags::CPU::MultiCore::SSE, float>  mc_sse_dense_vector_difference_test_float("MC SSE float");
+DenseVectorDifferenceTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_difference_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceTest<tags::Cell, float> cell_dense_vector_difference_test_float("Cell float");
@@ -625,15 +656,19 @@ class DenseVectorDifferenceQuickTest :
 };
 DenseVectorDifferenceQuickTest<tags::CPU, float>  dense_vector_difference_quick_test_float("float");
 DenseVectorDifferenceQuickTest<tags::CPU, double> dense_vector_difference_quick_test_double("double");
+DenseVectorDifferenceQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_difference_quick_test_float("MC float");
+DenseVectorDifferenceQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_difference_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorDifferenceQuickTest<tags::CPU::SSE, float>  sse_dense_vector_difference_quick_test_float("SSE float");
 DenseVectorDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_difference_quick_test_double("SSE double");
+DenseVectorDifferenceQuickTest<tags::CPU::MultiCore::SSE, float>  mc_sse_dense_vector_difference_quick_test_float("MC SSE float");
+DenseVectorDifferenceQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_difference_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_quick_test_float("Cell float");
 #endif
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorSparseVectorDifferenceTest :
     public BaseTest
 {
@@ -641,6 +676,7 @@ class DenseVectorSparseVectorDifferenceTest :
         DenseVectorSparseVectorDifferenceTest(const std::string & type) :
             BaseTest("dense_vector_sparse_vector_difference_test<" + type + ">")
     {
+            register_tag(Tag_::name);
     }
 
         virtual void run() const
@@ -676,10 +712,12 @@ class DenseVectorSparseVectorDifferenceTest :
             TEST_CHECK_THROWS(Difference<>::value(dv00, sv01), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorSparseVectorDifferenceTest<float> dense_vector_sparse_vector_difference_test_float("float");
-DenseVectorSparseVectorDifferenceTest<double> dense_vector_sparse_vector_difference_test_double("double");
+DenseVectorSparseVectorDifferenceTest<tags::CPU, float> dense_vector_sparse_vector_difference_test_float("float");
+DenseVectorSparseVectorDifferenceTest<tags::CPU, double> dense_vector_sparse_vector_difference_test_double("double");
+DenseVectorSparseVectorDifferenceTest<tags::CPU::MultiCore, float>  mc_dense_vector_sparse_vector_difference_test_float("MC float");
+DenseVectorSparseVectorDifferenceTest<tags::CPU::MultiCore, double> mc_dense_vector_sparse_vector_difference_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorSparseVectorDifferenceQuickTest :
     public QuickTest
 {
@@ -687,6 +725,7 @@ class DenseVectorSparseVectorDifferenceQuickTest :
         DenseVectorSparseVectorDifferenceQuickTest(const std::string & type) :
             QuickTest("dense_vector_sparse_vector_difference_quick_test<" + type + ">")
     {
+            register_tag(Tag_::name);
     }
 
         virtual void run() const
@@ -720,8 +759,10 @@ class DenseVectorSparseVectorDifferenceQuickTest :
             TEST_CHECK_THROWS(Difference<>::value(dv00, sv01), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorSparseVectorDifferenceQuickTest<float> dense_vector_sparse_vector_difference_quick_test_float("float");
-DenseVectorSparseVectorDifferenceQuickTest<double> dense_vector_sparse_vector_difference_quick_test_double("double");
+DenseVectorSparseVectorDifferenceQuickTest<tags::CPU, float> dense_vector_sparse_vector_difference_quick_test_float("float");
+DenseVectorSparseVectorDifferenceQuickTest<tags::CPU, double> dense_vector_sparse_vector_difference_quick_test_double("double");
+DenseVectorSparseVectorDifferenceQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_sparse_vector_difference_quick_test_float("MC float");
+DenseVectorSparseVectorDifferenceQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_sparse_vector_difference_quick_test_double("MC double");
 
 template <typename DT_>
 class SparseVectorDifferenceTest :

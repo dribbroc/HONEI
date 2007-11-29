@@ -444,7 +444,238 @@ namespace honei
         static DenseVector<float> & value(const SparseVector<float> & a, DenseVector<float> & b);
 
         /// \}
+    }; 
+
+  //ANFANG
+
+    template <typename Tag_> struct MCDifference
+    { 
+        template <typename DT1_, typename DT2_>
+        static void value(DenseVectorRange<DT1_> & a, const SparseVector<DT2_> & b, unsigned long offset)
+        {
+            typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+            r += offset;
+            offset = r.index();
+            unsigned long limit = r.index() + a.size();
+            while (r.index() < limit)
+            {
+                a[r.index()-offset] -= *r;
+                ++r;
+            }
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        {
+            CONTEXT("When substracting DenseVector from DenseVector (MultiCore):");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+            unsigned long parts(8);
+            unsigned long div = a.size() / parts;
+            if (div == 0)
+            {
+                Difference<typename Tag_::DelegateTo>::value(a,b);
+            }
+            else
+            {
+                unsigned long modulo = a.size() % parts;
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[parts];
+                for (int i(0); i < modulo; ++i)
+                {
+                    DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
+                    DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
+                    TwoArgWrapper<Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
+                    pt[i] = p->dispatch(mywrapper);
+                }
+                for (unsigned long i(modulo); i < parts; ++i)
+                {
+                    DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
+                    DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+                    TwoArgWrapper<Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
+                    pt[i] = p->dispatch(mywrapper);
+                }
+                for (unsigned long i(0); i < parts; ++i)
+                {
+                    pt[i]->wait_on();
+                }
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            CONTEXT("When substracting DenseVector from SparseVector (MultiCore):");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+            unsigned long parts(8);
+            unsigned long modulo = b.used_elements() % parts;
+            unsigned long div = b.used_elements() / parts;
+            if (div == 0) 
+            {
+                Difference<typename Tag_::DelegateTo>::value(a, b);
+            }
+            else
+            {
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[parts];
+                typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
+                unsigned long offset;
+                for (int i(0); i < modulo; ++i) 
+                {
+                    offset = r.index();
+                    r += div;
+                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
+                    ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, (i*(div+1)));
+                    pt[i] = p->dispatch(mywrapper);
+                    ++r;
+                }
+                for (unsigned long i(modulo); i < parts; ++i)
+                {
+                    offset = r.index();
+                    r+= div-1;
+                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
+                    ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, modulo + (i*div));
+                    pt[i] = p->dispatch(mywrapper);
+                    ++r;
+                }
+                for (unsigned long i = 0; i < parts;  ++i)
+                {
+                    pt[i]->wait_on();
+                }
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
+        {
+            CONTEXT("When substracting BandedMatrix from BandedMatrix (MultiCore):");
+
+            if (a.size() != b.size())
+            {
+                throw MatrixSizeDoesNotMatch(b.size(), a.size());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[2*a.rows()-1];
+            int taskcount(0);
+            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
+            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
+            for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
+            {
+                if (! r.exists())
+                    continue;
+
+                if (l.exists())
+                {
+                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
+                    pt[taskcount] = p->dispatch(mywrapper);
+                    ++taskcount; 
+                }
+                else
+                    a.band(r.index()) = r->copy();
+            }
+            for (unsigned long j = 0; j < taskcount; ++j)           
+            {
+                pt[j]->wait_on();
+            }
+
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When substracting DenseMatrix from DenseMatrix (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When substracting DenseMatrix from SparseMatrix (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+        { 
+            CONTEXT("When substracting SparseMatrix from SparseMatrix (MultiCore):");
+            
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                TwoArgWrapper< Difference<typename Tag_::DelegateTo>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < a.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return a;
+        }
     };
+    template <> struct Difference <tags::CPU::MultiCore> : MCDifference <tags::CPU::MultiCore> {};
+    template <> struct Difference <tags::CPU::MultiCore::SSE> : MCDifference <tags::CPU::MultiCore::SSE> {};
 
 }
 #endif
