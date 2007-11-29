@@ -34,6 +34,7 @@
 
 ///\todo: Do not use define for setting size of multicore-partitions.
 // For optimization purposes
+#define MIN_CHUNK_SIZE 256
 #define PARTS 8
 
 namespace honei
@@ -228,6 +229,13 @@ namespace honei
 
     template <typename Tag_> struct MCScale
     {
+        template <typename DT_>
+        static inline DT_ calculate_parts(const DT_ ref)
+        {
+            if (ref / MIN_CHUNK_SIZE < PARTS) return ref / MIN_CHUNK_SIZE;
+            return PARTS;
+        }
+
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT2_> & value(const DT1_ a, DenseMatrix<DT2_> & x)
         {
@@ -235,25 +243,38 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            unsigned long rest(x.columns() % PARTS);
-            unsigned long chunk_size(x.columns() / PARTS);
-
             std::list<PoolTask*> dispatched_tasks;
 
-            for (unsigned long i(0); i < x.rows(); ++i)
-            {
-                unsigned long j(0);
-                for ( ; j < rest; ++j)
-                {
-                    DenseVectorRange<DT2_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.columns()));
 
-                }
-                for ( ; j < PARTS; ++j)
+            if (num_parts)
+            {
+
+                unsigned long chunk_size(x.columns() / num_parts);
+                unsigned long rest(x.columns() % chunk_size);
+
+                for (unsigned long i(0); i < x.rows(); ++i)
                 {
-                    DenseVectorRange<DT2_> range(x[i].range(chunk_size, j * chunk_size + rest));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                    unsigned long j(0);
+                    for ( ; j < rest; ++j)
+                    {
+                        DenseVectorRange<DT2_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
+                    for ( ; j < num_parts; ++j)
+                    {
+                        DenseVectorRange<DT2_> range(x[i].range(chunk_size, j * chunk_size + rest));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
+                }
+            }
+            else
+            {
+                for (unsigned long i(0); i < x.rows(); ++i)
+                {
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, x[i]);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -278,23 +299,34 @@ namespace honei
 
             for (unsigned long i(0); i < x.rows(); ++i)
             {
-                unsigned long chunk_size(x[i].used_elements() / PARTS);
-                unsigned long rest(x[i].used_elements() % PARTS);
-                unsigned long j(0);
-                for ( ; j < rest; ++j)
+                unsigned long num_parts(MCScale<Tag_>::calculate_parts(x[i].used_elements()));
+                if (num_parts)
                 {
-                    typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
-                    start += j * (chunk_size + 1);
-                    stop += (j + 1) * (chunk_size + 1);
-                    ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
-                        wrapper(a, start, stop);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    unsigned long chunk_size(x[i].used_elements() / num_parts);
+                    unsigned long rest(x[i].used_elements() % chunk_size);
+                    unsigned long j(0);
+                    for ( ; j < rest; ++j)
+                    {
+                        typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
+                        start += j * (chunk_size + 1);
+                        stop += (j + 1) * (chunk_size + 1);
+                        ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
+                            wrapper(a, start, stop);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
+                    for ( ; j < num_parts; ++j)
+                    {
+                        typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
+                        start += j * chunk_size + rest;
+                        stop += (j + 1) * chunk_size + rest;
+                        ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
+                            wrapper(a, start, stop);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
                 }
-                for ( ; j < PARTS; ++j)
+                else
                 {
-                    typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
-                    start += j * chunk_size + rest;
-                    stop += (j + 1) * chunk_size + rest;
+                    typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].end_non_zero_elements());
                     ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
                         wrapper(a, start, stop);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
@@ -329,22 +361,33 @@ namespace honei
                     continue;
 
                 unsigned long band_size(x.size() - vi.index() - 1);
-                unsigned long chunk_size(band_size / PARTS);
-                unsigned long rest(band_size % PARTS);
-                unsigned long i(0);
+                unsigned long num_parts(MCScale<Tag_>::calculate_parts(band_size));
 
-                for ( ; i < rest; ++i)
+                if (num_parts)
                 {
-                    DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1) + x.size() - band_size));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                        wrapper(a, range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    unsigned long chunk_size(band_size / num_parts);
+                    unsigned long rest(band_size % chunk_size);
+                    unsigned long i(0);
+
+                    for ( ; i < rest; ++i)
+                    {
+                        DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1) + x.size() - band_size));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                            wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
+                    for ( ; i < num_parts; ++i)
+                    {
+                        DenseVectorRange<DT2_> range((*vi).range(chunk_size, chunk_size + rest + x.size() - band_size));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                            wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
                 }
-                for ( ; i < PARTS; ++i)
+                else
                 {
-                    DenseVectorRange<DT2_> range((*vi).range(chunk_size, chunk_size + rest + x.size() - band_size));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                        wrapper(a, range);
+                    DenseVectorRange<DT2_> range((*vi).range(band_size, x.size() - band_size));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -352,22 +395,32 @@ namespace honei
             // Calculating diagonal band.
             if (vi.exists())
             {
-                unsigned long chunk_size(x.size() / PARTS);
-                unsigned long rest(x.size() % PARTS);
-                unsigned long i(0);
+                unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.size()));
 
-                for ( ; i < rest; ++i)
+                if (num_parts)
                 {
-                    DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                        wrapper(a, range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    unsigned long chunk_size(x.size() / num_parts);
+                    unsigned long rest(x.size() % chunk_size);
+                    unsigned long i(0);
+
+                    for ( ; i < rest; ++i)
+                    {
+                        DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                            wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
+                    for ( ; i < num_parts; ++i)
+                    {
+                        DenseVectorRange<DT2_> range((*vi).range(chunk_size, i * chunk_size + rest));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                            wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
                 }
-                for ( ; i < PARTS; ++i)
+                else
                 {
-                    DenseVectorRange<DT2_> range((*vi).range(chunk_size, i * chunk_size + rest));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                        wrapper(a, range);
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVector<DT2_> > wrapper(a, (*vi));
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -381,20 +434,32 @@ namespace honei
                     continue;
 
                 unsigned long band_size(2 * x.size() - vi.index() - 1);
-                unsigned long chunk_size(band_size / PARTS);
-                unsigned long rest(band_size % PARTS);
-                unsigned long i(0);
+                unsigned long num_parts(MCScale<Tag_>::calculate_parts(band_size));
 
-                for ( ; i < rest; ++i)
+                if (num_parts)
                 {
-                    DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                        wrapper(a, range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    unsigned long chunk_size(band_size / num_parts);
+                    unsigned long rest(band_size % chunk_size);
+                    unsigned long i(0);
+
+                    for ( ; i < rest; ++i)
+                    {
+                        DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                            wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
+                    for ( ; i < num_parts; ++i)
+                    {
+                        DenseVectorRange<DT2_> range((*vi).range(chunk_size, i *  chunk_size + rest));
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                            wrapper(a, range);
+                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    }
                 }
-                for ( ; i < PARTS; ++i)
+                else
                 {
-                    DenseVectorRange<DT2_> range((*vi).range(chunk_size, i *  chunk_size + rest));
+                    DenseVectorRange<DT2_> range((*vi).range(band_size, 0));
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
                         wrapper(a, range);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
@@ -415,34 +480,42 @@ namespace honei
         {
             CONTEXT("When scaling DenseVectorContinuousBase (MultiCore):");
 
-            unsigned long rest(x.size() % PARTS);
-
-            unsigned long chunk_size(x.size() / PARTS);
-
             ThreadPool * tp(ThreadPool::get_instance());
 
             std::list<PoolTask *> dispatched_tasks;
 
-            unsigned long i(0);
-            for ( ; i < rest; ++i)
-            {
-                DenseVectorRange<DT2_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
-                TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                    wrapper(a, range);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
-            }
-            for ( ; i < PARTS; ++i)
-            {
-                DenseVectorRange<DT2_> range(x.range(chunk_size, i * chunk_size + rest));
-                TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_,
-                    DenseVectorRange<DT2_> > wrapper(a, range);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
-            }
+            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.size()));
 
-            while(! dispatched_tasks.empty())
+            if (num_parts)
             {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
+                unsigned long chunk_size(x.size() / num_parts);
+                unsigned long rest(x.size() % chunk_size);
+
+                unsigned long i(0);
+                for ( ; i < rest; ++i)
+                {
+                    DenseVectorRange<DT2_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
+                        wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+                for ( ; i < num_parts; ++i)
+                {
+                    DenseVectorRange<DT2_> range(x.range(chunk_size, i * chunk_size + rest));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_,
+                        DenseVectorRange<DT2_> > wrapper(a, range);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+
+                while(! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
+            }
+            else
+            {
+                Scale<typename Tag_::DelegateTo>::value(a, x);
             }
 
             return x;
@@ -453,38 +526,45 @@ namespace honei
         {
             CONTEXT("When scaling DenseVectorSlice (MultiCore):");
 
-            unsigned long rest(x.size() % PARTS);
-
-            unsigned long chunk_size(x.size() / PARTS);
-
-            ThreadPool * tp(ThreadPool::get_instance());
-
-            std::list<PoolTask *> dispatched_tasks;
-
-            unsigned long i(0);
-            for ( ; i < rest; ++i)
+            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.size()));
+            if (num_parts)
             {
-                typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
-                start += i * (chunk_size + 1);
-                stop += (i + 1) * (chunk_size + 1);
-                ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                    typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                unsigned long chunk_size(x.size() / num_parts);
+                unsigned long rest(x.size() % chunk_size);
+
+                ThreadPool * tp(ThreadPool::get_instance());
+
+                std::list<PoolTask *> dispatched_tasks;
+
+                unsigned long i(0);
+                for ( ; i < rest; ++i)
+                {
+                    typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
+                    start += i * (chunk_size + 1);
+                    stop += (i + 1) * (chunk_size + 1);
+                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
+                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+                for ( ; i < num_parts; ++i)
+                {
+                    typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
+                    start += i * chunk_size + rest;
+                    stop += (i + 1) * chunk_size + rest;
+                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
+                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
-            for ( ; i < PARTS; ++i)
+            else
             {
-                typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
-                start += i * chunk_size + rest;
-                stop += (i + 1) * chunk_size + rest;
-                ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                    typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
-            }
-
-            while (! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
+                Scale<>::value(a, x);
             }
 
             return x;
@@ -495,37 +575,47 @@ namespace honei
         {
             CONTEXT("When scaling SparseVector (MultiCore):");
 
-            unsigned long rest(x.used_elements() % PARTS);
-            unsigned long chunk_size(x.used_elements() / PARTS);
-            ThreadPool * tp(ThreadPool::get_instance());
+            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.used_elements()));
 
-            std::list<PoolTask *> dispatched_tasks;
-
-            unsigned long i(0);
-            for ( ; i < rest; ++i)
+            if (num_parts)
             {
-                typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
-                start += i * (chunk_size + 1);
-                stop += (i + 1) * (chunk_size + 1);
-                ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                    typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                unsigned long chunk_size(x.used_elements() / num_parts);
+                unsigned long rest(x.used_elements() % chunk_size);
+                ThreadPool * tp(ThreadPool::get_instance());
+
+                std::list<PoolTask *> dispatched_tasks;
+
+                unsigned long i(0);
+                for ( ; i < rest; ++i)
+                {
+                    typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
+                    start += i * (chunk_size + 1);
+                    stop += (i + 1) * (chunk_size + 1);
+                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
+                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+
+                for ( ; i < num_parts; ++i)
+                {
+                    typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
+                    start += i * chunk_size + rest;
+                    stop += (i + 1) * chunk_size + rest;
+                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
+                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
-
-            for ( ; i < PARTS; ++i)
+            else
             {
-                typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
-                start += i * chunk_size + rest;
-                stop += (i + 1) * chunk_size + rest;
-                ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                    typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
-            }
-
-            while (! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
+                typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.end_non_zero_elements());
+                MCScale<Tag_>::value(a, start, stop);
             }
 
             return x;
@@ -541,18 +631,6 @@ namespace honei
                 *x *= a;
             }
         }
-
-        #ifdef BENCHM
-        template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DT1_ a, DenseMatrix<DT2_> & b)
-        {
-            BenchmarkInfo result;
-            result.flops = b.rows() * b.columns();
-            result.load = b.rows() * b.columns() * sizeof(DT2_) + sizeof(DT1_);
-            result.store = b.rows() * b.columns() * sizeof(DT2_);
-            return result; 
-        }
-        #endif
     };
     template <> struct Scale<tags::CPU::MultiCore> : public MCScale<tags::CPU::MultiCore> {};
     template <> struct Scale<tags::CPU::MultiCore::SSE> : public MCScale<tags::CPU::MultiCore::SSE> {};
