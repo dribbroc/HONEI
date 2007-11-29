@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/scale-sse.cc: Added DenseMatrixScale SSE version.
+
 2007-11-28 Volker Jung <volker.jung@honei.org>
 
 	* libla/scale.hh: Fixed multicore-scaling of matrices. All multicore

@@ -429,7 +429,7 @@ namespace honei
             result.load = a.rows() * a.columns() * sizeof(DT1_) + sizeof(DT2_);
             result.store = a.rows() * a.columns() * sizeof(DT1_);
             return result;
-        }        
+        }
         #endif
     };
 

@@ -412,20 +412,20 @@ ConjugateGradientsTestDense_big<tags::CPU, double> cg_test_double_dense_big("dou
 
 
 #ifdef HONEI_SSE
-ConjugateGradientsTestSparse<tags::CPU::SSE, float> sse_cg_test_float_sparse("float");
-ConjugateGradientsTestSparse<tags::CPU::SSE, double> sse_cg_test_double_sparse("double");
+ConjugateGradientsTestSparse<tags::CPU::SSE, float> sse_cg_test_float_sparse("SSE float");
+ConjugateGradientsTestSparse<tags::CPU::SSE, double> sse_cg_test_double_sparse("SSE double");
 
-ConjugateGradientsTestSparseJAC<tags::CPU::SSE, float> sse_cg_test_float_sparse_jac("float");
-ConjugateGradientsTestSparseJAC<tags::CPU::SSE, double> sse_cg_test_double_sparse_jac("double");
+ConjugateGradientsTestSparseJAC<tags::CPU::SSE, float> sse_cg_test_float_sparse_jac("SSE float");
+ConjugateGradientsTestSparseJAC<tags::CPU::SSE, double> sse_cg_test_double_sparse_jac("SSE double");
 
 ConjugateGradientsTestDense<tags::CPU::SSE, float> sse_cg_test_float_dense("SSE float");
 ConjugateGradientsTestDense<tags::CPU::SSE, double> sse_cg_test_double_dense("SSE double");
 ConjugateGradientsTestBanded<tags::CPU::SSE, float> sse_cg_test_float_banded("SSE float");
 ConjugateGradientsTestBanded<tags::CPU::SSE, double> sse_cg_test_double_banded("SSE double");
-ConjugateGradientsTestDenseJAC<tags::CPU::SSE, float> sse_cg_test_float_dense_jac("float");
-ConjugateGradientsTestDenseJAC<tags::CPU::SSE, double> sse_cg_test_double_dense_jac("double");
-ConjugateGradientsTestBandedJAC<tags::CPU::SSE, float> sse_cg_test_float_banded_jac("float");
-ConjugateGradientsTestBandedJAC<tags::CPU::SSE, double> sse_cg_test_double_banded_jac("double");
+ConjugateGradientsTestDenseJAC<tags::CPU::SSE, float> sse_cg_test_float_dense_jac("SSE float");
+ConjugateGradientsTestDenseJAC<tags::CPU::SSE, double> sse_cg_test_double_dense_jac("SSE double");
+ConjugateGradientsTestBandedJAC<tags::CPU::SSE, float> sse_cg_test_float_banded_jac("SSE float");
+ConjugateGradientsTestBandedJAC<tags::CPU::SSE, double> sse_cg_test_double_banded_jac("SSE double");
 
 
 

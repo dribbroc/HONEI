@@ -39,7 +39,7 @@ class ScalarDenseMatrixScaleBench :
             {
                 BENCHMARK(Scale<Tag_>::value(DataType_ (alpha), dm0));
             }
-            BenchmarkInfo info(Scale<Tag_>::get_benchmark_info(alpha, dm0));
+            BenchmarkInfo info(Scale<>::get_benchmark_info(alpha, dm0));
             evaluate(info);
     }
 };
@@ -48,6 +48,10 @@ ScalarDenseMatrixScaleBench<tags::CPU, double>            SMPBenchdouble  ("Dens
 ScalarDenseMatrixScaleBench<tags::CPU::MultiCore, float>  SMPBenchfloatMC ("MC: DenseMatrix Scale Benchmark: size: 8192x8192, float",  8192, 10);
 ScalarDenseMatrixScaleBench<tags::CPU::MultiCore, double> SMPBenchdoubleMC("MC: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
 #ifdef HONEI_SSE
+ScalarDenseMatrixScaleBench<tags::CPU::SSE, float>
+        SMPBenchfloatSSE("SSE: DenseMatrix Scale Benchmark: size: 8192x8192, float", 8192, 10);
+ScalarDenseMatrixScaleBench<tags::CPU::SSE, double>
+        SMPBenchdoubleSSE("SSE: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
 ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, float>
         SMPBenchfloatMCSSE("MC SSE: DenseMatrix Scale Benchmark: size: 8192x8192, float", 8192, 10);
 ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, double>

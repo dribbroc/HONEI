@@ -35,9 +35,7 @@ DenseVector<float> & ElementProduct<tags::CPU::SSE>::value(DenseVector<float> & 
 
     __m128 m1, m2;
 
-    unsigned long quad_end(a.size() - (b.size() % 4));
-
-    for (unsigned long index = 0 ; index < quad_end ; index += 4) 
+    for (unsigned long index = 0 ; index < a.size() ; index += 4) 
     {
         m1 = _mm_load_ps(a.elements() + index);
         m2 = _mm_load_ps(b.elements() + index);
@@ -46,11 +44,6 @@ DenseVector<float> & ElementProduct<tags::CPU::SSE>::value(DenseVector<float> & 
 
         _mm_stream_ps(a.elements() + index, m1);
 
-    }
-
-    for (unsigned long index = quad_end ; index < a.size() ; index++)
-    {
-        a.elements()[index] *= b.elements()[index];
     }
     return a;
 }
@@ -66,9 +59,7 @@ DenseVector<double> & ElementProduct<tags::CPU::SSE>::value(DenseVector<double> 
 
     __m128d m1, m2;
 
-    unsigned long quad_end(a.size() - (b.size() % 2));
-
-    for (unsigned long index = 0 ; index < quad_end ; index += 2) 
+    for (unsigned long index = 0 ; index < a.size() ; index += 2) 
     {
         m1 = _mm_load_pd(a.elements() + index);
         m2 = _mm_load_pd(b.elements() + index);
@@ -76,11 +67,6 @@ DenseVector<double> & ElementProduct<tags::CPU::SSE>::value(DenseVector<double> 
         m1 = _mm_mul_pd(m1, m2);
 
         _mm_stream_pd(a.elements() + index, m1);
-    }
-
-    for (unsigned long index = quad_end ; index < a.size() ; index++)
-    {
-        a.elements()[index] *= b.elements()[index];
     }
     return a;
 }

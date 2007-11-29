@@ -154,6 +154,8 @@ DenseMatrixScaleTest<tags::CPU, double> scalar_dense_matrix_product_test_double(
 DenseMatrixScaleTest<tags::CPU::MultiCore, float> mc_scalar_dense_matrix_product_test_float("MC float");
 DenseMatrixScaleTest<tags::CPU::MultiCore, double> mc_scalar_dense_matrix_product_test_double("MC double");
 #ifdef HONEI_SSE
+DenseMatrixScaleTest<tags::CPU::SSE, float> sse_scalar_dense_matrix_product_test_float("SSE float");
+DenseMatrixScaleTest<tags::CPU::SSE, double> sse_scalar_dense_matrix_product_test_double("SSE double");
 DenseMatrixScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_dense_matrix_product_test_float("MC SSE float");
 DenseMatrixScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_dense_matrix_product_test_double("MC SSE double");
 #endif
@@ -193,6 +195,8 @@ DenseMatrixScaleQuickTest<tags::CPU, double> dense_matrix_scale_quick_test_doubl
 DenseMatrixScaleQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_scale_quick_test_float("MC float");
 DenseMatrixScaleQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_scale_quick_test_double("MC double");
 #ifdef HONEI_SSE
+DenseMatrixScaleQuickTest<tags::CPU::SSE, float> sse_dense_matrix_scale_quick_test_float("SSE float");
+DenseMatrixScaleQuickTest<tags::CPU::SSE, double> sse_dense_matrix_scale_quick_test_double("SSE double");
 DenseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_matrix_scale_quick_test_float("MC SSE float");
 DenseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_matrix_scale_quick_test_double("MC SSE double");
 #endif
@@ -286,7 +290,7 @@ class ScalarDenseVectorProductTest :
 {
     public:
         ScalarDenseVectorProductTest(const std::string & type) :
-            BaseTest("scalar_dense_vector_product_test<" + type + ">")
+            BaseTest("dense_vector_scale_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
@@ -321,7 +325,7 @@ class ScalarDenseVectorProductQuickTest :
 {
     public:
         ScalarDenseVectorProductQuickTest(const std::string & type) :
-            QuickTest("scalar_dense_vector_product_quick_test<" + type + ">")
+            QuickTest("dense_vector_scale_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }

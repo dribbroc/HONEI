@@ -33,8 +33,7 @@ DenseVector<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVector<flo
     a_data= a;
     m8 = _mm_load_ps1(&a_data);
 
-    unsigned long quad_end(x.size() - (x.size() % 4));
-    for (unsigned long index = 0 ; index < quad_end ; index += 4) 
+    for (unsigned long index = 0 ; index < x.size() ; index += 4) 
     {
         m1 = _mm_load_ps(x.elements() + index);
 
@@ -43,10 +42,6 @@ DenseVector<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVector<flo
         _mm_stream_ps(x.elements() + index, m1);
     }
 
-    for (unsigned long index = quad_end ; index < x.size() ; index++)
-    {
-        x.elements()[index] *= a;
-    }
     return x;
 }
 
@@ -59,8 +54,7 @@ DenseVector<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVector<d
     a_data= a;
     m8 = _mm_load_pd1(&a_data);
 
-    unsigned long quad_end(x.size() - (x.size() % 2));
-    for (unsigned long index = 0 ; index < quad_end ; index += 2) 
+    for (unsigned long index = 0 ; index < x.size() ; index += 2) 
     {
         m1 = _mm_load_pd(x.elements() + index);
 
@@ -69,10 +63,48 @@ DenseVector<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVector<d
         _mm_stream_pd(x.elements() + index, m1);
     }
 
-    for (unsigned long index = quad_end ; index < x.size() ; index++)
+    return x;
+}
+
+DenseMatrix<float> & Scale<tags::CPU::SSE>::value(const float a, DenseMatrix<float> & x)
+{
+    CONTEXT("When scaling DenseMatrix<float> by float with SSE:");
+
+    __m128 m1, m8;
+    float __attribute__((aligned(16))) a_data;
+    a_data= a;
+    m8 = _mm_load_ps1(&a_data);
+
+    for (unsigned long index = 0 ; index < x.rows() * x.columns() ; index += 4) 
     {
-        x.elements()[index] *= a;
+        m1 = _mm_load_ps(x.elements() + index);
+
+        m1 = _mm_mul_ps(m1, m8);
+
+        _mm_stream_ps(x.elements() + index, m1);
     }
+
+    return x;
+}
+
+DenseMatrix<double> & Scale<tags::CPU::SSE>::value(const double a, DenseMatrix<double> & x)
+{
+    CONTEXT("When scaling DenseMatrix<double> by double with SSE:");
+
+    __m128d m1, m8;
+    double __attribute__((aligned(16))) a_data;
+    a_data= a;
+    m8 = _mm_load_pd1(&a_data);
+
+    for (unsigned long index = 0 ; index < x.rows() * x.columns() ; index += 2) 
+    {
+        m1 = _mm_load_pd(x.elements() + index);
+
+        m1 = _mm_mul_pd(m1, m8);
+
+        _mm_stream_pd(x.elements() + index, m1);
+    }
+
     return x;
 }
 
