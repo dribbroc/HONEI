@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-29 Joachim Messer <joachim.messer@uni-dortmund.de.de>
+	* libla/product.hh: Implemented BandedMatrix*DenseVector for MultiCore
+	* libla/product_TEST.cc, product_BENCHMARK.cc: Improved BM*DV Test and
+	added MultiCore to test and benchmark.
+	* libutil/wrapper.hh: Added additional operator for ThreeArgWrapper.
+
 2007-11-29 Mathias Kadolsky <mathkad@gmx.de>
 
 	* libutil/wrapper.hh: Bug fixed in OneArgWrapper (_a is not a

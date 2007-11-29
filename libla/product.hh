@@ -1072,6 +1072,135 @@ namespace honei
             }
             return result;
         }
+
+        // helpfunction for BandedMAtrix*DenseVector MultiCore
+        template <typename DT1_, typename DT2_>
+        static void value(DenseVectorRange<DT1_> & result, const DenseVectorRange<DT1_> & a, const DenseVectorRange<DT2_> & b, Mutex * mutex)
+        {
+            DenseVector<DT1_> temp_result(a.copy());
+            ElementProduct<typename Tag_::DelegateTo>::value(temp_result, b);
+            Lock l(*mutex);
+            Sum<typename Tag_::DelegateTo>::value(result, temp_result);
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVector<DT2_> & b)
+        {
+            CONTEXT("When multiplying BandedMatrix with DenseVector(MultiCore):");
+
+            if (b.size() != a.columns())
+            {
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
+            }
+
+            DenseVector<DT1_> result(a.rows(), DT1_(0));
+            unsigned long parts(8);
+            unsigned long div = b.size() / parts;
+            if (div == 0)
+            {
+                return Product<typename Tag_::DelegateTo>::value(a,b);
+            }
+            else
+            {
+                unsigned long modulo = b.size() % parts;
+                ThreadPool * tp(ThreadPool::get_instance());
+                std::list< PoolTask* > dispatched_tasks;
+                Mutex mutex[parts];
+                int middle_index(a.rows() -1);
+
+                // If we are above or on the diagonal band
+                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), 
+                     vi_end(a.end_bands()); vi != vi_end ; ++vi)
+                {
+                    unsigned long i(0), offset(0);
+                    unsigned long end(vi->size() - (vi.index() - middle_index));
+                    while ((i < modulo) && (offset+div+1 < end))
+                    {
+                        DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
+                        DenseVectorRange<DT2_> range_2(b, div+1, offset + vi.index() - middle_index);
+                        DenseVectorRange<DT1_> res_range(result, div+1, offset);
+                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                        ++i;
+                        offset+=div+1;
+                    }
+                    if (i == modulo)
+                    {
+                        while ((i < parts) && (offset+div  < end))
+                        {
+                            DenseVectorRange<DT1_> range_1(*vi, div, offset);
+                            DenseVectorRange<DT2_> range_2(b, div, offset + vi.index() - middle_index);
+                            DenseVectorRange<DT1_> res_range(result, div, offset);
+                            ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                            dispatched_tasks.push_back(tp->dispatch(func));
+                            ++i;
+                            offset+=div;
+                        }
+                    }
+                    if (offset < end)
+                    {
+                        DenseVectorRange<DT1_> range_1(*vi, end - offset, offset);
+                        DenseVectorRange<DT2_> range_2(b, end - offset, offset + vi.index()-middle_index);
+                        DenseVectorRange<DT1_> res_range(result, end - offset, offset);
+                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                    }
+                }
+                //if we are below the diagonal band
+                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+                     vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
+                {
+                    unsigned long i(parts), offset(b.size());
+                    unsigned long start(middle_index - vi.index());
+                    while(i > modulo && offset-div > start)
+                    {
+                        --i;
+                        offset-=div;
+                        DenseVectorRange<DT1_> range_1(*vi, div, offset);
+                        DenseVectorRange<DT2_> range_2(b, div, offset - (middle_index - vi.index()));
+                        DenseVectorRange<DT1_> res_range(result, div, offset);
+                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                    }
+                    if (i == modulo)
+                    {
+                        while(i > 0 && offset-div-1 > start)
+                        {
+                            --i;
+                            offset-=(div+1);
+                            DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
+                            DenseVectorRange<DT2_> range_2(b, div+1, offset - (middle_index - vi.index()));
+                            DenseVectorRange<DT1_> res_range(result, div+1, offset);
+                            ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                            dispatched_tasks.push_back(tp->dispatch(func));
+                        }
+                    }
+                    if (offset > start)
+                    {
+                        DenseVectorRange<DT1_> range_1(*vi, offset-start, start);
+                        DenseVectorRange<DT2_> range_2(b, offset-start, 0);
+                        DenseVectorRange<DT1_> res_range(result, offset-start, start);
+                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                    }
+                }
+
+                while(! dispatched_tasks.empty())
+                {
+                    PoolTask * pt = dispatched_tasks.front();
+                    dispatched_tasks.pop_front();
+                    pt->wait_on();
+                }
+                return result;
+            }
+        }
+
     };
     template <> struct Product <tags::CPU::MultiCore> : MCProduct <tags::CPU::MultiCore> {};
     template <> struct Product <tags::CPU::MultiCore::SSE> : MCProduct <tags::CPU::MultiCore::SSE> {};

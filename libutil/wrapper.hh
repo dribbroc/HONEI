@@ -91,6 +91,10 @@ namespace honei
                     Tag_::value(_a, _b, _c);
                 }
 
+                void operator() (Mutex * mutex)
+                {
+                    Tag_::value(_a, _b, _c, mutex);
+                }
         };
     
     template < typename Tag_, typename DT1_, typename DT2_, typename DT3_>

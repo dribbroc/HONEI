@@ -46,16 +46,28 @@ class BandedMatrixDenseVectorProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(2));
-                BandedMatrix<DataType_> bm1(size, dv1);
-                DenseVector<DataType_> dv4(size, DataType_(2));
+                DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
+                DenseVector<DataType_> dv4(size, DataType_(0));
                 DenseVector<DataType_> dv5(dv4.copy());
+                for (unsigned long i(0); i < size; ++i)
+                    {
+                        (dv1)[i]= (-1)*DataType_(i+1);
+                        (dv2)[i]= DataType_(size-i);
+                        (dv4)[i]= DataType_(i+1);
+                        (dv5)[i]= DataType_(i+1);
+                    }
+                BandedMatrix<DataType_> bm1(size, dv1);
                 bm1.insert_band(1, dv4);
                 bm1.insert_band(-1, dv5);
 
-                DenseVector<DataType_> dv2(size, DataType_(3)), dv3(size, DataType_(6 * 3));
-                (dv3)[0]= DataType_(12);
-                (dv3)[size-1]= DataType_(12);
+                DenseVector<DataType_> dv3(size, DataType_(0));
+                (dv3)[0]= DataType_(-1);
+                (dv3)[size-1]= DataType_(size);
+                for (int i(1); i < size-1; ++i)
+                {
+                    (dv3)[i]= DataType_((i+1)*(size-i)); 
+                }
+
                 DenseVector<DataType_> prod (Product<Tag_>::value(bm1, dv2));
 
                 TEST_CHECK_EQUAL(prod, dv3);
@@ -68,9 +80,13 @@ class BandedMatrixDenseVectorProductTest :
 };
 BandedMatrixDenseVectorProductTest<tags::CPU, float> banded_matrix_dense_vector_product_test_float("float");
 BandedMatrixDenseVectorProductTest<tags::CPU, double> banded_matrix_dense_vector_product_test_double("double");
+BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore, float> mc_banded_matrix_dense_vector_product_test_float("MC float");
+BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore, double> mc_banded_matrix_dense_vector_product_test_double("MC double");
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_banded_matrix_dense_vector_product_test_float("SSE float");
 BandedMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_banded_matrix_dense_vector_product_test_double("SSE double");
+BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_banded_matrix_dense_vector_product_test_float("MC::SSE float");
+BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_banded_matrix_dense_vector_product_test_double("MC::SSE double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -87,16 +103,28 @@ class BandedMatrixDenseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(43);
-            DenseVector<DataType_> dv1(size, DataType_(2));
-            BandedMatrix<DataType_> bm1(size, dv1);
-            DenseVector<DataType_> dv4(size, DataType_(2));
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
+            DenseVector<DataType_> dv4(size, DataType_(0));
             DenseVector<DataType_> dv5(dv4.copy());
+            DenseVector<DataType_> dv6(size, DataType_(-1)), dv7(size, DataType_(1));
+            for (unsigned long i(0); i < size; ++i)
+                {
+                    (dv1)[i]= (-1)*DataType_(i+1);
+                    (dv2)[i]= DataType_(size-i);
+                    (dv4)[i]= DataType_(i+1);
+                    (dv5)[i]= DataType_(i+1);
+                }
+            BandedMatrix<DataType_> bm1(size, dv1);
             bm1.insert_band(1, dv4);
             bm1.insert_band(-1, dv5);
+            bm1.insert_band(-size+1, dv6);
+            bm1.insert_band(size-1, dv7);
 
-            DenseVector<DataType_> dv2(size, DataType_(3)), dv3(size, DataType_(6 * 3));
-            (dv3)[0]= DataType_(12);
-            (dv3)[size-1]= DataType_(12);
+            DenseVector<DataType_> dv3(size, DataType_(0));
+            for (int i(1); i < size-1; ++i)
+            {
+                (dv3)[i]= DataType_((i+1)*(size-i)); 
+            }
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
             TEST_CHECK_EQUAL(prod, dv3);
@@ -108,9 +136,13 @@ class BandedMatrixDenseVectorProductQuickTest :
 };
 BandedMatrixDenseVectorProductQuickTest<tags::CPU, float> banded_matrix_dense_vector_product_quick_test_float("float");
 BandedMatrixDenseVectorProductQuickTest<tags::CPU, double> banded_matrix_dense_vector_product_quick_test_double("double");
+BandedMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_dense_vector_product_quick_test_float("MC float");
+BandedMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_dense_vector_product_quick_test_double("MC double");
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_banded_matrix_dense_vector_product_quick_test_float("SSE float");
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_banded_matrix_dense_vector_product_quick_test_double("SSE double");
+BandedMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_banded_matrix_dense_vector_product_quick_test_float("MC::SSE float");
+BandedMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_banded_matrix_dense_vector_product_quick_test_double("MC::SSE double");
 #endif
 #ifdef HONEI_CELL
 BandedMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_banded_matrix_dense_vector_product_quick_test_float("CELL float");
