@@ -192,7 +192,7 @@ namespace honei
         class OneArgWrapper
         {
             private:
-                DT1_ & _a;
+                DT1_ _a;
 
             public:
 
