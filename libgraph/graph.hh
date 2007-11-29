@@ -25,29 +25,28 @@
 #include <libla/dense_matrix.hh>
 #include <libla/sparse_matrix.hh>
 #include <libgraph/node.hh>
+#include <libgraph/abstract_graph.hh>
 #include <map>
 
 namespace honei 
 {
 
-    template <typename DataType_> class Graph
+    template <typename DataType_> class Graph: 
+        public AbstractGraph<DataType_>
     {
     private:
         typedef    Node<DataType_> NodeType;
-        std::map<int, int> _nodeMapping;
-        DenseMatrix<DataType_> * _coordinates;
-        SparseMatrix< DataType_ > * _edges;
-        DenseVector<DataType_> * _nodeWeights;
         NodeType** _nodes;
         int _nodeCount;
         int _maxNodes;
         int _coordinateDimensions;
+    std::map<int, int> _nodeMapping;
 
         /// sets edges[v_index][w_index] = edges[w_index][v_index] = weight
         void setEdgeWeightInternal(int v_index, int w_index, DataType_ weight)
         {
-            (*_edges)[v_index][w_index] = weight;
-            (*_edges)[w_index][v_index] = weight;
+            (*this->_edges)[v_index][w_index] = weight;
+            (*this->_edges)[w_index][v_index] = weight;
         }
 
     public:
@@ -59,16 +58,16 @@ namespace honei
             _maxNodes(nodes)
         {
             _nodes = new NodeType*[nodes];
-            _coordinates = new DenseMatrix<DataType_>(coordinateDimensions, nodes);
-            _edges = new SparseMatrix<DataType_>(nodes, nodes);
-            _nodeWeights = new DenseVector<DataType_>(nodes, (DataType_)1);
+        this->_coordinates = new DenseMatrix<DataType_>(nodes, coordinateDimensions);
+            this->_edges = new SparseMatrix<DataType_>(nodes, nodes);
+            this->_nodeWeights = new DenseVector<DataType_>(nodes, (DataType_)1);
         }
 
         ~Graph()
         {
-            delete(_coordinates);
-            delete(_edges);
-            delete(_nodeWeights);
+            delete(this->_coordinates);
+            delete(this->_edges);
+            delete(this->_nodeWeights);
         }
 
         /// adds a node to this graph, puts its initial position and its weight into the relevant matrices
@@ -80,9 +79,9 @@ namespace honei
                 _nodeMapping[node->getID()] = _nodeCount;
                 for (int i(0); i < _coordinateDimensions; ++i)
                 {
-                    (*_coordinates)[i][_nodeCount] = i < node->getPosition()->size() ? (*node->getPosition())[i] : 0;
+                    (*this->_coordinates)[_nodeCount][i] = i < node->getPosition()->size() ? (*node->getPosition())[i] : 0;
                 }
-                (*_nodeWeights)[_nodeCount] = node->getWeight();
+                (*this->_nodeWeights)[_nodeCount] = node->getWeight();
                 ++_nodeCount;
             }
         }
@@ -139,26 +138,8 @@ namespace honei
         int getNodeIndex(int id)
         {
              if (_nodeMapping.find(id) != _nodeMapping.end())
-            return _nodeMapping[id];
+                return _nodeMapping[id];
             return -1;
-        }
-
-        /// returns the coordinate matrix of this graph
-        DenseMatrix<DataType_> * getCoordinates()
-        {
-            return _coordinates;
-        }
-
-        /// returns the weight of the nodes
-        DenseVector<DataType_> * getNodeWeights()
-        {
-            return _nodeWeights;
-        }
-
-        /// returns the weight of the edges in this graph
-        SparseMatrix<DataType_> * getEdges()
-        {
-            return _edges;
         }
 
         /// the number of actually contained nodes.

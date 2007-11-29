@@ -22,6 +22,7 @@
 
 
 #include <libgraph/graph.hh>
+#include <libgraph/abstract_graph.hh>
 
 #include <string>
 #include <iostream>
@@ -42,7 +43,7 @@ class GraphTest :
         }
 
     virtual void run() const
-    {
+    {    
         Graph<DataType_> g(5, 3);
         Node<DataType_> * node = new Node<DataType_>(1, 1, 1, 1, 1);
         g.addNode(node);
@@ -53,12 +54,11 @@ class GraphTest :
             g.addEdge(1,2, 7);
         g.addEdge(2,3, 4);
         g.addEdge(g.getNode(4), g.getNodeByID(6), 11);
-        std::cout << *g.getCoordinates() << std::endl;
-        std::cout << *g.getNodeWeights() << std::endl;
-        std::cout << *g.getEdges() << std::endl;
+        std::cout << *g.coordinates() << std::endl;
+        std::cout << *g.nodeWeights() << std::endl;
+        std::cout << *g.edges() << std::endl;
 
         delete(node);
-    //    delete(g);
         TEST_CHECK(true);
     }
 };

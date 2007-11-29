@@ -46,7 +46,7 @@ class EvolvingGraphTest :
 
     virtual void run() const
          {
-            // create evolving graph and some nodes
+            /* // create evolving graph and some nodes
             EvolvingGraph<DataType_> eg(2,1);
             eg.addNode(new NodeType(1, 1, 1, 1));
             eg.addNode(new NodeType(2, 2, 2, 2));
@@ -85,22 +85,56 @@ class EvolvingGraphTest :
             t2->addEdge(1,4, 4);
             t2->addEdge(3,5, 2);
             t2->addEdge(4,5, 4);
-            eg.addTimeslice(t2);
+            eg.addTimeslice(t2);*/
+
+            EvolvingGraph<DataType_> eg(2,1);
+            // Creating nodes
+            eg.addNode(new Node<DataType_>(1, 2, -2, 1));
+            eg.addNode(new Node<DataType_>(2, 2, 8, 1));
+            eg.addNode(new Node<DataType_>(3, 1, 0, 0));
+            eg.addNode(new Node<DataType_>(4, 1, 1, 0));
+
+            Graph<DataType_> * t1 = new Graph<DataType_>(2, 2);
+            t1->addNode(eg.getNode(1));
+            t1->addNode(eg.getNode(2));
+            t1->addEdge(1, 2, 1);
+            eg.addTimeslice(t1);
+
+            Graph<DataType_> * t2 = new Graph<DataType_>(3, 2);
+            t2->addNode(eg.getNode(1));
+            t2->addNode(eg.getNode(2));
+            t2->addNode(eg.getNode(3));
+            t2->addEdge(1,2,1);
+            t2->addEdge(1,3,1);
+            eg.addTimeslice(t2);            
 
             // see what happens if we assemble the whole graph's matrices
             std::cout << "evolving graph with " << eg.nodeCount() << " nodes and " << eg.sliceCount() << " timeslices " << std::            endl;
             std::cout << "Coordinates: " << std::endl;
-            std::cout << *eg.getCoordinates() << std::endl;
+            std::cout << *eg.coordinates() << std::endl;
 
             std::cout << " NodeWeights: " << std::endl;
-            std::cout << *eg.getNodeWeights() << std::endl;
+            std::cout << *eg.nodeWeights() << std::endl;
             std::cout << "Edges: " << std::endl;
-            std::cout << *eg.getEdges() << std::endl;
+            std::cout << *eg.edges() << std::endl;
 
-            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(*eg.getCoordinates(), *eg.getNodeWeights(), *eg.getEdges());
-            positions.update(0.01, 10);
-            std::cout << positions.coordinates() << std::endl;
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(eg, (DataType_)2);
+            positions.update(0.01, 100);
+            std::cout << "coordinates for eg after position.update(0.01, 100):\n" << positions.coordinates() << std::endl;
+
+
+            std::cout << "Graph t1 before update - t1.coordinates:\n" << *t1->coordinates() << std::endl;
+            std::cout << "t1.NodeWeights:\n " << *t1->nodeWeights() << std::endl;
+            std::cout << "t1.edges:\n" << *t1->edges() << std::endl;
+
+            // old version
+            // Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1->coordinates(), *t1->nodeWeights(), *t1->edges()); 
+            // new version: 
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1, (DataType_)2);
+            positions2.update(0.01, 1000);
+            std::cout << "coordinates for t1 after position2.update(0.01, 100):\n" << positions2.coordinates() << std::endl;       
             TEST_CHECK(true);
+            delete(t1);
     }
 };
 

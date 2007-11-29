@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-29 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+	* libgraph/{abstract_graph.hh,files.m4} : Added AbstractGraph as base class of Graph and EvolvingGraph. 
+	* libgraph/{evolving_graph{.hh,_TEST.cc},graph{.hh,_TEST.cc}}: Changed to support AbstractGraph.
+	* libgraph/position.hh: Added new constructor for Position that gets a
+	reference to an AbstractGraph. Added support for AbstractGraph in implementation of weighted Kamada Kawai method. Both Graphs and Evolving graphs are now supported by this method, Fruchterman-Reingold is about to come.
+
 2007-11-29 Andre Matuschek <andre@matuschek.org>
         * libla/difference.hh: Added MultiCore version of difference.
         * libls/difference_TEST.cc: Added tests for new MC instructions.
