@@ -37,7 +37,7 @@
 #include <libla/sum.hh>
 #include <libla/scale.hh>
 #include <libla/vector.hh>
-#include <libgraph/graph.hh>
+#include <libgraph/abstract_graph.hh>
 #include <libgraph/graph_error.hh>
 #include <libutil/tags.hh>
 
@@ -128,6 +128,28 @@
 
                 if (weights_of_nodes.size() != coordinates.rows())
                     throw VectorSizeDoesNotMatch(weights_of_nodes.size(), coordinates.columns());
+#if 0
+                \todo Implement Trace
+                if (Trace<>::value(weights_of_edges) > std::numeric_limits<DataType_>::epsilon())
+                    throw MatrixHasNonVanishingTrace;
+#endif
+            }
+
+            Positions(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
+                _imp(new methods::Implementation<Tag_, DataType_, GraphTag_>(graph, edge_length))
+            {
+                /* Following lines not needed: Graph assembles matrices correctly - I hope so, at least.
+                 *
+                 
+                if (graph.coordinates->columns() != graph.cweights_of_edges.columns())
+                    throw MatrixColumnsDoNotMatch(weights_of_edges.columns(), coordinates.columns());
+
+                if (! weights_of_edges.square())
+                    throw MatrixIsNotSquare(weights_of_edges.rows(), weights_of_edges.columns());
+
+                if (weights_of_nodes.size() != coordinates.columns())
+                    throw VectorSizeDoesNotMatch(weights_of_nodes.size(), coordinates.columns());
+                    */
 #if 0
                 \todo Implement Trace
                 if (Trace<>::value(weights_of_edges) > std::numeric_limits<DataType_>::epsilon())
@@ -669,6 +691,9 @@
                 /// vector of step widths
                 DenseVector<DataType_> _step_widths;
 
+                /// Reference to graph object, if this method is used with graph types. 
+                AbstractGraph<DataType_> * _graph; 
+                
             public:
                 friend class Positions<Tag_, DataType_, WeightedKamadaKawai>;
                 
@@ -682,7 +707,22 @@
                     _spring_forces(coordinates.rows(), coordinates.columns(), DataType_(0)),
                     _spring_force_parameters(weights_of_edges.rows(), weights_of_edges.rows(), DataType_(0)),
                     max_node(0),
-                    _step_widths(coordinates.rows(), DataType_(0))
+                    _step_widths(coordinates.rows(), DataType_(0)),
+                    _graph(0)
+                {
+                }
+
+                Implementation(AbstractGraph<DataType_> & graph, int edge_length) :
+                    _coordinates(*graph.coordinates()),
+                    _previous_coordinates(*(graph.coordinates()->copy())),
+                    _weights_of_nodes(*graph.nodeWeights()),
+                    _weights_of_edges(*graph.edges()),
+                    _graph_distance(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
+                    _spring_forces(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
+                    _spring_force_parameters(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
+                    max_node(0),
+                    _step_widths(_coordinates.rows(), DataType_(0)),
+                    _graph(&graph)
                 {
                 }
 
@@ -712,8 +752,10 @@
                         costs = 0;
                         while (row != e.column())
                         {
-                            costs += sqrt(_weights_of_nodes[row] * _weights_of_nodes[previous_nodes[row][e.column()]]) /
-                            _weights_of_edges[row][previous_nodes[row][e.column()]];
+                            costs += (_graph == 0) || _graph->sameTimeslice(row, e.column()) ?
+                            sqrt(_weights_of_nodes[row] * _weights_of_nodes[previous_nodes[row][e.column()]]) /
+                            _weights_of_edges[row][previous_nodes[row][e.column()]] :
+                            0;
                             row = previous_nodes[row][e.column()];
                         }
                     _graph_distance[e.column()][e.row()] = costs;
