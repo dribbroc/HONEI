@@ -97,6 +97,7 @@ namespace honei
                 _zero_vector(size, DataType_(0))
             {
                 CONTEXT("When creating BandedMatrix:");
+                ASSERT(size > 0, "size is zero!");
             }
 
             /**
@@ -111,6 +112,8 @@ namespace honei
                 _zero_vector(size, DataType_(0))
             {
                 CONTEXT("When creating BandedMatrix with initial band:");
+                ASSERT(size > 0, "size is zero!");
+
                 if (diagonal.size() != size)
                     throw VectorSizeDoesNotMatch(diagonal.size(), size);
 

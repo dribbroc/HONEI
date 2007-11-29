@@ -111,7 +111,9 @@ namespace honei
                 _source_columns(source._columns)
             {
                 CONTEXT("When creating DenseMatrixTile:");
-            }
+                ASSERT(rows > 0, "number of rows is zero!");
+                ASSERT(columns > 0, "number of columns is zero!");
+           }
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const

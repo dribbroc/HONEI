@@ -152,6 +152,7 @@ namespace honei
         CONTEXT("When creating SparseVector:");
         ASSERT(size >= capacity, "capacity '" + stringify(capacity) + "' exceeds size '" +
                 stringify(size) + "'!");
+        ASSERT(size > 0, "size is zero!");
     }
 
     template <typename DataType_>

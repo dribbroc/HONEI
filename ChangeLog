@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-29 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/banded_matrix.hh, libla/dense_matrix.hh,
+	libla/dense_matrix_tile.hh, libla/sparse_matrix.hh,
+	libla/sparse_vector-impl.hh: Added contexts and assertions to assure
+	that no container is created with a size of zero.
+
 2007-11-29 Joachim Messer <joachim.messer@uni-dortmund.de.de>
 	* libla/product.hh: Implemented BandedMatrix*DenseVector for MultiCore
 	* libla/product_TEST.cc, product_BENCHMARK.cc: Improved BM*DV Test and

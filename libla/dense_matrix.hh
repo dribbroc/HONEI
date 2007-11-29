@@ -106,6 +106,8 @@ namespace honei
                 _row_vectors(rows)
             {
                 CONTEXT("When creating DenseMatrix:");
+                ASSERT(rows > 0, "number of rows is zero!");
+                ASSERT(columns > 0, "number of columns is zero!");
             }
 
             /**
@@ -123,6 +125,8 @@ namespace honei
                 _row_vectors(rows)
             {
                 CONTEXT("When creating DenseMatrix:");
+                ASSERT(rows > 0, "number of rows is zero!");
+                ASSERT(columns > 0, "number of columns is zero!");
 
                 TypeTraits<DataType_>::fill(_elements.get(), _rows * _columns, value);
             }
@@ -168,6 +172,9 @@ namespace honei
                     _rows(rows),
                     _row_vectors(rows)
             {
+                ASSERT(rows > 0, "number of rows is zero!");
+                ASSERT(columns > 0, "number of columns is zero!");
+
                 if (column_offset + columns > source.columns())
                 {
                     throw MatrixColumnsDoNotMatch(column_offset + columns, source.columns());

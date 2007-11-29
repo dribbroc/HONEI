@@ -95,6 +95,10 @@ namespace honei
                 _row_vectors(rows + 1),
                 _zero_vector(columns, 1)
             {
+                CONTEXT("When creating SparseMatrix:");
+                ASSERT(rows > 0, "number of rows is zero!");
+                ASSERT(columns > 0, "number of columns is zero!");
+
                 _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
             }
 
