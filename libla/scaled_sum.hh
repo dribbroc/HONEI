@@ -128,6 +128,27 @@ namespace honei
             return x;
         }
 
+        template <typename DT1_, typename DT2_, typename DT3_>
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b, const DenseVectorBase<DT3_> & c)
+        {
+            CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, DenseVectorBase):");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+            if (a.size() != c.size())
+                throw VectorSizeDoesNotMatch(c.size(), a.size());
+
+            typename Vector<DT2_>::ConstElementIterator l(b.begin_elements());
+            typename Vector<DT3_>::ConstElementIterator r(c.begin_elements());
+            for (typename Vector<DT1_>::ElementIterator s(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
+            {
+                *s += *l * *r;
+                ++r, ++s;
+            }
+
+            return a;
+        }
         /// \}
 
         #ifdef BENCHM
@@ -183,6 +204,10 @@ namespace honei
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, float b);
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, double b);
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c );
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c);
 
         /// \}
     };

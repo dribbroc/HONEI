@@ -166,3 +166,94 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
     }
     return x;
 }
+
+DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c)
+
+{
+    CONTEXT("When calculatin ScaledSum (DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>) with SSE:");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+    if (a.size() != c.size())
+        throw VectorSizeDoesNotMatch(c.size(), a.size());
+
+    __m128 m1, m2, m3;
+
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 16;
+
+    unsigned long x_offset(a_offset / 4);
+    x_offset = (4 - x_offset) % 4;
+
+    unsigned long quad_start = x_offset;
+    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 4));
+    if (quad_end < 4 || quad_end > a.size())
+    {
+        quad_end = a.size();
+        quad_start = a.size();
+    }
+
+    for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
+    {
+        m1 = _mm_load_ps(a.elements() + index);
+        m2 = _mm_loadu_ps(b.elements() + index);
+        m3 = _mm_loadu_ps(c.elements() + index);
+
+        m2 = _mm_mul_ps(m3, m2);
+        m1 = _mm_add_ps(m2, m1);
+
+        _mm_stream_ps(a.elements() + index, m1);
+    }
+
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        a.elements()[index] += b.elements()[index] * c.elements()[index];
+    }
+    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    {
+        a.elements()[index] += b.elements()[index] * c.elements()[index];
+    }
+    return a;
+}
+
+DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
+{
+    CONTEXT("When calculatin ScaledSum (DenseVectorContinuousBase<doule>, DenseVectorContinuousBase<double>, DenseVectorContinuousBase<double>) with SSE:");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+    if (a.size() != c.size())
+        throw VectorSizeDoesNotMatch(c.size(), a.size());
+
+    __m128d m1, m2, m3;
+
+    unsigned long a_address = (unsigned long)a.elements();
+    unsigned long a_offset = a_address % 16;
+
+    unsigned long x_offset(a_offset / 8);
+
+    unsigned long quad_start = x_offset;
+    unsigned long quad_end(a.size() - ((a.size() - quad_start) % 2));
+
+    for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
+    {
+        m1 = _mm_load_pd(a.elements() + index);
+        m2 = _mm_loadu_pd(b.elements() + index);
+        m3 = _mm_loadu_pd(c.elements() + index);
+
+        m2 = _mm_mul_pd(m3, m2);
+        m3 = _mm_add_pd(m1, m2);
+
+        _mm_stream_pd(a.elements() + index, m1);
+    }
+
+    for (unsigned long index = 0 ; index < quad_start ; index++)
+    {
+        a.elements()[index] += b.elements()[index] * c.elements()[index];
+    }
+    for (unsigned long index = quad_end ; index < a.size() ; index++)
+    {
+        a.elements()[index] += b.elements()[index] * c.elements()[index];
+    }
+    return a;
+}
