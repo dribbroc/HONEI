@@ -39,6 +39,7 @@ namespace honei
         bool show_ground = true;
         bool show_water = true;
         bool enable_shading = true;
+        bool pause = false;
 
         int screen_width = 800;
         int screen_height = 600;
@@ -98,13 +99,13 @@ namespace honei
                 glLoadIdentity();
                 gluPerspective(45.0f,(GLfloat)gl_globals::screen_width/(GLfloat)gl_globals::screen_height,1.0f,1000.0f);
                 glEnable(GL_DEPTH_TEST);
-                glEnable(GL_CULL_FACE);
                 if (gl_globals::filling) glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
                 else glPolygonMode (GL_FRONT_AND_BACK, GL_LINES);
-                glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-                glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-                glEnable(GL_POLYGON_SMOOTH);
+                //eye candy
+                //glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+                //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+                //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+                //glEnable(GL_POLYGON_SMOOTH);
 
 
 
@@ -245,6 +246,18 @@ namespace honei
                     case 's':
                         gl_globals::enable_shading = !gl_globals::enable_shading;
                         break;
+                    case 'p':
+                        if (gl_globals::pause)
+                        {
+                            gl_globals::pause = false;
+                            glutIdleFunc(Engine::display);
+                        }
+                        else
+                        {
+                            gl_globals::pause = true;
+                            glutIdleFunc(NULL);
+                        }
+                        break;
                     case 'n':
                         gl_globals::translation_x_increment = gl_globals::translation_x_increment -0.1;
                         break;
@@ -340,6 +353,7 @@ namespace honei
             static void menu_scenario(GLint index)
             {
             }
+
             static void menu_main(GLint index)
             {
                 switch(index)
