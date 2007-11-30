@@ -1,15 +1,12 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
-
-#ifndef LIBSWE_GUARD_ENGINESOLVE_HH
-#define LIBSWE_GUARD_ENGINESOLVE_HH 1
 /*
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  *
- * This file is part of the SWE C++ library. LibSWE is free software;
+ * This file is part of the LibVisual C++ library. LibVisual is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibSWE is distributed in the hope that it will be useful, but WITHOUT ANY
+ * LibVisual is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -19,8 +16,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifndef LIBSWE_GUARD_ENGINESOLVE_HH
+#define LIBSWE_GUARD_ENGINESOLVE_HH 1
 
-#include <glut.h>
+#include <GL/glut.h>
 #include <libla/dense_matrix.hh>
 #include <libswe/solver.hh>
 
@@ -36,7 +35,10 @@ namespace honei
         double translation_y_increment = 0;
         double translation_z_increment = 0;
 
-        bool filling = 0;
+        bool filling = 1;
+        bool show_ground = true;
+        bool show_water = true;
+        bool enable_shading = true;
 
         int screen_width = 800;
         int screen_height = 600;
@@ -48,6 +50,10 @@ namespace honei
         double translation_x = 0;
         double translation_y = 0;
         double translation_z = 0;
+
+        GLint menu_id_main;
+        GLint menu_id_scenario;
+        GLint menu_id_rendering;
 
         //globally defined solver:
         ulint dwidth =40;
@@ -85,13 +91,20 @@ namespace honei
             static void init(void)
             {
                 glClearColor(0.0, 0.0, 0.2, 0.0);
-                glShadeModel(GL_SMOOTH);
+                if (gl_globals::enable_shading) glShadeModel(GL_SMOOTH);
+                else glShadeModel(GL_FLAT);
                 glViewport(0,0,gl_globals::screen_width,gl_globals::screen_height);
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(45.0f,(GLfloat)gl_globals::screen_width/(GLfloat)gl_globals::screen_height,1.0f,1000.0f);
                 glEnable(GL_DEPTH_TEST);
-                glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+                glEnable(GL_CULL_FACE);
+                if (gl_globals::filling) glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+                else glPolygonMode (GL_FRONT_AND_BACK, GL_LINES);
+                glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+                glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+                glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+                glEnable(GL_POLYGON_SMOOTH);
 
 
 
@@ -190,6 +203,14 @@ namespace honei
                 glutPostRedisplay ();
             }
 
+            static void mouse (int button, int state, int x, int y)
+            {
+                if (button == GLUT_LEFT_BUTTON && state ==GLUT_DOWN)
+                    glutSetCursor(GLUT_CURSOR_INFO);
+                if (button == GLUT_LEFT_BUTTON && state ==GLUT_UP)
+                    glutSetCursor(GLUT_CURSOR_INHERIT);
+            }
+
             static void keyboard (unsigned char key, int x, int y)
             {
                 switch (key)
@@ -203,7 +224,7 @@ namespace honei
                         gl_globals::translation_z_increment=0;
 
                         break;
-                    case 'r': case 'R':
+                    case 'r':
                         if (gl_globals::filling==0)
                         {
                             glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
@@ -214,6 +235,15 @@ namespace honei
                             glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
                             gl_globals::filling=0;
                         }
+                        break;
+                    case 'g':
+                        gl_globals::show_ground = !gl_globals::show_ground;
+                        break;
+                    case 'w':
+                        gl_globals::show_water = !gl_globals::show_water;
+                        break;
+                    case 's':
+                        gl_globals::enable_shading = !gl_globals::enable_shading;
                         break;
                     case 'n':
                         gl_globals::translation_x_increment = gl_globals::translation_x_increment -0.1;
@@ -239,8 +269,13 @@ namespace honei
                         gl_globals::translation_y_increment = gl_globals::translation_x_increment +0.1;
                         break;
 
+                    case 'q':
+                        exit (0);
+                        break;
 
-
+                    case char(27):
+                        exit(0);
+                        break;
                 }
             }
 
@@ -260,12 +295,69 @@ namespace honei
                     case GLUT_KEY_RIGHT:
                         gl_globals::rotation_y_increment = gl_globals::rotation_y_increment -0.5;
                         break;
+                    case GLUT_KEY_F5:
+                        init();
+                        break;
+                    case GLUT_KEY_F8:
+                        glutFullScreen();
+                        break;
+                    case GLUT_KEY_F9:
+                        glutReshapeWindow(640,480);
+                        glutPositionWindow(0,0);
+                        glutPostRedisplay();
+                        break;
+                }
+            }
+
+            static void menu_rendering(GLint index)
+            {
+                switch (index)
+                {
+                    case 2:
+                        if (gl_globals::filling==0)
+                        {
+                            glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+                            gl_globals::filling=1;
+                        }
+                        else
+                        {
+                            glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+                            gl_globals::filling=0;
+                        }
+                        break;
+                    case 3:
+                        gl_globals::show_ground = !gl_globals::show_ground;
+                        break;
+                    case 4:
+                        gl_globals::show_water = !gl_globals::show_water;
+                        break;
+                    case 5:
+                        gl_globals::enable_shading = !gl_globals::enable_shading;
+                        break;
+                }
+            }
+
+            static void menu_scenario(GLint index)
+            {
+            }
+            static void menu_main(GLint index)
+            {
+                switch(index)
+                {
+                    case 0:
+                        init();
+                        break;
+                    case 10:
+                        exit(0);
+                        break;
                 }
             }
 
             static void display(void)
             {
-                int l_index;
+                //int l_index;
+                if (gl_globals::enable_shading) glShadeModel(GL_SMOOTH);
+                else glShadeModel(GL_FLAT);
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
@@ -295,38 +387,42 @@ namespace honei
                 //hardcoded test mesh: TODO: remove
                 //DenseMatrix<double> scalarfield(10 , 10 , double(1));
                 gl_globals::solver.solve();
-                glBegin(GL_QUADS);
 
-                for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                if (gl_globals::show_water)
                 {
-                    for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                    glBegin(GL_QUADS);
+                    for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
                     {
-                        glColor3f(0.0, 0.0, 1.0);
-                        glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
-                        glColor3f(0.0, 1.0, 1.0);
-                        glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
-                        glVertex3d(i+1,j+1,gl_globals::height[i+1][j+1] + gl_globals::bottom[i+1][j+1]);
-                        glVertex3d(i,j+1,gl_globals::height[i][j+1] + gl_globals::bottom[i][j+1]);
+                        for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                        {
+                            glColor3f(0.0, 0.0, 1.0);
+                            glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
+                            glColor3f(0.0, 1.0, 1.0);
+                            glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
+                            glVertex3d(i+1,j+1,gl_globals::height[i+1][j+1] + gl_globals::bottom[i+1][j+1]);
+                            glVertex3d(i,j+1,gl_globals::height[i][j+1] + gl_globals::bottom[i][j+1]);
+                        }
                     }
+                    glEnd();
                 }
-                glEnd();
 
-                glBegin(GL_QUADS);
-
-                for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                if (gl_globals::show_ground)
                 {
-                    for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                    glBegin(GL_QUADS);
+                    for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
                     {
-                        glColor3f(1.0, 0.0, 0.0);
-                        glVertex3d(i,j,gl_globals::bottom[i][j]);
-                        glColor3f(1.0, 0.8, 0.0);
-                        glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
-                        glVertex3d(i+1,j+1,gl_globals::bottom[i+1][j+1]);
-                        glVertex3d(i,j+1,gl_globals::bottom[i][j+1]);
+                        for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                        {
+                            glColor3f(1.0, 0.0, 0.0);
+                            glVertex3d(i,j,gl_globals::bottom[i][j]);
+                            glColor3f(1.0, 0.8, 0.0);
+                            glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
+                            glVertex3d(i+1,j+1,gl_globals::bottom[i+1][j+1]);
+                            glVertex3d(i,j+1,gl_globals::bottom[i][j+1]);
+                        }
                     }
+                    glEnd();
                 }
-                glEnd();
-                glFlush();
                 glutSwapBuffers();
 
             }

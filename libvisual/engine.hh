@@ -20,7 +20,7 @@
  */
 
 
-#include <glut.h>
+#include <GL/glut.h>
 #include <libla/dense_matrix.hh>
 namespace honei
 {

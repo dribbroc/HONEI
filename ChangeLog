@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-30 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libvisual/enginesolve.hh, libvisual/enginesolve_TEST.cc:
+	Dramatically improved enginesolve usability. Added popup
+	menu on right mouse button click for example.
+	Still many instructions are only accessible through keyboard
+	shortcuts.
+
 2007-11-28 Markus Geveler <apryde@gmx.de>
 
 	* libmath/poisson_jac_double_dense_TEST.cc,

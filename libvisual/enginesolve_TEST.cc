@@ -1,4 +1,20 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
+/*
+ * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ *
+ * This file is part of the LibVisual C++ library. LibVisual is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License version 2, as published by the Free Software Foundation.
+ *
+ * LibVisual is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include <libvisual/enginesolve.hh>
 #include <libswe/solver.hh>
@@ -39,8 +55,24 @@ class EngineTest :
             glutDisplayFunc(Engine::display);
             glutIdleFunc(Engine::display);
             glutReshapeFunc(Engine::resize);
-            glutKeyboardFunc (Engine::keyboard);
-            glutSpecialFunc (Engine::keyboard_s);
+            glutKeyboardFunc(Engine::keyboard);
+            glutSpecialFunc(Engine::keyboard_s);
+            glutMouseFunc(Engine::mouse);
+            menu_id_rendering = glutCreateMenu(Engine::menu_rendering);
+            glutAddMenuEntry("Toggle fill mode", 2);
+            glutAddMenuEntry("Toggle ground", 3);
+            glutAddMenuEntry("Toggle water", 4);
+            glutAddMenuEntry("Toggle shading", 5);
+            menu_id_scenario = glutCreateMenu(Engine::menu_scenario);
+            glutAddMenuEntry("todo", 1);
+            menu_id_main = glutCreateMenu(Engine::menu_main);
+            glutAddMenuEntry("Restart scenario", 0);
+            glutAddSubMenu("Rendering", menu_id_rendering);
+            glutAddSubMenu("Scenarios", menu_id_scenario);
+            glutAddMenuEntry("Exit programm", 10);
+            glutAttachMenu(GLUT_RIGHT_BUTTON);
+            glutMotionFunc(NULL);
+            glutPassiveMotionFunc(NULL);
             Engine::init();
             glutMainLoop();
             TEST_CHECK(true);
