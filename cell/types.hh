@@ -27,9 +27,12 @@ namespace honei
 
 #if defined(__PPU__)
 
-        typedef void * EffectiveAddress;
+        struct LocalStoreAddress
+        {
+            unsigned value;
+        };
 
-        typedef unsigned int LocalStoreAddress;
+        typedef void * EffectiveAddress;
 
 #elif defined(__SPU__)
 

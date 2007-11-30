@@ -62,7 +62,8 @@ class DenseDotProductTest :
 
                 DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
                 DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, size * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
+                float eps(exp(-20 + 3.88127 * log(size)));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -117,7 +118,8 @@ class DenseDotProductQuickTest :
 
             DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
             DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-            TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, 2 * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
+            float eps(exp(-20 + 3.88127 * log(size)));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));

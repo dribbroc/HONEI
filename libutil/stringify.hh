@@ -156,7 +156,7 @@ namespace honei
     stringify(const cell::EffectiveAddress & item)
     {
         std::ostringstream s;
-        s << std::hex << item;
+        s << "0x" << std::hex << item;
         return s.str();
     }
 
@@ -169,7 +169,7 @@ namespace honei
     stringify(const cell::LocalStoreAddress & item)
     {
         std::ostringstream s;
-        s << std::hex << item;
+        s << "0x" << std::hex << item.value;
         return s.str();
     }
 #endif

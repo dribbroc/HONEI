@@ -187,11 +187,11 @@ namespace honei
                                         EffectiveAddress ea;
                                         unsigned u[2];
                                     } ea = { 0 };
-                                    LocalStoreAddress lsa(0);
+                                    LocalStoreAddress lsa = { 0 };
                                     unsigned size(0);
 
                                     spe_out_mbox_read(spe->context(), ea.u, 2);
-                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
                                     spe_out_mbox_read(spe->context(), &size, 1);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: PUT transfer started, ea = " +
                                             stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
@@ -208,11 +208,11 @@ namespace honei
                                         EffectiveAddress ea;
                                         unsigned u[2];
                                     } ea = { 0 };
-                                    LocalStoreAddress lsa(0);
+                                    LocalStoreAddress lsa = { 0 };
                                     unsigned size(0);
 
                                     spe_out_mbox_read(spe->context(), ea.u, 2);
-                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
                                     spe_out_mbox_read(spe->context(), &size, 1);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: GET transfer started, ea = " +
                                             stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
@@ -232,8 +232,8 @@ namespace honei
                                 {
                                     Lock ll(*imp->mutex);
 
-                                    LocalStoreAddress lsa(0);
-                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    LocalStoreAddress lsa = { 0 };
+                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: Acquired block at " +
                                             stringify(lsa));
                                 }
@@ -243,8 +243,8 @@ namespace honei
                                 {
                                     Lock ll(*imp->mutex);
 
-                                    LocalStoreAddress lsa(0);
-                                    spe_out_mbox_read(spe->context(), &lsa, 1);
+                                    LocalStoreAddress lsa = { 0 };
+                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: Released block at " +
                                             stringify(lsa));
                                 }

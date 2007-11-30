@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-30 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/types.hh, libutil/spe_kernel.cc, libutil/stringify.hh: Changed
+	stringification of sizes to decimal representation. Added a 0x in
+	every hexadecimal representation.
+	* libla/dot_product_TEST.cc: Applied new epsilon.
+
 2007-11-28 Markus Geveler <apryde@gmx.de>
 
 	* configure.ac, Makefile.am, autogen.bash,
