@@ -170,7 +170,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
 DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c)
 
 {
-    CONTEXT("When calculatin ScaledSum (DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>) with SSE:");
+    CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>) with SSE:");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -218,7 +218,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
 
 DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
 {
-    CONTEXT("When calculatin ScaledSum (DenseVectorContinuousBase<doule>, DenseVectorContinuousBase<double>, DenseVectorContinuousBase<double>) with SSE:");
+    CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<doule>, DenseVectorContinuousBase<double>, DenseVectorContinuousBase<double>) with SSE:");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
