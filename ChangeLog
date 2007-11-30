@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-28 Markus Geveler <apryde@gmx.de>
+
+	* configure.ac, Makefile.am, autogen.bash,
+	libvisual/files.m4, libvisual/Makefile.am.m4, libvisual/engine.hh,
+	libvisual/engine_TEST.cc, libvisual/enginesolve.hh,
+	libvisual/enginesolve_TEST.cc: Added visualization engine to
+	build-system, added RelaxSolver test environment.
+
 2007-11-30 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/scaled_sum.hh, libla/scaled_sum-sse.cc:

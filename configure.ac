@@ -224,6 +224,47 @@ if test "x$WITH_HDF5" = "xyes"; then
 	dnl }}}
 fi
 dnl }}}
+dnl {{{
+AC_MSG_CHECKING([whether to build the visualisation engine])
+AC_ARG_WITH([visual],
+	AS_HELP_STRING([--with--visual], [Build visualisation engine (needs packages: libGL, libGLU, libglut)]),
+		[WITH_VISUAL=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_HDF5=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_VISUAL])
+AM_CONDITIONAL([VISUAL], test "x$WITH_VISUAL" = "xyes")
+if test "x$WITH_VISUAL" = "xyes"; then
+	dnl {{{ check for libX11
+	AC_CHECK_LIB(X11, XOpenDisplay,
+		[have_x11=yes])
+	if test "x$have_x11" != "xyes" ; then
+		AC_MSG_ERROR([libX11 is needed for GPU support.])
+	fi
+	dnl }}}
+	dnl {{{ check for libGL
+	AC_CHECK_LIB(GL, glXCreateContext,
+		[have_gl=yes])
+	if test "x$have_gl" != "xyes" ; then
+		AC_MSG_ERROR([libGL (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+	dnl {{{ check for libGLU
+	AC_CHECK_LIB(GLU, gluPerspective,
+		[have_glu=yes])
+	if test "x$have_glu" != "xyes" ; then
+		AC_MSG_ERROR([libGLU (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+	dnl {{{ check for libglut
+	AC_CHECK_LIB(glut, glutPostRedisplay,
+		[have_glut=yes])
+	if test "x$have_glut" != "xyes" ; then
+		AC_MSG_ERROR([libglut (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+fi
+dnl }}}
 dnl }}}
 
 dnl output
@@ -240,6 +281,7 @@ AC_OUTPUT(
 	libmath/Makefile
 	libswe/Makefile
 	libutil/Makefile
+	libvisual/Makefile
 	unittest/Makefile
 	benchmark/Makefile
 )

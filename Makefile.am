@@ -9,7 +9,11 @@ if CELL
   CELLDIR = cell
 endif
 
-SUBDIRS = $(CELLDIR) benchmark libutil libla libmath unittest libgraph libswe
+if VISUAL
+  VISUALDIR = libvisual
+endif
+
+SUBDIRS = $(CELLDIR) benchmark libutil libla libmath unittest libgraph libswe $(VISUALDIR)
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) all
