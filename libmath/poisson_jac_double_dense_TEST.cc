@@ -86,11 +86,10 @@ class PoissonTestJACDenseDouble:
             fread(du, sizeof(double), n, file);
             fread(ul, sizeof(double), n, file);
             fread(ud, sizeof(double), n, file);
-            fread(ul, sizeof(double), n, file);
+            fread(uu, sizeof(double), n, file);
             fread(b,  sizeof(double), n, file);
             fread(ana_sol, sizeof(double), n, file);
             fread(ref_sol, sizeof(double), n, file);
-            fclose(file);
 
             DenseVector<double> dd_v(n, double(0));
             DenseVector<double> ll_v(n, double(0));
@@ -140,14 +139,15 @@ class PoissonTestJACDenseDouble:
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<double> result(n, double(0));
-            result = Jacobi<Tag_>::value(A, b_v, 0.00001);
-            //std::cout<< result <<endl;
-            //std::cout<< ana_sol_v <<endl;
-            //std::cout<< ref_sol_v <<endl;
+            result = Jacobi<Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon());
+            std::cout<< result <<endl;
+            std::cout<< ana_sol_v <<endl;
+            std::cout<< ref_sol_v <<endl;
             for(unsigned long i = 0; i < n; i++)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], std::numeric_limits<double>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], 0.0001);
             }
+            fclose(file);
             //TEST_CHECK(true);
         }
 };

@@ -86,7 +86,7 @@ class PoissonTestPCGBandedFloat:
             fread(du, sizeof(double), n, file);
             fread(ul, sizeof(double), n, file);
             fread(ud, sizeof(double), n, file);
-            fread(ul, sizeof(double), n, file);
+            fread(uu, sizeof(double), n, file);
             fread(b,  sizeof(double), n, file);
             fread(ana_sol, sizeof(double), n, file);
             fread(ref_sol, sizeof(double), n, file);

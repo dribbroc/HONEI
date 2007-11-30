@@ -86,7 +86,7 @@ class PoissonTestIterefCGDenseDouble:
             fread(du, sizeof(double), n, file);
             fread(ul, sizeof(double), n, file);
             fread(ud, sizeof(double), n, file);
-            fread(ul, sizeof(double), n, file);
+            fread(uu, sizeof(double), n, file);
             fread(b,  sizeof(double), n, file);
             fread(ana_sol, sizeof(double), n, file);
             fread(ref_sol, sizeof(double), n, file);
@@ -119,14 +119,9 @@ class PoissonTestIterefCGDenseDouble:
                 ana_sol_v[i] = ana_sol[i];
                 ref_sol_v[i] = ref_sol[i];
             }
-            //std::cout<<dd[4]<<endl;
-            //std::cout<<dd_v<<endl;
-
 
             unsigned int root_n = (unsigned int)sqrt(n);
             BandedMatrix<double> A(n,dd_v.copy());
-            //std::cout<<A.band(0)<<endl;
-            //A->insert_band(0, dd_v.copy());
             A.insert_band(1, du_v);
             A.insert_band(-1, dl_v);
             A.insert_band(root_n, ud_v);
@@ -136,9 +131,6 @@ class PoissonTestIterefCGDenseDouble:
             A.insert_band(-root_n-1, ll_v );
             A.insert_band(-root_n+1, lu_v);
 
-            //std::cout<<A.band(0)[0] * double(1) << endl;
-
-            //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<double> result(n, double(0));
             result = IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::epsilon());
             //std::cout<< result <<endl;
@@ -146,9 +138,9 @@ class PoissonTestIterefCGDenseDouble:
             //std::cout<< ref_sol_v <<endl;
             for(unsigned long i = 0; i < n; i++)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], double(10e-9));
+                std::cout << "index = " << i << ", value = " << result[i] << std::endl;
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], double(10e-9));
             }
-            //TEST_CHECK(true);
         }
 };
 PoissonTestIterefCGDenseDouble<tags::CPU, double> poisson_test_cg_dense_double("double");

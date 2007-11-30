@@ -5,6 +5,20 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-11-28 Markus Geveler <apryde@gmx.de>
+
+	* libmath/poisson_jac_double_dense_TEST.cc,
+	libmath/poisson_jac_float_banded_TEST.cc,
+	libmath/poisson_cg_doubl_dense_TEST.cc,
+	libmath/poisson_cg_float_banded_TEST.cc,
+	libmath/poisson_pcg_double_dense_TEST.cc,
+	libmath/poisson_pcg_float_banded_TEST.cc,
+	libmath/poisson_iteref_cg_double_dense_TEST.cc,
+	libmath/poisson_iteref_cg_float_banded_TEST.cc,
+	libmath/poisson_iteref_pcg_double_dense_TEST.cc,
+	libmath/poisson_iteref_pcg_float_banded_TEST.cc: Resolved heavy to
+	find typo bug in poisson tests.
+
 2007-11-30 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/types.hh, libutil/spe_kernel.cc, libutil/stringify.hh: Changed
