@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-01 Till Barz <till.barz@udo.edu>
+	* cell/interface.hh, cell/libutil/debug.hh, libutil/spe_kernel.cc:
+	Additional debug-output of unsigned values for SPU programs.
+
 2007-12-01 Markus Geveler <apryde@gmx.de>
 
 	* libvswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
