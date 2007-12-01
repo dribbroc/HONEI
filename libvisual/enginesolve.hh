@@ -40,9 +40,11 @@ namespace honei
         bool show_ground = true;
         bool show_water = true;
         bool enable_shading = true;
+        bool enable_alpha_blending = true;
         bool pause = false;
         bool fullscreen = false;
 
+        float alpha = 0.8;
         int screen_width = 800;
         int screen_height = 600;
 
@@ -409,54 +411,8 @@ namespace honei
                 glTranslatef(0.0, 0.0 , gl_globals::translation_z);
 
 
-                //hardcoded test mesh: TODO: remove
-                //DenseMatrix<double> scalarfield(10 , 10 , double(1));
                 gl_globals::solver.solve();
 
-                if (gl_globals::show_water)
-                {
-                    if(gl_globals::use_quads)
-                    {
-                        glBegin(GL_QUADS);
-                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
-                        {
-                            for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
-                            {
-                                glColor3f(0.0, 0.0, 1.0);
-                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
-                                glColor3f(0.0, 1.0, 1.0);
-                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
-                                glVertex3d(i+1,j+1,gl_globals::height[i+1][j+1] + gl_globals::bottom[i+1][j+1]);
-                                glVertex3d(i,j+1,gl_globals::height[i][j+1] + gl_globals::bottom[i][j+1]);
-                            }
-                        }
-                        glEnd();
-                    }
-                    else
-                    {
-                        glBegin(GL_TRIANGLE_STRIP);
-                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
-                        {
-                            for(unsigned int j = 0; j < gl_globals::dheight; j++)
-                            {
-                                glColor3f(0.0, 1.0, 1.0);
-                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
-                                glColor3f(0.0, 0.0, 1.0);
-                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
-                            }
-                            ++i;
-                            if (i >= gl_globals::dwidth-1)
-                                break;
-                            for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
-                            {
-                                glVertex3d(i,j2,gl_globals::height[i][j2] + gl_globals::bottom[i][j2]);
-                                glColor3f(0.0, 1.0, 1.0);
-                                glVertex3d(i+1,j2,gl_globals::height[i+1][j2] + gl_globals::bottom[i+1][j2]);
-                            }
-                        }
-                        glEnd();
-                    }
-                }
 
                 if (gl_globals::show_ground)
                 {
@@ -502,6 +458,57 @@ namespace honei
                         glEnd();
                     }
                 }
+                if(gl_globals::enable_alpha_blending)
+                {
+                    glEnable (GL_BLEND);
+                    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                }
+
+                if (gl_globals::show_water)
+                {
+                    if(gl_globals::use_quads)
+                    {
+                        glBegin(GL_QUADS);
+                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                        {
+                            for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                            {
+                                glColor4f(0.0, 0.0, 1.0, gl_globals::alpha);
+                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
+                                glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
+                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
+                                glVertex3d(i+1,j+1,gl_globals::height[i+1][j+1] + gl_globals::bottom[i+1][j+1]);
+                                glVertex3d(i,j+1,gl_globals::height[i][j+1] + gl_globals::bottom[i][j+1]);
+                            }
+                        }
+                        glEnd();
+                    }
+                    else
+                    {
+                        glBegin(GL_TRIANGLE_STRIP);
+                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                        {
+                            for(unsigned int j = 0; j < gl_globals::dheight; j++)
+                            {
+                                glColor3f(0.0, 1.0, 1.0);
+                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
+                                glColor3f(0.0, 0.0, 1.0);
+                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
+                            }
+                            ++i;
+                            if (i >= gl_globals::dwidth-1)
+                                break;
+                            for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
+                            {
+                                glVertex3d(i,j2,gl_globals::height[i][j2] + gl_globals::bottom[i][j2]);
+                                glColor3f(0.0, 1.0, 1.0);
+                                glVertex3d(i+1,j2,gl_globals::height[i+1][j2] + gl_globals::bottom[i+1][j2]);
+                            }
+                        }
+                        glEnd();
+                    }
+                }
+
                 glutSwapBuffers();
 
             }
