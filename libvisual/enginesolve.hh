@@ -36,10 +36,12 @@ namespace honei
         double translation_z_increment = 0;
 
         bool filling = 1;
+        bool use_quads = true;
         bool show_ground = true;
         bool show_water = true;
         bool enable_shading = true;
         bool pause = false;
+        bool fullscreen = false;
 
         int screen_width = 800;
         int screen_height = 600;
@@ -312,12 +314,18 @@ namespace honei
                         init();
                         break;
                     case GLUT_KEY_F8:
-                        glutFullScreen();
-                        break;
-                    case GLUT_KEY_F9:
-                        glutReshapeWindow(640,480);
-                        glutPositionWindow(0,0);
-                        glutPostRedisplay();
+                        if (gl_globals::fullscreen)
+                        {
+                            glutReshapeWindow(640,480);
+                            glutPositionWindow(0,0);
+                            glutPostRedisplay();
+                            gl_globals::fullscreen = false;
+                        }
+                        else
+                        {
+                            glutFullScreen();
+                            gl_globals::fullscreen = true;
+                        }
                         break;
                 }
             }
@@ -346,6 +354,9 @@ namespace honei
                         break;
                     case 5:
                         gl_globals::enable_shading = !gl_globals::enable_shading;
+                        break;
+                    case 6:
+                        gl_globals::use_quads = !gl_globals::use_quads;
                         break;
                 }
             }
@@ -404,38 +415,92 @@ namespace honei
 
                 if (gl_globals::show_water)
                 {
-                    glBegin(GL_QUADS);
-                    for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                    if(gl_globals::use_quads)
                     {
-                        for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                        glBegin(GL_QUADS);
+                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
                         {
-                            glColor3f(0.0, 0.0, 1.0);
-                            glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
-                            glColor3f(0.0, 1.0, 1.0);
-                            glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
-                            glVertex3d(i+1,j+1,gl_globals::height[i+1][j+1] + gl_globals::bottom[i+1][j+1]);
-                            glVertex3d(i,j+1,gl_globals::height[i][j+1] + gl_globals::bottom[i][j+1]);
+                            for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                            {
+                                glColor3f(0.0, 0.0, 1.0);
+                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
+                                glColor3f(0.0, 1.0, 1.0);
+                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
+                                glVertex3d(i+1,j+1,gl_globals::height[i+1][j+1] + gl_globals::bottom[i+1][j+1]);
+                                glVertex3d(i,j+1,gl_globals::height[i][j+1] + gl_globals::bottom[i][j+1]);
+                            }
                         }
+                        glEnd();
                     }
-                    glEnd();
+                    else
+                    {
+                        glBegin(GL_TRIANGLE_STRIP);
+                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                        {
+                            for(unsigned int j = 0; j < gl_globals::dheight; j++)
+                            {
+                                glColor3f(0.0, 1.0, 1.0);
+                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
+                                glColor3f(0.0, 0.0, 1.0);
+                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
+                            }
+                            ++i;
+                            if (i >= gl_globals::dwidth-1)
+                                break;
+                            for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
+                            {
+                                glVertex3d(i,j2,gl_globals::height[i][j2] + gl_globals::bottom[i][j2]);
+                                glColor3f(0.0, 1.0, 1.0);
+                                glVertex3d(i+1,j2,gl_globals::height[i+1][j2] + gl_globals::bottom[i+1][j2]);
+                            }
+                        }
+                        glEnd();
+                    }
                 }
 
                 if (gl_globals::show_ground)
                 {
-                    glBegin(GL_QUADS);
-                    for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                    if(gl_globals::use_quads)
                     {
-                        for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                        glBegin(GL_QUADS);
+                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
                         {
-                            glColor3f(1.0, 0.0, 0.0);
-                            glVertex3d(i,j,gl_globals::bottom[i][j]);
-                            glColor3f(1.0, 0.8, 0.0);
-                            glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
-                            glVertex3d(i+1,j+1,gl_globals::bottom[i+1][j+1]);
-                            glVertex3d(i,j+1,gl_globals::bottom[i][j+1]);
+                            for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
+                            {
+                                glColor3f(1.0, 0.0, 0.0);
+                                glVertex3d(i,j,gl_globals::bottom[i][j]);
+                                glColor3f(1.0, 0.8, 0.0);
+                                glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
+                                glVertex3d(i+1,j+1,gl_globals::bottom[i+1][j+1]);
+                                glVertex3d(i,j+1,gl_globals::bottom[i][j+1]);
+                            }
                         }
+                        glEnd();
                     }
-                    glEnd();
+                    else
+                    {
+                        glBegin(GL_TRIANGLE_STRIP);
+                        for(unsigned int i = 0; i < gl_globals::dwidth-1; ++i)
+                        {
+                            for(unsigned int j = 0; j < gl_globals::dheight; j++)
+                            {
+                                glColor3f(1.0, 0.0, 0.0);
+                                glVertex3d(i,j,gl_globals::bottom[i][j]);
+                                glColor3f(1.0, 0.8, 0.0);
+                                glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
+                            }
+                            ++i;
+                            if (i >= gl_globals::dwidth-1)
+                                break;
+                            for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
+                            {
+                                glVertex3d(i,j2,gl_globals::bottom[i][j2]);
+                                glColor3f(1.0, 0.0, 0.0);
+                                glVertex3d(i+1,j2,gl_globals::bottom[i+1][j2]);
+                            }
+                        }
+                        glEnd();
+                    }
                 }
                 glutSwapBuffers();
 
