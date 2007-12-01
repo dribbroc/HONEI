@@ -51,7 +51,8 @@ namespace honei
             km_debug_acquire_block, /// < A debug message about acquiring an LS memory block.
             km_debug_release_block, /// < A debug message about releasing an LS memory block.
             km_debug_dump, /// < A debug message to trigger a complete dump of the SPE's LS memory.
-            km_last = km_debug_dump
+            km_last = km_debug_dump,
+            km_debug_value /// > debug message for the output of a single value
         };
 
         /**

@@ -268,6 +268,19 @@ namespace honei
                                     spe->signal();
                                 }
                                 continue;
+
+                            case km_debug_value:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    unsigned value = 0;
+
+                                    spe_out_mbox_read(spe->context(), &value, 1);
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: Value: " +
+                                            stringify(value));
+                                }
+                                continue;
+
                         }
 
                         throw InternalError("Unexpected mail received in interrupt mailbox!");

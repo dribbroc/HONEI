@@ -75,6 +75,13 @@ namespace honei
             spu_write_out_intr_mbox(km_debug_dump);
             spu_read_signal1();
         }
+
+        inline void debug_value(const unsigned & value)
+        {
+            spu_write_out_intr_mbox(km_debug_value);
+            spu_write_out_mbox(value);
+        }
+
     }
 }
 
