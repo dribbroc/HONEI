@@ -360,6 +360,9 @@ namespace honei
                     case 6:
                         gl_globals::use_quads = !gl_globals::use_quads;
                         break;
+                    case 7:
+                        gl_globals::enable_alpha_blending = !gl_globals::enable_alpha_blending;
+                        break;
                 }
             }
 
@@ -463,6 +466,8 @@ namespace honei
                     glEnable (GL_BLEND);
                     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 }
+                else
+                    glDisable (GL_BLEND);
 
                 if (gl_globals::show_water)
                 {

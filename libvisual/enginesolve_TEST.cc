@@ -64,6 +64,7 @@ class EngineTest :
             glutAddMenuEntry("Toggle water", 4);
             glutAddMenuEntry("Toggle shading", 5);
             glutAddMenuEntry("Toggle vertex type", 6);
+            glutAddMenuEntry("Toggle alpha blending", 7);
             menu_id_scenario = glutCreateMenu(Engine::menu_scenario);
             glutAddMenuEntry("todo", 1);
             menu_id_main = glutCreateMenu(Engine::menu_main);
