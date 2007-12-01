@@ -443,9 +443,9 @@ namespace honei
                         {
                             for(unsigned int j = 0; j < gl_globals::dheight; j++)
                             {
-                                glColor3f(1.0, 0.0, 0.0);
-                                glVertex3d(i,j,gl_globals::bottom[i][j]);
                                 glColor3f(1.0, 0.8, 0.0);
+                                glVertex3d(i,j,gl_globals::bottom[i][j]);
+                                glColor3f(1.0, 0.0, 0.0);
                                 glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
                             }
                             ++i;
@@ -454,7 +454,7 @@ namespace honei
                             for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
                             {
                                 glVertex3d(i,j2,gl_globals::bottom[i][j2]);
-                                glColor3f(1.0, 0.0, 0.0);
+                                glColor3f(1.0, 0.8, 0.0);
                                 glVertex3d(i+1,j2,gl_globals::bottom[i+1][j2]);
                             }
                         }
@@ -495,9 +495,9 @@ namespace honei
                         {
                             for(unsigned int j = 0; j < gl_globals::dheight; j++)
                             {
-                                glColor3f(0.0, 1.0, 1.0);
+                                glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
                                 glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
-                                glColor3f(0.0, 0.0, 1.0);
+                                glColor4f(0.0, 0.0, 1.0, gl_globals::alpha);
                                 glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
                             }
                             ++i;
@@ -506,7 +506,7 @@ namespace honei
                             for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
                             {
                                 glVertex3d(i,j2,gl_globals::height[i][j2] + gl_globals::bottom[i][j2]);
-                                glColor3f(0.0, 1.0, 1.0);
+                                glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
                                 glVertex3d(i+1,j2,gl_globals::height[i+1][j2] + gl_globals::bottom[i+1][j2]);
                             }
                         }
