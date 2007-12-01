@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-12-01 Markus Geveler <apryde@gmx.de>
 
+	* libvswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
+	libswe/boundary_types.hh, libswe/scenario.hh, kibswe/files.m4: Added
+	boundary tags to libswe, added swe-solver tags, added Scenario to
+	libswe, refactored ImplicitSolver interface, added creation Test for
+	ImplicitSolver.
+
+2007-12-01 Markus Geveler <apryde@gmx.de>
+
 	* libvisual/enginesolve.hh: Added alpha blending of water surface to
 	renderengine.
 

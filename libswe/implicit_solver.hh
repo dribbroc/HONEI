@@ -44,57 +44,58 @@
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libutil/tags.hh>
-
+#include <libmath/methods.hh>
+#include <libswe/boundary_types.hh>
+#include <libswe/scenario.hh>
 using namespace std;
+using namespace methods;
+using namespace swe_solvers;
+using namespace boundaries;
 
 namespace honei {
-    template<typename Tag_=tags::CPU, typename ResPrec_>
+    template<typename Tag_, typename ResPrec_, typename SolverType_, typename BoundaryType_>
     class ImplicitSolver
+    {
+    };
+
+    template<typename Tag_, typename ResPrec_>
+    class ImplicitSolver<Tag_, ResPrec_, CG, REFLECT>
     {
         ///Private members:
         private:
-            ///Stepsize in x direction.
-            ResPrec_ _delta_x;
-            ///Stepsize in y direction.
-            ResPrec_ _delta_y;
-            ///Size of timestep.
-            ResPrec_ _delta_t;
-            ///Current timestep.
-            unsigned int _solve_time;
-
-            ///Dimensions of OMEGA:
-            double _d_width;
-            double _d_height;
-
-            ///The input- and to-be-updated - data.
-            DenseMatrix<ResPrec_> * _bottom;
-            DenseMatrix<ResPrec_> * _height;
-            DenseMatrix<ResPrec_> * _x_veloc;
-            DenseMatrix<ResPrec_> * _y_veloc;
-
-            ///The data to work on.
-            DenseMatrix<ResPrec_> * _system_matrix;
-            DenseVector<ResPrec_> * _right_hand_side;
-
+            Scenario<ResPrec_, IMPLICIT, REFLECT>* scenario;
             /**
              * System assembly: A.
              **/
-            template<WorkPrec_>
+            template<typename WorkPrec_>
             void assemble_matrix();
 
             /**
              * System assembly: b.
              **/
-            template<WorkPrec_>
+            template<typename WorkPrec_>
             void assemble_right_hand_side();
 
         public:
             /**
+             * Constructor.
+             * */
+            ImplicitSolver(Scenario<ResPrec_, IMPLICIT, REFLECT> & s)
+            {
+                scenario = &s;
+            }
+
+            /**
              * Solution capsule for one timestep.
              **/
-            template<WorkPrec_>
-            void solve();
+            template<typename WorkPrec_>
+            void solve(unsigned long iter_numbers);
 
-    }
+            /**
+             * Solution capsule for one timestep.
+             **/
+            template<typename WorkPrec_>
+            void solve(double conv_rad);
+    };
 }
 #endif

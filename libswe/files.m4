@@ -8,6 +8,8 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`implicit_solver',     `hh')
+add(`boundary_types',      `hh',)
+add(`implicit_solver',     `hh', `test')
 add(`limiter',             `hh', `test')
+add(`scenario',            `hh',)
 add(`solver',              `hh', `test')
