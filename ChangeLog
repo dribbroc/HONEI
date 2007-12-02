@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/scale-cell.cc, libla/scale.hh, libla/scale_TEST.cc:
+	Added Scale(float, SparseVector).
+
 2007-12-02 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/reduction_TEST.cc: Adjusted epsilon. Tests pass now for

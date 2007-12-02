@@ -137,6 +137,59 @@ namespace honei
         return b;
     }
 
+    SparseVector<float> &
+    Scale<tags::Cell>::value(const float a, SparseVector<float> & b)
+    {
+        CONTEXT("When scaling SparseVector<float> (Cell):");
 
+        Operand oa = { b.elements() };
+        Operand ob;
+        ob.u = b.size() / (1024 * 4);
+        Operand oc;
+        oc.u = b.size() % (1024 * 4);
+        oc.u &= ~0xF;
+        Operand od;
+        od.f = a;
+
+        unsigned rest_index(ob.u * 4096 + oc.u);
+
+        oc.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == oc.u)
+        {
+            if (ob.u > 0)
+            {
+                oc.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++ob.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_scale, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        Vector<float>::ElementIterator i(b.element_at(rest_index)), i_end(b.end_elements());
+        for ( ; i != i_end ; ++i)
+        {
+            *i *= od.f;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return b;
+    }
 }
 

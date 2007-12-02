@@ -389,6 +389,9 @@ ScalarSparseVectorProductTest<tags::CPU::MultiCore, double> mc_scalar_sparse_vec
 ScalarSparseVectorProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_sparse_vector_product_test_float("MC SSE float");
 ScalarSparseVectorProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_sparse_vector_product_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CELL
+ScalarSparseVectorProductTest<tags::Cell, float> cell_scalar_sparse_vector_product_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class ScalarSparseVectorProductQuickTest :
@@ -422,4 +425,7 @@ ScalarSparseVectorProductQuickTest<tags::CPU::MultiCore, double> mc_scalar_spars
 #ifdef HONEI_SSE
 ScalarSparseVectorProductQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_sparse_vector_product_quick_test_float("MC SSE float");
 ScalarSparseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_sparse_vector_product_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+ScalarSparseVectorProductQuickTest<tags::Cell, float> cell_scalar_sparse_vector_product_quick_test_float("Cell float");
 #endif
