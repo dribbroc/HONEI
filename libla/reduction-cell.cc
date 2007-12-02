@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -72,16 +73,16 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        float rest_result(0.0f);
+        float ppu_result(0.0f);
         for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
-            rest_result += *i;
+            ppu_result += *i;
         }
 
         if (use_spe)
             instruction.wait();
 
-        return result + rest_result;
+        return result += ppu_result;
     }
 
 
@@ -129,15 +130,16 @@ namespace honei
         }
 
 
+        float ppu_result(a.elements()[rest_index]);
         for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
-            result = (result > *i)?*i:result;
+            ppu_result = (*i < ppu_result) ? *i : ppu_result;
         }
 
         if (use_spe)
             instruction.wait();
 
-        return result;
+        return ppu_result < result ? ppu_result : result;
     }
 
     float
@@ -183,16 +185,16 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-
+        float ppu_result(a.elements()[rest_index]);
         for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
-            result = (result < *i)?*i:result;
+            ppu_result = (*i > ppu_result) ? *i : ppu_result;
         }
 
         if (use_spe)
             instruction.wait();
 
-        return result;
+        return ppu_result > result ? ppu_result : result;
     }
 
 

@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -57,7 +58,7 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / 4 ; ++i)
+        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
             acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
         }
@@ -74,7 +75,7 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / 4 ; ++i)
+    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
         acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
     }
@@ -86,36 +87,3 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
 
     return result.mail;
 }
-
-#if 0
-unsigned dense_float_vector_reduction_sum(const Instruction & inst)
-{
-    printf("dense_float_vector_reduction_sum:\n");
-
-    Allocation * block_a(acquire_block());
-
-    Pointer<float> a = { block_a->address };
-
-    mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 1, 0, 0);
-    mfc_write_tag_mask(1 << 1);
-    mfc_read_tag_status_all();
-
-    MailableResult<float> result;
-
-    // adding vectorised data (case: vectorsize is larger than 8 floats)
-    unsigned i(0);
-    for ( ; i < inst.size / 8 ; ++i)
-    {
-        a.vectorised[i*2] = spu_add(a.vectorised[i*2], a.vectorised[i*2+1]);
-        result.value += (a.typed[2*i+0] + a.typed[2*i+1] + a.typed[2*i+2] + a.typed[2*i+3]);
-    }
-    // adding the remaining data of the input-vector
-    unsigned j(0);
-    for ( ; j < inst.size % 8 ; ++i)
-    {
-        result.value += a.typed[j+8*i];
-    }
-
-    return result.mail;
-}
-#endif

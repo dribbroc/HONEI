@@ -1,6 +1,8 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-/* Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
+/*
+ * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -58,10 +60,10 @@ unsigned dense_float_reduction_min(const Instruction & inst)
         mfc_read_tag_status_all();
 
         tmpVector.value = a[current - 1].vectorised[0];
-        for (unsigned i(1) ; i < size / 4 ; ++i)
+        for (unsigned i(1) ; i < size / sizeof(vector float) ; ++i)
         {
-            bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i],tmpVector.value);
-            tmpVector.value  = spu_sel(a[current - 1].vectorised[i],tmpVector.value,bitMaskGT);
+            bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
+            tmpVector.value  = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
 
         --counter;
@@ -76,20 +78,20 @@ unsigned dense_float_reduction_min(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / 4 ; ++i)
+    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
-        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i],tmpVector.value);
-        tmpVector.value  = spu_sel(a[current - 1].vectorised[i],tmpVector.value, bitMaskGT);
+        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
+        tmpVector.value  = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
     }
 
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    tmpVector.array[0] =  tmpVector.array[0]>tmpVector.array[1]?tmpVector.array[1]:tmpVector.array[0];
-    tmpVector.array[2] =  tmpVector.array[2]>tmpVector.array[3]?tmpVector.array[3]:tmpVector.array[2];
+    tmpVector.array[0] =  tmpVector.array[0] < tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
+    tmpVector.array[2] =  tmpVector.array[2] < tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
 
-    MailableResult<float> result = { tmpVector.array[0]>tmpVector.array[2]?tmpVector.array[2]:tmpVector.array[0] };
+    MailableResult<float> result = { tmpVector.array[0] < tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
 
     return result.mail;
 }
