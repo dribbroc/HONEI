@@ -104,8 +104,6 @@ namespace honei
             end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
             quad_end = end - (end % 4);
 
-            std::cout<<op_offset<<std::endl;
-            std::cout.flush();
             Operand oa = { vi->elements() + quad_start };
             Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
             Operand oc = { results[counter]->elements() + quad_start };
@@ -145,8 +143,6 @@ namespace honei
 
             op_offset = middle_index - vi.index();
             start = op_offset; //Calculation of the element-index to start in iteration!
-            std::cout<<op_offset<<std::endl;
-            std::cout.flush();
             quad_start = start + ((4 - (start % 4)) % 4);
             end = vi->size();
             quad_end = end - (end % 4);
