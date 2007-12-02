@@ -25,7 +25,7 @@
 using namespace honei;
 using  namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorElementInverseTest :
     public BaseTest
 {
@@ -33,6 +33,7 @@ class DenseVectorElementInverseTest :
         DenseVectorElementInverseTest(const std::string & type) :
             BaseTest("dense_vector_element_inverse_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -47,16 +48,18 @@ class DenseVectorElementInverseTest :
                     *j = 1 / static_cast<DataType_>(i.index() + 1);
                     ++j;
                 }
-                ElementInverse<>::value(dv1);
+                ElementInverse<Tag_>::value(dv1);
                 TEST_CHECK_EQUAL(dv1, dv2);
             }
         }
 };
 
-DenseVectorElementInverseTest<float> dense_vector_element_inverse_test_float("float");
-DenseVectorElementInverseTest<double> dense_vector_element_inverse_test_double("double");
+DenseVectorElementInverseTest<tags::CPU, float> dense_vector_element_inverse_test_float("float");
+DenseVectorElementInverseTest<tags::CPU, double> dense_vector_element_inverse_test_double("double");
+DenseVectorElementInverseTest<tags::CPU::MultiCore, float> mc_dense_vector_element_inverse_test_float("MC float");
+DenseVectorElementInverseTest<tags::CPU::MultiCore, double> mc_dense_vector_element_inverse_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorElementInverseQuickTest :
     public QuickTest
 {
@@ -64,6 +67,7 @@ class DenseVectorElementInverseQuickTest :
         DenseVectorElementInverseQuickTest(const std::string & type) :
             QuickTest("dense_vector_element_inverse_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -77,21 +81,22 @@ class DenseVectorElementInverseQuickTest :
                 *j = 1 / static_cast<DataType_>(i.index() + 1);
                 ++j;
             }
-            ElementInverse<>::value(dv1);
+            ElementInverse<Tag_>::value(dv1);
             TEST_CHECK_EQUAL(dv1, dv2);
         }
 };
-DenseVectorElementInverseQuickTest<float>  dense_vector_element_inverse_quick_test_float("float");
-DenseVectorElementInverseQuickTest<double> dense_vector_element_inverse_quick_test_double("double");
+DenseVectorElementInverseQuickTest<tags::CPU, float> dense_vector_element_inverse_quick_test_float("float");
+DenseVectorElementInverseQuickTest<tags::CPU, double> dense_vector_element_inverse_quick_test_double("double");
+DenseVectorElementInverseQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_element_inverse_quick_test_float("MC float");
+DenseVectorElementInverseQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_element_inverse_quick_test_double("MC double");
 
-
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorElementInverseTest :
     public BaseTest
 {
     public:
         SparseVectorElementInverseTest(const std::string & type) :
-            BaseTest("sparse_element_inverse_test<" + type + ">")
+            BaseTest("sparse_vector_element_inverse_test<" + type + ">")
         {
         }
 
@@ -111,20 +116,22 @@ class SparseVectorElementInverseTest :
                     ++j;
                 }
 
-                TEST_CHECK_EQUAL(ElementInverse<>::value(sv1), sv2);
+                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(sv1), sv2);
             }
         }
 };
-SparseVectorElementInverseTest<float> sparse_vector_element_inverse_test_float("float");
-SparseVectorElementInverseTest<double> sparse_vector_element_inverse_test_double("double");
+SparseVectorElementInverseTest<tags::CPU, float> sparse_vector_element_inverse_test_float("float");
+SparseVectorElementInverseTest<tags::CPU, double> sparse_vector_element_inverse_test_double("double");
+SparseVectorElementInverseTest<tags::CPU::MultiCore, float> mc_sparse_vector_element_inverse_test_float("MC float");
+SparseVectorElementInverseTest<tags::CPU::MultiCore, double> mc_sparse_vector_element_inverse_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorElementInverseQuickTest :
     public QuickTest
 {
     public:
         SparseVectorElementInverseQuickTest(const std::string & type) :
-            QuickTest("sparse_element_inverse_quick_test<" + type + ">")
+            QuickTest("sparse_vector_element_inverse_quick_test<" + type + ">")
         {
         }
 
@@ -146,10 +153,12 @@ class SparseVectorElementInverseQuickTest :
             TEST_CHECK_EQUAL(ElementInverse<>::value(sv1), sv2);
         }
 };
-SparseVectorElementInverseQuickTest<float> sparse_vector_element_inverse_quick_test_float("float");
-SparseVectorElementInverseQuickTest<double> sparse_vector_element_inverse_quick_test_double("double");
+SparseVectorElementInverseQuickTest<tags::CPU, float> sparse_vector_element_inverse_quick_test_float("float");
+SparseVectorElementInverseQuickTest<tags::CPU, double> sparse_vector_element_inverse_quick_test_double("double");
+SparseVectorElementInverseQuickTest<tags::CPU::MultiCore, float> mc_sparse_vector_element_inverse_quick_test_float("MC float");
+SparseVectorElementInverseQuickTest<tags::CPU::MultiCore, double> mc_sparse_vector_element_inverse_quick_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixElementInverseTest :
     public BaseTest
 {
@@ -173,14 +182,16 @@ class BandedMatrixElementInverseTest :
                     ++j;
                 }
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-                TEST_CHECK_EQUAL(ElementInverse<>::value(bm1), bm2);
+                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(bm1), bm2);
             }
         }
 };
-BandedMatrixElementInverseTest<float> banded_matrix_element_inverse_test_float("float");
-BandedMatrixElementInverseTest<double> banded_matrix_element_inverse_test_double("double");
+BandedMatrixElementInverseTest<tags::CPU, float> banded_matrix_element_inverse_test_float("float");
+BandedMatrixElementInverseTest<tags::CPU, double> banded_matrix_element_inverse_test_double("double");
+BandedMatrixElementInverseTest<tags::CPU::MultiCore, float> mc_banded_matrix_element_inverse_test_float("MC float");
+BandedMatrixElementInverseTest<tags::CPU::MultiCore, double> mc_banded_matrix_element_inverse_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixElementInverseQuickTest :
     public QuickTest
 {
@@ -204,13 +215,15 @@ class BandedMatrixElementInverseQuickTest :
                 }
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
 
-                TEST_CHECK_EQUAL(ElementInverse<>::value(bm1), bm2);
+                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(bm1), bm2);
         }
 };
-BandedMatrixElementInverseQuickTest<float> banded_matrix_element_inverse_quick_test_float("float");
-BandedMatrixElementInverseQuickTest<double> banded_matrix_element_inverse_quick_test_double("double");
+BandedMatrixElementInverseQuickTest<tags::CPU, float> banded_matrix_element_inverse_quick_test_float("float");
+BandedMatrixElementInverseQuickTest<tags::CPU, double> banded_matrix_element_inverse_quick_test_double("double");
+BandedMatrixElementInverseQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_element_inverse_quick_test_float("MC float");
+BandedMatrixElementInverseQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_element_inverse_quick_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixElementInverseTest :
     public BaseTest
 {
@@ -234,14 +247,16 @@ class DenseMatrixElementInverseTest :
                     ++j;
                 }
 
-                TEST_CHECK_EQUAL(ElementInverse<>::value(dm1), dm2);
+                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(dm1), dm2);
             }
         }
 };
-DenseMatrixElementInverseTest<float> dense_matrix_element_inverse_test_float("float");
-DenseMatrixElementInverseTest<double> dense_matrix_element_inverse_test_double("double");
+DenseMatrixElementInverseTest<tags::CPU, float> dense_matrix_element_inverse_test_float("float");
+DenseMatrixElementInverseTest<tags::CPU, double> dense_matrix_element_inverse_test_double("double");
+DenseMatrixElementInverseTest<tags::CPU::MultiCore, float> mc_dense_matrix_element_inverse_test_float("MC float");
+DenseMatrixElementInverseTest<tags::CPU::MultiCore, double> mc_dense_matrix_element_inverse_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixElementInverseQuickTest :
     public QuickTest
 {
@@ -263,13 +278,15 @@ class DenseMatrixElementInverseQuickTest :
                 ++j;
             }
 
-            TEST_CHECK_EQUAL(ElementInverse<>::value(dm1), dm2);
+            TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(dm1), dm2);
         }
 };
-DenseMatrixElementInverseQuickTest<float>  dense_matrix_element_inverse_quick_test_float("float");
-DenseMatrixElementInverseQuickTest<double> dense_matrix_element_inverse_quick_test_double("double");
+DenseMatrixElementInverseQuickTest<tags::CPU, float>  dense_matrix_element_inverse_quick_test_float("float");
+DenseMatrixElementInverseQuickTest<tags::CPU, double> dense_matrix_element_inverse_quick_test_double("double");
+DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_element_inverse_quick_test_float("MC float");
+DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_element_inverse_quick_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixElementInverseTest :
     public BaseTest
 {
@@ -296,14 +313,16 @@ class SparseMatrixElementInverseTest :
 
                     }
                 }
-                TEST_CHECK_EQUAL(ElementInverse<>::value(sm1), sm2);
+                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(sm1), sm2);
             }
         }
 };
-SparseMatrixElementInverseTest<float> sparse_matrix_element_inverse_test_float("float");
-SparseMatrixElementInverseTest<double> sparse_matrix_element_inverse_test_double("double");
+SparseMatrixElementInverseTest<tags::CPU, float> sparse_matrix_element_inverse_test_float("float");
+SparseMatrixElementInverseTest<tags::CPU, double> sparse_matrix_element_inverse_test_double("double");
+SparseMatrixElementInverseTest<tags::CPU::MultiCore, float> mc_sparse_matrix_element_inverse_test_float("MC float");
+SparseMatrixElementInverseTest<tags::CPU::MultiCore, double> mc_sparse_matrix_element_inverse_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixElementInverseQuickTest :
     public QuickTest
 {
@@ -329,8 +348,10 @@ class SparseMatrixElementInverseQuickTest :
 
                 }
             }
-            TEST_CHECK_EQUAL(ElementInverse<>::value(sm1), sm2);
+            TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(sm1), sm2);
         }
 };
-SparseMatrixElementInverseQuickTest<float> sparse_matrix_element_inverse_quick_test_float("float");
-SparseMatrixElementInverseQuickTest<double> sparse_matrix_element_inverse_quick_test_double("double");
+SparseMatrixElementInverseQuickTest<tags::CPU, float> sparse_matrix_element_inverse_quick_test_float("float");
+SparseMatrixElementInverseQuickTest<tags::CPU, double> sparse_matrix_element_inverse_quick_test_double("double");
+SparseMatrixElementInverseQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_element_inverse_quick_test_float("MC float");
+SparseMatrixElementInverseQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_element_inverse_quick_test_double("MC double");
