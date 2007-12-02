@@ -71,7 +71,7 @@ namespace honei
         msg += "o = " + stringify(_instruction.m.ea) + "\n";
         LOGMESSAGE(ll_minimal, msg);
 
-        _kernel = kernel;
+        _kernel = new SPEKernel(*kernel);
         _index = kernel->enqueue(*this);
     }
 
@@ -81,6 +81,8 @@ namespace honei
         if (_kernel)
         {
             _kernel->wait(_index);
+
+            delete _kernel;
             _kernel = 0;
         }
     }
