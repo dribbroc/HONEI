@@ -35,6 +35,7 @@ namespace bm_dv_product
         unsigned long end;
         unsigned long quad_start;
         unsigned long quad_end;
+        bool use_spe;
     };
 }
 
@@ -74,7 +75,7 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        unsigned int spe_count = 4;
+        unsigned int spe_count = 1;
 
 
         typedef std::vector<bm_dv_product::SPETask> TaskList;
@@ -103,6 +104,8 @@ namespace honei
             end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
             quad_end = end - (end % 4);
 
+            std::cout<<op_offset<<std::endl;
+            std::cout.flush();
             Operand oa = { vi->elements() + quad_start };
             Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
             Operand oc = { results[counter]->elements() + quad_start };
@@ -118,7 +121,12 @@ namespace honei
             task.end = end;
             task.quad_start = quad_start;
             task.quad_end = quad_end;
-            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
+            if(quad_end > quad_start)
+            {
+                task.use_spe = true;
+            }
+            else task.use_spe = false;
+            task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
             /*for (unsigned long index = quad_end ; index < end ; index++) 
@@ -137,6 +145,8 @@ namespace honei
 
             op_offset = middle_index - vi.index();
             start = op_offset; //Calculation of the element-index to start in iteration!
+            std::cout<<op_offset<<std::endl;
+            std::cout.flush();
             quad_start = start + ((4 - (start % 4)) % 4);
             end = vi->size();
             quad_end = end - (end % 4);
@@ -155,7 +165,12 @@ namespace honei
             task.end = end;
             task.quad_start = quad_start;
             task.quad_end = quad_end;
-            task.spe_instruction= SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
+            if(quad_end > quad_start)
+            {
+                task.use_spe = true;
+            }
+            else task.use_spe = false;
+            task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
             for (unsigned long index = start ; index < quad_start ; index++)
@@ -174,7 +189,7 @@ namespace honei
         {
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-                SPEManager::instance()->dispatch(task_list.at(i + j).spe_instruction);
+                if(task_list.at(i + j).use_spe) SPEManager::instance()->dispatch(task_list.at(i + j).spe_instruction);
             }
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
@@ -187,13 +202,13 @@ namespace honei
             }
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-            task_list.at(i + j).spe_instruction.wait();
+                if(task_list.at(i + j).use_spe) task_list.at(i + j).spe_instruction.wait();
             }
         }
 
         for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
-            SPEManager::instance()->dispatch(task_list.at(i).spe_instruction);
+            if(task_list.at(i).use_spe) SPEManager::instance()->dispatch(task_list.at(i).spe_instruction);
         }
         for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
@@ -206,7 +221,7 @@ namespace honei
         }
         for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
-            task_list.at(i).spe_instruction.wait();
+            if(task_list.at(i).use_spe) task_list.at(i).spe_instruction.wait();
         }
 
 

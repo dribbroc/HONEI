@@ -39,7 +39,7 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
 
     //unsigned start(inst.d.u);
     //unsigned end(inst.e.u);
-    signed op_offset(inst.f.s);
+    //signed op_offset(inst.f.s);
     unsigned x_offset(inst.g.u);
     unsigned y_offset((4 - x_offset) % 4);
 

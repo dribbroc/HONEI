@@ -117,8 +117,8 @@ class BandedMatrixDenseVectorProductQuickTest :
             BandedMatrix<DataType_> bm1(size, dv1);
             bm1.insert_band(1, dv4);
             bm1.insert_band(-1, dv5);
-            bm1.insert_band(-size+1, dv6);
-            bm1.insert_band(size-1, dv7);
+            bm1.insert_band(-size + 1, dv6);
+            bm1.insert_band(size - 1, dv7);
 
             DenseVector<DataType_> dv3(size, DataType_(0));
             for (int i(1); i < size-1; ++i)
