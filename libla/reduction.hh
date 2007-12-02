@@ -33,6 +33,10 @@
 #include <libutil/thread_pool.hh>
 #include <libutil/wrapper.hh>
 
+///\todo: Do not use define for setting size of multicore-partitions.
+// For optimization purposes
+#define PARTS 8
+
 namespace honei
 {
     /**
@@ -539,14 +543,14 @@ namespace honei
 
             ThreadPool * p(ThreadPool::get_instance());
             PoolTask * pt[a.rows()];
-            typename Vector<DT_>::ElementIterator l(result.begin_elements());
             for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
             {
+                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                l += i;
                 ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*l, a[i]);
                 pt[i] = p->dispatch(mywrapper);
-                ++l;
             }
-            for (unsigned long i = 0; i < a.rows(); ++i)
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
                 pt[i]->wait_on();
             }
@@ -561,18 +565,535 @@ namespace honei
 
             ThreadPool * p(ThreadPool::get_instance());
             PoolTask * pt[a.rows()];
-            typename Vector<DT_>::ElementIterator l(result.begin_elements());
             for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
             {
+                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                l += i;
                 ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const SparseVector<DT_> > mywrapper(*l, a[i]);
                 pt[i] = p->dispatch(mywrapper);
-                ++l;
+            }
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & a)
+        {
+            CONTEXT("When reducing DenseVectorContinuousBase to Scalar by sum (MultiCore):");
+            DT_ result(0);
+
+            unsigned long parts(PARTS);
+            unsigned long div(a.size() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.size() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < (modulo) ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                pri += i;
+                DenseVectorRange<DT_> range(a.range(div+1, i * (div + 1)));
+                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                pri += i;
+                DenseVectorRange<DT_> range(a.range(div, modulo + div * i));
+                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const DenseVectorSlice<DT_> & a)
+        {
+            CONTEXT("When reducing DenseVectorSlice to Scalar by sum (MultiCore):");
+            DT_ result(0);
+            unsigned long parts(PARTS);
+            unsigned long div(a.size() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.size() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                start += i * (div + 1);
+                stop += (i + 1) * (div +1);
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+                start += (div + 1);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                start += i * (div) + modulo;
+                stop += (i + 1) * (div) + modulo;
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const SparseVector<DT_> & a)
+        {
+            CONTEXT("When reducing SparseVector to Scalar by sum (MultiCore):");
+            DT_ result(0);
+            unsigned long parts(PARTS);
+            unsigned long div(a.used_elements() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.used_elements() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                start += i * (div + 1);
+                stop += (i + 1) * (div +1);
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                start += i * (div) + modulo;
+                stop += (i + 1) * (div) + modulo;
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+
+        template <typename DTP_, typename IT1_, typename IT2_>
+        static void value(DTP_ result, IT1_ & x, IT2_ & x_end)
+        {
+            CONTEXT("When reducing iterator-based by sum:");
+
+            for ( ; x != x_end ; ++x)
+            {
+                *result += *x;
+            }
+        }
+    };
+
+    template <typename Tag_> struct MCReduction<rt_max, Tag_>
+    {
+        template <typename DT_>
+        static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing DenseMatrix to DenseVector by max (MultiCore):");
+            DenseVector<DT_> result(a.rows());
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            {
+                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                l += i;
+                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*l, a[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static DenseVector<DT_> value(const SparseMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing SparseMatrix to DenseVector by max (MultiCore):");
+            DenseVector<DT_> result(a.rows());
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            {
+                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                l += i;
+                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const SparseVector<DT_> > mywrapper(*l, a[i]);
+                pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
             }
             return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & a)
+        {
+            CONTEXT("When reducing DenseVectorContinuousBase to Scalar by max (MultiCore):");
+            DT_ result(0);
+
+            unsigned long parts(PARTS);
+            unsigned long div(a.size() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.size() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                pri += i;
+                DenseVectorRange<DT_> range(a.range(div+1, i * (div + 1)));
+                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                pri += i;
+                DenseVectorRange<DT_> range(a.range(div, modulo + div * i));
+                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const DenseVectorSlice<DT_> & a)
+        {
+            CONTEXT("When reducing DenseVectorSlice to Scalar by max (MultiCore):");
+            DT_ result(0);
+            unsigned long parts(PARTS);
+            unsigned long div(a.size() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.size() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                start += i * (div + 1);
+                stop += (i + 1) * (div +1);
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+                ++pri;
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                start += i * (div) + modulo;
+                stop += (i + 1) * (div) + modulo;
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+                ++pri;
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const SparseVector<DT_> & a)
+        {
+            CONTEXT("When reducing SparseVector to Scalar by max (MultiCore):");
+            DT_ result(0);
+            unsigned long parts(PARTS);
+            unsigned long div(a.used_elements() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.used_elements() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                start += i * (div + 1);
+                stop += (i + 1) * (div +1);
+                pri += i;
+                ThreeArgWrapper<Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                start += i * (div) + modulo;
+                stop += (i + 1) * (div) + modulo;
+                pri += i;
+                ThreeArgWrapper<Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+        template <typename DTP_, typename IT1_, typename IT2_>
+        static void value(DTP_ result, IT1_ & x, IT2_ & x_end)
+        {
+            CONTEXT("When reducing iterator-based by max:");
+            for ( ; x != x_end ; ++x)
+            {
+                if (*result < *x) *result = *x;
+            }
+        }
+    };
+
+    template <typename Tag_> struct MCReduction<rt_min, Tag_>
+    {
+        template <typename DT_>
+        static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing DenseMatrix to DenseVector by min (MultiCore):");
+            DenseVector<DT_> result(a.rows());
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            {
+                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                l += i;
+                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*l, a[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static DenseVector<DT_> value(const SparseMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing SparseMatrix to DenseVector by min (MultiCore):");
+            DenseVector<DT_> result(a.rows());
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[a.rows()];
+            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            {
+                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                l += i;
+                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const SparseVector<DT_> > mywrapper(*l, a[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & a)
+        {
+            CONTEXT("When reducing DenseVectorContinuousBase to Scalar by min (MultiCore):");
+            DT_ result(0);
+
+            unsigned long parts(PARTS);
+            unsigned long div(a.size() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.size() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                pri += i;
+                DenseVectorRange<DT_> range(a.range(div+1, i * (div + 1)));
+                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                pri += i;
+                DenseVectorRange<DT_> range(a.range(div, modulo + div * i));
+                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const DenseVectorSlice<DT_> & a)
+        {
+            CONTEXT("When reducing DenseVectorSlice to Scalar by min (MultiCore):");
+            DT_ result(0);
+            unsigned long parts(PARTS);
+            unsigned long div(a.size() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.size() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                start += i * (div + 1);
+                stop += (i + 1) * (div +1);
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                start += i * (div) + modulo;
+                stop += (i + 1) * (div) + modulo;
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const SparseVector<DT_> & a)
+        {
+            CONTEXT("When reducing SparseVector to Scalar by min (MultiCore):");
+            DT_ result(0);
+            unsigned long parts(PARTS);
+            unsigned long div(a.used_elements() / parts);
+            if (div <= 1) 
+            {
+                result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
+                return result;
+            }
+            unsigned long modulo = a.used_elements() % parts;
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            DenseVector<DT_> preresult(parts, DT_(0));
+            for (unsigned long i(0) ; i < modulo ; ++i)
+            {
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                start += i * (div + 1);
+                stop += (i + 1) * (div +1);
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(modulo) ; i < parts ; ++i)
+            {
+                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                start += i * (div) + modulo;
+                stop += (i + 1) * (div) + modulo;
+                pri += i;
+                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
+                pt[i] = p->dispatch(wrapper);
+            }
+            for (unsigned long i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
+            return result;
+        }
+
+
+        template <typename DTP_, typename IT1_, typename IT2_>
+        static void value(DTP_ result, IT1_ & x, IT2_ & x_end)
+        {
+            CONTEXT("When reducing iterator-based by min:");
+            for ( ; x != x_end ; ++x)
+            {
+                if (*result > *x) *result = *x;
+            }
         }
     };
     template <ReductionType type_> struct Reduction<type_, tags::CPU::MultiCore> : MCReduction<type_, tags::CPU::MultiCore> {};

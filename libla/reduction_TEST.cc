@@ -203,14 +203,15 @@ SparseMatrixReductionQuickTest<tags::CPU, double> sparse_matrix_reduction_to_sum
 SparseMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_sum_quick_test_float("MC float");
 SparseMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_sum_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToSumTest :
     public BaseTest
 {
     public:
         DenseVectorReductionToSumTest(const std::string & type) :
-            BaseTest("dense_vector_eduction_to_sum_test<" + type + ">")
+            BaseTest("dense_vector_reduction_to_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -224,7 +225,7 @@ class DenseVectorReductionToSumTest :
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
                 }
 
-                DT_ v1(Reduction<rt_sum>::value(dv));
+                DT_ v1(Reduction<rt_sum, Tag_>::value(dv));
                 DT_ s1(size * (size + 1) / 2 / 1.23456789);
                 // Behaviour similar to size^2 * eps
                 DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
@@ -233,8 +234,10 @@ class DenseVectorReductionToSumTest :
         }
 };
 
-DenseVectorReductionToSumTest<float> dense_vector_reduction_to_sum_test_float("float");
-DenseVectorReductionToSumTest<double> dense_vector_reduction_to_sum_test_double("double");
+DenseVectorReductionToSumTest<tags::CPU, float> dense_vector_reduction_to_sum_test_float("float");
+DenseVectorReductionToSumTest<tags::CPU, double> dense_vector_reduction_to_sum_test_double("double");
+DenseVectorReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_sum_test_float("MC float");
+DenseVectorReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_sum_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseVectorReductionToSumQuickTest :
@@ -266,12 +269,14 @@ class DenseVectorReductionToSumQuickTest :
 };
 DenseVectorReductionToSumQuickTest<tags::CPU, float>  dense_vector_reduction_to_sum_quick_test_float("float");
 DenseVectorReductionToSumQuickTest<tags::CPU, double> dense_vector_reduction_to_sum_quick_test_double("double");
+DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_reduction_to_sum_quick_test_float("MC float");
+DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_sum_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorReductionToSumQuickTest<tags::Cell, float> dense_vector_reduction_to_sum_quick_test_float_cell("Cell float");
 #endif
 
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseVectorReductionToSumTest :
     public BaseTest
 {
@@ -279,6 +284,7 @@ class SparseVectorReductionToSumTest :
         SparseVectorReductionToSumTest(const std::string & type) :
             BaseTest("sparse_vector_reduction_to_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -290,21 +296,26 @@ class SparseVectorReductionToSumTest :
                 for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    if (i.index() % 10 == 0) *i = static_cast<DT_>((i.index() +1) / 1.23456789);
-                    s1 += *i;
+                    if (i.index() % 10 == 0)
+                    {
+                        *i = static_cast<DT_>((i.index() +1) / 1.23456789);
+                        s1 += *i;
+                    }                
                 }
 
-                DT_ v1(Reduction<rt_sum>::value(sv1));
+                DT_ v1(Reduction<rt_sum, Tag_>::value(sv1));
                 DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
             }
         }
 };
 
-SparseVectorReductionToSumTest<float> sparse_vector_reduction_to_sum_test_float("float");
-SparseVectorReductionToSumTest<double> sparse_vector_reduction_to_sum_test_double("double");
+SparseVectorReductionToSumTest<tags::CPU, float> sparse_vector_reduction_to_sum_test_float("float");
+SparseVectorReductionToSumTest<tags::CPU, double> sparse_vector_reduction_to_sum_test_double("double");
+SparseVectorReductionToSumTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_sum_test_float("MC float");
+SparseVectorReductionToSumTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_sum_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseVectorReductionToSumQuickTest :
     public QuickTest
 {
@@ -312,6 +323,7 @@ class SparseVectorReductionToSumQuickTest :
         SparseVectorReductionToSumQuickTest(const std::string & type) :
             QuickTest("sparse_vector_reduction_to_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -322,20 +334,25 @@ class SparseVectorReductionToSumQuickTest :
             for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
-                if (i.index() % 10 == 0) *i = static_cast<DT_>((i.index() +1) / 1.23456789);
-                s1 += *i;
+                if (i.index() % 10 == 0)
+                {
+                    *i = static_cast<DT_>((i.index() +1) / 1.23456789);
+                    s1 += *i;
+                }
             }
 
-            DT_ v1(Reduction<rt_sum>::value(sv1));
+            DT_ v1(Reduction<rt_sum, Tag_>::value(sv1));
             DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
         }
 };
 
-SparseVectorReductionToSumQuickTest<float> sparse_reduction_to_sum_quick_test_float("float");
-SparseVectorReductionToSumQuickTest<double> sparse_reduction_to_sum_quick_test_double("double");
+SparseVectorReductionToSumQuickTest<tags::CPU, float> sparse_reduction_to_sum_quick_test_float("float");
+SparseVectorReductionToSumQuickTest<tags::CPU, double> sparse_reduction_to_sum_quick_test_double("double");
+SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_sum_quick_test_float("MC float");
+SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_sum_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixReductionToMinTest :
     public BaseTest
 {
@@ -343,6 +360,7 @@ class DenseMatrixReductionToMinTest :
         DenseMatrixReductionToMinTest(const std::string & type) :
             BaseTest("dense_matrix_reduction_to_min_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -356,16 +374,17 @@ class DenseMatrixReductionToMinTest :
                     *i = i.index();
                 }
 
-                DenseVector<DT_> v1(Reduction<rt_min>::value(dm1));
+                DenseVector<DT_> v1(Reduction<rt_min,Tag_>::value(dm1));
                 TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
             }
         }
 };
+DenseMatrixReductionToMinTest<tags::CPU, float> dense_matrix_reduction_to_min_test_float("float");
+DenseMatrixReductionToMinTest<tags::CPU, double> dense_matrix_reduction_to_min_test_double("double");
+DenseMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_min_test_float("MC float");
+DenseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_min_test_double("MC double");
 
-DenseMatrixReductionToMinTest<float> dense_matrix_reduction_to_min_test_float("float");
-DenseMatrixReductionToMinTest<double> dense_matrix_reduction_to_min_test_double("double");
-
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixReductionToMinQuickTest :
     public QuickTest
 {
@@ -373,6 +392,7 @@ class DenseMatrixReductionToMinQuickTest :
         DenseMatrixReductionToMinQuickTest(const std::string & type) :
             QuickTest("dense_matrix_reduction_to_min_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -385,15 +405,16 @@ class DenseMatrixReductionToMinQuickTest :
                 *i = i.index();
             }
 
-            DenseVector<DT_> v1(Reduction<rt_min>::value(dm1));
+            DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(dm1));
             TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
         }
 };
+DenseMatrixReductionToMinQuickTest<tags::CPU, float> dense_matrix_reduction_to_min_quick_test_float("float");
+DenseMatrixReductionToMinQuickTest<tags::CPU, double> dense_matrix_reduction_to_min_quick_test_double("double");
+DenseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_min_quick_test_float("MC float");
+DenseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_min_quick_test_double("MC double");
 
-DenseMatrixReductionToMinQuickTest<float> dense_matrix_reduction_to_min_quick_test_float("float");
-DenseMatrixReductionToMinQuickTest<double> dense_matrix_reduction_to_min_quick_test_double("double");
-
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixReductionToMinTest :
     public BaseTest
 {
@@ -401,6 +422,7 @@ class SparseMatrixReductionToMinTest :
         SparseMatrixReductionToMinTest(const std::string & type) :
             BaseTest("sparse_matrix_reduction_to_min_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -414,16 +436,17 @@ class SparseMatrixReductionToMinTest :
                     *i = i.index();
                 }
 
-                DenseVector<DT_> v1(Reduction<rt_min>::value(sm1));
+                DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(sm1));
                 TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
             }
         }
 };
+SparseMatrixReductionToMinTest<tags::CPU, float> sparse_matrix_reduction_to_min_test_float("float");
+SparseMatrixReductionToMinTest<tags::CPU, double> sparse_matrix_reduction_to_min_test_double("double");
+SparseMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_test_float("MC float");
+SparseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_test_double("MC double");
 
-SparseMatrixReductionToMinTest<float> sparse_matrix_reduction_to_min_test_float("float");
-SparseMatrixReductionToMinTest<double> sparse_matrix_reduction_to_min_test_double("double");
-
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixReductionToMinQuickTest :
     public QuickTest
 {
@@ -431,6 +454,7 @@ class SparseMatrixReductionToMinQuickTest :
         SparseMatrixReductionToMinQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_reduction_to_min_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -443,13 +467,14 @@ class SparseMatrixReductionToMinQuickTest :
                 *i = i.index();
             }
 
-            DenseVector<DT_> v1(Reduction<rt_min>::value(sm1));
+            DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(sm1));
             TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
         }
 };
-
-SparseMatrixReductionToMinQuickTest<float> sparse_matrix_reduction_to_min_quick_test_float("float");
-SparseMatrixReductionToMinQuickTest<double> sparse_matrix_reduction_to_min_quick_test_double("double");
+SparseMatrixReductionToMinQuickTest<tags::CPU, float> sparse_matrix_reduction_to_min_quick_test_float("float");
+SparseMatrixReductionToMinQuickTest<tags::CPU, double> sparse_matrix_reduction_to_min_quick_test_double("double");
+SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_quick_test_float("MC float");
+SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_quick_test_double("MC double");
 
 template <typename DT_>
 class BandedMatrixReductionToMinTest :
@@ -510,7 +535,7 @@ class BandedMatrixReductionToMinQuickTest :
 BandedMatrixReductionToMinQuickTest<float> banded_matrix_reduction_to_min_quick_test_float("float");
 BandedMatrixReductionToMinQuickTest<double> banded_matrix_reduction_to_min_quick_test_double("double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToMinTest :
     public BaseTest
 {
@@ -518,6 +543,7 @@ class DenseVectorReductionToMinTest :
         DenseVectorReductionToMinTest(const std::string & type) :
             BaseTest("dense_vector_reduction_to_min_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -531,14 +557,16 @@ class DenseVectorReductionToMinTest :
                     *i = i.index();
                 }
 
-                DT_ v1(Reduction<rt_min>::value(dv1));
+                DT_ v1(Reduction<rt_min, Tag_>::value(dv1));
                 TEST_CHECK_EQUAL(v1, 0);
             }
         }
 };
 
-DenseVectorReductionToMinTest<float> dense_vector_reduction_to_min_test_float("float");
-DenseVectorReductionToMinTest<double> dense_vector_reduction_to_min_test_double("double");
+DenseVectorReductionToMinTest<tags::CPU, float> dense_vector_reduction_to_min_test_float("float");
+DenseVectorReductionToMinTest<tags::CPU, double> dense_vector_reduction_to_min_test_double("double");
+DenseVectorReductionToMinTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_min_test_float("MC float");
+DenseVectorReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_min_test_double("MC double");
 
 
 template <typename Tag_, typename DT_>
@@ -569,7 +597,8 @@ class DenseVectorReductionToMinQuickTest :
 
 DenseVectorReductionToMinQuickTest<tags::CPU, float> dense_reduction_to_min_quick_test_float("float");
 DenseVectorReductionToMinQuickTest<tags::CPU, double> dense_reduction_to_min_quick_test_double("double");
-
+DenseVectorReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_dense_reduction_to_min_quick_test_float("MC float");
+DenseVectorReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_reduction_to_min_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorReductionToMinQuickTest<tags::Cell, float> dense_vector_reduction_to_min_quick_test_float_cell("Cell float");
 #endif
@@ -578,7 +607,7 @@ DenseVectorReductionToMinQuickTest<tags::Cell, float> dense_vector_reduction_to_
 
 
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseVectorReductionToMinTest :
     public BaseTest
 {
@@ -586,6 +615,7 @@ class SparseVectorReductionToMinTest :
         SparseVectorReductionToMinTest(const std::string & type) :
             BaseTest("sparse_vector_reduction_to_min_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -599,16 +629,18 @@ class SparseVectorReductionToMinTest :
                     *i = i.index();
                 }
 
-                DT_ v1(Reduction<rt_min>::value(sv1));
+                DT_ v1(Reduction<rt_min, Tag_>::value(sv1));
                 TEST_CHECK_EQUAL(v1, 0);
             }
         }
 };
 
-SparseVectorReductionToMinTest<float> sparse_vector_reduction_to_min_test_float("float");
-SparseVectorReductionToMinTest<double> sparse_vector_reduction_to_min_test_double("double");
+SparseVectorReductionToMinTest<tags::CPU, float> sparse_vector_reduction_to_min_test_float("float");
+SparseVectorReductionToMinTest<tags::CPU, double> sparse_vector_reduction_to_min_test_double("double");
+SparseVectorReductionToMinTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_min_test_float("MC float");
+SparseVectorReductionToMinTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_min_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseVectorReductionToMinQuickTest :
     public QuickTest
 {
@@ -616,6 +648,7 @@ class SparseVectorReductionToMinQuickTest :
         SparseVectorReductionToMinQuickTest(const std::string & type) :
             QuickTest("sparse_vector_reduction_to_min_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -628,15 +661,17 @@ class SparseVectorReductionToMinQuickTest :
                 *i = i.index();
             }
 
-            DT_ v1(Reduction<rt_min>::value(sv1));
+            DT_ v1(Reduction<rt_min, Tag_>::value(sv1));
             TEST_CHECK_EQUAL(v1, 0);
         }
 };
 
-SparseVectorReductionToMinQuickTest<float> sparse_reduction_to_min_quick_test_float("float");
-SparseVectorReductionToMinQuickTest<double> sparse_reduction_to_min_quick_test_double("double");
+SparseVectorReductionToMinQuickTest<tags::CPU, float> sparse_reduction_to_min_quick_test_float("float");
+SparseVectorReductionToMinQuickTest<tags::CPU, double> sparse_reduction_to_min_quick_test_double("double");
+SparseVectorReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_min_quick_test_float("MC float");
+SparseVectorReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_min_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixReductionToMaxTest :
     public BaseTest
 {
@@ -644,6 +679,7 @@ class DenseMatrixReductionToMaxTest :
         DenseMatrixReductionToMaxTest(const std::string & type) :
             BaseTest("dense_matrix_reduction_to_max_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -657,16 +693,18 @@ class DenseMatrixReductionToMaxTest :
                     *i = i.index();
                 }
 
-                DenseVector<DT_> v1(Reduction<rt_max>::value(dm1));
+                DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
                 TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
             }
         }
 };
 
-DenseMatrixReductionToMaxTest<float> dense_matrix_reduction_to_max_test_float("float");
-DenseMatrixReductionToMaxTest<double> dense_matrix_reduction_to_max_test_double("double");
+DenseMatrixReductionToMaxTest<tags::CPU, float> dense_matrix_reduction_to_max_test_float("float");
+DenseMatrixReductionToMaxTest<tags::CPU, double> dense_matrix_reduction_to_max_test_double("double");
+DenseMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_max_test_float("MC float");
+DenseMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_max_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixReductionToMaxQuickTest :
     public QuickTest
 {
@@ -674,6 +712,7 @@ class DenseMatrixReductionToMaxQuickTest :
         DenseMatrixReductionToMaxQuickTest(const std::string & type) :
             QuickTest("dense_matrix_reduction_to_max_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -686,16 +725,18 @@ class DenseMatrixReductionToMaxQuickTest :
                 *i = i.index();
             }
 
-            DenseVector<DT_> v1(Reduction<rt_max>::value(dm1));
+            DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
             TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
         }
 };
 
-DenseMatrixReductionToMaxQuickTest<float> dense_matrix_reduction_to_max_quick_test_float("float");
-DenseMatrixReductionToMaxQuickTest<double> dense_matrix_reduction_to_max_quick_test_double("double");
+DenseMatrixReductionToMaxQuickTest<tags::CPU, float> dense_matrix_reduction_to_max_quick_test_float("float");
+DenseMatrixReductionToMaxQuickTest<tags::CPU, double> dense_matrix_reduction_to_max_quick_test_double("double");
+DenseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_max_quick_test_float("MC float");
+DenseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_max_quick_test_double("MC double");
 
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixReductionToMaxTest :
     public BaseTest
 {
@@ -703,6 +744,7 @@ class SparseMatrixReductionToMaxTest :
         SparseMatrixReductionToMaxTest(const std::string & type) :
             BaseTest("sparse_matrix_reduction_to_max_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -716,16 +758,18 @@ class SparseMatrixReductionToMaxTest :
                     *i = i.index();
                 }
 
-                DenseVector<DT_> v1(Reduction<rt_max>::value(sm1));
+                DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(sm1));
                 TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
             }
         }
 };
 
-SparseMatrixReductionToMaxTest<float> sparse_matrix_reduction_to_max_test_float("float");
-SparseMatrixReductionToMaxTest<double> sparse_matrix_reduction_to_max_test_double("double");
+SparseMatrixReductionToMaxTest<tags::CPU, float> sparse_matrix_reduction_to_max_test_float("float");
+SparseMatrixReductionToMaxTest<tags::CPU, double> sparse_matrix_reduction_to_max_test_double("double");
+SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_test_float("MC float");
+SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseMatrixReductionToMaxQuickTest :
     public QuickTest
 {
@@ -733,6 +777,7 @@ class SparseMatrixReductionToMaxQuickTest :
         SparseMatrixReductionToMaxQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_reduction_to_max_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -745,13 +790,15 @@ class SparseMatrixReductionToMaxQuickTest :
                 *i = i.index();
             }
 
-            DenseVector<DT_> v1(Reduction<rt_max>::value(sm1));
+            DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(sm1));
             TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
         }
 };
 
-SparseMatrixReductionToMaxQuickTest<float> sparse_matrix_reduction_to_max_quick_test_float("float");
-SparseMatrixReductionToMaxQuickTest<double> sparse_matrix_reduction_to_max_quick_test_double("double");
+SparseMatrixReductionToMaxQuickTest<tags::CPU, float> sparse_matrix_reduction_to_max_quick_test_float("float");
+SparseMatrixReductionToMaxQuickTest<tags::CPU, double> sparse_matrix_reduction_to_max_quick_test_double("double");
+SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_quick_test_float("MC float");
+SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_quick_test_double("MC double");
 
 template <typename DT_>
 class BandedMatrixReductionToMaxTest :
@@ -811,7 +858,7 @@ class BandedMatrixReductionToMaxQuickTest :
 BandedMatrixReductionToMaxQuickTest<float> banded_matrix_reduction_to_max_quick_test_float("float");
 BandedMatrixReductionToMaxQuickTest<double> banded_matrix_reduction_to_max_quick_test_double("double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToMaxTest :
     public BaseTest
 {
@@ -819,6 +866,7 @@ class DenseVectorReductionToMaxTest :
         DenseVectorReductionToMaxTest(const std::string & type) :
             BaseTest("dense_vector_reduction_to_max_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -832,14 +880,16 @@ class DenseVectorReductionToMaxTest :
                     *i = i.index();
                 }
 
-                DT_ v1(Reduction<rt_max>::value(dv1));
+                DT_ v1(Reduction<rt_max, Tag_>::value(dv1));
                 TEST_CHECK_EQUAL(v1, size-1);
             }
         }
 };
 
-DenseVectorReductionToMaxTest<float> dense_vector_reduction_to_max_test_float("float");
-DenseVectorReductionToMaxTest<double> dense_vector_reduction_to_max_test_double("double");
+DenseVectorReductionToMaxTest<tags::CPU, float> dense_vector_reduction_to_max_test_float("float");
+DenseVectorReductionToMaxTest<tags::CPU, double> dense_vector_reduction_to_max_test_double("double");
+DenseVectorReductionToMaxTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_max_test_float("MC float");
+DenseVectorReductionToMaxTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_max_test_double("MC double");
 
 
 template <typename Tag_, typename DT_>
@@ -870,6 +920,8 @@ class DenseVectorReductionToMaxQuickTest :
 
 DenseVectorReductionToMaxQuickTest<tags::CPU, float> dense_reduction_to_max_quick_test_float("float");
 DenseVectorReductionToMaxQuickTest<tags::CPU, double> dense_reduction_to_max_quick_test_double("double");
+DenseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_dense_reduction_to_max_quick_test_float("MC float");
+DenseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_dense_reduction_to_max_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorReductionToMaxQuickTest<tags::Cell, float> dense_vector_reduction_to_max_quick_test_float_cell("Cell float");
 #endif
@@ -879,7 +931,7 @@ DenseVectorReductionToMaxQuickTest<tags::Cell, float> dense_vector_reduction_to_
 
 
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseVectorReductionToMaxTest :
     public BaseTest
 {
@@ -887,6 +939,7 @@ class SparseVectorReductionToMaxTest :
         SparseVectorReductionToMaxTest(const std::string & type) :
             BaseTest("sparse_vector_reduction_to_max_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -900,16 +953,18 @@ class SparseVectorReductionToMaxTest :
                     *i = i.index();
                 }
 
-                DT_ v1(Reduction<rt_max>::value(sv1));
+                DT_ v1(Reduction<rt_max, Tag_>::value(sv1));
                 TEST_CHECK_EQUAL(v1, size-1);
             }
         }
 };
 
-SparseVectorReductionToMaxTest<float> sparse_vector_reduction_to_max_test_float("float");
-SparseVectorReductionToMaxTest<double> sparse_vector_reduction_to_max_test_double("double");
+SparseVectorReductionToMaxTest<tags::CPU, float> sparse_vector_reduction_to_max_test_float("float");
+SparseVectorReductionToMaxTest<tags::CPU, double> sparse_vector_reduction_to_max_test_double("double");
+SparseVectorReductionToMaxTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_max_test_float("MC float");
+SparseVectorReductionToMaxTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_max_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class SparseVectorReductionToMaxQuickTest :
     public QuickTest
 {
@@ -917,6 +972,7 @@ class SparseVectorReductionToMaxQuickTest :
         SparseVectorReductionToMaxQuickTest(const std::string & type) :
             QuickTest("sparse_vector_reduction_to_max_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -929,11 +985,13 @@ class SparseVectorReductionToMaxQuickTest :
                 *i = i.index();
             }
 
-            DT_ v1(Reduction<rt_max>::value(sv1));
+            DT_ v1(Reduction<rt_max, Tag_>::value(sv1));
             TEST_CHECK_EQUAL(v1, size-1);
         }
 };
 
-SparseVectorReductionToMaxQuickTest<float> sparse_reduction_to_max_quick_test_float("float");
-SparseVectorReductionToMaxQuickTest<double> sparse_reduction_to_max_quick_test_double("double");
+SparseVectorReductionToMaxQuickTest<tags::CPU, float> sparse_reduction_to_max_quick_test_float("float");
+SparseVectorReductionToMaxQuickTest<tags::CPU, double> sparse_reduction_to_max_quick_test_double("double");
+SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_max_quick_test_float("MC float");
+SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_max_quick_test_double("MC double");
 
