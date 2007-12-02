@@ -227,9 +227,8 @@ class DenseVectorReductionToSumTest :
 
                 DT_ v1(Reduction<rt_sum, Tag_>::value(dv));
                 DT_ s1(size * (size + 1) / 2 / 1.23456789);
-                // Behaviour similar to size^2 * eps
-                DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
+                DT_ eps(exp(-19.72 + log(size) * 2.92257));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
             }
         }
 };
@@ -262,9 +261,8 @@ class DenseVectorReductionToSumQuickTest :
 
             DT_ v1(Reduction<rt_sum, Tag_>::value(dv));
             DT_ s1(size * (size + 1) / 2 / 1.23456789);
-            // Behaviour similar to size^2 * eps
-            DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
+            DT_ eps(exp(-19.72 + log(size) * 2.92257));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
         }
 };
 DenseVectorReductionToSumQuickTest<tags::CPU, float>  dense_vector_reduction_to_sum_quick_test_float("float");
