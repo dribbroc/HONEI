@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-02 Sven Mallach <sven.mallach@honei.org>
 
+	* libla/reduction_TEST.cc: Adjusted epsilon. Tests pass now for
+	arbitrary sizes.
+
+2007-12-02 Sven Mallach <sven.mallach@honei.org>
+
 	* cell/libla/dense_float_reduction_max.cc,
 	cell/libla/dense_float_reduction_min.cc,
 	cell/libla/dense_float_reduction_sum.cc, libla/reduction-cell.cc:
