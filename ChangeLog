@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/scaled_sum.hh, libla/scaled_sum_TEST.cc:
+	Added workaround for gcc's ugly function resolving.
+	Added ScaledSum(dvr, dvr, dvr) tests.
+
 2007-12-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libla/scale-cell.cc, libla/scale.hh, libla/scale_TEST.cc:
@@ -132,7 +138,6 @@ see the NEWS file.
         * libla/difference.hh: Added MultiCore version of difference.
         * libls/difference_TEST.cc: Added tests for new MC instructions.
 
->>>>>>> .r999
 2007-11-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/scale-sse.cc: Added DenseMatrixScale SSE version.

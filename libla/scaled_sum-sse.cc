@@ -242,7 +242,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
         m3 = _mm_loadu_pd(c.elements() + index);
 
         m2 = _mm_mul_pd(m3, m2);
-        m3 = _mm_add_pd(m1, m2);
+        m1 = _mm_add_pd(m1, m2);
 
         _mm_stream_pd(a.elements() + index, m1);
     }

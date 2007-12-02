@@ -61,8 +61,8 @@ namespace honei
          * \exception VectorSizeDoesNotMatch is thrown if the sizes of x and y do not match.
          */
 
-        template <typename DT1_, typename DT2_, typename DT3_>
-        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT3_ b)
+        template <typename DT1_, typename DT2_>
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
         {
             CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, scalar):");
 
@@ -141,7 +141,7 @@ namespace honei
             typename Vector<DT2_>::ConstElementIterator l(b.begin_elements());
             typename Vector<DT3_>::ConstElementIterator r(c.begin_elements());
             for (typename Vector<DT1_>::ElementIterator s(a.begin_elements()),
-                    l_end(a.end_elements()) ; l != l_end ; ++l)
+                    s_end(a.end_elements()) ; s != s_end ; ++l)
             {
                 *s += *l * *r;
                 ++r, ++s;

@@ -61,7 +61,7 @@ class DenseVectorScaledSumTest :
         }
 };
 DenseVectorScaledSumTest<tags::CPU, float> dense_vector_scaled_sum_test_float("float");
-DenseVectorScaledSumTest<tags::CPU, double> dense_vector_scaled__sum_test_double("double");
+DenseVectorScaledSumTest<tags::CPU, double> dense_vector_scaled_sum_test_double("double");
 #ifdef HONEI_SSE
 DenseVectorScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_scaled_sum_test_float("SSE float");
 DenseVectorScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_scaled_sum_test_double("SSE double");
@@ -96,10 +96,92 @@ class DenseVectorScaledSumQuickTest :
         }
 };
 DenseVectorScaledSumQuickTest<tags::CPU, float> dense_vector_scaled_sum_quick_test_float("float");
-DenseVectorScaledSumQuickTest<tags::CPU, double> dense_vector_scaled__sum_quick_test_double("double");
+DenseVectorScaledSumQuickTest<tags::CPU, double> dense_vector_scaled_sum_quick_test_double("double");
 #ifdef HONEI_SSE
 DenseVectorScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_scaled_sum_quick_test_float("SSE float");
 DenseVectorScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_scaled_sum_quick_test_double("SSE double");
+#endif
+
+
+template <typename Tag_, typename DataType_>
+class DenseVector3ScaledSumTest :
+    public BaseTest
+{
+    public:
+        DenseVector3ScaledSumTest(const std::string & type) :
+            BaseTest("dense_vector_3_scaled_sum_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(11) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size, DataType_(2));
+                DenseVector<DataType_> dv2(size, DataType_(3));
+                DenseVector<DataType_> sum(size, DataType_(2));
+                DenseVectorRange<DataType_> dvr1(dv1, size / 2, 3);
+                DenseVectorRange<DataType_> dvr2(dv2, size / 2, 2);
+                DenseVectorRange<DataType_> sumr(sum, size / 2, 5);
+
+                ScaledSum<Tag_>::value(sumr, dvr1, dvr2);
+                DataType_ v1(Norm<vnt_l_one>::value(sumr));
+
+                TEST_CHECK_EQUAL(v1, 8 * (size / 2));
+            }
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DenseVector<DataType_> sum00(1, DataType_(2));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(sum00, dv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
+DenseVector3ScaledSumTest<tags::CPU, float> dense_vector_3_scaled_sum_test_float("float");
+DenseVector3ScaledSumTest<tags::CPU, double> dense_vector_scaled_3_sum_test_double("double");
+#ifdef HONEI_SSE
+DenseVector3ScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_3_scaled_sum_test_float("SSE float");
+DenseVector3ScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_3_scaled_sum_test_double("SSE double");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVector3ScaledSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVector3ScaledSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_3_scaled_sum_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(65);
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            DenseVector<DataType_> dv2(size, DataType_(3));
+            DenseVector<DataType_> sum(size, DataType_(2));
+            DenseVectorRange<DataType_> dvr1(dv1, size / 2, 3);
+            DenseVectorRange<DataType_> dvr2(dv2, size / 2, 2);
+            DenseVectorRange<DataType_> sumr(sum, size / 2, 5);
+
+            ScaledSum<Tag_>::value(sumr, dvr1, dvr2);
+            DataType_ v1(Norm<vnt_l_one>::value(sumr));
+            TEST_CHECK_EQUAL(v1, 8 * (size / 2));
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DenseVector<DataType_> sum00(1, DataType_(2));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(sum00, dv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
+DenseVector3ScaledSumQuickTest<tags::CPU, float> dense_vector_3_scaled_sum_quick_test_float("float");
+DenseVector3ScaledSumQuickTest<tags::CPU, double> dense_vector_scaled_3_sum_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseVector3ScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_3_scaled_sum_quick_test_float("SSE float");
+DenseVector3ScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_3_scaled_sum_quick_test_double("SSE double");
 #endif
 
 template <typename DataType_>
