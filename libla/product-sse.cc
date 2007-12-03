@@ -22,7 +22,6 @@
 #include <libla/product.hh>
 #include <xmmintrin.h>
 #include <emmintrin.h>
-#include <iostream>
 
 using namespace honei;
 

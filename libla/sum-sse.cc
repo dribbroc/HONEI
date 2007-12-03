@@ -32,18 +32,35 @@ DenseVector<float> & Sum<tags::CPU::SSE>::value(DenseVector<float> & a, const De
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
+    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
 
-    __m128 m1, m2;
+    unsigned long quad_end(a.size() - (a.size() % 16));
+    if (a.size() < 16) quad_end = 0;
 
-
-    for (unsigned long index = 0 ; index < a.size() ; index += 4)
+    for (unsigned long index = 0 ; index < quad_end ; index += 16)
     {
         m1 = _mm_load_ps(a.elements() + index);
+        m3 = _mm_load_ps(a.elements() + index + 4);
+        m5 = _mm_load_ps(a.elements() + index + 8);
+        m7 = _mm_load_ps(a.elements() + index + 12);
         m2 = _mm_load_ps(b.elements() + index);
+        m4 = _mm_load_ps(b.elements() + index + 4);
+        m6 = _mm_load_ps(b.elements() + index + 8);
+        m8 = _mm_load_ps(b.elements() + index + 12);
 
         m1 = _mm_add_ps(m1, m2);
+        m3 = _mm_add_ps(m3, m4);
+        m5 = _mm_add_ps(m5, m6);
+        m7 = _mm_add_ps(m7, m8);
 
         _mm_stream_ps(a.elements() + index, m1);
+        _mm_stream_ps(a.elements() + index + 4, m3);
+        _mm_stream_ps(a.elements() + index + 8, m5);
+        _mm_stream_ps(a.elements() + index + 12, m7);
+    }
+    for (unsigned long index(quad_end) ; index < a.size() ; ++index)
+    {
+        a.elements()[index] += b.elements()[index];
     }
     return a;
 }
@@ -56,17 +73,35 @@ DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
+    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
-    __m128d m1, m2;
+    unsigned long quad_end(a.size() - (a.size() % 8));
+    if (a.size() < 8) quad_end = 0;
 
-    for (unsigned long index = 0 ; index < a.size() ; index += 2)
+    for (unsigned long index = 0 ; index < quad_end ; index += 8)
     {
         m1 = _mm_load_pd(a.elements() + index);
+        m3 = _mm_load_pd(a.elements() + index + 2);
+        m5 = _mm_load_pd(a.elements() + index + 4);
+        m7 = _mm_load_pd(a.elements() + index + 6);
         m2 = _mm_load_pd(b.elements() + index);
+        m4 = _mm_load_pd(b.elements() + index + 2);
+        m6 = _mm_load_pd(b.elements() + index + 4);
+        m8 = _mm_load_pd(b.elements() + index + 6);
 
         m1 = _mm_add_pd(m1, m2);
+        m3 = _mm_add_pd(m3, m4);
+        m5 = _mm_add_pd(m5, m6);
+        m7 = _mm_add_pd(m7, m8);
 
         _mm_stream_pd(a.elements() + index, m1);
+        _mm_stream_pd(a.elements() + index + 2, m3);
+        _mm_stream_pd(a.elements() + index + 4, m5);
+        _mm_stream_pd(a.elements() + index + 6, m7);
+    }
+    for (unsigned long index(quad_end) ; index < a.size() ; ++index)
+    {
+        a.elements()[index] += b.elements()[index];
     }
     return a;
 }
@@ -77,31 +112,71 @@ DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinu
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-    __m128 m1, m2;
+    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
 
     unsigned long a_address = (unsigned long)a.elements();
     unsigned long a_offset = a_address % 16;
+    unsigned long b_address = (unsigned long)b.elements();
+    unsigned long b_offset = b_address % 16;
 
     unsigned long x_offset(a_offset / 4);
     x_offset = (4 - x_offset) % 4;
 
     unsigned long quad_start = x_offset;
-    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 4));
-    if (quad_end < 4 || quad_end > a.size())
+    unsigned long quad_end(a.size() - ((a.size()-quad_start) % 16));
+    if (a.size() < 24)
     {
-        quad_end = a.size();
-        quad_start = a.size();
+        quad_end = 0;
+        quad_start = 0;
     }
-    for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
+    if (a_offset == b_offset)
     {
-        m1 = _mm_load_ps(a.elements() + index);
-        m2 = _mm_loadu_ps(b.elements() + index);
+        for (unsigned long index = quad_start ; index < quad_end ; index += 16)
+        {
+            m1 = _mm_load_ps(a.elements() + index);
+            m3 = _mm_load_ps(a.elements() + index + 4);
+            m5 = _mm_load_ps(a.elements() + index + 8);
+            m7 = _mm_load_ps(a.elements() + index + 12);
+            m2 = _mm_load_ps(b.elements() + index);
+            m4 = _mm_load_ps(b.elements() + index + 4);
+            m6 = _mm_load_ps(b.elements() + index + 8);
+            m8 = _mm_load_ps(b.elements() + index + 12);
 
-        m1 = _mm_add_ps(m1, m2);
+            m1 = _mm_add_ps(m1, m2);
+            m3 = _mm_add_ps(m3, m4);
+            m5 = _mm_add_ps(m5, m6);
+            m7 = _mm_add_ps(m7, m8);
 
-        _mm_stream_ps(a.elements() + index, m1);
+            _mm_stream_ps(a.elements() + index, m1);
+            _mm_stream_ps(a.elements() + index + 4, m3);
+            _mm_stream_ps(a.elements() + index + 8, m5);
+            _mm_stream_ps(a.elements() + index + 12, m7);
+        }
     }
+    else
+    {
+        for (unsigned long index = quad_start ; index < quad_end ; index += 16)
+        {
+            m1 = _mm_load_ps(a.elements() + index);
+            m3 = _mm_load_ps(a.elements() + index + 4);
+            m5 = _mm_load_ps(a.elements() + index + 8);
+            m7 = _mm_load_ps(a.elements() + index + 12);
+            m2 = _mm_loadu_ps(b.elements() + index);
+            m4 = _mm_loadu_ps(b.elements() + index + 4);
+            m6 = _mm_loadu_ps(b.elements() + index + 8);
+            m8 = _mm_loadu_ps(b.elements() + index + 12);
 
+            m1 = _mm_add_ps(m1, m2);
+            m3 = _mm_add_ps(m3, m4);
+            m5 = _mm_add_ps(m5, m6);
+            m7 = _mm_add_ps(m7, m8);
+
+            _mm_stream_ps(a.elements() + index, m1);
+            _mm_stream_ps(a.elements() + index + 4, m3);
+            _mm_stream_ps(a.elements() + index + 8, m5);
+            _mm_stream_ps(a.elements() + index + 12, m7);
+        }
+    }
     for (unsigned long index = 0 ; index < quad_start ; index++)
     {
         a.elements()[index] += b.elements()[index];
@@ -120,24 +195,70 @@ DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContin
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-    __m128d m1,m2;
+    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
     unsigned long a_address = (unsigned long)a.elements();
     unsigned long a_offset = a_address % 16;
+    unsigned long b_address = (unsigned long)b.elements();
+    unsigned long b_offset = b_address % 16;
 
     unsigned long x_offset(a_offset / 8);
 
     unsigned long quad_start = x_offset;
-    unsigned long quad_end(a.size() - ((a.size() - quad_start) % 2));
-
-    for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
+    unsigned long quad_end(a.size() - ((a.size() - quad_start) % 8));
+    if (a.size() < 16)
     {
-        m1 = _mm_load_pd(a.elements() + index);
-        m2 = _mm_loadu_pd(b.elements() + index);
+        quad_end = 0;
+        quad_start = 0;
+    }
 
-        m1 = _mm_add_pd(m1, m2);
+    if (a_offset == b_offset)
+    {
+        for (unsigned long index = quad_start ; index < quad_end ; index += 8)
+        {
+            m1 = _mm_load_pd(a.elements() + index);
+            m3 = _mm_load_pd(a.elements() + index + 2);
+            m5 = _mm_load_pd(a.elements() + index + 4);
+            m7 = _mm_load_pd(a.elements() + index + 6);
+            m2 = _mm_load_pd(b.elements() + index);
+            m4 = _mm_load_pd(b.elements() + index + 2);
+            m6 = _mm_load_pd(b.elements() + index + 4);
+            m8 = _mm_load_pd(b.elements() + index + 6);
 
-        _mm_stream_pd(a.elements() + index, m1);
+            m1 = _mm_add_pd(m1, m2);
+            m3 = _mm_add_pd(m3, m4);
+            m5 = _mm_add_pd(m5, m6);
+            m7 = _mm_add_pd(m7, m8);
+
+            _mm_stream_pd(a.elements() + index, m1);
+            _mm_stream_pd(a.elements() + index + 2, m3);
+            _mm_stream_pd(a.elements() + index + 4, m5);
+            _mm_stream_pd(a.elements() + index + 6, m7);
+        }
+    }
+    else
+    {
+        for (unsigned long index = quad_start ; index < quad_end ; index += 8)
+        {
+            m1 = _mm_load_pd(a.elements() + index);
+            m3 = _mm_load_pd(a.elements() + index + 2);
+            m5 = _mm_load_pd(a.elements() + index + 4);
+            m7 = _mm_load_pd(a.elements() + index + 6);
+            m2 = _mm_loadu_pd(b.elements() + index);
+            m4 = _mm_loadu_pd(b.elements() + index + 2);
+            m6 = _mm_loadu_pd(b.elements() + index + 4);
+            m8 = _mm_loadu_pd(b.elements() + index + 6);
+
+            m1 = _mm_add_pd(m1, m2);
+            m3 = _mm_add_pd(m3, m4);
+            m5 = _mm_add_pd(m5, m6);
+            m7 = _mm_add_pd(m7, m8);
+
+            _mm_stream_pd(a.elements() + index, m1);
+            _mm_stream_pd(a.elements() + index + 2, m3);
+            _mm_stream_pd(a.elements() + index + 4, m5);
+            _mm_stream_pd(a.elements() + index + 6, m7);
+        }
     }
 
     for (unsigned long index = 0 ; index < quad_start ; index++)

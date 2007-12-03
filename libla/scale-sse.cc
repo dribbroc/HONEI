@@ -235,7 +235,7 @@ DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, D
         quad_start = 0;
     }
 
-    for (unsigned long index = quad_start ; index < quad_end ; index += 28) 
+    for (unsigned long index = quad_start ; index < quad_end ; index += 28)
     {
         m1 = _mm_load_ps(x.elements() + index);
         m2 = _mm_load_ps(x.elements() + index + 4);
@@ -295,7 +295,7 @@ DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a,
         quad_start = 0;
     }
 
-    for (unsigned long index = quad_start ; index < quad_end ; index += 14) 
+    for (unsigned long index = quad_start ; index < quad_end ; index += 14)
     {
         m1 = _mm_load_pd(x.elements() + index);
         m2 = _mm_load_pd(x.elements() + index + 2);
