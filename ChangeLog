@@ -5,7 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-12-02 David Gies <david-gies@gmx.de>
+2007-12-03 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* libla/product.hh: Fixed iteration over nonexisting bands in MC and
+	SingleCore BM*DV. MC now uses scaled sum.
+	* libutil/wrapper.hh: Added necessary operator.
+
+2007-12-03 David Gies <david-gies@gmx.de>
 
         * libla/reduction.hh, libutil/wrapper.hh: Fixed small bugs.
 

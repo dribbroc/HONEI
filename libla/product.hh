@@ -27,6 +27,7 @@
 #include <libla/dot_product.hh>
 #include <libla/element_product.hh>
 #include <libla/matrix_error.hh>
+#include <libla/scaled_sum.hh>
 #include <libla/sparse_matrix.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/sum.hh>
@@ -177,6 +178,8 @@ namespace honei
             for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
                     vi != vi_end ; ++vi)
             {
+                if (!vi.exists())
+                    continue;
                 typename Vector<DT2_>::ConstElementIterator j(b.begin_elements()), j_end(b.end_elements());
                 typename Vector<DT1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements());
 
@@ -203,6 +206,8 @@ namespace honei
             for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
                     vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
+                if (!vi.exists())
+                    continue;
                 typename Vector<DT2_>::ConstElementIterator j(b.begin_elements()), j_end(b.end_elements());
                 typename Vector<DT1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements());
                 unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
@@ -1112,6 +1117,8 @@ namespace honei
                 for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), 
                      vi_end(a.end_bands()); vi != vi_end ; ++vi)
                 {
+                    if (!vi.exists())
+                        continue;
                     unsigned long i(0), offset(0);
                     unsigned long end(vi->size() - (vi.index() - middle_index));
                     while ((i < modulo) && (offset+div+1 < end))
@@ -1119,7 +1126,7 @@ namespace honei
                         DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
                         DenseVectorRange<DT2_> range_2(b, div+1, offset + vi.index() - middle_index);
                         DenseVectorRange<DT1_> res_range(result, div+1, offset);
-                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
                         dispatched_tasks.push_back(tp->dispatch(func));
                         ++i;
@@ -1132,7 +1139,7 @@ namespace honei
                             DenseVectorRange<DT1_> range_1(*vi, div, offset);
                             DenseVectorRange<DT2_> range_2(b, div, offset + vi.index() - middle_index);
                             DenseVectorRange<DT1_> res_range(result, div, offset);
-                            ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
                             dispatched_tasks.push_back(tp->dispatch(func));
                             ++i;
@@ -1144,7 +1151,7 @@ namespace honei
                         DenseVectorRange<DT1_> range_1(*vi, end - offset, offset);
                         DenseVectorRange<DT2_> range_2(b, end - offset, offset + vi.index()-middle_index);
                         DenseVectorRange<DT1_> res_range(result, end - offset, offset);
-                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
                         dispatched_tasks.push_back(tp->dispatch(func));
                     }
@@ -1153,6 +1160,8 @@ namespace honei
                 for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
                      vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
                 {
+                    if (!vi.exists())
+                        continue;
                     unsigned long i(parts), offset(b.size());
                     unsigned long start(middle_index - vi.index());
                     while(i > modulo && offset-div > start)
@@ -1162,7 +1171,7 @@ namespace honei
                         DenseVectorRange<DT1_> range_1(*vi, div, offset);
                         DenseVectorRange<DT2_> range_2(b, div, offset - (middle_index - vi.index()));
                         DenseVectorRange<DT1_> res_range(result, div, offset);
-                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
                         dispatched_tasks.push_back(tp->dispatch(func));
                     }
@@ -1175,7 +1184,7 @@ namespace honei
                             DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
                             DenseVectorRange<DT2_> range_2(b, div+1, offset - (middle_index - vi.index()));
                             DenseVectorRange<DT1_> res_range(result, div+1, offset);
-                            ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
                             dispatched_tasks.push_back(tp->dispatch(func));
                         }
@@ -1185,7 +1194,7 @@ namespace honei
                         DenseVectorRange<DT1_> range_1(*vi, offset-start, start);
                         DenseVectorRange<DT2_> range_2(b, offset-start, 0);
                         DenseVectorRange<DT1_> res_range(result, offset-start, start);
-                        ThreeArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]); 
                         dispatched_tasks.push_back(tp->dispatch(func));
                     }

@@ -93,7 +93,8 @@ namespace honei
 
                 void operator() (Mutex * mutex)
                 {
-                    Tag_::value(_a, _b, _c, mutex);
+                    Lock l(*mutex);
+                    Tag_::value(_a, _b, _c);
                 }
         };
     
