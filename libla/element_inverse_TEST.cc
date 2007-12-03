@@ -98,6 +98,7 @@ class SparseVectorElementInverseTest :
         SparseVectorElementInverseTest(const std::string & type) :
             BaseTest("sparse_vector_element_inverse_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -133,6 +134,7 @@ class SparseVectorElementInverseQuickTest :
         SparseVectorElementInverseQuickTest(const std::string & type) :
             QuickTest("sparse_vector_element_inverse_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -166,6 +168,7 @@ class BandedMatrixElementInverseTest :
         BandedMatrixElementInverseTest(const std::string & type) :
             BaseTest("banded_matrix_element_inverse_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -199,6 +202,7 @@ class BandedMatrixElementInverseQuickTest :
         BandedMatrixElementInverseQuickTest(const std::string & type) :
             QuickTest("banded_matrix_element_inverse_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -231,6 +235,7 @@ class DenseMatrixElementInverseTest :
         DenseMatrixElementInverseTest(const std::string & type) :
             BaseTest("dense_matrix_element_inverse_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -264,6 +269,7 @@ class DenseMatrixElementInverseQuickTest :
         DenseMatrixElementInverseQuickTest(const std::string & type) :
             QuickTest("dense_matrix_element_inverse_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -294,6 +300,7 @@ class SparseMatrixElementInverseTest :
         SparseMatrixElementInverseTest(const std::string & type) :
             BaseTest("sparse_matrix_element_inverse_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -330,6 +337,7 @@ class SparseMatrixElementInverseQuickTest :
         SparseMatrixElementInverseQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_element_inverse_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
