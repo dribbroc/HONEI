@@ -59,6 +59,7 @@ namespace honei
     void
     SPEInstruction::enqueue_with(SPEKernel * kernel) const
     {
+        #ifdef DEBUG
         std::string msg("Enqueing SPEInstruction, opcode = " + stringify(_instruction.opcode) +
                 ", size = " + stringify(_instruction.size) + "\n");
         msg += "a = " + stringify(_instruction.a.ea) + ", b = " + stringify(_instruction.b.ea) + "\n";
@@ -70,6 +71,7 @@ namespace honei
         msg += "m = " + stringify(_instruction.k.ea) + ", n = " + stringify(_instruction.l.ea) + "\n";
         msg += "o = " + stringify(_instruction.m.ea) + "\n";
         LOGMESSAGE(ll_minimal, msg);
+        #endif
 
         _kernel = new SPEKernel(*kernel);
         _index = kernel->enqueue(*this);
