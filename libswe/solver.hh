@@ -593,11 +593,11 @@ namespace honei {
             }
 #ifdef SOLVER_VERBOSE
             std::cout << "Preproc: Mapping done.\n";
-#endif
             cout << stringify(hbound) << endl;
             cout << stringify(bbound) << endl;
             cout << stringify(u1bound) << endl;
             cout << stringify(u2bound) << endl;
+#endif
 
        // }//TODO: the other cases of boundary usage
 
