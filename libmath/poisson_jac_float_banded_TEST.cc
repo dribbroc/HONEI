@@ -140,14 +140,20 @@ class PoissonTestJACBandedFloat:
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            result = Jacobi<Tag_>::value(A, b_v, 0.00001);
+            result = Jacobi<Tag_>::value(A, b_v, std::numeric_limits<float>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
             for(unsigned long i = 0; i < n; i++)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], std::numeric_limits<float>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-04);
             }
+            DenseVector<double> x(n, double(0));
+            Difference<Tag_>::value(result, ana_sol_v);
+            Difference<Tag_>::value(x, result);
+            double norm = Norm<vnt_l_two, false, Tag_>::value(x);
+            cout<<"L2: "<<norm<<endl;
+
             //TEST_CHECK(true);
         }
 };

@@ -132,15 +132,21 @@ class PoissonTestIterefCGDenseDouble:
             A.insert_band(-root_n+1, lu_v);
 
             DenseVector<double> result(n, double(0));
-            result = IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::epsilon());
+            result = IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon() , std::numeric_limits<double>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
             for(unsigned long i = 0; i < n; i++)
             {
-                std::cout << "index = " << i << ", value = " << result[i] << std::endl;
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], double(10e-9));
+                //std::cout << "index = " << i << ", value = " << result[i] << std::endl;
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], double(1e-03));
             }
+            DenseVector<double> x(n, double(0));
+            Difference<Tag_>::value(result, ana_sol_v);
+            Difference<Tag_>::value(x, result);
+            double norm = Norm<vnt_l_two, false, Tag_>::value(x);
+            cout<<"L2: "<<norm<<endl;
+
         }
 };
 PoissonTestIterefCGDenseDouble<tags::CPU, double> poisson_test_cg_dense_double("double");

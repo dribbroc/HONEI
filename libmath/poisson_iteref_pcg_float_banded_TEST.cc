@@ -148,6 +148,12 @@ class PoissonTestIterefPCGBandedFloat:
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-4);
             }
+            DenseVector<double> x(n, double(0));
+            Difference<Tag_>::value(result, ana_sol_v);
+            Difference<Tag_>::value(x, result);
+            double norm = Norm<vnt_l_two, false, Tag_>::value(x);
+            cout<<"L2: "<<norm<<endl;
+
             //TEST_CHECK(true);
         }
 };

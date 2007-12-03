@@ -140,7 +140,7 @@ class PoissonTestIterefCGBandedFloat:
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            result = IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<float>::epsilon(), std::numeric_limits<float>::epsilon());
+            result = IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
@@ -149,6 +149,12 @@ class PoissonTestIterefCGBandedFloat:
                 TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-4);
             }
             //TEST_CHECK(true);
+            DenseVector<double> x(n, double(0));
+            Difference<Tag_>::value(result, ana_sol_v);
+            Difference<Tag_>::value(x, result);
+            double norm = Norm<vnt_l_two, false, Tag_>::value(x);
+            cout<<"L2: "<<norm<<endl;
+
         }
 };
 PoissonTestIterefCGBandedFloat<tags::CPU, float> poisson_test_iteref_cg_banded_float("float");
