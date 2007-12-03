@@ -233,13 +233,13 @@ namespace honei
             }
 
             /// Returns the number of our columns.
-            virtual unsigned long columns() const
+            inline virtual unsigned long columns() const
             {
                 return _columns;
             }
 
             /// Returns the number of our rows.
-            virtual unsigned long rows() const
+            inline virtual unsigned long rows() const
             {
                 return _rows;
             }
@@ -263,13 +263,13 @@ namespace honei
             }
 
             /// Retrieves element at (row, column), unassignable.
-            virtual const DataType_ & operator() (unsigned long row, unsigned long column) const
+            inline virtual const DataType_ & operator() (unsigned long row, unsigned long column) const
             {
                 return _elements.get()[column + row * _columns]; 
             }
 
             /// Retrieves element at (row, column), assignable.
-            virtual DataType_ & operator() (unsigned long row, unsigned long column)
+            inline virtual DataType_ & operator() (unsigned long row, unsigned long column)
             {
                 return _elements.get()[column + row * _columns]; 
             }

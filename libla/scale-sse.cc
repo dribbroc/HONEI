@@ -28,18 +28,44 @@ DenseVector<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVector<flo
 {
     CONTEXT("When scaling DenseVector<float> by float with SSE:");
 
-    __m128 m1, m8;
+    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
     float __attribute__((aligned(16))) a_data;
     a_data= a;
     m8 = _mm_load_ps1(&a_data);
 
-    for (unsigned long index = 0 ; index < x.size() ; index += 4) 
+    unsigned long size(x.size());
+    unsigned long quad_end(size - (size % 28));
+    if (size < 28) quad_end = 0;
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 28)
     {
         m1 = _mm_load_ps(x.elements() + index);
+        m2 = _mm_load_ps(x.elements() + index + 4);
+        m3 = _mm_load_ps(x.elements() + index + 8);
+        m4 = _mm_load_ps(x.elements() + index + 12);
+        m5 = _mm_load_ps(x.elements() + index + 16);
+        m6 = _mm_load_ps(x.elements() + index + 20);
+        m7 = _mm_load_ps(x.elements() + index + 24);
 
         m1 = _mm_mul_ps(m1, m8);
+        m2 = _mm_mul_ps(m2, m8);
+        m3 = _mm_mul_ps(m3, m8);
+        m4 = _mm_mul_ps(m4, m8);
+        m5 = _mm_mul_ps(m5, m8);
+        m6 = _mm_mul_ps(m6, m8);
+        m7 = _mm_mul_ps(m7, m8);
 
         _mm_stream_ps(x.elements() + index, m1);
+        _mm_stream_ps(x.elements() + index + 4, m2);
+        _mm_stream_ps(x.elements() + index + 8, m3);
+        _mm_stream_ps(x.elements() + index + 12, m4);
+        _mm_stream_ps(x.elements() + index + 16, m5);
+        _mm_stream_ps(x.elements() + index + 20, m6);
+        _mm_stream_ps(x.elements() + index + 24, m7);
+    }
+    for (unsigned long index(quad_end) ; index < size ; ++index)
+    {
+        x.elements()[index] *= a;
     }
 
     return x;
@@ -49,18 +75,44 @@ DenseVector<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVector<d
 {
     CONTEXT("When scaling DenseVector<double> by double with SSE:");
 
-    __m128d m1, m8;
+    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
     double __attribute__((aligned(16))) a_data;
     a_data= a;
     m8 = _mm_load_pd1(&a_data);
 
-    for (unsigned long index = 0 ; index < x.size() ; index += 2) 
+    unsigned long size(x.size());
+    unsigned long quad_end(size - (size % 14));
+    if (size < 14) quad_end = 0;
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 14)
     {
         m1 = _mm_load_pd(x.elements() + index);
+        m2 = _mm_load_pd(x.elements() + index + 2);
+        m3 = _mm_load_pd(x.elements() + index + 4);
+        m4 = _mm_load_pd(x.elements() + index + 6);
+        m5 = _mm_load_pd(x.elements() + index + 8);
+        m6 = _mm_load_pd(x.elements() + index + 10);
+        m7 = _mm_load_pd(x.elements() + index + 12);
 
         m1 = _mm_mul_pd(m1, m8);
+        m2 = _mm_mul_pd(m2, m8);
+        m3 = _mm_mul_pd(m3, m8);
+        m4 = _mm_mul_pd(m4, m8);
+        m5 = _mm_mul_pd(m5, m8);
+        m6 = _mm_mul_pd(m6, m8);
+        m7 = _mm_mul_pd(m7, m8);
 
         _mm_stream_pd(x.elements() + index, m1);
+        _mm_stream_pd(x.elements() + index + 2, m2);
+        _mm_stream_pd(x.elements() + index + 4, m3);
+        _mm_stream_pd(x.elements() + index + 6, m4);
+        _mm_stream_pd(x.elements() + index + 8, m5);
+        _mm_stream_pd(x.elements() + index + 10, m6);
+        _mm_stream_pd(x.elements() + index + 12, m7);
+    }
+    for (unsigned long index(quad_end) ; index < size ; ++index)
+    {
+        x.elements()[index] *= a;
     }
 
     return x;
@@ -70,18 +122,44 @@ DenseMatrix<float> & Scale<tags::CPU::SSE>::value(const float a, DenseMatrix<flo
 {
     CONTEXT("When scaling DenseMatrix<float> by float with SSE:");
 
-    __m128 m1, m8;
+    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
     float __attribute__((aligned(16))) a_data;
     a_data= a;
     m8 = _mm_load_ps1(&a_data);
 
-    for (unsigned long index = 0 ; index < x.rows() * x.columns() ; index += 4) 
+    unsigned long size(x.rows() * x.columns());
+    unsigned long quad_end(size - (size % 28));
+    if (size < 28) quad_end = 0;
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 28)
     {
         m1 = _mm_load_ps(x.elements() + index);
+        m2 = _mm_load_ps(x.elements() + index + 4);
+        m3 = _mm_load_ps(x.elements() + index + 8);
+        m4 = _mm_load_ps(x.elements() + index + 12);
+        m5 = _mm_load_ps(x.elements() + index + 16);
+        m6 = _mm_load_ps(x.elements() + index + 20);
+        m7 = _mm_load_ps(x.elements() + index + 24);
 
         m1 = _mm_mul_ps(m1, m8);
+        m2 = _mm_mul_ps(m2, m8);
+        m3 = _mm_mul_ps(m3, m8);
+        m4 = _mm_mul_ps(m4, m8);
+        m5 = _mm_mul_ps(m5, m8);
+        m6 = _mm_mul_ps(m6, m8);
+        m7 = _mm_mul_ps(m7, m8);
 
         _mm_stream_ps(x.elements() + index, m1);
+        _mm_stream_ps(x.elements() + index + 4, m2);
+        _mm_stream_ps(x.elements() + index + 8, m3);
+        _mm_stream_ps(x.elements() + index + 12, m4);
+        _mm_stream_ps(x.elements() + index + 16, m5);
+        _mm_stream_ps(x.elements() + index + 20, m6);
+        _mm_stream_ps(x.elements() + index + 24, m7);
+    }
+    for (unsigned long index(quad_end) ; index < size ; ++index)
+    {
+        x.elements()[index] *= a;
     }
 
     return x;
@@ -91,18 +169,44 @@ DenseMatrix<double> & Scale<tags::CPU::SSE>::value(const double a, DenseMatrix<d
 {
     CONTEXT("When scaling DenseMatrix<double> by double with SSE:");
 
-    __m128d m1, m8;
+    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
     double __attribute__((aligned(16))) a_data;
     a_data= a;
     m8 = _mm_load_pd1(&a_data);
 
-    for (unsigned long index = 0 ; index < x.rows() * x.columns() ; index += 2) 
+    unsigned long size(x.rows() * x.columns());
+    unsigned long quad_end(size - (size % 14));
+    if (size < 14) quad_end = 0;
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 14)
     {
         m1 = _mm_load_pd(x.elements() + index);
+        m2 = _mm_load_pd(x.elements() + index + 2);
+        m3 = _mm_load_pd(x.elements() + index + 4);
+        m4 = _mm_load_pd(x.elements() + index + 6);
+        m5 = _mm_load_pd(x.elements() + index + 8);
+        m6 = _mm_load_pd(x.elements() + index + 10);
+        m7 = _mm_load_pd(x.elements() + index + 12);
 
         m1 = _mm_mul_pd(m1, m8);
+        m2 = _mm_mul_pd(m2, m8);
+        m3 = _mm_mul_pd(m3, m8);
+        m4 = _mm_mul_pd(m4, m8);
+        m5 = _mm_mul_pd(m5, m8);
+        m6 = _mm_mul_pd(m6, m8);
+        m7 = _mm_mul_pd(m7, m8);
 
         _mm_stream_pd(x.elements() + index, m1);
+        _mm_stream_pd(x.elements() + index + 2, m2);
+        _mm_stream_pd(x.elements() + index + 4, m3);
+        _mm_stream_pd(x.elements() + index + 6, m4);
+        _mm_stream_pd(x.elements() + index + 8, m5);
+        _mm_stream_pd(x.elements() + index + 10, m6);
+        _mm_stream_pd(x.elements() + index + 12, m7);
+    }
+    for (unsigned long index(quad_end) ; index < size ; ++index)
+    {
+        x.elements()[index] *= a;
     }
 
     return x;
