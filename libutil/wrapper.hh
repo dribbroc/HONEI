@@ -187,7 +187,7 @@ namespace honei
                 {
                     DT1_ temp(Tag_::value(_a));
                     Lock l(*mutex);
-                    _result += *temp;
+                    _result += temp;
                 }
 
         };

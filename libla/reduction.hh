@@ -903,6 +903,8 @@ namespace honei
         static void value(DTP_ result, IT1_ & x, IT2_ & x_end)
         {
             CONTEXT("When reducing iterator-based by max:");
+            *result = *x;
+            ++x;
             for ( ; x != x_end ; ++x)
             {
                 if (*result < *x) *result = *x;
@@ -1090,6 +1092,8 @@ namespace honei
         static void value(DTP_ result, IT1_ & x, IT2_ & x_end)
         {
             CONTEXT("When reducing iterator-based by min:");
+            *result = *x;
+            ++x;
             for ( ; x != x_end ; ++x)
             {
                 if (*result > *x) *result = *x;
