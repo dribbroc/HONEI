@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-12-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libla/scale-sse.cc: Unrolled DVCB loops.
+
+2007-12-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/product-sse.cc: Unrolled loops.
 
 2007-12-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>

@@ -216,7 +216,7 @@ DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, D
 {
     CONTEXT("When scaling DenseVectorContinuousBase<float> by float with SSE:");
 
-    __m128 m1, m8;
+    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
     float __attribute__((aligned(16))) a_data;
     a_data= a;
     m8 = _mm_load_ps1(&a_data);
@@ -228,20 +228,38 @@ DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, D
     z_offset = (4 - z_offset) % 4;
 
     unsigned long quad_start = z_offset;
-    unsigned long quad_end(x.size() - ((x.size()-quad_start) % 4));
-    if (quad_end < 4 || quad_end > x.size())
+    unsigned long quad_end(x.size() - ((x.size()-quad_start) % 28));
+    if (x.size() < 32)
     {
-        quad_end = x.size();
-        quad_start = x.size();
+        quad_end = 0;
+        quad_start = 0;
     }
 
-    for (unsigned long index = quad_start ; index < quad_end ; index += 4) 
+    for (unsigned long index = quad_start ; index < quad_end ; index += 28) 
     {
         m1 = _mm_load_ps(x.elements() + index);
+        m2 = _mm_load_ps(x.elements() + index + 4);
+        m3 = _mm_load_ps(x.elements() + index + 8);
+        m4 = _mm_load_ps(x.elements() + index + 12);
+        m5 = _mm_load_ps(x.elements() + index + 16);
+        m6 = _mm_load_ps(x.elements() + index + 20);
+        m7 = _mm_load_ps(x.elements() + index + 24);
 
         m1 = _mm_mul_ps(m1, m8);
+        m2 = _mm_mul_ps(m2, m8);
+        m3 = _mm_mul_ps(m3, m8);
+        m4 = _mm_mul_ps(m4, m8);
+        m5 = _mm_mul_ps(m5, m8);
+        m6 = _mm_mul_ps(m6, m8);
+        m7 = _mm_mul_ps(m7, m8);
 
         _mm_stream_ps(x.elements() + index, m1);
+        _mm_stream_ps(x.elements() + index + 4, m2);
+        _mm_stream_ps(x.elements() + index + 8, m3);
+        _mm_stream_ps(x.elements() + index + 12, m4);
+        _mm_stream_ps(x.elements() + index + 16, m5);
+        _mm_stream_ps(x.elements() + index + 20, m6);
+        _mm_stream_ps(x.elements() + index + 24, m7);
     }
 
     for (unsigned long index = 0 ; index < quad_start ; index++)
@@ -259,7 +277,7 @@ DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a,
 {
     CONTEXT("When scaling DenseVectorContinuousBase<double> by double with SSE:");
 
-    __m128d m1, m8;
+    __m128d m1, m2, m3, m4, m5, m6, m7,  m8;
     double __attribute__((aligned(16))) a_data;
     a_data= a;
     m8 = _mm_load_pd1(&a_data);
@@ -270,15 +288,38 @@ DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a,
     unsigned long z_offset(x_offset / 8);
 
     unsigned long quad_start = z_offset;
-    unsigned long quad_end(x.size() - ((x.size()-quad_start) % 2));
+    unsigned long quad_end(x.size() - ((x.size()-quad_start) % 14));
+    if (x.size() < 16)
+    {
+        quad_end = 0;
+        quad_start = 0;
+    }
 
-    for (unsigned long index = quad_start ; index < quad_end ; index += 2) 
+    for (unsigned long index = quad_start ; index < quad_end ; index += 14) 
     {
         m1 = _mm_load_pd(x.elements() + index);
+        m2 = _mm_load_pd(x.elements() + index + 2);
+        m3 = _mm_load_pd(x.elements() + index + 4);
+        m4 = _mm_load_pd(x.elements() + index + 6);
+        m5 = _mm_load_pd(x.elements() + index + 8);
+        m6 = _mm_load_pd(x.elements() + index + 10);
+        m7 = _mm_load_pd(x.elements() + index + 12);
 
         m1 = _mm_mul_pd(m1, m8);
+        m2 = _mm_mul_pd(m2, m8);
+        m3 = _mm_mul_pd(m3, m8);
+        m4 = _mm_mul_pd(m4, m8);
+        m5 = _mm_mul_pd(m5, m8);
+        m6 = _mm_mul_pd(m6, m8);
+        m7 = _mm_mul_pd(m7, m8);
 
         _mm_stream_pd(x.elements() + index, m1);
+        _mm_stream_pd(x.elements() + index + 2, m2);
+        _mm_stream_pd(x.elements() + index + 4, m3);
+        _mm_stream_pd(x.elements() + index + 6, m4);
+        _mm_stream_pd(x.elements() + index + 8, m5);
+        _mm_stream_pd(x.elements() + index + 10, m6);
+        _mm_stream_pd(x.elements() + index + 12, m7);
     }
 
     for (unsigned long index = 0 ; index < quad_start ; index++)
