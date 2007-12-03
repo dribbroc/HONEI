@@ -17,9 +17,11 @@ SUBDIRS = $(CELLDIR) benchmark libutil libla libmath unittest libgraph libswe $(
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) all
-	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="bench-recursive" bench-recursive
+	$(MAKE) $(AM_MAKEFLAGS) RECURSIVE_TARGETS+="benchm-recursive" benchm-recursive
 
 bench-am:
+
+benchm-am:
 
 quickcheck-am:
 quickcheck:

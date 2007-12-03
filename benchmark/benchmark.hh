@@ -13,12 +13,17 @@ struct BenchmarkInfo
     unsigned long flops;
     unsigned long load;
     unsigned long store;
+    std::list<unsigned long> size;
+    double scale;
+    std::string scaleinfo;
 
     BenchmarkInfo()
     {
         flops = 0;
         load = 0;
         store = 0;
+        scale = 1;
+        scaleinfo = " ";
     }
     
     BenchmarkInfo operator+(const BenchmarkInfo a) 
@@ -48,9 +53,12 @@ class Benchmark
         const std::string _id;
         timeval _start, _end;
         list<double> _benchlist;
+        int x, xmin, xmax;
+        double total, min, max, avg, median, tp, mediantp, f, medianf;
+
 
     public:
-        /**
+        /**     
          * Constructor
          * \param id the Benchmark
          */
@@ -61,11 +69,17 @@ class Benchmark
         /// called by the benchmark framework to run the benchmark
         virtual void run() = 0;
 
-        ///generates a standard benchmark output
+        void calculate();
+    
+        void calculate(BenchmarkInfo info);
+
+        /// generates a standard benchmark output
         void evaluate();
 
-        ///generates a benchmark output with FLOPS and data transfer rate information.
+        /// generates a benchmark output with FLOPS and data transfer rate information.
         void evaluate(BenchmarkInfo info);
+
+        void evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<int> cores, int count);
 };
 
 /**

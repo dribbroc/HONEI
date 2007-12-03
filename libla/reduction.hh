@@ -173,6 +173,7 @@ namespace honei
             BenchmarkInfo result;
             DenseVector<DT1_> temp(a.columns());
             result = Reduction<rt_sum>::get_benchmark_info(temp) * a.rows();
+            result.size.push_back(a.rows() * a.columns());
             return result;
         }
 
@@ -183,6 +184,7 @@ namespace honei
             result.flops = a.size();
             result.load = sizeof(DT1_) * a.size();
             result.store = sizeof(DT1_);
+            result.size.push_back(a.size());
             return result;
         }
         #endif

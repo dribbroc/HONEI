@@ -381,6 +381,8 @@ namespace honei
             result.flops = a.rows() * a.columns();
             result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
             result.store = a.rows() * a.columns() * sizeof(DT1_);
+            result.size.push_back(a.rows() * a.columns());
+            result.size.push_back(b.rows() * b.columns());
             return result; 
         }
 
@@ -393,8 +395,11 @@ namespace honei
             {
                 result.flops += 1;
                 result.load += sizeof(DT1_) + sizeof(DT2_);
-                result.store += 1;
+                result.store += sizeof(DT1_);
             }
+            result.size.push_back(a.rows() * a.columns());
+            result.size.push_back(b.rows() * b.columns());
+            result.scale = (double(a.rows() * a.columns()) / result.flops);
             return result;
         }
 
@@ -405,6 +410,8 @@ namespace honei
             result.flops = a.size() * a.size();
             result.load = a.size() * a.size() * (sizeof(DT1_) + sizeof(DT2_));
             result.store = a.size() * a.size() * sizeof(DT1_);
+            result.size.push_back(a.rows() * a.columns());
+            result.size.push_back(b.rows() * b.columns());
             return result;
         }
         #endif

@@ -143,6 +143,7 @@ namespace honei
             result.flops = b.rows() * b.columns();
             result.load = b.rows() * b.columns() * sizeof(DT2_) + sizeof(DT1_);
             result.store = b.rows() * b.columns() * sizeof(DT2_);
+            result.size.push_back(b.rows() * b.columns());
             return result; 
         }
         #endif

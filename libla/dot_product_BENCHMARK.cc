@@ -12,7 +12,7 @@ using namespace std;
 using namespace honei;
 
 
-template <typename DataType_>
+template <typename DataType_, typename Tag_>
 
 class DotProductBench :
     public Benchmark
@@ -35,17 +35,18 @@ class DotProductBench :
             DataType_ p0;
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(p0 = DotProduct<>::value(dv0, dv1));
+                BENCHMARK(p0 = DotProduct<Tag_>::value(dv0, dv1));
             }
             BenchmarkInfo info(DotProduct<>::get_benchmark_info(dv1, dv0));
             evaluate(info);
         }
 };
-DotProductBench<float> DPBenchfloat("Dot Product Benchmark dense/dense - vector size: 10,000,000 float", 10000000, 10);
-DotProductBench<double> DPBenchdouble("Dot Product Benchmark dense/dense - vector size: 10,000,000 double", 10000000, 10);
+DotProductBench<float, tags::CPU> DPBenchfloat("Dot Product Benchmark dense/dense - vector size: 10,000,000 float", 10000000, 10);
+DotProductBench<double, tags::CPU> DPBenchdouble("Dot Product Benchmark dense/dense - vector size: 10,000,000 double", 10000000, 10);
+DotProductBench<float, tags::CPU> MCDPBenchfloat("MC: Dot Product Benchmark dense/dense - vector size: 10,000,000 float", 10000000, 10);
+DotProductBench<double, tags::CPU> MCDPBenchdouble("MC: Dot Product Benchmark dense/dense - vector size: 10,000,000 double", 10000000, 10);
 
-
-template <typename DataType_>
+template <typename DataType_, typename Tag_>
 
 class SparseDotProductBench :
     public Benchmark
@@ -75,12 +76,14 @@ class SparseDotProductBench :
             DenseVector<DataType_> dv(_size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(p0 = DotProduct<>::value(sv,dv));
+                BENCHMARK(p0 = DotProduct<Tag_>::value(sv,dv));
             }
             BenchmarkInfo info(DotProduct<>::get_benchmark_info(sv, dv));
             evaluate(info);
         }
 };
-SparseDotProductBench<float> SDPBenchfloat("Dot Product Benchmark sparse/dense - vector size: 10,000,000 float", 10000000, 10);
-SparseDotProductBench<double> SDPBenchdouble("Dot Product Benchmark sparse/dense - vector size: 10,000,000 double", 10000000, 10);
+SparseDotProductBench<float, tags::CPU> SDPBenchfloat("Dot Product Benchmark sparse/dense - vector size: 10,000,000 float", 10000000, 10);
+SparseDotProductBench<double, tags::CPU> SDPBenchdouble("Dot Product Benchmark sparse/dense - vector size: 10,000,000 double", 10000000, 10);
+SparseDotProductBench<float, tags::CPU::MultiCore> MCSDPBenchfloat("MC: Dot Product Benchmark sparse/dense - vector size: 10,000,000 float", 10000000, 10);
+SparseDotProductBench<double, tags::CPU::MultiCore> MCSDPBenchdouble("MC: Dot Product Benchmark sparse/dense - vector size: 10,000,000 double", 10000000, 10);
 

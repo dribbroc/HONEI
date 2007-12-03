@@ -5,6 +5,22 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-03 David Gies <david-gies@gmx.de>
+
+	* Makefile.am, libmath/Makefile.am.m4, libswe/Makefile.am.m4, 
+	libgraph/Makefile.am.m4, libla/Makefile.am.m4: Make bench in trunk
+	now makes benchmarks in trunk/libmath, trunk/libswe, trunk/libgraph
+	and trunk/libla that are registered in files.m4.
+	* benchmark/benchmark.hh, benchmark/benchmark.cc: Added some new infos
+	to benchmarks output and added new evaluation for multiple different
+	benchmarks with output to a "plot file".
+	* libla/sum.hh, libla/element_inverse.hh, libla/dot_product.hh,
+	libla/element_product.hh, libla/product.hh, libla/reduction.hh,
+	libla/scale.hh, libla/scaled_sum.hh:
+	Minor changes to get_benchmark_info() for the new evaluation.
+	* libla/sum_BENCHMARK.cc, libla/element_inverse_BENCHMARK.cc,
+	libla/dot_product_BENCHMARK.cc: Added some benchmarks.
+
 2007-12-03 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* libla/product.hh: Fixed iteration over nonexisting bands in MC and
@@ -13,7 +29,7 @@ see the NEWS file.
 
 2007-12-03 David Gies <david-gies@gmx.de>
 
-        * libla/reduction.hh, libutil/wrapper.hh: Fixed small bugs.
+	* libla/reduction.hh, libutil/wrapper.hh: Fixed small bugs.
 
 2007-12-03 Mathias Kadolsky <mathkad@gmx.de>
 
@@ -45,7 +61,7 @@ see the NEWS file.
 
 2007-12-02 David Gies <david-gies@gmx.de>
 
-        * libla/reduction.hh, libla/reduction_TEST.cc: Added MultiCore reductions.
+	* libla/reduction.hh, libla/reduction_TEST.cc: Added MultiCore reductions.
 
 2007-12-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 

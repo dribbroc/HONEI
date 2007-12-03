@@ -120,3 +120,37 @@ DenseMatrixSumBench<tags::CPU, float> DMSBenchfloat1("Dense Matrix Sum Benchmark
 DenseMatrixSumBench<tags::CPU, double> DMSBenchdouble1("Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore, float> DMSBenchfloat1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore, double> DMSBenchdouble1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+
+
+template <typename DT_, typename Tag_>
+class DenseVectorSumBenchTestPlot :
+    public Benchmark
+{
+    public:
+        DenseVectorSumBenchTestPlot(const std::string & id) :
+            Benchmark(id)
+        {
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<int> cores;
+            for (unsigned long j(1) ; j < 11 ; ++j)
+            {
+                cores.push_back(1);
+                DenseVector<DT_> dv0(j * 1000000, DT_(rand()));
+                DenseVector<DT_> dv1(j * 1000000, DT_(rand()));
+                for(int i = 0; i < 10; ++i)
+                {
+                    BENCHMARK(Sum<Tag_>::value(dv0, dv1));
+                }
+                info = Sum<>::get_benchmark_info(dv0, dv1);
+                infolist.push_back(info);  
+            }
+            evaluate_to_plotfile(infolist, cores, 10);
+        }
+};
+DenseVectorSumBenchTestPlot<double, tags::CPU> DVSBTP("Dense Vector Sum Benchmark - vector size: x * 100.000, 0<x<11 - double");
+DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore> MCDVSBTP("MC: Dense Vector Sum Benchmark - vector size: x * 100.000, 0<x<11 - double");

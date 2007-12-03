@@ -159,6 +159,8 @@ namespace honei
             result.flops = a.size() * 2;
             result.load = a.size() * (sizeof(DT1_) + sizeof(DT2_)) + sizeof(DT3_);
             result.store = a.size() * sizeof(DT1_);
+            result.size.push_back(a.size());
+            result.size.push_back(b.size());
             return result; 
         }
         #endif

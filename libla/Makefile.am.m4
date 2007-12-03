@@ -94,6 +94,9 @@ bench:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	bash $(top_builddir)/libla/benchmark
 
+benchm:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+
 check_PROGRAMS = $(TESTS)
 
 quickcheck: $(TESTS)
