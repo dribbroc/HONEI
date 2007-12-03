@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libla/sum.hh, libla/sum-sse.cc, libla/sum_TEST.cc:
+	Added Sum(dm, dm).
+
+2007-12-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/sum-sse.cc:
 	Unrolled all loops. Added aligned version for DVCB ops.
 

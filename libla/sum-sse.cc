@@ -106,6 +106,104 @@ DenseVector<double> & Sum<tags::CPU::SSE>::value(DenseVector<double> & a, const 
     return a;
 }
 
+DenseMatrix<float> & Sum<tags::CPU::SSE>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
+{
+    CONTEXT("When adding DenseMatrix<float> to DenseMatrix<float> with SSE:");
+
+
+    if (a.columns() != b.columns())
+    {
+        throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+    }
+
+    if (a.rows() != b.rows())
+    {
+        throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+    }
+
+    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+
+    unsigned long size(a.rows() * a.columns());
+    unsigned long quad_end(size - (size % 16));
+    if (size < 16) quad_end = 0;
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 16)
+    {
+        m1 = _mm_load_ps(a.elements() + index);
+        m3 = _mm_load_ps(a.elements() + index + 4);
+        m5 = _mm_load_ps(a.elements() + index + 8);
+        m7 = _mm_load_ps(a.elements() + index + 12);
+        m2 = _mm_load_ps(b.elements() + index);
+        m4 = _mm_load_ps(b.elements() + index + 4);
+        m6 = _mm_load_ps(b.elements() + index + 8);
+        m8 = _mm_load_ps(b.elements() + index + 12);
+
+        m1 = _mm_add_ps(m1, m2);
+        m3 = _mm_add_ps(m3, m4);
+        m5 = _mm_add_ps(m5, m6);
+        m7 = _mm_add_ps(m7, m8);
+
+        _mm_stream_ps(a.elements() + index, m1);
+        _mm_stream_ps(a.elements() + index + 4, m3);
+        _mm_stream_ps(a.elements() + index + 8, m5);
+        _mm_stream_ps(a.elements() + index + 12, m7);
+    }
+    for (unsigned long index(quad_end) ; index < size ; ++index)
+    {
+        a.elements()[index] += b.elements()[index];
+    }
+    return a;
+}
+
+DenseMatrix<double> & Sum<tags::CPU::SSE>::value(DenseMatrix<double> & a, const DenseMatrix<double> & b)
+{
+    CONTEXT("When adding DenseMatrix<double> to DenseMatrix<double> with SSE:");
+
+
+    if (a.columns() != b.columns())
+    {
+        throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+    }
+
+    if (a.rows() != b.rows())
+    {
+        throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+    }
+
+    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
+
+    unsigned long size(a.rows() * a.columns());
+    unsigned long quad_end(size - (size % 8));
+    if (size < 8) quad_end = 0;
+
+    for (unsigned long index = 0 ; index < quad_end ; index += 8)
+    {
+        m1 = _mm_load_pd(a.elements() + index);
+        m3 = _mm_load_pd(a.elements() + index + 2);
+        m5 = _mm_load_pd(a.elements() + index + 4);
+        m7 = _mm_load_pd(a.elements() + index + 6);
+        m2 = _mm_load_pd(b.elements() + index);
+        m4 = _mm_load_pd(b.elements() + index + 2);
+        m6 = _mm_load_pd(b.elements() + index + 4);
+        m8 = _mm_load_pd(b.elements() + index + 6);
+
+        m1 = _mm_add_pd(m1, m2);
+        m3 = _mm_add_pd(m3, m4);
+        m5 = _mm_add_pd(m5, m6);
+        m7 = _mm_add_pd(m7, m8);
+
+        _mm_stream_pd(a.elements() + index, m1);
+        _mm_stream_pd(a.elements() + index + 2, m3);
+        _mm_stream_pd(a.elements() + index + 4, m5);
+        _mm_stream_pd(a.elements() + index + 6, m7);
+    }
+    for (unsigned long index(quad_end) ; index < size ; ++index)
+    {
+        a.elements()[index] += b.elements()[index];
+    }
+    return a;
+}
+
 DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> with SSE:");
