@@ -22,6 +22,7 @@
 #include <libla/product.hh>
 #include <xmmintrin.h>
 #include <emmintrin.h>
+#include <iostream>
 
 using namespace honei;
 
@@ -165,10 +166,10 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 
     DenseVector<double> result(a.rows(), double(0));
 
-    __m128d m1, m2, m3, m4, m5;
+    __m128d m1, m2, m3, m4, m5, m6;
 
     unsigned long middle_index(a.rows() - 1);
-    unsigned long quad_end, end, quad_start, start, x_offset, op_offset;
+    unsigned long quad_end, end, quad_start, start, op_offset;
 
     // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
     for (BandedMatrix<double>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
@@ -178,22 +179,25 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
             continue;
         op_offset = vi.index() - middle_index;
         end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
-        quad_end = end - (end % 2);
-        x_offset = op_offset % 2;
+        quad_end = end - (end % 4);
+        if (end < 12) quad_end = 0;
 
-        for (unsigned long index = 0 ; index < quad_end ; index += 2)
+        for (unsigned long index = 0 ; index < quad_end ; index += 4)
         {
             m1 = _mm_load_pd(vi->elements() + index);
-            //m2 = _mm_load_pd(b.elements() + index + op_offset - x_offset); //eins davor!
-            //m4 = _mm_load_pd(b.elements() + index + op_offset + x_offset); // eins dahinter!
-            //m2 = _mm_shuffle_pd(m2, m4, (0 << 1) | 1); // zweite von m2 und erste von m4
+            m4 = _mm_load_pd(vi->elements() + index + 2);
             m2 = _mm_loadu_pd(b.elements() + index + op_offset);
+            m5 = _mm_loadu_pd(b.elements() + index + op_offset + 2);
             m3 = _mm_load_pd(result.elements() + index);
+            m6 = _mm_load_pd(result.elements() + index + 2);
 
             m1 = _mm_mul_pd(m1, m2);
             m1 = _mm_add_pd(m1, m3);
+            m4 = _mm_mul_pd(m4, m5);
+            m4 = _mm_add_pd(m4, m6);
 
             _mm_store_pd(result.elements() + index, m1);
+            _mm_store_pd(result.elements() + index + 2, m4);
         }
 
         for (unsigned long index = quad_end ; index < end ; index++) 
@@ -210,24 +214,31 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
             continue;
         op_offset = middle_index - vi.index();
         start = op_offset; //Calculation of the element-index to start in iteration!
-        quad_start = start + (start % 2);
+        quad_start = start + (4 - (start % 4));
         end = a.size();
-        quad_end = end - (end % 2);
-        x_offset = op_offset % 2;
+        quad_end = end - (end % 4);
+        if ( start + 12 > end)
+        {
+            quad_end = start;
+            quad_start = start;
+        }
 
-        for (unsigned long index = quad_start ; index < quad_end ; index += 2)
+        for (unsigned long index = quad_start ; index < quad_end ; index += 4)
         {
             m1 = _mm_load_pd(vi->elements() + index);
-            //m2 = _mm_load_pd(b.elements() + index - op_offset - x_offset);
-            //m2 = _mm_load_pd(b.elements() + index - op_offset + x_offset);
-            //m2 = _mm_shuffle_pd(m2, m4, (0 << 1) | 1); // zweite von m2 und erste von m4
+            m4 = _mm_load_pd(vi->elements() + index + 2);
             m2 = _mm_loadu_pd(b.elements() + index - op_offset);
+            m5 = _mm_loadu_pd(b.elements() + index - op_offset + 2);
             m3 = _mm_load_pd(result.elements() + index);
+            m6 = _mm_load_pd(result.elements() + index + 2);
 
             m1 = _mm_mul_pd(m1, m2);
             m1 = _mm_add_pd(m1, m3);
+            m4 = _mm_mul_pd(m4, m5);
+            m4 = _mm_add_pd(m4, m6);
 
             _mm_store_pd(result.elements() + index, m1);
+            _mm_store_pd(result.elements() + index + 2, m4);
         }
 
         for (unsigned long index = start ; index < quad_start ; index++)
