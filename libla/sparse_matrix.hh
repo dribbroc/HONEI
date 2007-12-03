@@ -21,6 +21,7 @@
 #define LIBLA_GUARD_SPARSE_MATRIX_HH 1
 
 #include <libla/element_iterator.hh>
+#include <libla/vector_iterator.hh>
 #include <libla/matrix.hh>
 #include <libla/sparse_vector-impl.hh>
 #include <libutil/shared_array-impl.hh>
@@ -59,12 +60,15 @@ namespace honei
             template <typename ElementType_> class SparseElementIterator;
             /// Our smart implementation of ElementIteratorBase.
             template <typename ElementType_> class NonZeroElementIterator;
+            /// Our smart implementation of VectorIteratorBase.
+            template <typename ElementType_> class NonZeroRowIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
             friend class SparseElementIterator<DataType_>;
             friend class NonZeroElementIterator<DataType_>;
+            friend class NonZeroRowIterator<DataType_>;
 
             /// Type of the const iterator over our elements.
             typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
@@ -73,10 +77,10 @@ namespace honei
             typedef typename MutableMatrix<DataType_>::ElementIterator ElementIterator;
 
             /// Type of the const iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, const DataType_> ConstVectorIterator;
+            typedef VectorIteratorWrapper<DataType_, const SparseVector<DataType_> > ConstRowIterator;
 
             /// Type of the iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
+            typedef VectorIteratorWrapper<DataType_, SparseVector<DataType_> > RowIterator;
 
             /// \name Constructors
             /// \{
@@ -154,6 +158,30 @@ namespace honei
             virtual ElementIterator end_non_zero_elements()
             {
                 return ElementIterator(new NonZeroElementIterator<DataType_>(*this, 0 /* Dummy */));
+            }
+
+            /// Returns const iterator pointing to the first row of the matrix.
+            ConstRowIterator begin_non_zero_rows() const
+            {
+                return ConstRowIterator(new NonZeroRowIterator<DataType_>(*this, 0));
+            }
+
+            /// Returns const iterator pointing behind the last row of the matrix.
+            ConstRowIterator end_non_zero_rows() const
+            {
+                return ConstRowIterator(new NonZeroRowIterator<DataType_>(*this, _rows));
+            }
+
+            /// Returns iterator pointing to the first row of the matrix.
+            RowIterator begin_non_zero_rows()
+            {
+                return RowIterator(new NonZeroRowIterator<DataType_>(*this, 0));
+            }
+
+            /// Returns iterator pointing behind the last row of the matrix.
+            RowIterator end_non_zero_rows()
+            {
+                return RowIterator(new NonZeroRowIterator<DataType_>(*this, _rows));
             }
 
             /// Returns the number of our columns.
@@ -586,6 +614,121 @@ namespace honei
             virtual unsigned long row() const
             {
                 return _row;
+            }
+
+            /// Returns a pointer to our parent container.
+            virtual const Matrix<DataType_> * parent() const
+            {
+                return &_matrix;
+            }
+
+            /// \}
+    };
+
+    /**
+     * \brief SparseMatrix::NonZeroRowIterator is a smart iterator implementation that iterates over non-zero
+     * \brief rows of sparse matrices.
+     *
+     * \ingroup grpmatrix
+     **/
+    template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroRowIterator<DataType_> :
+        public VectorIteratorBase<DataType_, SparseVector<DataType_> >
+    {
+        private:
+            /// Our parent matrix.
+            const SparseMatrix<DataType_> & _matrix;
+
+            /// Our index.
+            unsigned long _index;
+
+        public:
+            /// \name Constructors and destructor
+            /// \{
+
+            /**
+             * Constructor, creates a begin iterator.
+             *
+             * \param matrix The parent matrix that is referenced by the iterator.
+             **/
+            NonZeroRowIterator(const SparseMatrix<DataType_> & matrix, const unsigned long & index) :
+                _matrix(matrix),
+                _index(index)
+            {
+            }
+
+            /// Copy-constructor.
+            NonZeroRowIterator(NonZeroRowIterator<DataType_> const & other) :
+                _matrix(other._matrix),
+                _index(other._index)
+            {
+            }
+
+            /// \}
+
+            /// \name Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            virtual NonZeroRowIterator<DataType_> & operator++ ()
+            {
+                while (_index < _matrix._rows)
+                {
+                    _index++;
+                    if (_matrix._row_vectors[_index])
+                        break;
+                }
+            }
+
+            /// Dereference operator that returns assignable reference.
+            virtual SparseVector<DataType_> & operator* ()
+            {
+                CONTEXT("When accessing assignable non-zero-row at index '" + stringify(_index) + "':");
+
+                return *_matrix._row_vectors[_index];
+            }
+
+            /// Dereference operator that returns umassignable reference.
+            virtual const SparseVector<DataType_> & operator* () const
+            {
+                CONTEXT("When accessing unassignable non-zero-row at index '" + stringify(_index) + "':");
+
+                return *_matrix._row_vectors[_index];
+            }
+
+            /// Comparison operator for less-than.
+            virtual bool operator< (const VectorIteratorBase<DataType_, SparseVector<DataType_> > & other) const
+            {
+                return _index < other.index();
+            }
+
+            /// Comparison operator for equality.
+            virtual bool operator== (const VectorIteratorBase<DataType_, SparseVector<DataType_> > & other) const
+            {
+                return ((&_matrix == other.parent()) && (_index == other.index()));
+            }
+
+            /// Comparison operator for inequality.
+            virtual bool operator!= (const VectorIteratorBase<DataType_, SparseVector<DataType_> > & other) const
+            {
+                return ((&_matrix != other.parent()) || (_index != other.index()));
+            }
+
+            /// \}
+
+
+            /// \name IteratorTraits interface
+            /// \{
+
+            /// Returns true if the referenced vector already exists.
+            virtual bool exists() const
+            {
+                return _matrix._row_vectors[_index];
+            }
+
+            /// Returns our index.
+            virtual const unsigned long index() const
+            {
+                return _index;
             }
 
             /// Returns a pointer to our parent container.
