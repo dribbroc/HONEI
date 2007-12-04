@@ -46,7 +46,7 @@ unsigned dense_float_reduction_min(const Instruction & inst)
     ea_a += size;
 
     vector unsigned int bitMaskGT;
-    Subscriptable<float> tmpVector = { spu_splats(0.0f) };
+    Subscriptable<float> tmpVector = { spu_splats(inst.e.f) };
 
     while (counter > 1)
     {
@@ -59,8 +59,7 @@ unsigned dense_float_reduction_min(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        tmpVector.value = a[current - 1].vectorised[0];
-        for (unsigned i(1) ; i < size / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
             bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
             tmpVector.value  = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
@@ -81,16 +80,14 @@ unsigned dense_float_reduction_min(const Instruction & inst)
     for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
         bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-        tmpVector.value  = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
+        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
     }
-
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    tmpVector.array[0] =  tmpVector.array[0] < tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
-    tmpVector.array[2] =  tmpVector.array[2] < tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
-
+    tmpVector.array[0] = tmpVector.array[0] < tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
+    tmpVector.array[2] = tmpVector.array[2] < tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
     MailableResult<float> result = { tmpVector.array[0] < tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
 
     return result.mail;

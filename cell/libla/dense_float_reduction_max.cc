@@ -45,7 +45,7 @@ unsigned dense_float_reduction_max(const Instruction & inst)
     ea_a += size;
 
     vector unsigned int bitMaskGT;
-    Subscriptable<float> tmpVector = { spu_splats(0.0f) };
+    Subscriptable<float> tmpVector = { spu_splats(inst.e.f) };
 
     while (counter > 1)
     {
@@ -58,8 +58,7 @@ unsigned dense_float_reduction_max(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        tmpVector.value = a[current - 1].vectorised[0];
-        for (unsigned i(1) ; i < size / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
             bitMaskGT = spu_cmpgt(tmpVector.value,a[current - 1].vectorised[i]);
             tmpVector.value  = spu_sel(a[current - 1].vectorised[i],tmpVector.value,bitMaskGT);
