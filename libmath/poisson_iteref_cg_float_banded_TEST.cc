@@ -149,7 +149,7 @@ class PoissonTestIterefCGBandedFloat:
                 TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-4);
             }
             //TEST_CHECK(true);
-            DenseVector<double> x(n, double(0));
+            DenseVector<float> x(n, float(0));
             Difference<Tag_>::value(result, ana_sol_v);
             Difference<Tag_>::value(x, result);
             double norm = Norm<vnt_l_two, false, Tag_>::value(x);
@@ -158,3 +158,6 @@ class PoissonTestIterefCGBandedFloat:
         }
 };
 PoissonTestIterefCGBandedFloat<tags::CPU, float> poisson_test_iteref_cg_banded_float("float");
+#ifdef HONEI_SSE
+PoissonTestIterefCGBandedFloat<tags::CPU::SSE, float> poisson_test_iteref_cg_banded_float_sse("SSE float");
+#endif

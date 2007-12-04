@@ -157,3 +157,6 @@ class PoissonTestJACDenseDouble:
         }
 };
 PoissonTestJACDenseDouble<tags::CPU, double> poisson_test_jac_dense_double("double");
+#ifdef HONEI_SSE
+PoissonTestJACDenseDouble<tags::CPU::SSE, double> poisson_test_jac_dense_double_sse("SSE double");
+#endif

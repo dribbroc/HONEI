@@ -158,3 +158,6 @@ class PoissonTestIterefPCGDenseDouble:
         }
 };
 PoissonTestIterefPCGDenseDouble<tags::CPU, double> poisson_test_iterefpcg_dense_double("double");
+#ifdef HONEI_SSE
+PoissonTestIterefPCGDenseDouble<tags::CPU::SSE, double> poisson_test_iterefpcg_dense_double_sse("SSE double");
+#endif

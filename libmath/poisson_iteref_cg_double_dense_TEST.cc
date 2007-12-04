@@ -150,3 +150,6 @@ class PoissonTestIterefCGDenseDouble:
         }
 };
 PoissonTestIterefCGDenseDouble<tags::CPU, double> poisson_test_cg_dense_double("double");
+#ifdef HONEI_SSE
+PoissonTestIterefCGDenseDouble<tags::CPU::SSE, double> poisson_test_cg_dense_double_sse("SSE double");
+#endif
