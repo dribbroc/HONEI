@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-04 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/difference-sse.cc, libla/difference.hh, libla/dot_product-sse.cc, libla/dot_product.hh, libla/element_product-sse.cc, libla/element_product.hh, libla/product_BENCHMARK.cc, libla/scaled_sum-sse.cc, libla/scaled_sum.hh:
+	Applied sse backend changes to all missing operations.
+
 2007-12-04 Markus Geveler <apryde@gmx.de>
 
 	* libswe/implicitt_solver.hh, libswe/implicit_solver_TEST.cc,

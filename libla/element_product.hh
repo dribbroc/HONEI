@@ -489,13 +489,13 @@ namespace honei
          * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
          */
 
-        static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
-
-        static DenseVector<double> & value(DenseVector<double> & a, const DenseVector<double> & b);
-
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+
+        static DenseMatrix<double> & value(DenseMatrix<double> & a, const DenseMatrix<double> & b);
 
         /// \}
     };
