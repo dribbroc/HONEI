@@ -452,7 +452,7 @@ class DenseMatrixSumTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(-3)),
                     dm3(size+1, size, DataType_(-1));
-                Sum<>::value(dm1, dm2);
+                Sum<Tag_>::value(dm1, dm2);
 
                 TEST_CHECK_EQUAL(dm1, dm3);
             }
@@ -490,7 +490,7 @@ class DenseMatrixSumQuickTest :
             unsigned long size(11);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(-3)),
                 dm3(size+1, size, DataType_(-1));
-            Sum<>::value(dm1, dm2);
+            Sum<Tag_>::value(dm1, dm2);
 
             TEST_CHECK_EQUAL(dm1, dm3);
 
