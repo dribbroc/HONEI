@@ -148,20 +148,21 @@ namespace honei
 
 using namespace honei;
 
-DenseVector<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVector<float> & x)
+DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVectorContinuousBase<float> & x)
 {
-    CONTEXT("When scaling DenseVector<float> by float with SSE:");
+    CONTEXT("When scaling DenseVectorContinuousBase<float> by float with SSE:");
 
     intern::sse::scale(a, x.elements(), x.size());
 
     return x;
 }
 
-DenseVector<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVector<double> & x)
+DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVectorContinuousBase<double> & x)
 {
-    CONTEXT("When scaling DenseVector<double> by double with SSE:");
+    CONTEXT("When scaling DenseVectorContinuousBase<double> by double with SSE:");
 
     intern::sse::scale(a, x.elements(), x.size());
+
     return x;
 }
 
@@ -179,24 +180,6 @@ DenseMatrix<double> & Scale<tags::CPU::SSE>::value(const double a, DenseMatrix<d
     CONTEXT("When scaling DenseMatrix<double> by double with SSE:");
 
     intern::sse::scale(a, x.elements(), x.rows() * x.columns());
-
-    return x;
-}
-
-DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(const float a, DenseVectorContinuousBase<float> & x)
-{
-    CONTEXT("When scaling DenseVectorContinuousBase<float> by float with SSE:");
-
-    intern::sse::scale(a, x.elements(), x.size());
-
-    return x;
-}
-
-DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(const double a, DenseVectorContinuousBase<double> & x)
-{
-    CONTEXT("When scaling DenseVectorContinuousBase<double> by double with SSE:");
-
-    intern::sse::scale(a, x.elements(), x.size());
 
     return x;
 }

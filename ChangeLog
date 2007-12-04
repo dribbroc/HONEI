@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-04 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/scale.hh, libla/scale-sse.cc:
+	Removed Scale(dv,dv).
+
 2007-12-04 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh: Modified RelaxSolver's verbose mode.

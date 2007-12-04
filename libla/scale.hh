@@ -177,17 +177,13 @@ namespace honei
          * \retval x Will modify the entity x and return it.
          */
 
-        static DenseVector<float> & value(const float a, DenseVector<float> & x);
+        static DenseVectorContinuousBase<float> & value(const float a, DenseVectorContinuousBase<float> & x);
 
-        static DenseVector<double> & value(const double a, DenseVector<double> & x);
+        static DenseVectorContinuousBase<double> & value(const double a, DenseVectorContinuousBase<double> & x);
 
         static DenseMatrix<float> & value(const float a, DenseMatrix<float> & x);
 
         static DenseMatrix<double> & value(const double a, DenseMatrix<double> & x);
-
-        static DenseVectorContinuousBase<float> & value(const float a, DenseVectorContinuousBase<float> & x);
-
-        static DenseVectorContinuousBase<double> & value(const double a, DenseVectorContinuousBase<double> & x);
 
         static SparseVector<float> & value(const float a, SparseVector<float> & x);
 
