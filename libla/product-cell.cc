@@ -117,13 +117,18 @@ namespace honei
             task.band = vi->elements();
             task.start = start;
             task.end = end;
-            task.quad_start = quad_start;
-            task.quad_end = quad_end;
             if(quad_end > quad_start)
             {
                 task.use_spe = true;
             }
-            else task.use_spe = false;
+            else
+            {
+                task.use_spe = false;
+                quad_start = 0;
+                quad_end = 0;
+            }
+            task.quad_start = quad_start;
+            task.quad_end = quad_end;
             task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
@@ -159,13 +164,18 @@ namespace honei
             task.band = vi->elements();
             task.start = start;
             task.end = end;
-            task.quad_start = quad_start;
-            task.quad_end = quad_end;
             if(quad_end > quad_start)
             {
                 task.use_spe = true;
             }
-            else task.use_spe = false;
+            else
+            {
+                task.use_spe = false;
+                quad_start = 0;
+                quad_end = start;
+            }
+            task.quad_start = quad_start;
+            task.quad_end = quad_end;
             task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
