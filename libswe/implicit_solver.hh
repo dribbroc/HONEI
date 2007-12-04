@@ -64,6 +64,7 @@ namespace honei {
         ///Private members:
         private:
             Scenario<ResPrec_, IMPLICIT, REFLECT>* scenario;
+
             /**
              * System assembly: A.
              **/
@@ -96,6 +97,14 @@ namespace honei {
              **/
             template<typename WorkPrec_>
             void solve(double conv_rad);
+
+            /**
+             * Preprocessing.
+             **/
+            void do_preprocessing()
+            {
+            }
+
     };
 }
 #endif

@@ -44,7 +44,7 @@ class ImplicitSolverCreationTest :
 
         virtual void run() const
         {
-            Scenario<DataType_, IMPLICIT, REFLECT> scenario;
+            Scenario<DataType_, IMPLICIT, REFLECT> scenario(2000);
             ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
             TEST_CHECK(true);
         }
