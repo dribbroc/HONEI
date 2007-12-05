@@ -41,12 +41,14 @@
 #ifndef LIBSWE_GUARD_IMPLICIT_SOLVER_HH
 #define LIBSWE_GUARD_IMPLICIT_SOLVER_HH 1
 
+#include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
 #include <libutil/tags.hh>
 #include <libmath/methods.hh>
 #include <libswe/boundary_types.hh>
 #include <libswe/scenario.hh>
+#include <iostream>
 using namespace std;
 using namespace methods;
 using namespace swe_solvers;
@@ -87,7 +89,7 @@ namespace honei {
             DenseMatrix<ResPrec_> * _y_veloc;
 
             ///The data to work on.
-            DenseMatrix<ResPrec_> * _system_matrix;
+            BandedMatrix<ResPrec_> * _system_matrix;
             DenseVector<ResPrec_> * _right_hand_side;
             ///The boundary maps of the scalarfields:
             DenseMatrix<ResPrec_>* _height_bound;
@@ -103,13 +105,65 @@ namespace honei {
              * System assembly: A.
              **/
             template<typename WorkPrec_>
-            void assemble_matrix();
+            void _assemble_matrix()
+            {
+                DenseVector<ResPrec_> uu(_system_matrix->size(), ResPrec_(0));
+                DenseVector<ResPrec_> du(_system_matrix->size(), ResPrec_(0));
+                DenseVector<ResPrec_> dd(_system_matrix->size(), ResPrec_(0));
+                DenseVector<ResPrec_> dl(_system_matrix->size(), ResPrec_(0));
+                DenseVector<ResPrec_> ll(_system_matrix->size(), ResPrec_(0));
+
+                ResPrec_ alpha(_delta_t*_delta_t*ResPrec_(9.81));
+                ///Ignore ghost cells, assemble:
+                unsigned long actual_row = 1;
+                unsigned long actual_column = 1;
+                unsigned long i = 0;
+                while(i < (_system_matrix->size()))
+                {
+std::cout<<actual_row<<","<<actual_column<<endl;
+
+                    ///Assemble dd:
+                    dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column])*(ResPrec_(1)/(_delta_x*_delta_x) + ResPrec_(1)/(_delta_y*_delta_y));
+                    ///Assemble ll:
+                    ll[i] = alpha*(((*_bottom_bound)[actual_row-1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    ///Assemble uu:
+                    uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    ///Assemble dl:
+                    dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    ///Assemble du:
+                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    ///Iterate:
+                    ++i;
+                    if((actual_column) == _grid_width)
+                    {
+                        if(actual_row < _grid_height)
+                        {
+                            ++actual_row;
+                        }
+                        actual_column = 1;
+                    }
+                    else
+                    {
+                        ++actual_column;
+                    }
+                }
+
+                ///Insert bands:
+                _system_matrix->insert_band(0, dd);
+                _system_matrix->insert_band(1, du);
+                _system_matrix->insert_band(-1, dl);
+                _system_matrix->insert_band(_grid_width, uu);
+                _system_matrix->insert_band(-_grid_width, ll);
+
+            }
 
             /**
              * System assembly: b.
              **/
             template<typename WorkPrec_>
-            void assemble_right_hand_side();
+            void _assemble_right_hand_side()
+            {
+            }
 
         public:
             /**
@@ -123,8 +177,11 @@ namespace honei {
             /**
              * Solution capsule for one timestep.
              **/
-            template<typename WorkPrec_>
-            void solve(unsigned long iter_numbers);
+            void solve(unsigned long iter_numbers)
+            {
+                //\TODO: Complete. This is for test purpose only.
+                _assemble_matrix<ResPrec_>();
+            }
 
             /**
              * Solution capsule for one timestep.
@@ -158,6 +215,9 @@ namespace honei {
                 _bottom_bound = scenario->bottom_bound;
                 _x_veloc_bound = scenario->x_veloc_bound;
                 _y_veloc_bound = scenario->y_veloc_bound;
+                ///Just get the address where to store linear system:
+                _system_matrix = scenario->system_matrix;
+                _right_hand_side = scenario->right_hand_side;
 
                 ///Process boundary mapping:
                 for(unsigned long i = 0; i < _grid_height; i++)
@@ -201,7 +261,6 @@ namespace honei {
                     (*scenario->y_veloc_bound)[i][(scenario->grid_height) + 1] = (*scenario->y_veloc_bound)[i][(scenario->grid_height)];
                 }
             }
-
     };
 }
 #endif

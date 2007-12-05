@@ -52,6 +52,8 @@ namespace honei
             bool boundaries_set;
             bool delta_t_set;
 
+            bool allocation;
+
         public:
             ///Our Problem size.
             unsigned long n;
@@ -76,7 +78,7 @@ namespace honei
             DenseMatrix<ResPrec_> * y_veloc;
 
             ///The data to work on.
-            DenseMatrix<ResPrec_> * system_matrix;
+            BandedMatrix<ResPrec_> * system_matrix;
             DenseVector<ResPrec_> * right_hand_side;
             ///The boundary maps of the scalarfields:
             DenseMatrix<ResPrec_>* height_bound;

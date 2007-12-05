@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-05 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
+	scenario.hh: Added matrix assembly with respect to reflective
+	boundaries and a test, added interim solve capsule, added flags to
+	Scenario.
+
 2007-12-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/norm.hh:
