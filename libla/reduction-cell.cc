@@ -94,11 +94,13 @@ namespace honei
 
         for (unsigned i(0) ; i < a.rows() ; i++)
         {
+            result[i] = Reduction<rt_sum, tags::Cell>::value(a[i].copy());
+            /*
             Operand oa = { result.elements() + i };
             Operand ob = { a.elements() + (i * a.columns()) };
             Operand oc, od;
-            oc.u = (a.columns()) / 4096;
-            od.u = (a.columns()) % 4096;
+            oc.u = a.columns() / 4096;
+            od.u = a.columns() % 4096;
             od.u &= ~0xF;
 
             unsigned rest_index(oc.u * 4096 + od.u);
@@ -140,6 +142,7 @@ namespace honei
                 instruction.wait();
 
             result[i] += ppu_result;
+            */
         }
         return result;
     }
@@ -187,7 +190,6 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-
         float ppu_result(a[0]);
         for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
@@ -216,6 +218,8 @@ namespace honei
 
         for (unsigned i(0) ; i < a.rows() ; i++)
         {
+            result[i] = Reduction<rt_min, tags::Cell>::value(a[i].copy());
+            /*
             Operand oa = { result.elements() + i };
             Operand ob = { a.elements() + (i * a.columns()) };
             Operand oc, od, oe;
@@ -267,6 +271,7 @@ namespace honei
             {
                result[i] = ppu_result;
             }
+            */
        }
         return result;
     }
@@ -307,7 +312,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_reduction_max, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_dense_float_reduction_max, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
@@ -342,6 +347,9 @@ namespace honei
 
         for (unsigned i(0) ; i < a.rows() ; i++)
         {
+            result[i] = Reduction<rt_max, tags::Cell>::value(a[i].copy());
+
+            /*
             Operand oa = { result.elements() + i };
             Operand ob = { a.elements() + (i * a.columns()) };
             Operand oc, od, oe;
@@ -393,6 +401,7 @@ namespace honei
             {
                result[i] = ppu_result;
             }
+            */
         }
         return result;
     }

@@ -90,20 +90,29 @@ class DenseMatrixReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DT_> dm1(size+1, size, DT_(1));
-                DenseVector<DT_> dv1(size + 1, DT_(size ));
+                DenseMatrix<DT_> dm1(size, size);
+                DenseVector<DT_> dv1(size, DT_(0));
+                for(typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), 
+                        i_end(dm1.end_elements()) ; i != i_end ; ++i)
+                {
+                    *i = i.index();
+                    dv1[i.row()] += i.index();
+                }
+
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
                 TEST_CHECK_EQUAL(sum, dv1);
             }
         }
 };
+
 DenseMatrixReductionToSumTest<tags::CPU, float> dense_matrix_reduction_to_sum_test_float("float");
 DenseMatrixReductionToSumTest<tags::CPU, double> dense_matrix_reduction_to_sum_test_double("double");
 DenseMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_sum_test_float("MC float");
 DenseMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_sum_test_double("MC double");
+
 #ifdef HONEI_CELL
 DenseMatrixReductionToSumTest<tags::Cell, float> cell_dense_matrix_reduction_to_sum_test_float("Cell float");
 #endif
@@ -122,8 +131,14 @@ class DenseMatrixReductionQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DT_> dm1(size+1, size, DT_(1));
-            DenseVector<DT_> dv1(size + 1, DT_(size));
+            DenseMatrix<DT_> dm1(size, size);
+            DenseVector<DT_> dv1(size, DT_(0));
+            for(typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), 
+                    i_end(dm1.end_elements()) ; i != i_end ; ++i)
+            {
+                *i = i.index();
+                dv1[i.row()] += i.index();
+            }
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
             TEST_CHECK_EQUAL(sum, dv1);
@@ -222,7 +237,7 @@ class DenseVectorReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 16) ; size <<= 1)
             {
                 DenseVector<DT_> dv(size);
                 for (typename Vector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
@@ -243,6 +258,9 @@ DenseVectorReductionToSumTest<tags::CPU, float> dense_vector_reduction_to_sum_te
 DenseVectorReductionToSumTest<tags::CPU, double> dense_vector_reduction_to_sum_test_double("double");
 DenseVectorReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_sum_test_float("MC float");
 DenseVectorReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_sum_test_double("MC double");
+#ifdef HONEI_CELL
+//DenseVectorReductionToSumTest<tags::Cell, float> dense_vector_reduction_to_sum_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseVectorReductionToSumQuickTest :
@@ -383,10 +401,12 @@ class DenseMatrixReductionToMinTest :
             }
         }
 };
+
 DenseMatrixReductionToMinTest<tags::CPU, float> dense_matrix_reduction_to_min_test_float("float");
 DenseMatrixReductionToMinTest<tags::CPU, double> dense_matrix_reduction_to_min_test_double("double");
 DenseMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_min_test_float("MC float");
 DenseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_min_test_double("MC double");
+
 #ifdef HONEI_CELL
 DenseMatrixReductionToMinTest<tags::Cell, float> cell_dense_matrix_reduction_to_min_test_float("Cell float");
 #endif
@@ -406,7 +426,7 @@ class DenseMatrixReductionToMinQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(8);
+            unsigned long size(14);
             DenseMatrix<DT_> dm1(size, size);
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
@@ -418,10 +438,12 @@ class DenseMatrixReductionToMinQuickTest :
             TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
         }
 };
+
 DenseMatrixReductionToMinQuickTest<tags::CPU, float> dense_matrix_reduction_to_min_quick_test_float("float");
 DenseMatrixReductionToMinQuickTest<tags::CPU, double> dense_matrix_reduction_to_min_quick_test_double("double");
 DenseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_min_quick_test_float("MC float");
 DenseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_min_quick_test_double("MC double");
+
 #ifdef HONEI_CELL
 DenseMatrixReductionToMinQuickTest<tags::Cell, float> cell_dense_matrix_reduction_to_min_quick_test_float("Cell float");
 #endif
@@ -699,7 +721,7 @@ class DenseMatrixReductionToMaxTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
@@ -718,6 +740,7 @@ DenseMatrixReductionToMaxTest<tags::CPU, float> dense_matrix_reduction_to_max_te
 DenseMatrixReductionToMaxTest<tags::CPU, double> dense_matrix_reduction_to_max_test_double("double");
 DenseMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_max_test_float("MC float");
 DenseMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_max_test_double("MC double");
+
 #ifdef HONEI_CELL
 DenseMatrixReductionToMaxTest<tags::Cell, float> cell_dense_matrix_reduction_to_max_test_float("Cell float");
 #endif
@@ -1010,4 +1033,3 @@ SparseVectorReductionToMaxQuickTest<tags::CPU, float> sparse_reduction_to_max_qu
 SparseVectorReductionToMaxQuickTest<tags::CPU, double> sparse_reduction_to_max_quick_test_double("double");
 SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_max_quick_test_float("MC float");
 SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_max_quick_test_double("MC double");
-

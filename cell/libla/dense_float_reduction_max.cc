@@ -60,8 +60,8 @@ unsigned dense_float_reduction_max(const Instruction & inst)
 
         for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
-            bitMaskGT = spu_cmpgt(tmpVector.value,a[current - 1].vectorised[i]);
-            tmpVector.value  = spu_sel(a[current - 1].vectorised[i],tmpVector.value,bitMaskGT);
+            bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
+            tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
 
         --counter;
@@ -78,15 +78,15 @@ unsigned dense_float_reduction_max(const Instruction & inst)
 
     for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
-        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i],tmpVector.value);
+        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
         tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
     }
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    tmpVector.array[0] =  tmpVector.array[0] > tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
-    tmpVector.array[2] =  tmpVector.array[2] > tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
+    tmpVector.array[0] = tmpVector.array[0] > tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
+    tmpVector.array[2] = tmpVector.array[2] > tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
 
     MailableResult<float> result = { tmpVector.array[0] > tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
 

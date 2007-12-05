@@ -5,9 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-05 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/dense_float_reduction_max.cc, libla/reduction-cell.cc,
+	libla/reduction_TEST.cc: Even more bugfixes. Improved tests and
+	applied coding conventions. As a temporary workaround for alignment
+	problems DM-Reductions just call DV-Reductions with a copy of the
+	row-DenseVectorRange now. See also Trac-ticket #15.
+
 2007-12-05 Andre Matuschek <andre@matuschek.org>
-        * libla/product.hh: Added MultiCore version of DenseMatrix product.
-        * libla/product_TEST.cc: Added tests for MC DMxDM product.
+
+	* libla/product.hh: Added MultiCore version of DenseMatrix product.
+	* libla/product_TEST.cc: Added tests for MC DMxDM product.
 
 2007-12-04 Markus Geveler <apryde@gmx.de>
 
@@ -25,8 +34,12 @@ see the NEWS file.
 
 2007-12-04 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libla/difference-sse.cc, libla/difference.hh, libla/dot_product-sse.cc, libla/dot_product.hh, libla/element_product-sse.cc, libla/element_product.hh, libla/product_BENCHMARK.cc, libla/scaled_sum-sse.cc, libla/scaled_sum.hh:
-	Applied sse backend changes to all missing operations.
+	* libla/difference-sse.cc, libla/difference.hh,
+	libla/dot_product-sse.cc, libla/dot_product.hh,
+	libla/element_product-sse.cc, libla/element_product.hh,
+	libla/product_BENCHMARK.cc, libla/scaled_sum-sse.cc,
+	libla/scaled_sum.hh: Applied sse backend changes to all missing
+	operations.
 
 2007-12-04 Markus Geveler <apryde@gmx.de>
 
