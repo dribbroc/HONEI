@@ -405,24 +405,46 @@ namespace honei
          * \name Norms
          * \{
          *
-         * \brief Returns the square root of the given norm of a vector.
+         * \brief Returns the L2 norm of a vector.
          *
          * \param x The entity whose norm is to be computed.
          *
          * \retval r Will create a new object of type DT_ and return it.
          */
 
-        static float value(const DenseVector<float> & x)
+        static float value(const DenseVectorContinuousBase<float> & x)
         {
             return DotProduct<tags::CPU::SSE>::value(x, x);
         };
 
-        static double value(const DenseVector<double> & x)
+        static double value(const DenseVectorContinuousBase<double> & x)
         {
             return DotProduct<tags::CPU::SSE>::value(x, x);
         };
 
-        /// \}
+    };
+    template <> struct Norm<vnt_l_two, true, tags::CPU::SSE>
+    {
+        /**
+         * \name Norms
+         * \{
+         *
+         * \brief Returns the square root of the L2 norm of a vector.
+         *
+         * \param x The entity whose norm is to be computed.
+         *
+         * \retval r Will create a new object of type DT_ and return it.
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & x)
+        {
+            return sqrt(DotProduct<tags::CPU::SSE>::value(x, x));
+        };
+
+        static double value(const DenseVectorContinuousBase<double> & x)
+        {
+            return sqrt(DotProduct<tags::CPU::SSE>::value(x, x));
+        };
     };
 }
 
