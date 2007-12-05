@@ -46,34 +46,44 @@ namespace honei
     class Scenario<ResPrec_, swe_solvers::IMPLICIT, boundaries::REFLECT>
     {
 
+        private:
+            ///Flags for validation by ScenarioManager:
+            bool scalarfields_set;
+            bool boundaries_set;
+            bool delta_t_set;
+
         public:
             ///Our Problem size.
-            unsigned long _n;
+            unsigned long n;
 
             ///Stepsize in x direction.
-            ResPrec_ _delta_x;
+            ResPrec_ delta_x;
             ///Stepsize in y direction.
-            ResPrec_ _delta_y;
+            ResPrec_ delta_y;
             ///Size of timestep.
-            ResPrec_ _delta_t;
-            ///Current timestep.
-            unsigned int _solve_time;
+            ResPrec_ delta_t;
 
             ///Dimensions of OMEGA:
-            ResPrec_ _d_width;
-            ResPrec_ _d_height;
-            unsigned long _grid_width;
-            unsigned long _grid_height;
+            ResPrec_ d_width;
+            ResPrec_ d_height;
+            unsigned long grid_width;
+            unsigned long grid_height;
 
             ///The input- and to-be-updated - data.
-            DenseMatrix<ResPrec_> * _bottom;
-            DenseMatrix<ResPrec_> * _height;
-            DenseMatrix<ResPrec_> * _x_veloc;
-            DenseMatrix<ResPrec_> * _y_veloc;
+            DenseMatrix<ResPrec_> * bottom;
+            DenseMatrix<ResPrec_> * height;
+            DenseMatrix<ResPrec_> * x_veloc;
+            DenseMatrix<ResPrec_> * y_veloc;
 
             ///The data to work on.
-            DenseMatrix<ResPrec_> * _system_matrix;
-            DenseVector<ResPrec_> * _right_hand_side;
+            DenseMatrix<ResPrec_> * system_matrix;
+            DenseVector<ResPrec_> * right_hand_side;
+            ///The boundary maps of the scalarfields:
+            DenseMatrix<ResPrec_>* height_bound;
+            DenseMatrix<ResPrec_>* bottom_bound;
+            DenseMatrix<ResPrec_>* x_veloc_bound;
+            DenseMatrix<ResPrec_>* y_veloc_bound;
+
 
             /**
              * Constructor for square shaped OMEGA.
@@ -83,9 +93,9 @@ namespace honei
              **/
             Scenario(unsigned long size)
             {
-                _n = size;
-                _grid_width = _n;
-                _grid_height = _n;
+                n = size;
+                grid_width = n;
+                grid_height = n;
             }
 
             /**
@@ -97,16 +107,16 @@ namespace honei
              * \param delta_y The stepsize in y direction.
              *
              **/
-            Scenario(ResPrec_ d_width, ResPrec_ d_height, ResPrec_ delta_x, ResPrec_ delta_y)
+            Scenario(ResPrec_ dwidth, ResPrec_ dheight, ResPrec_ deltax, ResPrec_ deltay)
             {
-                _d_width = d_width;
-                _d_height = d_height;
-                _delta_x = delta_x;
-                _delta_y = delta_y;
+                d_width = dwidth;
+                d_height = dheight;
+                delta_x = deltax;
+                delta_y = deltay;
 
                 //\TODO: catch error: d_width%delta_x !=0
-                _grid_width = _d_width/_delta_x;
-                _grid_height = _d_height/_delta_y;
+                grid_width = d_width/delta_x;
+                grid_height = d_height/delta_y;
             }
 
             /**
@@ -116,10 +126,10 @@ namespace honei
              * \param grid_height The height of the grid.
              *
              **/
-            Scenario(ResPrec_ grid_width, ResPrec_ grid_height)
+            Scenario(ResPrec_ gridwidth, ResPrec_ gridheight)
             {
-                _grid_width = grid_width;
-                _grid_height = grid_height;
+                grid_width = gridwidth;
+                grid_height = gridheight;
             }
     };
 
@@ -128,23 +138,23 @@ namespace honei
     {
         public:
             ///Stepsize in x direction.
-            ResPrec_ _delta_x;
+            ResPrec_ delta_x;
             ///Stepsize in y direction.
-            ResPrec_ _delta_y;
+            ResPrec_ delta_y;
             ///Size of timestep.
-            ResPrec_ _delta_t;
+            ResPrec_ delta_t;
             ///Current timestep.
-            unsigned int _solve_time;
+            unsigned int solve_time;
 
             ///Dimensions of OMEGA:
-            unsigned long _d_width;
-            unsigned long _d_height;
+            unsigned long d_width;
+            unsigned long d_height;
 
             ///The input- and to-be-updated - data.
-            DenseMatrix<ResPrec_> * _bottom;
-            DenseMatrix<ResPrec_> * _height;
-            DenseMatrix<ResPrec_> * _x_veloc;
-            DenseMatrix<ResPrec_> * _y_veloc;
+            DenseMatrix<ResPrec_> * bottom;
+            DenseMatrix<ResPrec_> * height;
+            DenseMatrix<ResPrec_> * x_veloc;
+            DenseMatrix<ResPrec_> * y_veloc;
 
             ///The data to work on 
             // \TODO: c, d, etc...

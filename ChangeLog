@@ -5,7 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-12-04 Markus Geveler <apryde@gmx.de>
+2007-12-05 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
+	scenario.hh: Added preprocessing and boundary usage to implicit
+	solver, added preprocessing test, added validation flags to Scenario.
+
+2007-12-05 Markus Geveler <apryde@gmx.de>
 
 	* libvisual/enginesolve.hh: Added branches for solver instantiation in gl_globals.
 

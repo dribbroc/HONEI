@@ -63,7 +63,41 @@ namespace honei {
     {
         ///Private members:
         private:
+            ///Our scenario.
             Scenario<ResPrec_, IMPLICIT, REFLECT>* scenario;
+            unsigned long _n;
+
+            ///Stepsize in x direction.
+            ResPrec_ _delta_x;
+            ///Stepsize in y direction.
+            ResPrec_ _delta_y;
+            ///Size of timestep.
+            ResPrec_ _delta_t;
+
+            ///Dimensions of OMEGA:
+            ResPrec_ _d_width;
+            ResPrec_ _d_height;
+            unsigned long _grid_width;
+            unsigned long _grid_height;
+
+            ///The input- and to-be-updated - data.
+            DenseMatrix<ResPrec_> * _bottom;
+            DenseMatrix<ResPrec_> * _height;
+            DenseMatrix<ResPrec_> * _x_veloc;
+            DenseMatrix<ResPrec_> * _y_veloc;
+
+            ///The data to work on.
+            DenseMatrix<ResPrec_> * _system_matrix;
+            DenseVector<ResPrec_> * _right_hand_side;
+            ///The boundary maps of the scalarfields:
+            DenseMatrix<ResPrec_>* _height_bound;
+            DenseMatrix<ResPrec_>* _bottom_bound;
+            DenseMatrix<ResPrec_>* _x_veloc_bound;
+            DenseMatrix<ResPrec_>* _y_veloc_bound;
+
+
+            ///The current timestep.
+            unsigned int solve_time;
 
             /**
              * System assembly: A.
@@ -103,6 +137,69 @@ namespace honei {
              **/
             void do_preprocessing()
             {
+
+                ///Copy our scenario data:
+                _n = scenario->n;
+                _delta_x = scenario->delta_x;
+                _delta_y = scenario->delta_y;
+                _delta_t = scenario->delta_t;
+                _d_width = scenario->d_width;
+                _d_height = scenario->d_height;
+                _grid_width = scenario->grid_width;
+                _grid_height = scenario->grid_height;
+
+                ///Make local copies of the scalarfields;
+                _bottom = scenario->bottom->copy();
+                _height = scenario->height->copy();
+                _x_veloc = scenario->x_veloc->copy();
+                _y_veloc = scenario->y_veloc->copy();
+                ///Just get the address where to store boundary maps:
+                _height_bound = scenario->height_bound;
+                _bottom_bound = scenario->bottom_bound;
+                _x_veloc_bound = scenario->x_veloc_bound;
+                _y_veloc_bound = scenario->y_veloc_bound;
+
+                ///Process boundary mapping:
+                for(unsigned long i = 0; i < _grid_height; i++)
+                {
+                    for(unsigned long j = 0; j < _grid_width; j++)
+                    {
+                        (*(_height_bound))[i+1][j+1] = (*(_height))[i][j];
+                        (*_bottom_bound)[i+1][j+1] = (*_bottom)[i][j];
+                        (*_x_veloc_bound)[i+1][j+1] = (*_x_veloc)[i][j];
+                        (*_y_veloc_bound)[i+1][j+1] = (*_y_veloc)[i][j];
+                    }
+                }
+
+                ///Process boundary correction for all scalarfields:
+                for(unsigned long i = 0; i < _grid_width+2; i++)
+                {
+                    ///Correct first row:
+                    (*_height_bound)[0][i] = (*_height_bound)[1][i];
+                    (*_bottom_bound)[0][i] = (*_bottom_bound)[1][i];
+                    (*_x_veloc_bound)[0][i] = (*_x_veloc_bound)[1][i];
+                    (*_y_veloc_bound)[0][i] = (*_y_veloc_bound)[1][i];
+                    ///Correct last row:
+                    (*_height_bound)[(_grid_height)+1][i] = (*_height_bound)[(_grid_height) - 1][i];
+                    (*_bottom_bound)[(_grid_height)+1][i] = (*_bottom_bound)[(_grid_height) - 1][i];
+                    (*_x_veloc_bound)[(_grid_height)+1][i] = (*_x_veloc_bound)[(_grid_height) - 1][i];
+                    (*_y_veloc_bound)[(_grid_height)+1][i] = (*_y_veloc_bound)[(_grid_height) - 1][i];
+
+                }
+
+                for(unsigned long i = 1; i < (scenario->grid_height)+1; i++)
+                {
+                    ///Correct first column:
+                    (*scenario->height_bound)[i][0] = (*scenario->height_bound)[i][1];
+                    (*scenario->bottom_bound)[i][0] = (*scenario->bottom_bound)[i][1];
+                    (*scenario->x_veloc_bound)[i][0] = (*scenario->x_veloc_bound)[i][1];
+                    (*scenario->y_veloc_bound)[i][0] = (*scenario->y_veloc_bound)[i][1];
+                    ///Correct last column:
+                    (*scenario->height_bound)[i][(scenario->grid_height) + 1] = (*scenario->height_bound)[i][(scenario->grid_height)];
+                    (*scenario->bottom_bound)[i][(scenario->grid_height) + 1] = (*scenario->bottom_bound)[i][(scenario->grid_height)];
+                    (*scenario->x_veloc_bound)[i][(scenario->grid_height) + 1] = (*scenario->x_veloc_bound)[i][(scenario->grid_height)];
+                    (*scenario->y_veloc_bound)[i][(scenario->grid_height) + 1] = (*scenario->y_veloc_bound)[i][(scenario->grid_height)];
+                }
             }
 
     };

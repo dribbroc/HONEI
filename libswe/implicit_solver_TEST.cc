@@ -24,7 +24,7 @@
 #include <libswe/scenario.hh>
 
 #include <sys/time.h>
-
+#include <iostream>
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -49,4 +49,48 @@ class ImplicitSolverCreationTest :
             TEST_CHECK(true);
         }
 };
+template <typename Tag_, typename DataType_>
+class ImplicitSolverPreprocessingTest :
+    public BaseTest
+{
+    public:
+        ImplicitSolverPreprocessingTest(const std::string & type) :
+            BaseTest("implicit_solver_preprocessing_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            Scenario<DataType_, IMPLICIT, REFLECT> scenario(4);
+            DenseMatrix<DataType_> h_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> h(4 , 4, DataType_(1));
+            DenseMatrix<DataType_> xv_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> xv(4 , 4, DataType_(1));
+            DenseMatrix<DataType_> yv_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> yv(4 , 4, DataType_(1));
+            DenseMatrix<DataType_> b_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> b(4 , 4, DataType_(1));
+
+            scenario.height = &h;
+            scenario.x_veloc = &xv;
+            scenario.y_veloc = &yv;
+            scenario.bottom = &b;
+            scenario.height_bound = &h_b;
+            scenario.x_veloc_bound = &xv_b;
+            scenario.y_veloc_bound = &yv_b;
+            scenario.bottom_bound = &b_b;
+
+            ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
+            solver.do_preprocessing();
+            std::cout<<*(scenario.height_bound)<<endl;
+            std::cout<<*(scenario.x_veloc_bound)<<endl;
+            std::cout<<*(scenario.y_veloc_bound)<<endl;
+            std::cout<<*(scenario.bottom_bound)<<endl;
+            TEST_CHECK(true);
+
+        }
+};
+
 ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
+ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
