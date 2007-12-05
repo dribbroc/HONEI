@@ -675,6 +675,8 @@ class DenseMatrixProductTest :
 };
 DenseMatrixProductTest<tags::CPU, float> dense_matrix_product_test_float("float");
 DenseMatrixProductTest<tags::CPU, double> dense_matrix_product_test_double("double");
+DenseMatrixProductTest<tags::CPU::MultiCore, float> mc_dense_matrix_product_test_float("MC float");
+DenseMatrixProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_product_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixProductQuickTest :
@@ -704,8 +706,10 @@ class DenseMatrixProductQuickTest :
 
         }
 };
-DenseMatrixProductQuickTest<tags::CPU, float> dense_matrix_product_quick_test_float("float");
+DenseMatrixProductQuickTest<tags::CPU, float>  dense_matrix_product_quick_test_float("float");
 DenseMatrixProductQuickTest<tags::CPU, double> dense_matrix_product_quick_test_double("double");
+DenseMatrixProductQuickTest<tags::CPU::MultiCore, float>  mc_dense_matrix_product_quick_test_float("MC float");
+DenseMatrixProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_product_quick_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixProductCellTest :

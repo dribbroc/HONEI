@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-05 Andre Matuschek <andre@matuschek.org>
+        * libla/product.hh: Added MultiCore version of DenseMatrix product.
+        * libla/product_TEST.cc: Added tests for MC DMxDM product.
+
 2007-12-04 Markus Geveler <apryde@gmx.de>
 
 	* libmath/poisson_jac_double_dense_TEST.cc,

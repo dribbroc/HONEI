@@ -38,6 +38,7 @@
 
 #include <tr1/functional>
 #include <cmath>
+#include <iostream>
 
 namespace honei
 {
@@ -1092,6 +1093,43 @@ namespace honei
             }
             return result;
         }
+
+        // hier!
+        template <typename DT1_, typename DT2_>
+         static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+        {
+            CONTEXT("When multiplying DenseMatrix with DenseMatrix (MultiCore):");
+
+            if (a.columns() != b.rows())
+                throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask   * pt[a.rows() * b.columns()];
+
+
+            DenseMatrix<DT1_> result(a.rows(), b.columns());
+
+            for (unsigned int s(0) ; s < a.rows() ; ++s)
+            {
+                const DenseVectorRange<DT1_> a_row(a[s]);
+                for (unsigned int t(0); t < b.columns() ; ++t)
+                {
+                    const DenseVectorSlice<DT2_> b_column(b.column(t));
+                    //result[s][t] = DotProduct<>::value(b_column, a_row);
+                    ResultTwoArgWrapper< DotProduct<>, DT1_, const DenseVectorRange<DT1_>,
+                        const DenseVectorSlice<DT2_> > mywrapper(result[s][t], a_row, b_column);
+                    pt[s * b.columns() + t] = p->dispatch(mywrapper);
+                }
+
+            }
+
+            for (unsigned long i = 0; (i < a.rows() * b.columns());  ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
 
         // helpfunction for BandedMAtrix*DenseVector MultiCore
         template <typename DT1_, typename DT2_>
