@@ -97,11 +97,12 @@ namespace honei
         }
 
 #elif defined(__SSE__)
+        /// \todo Unroll loops.
 
         template <> void
         PODTraits<float>::copy(const float * source, float * dest, std::size_t count)
         {
-            __m128 m1;
+            __m128 m1, m2, m3, m4, m5, m6, m7, m8;
             unsigned long dest_address = (unsigned long)dest;
             unsigned long dest_offset = dest_address % 16;
 
@@ -109,17 +110,31 @@ namespace honei
             x_offset = (4 - x_offset) % 4;
 
             unsigned long quad_start = x_offset;
-            unsigned long quad_end(count - ((count - quad_start) % 4));
-            if (quad_end < 4 || quad_end > count)
+            unsigned long quad_end(count - ((count - quad_start) % 32));
+            if (count < 40)
             {
-                quad_end = count;
-                quad_start = count;
+                quad_end = 0;
+                quad_start = 0;
             }
 
-            for (unsigned long index = quad_start ; index < quad_end ; index += 4)
+            for (unsigned long index = quad_start ; index < quad_end ; index += 32)
             {
                 m1 = _mm_loadu_ps(source + index);
+                m2 = _mm_loadu_ps(source + index + 4);
+                m3 = _mm_loadu_ps(source + index + 8);
+                m4 = _mm_loadu_ps(source + index + 12);
+                m5 = _mm_loadu_ps(source + index + 16);
+                m6 = _mm_loadu_ps(source + index + 20);
+                m7 = _mm_loadu_ps(source + index + 24);
+                m8 = _mm_loadu_ps(source + index + 28);
                 _mm_stream_ps(dest + index, m1);
+                _mm_stream_ps(dest + index + 4, m2);
+                _mm_stream_ps(dest + index + 8, m3);
+                _mm_stream_ps(dest + index + 12, m4);
+                _mm_stream_ps(dest + index + 16, m5);
+                _mm_stream_ps(dest + index + 20, m6);
+                _mm_stream_ps(dest + index + 24, m7);
+                _mm_stream_ps(dest + index + 28, m8);
             }
 
             for (unsigned long index (0) ; index < quad_start ; index++)
@@ -135,19 +150,38 @@ namespace honei
         template <> void
         PODTraits<double>::copy(const double * source, double * dest, std::size_t count)
         {
-            __m128d m1;
+            __m128d m1, m2, m3, m4, m5, m6, m7, m8;
             unsigned long dest_address = (unsigned long)dest;
             unsigned long dest_offset = dest_address % 16;
 
             unsigned long x_offset(dest_offset / 8);
 
             unsigned long quad_start = x_offset;
-            unsigned long quad_end(count - ((count - quad_start) % 2));
+            unsigned long quad_end(count - ((count - quad_start) % 16));
+            if (count < 24)
+            {
+                quad_end = 0;
+                quad_start = 0;
+            }
 
-            for (unsigned long index = quad_start ; index < quad_end ; index += 2)
+            for (unsigned long index = quad_start ; index < quad_end ; index += 16)
             {
                 m1 = _mm_loadu_pd(source + index);
+                m2 = _mm_loadu_pd(source + index + 2);
+                m3 = _mm_loadu_pd(source + index + 4);
+                m4 = _mm_loadu_pd(source + index + 6);
+                m5 = _mm_loadu_pd(source + index + 8);
+                m6 = _mm_loadu_pd(source + index + 10);
+                m7 = _mm_loadu_pd(source + index + 12);
+                m8 = _mm_loadu_pd(source + index + 14);
                 _mm_stream_pd(dest + index, m1);
+                _mm_stream_pd(dest + index + 2, m2);
+                _mm_stream_pd(dest + index + 4, m3);
+                _mm_stream_pd(dest + index + 6, m4);
+                _mm_stream_pd(dest + index + 8, m5);
+                _mm_stream_pd(dest + index + 10, m6);
+                _mm_stream_pd(dest + index + 12, m7);
+                _mm_stream_pd(dest + index + 14, m8);
             }
 
             for (unsigned long index (0) ; index < quad_start ; index++)
@@ -175,16 +209,23 @@ namespace honei
             x_offset = (4 - x_offset) % 4;
 
             unsigned long quad_start = x_offset;
-            unsigned long quad_end(count - ((count - quad_start) % 4));
-            if (quad_end < 4 || quad_end > count)
+            unsigned long quad_end(count - ((count - quad_start) % 32));
+            if (count < 40)
             {
-                quad_end = count;
-                quad_start = count;
+                quad_end = 0;
+                quad_start = 0;
             }
 
-            for (unsigned long index = quad_start ; index < quad_end ; index += 4)
+            for (unsigned long index = quad_start ; index < quad_end ; index += 32)
             {
                 _mm_stream_ps(dest + index, m1);
+                _mm_stream_ps(dest + index + 4, m1);
+                _mm_stream_ps(dest + index + 8, m1);
+                _mm_stream_ps(dest + index + 12, m1);
+                _mm_stream_ps(dest + index + 16, m1);
+                _mm_stream_ps(dest + index + 20, m1);
+                _mm_stream_ps(dest + index + 24, m1);
+                _mm_stream_ps(dest + index + 28, m1);
             }
 
             for (unsigned long index (0) ; index < quad_start ; index++)
@@ -211,11 +252,23 @@ namespace honei
             unsigned long x_offset(dest_offset / 8);
 
             unsigned long quad_start = x_offset;
-            unsigned long quad_end(count - ((count - quad_start) % 2));
+            unsigned long quad_end(count - ((count - quad_start) % 16));
+            if (count < 24)
+            {
+                quad_end = 0;
+                quad_start = 0;
+            }
 
-            for (unsigned long index = quad_start ; index < quad_end ; index += 2)
+            for (unsigned long index = quad_start ; index < quad_end ; index += 16)
             {
                 _mm_stream_pd(dest + index, m1);
+                _mm_stream_pd(dest + index + 2, m1);
+                _mm_stream_pd(dest + index + 4, m1);
+                _mm_stream_pd(dest + index + 6, m1);
+                _mm_stream_pd(dest + index + 8, m1);
+                _mm_stream_pd(dest + index + 10, m1);
+                _mm_stream_pd(dest + index + 12, m1);
+                _mm_stream_pd(dest + index + 14, m1);
             }
 
             for (unsigned long index (0) ; index < quad_start ; index++)
