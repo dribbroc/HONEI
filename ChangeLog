@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-06 Markus Geveler <apryde@gmx.de>
 
+	* libswe/implicit_solver_TEST.cc: Added missing initial values to assembly
+	test.
+
+2007-12-06 Markus Geveler <apryde@gmx.de>
+
 	* libmath/interpolation.hh, libmath/interpolation_TEST.cc: Added
 	implementation of bilinear interpolation in 2D and its test.
 

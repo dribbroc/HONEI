@@ -125,6 +125,14 @@ class ImplicitSolverMatrixAssTest :
             scenario.bottom_bound = &b_b;
             scenario.system_matrix = &A;
 
+            DataType_ delta_t(1);
+            DataType_ delta_x(2);
+            DataType_ delta_y(2);
+
+            scenario.delta_t = delta_t;
+            scenario.delta_x = delta_x;
+            scenario.delta_y = delta_y;
+
             ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
             solver.do_preprocessing();
             solver.solve(1);
