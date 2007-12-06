@@ -354,26 +354,12 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
             DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
-            typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
-
-            ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
-            for (unsigned int l_row(0) ; l_row < a.rows() ; ++l_row)
+            for( typename Matrix<DT2_>::ConstElementIterator i(b.begin_non_zero_elements()), i_end(b.end_non_zero_elements()) ;
+                    i < i_end ; ++i )
             {
-                const DenseVectorRange<DT1_> a_row(a[l_row]);
-                for (unsigned int r_column(0); r_column < b.columns() ; ++r_column)
-                {
-                    typename Vector<DT1_>::ConstElementIterator l(a_row.begin_elements());
-                    for (unsigned int r_row(0); r_row < b.rows() ; ++r_row)
-                    {
-                        const SparseVector<DT2_> b_row(b[r_row]);
-                        DT2_ b_value(b_row[r_column]);
-                        //result[l_row][r_column] += b_value * *l;
-                        *i += b_value * *l;
-                        ++l;
-                    }
-                    ++i;
-                }
+                ScaledSum<>::value(result.column(i.column()), a.column(i.row()), *i);
             }
+
             return result;
         }
 
@@ -411,27 +397,21 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> value(const SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
-            CONTEXT("when multiplying SparseMatrix with DenseMatrix:");
+            CONTEXT("When multiplying SparseMatrix with DenseMatrix:");
 
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT1_> result(a.rows(), b.columns());
-            typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
-
-            for (unsigned int s(0) ; s < a.rows() ; ++s)
+            DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
+            for( typename Matrix<DT1_>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
+                    i < i_end ; ++i )
             {
-                const SparseVector<DT1_> a_row(a[s]);
-                for (unsigned int t(0); t < b.columns() ; ++t)
-                {
-                    const DenseVectorSlice<DT2_> b_column(b.column(t));
-                    *i = DotProduct<>::value(a_row, b_column);
-                    ++i;
-                }
-
+                ScaledSum<>::value(result[i.row()], b[i.column()], *i);
             }
+
             return result;
         }
+
 
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> value(const BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)

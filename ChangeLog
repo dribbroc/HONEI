@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-06 Volker Jung <volker.jung@honei.org>
+
+	* libla/product.hh : Reworked base implementations of DenseMatrix-SparseMatrix and
+	SparseMatrix-DenseMatrix products.
+
 2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/difference.hh, libla/product.hh, libla/reduction-sse.cc, libla/sum.hh:
