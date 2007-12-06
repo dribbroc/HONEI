@@ -205,7 +205,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 
         for (unsigned long index = quad_end ; index < end ; index++) 
         {
-            r_e[index] += band_e[index] * b_e[index - op_offset];
+            r_e[index] += band_e[index] * b_e[index + op_offset];
         }
     }
 
