@@ -20,6 +20,7 @@
 #ifndef LIBLA_GUARD_ABSOLUTE_HH
 #define LIBLA_GUARD_ABSOLUTE_HH 1
 
+#include <libla/dense_vector.hh>
 #include <libla/vector.hh>
 #include <libla/sparse_vector.hh>
 #include <libutil/tags.hh>
@@ -71,6 +72,30 @@ namespace honei
         static SparseVector<DT_> & value(SparseVector<DT_> & x);
 
         /// \}
+
+        template <typename DT_>
+        static inline DenseVector<DT_> & value(DenseVector<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            Absolute<>::value(temp);
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorSlice<DT_> & value(DenseVectorSlice<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            Absolute<>::value(temp);
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorRange<DT_> & value(DenseVectorRange<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            Absolute<>::value(temp);
+            return x;
+        }
     };
 
     template <>

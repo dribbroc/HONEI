@@ -21,6 +21,8 @@
 #ifndef LIBLA_GUARD_ELEMENT_INVERSE_HH
 #define LIBLA_GUARD_ELEMENT_INVERSE_HH 1
 
+#include <libla/dense_vector_range.hh>
+#include <libla/dense_vector_slice.hh>
 #include <libla/banded_matrix.hh>
 #include <libla/dense_matrix.hh>
 #include <libla/dense_vector.hh>
@@ -170,6 +172,30 @@ namespace honei
                 }
             }
 
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVector<DT_> & value(DenseVector<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            ElementInverse<>::value(temp);
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorRange<DT_> & value(DenseVectorRange<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            ElementInverse<>::value(temp);
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorSlice<DT_> & value(DenseVectorSlice<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            ElementInverse<>::value(temp);
             return x;
         }
 

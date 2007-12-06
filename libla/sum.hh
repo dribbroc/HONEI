@@ -323,6 +323,30 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Sum<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Sum<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Sum<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
         static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
             CONTEXT("When adding SparseVector to SparseVector:");
@@ -370,6 +394,29 @@ namespace honei
             return a;
         }
 
+        template <typename DT1_, typename DT2_>
+        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Sum<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Sum<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Sum<>::value(temp, b);
+            return a;
+        }
         /// \}
 
         /**
@@ -398,6 +445,29 @@ namespace honei
             return x;
         }
 
+        template <typename DT_>
+        static inline DenseVector<DT_> & value(const DT_ a, DenseVector<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            Sum<>::value(a, temp);
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorRange<DT_> & value(const DT_ a, DenseVectorRange<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            Sum<>::value(a, temp);
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorSlice<DT_> & value(const DT_ a, DenseVectorSlice<DT_> & x)
+        {
+            DenseVectorBase<DT_> & temp = x;
+            Sum<>::value(a, temp);
+            return x;
+        }
         /// \}
 
         #ifdef BENCHM

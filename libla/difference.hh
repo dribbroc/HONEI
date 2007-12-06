@@ -293,6 +293,30 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
         static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
             CONTEXT("When subtracting SparseVector from SparseVector:");
@@ -341,7 +365,31 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorBase<DT1_> & value(const SparseVector<DT1_> & a, DenseVectorBase<DT2_> & b)
+        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVectorBase<DT2_> & value(const SparseVector<DT1_> & a, DenseVectorBase<DT2_> & b)
         {
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -356,6 +404,29 @@ namespace honei
             return b;
         }
 
+        template <typename DT1_, typename DT2_>
+        static inline DenseVector<DT2_> & value(const SparseVector<DT1_> & a, DenseVector<DT2_> & b)
+        {
+            DenseVectorBase<DT2_> & temp = b;
+            Difference<>::value(a, temp);
+            return b;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT2_> & value(const SparseVector<DT1_> & a, DenseVectorRange<DT2_> & b)
+        {
+            DenseVectorBase<DT2_> & temp = b;
+            Difference<>::value(a, temp);
+            return b;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT2_> & value(const SparseVector<DT1_> & a, DenseVectorSlice<DT2_> & b)
+        {
+            DenseVectorBase<DT2_> & temp = b;
+            Difference<>::value(a, temp);
+            return b;
+        }
         /// \}
     };
 

@@ -121,6 +121,30 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static inline DenseVector<DT2_> & value(const DT1_ a, DenseVector<DT2_> & x)
+        {
+            DenseVectorBase<DT2_> & temp = x;
+            Scale<>::value(a, temp);
+            return x;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT2_> & value(const DT1_ a, DenseVectorRange<DT2_> & x)
+        {
+            DenseVectorBase<DT2_> & temp = x;
+            Scale<>::value(a, temp);
+            return x;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT2_> & value(const DT1_ a, DenseVectorSlice<DT2_> & x)
+        {
+            DenseVectorBase<DT2_> & temp = x;
+            Scale<>::value(a, temp);
+            return x;
+        }
+
+        template <typename DT1_, typename DT2_>
         static SparseVector<DT2_> & value(const DT1_ a, SparseVector<DT2_> & x)
         {
             CONTEXT("When scaling SparseVector");

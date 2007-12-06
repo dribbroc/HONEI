@@ -136,6 +136,30 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            ElementProduct<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            ElementProduct<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            ElementProduct<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
             CONTEXT("When calculating the product of DenseMatrix elements");
