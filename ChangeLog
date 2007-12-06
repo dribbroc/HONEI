@@ -6,6 +6,11 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 
+2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/product-sse.cc, libla/scaled_sum-sse.cc:
+	Optimized bmdv sse versions a little bit.
+
 2007-12-06 Till Barz <till.barz@udo.de>
 
 	* libla/norm.hh, libla/norm-cell.cc, libla/files.m4, cell/opcodes,

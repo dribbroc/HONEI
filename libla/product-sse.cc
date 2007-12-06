@@ -181,27 +181,31 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
         quad_end = end - (end % 4);
         if (end < 12) quad_end = 0;
 
+        double * band_e = vi->elements();
+        double * b_e = b.elements();
+        double * r_e = result.elements();
+
         for (unsigned long index = 0 ; index < quad_end ; index += 4)
         {
-            m1 = _mm_load_pd(vi->elements() + index);
-            m4 = _mm_load_pd(vi->elements() + index + 2);
-            m2 = _mm_loadu_pd(b.elements() + index + op_offset);
-            m5 = _mm_loadu_pd(b.elements() + index + op_offset + 2);
-            m3 = _mm_load_pd(result.elements() + index);
-            m6 = _mm_load_pd(result.elements() + index + 2);
+            m2 = _mm_loadu_pd(b_e + index + op_offset);
+            m5 = _mm_loadu_pd(b_e + index + op_offset + 2);
+            m1 = _mm_load_pd(band_e + index);
+            m4 = _mm_load_pd(band_e + index + 2);
+            m3 = _mm_load_pd(r_e + index);
+            m6 = _mm_load_pd(r_e + index + 2);
 
             m1 = _mm_mul_pd(m1, m2);
-            m1 = _mm_add_pd(m1, m3);
             m4 = _mm_mul_pd(m4, m5);
+            m1 = _mm_add_pd(m1, m3);
             m4 = _mm_add_pd(m4, m6);
 
-            _mm_store_pd(result.elements() + index, m1);
-            _mm_store_pd(result.elements() + index + 2, m4);
+            _mm_store_pd(r_e + index, m1);
+            _mm_store_pd(r_e + index + 2, m4);
         }
 
         for (unsigned long index = quad_end ; index < end ; index++) 
         {
-            result.elements()[index] += vi->elements()[index] * b.elements()[index + op_offset];
+            r_e[index] += band_e[index] * b_e[index - op_offset];
         }
     }
 
@@ -221,32 +225,35 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
             quad_end = start;
             quad_start = start;
         }
-
-        for (unsigned long index = quad_start ; index < quad_end ; index += 4)
-        {
-            m1 = _mm_load_pd(vi->elements() + index);
-            m4 = _mm_load_pd(vi->elements() + index + 2);
-            m2 = _mm_loadu_pd(b.elements() + index - op_offset);
-            m5 = _mm_loadu_pd(b.elements() + index - op_offset + 2);
-            m3 = _mm_load_pd(result.elements() + index);
-            m6 = _mm_load_pd(result.elements() + index + 2);
-
-            m1 = _mm_mul_pd(m1, m2);
-            m1 = _mm_add_pd(m1, m3);
-            m4 = _mm_mul_pd(m4, m5);
-            m4 = _mm_add_pd(m4, m6);
-
-            _mm_store_pd(result.elements() + index, m1);
-            _mm_store_pd(result.elements() + index + 2, m4);
-        }
+        double * band_e = vi->elements();
+        double * b_e = b.elements();
+        double * r_e = result.elements();
 
         for (unsigned long index = start ; index < quad_start ; index++)
         {
-            result.elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
+            r_e[index] += band_e[index] * b_e[index - op_offset];
         }
+        for (unsigned long index = quad_start ; index < quad_end ; index += 4)
+        {
+            m2 = _mm_loadu_pd(b_e + index - op_offset);
+            m5 = _mm_loadu_pd(b_e + index - op_offset + 2);
+            m1 = _mm_load_pd(band_e + index);
+            m4 = _mm_load_pd(band_e + index + 2);
+            m3 = _mm_load_pd(r_e + index);
+            m6 = _mm_load_pd(r_e + index + 2);
+
+            m1 = _mm_mul_pd(m1, m2);
+            m4 = _mm_mul_pd(m4, m5);
+            m1 = _mm_add_pd(m1, m3);
+            m4 = _mm_add_pd(m4, m6);
+
+            _mm_store_pd(r_e + index, m1);
+            _mm_store_pd(r_e + index + 2, m4);
+        }
+
         for (unsigned long index = quad_end ; index < end ; index++)
         {
-            result.elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
+            r_e[index] += band_e[index] * b_e[index - op_offset];
         }
     }
     return result;

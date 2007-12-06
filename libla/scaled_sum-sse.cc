@@ -196,7 +196,7 @@ namespace honei
                 _mm_sfence();
             }
 
-            inline void scaled_sum(float * x, const float * y, float * z, unsigned long size)
+            inline void scaled_sum(float * x, const float * y, const float * z, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6;
 
@@ -258,8 +258,8 @@ namespace honei
                         m1 = _mm_add_ps(m1, m2);
                         m4 = _mm_add_ps(m4, m5);
 
-                        _mm_stream_ps(x + index, m1);
-                        _mm_stream_ps(x + index + 4, m4);
+                        _mm_store_ps(x + index, m1);
+                        _mm_store_ps(x + index + 4, m4);
                     }
                 }
                 for (unsigned long index(0) ; index < quad_start ; index++)
@@ -273,7 +273,7 @@ namespace honei
                 _mm_sfence();
             }
 
-            inline void scaled_sum(double * x, const double * y, double * z, unsigned long size)
+            inline void scaled_sum(double * x, const double * y, const double * z, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6;
 
@@ -312,8 +312,8 @@ namespace honei
                         m1 = _mm_add_pd(m1, m2);
                         m4 = _mm_add_pd(m4, m5);
 
-                        _mm_stream_pd(x + index, m1);
-                        _mm_stream_pd(x + index + 2, m4);
+                        _mm_store_pd(x + index, m1);
+                        _mm_store_pd(x + index + 2, m4);
                     }
                 }
                 else
@@ -334,8 +334,8 @@ namespace honei
                         m1 = _mm_add_pd(m1, m2);
                         m4 = _mm_add_pd(m4, m5);
 
-                        _mm_stream_pd(x + index, m1);
-                        _mm_stream_pd(x + index + 2, m4);
+                        _mm_store_pd(x + index, m1);
+                        _mm_store_pd(x + index + 2, m4);
                     }
                 }
                 for (unsigned long index(0) ; index < quad_start ; index++)
