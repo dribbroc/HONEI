@@ -40,6 +40,9 @@ unsigned dense_float_reduction_max(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
+    unsigned offset((ea_a & 0xF) / sizeof(float));
+    ea_a &= ~0xF;
+
     debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
@@ -60,10 +63,12 @@ unsigned dense_float_reduction_max(const Instruction & inst)
 
         for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
+            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
             tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
-
+        offset = ea_a & 0xF;
+        ea_a &= ~0xF;
         --counter;
 
         unsigned temp(next);
@@ -78,6 +83,7 @@ unsigned dense_float_reduction_max(const Instruction & inst)
 
     for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
+        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
         bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
         tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
     }

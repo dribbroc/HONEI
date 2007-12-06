@@ -113,7 +113,7 @@ class DenseMatrixReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size);
                 DenseVector<DT_> dv1(size, DT_(0));

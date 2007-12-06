@@ -94,8 +94,6 @@ namespace honei
 
         for (unsigned i(0) ; i < a.rows() ; i++)
         {
-            result[i] = Reduction<rt_sum, tags::Cell>::value(a[i].copy());
-            /*
             Operand oa = { result.elements() + i };
             Operand ob = { a.elements() + (i * a.columns()) };
             Operand oc, od;
@@ -142,7 +140,7 @@ namespace honei
                 instruction.wait();
 
             result[i] += ppu_result;
-            */
+
         }
         return result;
     }
@@ -218,8 +216,6 @@ namespace honei
 
         for (unsigned i(0) ; i < a.rows() ; i++)
         {
-            result[i] = Reduction<rt_min, tags::Cell>::value(a[i].copy());
-            /*
             Operand oa = { result.elements() + i };
             Operand ob = { a.elements() + (i * a.columns()) };
             Operand oc, od, oe;
@@ -271,7 +267,7 @@ namespace honei
             {
                result[i] = ppu_result;
             }
-            */
+
        }
         return result;
     }
@@ -347,9 +343,6 @@ namespace honei
 
         for (unsigned i(0) ; i < a.rows() ; i++)
         {
-            result[i] = Reduction<rt_max, tags::Cell>::value(a[i].copy());
-
-            /*
             Operand oa = { result.elements() + i };
             Operand ob = { a.elements() + (i * a.columns()) };
             Operand oc, od, oe;
@@ -401,7 +394,7 @@ namespace honei
             {
                result[i] = ppu_result;
             }
-            */
+
         }
         return result;
     }

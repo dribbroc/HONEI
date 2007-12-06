@@ -41,6 +41,9 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
+    unsigned offset((ea_a & 0xF) / sizeof(float));
+    ea_a &= ~0xF;
+
     debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
@@ -60,8 +63,11 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
 
         for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
+            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
         }
+        offset = ea_a & 0xF;
+        ea_a &= ~0xF;
 
         --counter;
 
@@ -77,6 +83,7 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
 
     for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
+        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
         acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
     }
 
