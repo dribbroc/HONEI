@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/hdf5.cc, libutil/hdf5.hh, libutil/hdf5_TEST.cc: Added group
+	wrapper class. Rewrote data space wrapper classes. Added support for
+	creating and opening to all wrappers than needed it, using named
+	constructos. Adjusted test cases.
+
 2007-12-06 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/sparse_matrix.hh: Fixed bug in typedef.

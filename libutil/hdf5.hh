@@ -51,6 +51,9 @@
 
 namespace honei
 {
+    // Forward declaration
+    class HDF5Group;
+
     /**
      * HDF5Error is thrown by libhdf5 wrapper classes whenever an error occurs in interfacing libhdf5.
      *
@@ -102,7 +105,8 @@ namespace honei
 
     template <> struct HDF5Type<float>
     {
-        static inline hid_t type_id() { return H5T_NATIVE_FLOAT; }
+        static inline hid_t storage_type_id() { return H5T_IEEE_F32BE; }
+        static inline hid_t memory_type_id() { return H5T_NATIVE_FLOAT; }
     };
 
     /// \}
@@ -138,17 +142,99 @@ namespace honei
             /// Our implementation.
             std::tr1::shared_ptr<Implementation> _imp;
 
-        public:
             /**
              * Constructor.
+             *
+             * For internal use only.
+             */
+            HDF5File(Implementation * imp);
+
+        public:
+            friend class HDF5Group;
+
+            /**
+             * Constructor.
+             *
+             * Open an existing HDF5 file of given name.
+             *
+             * \param name The file's name.
+             */
+            HDF5File(const std::string & name);
+
+            /**
+             * Named Constructor.
+             *
+             * Create a new HDF5 file of given name.
              *
              * \param name The new file's name.
              * \param mode The new file's creation mode.
              */
-            HDF5File(const std::string & name, int mode = 0);
+            static HDF5File create(const std::string & name, int mode = 0);
+
+            /**
+             * Return a named group object.
+             *
+             * \param name Name of the group whose wrapper shall be returned.
+             */
+            HDF5Group group(const std::string & name);
 
             /// Return our HDF5 object id.
             hid_t id() const;
+    };
+
+    /**
+     * HDF5Group is the wrapper class for libhdf5's (HFG-prefixed) group access functions.
+     *
+     * Creates or opens a new HDF5 group upon construction and closes it once no HDF5
+     * wrapper references the group anymore.
+     *
+     * \ingroup grphdf5
+     */
+    class HDF5Group
+    {
+        private:
+            /// Our implementation class.
+            struct Implementation;
+
+            /// Our implementation.
+            std::tr1::shared_ptr<Implementation> _imp;
+
+            /**
+             * Constructor.
+             *
+             * Opens a given group.
+             *
+             * \param file The new group's file.
+             * \param name The new group's name.
+             */
+            HDF5Group(const HDF5File & file, const std::string & name);
+
+            /**
+             * Constructor.
+             *
+             * Creates a HDF5Group object from an existing Implementation object.
+             *
+             * \param imp The group's implementation object.
+             */
+            HDF5Group(Implementation * _imp);
+
+        public:
+            friend class HDF5File;
+
+            /// \name Basic operations
+            /// \{
+
+            /**
+             * Named constructor.
+             *
+             * Creates a new HDF5 group of given name.
+             *
+             * \param file The HDF5 file in which the group shall be created.
+             * \param name The name of the group that shall be created.
+             */
+            static HDF5Group create(const HDF5File & file, const std::string & name);
+
+            /// \}
     };
 
     /**
@@ -162,18 +248,35 @@ namespace honei
     class HDF5DataSpace
     {
         protected:
-            /// Constructor.
-            HDF5DataSpace();
+            struct Implementation;
+
+            /// Our implementation
+            std::tr1::shared_ptr<Implementation> _imp;
+
+            /**
+             * Constructor.
+             *
+             * For use by direct descendants of HDF5DataSpace only.
+             */
+            HDF5DataSpace(Implementation * imp);
+
+            /**
+             * Constructor.
+             *
+             * Create a HDF5 data space wrapper object from an HDF5 data space id.
+             *
+             * \param id The data space's object id.
+             */
+            HDF5DataSpace(hid_t id);
 
         public:
+            friend class HDF5DataSetBase;
+
             /// Destructor.
             virtual ~HDF5DataSpace();
 
-            /// Return a copy of this data space.
-            virtual HDF5DataSpace * copy() const;
-
             /// Return our HDF5 object id.
-            virtual hid_t id() const;
+            hid_t id() const;
     };
 
     /**
@@ -196,11 +299,11 @@ namespace honei
         public HDF5DataSpace
     {
         private:
-            /// Our implementation class.
-            struct Implementation;
+            /// Our simple implementation class.
+            struct SimpleImplementation;
 
-            /// Our implementaion.
-            std::tr1::shared_ptr<Implementation> _imp;
+            /// Our simple implementation.
+            SimpleImplementation * _simple_imp;
 
         public:
             /**
@@ -223,12 +326,6 @@ namespace honei
              * \param dimension Size of a dimension that is to be added to the data space.
              */
             HDF5SimpleDataSpace & operator[] (hsize_t dimension);
-
-            /// Return a copy of this data space.
-            virtual HDF5SimpleDataSpace * copy() const;
-
-            /// Return our HDF5 object id.
-            virtual hid_t id() const;
     };
 
     /**
@@ -240,26 +337,37 @@ namespace honei
      */
     class HDF5DataSetBase
     {
-        private:
+        protected:
             /// Our implementation class.
             struct Implementation;
 
             /// Our implementation.
             std::tr1::shared_ptr<Implementation> _imp;
 
-        public:
             /**
              * Constructor.
              *
-             * Create a new HDF5 dataset in a given HDF5 file.
+             * Create a new HDF5 data set in a given HDF5 file.
              *
-             * \param file File in which the set shall be created.
-             * \param name Name of the data set.
+             * \param file The file in which the set shall be created.
+             * \param name The name of the data set.
              * \param data_space The data space which this set shall use.
              * \param type_id The type id of the set's elements.
              */
             HDF5DataSetBase(const HDF5File & file, const std::string & name, const HDF5DataSpace & data_space,
                     hid_t type_id);
+
+            /**
+             * Constructor.
+             *
+             * Open an existing HDF5 data set in a given HDF5 file.
+             *
+             * \param file The File in which the data set is located.
+             * \param name The name of the data set.
+             */
+            HDF5DataSetBase(const HDF5File & file, const std::string & name);
+
+        public:
 
             /// Destructor.
             virtual ~HDF5DataSetBase();
@@ -271,7 +379,7 @@ namespace honei
     /**
      * HDF5DataSet is the wrapper class template for libhdf5's (H5D-prefixed) data set functions.
      *
-     * Creates a new HDF5 data set of given data type and data spacee and closes it once no HDF5
+     * Creates a new HDF5 data set of given data type and data space and closes it once no HDF5
      * wrapper references it anymore.
      *
      * \ingroup grphdf5
@@ -279,18 +387,76 @@ namespace honei
     template <typename DT_> class HDF5DataSet :
         public HDF5DataSetBase
     {
-        public:
+        private:
+            /**
+             * Constructor.
+             *
+             * Create a new data set of given name in a given HDF5 file.
+             *
+             * \param file The new data set's parent file.
+             * \param name The new data set's name.
+             * \param data_space The new data set's data space.
+             */
             HDF5DataSet(HDF5File & file, const std::string & name, const HDF5DataSpace & data_space) :
-                HDF5DataSetBase(file, name, data_space, HDF5Type<DT_>::type_id())
+                HDF5DataSetBase(file, name, data_space, HDF5Type<DT_>::storage_type_id())
             {
             }
 
-            HDF5DataSet<DT_> & operator<< (DT_ * values)
+        public:
+            /**
+             * Constructor.
+             *
+             * Open an existing data set of given name from a given HDF5 file.
+             *
+             * \param file The data set's parent file.
+             * \param name The data set's name.
+             */
+            HDF5DataSet(HDF5File & file, const std::string & name) :
+                HDF5DataSetBase(file, name)
+            {
+            }
+
+            /**
+             * Named constructor.
+             *
+             * Create a new data set of given name in a given HDF5 file.
+             *
+             * \param file The new data set's parent file.
+             * \param name The new data set's name.
+             * \param data_space The new data set's data space.
+             */
+            static inline HDF5DataSet<DT_> create(HDF5File & file, const std::string & name,
+                    const HDF5DataSpace & data_space)
+            {
+                return HDF5DataSet<DT_>(file, name, data_space);
+            }
+
+            /**
+             * Serialize data to the data set.
+             *
+             * \param values The data that shall be written to the data set.
+             */
+            HDF5DataSet<DT_> & operator<< (const DT_ * values)
             {
                 herr_t result;
 
-                if (0 > (result = H5Dwrite(id(), HDF5Type<DT_>::type_id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, values)))
+                if (0 > (result = H5Dwrite(id(), HDF5Type<DT_>::memory_type_id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, values)))
                     throw HDF5Error("H5Dwrite", result);
+
+                return *this;
+            }
+
+            /**
+             * Deserialize data from the data set.
+             *
+             * \param values The data that shall be read from the data set.
+             */
+            const HDF5DataSet<DT_> & operator>> (DT_ * values) const
+            {
+                herr_t result;
+
+                if (0 > (result = H5Dread(id(), HDF5Type<DT_>::memory_type_id(), H5S_ALL, H5S_ALL, H5P_DEFAULT, values)))
+                    throw HDF5Error("H5Dread", result);
 
                 return *this;
             }
