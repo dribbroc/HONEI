@@ -586,6 +586,93 @@ namespace honei
     template <typename Tag_> struct MCReduction<rt_sum, Tag_>
     {
         template <typename DT_>
+        static DenseVector<DT_> value(const BandedMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing BandedMatrix to DenseVector by sum (MultiCore):");
+            unsigned long parts(PARTS);
+            unsigned long modulo(0);
+            unsigned long div(1);
+            DenseVector<DT_> result(a.size(), DT_(0));
+            if (a.band_at(a.size()-1).exists())
+                result = a.band(0);
+            if (a.size() < parts)
+                parts = a.size();
+            else
+            {
+                div = a.size() / parts;
+                modulo = a.size() % parts;
+            }
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            for (int i(0) ; i < modulo ; ++i)
+            {
+                DenseVectorRange<DT_> range(result.range(div+1, i * (div + 1)));
+                ThreeArgWrapper< Reduction<rt_sum, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i*(div+1));
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (int i(modulo) ; i < parts ; ++i)
+            {
+                DenseVectorRange<DT_> range(result.range(div, modulo + div * i));
+                ThreeArgWrapper< Reduction<rt_sum, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i * div + modulo);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (int i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static void value(DenseVectorRange<DT_> & range, const BandedMatrix<DT_> & a, const unsigned long start)
+        {
+            unsigned long range_size(range.size());
+            unsigned long startindex(a.size() - (start + range_size)), endindex((2 * a.size() - 1) - start);
+            typename DenseVectorRange<DT_>::ElementIterator range_end(range.end_elements());
+            typename BandedMatrix<DT_>::ConstVectorIterator vi(a.band_at(startindex)), end(a.band_at(a.size()-1));
+            // Calculation for lower part
+            for ( ; vi != end ; ++vi)
+            {
+                if (!vi.exists())
+                    continue;
+                DenseVectorRange<DT_> band(vi->range(range_size, start));
+                typename DenseVectorRange<DT_>::ElementIterator r(range.begin_elements());
+                typename DenseVectorRange<DT_>::ElementIterator b(band.begin_elements());
+                for (int i(0) ; (i < (long(startindex - vi.index()) + long(range_size-1))) ; ++i)
+                {
+                    ++r;
+                    ++b;
+                }
+                for ( ; r != range_end ; ++r, ++b)
+                {
+                    *r += *b;
+                }
+            }
+            // Calculation for upper part
+            if (endindex > vi.index() + 1)
+            {
+                ++ vi;
+                end = a.band_at(endindex);
+
+                for ( ; vi != end ; ++vi)
+                {
+                    if (!vi.exists())
+                        continue;
+                    DenseVectorRange<DT_> band(vi->range(range_size, start));
+                    typename DenseVectorRange<DT_>::ElementIterator r(range.begin_elements());
+                    typename DenseVectorRange<DT_>::ElementIterator b(band.begin_elements());        
+                    unsigned long i = range_size;                    
+                    if (i > (endindex - vi.index())) 
+                        i = endindex - vi.index();
+                    for ( ; i > 0 ;--i, ++r, ++b)
+                    {
+                        *r += *b;
+                    }
+                }
+            }
+        }
+
+        template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
         {
             CONTEXT("When reducing DenseMatrix to DenseVector by sum (MultiCore):");
@@ -759,7 +846,6 @@ namespace honei
             return result;
         }
 
-
         template <typename DTP_, typename IT1_, typename IT2_>
         static void value(DTP_ result, IT1_ & x, IT2_ & x_end)
         {
@@ -774,6 +860,95 @@ namespace honei
 
     template <typename Tag_> struct MCReduction<rt_max, Tag_>
     {
+        template <typename DT_>
+        static DenseVector<DT_> value(const BandedMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing BandedMatrix to DenseVector by max (MultiCore):");
+            unsigned long parts(PARTS);
+            unsigned long modulo(0);
+            unsigned long div(1);
+            DenseVector<DT_> result(a.size(), DT_(0));
+            if (a.band_at(a.size()-1).exists())
+                result = a.band(0);                
+            if (a.size() < parts)
+                parts = a.size();
+            else
+            {
+                div = a.size() / parts;
+                modulo = a.size() % parts;
+            }
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            for (int i(0) ; i < modulo ; ++i)
+            {
+                DenseVectorRange<DT_> range(result.range(div+1, i * (div + 1)));
+                ThreeArgWrapper< Reduction<rt_max, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i*(div+1));
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (int i(modulo) ; i < parts ; ++i)
+            {
+                DenseVectorRange<DT_> range(result.range(div, modulo + div * i));
+                ThreeArgWrapper< Reduction<rt_max, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i * div + modulo);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (int i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static void value(DenseVectorRange<DT_> & range, const BandedMatrix<DT_> & a, const unsigned long start)
+        {
+            unsigned long range_size(range.size());
+            unsigned long startindex(a.size() - (start + range_size)), endindex((2 * a.size() - 1) - start);
+            typename DenseVectorRange<DT_>::ElementIterator range_end(range.end_elements());
+            typename BandedMatrix<DT_>::ConstVectorIterator vi(a.band_at(startindex)), end(a.band_at(a.size()-1));
+            // Calculation for lower part
+            for ( ; vi != end ; ++vi)
+            {
+                if (!vi.exists())
+                    continue;
+                DenseVectorRange<DT_> band(vi->range(range_size, start));
+                typename DenseVectorRange<DT_>::ElementIterator r(range.begin_elements());
+                typename DenseVectorRange<DT_>::ElementIterator b(band.begin_elements());
+                for (int i(0) ; (i < (long(startindex - vi.index()) + long(range_size-1))) ; ++i)
+                {
+                    ++r;
+                    ++b;
+                }
+                for ( ; r != range_end ; ++r, ++b)
+                {
+                    if (*r < *b)
+                        *r = *b;
+                }
+            }
+            // Calculation for upper part
+            if (endindex > vi.index() + 1)
+            {
+                ++ vi;
+                end = a.band_at(endindex);
+
+                for ( ; vi != end ; ++vi)
+                {
+                    if (!vi.exists())
+                        continue;
+                    DenseVectorRange<DT_> band(vi->range(range_size, start));
+                    typename DenseVectorRange<DT_>::ElementIterator r(range.begin_elements());
+                    typename DenseVectorRange<DT_>::ElementIterator b(band.begin_elements());        
+                    unsigned long i = range_size;                    
+                    if (i > (endindex - vi.index())) 
+                        i = endindex - vi.index();
+                    for ( ; i > 0 ;--i, ++r, ++b)
+                    {
+                        if (*r < *b)
+                            *r = *b;
+                    }
+                }
+            }
+        }
+
         template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
         {
@@ -964,6 +1139,95 @@ namespace honei
 
     template <typename Tag_> struct MCReduction<rt_min, Tag_>
     {
+        template <typename DT_>
+        static DenseVector<DT_> value(const BandedMatrix<DT_> & a)
+        {
+            CONTEXT("When reducing BandedMatrix to DenseVector by min (MultiCore):");
+            unsigned long parts(PARTS);
+            unsigned long modulo(0);
+            unsigned long div(1);
+            DenseVector<DT_> result(a.size(), DT_(0));
+            if (a.band_at(a.size()-1).exists())
+                result = a.band(0);                
+            if (a.size() < parts)
+                parts = a.size();
+            else
+            {
+                div = a.size() / parts;
+                modulo = a.size() % parts;
+            }
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[parts];
+            for (int i(0) ; i < modulo ; ++i)
+            {
+                DenseVectorRange<DT_> range(result.range(div+1, i * (div + 1)));
+                ThreeArgWrapper< Reduction<rt_min, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i*(div+1));
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (int i(modulo) ; i < parts ; ++i)
+            {
+                DenseVectorRange<DT_> range(result.range(div, modulo + div * i));
+                ThreeArgWrapper< Reduction<rt_min, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i * div + modulo);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (int i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return result;
+        }
+
+        template <typename DT_>
+        static void value(DenseVectorRange<DT_> & range, const BandedMatrix<DT_> & a, const unsigned long start)
+        {
+            unsigned long range_size(range.size());
+            unsigned long startindex(a.size() - (start + range_size)), endindex((2 * a.size() - 1) - start);
+            typename DenseVectorRange<DT_>::ElementIterator range_end(range.end_elements());
+            typename BandedMatrix<DT_>::ConstVectorIterator vi(a.band_at(startindex)), end(a.band_at(a.size()-1));
+            // Calculation for lower part
+            for ( ; vi != end ; ++vi)
+            {
+                if (!vi.exists())
+                    continue;
+                DenseVectorRange<DT_> band(vi->range(range_size, start));
+                typename DenseVectorRange<DT_>::ElementIterator r(range.begin_elements());
+                typename DenseVectorRange<DT_>::ElementIterator b(band.begin_elements());
+                for (int i(0) ; (i < (long(startindex - vi.index()) + long(range_size-1))) ; ++i)
+                {
+                    ++r;
+                    ++b;
+                }
+                for ( ; r != range_end ; ++r, ++b)
+                {
+                    if (*r > *b)
+                        *r = *b;
+                }
+            }
+            // Calculation for upper part
+            if (endindex > vi.index() + 1)
+            {
+                ++ vi;
+                end = a.band_at(endindex);
+
+                for ( ; vi != end ; ++vi)
+                {
+                    if (!vi.exists())
+                        continue;
+                    DenseVectorRange<DT_> band(vi->range(range_size, start));
+                    typename DenseVectorRange<DT_>::ElementIterator r(range.begin_elements());
+                    typename DenseVectorRange<DT_>::ElementIterator b(band.begin_elements());        
+                    unsigned long i = range_size;                    
+                    if (i > (endindex - vi.index())) 
+                        i = endindex - vi.index();
+                    for ( ; i > 0 ;--i, ++r, ++b)
+                    {
+                        if (*r > *b)
+                            *r = *b;
+                    }
+                }
+            }
+        }
+
         template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & a)
         {

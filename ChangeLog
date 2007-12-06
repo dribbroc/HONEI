@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-06 David Gies <david-gies@gmx.de>
+
+	* libla/reduction.hh, libla/reduction_TEST.cc:Added BM-reductions for MultiCore.
+
 2007-12-06 Volker Jung <volker.jung@honei.org>
 
 	* libla/product.hh : Reworked base implementations of DenseMatrix-SparseMatrix and

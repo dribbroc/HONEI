@@ -29,7 +29,7 @@
 using namespace honei;
 using namespace tests;
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixReductionToSumTest :
     public BaseTest
 {
@@ -37,6 +37,7 @@ class BandedMatrixReductionToSumTest :
         BandedMatrixReductionToSumTest(const std::string & type) :
             BaseTest("banded_matrix_reduction_to_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -44,17 +45,27 @@ class BandedMatrixReductionToSumTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseVector<DT_> * dv1 (new DenseVector<DT_>(size, DT_(2)));
+                DenseVector<DT_> * dv2 (new DenseVector<DT_>(size, DT_(-2)));
                 BandedMatrix<DT_> bm1(size, *dv1);
-                DenseVector<DT_> sum(Reduction<rt_sum>::value(bm1));
-
+                bm1.insert_band(1, *dv1);
+                bm1.insert_band((size-1), *dv2);
+                bm1.insert_band( -1, *dv2);
+                bm1.insert_band((-(size-1)), *dv1);
+                bm1.insert_band(2, *dv1);
+                bm1.insert_band((size-2), *dv2);
+                bm1.insert_band(-2, *dv2);
+                bm1.insert_band((-(size-2)), *dv1);
+                DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(bm1));
                 TEST_CHECK_EQUAL(sum, *dv1);
             }
         }
 };
-BandedMatrixReductionToSumTest<float> banded_matrix_reduction_to_sum_test_float("float");
-BandedMatrixReductionToSumTest<double> banded_matrix_reduction_to_sum_test_double("double");
+BandedMatrixReductionToSumTest<tags::CPU, float> banded_matrix_reduction_to_sum_test_float("float");
+BandedMatrixReductionToSumTest<tags::CPU, double> banded_matrix_reduction_to_sum_test_double("double");
+BandedMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_sum_test_float("MC float");
+BandedMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_sum_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixReductionQuickTest :
     public QuickTest
 {
@@ -62,20 +73,32 @@ class BandedMatrixReductionQuickTest :
         BandedMatrixReductionQuickTest(const std::string & type) :
             QuickTest("banded_matrix_reduction_to_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
             unsigned long size(20);
             DenseVector<DT_> * dv1 (new DenseVector<DT_>(size, DT_(2)));
+            DenseVector<DT_> * dv2 (new DenseVector<DT_>(size, DT_(-2)));
             BandedMatrix<DT_> bm1(size, *dv1);
-            DenseVector<DT_> sum(Reduction<rt_sum>::value(bm1));
+            bm1.insert_band(1, *dv1);
+            bm1.insert_band((size-1), *dv2);
+            bm1.insert_band( -1, *dv2);
+            bm1.insert_band((-(size-1)), *dv1);
+            bm1.insert_band(2, *dv1);
+            bm1.insert_band((size-2), *dv2);
+            bm1.insert_band(-2, *dv2);
+            bm1.insert_band((-(size-2)), *dv1);
+            DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(bm1));
 
             TEST_CHECK_EQUAL(sum, *dv1);
         }
 };
-BandedMatrixReductionQuickTest<float> banded_matrix_reduction_to_sum_quick_test_float("float");
-BandedMatrixReductionQuickTest<double> banded_matrix_reduction_to_sum_quick_test_double("double");
+BandedMatrixReductionQuickTest<tags::CPU, float> banded_matrix_reduction_to_sum_quick_test_float("float");
+BandedMatrixReductionQuickTest<tags::CPU, double> banded_matrix_reduction_to_sum_quick_test_double("double");
+BandedMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_sum_quick_test_float("MC float");
+BandedMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_sum_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseMatrixReductionToSumTest :
@@ -557,7 +580,7 @@ SparseMatrixReductionToMinQuickTest<tags::CPU, double> sparse_matrix_reduction_t
 SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_quick_test_float("MC float");
 SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMinTest :
     public BaseTest
 {
@@ -565,6 +588,7 @@ class BandedMatrixReductionToMinTest :
         BandedMatrixReductionToMinTest(const std::string & type) :
             BaseTest("banded_matrix_reduction_to_min_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -579,16 +603,18 @@ class BandedMatrixReductionToMinTest :
                 }
 
 
-                DenseVector<DT_> v1(Reduction<rt_min>::value(bm1));
+                DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(bm1));
                 TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
             }
         }
 };
 
-BandedMatrixReductionToMinTest<float> banded_matrix_reduction_to_min_test_float("float");
-BandedMatrixReductionToMinTest<double> banded_matrix_reduction_to_min_test_double("double");
+BandedMatrixReductionToMinTest<tags::CPU, float> banded_matrix_reduction_to_min_test_float("float");
+BandedMatrixReductionToMinTest<tags::CPU, double> banded_matrix_reduction_to_min_test_double("double");
+BandedMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_min_test_float("MC float");
+BandedMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_min_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMinQuickTest :
     public QuickTest
 {
@@ -596,6 +622,7 @@ class BandedMatrixReductionToMinQuickTest :
         BandedMatrixReductionToMinQuickTest(const std::string & type) :
             QuickTest("banded_matrix_reduction_to_min_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -608,13 +635,15 @@ class BandedMatrixReductionToMinQuickTest :
                 *i = i.index();
             }
 
-            DenseVector<DT_> v1(Reduction<rt_min>::value(bm1));
+            DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(bm1));
             TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
         }
 };
 
-BandedMatrixReductionToMinQuickTest<float> banded_matrix_reduction_to_min_quick_test_float("float");
-BandedMatrixReductionToMinQuickTest<double> banded_matrix_reduction_to_min_quick_test_double("double");
+BandedMatrixReductionToMinQuickTest<tags::CPU, float> banded_matrix_reduction_to_min_quick_test_float("float");
+BandedMatrixReductionToMinQuickTest<tags::CPU, double> banded_matrix_reduction_to_min_quick_test_double("double");
+BandedMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_min_quick_test_float("MC float");
+BandedMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_min_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseVectorReductionToMinTest :
@@ -891,7 +920,7 @@ SparseMatrixReductionToMaxQuickTest<tags::CPU, double> sparse_matrix_reduction_t
 SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_quick_test_float("MC float");
 SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMaxTest :
     public BaseTest
 {
@@ -899,6 +928,7 @@ class BandedMatrixReductionToMaxTest :
         BandedMatrixReductionToMaxTest(const std::string & type) :
             BaseTest("banded_matrix_reduction_to_max_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -912,16 +942,18 @@ class BandedMatrixReductionToMaxTest :
                     *i = i.index();
                 }
 
-                DenseVector<DT_> v1(Reduction<rt_max>::value(bm1));
+                DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(bm1));
                 TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
             }
         }
 };
 
-BandedMatrixReductionToMaxTest<float> banded_matrix_reduction_to_max_test_float("float");
-BandedMatrixReductionToMaxTest<double> banded_matrix_reduction_to_max_test_double("double");
+BandedMatrixReductionToMaxTest<tags::CPU, float> banded_matrix_reduction_to_max_test_float("float");
+BandedMatrixReductionToMaxTest<tags::CPU, double> banded_matrix_reduction_to_max_test_double("double");
+BandedMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_max_test_float("MC float");
+BandedMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_max_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMaxQuickTest :
     public QuickTest
 {
@@ -929,6 +961,7 @@ class BandedMatrixReductionToMaxQuickTest :
         BandedMatrixReductionToMaxQuickTest(const std::string & type) :
             QuickTest("banded_matrix_reduction_to_max_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -941,13 +974,15 @@ class BandedMatrixReductionToMaxQuickTest :
                 *i = i.index();
             }
 
-            DenseVector<DT_> v1(Reduction<rt_max>::value(bm1));
+            DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(bm1));
             TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
         }
 };
 
-BandedMatrixReductionToMaxQuickTest<float> banded_matrix_reduction_to_max_quick_test_float("float");
-BandedMatrixReductionToMaxQuickTest<double> banded_matrix_reduction_to_max_quick_test_double("double");
+BandedMatrixReductionToMaxQuickTest<tags::CPU, float> banded_matrix_reduction_to_max_quick_test_float("float");
+BandedMatrixReductionToMaxQuickTest<tags::CPU, double> banded_matrix_reduction_to_max_quick_test_double("double");
+BandedMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_max_quick_test_float("MC float");
+BandedMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_max_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseVectorReductionToMaxTest :
