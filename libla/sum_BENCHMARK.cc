@@ -120,6 +120,12 @@ DenseMatrixSumBench<tags::CPU, float> DMSBenchfloat1("Dense Matrix Sum Benchmark
 DenseMatrixSumBench<tags::CPU, double> DMSBenchdouble1("Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore, float> DMSBenchfloat1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore, double> DMSBenchdouble1mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+#ifdef HONEI_SSE
+DenseMatrixSumBench<tags::CPU::SSE, float> DMSBenchfloat1sse("SSE Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
+DenseMatrixSumBench<tags::CPU::SSE, double> DMSBenchdouble1sse("SSE Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+DenseMatrixSumBench<tags::CPU::MultiCore::SSE, float> DMSBenchfloat1mcsse("MC SSE : Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
+DenseMatrixSumBench<tags::CPU::MultiCore::SSE, double> DMSBenchdouble1mcsse("MC SSE: Dense Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+#endif
 
 
 template <typename DT_, typename Tag_>

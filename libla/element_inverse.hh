@@ -215,8 +215,53 @@ namespace honei
         #endif
     };
 
+    /**
+     * \brief Inversion of the elements of the given entity.
+     *
+     * ElementInverse is the template for the inversion of the elements
+     * \f[
+     *     \texttt{ElementInverse}(a): \quad a \leftarrow a[i]^{-1},
+     * \f]
+     *
+     * of a given entity.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <>
+    struct ElementInverse<tags::CPU::SSE>
+    {
+        /**
+         * \name Element inversions
+         * \{
+         *
+         * \brief Returns the inverse values of all of an entity's elements.
+         *
+         * \param x The entity whose elements' inverse values shall be computed.
+         *
+         * \retval x Will modify the entity x and return it.
+         */
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x);
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & x);
+
+        static DenseMatrix<double> & value(DenseMatrix<double> & x);
+
+        static SparseVector<float> & value(SparseVector<float> & x);
+
+        static SparseVector<double> & value(SparseVector<double> & x);
+
+        static SparseMatrix<float> & value(SparseMatrix<float> & x);
+
+        static SparseMatrix<double> & value(SparseMatrix<double> & x);
+        /// \}
+    };
+
     template <typename Tag_> struct MCElementInverse
-    { 
+    {
         template <typename DT1_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & x)
         {
