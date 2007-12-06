@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-06 Markus Geveler <apryde@gmx.de>
+
+	* libmath/interpolation.hh, libmath/interpolation_TEST.cc: Added
+	implementation of bilinear interpolation in 2D and its test.
 
 2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
