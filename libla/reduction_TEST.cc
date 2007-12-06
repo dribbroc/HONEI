@@ -112,7 +112,12 @@ DenseMatrixReductionToSumTest<tags::CPU, float> dense_matrix_reduction_to_sum_te
 DenseMatrixReductionToSumTest<tags::CPU, double> dense_matrix_reduction_to_sum_test_double("double");
 DenseMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_sum_test_float("MC float");
 DenseMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_sum_test_double("MC double");
-
+#ifdef HONEI_SSE
+DenseMatrixReductionToSumTest<tags::CPU::SSE, float> sse_dense_matrix_reduction_to_sum_test_float("SSE float");
+DenseMatrixReductionToSumTest<tags::CPU::SSE, double> sse_dense_matrix_reduction_to_sum_test_double("SSE double");
+DenseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_reduction_to_sum_test_float("MC SSE float");
+DenseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_reduction_to_sum_test_double("MC SSE double");
+#endif
 #ifdef HONEI_CELL
 DenseMatrixReductionToSumTest<tags::Cell, float> cell_dense_matrix_reduction_to_sum_test_float("Cell float");
 #endif
@@ -148,6 +153,12 @@ DenseMatrixReductionQuickTest<tags::CPU, float> dense_matrix_reduction_to_sum_qu
 DenseMatrixReductionQuickTest<tags::CPU, double> dense_matrix_reduction_to_sum_quick_test_double("double");
 DenseMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_sum_quick_test_float("MC float");
 DenseMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_sum_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseMatrixReductionQuickTest<tags::CPU::SSE, float> sse_dense_matrix_reduction_to_sum_quick_test_float("SSE float");
+DenseMatrixReductionQuickTest<tags::CPU::SSE, double> sse_dense_matrix_reduction_to_sum_quick_test_double("SSE double");
+DenseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_reduction_to_sum_quick_test_float("MC SSE float");
+DenseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_reduction_to_sum_quick_test_double("MC SSE double");
+#endif
 #ifdef HONEI_CELL
 DenseMatrixReductionQuickTest<tags::Cell, float> cell_dense_matrix_reduction_to_sum_quick_test_float("Cell float");
 #endif
@@ -188,6 +199,12 @@ SparseMatrixReductionToSumTest<tags::CPU, float> sparse_matrix_reduction_to_sum_
 SparseMatrixReductionToSumTest<tags::CPU, double> sparse_matrix_reduction_to_sum_test_double("double");
 SparseMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_sum_test_float("MC float");
 SparseMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_sum_test_double("MC double");
+#ifdef HONEI_SSE
+SparseMatrixReductionToSumTest<tags::CPU::SSE, float> sse_sparse_matrix_reduction_to_sum_test_float("SSE float");
+SparseMatrixReductionToSumTest<tags::CPU::SSE, double> sse_sparse_matrix_reduction_to_sum_test_double("SSE double");
+SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_matrix_reduction_to_sum_test_float("MC SSE float");
+SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_test_double("MC SSE double");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseMatrixReductionQuickTest :
@@ -223,6 +240,12 @@ SparseMatrixReductionQuickTest<tags::CPU, float> sparse_matrix_reduction_to_sum_
 SparseMatrixReductionQuickTest<tags::CPU, double> sparse_matrix_reduction_to_sum_quick_test_double("double");
 SparseMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_sum_quick_test_float("MC float");
 SparseMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_sum_quick_test_double("MC double");
+#ifdef HONEI_SSE
+SparseMatrixReductionQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_reduction_to_sum_quick_test_float("SSE float");
+SparseMatrixReductionQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_reduction_to_sum_quick_test_double("SSE double");
+SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_matrix_reduction_to_sum_quick_test_float("MC SSE float");
+SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_quick_test_double("MC SSE double");
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseVectorReductionToSumTest :
@@ -258,6 +281,12 @@ DenseVectorReductionToSumTest<tags::CPU, float> dense_vector_reduction_to_sum_te
 DenseVectorReductionToSumTest<tags::CPU, double> dense_vector_reduction_to_sum_test_double("double");
 DenseVectorReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_sum_test_float("MC float");
 DenseVectorReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_sum_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorReductionToSumTest<tags::CPU::SSE, float> sse_dense_vector_reduction_to_sum_test_float("SSE float");
+DenseVectorReductionToSumTest<tags::CPU::SSE, double> sse_dense_vector_reduction_to_sum_test_double("SSE double");
+DenseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_reduction_to_sum_test_float("MC SSE float");
+DenseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_reduction_to_sum_test_double("MC SSE double");
+#endif
 #ifdef HONEI_CELL
 //DenseVectorReductionToSumTest<tags::Cell, float> dense_vector_reduction_to_sum_test_float_cell("Cell float");
 #endif
@@ -293,6 +322,12 @@ DenseVectorReductionToSumQuickTest<tags::CPU, float>  dense_vector_reduction_to_
 DenseVectorReductionToSumQuickTest<tags::CPU, double> dense_vector_reduction_to_sum_quick_test_double("double");
 DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_reduction_to_sum_quick_test_float("MC float");
 DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_sum_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorReductionToSumQuickTest<tags::CPU::SSE, float>  sse_dense_vector_reduction_to_sum_quick_test_float("SSE float");
+DenseVectorReductionToSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_reduction_to_sum_quick_test_double("SSE double");
+DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_reduction_to_sum_quick_test_float("MC SSE float");
+DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_reduction_to_sum_quick_test_double("MC SSE double");
+#endif
 #ifdef HONEI_CELL
 DenseVectorReductionToSumQuickTest<tags::Cell, float> dense_vector_reduction_to_sum_quick_test_float_cell("Cell float");
 #endif
@@ -336,6 +371,12 @@ SparseVectorReductionToSumTest<tags::CPU, float> sparse_vector_reduction_to_sum_
 SparseVectorReductionToSumTest<tags::CPU, double> sparse_vector_reduction_to_sum_test_double("double");
 SparseVectorReductionToSumTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_sum_test_float("MC float");
 SparseVectorReductionToSumTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_sum_test_double("MC double");
+#ifdef HONEI_SSE
+SparseVectorReductionToSumTest<tags::CPU::SSE, float> sse_sparse_vector_reduction_to_sum_test_float("SSE float");
+SparseVectorReductionToSumTest<tags::CPU::SSE, double> sse_sparse_vector_reduction_to_sum_test_double("SSE double");
+SparseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_vector_reduction_to_sum_test_float("MC SSE float");
+SparseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_vector_reduction_to_sum_test_double("MC SSE double");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseVectorReductionToSumQuickTest :
@@ -373,6 +414,12 @@ SparseVectorReductionToSumQuickTest<tags::CPU, float> sparse_reduction_to_sum_qu
 SparseVectorReductionToSumQuickTest<tags::CPU, double> sparse_reduction_to_sum_quick_test_double("double");
 SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_sum_quick_test_float("MC float");
 SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_sum_quick_test_double("MC double");
+#ifdef HONEI_SSE
+SparseVectorReductionToSumQuickTest<tags::CPU::SSE, float> sse_sparse_reduction_to_sum_quick_test_float("SSE float");
+SparseVectorReductionToSumQuickTest<tags::CPU::SSE, double> sse_sparse_reduction_to_sum_quick_test_double("SSE double");
+SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_reduction_to_sum_quick_test_float("MC SSE float");
+SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_reduction_to_sum_quick_test_double("MC SSE double");
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseMatrixReductionToMinTest :

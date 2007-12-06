@@ -447,6 +447,51 @@ namespace honei
      * \ingroup grplaoperations
      * \ingroup grplavectoroperations
      */
+    template <> struct Reduction<rt_sum,tags::CPU::SSE>
+    {
+        /**
+         * \name Reduction
+         * \{
+         *
+         * Returns the sum-reduction of a given vector.
+         *
+         * \param x One vectors of which reduction shall be computed.
+         * 
+         *
+         * \retval r Will return an scalar instance of the used data type.
+         *
+         * 
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & a);
+
+        static double value(const DenseVectorContinuousBase<double> & a);
+
+        static DenseVector<float> value(const DenseMatrix<float> & a);
+
+        static DenseVector<double> value(const DenseMatrix<double> & a);
+
+        static float value(const SparseVector<float> & a);
+
+        static double value(const SparseVector<double> & a);
+
+        static DenseVector<float> value(const SparseMatrix<float> & a);
+
+        static DenseVector<double> value(const SparseMatrix<double> & a);
+
+    };
+    /**
+     * \brief reduction of a vector to scalar (sum)
+     *
+     * Reduction is the class template for the operation
+     * \f[
+     *     \texttt{Reduction}(x): \quad r \leftarrow \sum x_i,
+     * \f]
+     * which yields the reduction of the given vector x .
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct Reduction<rt_sum,tags::Cell>
     {
         /**

@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libla/dot_product-sse.cc: Unrolled loops.
+	* libla/norm.hh, libla/norm-sse.cc:
+	Replaced dot-product calls by real norm operations.
+	* libla/reduction.hh, libla/reduction-sse.cc, libla/reduction_TEST.cc:
+	Added sse version of 'reduction to sum' and tests.
+
+2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libutil/tags.cc, unittest/unittest.cc:
 	Splitted MultiCore and MultiCore::SSE in terms of unittest.
 	'check-sse' now runs the mc::sse tests as 'check-mc' does.

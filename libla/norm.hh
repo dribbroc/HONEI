@@ -412,16 +412,13 @@ namespace honei
          * \retval r Will create a new object of type DT_ and return it.
          */
 
-        static float value(const DenseVectorContinuousBase<float> & x)
-        {
-            return DotProduct<tags::CPU::SSE>::value(x, x);
-        };
+        static float value(const DenseVectorContinuousBase<float> & x);
 
-        static double value(const DenseVectorContinuousBase<double> & x)
-        {
-            return DotProduct<tags::CPU::SSE>::value(x, x);
-        };
+        static double value(const DenseVectorContinuousBase<double> & x);
 
+        static float value(const SparseVector<float> & x);
+
+        static double value(const SparseVector<double> & x);
     };
     template <> struct Norm<vnt_l_two, true, tags::CPU::SSE>
     {
@@ -436,15 +433,13 @@ namespace honei
          * \retval r Will create a new object of type DT_ and return it.
          */
 
-        static float value(const DenseVectorContinuousBase<float> & x)
-        {
-            return sqrt(DotProduct<tags::CPU::SSE>::value(x, x));
-        };
+        static float value(const DenseVectorContinuousBase<float> & x);
 
-        static double value(const DenseVectorContinuousBase<double> & x)
-        {
-            return sqrt(DotProduct<tags::CPU::SSE>::value(x, x));
-        };
+        static double value(const DenseVectorContinuousBase<double> & x);
+
+        static float value(const SparseVector<float> & x);
+
+        static double value(const SparseVector<double> & x);
     };
 }
 
