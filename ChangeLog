@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libla/difference.hh, libla/product.hh, libla/reduction-sse.cc, libla/sum.hh:
+	Added wrapper to tags::CPU for the last missing FruchtermanReingold
+	sse operations.
+
+2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/dot_product-sse.cc: Unrolled loops.
 	* libla/norm.hh, libla/norm-sse.cc:
 	Replaced dot-product calls by real norm operations.

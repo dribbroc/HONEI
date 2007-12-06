@@ -210,12 +210,6 @@ DenseVector<float> Reduction<rt_sum, tags::CPU::SSE>::value(const SparseMatrix<f
 
     DenseVector<float> result(a.rows());
 
-    /// \todo use ConstRowIterator
-    /*for (SparseMatrix<float>::ConstRowIterator l(a.begin_non_zero_rows()),
-            l_end(a.end_non_zero_rows()) ; l != l_end ; ++l)
-    {
-        result[l.index()] = intern::sse::reduction_sum(l->elements(), l->used_elements());
-    }*/
     for (unsigned long i(0) ; i < a.rows() ; ++i)
     {
         result[i] = intern::sse::reduction_sum(a[i].elements(), a[i].used_elements());
@@ -230,12 +224,6 @@ DenseVector<double> Reduction<rt_sum, tags::CPU::SSE>::value(const SparseMatrix<
 
     DenseVector<double> result(a.rows());
 
-    /// \todo use ConstRowIterator
-    /*for (SparseMatrix<double>::ConstRowIterator l(a.begin_non_zero_rows()),
-            l_end(a.end_non_zero_rows()) ; l != l_end ; ++l)
-    {
-        result[l.index()] = intern::sse::reduction_sum(l->elements(), l->used_elements());
-    }*/
     for (unsigned long i(0) ; i < a.rows() ; ++i)
     {
         result[i] = intern::sse::reduction_sum(a[i].elements(), a[i].used_elements());

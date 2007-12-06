@@ -514,6 +514,18 @@ namespace honei
 
         static DenseMatrix<double> & value(DenseMatrix<double> & a, const DenseMatrix<double> & b);
 
+        static DenseMatrix<float> value(DenseMatrix<float> &a, const BandedMatrix<float> & b)
+        {
+            CONTEXT("When adding DenseMatrix and BandedMatrix (SSE forwarding to CPU):");
+            return Sum<tags::CPU>::value(a, b);
+        }
+
+        static DenseMatrix<double> value(DenseMatrix<double> &a, const BandedMatrix<double> & b)
+        {
+            CONTEXT("When adding DenseMatrix and BandedMatrix (SSE forwarding to CPU):");
+            return Sum<tags::CPU>::value(a, b);
+        }
+
         /// \}
     };
 

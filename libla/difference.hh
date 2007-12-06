@@ -402,6 +402,18 @@ namespace honei
 
         static DenseMatrix<double> & value(DenseMatrix<double> & a, const DenseMatrix<double> & b);
 
+        static SparseMatrix<float> value(const BandedMatrix<float> &a, SparseMatrix<float> & b)
+        {
+            CONTEXT("When subtracting SparseMatrix from BandedMatrix (SSE forwarding to CPU):");
+            return Difference<tags::CPU>::value(a, b);
+        }
+
+        static SparseMatrix<double> value(const BandedMatrix<double> &a, SparseMatrix<double> & b)
+        {
+            CONTEXT("When subtracting SparseMatrix from BandedMatrix (SSE forwarding to CPU):");
+            return Difference<tags::CPU>::value(a, b);
+        }
+
         /// \}
     };
 
