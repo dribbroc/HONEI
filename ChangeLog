@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+
+2007-12-06 Till Barz <till.barz@udo.de>
+
+	* libla/norm.hh, libla/norm-cell.cc, libla/files.m4, cell/opcodes,
+	cell/libla/dense_float_norm_max.cc, cell/opcodes.hh,
+	cell/kernels/kernel_reference.sk:
+	Cell implementation of the norm operation (maximum norm) added.
+
 2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/difference-sse.cc, libla/dot_product-sse.cc,
