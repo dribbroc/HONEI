@@ -77,7 +77,7 @@ namespace honei
             typedef typename MutableMatrix<DataType_>::ElementIterator ElementIterator;
 
             /// Type of the const iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, const SparseVector<DataType_> > ConstRowIterator;
+            typedef VectorIteratorWrapper<DataType_, SparseVector<DataType_> > ConstRowIterator;
 
             /// Type of the iterator over our vectors.
             typedef VectorIteratorWrapper<DataType_, SparseVector<DataType_> > RowIterator;

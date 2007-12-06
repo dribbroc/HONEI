@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-06 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/sparse_matrix.hh: Fixed bug in typedef.
+
 2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/element_inverse.hh, libla/element_inverse-sse.cc,
