@@ -518,7 +518,7 @@
 
                     // _spring_force_parameters = mul( _graph_distance, square_dist) -1
                     _spring_force_parameters = ElementProduct<Tag_>::value(*(_graph_distance.copy()), square_dist);
-                    Sum<Tag_>::value(_spring_force_parameters, DataType_(-1));
+                    Sum<Tag_>::value(DataType_(-1), _spring_force_parameters);
 
 
                     // Calculate the single diagonal matrix containing the row sum vector of _spring_force_parameters
@@ -795,7 +795,7 @@
 
                     // _spring_force_parameters = _spring_force_parameters * square_dist -1
                     ElementProduct<Tag_>::value(_spring_force_parameters, square_dist);
-                    Sum<Tag_>::value(_spring_force_parameters, DataType_(-1));
+                    Sum<Tag_>::value(DataType_(-1), _spring_force_parameters);
 
 
                     // Calculate the single diagonal matrix containing the row sum vector of _spring_force_parameters

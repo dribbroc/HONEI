@@ -273,18 +273,18 @@ namespace honei
          * \retval a The referenced matrix is changed by adding the given scalar to each of its elements.
          */
 
-        template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DT2_ b)
+        template <typename DT_>
+        static DenseMatrix<DT_> & value(const DT_ a, DenseMatrix<DT_> & x)
         {
             CONTEXT("When adding scalar to DenseMatrix:");
 
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
-                    l_end(a.end_elements()) ; l != l_end ; ++l)
+            for (typename MutableMatrix<DT_>::ElementIterator l(x.begin_elements()),
+                    l_end(x.end_elements()) ; l != l_end ; ++l)
             {
-                *l += b;
+                *l += a;
             }
 
-            return a;
+            return x;
         }
 
         /// \}
@@ -596,6 +596,13 @@ namespace honei
             return Sum<tags::CPU>::value(a, b);
         }
 
+        static DenseVectorContinuousBase<float> & value(const float a, DenseVectorContinuousBase<float> & x);
+
+        static DenseVectorContinuousBase<double> & value(const double a, DenseVectorContinuousBase<double> & x);
+
+        static DenseMatrix<float> & value(const float a, DenseMatrix<float> & x);
+
+        static DenseMatrix<double> & value(const double a, DenseMatrix<double> & x);
         /// \}
     };
 

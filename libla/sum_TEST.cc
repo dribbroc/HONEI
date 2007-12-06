@@ -613,7 +613,7 @@ SparseMatrixSumQuickTest<tags::CPU, double> sparse_matrix_sum_quick_test_double(
 SparseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_sum_quick_test_float("MC float");
 SparseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_sum_quick_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class ScalarDenseMatrixSumTest :
     public BaseTest
 {
@@ -621,6 +621,7 @@ class ScalarDenseMatrixSumTest :
         ScalarDenseMatrixSumTest(const std::string & type) :
             BaseTest("scalar_dense_matrix_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -628,16 +629,20 @@ class ScalarDenseMatrixSumTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(5));
-                Sum<>::value(dm1, DataType_(3));
+                Sum<Tag_>::value(DataType_(3), dm1);
 
                 TEST_CHECK_EQUAL(dm1, dm2);
             }
         }
 };
-ScalarDenseMatrixSumTest<float> scalar_dense_matrix_sum_test_float("float");
-ScalarDenseMatrixSumTest<double> scalar_dense_matrix_sum_test_double("double");
+ScalarDenseMatrixSumTest<tags::CPU, float> scalar_dense_matrix_sum_test_float("float");
+ScalarDenseMatrixSumTest<tags::CPU, double> scalar_dense_matrix_sum_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseMatrixSumTest<tags::CPU::SSE, float> sse_scalar_dense_matrix_sum_test_float("SSE float");
+ScalarDenseMatrixSumTest<tags::CPU::SSE, double> sse_scalar_dense_matrix_sum_test_double("SSE double");
+#endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class ScalarDenseMatrixSumQuickTest :
     public QuickTest
 {
@@ -645,13 +650,14 @@ class ScalarDenseMatrixSumQuickTest :
         ScalarDenseMatrixSumQuickTest(const std::string & type) :
             QuickTest("scalar_dense_matrix_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
             unsigned long size(5);
             DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
-            Sum<>::value(dm, DataType_(3));
+            Sum<Tag_>::value(DataType_(3), dm);
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
@@ -663,12 +669,16 @@ class ScalarDenseMatrixSumQuickTest :
                     std::numeric_limits<DataType_>::epsilon());
         }
 };
-ScalarDenseMatrixSumQuickTest<float> scalar_dense_matrix_sum_quick_test_float("float");
-ScalarDenseMatrixSumQuickTest<double> scalar_dense_matrix_sum_quick_test_double("double");
+ScalarDenseMatrixSumQuickTest<tags::CPU, float> scalar_dense_matrix_sum_quick_test_float("float");
+ScalarDenseMatrixSumQuickTest<tags::CPU, double> scalar_dense_matrix_sum_quick_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseMatrixSumQuickTest<tags::CPU::SSE, float> sse_scalar_dense_matrix_sum_quick_test_float("SSE float");
+ScalarDenseMatrixSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_matrix_sum_quick_test_double("SSE double");
+#endif
 
 // Test cases for vector operations
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class ScalarDenseVectorSumTest :
     public BaseTest
 {
@@ -676,6 +686,7 @@ class ScalarDenseVectorSumTest :
         ScalarDenseVectorSumTest(const std::string & type) :
             BaseTest("scalar_dense_vector_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -683,16 +694,20 @@ class ScalarDenseVectorSumTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(9));
-                Sum<>::value(DataType_(7), dv1);
+                Sum<Tag_>::value(DataType_(7), dv1);
 
                 TEST_CHECK_EQUAL(dv1, dv2);
             }
         }
 };
-ScalarDenseVectorSumTest<float>  scalar_dense_vector_sum_test_float("float");
-ScalarDenseVectorSumTest<double> scalar_dense_vector_sum_test_double("double");
+ScalarDenseVectorSumTest<tags::CPU, float>  scalar_dense_vector_sum_test_float("float");
+ScalarDenseVectorSumTest<tags::CPU, double> scalar_dense_vector_sum_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseVectorSumTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_sum_test_float("SSE float");
+ScalarDenseVectorSumTest<tags::CPU::SSE, double> sse_scalar_dense_vector_sum_test_double("SSE double");
+#endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class ScalarDenseVectorSumQuickTest :
     public QuickTest
 {
@@ -700,19 +715,24 @@ class ScalarDenseVectorSumQuickTest :
         ScalarDenseVectorSumQuickTest(const std::string & type) :
             QuickTest("scalar_dense_vector_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
             unsigned long size = 18;
             DenseVector<DataType_> dv1(size, DataType_(4)), dv2(size, DataType_(9));
-            Sum<>::value(DataType_(5), dv1);
+            Sum<Tag_>::value(DataType_(5), dv1);
 
             TEST_CHECK_EQUAL(dv1, dv2);
         }
 };
-ScalarDenseVectorSumQuickTest<float>  scalar_dense_vector_sum_quick_test_float("float");
-ScalarDenseVectorSumQuickTest<double> scalar_dense_vector_sum_quick_test_double("double");
+ScalarDenseVectorSumQuickTest<tags::CPU, float>  scalar_dense_vector_sum_quick_test_float("float");
+ScalarDenseVectorSumQuickTest<tags::CPU, double> scalar_dense_vector_sum_quick_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseVectorSumQuickTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_sum_quick_test_float("SSE float");
+ScalarDenseVectorSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_sum_quick_test_double("SSE double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeSumTest :

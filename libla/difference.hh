@@ -485,6 +485,18 @@ namespace honei
             return Difference<tags::CPU>::value(a, b);
         }
 
+        static DenseMatrix<float> value(const BandedMatrix<float> &a, DenseMatrix<float> & b)
+        {
+            CONTEXT("When subtracting DenseMatrix from BandedMatrix (SSE forwarding to CPU):");
+            return Difference<tags::CPU>::value(a, b);
+        }
+
+        static DenseMatrix<double> value(const BandedMatrix<double> &a, DenseMatrix<double> & b)
+        {
+            CONTEXT("When subtracting DenseMatrix from BandedMatrix (SSE forwarding to CPU):");
+            return Difference<tags::CPU>::value(a, b);
+        }
+
         /// \}
     };
 
