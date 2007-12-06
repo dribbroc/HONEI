@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libutil/tags.cc, unittest/unittest.cc:
+	Splitted MultiCore and MultiCore::SSE in terms of unittest.
+	'check-sse' now runs the mc::sse tests as 'check-mc' does.
+
 2007-12-05 Markus Geveler <apryde@gmx.de>
 
 	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,

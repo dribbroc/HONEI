@@ -160,11 +160,11 @@ int main(int argc, char** argv)
         {
             if (quick && (!(*i)->is_quick_test()) )
                 continue;
-            if (sse && (!((*i)->get_tag_name()=="sse")))
+            if (sse && !( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse")))
                 continue;
             if (cell && (!((*i)->get_tag_name()=="cell")))
                 continue;
-            if (mc && (!((*i)->get_tag_name()=="mc")))
+            if (mc && ! ( ((*i)->get_tag_name()=="mc-sse") || ((*i)->get_tag_name()=="mc")))
                 continue;
 
             std::cout << (*i)->id() + ": \n";
