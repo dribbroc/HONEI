@@ -441,6 +441,18 @@ namespace honei
 
         static double value(const SparseVector<double> & x);
     };
+
+    template <> struct Norm<vnt_max, false, tags::Cell>
+    {
+
+        static float value(const DenseVector<float> & a);
+
+    };
+
+
+
 }
+
+
 
 #endif

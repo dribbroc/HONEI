@@ -41,6 +41,7 @@ namespace honei
             oc_dense_float_reduction_max,
             oc_dense_float_reduction_min,
             oc_dense_float_scale,
+            oc_dense_float_norm_max,
 
             oc_test_instruction_finished = 1 << 30,
             oc_test_result_dword,
