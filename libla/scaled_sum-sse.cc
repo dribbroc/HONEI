@@ -236,8 +236,8 @@ namespace honei
                         m1 = _mm_add_ps(m1, m2);
                         m4 = _mm_add_ps(m4, m5);
 
-                        _mm_stream_ps(x + index, m1);
-                        _mm_stream_ps(x + index + 4, m4);
+                        _mm_store_ps(x + index, m1);
+                        _mm_store_ps(x + index + 4, m4);
                     }
                 }
                 else
