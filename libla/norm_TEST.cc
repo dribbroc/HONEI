@@ -27,9 +27,9 @@
 #include <tr1/memory>
 
 using namespace honei;
-using  namespace tests;
+using namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorNormValueTest :
     public BaseTest
 {
@@ -37,6 +37,7 @@ class DenseVectorNormValueTest :
         DenseVectorNormValueTest(const std::string & type) :
             BaseTest("dense_vector_norm_value_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -52,7 +53,7 @@ class DenseVectorNormValueTest :
 
                 DataType_ s(size);
 
-                DataType_ vmax(Norm<vnt_max>::value(dv));
+                DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
                 DataType_ smax(s / 1.23456789);
                 TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
@@ -69,8 +70,11 @@ class DenseVectorNormValueTest :
         }
 };
 
-DenseVectorNormValueTest<float> dense_vector_norm_value_test_float("float");
-DenseVectorNormValueTest<double> dense_vector_norm_value_test_double("double");
+DenseVectorNormValueTest<tags::CPU, float> dense_vector_norm_value_test_float("float");
+DenseVectorNormValueTest<tags::CPU, double> dense_vector_norm_value_test_double("double");
+#ifdef HONEI_CELL
+DenseVectorNormValueTest<tags::Cell, float> cell_dense_vector_norm_value_test_float("float");
+#endif
 
 template <typename DataType_>
 class DenseVectorNormQuickTest :
