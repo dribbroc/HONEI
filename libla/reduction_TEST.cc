@@ -113,7 +113,7 @@ class DenseMatrixReductionToSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 9) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size);
                 DenseVector<DT_> dv1(size, DT_(0));
@@ -294,7 +294,8 @@ class DenseVectorReductionToSumTest :
 
                 DT_ v1(Reduction<rt_sum, Tag_>::value(dv));
                 DT_ s1(size * (size + 1) / 2 / 1.23456789);
-                DT_ eps(exp(-19.72 + log(size) * 2.92257));
+                //DT_ eps(exp(-19.72 + log(size) * 2.92257));
+                DT_ eps(exp(-20 + log(size) * 4));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
             }
         }
@@ -311,7 +312,7 @@ DenseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vec
 DenseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_reduction_to_sum_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//DenseVectorReductionToSumTest<tags::Cell, float> dense_vector_reduction_to_sum_test_float_cell("Cell float");
+DenseVectorReductionToSumTest<tags::Cell, float> dense_vector_reduction_to_sum_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -337,7 +338,8 @@ class DenseVectorReductionToSumQuickTest :
 
             DT_ v1(Reduction<rt_sum, Tag_>::value(dv));
             DT_ s1(size * (size + 1) / 2 / 1.23456789);
-            DT_ eps(exp(-19.72 + log(size) * 2.92257));
+            //DT_ eps(exp(-19.72 + log(size) * 2.92257));
+            DT_ eps(exp(-20 + log(size) * 4));
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
         }
 };
