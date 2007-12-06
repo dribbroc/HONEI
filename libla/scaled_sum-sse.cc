@@ -29,7 +29,7 @@ namespace honei
     {
         namespace sse
         {
-            void scaled_sum(float * x, const float * y, float b, unsigned long size)
+            inline void scaled_sum(float * x, const float * y, float b, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m8;
                 float __attribute__((aligned(16))) b_data;
@@ -110,9 +110,10 @@ namespace honei
                 {
                     x[index] += y[index] * b;
                 }
+                _mm_sfence();
             }
 
-            void scaled_sum(double * x, const double * y, double b, unsigned long size)
+            inline void scaled_sum(double * x, const double * y, double b, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m8;
                 double __attribute__((aligned(16))) b_data;
@@ -192,9 +193,10 @@ namespace honei
                 {
                     x[index] += y[index] * b;
                 }
+                _mm_sfence();
             }
 
-            void scaled_sum(float * x, const float * y, float * z, unsigned long size)
+            inline void scaled_sum(float * x, const float * y, float * z, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6;
 
@@ -268,8 +270,10 @@ namespace honei
                 {
                     x[index] += y[index] * z[index];
                 }
+                _mm_sfence();
             }
-            void scaled_sum(double * x, const double * y, double * z, unsigned long size)
+
+            inline void scaled_sum(double * x, const double * y, double * z, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6;
 
@@ -342,6 +346,7 @@ namespace honei
                 {
                     x[index] += y[index] * z[index];
                 }
+                _mm_sfence();
             }
         }
     }

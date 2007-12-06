@@ -28,7 +28,7 @@ namespace honei
     {
         namespace sse
         {
-            void sum(float * a, const float * b, unsigned long size)
+            inline void sum(float * a, const float * b, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
 
@@ -103,8 +103,10 @@ namespace honei
                 {
                     a[index] += b[index];
                 }
+                _mm_sfence();
             }
-            void sum(double * a, const double * b, unsigned long size)
+
+            inline void sum(double * a, const double * b, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
@@ -180,9 +182,10 @@ namespace honei
                 {
                     a[index] += b[index];
                 }
+                _mm_sfence();
             }
 
-            void sum(const float a, float * x, unsigned long size)
+            inline void sum(const float a, float * x, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
                 float __attribute__((aligned(16))) a_data;
@@ -238,9 +241,10 @@ namespace honei
                 {
                     x[index] += a;
                 }
+                _mm_sfence();
             }
 
-            void sum(const double a, double * x, unsigned long size)
+            inline void sum(const double a, double * x, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7,  m8;
                 double __attribute__((aligned(16))) a_data;
@@ -295,6 +299,7 @@ namespace honei
                 {
                     x[index] += a;
                 }
+                _mm_sfence();
             }
         }
     }

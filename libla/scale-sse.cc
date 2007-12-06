@@ -28,7 +28,7 @@ namespace honei
     {
         namespace sse
         {
-            void scale(const float a, float * x, unsigned long size)
+            inline void scale(const float a, float * x, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
                 float __attribute__((aligned(16))) a_data;
@@ -84,9 +84,10 @@ namespace honei
                 {
                     x[index] *= a;
                 }
+                _mm_sfence();
             }
 
-            void scale(const double a, double * x, unsigned long size)
+            inline void scale(const double a, double * x, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7,  m8;
                 double __attribute__((aligned(16))) a_data;
@@ -141,6 +142,7 @@ namespace honei
                 {
                     x[index] *= a;
                 }
+                _mm_sfence();
             }
         }
     }

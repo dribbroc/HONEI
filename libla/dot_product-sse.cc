@@ -28,7 +28,7 @@ namespace honei
     {
         namespace sse
         {
-            float dot_product(const float * a, float * b, unsigned long size)
+            inline float dot_product(const float * a, float * b, unsigned long size)
             {
                 float __attribute__((aligned(16))) result(0);
 
@@ -99,6 +99,7 @@ namespace honei
                 result += m8.f[1];
                 result += m8.f[2];
                 result += m8.f[3];
+                _mm_sfence();
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
                 {
@@ -111,7 +112,7 @@ namespace honei
                 return result;
             }
 
-            double dot_product(double * a, double * b, unsigned long size)
+            inline double dot_product(double * a, double * b, unsigned long size)
             {
                 double __attribute__((aligned(16))) result(0);
                 union sse2
@@ -176,6 +177,7 @@ namespace honei
                 }
                 result += m8.d[0];
                 result += m8.d[1];
+                _mm_sfence();
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
                 {

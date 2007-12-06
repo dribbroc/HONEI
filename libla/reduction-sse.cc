@@ -28,7 +28,7 @@ namespace honei
     {
         namespace sse
         {
-            float reduction_sum(const float * a, unsigned long size)
+            inline float reduction_sum(const float * a, unsigned long size)
             {
                 float __attribute__((aligned(16))) result(0);
                 union sse4
@@ -83,11 +83,12 @@ namespace honei
                 {
                     result += a[index];
                 }
-                return result;
+                _mm_sfence();
 
+                return result;
             }
 
-            double reduction_sum(double * a, unsigned long size)
+            inline double reduction_sum(double * a, unsigned long size)
             {
                 double __attribute__((aligned(16))) result(0);
                 union sse2
@@ -139,6 +140,7 @@ namespace honei
                 {
                     result += a[index];
                 }
+                _mm_sfence();
 
                 return result;
             }

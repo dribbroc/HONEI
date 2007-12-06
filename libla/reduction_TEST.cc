@@ -117,7 +117,7 @@ class DenseMatrixReductionToSumTest :
             {
                 DenseMatrix<DT_> dm1(size, size);
                 DenseVector<DT_> dv1(size, DT_(0));
-                for(typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), 
+                for(typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
                         i_end(dm1.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index();
@@ -126,7 +126,11 @@ class DenseMatrixReductionToSumTest :
 
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
-                TEST_CHECK_EQUAL(sum, dv1);
+                for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()),
+                        i_end(sum.end_elements()), j(dv1.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
+                }
             }
         }
 };

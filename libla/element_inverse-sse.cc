@@ -28,7 +28,7 @@ namespace honei
     {
         namespace sse
         {
-            void element_inverse(float * x, unsigned long size)
+            inline void element_inverse(float * x, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
                 float __attribute__((aligned(16))) a_data(float(1));
@@ -83,9 +83,10 @@ namespace honei
                 {
                     x[index] = float(1) / x[index];
                 }
+                _mm_sfence();
             }
 
-            void element_inverse(double * x, unsigned long size)
+            inline void element_inverse(double * x, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7,  m8;
                 double __attribute__((aligned(16))) a_data(double(1));
@@ -138,6 +139,7 @@ namespace honei
                 {
                     x[index] = double(1) / x[index];
                 }
+                _mm_sfence();
             }
         }
     }

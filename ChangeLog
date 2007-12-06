@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/difference-sse.cc, libla/dot_product-sse.cc,
+	libla/element_inverse-sse.cc, libla/element_product-sse.cc,
+	libla/norm-sse.cc, libla/reduction-sse.cc,
+	libla/scaled_sum-sse.cc, libla/scale-sse.cc,
+	libla/sum-sse.cc:
+	Added fences behind all streamed stores.
+
 2007-12-06 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/reduction_TEST.cc: Adjusted eps for DV,Sum. Uncmmented BaseTest

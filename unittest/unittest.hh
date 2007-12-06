@@ -189,7 +189,7 @@ namespace tests
             TwoVarHolder test_h(a, b); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, test_h.result, \
                     _id + "\n" +  "Expected '" #a "' to equal '" + test_h.s_b + \
-                    "' but got '" + test_h.s_a + "'"); \
+                    "'\nbut got\n'" + test_h.s_a + "'"); \
         } catch (const TestFailedException &) { \
             throw; \
         } catch (const std::exception & test_e) { \
@@ -234,7 +234,7 @@ namespace tests
             std::string s_b(stringify(b)); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, s_a == s_b, \
                     _id + "\n" +  "Expected '" #a "' to equal '" + s_b + \
-                    "' but got '" + s_a + "'"); \
+                    "'\nbut got\n'" + s_a + "'"); \
         } catch (const TestFailedException &) { \
             throw; \
         } catch (const exception & test_e) { \

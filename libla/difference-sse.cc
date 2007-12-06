@@ -28,7 +28,7 @@ namespace honei
     {
         namespace sse
         {
-            void difference(float * a, const float * b, unsigned long size)
+            inline void difference(float * a, const float * b, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
 
@@ -103,8 +103,10 @@ namespace honei
                 {
                     a[index] -= b[index];
                 }
+                _mm_sfence();
             }
-            void difference(double * a, const double * b, unsigned long size)
+
+            inline void difference(double * a, const double * b, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
@@ -180,6 +182,7 @@ namespace honei
                 {
                     a[index] -= b[index];
                 }
+                _mm_sfence();
             }
         }
     }

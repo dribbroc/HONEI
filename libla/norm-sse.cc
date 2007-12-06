@@ -28,7 +28,7 @@ namespace honei
     {
         namespace sse
         {
-            float norm_l2(const float * a, unsigned long size)
+            inline float norm_l2(const float * a, unsigned long size)
             {
                 float __attribute__((aligned(16))) result(0);
                 union sse4
@@ -90,11 +90,12 @@ namespace honei
                 {
                     result += a[index] * a[index];
                 }
-                return result;
+                _mm_sfence();
 
+                return result;
             }
 
-            double norm_l2(double * a, unsigned long size)
+            inline double norm_l2(double * a, unsigned long size)
             {
                 double __attribute__((aligned(16))) result(0);
                 union sse2
@@ -153,6 +154,7 @@ namespace honei
                 {
                     result += a[index] * a[index];
                 }
+                _mm_sfence();
 
                 return result;
             }
