@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -180,10 +180,9 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        Vector<float>::ElementIterator i(b.element_at(rest_index)), i_end(b.end_elements());
-        for ( ; i != i_end ; ++i)
+        for (unsigned i(rest_index); i < b.used_elements() ; i++)
         {
-            *i *= od.f;
+            *(b.elements() + i) *= a;
         }
 
         if (use_spe)

@@ -25,6 +25,7 @@
 
 #include <limits>
 #include <tr1/memory>
+#include <iostream>
 
 using namespace honei;
 using namespace tests;
@@ -233,7 +234,7 @@ SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_m
 SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//SparseMatrixReductionToSumTest<tags::Cell, float> sparse_matrix_reduction_to_sum_test_float_cell("Cell float");
+SparseMatrixReductionToSumTest<tags::Cell, float> sparse_matrix_reduction_to_sum_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -277,7 +278,7 @@ SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_m
 SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//SparseMatrixReductionQuickTest<tags::Cell, float> sparse_matrix_reduction_to_sum_quick_test_float_cell("Cell float");
+SparseMatrixReductionQuickTest<tags::Cell, float> sparse_matrix_reduction_to_sum_quick_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -392,7 +393,7 @@ class SparseVectorReductionToSumTest :
                     {
                         *i = static_cast<DT_>((i.index() +1) / 1.23456789);
                         s1 += *i;
-                    }                
+                    }
                 }
 
                 DT_ v1(Reduction<rt_sum, Tag_>::value(sv1));
@@ -481,11 +482,20 @@ class DenseMatrixReductionToMinTest :
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    *i = i.index();
+                    if (i.index() % 2 == 0)
+                        *i = i.index();
+                    else
+                        *i = i.index() * DT_(-1);
                 }
 
+                DT_ should;
+                if (size % 2 == 0)
+                    should = dm1[size-1][size-1];
+                else
+                    should = dm1[size-1][size-2];
+
                 DenseVector<DT_> v1(Reduction<rt_min,Tag_>::value(dm1));
-                TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
+                TEST_CHECK_EQUAL(v1[size-1], should);
             }
         }
 };
@@ -518,12 +528,21 @@ class DenseMatrixReductionToMinQuickTest :
             DenseMatrix<DT_> dm1(size, size);
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
-            {
-                *i = i.index();
-            }
+                {
+                    if (i.index() % 2 == 0)
+                        *i = i.index();
+                    else
+                        *i = i.index() * DT_(-1);
+                }
+
+                DT_ should;
+                if (size % 2 == 0)
+                    should = dm1[size-1][size-1];
+                else
+                    should = dm1[size-1][size-2];
 
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(dm1));
-            TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
+            TEST_CHECK_EQUAL(v1[size-1], should);
         }
 };
 
@@ -554,12 +573,21 @@ class SparseMatrixReductionToMinTest :
                 SparseMatrix<DT_> sm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                         i != i_end ; ++i)
-                {
+            {
+                if (i.index() % 2 == 0)
                     *i = i.index();
-                }
+                else
+                    *i = i.index() * DT_(-1);
+            }
+
+            DT_ should;
+            if (size % 2 == 0)
+                should = sm1[size-1][size-1];
+            else
+                should = sm1[size-1][size-2];
 
                 DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(sm1));
-                TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
+                TEST_CHECK_EQUAL(v1[size-1], should);
             }
         }
 };
@@ -568,7 +596,7 @@ SparseMatrixReductionToMinTest<tags::CPU, double> sparse_matrix_reduction_to_min
 SparseMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_test_float("MC float");
 SparseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_test_double("MC double");
 #ifdef HONEI_CELL
-//SparseMatrixReductionToMinTest<tags::Cell, float> sparse_matrix_reduction_to_min_test_float_cell("Cell float");
+SparseMatrixReductionToMinTest<tags::Cell, float> sparse_matrix_reduction_to_min_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -589,11 +617,20 @@ class SparseMatrixReductionToMinQuickTest :
             for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                     i != i_end ; ++i)
             {
-                *i = i.index();
+                if (i.index() % 2 == 0)
+                    *i = i.index();
+                else
+                    *i = i.index() * DT_(-1);
             }
 
+            DT_ should;
+            if (size % 2 == 0)
+                should = sm1[size-1][size-1];
+            else
+                should = sm1[size-1][size-2];
+
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(sm1));
-            TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
+            TEST_CHECK_EQUAL(v1[size-1], should);
         }
 };
 SparseMatrixReductionToMinQuickTest<tags::CPU, float> sparse_matrix_reduction_to_min_quick_test_float("float");
@@ -601,7 +638,7 @@ SparseMatrixReductionToMinQuickTest<tags::CPU, double> sparse_matrix_reduction_t
 SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_quick_test_float("MC float");
 SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_quick_test_double("MC double");
 #ifdef HONEI_CELL
-//SparseMatrixReductionToMinQuickTest<tags::Cell, float> sparse_matrix_reduction_to_min_quick_test_float_cell("Cell float");
+SparseMatrixReductionToMinQuickTest<tags::Cell, float> sparse_matrix_reduction_to_min_quick_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -828,12 +865,21 @@ class DenseMatrixReductionToMaxTest :
                 DenseMatrix<DT_> dm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                         i != i_end ; ++i)
-                {
+            {
+                if (i.index() % 2 == 0)
                     *i = i.index();
-                }
+                else
+                    *i = i.index() * DT_(-1);
+            }
+
+            DT_ should;
+            if (size % 2 == 0)
+                should = dm1[size-1][size-2];
+            else
+                should = dm1[size-1][size-1];
 
                 DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
-                TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
+                TEST_CHECK_EQUAL(v1[size-1], should);
             }
         }
 };
@@ -865,11 +911,20 @@ class DenseMatrixReductionToMaxQuickTest :
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
             {
-                *i = i.index();
+                if (i.index() % 2 == 0)
+                    *i = i.index();
+                else
+                    *i = i.index() * DT_(-1);
             }
 
+            DT_ should;
+            if (size % 2 == 0)
+                should = dm1[size-1][size-2];
+            else
+                should = dm1[size-1][size-1];
+
             DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
-            TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
+            TEST_CHECK_EQUAL(v1[size-1], should);
         }
 };
 
@@ -900,12 +955,21 @@ class SparseMatrixReductionToMaxTest :
                 SparseMatrix<DT_> sm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                         i != i_end ; ++i)
-                {
+            {
+                if (i.index() % 2 == 0)
                     *i = i.index();
-                }
+                else
+                    *i = i.index() * DT_(-1);
+            }
+
+            DT_ should;
+            if (size % 2 == 0)
+                should = sm1[size-1][size-2];
+            else
+                should = sm1[size-1][size-1];
 
                 DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(sm1));
-                TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
+                TEST_CHECK_EQUAL(v1[size-1], should);
             }
         }
 };
@@ -915,7 +979,7 @@ SparseMatrixReductionToMaxTest<tags::CPU, double> sparse_matrix_reduction_to_max
 SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_test_float("MC float");
 SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_test_double("MC double");
 #ifdef HONEI_CELL
-//SparseMatrixReductionToMaxTest<tags::Cell, float> sparse_matrix_reduction_to_max_test_float_cell("Cell float");
+SparseMatrixReductionToMaxTest<tags::Cell, float> sparse_matrix_reduction_to_max_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -936,11 +1000,20 @@ class SparseMatrixReductionToMaxQuickTest :
             for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                     i != i_end ; ++i)
             {
-                *i = i.index();
+                    if (i.index() % 2 == 0)
+                        *i = i.index();
+                    else
+                        *i = i.index() * DT_(-1);
             }
 
+                DT_ should;
+                if (size % 2 == 0)
+                    should = sm1[size-1][size-2];
+                else
+                    should = sm1[size-1][size-1];
+
             DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(sm1));
-            TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
+            TEST_CHECK_EQUAL(v1[size-1], should);
         }
 };
 
@@ -949,7 +1022,7 @@ SparseMatrixReductionToMaxQuickTest<tags::CPU, double> sparse_matrix_reduction_t
 SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_quick_test_float("MC float");
 SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_quick_test_double("MC double");
 #ifdef HONEI_CELL
-//SparseMatrixReductionToMaxQuickTest<tags::Cell, float> sparse_matrix_reduction_to_max_quick_test_float_cell("Cell float");
+SparseMatrixReductionToMaxQuickTest<tags::Cell, float> sparse_matrix_reduction_to_max_quick_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -1153,4 +1226,3 @@ SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_redu
 #ifdef HONEI_CELL
 SparseVectorReductionToMaxQuickTest<tags::Cell, float> sparse_vector_reduction_to_max_quick_test_float_cell("Cell float");
 #endif
-

@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-07 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/reduction-cell.cc, libla/reduction_TEST.cc: Fixed
+	SparseMatrix-Cases and commented their tests in. Also brought in some
+	sense into some of the tests.
+	* libla/sparse_vector.hh, libla/sparse_vector-impl.hh,
+	libla/vector.hh: Removed element_at iterator for SparseVector as it is
+	not applicable!
+	* libla/scale-cell.cc: Removed usage of removed element_at iterator.
+
 2007-12-07 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver.hh, libvisual/enginesolve.hh: Resolved several hidden

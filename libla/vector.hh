@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -58,9 +58,6 @@ namespace honei
             /// Returns const iterator pointing behind the last element of the vector.
             virtual ConstElementIterator end_elements() const = 0;
 
-            /// Returns const iterator pointing to a given element of the vector.
-            virtual ConstElementIterator element_at(unsigned long index) const = 0;
-
             /// Type of the iterator over our elements.
             template <typename ElementType_> class ElementIteratorWrapper;
             typedef ElementIteratorWrapper<DataType_> ElementIterator;
@@ -70,9 +67,6 @@ namespace honei
 
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements() = 0;
-
-            /// Returns const iterator pointing to a given element of the vector.
-            virtual ElementIterator element_at(unsigned long index) = 0;
 
             /// Returns our size.
             virtual unsigned long size() const = 0;

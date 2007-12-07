@@ -103,17 +103,11 @@ namespace honei
             /// Returns iterator pointing behind the last element of the vector.
             virtual ConstElementIterator end_elements() const;
 
-            /// Returns const iterator pointing to a given element of the vector.
-            virtual ConstElementIterator element_at(unsigned long index) const;
-
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements();
 
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_elements();
-
-            /// Returns iterator pointing to a given element of the vector.
-            virtual ElementIterator element_at(unsigned long index);
 
             /// Returns const iterator pointing to the first non-zero element of the vector.
             virtual ConstElementIterator begin_non_zero_elements() const;

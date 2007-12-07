@@ -442,9 +442,9 @@ namespace honei
         }
 
         float ppu_result(0.0f);
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (unsigned i(rest_index); i < a.used_elements() ; i++)
         {
-            ppu_result += *i;
+            ppu_result += *(a.elements() + i);
         }
 
         if (use_spe)
@@ -452,7 +452,7 @@ namespace honei
 
         return result += ppu_result;
     }
-/*
+
     DenseVector<float>
     Reduction<rt_sum, tags::Cell>::value(const SparseMatrix<float> & a)
     {
@@ -460,7 +460,7 @@ namespace honei
 
         DenseVector<float> result(a.rows(), 0.0f);
 
-        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
+        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()),
                 i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
         {
             result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
@@ -468,7 +468,7 @@ namespace honei
 
         return result;
     }
-*/
+
     float
     Reduction<rt_min, tags::Cell>::value(const SparseVector<float> & a)
     {
@@ -482,7 +482,8 @@ namespace honei
         oc.u = a.used_elements() / 4096;
         od.u = a.used_elements() % 4096;
         od.u &= ~0xF;
-        oe.f = a[0];
+        oe.f = a.used_elements() < a.size() ? 0.0f : a[*a.indices()];
+
         unsigned rest_index(oc.u * 4096 + od.u);
 
         od.u *= 4;
@@ -512,10 +513,11 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        float ppu_result(a[0]);
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        float ppu_result(oe.f);
+
+        for (unsigned i(rest_index); i < a.used_elements() ; i++)
         {
-            ppu_result = (*i < ppu_result) ? *i : ppu_result;
+            ppu_result = *(a.elements() + i) < ppu_result ? *(a.elements() + i) : ppu_result;
         }
 
         if (use_spe)
@@ -530,7 +532,7 @@ namespace honei
 
         return result;
     }
-/*
+
     DenseVector<float>
     Reduction<rt_min, tags::Cell>::value(const SparseMatrix<float> & a)
     {
@@ -541,12 +543,12 @@ namespace honei
         for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
                 i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
         {
-            result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
+            result[i.index()] = Reduction<rt_min, tags::Cell>::value(*i);
         }
 
         return result;
     }
-*/
+
     float
     Reduction<rt_max, tags::Cell>::value(const SparseVector<float> & a)
     {
@@ -560,7 +562,7 @@ namespace honei
         oc.u = a.used_elements() / 4096;
         od.u = a.used_elements() % 4096;
         od.u &= ~0xF;
-        oe.f = a[0];
+        oe.f = a.used_elements() < a.size() ? 0.0f : a[*a.indices()];
         unsigned rest_index(oc.u * 4096 + od.u);
 
         od.u *= 4;
@@ -590,10 +592,11 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        float ppu_result(a[0]);
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        float ppu_result(oe.f);
+
+        for (unsigned i(rest_index); i < a.used_elements() ; i++)
         {
-            ppu_result = (*i > ppu_result) ? *i : ppu_result;
+            ppu_result = *(a.elements() + i) > ppu_result ? *(a.elements() + i) : ppu_result;
         }
 
         if (use_spe)
@@ -608,7 +611,7 @@ namespace honei
 
         return result;
     }
-/*
+
     DenseVector<float>
     Reduction<rt_max, tags::Cell>::value(const SparseMatrix<float> & a)
     {
@@ -619,10 +622,10 @@ namespace honei
         for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
                 i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
         {
-            result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
+            result[i.index()] = Reduction<rt_max, tags::Cell>::value(*i);
         }
 
         return result;
     }
-*/
+
 }

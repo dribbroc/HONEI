@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -173,12 +173,6 @@ namespace honei
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::element_at(unsigned long index) const
-    {
-        return ConstElementIterator(new SparseElementIterator<DataType_>(*this, index));
-    }
-
-    template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::begin_elements()
     {
         return ElementIterator(new SparseElementIterator<DataType_>(*this, 0));
@@ -188,12 +182,6 @@ namespace honei
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::end_elements()
     {
         return ElementIterator(new SparseElementIterator<DataType_>(*this, _imp->_size));
-    }
-
-    template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::element_at(unsigned long index)
-    {
-        return ElementIterator(new SparseElementIterator<DataType_>(*this, index));
     }
 
     template <typename DataType_>
