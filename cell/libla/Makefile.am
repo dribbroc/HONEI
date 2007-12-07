@@ -1,7 +1,8 @@
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
-CXX = spu-g++
+CXX = $(SPU_CXX)
+CXXFLAGS = $(SPU_CXXFLAGS)
 
 noinst_LIBRARIES = libla_spe.a
 libla_spe_a_SOURCES = \
@@ -18,7 +19,8 @@ libla_spe_a_SOURCES = \
 	dense_float_reduction_max.cc \
 	dense_float_reduction_min.cc \
 	dense_float_norm_max.cc
-libla_spe_a_CXXFLAGS = -msafe-dma -fno-exceptions -fno-rtti
+
+libla_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 
 bench:
 quickcheck:

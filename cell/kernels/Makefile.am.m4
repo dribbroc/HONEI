@@ -37,13 +37,13 @@ $1-registrator.cc : registrator.cc.in $1
 	    $< > $`'@
 
 $1_SOURCES = $1.cc
-$1_CXXFLAGS = -O1 -Wall -msafe-dma -fno-exceptions -fno-rtti
+$1_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 $1_LDADD = \
 	$(top_srcdir)/cell/libla/libla_spe.a \
 	$(top_srcdir)/cell/libutil/libutil_spe.a
 
 libcell-$1.o : $1
-	ppu-embedspu $1_handle $< $`'@
+	$(PPU_EMBEDSPU) $1_handle $< $`'@
 	sed -e "s/@NAME@/libcell-$1.o/"\
 	    libtool-hack.in > libcell-$1.lo
 ')dnl
@@ -52,7 +52,8 @@ include(`cell/kernels/files.m4')
 
 AM_CXXFLAGS = -I$(top_srcdir)
 
-CXX = spu-g++
+CXX = $(SPU_CXX)
+CXXFLAGS = $(SPU_CXXFLAGS)
 
 BUILT_SOURCES = sourceslist objlist
 CLEANFILES = *~ *.body *.functions *.opcodes *.cc *.o
