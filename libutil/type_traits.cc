@@ -21,6 +21,7 @@
 
 #if defined(__ALTIVEC__)
 #  include <altivec.h>
+#  include <algorithm>
 #  include <cstring>
 #elif defined(__SSE__)
 #  include <xmmintrin.h>
@@ -52,21 +53,21 @@ namespace honei
         PODTraits<float>::fill(float * dest, std::size_t count, const float & proto)
         {
             vector float vectorised_proto = { proto, proto, proto, proto };
-            vector float * vectorised_dest(reinterpret_cast<vector float *>(ptr));
-            unsigned offset((reinterpret_cast<unsigned long long>(ptr) & 0xF) / sizeof(float));
+            vector float * vectorised_dest(reinterpret_cast<vector float *>(dest));
+            std::size_t offset((reinterpret_cast<unsigned long long>(dest) & 0xF) / sizeof(float));
 
-            for (unsigned i(0) ; i < std::min(n, offset) ; ++i)
+            for (unsigned i(0) ; i < std::min(count, offset) ; ++i)
             {
-                dest[i] = v;
+                dest[i] = proto;
             }
 
-            for (unsigned i(sizeof(vector float) - sizeof(float) * offset) ; i < (n - offset) * sizeof(float) ;
+            for (unsigned i(sizeof(vector float) - sizeof(float) * offset) ; i < (count - offset) * sizeof(float) ;
                     i += sizeof(vector float))
             {
                 vec_st(vectorised_proto, i, vectorised_dest);
             }
 
-            for (unsigned i((n - offset) & ~0x3) ; i < n ; ++i)
+            for (unsigned i((count - offset) & ~0x3) ; i < count ; ++i)
             {
                 dest[i] = proto;
             }
@@ -75,25 +76,7 @@ namespace honei
         template <> void
         PODTraits<double>::fill(double * dest, std::size_t count, const double & proto)
         {
-            vector double vectorised_proto = { proto, proto, proto, proto };
-            vector double * vectorised_dest(reinterpret_cast<vector double *>(ptr));
-            unsigned offset((reinterpret_cast<unsigned long long>(ptr) & 0xF) / sizeof(double));
-
-            for (unsigned i(0) ; i < std::min(n, offset) ; ++i)
-            {
-                dest[i] = v;
-            }
-
-            for (unsigned i(sizeof(vector double) - sizeof(double) * offset) ; i < (n - offset) * sizeof(double) ;
-                    i += sizeof(vector double))
-            {
-                vec_st(vectorised_proto, i, vectorised_dest);
-            }
-
-            for (unsigned i((n - offset) & ~0x1) ; i < n ; ++i)
-            {
-                dest[i] = proto;
-            }
+            std::fill_n(dest, count, proto);
         }
 
 #elif defined(__SSE__)
