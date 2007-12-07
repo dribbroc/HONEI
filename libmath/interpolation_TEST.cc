@@ -47,9 +47,13 @@ class InterpolationTest:
 
             DT1_ delta_x(1);
             DT1_ delta_y(1);
-            DT1_ result = Interpolation<Tag_, LINEAR>::value(delta_x, delta_y, height, DT1_(5.5), DT1_(5.5));
+            DT1_ result = Interpolation<Tag_, LINEAR>::value(delta_x, delta_y, height, DT1_(5.1234), DT1_(5.00001));
             TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(20), result, std::numeric_limits<DT1_>::epsilon());
         }
 };
-InterpolationTest<tags::CPU, double> interpolation_test("double");
-
+InterpolationTest<tags::CPU, double> interpolation_test_double("double");
+InterpolationTest<tags::CPU, float> interpolation_test_float("float");
+#ifdef HONEI_SSE
+InterpolationTest<tags::CPU::SSE, double> interpolation_test_double_sse("SSE double");
+InterpolationTest<tags::CPU::SSE, float> interpolation_test_float_sse("SSE float");
+#endif

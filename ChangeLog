@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-07 Markus Geveler <apryde@gmx.de>
+
+	* libmath/interpolation.hh, libmath/interpolation_TEST.cc: Resolved
+	computational bug.
+
 2007-12-07 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/reduction-cell.cc, libla/reduction.hh,
