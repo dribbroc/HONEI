@@ -34,6 +34,10 @@ namespace honei
         class LINEAR
         {
         };
+
+        class NN
+        {
+        };
     }
     /**
      * \brief Interpolation in space with arbitrary dimensions.
@@ -93,6 +97,63 @@ namespace honei
                 return result;
             }
     };
+
+    template <typename Tag_>
+    struct Interpolation<Tag_, interpolation_methods::NN>
+    {
+        public:
+            /**
+             * \brief Interpolation in space: 2D (NEAREST NEIGHBOUR).
+             * \param delta_x The stepsize in x direction.
+             * \param delta_y The stepsize in y direction.
+             * \param height The scalarfield representing the function.
+             * \param x The x value in parameter space.
+             * \param y The y value in parameter space.
+             */
+            template<typename ResPrec_>
+            static inline ResPrec_ value(const ResPrec_ delta_x, const ResPrec_ delta_y, const DenseMatrix<ResPrec_>& height, const ResPrec_ x, const ResPrec_ y)
+            {
+                ///Compute the lower left vertex of the cell, in which the vector (x y)^T falls in
+                ///parameter space:
+
+                ResPrec_ x_t(0);
+                ResPrec_ y_t(0);
+                while(x_t + delta_x < x)
+                {
+                    x_t += delta_x;
+                }
+                while(y_t + delta_y < y)
+                {
+                    y_t += delta_y;
+                }
+
+                unsigned long i(x_t/delta_x);
+                unsigned long j(y_t/delta_y);
+
+                unsigned long nearest_x;
+                unsigned long nearest_y;
+                if(x_t + delta_x/2 < x)
+                {
+                    nearest_x = j;
+                }
+                else
+                {
+                    nearest_x = j + 1;
+                }
+                if(y_t + delta_y/2 < y)
+                {
+                    nearest_y = i;
+                }
+                else
+                {
+                    nearest_y = i + 1;
+                }
+
+                return height[nearest_y][nearest_x];
+
+           }
+    };
+
 }
 
 #endif

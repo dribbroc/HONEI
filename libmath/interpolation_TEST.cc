@@ -49,6 +49,9 @@ class InterpolationTest:
             DT1_ delta_y(1);
             DT1_ result = Interpolation<Tag_, LINEAR>::value(delta_x, delta_y, height, DT1_(5.1234), DT1_(5.00001));
             TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(20), result, std::numeric_limits<DT1_>::epsilon());
+
+            DT1_ result2 = Interpolation<Tag_, NN>::value(delta_x, delta_y, height, DT1_(5.1234), DT1_(5.00001));
+            TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(20), result, std::numeric_limits<DT1_>::epsilon());
         }
 };
 InterpolationTest<tags::CPU, double> interpolation_test_double("double");

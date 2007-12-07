@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-07 Markus Geveler <apryde@gmx.de>
 
+	* libmath/interpolation.hh, libmath/interpolation_TEST.cc: Added
+	implementation of nearest neighbour interpolation in 2D.
+
+2007-12-07 Markus Geveler <apryde@gmx.de>
+
 	* libmath/interpolation.hh, libmath/interpolation_TEST.cc: Resolved
 	computational bug.
 
