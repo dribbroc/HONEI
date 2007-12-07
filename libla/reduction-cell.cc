@@ -398,5 +398,231 @@ namespace honei
         }
         return result;
     }
+   float
+    Reduction<rt_sum, tags::Cell>::value(const SparseVector<float> & a)
+    {
+        CONTEXT("When reducing SparseVector<float> to Scalar by sum (Cell):");
 
+        float result(0.0f);
+
+        Operand oa = { &result };
+        Operand ob = { a.elements() };
+        Operand oc, od;
+        oc.u = a.used_elements() / 4096;
+        od.u = a.used_elements() % 4096;
+        od.u &= ~0xF;
+
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++oc.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_reduction_sum, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        float ppu_result(0.0f);
+        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            ppu_result += *i;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return result += ppu_result;
+    }
+/*
+    DenseVector<float>
+    Reduction<rt_sum, tags::Cell>::value(const SparseMatrix<float> & a)
+    {
+        CONTEXT("When reducing SparseMatrix<float> to Vector by sum (Cell):");
+
+        DenseVector<float> result(a.rows(), 0.0f);
+
+        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
+                i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
+        {
+            result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
+        }
+
+        return result;
+    }
+*/
+    float
+    Reduction<rt_min, tags::Cell>::value(const SparseVector<float> & a)
+    {
+        CONTEXT("When reducing SparseVector<float> to Scalar by minimum (Cell):");
+
+        float result(0.0f);
+
+        Operand oa = { &result };
+        Operand ob = { a.elements() };
+        Operand oc, od, oe;
+        oc.u = a.used_elements() / 4096;
+        od.u = a.used_elements() % 4096;
+        od.u &= ~0xF;
+        oe.f = a[0];
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++oc.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_reduction_min, 16 * 1024, oa, ob, oc, od, oe);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        float ppu_result(a[0]);
+        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            ppu_result = (*i < ppu_result) ? *i : ppu_result;
+        }
+
+        if (use_spe)
+        {
+            instruction.wait();
+            result = ppu_result < result ? ppu_result : result;
+        }
+        else
+        {
+            result = ppu_result;
+        }
+
+        return result;
+    }
+/*
+    DenseVector<float>
+    Reduction<rt_min, tags::Cell>::value(const SparseMatrix<float> & a)
+    {
+        CONTEXT("When reducing SparseMatrix<float> to Vector by min (Cell):");
+
+        DenseVector<float> result(a.rows(), 0.0f);
+
+        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
+                i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
+        {
+            result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
+        }
+
+        return result;
+    }
+*/
+    float
+    Reduction<rt_max, tags::Cell>::value(const SparseVector<float> & a)
+    {
+        CONTEXT("When reducing SparseVector<float> to Scalar by maximum (Cell):");
+
+        float result(0.0f);
+
+        Operand oa = { &result };
+        Operand ob = { a.elements() };
+        Operand oc, od, oe;
+        oc.u = a.used_elements() / 4096;
+        od.u = a.used_elements() % 4096;
+        od.u &= ~0xF;
+        oe.f = a[0];
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++oc.u;
+        }
+
+        SPEInstruction instruction(oc_dense_float_reduction_max, 16 * 1024, oa, ob, oc, od, oe);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        float ppu_result(a[0]);
+        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            ppu_result = (*i > ppu_result) ? *i : ppu_result;
+        }
+
+        if (use_spe)
+        {
+            instruction.wait();
+            result = ppu_result > result ? ppu_result : result;
+        }
+        else
+        {
+            result = ppu_result;
+        }
+
+        return result;
+    }
+/*
+    DenseVector<float>
+    Reduction<rt_max, tags::Cell>::value(const SparseMatrix<float> & a)
+    {
+        CONTEXT("When reducing SparseMatrix<float> to Vector by max (Cell):");
+
+        DenseVector<float> result(a.rows(), 0.0f);
+
+        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
+                i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
+        {
+            result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
+        }
+
+        return result;
+    }
+*/
 }

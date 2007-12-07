@@ -5,7 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-12-06 Sven Mallach <sven.mallach@honei.org>
+2007-12-07 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/reduction-cell.cc, libla/reduction.hh,
+	libla/reduction_TEST.cc: Wrote support for SparseVector and prepared
+	support for SparseMatrix (doesn't work yet). Added tests.
+
+2007-12-07 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/norm_TEST.cc: Added tests for new cell operation Norm(max).
 

@@ -232,6 +232,9 @@ SparseMatrixReductionToSumTest<tags::CPU::SSE, double> sse_sparse_matrix_reducti
 SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_matrix_reduction_to_sum_test_float("MC SSE float");
 SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CELL
+//SparseMatrixReductionToSumTest<tags::Cell, float> sparse_matrix_reduction_to_sum_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseMatrixReductionQuickTest :
@@ -272,6 +275,9 @@ SparseMatrixReductionQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_reductio
 SparseMatrixReductionQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_reduction_to_sum_quick_test_double("SSE double");
 SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_matrix_reduction_to_sum_quick_test_float("MC SSE float");
 SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+//SparseMatrixReductionQuickTest<tags::Cell, float> sparse_matrix_reduction_to_sum_quick_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -406,6 +412,9 @@ SparseVectorReductionToSumTest<tags::CPU::SSE, double> sse_sparse_vector_reducti
 SparseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_vector_reduction_to_sum_test_float("MC SSE float");
 SparseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_vector_reduction_to_sum_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CELL
+SparseVectorReductionToSumTest<tags::Cell, float> sparse_vector_reduction_to_sum_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseVectorReductionToSumQuickTest :
@@ -448,6 +457,9 @@ SparseVectorReductionToSumQuickTest<tags::CPU::SSE, float> sse_sparse_reduction_
 SparseVectorReductionToSumQuickTest<tags::CPU::SSE, double> sse_sparse_reduction_to_sum_quick_test_double("SSE double");
 SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_reduction_to_sum_quick_test_float("MC SSE float");
 SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_reduction_to_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+SparseVectorReductionToSumQuickTest<tags::Cell, float> sparse_vector_reduction_to_sum_quick_test_float_cell("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -555,6 +567,9 @@ SparseMatrixReductionToMinTest<tags::CPU, float> sparse_matrix_reduction_to_min_
 SparseMatrixReductionToMinTest<tags::CPU, double> sparse_matrix_reduction_to_min_test_double("double");
 SparseMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_test_float("MC float");
 SparseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_test_double("MC double");
+#ifdef HONEI_CELL
+//SparseMatrixReductionToMinTest<tags::Cell, float> sparse_matrix_reduction_to_min_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseMatrixReductionToMinQuickTest :
@@ -585,6 +600,9 @@ SparseMatrixReductionToMinQuickTest<tags::CPU, float> sparse_matrix_reduction_to
 SparseMatrixReductionToMinQuickTest<tags::CPU, double> sparse_matrix_reduction_to_min_quick_test_double("double");
 SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_quick_test_float("MC float");
 SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_quick_test_double("MC double");
+#ifdef HONEI_CELL
+//SparseMatrixReductionToMinQuickTest<tags::Cell, float> sparse_matrix_reduction_to_min_quick_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMinTest :
@@ -722,10 +740,6 @@ DenseVectorReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_reduct
 DenseVectorReductionToMinQuickTest<tags::Cell, float> dense_vector_reduction_to_min_quick_test_float_cell("Cell float");
 #endif
 
-
-
-
-
 template <typename Tag_, typename DT_>
 class SparseVectorReductionToMinTest :
     public BaseTest
@@ -758,6 +772,9 @@ SparseVectorReductionToMinTest<tags::CPU, float> sparse_vector_reduction_to_min_
 SparseVectorReductionToMinTest<tags::CPU, double> sparse_vector_reduction_to_min_test_double("double");
 SparseVectorReductionToMinTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_min_test_float("MC float");
 SparseVectorReductionToMinTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_min_test_double("MC double");
+#ifdef HONEI_CELL
+SparseVectorReductionToMinTest<tags::Cell, float> sparse_vector_reduction_to_min_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseVectorReductionToMinQuickTest :
@@ -789,6 +806,9 @@ SparseVectorReductionToMinQuickTest<tags::CPU, float> sparse_reduction_to_min_qu
 SparseVectorReductionToMinQuickTest<tags::CPU, double> sparse_reduction_to_min_quick_test_double("double");
 SparseVectorReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_min_quick_test_float("MC float");
 SparseVectorReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_min_quick_test_double("MC double");
+#ifdef HONEI_CELL
+SparseVectorReductionToMinQuickTest<tags::Cell, float> sparse_vector_reduction_to_min_quick_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseMatrixReductionToMaxTest :
@@ -894,6 +914,9 @@ SparseMatrixReductionToMaxTest<tags::CPU, float> sparse_matrix_reduction_to_max_
 SparseMatrixReductionToMaxTest<tags::CPU, double> sparse_matrix_reduction_to_max_test_double("double");
 SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_test_float("MC float");
 SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_test_double("MC double");
+#ifdef HONEI_CELL
+//SparseMatrixReductionToMaxTest<tags::Cell, float> sparse_matrix_reduction_to_max_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseMatrixReductionToMaxQuickTest :
@@ -925,6 +948,9 @@ SparseMatrixReductionToMaxQuickTest<tags::CPU, float> sparse_matrix_reduction_to
 SparseMatrixReductionToMaxQuickTest<tags::CPU, double> sparse_matrix_reduction_to_max_quick_test_double("double");
 SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_quick_test_float("MC float");
 SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_quick_test_double("MC double");
+#ifdef HONEI_CELL
+//SparseMatrixReductionToMaxQuickTest<tags::Cell, float> sparse_matrix_reduction_to_max_quick_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMaxTest :
@@ -1090,6 +1116,9 @@ SparseVectorReductionToMaxTest<tags::CPU, float> sparse_vector_reduction_to_max_
 SparseVectorReductionToMaxTest<tags::CPU, double> sparse_vector_reduction_to_max_test_double("double");
 SparseVectorReductionToMaxTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_max_test_float("MC float");
 SparseVectorReductionToMaxTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_max_test_double("MC double");
+#ifdef HONEI_CELL
+SparseVectorReductionToMaxTest<tags::Cell, float> sparse_vector_reduction_to_max_test_float_cell("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class SparseVectorReductionToMaxQuickTest :
@@ -1121,3 +1150,7 @@ SparseVectorReductionToMaxQuickTest<tags::CPU, float> sparse_reduction_to_max_qu
 SparseVectorReductionToMaxQuickTest<tags::CPU, double> sparse_reduction_to_max_quick_test_double("double");
 SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_max_quick_test_float("MC float");
 SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_max_quick_test_double("MC double");
+#ifdef HONEI_CELL
+SparseVectorReductionToMaxQuickTest<tags::Cell, float> sparse_vector_reduction_to_max_quick_test_float_cell("Cell float");
+#endif
+
