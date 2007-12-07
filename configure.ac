@@ -129,11 +129,37 @@ if test "x$ENABLE_CELL" = "xyes" ; then
 		AC_MSG_ERROR([libspe2 (http://sourceforge.net/projects/libspe) is required for CELL BE support.])
 	fi
 	dnl }}}
+	dnl {{{ check for toolchain
+	dnl {{{ check for spu-g++
+	if test "x$SPU_CXX" = "x" ; then
+		SPU_CXX=spu-g++
+	fi
+	AC_CHECK_PROG(have_spu_cxx, [$SPU_CXX], [yes], [no])
+	if test "x$have_spu_cxx" != "xyes" ; then
+		AC_MSG_ERROR([The SPU C++ compiler ($SPU_CXX) is required for CELL BE support.])
+	fi
+	AC_SUBST([SPU_CXX])
+	dnl }}}
+	dnl {{{ check for ppu-embedspu
+	if test "x$PPU_EMBEDSPU" = "x" ; then
+		PPU_EMBEDSPU=ppu-embedspu
+	fi
+	AC_CHECK_PROG(have_ppu_embedspu, [$PPU_EMBEDSPU], [yes], [no])
+	if test "x$have_ppu_embedspu" != "xyes" ; then
+		AC_MSG_ERROR([The SPU embedding program ($PPU_EMBEDSPU) is required for CELL BE support.])
+	fi
+	AC_SUBST([PPU_EMBEDSPU])
+	dnl }}}
+	dnl }}}
 	dnl {{{ enable CELL support
 	CELLDEF="-DHONEI_CELL"
+	if test "x$SPU_CXXFLAGS" = "x" ; then
+		SPU_CXXFLAGS="-O1"
+	fi
+	AC_SUBST([CELLDEF])
+	AC_SUBST([SPU_CXXFLAGS])
 	dnl }}}
 fi
-AC_SUBST([CELLDEF])
 dnl }}}
 dnl {{{ check for GPU support
 AC_MSG_CHECKING([whether to build GPU support])
