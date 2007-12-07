@@ -67,14 +67,14 @@ namespace honei
         DenseMatrix<float> height(dheight, dwidth, float(5));
 
         DenseMatrix<float> bottom(dheight, dwidth, float(0));
-        DenseMatrix<float> u1(dheight, dwidth, float(4));
-        DenseMatrix<float> u2(dheight, dwidth, float(4));
+        DenseMatrix<float> u1(dheight, dwidth, float(0));
+        DenseMatrix<float> u2(dheight, dwidth, float(0));
         unsigned long entries = 3*((dwidth*dheight)+4*(dwidth+dheight+4));
         DenseVector<float> u(entries, float(1));
         DenseVector<float> v(entries, float(1));
         DenseVector<float> w(entries, float(1));
-        DenseVector<float> bx (entries/3, float(0));
-        DenseVector<float> by (entries/3, float(0));
+        DenseVector<float> bx (entries/3, float(1));
+        DenseVector<float> by (entries/3, float(1));
         DenseVector<float> c (3,float(5));
         DenseVector<float> d (3,float(5));
         float deltax = 5;

@@ -987,14 +987,14 @@ namespace honei {
         if (fabs(h) >= std::numeric_limits<WorkPrec_>::epsilon())
         {
             result[0] = q1;
-            result[1] = (q1 * q1 / h) + (9.81 * h * h / 2);
+            result[1] = (q1 * q1 / h) + (WorkPrec_(9.81) * h * h / WorkPrec_(2));
             result[2] = q1 * q2 / h;
         }
         else
         {
-            result[0] = WorkPrec_(0);
-            result[1] = WorkPrec_(0);
-            result[2] = WorkPrec_(0);
+            result[0] = q1;
+            result[1] = (q1 * q1 / std::numeric_limits<WorkPrec_>::epsilon());
+            result[2] = q1 * q2 / std::numeric_limits<WorkPrec_>::epsilon();
         }
         return result;
     }
@@ -1026,13 +1026,13 @@ namespace honei {
         {
             result[0] = q2;
             result[1] = q1 * q2 / h;
-            result[2] = (q2 * q2 / h) + (9.81 * h * h / 2);
+            result[2] = (q2 * q2 / h) + (WorkPrec_(9.81) * h * h / WorkPrec_(2));
         }
         else
         {
-            result[0] = WorkPrec_(0);
-            result[1] = WorkPrec_(0);
-            result[2] = WorkPrec_(0);
+            result[0] = q2;
+            result[1] = q1 * q2 / std::numeric_limits<WorkPrec_>::epsilon();
+            result[2] = q2 * q2 / std::numeric_limits<WorkPrec_>::epsilon();
         }
         return result;
     }
@@ -1134,18 +1134,21 @@ namespace honei {
         if (fabs(h) >= std::numeric_limits<WorkPrec_>::epsilon())
         {
             result[0] = WorkPrec_(0);
-            WorkPrec_ temp = _manning_n_squared * pow(h, -7/3) * sqrt(q1 * q1 + q2 * q2) * (-1);
+            WorkPrec_ temp = _manning_n_squared * pow(h, WorkPrec_(-7/3)) * sqrt(q1 * q1 + q2 * q2) * (-1);
 
-            result[1] = (temp * q1 - h * slope_x) * 9.81;
-            result[2] = (temp * q2 - h * slope_y) * 9.81;
+            result[1] = (temp * q1 - h * slope_x) * WorkPrec_(9.81);
+            result[2] = (temp * q2 - h * slope_y) * WorkPrec_(9.81);
 
             return result;
         }
         else
         {
             result[0] = WorkPrec_(0);
-            result[1] = WorkPrec_(0);
-            result[2] = WorkPrec_(0);
+            WorkPrec_ temp = _manning_n_squared * pow(std::numeric_limits<WorkPrec_>::epsilon(), WorkPrec_(-7/3)) * sqrt(q1 * q1 + q2 * q2) * (-1);
+
+            result[1] = (temp * q1 -  std::numeric_limits<WorkPrec_>::epsilon() * slope_x) * WorkPrec_(9.81);
+            result[2] = (temp * q2 -  std::numeric_limits<WorkPrec_>::epsilon() * slope_y) * WorkPrec_(9.81);
+
             return result;
         }
     }
@@ -1292,7 +1295,9 @@ namespace honei {
                 }
                 else
                 {
-                    phiPlusOld[k] = WorkPrec_(0);
+                    //phiPlusOld[k] = WorkPrec_(0);
+                    phiPlusOld[k] = min_mod_limiter(tempTopPlus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                 }
                 tempPlus[k]=temp;
                 tempTopPlus[k]=tempTop;
@@ -1309,7 +1314,8 @@ namespace honei {
                 }
                 else
                 {
-                    phiMinusNew[k] = WorkPrec_(0);
+                    phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+                    //phiMinusNew[k] = WorkPrec_(0);
                 }
                 tempMinus[k]=temp;//switch(temp, temp_minus(k));
                 tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
@@ -1321,7 +1327,9 @@ namespace honei {
                 }
                 else
                 {
-                    phiPlusNew[k] = WorkPrec_(0);
+                    //phiPlusNew[k] = WorkPrec_(0);
+                    phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                 }
                 tempPlus[k]= temp;//switch(temp, temp_plus(k));
                 tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
@@ -1335,7 +1343,6 @@ namespace honei {
                     temp = prefac *(2 - phiPlusOld[k]);
                     m1bandMinus1[bminus1.index()] =temp;
                     m3bandMinus1[bminus1.index()] =temp * (*_c)[k];
-
                     m1diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
                     m3diag[d.index()] = -(*_c)[k] * prefac *(4 - phiPlusNew[k] - phiPlusOld[k] + phiMinusNew[k]);
 
@@ -1350,7 +1357,9 @@ namespace honei {
                     }
                     else
                     {
-                        phiMinusNew[k] = WorkPrec_(0);
+                        //phiMinusNew[k] = WorkPrec_(0);
+                        phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                     }
 
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
@@ -1363,7 +1372,9 @@ namespace honei {
                     }
                     else
                     {
-                        phiPlusNew[k] = WorkPrec_(0);
+                        //phiPlusNew[k] = WorkPrec_(0);
+                        phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                     }
 
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
@@ -1416,14 +1427,14 @@ namespace honei {
     template<typename WorkPrec_>
     void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
     {
-        WorkPrec_ prefac;
+        WorkPrec_ prefac(0);
         if(_eps != _delta_t)
         {
-            prefac = 1/(_eps - _delta_t);
+            prefac = WorkPrec_(1)/(_eps - _delta_t);
         }
         else
         {
-        cout << "prefac is invalid!\n";
+            cout << "prefac is invalid!\n";
         }
         DenseVector<WorkPrec_> vc(_v->copy());
         DenseVector<WorkPrec_> u1_c(_u->copy());
@@ -1568,14 +1579,12 @@ namespace honei {
                 predictedu [((i+2)*3*(_d_width+4)+k)] = predictedu [((i+2)*3*(_d_width+4)+9+k)];
                 predictedv [((i+2)*3*(_d_width+4)+k)] = predictedv [((i+2)*3*(_d_width+4)+9+k)];
                 predictedw [((i+2)*3*(_d_width+4)+k)] = predictedw [((i+2)*3*(_d_width+4)+9+k)];
-    
                 predictedu [((i+2)*3*(_d_width+4)+3+k)] = predictedu [((i+2)*3*(_d_width+4)+6+k)];
                 predictedv [((i+2)*3*(_d_width+4)+3+k)] = predictedv [((i+2)*3*(_d_width+4)+6+k)];
                 predictedw [((i+2)*3*(_d_width+4)+3+k)] = predictedw [((i+2)*3*(_d_width+4)+6+k)];
                 predictedu [((i+3)*3*(_d_width+4)-3+k)] = predictedu [((i+3)*3*(_d_width+4)-12+k)];
                 predictedv [((i+3)*3*(_d_width+4)-3+k)] = predictedv [((i+3)*3*(_d_width+4)-12+k)];
                 predictedw [((i+3)*3*(_d_width+4)-3+k)] = predictedw [((i+3)*3*(_d_width+4)-12+k)];
-    
                 predictedu [((i+3)*3*(_d_width+4)-6+k)] = predictedu [((i+3)*3*(_d_width+4)-9+k)];
                 predictedv [((i+3)*3*(_d_width+4)-6+k)] = predictedv [((i+3)*3*(_d_width+4)-9+k)];
                 predictedw [((i+3)*3*(_d_width+4)-6+k)] = predictedw [((i+3)*3*(_d_width+4)-9+k)];
@@ -1630,15 +1639,15 @@ namespace honei {
 
         DenseVector<WorkPrec_> v_temp_result_c(_v_temp->copy());
 
-        Scale<Tag_>::value(-2*_delta_t,v_temp_result_c);
-        Scale<Tag_>::value(2*_delta_t, flow_c);
+        Scale<Tag_>::value(WorkPrec_(-2)*_delta_t,v_temp_result_c);
+        Scale<Tag_>::value(WorkPrec_(2)*_delta_t, flow_c);
         Sum<Tag_>::value(v_temp_result_c, flow_c);
         DenseVector<WorkPrec_> innersum2(v_temp_result_c.copy());
 
         Sum<Tag_>::value(innersum1, innersum2);
 
         ///Scale sum:
-        Scale<Tag_>::value(1/(_eps+_delta_t), innersum1);
+        Scale<Tag_>::value(WorkPrec_(1)/(_eps+_delta_t), innersum1);
 
         ///Repeat for w:
         DenseVector<WorkPrec_> flow2_c(predictedu.copy());
@@ -1657,13 +1666,13 @@ namespace honei {
 
         DenseVector<WorkPrec_> w_temp_result_c(_w_temp->copy());
 
-        Scale<Tag_>::value(-2*_delta_t,w_temp_result_c);
-        Scale<Tag_>::value(2*_delta_t, flow3_c);
+        Scale<Tag_>::value(WorkPrec_(-2)*_delta_t,w_temp_result_c);
+        Scale<Tag_>::value(WorkPrec_(2)*_delta_t, flow3_c);
         Sum<Tag_>::value(w_temp_result_c, flow3_c);
         DenseVector<WorkPrec_>innersum22(w_temp_result_c.copy());
 
         Sum<Tag_>::value(innersum11, innersum22);
-        Scale<Tag_>::value(1/(_eps + _delta_t), innersum11);
+        Scale<Tag_>::value(WorkPrec_(1)/(_eps + _delta_t), innersum11);
 
         predictedv = innersum1.copy();
         predictedw = innersum11.copy();
@@ -1726,32 +1735,32 @@ namespace honei {
             {
                 PredictionPrec2_ a = (*_u)[iter.index()];
                 bool warning = false;
-                if(predictedu[iter.index()] + a)
+                if(predictedu[iter.index()] + a < 0)
                     warning = true;
 
-                (*_u)[iter.index()] = fabs(0.5*(predictedu[iter.index()] + a));
+                (*_u)[iter.index()] = fabs(ResPrec_(0.5)*(predictedu[iter.index()] + a));
                 *h = (*_u)[iter.index()];
                 ++h;
                 ++count;
 
-                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                (*_v)[iter.index()] = ResPrec_(0.5)*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+                (*_w)[iter.index()] = ResPrec_(0.5)*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
                 if(warning)
-                    (*_u)[iter.index()] = fabs(0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]));
+                    (*_u)[iter.index()] = fabs(ResPrec_(0.5)*(predictedu[iter.index()]+ (*_u)[iter.index()]));
                 else
-                    (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+                    (*_u)[iter.index()] = ResPrec_(0.5)*(predictedu[iter.index()]+ (*_u)[iter.index()]);
 
-                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                (*_v)[iter.index()] = ResPrec_(0.5)*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+                (*_w)[iter.index()] = ResPrec_(0.5)*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
                 if(warning)
-                    (*_u)[iter.index()] = fabs(0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]));
+                    (*_u)[iter.index()] = fabs(ResPrec_(0.5)*(predictedu[iter.index()]+ (*_u)[iter.index()]));
                 else
-                    (*_u)[iter.index()] = 0.5*(predictedu[iter.index()]+ (*_u)[iter.index()]);
+                    (*_u)[iter.index()] = ResPrec_(0.5)*(predictedu[iter.index()]+ (*_u)[iter.index()]);
 
-                (*_v)[iter.index()] = 0.5*(predictedv[iter.index()]+ (*_v)[iter.index()]);
-                (*_w)[iter.index()] = 0.5*(predictedw[iter.index()]+ (*_w)[iter.index()]);
+                (*_v)[iter.index()] = ResPrec_(0.5)*(predictedv[iter.index()]+ (*_v)[iter.index()]);
+                (*_w)[iter.index()] = ResPrec_(0.5)*(predictedw[iter.index()]+ (*_w)[iter.index()]);
                 ++iter;
             }
             else
@@ -2003,7 +2012,9 @@ namespace honei {
                     }
                     else
                     {
-                        phiPlusOld[k] = WorkPrec_(0);
+                       //phiPlusOld[k] = WorkPrec_(0);
+                       phiPlusOld[k] = min_mod_limiter(tempTopPlus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                     }
                     tempPlus[k]=temp;
                     tempTopPlus[k]=tempTop;
@@ -2026,7 +2037,9 @@ namespace honei {
                     }
                     else
                     {
-                        phiMinusNew[k] = WorkPrec_(0);
+                        //phiMinusNew[k] = WorkPrec_(0);
+                        phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                     }
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
@@ -2038,7 +2051,9 @@ namespace honei {
                     }
                     else
                     {
-                        phiPlusNew[k] = WorkPrec_(0);
+                        //phiPlusNew[k] = WorkPrec_(0);
+                        phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                     }
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
                     tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
@@ -2059,7 +2074,6 @@ namespace honei {
 
                         m2bandMinus1[bminus1.index()] =temp;
                         m4bandMinus1[bminus1.index()] =temp * (*_d)[k];
-
                         m2diag[d.index()] = prefac * (phiPlusNew[k] + phiPlusOld[k] + phiMinusNew[k]);
                         m4diag[d.index()] = (*_d)[k] * prefac *(phiPlusNew[k] + phiPlusOld[k] - phiMinusNew[k] - 4);
 
@@ -2073,7 +2087,9 @@ namespace honei {
                     }
                     else
                     {
-                        phiMinusNew[k] = WorkPrec_(0);
+                        //phiMinusNew[k] = WorkPrec_(0);
+                        phiMinusNew[k] = min_mod_limiter(tempTopMinus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                     }
                     tempMinus[k]=temp;//switch(temp, temp_minus(k));
                     tempTopMinus[k] = tempTop;//switch(temp_top, temp_top_minus(k));
@@ -2085,7 +2101,9 @@ namespace honei {
                     }
                     else
                     {
-                        phiPlusNew[k] = WorkPrec_(0);
+                        //phiPlusNew[k] = WorkPrec_(0);
+                        phiPlusNew[k] = min_mod_limiter(tempTopPlus[k]/std::numeric_limits<WorkPrec_>::epsilon());
+
                     }
                     tempPlus[k]= temp;//switch(temp, temp_plus(k));
                     tempTopPlus[k] = tempTop;//switch(temp_top, temp_top_plus(k));
@@ -2207,7 +2225,6 @@ namespace honei {
         typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6.begin_elements());
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3.begin_elements());
-        //MIGHTBEBUG:
         DenseVector<WorkPrec_> d_squared(((_d->copy())));
         ElementProduct<Tag_>::value(d_squared, (*_d));
 
