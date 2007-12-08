@@ -756,7 +756,7 @@ class DenseMatrixProductCellQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(145);
+            unsigned long size(100);
 
             DenseMatrix<DataType_> dm1(size, size, DataType_(2)), dm2(size, size, DataType_(3)),
                 dm3(size, size, DataType_(6 * size));

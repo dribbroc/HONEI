@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-08 Sven Mallach <sven.mallach@honei.org>
 
+	* libla/product.hh, libla/product_TEST.cc: Fixed compilation bugs that
+	were caused by removing SV::element_at.
+
+2007-12-08 Sven Mallach <sven.mallach@honei.org>
+
 	* libla/sparse_vector.hh, libla/sparse_vector-impl.hh: Added new
 	iterator definition: non_zero_element_at(pos) with pos != index!
 

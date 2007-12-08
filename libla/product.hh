@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -252,16 +252,16 @@ namespace honei
                         j_end(b.end_non_zero_elements()) ; j != j_end ; ++j)
                 {
                     typename Vector<DT1_>::ConstElementIterator c(vi->element_at(move_index)), c_end(vi->end_elements());
-                    typename Vector<DT1_>::ElementIterator r(result.element_at(move_index));
+                    unsigned long ctr(0);
                     while (c.index() < (j.index() + move_index) && c != c_end) // Need a positive index here, so + is used!
                     {
                         ++c;
-                        ++r;
+                        ctr++;
                     }
 
                     if (c != c_end)
                     {
-                        *r += *c * *j;
+                        result[move_index + ctr] += *c * *j;
                     }
                 }
             }
@@ -857,12 +857,11 @@ namespace honei
                 for (unsigned int z(0) ; z < a.rows() ; ++z)
                 {
                     const SparseVector<DT1_> row(a[z]);
-                    typename Vector<DT1_>::ConstElementIterator c(row.element_at(real_index));
                     typename Vector<DT1_>::ElementIterator x(result[z].begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->element_at(real_index)),
-                        d_end(vi->end_elements()) ; d != d_end ; ++x, ++c, ++d)
+                        d_end(vi->end_elements()) ; d != d_end ; ++x, ++d)
                     {
-                        *x += *d * *c;
+                        *x += *d * row[real_index + x.index()];
                     }
                 }
             }
