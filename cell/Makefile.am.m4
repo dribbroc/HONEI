@@ -28,7 +28,7 @@ libcell_la_LIBADD = objlist
 Makefile.am : Makefile.am.m4 kernels/files.m4
 	$(top_srcdir)/misc/do_m4.bash Makefile.am
 
-bench:
+benchm:
 quickcheck:
 quickcheck-sse:
 quickcheck-cell:
