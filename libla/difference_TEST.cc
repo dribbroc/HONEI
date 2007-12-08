@@ -138,15 +138,20 @@ class BandedMatrixDifferenceTest :
                 DenseVector<DT_> dv1(size, DT_(2));
                 DenseVector<DT_> dv2(size, DT_(3));
                 DenseVector<DT_> dv3(size, DT_(-1));
+                DenseVector<DT_> dv4(size, DT_(1));
                 BandedMatrix<DT_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
-                Difference<>::value(bm1, bm2);
+                bm1.insert_band(-1, dv1.copy());
+                bm2.insert_band(1, dv3.copy());
+                bm3.insert_band(-1, dv1.copy());
+                bm3.insert_band(1, dv4.copy()); 
+                Difference<Tag_>::value(bm1, bm2);
 
                 TEST_CHECK_EQUAL(bm1, bm3);
             }
 
             BandedMatrix<DT_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(Difference<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
 BandedMatrixDifferenceTest<tags::CPU, float> banded_matrix_difference_test_float("float");
@@ -170,10 +175,14 @@ class BandedMatrixDifferenceQuickTest :
         virtual void run() const
         {
             unsigned long size (5);
-            DenseVector<DT_> dv1(size, DT_(2)), dv2(size, DT_(3)), dv3(size, DT_(-1));
+            DenseVector<DT_> dv1(size, DT_(2)), dv2(size, DT_(3)), dv3(size, DT_(-1)), dv4(size, DT_(1));
             BandedMatrix<DT_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
+            bm1.insert_band(-1, dv1.copy());
+            bm2.insert_band(1, dv3.copy());
+            bm3.insert_band(-1, dv1.copy());
+            bm3.insert_band(1, dv4.copy());
 
-            Difference<>::value(bm1, bm2);
+            Difference<Tag_>::value(bm1, bm2);
 
             for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                     i_end(bm1.end_elements()), j(bm3.begin_elements()) ; i != i_end ; ++i, ++j)
@@ -183,7 +192,7 @@ class BandedMatrixDifferenceQuickTest :
 
             BandedMatrix<DT_> bm01(5), bm02(6);
 
-            TEST_CHECK_THROWS(Difference<>::value(bm02, bm01), MatrixSizeDoesNotMatch);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(bm02, bm01), MatrixSizeDoesNotMatch);
         }
 };
 BandedMatrixDifferenceQuickTest<tags::CPU, float> banded_matrix_difference_quick_test_float("float");

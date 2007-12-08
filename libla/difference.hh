@@ -181,7 +181,7 @@ namespace honei
                 {
                     DenseVector<DT2_> band(r->copy());
                     Scale<>::value(DT1_(-1), band);
-                    a.band(r.index()) = band;
+                    a.band(r.index() - a.size() + 1) = band;
                 }
             }
 
@@ -773,7 +773,11 @@ namespace honei
                     ++taskcount; 
                 }
                 else
-                    a.band(r.index()) = r->copy();
+                {
+                   DenseVector<DT2_> band(r->copy());
+                   Scale<typename Tag_::DelegateTo>::value(DT1_(-1), band);
+                   a.band(r.index()-a.size()+1) = band;
+                }
             }
             for (unsigned long j = 0; j < taskcount; ++j)           
             {
