@@ -49,6 +49,8 @@
 #include <libswe/boundary_types.hh>
 #include <libswe/scenario.hh>
 #include <iostream>
+#include <libmath/interpolation.hh>
+
 using namespace std;
 using namespace methods;
 using namespace swe_solvers;
@@ -120,18 +122,16 @@ namespace honei {
                 unsigned long i = 0;
                 while(i < (_system_matrix->size()))
                 {
-std::cout<<actual_row<<","<<actual_column<<endl;
-
                     ///Assemble dd:
-                    dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column])*(ResPrec_(1)/(_delta_x*_delta_x) + ResPrec_(1)/(_delta_y*_delta_y));
+                    dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column])*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x));
                     ///Assemble ll:
-                    ll[i] = alpha*(((*_bottom_bound)[actual_row-1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    ll[i] = alpha*(((*_bottom_bound)[actual_row-1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
                     ///Assemble uu:
-                    uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
                     ///Assemble dl:
-                    dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
                     ///Assemble du:
-                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/_delta_x);
+                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
                     ///Iterate:
                     ++i;
                     if((actual_column) == _grid_width)
@@ -163,6 +163,68 @@ std::cout<<actual_row<<","<<actual_column<<endl;
             template<typename WorkPrec_>
             void _assemble_right_hand_side()
             {
+                DenseVector<WorkPrec_> h(_grid_width * _grid_height, WorkPrec_(0));
+                DenseVector<WorkPrec_> v_x(_grid_width * _grid_height, WorkPrec_(0));
+                DenseVector<WorkPrec_> v_y(_grid_width * _grid_height, WorkPrec_(0));
+
+                ///Compute propagation of velocity and height fields:
+                unsigned long i(1);
+                unsigned long j(1);
+                unsigned long current_index(0);
+                for(unsigned long current_index(0); current_index < _grid_height * _grid_width; ++current_index)
+                {
+                    unsigned long current_x(( j - 1 ) * _delta_x);
+                    unsigned long current_y(( i - 1) * _delta_y);
+                    h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
+                            current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
+                            current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
+                    v_x[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc,
+                            current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
+                            current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
+                    v_y[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_y_veloc_bound,
+                            current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
+                            current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
+                    if( j == _grid_width)
+                    {
+                        ++i;
+                        j = 1;
+                    }
+                    else
+                    {
+                        ++j;
+                    }
+                }
+
+                ///Assemble vector:
+                unsigned long current_row(1);
+                unsigned long current_column(1);
+                WorkPrec_ beta_x(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_x));
+                WorkPrec_ beta_y(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_y));
+                for(unsigned long index(0); index < _grid_width * _grid_height; ++index)
+                {
+                    WorkPrec_ b_diff_1((*_bottom_bound)[current_row + 1][current_column] - (*_bottom_bound)[current_row -1][current_column]);
+                    WorkPrec_ b_diff_2((*_bottom_bound)[current_row][current_column + 1] - (*_bottom_bound)[current_row][current_column - 1]);
+                    WorkPrec_ v_x_diff(v_x[index + _grid_width] - v_x[index - _grid_width]);
+                    WorkPrec_ v_y_diff(v_y[index + 1] - v_x[index -1]);
+
+                    //scale:
+                    b_diff_1 = b_diff_1 * beta_y * v_y[index];
+                    b_diff_2 = b_diff_2 * beta_x * v_x[index];
+                    v_x_diff = v_x_diff * beta_x * (*_height_bound)[current_row][current_column];
+                    v_y_diff = v_y_diff * beta_y * (*_height_bound)[current_row][current_column];
+                    //accumulate:
+                    (*_right_hand_side)[index] = h[index] + b_diff_1 + b_diff_2 - v_x_diff - v_y_diff;
+                    //Iterate:
+                    if( current_column == _grid_width)
+                    {
+                        ++current_row;
+                        current_column = 1;
+                    }
+                    else
+                    {
+                        ++current_column;
+                    }
+                }
             }
 
         public:
@@ -181,13 +243,14 @@ std::cout<<actual_row<<","<<actual_column<<endl;
             {
                 //\TODO: Complete. This is for test purpose only.
                 _assemble_matrix<ResPrec_>();
+                _assemble_right_hand_side<ResPrec_>();
             }
 
             /**
              * Solution capsule for one timestep.
              **/
             template<typename WorkPrec_>
-            void solve(double conv_rad);
+                void solve(double conv_rad);
 
             /**
              * Preprocessing.

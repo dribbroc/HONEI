@@ -114,6 +114,7 @@ class ImplicitSolverMatrixAssTest :
             DenseMatrix<DataType_> b_b(6, 6, DataType_(0));
             DenseMatrix<DataType_> b(4 , 4, DataType_(1));
 
+            DenseVector<DataType_> rhs(16, DataType_(0));
             BandedMatrix<DataType_> A(16);
             scenario.height = &h;
             scenario.x_veloc = &xv;
@@ -124,6 +125,8 @@ class ImplicitSolverMatrixAssTest :
             scenario.y_veloc_bound = &yv_b;
             scenario.bottom_bound = &b_b;
             scenario.system_matrix = &A;
+            scenario.right_hand_side = &rhs;
+
 
             DataType_ delta_t(1);
             DataType_ delta_x(2);
@@ -142,8 +145,69 @@ class ImplicitSolverMatrixAssTest :
             TEST_CHECK(true);
 
         }
+
+};
+template <typename Tag_, typename DataType_>
+class ImplicitSolverRHSAssTest :
+    public BaseTest
+{
+    public:
+        ImplicitSolverRHSAssTest(const std::string & type) :
+            BaseTest("implicit_solver_rhs_ass_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            Scenario<DataType_, IMPLICIT, REFLECT> scenario(4);
+            DenseMatrix<DataType_> h_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> h(4 , 4, DataType_(0));
+            DenseMatrix<DataType_> xv_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> xv(4 , 4, DataType_(0));
+            DenseMatrix<DataType_> yv_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> yv(4 , 4, DataType_(0));
+            DenseMatrix<DataType_> b_b(6, 6, DataType_(0));
+            DenseMatrix<DataType_> b(4 , 4, DataType_(0));
+
+            DenseVector<DataType_> rhs(16, DataType_(0));
+            BandedMatrix<DataType_> A(16);
+            scenario.height = &h;
+            scenario.x_veloc = &xv;
+            scenario.y_veloc = &yv;
+            scenario.bottom = &b;
+            scenario.height_bound = &h_b;
+            scenario.x_veloc_bound = &xv_b;
+            scenario.y_veloc_bound = &yv_b;
+            scenario.bottom_bound = &b_b;
+            scenario.system_matrix = &A;
+            scenario.right_hand_side = &rhs;
+
+
+            DataType_ delta_t(1);
+            DataType_ delta_x(2);
+            DataType_ delta_y(2);
+
+            scenario.delta_t = delta_t;
+            scenario.delta_x = delta_x;
+            scenario.delta_y = delta_y;
+
+            ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
+            solver.do_preprocessing();
+            solver.solve(1);
+            std::cout<<"b:"<<endl;
+            std::cout<<rhs<<endl;
+
+            TEST_CHECK(true);
+
+        }
 };
 
 ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
 ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
 ImplicitSolverMatrixAssTest<tags::CPU, float> implicit_solver_matrix_test_float("float");
+ImplicitSolverRHSAssTest<tags::CPU, float> implicit_solver_rhs_test_float("float");
+ImplicitSolverCreationTest<tags::CPU, double> implicit_solver_creation_test_double("double");
+ImplicitSolverPreprocessingTest<tags::CPU, double> implicit_solver_preprocessing_test_double("double");
+ImplicitSolverMatrixAssTest<tags::CPU, double> implicit_solver_matrix_test_double("double");
+ImplicitSolverRHSAssTest<tags::CPU, double> implicit_solver_rhs_test_double("double");
