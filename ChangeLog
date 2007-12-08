@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-08 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* libla/difference.hh: Reimplemented (BM,DM) and (BM,SM). Implemented 
+	MultiCore (BM, SM).
+	*libla/difference_TEST.cc: Added correspondings TESTS
+	*libutil/wrapper.hh: Added FourArgWrapper.
+
 2007-12-08 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/dense_dense_float_difference.cc,

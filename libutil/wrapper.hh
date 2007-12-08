@@ -26,6 +26,42 @@
 namespace honei
 {
     template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_>
+        class FourArgWrapper
+        {
+            private:
+                DT1_ _a;
+
+                DT2_ _b;
+
+                DT3_ _c;
+
+                DT4_ _d;
+
+            public:
+
+                typedef void result_type;
+
+                FourArgWrapper(DT1_ & a, DT2_ & b, DT3_ & c, DT4_ & d):
+                    _a(a),
+                    _b(b),
+                    _c(c),
+                    _d(d)
+                {
+                }
+
+                void operator() ()
+                {
+                    Tag_::value(_a, _b, _c, _d);
+                }
+
+                void operator() (Mutex * mutex)
+                {
+                    Lock l(*mutex);
+                    Tag_::value(_a, _b, _c, _d);
+                }
+        };
+
+    template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_>
         class ResultThreeArgWrapper
         {
             private:

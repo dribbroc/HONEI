@@ -222,13 +222,44 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements());
-            for (typename MutableMatrix<DT2_>::ElementIterator r(b.begin_elements()),
-                    r_end(b.end_elements()) ; r != r_end ; ++r, ++l)
+            Scale<tags::CPU>::value(-1,b);
+            
+            int middle_index(a.rows() -1);
+            // If we are below the diagonal band, we start at Element index and go on until the last element.
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+                    vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
-                *r = *l - *r;
+                if (!vi.exists())
+                    continue;
+                unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
+                unsigned long i(0);
+                for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                        c_end(vi->end_elements()) ; c != c_end ; ++c)
+                {
+                    b[start][i] += *c;
+                    ++start, ++i;
+                }
             }
 
+            // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
+                    vi != vi_end ; ++vi)
+            {
+                if (!vi.exists())
+                    continue;
+
+                //Calculation of the element-index to stop in iteration!
+                unsigned long offset(vi.index() - middle_index);
+                unsigned long end(vi->size() - offset);
+                unsigned long i(0);
+                for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                        c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                {
+                    b[i][offset] +=  *c;
+                    ++offset, ++i;
+                }
+            }
+            
             return b;
         }
 
@@ -246,11 +277,43 @@ namespace honei
             {
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
-
-            for (typename Matrix<DT1_>::ConstElementIterator l(a.begin_elements()),
-                    l_end(a.end_elements()) ; l != l_end ; ++l)
+            
+            Scale<tags::CPU>::value(-1,b);
+            
+            int middle_index(a.rows() -1);
+            // If we are below the diagonal band, we start at Element index and go on until the last element.
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+                    vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
-                    b[l.row()][l.column()] = (b[l.row()][l.column()] * (-1)) + *l;
+                if (!vi.exists())
+                    continue;
+                unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
+                unsigned long i(0);
+                for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                        c_end(vi->end_elements()) ; c != c_end ; ++c)
+                {
+                    b[start][i] += *c;
+                    ++start, ++i;
+                }
+            }
+
+            // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
+                    vi != vi_end ; ++vi)
+            {
+                if (!vi.exists())
+                    continue;
+
+                //Calculation of the element-index to stop in iteration!
+                unsigned long offset(vi.index() - middle_index);
+                unsigned long end(vi->size() - offset);
+                unsigned long i(0);
+                for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                        c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                {
+                    b[i][offset] +=  *c;
+                    ++offset, ++i;
+                }
             }
 
             return b;
@@ -428,6 +491,32 @@ namespace honei
             return b;
         }
         /// \}
+
+        #ifdef BENCHM
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, SparseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.rows() * a.columns();
+            result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.rows() * a.columns() * sizeof(DT1_);
+            result.size.push_back(a.rows() * a.columns());
+            result.size.push_back(b.rows() * b.columns());
+            return result; 
+        }
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.rows() * a.columns();
+            result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.rows() * a.columns() * sizeof(DT1_);
+            result.size.push_back(a.rows() * a.columns());
+            result.size.push_back(b.rows() * b.columns());
+            return result; 
+        }
+
+        #endif
     };
 
     /**
@@ -557,6 +646,18 @@ namespace honei
                 a[r.index()-offset] -= *r;
                 ++r;
             }
+        }
+       
+        template <typename DT1_, typename DT2_>
+        static void value(const DenseVectorRange<DT1_> & a, SparseMatrix<DT2_> & b, unsigned long offset_y, unsigned long offset_x)
+        {
+            for(typename Vector<DT1_>::ConstElementIterator c(a.begin_elements()),
+                        c_end(a.end_elements()) ; c != c_end ; ++c)
+                {
+                    b[offset_y][offset_x] += *c;
+                    ++offset_y, ++offset_x;
+                }
+
         }
 
         template <typename DT1_, typename DT2_>
@@ -767,6 +868,122 @@ namespace honei
                 pt[i]->wait_on();
             }
             return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(const BandedMatrix<DT2_> & a, SparseMatrix<DT1_> & b)
+        {
+            CONTEXT("When subtracting SparseMatrix from BandedMatrix (MultiCore):");
+
+            if (b.columns() != b.rows())
+            {
+                throw MatrixIsNotSquare(b.rows(), b.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+            
+            Scale<Tag_>::value(-1,b);
+
+            unsigned long parts(8);
+            unsigned long div = a.size() / parts;
+            if (div == 0)
+            {
+                return Difference<typename Tag_::DelegateTo>::value(a,b);
+            }
+            else
+            {
+                unsigned long modulo = a.size() % parts;
+                ThreadPool * tp(ThreadPool::get_instance());
+                std::list< PoolTask* > dispatched_tasks;
+                Mutex mutex[parts];
+                int middle_index(a.rows() -1);
+                //if we are below the diagonal band
+                for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_bands()),
+                     vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
+                {
+                    if (!vi.exists())
+                        continue;
+                    unsigned long i(parts), offset(a.size());
+                    unsigned long start(middle_index - vi.index());
+                    while(i > modulo && offset-div > start)
+                    {
+                        --i;
+                        offset-=div;
+                        DenseVectorRange<DT2_> range_1(*vi, div, offset);
+                        FourArgWrapper<MCDifference<Tag_>, const DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size());
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                    }
+                    if (i == modulo)
+                    {
+                        while(i > 0 && offset-div-1 > start)
+                        {
+                            --i;
+                            offset-=(div+1);
+                            DenseVectorRange<DT2_> range_1(*vi, div+1, offset);
+                            FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size());
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                            dispatched_tasks.push_back(tp->dispatch(func));
+                        }
+                    }
+                    if (offset > start)
+                    {
+                        DenseVectorRange<DT2_> range_1(*vi, offset-start, start);
+                        FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, start, 0);
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                    }
+                }
+                // If we are above or on the diagonal band
+                for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.band_at(middle_index)), 
+                     vi_end(a.end_bands()); vi != vi_end ; ++vi)
+                {
+                    if (!vi.exists())
+                        continue;
+                    unsigned long i(0), offset(0);
+                    unsigned long index(vi.index() - middle_index);
+                    unsigned long end(vi->size() - index);
+                    while ((i < modulo) && (offset+div+1 < end))
+                    {
+                        DenseVectorRange<DT2_> range_1(*vi, div+1, offset);
+                        FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index + offset);
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                        ++i;
+                        offset+=div+1;
+                    }
+                    if (i == modulo)
+                    {
+                        while ((i < parts) && (offset+div  < end))
+                        {
+                            DenseVectorRange<DT2_> range_1(*vi, div, offset);
+                            FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index+offset);
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                            dispatched_tasks.push_back(tp->dispatch(func));
+                            ++i;
+                            offset+=div;
+                        }
+                    }
+                    if (offset < end)
+                    {
+                        DenseVectorRange<DT2_> range_1(*vi, end - offset, offset);
+                        FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index+offset);
+                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                        dispatched_tasks.push_back(tp->dispatch(func));
+                    }
+                }
+                
+                while(! dispatched_tasks.empty())
+                {
+                    PoolTask * pt = dispatched_tasks.front();
+                    dispatched_tasks.pop_front();
+                    pt->wait_on();
+                }
+                return b;
+            }
         }
     };
     template <> struct Difference <tags::CPU::MultiCore> : MCDifference <tags::CPU::MultiCore> {};

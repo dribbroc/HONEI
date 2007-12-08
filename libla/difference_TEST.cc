@@ -191,7 +191,7 @@ BandedMatrixDifferenceQuickTest<tags::CPU, double> banded_matrix_difference_quic
 BandedMatrixDifferenceQuickTest<tags::CPU::MultiCore, float>  mc_banded_matrix_difference_quick_test_float("MC float");
 BandedMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_difference_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixSparseMatrixDifferenceTest :
     public BaseTest
 {
@@ -199,6 +199,7 @@ class BandedMatrixSparseMatrixDifferenceTest :
         BandedMatrixSparseMatrixDifferenceTest(const std::string & type) :
             BaseTest("banded_matrix_sparse_matrix_difference_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -232,7 +233,7 @@ class BandedMatrixSparseMatrixDifferenceTest :
                             *k = DT_(1);
                     }
                 }
-                Difference<>::value(bm1, sm2);
+                Difference<Tag_>::value(bm1, sm2);
 
                 TEST_CHECK_EQUAL(sm2, sm3);
             }
@@ -244,10 +245,12 @@ class BandedMatrixSparseMatrixDifferenceTest :
             TEST_CHECK_THROWS(Difference<>::value(bm01, sm02), MatrixIsNotSquare);
         }
 };
-BandedMatrixSparseMatrixDifferenceTest<float> banded_matrix_sparse_matrix_difference_test_float("float");
-BandedMatrixSparseMatrixDifferenceTest<double> banded_matrix_sparse_matrix_difference_test_double("double");
+BandedMatrixSparseMatrixDifferenceTest<tags::CPU, float> banded_matrix_sparse_matrix_difference_test_float("float");
+BandedMatrixSparseMatrixDifferenceTest<tags::CPU, double> banded_matrix_sparse_matrix_difference_test_double("double");
+BandedMatrixSparseMatrixDifferenceTest<tags::CPU::MultiCore, float> mc_banded_matrix_sparse_matrix_difference_test_float("MC float");
+BandedMatrixSparseMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_banded_matrix_sparse_matrix_difference_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class BandedMatrixSparseMatrixDifferenceQuickTest :
     public QuickTest
 {
@@ -255,6 +258,7 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
         BandedMatrixSparseMatrixDifferenceQuickTest(const std::string & type) :
             QuickTest("banded_matrix_sparse_matrix_difference_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -288,7 +292,7 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
                 }
             }
 
-            Difference<>::value(bm1, sm2);
+            Difference<Tag_>::value(bm1, sm2);
             TEST_CHECK_EQUAL(sm2, sm3);
 
             BandedMatrix<DT_> bm01(5);
@@ -298,8 +302,10 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
             TEST_CHECK_THROWS(Difference<>::value(bm01, sm02), MatrixIsNotSquare);
         }
 };
-BandedMatrixSparseMatrixDifferenceQuickTest<float> banded_matrix_sparse_matrix_difference_quick_test_float("float");
-BandedMatrixSparseMatrixDifferenceQuickTest<double> banded_matrix_sparse_matrix_difference_quick_test_double("double");
+BandedMatrixSparseMatrixDifferenceQuickTest<tags::CPU, float> banded_matrix_sparse_matrix_difference_quick_test_float("float");
+BandedMatrixSparseMatrixDifferenceQuickTest<tags::CPU, double> banded_matrix_sparse_matrix_difference_quick_test_double("double");
+BandedMatrixSparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_sparse_matrix_difference_quick_test_float("MC float");
+BandedMatrixSparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_sparse_matrix_difference_quick_test_double("MC double");
 
 template <typename DT_>
 class DenseMatrixDifferenceTest :
