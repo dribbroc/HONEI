@@ -53,8 +53,8 @@ void dense_dense_float_matrix_product(const Instruction & inst)
     Allocation * block_a[2] = { acquire_block(), acquire_block() };
     Allocation * block_r[2] = { acquire_block(), acquire_block() };
 
-    Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
-    Pointer<float> r[2] = { block_r[0]->address, block_r[1]->address };
+    Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+    Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
 
     unsigned b_last_t_size(multiple_of_sixteen(inst.i.u));
     Allocation * block_b[inst.g.u];

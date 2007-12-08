@@ -47,8 +47,8 @@ int dense_dense_float_element_product(const Instruction & inst)
     Allocation * block_a[2] = { acquire_block(), acquire_block() };
     Allocation * block_b[2] = { acquire_block(), acquire_block() };
 
-    Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
-    Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
+    Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+    Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
 
     unsigned counter(inst.c.u);
     unsigned size(counter > 1 ? inst.size : inst.d.u);

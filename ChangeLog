@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-08 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/dense_dense_float_difference.cc,
+	cell/libla/dense_dense_float_dot_product.cc,
+	cell/libla/dense_dense_float_element_product.cc,
+	cell/libla/dense_dense_float_matrix_product.cc,
+	cell/libla/dense_float_norm_max.cc,
+	cell/libla/dense_float_reduction_max.cc,
+	cell/libla/dense_float_reduction_min.cc,
+	cell/libla/dense_float_reduction_sum.cc,
+	cell/libla/dense_float_scale.cc, cell/libla/dense_sparse_float_sum.cc:
+	Fixed all compiler warnings.
+
 2007-12-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/Makefile.am.m4: Fixed target 'benchmark' on cell.

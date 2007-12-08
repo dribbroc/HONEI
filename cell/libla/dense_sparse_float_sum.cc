@@ -35,11 +35,10 @@ void dense_sparse_float_sum(const Instruction & inst)
     Allocation * block_b[2] = { acquire_block(), acquire_block() }; // b's elements
     Allocation * block_c[2] = { acquire_block(), acquire_block() }; // b's indices
 
-    Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
-    Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
-    Pointer<unsigned long long> c[2] = { block_c[0]->address, block_c[1]->address };
+    Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+    Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
+    Pointer<unsigned long long> c[2] = { { block_c[0]->address }, { block_c[1]->address } };
 
-    unsigned used_elements(multiple_of_sixteen(inst.d.u));
     unsigned actual_last_index_in_dv(inst.i.u);
     unsigned dv_already_finished_elements(0); // for getting the right index in current part of dv
     unsigned a_counter(inst.e.u);
@@ -47,7 +46,7 @@ void dense_sparse_float_sum(const Instruction & inst)
 
     unsigned a_size(a_counter > 1 ? inst.size : multiple_of_sixteen(inst.f.u));
     unsigned b_size(b_counter > 1 ? inst.size/2 : multiple_of_sixteen(inst.h.u));
-    unsigned a_nextsize, b_nextsize;
+    unsigned a_nextsize(0), b_nextsize(0);
     unsigned a_current(1), b_current(1), a_next(2), b_next(2);
 
     mfc_get(a[a_current - 1].untyped, ea_a, a_size, a_current, 0, 0);

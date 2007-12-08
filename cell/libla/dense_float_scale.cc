@@ -42,7 +42,7 @@ void dense_float_scale(const Instruction & inst)
     EffectiveAddress ea_m(inst.a.ea), ea_r(inst.a.ea);
 
     Allocation * block_m[2] = { acquire_block(), acquire_block() };
-    Pointer<float> m[2] = { block_m[0]->address, block_m[1]->address };
+    Pointer<float> m[2] = { { block_m[0]->address} , { block_m[1]->address } };
 
     unsigned counter(inst.b.u);
     unsigned size(counter > 1 ? inst.size : inst.c.u);
