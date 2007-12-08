@@ -2,6 +2,7 @@
 
 halt
 return_void     dense_dense_float_sum                       dense_dense_float_sum
+return_void     dense_scalar_float_sum                      dense_scalar_float_sum
 return_void     dense_sparse_float_sum                      dense_sparse_float_sum
 return_void     dense_dense_float_difference                dense_dense_float_difference
 return_dword    dense_dense_float_dot_product               dense_dense_float_dot_product

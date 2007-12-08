@@ -641,6 +641,10 @@ ScalarDenseMatrixSumTest<tags::CPU, double> scalar_dense_matrix_sum_test_double(
 ScalarDenseMatrixSumTest<tags::CPU::SSE, float> sse_scalar_dense_matrix_sum_test_float("SSE float");
 ScalarDenseMatrixSumTest<tags::CPU::SSE, double> sse_scalar_dense_matrix_sum_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+ScalarDenseMatrixSumTest<tags::Cell, float> cell_scalar_dense_matrix_sum_test_float("Cell float");
+#endif
+
 
 template <typename Tag_, typename DataType_>
 class ScalarDenseMatrixSumQuickTest :
@@ -675,6 +679,9 @@ ScalarDenseMatrixSumQuickTest<tags::CPU, double> scalar_dense_matrix_sum_quick_t
 ScalarDenseMatrixSumQuickTest<tags::CPU::SSE, float> sse_scalar_dense_matrix_sum_quick_test_float("SSE float");
 ScalarDenseMatrixSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_matrix_sum_quick_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+ScalarDenseMatrixSumQuickTest<tags::Cell, float> cell_scalar_dense_matrix_sum_quick_test_float("Cell float");
+#endif
 
 // Test cases for vector operations
 
@@ -706,6 +713,9 @@ ScalarDenseVectorSumTest<tags::CPU, double> scalar_dense_vector_sum_test_double(
 ScalarDenseVectorSumTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_sum_test_float("SSE float");
 ScalarDenseVectorSumTest<tags::CPU::SSE, double> sse_scalar_dense_vector_sum_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+ScalarDenseVectorSumTest<tags::Cell, float> cell_scalar_dense_vector_sum_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class ScalarDenseVectorSumQuickTest :
@@ -733,6 +743,10 @@ ScalarDenseVectorSumQuickTest<tags::CPU, double> scalar_dense_vector_sum_quick_t
 ScalarDenseVectorSumQuickTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_sum_quick_test_float("SSE float");
 ScalarDenseVectorSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_sum_quick_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+ScalarDenseVectorSumQuickTest<tags::Cell, float>  cell_scalar_dense_vector_sum_quick_test_float("Cell float");
+#endif
+
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeSumTest :

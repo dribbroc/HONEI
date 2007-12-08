@@ -526,6 +526,22 @@ namespace honei
     template <> struct Sum<tags::Cell>
     {
         /**
+         * \name Sums of scalar and matrix
+         * \{
+         *
+         * Returns the matrix after adding a scalar to every element.
+         *
+         * \param a The DenseMatrix to be used.
+         * \param b The scalar to be added.
+         *
+         * \retval a The referenced matrix is changed by adding the given scalar to each of its elements.
+         */
+
+        static DenseMatrix<float> & value(const float & b, DenseMatrix<float> & a);
+
+        /// \}
+
+        /**
          * \name Sums of two vectors
          * \{
          *
@@ -540,7 +556,24 @@ namespace honei
          */
 
         static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+
         static DenseVector<float> & value(DenseVector<float> & a, const SparseVector<float> & b);
+
+        /// \}
+
+        /**
+         * \name Sums of scalar and vector
+         * \{
+         *
+         * Returns the vector after adding a scalar to every element.
+         *
+         * \param a The Vector that shall be added.
+         * \param b The scalar that shall be added.
+         *
+         * \retval Will modify the summand a and return it.
+         */
+
+        static DenseVector<float> & value(const float & b, DenseVector<float> & a);
 
         /// \}
     };
