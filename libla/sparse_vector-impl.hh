@@ -209,6 +209,18 @@ namespace honei
     }
 
     template <typename DataType_>
+    typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::non_zero_element_at(unsigned long pos)
+    {
+        return ElementIterator(new NonZeroElementIterator<DataType_>(*this, pos));
+    }
+
+    template <typename DataType_>
+    typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::non_zero_element_at(unsigned long pos) const
+    {
+        return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, pos));
+    }
+
+    template <typename DataType_>
     unsigned long SparseVector<DataType_>::capacity() const
     {
         return _imp->_capacity;

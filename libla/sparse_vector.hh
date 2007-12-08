@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -115,11 +115,19 @@ namespace honei
             /// Returns const iterator pointing behind the last element of the vector.
             virtual ConstElementIterator end_non_zero_elements() const;
 
+            /// Returns const iterator pointing to a given non zero element of the vector.
+            /// Please note that pos != index. pos is the index into the elements array.
+            virtual ConstElementIterator non_zero_element_at(unsigned long pos) const;
+
             /// Returns iterator pointing to the first non-zero element of the vector.
             virtual ElementIterator begin_non_zero_elements();
 
             /// Returns iterator pointing behind the last element of the vector.
             virtual ElementIterator end_non_zero_elements();
+
+            /// Returns iterator pointing to a given non zero element of the vector.
+            /// Please note that pos != index. pos is the index into the elements array.
+            virtual ElementIterator non_zero_element_at(unsigned long pos);
 
             /// Returns out element capacity.
             virtual unsigned long capacity() const;
