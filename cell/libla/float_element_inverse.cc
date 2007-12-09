@@ -55,10 +55,9 @@ void float_element_inverse(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(float) ; i++)
+        for (unsigned i(0) ; i < size / sizeof(vector float) ; i++)
         {
-            if (a[current - 1].typed[i] != 0)
-                a[current - 1].typed[i] = 1.0f / a[current - 1].typed[i];
+            a[current - 1].vectorised[i] = spu_re(a[current - 1].vectorised[i]);
         }
 
         mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
@@ -76,10 +75,9 @@ void float_element_inverse(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / sizeof(float) ; i++)
+    for (unsigned i(0) ; i < size / sizeof(vector float) ; i++)
     {
-        if (a[current - 1].typed[i] != 0)
-            a[current - 1].typed[i] = 1.0f / a[current - 1].typed[i];
+        a[current - 1].vectorised[i] = spu_re(a[current - 1].vectorised[i]);
     }
 
     mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
