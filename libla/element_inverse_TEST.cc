@@ -46,7 +46,7 @@ class DenseVectorElementInverseTest :
                 {
                     *i = i.index() - 5;
                     if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                    else *j = 0;
+                    else *j = DataType_(0);
                     ++j;
                 }
                 ElementInverse<Tag_>::value(dv1);
@@ -86,7 +86,7 @@ class DenseVectorElementInverseQuickTest :
             {
                 *i = i.index() - 5;
                 if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                else *j = 0;
+                else *j = DataType_(0);
                 ++j;
             }
             ElementInverse<Tag_>::value(dv1);
@@ -130,6 +130,8 @@ class SparseVectorElementInverseTest :
                     }
                     ++j;
                 }
+                sv1[0] = DataType_(0);
+                sv2[0] = DataType_(0);
 
                 TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(sv1), sv2);
             }
@@ -171,6 +173,8 @@ class SparseVectorElementInverseQuickTest :
                 }
                 ++j;
             }
+            sv1[0] = DataType_(0);
+            sv2[0] = DataType_(0);
 
             TEST_CHECK_EQUAL(ElementInverse<>::value(sv1), sv2);
         }
@@ -206,8 +210,9 @@ class BandedMatrixElementInverseTest :
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
-                    *i = i.index() + 1;
-                    *j = 1 / DataType_(i.index() + 1);
+                    *i = i.index() - 1;
+                    if (i.index() - 1 == 0) *j = DataType_(0);
+                    else *j = 1 / DataType_(i.index() - 1);
                     ++j;
                 }
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
@@ -239,8 +244,9 @@ class BandedMatrixElementInverseQuickTest :
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
-                    *i = i.index() + 1;
-                    *j = 1 / DataType_(i.index() + 1);
+                    *i = i.index() - 1;
+                    if (i.index() - 1 == 0) *j = DataType_(0);
+                    else *j = 1 / DataType_(i.index() - 1);
                     ++j;
                 }
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
@@ -275,7 +281,7 @@ class DenseMatrixElementInverseTest :
                 {
                     *i = i.index() - 5;
                     if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                    else *j = 0;
+                    else *j = DataType_(0);
                     ++j;
                 }
 
@@ -317,7 +323,7 @@ class DenseMatrixElementInverseQuickTest :
             {
                 *i = i.index() - 5;
                 if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                else *j = 0;
+                else *j = DataType_(0);
                 ++j;
             }
 
@@ -366,6 +372,8 @@ class SparseMatrixElementInverseTest :
 
                     }
                 }
+                sm1[0][0] = DataType_(0);
+                sm2[0][0] = DataType_(0);
                 TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(sm1), sm2);
             }
         }
@@ -408,6 +416,8 @@ class SparseMatrixElementInverseQuickTest :
 
                 }
             }
+            sm1[0][0] = DataType_(0);
+            sm2[0][0] = DataType_(0);
             TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(sm1), sm2);
         }
 };
