@@ -188,7 +188,7 @@ namespace tests
         try { \
             TwoVarHolder test_h(a, b); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, test_h.result, \
-                    _id + "\n" +  "Expected '" #a "' to equal '" + test_h.s_b + \
+                    _id + "\n" +  "Expected '" #a "' to equal \n'" + test_h.s_b + \
                     "'\nbut got\n'" + test_h.s_a + "'"); \
         } catch (const TestFailedException &) { \
             throw; \

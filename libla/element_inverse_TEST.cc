@@ -44,8 +44,9 @@ class DenseVectorElementInverseTest :
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
-                    *i = i.index() + 1;
-                    *j = 1 / static_cast<DataType_>(i.index() + 1);
+                    *i = i.index() - 5;
+                    if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
+                    else *j = 0;
                     ++j;
                 }
                 ElementInverse<Tag_>::value(dv1);
@@ -83,8 +84,9 @@ class DenseVectorElementInverseQuickTest :
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()) ; i != i_end ; ++i)
             {
-                *i = i.index() + 1;
-                *j = 1 / static_cast<DataType_>(i.index() + 1);
+                *i = i.index() - 5;
+                if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
+                else *j = 0;
                 ++j;
             }
             ElementInverse<Tag_>::value(dv1);
@@ -271,8 +273,9 @@ class DenseMatrixElementInverseTest :
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
                         j(dm2.begin_elements()) ; i != i_end ; ++i)
                 {
-                    *i = i.index() + 1;
-                    *j = 1 / DataType_(i.index() + 1);
+                    *i = i.index() - 5;
+                    if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
+                    else *j = 0;
                     ++j;
                 }
 
@@ -309,8 +312,9 @@ class DenseMatrixElementInverseQuickTest :
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
                     j(dm2.begin_elements()) ; i != i_end ; ++i)
             {
-                *i = i.index() + 1;
-                *j = 1 / static_cast<DataType_>(i.index() + 1);
+                *i = i.index() - 5;
+                if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
+                else *j = 0;
                 ++j;
             }
 
