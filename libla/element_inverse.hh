@@ -95,7 +95,10 @@ namespace honei
             for (typename Vector<DataType_>::ElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
-                *l = DataType_(1) / *l;
+                  if (*l == static_cast<DataType_>(0))
+                    continue;
+
+                  *l = DataType_(1) / *l;
             }
             return x;
         }
@@ -125,7 +128,10 @@ namespace honei
             for (typename MutableMatrix<DataType_>::ElementIterator i(x.begin_non_zero_elements()),
                     i_end(x.end_non_zero_elements()) ; i != i_end ; ++i)
             {
-                *i = DataType_(1) / *i;
+               if (*l == static_cast<DataType_>(0))
+                  continue;
+
+               *i = DataType_(1) / *i;
             }
 
             return x;
