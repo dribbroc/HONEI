@@ -128,7 +128,7 @@ namespace honei
             for (typename MutableMatrix<DataType_>::ElementIterator i(x.begin_non_zero_elements()),
                     i_end(x.end_non_zero_elements()) ; i != i_end ; ++i)
             {
-               if (*l == static_cast<DataType_>(0))
+               if (*i == static_cast<DataType_>(0))
                   continue;
 
                *i = DataType_(1) / *i;
