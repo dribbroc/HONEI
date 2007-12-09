@@ -136,6 +136,7 @@ int main(int argc, char** argv)
     bool sse(false);
     bool cell(false);
     bool mc(false);
+    bool cpu_only(false);
     if ((argc > 1) && (stringify(argv[1]) == "quick"))
     {
         quick = true;
@@ -152,6 +153,10 @@ int main(int argc, char** argv)
     {
         mc = true;
     }
+    if ((argc == 3) && (stringify(argv[2]) == "cpu"))
+    {
+        cpu_only = true;
+    }
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
             i != i_end ; ++i)
     {
@@ -165,6 +170,9 @@ int main(int argc, char** argv)
             if (cell && (!((*i)->get_tag_name()=="cell")))
                 continue;
             if (mc && ! ( ((*i)->get_tag_name()=="mc-sse") || ((*i)->get_tag_name()=="mc")))
+                continue;
+            if (cpu_only && ( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse") ||
+                        ((*i)->get_tag_name()=="cell")))
                 continue;
 
             std::cout << (*i)->id() + ": \n";

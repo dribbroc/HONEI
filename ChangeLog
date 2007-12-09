@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-09 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* unittest/unittest.cc:
+	Added parameter 'cpu' to run only tags::CPU and tags::CPU::MC tests.
+
 2007-12-09 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/element_inverse.hh: Added if-conditions as we cannot expect SV
