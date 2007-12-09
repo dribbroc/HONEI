@@ -38,7 +38,7 @@ using namespace honei::cell;
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
  */
-int dense_dense_float_difference(const Instruction & inst)
+void dense_dense_float_difference(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_result(inst.a.ea);
 

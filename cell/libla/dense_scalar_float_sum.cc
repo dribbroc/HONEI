@@ -37,7 +37,7 @@ using namespace honei::cell;
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
  */
-int dense_scalar_float_sum(const Instruction & inst)
+void dense_scalar_float_sum(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_result(inst.a.ea);
 
