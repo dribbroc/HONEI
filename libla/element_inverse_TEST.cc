@@ -65,6 +65,9 @@ DenseVectorElementInverseTest<tags::CPU::SSE, double> sse_dense_vector_element_i
 DenseVectorElementInverseTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_element_inverse_test_float("MC SSE float");
 DenseVectorElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_element_inverse_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CELL
+DenseVectorElementInverseTest<tags::Cell, float> cell_dense_vector_element_inverse_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorElementInverseQuickTest :
@@ -79,7 +82,7 @@ class DenseVectorElementInverseQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(11);
+            unsigned long size(22);
             DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()) ; i != i_end ; ++i)
@@ -102,6 +105,9 @@ DenseVectorElementInverseQuickTest<tags::CPU::SSE, float> sse_dense_vector_eleme
 DenseVectorElementInverseQuickTest<tags::CPU::SSE, double> sse_dense_vector_element_inverse_quick_test_double("SSE double");
 DenseVectorElementInverseQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_element_inverse_quick_test_float("MC SSE float");
 DenseVectorElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_element_inverse_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorElementInverseQuickTest<tags::Cell, float> cell_dense_vector_element_inverse_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>

@@ -81,4 +81,60 @@ namespace honei
 
         return a;
     }
+
+    DenseVector<float> &
+    ElementInverse<tags::Cell>::value(DenseVector<float> & a)
+    {
+        CONTEXT("When inverting DenseVector<float> (Cell):");
+
+        Operand oa = { a.elements() };
+        Operand ob, oc;
+        ob.u = a.size() / 4096;
+        oc.u = a.size() % 4096;
+        oc.u &= ~0xF;
+
+        unsigned rest_index(ob.u * 4096 + oc.u);
+
+        oc.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == oc.u)
+        {
+            if (ob.u > 0)
+            {
+                oc.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++ob.u;
+        }
+
+        SPEInstruction instruction(oc_float_element_inverse, 16 * 1024, oa, ob, oc);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        for (Vector<float>::ElementIterator j(a.element_at(rest_index)), j_end(a.end_elements()) ; j != j_end ; ++j)
+        {
+            if (*j == 0)
+                continue;
+
+            *j = 1 / *j;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return a;
+    }
+
+
 }
