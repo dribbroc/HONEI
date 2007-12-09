@@ -44,6 +44,7 @@ void float_element_inverse(const Instruction & inst)
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
 
+
     while (counter > 1)
     {
         nextsize = (counter == 2 ? inst.c.u : inst.size);
@@ -57,7 +58,24 @@ void float_element_inverse(const Instruction & inst)
 
         for (unsigned i(0) ; i < size / sizeof(vector float) ; i++)
         {
-            a[current - 1].vectorised[i] = spu_re(a[current - 1].vectorised[i]);
+            const Vector<float> one = { { 1.0f, 1.0f, 1.0f, 1.0f } };
+            const Vector<float> zero = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+            // Bitmask for the exponent field in single precision IEEE 754 floats.
+            const Vector<unsigned> mask = { { 0x7f800000U, 0x7f800000U, 0x7f800000U, 0x7f800000U } };
+
+            // Do FREST, FI and one step of Newton-Raphson as proposed
+            // in SPUISAv1.2, p. 215f.
+            vector float & x(a[current - 1].vectorised[i]);
+            Vector<float> v = { x };
+            Vector<float> i = { spu_re(x) };
+            Vector<float> t = { spu_nmsub(x, i.vf, one.vf) };
+            v.vf = spu_madd(t.vf, i.vf, i.vf);
+
+            // Replace NANs by zeros.
+            vector unsigned int finite_test(spu_and(v.vui, mask.vui));
+            finite_test = spu_cmpeq(finite_test, mask.vui);
+            v.vui = spu_sel(v.vui, zero.vui, finite_test);
+            x = v.vf;
         }
 
         mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
@@ -77,7 +95,24 @@ void float_element_inverse(const Instruction & inst)
 
     for (unsigned i(0) ; i < size / sizeof(vector float) ; i++)
     {
-        a[current - 1].vectorised[i] = spu_re(a[current - 1].vectorised[i]);
+        const Vector<float> one = { { 1.0f, 1.0f, 1.0f, 1.0f } };
+        const Vector<float> zero = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+        // Bitmask for the exponent field in single precision IEEE 754 floats.
+        const Vector<unsigned> mask = { { 0x7f800000U, 0x7f800000U, 0x7f800000U, 0x7f800000U } };
+
+        // Do FREST, FI and one step of Newton-Raphson as proposed
+        // in SPUISAv1.2, p. 215f.
+        vector float & x(a[current - 1].vectorised[i]);
+        Vector<float> v = { x };
+        Vector<float> i = { spu_re(x) };
+        Vector<float> t = { spu_nmsub(x, i.vf, one.vf) };
+        v.vf = spu_madd(t.vf, i.vf, i.vf);
+
+        // Replace NANs by zeros.
+        vector unsigned int finite_test(spu_and(v.vui, mask.vui));
+        finite_test = spu_cmpeq(finite_test, mask.vui);
+        v.vui = spu_sel(v.vui, zero.vui, finite_test);
+        x = v.vf;
     }
 
     mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);

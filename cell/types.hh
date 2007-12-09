@@ -80,6 +80,20 @@ namespace honei
             unsigned long array[4];
         };
 
+        template <typename T_> union Vector;
+
+        template <> union Vector<float>
+        {
+            vector float vf;
+            vector unsigned int vui;
+        };
+
+        template <> union Vector<unsigned>
+        {
+            vector unsigned int vui;
+            vector float vf;
+        };
+
         template <typename T_> union MailableResult;
 
         template <> union MailableResult<float>

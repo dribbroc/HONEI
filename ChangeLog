@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/types.hh: Added new union template Vector.
+	* cell/libla/float_element_inverse.cc: Raised precision of divison by
+	a following Newton-Raphson step. Added means to exchange NANs in the
+	result with zeros for the time being.
+
 2007-12-09 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/float_element_inverse.cc: Switched back to estimated
