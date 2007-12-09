@@ -39,15 +39,15 @@ using namespace honei::cell;
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
  */
-int dense_dense_float_sum(const Instruction & inst)
+void dense_dense_float_sum(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_result(inst.a.ea);
 
     Allocation * block_a[2] = { acquire_block(), acquire_block() };
     Allocation * block_b[2] = { acquire_block(), acquire_block() };
 
-    Pointer<float> a[2] = { block_a[0]->address, block_a[1]->address };
-    Pointer<float> b[2] = { block_b[0]->address, block_b[1]->address };
+    Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+    Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
 
     unsigned counter(inst.c.u);
     unsigned size(counter > 1 ? inst.size : inst.d.u);

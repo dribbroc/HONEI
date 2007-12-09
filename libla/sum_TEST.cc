@@ -473,6 +473,9 @@ DenseMatrixSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_sum_te
 DenseMatrixSumTest<tags::CPU::SSE, float> sse_dense_matrix_sum_test_float("SSE float");
 DenseMatrixSumTest<tags::CPU::SSE, double> sse_dense_matrix_sum_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+DenseMatrixSumTest<tags::Cell, float> cell_dense_matrix_sum_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixSumQuickTest :
@@ -509,6 +512,9 @@ DenseMatrixSumQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_su
 DenseMatrixSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_sum_quick_test_double("MC SSE double");
 DenseMatrixSumQuickTest<tags::CPU::SSE, float> sse_dense_matrix_sum_quick_test_float("SSE float");
 DenseMatrixSumQuickTest<tags::CPU::SSE, double> sse_dense_matrix_sum_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseMatrixSumQuickTest<tags::Cell, float> cell_dense_matrix_sum_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>

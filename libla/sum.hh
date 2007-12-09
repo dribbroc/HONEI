@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -526,6 +526,23 @@ namespace honei
     template <> struct Sum<tags::Cell>
     {
         /**
+         * \name Sums of two matrices.
+         * \{
+         *
+         * Returns the first matrix after adding each element of the second one.
+         *
+         * \param a The DenseMatrix to be used.
+         * \param b The DenseMatrix to be added.
+         *
+         * \retval a The referenced matrix is changed by adding each corresponding element to each of its elements.
+         */
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+
+        /// \}
+
+
+        /**
          * \name Sums of scalar and matrix
          * \{
          *
@@ -720,7 +737,8 @@ namespace honei
                     offset = r.index();
                     r += div;
                     DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
-                    ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, (i*(div+1)));
+                    ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>,
+                        const unsigned long > mywrapper(range, b, (i*(div+1)));
                     pt[i] = p->dispatch(mywrapper);
                     ++r;
                 }
@@ -729,7 +747,8 @@ namespace honei
                     offset = r.index();
                     r+= div-1;
                     DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
-                    ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, modulo + (i*div));
+                    ThreeArgWrapper<MCSum<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>,
+                        const unsigned long > mywrapper(range, b, modulo + (i*div));
                     pt[i] = p->dispatch(mywrapper);
                     ++r;
                 }
@@ -782,7 +801,7 @@ namespace honei
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         { 
             CONTEXT("When adding DenseMatrix to DenseMatrix (MultiCore):");
-            
+
             if (a.columns() != b.columns())
             {
                 throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
@@ -811,7 +830,7 @@ namespace honei
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         { 
             CONTEXT("When adding DenseMatrix to SparseMatrix (MultiCore):");
-            
+
             if (a.columns() != b.columns())
             {
                 throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
@@ -840,7 +859,7 @@ namespace honei
         static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         { 
             CONTEXT("When adding SparseMatrix to SparseMatrix (MultiCore):");
-            
+
             if (a.columns() != b.columns())
             {
                 throw MatrixColumnsDoNotMatch(b.columns(), a.columns());

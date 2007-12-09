@@ -87,6 +87,66 @@ namespace honei
         return a;
     }
 
+    DenseMatrix<float> &
+    Sum<tags::Cell>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
+    {
+        CONTEXT("When adding DenseMatrix<float> to DenseMatrix<float> (Cell):");
+
+        if (a.rows() != b.rows())
+            throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+        if (a.columns() != b.columns())
+            throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+
+        Operand oa = { a.elements() };
+        Operand ob = { b.elements() };
+        Operand oc, od;
+        // hardcode transfer buffer size for now.
+        oc.u = (a.rows() * a.columns()) / (1024 * 4);
+        od.u = (a.rows() * a.columns()) % (1024 * 4);
+        od.u &= ~0xF;
+
+        unsigned rest_index(oc.u * 4096 + od.u);
+
+        od.u *= 4;
+
+        bool use_spe(true);
+
+        if (0 == od.u)
+        {
+            if (oc.u > 0)
+            {
+                od.u = 16 * 1024;
+            }
+            else
+            {
+                use_spe = false;
+            }
+        }
+        else
+        {
+            ++oc.u;
+        }
+
+        SPEInstruction instruction(oc_dense_dense_float_sum, 16 * 1024, oa, ob, oc, od);
+
+        if (use_spe)
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        Matrix<float>::ConstElementIterator j(b.element_at(rest_index));
+        MutableMatrix<float>::ElementIterator i(a.element_at(rest_index)), i_end(a.end_elements());
+        for ( ; i != i_end ; ++i, ++j)
+        {
+            *i += *j;
+        }
+
+        if (use_spe)
+            instruction.wait();
+
+        return a;
+    }
+
     DenseVector<float> &
     Sum<tags::Cell>::value(DenseVector<float> & a, const SparseVector<float> & b)
     {
