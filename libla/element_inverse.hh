@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -604,8 +604,39 @@ namespace honei
         }
     };
 
-    template <> struct ElementInverse <tags::CPU::MultiCore> : MCElementInverse <tags::CPU::MultiCore> {};
-    template <> struct ElementInverse <tags::CPU::MultiCore::SSE> : MCElementInverse <tags::CPU::MultiCore::SSE> {};
+    template <> struct ElementInverse<tags::CPU::MultiCore> : MCElementInverse <tags::CPU::MultiCore> {};
+    template <> struct ElementInverse<tags::CPU::MultiCore::SSE> : MCElementInverse <tags::CPU::MultiCore::SSE> {};
+
+    /**
+     * \brief Inversion of the elements of the given entity.
+     *
+     * ElementInverse is the template for the inversion of the elements
+     * \f[
+     *     \texttt{ElementInverse}(a): \quad a \leftarrow a[i]^{-1},
+     * \f]
+     *
+     * of a given entity.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <> struct ElementInverse<tags::Cell>
+    {
+        /**
+         * \name Element inversions
+         * \{
+         *
+         * \brief Returns the inverse values of all of an entity's elements.
+         *
+         * \param a The entity whose elements' inverse values shall be computed.
+         *
+         * \retval a Will modify the entity x and return it.
+         */
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & a);
+    };
+
 
 }
 #endif

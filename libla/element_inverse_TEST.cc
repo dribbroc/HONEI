@@ -293,6 +293,9 @@ DenseMatrixElementInverseTest<tags::CPU::SSE, double>sse_dense_matrix_element_in
 DenseMatrixElementInverseTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_element_inverse_test_float("MC SSE float");
 DenseMatrixElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_element_inverse_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CELL
+DenseMatrixElementInverseTest<tags::Cell, float> cell_dense_matrix_element_inverse_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixElementInverseQuickTest :
@@ -307,8 +310,8 @@ class DenseMatrixElementInverseQuickTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> dm1(3, 2, DataType_(0)),
-                    dm2(3, 2, DataType_(0));
+            DenseMatrix<DataType_> dm1(6, 3, DataType_(0)),
+                    dm2(6, 3, DataType_(0));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
                     j(dm2.begin_elements()) ; i != i_end ; ++i)
             {
@@ -330,6 +333,9 @@ DenseMatrixElementInverseQuickTest<tags::CPU::SSE, float>  sse_dense_matrix_elem
 DenseMatrixElementInverseQuickTest<tags::CPU::SSE, double> sse_dense_matrix_element_inverse_quick_test_double("SSE double");
 DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_element_inverse_quick_test_float("MC SSE float");
 DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_element_inverse_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseMatrixElementInverseQuickTest<tags::Cell, float> cell_dense_matrix_element_inverse_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>

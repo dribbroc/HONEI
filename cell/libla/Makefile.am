@@ -19,7 +19,8 @@ libla_spe_a_SOURCES = \
 	dense_float_reduction_sum.cc \
 	dense_float_reduction_max.cc \
 	dense_float_reduction_min.cc \
-	dense_float_norm_max.cc
+	dense_float_norm_max.cc \
+	float_element_inverse.cc
 
 libla_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 
