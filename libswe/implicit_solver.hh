@@ -50,6 +50,8 @@
 #include <libswe/scenario.hh>
 #include <iostream>
 #include <libmath/interpolation.hh>
+#include <libmath/conjugate_gradients.hh>
+#include <libmath/jacobi.hh>
 
 using namespace std;
 using namespace methods;
@@ -93,6 +95,9 @@ namespace honei {
             ///The data to work on.
             BandedMatrix<ResPrec_> * _system_matrix;
             DenseVector<ResPrec_> * _right_hand_side;
+            DenseVector<ResPrec_> * _u_temp;
+            DenseVector<ResPrec_> * _v_temp;
+
             ///The boundary maps of the scalarfields:
             DenseMatrix<ResPrec_>* _height_bound;
             DenseMatrix<ResPrec_>* _bottom_bound;
@@ -164,8 +169,6 @@ namespace honei {
             void _assemble_right_hand_side()
             {
                 DenseVector<WorkPrec_> h(_grid_width * _grid_height, WorkPrec_(0));
-                DenseVector<WorkPrec_> v_x(_grid_width * _grid_height, WorkPrec_(0));
-                DenseVector<WorkPrec_> v_y(_grid_width * _grid_height, WorkPrec_(0));
 
                 ///Compute propagation of velocity and height fields:
                 unsigned long i(1);
@@ -173,15 +176,15 @@ namespace honei {
                 unsigned long current_index(0);
                 for(unsigned long current_index(0); current_index < _grid_height * _grid_width; ++current_index)
                 {
-                    unsigned long current_x(( j - 1 ) * _delta_x);
-                    unsigned long current_y(( i - 1) * _delta_y);
+                    unsigned long current_x = long(( j - 1 ) * _delta_x);
+                    unsigned long current_y = long(( i - 1) * _delta_y);
                     h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
                             current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
                             current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
-                    v_x[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc,
+                    (*_u_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc,
                             current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
                             current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
-                    v_y[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_y_veloc_bound,
+                    (*_v_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_y_veloc_bound,
                             current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
                             current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
                     if( j == _grid_width)
@@ -204,12 +207,12 @@ namespace honei {
                 {
                     WorkPrec_ b_diff_1((*_bottom_bound)[current_row + 1][current_column] - (*_bottom_bound)[current_row -1][current_column]);
                     WorkPrec_ b_diff_2((*_bottom_bound)[current_row][current_column + 1] - (*_bottom_bound)[current_row][current_column - 1]);
-                    WorkPrec_ v_x_diff(v_x[index + _grid_width] - v_x[index - _grid_width]);
-                    WorkPrec_ v_y_diff(v_y[index + 1] - v_x[index -1]);
+                    WorkPrec_ v_x_diff((*_v_temp)[index + _grid_width] - (*_v_temp)[index - _grid_width]);
+                    WorkPrec_ v_y_diff((*_u_temp)[index + 1] - (*_u_temp)[index -1]);
 
                     //scale:
-                    b_diff_1 = b_diff_1 * beta_y * v_y[index];
-                    b_diff_2 = b_diff_2 * beta_x * v_x[index];
+                    b_diff_1 = b_diff_1 * beta_y * (*_v_temp)[index];
+                    b_diff_2 = b_diff_2 * beta_x * (*_u_temp)[index];
                     v_x_diff = v_x_diff * beta_x * (*_height_bound)[current_row][current_column];
                     v_y_diff = v_y_diff * beta_y * (*_height_bound)[current_row][current_column];
                     //accumulate:
@@ -224,6 +227,42 @@ namespace honei {
                     {
                         ++current_column;
                     }
+                }
+            }
+            /**
+             * The update of the velocity fields per timestep - also creates h.
+             * */
+            template<typename WorkPrec_>
+            void _update(DenseVector<WorkPrec_>& w_new)
+            {
+                unsigned long index(0);
+                unsigned long actual_row(1);
+                unsigned long actual_column(1);
+                WorkPrec_ gamma = - WorkPrec_(9.81) * _delta_t;
+                while(index < _grid_width * _grid_height)
+                {
+                    WorkPrec_ h_new(w_new[index] - (*_bottom_bound)[actual_row][actual_column]);
+                    WorkPrec_ delta_h_1(h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row][actual_column - 1]));
+                    WorkPrec_ delta_h_2 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                    (*_height_bound)[actual_row][actual_column] = h_new;
+                    (*_x_veloc_bound)[actual_row][actual_column] = gamma * delta_h_1 / _delta_x + (*_u_temp)[index];
+                    (*_y_veloc_bound)[actual_row][actual_column] = gamma * delta_h_2 / _delta_y + (*_v_temp)[index];
+
+                    //Iterate:
+                    if((actual_column) == _grid_width)
+                    {
+                        if(actual_row < _grid_height)
+                        {
+                            ++actual_row;
+                        }
+                        actual_column = 1;
+                    }
+                    else
+                    {
+                        ++actual_column;
+                    }
+
+                    ++index;
                 }
             }
 
@@ -244,6 +283,35 @@ namespace honei {
                 //\TODO: Complete. This is for test purpose only.
                 _assemble_matrix<ResPrec_>();
                 _assemble_right_hand_side<ResPrec_>();
+
+                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, long(iter_numbers)));
+                _update(w_new);
+
+                ///Our boundary - correction:
+                for(unsigned long i = 0; i < _grid_width+2; i++)
+                {
+                    ///Correct first row:
+                    (*_height_bound)[0][i] = (*_height_bound)[1][i];
+                    (*_x_veloc_bound)[0][i] = (*_x_veloc_bound)[1][i];
+                    (*_y_veloc_bound)[0][i] = (*_y_veloc_bound)[1][i];
+                    ///Correct last row:
+                    (*_height_bound)[(_grid_height)+1][i] = (*_height_bound)[(_grid_height) - 1][i];
+                    (*_x_veloc_bound)[(_grid_height)+1][i] = (*_x_veloc_bound)[(_grid_height) - 1][i];
+                    (*_y_veloc_bound)[(_grid_height)+1][i] = (*_y_veloc_bound)[(_grid_height) - 1][i];
+
+                }
+
+                for(unsigned long i = 1; i < (_grid_height)+1; i++)
+                {
+                    ///Correct first column:
+                    (*_height_bound)[i][0] = (*_height_bound)[i][1];
+                    (*_x_veloc_bound)[i][0] = (*_x_veloc_bound)[i][1];
+                    (*_y_veloc_bound)[i][0] = (*_y_veloc_bound)[i][1];
+                    ///Correct last column:
+                    (*_height_bound)[i][(_grid_height) + 1] = (*_height_bound)[i][(_grid_height)];
+                    (*_x_veloc_bound)[i][(_grid_height) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
+                    (*_y_veloc_bound)[i][(_grid_height) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
+                }
             }
 
             /**
@@ -281,6 +349,8 @@ namespace honei {
                 ///Just get the address where to store linear system:
                 _system_matrix = scenario->system_matrix;
                 _right_hand_side = scenario->right_hand_side;
+                _u_temp = scenario->u_temp;
+                _v_temp = scenario->v_temp;
 
                 ///Process boundary mapping:
                 for(unsigned long i = 0; i < _grid_height; i++)
@@ -310,18 +380,18 @@ namespace honei {
 
                 }
 
-                for(unsigned long i = 1; i < (scenario->grid_height)+1; i++)
+                for(unsigned long i = 1; i < (_grid_height)+1; i++)
                 {
                     ///Correct first column:
-                    (*scenario->height_bound)[i][0] = (*scenario->height_bound)[i][1];
-                    (*scenario->bottom_bound)[i][0] = (*scenario->bottom_bound)[i][1];
-                    (*scenario->x_veloc_bound)[i][0] = (*scenario->x_veloc_bound)[i][1];
-                    (*scenario->y_veloc_bound)[i][0] = (*scenario->y_veloc_bound)[i][1];
+                    (*_height_bound)[i][0] = (*_height_bound)[i][1];
+                    (*_bottom_bound)[i][0] = (*_bottom_bound)[i][1];
+                    (*_x_veloc_bound)[i][0] = (*_x_veloc_bound)[i][1];
+                    (*_y_veloc_bound)[i][0] = (*_y_veloc_bound)[i][1];
                     ///Correct last column:
-                    (*scenario->height_bound)[i][(scenario->grid_height) + 1] = (*scenario->height_bound)[i][(scenario->grid_height)];
-                    (*scenario->bottom_bound)[i][(scenario->grid_height) + 1] = (*scenario->bottom_bound)[i][(scenario->grid_height)];
-                    (*scenario->x_veloc_bound)[i][(scenario->grid_height) + 1] = (*scenario->x_veloc_bound)[i][(scenario->grid_height)];
-                    (*scenario->y_veloc_bound)[i][(scenario->grid_height) + 1] = (*scenario->y_veloc_bound)[i][(scenario->grid_height)];
+                    (*_height_bound)[i][(_grid_height) + 1] = (*_height_bound)[i][(_grid_height)];
+                    (*_bottom_bound)[i][(_grid_height) + 1] = (*_bottom_bound)[i][(_grid_height)];
+                    (*_x_veloc_bound)[i][(_grid_height) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
+                    (*_y_veloc_bound)[i][(_grid_height) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
                 }
             }
     };

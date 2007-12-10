@@ -80,6 +80,9 @@ namespace honei
             ///The data to work on.
             BandedMatrix<ResPrec_> * system_matrix;
             DenseVector<ResPrec_> * right_hand_side;
+            DenseVector<ResPrec_> * u_temp;
+            DenseVector<ResPrec_> * v_temp;
+
             ///The boundary maps of the scalarfields:
             DenseMatrix<ResPrec_>* height_bound;
             DenseMatrix<ResPrec_>* bottom_bound;

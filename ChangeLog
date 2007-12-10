@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-10 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
+	scenario.hh: Added implementation of velocity update and solve capsule
+	for implicit solver, resolved minor bug in boundary correction,
+	updated scenario, added runtime test.
+
 2007-12-09 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/element_inverse-cell.cc, libla/element_inverse.hh,
