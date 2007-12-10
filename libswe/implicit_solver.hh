@@ -295,9 +295,9 @@ namespace honei {
                     (*_x_veloc_bound)[0][i] = (*_x_veloc_bound)[1][i];
                     (*_y_veloc_bound)[0][i] = (*_y_veloc_bound)[1][i];
                     ///Correct last row:
-                    (*_height_bound)[(_grid_height)+1][i] = (*_height_bound)[(_grid_height) - 1][i];
-                    (*_x_veloc_bound)[(_grid_height)+1][i] = (*_x_veloc_bound)[(_grid_height) - 1][i];
-                    (*_y_veloc_bound)[(_grid_height)+1][i] = (*_y_veloc_bound)[(_grid_height) - 1][i];
+                    (*_height_bound)[(_grid_height)+1][i] = (*_height_bound)[(_grid_height)][i];
+                    (*_x_veloc_bound)[(_grid_height)+1][i] = (*_x_veloc_bound)[(_grid_height)][i];
+                    (*_y_veloc_bound)[(_grid_height)+1][i] = (*_y_veloc_bound)[(_grid_height)][i];
 
                 }
 
@@ -312,6 +312,19 @@ namespace honei {
                     (*_x_veloc_bound)[i][(_grid_height) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
                     (*_y_veloc_bound)[i][(_grid_height) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
                 }
+                (*_height_bound)[0][0] = (*_height_bound)[0][1];
+                (*_height_bound)[0][_grid_width + 1] = (*_height_bound)[0][_grid_width];
+                (*_height_bound)[_grid_height + 1][0] = (*_height_bound)[_grid_height ][0];
+                (*_height_bound)[_grid_height + 1][_grid_width + 1] = (*_height_bound)[_grid_height][_grid_width];
+                (*_x_veloc_bound)[0][0] = (*_x_veloc_bound)[0][1];
+                (*_x_veloc_bound)[0][_grid_width + 1] = (*_x_veloc_bound)[0][_grid_width];
+                (*_x_veloc_bound)[_grid_height + 1][0] = (*_x_veloc_bound)[_grid_height][0];
+                (*_x_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_x_veloc_bound)[_grid_height][_grid_width];
+                (*_y_veloc_bound)[0][0] = (*_y_veloc_bound)[0][1];
+                (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[0][_grid_width];
+                (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][0];
+                (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
+
             }
 
             /**
@@ -373,10 +386,10 @@ namespace honei {
                     (*_x_veloc_bound)[0][i] = (*_x_veloc_bound)[1][i];
                     (*_y_veloc_bound)[0][i] = (*_y_veloc_bound)[1][i];
                     ///Correct last row:
-                    (*_height_bound)[(_grid_height)+1][i] = (*_height_bound)[(_grid_height) - 1][i];
-                    (*_bottom_bound)[(_grid_height)+1][i] = (*_bottom_bound)[(_grid_height) - 1][i];
-                    (*_x_veloc_bound)[(_grid_height)+1][i] = (*_x_veloc_bound)[(_grid_height) - 1][i];
-                    (*_y_veloc_bound)[(_grid_height)+1][i] = (*_y_veloc_bound)[(_grid_height) - 1][i];
+                    (*_height_bound)[(_grid_height)+1][i] = (*_height_bound)[(_grid_height)][i];
+                    (*_bottom_bound)[(_grid_height)+1][i] = (*_bottom_bound)[(_grid_height)][i];
+                    (*_x_veloc_bound)[(_grid_height)+1][i] = (*_x_veloc_bound)[(_grid_height)][i];
+                    (*_y_veloc_bound)[(_grid_height)+1][i] = (*_y_veloc_bound)[(_grid_height)][i];
 
                 }
 
@@ -393,7 +406,25 @@ namespace honei {
                     (*_x_veloc_bound)[i][(_grid_height) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
                     (*_y_veloc_bound)[i][(_grid_height) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
                 }
+                //The rest:
+                (*_height_bound)[0][0] = (*_height_bound)[0][1];
+                (*_height_bound)[0][_grid_width + 1] = (*_height_bound)[0][_grid_width];
+                (*_height_bound)[_grid_height + 1][0] = (*_height_bound)[_grid_height ][0];
+                (*_height_bound)[_grid_height + 1][_grid_width + 1] = (*_height_bound)[_grid_height][_grid_width];
+                (*_bottom_bound)[0][0] = (*_bottom_bound)[0][1];
+                (*_bottom_bound)[0][_grid_width + 1] = (*_bottom_bound)[0][_grid_width];
+                (*_bottom_bound)[_grid_height + 1][0] = (*_bottom_bound)[_grid_height][0];
+                (*_bottom_bound)[_grid_height + 1][_grid_width  + 1] = (*_bottom_bound)[_grid_height][_grid_width];
+                (*_x_veloc_bound)[0][0] = (*_x_veloc_bound)[0][1];
+                (*_x_veloc_bound)[0][_grid_width + 1] = (*_x_veloc_bound)[0][_grid_width];
+                (*_x_veloc_bound)[_grid_height + 1][0] = (*_x_veloc_bound)[_grid_height][0];
+                (*_x_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_x_veloc_bound)[_grid_height][_grid_width];
+                (*_y_veloc_bound)[0][0] = (*_y_veloc_bound)[0][1];
+                (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[0][_grid_width];
+                (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][0];
+                (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
             }
+
     };
 }
 #endif

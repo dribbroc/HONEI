@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-12-10 Markus Geveler <apryde@gmx.de>
 
+	* libswe/implicit_solver.hh: Adjusted boundary correction in
+	preprocessing stage and solve(), resolved bug in access of boundary
+	values.
+
+2007-12-10 Markus Geveler <apryde@gmx.de>
+
 	* libmath/interpolation.hh: Resolved compiler warnings due to type
 	conversion.
 
