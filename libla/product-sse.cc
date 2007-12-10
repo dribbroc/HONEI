@@ -50,7 +50,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
         op_offset = vi.index() - middle_index;
         end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
         quad_end = end - (end % 8);
-        if (end < 24) quad_end = 0;
+        if (end < 32) quad_end = 0;
 
         float * band_e = vi->elements();
         float * b_e = b.elements();
@@ -91,7 +91,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
         quad_start = start + (8 - (start % 8));
         end = a.size();
         quad_end = end - (end % 8);
-        if ( start + 24 > end)
+        if ( start + 32 > end)
         {
             quad_end = start;
             quad_start = start;
@@ -107,11 +107,11 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
         for (unsigned long index = quad_start ; index < quad_end ; index += 8)
         {
             m2 = _mm_loadu_ps(b_e + index - op_offset);
-            m5 = _mm_loadu_ps(b_e + index - op_offset + 8);
+            m5 = _mm_loadu_ps(b_e + index - op_offset + 4);
             m1 = _mm_load_ps(band_e + index);
-            m4 = _mm_load_ps(band_e + index + 8);
+            m4 = _mm_load_ps(band_e + index + 4);
             m3 = _mm_load_ps(r_e + index);
-            m6 = _mm_load_ps(r_e + index + 8);
+            m6 = _mm_load_ps(r_e + index + 4);
 
             m1 = _mm_mul_ps(m1, m2);
             m4 = _mm_mul_ps(m4, m5);
@@ -119,7 +119,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             m4 = _mm_add_ps(m4, m6);
 
             _mm_store_ps(r_e + index, m1);
-            _mm_store_ps(r_e + index + 8, m4);
+            _mm_store_ps(r_e + index + 4, m4);
         }
 
         for (unsigned long index = quad_end ; index < end ; index++)
