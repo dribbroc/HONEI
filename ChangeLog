@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-10 Markus Geveler <apryde@gmx.de>
 
+	* libmath/interpolation.hh: Resolved compiler warnings due to type
+	conversion.
+
+2007-12-10 Markus Geveler <apryde@gmx.de>
+
 	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
 	scenario.hh: Added implementation of velocity update and solve capsule
 	for implicit solver, resolved minor bug in boundary correction,

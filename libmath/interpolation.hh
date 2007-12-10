@@ -80,8 +80,8 @@ namespace honei
                     y_t += delta_y;
                 }
 
-                unsigned long i(x_t/delta_x);
-                unsigned long j(y_t/delta_y);
+                unsigned long i = long(x_t/delta_x);
+                unsigned long j = long(y_t/delta_y);
 
                 ///Perform bilinear interpolation:
                 /*ResPrec_ result = height[i][j] * ( ResPrec_(1) - (y - y_t ))* (ResPrec_(1) - (x -x_t)) +
