@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-10 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libswe/files.m4, libswe/solver_BENCHMARK.cc:
+	Added solver benchmark.
+	* libswe/solver.hh:
+	Removed one last output without solver_VERBOSE set.
+
 2007-12-10 Markus Geveler <apryde@gmx.de>
 
 	* libswe/implicit_solver.hh: Adjusted boundary correction in

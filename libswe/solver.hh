@@ -1904,8 +1904,8 @@ namespace honei {
         delete _w_temp;
         */
 
-        cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
 #ifdef SOLVER_VERBOSE
+        cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
         cout << stringify(*_u)<<endl;
 #endif
 
