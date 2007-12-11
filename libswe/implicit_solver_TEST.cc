@@ -291,5 +291,7 @@ ImplicitSolverMatrixAssTest<tags::CPU, double> implicit_solver_matrix_test_doubl
 ImplicitSolverRHSAssTest<tags::CPU, double> implicit_solver_rhs_test_double("double");
 ImplicitSolverRuntimeTest<tags::CPU, float> implicit_solver_runtime_test_float("float");
 ImplicitSolverRuntimeTest<tags::CPU, double> implicit_solver_runtime_test_double("double");
-
-
+#ifdef HONEI_SSE
+ImplicitSolverRuntimeTest<tags::CPU::SSE, float> sse_implicit_solver_runtime_test_float("SSE float");
+ImplicitSolverRuntimeTest<tags::CPU::SSE, double> sse_implicit_solver_runtime_test_double("SSE double");
+#endif
