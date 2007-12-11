@@ -1029,29 +1029,13 @@ namespace honei
 
         static DenseVector<double> value(const DenseMatrix<double> & a, const DenseVector<double> & b);
 
-        static DenseMatrix<float> value(const DenseMatrix<float> &a, const DenseMatrix<float> & b)
-        {
-            CONTEXT("When multiplying DenseMatrix with DenseMatrix (SSE forwarding to CPU):");
-            return Product<tags::CPU>::value(a, b);
-        }
+        static DenseMatrix<float> value(const DenseMatrix<float> &a, const DenseMatrix<float> & b);
 
-        static DenseMatrix<double> value(const DenseMatrix<double> &a, const DenseMatrix<double> & b)
-        {
-            CONTEXT("When multiplying DenseMatrix with DenseMatrix (SSE forwarding to CPU):");
-            return Product<tags::CPU>::value(a, b);
-        }
+        static DenseMatrix<double> value(const DenseMatrix<double> &a, const DenseMatrix<double> & b);
 
-        static DenseMatrix<float> value(const SparseMatrix<float> &a, const DenseMatrix<float> & b)
-        {
-            CONTEXT("When multiplying SparseMatrix with DenseMatrix (SSE forwarding to CPU):");
-            return Product<tags::CPU>::value(a, b);
-        }
+        static DenseMatrix<float> value(const SparseMatrix<float> &a, const DenseMatrix<float> & b);
 
-        static DenseMatrix<double> value(const SparseMatrix<double> &a, const DenseMatrix<double> & b)
-        {
-            CONTEXT("When multiplying SparseMatrix with DenseMatrix (SSE forwarding to CPU):");
-            return Product<tags::CPU>::value(a, b);
-        }
+        static DenseMatrix<double> value(const SparseMatrix<double> &a, const DenseMatrix<double> & b);
 
         /// \}
     };

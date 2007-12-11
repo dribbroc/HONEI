@@ -20,8 +20,21 @@
  */
 
 #include <libla/product.hh>
+
 #include <xmmintrin.h>
 #include <emmintrin.h>
+
+namespace honei
+{
+    namespace intern
+    {
+        namespace sse
+        {
+            extern void scaled_sum(float * x, const float * y, float b, unsigned long size);
+            extern void scaled_sum(double * x, const double * y, double b, unsigned long size);
+        }
+    }
+}
 
 using namespace honei;
 
@@ -270,6 +283,78 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
     for (Vector<double>::ElementIterator l(result.begin_elements()), l_end(result.end_elements()) ; l != l_end ; ++l)
     {
         *l = DotProduct<tags::CPU::SSE>::value(b, a[l.index()]);
+    }
+
+    return result;
+}
+
+DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseMatrix<float> & b)
+{
+    CONTEXT("When multiplying DenseMatrix<float> with DenseMatrix<float> with SSE:");
+
+    if (a.columns() != b.rows())
+        throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+    DenseMatrix<float> result(a.rows(), b.columns(), float(0));
+
+    for (DenseMatrix<float>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()) ;
+            i != i_end ; ++i)
+    {
+        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+    }
+
+    return result;
+}
+
+DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a, const DenseMatrix<double> & b)
+{
+    CONTEXT("When multiplying DenseMatrix<double> with DenseMatrix<double> with SSE:");
+
+    if (a.columns() != b.rows())
+        throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+    DenseMatrix<double> result(a.rows(), b.columns(), double(0));
+
+    for (DenseMatrix<double>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()) ;
+            i != i_end ; ++i)
+    {
+        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+    }
+
+    return result;
+}
+
+DenseMatrix<float> Product<tags::CPU::SSE>::value(const SparseMatrix<float> & a, const DenseMatrix<float> & b)
+{
+    CONTEXT("When multiplying SparseMatrix<float> with DenseMatrix<float> with SSE:");
+
+    if (a.columns() != b.rows())
+        throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+    DenseMatrix<float> result(a.rows(), b.columns(), float(0));
+
+    for (SparseMatrix<float>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
+            i != i_end ; ++i)
+    {
+        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+    }
+
+    return result;
+}
+
+DenseMatrix<double> Product<tags::CPU::SSE>::value(const SparseMatrix<double> & a, const DenseMatrix<double> & b)
+{
+    CONTEXT("When multiplying SparseMatrix<double> with DenseMatrix<double> with SSE:");
+
+    if (a.columns() != b.rows())
+        throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+    DenseMatrix<double> result(a.rows(), b.columns(), double(0));
+
+    for (SparseMatrix<double>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
+            i != i_end ; ++i)
+    {
+        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
     }
 
     return result;
