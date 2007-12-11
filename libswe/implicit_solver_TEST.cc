@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define SOLVER_VERBOSE 1
 #include "implicit_solver.hh"
 #include <unittest/unittest.hh>
 #include <libutil/stringify.hh>
@@ -266,7 +267,7 @@ class ImplicitSolverRuntimeTest :
 
             solver.do_preprocessing();
 
-            int timesteps = 40;
+            int timesteps = 3;
             for(int timestep = 0; timestep < timesteps; ++timestep)
             {
                 solver.solve(20);

@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-11 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
+	libmath/interpolation.hh: Enhanced performance of Interpolation by
+	substitution of loops, added some verbose output to ImplicitSolver,
+	added bounary correction.
+
 2007-12-11 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product.hh, libla/product-sse.cc, libla/product_TEST.cc:

@@ -152,7 +152,7 @@ namespace honei {
                     }
                 }
                 ///Correct boundaries:
-                /*unsigned long a(0);
+                unsigned long a(0);
                 unsigned long column_count(0);
                 while(a < (_grid_width + 2) * (_grid_height + 2))
                 {
@@ -202,17 +202,21 @@ namespace honei {
                         uu[a] = uu[a - _grid_width - 2];
                         ll[a] = ll[a - _grid_width - 2];
                         cout<< "Accessing " << a - _grid_width - 2 << endl;
-
                     }
-
                     ++a;
-                }*/
+                }
+#ifdef SOLVER_VERBOSE
+                cout<<"Finished correction in matrix assembly!" << endl;
+#endif
                 ///Insert bands:
                 _system_matrix->insert_band(0, dd);
                 _system_matrix->insert_band(1, du);
                 _system_matrix->insert_band(-1, dl);
                 _system_matrix->insert_band(_grid_width + 2, uu);
                 _system_matrix->insert_band(-_grid_width - 2, ll);
+#ifdef SOLVER_VERBOSE
+                cout<<"Inserted bands in matrix assembly!" << endl;
+#endif
 
             }
 
@@ -231,18 +235,25 @@ namespace honei {
                 //\TODO: search for corruption in this loop or in interpolation:
                 for(; current_index < (_grid_height + 2) * (_grid_width + 2) - (_grid_width + 2); ++current_index)
                 {
+#ifdef SOLVER_VERBOSE
+                cout<<"Accessing index in RHS assembly: "<< current_index << endl;
+#endif
 
                     WorkPrec_ current_x = WorkPrec_(( j - 1 ) * _delta_x);
                     WorkPrec_ current_y = WorkPrec_(( i - 1) * _delta_y);
+                    cout<<"Current_x: " << current_x << endl;
+                    cout<<"i,j " << i << "," << j << endl;
+                    cout<<"dt " << _delta_t << endl;
+                    cout<<"XVB " << (*_x_veloc_bound)[i][j] << endl;
                     h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
-                            current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
-                            current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
+                            WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
+                            WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
                     (*_u_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc_bound,
-                            current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
-                            current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
+                            WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
+                            WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
                     (*_v_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_y_veloc_bound,
-                            current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
-                            current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
+                            WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
+                            WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
 
                     if( j == _grid_width)
                     {
@@ -327,7 +338,7 @@ namespace honei {
                 }
 
                 ///Correct boundaries:
-                /*unsigned long a(0);
+                unsigned long a(0);
                 unsigned long column_count(0);
                 while(a < (_grid_width + 2) * (_grid_height + 2))
                 {
@@ -361,10 +372,9 @@ namespace honei {
                     }
 
                     ++a;
-                }*/
-
-
+                }
             }
+
             /**
              * The update of the velocity fields per timestep - also creates h.
              * */
@@ -430,9 +440,17 @@ namespace honei {
                 _assemble_matrix<ResPrec_>();
                 _assemble_right_hand_side<ResPrec_>();
 
-                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, long(iter_numbers)));
-
+#ifdef SOLVER_VERBOSE
+                cout<<"Finished assembly!"<<endl;
+#endif
+                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, std::numeric_limits<ResPrec_>::epsilon()));
+#ifdef SOLVER_VERBOSE
+                cout<<"Finished CG!"<< endl;
+#endif
                 _update(w_new);
+#ifdef SOLVER_VERBOSE
+                cout<<"After update!"<<endl;
+#endif
 
                 ///Our boundary - correction:
                 for(unsigned long i = 0; i < _grid_width+2; i++)
@@ -471,6 +489,9 @@ namespace honei {
                 (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[0][_grid_width];
                 (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][0];
                 (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
+#ifdef SOLVER_VERBOSE
+                cout<<"Finished all!"<<endl;
+#endif
 
             }
 

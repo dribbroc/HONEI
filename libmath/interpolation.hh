@@ -64,22 +64,14 @@ namespace honei
              * \param y The y value in parameter space.
              */
             template<typename ResPrec_>
-            static inline ResPrec_ value(const ResPrec_ delta_x, const ResPrec_ delta_y, const DenseMatrix<ResPrec_>& height, const ResPrec_ x, const ResPrec_ y)
+            static inline ResPrec_ value(const ResPrec_ delta_x, const ResPrec_ delta_y, const DenseMatrix<ResPrec_>& height, ResPrec_ x, ResPrec_ y)
             {
                 ///Compute the lower left vertex of the cell, in which the vector (x y)^T falls in
                 ///parameter space:
-
-                ResPrec_ x_t(0);
-                ResPrec_ y_t(0);
-
-                while(x_t + delta_x <= x)
-                {
-                    x_t += delta_x;
-                }
-                while(y_t + delta_y <= y)
-                {
-                    y_t += delta_y;
-                }
+                ResPrec_ x_t_1(x / delta_x);
+                ResPrec_ y_t_1(y / delta_y);
+                unsigned long x_t = (unsigned long)x_t_1;
+                unsigned long y_t = (unsigned long)y_t_1;
                 unsigned long i = long(x_t/delta_x);
                 unsigned long j = long(y_t/delta_y);
                 ResPrec_ l_1, l_2;
@@ -88,7 +80,6 @@ namespace honei
                 {
                     l_1 = (x - x_t) * (height[i][j+1] - height[i][j]) + height[i][j];
                     l_2 = (x - x_t) * (height[i+1][j+1] - height[i+1][j]) + height[i+1][j];
-                    //cout<< "Accessing(1) " << "(" << i + 1 << "," << j + 1 << ")"<<endl;
                 }
                 else if( i >= height.rows() - 1 && j >= height.columns() - 1)
 
@@ -96,20 +87,17 @@ namespace honei
                     l_1 = (x - x_t) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
                     l_2 = (x - x_t) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
 
-                    //cout<< "Accessing(4) " << "(" << height.rows() - 1 << "," << height.columns() - 1  << ")"<<endl;
                 }
 
                 else if(i >= height.rows() - 1)
                 {
                     l_1 = (x - x_t) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
                     l_2 = (x - x_t) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
-                    //cout<< "Accessing(2) " << "(" << height.rows() - 1 << "," << j + 1 << ")"<<endl;
                 }
                 else if(j >= height.columns() - 1)
                 {
                     l_1 = (x - x_t) * (height[i][height.columns() - 1] - height[i][height.columns() - 1]) + height[i][height.columns() - 1];
                     l_2 = (x - x_t) * (height[i + 1][height.columns() - 1] - height[i + 1][height.columns() - 1]) + height[i+1][height.columns() - 1];
-                    //cout<< "Accessing(3) " << "(" << i + 1 << "," << height.columns() - 1 << ")"<<endl;
                 }
                 ResPrec_ result = (y - y_t) * (l_2 - l_1) + l_1;
                 return result;
@@ -129,62 +117,55 @@ namespace honei
                  * \param y The y value in parameter space.
                  */
                 template<typename ResPrec_>
-                    static inline ResPrec_ value(const ResPrec_ delta_x, const ResPrec_ delta_y, const DenseMatrix<ResPrec_>& height, const ResPrec_ x, const ResPrec_ y)
+                static inline ResPrec_ value(const ResPrec_ delta_x, const ResPrec_ delta_y, const DenseMatrix<ResPrec_>& height, const ResPrec_ x, const ResPrec_ y)
+                {
+                    ///Compute the lower left vertex of the cell, in which the vector (x y)^T falls in
+                    ///parameter space:
+                    ResPrec_ x_t_1(x / delta_x);
+                    ResPrec_ y_t_1(y / delta_y);
+                    unsigned long x_t = (unsigned long)x_t_1;
+                    unsigned long y_t = (unsigned long)y_t_1;
+
+                    unsigned long i(x_t/delta_x);
+                    unsigned long j(y_t/delta_y);
+
+                    unsigned long nearest_x;
+                    unsigned long nearest_y;
+                    if(x_t + delta_x/2 < x)
                     {
-                        ///Compute the lower left vertex of the cell, in which the vector (x y)^T falls in
-                        ///parameter space:
-
-                        ResPrec_ x_t(0);
-                        ResPrec_ y_t(0);
-                        while(x_t + delta_x <= x)
-                        {
-                            x_t += delta_x;
-                        }
-                        while(y_t + delta_y <= y)
-                        {
-                            y_t += delta_y;
-                        }
-
-                        unsigned long i(x_t/delta_x);
-                        unsigned long j(y_t/delta_y);
-
-                        unsigned long nearest_x;
-                        unsigned long nearest_y;
-                        if(x_t + delta_x/2 < x)
-                        {
-                            nearest_x = j;
-                        }
-                        else
-                        {
-                            nearest_x = j + 1;
-                        }
-                        if(y_t + delta_y/2 < y)
-                        {
-                            nearest_y = i;
-                        }
-                        else
-                        {
-                            nearest_y = i + 1;
-                        }
-
-                        if(nearest_x < height.columns() - 1 && nearest_y < height.rows() - 1)
-                        {
-                            return height[nearest_y][nearest_x];
-                        }
-                        else if(nearest_x >= height.columns() - 1 && nearest_y >= height.rows() - 1) 
-                        {
-                            return height[height.rows() - 1][height.columns() -1];
-                        }
-                        else if (nearest_x >= height.columns() - 1)
-                        {
-                            return height[nearest_y][height.columns() - 1];
-                        }
-                        else if (nearest_y >= height.rows() - 1)
-                        {
-                            return height[height.rows() - 1][nearest_x];
-                        }
-
+                        nearest_x = j;
                     }
+                    else
+                    {
+                        nearest_x = j + 1;
+                    }
+                    if(y_t + delta_y/2 < y)
+                    {
+                        nearest_y = i;
+                    }
+                    else
+                    {
+                        nearest_y = i + 1;
+                    }
+
+                    if(nearest_x < height.columns() - 1 && nearest_y < height.rows() - 1)
+                    {
+                        return height[nearest_y][nearest_x];
+                    }
+                    else if(nearest_x >= height.columns() - 1 && nearest_y >= height.rows() - 1) 
+                    {
+                        return height[height.rows() - 1][height.columns() -1];
+                    }
+                    else if (nearest_x >= height.columns() - 1)
+                    {
+                        return height[nearest_y][height.columns() - 1];
+                    }
+                    else if (nearest_y >= height.rows() - 1)
+                    {
+                        return height[height.rows() - 1][nearest_x];
+                    }
+
+                }
         };
 
 }
