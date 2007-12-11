@@ -73,6 +73,9 @@ namespace honei
     {
         CONTEXT("When creating DenseVectorRange:");
         ASSERT(size > 0, "size is zero!");
+        ASSERT(size <= source._imp->size, "size of range is bigger than size of source!");
+        ASSERT(offset <= source._imp->size, "offset is out of bounds!");
+        ASSERT(offset + size <= source._imp->size, "end of range is out of bounds!");
     }
 
     template <typename DataType_>
@@ -82,6 +85,9 @@ namespace honei
     {
         CONTEXT("When creating DenseVectorRange:");
         ASSERT(size > 0, "size is zero!");
+        ASSERT(size <= source._imp->size, "size of range is bigger than size of source!");
+        ASSERT(offset <= source._imp->size, "offset is out of bounds!");
+        ASSERT(offset + size <= source._imp->size, "end of range is out of bounds!");
     }
 
     template <typename DataType_>
@@ -97,7 +103,7 @@ namespace honei
     {
         CONTEXT("When creating DenseVectorRange:");
         ASSERT(size > 0, "size is zero!");
-        ASSERT(size <= source._imp->size, "size is bigger than size of source!");
+        ASSERT(size <= source._imp->size, "size of range is bigger than size of source!");
         ASSERT(offset <= source._imp->size, "offset is out of bounds!");
         ASSERT(offset + size <= source._imp->size, "end of range is out of bounds!");
     }
