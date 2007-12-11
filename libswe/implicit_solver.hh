@@ -151,6 +151,62 @@ namespace honei {
                         ++i;
                     }
                 }
+                ///Correct boundaries:
+                /*unsigned long a(0);
+                unsigned long column_count(0);
+                while(a < (_grid_width + 2) * (_grid_height + 2))
+                {
+                    cout<<a<<endl;
+                    if(a < _grid_width + 2)
+                    {
+                        dd[a] = dd[a + _grid_width + 2];
+                        du[a] = du[a + _grid_width + 2];
+                        dl[a] = dl[a + _grid_width + 2];
+                        uu[a] = uu[a + _grid_width + 2];
+                        ll[a] = ll[a + _grid_width + 2];
+                        cout<< "Accessing " << a + _grid_width + 2 << endl;
+                    }
+
+                    if(column_count == _grid_width + 1)
+                    {
+                        dd[a] = dd[a - 1];
+                        du[a] = du[a - 1];
+                        dl[a] = dl[a - 1];
+                        uu[a] = uu[a - 1];
+                        ll[a] = ll[a - 1];
+                        cout<< "Accessing " << a -1 << endl;
+
+                        column_count = 0;
+                    }
+                    else if(column_count == 0)
+                    {
+                        dd[a] = dd[a + 1];
+                        du[a] = du[a + 1];
+                        dl[a] = dl[a + 1];
+                        uu[a] = uu[a + 1];
+                        ll[a] = ll[a + 1];
+                        cout<< "Accessing " << a + 1 << endl;
+
+                        ++column_count;
+                    }
+                    else
+                    {
+                        ++column_count;
+                    }
+
+                    if(a > (_grid_height + 1) * (_grid_width + 2))
+                    {
+                        dd[a] = dd[a - _grid_width - 2];
+                        du[a] = du[a - _grid_width - 2];
+                        dl[a] = dl[a - _grid_width - 2];
+                        uu[a] = uu[a - _grid_width - 2];
+                        ll[a] = ll[a - _grid_width - 2];
+                        cout<< "Accessing " << a - _grid_width - 2 << endl;
+
+                    }
+
+                    ++a;
+                }*/
                 ///Insert bands:
                 _system_matrix->insert_band(0, dd);
                 _system_matrix->insert_band(1, du);
@@ -269,6 +325,44 @@ namespace honei {
                         ++current_column;
                     }
                 }
+
+                ///Correct boundaries:
+                /*unsigned long a(0);
+                unsigned long column_count(0);
+                while(a < (_grid_width + 2) * (_grid_height + 2))
+                {
+                    cout<<a<<endl;
+                    if(a < _grid_width + 2)
+                    {
+                        (*_right_hand_side)[a] = (*_right_hand_side)[a + _grid_width + 2];
+                    }
+
+                    if(column_count == _grid_width + 1)
+                    {
+                        (*_right_hand_side)[a] = (*_right_hand_side)[a - 1];
+
+                        column_count = 0;
+                    }
+                    else if(column_count == 0)
+                    {
+                        (*_right_hand_side)[a] = (*_right_hand_side)[a + 1];
+
+                        ++column_count;
+                    }
+                    else
+                    {
+                        ++column_count;
+                    }
+
+                    if(a > (_grid_height + 1) * (_grid_width + 2))
+                    {
+                        (*_right_hand_side)[a] = (*_right_hand_side)[a - _grid_width - 2];
+
+                    }
+
+                    ++a;
+                }*/
+
 
             }
             /**

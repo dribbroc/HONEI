@@ -266,7 +266,7 @@ class ImplicitSolverRuntimeTest :
 
             solver.do_preprocessing();
 
-            int timesteps = 1;
+            int timesteps = 40;
             for(int timestep = 0; timestep < timesteps; ++timestep)
             {
                 solver.solve(20);

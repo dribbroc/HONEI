@@ -5,12 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-11 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
+	libmath/interpolation.hh:Added vital boundary handling to
+	interpolation.
+
 2007-12-11 Volker Jung <volker.jung@honei.org>
 
 	* libla/dense_vector_range-impl.hh, libla/dense_vector_slice-impl.hh:
 	Added assertions to constructors.
 
-2007-12-10 Markus Geveler <apryde@gmx.de>
+2007-12-11 Markus Geveler <apryde@gmx.de>
 
 	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
 	libswe/scenario.hh, libmath/interpolation.hh: Added final
