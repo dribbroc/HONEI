@@ -113,11 +113,11 @@ class ImplicitSolverMatrixAssTest :
             DenseMatrix<DataType_> yv(4 , 4, DataType_(1));
             DenseMatrix<DataType_> b_b(6, 6, DataType_(0));
             DenseMatrix<DataType_> b(4 , 4, DataType_(1));
-            DenseVector<DataType_> u_t(16, DataType_(0));
-            DenseVector<DataType_> v_t(16, DataType_(0));
+            DenseVector<DataType_> u_t(36, DataType_(0));
+            DenseVector<DataType_> v_t(36, DataType_(0));
 
-            DenseVector<DataType_> rhs(16, DataType_(0));
-            BandedMatrix<DataType_> A(16);
+            DenseVector<DataType_> rhs(36, DataType_(0));
+            BandedMatrix<DataType_> A(36);
             scenario.height = &h;
             scenario.x_veloc = &xv;
             scenario.y_veloc = &yv;
@@ -131,8 +131,8 @@ class ImplicitSolverMatrixAssTest :
 
 
             DataType_ delta_t(1);
-            DataType_ delta_x(2);
-            DataType_ delta_y(2);
+            DataType_ delta_x(1);
+            DataType_ delta_y(1);
 
             scenario.delta_t = delta_t;
             scenario.delta_x = delta_x;
@@ -141,8 +141,10 @@ class ImplicitSolverMatrixAssTest :
             scenario.v_temp = &v_t;
 
             ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
+
             solver.do_preprocessing();
             solver.solve(1);
+            cout<<"After solve:"<< endl;
             std::cout<<"A:"<<endl;
             std::cout<<A<<endl;
 
@@ -174,8 +176,8 @@ class ImplicitSolverRHSAssTest :
             DenseMatrix<DataType_> b_b(6, 6, DataType_(0));
             DenseMatrix<DataType_> b(4 , 4, DataType_(0));
 
-            DenseVector<DataType_> rhs(16, DataType_(0));
-            BandedMatrix<DataType_> A(16);
+            DenseVector<DataType_> rhs(36, DataType_(0));
+            BandedMatrix<DataType_> A(36);
             scenario.height = &h;
             scenario.x_veloc = &xv;
             scenario.y_veloc = &yv;
@@ -186,12 +188,12 @@ class ImplicitSolverRHSAssTest :
             scenario.bottom_bound = &b_b;
             scenario.system_matrix = &A;
             scenario.right_hand_side = &rhs;
-            DenseVector<DataType_> u_t(16, DataType_(0));
-            DenseVector<DataType_> v_t(16, DataType_(0));
+            DenseVector<DataType_> u_t(36, DataType_(0));
+            DenseVector<DataType_> v_t(36, DataType_(0));
 
             DataType_ delta_t(1);
-            DataType_ delta_x(2);
-            DataType_ delta_y(2);
+            DataType_ delta_x(1);
+            DataType_ delta_y(1);
 
             scenario.delta_t = delta_t;
             scenario.delta_x = delta_x;
@@ -233,8 +235,8 @@ class ImplicitSolverRuntimeTest :
             DenseMatrix<DataType_> b_b(6, 6, DataType_(0));
             DenseMatrix<DataType_> b(4 , 4, DataType_(0));
 
-            DenseVector<DataType_> rhs(16, DataType_(0));
-            BandedMatrix<DataType_> A(16);
+            DenseVector<DataType_> rhs(36, DataType_(0));
+            BandedMatrix<DataType_> A(36);
             scenario.height = &h;
             scenario.x_veloc = &xv;
             scenario.y_veloc = &yv;
@@ -245,12 +247,12 @@ class ImplicitSolverRuntimeTest :
             scenario.bottom_bound = &b_b;
             scenario.system_matrix = &A;
             scenario.right_hand_side = &rhs;
-            DenseVector<DataType_> u_t(16, DataType_(0));
-            DenseVector<DataType_> v_t(16, DataType_(0));
+            DenseVector<DataType_> u_t(36, DataType_(0));
+            DenseVector<DataType_> v_t(36, DataType_(0));
 
             DataType_ delta_t(1);
-            DataType_ delta_x(2);
-            DataType_ delta_y(2);
+            DataType_ delta_x(1);
+            DataType_ delta_y(1);
 
             scenario.delta_t = delta_t;
             scenario.delta_x = delta_x;
@@ -260,8 +262,16 @@ class ImplicitSolverRuntimeTest :
             scenario.v_temp = &v_t;
 
             ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
+            cout<<"After preproc:"<<endl;
+
             solver.do_preprocessing();
-            solver.solve(100);
+
+            int timesteps = 1;
+            for(int timestep = 0; timestep < timesteps; ++timestep)
+            {
+                solver.solve(20);
+            }
+            cout<<"After solve:"<< endl;
 
             cout << h_b;
 
@@ -270,7 +280,6 @@ class ImplicitSolverRuntimeTest :
         }
 };
 
-ImplicitSolverRuntimeTest<tags::CPU, float> implicit_solver_runtime_test_float("float");
 ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
 ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
 ImplicitSolverMatrixAssTest<tags::CPU, float> implicit_solver_matrix_test_float("float");
@@ -279,4 +288,7 @@ ImplicitSolverCreationTest<tags::CPU, double> implicit_solver_creation_test_doub
 ImplicitSolverPreprocessingTest<tags::CPU, double> implicit_solver_preprocessing_test_double("double");
 ImplicitSolverMatrixAssTest<tags::CPU, double> implicit_solver_matrix_test_double("double");
 ImplicitSolverRHSAssTest<tags::CPU, double> implicit_solver_rhs_test_double("double");
+ImplicitSolverRuntimeTest<tags::CPU, float> implicit_solver_runtime_test_float("float");
 ImplicitSolverRuntimeTest<tags::CPU, double> implicit_solver_runtime_test_double("double");
+
+

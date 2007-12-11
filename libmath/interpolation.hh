@@ -71,24 +71,19 @@ namespace honei
 
                 ResPrec_ x_t(0);
                 ResPrec_ y_t(0);
-                while(x_t + delta_x < x)
+
+                while(x_t + delta_x <= x)
                 {
                     x_t += delta_x;
                 }
-                while(y_t + delta_y < y)
+                while(y_t + delta_y <= y)
                 {
                     y_t += delta_y;
                 }
-
                 unsigned long i = long(x_t/delta_x);
                 unsigned long j = long(y_t/delta_y);
 
                 ///Perform bilinear interpolation:
-                /*ResPrec_ result = height[i][j] * ( ResPrec_(1) - (y - y_t ))* (ResPrec_(1) - (x -x_t)) +
-                                  height[i+1][j] * (y - y_t ) * (ResPrec_(1) - (y - y_t) ) +
-                                  height[i][j+1] * (x -x_t) * (ResPrec_(1) - (y - y_t) ) +
-                                  height[i+1][j+1] * (y - y_t ) * (x -x_t);*/
-
                 ResPrec_ l_1 = (x - x_t) * (height[i][j+1] - height[i][j]) + height[i][j];
                 ResPrec_ l_2 = (x - x_t) * (height[i+1][j+1] - height[i+1][j]) + height[i+1][j];
 
@@ -118,11 +113,11 @@ namespace honei
 
                 ResPrec_ x_t(0);
                 ResPrec_ y_t(0);
-                while(x_t + delta_x < x)
+                while(x_t + delta_x <= x)
                 {
                     x_t += delta_x;
                 }
-                while(y_t + delta_y < y)
+                while(y_t + delta_y <= y)
                 {
                     y_t += delta_y;
                 }

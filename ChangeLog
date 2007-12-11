@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-10 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,
+	libswe/scenario.hh, libmath/interpolation.hh: Added final
+	implementation of ImplicitSolver boundary correction, velocity
+	correction, solve capsule and assembly methods, resolved two bugs in
+	assembly tests, resolved minor bug in Interpolation, ImplicitSolver is
+	up and running, entering visual debug procedure.
+
 2007-12-10 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product-sse.cc:

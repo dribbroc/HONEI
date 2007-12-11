@@ -122,10 +122,11 @@ namespace honei {
 
                 ResPrec_ alpha(_delta_t*_delta_t*ResPrec_(9.81));
                 ///Ignore ghost cells, assemble:
-                unsigned long actual_row = 1;
-                unsigned long actual_column = 1;
-                unsigned long i = 0;
-                while(i < (_system_matrix->size()))
+                unsigned long actual_row(1);
+                unsigned long actual_column(1);
+                unsigned long i(_grid_width + 3);
+
+                while(i < (_system_matrix->size()) - (_grid_width + 2))
                 {
                     ///Assemble dd:
                     dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column])*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x));
@@ -138,27 +139,24 @@ namespace honei {
                     ///Assemble du:
                     du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
                     ///Iterate:
-                    ++i;
                     if((actual_column) == _grid_width)
                     {
-                        if(actual_row < _grid_height)
-                        {
-                            ++actual_row;
-                        }
+                        ++actual_row;
                         actual_column = 1;
+                        i += 3;
                     }
                     else
                     {
                         ++actual_column;
+                        ++i;
                     }
                 }
-
                 ///Insert bands:
                 _system_matrix->insert_band(0, dd);
                 _system_matrix->insert_band(1, du);
                 _system_matrix->insert_band(-1, dl);
-                _system_matrix->insert_band(_grid_width, uu);
-                _system_matrix->insert_band(-_grid_width, ll);
+                _system_matrix->insert_band(_grid_width + 2, uu);
+                _system_matrix->insert_band(-_grid_width - 2, ll);
 
             }
 
@@ -168,29 +166,33 @@ namespace honei {
             template<typename WorkPrec_>
             void _assemble_right_hand_side()
             {
-                DenseVector<WorkPrec_> h(_grid_width * _grid_height, WorkPrec_(0));
+                DenseVector<WorkPrec_> h((_grid_width +2) * (_grid_height + 2), WorkPrec_(0));
 
                 ///Compute propagation of velocity and height fields:
                 unsigned long i(1);
                 unsigned long j(1);
-                unsigned long current_index(0);
-                for(unsigned long current_index(0); current_index < _grid_height * _grid_width; ++current_index)
+                unsigned long current_index(_grid_width + 3);
+                //\TODO: search for corruption in this loop or in interpolation:
+                for(; current_index < (_grid_height + 2) * (_grid_width + 2) - (_grid_width + 2); ++current_index)
                 {
-                    unsigned long current_x = long(( j - 1 ) * _delta_x);
-                    unsigned long current_y = long(( i - 1) * _delta_y);
+
+                    WorkPrec_ current_x = WorkPrec_(( j - 1 ) * _delta_x);
+                    WorkPrec_ current_y = WorkPrec_(( i - 1) * _delta_y);
                     h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
                             current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
                             current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
-                    (*_u_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc,
+                    (*_u_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc_bound,
                             current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
                             current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
                     (*_v_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_y_veloc_bound,
                             current_x - (_delta_t * (*_x_veloc_bound)[i][j]),
                             current_y - (_delta_t * (*_y_veloc_bound)[i][j]));
+
                     if( j == _grid_width)
                     {
                         ++i;
                         j = 1;
+                        current_index += 2; //due to for
                     }
                     else
                     {
@@ -201,14 +203,52 @@ namespace honei {
                 ///Assemble vector:
                 unsigned long current_row(1);
                 unsigned long current_column(1);
+                unsigned long index(_grid_width + 3);
                 WorkPrec_ beta_x(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_x));
                 WorkPrec_ beta_y(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_y));
-                for(unsigned long index(0); index < _grid_width * _grid_height; ++index)
+                for(; index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2); ++index)
                 {
                     WorkPrec_ b_diff_1((*_bottom_bound)[current_row + 1][current_column] - (*_bottom_bound)[current_row -1][current_column]);
                     WorkPrec_ b_diff_2((*_bottom_bound)[current_row][current_column + 1] - (*_bottom_bound)[current_row][current_column - 1]);
-                    WorkPrec_ v_x_diff((*_v_temp)[index + _grid_width] - (*_v_temp)[index - _grid_width]);
-                    WorkPrec_ v_y_diff((*_u_temp)[index + 1] - (*_u_temp)[index -1]);
+     WorkPrec_ v_x_diff, v_y_diff;
+
+                    if(index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) <= (_grid_width + 2) * (_grid_height + 2))
+                    {
+                        v_x_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index - (_grid_width + 2)]);
+                    }
+                    else if ( index - (_grid_width + 2) < 0 && index + (_grid_width + 2) <= (_grid_width + 2) * (_grid_height + 2))
+                    {
+                        v_x_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index]);
+
+                    }
+                    else if (index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) > (_grid_width + 2) * (_grid_height + 2))
+                    {
+                        v_x_diff = ((*_v_temp)[index] - (*_v_temp)[index -( _grid_width + 2)]);
+
+                    }
+                    else
+                    {
+                        v_x_diff = ((*_v_temp)[index] - (*_v_temp)[index]);
+                    }
+
+                    if(index - 1 >= 0 && index + 1 <= (_grid_width + 2) * (_grid_height + 2))
+                    {
+                        v_y_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index - 1]);
+                    }
+                    else if ( index - 1 < 0 && index + 1 <= (_grid_width + 2) * (_grid_height + 2))
+                    {
+                        v_y_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index]);
+
+                    }
+                    else if (index - 1 >= 0 && index + 1 > (_grid_width + 2) * (_grid_height + 2))
+                    {
+                        v_y_diff = ((*_u_temp)[index] - (*_u_temp)[index -( _grid_width + 2)]);
+
+                    }
+                    else
+                    {
+                        v_y_diff = ((*_u_temp)[index] - (*_u_temp)[index]);
+                    }
 
                     //scale:
                     b_diff_1 = b_diff_1 * beta_y * (*_v_temp)[index];
@@ -222,12 +262,14 @@ namespace honei {
                     {
                         ++current_row;
                         current_column = 1;
+                        index += 2; //due to for
                     }
                     else
                     {
                         ++current_column;
                     }
                 }
+
             }
             /**
              * The update of the velocity fields per timestep - also creates h.
@@ -235,34 +277,44 @@ namespace honei {
             template<typename WorkPrec_>
             void _update(DenseVector<WorkPrec_>& w_new)
             {
-                unsigned long index(0);
+
+                unsigned long index(_grid_width + 3);
                 unsigned long actual_row(1);
                 unsigned long actual_column(1);
                 WorkPrec_ gamma = - WorkPrec_(9.81) * _delta_t;
-                while(index < _grid_width * _grid_height)
+                while(index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2))
                 {
                     WorkPrec_ h_new(w_new[index] - (*_bottom_bound)[actual_row][actual_column]);
-                    WorkPrec_ delta_h_1(h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row][actual_column - 1]));
-                    WorkPrec_ delta_h_2 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row - 1][actual_column]));
+
+                    WorkPrec_ delta_h_1, delta_h_2;
+
+                    if( index - 1 >= 0)
+                    {
+                        delta_h_1 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row][actual_column - 1]));
+                        delta_h_2 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                    }
+                    else
+                    {
+                        delta_h_1 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row][actual_column - 1]));
+                        delta_h_2 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                    }
                     (*_height_bound)[actual_row][actual_column] = h_new;
                     (*_x_veloc_bound)[actual_row][actual_column] = gamma * delta_h_1 / _delta_x + (*_u_temp)[index];
                     (*_y_veloc_bound)[actual_row][actual_column] = gamma * delta_h_2 / _delta_y + (*_v_temp)[index];
 
                     //Iterate:
+
                     if((actual_column) == _grid_width)
                     {
-                        if(actual_row < _grid_height)
-                        {
-                            ++actual_row;
-                        }
+                        ++actual_row;
                         actual_column = 1;
+                        index += 3;
                     }
                     else
                     {
                         ++actual_column;
+                        ++index;
                     }
-
-                    ++index;
                 }
             }
 
@@ -285,6 +337,7 @@ namespace honei {
                 _assemble_right_hand_side<ResPrec_>();
 
                 DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, long(iter_numbers)));
+
                 _update(w_new);
 
                 ///Our boundary - correction:
@@ -341,7 +394,7 @@ namespace honei {
 
                 ///Copy our scenario data:
                 _n = scenario->n;
-                _delta_x = scenario->delta_x;
+                this->_delta_x = scenario->delta_x;
                 _delta_y = scenario->delta_y;
                 _delta_t = scenario->delta_t;
                 _d_width = scenario->d_width;
@@ -364,7 +417,6 @@ namespace honei {
                 _right_hand_side = scenario->right_hand_side;
                 _u_temp = scenario->u_temp;
                 _v_temp = scenario->v_temp;
-
                 ///Process boundary mapping:
                 for(unsigned long i = 0; i < _grid_height; i++)
                 {
@@ -376,7 +428,6 @@ namespace honei {
                         (*_y_veloc_bound)[i+1][j+1] = (*_y_veloc)[i][j];
                     }
                 }
-
                 ///Process boundary correction for all scalarfields:
                 for(unsigned long i = 0; i < _grid_width+2; i++)
                 {
@@ -423,8 +474,8 @@ namespace honei {
                 (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[0][_grid_width];
                 (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][0];
                 (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
-            }
 
+            }
     };
 }
 #endif
