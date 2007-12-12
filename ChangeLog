@@ -15,6 +15,7 @@ see the NEWS file.
 	cell/libla/dense_dense_float_scaled_sum.cc,
 	cell/libla/dense_dense_float_sum.cc,
 	cell/libla/dense_float_norm_max.cc,
+	cell/libla/dense_float_reduction_max.cc,
 	cell/libla/dense_float_reduction_min.cc,
 	cell/libla/dense_float_reduction_sum.cc,
 	cell/libla/dense_float_scale.cc, cell/libla/dense_sparse_float_sum.cc,
