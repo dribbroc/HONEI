@@ -140,7 +140,6 @@
             {
                 /* Following lines not needed: Graph assembles matrices correctly - I hope so, at least.
                  *
-                 
                 if (graph.coordinates->columns() != graph.cweights_of_edges.columns())
                     throw MatrixColumnsDoNotMatch(weights_of_edges.columns(), coordinates.columns());
 

@@ -42,10 +42,10 @@ namespace honei
          * Return the index of the maximum element of a masked vector.
          *
          * \param vector The DenseVector to be used.
-         * \param mask Vector<bool> to be used for masking.
+         * \param mask DenseVector<bool> to be used for masking.
          **/
 
-        static unsigned long value(const DenseVectorBase<DataType_> & vector, const Vector<bool> & mask)
+        static unsigned long value(const DenseVectorBase<DataType_> & vector, const DenseVector<bool> & mask)
         {
             CONTEXT("When calculating the maximum element of a masked DenseVector");
             if (vector.size() != mask.size())
@@ -63,7 +63,7 @@ namespace honei
 
             unsigned long result(i);
             DataType_ temp(vector[i]);
-            Vector<bool>::ConstElementIterator r(mask.element_at(i));
+            DenseVector<bool>::ConstElementIterator r(mask.element_at(i));
 
             for (typename Vector<DataType_>::ConstElementIterator l(vector.element_at(i)), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
@@ -82,10 +82,10 @@ namespace honei
          * Return the index of the maximum element of a masked vector.
          *
          * \param vector The SparseVector to be used.
-         * \param mask Vector<bool> to be used for masking.
+         * \param mask DenseVector<bool> to be used for masking.
          **/
 
-        static unsigned long value(const SparseVector<DataType_> & vector, const Vector<bool> & mask)
+        static unsigned long value(const SparseVector<DataType_> & vector, const DenseVector<bool> & mask)
         {
             CONTEXT("When calculating the maximum element of a masked SparseVector");
             if (vector.size() != mask.size())
@@ -99,12 +99,12 @@ namespace honei
                 if (i == mask.size()-1 && mask[i] == 0)
                     throw MaskIsZeroException();
             }
-            
+
             unsigned long result(i);
             DataType_ temp(vector[i]);
-            Vector<bool>::ConstElementIterator r(mask.element_at(i));
+            DenseVector<bool>::ConstElementIterator r(mask.begin_elements());
 
-            for (typename Vector<DataType_>::ConstElementIterator l(vector.element_at(i)), l_end(vector.end_elements()) ; l != l_end ; ++l)
+            for (typename Vector<DataType_>::ConstElementIterator l(vector.begin_elements()), l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 if (*r && *l > temp)
                 {
