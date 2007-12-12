@@ -41,45 +41,57 @@ namespace honei
         inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
                 const unsigned & size)
         {
+#ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_get);
             spu_write_out_mbox(ea >> 32);
             spu_write_out_mbox(ea & 0xFFFFFFFF);
             spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
             spu_write_out_mbox(size);
+#endif
         }
 
         inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
                 const unsigned & size)
         {
+#ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_put);
             spu_write_out_mbox(ea >> 32);
             spu_write_out_mbox(ea & 0xFFFFFFFF);
             spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
             spu_write_out_mbox(size);
+#endif
         }
 
         inline void debug_acquire(const LocalStoreAddress & lsa)
         {
+#ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_acquire_block);
             spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+#endif
         }
 
         inline void debug_release(const LocalStoreAddress & lsa)
         {
+#ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_release_block);
             spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+#endif
         }
 
         inline void debug_dump()
         {
+#ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_dump);
             spu_read_signal1();
+#endif
         }
 
         inline void debug_value(const unsigned & value)
         {
+#ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_value);
             spu_write_out_mbox(value);
+#endif
         }
 
     }

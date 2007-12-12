@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
 CXXFLAGS= $(SPU_CXXFLAGS)
+DEFS = $(DEBUGDEF)
 
 noinst_LIBRARIES = libutil_spe.a
 
