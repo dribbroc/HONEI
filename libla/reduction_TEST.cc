@@ -489,7 +489,7 @@ class DenseMatrixReductionToMinTest :
                 }
 
                 DT_ should;
-                if (size % 2 == 0)
+                if (size % 2 == 0 || size == 1)
                     should = dm1[size-1][size-1];
                 else
                     should = dm1[size-1][size-2];
@@ -524,7 +524,7 @@ class DenseMatrixReductionToMinQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(14);
+            unsigned long size(23);
             DenseMatrix<DT_> dm1(size, size);
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
@@ -536,7 +536,7 @@ class DenseMatrixReductionToMinQuickTest :
                 }
 
                 DT_ should;
-                if (size % 2 == 0)
+                if (size % 2 == 0 || size == 1)
                     should = dm1[size-1][size-1];
                 else
                     should = dm1[size-1][size-2];
@@ -581,7 +581,7 @@ class SparseMatrixReductionToMinTest :
             }
 
             DT_ should;
-            if (size % 2 == 0)
+            if (size % 2 == 0 || size == 1)
                 should = sm1[size-1][size-1];
             else
                 should = sm1[size-1][size-2];
@@ -624,7 +624,7 @@ class SparseMatrixReductionToMinQuickTest :
             }
 
             DT_ should;
-            if (size % 2 == 0)
+            if (size % 2 == 0 || size == 1)
                 should = sm1[size-1][size-1];
             else
                 should = sm1[size-1][size-2];

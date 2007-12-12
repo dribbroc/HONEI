@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-12 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/kernels/kernel_reference.sk,
+	cell/libla/dense_dense_float_scaled_sum.cc, cell/libla/Makefile.am,
+	cell/opcodes.hh, libla/files.m4, libla/scaled_sum-cell.cc,
+	libla/scaled_sum.hh, libla/scaled_sum_TEST.cc: Implemented ScaledSum
+	for dense entities on Cell.
+	* libla/reduction_TEST.cc: Fixed some BaseTest issues.
+
 2007-12-11 Markus Geveler <apryde@gmx.de>
 
 	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,

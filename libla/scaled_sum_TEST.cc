@@ -66,6 +66,9 @@ DenseVectorScaledSumTest<tags::CPU, double> dense_vector_scaled_sum_test_double(
 DenseVectorScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_scaled_sum_test_float("SSE float");
 DenseVectorScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_scaled_sum_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+DenseVectorScaledSumTest<tags::Cell, float> cell_dense_vector_scaled_sum_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorScaledSumQuickTest :
@@ -100,6 +103,9 @@ DenseVectorScaledSumQuickTest<tags::CPU, double> dense_vector_scaled_sum_quick_t
 #ifdef HONEI_SSE
 DenseVectorScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_scaled_sum_quick_test_float("SSE float");
 DenseVectorScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_scaled_sum_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorScaledSumQuickTest<tags::Cell, float> cell_dense_vector_scaled_sum_quick_test_float("Cell float");
 #endif
 
 
