@@ -508,7 +508,7 @@ namespace honei
          * 
          */
 
-        static float value(const DenseVector<float> & a);
+        static float value(const DenseVectorContinuousBase<float> & a);
         static DenseVector<float> value(const DenseMatrix<float> & a);
         static float value(const SparseVector<float> & a);
         static DenseVector<float> value(const SparseMatrix<float> & a);
@@ -544,7 +544,7 @@ namespace honei
          * 
          */
 
-        static float value(const DenseVector<float> & a);
+        static float value(const DenseVectorContinuousBase<float> & a);
         static DenseVector<float> value(const DenseMatrix<float> & a);
         static float value(const SparseVector<float> & a);
         static DenseVector<float> value(const SparseMatrix<float> & a);
@@ -580,7 +580,7 @@ namespace honei
          * 
          */
 
-        static float value(const DenseVector<float> & a);
+        static float value(const DenseVectorContinuousBase<float> & a);
         static DenseVector<float> value(const DenseMatrix<float> & a);
         static float value(const SparseVector<float> & a);
         static DenseVector<float> value(const SparseMatrix<float> & a);
