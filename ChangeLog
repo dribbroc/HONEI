@@ -7,6 +7,13 @@ see the NEWS file.
 
 2007-12-12 Sven Mallach <sven.mallach@honei.org>
 
+	* libgraph/position.hh, libgraph/vector_masked_max_index.hh,
+	libgraph/vector_masked_min_index.hh, libla/vector.hh: Fixed
+	polymorphism-problems with element_at iterator and connected problems
+	in libgraph.
+
+2007-12-12 Sven Mallach <sven.mallach@honei.org>
+
 	* cell/libla/dense_dense_float_difference.cc,
 	cell/libla/dense_dense_float_dot_product.cc,
 	cell/libla/dense_dense_float_element_product.cc,
