@@ -23,9 +23,21 @@
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
-#include <stdio.h>
 
 using namespace honei::cell;
+
+/*
+ * product_banded_matrix_dense_vector_float
+ *
+ * \size Default transfer buffer size in bytes.
+ * \operand a Base address of first entity.
+ * \operand b Base address of second entity.
+ * \operand c Base address of result entity.
+ * \operand d Number of transfers needed.
+ * \operand e Last transfer buffer size in bytes.
+ * \operand f Band offset
+ * \operand g SIMD x_offset
+ */
 
 void banded_dense_float_matrix_vector_product(const Instruction & inst)
 {
@@ -37,15 +49,12 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
     Pointer<float> b = { block_b->address };
     Pointer<float> r = { block_r->address };
 
-    //unsigned start(inst.d.u);
-    //unsigned end(inst.e.u);
-    //signed op_offset(inst.f.s);
     unsigned x_offset(inst.g.u);
     unsigned y_offset((4 - x_offset) % 4);
 
-    mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * sizeof(float)), 1, 0, 0);
-    mfc_get(b.untyped, inst.b.ea, multiple_of_sixteen((inst.size + x_offset + y_offset) * sizeof(float)), 2, 0, 0);
-    mfc_get(r.untyped, inst.c.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
+    mfc_get(a.untyped, inst.a.ea, inst.size * sizeof(float), 1, 0, 0);
+    mfc_get(b.untyped, inst.b.ea, (inst.size + x_offset + y_offset) * sizeof(float), 2, 0, 0);
+    mfc_get(r.untyped, inst.c.ea, inst.size * sizeof(float), 3, 0, 0);
     mfc_write_tag_mask(1 << 3 | 1 << 2 | 1 << 1);
     mfc_read_tag_status_all();
 
@@ -56,7 +65,7 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
         r.vectorised[i] = spu_madd(a.vectorised[i], temp, r.vectorised[i]);
     }
 
-    mfc_put(r.untyped, inst.c.ea, multiple_of_sixteen(inst.size * sizeof(float)), 3, 0, 0);
+    mfc_put(r.untyped, inst.c.ea, inst.size * sizeof(float), 3, 0, 0);
     mfc_write_tag_mask(1 << 3);
     mfc_read_tag_status_all();
 
