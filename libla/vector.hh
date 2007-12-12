@@ -90,6 +90,15 @@ namespace honei
     template <typename DataType_> class DenseVectorBase :
         public Vector<DataType_>
     {
+        public:
+            typedef typename honei::Vector<DataType_>::ConstElementIterator ConstElementIterator;
+            typedef typename honei::Vector<DataType_>::ElementIterator ElementIterator;
+
+            /// Returns const iterator pointing to a given element of the vector.
+            virtual ConstElementIterator element_at(unsigned long index) const = 0;
+
+            /// Returns iterator pointing to a given element of the vector.
+            virtual ElementIterator element_at(unsigned long index) = 0;
     };
 
     /**
