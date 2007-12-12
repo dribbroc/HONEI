@@ -24,7 +24,6 @@
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
-#include <stdio.h>
 
 using namespace honei::cell;
 

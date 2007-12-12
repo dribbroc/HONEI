@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,7 +23,6 @@
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
-#include <stdio.h>
 
 using namespace honei::cell;
 
@@ -75,7 +74,7 @@ void dense_dense_float_scaled_sum(const Instruction & inst)
 
         for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
-            a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], spu_mul(b[current - 1].vectorised[i], scalar_vector));
+            a[current - 1].vectorised[i] = spu_madd(b[current - 1].vectorised[i], scalar_vector, a[current - 1].vectorised[i]);
         }
 
         mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
@@ -95,7 +94,7 @@ void dense_dense_float_scaled_sum(const Instruction & inst)
 
     for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
-        a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], spu_mul(b[current - 1].vectorised[i], scalar_vector));
+        a[current - 1].vectorised[i] = spu_madd(b[current - 1].vectorised[i], scalar_vector, a[current - 1].vectorised[i]);
     }
 
     mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
