@@ -88,6 +88,9 @@ BandedMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_banded_matrix_den
 BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_banded_matrix_dense_vector_product_test_float("MC::SSE float");
 BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_banded_matrix_dense_vector_product_test_double("MC::SSE double");
 #endif
+#ifdef HONEI_CELL
+BandedMatrixDenseVectorProductTest<tags::Cell, float> cell_banded_matrix_dense_vector_product_test_float("CELL float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class BandedMatrixDenseVectorProductQuickTest :

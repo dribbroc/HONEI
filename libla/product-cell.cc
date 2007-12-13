@@ -75,7 +75,8 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        unsigned int spe_count = 1;
+        /// \todo what about a deadlock above 2 spe's debug mode?
+        unsigned int spe_count = 4;
 
 
         typedef std::vector<bm_dv_product::SPETask> TaskList;
@@ -108,8 +109,23 @@ namespace honei
             Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
             Operand oc = { results[counter]->elements() + quad_start };
             Operand od, oe, of, og;
-            //od.u = quad_start;
-            //oe.u = quad_end;
+
+            /// \todo use greater transfer size
+            od.u = (quad_end - quad_start) / (512 * 4);
+            oe.u = (quad_end - quad_start) % (512 * 4);
+            if (0 == oe.u)
+            {
+                if (od.u > 0)
+                {
+                    oe.u = 512 * 4;
+                }
+            }
+            else
+            {
+                ++od.u;
+            }
+
+            /// \todo Find a way to use vector size above signed long max size
             of.s = (signed)op_offset;
             og.u = op_offset % 4;
             bm_dv_product::SPETask task;
@@ -129,7 +145,7 @@ namespace honei
             }
             task.quad_start = quad_start;
             task.quad_end = quad_end;
-            task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
+            task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 512 * 4, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
             /*for (unsigned long index = quad_end ; index < end ; index++) 
@@ -155,8 +171,21 @@ namespace honei
             Operand ob = { b.elements() + quad_start - op_offset - (4 - (op_offset % 4)) };
             Operand oc = { results[counter]->elements() + quad_start};
             Operand od, oe, of, og;
-            //od.u = quad_start;
-            //oe.u = quad_end;
+
+            od.u = (quad_end - quad_start) / (512 * 4);
+            oe.u = (quad_end - quad_start) % (512 * 4);
+            if (0 == oe.u)
+            {
+                if (od.u > 0)
+                {
+                    oe.u = 512 * 4;
+                }
+            }
+            else
+            {
+                ++od.u;
+            }
+
             of.s = -1 * (signed)op_offset;
             og.u = (4 - (op_offset % 4)) % 4;
             bm_dv_product::SPETask task;
@@ -176,7 +205,7 @@ namespace honei
             }
             task.quad_start = quad_start;
             task.quad_end = quad_end;
-            task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, quad_end - quad_start, oa, ob, oc, od, oe, of, og);
+            task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 512 * 4, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
             for (unsigned long index = start ; index < quad_start ; index++)
@@ -236,6 +265,7 @@ namespace honei
         // 0 + 2
         Operand orc, ord;
         // hardcode transfer buffer size for now.
+        /// \todo use only one spe if spe_count equals 1
         orc.u = b.size() / (1024 * 4);
         ord.u = b.size() % (1024 * 4);
         ord.u &= ~0xF;
@@ -328,7 +358,7 @@ namespace honei
         /* \\\todo: Tiling. */
 
         /* We assume to have complete matrices or complete matrix tiles
-         * at ths point. So later here will be another for-loop that calls the
+         * at this point. So later here will be another for-loop that calls the
          * spe program for every pair (triple with result) of tiles.
          * This for loop will be responsible for transfering the logically
          * correct pairs of tiles to the spe.

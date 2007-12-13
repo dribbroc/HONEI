@@ -41,35 +41,89 @@ using namespace honei::cell;
 
 void banded_dense_float_matrix_vector_product(const Instruction & inst)
 {
-    Allocation * block_a(acquire_block());
-    Allocation * block_b(acquire_block());
-    Allocation * block_r(acquire_block());
+    EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_r(inst.c.ea), ea_result(inst.c.ea);
 
-    Pointer<float> a = { block_a->address };
-    Pointer<float> b = { block_b->address };
-    Pointer<float> r = { block_r->address };
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
+    Allocation * block_b[2] = { acquire_block(), acquire_block() };
+    Allocation * block_r[2] = { acquire_block(), acquire_block() };
+
+    Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+    Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
+    Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
 
     unsigned x_offset(inst.g.u);
     unsigned y_offset((4 - x_offset) % 4);
 
-    mfc_get(a.untyped, inst.a.ea, inst.size * sizeof(float), 1, 0, 0);
-    mfc_get(b.untyped, inst.b.ea, (inst.size + x_offset + y_offset) * sizeof(float), 2, 0, 0);
-    mfc_get(r.untyped, inst.c.ea, inst.size * sizeof(float), 3, 0, 0);
-    mfc_write_tag_mask(1 << 3 | 1 << 2 | 1 << 1);
+    unsigned counter(inst.d.u);
+    unsigned size(counter > 1 ? inst.size : inst.e.u);
+    unsigned nextsize;
+    unsigned current(1), next(2);
+
+    debug_get(ea_a, a[current -1].untyped, size * sizeof(float));
+    mfc_get(a[current - 1].untyped, ea_a, size * sizeof(float), current, 0, 0);
+    debug_get(ea_b, b[current -1].untyped, (size + x_offset + y_offset) * sizeof(float));
+    mfc_get(b[current - 1].untyped, ea_b, (size + x_offset + y_offset) * sizeof(float), current, 0, 0);
+    debug_get(ea_r, r[current -1].untyped, size * sizeof(float));
+    mfc_get(r[current - 1].untyped, ea_r, size * sizeof(float), current, 0, 0);
+    ea_a += size;
+    ea_b += size;
+    ea_r += size;
+
+    while (counter > 1)
+    {
+        nextsize = (counter == 2 ? inst.e.u : inst.size);
+
+        debug_get(ea_a, a[next -1].untyped, nextsize * sizeof(float));
+        mfc_get(a[next - 1].untyped, ea_a, nextsize * sizeof(float), next, 0, 0);
+        debug_get(ea_b, b[next -1].untyped, (nextsize + x_offset + y_offset) * sizeof(float));
+        mfc_get(b[next - 1].untyped, ea_b, (nextsize + x_offset + y_offset) * sizeof(float), next, 0, 0);
+        debug_get(ea_r, r[next -1].untyped, nextsize * sizeof(float));
+        mfc_get(r[next - 1].untyped, ea_r, nextsize * sizeof(float), next, 0, 0);
+        ea_a += nextsize;
+        ea_b += nextsize;
+        ea_r += nextsize;
+
+        mfc_write_tag_mask(1 << current);
+        mfc_read_tag_status_all();
+
+        for (unsigned i(0) ; i < size / 4 ; i++)
+        {
+            vector float temp = b[current - 1].vectorised[i]; // temp version needed?
+            extract(temp, b[current - 1].vectorised[i + 1], x_offset);
+            r[current - 1].vectorised[i] = spu_madd(a[current - 1].vectorised[i], temp, r[current - 1].vectorised[i]);
+        }
+        debug_put(ea_result, r[current -1].untyped, size * sizeof(float));
+        mfc_putb(r[current - 1].untyped, ea_result, size * sizeof(float), current, 0, 0);
+        ea_result += size;
+
+        --counter;
+
+        unsigned temp(next);
+        next = current;
+        current = temp;
+
+        size = nextsize;
+    }
+    mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < inst.size / 4 ; i++)
+    for (unsigned i(0) ; i < size / 4 ; i++)
     {
-        vector float temp = b.vectorised[i]; // temp version needed?
-        extract(temp, b.vectorised[i + 1], x_offset);
-        r.vectorised[i] = spu_madd(a.vectorised[i], temp, r.vectorised[i]);
+        vector float temp = b[current - 1].vectorised[i]; // temp version needed?
+        extract(temp, b[current - 1].vectorised[i + 1], x_offset);
+        r[current - 1].vectorised[i] = spu_madd(a[current - 1].vectorised[i], temp, r[current - 1].vectorised[i]);
     }
 
-    mfc_put(r.untyped, inst.c.ea, inst.size * sizeof(float), 3, 0, 0);
-    mfc_write_tag_mask(1 << 3);
+    debug_put(ea_result, r[current -1].untyped, size * sizeof(float));
+    mfc_putb(r[current - 1].untyped, ea_result, size * sizeof(float), current, 0, 0);
+
+    mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    release_block(*block_a);
-    release_block(*block_b);
-    release_block(*block_r);
+    release_block(*block_a[0]);
+    release_block(*block_a[1]);
+    release_block(*block_b[0]);
+    release_block(*block_b[1]);
+    release_block(*block_r[0]);
+    release_block(*block_r[1]);
 }

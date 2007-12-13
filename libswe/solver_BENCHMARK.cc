@@ -139,5 +139,7 @@ RelaxSolverBench<tags::CPU::SSE, double> sse_relax_solver_bench_double_2("SSE Re
 #ifdef HONEI_CELL
 RelaxSolverBench<tags::Cell, float> cell_relax_solver_bench_float_1("Cell RelaxSolverSum Benchmark - size: 21, float",
         21, 100);
+RelaxSolverBench<tags::Cell, float> cell_relax_solver_bench_float_2("Cell RelaxSolverSum Benchmark - size: 41, float",
+        41, 100);
 #endif
 
