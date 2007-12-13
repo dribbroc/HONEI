@@ -126,7 +126,7 @@ namespace honei {
                 unsigned long actual_column(1);
                 unsigned long i(_grid_width + 3);
 
-                while(i < (_system_matrix->size()) - (_grid_width + 2))
+                while(i < ((_grid_width +  2)*(_grid_height + 2) - _grid_width - 2))
                 {
                     ///Assemble dd:
                     dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column])*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x));
@@ -153,6 +153,7 @@ namespace honei {
                 }
                 //TODO: BUG!!!
                 ///Correct boundaries:
+
                 unsigned long a(0);
                 unsigned long column_count(0);
                 while(a < (_grid_width + 2) * (_grid_height + 2))
@@ -199,6 +200,30 @@ namespace honei {
                     }
                     ++a;
                 }
+                dd[0] = dd[_grid_width + 3];
+                du[0] = du[_grid_width + 3];
+                dl[0] = dl[_grid_width + 3];
+                uu[0] = uu[_grid_width + 3];
+                ll[0] = ll[_grid_width + 3];
+
+                dd[_grid_width + 1] = dd[ 2 * (_grid_width + 1)];
+                du[_grid_width + 1] = du[ 2 * (_grid_width + 1)];
+                dl[_grid_width + 1] = dl[ 2 * (_grid_width + 1)];
+                uu[_grid_width + 1] = uu[ 2 * (_grid_width + 1)];
+                ll[_grid_width + 1] = ll[ 2 * (_grid_width + 1)];
+
+                dd[(_grid_height + 1)* (_grid_width + 2) ] = dd[(_grid_height)* (_grid_width + 2) + 1];
+                du[(_grid_height + 1)* (_grid_width + 2) ] = du[(_grid_height)* (_grid_width + 2) + 1];
+                dl[(_grid_height + 1)* (_grid_width + 2) ] = dl[(_grid_height)* (_grid_width + 2) + 1];
+                uu[(_grid_height + 1)* (_grid_width + 2) ] = uu[(_grid_height)* (_grid_width + 2) + 1];
+                ll[(_grid_height + 1)* (_grid_width + 2) ] = ll[(_grid_height)* (_grid_width + 2) + 1];
+
+                dd[(_grid_height + 2)* (_grid_width + 2) - 1] = dd[(_grid_height + 1)* (_grid_width + 2) - 2];
+                du[(_grid_height + 2)* (_grid_width + 2) - 1] = du[(_grid_height + 1)* (_grid_width + 2) - 2];
+                dl[(_grid_height + 2)* (_grid_width + 2) - 1] = dl[(_grid_height + 1)* (_grid_width + 2) - 2];
+                uu[(_grid_height + 2)* (_grid_width + 2) - 1] = uu[(_grid_height + 1)* (_grid_width + 2) - 2];
+                ll[(_grid_height + 2)* (_grid_width + 2) - 1] = ll[(_grid_height + 1)* (_grid_width + 2) - 2];
+
 #ifdef SOLVER_VERBOSE
                 cout<<"Finished correction in matrix assembly!" << endl;
 #endif
@@ -218,37 +243,37 @@ namespace honei {
              * System assembly: b.
              **/
             template<typename WorkPrec_>
-            void _assemble_right_hand_side()
-            {
-                DenseVector<WorkPrec_> h((_grid_width +2) * (_grid_height + 2), WorkPrec_(0));
-
-                ///Compute propagation of velocity and height fields:
-                unsigned long i(1);
-                unsigned long j(1);
-                unsigned long current_index(_grid_width + 3);
-                for(; current_index < (_grid_height + 2) * (_grid_width + 2) - (_grid_width + 2); ++current_index)
+                void _assemble_right_hand_side()
                 {
-                    WorkPrec_ current_x = WorkPrec_(( j - 1 ) * _delta_x);
-                    WorkPrec_ current_y = WorkPrec_(( i - 1) * _delta_y);
-                    h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
-                            WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
-                            WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
-                    (*_u_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc_bound,
-                            WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
-                            WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
-                    (*_v_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_y_veloc_bound,
-                            WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
-                            WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
+                    DenseVector<WorkPrec_> h((_grid_width +2) * (_grid_height + 2), WorkPrec_(0));
 
-                    if( j == _grid_width)
+                    ///Compute propagation of velocity and height fields:
+                    unsigned long i(1);
+                    unsigned long j(1);
+                    unsigned long current_index(_grid_width + 3);
+                    for(; current_index < (_grid_height + 2) * (_grid_width + 2) - (_grid_width + 2); ++current_index)
                     {
-                        ++i;
-                        j = 1;
-                        current_index += 2; //due to for
-                    }
-                    else
-                    {
-                        ++j;
+                        WorkPrec_ current_x = WorkPrec_(( j - 1 ) * _delta_x);
+                        WorkPrec_ current_y = WorkPrec_(( i - 1) * _delta_y);
+                        h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
+                                WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
+                                WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
+                        (*_u_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc_bound,
+                                WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
+                                WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
+                        (*_v_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_y_veloc_bound,
+                                WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
+                                WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
+
+                        if( j == _grid_width)
+                        {
+                            ++i;
+                            j = 1;
+                            current_index += 2; //due to for
+                        }
+                        else
+                        {
+                            ++j;
                     }
                 }
 
@@ -357,6 +382,14 @@ namespace honei {
 
                     ++a;
                 }
+                (*_right_hand_side)[0] = (*_right_hand_side)[_grid_width + 3];
+
+                (*_right_hand_side)[_grid_width + 1] = (*_right_hand_side)[ 2 * (_grid_width + 1)];
+
+                (*_right_hand_side)[(_grid_height + 1)* (_grid_width + 2) ] = (*_right_hand_side)[(_grid_height)* (_grid_width + 2) + 1];
+
+                (*_right_hand_side)[(_grid_height + 2)* (_grid_width + 2) - 1] = (*_right_hand_side)[(_grid_height + 1)* (_grid_width + 2) - 2];
+
             }
 
             /**
@@ -437,7 +470,7 @@ namespace honei {
 #ifdef SOLVER_VERBOSE
                 cout<<"Finished assembly!"<<endl;
 #endif
-                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, std::numeric_limits<ResPrec_>::epsilon()));
+                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, long(20)));
 #ifdef SOLVER_VERBOSE
                 cout<<"Finished CG!"<< endl;
 #endif
