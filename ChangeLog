@@ -5,7 +5,7 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-12-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
+2007-12-13 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/libla/banded_dense_float_matrix_vector_product.cc, libla/product-cell.cc, libla/product_TEST.cc, libswe/solver_BENCHMARK.cc:
 	Added double buffering to bm*dv. First version is explicitly not
