@@ -251,7 +251,7 @@ class ImplicitSolverRuntimeTest :
             DenseVector<DataType_> u_t(36, DataType_(0));
             DenseVector<DataType_> v_t(36, DataType_(0));
 
-            DataType_ delta_t(1);
+            DataType_ delta_t(10e-12);
             DataType_ delta_x(1);
             DataType_ delta_y(1);
 
@@ -267,10 +267,12 @@ class ImplicitSolverRuntimeTest :
 
             solver.do_preprocessing();
 
-            int timesteps = 3;
+            int timesteps = 2;
             for(int timestep = 0; timestep < timesteps; ++timestep)
             {
                 solver.solve(20);
+                cout<<"u: "<<u_t<<endl;
+                cout<<"v: "<<v_t<<endl;
             }
             cout<<"After solve:"<< endl;
 
@@ -280,7 +282,6 @@ class ImplicitSolverRuntimeTest :
 
         }
 };
-
 ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
 ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
 ImplicitSolverMatrixAssTest<tags::CPU, float> implicit_solver_matrix_test_float("float");

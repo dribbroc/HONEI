@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-13 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc: Resolved
+	assembly bug, resolved boundary correction failure.
+
 2007-12-13 Andre Matuschek <andre@matuschek.org>
 
 	* libla/sum.hh, libla/sum_TEST.cc: Added MultiCore-Version of scalar

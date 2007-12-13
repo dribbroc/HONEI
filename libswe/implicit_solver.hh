@@ -131,13 +131,13 @@ namespace honei {
                     ///Assemble dd:
                     dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column])*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x));
                     ///Assemble ll:
-                    ll[i] = alpha*(((*_bottom_bound)[actual_row-1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
-                    ///Assemble uu:
-                    uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
-                    ///Assemble dl:
                     dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
+                    ///Assemble uu:
+                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(4*_delta_x * _delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
+                    ///Assemble dl:
+                    ll[i] = alpha*(((*_bottom_bound)[actual_row - 1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
                     ///Assemble du:
-                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
+                    uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
                     ///Iterate:
                     if((actual_column) == _grid_width)
                     {
@@ -151,12 +151,12 @@ namespace honei {
                         ++i;
                     }
                 }
+                //TODO: BUG!!!
                 ///Correct boundaries:
                 unsigned long a(0);
                 unsigned long column_count(0);
                 while(a < (_grid_width + 2) * (_grid_height + 2))
                 {
-                    cout<<a<<endl;
                     if(a < _grid_width + 2)
                     {
                         dd[a] = dd[a + _grid_width + 2];
@@ -164,7 +164,6 @@ namespace honei {
                         dl[a] = dl[a + _grid_width + 2];
                         uu[a] = uu[a + _grid_width + 2];
                         ll[a] = ll[a + _grid_width + 2];
-                        cout<< "Accessing " << a + _grid_width + 2 << endl;
                     }
 
                     if(column_count == _grid_width + 1)
@@ -174,8 +173,6 @@ namespace honei {
                         dl[a] = dl[a - 1];
                         uu[a] = uu[a - 1];
                         ll[a] = ll[a - 1];
-                        cout<< "Accessing " << a -1 << endl;
-
                         column_count = 0;
                     }
                     else if(column_count == 0)
@@ -185,8 +182,6 @@ namespace honei {
                         dl[a] = dl[a + 1];
                         uu[a] = uu[a + 1];
                         ll[a] = ll[a + 1];
-                        cout<< "Accessing " << a + 1 << endl;
-
                         ++column_count;
                     }
                     else
@@ -201,7 +196,6 @@ namespace honei {
                         dl[a] = dl[a - _grid_width - 2];
                         uu[a] = uu[a - _grid_width - 2];
                         ll[a] = ll[a - _grid_width - 2];
-                        cout<< "Accessing " << a - _grid_width - 2 << endl;
                     }
                     ++a;
                 }
@@ -232,19 +226,10 @@ namespace honei {
                 unsigned long i(1);
                 unsigned long j(1);
                 unsigned long current_index(_grid_width + 3);
-                //\TODO: search for corruption in this loop or in interpolation:
                 for(; current_index < (_grid_height + 2) * (_grid_width + 2) - (_grid_width + 2); ++current_index)
                 {
-#ifdef SOLVER_VERBOSE
-                cout<<"Accessing index in RHS assembly: "<< current_index << endl;
-#endif
-
                     WorkPrec_ current_x = WorkPrec_(( j - 1 ) * _delta_x);
                     WorkPrec_ current_y = WorkPrec_(( i - 1) * _delta_y);
-                    cout<<"Current_x: " << current_x << endl;
-                    cout<<"i,j " << i << "," << j << endl;
-                    cout<<"dt " << _delta_t << endl;
-                    cout<<"XVB " << (*_x_veloc_bound)[i][j] << endl;
                     h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
                             WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
                             WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
@@ -277,44 +262,44 @@ namespace honei {
                 {
                     WorkPrec_ b_diff_1((*_bottom_bound)[current_row + 1][current_column] - (*_bottom_bound)[current_row -1][current_column]);
                     WorkPrec_ b_diff_2((*_bottom_bound)[current_row][current_column + 1] - (*_bottom_bound)[current_row][current_column - 1]);
-     WorkPrec_ v_x_diff, v_y_diff;
+                    WorkPrec_ v_x_diff, v_y_diff;
 
                     if(index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) <= (_grid_width + 2) * (_grid_height + 2))
                     {
-                        v_x_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index - (_grid_width + 2)]);
+                        v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index - (_grid_width + 2)]);
                     }
                     else if ( index - (_grid_width + 2) < 0 && index + (_grid_width + 2) <= (_grid_width + 2) * (_grid_height + 2))
                     {
-                        v_x_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index]);
+                        v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index]);
 
                     }
                     else if (index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) > (_grid_width + 2) * (_grid_height + 2))
                     {
-                        v_x_diff = ((*_v_temp)[index] - (*_v_temp)[index -( _grid_width + 2)]);
+                        v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index -( _grid_width + 2)]);
 
                     }
                     else
                     {
-                        v_x_diff = ((*_v_temp)[index] - (*_v_temp)[index]);
+                        v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index]);
                     }
 
                     if(index - 1 >= 0 && index + 1 <= (_grid_width + 2) * (_grid_height + 2))
                     {
-                        v_y_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index - 1]);
+                        v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index - 1]);
                     }
                     else if ( index - 1 < 0 && index + 1 <= (_grid_width + 2) * (_grid_height + 2))
                     {
-                        v_y_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index]);
+                        v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index]);
 
                     }
                     else if (index - 1 >= 0 && index + 1 > (_grid_width + 2) * (_grid_height + 2))
                     {
-                        v_y_diff = ((*_u_temp)[index] - (*_u_temp)[index -( _grid_width + 2)]);
+                        v_x_diff = ((*_u_temp)[index] - (*_u_temp)[index -( _grid_width + 2)]);
 
                     }
                     else
                     {
-                        v_y_diff = ((*_u_temp)[index] - (*_u_temp)[index]);
+                        v_x_diff = ((*_u_temp)[index] - (*_u_temp)[index]);
                     }
 
                     //scale:
@@ -342,7 +327,6 @@ namespace honei {
                 unsigned long column_count(0);
                 while(a < (_grid_width + 2) * (_grid_height + 2))
                 {
-                    cout<<a<<endl;
                     if(a < _grid_width + 2)
                     {
                         (*_right_hand_side)[a] = (*_right_hand_side)[a + _grid_width + 2];
@@ -392,19 +376,30 @@ namespace honei {
 
                     WorkPrec_ delta_h_1, delta_h_2;
 
-                    if( index - 1 >= 0)
+                    if( index - 1 >= 0 && index - (_grid_width + 2) >= 0)
                     {
                         delta_h_1 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row][actual_column - 1]));
-                        delta_h_2 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                        delta_h_2 = (h_new - (w_new[index - (_grid_width + 2)] - (*_bottom_bound)[actual_row - 1][actual_column]));
                     }
-                    else
+                    else if (index - 1 < 0 && index - (_grid_width + 2) < 0)
                     {
                         delta_h_1 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row][actual_column - 1]));
                         delta_h_2 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row - 1][actual_column]));
                     }
+                    else if (index - 1 < 0)
+                    {
+                        delta_h_1 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row][actual_column - 1]));
+                        delta_h_2 = (h_new - (w_new[index - (_grid_width + 2)] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                    }
+                    else
+                    {
+                        delta_h_1 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row][actual_column - 1]));
+                        delta_h_2 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                    }
+
                     (*_height_bound)[actual_row][actual_column] = h_new;
-                    (*_x_veloc_bound)[actual_row][actual_column] = gamma * delta_h_1 / _delta_x + (*_u_temp)[index];
-                    (*_y_veloc_bound)[actual_row][actual_column] = gamma * delta_h_2 / _delta_y + (*_v_temp)[index];
+                    (*_x_veloc_bound)[actual_row][actual_column] = (gamma * delta_h_1 / _delta_x) + (*_u_temp)[index];
+                    (*_y_veloc_bound)[actual_row][actual_column] = (gamma * delta_h_2 / _delta_y) + (*_v_temp)[index];
 
                     //Iterate:
 
@@ -436,7 +431,6 @@ namespace honei {
              **/
             void solve(unsigned long iter_numbers)
             {
-                //\TODO: Complete. This is for test purpose only.
                 _assemble_matrix<ResPrec_>();
                 _assemble_right_hand_side<ResPrec_>();
 
