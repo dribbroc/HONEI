@@ -36,8 +36,8 @@ class BandedMatrixDenseVectorProductBench :
             DenseVector<DataType_> dv5(dv4.copy());
             for (int i = 1; i < 6 && i < _size; i++)
             {
-                bm1.insert_band(i, dv4.copy());
-                bm1.insert_band(-1 * i, dv5.copy());
+                bm1.insert_band(i * 3, dv4.copy());
+                bm1.insert_band(-1 * 5 * i, dv5.copy());
             }
             DenseVector<DataType_> dv2(_size, DataType_(4));
             for (unsigned long i(0) ; i < _count ; i++)
@@ -60,8 +60,9 @@ BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEBMDVP
 BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEBMDVPBenchdouble("MC::SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 10);
 #endif
 #ifdef HONEI_CELL
-BandedMatrixDenseVectorProductBench<tags::Cell, float> SSEBMDVPBenchfloat("Cell Banded Matrix Dense Vector Product Benchmark - matrix size: 3969, float", 3969, 10);
+BandedMatrixDenseVectorProductBench<tags::Cell, float> CELLBMDVPBenchfloat("CELL Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
 #endif
+
 template <typename DataType_>
 class DenseMatrixProductBench :
     public Benchmark
