@@ -647,6 +647,8 @@ ScalarDenseMatrixSumTest<tags::CPU, double> scalar_dense_matrix_sum_test_double(
 ScalarDenseMatrixSumTest<tags::CPU::SSE, float> sse_scalar_dense_matrix_sum_test_float("SSE float");
 ScalarDenseMatrixSumTest<tags::CPU::SSE, double> sse_scalar_dense_matrix_sum_test_double("SSE double");
 #endif
+ScalarDenseMatrixSumTest<tags::CPU::MultiCore, float> mc_scalar_dense_matrix_sum_test_float("MC float");
+ScalarDenseMatrixSumTest<tags::CPU::MultiCore, double> mc_scalar_dense_matrix_sum_test_double("MC double");
 #ifdef HONEI_CELL
 ScalarDenseMatrixSumTest<tags::Cell, float> cell_scalar_dense_matrix_sum_test_float("Cell float");
 #endif
@@ -685,6 +687,8 @@ ScalarDenseMatrixSumQuickTest<tags::CPU, double> scalar_dense_matrix_sum_quick_t
 ScalarDenseMatrixSumQuickTest<tags::CPU::SSE, float> sse_scalar_dense_matrix_sum_quick_test_float("SSE float");
 ScalarDenseMatrixSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_matrix_sum_quick_test_double("SSE double");
 #endif
+ScalarDenseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_scalar_dense_matrix_sum_quick_test_float("MC float");
+ScalarDenseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_scalar_dense_matrix_sum_quick_test_double("MC double");
 #ifdef HONEI_CELL
 ScalarDenseMatrixSumQuickTest<tags::Cell, float> cell_scalar_dense_matrix_sum_quick_test_float("Cell float");
 #endif

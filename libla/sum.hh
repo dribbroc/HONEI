@@ -826,6 +826,25 @@ namespace honei
             return a;
         }
 
+        template <typename DT1_>
+        static DenseMatrix<DT1_> & value(const DT1_  a, DenseMatrix<DT1_> & b)
+        { 
+            CONTEXT("When adding scalar to DenseMatrix (MultiCore):");
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[b.rows()];
+            for (unsigned long i = 0 ; i < b.rows() ; ++i)
+            {
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT1_> > mywrapper(a, b[i]);
+                pt[i] = p->dispatch(mywrapper);
+            }
+            for (unsigned long i = 0; i < b.rows(); ++i)
+            {
+                pt[i]->wait_on();
+            }
+            return b;
+        }
+
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         { 
