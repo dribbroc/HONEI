@@ -39,6 +39,7 @@ class FruchtermanReingoldPositionsQuickTest :
         FruchtermanReingoldPositionsQuickTest(const std::string & type) :
             QuickTest("fruchterman_reingold_positions_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -94,9 +95,15 @@ class FruchtermanReingoldPositionsQuickTest :
 
 FruchtermanReingoldPositionsQuickTest<tags::CPU, float> fruchterman_reingold_positions_quick_test_float("float");
 FruchtermanReingoldPositionsQuickTest<tags::CPU, double> fruchterman_reingold_positions_quick_test_double("double");
+//FruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore, float> mc_fruchterman_reingold_positions_quick_test_float("MC float");
+//FruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore, double> mc_fruchterman_reingold_positions_quick_test_double("MC double");
 
-//FruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, float> sse_fruchterman_reingold_positions_quick_test_float("SSE float");
-//FruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_fruchterman_reingold_positions_quick_test_double("SSE double");
+#ifdef HONEI_SSE
+FruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, float> sse_fruchterman_reingold_positions_quick_test_float("SSE float");
+FruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_fruchterman_reingold_positions_quick_test_double("SSE double");
+//FruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_fruchterman_reingold_positions_quick_test_float("MC SSE float");
+//FruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_fruchterman_reingold_positions_quick_test_double("MC SSE double");
+#endif
 
 
 template <typename Tag_, typename DataType_>
@@ -107,6 +114,7 @@ class KamadaKawaiPositionsQuickTest :
         KamadaKawaiPositionsQuickTest(const std::string & type) :
             QuickTest("kamada_kawai_positions_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -163,8 +171,10 @@ class KamadaKawaiPositionsQuickTest :
 KamadaKawaiPositionsQuickTest<tags::CPU, float> kamada_kawai_positions_quick_test_float("float");
 KamadaKawaiPositionsQuickTest<tags::CPU, double> kamada_kawai_positions_quick_test_double("double");
 
-//KamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_kamada_kawai_positions_quick_test_float("SSE float");
-//KamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_kamada_kawai_positions_quick_test_double("SSE double");
+#ifdef HONEI_SSE
+KamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_kamada_kawai_positions_quick_test_float("SSE float");
+KamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_kamada_kawai_positions_quick_test_double("SSE double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class WeightedFruchtermanReingoldPositionsQuickTest :
@@ -174,6 +184,7 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
         WeightedFruchtermanReingoldPositionsQuickTest(const std::string & type) :
             QuickTest("weighted_fruchterman_reingold_positions_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -228,8 +239,10 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU, float> weighted_fruchterman_reingold_positions_quick_test_float("float");
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU, double> weighted_fruchterman_reingold_positions_quick_test_double("double");
 
+#ifdef HONEI_SSE
 //WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_quick_test_float("SSE float");
 //WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_quick_test_double("SSE double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class WeightedKamadaKawaiPositionsQuickTest :
@@ -239,6 +252,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
         WeightedKamadaKawaiPositionsQuickTest(const std::string & type) :
             QuickTest("weighted_kamada_kawai_positions_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -293,8 +307,10 @@ class WeightedKamadaKawaiPositionsQuickTest :
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU, float> weighted_kamada_kawai_positions_quick_test_float("float");
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU, double> weighted_kamada_kawai_positions_quick_test_double("double");
 
-//WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_quick_test_float("SSE float");
-//WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_quick_test_double("SSE double");
+#ifdef HONEI_SSE
+WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_quick_test_float("SSE float");
+WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_quick_test_double("SSE double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class KamadaKawaiPositionsTest :
@@ -308,6 +324,7 @@ class KamadaKawaiPositionsTest :
         KamadaKawaiPositionsTest(const std::string & type, int nodecount = 50) :
             BaseTest("kamada_kawai_positions_test<" + type + ">")
         {
+            register_tag(Tag_::name);
             _nodecount = nodecount;
         }
 
@@ -362,16 +379,19 @@ class KamadaKawaiPositionsTest :
             Positions<Tag_, DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
 
             // update the positions 
-            position.update(0.01,150);
-            std::cout << "positions of KK  "<< position.coordinates() << std::endl;
+            position.update(0.00001, _nodecount * 10);
+            std::cout << "max_node_force of KK  "<< position.max_node_force() << std::endl;
+            std::cout << "number_of_iterations of KK  "<< position.number_of_iterations() << std::endl;
         }
 };
 
-KamadaKawaiPositionsTest<tags::CPU, float> kamada_kawai_positions_test_float("float");
-KamadaKawaiPositionsTest<tags::CPU, double> kamada_kawai_positions_test_double("double");
+KamadaKawaiPositionsTest<tags::CPU, float> kamada_kawai_positions_test_float("float", 100);
+KamadaKawaiPositionsTest<tags::CPU, double> kamada_kawai_positions_test_double("double", 100);
 
-//KamadaKawaiPositionsTest<tags::CPU::SSE, float> kamada_kawai_positions_test_float("SSE float");
-//KamadaKawaiPositionsTest<tags::CPU::SSE, double> kamada_kawai_positions_test_float("SSE double");
+#ifdef HONEI_SSE
+KamadaKawaiPositionsTest<tags::CPU::SSE, float> sse_kamada_kawai_positions_test_float("SSE float", 100);
+KamadaKawaiPositionsTest<tags::CPU::SSE, double> sse_kamada_kawai_positions_test_double("SSE double", 100);
+#endif
 
 template <typename Tag_, typename DataType_>
 class FruchtermanReingoldPositionsTest :
@@ -385,6 +405,7 @@ class FruchtermanReingoldPositionsTest :
         FruchtermanReingoldPositionsTest(const std::string & type, int nodecount = 50) :
             BaseTest("fruchterman_reingold_positions_test<" + type + ">")
         {
+            register_tag(Tag_::name);
             _nodecount = nodecount;
         }
 
@@ -439,16 +460,18 @@ class FruchtermanReingoldPositionsTest :
             Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
 
             // update the positions 
-            position.update(0.01,50);
-            std::cout << "positions of FR  "<< position.coordinates() << std::endl;
+            position.update(0.00001,_nodecount * 5);
+            std::cout << "max_node_force of FR  "<< position.max_node_force() << std::endl;
+            std::cout << "number_of_iterations of FR  "<< position.number_of_iterations() << std::endl;
         }
 };
 
-FruchtermanReingoldPositionsTest<tags::CPU, float> fruchterman_reingold_positions_test_float("float");
-FruchtermanReingoldPositionsTest<tags::CPU, double> fruchterman_reingold_positions_test_double("double");
-
-//FruchtermanReingoldPositionsTest<tags::CPU::SSE, float> fruchterman_reingold_positions_test_float("SSE float");
-//FruchtermanReingoldPositionsTest<tags::CPU::SSE, double> fruchterman_reingold_positions_test_float("SSE double");
+FruchtermanReingoldPositionsTest<tags::CPU, float> fruchterman_reingold_positions_test_float("float", 100);
+FruchtermanReingoldPositionsTest<tags::CPU, double> fruchterman_reingold_positions_test_double("double", 100);
+#ifdef HONEI_SSE
+FruchtermanReingoldPositionsTest<tags::CPU::SSE, float> sse_fruchterman_reingold_positions_test_float("SSE float", 100);
+FruchtermanReingoldPositionsTest<tags::CPU::SSE, double> sse_fruchterman_reingold_positions_test_double("SSE double", 100);
+#endif
 
 template <typename Tag_, typename DataType_>
 class WeightedFruchtermanReingoldPositionsTest :
@@ -463,6 +486,7 @@ class WeightedFruchtermanReingoldPositionsTest :
             BaseTest("weighted_fruchterman_reingold_positions_test<" + type + ">")
         {
             _nodecount = nodecount;
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -516,16 +540,18 @@ class WeightedFruchtermanReingoldPositionsTest :
             Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
 
             // update the positions 
-            position.update(0.0001,50);
-            std::cout << "positions of WFR  "<< position.coordinates() << std::endl;
+            position.update(0.00001,_nodecount * 5);
+            std::cout << "max_node_force of WFR  "<< position.max_node_force() << std::endl;
+            std::cout << "number_of_iterations of WFR  "<< position.number_of_iterations() << std::endl;
         }
 };
 
-WeightedFruchtermanReingoldPositionsTest<tags::CPU, float> weighted_fruchterman_reingold_positions_test_float("float");
-WeightedFruchtermanReingoldPositionsTest<tags::CPU, double> weighted_fruchterman_reingold_positions_test_double("double");
-
-//WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_test_float("SSE float");
-//WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_test_double("SSE double");
+WeightedFruchtermanReingoldPositionsTest<tags::CPU, float> weighted_fruchterman_reingold_positions_test_float("float", 100);
+WeightedFruchtermanReingoldPositionsTest<tags::CPU, double> weighted_fruchterman_reingold_positions_test_double("double", 100);
+#ifdef HONEI_SSE
+//WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_test_float("SSE float", 100);
+//WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_test_double("SSE double", 100);
+#endif
 
 template <typename Tag_, typename DataType_>
 class WeightedKamadaKawaiPositionsTest :
@@ -540,6 +566,7 @@ class WeightedKamadaKawaiPositionsTest :
             BaseTest("weighted_kamada_kawai_positions_test<" + type + ">")
         {
             _nodecount = nodecount;
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -593,13 +620,15 @@ class WeightedKamadaKawaiPositionsTest :
             Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*pPosition, *pNode_Weights, *pEdge_Weights);
 
             // update the positions 
-            position.update(0.00001,150);
-            std::cout << "positions of WKK  "<< position.coordinates() << std::endl;
+            position.update(0.00001,_nodecount * 10);
+            std::cout << "max_node_force of WKK  "<< position.max_node_force() << std::endl;
+            std::cout << "number_of_iterations of WKK  "<< position.number_of_iterations() << std::endl;
         }
 };
 
-WeightedKamadaKawaiPositionsTest<tags::CPU, float> weighted_kamada_kawai_positions_test_float("float");
-WeightedKamadaKawaiPositionsTest<tags::CPU, double> weighted_kamada_kawai_positions_test_double("double");
-
-//WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_test_float("SSE float");
-//WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_test_double("SSE double");
+WeightedKamadaKawaiPositionsTest<tags::CPU, float> weighted_kamada_kawai_positions_test_float("float", 100);
+WeightedKamadaKawaiPositionsTest<tags::CPU, double> weighted_kamada_kawai_positions_test_double("double", 100);
+#ifdef HONEI_SSE
+WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_test_float("SSE float", 100);
+WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_test_double("SSE double", 100);
+#endif

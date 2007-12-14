@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-14 Mathias Kadolsky <mathkad@gmx.de>
+
+	* libgraph/position_TEST.cc: SSE-Tests added.
+	libgraph/position_BENCHMARK.cc: Benchmark for position.hh added.
+	libgraph/files.m4
+
 2007-12-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/log.cc, libutil/log.hh: Reworked LOGMESSAGE's inner data
