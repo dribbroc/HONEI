@@ -76,7 +76,7 @@ namespace honei
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
         /// \todo what about a deadlock above 2 spe's debug mode?
-        unsigned int spe_count = 4;
+        unsigned int spe_count = 2;
 
 
         typedef std::vector<bm_dv_product::SPETask> TaskList;
@@ -265,6 +265,9 @@ namespace honei
         // 0 + 1
         // 2 + 3
         // 0 + 2
+        if (spe_count == 1) 
+            return *results[0];
+
         Operand orc, ord;
         // hardcode transfer buffer size for now.
         /// \todo use only one spe if spe_count equals 1
