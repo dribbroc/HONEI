@@ -67,7 +67,7 @@ namespace honei
     {
         CONTEXT("When creating DenseVectorSlice:");
         ASSERT(size > 0, "size is zero!");
-        ASSERT(elements.size() >= offset + size * stepsize, "end of slice is beyond end of source!");
+        ASSERT(elements.size() > offset + (size - 1) * stepsize, "end of slice is beyond end of source!");
     }
 
     template <typename DataType_>
@@ -77,7 +77,7 @@ namespace honei
     {
         CONTEXT("When creating DenseVectorSlice:");
         ASSERT(size > 0, "size is zero!");
-        ASSERT(source.size() >= offset + size * stepsize, "end of slice is beyond end of source!");
+        ASSERT(source.size() > offset + (size - 1) * stepsize, "end of slice is beyond end of source!");
     }
 
     template <typename DataType_>
