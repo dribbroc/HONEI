@@ -25,7 +25,6 @@
 #include <libla/reduction.hh>
 #include <unittest/unittest.hh>
 
-#include <iostream>
 #include <limits>
 #include <tr1/memory>
 
@@ -669,7 +668,6 @@ class DenseMatrixProductTest :
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
                     dm3(size+1, size+1, DataType_(6 * size));
                 DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-                std::cout << "Test " << i << std::endl;
                 TEST_CHECK_EQUAL(prod, dm3);
             }
 
