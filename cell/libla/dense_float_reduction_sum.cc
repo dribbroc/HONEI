@@ -65,8 +65,6 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
             extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
         }
-        offset = ea_a & 0xF;
-        ea_a &= ~0xF;
 
         --counter;
 
@@ -80,11 +78,14 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+    unsigned i(0);
+    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
         extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
         acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
     }
+
+    acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);

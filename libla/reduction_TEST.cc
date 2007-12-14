@@ -25,7 +25,6 @@
 
 #include <limits>
 #include <tr1/memory>
-#include <iostream>
 
 using namespace honei;
 using namespace tests;
@@ -478,7 +477,7 @@ class DenseMatrixReductionToMinTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                DenseMatrix<DT_> dm1(size, size);
+                DenseMatrix<DT_> dm1(size, size, DT_(0));
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
@@ -488,14 +487,14 @@ class DenseMatrixReductionToMinTest :
                         *i = i.index() * DT_(-1);
                 }
 
-                DT_ should;
-                if (size % 2 == 0 || size == 1)
+                DT_ should(0);
+                if ((size % 2 == 0) || (size == 1))
                     should = dm1[size-1][size-1];
                 else
                     should = dm1[size-1][size-2];
 
-                DenseVector<DT_> v1(Reduction<rt_min,Tag_>::value(dm1));
-                TEST_CHECK_EQUAL(v1[size-1], should);
+            DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(dm1));
+            TEST_CHECK_EQUAL(v1[size-1], should);
             }
         }
 };
@@ -508,8 +507,6 @@ DenseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_matrix_redu
 #ifdef HONEI_CELL
 DenseMatrixReductionToMinTest<tags::Cell, float> cell_dense_matrix_reduction_to_min_test_float("Cell float");
 #endif
-
-
 
 template <typename Tag_, typename DT_>
 class DenseMatrixReductionToMinQuickTest :
@@ -524,8 +521,9 @@ class DenseMatrixReductionToMinQuickTest :
 
         virtual void run() const
         {
+            {
             unsigned long size(23);
-            DenseMatrix<DT_> dm1(size, size);
+            DenseMatrix<DT_> dm1(size, size, DT_(0));
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
                 {
@@ -535,14 +533,15 @@ class DenseMatrixReductionToMinQuickTest :
                         *i = i.index() * DT_(-1);
                 }
 
-                DT_ should;
-                if (size % 2 == 0 || size == 1)
+                DT_ should(0);
+                if ((size % 2 == 0) || (size == 1))
                     should = dm1[size-1][size-1];
                 else
                     should = dm1[size-1][size-2];
 
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(dm1));
             TEST_CHECK_EQUAL(v1[size-1], should);
+            }
         }
 };
 
@@ -878,8 +877,8 @@ class DenseMatrixReductionToMaxTest :
             else
                 should = dm1[size-1][size-1];
 
-                DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
-                TEST_CHECK_EQUAL(v1[size-1], should);
+            DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
+            TEST_CHECK_EQUAL(v1[size-1], should);
             }
         }
 };
@@ -906,7 +905,7 @@ class DenseMatrixReductionToMaxQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(22);
+            unsigned long size(23);
             DenseMatrix<DT_> dm1(size, size);
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)

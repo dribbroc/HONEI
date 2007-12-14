@@ -223,6 +223,7 @@ namespace honei
             od.u = a.columns() % 4096;
             od.u &= ~0xF;
             oe.f = *(a.elements() + (i * a.columns()));
+
             unsigned rest_index(oc.u * 4096 + od.u);
 
             od.u *= 4;
