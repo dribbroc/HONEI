@@ -7,6 +7,10 @@ see the NEWS file.
 
 2007-12-14 Mathias Kadolsky <mathkad@gmx.de>
 
+	* libgraph/breadth_first_search.hh, breadth_first_search_TEST.cc.
+
+2007-12-14 Mathias Kadolsky <mathkad@gmx.de>
+
 	* libgraph/position_TEST.cc: SSE-Tests added.
 	libgraph/position_BENCHMARK.cc: Benchmark for position.hh added.
 	libgraph/files.m4
