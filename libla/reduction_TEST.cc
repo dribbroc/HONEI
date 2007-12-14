@@ -477,7 +477,7 @@ class DenseMatrixReductionToMinTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                DenseMatrix<DT_> dm1(size, size, DT_(0));
+                DenseMatrix<DT_> dm1(size, size);
                 for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
@@ -487,7 +487,7 @@ class DenseMatrixReductionToMinTest :
                         *i = i.index() * DT_(-1);
                 }
 
-                DT_ should(0);
+                DT_ should;
                 if ((size % 2 == 0) || (size == 1))
                     should = dm1[size-1][size-1];
                 else
@@ -521,9 +521,8 @@ class DenseMatrixReductionToMinQuickTest :
 
         virtual void run() const
         {
-            {
             unsigned long size(23);
-            DenseMatrix<DT_> dm1(size, size, DT_(0));
+            DenseMatrix<DT_> dm1(size, size);
             for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
                 {
@@ -533,7 +532,7 @@ class DenseMatrixReductionToMinQuickTest :
                         *i = i.index() * DT_(-1);
                 }
 
-                DT_ should(0);
+                DT_ should;
                 if ((size % 2 == 0) || (size == 1))
                     should = dm1[size-1][size-1];
                 else
@@ -541,7 +540,6 @@ class DenseMatrixReductionToMinQuickTest :
 
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(dm1));
             TEST_CHECK_EQUAL(v1[size-1], should);
-            }
         }
 };
 
