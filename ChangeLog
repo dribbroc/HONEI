@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-14 Mathias Kadolsky <mathkad@gmx.de>
 
+	* libgraph/position.hh: Functions to get number of iterations 
+	and maximum force added.
+
+2007-12-14 Mathias Kadolsky <mathkad@gmx.de>
+
 	* libgraph/breadth_first_search.hh, breadth_first_search_TEST.cc.
 
 2007-12-14 Mathias Kadolsky <mathkad@gmx.de>
