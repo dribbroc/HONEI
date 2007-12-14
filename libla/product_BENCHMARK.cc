@@ -63,7 +63,7 @@ BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEBMDV
 BandedMatrixDenseVectorProductBench<tags::Cell, float> CELLBMDVPBenchfloat("CELL Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
 #endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseMatrixProductBench :
     public Benchmark
 {
@@ -80,19 +80,24 @@ class DenseMatrixProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
             DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(Product<>::value(dm0, dm1));
+                BENCHMARK(Product<Tag_>::value(dm0, dm1));
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(dm0, dm1));
             evaluate(info);
         }
 };
-DenseMatrixProductBench<float> DMPBenchfloat2("Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
-DenseMatrixProductBench<double> DMPBenchdouble2("Matrix Product Benchmark dense/dense - matrix size: 256x256, double", 256, 10);
+DenseMatrixProductBench<tags::CPU, float> DMPBenchfloat2("Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
+DenseMatrixProductBench<tags::CPU, double> DMPBenchdouble2("Matrix Product Benchmark dense/dense - matrix size: 256x256, double", 256, 10);
+DenseMatrixProductBench<tags::CPU::MultiCore, float> MCDMPBenchfloat2("MC Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
+DenseMatrixProductBench<tags::CPU::MultiCore, double> MCDMPBenchdouble2("MC Matrix Product Benchmark dense/dense - matrix size: 256x256, double", 256, 10);
+#ifdef HONEI_SSE
+DenseMatrixProductBench<tags::CPU, float> SSEDMPBenchfloat2("SSE Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
+DenseMatrixProductBench<tags::CPU, double> SSEDMPBenchdouble2("SSE Matrix Product Benchmark dense/dense - matrix size: 256x256, double", 256, 10);
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixDenseVectorProductBench :
