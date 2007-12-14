@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-13 Volker Jung <volker.jung@honei.org>
+
+	* libla/difference.hh, +libla/difference-mc.hh, libla/dot_product.hh,
+	+libla/dot_product-mc.hh, libla/element_inverse.hh,
+	+libla/element_inverse-mc.hh, libla/element_product.hh,
+	+libla/element_product-mc.hh, libla/product.hh, +libla/product-mc.hh,
+	libla/scale.hh, +libla/scale-mc.hh:
+	Moved MultiCore-structs into separate headers.
+
 2007-12-13 Markus Geveler <apryde@gmx.de>
 
 	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc: Resolved
