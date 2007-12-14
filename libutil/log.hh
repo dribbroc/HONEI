@@ -42,15 +42,6 @@ namespace honei
     class LogMessage
     {
         private:
-            /// Our context.
-            std::string _context;
-
-            /// Our log level.
-            LogLevel _level;
-
-            /// Our message.
-            std::string _message;
-
             /// Default constructor.
             LogMessage();
 
@@ -64,24 +55,6 @@ namespace honei
              * \param messag Message to be logged.
              */
             LogMessage(const LogLevel level, const std::string & message);
-
-            /// Return our context.
-            std::string context() const
-            {
-                return _context;
-            }
-
-            /// Return our log level.
-            LogLevel level() const
-            {
-                return _level;
-            }
-
-            /// Return our message.
-            std::string message() const
-            {
-                return _message;
-            }
     };
 
     /// Log a message.

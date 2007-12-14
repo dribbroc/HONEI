@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-14 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/log.cc, libutil/log.hh: Reworked LOGMESSAGE's inner data
+	structure, reduced copying of strings.
+
 2007-12-14 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/dense_float_reduction_max.cc,

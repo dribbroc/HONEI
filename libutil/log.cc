@@ -33,6 +33,29 @@
 
 namespace honei
 {
+    namespace intern
+    {
+        struct LogData
+        {
+            /// Our context.
+            std::string context;
+
+            /// Our log level.
+            LogLevel level;
+
+            /// Our message.
+            std::string message;
+
+            /// Constructor.
+            LogData(const std::string & c, LogLevel l, const std::string & m) :
+                context(c),
+                level(l),
+                message(m)
+            {
+            }
+        };
+    }
+
     /**
      * LogQueue prints LogMessages using a single thread.
      */
@@ -51,7 +74,7 @@ namespace honei
         Thread * thread;
 
         /// Our list of log messages.
-        std::list<LogMessage> messages;
+        std::list<intern::LogData *> messages;
 
         /// Our previous context.
         std::string previous_context;
@@ -61,7 +84,7 @@ namespace honei
         {
             while (true)
             {
-                LogMessage message;
+                intern::LogData * data;
 
                 {
                     Lock l(*mutex);
@@ -76,16 +99,18 @@ namespace honei
                     }
                     else
                     {
-                        message = messages.front();
+                        data = messages.front();
                         messages.pop_front();
                     }
                 }
 
-                if (previous_context == message.context())
-                    std::cerr << "(same context) " << message.message() << std::endl;
+                if (previous_context == data->context)
+                    std::cerr << "(same context) " << data->message << std::endl;
                 else
-                    std::cerr << message.context() << message.message() << std::endl;
-                previous_context = message.context();
+                    std::cerr << data->context << data->message << std::endl;
+                previous_context = data->context;
+
+                delete data;
             }
         }
 
@@ -111,11 +136,11 @@ namespace honei
             delete mutex;
         }
 
-        void enqueue(const LogMessage & message)
+        void enqueue(intern::LogData * data)
         {
             Lock l(*mutex);
 
-            messages.push_back(message);
+            messages.push_back(data);
             work_pending->signal();
         }
     };
@@ -125,12 +150,10 @@ namespace honei
         static LogQueue log_queue;
     }
 
-    LogMessage::LogMessage(const LogLevel level, const std::string & message) :
-        _context("In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " + Context::backtrace("\n ... ")),
-        _level(level),
-        _message(message)
+    LogMessage::LogMessage(const LogLevel level, const std::string & message)
     {
-        intern::log_queue.enqueue(*this);
+        intern::log_queue.enqueue(new intern::LogData("In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " + Context::backtrace("\n ... "),
+                    level, message));
     }
 
     LogMessage::LogMessage()
