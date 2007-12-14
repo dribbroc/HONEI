@@ -47,8 +47,8 @@ class EngineTest :
             char * c = "Test: Engine";
             char ** cp = &c;
             glutInit(pi,cp);
-            //glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-            glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
+            glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+            //glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
             glutInitWindowSize(screen_width, screen_height);
             glutInitWindowPosition(0,0);
             glutCreateWindow("LibSWE Render- engine 1.0 (c) 2007 Markus Geveler");

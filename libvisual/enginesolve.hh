@@ -45,8 +45,8 @@ namespace honei
         bool fullscreen = false;
 
         float alpha = 0.8;
-        int screen_width = 800;
-        int screen_height = 600;
+        int screen_width = 640;
+        int screen_height = 480;
 
         double rotation_x = 0;
         double rotation_y = 0;
