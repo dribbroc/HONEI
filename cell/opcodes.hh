@@ -43,6 +43,7 @@ namespace honei
             oc_dense_float_reduction_min,
             oc_dense_float_scale,
             oc_dense_float_norm_max,
+            oc_dense_float_norm_l_two,
             oc_float_element_inverse,
             oc_dense_dense_float_scaled_sum,
 

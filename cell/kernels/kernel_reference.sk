@@ -15,5 +15,6 @@ return_dword    dense_float_reduction_min                   dense_float_reductio
 return_dword    dense_float_reduction_max                   dense_float_reduction_max
 return_void     dense_float_scale                           dense_float_scale
 return_dword    dense_float_norm_max                        dense_float_norm_max
+return_dword    dense_float_norm_l_two                      dense_float_norm_l_two
 return_void     float_element_inverse                       float_element_inverse
 return_void     dense_dense_float_scaled_sum                dense_dense_float_scaled_sum

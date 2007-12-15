@@ -449,6 +449,12 @@ namespace honei
 
     };
 
+    template <> struct Norm<vnt_l_two, true, tags::Cell>
+    {
+
+        static float value(const DenseVector<float> & a);
+
+    };
 
 
 }

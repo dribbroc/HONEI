@@ -21,6 +21,7 @@ libla_spe_a_SOURCES = \
 	dense_float_reduction_max.cc \
 	dense_float_reduction_min.cc \
 	dense_float_norm_max.cc \
+	dense_float_norm_l_two.cc \
 	float_element_inverse.cc \
 	dense_dense_float_scaled_sum.cc
 
