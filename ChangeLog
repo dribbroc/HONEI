@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-12-15 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libgraph/position_TEST.cc, libla/element_product.hh:
+	Added SSE dummy for missing ElementProduct_SM_DM. Activated
+	corresponding position tests.
+
+2007-12-15 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/element_inverse-sse.cc:
 	Disabled sse version until division by zero is no problem or a fast
 	zero detection is found.

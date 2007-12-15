@@ -524,6 +524,18 @@ namespace honei
 
         static DenseMatrix<double> & value(DenseMatrix<double> & a, const DenseMatrix<double> & b);
 
+        static SparseMatrix<float> & value(SparseMatrix<float> & a, const DenseMatrix<float> & b)
+        {
+            CONTEXT("When multiplying SparseMatrix with DenseMatrix elementwise (SSE forwarding to CPU):");
+            return ElementProduct<tags::CPU>::value(a, b);
+        }
+
+        static SparseMatrix<double> & value(SparseMatrix<double> & a, const DenseMatrix<double> & b)
+        {
+            CONTEXT("When multiplying SparseMatrix with DenseMatrix elementwise (SSE forwarding to CPU):");
+            return ElementProduct<tags::CPU>::value(a, b);
+        }
+
         /// \}
     };
 
