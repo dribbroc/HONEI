@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-15 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/element_inverse-sse.cc:
+	Disabled sse version until division by zero is no problem or a fast
+	zero detection is found.
+
 2007-12-14 Mathias Kadolsky <mathkad@gmx.de>
 
 	* libgraph/position.hh: Functions to get number of iterations 

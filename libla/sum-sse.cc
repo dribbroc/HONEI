@@ -200,7 +200,7 @@ namespace honei
 
                 unsigned long quad_start = z_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 28));
-                if (size < 32)
+                if (size < 36)
                 {
                     quad_end = 0;
                     quad_start = 0;
@@ -258,7 +258,7 @@ namespace honei
 
                 unsigned long quad_start = z_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 14));
-                if (size < 16)
+                if (size < 24)
                 {
                     quad_end = 0;
                     quad_start = 0;

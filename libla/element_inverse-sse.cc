@@ -151,6 +151,8 @@ DenseVectorContinuousBase<float> & ElementInverse<tags::CPU::SSE>::value(DenseVe
 {
     CONTEXT("When inverting DenseVectorContinuousBase<float> with SSE:");
 
+    ElementInverse<tags::CPU>::value(x);
+    return x;
     intern::sse::element_inverse(x.elements(), x.size());
 
     return x;
@@ -160,6 +162,8 @@ DenseVectorContinuousBase<double> & ElementInverse<tags::CPU::SSE>::value(DenseV
 {
     CONTEXT("When inverting DenseVectorContinuousBase<double> with SSE:");
 
+    ElementInverse<tags::CPU>::value(x);
+    return x;
     intern::sse::element_inverse(x.elements(), x.size());
 
     return x;
@@ -169,6 +173,7 @@ DenseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<float> & 
 {
     CONTEXT("When inverting DenseMatrix<float> with SSE:");
 
+    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.rows() * x.columns());
 
     return x;
@@ -178,6 +183,7 @@ DenseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<double> 
 {
     CONTEXT("When inverting DenseMatrix<double> with SSE:");
 
+    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.rows() * x.columns());
 
     return x;
@@ -187,6 +193,7 @@ SparseVector<float> & ElementInverse<tags::CPU::SSE>::value(SparseVector<float> 
 {
     CONTEXT("When inverting SparseVector<float> with SSE:");
 
+    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.used_elements());
 
     return x;
@@ -196,6 +203,7 @@ SparseVector<double> & ElementInverse<tags::CPU::SSE>::value(SparseVector<double
 {
     CONTEXT("When inverting SparseVector<double> with SSE:");
 
+    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.used_elements());
     return x;
 }
@@ -204,6 +212,7 @@ SparseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<float> 
 {
     CONTEXT("When invertingSparseMatrix<float> with SSE:");
 
+    return ElementInverse<tags::CPU>::value(x);
     for (SparseMatrix<float>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)
     {
@@ -217,6 +226,7 @@ SparseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<double
 {
     CONTEXT("When inverting SparseMatrix<double> with SSE:");
 
+    return ElementInverse<tags::CPU>::value(x);
     for (SparseMatrix<double>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)
     {
