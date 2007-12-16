@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-16 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/sum_BENCHMARK.cc:
+	Added DVR Sum benchmark.
+
 2007-12-15 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libgraph/position_TEST.cc, libla/element_product.hh:

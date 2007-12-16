@@ -50,7 +50,6 @@ ScalarDenseMatrixSumBench<double> SDMSBenchdouble("MatrixShift Benchmark - size:
 
 
 template <typename Tag_, typename DataType_>
-
 class DenseVectorSumBench :
     public Benchmark
 {
@@ -87,6 +86,43 @@ DenseVectorSumBench<tags::CPU::SSE, double> SSEDVSBenchdouble1("SSE Dense Vector
 #ifdef HONEI_CELL
 DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float",
         64ul * 64 * 64 * 64, 10);
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeSumBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        DenseVectorRangeSumBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DenseVector<DataType_> dv0(_size, DataType_(rand()));
+            DenseVector<DataType_> dv1(_size, DataType_(rand()));
+            DenseVectorRange<DataType_> dvr0 (dv0, _size - 2, 0);
+            DenseVectorRange<DataType_> dvr1 (dv1, _size - 2, 1);
+            for(int i = 0; i < _count; ++i)
+            {
+                BENCHMARK(Sum<Tag_>::value(dvr0, dvr1));
+            }
+            BenchmarkInfo info(Sum<>::get_benchmark_info(dvr0, dvr1));
+            evaluate(info);
+        }
+};
+
+DenseVectorRangeSumBench<tags::CPU, float> DVRSBenchfloat1("Dense Vector Range Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorRangeSumBench<tags::CPU, double> DVRSBenchdouble1("Dense Vector Range Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+#ifdef HONEI_SSE
+DenseVectorRangeSumBench<tags::CPU::SSE, float> SSEDVRSBenchfloat1("SSE Dense Vector Range Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+DenseVectorRangeSumBench<tags::CPU::SSE, double> SSEDVRSBenchdouble1("SSE Dense Vector Range Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
