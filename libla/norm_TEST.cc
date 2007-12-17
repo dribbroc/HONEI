@@ -62,7 +62,7 @@ class DenseVectorNormValueTest :
                 DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-                DataType_ v2(Norm<vnt_l_two, false>::value(dv));
+                DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
                 DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
                 DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
@@ -108,7 +108,7 @@ class DenseVectorNormQuickTest :
             DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-            DataType_ v3(Norm<vnt_l_two, false>::value(dv));
+            DataType_ v3(Norm<vnt_l_two, false, Tag_>::value(dv));
             DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
             DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
