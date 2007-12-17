@@ -88,25 +88,22 @@ namespace honei
         CONTEXT("When scaling DenseVector<float> (Cell):");
 
         Operand oa = { b.elements() };
-        Operand ob;
-        ob.u = b.size() / (1024 * 4);
-        Operand oc;
-        oc.u = b.size() % (1024 * 4);
-        oc.u &= ~0xF;
+        Operand ob, oc, od;
+        od.f = a;
 
-        // What we need on PPU
         unsigned offset((oa.u & 0xF) / sizeof(float));
-        unsigned rest_index(ob.u * 4096 + oc.u);
-        rest_index += (rest_index < offset) ? offset : 0;
 
-        // What we need on SPU
-        oa.u = (offset > 0) ? oa.u + 16 - offset : oa.u; // aligned address
-        ob.u = (b.size() - offset) / (1024 * 4); // size - ppu-calculated offset!
+        if (offset > 0)
+            oa.u += 16 - offset; // Align the address for SPU.
+
+        ob.u = (b.size() - offset) / (1024 * 4); // Subtract PPU-calculated offset from size.
         oc.u = (b.size() - offset) % (1024 * 4);
         oc.u &= ~0xF;
         oc.u *= 4;
-        Operand od;
-        od.f = a;
+
+        unsigned rest_index(ob.u * 4096 + oc.u); // Rest index for PPU dependent on offset and SPU part.
+        if (rest_index < offset)
+            rest_index += offset;
 
         bool use_spe(true);
 
