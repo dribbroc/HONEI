@@ -66,8 +66,10 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
             extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
         }
-        acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
-
+        for (unsigned j(0) ; j < (4 - offset) ; j++)
+        {
+            acc.array[j] += a[current - 1].typed[i * 4 + j];
+        }
         --counter;
 
         unsigned temp(next);
@@ -86,7 +88,10 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
         extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
         acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
     }
-    acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
+    for (unsigned j(0) ; j < (4 - offset) ; j++)
+    {
+        acc.array[j] += a[current - 1].typed[i * 4 + j];
+    }
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
