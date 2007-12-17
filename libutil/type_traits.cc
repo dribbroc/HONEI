@@ -80,7 +80,6 @@ namespace honei
         }
 
 #elif defined(__SSE__)
-        /// \todo Unroll loops.
 
         template <> void
         PODTraits<float>::copy(const float * source, float * dest, std::size_t count)

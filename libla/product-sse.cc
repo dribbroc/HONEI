@@ -30,8 +30,176 @@ namespace honei
     {
         namespace sse
         {
-            extern void scaled_sum(float * x, const float * y, float b, unsigned long size);
-            extern void scaled_sum(double * x, const double * y, double b, unsigned long size);
+            inline void product_dm(float * x, const float * y, float b, unsigned long size)
+            {
+                _mm_prefetch(y, _MM_HINT_T0);
+                _mm_prefetch(x, _MM_HINT_T0);
+
+                __m128 m1, m2, m3, m4, m5, m6, m8;
+                float __attribute__((aligned(16))) b_data;
+                b_data = b;
+                m8 = _mm_load1_ps(&b_data);
+
+                unsigned long x_address = (unsigned long)x;
+                unsigned long x_offset = x_address % 16;
+                unsigned long y_address = (unsigned long)y;
+                unsigned long y_offset = y_address % 16;
+
+                unsigned long z_offset(x_offset / 4);
+                z_offset = (4 - z_offset) % 4;
+
+                unsigned long quad_start = z_offset;
+                unsigned long quad_end(size - ((size - quad_start) % 12));
+                if (size < 16)
+                {
+                    quad_end = 0;
+                    quad_start = 0;
+                }
+
+                if (x_offset == y_offset)
+                {
+                    for (unsigned long index = quad_start ; index < quad_end ; index += 12)
+                    {
+
+                        m1 = _mm_load_ps(x + index);
+                        m3 = _mm_load_ps(x + index + 4);
+                        m5 = _mm_load_ps(x + index + 8);
+                        m2 = _mm_load_ps(y + index);
+                        m4 = _mm_load_ps(y + index + 4);
+                        m6 = _mm_load_ps(y + index + 8);
+
+                        m2 = _mm_mul_ps(m2, m8);
+                        m4 = _mm_mul_ps(m4, m8);
+                        m6 = _mm_mul_ps(m6, m8);
+
+                        m1 = _mm_add_ps(m1, m2);
+                        m3 = _mm_add_ps(m3, m4);
+                        m5 = _mm_add_ps(m5, m6);
+
+                        _mm_store_ps(x + index, m1);
+                        _mm_store_ps(x + index + 4, m3);
+                        _mm_store_ps(x + index + 8, m5);
+                    }
+                }
+                else
+                {
+                    for (unsigned long index = quad_start ; index < quad_end ; index += 12)
+                    {
+
+                        m1 = _mm_load_ps(x + index);
+                        m3 = _mm_load_ps(x + index + 4);
+                        m5 = _mm_load_ps(x + index + 8);
+                        m2 = _mm_loadu_ps(y + index);
+                        m4 = _mm_loadu_ps(y + index + 4);
+                        m6 = _mm_loadu_ps(y + index + 8);
+
+                        m2 = _mm_mul_ps(m2, m8);
+                        m4 = _mm_mul_ps(m4, m8);
+                        m6 = _mm_mul_ps(m6, m8);
+
+                        m1 = _mm_add_ps(m1, m2);
+                        m3 = _mm_add_ps(m3, m4);
+                        m5 = _mm_add_ps(m5, m6);
+
+                        _mm_store_ps(x + index, m1);
+                        _mm_store_ps(x + index + 4, m3);
+                        _mm_store_ps(x + index + 8, m5);
+                    }
+                }
+                for (unsigned long index(0) ; index < quad_start ; index++)
+                {
+                    x[index] += y[index] * b;
+                }
+                for (unsigned long index = quad_end ; index < size ; index++)
+                {
+                    x[index] += y[index] * b;
+                }
+            }
+
+            inline void product_dm(double * x, const double * y, double b, unsigned long size)
+            {
+                _mm_prefetch(y, _MM_HINT_T0);
+                _mm_prefetch(x, _MM_HINT_T0);
+
+                __m128d m1, m2, m3, m4, m5, m6, m8;
+                double __attribute__((aligned(16))) b_data;
+                b_data = b;
+                m8 = _mm_load1_pd(&b_data);
+
+                unsigned long x_address = (unsigned long)x;
+                unsigned long x_offset = x_address % 16;
+                unsigned long y_address = (unsigned long)y;
+                unsigned long y_offset = y_address % 16;
+
+                unsigned long z_offset(x_offset / 8);
+
+                unsigned long quad_start = z_offset;
+                unsigned long quad_end(size - ((size - quad_start) % 6));
+                if (size < 12)
+                {
+                    quad_end = 0;
+                    quad_start = 0;
+                }
+
+                if (x_offset == y_offset)
+                {
+                    for (unsigned long index = quad_start ; index < quad_end ; index += 6)
+                    {
+
+                        m1 = _mm_load_pd(x + index);
+                        m3 = _mm_load_pd(x + index + 2);
+                        m5 = _mm_load_pd(x + index + 4);
+                        m2 = _mm_load_pd(y + index);
+                        m4 = _mm_load_pd(y + index + 2);
+                        m6 = _mm_load_pd(y + index + 4);
+
+                        m2 = _mm_mul_pd(m2, m8);
+                        m4 = _mm_mul_pd(m4, m8);
+                        m6 = _mm_mul_pd(m6, m8);
+
+                        m1 = _mm_add_pd(m1, m2);
+                        m3 = _mm_add_pd(m3, m4);
+                        m5 = _mm_add_pd(m5, m6);
+
+                        _mm_store_pd(x + index, m1);
+                        _mm_store_pd(x + index + 2, m3);
+                        _mm_store_pd(x + index + 4, m5);
+                    }
+                }
+                else
+                {
+                    for (unsigned long index = quad_start ; index < quad_end ; index += 6)
+                    {
+
+                        m1 = _mm_load_pd(x + index);
+                        m3 = _mm_load_pd(x + index + 2);
+                        m5 = _mm_load_pd(x + index + 4);
+                        m2 = _mm_loadu_pd(y + index);
+                        m4 = _mm_loadu_pd(y + index + 2);
+                        m6 = _mm_loadu_pd(y + index + 4);
+
+                        m2 = _mm_mul_pd(m2, m8);
+                        m4 = _mm_mul_pd(m4, m8);
+                        m6 = _mm_mul_pd(m6, m8);
+
+                        m1 = _mm_add_pd(m1, m2);
+                        m3 = _mm_add_pd(m3, m4);
+                        m5 = _mm_add_pd(m5, m6);
+
+                        _mm_store_pd(x + index, m1);
+                        _mm_store_pd(x + index + 2, m3);
+                        _mm_store_pd(x + index + 4, m5);
+                    }
+                }
+                for (unsigned long index(0) ; index < quad_start ; index++)
+                {
+                    x[index] += y[index] * b;
+                }
+                for (unsigned long index = quad_end ; index < size ; index++)
+                {
+                    x[index] += y[index] * b;
+                }
+            }
         }
     }
 }
@@ -297,10 +465,12 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
 
     DenseMatrix<float> result(a.rows(), b.columns(), float(0));
 
-    for (DenseMatrix<float>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()) ;
-            i != i_end ; ++i)
+    for (unsigned long i(0) ; i < a.rows() ; ++i)
     {
-        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        {
+            honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i,j), b[j].size());
+        }
     }
 
     return result;
@@ -315,10 +485,12 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
 
     DenseMatrix<double> result(a.rows(), b.columns(), double(0));
 
-    for (DenseMatrix<double>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()) ;
-            i != i_end ; ++i)
+    for (unsigned long i(0) ; i < a.rows() ; ++i)
     {
-        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        {
+            honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i,j), b[j].size());
+        }
     }
 
     return result;
@@ -336,7 +508,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const SparseMatrix<float> & a,
     for (SparseMatrix<float>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
-        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+        honei::intern::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
     }
 
     return result;
@@ -354,7 +526,7 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const SparseMatrix<double> & 
     for (SparseMatrix<double>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
-        honei::intern::sse::scaled_sum(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+        honei::intern::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
     }
 
     return result;
