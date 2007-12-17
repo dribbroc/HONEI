@@ -445,14 +445,14 @@ namespace honei
     template <> struct Norm<vnt_max, false, tags::Cell>
     {
 
-        static float value(const DenseVector<float> & a);
+        static float value(const DenseVectorContinuousBase<float> & a);
 
     };
 
     template <> struct Norm<vnt_l_two, true, tags::Cell>
     {
 
-        static float value(const DenseVector<float> & a);
+        static float value(const DenseVectorContinuousBase<float> & a);
 
     };
 

@@ -60,12 +60,16 @@ unsigned dense_float_reduction_max(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        unsigned i(0);
+        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
             extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
             tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
+        bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
+        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
+
         --counter;
 
         unsigned temp(next);

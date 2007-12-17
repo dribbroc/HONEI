@@ -33,7 +33,7 @@ namespace honei
     using namespace cell;
 
     float
-    Norm<vnt_max, false, tags::Cell>::value(const DenseVector<float> & a)
+    Norm<vnt_max, false, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
         CONTEXT("When applying max norm to a DenseVector<float> (Cell):");
 
@@ -96,7 +96,7 @@ namespace honei
 
 
     float
-    Norm<vnt_l_two, true, tags::Cell>::value(const DenseVector<float> & a)
+    Norm<vnt_l_two, true, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
         CONTEXT("When applying L2-norm to a DenseVector<float> (Cell):");
 
@@ -104,11 +104,11 @@ namespace honei
 
         Operand oa = { &result };
         Operand ob = { a.elements() };
-        Operand oc, od, oe;
+        Operand oc, od;
         oc.u = a.size() / 4096;
         od.u = a.size() % 4096;
         od.u &= ~0xF;
-        oe.f = a[0];
+
         unsigned rest_index(oc.u * 4096 + od.u);
 
         od.u *= 4;
@@ -131,17 +131,17 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_norm_l_two, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_dense_float_norm_l_two, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        float ppu_result(a[0]);
+        float ppu_result(0.0f);
         for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
-            ppu_result += pow(*i,2);
+            ppu_result += *i * *i;
         }
 
         if (use_spe)

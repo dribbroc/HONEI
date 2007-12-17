@@ -41,6 +41,9 @@ unsigned dense_float_norm_max(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
+    unsigned offset((ea_a & 0xF) / sizeof(float));
+    ea_a &= ~0xF;
+
     debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
@@ -59,11 +62,15 @@ unsigned dense_float_norm_max(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        unsigned i(0);
+        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
+            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             bitMaskGT = spu_cmpabsgt(tmpVector.value, a[current - 1].vectorised[i]);
             tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
+        bitMaskGT = spu_cmpabsgt(tmpVector.value, a[current - 1].vectorised[i]);
+        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
         --counter;
 
@@ -77,11 +84,15 @@ unsigned dense_float_norm_max(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+    unsigned i(0);
+    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
+        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
         bitMaskGT = spu_cmpabsgt(a[current - 1].vectorised[i], tmpVector.value);
         tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
     }
+    bitMaskGT = spu_cmpabsgt(a[current - 1].vectorised[i], tmpVector.value);
+    tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);

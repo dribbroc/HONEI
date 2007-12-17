@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-17 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/dense_float_norm_l_two.cc,
+	cell/libla/dense_float_norm_max.cc, libla/norm-cell.cc, libla/norm.hh:
+	Simple optimizations and corrections. Applied support for unaligned
+	addresses.
+	* cell/libla/dense_float_reduction_max.cc,
+	cell/libla/dense_float_reduction_min.cc,
+	cell/libla/dense_float_reduction_sum.cc: Minor issues.
+
 2007-12-16 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/sum_BENCHMARK.cc:

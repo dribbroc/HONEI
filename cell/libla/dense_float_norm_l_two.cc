@@ -62,13 +62,13 @@ unsigned dense_float_norm_l_two(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        unsigned i(0);
+        for( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
             extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-            a[current - 1].vectorised[i] = spu_mul(a[current - 1].vectorised[i], 
-                                                   a[current - 1].vectorised[i]);
-            acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
+            acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
         }
+        acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
 
         --counter;
 
@@ -86,20 +86,15 @@ unsigned dense_float_norm_l_two(const Instruction & inst)
     for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
         extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-        a[current - 1].vectorised[i] = spu_mul(a[current - 1].vectorised[i], 
-                                               a[current - 1].vectorised[i]);
-        acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
+        acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
     }
-
-    a[current - 1].vectorised[i] = spu_mul(a[current - 1].vectorised[i],
-                                           a[current - 1].vectorised[i]);
-    acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
+    acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    MailableResult<float> result = { pow(acc.array[0],2) + pow(acc.array[1],2) 
-                                   + pow(acc.array[2],2) + pow(acc.array[3],2) };
+    acc.value = spu_mul(acc.value, acc.value);
+    MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
 
     return result.mail;
 }
