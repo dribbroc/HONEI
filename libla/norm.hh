@@ -457,6 +457,13 @@ namespace honei
     };
 
 
+    template <> struct Norm<vnt_l_two, false, tags::Cell>
+    {
+
+        static float value(const DenseVectorContinuousBase<float> & a);
+
+    };
+
 }
 
 
