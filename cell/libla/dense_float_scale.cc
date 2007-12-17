@@ -52,7 +52,7 @@ void dense_float_scale(const Instruction & inst)
     mfc_get(m[current - 1].untyped, ea_m, size, current, 0, 0);
     ea_m += size;
 
-    vector float scale_vector(spu_splats(static_cast<float>(inst.d.f)));
+    Subscriptable<float> scale_vector = { spu_splats(static_cast<float>(inst.d.f)) };
 
     while (counter > 1)
     {
@@ -64,9 +64,9 @@ void dense_float_scale(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        for (unsigned i(0); i < size / sizeof(vector float) ; ++i)
         {
-            m[current - 1].vectorised[i] = spu_mul(m[current - 1].vectorised[i], scale_vector);
+            m[current - 1].vectorised[i] = spu_mul(m[current - 1].vectorised[i], scale_vector.value);
         }
 
         mfc_putb(m[current - 1].untyped, ea_r, size, current, 0, 0);
@@ -83,11 +83,9 @@ void dense_float_scale(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-
-    unsigned i(0);
-    for ( ; i < size / sizeof(vector float) ; i++)
+    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
-        m[current - 1].vectorised[i] = spu_mul(m[current - 1].vectorised[i], scale_vector);
+        m[current - 1].vectorised[i] = spu_mul(m[current - 1].vectorised[i], scale_vector.value);
     }
 
     mfc_put(m[current - 1].untyped, ea_r, size, current, 0, 0);

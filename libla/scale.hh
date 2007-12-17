@@ -29,7 +29,6 @@
 #include <libutil/wrapper.hh>
 #include <libutil/tags.hh>
 
-#include <iostream>
 #include <list>
 
 
@@ -252,7 +251,7 @@ namespace honei
 
         static DenseMatrix<float> & value(const float a, DenseMatrix<float> & x);
 
-        static DenseVector<float> & value(const float a, DenseVector<float> & x);
+        static DenseVectorContinuousBase<float> & value(const float a, DenseVectorContinuousBase<float> & x);
 
         static SparseVector<float> & value(const float a, SparseVector<float> & x);
 

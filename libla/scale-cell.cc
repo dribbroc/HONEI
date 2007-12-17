@@ -82,8 +82,8 @@ namespace honei
         return b;
     }
 
-    DenseVector<float> &
-    Scale<tags::Cell>::value(const float a, DenseVector<float> & b)
+    DenseVectorContinuousBase<float> &
+    Scale<tags::Cell>::value(const float a, DenseVectorContinuousBase<float> & b)
     {
         CONTEXT("When scaling DenseVector<float> (Cell):");
 
@@ -93,12 +93,20 @@ namespace honei
         Operand oc;
         oc.u = b.size() % (1024 * 4);
         oc.u &= ~0xF;
+
+        // What we need on PPU
+        unsigned offset((oa.u & 0xF) / sizeof(float));
+        unsigned rest_index(ob.u * 4096 + oc.u);
+        rest_index += (rest_index < offset) ? offset : 0;
+
+        // What we need on SPU
+        oa.u = (offset > 0) ? oa.u + 16 - offset : oa.u; // aligned address
+        ob.u = (b.size() - offset) / (1024 * 4); // size - ppu-calculated offset!
+        oc.u = (b.size() - offset) % (1024 * 4);
+        oc.u &= ~0xF;
+        oc.u *= 4;
         Operand od;
         od.f = a;
-
-        unsigned rest_index(ob.u * 4096 + oc.u);
-
-        oc.u *= 4;
 
         bool use_spe(true);
 
@@ -125,8 +133,14 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        Vector<float>::ElementIterator i(b.element_at(rest_index)), i_end(b.end_elements());
-        for ( ; i != i_end ; ++i)
+        for (Vector<float>::ElementIterator i(b.begin_elements()),
+                i_end(b.element_at(offset)) ; i != i_end ; ++i)
+        {
+            *i *= od.f;
+        }
+
+        for (Vector<float>::ElementIterator i(b.element_at(rest_index)),
+                i_end(b.end_elements())  ; i != i_end ; ++i)
         {
             *i *= od.f;
         }

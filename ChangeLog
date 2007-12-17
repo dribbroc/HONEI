@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-12-17 Sven Mallach <sven.mallach@honei.org>
 
+	* cell/libla/dense_float_scale.cc, libla/scale-cell.cc,
+	libla/scale.hh, libla/scale_TEST.cc: Applied support for unaligned
+	addresses. Added an appropriate test for this case.
+
+2007-12-17 Sven Mallach <sven.mallach@honei.org>
+
 	* cell/libla/dense_float_norm_l_two.cc,
 	cell/libla/dense_float_norm_max.cc, libla/norm-cell.cc, libla/norm.hh:
 	Simple optimizations and corrections. Applied support for unaligned

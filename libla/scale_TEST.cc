@@ -160,7 +160,7 @@ DenseMatrixScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_dense_matri
 DenseMatrixScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_dense_matrix_product_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-DenseMatrixScaleTest<tags::Cell, float> cell_dense_matrix_scale_test_float("Cell float");
+//DenseMatrixScaleTest<tags::Cell, float> cell_dense_matrix_scale_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -201,7 +201,7 @@ DenseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_matrix_
 DenseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_matrix_scale_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-DenseMatrixScaleQuickTest<tags::Cell, float> cell_dense_matrix_scale_quick_test_float("Cell float");
+//DenseMatrixScaleQuickTest<tags::Cell, float> cell_dense_matrix_scale_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -303,12 +303,12 @@ class ScalarDenseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(3) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(3));
-
-                Scale<Tag_>::value(DataType_(2), dv1);
-                DataType_ v1(Norm<vnt_l_one>::value(dv1));
+                DenseMatrix<DataType_> dm(size, size, DataType_(3));
+                DenseVectorRange<DataType_> dv(dm[2]);
+                Scale<Tag_>::value(DataType_(2), dv);
+                DataType_ v1(Norm<vnt_l_one>::value(dv));
                 TEST_CHECK_EQUAL(v1, 6 * size);
             }
         }
@@ -323,6 +323,9 @@ ScalarDenseVectorProductTest<tags::CPU::SSE, float> sse_scalar_dense_vector_prod
 ScalarDenseVectorProductTest<tags::CPU::SSE, double> sse_scalar_dense_vector_product_test_double("sse double");
 ScalarDenseVectorProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_dense_vector_product_test_float("MC SSE float");
 ScalarDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_dense_vector_product_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+ScalarDenseVectorProductTest<tags::Cell, float> cell_scalar_dense_vector_product_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -399,7 +402,7 @@ ScalarSparseVectorProductTest<tags::CPU::SSE, float> sse_scalar_sparse_vector_pr
 ScalarSparseVectorProductTest<tags::CPU::SSE, double> sse_scalar_sparse_vector_product_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-ScalarSparseVectorProductTest<tags::Cell, float> cell_scalar_sparse_vector_product_test_float("Cell float");
+//ScalarSparseVectorProductTest<tags::Cell, float> cell_scalar_sparse_vector_product_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -439,5 +442,5 @@ ScalarSparseVectorProductQuickTest<tags::CPU::SSE, float> sse_scalar_sparse_vect
 ScalarSparseVectorProductQuickTest<tags::CPU::SSE, double> sse_scalar_sparse_vector_product_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-ScalarSparseVectorProductQuickTest<tags::Cell, float> cell_scalar_sparse_vector_product_quick_test_float("Cell float");
+//ScalarSparseVectorProductQuickTest<tags::Cell, float> cell_scalar_sparse_vector_product_quick_test_float("Cell float");
 #endif
