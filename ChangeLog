@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-18 Andre Matuschek <andre@matuschek.org>
+
+	*libla/sum.hh, libla/sum_TEST.cc, libla/sum_BENCHMARK.cc: Added MultiCore
+	version of DenseMatrix BandedMatrix sum.
+
 2007-12-18 David Gies <david-gies@gmx.de>
 
 	*libla/dot_product-mc.hh: Dense vector dot product adjusted for DenseVectorContinuousBase.

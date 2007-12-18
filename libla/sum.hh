@@ -31,6 +31,7 @@
 #include <libutil/thread_pool.hh>
 #include <libutil/wrapper.hh>
 
+#include <iostream>
 #include <algorithm>
 
 namespace honei
@@ -207,22 +208,29 @@ namespace honei
                     continue;
 
                 unsigned long size(b.size());
-                unsigned long row_index(-std::max(long(r.index() - size + 1), long(0)));
-                unsigned long col_index(std::min(long(r.index() - size + 1), long(0)));
+                unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
+                unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
 
-                for (typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements()) ;
-                        c != c_end ; ++c)
+                typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+
+                if (r.index() < size - 1)
                 {
-                    if (row_index + c.index() >= size)
+                        c += ((size-1) - r.index());
+                }                
+
+                for ( ; c != c_end ; ++c)
+                {
+                    if (row_index >= size)
                         break;
 
-                    if (col_index + c.index() >= size)
+                    if (col_index >= size)
                         break;
 
-                    a[row_index + c.index()][col_index + c.index()] += *c;
+                    a[row_index][col_index] += *c;
+                    ++row_index;
+                    ++col_index;
                 }
             }
-
             return a;
         }
 
@@ -797,6 +805,102 @@ namespace honei
             return a;
         }
 
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
+        {
+            CONTEXT("When adding BandedMatrix to DenseMatrix (MutiCore):");
+
+            if (a.columns() != a.rows())
+            {
+                throw MatrixIsNotSquare(a.rows(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[2];
+
+            ThreeArgWrapper< MCSum<typename Tag_::DelegateTo>,  DenseMatrix<DT1_>,
+                const BandedMatrix<DT2_>, const bool> mywrapper1 (a, b, true);
+            pt[0] = p->dispatch(mywrapper1);
+
+            ThreeArgWrapper< MCSum<typename Tag_::DelegateTo>,  DenseMatrix<DT1_>,
+                const BandedMatrix<DT2_>, const bool> mywrapper2 (a, b, false);
+            pt[1] = p->dispatch(mywrapper2);
+
+            pt[0]->wait_on();
+            pt[1]->wait_on();
+
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b, const bool upper)
+        {
+            CONTEXT("When partial adding BandedMatrix to DenseMatrix:");
+
+            unsigned long size(b.size());
+
+            if (upper)
+            {
+
+                for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.band_at(size-1)), r_end(b.end_bands()) ;
+                        r != r_end ; ++r)
+                {
+                    if (! r.exists())
+                        continue;
+    
+                    unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
+                    unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
+    
+                    typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+    
+                    for ( ; c != c_end ; ++c)
+                    {
+                        if (row_index >= size)
+                            break;
+
+                        if (col_index >= size)
+                            break;
+    
+                        a[row_index][col_index] += *c;
+                        ++row_index;
+                        ++col_index;
+                    }
+                }
+                return a;            
+            } else {
+                for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.band_at(size-1)) ;
+                        r != r_end ; ++r)
+                {
+                    if (! r.exists())
+                        continue;
+    
+                    unsigned long size(b.size());
+                    unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
+                    unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
+    
+                    typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+    
+                    if (r.index() < size - 1)
+                    {
+                            c += ((size-1) - r.index());
+                    }                
+    
+                    for ( ; c != c_end ; ++c)
+                    {    
+                        a[row_index][col_index] += *c;
+                        ++row_index;
+                        ++col_index;
+                    }
+                }
+                return a;
+            }    
+        }
+    
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         { 

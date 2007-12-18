@@ -32,7 +32,7 @@ using namespace tests;
 
 // Test cases for matrix operations
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixDenseMatrixSumTest :
     public BaseTest
 {
@@ -40,6 +40,7 @@ class BandedMatrixDenseMatrixSumTest :
         BandedMatrixDenseMatrixSumTest(const std::string & type) :
             BaseTest("banded_matrix_dense_matrix_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -48,6 +49,10 @@ class BandedMatrixDenseMatrixSumTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
+                bm1.insert_band(2,dv1);
+                bm1.insert_band(-3,dv1);
+                bm1.insert_band(4,dv1);
+                bm1.insert_band(-5,dv1);
                 DenseMatrix<DataType_> dm2(size, size, DataType_(1)), dm3(size, size, DataType_(1));
 
                 typename MutableMatrix<DataType_>::ElementIterator k(dm3.begin_elements());
@@ -59,7 +64,7 @@ class BandedMatrixDenseMatrixSumTest :
                         *k = DataType_(3);
                     }
                 }
-                Sum<>::value(dm2, bm1);
+                Sum<Tag_>::value(dm2, bm1);
 
                 TEST_CHECK_EQUAL(dm2, dm3);
             }
@@ -67,11 +72,13 @@ class BandedMatrixDenseMatrixSumTest :
             BandedMatrix<DataType_> bm01(5);
             DenseMatrix<DataType_> dm02(6, 6);
 
-            TEST_CHECK_THROWS(Sum<>::value(dm02, bm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Sum<Tag_>::value(dm02, bm01), MatrixRowsDoNotMatch);
         }
 };
-BandedMatrixDenseMatrixSumTest<float> banded_matrix_dense_matrix_sum_test_float("float");
-BandedMatrixDenseMatrixSumTest<double> banded_matrix_dense_matrix_sum_test_double("double");
+BandedMatrixDenseMatrixSumTest<tags::CPU, float> banded_matrix_dense_matrix_sum_test_float("float");
+BandedMatrixDenseMatrixSumTest<tags::CPU, double> banded_matrix_dense_matrix_sum_test_double("double");
+BandedMatrixDenseMatrixSumTest<tags::CPU::MultiCore, float> mc_banded_matrix_dense_matrix_sum_test_float("MC float");
+BandedMatrixDenseMatrixSumTest<tags::CPU::MultiCore, double> mc_banded_matrix_dense_matrix_sum_test_double("MC double");
 
 template <typename DataType_>
 class BandedMatrixDenseMatrixSumQuickTest :

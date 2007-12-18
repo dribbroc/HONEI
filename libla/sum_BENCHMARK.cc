@@ -167,6 +167,45 @@ DenseMatrixSumBench<tags::CPU::MultiCore::SSE, double> DMSBenchdouble1mcsse("MC 
 DenseMatrixSumBench<tags::Cell, float> DMSBenchfloat1cell("Cell Dense Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
 #endif
 
+template <typename Tag_, typename DataType_>
+class DenseMatrixBandedMatrixSumBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        DenseMatrixBandedMatrixSumBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
+            DenseVector<DataType_> dv (_size, DataType_(rand()));
+            BandedMatrix<DataType_> bm(_size, dv);
+            for(int i = 0 ; i < _size; i += 10) {
+                bm.insert_band(i, dv);
+                bm.insert_band(-i, dv);
+            }
+            
+            for(int i = 0 ; i < _count ; ++i)
+            {
+                BENCHMARK(Sum<Tag_>::value(dm0, bm));
+            }
+            evaluate();
+        }
+};
+
+DenseMatrixBandedMatrixSumBench<tags::CPU, float> DMBMSBenchfloat1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
+DenseMatrixBandedMatrixSumBench<tags::CPU, double> DMBMSBenchdouble1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, float> DMBMSBenchfloat1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
+DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, double> DMSBMBenchdouble1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+
+
 
 template <typename DT_, typename Tag_>
 class DenseVectorSumBenchTestPlot :
