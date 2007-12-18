@@ -72,6 +72,8 @@ class DenseVectorNormValueTest :
 
 DenseVectorNormValueTest<tags::CPU, float> dense_vector_norm_value_test_float("float");
 DenseVectorNormValueTest<tags::CPU, double> dense_vector_norm_value_test_double("double");
+DenseVectorNormValueTest<tags::CPU::MultiCore, float> mc_dense_vector_norm_value_test_float("MC float");
+DenseVectorNormValueTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_value_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorNormValueTest<tags::Cell, float> cell_dense_vector_norm_value_test_float("float (Cell)");
 #endif
@@ -115,14 +117,14 @@ class DenseVectorNormQuickTest :
 
         }
 };
-DenseVectorNormQuickTest<tags::CPU,float>  dense_vector_norm_quick_test_float("float");
-DenseVectorNormQuickTest<tags::CPU,double> dense_vector_norm_quick_test_double("double");
-
+DenseVectorNormQuickTest<tags::CPU, float>  dense_vector_norm_quick_test_float("float");
+DenseVectorNormQuickTest<tags::CPU, double> dense_vector_norm_quick_test_double("double");
+DenseVectorNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_norm_quick_test_float("MC float");
+DenseVectorNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorNormQuickTest<tags::Cell, float> cell_vector_norm_quick_test_float("float (Cell)");
 #endif
-
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorNormValueTest :
     public BaseTest
 {
@@ -130,6 +132,7 @@ class SparseVectorNormValueTest :
         SparseVectorNormValueTest(const std::string & type) :
             BaseTest("sparse_vector_norm_value_test<" + type + ">")
         {
+            register_tag(Tag_::name); 
         }
 
         virtual void run() const
@@ -152,24 +155,26 @@ class SparseVectorNormValueTest :
                     }
                 }
 
-                DataType_ vmax(Norm<vnt_max>::value(sv));
+                DataType_ vmax(Norm<vnt_max, false, Tag_>::value(sv));
                 TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
-                DataType_ v1(Norm<vnt_l_one>::value(sv));
+                DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(sv));
                 DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-                DataType_ v2(Norm<vnt_l_two, false>::value(sv));
+                DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(sv));
                 DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
             }
         }
 };
 
-SparseVectorNormValueTest<float> sparse_vector_norm_value_test_float("float");
-SparseVectorNormValueTest<double> sparse_vector_norm_value_test_double("double");
+SparseVectorNormValueTest<tags::CPU, float> sparse_vector_norm_value_test_float("float");
+SparseVectorNormValueTest<tags::CPU, double> sparse_vector_norm_value_test_double("double");
+SparseVectorNormValueTest<tags::CPU::MultiCore, float> mc_sparse_vector_norm_value_test_float("MC float");
+SparseVectorNormValueTest<tags::CPU::MultiCore, double> mc_sparse_vector_norm_value_test_double("MC double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorNormQuickTest :
     public QuickTest
 {
@@ -177,6 +182,7 @@ class SparseVectorNormQuickTest :
         SparseVectorNormQuickTest(const std::string & type) :
             QuickTest("sparse_vector_norm_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -198,18 +204,20 @@ class SparseVectorNormQuickTest :
                 }
             }
 
-            DataType_ vmax(Norm<vnt_max>::value(sv));
+            DataType_ vmax(Norm<vnt_max, false, Tag_>::value(sv));
             TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
-            DataType_ v1(Norm<vnt_l_one>::value(sv));
+            DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(sv));
             DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
-            DataType_ v2(Norm<vnt_l_two, false>::value(sv));
+            DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(sv));
             DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
         }
 };
 
-SparseVectorNormQuickTest<float> sparse_vector_norm_quick_test_float("float");
-SparseVectorNormQuickTest<double> sparse_vector_norm_quick_test_double("double");
+SparseVectorNormQuickTest<tags::CPU, float> sparse_vector_norm_quick_test_float("float");
+SparseVectorNormQuickTest<tags::CPU, double> sparse_vector_norm_quick_test_double("double");
+SparseVectorNormQuickTest<tags::CPU::MultiCore, float> mc_sparse_vector_norm_quick_test_float("MC float");
+SparseVectorNormQuickTest<tags::CPU::MultiCore, double> mc_sparse_vector_norm_quick_test_double("MC double");

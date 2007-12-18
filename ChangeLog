@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-18 David Gies <david-gies@gmx.de>
+
+    *libla/norm.hh, libla/norm_TEST: Added MultiCore Norms.
+    *libmath/iterative_refinement_TEST.cc, conjugate_gradients_TEST.cc,
+    jacobi_TEST.cc: Fixed wrong template argument in Norms.
+
 2007-12-18 Mathias Kadolsky <mathkad@gmx.de>
 
 	* libgraph/position_BENCHMARK.cc: WeightedFruchtermanReingold Benchmark added.
