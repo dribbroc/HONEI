@@ -86,17 +86,18 @@ class KamadaKawaiPositionsBench :
                 i++;
             }
 
-            // Creating a Positions object with the test scenario
-            Positions<Tag_, DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
-
-            // update the positions
+            // Creating a Positions object with the test scenario and update the positions
+            int number_of_iterations;
+            DataType_ max_node_force;
             for(int i = 0; i < _count; ++i)
             {
+                Positions<Tag_, DataType_, methods::KamadaKawai> position(*((*pPosition).copy()), *pNeighbour, 2);
                 BENCHMARK(position.update(0.00001, _nodecount * 10));
+                number_of_iterations = position.number_of_iterations();
+                max_node_force = position.max_node_force();
             }
-
-            std::cout << "max_node_force of KK  "<< position.max_node_force() << std::endl;
-            std::cout << "number_of_iterations of KK  "<< position.number_of_iterations() << std::endl;
+            std::cout << "Maximum node force of KK:  "<< max_node_force << std::endl;
+            std::cout << "Number of iterations of KK:  "<< number_of_iterations << std::endl;
 
             evaluate();
         }
@@ -156,14 +157,18 @@ class FruchtermanReingoldPositionsBench :
             // Creating a Positions object with the test scenario
             Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
 
-            // update the positions
+            // Creating a Positions object with the test scenario and update the positions
+            int number_of_iterations;
+            DataType_ max_node_force;
             for(int i = 0; i < _count; ++i)
             {
+                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*((*pPosition).copy()), *pNeighbour, 2);
                 BENCHMARK(position.update(0.00001, _nodecount * 5));
+                number_of_iterations = position.number_of_iterations();
+                max_node_force = position.max_node_force();
             }
-
-            std::cout << "max_node_force of FR  "<< position.max_node_force() << std::endl;
-            std::cout << "number_of_iterations of FR  "<< position.number_of_iterations() << std::endl;
+            std::cout << "Maximum node force of FR:  "<< max_node_force << std::endl;
+            std::cout << "Number of iterations of FR:  "<< number_of_iterations << std::endl;
 
             evaluate();
         }
@@ -231,33 +236,118 @@ class WeightedKamadaKawaiPositionsBench :
                 i++;
             }
 
-            // Creating a Positions object with the test scenario
-            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*pPosition, *pNode_Weights, *pEdge_Weights);
-
-            // update the positions
+            // Creating a Positions object with the test scenario and update the positions
+            int number_of_iterations;
+            DataType_ max_node_force;
             for(int i = 0; i < _count; ++i)
             {
+                Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*((*pPosition).copy()), *pNode_Weights, *pEdge_Weights);
                 BENCHMARK(position.update(0.00001, _nodecount * 10));
+                number_of_iterations = position.number_of_iterations();
+                max_node_force = position.max_node_force();
             }
-
-            std::cout << "max_node_force of WKK  "<< position.max_node_force() << std::endl;
-            std::cout << "number_of_iterations of WKK  "<< position.number_of_iterations() << std::endl;
+            std::cout << "Maximum node force of WKK:  "<< max_node_force << std::endl;
+            std::cout << "Number of iterations of WKK:  "<< number_of_iterations << std::endl;
 
             evaluate();
         }
 };
 
-KamadaKawaiPositionsBench<tags::CPU, float> kamada_kawai_positions_bench_float("float", 200, 10);
-KamadaKawaiPositionsBench<tags::CPU, double> kamada_kawai_positions_bench_double("double", 200, 10);
-FruchtermanReingoldPositionsBench<tags::CPU, float> fruchterman_reingold_positions_bench_float("float", 200, 10);
-FruchtermanReingoldPositionsBench<tags::CPU, double> fruchterman_reingold_positions_bench_double("double", 200, 10);
-WeightedKamadaKawaiPositionsBench<tags::CPU, float> weighted_kamada_kawai_positions_bench_float("float", 200, 10);
-WeightedKamadaKawaiPositionsBench<tags::CPU, double> weighted_kamada_kawai_positions_bench_double("double", 200, 10);
+template <typename Tag_, typename DataType_>
+class WeightedFruchtermanReingoldPositionsBench :
+    public Benchmark
+{
+    private:
+        int _nodecount;
+        int _count;
+    public:
+        WeightedFruchtermanReingoldPositionsBench(const std::string & id, int nodecount, int count) :
+            Benchmark(id)
+        {
+            _nodecount = nodecount;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            // Creatoing test scenario
+            DataType_ pos[2*_nodecount];
+            for (int i(0); i < _nodecount; ++i)
+            {
+                    pos[2*i+1] = sin((DataType_)i /(DataType_)_nodecount * 2.0f * 3.14f);
+                    pos[2*i] = cos((DataType_)i / (DataType_)_nodecount * 2.0f * 3.14f);
+            }
+
+            DataType_ edge_weights[_nodecount*_nodecount];
+            for (int i(0); i < _nodecount; ++i)
+                for (int j(0); j < _nodecount; ++j)
+                    edge_weights[i*_nodecount + j] = i == j ? 0 : 1;
+
+            DataType_ node_weights[_nodecount];
+            for (int i(0); i < _nodecount; ++i)
+            {
+                    node_weights[i] = 1;
+            }
+
+            // Now, fill that numbers into the real matrices
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(_nodecount,2));
+            int i(0);
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
+                    e_end(pPosition->end_elements());e != e_end ; ++e)
+            {
+                *e = pos[i++]; 
+            }
+
+            i = 0;
+            std::tr1::shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(_nodecount));
+            for (typename Vector<DataType_>::ElementIterator e(pNode_Weights->begin_elements()),
+                    e_end(pNode_Weights->end_elements()); e != e_end ; ++e)
+            {
+                *e = 3*node_weights[i++];
+            }
+
+            i = 0;
+            std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(_nodecount,_nodecount));
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
+                    e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
+            {
+                if (edge_weights[i] > std::numeric_limits<DataType_>::epsilon()) *e = edge_weights[i];
+                i++;
+            }
+
+            // Creating a Positions object with the test scenario and update the positions
+            int number_of_iterations;
+            DataType_ max_node_force;
+            for(int i = 0; i < _count; ++i)
+            {
+                Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*((*pPosition).copy()), *pNode_Weights, *pEdge_Weights);
+                BENCHMARK(position.update(0.00001, _nodecount * 5));
+                number_of_iterations = position.number_of_iterations();
+                max_node_force = position.max_node_force();
+            }
+            std::cout << "Maximum node force of WFR:  "<< max_node_force << std::endl;
+            std::cout << "Number of iterations of WFR:  "<< number_of_iterations << std::endl;
+
+            evaluate();
+        }
+};
+
+KamadaKawaiPositionsBench<tags::CPU, float> kamada_kawai_positions_bench_float("KamadaKawai Benchmark float", 200, 10);
+KamadaKawaiPositionsBench<tags::CPU, double> kamada_kawai_positions_bench_double("KamadaKawai Benchmark double", 200, 10);
+FruchtermanReingoldPositionsBench<tags::CPU, float> fruchterman_reingold_positions_bench_float("FruchtermanReingold Benchmark float", 200, 10);
+FruchtermanReingoldPositionsBench<tags::CPU, double> fruchterman_reingold_positions_bench_double("FruchtermanReingold Benchmark double", 200, 10);
+WeightedKamadaKawaiPositionsBench<tags::CPU, float> weighted_kamada_kawai_positions_bench_float("WeightedKamadaKawai Benchmark float", 200, 10);
+WeightedKamadaKawaiPositionsBench<tags::CPU, double> weighted_kamada_kawai_positions_bench_double("WeightedKamadaKawai Benchmark double", 200, 10);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU, float> weighted_fruchterman_reingold_positions_bench_float("WeightedFruchtermanReingold Benchmark float", 200, 10);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU, double> weighted_fruchterman_reingold_positions_bench_double("WeightedFruchtermanReingold Benchmark double", 200, 10);
+
 #ifdef HONEI_SSE
-KamadaKawaiPositionsBench<tags::CPU::SSE, float> sse_kamada_kawai_positions_bench_float("SSE float", 200, 10);
-KamadaKawaiPositionsBench<tags::CPU::SSE, double> sse_kamada_kawai_positions_bench_double("SSE double", 200, 10);
-FruchtermanReingoldPositionsBench<tags::CPU::SSE, float> sse_fruchterman_reingold_positions_bench_float("SSE float", 200, 10);
-FruchtermanReingoldPositionsBench<tags::CPU::SSE, double> sse_fruchterman_reingold_positions_bench_double("SSE double", 200, 10);
-WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_bench_float("SSE float", 200, 10);
-WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_bench_double("SSE double", 200, 10);
+KamadaKawaiPositionsBench<tags::CPU::SSE, float> sse_kamada_kawai_positions_bench_float("SSE KamadaKawai Benchmark float", 200, 10);
+KamadaKawaiPositionsBench<tags::CPU::SSE, double> sse_kamada_kawai_positions_bench_double("SSE KamadaKawai Benchmark double", 200, 10);
+FruchtermanReingoldPositionsBench<tags::CPU::SSE, float> sse_fruchterman_reingold_positions_bench_float("SSE FruchtermanReingold Benchmark float", 200, 10);
+FruchtermanReingoldPositionsBench<tags::CPU::SSE, double> sse_fruchterman_reingold_positions_bench_double("SSE FruchtermanReingold Benchmark double", 200, 10);
+WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_bench_float("SSE WeightedKamadaKawai Benchmark float", 200, 10);
+WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_bench_double("SSE WeightedKamadaKawai Benchmark double", 200, 10);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_bench_float("SSE WeightedFruchtermanReingold Benchmark float", 200, 10);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_bench_double("SSE WeightedFruchtermanReingold Benchmark double", 200, 10);
 #endif
