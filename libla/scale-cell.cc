@@ -86,7 +86,6 @@ namespace honei
     Scale<tags::Cell>::value(const float a, DenseVectorContinuousBase<float> & b)
     {
         CONTEXT("When scaling DenseVector<float> (Cell):");
-
         Operand oa = { b.elements() };
         Operand ob, oc, od;
         od.f = a;
@@ -99,11 +98,9 @@ namespace honei
         ob.u = (b.size() - offset) / (1024 * 4); // Subtract PPU-calculated offset from size.
         oc.u = (b.size() - offset) % (1024 * 4);
         oc.u &= ~0xF;
-        oc.u *= 4;
 
-        unsigned rest_index(ob.u * 4096 + oc.u); // Rest index for PPU dependent on offset and SPU part.
-        if (rest_index < offset)
-            rest_index += offset;
+        unsigned rest_index(ob.u * 4096 + oc.u + offset); // Rest index for PPU dependent on offset and SPU part.
+        oc.u *= 4;
 
         bool use_spe(true);
 
@@ -114,12 +111,12 @@ namespace honei
                 oc.u = 16 * 1024;
             }
             else
-            {
+             {
                 use_spe = false;
             }
         }
         else
-        {
+        { 
             ++ob.u;
         }
 
@@ -128,19 +125,19 @@ namespace honei
         if (use_spe)
         {
             SPEManager::instance()->dispatch(instruction);
-        }
+        } 
 
         for (Vector<float>::ElementIterator i(b.begin_elements()),
                 i_end(b.element_at(offset)) ; i != i_end ; ++i)
         {
             *i *= od.f;
-        }
+        } 
 
         for (Vector<float>::ElementIterator i(b.element_at(rest_index)),
-                i_end(b.end_elements())  ; i != i_end ; ++i)
+                i_end(b.end_elements()) ; i != i_end ; ++i)
         {
             *i *= od.f;
-        }
+        } 
 
         if (use_spe)
             instruction.wait();

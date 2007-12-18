@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-18 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/scale-cell.cc: Fixed small bug.
+
 2007-12-18 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product_BENCHMARK.cc:
