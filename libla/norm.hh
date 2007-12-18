@@ -25,8 +25,6 @@
 #include <libla/dot_product.hh>
 #include <libutil/tags.hh>
 
-#include <iostream>
-
 #include <cmath>
 
 ///\todo: Do not use define for setting size of multicore-partitions.
@@ -265,7 +263,6 @@ namespace honei
         template <typename DT_>
         static DT_ value(const DenseVectorBase<DT_> & x)
         {
-std::cout << "yo  " << std::endl;
             CONTEXT("When calculating norm of a DenseVectorBase:");
             return DotProduct<tags::CPU>::value(x, x);
         }
@@ -273,7 +270,6 @@ std::cout << "yo  " << std::endl;
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
-std::cout << "yo  " << std::endl;
             CONTEXT("When calculating norm of a SparseVector:");
             return DotProduct<tags::CPU>::value(x, x);
         }
@@ -483,7 +479,6 @@ std::cout << "yo  " << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorContinuousBase<DT_> & x)
         {
-std::cout << "yo  yo  yo0dvcb" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorContinuousBase (MultiCore):");
             DT_ result(0);
 
@@ -525,7 +520,6 @@ std::cout << "yo  yo  yo0dvcb" << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorSlice<DT_> & x)
         {
-std::cout << "yo  yo  yo0dvs" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorSlice (MultiCore):");
             // mc->sc dummy
             return Norm<vnt_max, root_, typename Tag_::DelegateTo>::value(x);
@@ -534,7 +528,6 @@ std::cout << "yo  yo  yo0dvs" << std::endl;
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
-std::cout << "yo  yo  yo0sv" << std::endl;
             CONTEXT("When calculating norm of a SparseVector (MultiCore):");
             // mc->sc dummy
             return Norm<vnt_max, root_, typename Tag_::DelegateTo>::value(x);
@@ -547,7 +540,6 @@ std::cout << "yo  yo  yo0sv" << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorContinuousBase<DT_> & x)
         {
-std::cout << "yo  yo  yo1dvcb" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorContinuousBase (MultiCore):");
 
             DT_ result(0);
@@ -590,7 +582,6 @@ std::cout << "yo  yo  yo1dvcb" << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorSlice<DT_> & x)
         {
-std::cout << "yo  yo  yo1dvs" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorSlice (MultiCore):");
             // mc->sc dummy
             return Norm<vnt_l_one, root_, typename Tag_::DelegateTo>::value(x);
@@ -599,7 +590,6 @@ std::cout << "yo  yo  yo1dvs" << std::endl;
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
-std::cout << "yo  yo  yo1sv" << std::endl;
             CONTEXT("When calculating norm of a SparseVector (MultiCore):");
             // mc->sc dummy
             return Norm<vnt_l_one, root_, typename Tag_::DelegateTo>::value(x);
@@ -612,7 +602,6 @@ std::cout << "yo  yo  yo1sv" << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorContinuousBase<DT_> & x)
         {
-std::cout << "yo  yo  yo2dv" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorContinuousBase (MultiCore):");
             return DotProduct<Tag_>::value(x, x);
         }
@@ -620,7 +609,6 @@ std::cout << "yo  yo  yo2dv" << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorSlice<DT_> & x)
         {
-std::cout << "yo  yo  yo2dvb" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorSlice (MultiCore):");
             DenseVector<DT_> y(x.copy());
             return DotProduct<Tag_>::value(x, x);
@@ -629,7 +617,6 @@ std::cout << "yo  yo  yo2dvb" << std::endl;
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
-std::cout << "yo  yo  yo2sv" << std::endl;
             CONTEXT("When calculating norm of a SparseVecto (Multicore):");
             return DotProduct<tags::CPU>::value(x, x);
         }
@@ -641,7 +628,6 @@ std::cout << "yo  yo  yo2sv" << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorContinuousBase<DT_> & x)
         {
-std::cout << "yo  yo  yo2tdvb" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorBase (MultiCore):");
             return sqrt(Norm<vnt_l_two, false, Tag_>::value(x));
         }
@@ -649,7 +635,6 @@ std::cout << "yo  yo  yo2tdvb" << std::endl;
         template <typename DT_>
         static DT_ value(const DenseVectorSlice<DT_> & x)
         {
-std::cout << "yo  yo  yo2tdvb" << std::endl;
             CONTEXT("When calculating norm of a DenseVectorBase (MultiCore):");
             return sqrt(Norm<vnt_l_two, false, Tag_>::value(x));
         }
@@ -657,7 +642,6 @@ std::cout << "yo  yo  yo2tdvb" << std::endl;
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & x)
         {
-std::cout << "yo  yo  yo2tsv" << std::endl;
             CONTEXT("When calculating norm of a SparseVector (MultiCore):");
             return sqrt(Norm<vnt_l_two, false, Tag_>::value(x));
         }

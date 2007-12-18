@@ -42,7 +42,7 @@ namespace honei
     template <typename Tag_> struct MCDotProduct
     {
         template <typename DT1_, typename DT2_>
-        static DT1_ value(SparseVector<DT1_> & a, const DenseVectorRange<DT2_> & b, unsigned long offset)
+        static DT1_ value(const SparseVector<DT1_> & a, const DenseVectorRange<DT2_> & b, unsigned long offset)
         {
             DT1_ result(0);
             typename Vector<DT1_>::ConstElementIterator r(a.begin_non_zero_elements());
@@ -58,9 +58,9 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DT1_ value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DT1_ value(const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            CONTEXT("When calculating DenseVector-DenseVector dot product (MultiCore):");
+            CONTEXT("When calculating DenseVectorContinuousBase-DenseVectorContinuousBase dot product (MultiCore):");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -79,15 +79,15 @@ namespace honei
                 PoolTask * pt[parts];
                 for (int i(0); i < modulo; ++i)
                 {
-                    DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
-                    DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
+                    DenseVectorRange<DT1_> range_1(a.range(div+1, i*(div+1)));
+                    DenseVectorRange<DT2_> range_2(b.range(div+1, i*(div+1)));
                     ResultTwoArgWrapper<DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(result, range_1, range_2);
                     pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
                 }
                 for (unsigned long i(modulo); i < parts; ++i)
                 {
-                    DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
-                    DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+                    DenseVectorRange<DT1_> range_1(a.range(div, modulo+(i*div)));
+                    DenseVectorRange<DT2_> range_2(b.range(div, modulo+(i*div)));
                     ResultTwoArgWrapper<DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(result, range_1, range_2);
                     pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
                 }
@@ -100,9 +100,9 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DT1_ value(SparseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DT1_ value(const SparseVector<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            CONTEXT("When calculating SparseVector-DenseVector dot product (MultiCore):");
+            CONTEXT("When calculating SparseVector-DenseVectorContinuousBase dot product (MultiCore):");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -125,8 +125,8 @@ namespace honei
                 {
                     offset = r.index();
                     r += div;
-                    DenseVectorRange<DT2_> range(b, r.index()-offset+1, offset);
-                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_, SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, (i*(div+1)));
+                    DenseVectorRange<DT2_> range(b.range(r.index()-offset+1, offset));
+                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_,const SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, (i*(div+1)));
                     pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
                     ++r;
                 }
@@ -134,8 +134,8 @@ namespace honei
                 {
                     offset = r.index();
                     r+= div-1;
-                    DenseVectorRange<DT2_> range(b, r.index()-offset+1, offset);
-                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_, SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, modulo + (i*div));
+                    DenseVectorRange<DT2_> range(b.range(r.index()-offset+1, offset));
+                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_,const SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, modulo + (i*div));
                     pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
                     ++r;
                 }
