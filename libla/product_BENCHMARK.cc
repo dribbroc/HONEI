@@ -64,6 +64,48 @@ BandedMatrixDenseVectorProductBench<tags::Cell, float> CELLBMDVPBenchfloat("CELL
 #endif
 
 template <typename Tag_, typename DataType_>
+class BandedMatrixDenseVectorProductBenchRelax :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        BandedMatrixDenseVectorProductBenchRelax(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DenseVector<DataType_> dv1(_size, DataType_(2));
+            BandedMatrix<DataType_> bm1(_size, dv1);
+            DenseVector<DataType_> dv4(_size, DataType_(3));
+            DenseVector<DataType_> dv5(dv4.copy());
+            //bm1.insert_band(3, dv4.copy());
+            //bm1.insert_band(-3, dv5.copy());
+            //bm1.insert_band(15, dv5.copy());
+            DenseVector<DataType_> dv2(_size, DataType_(4));
+            for (unsigned long i(0) ; i < _count ; i++)
+            {
+                BENCHMARK(Product<Tag_>::value(bm1, dv2));
+            }
+            BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
+            evaluate(info);
+        }
+};
+
+#ifdef HONEI_SSE
+BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, float> SSEBMDVPBenchfloatRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
+#endif
+#ifdef HONEI_CELL
+BandedMatrixDenseVectorProductBenchRelax<tags::Cell, float> CELLBMDVPBenchfloatRelax("CELL Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
+#endif
+
+
+template <typename Tag_, typename DataType_>
 class DenseMatrixProductBench :
     public Benchmark
 {

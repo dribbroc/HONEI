@@ -76,7 +76,7 @@ namespace honei
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
         /// \todo what about a deadlock above 2 spe's debug mode?
-        unsigned int spe_count = 2;
+        unsigned int spe_count = 1;
 
 
         typedef std::vector<bm_dv_product::SPETask> TaskList;
