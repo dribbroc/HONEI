@@ -446,26 +446,44 @@ namespace honei
         static double value(const SparseVector<double> & x);
     };
 
+     /**
+     * \brief Norm of an entity (Cell-implementation).
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_2,
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
+
     template <> struct Norm<vnt_max, false, tags::Cell>
     {
-
         static float value(const DenseVectorContinuousBase<float> & a);
-
     };
+
+    template <> struct Norm<vnt_l_one, false, tags::Cell>
+    {
+        static float value(const DenseVectorContinuousBase<float> & a);
+    };
+
 
     template <> struct Norm<vnt_l_two, true, tags::Cell>
     {
-
         static float value(const DenseVectorContinuousBase<float> & a);
     };
 
 
     template <> struct Norm<vnt_l_two, false, tags::Cell>
     {
-
         static float value(const DenseVectorContinuousBase<float> & a);
-
     };
+    // end of the template-Cell-part
 
     // MCNorm
     template <VectorNormType norm_type_ = vnt_l_two, bool root_ = false, typename Tag_ = tags::CPU::MultiCore> 

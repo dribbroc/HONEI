@@ -105,7 +105,7 @@ class DenseVectorNormQuickTest :
             DataType_ smax(s / 1.23456789);
             TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
 
-            DataType_ v1(Norm<vnt_l_one>::value(dv));
+            DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(dv));
             DataType_ s1(s * (s + 1) / 2 / 1.23456789);
             DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);

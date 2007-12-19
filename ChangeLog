@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-19 Till Barz <till.barz@udo.edu>
+	* cell/kernels/kernel_reference.sk, cell/libla/Makefile.am,
+	trunk/cell/opcodes.hh, libla/reduction_TEST.cc, libla/norm_TEST.cc,
+	libla/norm-cell.cc, libla/norm.hh: Cell-Implementation (float) of the
+	L1-Norm plus fitted test.
+
 2007-12-19 Andre Matuschek <andre@matuschek.org>
 	* libla/scale-mc.hh: Removed unused #include <iostream>.
 	* libla/difference-mc.hh, difference_TEST.cc: Added MultiCore-Version
