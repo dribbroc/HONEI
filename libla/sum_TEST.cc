@@ -947,7 +947,13 @@ class DenseVectorSumQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(16 * 1024 + 3);
+#if defined HONEI_CELL
+            unsigned long size(18225);
+#elif defined HONEI_SSE
+            unsigned long size(18225);
+#else
+            unsigned long size(19);
+#endif
 
             DenseVector<DataType_> dv1(size), dv2(size);
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),

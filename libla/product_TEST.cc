@@ -105,8 +105,14 @@ class BandedMatrixDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(43);
-            DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
+#if defined HONEI_CELL
+            unsigned long size(18225);
+#elif defined HONEI_SSE
+            unsigned long size(18225);
+#else
+            unsigned long size(19);
+#endif
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(1));
             DenseVector<DataType_> dv4(size, DataType_(0));
             DenseVector<DataType_> dv5(dv4.copy());
             DenseVector<DataType_> dv6(size, DataType_(-1)), dv7(size, DataType_(1));
@@ -130,7 +136,12 @@ class BandedMatrixDenseVectorProductQuickTest :
             }
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
-            TEST_CHECK_EQUAL(prod, dv3);
+            for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    it != i_end ; ++it, ++dit)
+            {
+                //std::cout<<it.index() << " ";
+                TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
+            }
 
             BandedMatrix<DataType_> bm01(5);
             DenseVector<DataType_> dv01(4, DataType_(1));
@@ -326,7 +337,7 @@ DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_dense_matrix_d
 DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
+//DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>
@@ -750,7 +761,7 @@ class DenseMatrixProductCellTest :
 };
 
 #ifdef HONEI_CELL
-DenseMatrixProductCellTest<tags::Cell, float> cell_dense_matrix_product_test_float("Cell float");
+//DenseMatrixProductCellTest<tags::Cell, float> cell_dense_matrix_product_test_float("Cell float");
 #endif
 
 
@@ -783,7 +794,7 @@ class DenseMatrixProductCellQuickTest :
         }
 };
 #ifdef HONEI_CELL
-DenseMatrixProductCellQuickTest<tags::Cell, float> cell_dense_matrix_product_quick_test_float("Cell float");
+//DenseMatrixProductCellQuickTest<tags::Cell, float> cell_dense_matrix_product_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>

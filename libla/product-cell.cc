@@ -145,7 +145,7 @@ namespace honei
             }
             task.quad_start = quad_start;
             task.quad_end = quad_end;
-            //std::cout<< "D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
+            //std::cout<< "above D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
             task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 
@@ -206,7 +206,7 @@ namespace honei
             }
             task.quad_start = quad_start;
             task.quad_end = quad_end;
-            //std::cout<< "D: "<<od.u<<" spe: "<<task.use_spe<<std::endl;
+            //std::cout<< "below D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
             task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og);
             task_list.push_back(task);
 

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/element_product_TEST.cc, libla/product-cell.cc, libla/product_TEST.cc, libla/scale_TEST.cc, libla/sum_TEST.cc:
+	Increased test size for cell and sse tests.
+
 2007-12-19 Markus Geveler <apryde@gmx.de>
 
 	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc,

@@ -341,7 +341,13 @@ class ScalarDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+#if defined HONEI_CELL
+            unsigned long size(18225);
+#elif defined HONEI_SSE
+            unsigned long size(18225);
+#else
+            unsigned long size(19);
+#endif
             DenseVector<DataType_> source(size * 2, DataType_(3));
             DenseVectorRange<DataType_> dv1(source, size, 3);
 

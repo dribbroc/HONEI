@@ -86,7 +86,13 @@ class DenseVectorElementProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+#if defined HONEI_CELL
+            unsigned long size(18225);
+#elif defined HONEI_SSE
+            unsigned long size(18225);
+#else
+            unsigned long size(19);
+#endif
             DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
                 dv3(size, DataType_(6));
             ElementProduct<Tag_>::value(dv1, dv2);
