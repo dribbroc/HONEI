@@ -250,7 +250,7 @@ class DenseVectorSparseVectorScaledSumTest :
         }
 };
 DenseVectorSparseVectorScaledSumTest<float> dense_vector_sparse_vector_scaled_sum_test_float("float");
-DenseVectorSparseVectorScaledSumTest<double> dense_vector_sparse_vector_scaled__sum_test_double("double");
+DenseVectorSparseVectorScaledSumTest<double> dense_vector_sparse_vector_scaled_sum_test_double("double");
 
 template <typename DataType_>
 class DenseVectorSparseVectorScaledSumQuickTest :
@@ -301,7 +301,7 @@ class DenseVectorSparseVectorScaledSumQuickTest :
         }
 };
 DenseVectorSparseVectorScaledSumQuickTest<float> dense_vector_sparse_vector_scaled_sum_quick_test_float("float");
-DenseVectorSparseVectorScaledSumQuickTest<double> dense_vector_sparse_vector_scaled__sum_quick_test_double("double");
+DenseVectorSparseVectorScaledSumQuickTest<double> dense_vector_sparse_vector_scaled_sum_quick_test_double("double");
 
 template <typename DataType_>
 class SparseVectorScaledSumTest :
@@ -354,7 +354,7 @@ class SparseVectorScaledSumTest :
         }
 };
 SparseVectorScaledSumTest<float> sparse_vector_scaled_sum_test_float("float");
-SparseVectorScaledSumTest<double> sparse_vector_scaled__sum_test_double("double");
+SparseVectorScaledSumTest<double> sparse_vector_scaled_sum_test_double("double");
 
 template <typename DataType_>
 class SparseVectorScaledSumQuickTest :
@@ -404,4 +404,4 @@ class SparseVectorScaledSumQuickTest :
         }
 };
 SparseVectorScaledSumQuickTest<float> sparse_vector_scaled_sum_quick_test_float("float");
-SparseVectorScaledSumQuickTest<double> sparse_vector_scaled__sum_quick_test_double("double");
+SparseVectorScaledSumQuickTest<double> sparse_vector_scaled_sum_quick_test_double("double");

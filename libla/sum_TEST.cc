@@ -775,7 +775,7 @@ class DenseVectorRangeSumTest :
 {
     public:
         DenseVectorRangeSumTest(const std::string & type) :
-            BaseTest("dense_vector_range_sum__test<" + type + ">")
+            BaseTest("dense_vector_range_sum_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
@@ -817,7 +817,7 @@ DenseVectorRangeSumTest<tags::CPU, double> dense_vector_range_sum_test_double("d
 //DenseVectorRangeSumTest<tags::CPU::MultiCore, float> mc_dense_vector_range_sum_test_float("MC float");
 //DenseVectorRangeSumTest<tags::CPU::MultiCore, double> mc_dense_vector_range_sum_test_double("MC double");
 #ifdef HONEI_SSE
-DenseVectorRangeSumTest<tags::CPU::SSE, float> sse_dense_vector_range_sum__test_float("SSE float");
+DenseVectorRangeSumTest<tags::CPU::SSE, float> sse_dense_vector_range_sum_test_float("SSE float");
 DenseVectorRangeSumTest<tags::CPU::SSE, double> sse_dense_vector_range_sum_test_double("SSE double");
 //DenseVectorRangeSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_sum_test_float("MC SSE float");
 //DenseVectorRangeSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_sum_test_double("MC SSE double");
