@@ -3,10 +3,12 @@ ifdef(`__gnu__',`',`errprint(`This is not GNU m4...
 
 dnl vim: set ft=m4 noet :
 
-define(`filelist', `')dnl
-define(`testlist', `')dnl
-define(`headerlist', `')dnl
 define(`benchmarklist', `')dnl
+define(`filelist', `')dnl
+define(`celllist', `')dnl
+define(`headerlist', `')dnl
+define(`sselist', `')dnl
+define(`testlist', `')dnl
 define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
@@ -28,15 +30,34 @@ $1_BENCHMARK_LDADD = \
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
 define(`addhh', `define(`filelist', filelist `$1.hh')define(`headerlist', headerlist `$1.hh')')dnl
+define(`addimpl', `define(`filelist', filelist `$1-impl.hh')define(`headerlist', headerlist `$1-impl.hh')')dnl
 define(`addcc', `define(`filelist', filelist `$1.cc')')dnl
+define(`addcell', `define(`celllist', celllist `$1-cell.cc')')dnl
+define(`addsse', `define(`sselist', sselist `$1-sse.cc')')dnl
 define(`addthis', `dnl
 ifelse(`$2', `hh', `addhh(`$1')', `')dnl
+ifelse(`$2', `impl', `addimpl(`$1')', `')dnl
 ifelse(`$2', `cc', `addcc(`$1')', `')dnl
-ifelse(`$2', `benchmark', `addbench(`$1')', `')dnl
-ifelse(`$2', `test', `addtest(`$1')', `')')dnl
-define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')')dnl
+ifelse(`$2', `cell', `addcell(`$1')', `')dnl
+ifelse(`$2', `sse', `addsse(`$1')', `')dnl
+ifelse(`$2', `test', `addtest(`$1')', `')dnl
+ifelse(`$2', `benchmark', `addbench(`$1')', `')')dnl
+define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')')dnl
 
 include(`libswe/files.m4')
+
+if CELL
+
+CELLFILES = celllist
+CELLTESTLIBS = $(top_builddir)/cell/libcell.la
+
+endif
+
+if SSE
+
+SSEFILES = sselist
+
+endif
 
 AM_CXXFLAGS = -I$(top_srcdir)
 
@@ -50,10 +71,11 @@ DEFS = \
 
 lib_LTLIBRARIES = libswe.la
 
-libswe_la_SOURCES = filelist
+libswe_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libswe_la_LIBADD = \
 	$(top_builddir)/libutil/libutil.la \
 	$(top_builddir)/libla/libla.la
+	$(CELLLIB)
 
 pg512_includedir = $(includedir)/pg512/
 pg512_include_HEADERS = headerlist
