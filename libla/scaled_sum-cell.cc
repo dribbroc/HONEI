@@ -89,7 +89,7 @@ namespace honei
         // Calculate the first a_offset elements on PPU.
         Vector<float>::ConstElementIterator j(b.begin_elements());
         for (Vector<float>::ElementIterator i(a.begin_elements()),
-            i_end(a.element_at((4 - a_offset) % 4)) ; i != i_end ; ++i)
+            i_end(a.element_at((4 - a_offset) % 4)) ; i != i_end ; ++i, ++j)
         {
             *i += *j * c;
         }
