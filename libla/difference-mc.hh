@@ -31,6 +31,7 @@
 #include <libla/vector.hh>
 #include <libutil/tags.hh>
 
+
 namespace honei
 {
     template <typename Tag_> struct Difference;
@@ -188,6 +189,89 @@ namespace honei
             }
 
             return a;
+        }
+        
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            CONTEXT("When subtracting DenseMatrix from BandedMatrix (MultiCore:");
+
+            if (a.columns() != a.rows())
+            {
+                throw MatrixIsNotSquare(a.rows(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            Scale<Tag_>::value(-1,b);
+
+            ThreadPool * p(ThreadPool::get_instance());
+            PoolTask * pt[2];
+           
+
+            ResultThreeArgWrapper< MCDifference<typename Tag_::DelegateTo>, DenseMatrix<DT2_>, const BandedMatrix<DT1_>,
+                DenseMatrix<DT2_>, const bool> mywrapper1 (b, a, b, true);
+            pt[0] = p->dispatch(mywrapper1);
+
+            ResultThreeArgWrapper< MCDifference<typename Tag_::DelegateTo>, DenseMatrix<DT2_>, const BandedMatrix<DT1_>,
+                DenseMatrix<DT2_>, const bool> mywrapper2 (b, a, b, false);
+            pt[1] = p->dispatch(mywrapper2);
+
+            pt[0]->wait_on();
+            delete pt[0];
+            pt[1]->wait_on();
+            delete pt[1];
+            
+            return b;
+            
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b, const bool upper)
+        {
+            CONTEXT("When subtracting DenseMatrix from BandedMatrix (MultiCore:");
+            
+            int middle_index(a.rows() -1);
+            // If we are below the diagonal band, we start at Element index and go on until the last element.
+            if (!upper) {
+                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+                        vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
+                {
+                    if (!vi.exists())
+                        continue;
+                    unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                    {
+                        b[start][i] += *c;
+                        ++start, ++i;
+                    }
+                }
+            } else {
+                // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
+                        vi != vi_end ; ++vi)
+                {
+                    if (!vi.exists())
+                        continue;
+    
+                    //Calculation of the element-index to stop in iteration!
+                    unsigned long offset(vi.index() - middle_index);
+                    unsigned long end(vi->size() - offset);
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                    {
+                        b[i][offset] +=  *c;
+                        ++offset, ++i;
+                    }
+                } 
+            }
+            return b;
         }
 
         template <typename DT1_, typename DT2_>

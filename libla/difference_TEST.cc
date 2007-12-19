@@ -48,6 +48,10 @@ class BandedMatrixDenseMatrixDifferenceTest :
             {
                 DenseVector<DT_> dv1(size, DT_(2));
                 BandedMatrix<DT_> bm1(size, dv1);
+                bm1.insert_band(2,dv1);
+                bm1.insert_band(-3,dv1);
+                bm1.insert_band(4,dv1);
+                bm1.insert_band(-5,dv1);
                 DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
                 typename MutableMatrix<DT_>::ElementIterator k(dm3.begin_elements());
@@ -59,7 +63,7 @@ class BandedMatrixDenseMatrixDifferenceTest :
                         *k = DT_(1);
                     }
                 }
-                Difference<>::value(bm1, dm2);
+                Difference<Tag_>::value(bm1, dm2);
 
                 TEST_CHECK_EQUAL(dm2, dm3);
             }
@@ -92,6 +96,10 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
             unsigned long size (11);
             DenseVector<DT_> dv1(size, DT_(2));
             BandedMatrix<DT_> bm1(size, dv1);
+            bm1.insert_band(2,dv1);
+            bm1.insert_band(-3,dv1);
+            bm1.insert_band(4,dv1);
+            bm1.insert_band(-5,dv1);
             DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
             typename MutableMatrix<DT_>::ElementIterator k(dm3.begin_elements());
@@ -103,7 +111,7 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
                     *k = DT_(1);
                 }
             }
-            Difference<>::value(bm1, dm2);
+            Difference<Tag_>::value(bm1, dm2);
 
             TEST_CHECK_EQUAL(dm2, dm3);
 
@@ -316,7 +324,7 @@ BandedMatrixSparseMatrixDifferenceQuickTest<tags::CPU, double> banded_matrix_spa
 BandedMatrixSparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_sparse_matrix_difference_quick_test_float("MC float");
 BandedMatrixSparseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_sparse_matrix_difference_quick_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixDifferenceTest :
     public BaseTest
 {
@@ -324,6 +332,7 @@ class DenseMatrixDifferenceTest :
         DenseMatrixDifferenceTest(const std::string & type) :
             BaseTest("dense_matrix_difference_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -343,10 +352,12 @@ class DenseMatrixDifferenceTest :
             TEST_CHECK_THROWS(Difference<>::value(dm03, dm01), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixDifferenceTest<float> dense_matrix_difference_test_float("float");
-DenseMatrixDifferenceTest<double> dense_matrix_difference_test_double("double");
+DenseMatrixDifferenceTest<tags::CPU, float> dense_matrix_difference_test_float("float");
+DenseMatrixDifferenceTest<tags::CPU, double> dense_matrix_difference_test_double("double");
+DenseMatrixDifferenceTest<tags::CPU::MultiCore, float> mc_dense_matrix_difference_test_float("MC float");
+DenseMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_dense_matrix_difference_test_double("MC double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixDifferenceQuickTest :
     public QuickTest
 {
@@ -354,6 +365,7 @@ class DenseMatrixDifferenceQuickTest :
         DenseMatrixDifferenceQuickTest(const std::string & type) :
             QuickTest("dense_matrix_difference_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -371,8 +383,10 @@ class DenseMatrixDifferenceQuickTest :
             TEST_CHECK_THROWS(Difference<>::value(dm03, dm02), MatrixColumnsDoNotMatch);
         }
 };
-DenseMatrixDifferenceQuickTest<float> dense_matrix_difference_quick_test_float("float");
-DenseMatrixDifferenceQuickTest<double> dense_matrix_difference_quick_test_double("double");
+DenseMatrixDifferenceQuickTest<tags::CPU, float> dense_matrix_difference_quick_test_float("float");
+DenseMatrixDifferenceQuickTest<tags::CPU, double> dense_matrix_difference_quick_test_double("double");
+DenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_difference_quick_test_float("MC float");
+DenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_difference_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseMatrixSparseMatrixDifferenceTest :

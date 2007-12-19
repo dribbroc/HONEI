@@ -27,8 +27,6 @@
 #include <libutil/thread_pool.hh>
 #include <libutil/wrapper.hh>
 #include <libutil/tags.hh>
-
-#include <iostream>
 #include <list>
 
 
@@ -97,7 +95,6 @@ namespace honei
                 dispatched_tasks.front()->wait_on();
                 dispatched_tasks.pop_front();
             }
-
             return x;
         }
 
