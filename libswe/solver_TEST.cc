@@ -43,9 +43,9 @@ class RelaxSolverTest :
 
         virtual void run() const
         {
-            ulint dwidth =21;
-            ulint dheight =21;
-            ulint timesteps =1;
+            ulint dwidth = 40;
+            ulint dheight = 40;
+            ulint timesteps = 50;
 
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
@@ -57,9 +57,10 @@ class RelaxSolverTest :
                 }
                  //(height)[0][i] = DataType_(10);
             }
+
             //END SCENARIO setup
             DenseMatrix<DataType_> bottom(dheight, dwidth, DataType_(1));
-            for(ulint i = 0; i< bottom.rows(); ++i)
+            /*for(ulint i = 0; i< bottom.rows(); ++i)
             {
                 for(ulint j=0; j<bottom.columns()-10; ++j)
                 {
@@ -72,7 +73,7 @@ class RelaxSolverTest :
                             bottom[i][j] = DataType_(1);
                     }
                 }
-            }
+            }*/
             std::cout<<bottom<<std::endl;
 
             DenseMatrix<DataType_> u1(dheight, dwidth, DataType_(0));
@@ -95,7 +96,7 @@ class RelaxSolverTest :
 
             DataType_ deltax = 5;
             DataType_ deltay = 5;
-            DataType_ deltat = 5./22.;
+            DataType_ deltat = 5./24.;
 
             double eps = 10e-6;
             DataType_ manning = DataType_(0);
