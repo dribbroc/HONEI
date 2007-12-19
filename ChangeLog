@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-12-19 Sven Mallach <sven.mallach@honei.org>
 
+	* libla/scale-cell.cc, libla/scale_TEST.cc: Adopted new knowledge
+	about unaligned cases to Scale(Cell) and created appropriate
+	DVR-Tests.
+
+2007-12-19 Sven Mallach <sven.mallach@honei.org>
+
 	* cell/libla/dense_dense_float_scaled_sum.cc,
 	libla/scaled_sum-cell.cc, libla/scaled_sum.hh,
 	libla/scaled_sum_TEST.cc: First operation with support for two (!)

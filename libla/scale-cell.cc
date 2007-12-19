@@ -94,13 +94,13 @@ namespace honei
         unsigned offset((oa.u & 0xF) / sizeof(float));
 
         if (offset > 0)
-            oa.u += 16 - offset; // Align the address for SPU.
+            oa.u += 16 -(4 * offset); // Align the address for SPU.
 
-        ob.u = (b.size() - offset) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        oc.u = (b.size() - offset) % (1024 * 4);
+        ob.u = (b.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
+        oc.u = (b.size() - ((4 - offset) % 4)) % (1024 * 4);
         oc.u &= ~0xF;
 
-        unsigned rest_index(ob.u * 4096 + oc.u + offset); // Rest index for PPU dependent on offset and SPU part.
+        unsigned rest_index(ob.u * 4096 + oc.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
         oc.u *= 4;
 
         bool use_spe(true);
@@ -129,7 +129,7 @@ namespace honei
         }
 
         for (Vector<float>::ElementIterator i(b.begin_elements()),
-                i_end(b.element_at(offset)) ; i != i_end ; ++i)
+                i_end(b.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
         {
             *i *= od.f;
         }

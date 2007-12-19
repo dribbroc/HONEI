@@ -59,7 +59,6 @@ void dense_dense_float_scaled_sum(const Instruction & inst)
 
     vector float scalar_vector(spu_splats(inst.c.f));
 
-    debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     mfc_get(b[current - 1].untyped, ea_b, size, current, 0, 0);
     ea_a += size;

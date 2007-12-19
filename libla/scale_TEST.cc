@@ -305,8 +305,8 @@ class ScalarDenseVectorProductTest :
         {
             for (unsigned long size(3) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm(size, size, DataType_(3));
-                DenseVectorRange<DataType_> dv(dm[2]);
+                DenseVector<DataType_> source(size * 2, DataType_(3));
+                DenseVectorRange<DataType_> dv(source, size, 3);
                 Scale<Tag_>::value(DataType_(2), dv);
                 DataType_ v1(Norm<vnt_l_one>::value(dv));
                 TEST_CHECK_EQUAL(v1, 6 * size);
@@ -342,7 +342,8 @@ class ScalarDenseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseVector<DataType_> dv1(size, DataType_(3));
+            DenseVector<DataType_> source(size * 2, DataType_(3));
+            DenseVectorRange<DataType_> dv1(source, size, 3);
 
             Scale<Tag_>::value(DataType_(2), dv1);
             DataType_ v1(Norm<vnt_l_one>::value(dv1));
