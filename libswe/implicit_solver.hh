@@ -129,15 +129,15 @@ namespace honei {
                 while(i < ((_grid_width +  2)*(_grid_height + 2) - _grid_width - 2))
                 {
                     ///Assemble dd:
-                    dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column])*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x));
+                    dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column]*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x)));
                     ///Assemble ll:
-                    dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(4*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
+                    dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(ResPrec_(4)*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
                     ///Assemble uu:
-                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(4*_delta_x * _delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
+                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(ResPrec_(4)*_delta_x * _delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
                     ///Assemble dl:
-                    ll[i] = alpha*(((*_bottom_bound)[actual_row - 1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
+                    ll[i] = alpha*(((*_bottom_bound)[actual_row - 1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(ResPrec_(4)*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
                     ///Assemble du:
-                    uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(4*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
+                    uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(ResPrec_(4)*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
                     ///Iterate:
                     if((actual_column) == _grid_width)
                     {
@@ -151,8 +151,6 @@ namespace honei {
                         ++i;
                     }
                 }
-                //TODO: BUG!!!
-                ///Correct boundaries:
 
                 unsigned long a(0);
                 unsigned long column_count(0);
@@ -246,6 +244,8 @@ namespace honei {
                 void _assemble_right_hand_side()
                 {
                     DenseVector<WorkPrec_> h((_grid_width +2) * (_grid_height + 2), WorkPrec_(0));
+                    DenseVector<WorkPrec_> b((_grid_width +2) * (_grid_height + 2), WorkPrec_(0));
+
 
                     ///Compute propagation of velocity and height fields:
                     unsigned long i(1);
@@ -253,11 +253,17 @@ namespace honei {
                     unsigned long current_index(_grid_width + 3);
                     for(; current_index < (_grid_height + 2) * (_grid_width + 2) - (_grid_width + 2); ++current_index)
                     {
-                        WorkPrec_ current_x = WorkPrec_(( j - 1 ) * _delta_x);
-                        WorkPrec_ current_y = WorkPrec_(( i - 1) * _delta_y);
+                        WorkPrec_ current_x = WorkPrec_((j) * _delta_x);
+                        WorkPrec_ current_y = WorkPrec_((i) * _delta_y);
                         h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
                                 WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
                                 WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
+                        b[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_bottom_bound,
+                                WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
+                                WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
+
+                        h[current_index] = h[current_index] - b[current_index];
+
                         (*_u_temp)[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_x_veloc_bound,
                                 WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
                                 WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
@@ -274,121 +280,139 @@ namespace honei {
                         else
                         {
                             ++j;
-                    }
-                }
-
-                ///Assemble vector:
-                unsigned long current_row(1);
-                unsigned long current_column(1);
-                unsigned long index(_grid_width + 3);
-                WorkPrec_ beta_x(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_x));
-                WorkPrec_ beta_y(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_y));
-                for(; index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2); ++index)
-                {
-                    WorkPrec_ b_diff_1((*_bottom_bound)[current_row + 1][current_column] - (*_bottom_bound)[current_row -1][current_column]);
-                    WorkPrec_ b_diff_2((*_bottom_bound)[current_row][current_column + 1] - (*_bottom_bound)[current_row][current_column - 1]);
-                    WorkPrec_ v_x_diff, v_y_diff;
-
-                    if(index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) <= (_grid_width + 2) * (_grid_height + 2))
-                    {
-                        v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index - (_grid_width + 2)]);
-                    }
-                    else if ( index - (_grid_width + 2) < 0 && index + (_grid_width + 2) <= (_grid_width + 2) * (_grid_height + 2))
-                    {
-                        v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index]);
+                        }
 
                     }
-                    else if (index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) > (_grid_width + 2) * (_grid_height + 2))
-                    {
-                        v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index -( _grid_width + 2)]);
 
-                    }
-                    else
+                    ///Assemble vector:
+                    unsigned long current_row(1);
+                    unsigned long current_column(1);
+                    unsigned long index(_grid_width + 3);
+                    WorkPrec_ beta_x(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_x));
+                    WorkPrec_ beta_y(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_y));
+                    for(; index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2); ++index)
                     {
-                        v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index]);
-                    }
+                        WorkPrec_ b_diff_1((*_bottom_bound)[current_row + 1][current_column] - (*_bottom_bound)[current_row -1][current_column]);
+                        WorkPrec_ b_diff_2((*_bottom_bound)[current_row][current_column + 1] - (*_bottom_bound)[current_row][current_column - 1]);
+                        WorkPrec_ v_x_diff, v_y_diff;
 
-                    if(index - 1 >= 0 && index + 1 <= (_grid_width + 2) * (_grid_height + 2))
-                    {
-                        v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index - 1]);
-                    }
-                    else if ( index - 1 < 0 && index + 1 <= (_grid_width + 2) * (_grid_height + 2))
-                    {
-                        v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index]);
+                        if(index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) < (_grid_width + 2) * (_grid_height + 2))
+                        {
+                            v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index - (_grid_width + 2)]);
+                        }
+                        else if ( index - (_grid_width + 2) < 0 && index + (_grid_width + 2) < (_grid_width + 2) * (_grid_height + 2))
+                        {
+                            v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index]);
 
-                    }
-                    else if (index - 1 >= 0 && index + 1 > (_grid_width + 2) * (_grid_height + 2))
-                    {
-                        v_x_diff = ((*_u_temp)[index] - (*_u_temp)[index -( _grid_width + 2)]);
+                        }
+                        else if (index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) >= (_grid_width + 2) * (_grid_height + 2))
+                        {
+                            v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index -( _grid_width + 2)]);
 
-                    }
-                    else
-                    {
-                        v_x_diff = ((*_u_temp)[index] - (*_u_temp)[index]);
-                    }
+                        }
+                        else
+                        {
+                            v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index]);
+                        }
 
-                    //scale:
-                    b_diff_1 = b_diff_1 * beta_y * (*_v_temp)[index];
-                    b_diff_2 = b_diff_2 * beta_x * (*_u_temp)[index];
-                    v_x_diff = v_x_diff * beta_x * (*_height_bound)[current_row][current_column];
-                    v_y_diff = v_y_diff * beta_y * (*_height_bound)[current_row][current_column];
-                    //accumulate:
-                    (*_right_hand_side)[index] = h[index] + b_diff_1 + b_diff_2 - v_x_diff - v_y_diff;
-                    //Iterate:
-                    if( current_column == _grid_width)
-                    {
-                        ++current_row;
-                        current_column = 1;
-                        index += 2; //due to for
-                    }
-                    else
-                    {
-                        ++current_column;
-                    }
-                }
+                        if(index - 1 >= 0 && index + 1 < (_grid_width + 2) * (_grid_height + 2))
+                        {
+                            v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index - 1]);
+                        }
+                        else if ( index - 1 < 0 && index + 1 < (_grid_width + 2) * (_grid_height + 2))
+                        {
+                            v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index]);
 
-                ///Correct boundaries:
-                unsigned long a(0);
-                unsigned long column_count(0);
-                while(a < (_grid_width + 2) * (_grid_height + 2))
-                {
-                    if(a < _grid_width + 2)
-                    {
-                        (*_right_hand_side)[a] = (*_right_hand_side)[a + _grid_width + 2];
-                    }
+                        }
+                        else if (index - 1 >= 0 && index + 1 >= (_grid_width + 2) * (_grid_height + 2))
+                        {
+                            v_x_diff = ((*_u_temp)[index] - (*_u_temp)[index -( _grid_width + 2)]);
 
-                    if(column_count == _grid_width + 1)
-                    {
-                        (*_right_hand_side)[a] = (*_right_hand_side)[a - 1];
+                        }
+                        else
+                        {
+                            v_x_diff = ((*_u_temp)[index] - (*_u_temp)[index]);
+                        }
 
-                        column_count = 0;
-                    }
-                    else if(column_count == 0)
-                    {
-                        (*_right_hand_side)[a] = (*_right_hand_side)[a + 1];
-
-                        ++column_count;
-                    }
-                    else
-                    {
-                        ++column_count;
+                        //scale:
+                        b_diff_1 = b_diff_1 * beta_y * (*_v_temp)[index];
+                        b_diff_2 = b_diff_2 * beta_x * (*_u_temp)[index];
+                        v_x_diff = v_x_diff * beta_x * (*_height_bound)[current_row][current_column];
+                        v_y_diff = v_y_diff * beta_y * (*_height_bound)[current_row][current_column];
+                        //accumulate:
+                        (*_right_hand_side)[index] = h[index] + b_diff_1 + b_diff_2 - v_x_diff - v_y_diff;
+                        //Iterate:
+                        if( current_column == _grid_width)
+                        {
+                            ++current_row;
+                            current_column = 1;
+                            index += 2; //due to for
+                        }
+                        else
+                        {
+                            ++current_column;
+                        }
                     }
 
-                    if(a > (_grid_height + 1) * (_grid_width + 2))
+                    ///Correct boundaries:
+                    unsigned long a(0);
+                    unsigned long column_count(0);
+                    while(a < (_grid_width + 2) * (_grid_height + 2))
                     {
-                        (*_right_hand_side)[a] = (*_right_hand_side)[a - _grid_width - 2];
+                        if(a < _grid_width + 2)
+                        {
+                            (*_right_hand_side)[a] = (*_right_hand_side)[a + _grid_width + 2];
+                            (*_u_temp)[a] = (*_u_temp)[a + _grid_width + 2];
+                            (*_v_temp)[a] = (*_v_temp)[a + _grid_width + 2];
 
-                    }
+                        }
+
+                        if(column_count == _grid_width + 1)
+                        {
+                            (*_right_hand_side)[a] = (*_right_hand_side)[a - 1];
+                            (*_u_temp)[a] = (*_u_temp)[a - 1];
+                            (*_v_temp)[a] = (*_v_temp)[a - 1];
+
+                            column_count = 0;
+                        }
+                        else if(column_count == 0)
+                        {
+                            (*_right_hand_side)[a] = (*_right_hand_side)[a + 1];
+                            (*_u_temp)[a] = (*_u_temp)[a + 1];
+                            (*_v_temp)[a] = (*_v_temp)[a + 1];
+
+                            ++column_count;
+                        }
+                        else
+                        {
+                            ++column_count;
+                        }
+
+                        if(a > (_grid_height + 1) * (_grid_width + 2))
+                        {
+                            (*_right_hand_side)[a] = (*_right_hand_side)[a - _grid_width - 2];
+                            (*_u_temp)[a] = (*_u_temp)[a - _grid_width - 2];
+                            (*_v_temp)[a] = (*_v_temp)[a - _grid_width - 2];
+
+                        }
 
                     ++a;
                 }
                 (*_right_hand_side)[0] = (*_right_hand_side)[_grid_width + 3];
+                (*_u_temp)[0] = (*_u_temp)[_grid_width + 3];
+                (*_v_temp)[0] = (*_v_temp)[_grid_width + 3];
 
                 (*_right_hand_side)[_grid_width + 1] = (*_right_hand_side)[ 2 * (_grid_width + 1)];
+                (*_u_temp)[_grid_width + 1] = (*_u_temp)[2 * (_grid_width + 1)];
+                (*_v_temp)[_grid_width + 1] = (*_v_temp)[2 * (_grid_width + 1)];
 
                 (*_right_hand_side)[(_grid_height + 1)* (_grid_width + 2) ] = (*_right_hand_side)[(_grid_height)* (_grid_width + 2) + 1];
+                (*_u_temp)[(_grid_height + 1)* (_grid_width + 2)] = (*_u_temp)[(_grid_height)* (_grid_width + 2) + 1];
+                (*_v_temp)[(_grid_height + 1)* (_grid_width + 2)] = (*_v_temp)[(_grid_height)* (_grid_width + 2) + 1];
 
                 (*_right_hand_side)[(_grid_height + 2)* (_grid_width + 2) - 1] = (*_right_hand_side)[(_grid_height + 1)* (_grid_width + 2) - 2];
+                (*_u_temp)[(_grid_height + 2)* (_grid_width + 2) - 1] = (*_u_temp)[(_grid_height + 1)* (_grid_width + 2) - 2];
+                (*_v_temp)[(_grid_height + 2)* (_grid_width + 2) - 1] = (*_v_temp)[(_grid_height + 1)* (_grid_width + 2) - 2];
 
             }
 
@@ -468,9 +492,13 @@ namespace honei {
                 _assemble_right_hand_side<ResPrec_>();
 
 #ifdef SOLVER_VERBOSE
+                cout<<"SYSTEM:A " << *_system_matrix << endl;
+                cout<<"SYSTEM:b " << *_right_hand_side << endl;
+                cout<<"HEIGHT_BOUND before solution: "<<endl;
+                cout<<*_height_bound;
                 cout<<"Finished assembly!"<<endl;
 #endif
-                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, long(20)));
+                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, std::numeric_limits<ResPrec_>::epsilon()));
 #ifdef SOLVER_VERBOSE
                 cout<<"Finished CG!"<< endl;
 #endif
@@ -480,7 +508,7 @@ namespace honei {
 #endif
 
                 ///Our boundary - correction:
-                for(unsigned long i = 0; i < _grid_width+2; i++)
+                for(unsigned long i = 0; i < _grid_width + 2; i++)
                 {
                     ///Correct first row:
                     (*_height_bound)[0][i] = (*_height_bound)[1][i];
@@ -500,9 +528,9 @@ namespace honei {
                     (*_x_veloc_bound)[i][0] = (*_x_veloc_bound)[i][1];
                     (*_y_veloc_bound)[i][0] = (*_y_veloc_bound)[i][1];
                     ///Correct last column:
-                    (*_height_bound)[i][(_grid_height) + 1] = (*_height_bound)[i][(_grid_height)];
-                    (*_x_veloc_bound)[i][(_grid_height) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
-                    (*_y_veloc_bound)[i][(_grid_height) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
+                    (*_height_bound)[i][(_grid_width) + 1] = (*_height_bound)[i][(_grid_height)];
+                    (*_x_veloc_bound)[i][(_grid_width) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
+                    (*_y_veloc_bound)[i][(_grid_width) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
                 }
                 (*_height_bound)[0][0] = (*_height_bound)[0][1];
                 (*_height_bound)[0][_grid_width + 1] = (*_height_bound)[0][_grid_width];
@@ -545,10 +573,10 @@ namespace honei {
                 _grid_height = scenario->grid_height;
 
                 ///Make local copies of the scalarfields;
-                _bottom = scenario->bottom->copy();
-                _height = scenario->height->copy();
-                _x_veloc = scenario->x_veloc->copy();
-                _y_veloc = scenario->y_veloc->copy();
+                _bottom = scenario->bottom;//->copy();
+                _height = scenario->height;//->copy();
+                _x_veloc = scenario->x_veloc;//->copy();
+                _y_veloc = scenario->y_veloc;//->copy();
                 ///Just get the address where to store boundary maps:
                 _height_bound = scenario->height_bound;
                 _bottom_bound = scenario->bottom_bound;
@@ -594,10 +622,10 @@ namespace honei {
                     (*_x_veloc_bound)[i][0] = (*_x_veloc_bound)[i][1];
                     (*_y_veloc_bound)[i][0] = (*_y_veloc_bound)[i][1];
                     ///Correct last column:
-                    (*_height_bound)[i][(_grid_height) + 1] = (*_height_bound)[i][(_grid_height)];
-                    (*_bottom_bound)[i][(_grid_height) + 1] = (*_bottom_bound)[i][(_grid_height)];
-                    (*_x_veloc_bound)[i][(_grid_height) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
-                    (*_y_veloc_bound)[i][(_grid_height) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
+                    (*_height_bound)[i][(_grid_width) + 1] = (*_height_bound)[i][(_grid_height)];
+                    (*_bottom_bound)[i][(_grid_width) + 1] = (*_bottom_bound)[i][(_grid_height)];
+                    (*_x_veloc_bound)[i][(_grid_width) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
+                    (*_y_veloc_bound)[i][(_grid_width) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
                 }
                 //The rest:
                 (*_height_bound)[0][0] = (*_height_bound)[0][1];

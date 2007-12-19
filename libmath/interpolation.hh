@@ -100,7 +100,11 @@ namespace honei
                     l_2 = (x - x_t) * (height[i + 1][height.columns() - 1] - height[i + 1][height.columns() - 1]) + height[i+1][height.columns() - 1];
                 }
                 ResPrec_ result = (y - y_t) * (l_2 - l_1) + l_1;
+#ifdef SOLVER_DEBUG
+                cout<<"INTERP.: "<<result<<endl;
+#endif
                 return result;
+
             }
     };
 
