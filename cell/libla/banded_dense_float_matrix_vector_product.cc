@@ -65,9 +65,9 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
     mfc_get(b[current - 1].untyped, ea_b, (size + x_offset + y_offset) * sizeof(float), current, 0, 0);
     debug_get(ea_r, r[current -1].untyped, size * sizeof(float));
     mfc_get(r[current - 1].untyped, ea_r, size * sizeof(float), current, 0, 0);
-    ea_a += size;
-    ea_b += size;
-    ea_r += size;
+    ea_a += size * sizeof(float);
+    ea_b += size * sizeof(float);
+    ea_r += size * sizeof(float);
 
     while (counter > 1)
     {
@@ -79,9 +79,9 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
         mfc_get(b[next - 1].untyped, ea_b, (nextsize + x_offset + y_offset) * sizeof(float), next, 0, 0);
         debug_get(ea_r, r[next -1].untyped, nextsize * sizeof(float));
         mfc_get(r[next - 1].untyped, ea_r, nextsize * sizeof(float), next, 0, 0);
-        ea_a += nextsize;
-        ea_b += nextsize;
-        ea_r += nextsize;
+        ea_a += nextsize * sizeof(float);
+        ea_b += nextsize * sizeof(float);
+        ea_r += nextsize * sizeof(float);
 
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
@@ -94,7 +94,7 @@ void banded_dense_float_matrix_vector_product(const Instruction & inst)
         }
         debug_put(ea_result, r[current -1].untyped, size * sizeof(float));
         mfc_putb(r[current - 1].untyped, ea_result, size * sizeof(float), current, 0, 0);
-        ea_result += size;
+        ea_result += size * sizeof(float);
 
         --counter;
 
