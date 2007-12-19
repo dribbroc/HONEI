@@ -20,6 +20,7 @@
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
 #include <cell/libutil/debug.hh>
+#include <cell/libutil/transfer.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -37,6 +38,7 @@ using namespace honei::cell;
  * \operand c Base address of the scalar.
  * \operand d Number of transfers needed.
  * \operand e Last transfer buffer size in bytes.
+ * \operand f The alignment offset of second entity
  */
 void dense_dense_float_scaled_sum(const Instruction & inst)
 {
@@ -53,8 +55,11 @@ void dense_dense_float_scaled_sum(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
+    unsigned b_offset(inst.f.u);
+
     vector float scalar_vector(spu_splats(inst.c.f));
 
+    debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     mfc_get(b[current - 1].untyped, ea_b, size, current, 0, 0);
     ea_a += size;
@@ -64,20 +69,26 @@ void dense_dense_float_scaled_sum(const Instruction & inst)
     {
         nextsize = (counter == 2 ? inst.e.u : inst.size);
 
-        mfc_get(a[next - 1].untyped, ea_a, nextsize, next, 0, 0);
-        mfc_get(b[next - 1].untyped, ea_b, nextsize, next, 0, 0);
+        mfc_get(a[next - 1].untyped, ea_a - 16, nextsize, next, 0, 0);
+        mfc_get(b[next - 1].untyped, ea_b - 16, nextsize, next, 0, 0);
         ea_a += nextsize;
         ea_b += nextsize;
 
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        unsigned i(0);
+        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
+            extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], b_offset);
             a[current - 1].vectorised[i] = spu_madd(b[current - 1].vectorised[i], scalar_vector, a[current - 1].vectorised[i]);
         }
 
-        mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
+        if (counter == inst.d.u)
+            mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
+        else
+            mfc_putb(a[current - 1].untyped, ea_result - 16, size, current, 0, 0);
+
         ea_result += size;
 
         --counter;
@@ -89,17 +100,38 @@ void dense_dense_float_scaled_sum(const Instruction & inst)
         size = nextsize;
     }
 
-    mfc_write_tag_mask(1 << current);
+    // For calculation of "the end" (see below)
+    mfc_get(a[next - 1].untyped, ea_a - 16, 16, next, 0, 0);
+    mfc_get(b[next - 1].untyped, ea_b - 16, 32, next, 0, 0);
+
+    mfc_write_tag_mask(1 << current); // Make sure earlier GETS/PUTS are done
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+    unsigned i(0);
+    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
+        extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], b_offset);
         a[current - 1].vectorised[i] = spu_madd(b[current - 1].vectorised[i], scalar_vector, a[current - 1].vectorised[i]);
     }
 
-    mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
+    if (counter == inst.d.u)
+        mfc_put(a[current - 1].untyped, ea_result, size, current, 0, 0);
+    else
+        mfc_put(a[current - 1].untyped, ea_result - 16, size, current, 0, 0);
 
-    mfc_write_tag_mask(1 << current);
+    // Now calculate the last vector of a and the shuffled last two vectors of b.
+    mfc_write_tag_mask(1 << next); // Assure that GET(next) is done
+    mfc_read_tag_status_all();
+
+    extract(b[next - 1].vectorised[0], b[next - 1].vectorised[1], b_offset);
+    a[next - 1].vectorised[0] = spu_madd(b[next - 1].vectorised[0], scalar_vector, a[next - 1].vectorised[0]);
+
+    mfc_write_tag_mask(1 << current); // Assure that PUT(current) is done
+    mfc_read_tag_status_all();
+
+    mfc_put(a[next - 1].untyped, ea_result + size - 16, 16, next, 0, 0);
+
+    mfc_write_tag_mask(1 << next); // Assure that PUT(next) is done
     mfc_read_tag_status_all();
 
     release_block(*block_a[0]);

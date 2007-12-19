@@ -86,6 +86,7 @@ namespace honei
     Scale<tags::Cell>::value(const float a, DenseVectorContinuousBase<float> & b)
     {
         CONTEXT("When scaling DenseVector<float> (Cell):");
+
         Operand oa = { b.elements() };
         Operand ob, oc, od;
         od.f = a;
@@ -111,12 +112,12 @@ namespace honei
                 oc.u = 16 * 1024;
             }
             else
-             {
+            {
                 use_spe = false;
             }
         }
         else
-        { 
+        {
             ++ob.u;
         }
 
@@ -125,19 +126,19 @@ namespace honei
         if (use_spe)
         {
             SPEManager::instance()->dispatch(instruction);
-        } 
+        }
 
         for (Vector<float>::ElementIterator i(b.begin_elements()),
                 i_end(b.element_at(offset)) ; i != i_end ; ++i)
         {
             *i *= od.f;
-        } 
+        }
 
         for (Vector<float>::ElementIterator i(b.element_at(rest_index)),
                 i_end(b.end_elements()) ; i != i_end ; ++i)
         {
             *i *= od.f;
-        } 
+        }
 
         if (use_spe)
             instruction.wait();

@@ -42,15 +42,19 @@ class DenseVectorScaledSumTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(2));
-                DenseVector<DataType_> dv2(size, DataType_(3));
+                DenseVector<DataType_> dv1_source(size * 2, DataType_(2));
+                DenseVectorRange<DataType_> dv1(dv1_source, size, 1);
+
+                DenseVector<DataType_> dv2_source(size * 2, DataType_(3));
+                DenseVectorRange<DataType_> dv2(dv2_source, size, 3);
                 DataType_ scal(DataType_(2));
 
                 ScaledSum<Tag_>::value(dv1, dv2, scal);
-                DataType_ v1(Norm<vnt_l_one>::value(dv1));
-                TEST_CHECK_EQUAL(v1, 8 * size);
+                DenseVector<DataType_> dv3(size, DataType_(8));
+
+                TEST_CHECK_EQUAL(dv1, dv3);
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -84,8 +88,13 @@ class DenseVectorScaledSumQuickTest :
         virtual void run() const
         {
             unsigned long size(65);
-            DenseVector<DataType_> dv1(size, DataType_(2));
-            DenseVector<DataType_> dv2(size, DataType_(3));
+
+            DenseVector<DataType_> dv1_source(size * 2, DataType_(2));
+            DenseVectorRange<DataType_> dv1(dv1_source, size, 1);
+
+            DenseVector<DataType_> dv2_source(size * 2, DataType_(3));
+            DenseVectorRange<DataType_> dv2(dv2_source, size, 3);
+
             DataType_ scal(DataType_(2));
             DenseVector<DataType_> dv3(size, DataType_(8));
             ScaledSum<Tag_>::value(dv1, dv2, scal);

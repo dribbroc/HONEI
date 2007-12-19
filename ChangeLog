@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-19 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/dense_dense_float_scaled_sum.cc,
+	libla/scaled_sum-cell.cc, libla/scaled_sum.hh,
+	libla/scaled_sum_TEST.cc: First operation with support for two (!)
+	unaligned containers, even with different offsets. Appropriate tests.
+
 2007-12-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libmath/Makefile.am.m4, libswe/Makefile.am.m4:

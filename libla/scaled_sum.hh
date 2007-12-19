@@ -316,7 +316,7 @@ namespace honei
          * \exception VectorSizeDoesNotMatch is thrown if the sizes of x and y do not match.
          */
 
-        static DenseVector<float> & value(DenseVector<float> & x, const DenseVector<float> & y, const float & b);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, const float & b);
 
         static DenseMatrix<float> & value(DenseMatrix<float> & x, const DenseMatrix<float> & y, const float & b);
 
