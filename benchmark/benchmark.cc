@@ -359,6 +359,11 @@ int main(int argc, char** argv)
         i = BenchmarkList::instance()->erase(count);
 
     }
+    if (BenchmarkList::instance()->begin_benchs() == BenchmarkList::instance()->end_benchs())
+    {
+        cout << "No relevant Benchmarks." << endl;
+        return result;
+    }
     cout << endl << "Choose: (1), (2), ..., (a)ll, (n)one" << endl;
     string a, tmp;
     int b;

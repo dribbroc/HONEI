@@ -42,6 +42,7 @@ class RelaxSolverBench :
         RelaxSolverBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -142,4 +143,3 @@ RelaxSolverBench<tags::Cell, float> cell_relax_solver_bench_float_1("Cell RelaxS
 RelaxSolverBench<tags::Cell, float> cell_relax_solver_bench_float_2("Cell RelaxSolverSum Benchmark - size: 41, float",
         41, 100);
 #endif
-

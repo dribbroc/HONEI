@@ -46,6 +46,7 @@ class KamadaKawaiPositionsBench :
         KamadaKawaiPositionsBench(const std::string & id, int nodecount, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _nodecount = nodecount;
             _count = count;
         }
@@ -114,6 +115,7 @@ class FruchtermanReingoldPositionsBench :
         FruchtermanReingoldPositionsBench(const std::string & id, int nodecount, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _nodecount = nodecount;
             _count = count;
         }
@@ -185,6 +187,7 @@ class WeightedKamadaKawaiPositionsBench :
         WeightedKamadaKawaiPositionsBench(const std::string & id, int nodecount, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _nodecount = nodecount;
             _count = count;
         }
@@ -264,6 +267,7 @@ class WeightedFruchtermanReingoldPositionsBench :
         WeightedFruchtermanReingoldPositionsBench(const std::string & id, int nodecount, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _nodecount = nodecount;
             _count = count;
         }

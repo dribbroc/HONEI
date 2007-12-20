@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-20 David Gies <david-gies@gmx.de>
+
+	* libswe/Makefile.am.m4, libgraph/Makefile.am.m4, libswe/solver_BENCHMARK.cc,
+	libgraph/position_BENCHMARK.cc: Applied Benchmark changes to folders libswe and libgraph.
+
 2007-12-20 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/product-cell.cc, libla/product.hh, libla/product_TEST.cc:

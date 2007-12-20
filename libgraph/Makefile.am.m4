@@ -65,10 +65,32 @@ check_PROGRAMS = $(TESTS)
 
 EXTRA_PROGRAMS = benchmarklist
 
-bench: benchm
-
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+
+bench:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libgraph/position_BENCHMARK
+
+bench-sc: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libgraph/position_BENCHMARK sc
+
+bench-sse: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libgraph/position_BENCHMARK sse
+
+bench-mc: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libgraph/position_BENCHMARK mc
+
+bench-cpu: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libgraph/position_BENCHMARK cpu
+
+bench-cell: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libgraph/position_BENCHMARK cell
 
 quickcheck: $(TESTS)
 	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check
