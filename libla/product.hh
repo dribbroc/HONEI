@@ -1119,6 +1119,7 @@ namespace honei
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
         static DenseMatrix<float> value(const DenseMatrix<float> & a, const DenseMatrix<float> & b);
         static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVector<float> & b);
+        static DenseMatrix<float> value(const SparseMatrix<float> & a, const DenseMatrix<float> & b);
     };
 
     /**

@@ -23,7 +23,7 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-#include <iostream>
+
 namespace bm_dv_product
 {
     struct SPETask
@@ -432,8 +432,6 @@ namespace honei
         unsigned r_def_t_size(rows_per_transfer * r_tile_columns * 4);
         unsigned a_def_t_size(rows_per_transfer * a_tile_columns * 4);
 
-        std::cout << "Starting for-loop." << std::endl;
-
         for ( ; ; ) // Need two default aligned transfer size as closest to 16384 as possible.
         {
             if (a_def_t_size % 16 == 0 && r_def_t_size % 16 == 0)
@@ -448,7 +446,6 @@ namespace honei
                 std::cout << "Could not find an alignment" << std::endl;
             }
         }
-        std::cout << "Finished for-loop." << std::endl;
 
         of.u = a_tile_rows / rows_per_transfer;
         og.u = (b_tile_rows * b_tile_columns * 4) / 16384;
@@ -489,5 +486,22 @@ namespace honei
 
         return result;
     }
-}
 
+    DenseMatrix<float>
+    Product<tags::Cell>::value(const SparseMatrix<float> & a, const DenseMatrix<float> & b)
+    {
+        CONTEXT("When calculating SparseMatrix<float>-DenseMatrix<float> product (Cell):");
+
+        if (a.columns() != b.rows())
+            throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+        DenseMatrix<float> result(a.rows(), b.columns(), 0.0f);
+
+        for(SparseMatrix<float>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
+        {
+            ScaledSum<tags::Cell>::value(result[i.row()], b[i.column()], *i);
+        }
+
+        return result;
+    }
+}

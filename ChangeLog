@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-20 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/product-cell.cc, libla/product.hh, libla/product_TEST.cc:
+	Added Product<Cell>(SM,DM) based on using ScaledSum(Cell). Added
+	tests.
+	* libla/scaled_sum_TEST.cc: Added new extra DVR tests and made them
+	check all possible combinations of alignment offsets.
+
 2007-12-20 David Gies <david-gies@gmxde>
 
 	* libla/Makefile.am.m4:

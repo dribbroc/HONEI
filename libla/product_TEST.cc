@@ -136,7 +136,7 @@ class BandedMatrixDenseVectorProductQuickTest :
             }
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
-            for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+            for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ; 
                     it != i_end ; ++it, ++dit)
             {
                 //std::cout<<it.index() << " ";
@@ -904,6 +904,9 @@ SparseMatrixDenseMatrixProductTest<tags::CPU, double> sparse_matrix_dense_matrix
 SparseMatrixDenseMatrixProductTest<tags::CPU::SSE, float> sse_sparse_matrix_dense_matrix_product_test_float("SSE float");
 SparseMatrixDenseMatrixProductTest<tags::CPU::SSE, double> sse_sparse_matrix_dense_matrix_product_test_double("SSE double");
 #endif
+#ifdef HONEI_CELL
+SparseMatrixDenseMatrixProductTest<tags::Cell, float> cell_sparse_matrix_dense_matrix_product_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class SparseMatrixDenseMatrixProductQuickTest :
@@ -941,6 +944,9 @@ SparseMatrixDenseMatrixProductQuickTest<tags::CPU, double> sparse_matrix_dense_m
 #ifdef HONEI_SSE
 SparseMatrixDenseMatrixProductQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_dense_matrix_product_quick_test_float("SSE float");
 SparseMatrixDenseMatrixProductQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_dense_matrix_product_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+SparseMatrixDenseMatrixProductQuickTest<tags::Cell, float> cell_sparse_matrix_dense_matrix_product_quick_test_float("Cell float");
 #endif
 
 template <typename DataType_>
