@@ -15,7 +15,7 @@ class Benchmark;
 class BenchmarkList
 {
     private:
-        static std::list<Benchmark *> _tests;
+        static std::list<Benchmark *> _benchs;
 
         BenchmarkList()
         {
@@ -30,104 +30,115 @@ class BenchmarkList
             return &result;
         }
 
-        void register_test(Benchmark * const test)
+        void register_bench(Benchmark * const bench)
         {
-            _tests.push_back(test);
+            _benchs.push_back(bench);
         }
 
-        Iterator begin_tests() const
+        Iterator begin_benchs() const
         {
-            return _tests.begin();
+            return _benchs.begin();
         }
 
-        Iterator end_tests() const
+        Iterator end_benchs() const
         {
-            return _tests.end();
+            return _benchs.end();
         }
         
         int bench_count() const
         {
-            return _tests.size();
+            return _benchs.size();
+        }
+
+        Iterator erase(int index)
+        {
+            std::list<Benchmark*>::iterator er(_benchs.begin()), benchs_end(_benchs.end());
+            for (int i(1) ; ((i < index) && (er != benchs_end)) ; ++i) 
+                ++er;
+            if (er != benchs_end)
+                return _benchs.erase(er);
+            else
+                return er;               
         }
 };
 
-std::list<Benchmark *> BenchmarkList::_tests;
+std::list<Benchmark *> BenchmarkList::_benchs;
 
 Benchmark::Benchmark(const std::string & id) :
     _id(id)
 {
-    BenchmarkList::instance()->register_test(this);
+    BenchmarkList::instance()->register_bench(this);
 }
 
 void Benchmark::calculate()
 {
-    x = 0;
-    xmin = 1;
-    xmax = 1;
-    total = 0;
-    min = _benchlist.front();
-    max = _benchlist.front();
+    _x = 0;
+    _xmin = 1;
+    _xmax = 1;
+    _total = 0;
+    _min = _benchlist.front();
+    _max = _benchlist.front();
     for (list<double>::iterator i = _benchlist.begin() ; i != _benchlist.end() ; ++i)
     {
-        total += *i;
-        ++x;
-        if (*i < min)
+        _total += *i;
+        ++_x;
+        if (*i < _min)
         {  
-            min = *i;
-            xmin = x;
+            _min = *i;
+            _xmin = _x;
         }
-        else if (*i > max) 
+        else if (*i > _max) 
         {
-            max = *i;
-            xmax = x;
+            _max = *i;
+            _xmax = _x;
         } 
     }
-    avg = (total/x);
+    _avg = (_total/_x);
     list<double> temp;
     temp = _benchlist;
     temp.sort();
     list<double>::iterator m = temp.begin();
-    for(int i = 0 ; i < ((x + 1) / 2) ; ++i)
+    for(int i = 0 ; i < ((_x + 1) / 2) ; ++i)
     {
         ++m;
     }
-    median = *m;
+    _median = *m;
 }
 
 void Benchmark::calculate(BenchmarkInfo info)
 {
     calculate();
-    if (total > 0)
+    if (_total > 0)
     {
-        tp = ((double)(info.load + info.store) / (1024 * 1024)) * x / total;
-        f = ((double)((x/total)*info.flops) / 1000000);
+        _tp = ((double)(info.load + info.store) / (1024 * 1024)) * _x / _total;
+        _f = ((double)((_x/_total)*info.flops) / 1000000);
     }
     else
     {
-        tp = 0;
-        f = 0;
+        _tp = 0;
+        _f = 0;
     }
-    if (median > 0)
+    if (_median > 0)
     {
-        mediantp = ((double)(info.load + info.store) / (1024 * 1024)) / median;
-        medianf = ((double)(info.flops) / 1000000) / median;
+        _mediantp = ((double)(info.load + info.store) / (1024 * 1024)) / _median;
+        _medianf = ((double)(info.flops) / 1000000) / _median;
     }
     else
     {
-        mediantp = 0;
-        medianf = 0;
+        _mediantp = 0;
+        _medianf = 0;
     }
 }
 
 void Benchmark::evaluate()
 {
     calculate();
-    cout << "Function Calls: " << x << endl;
-    cout << "Runtime - total:   " << total << "sec" << endl;
-    cout << "Runtime - lowest:  " << min << "sec (" << xmin << ".)" << endl;
-    cout << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
-    cout << "Runtime - mean:    " << avg << "sec" << endl;
-    cout << "Runtime - median:  " << median << "sec" << endl;
+    cout << "Function Calls: " << _x << endl;
+    cout << "Runtime - total:   " << _total << "sec" << endl;
+    cout << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << endl;
+    cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
+    cout << "Runtime - mean:    " << _avg << "sec" << endl;
+    cout << "Runtime - median:  " << _median << "sec" << endl;
     ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
     if (!ofs)
         cout << "Can't write to file!" << endl;
@@ -137,12 +148,12 @@ void Benchmark::evaluate()
         time(&t);
         ofs << _id  << " - " << ctime(&t) << endl << endl;
         ofs << "Result:"<< endl;
-        ofs << "Function Calls: " << x << endl;
-        ofs << "Runtime - total: " << total << "sec" << endl;
-        ofs << "Runtime - lowest: " << min << "sec (" << xmin << ".)" << endl;
-        ofs << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
-        ofs << "Runtime - mean:    " << avg << "sec" << endl;
-        ofs << "Runtime - median:  " << median << "sec" << endl;
+        ofs << "Function Calls: " << _x << endl;
+        ofs << "Runtime - total: " << _total << "sec" << endl;
+        ofs << "Runtime - lowest: " << _min << "sec (" << _xmin << ".)" << endl;
+        ofs << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
+        ofs << "Runtime - mean:    " << _avg << "sec" << endl;
+        ofs << "Runtime - median:  " << _median << "sec" << endl;
         ofs << endl << endl << endl;
     }
 }
@@ -150,31 +161,31 @@ void Benchmark::evaluate()
 void Benchmark::evaluate(BenchmarkInfo info)
 {
     calculate(info);
-    cout << "Function Calls: " << x << endl;
-    cout << "Runtime - total:   " << total << "sec" << endl;
-    cout << "Runtime - lowest:  " << min << "sec (" << xmin << ".)" << endl;
-    cout << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
-    cout << "Runtime - mean:    " << avg << "sec" << endl;
-    cout << "Runtime - median:  " << median << "sec" << endl;
+    cout << "Function Calls: " << _x << endl;
+    cout << "Runtime - total:   " << _total << "sec" << endl;
+    cout << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << endl;
+    cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
+    cout << "Runtime - mean:    " << _avg << "sec" << endl;
+    cout << "Runtime - median:  " << _median << "sec" << endl;
     string pf = " KMGTPEZY";
     int i = 2;
-    while (tp > 1024 && i < 8)
+    while (_tp > 1024 && i < 8)
     {
-        tp /= 1024;
-        mediantp /= 1024;
+        _tp /= 1024;
+        _mediantp /= 1024;
         ++i;
     }
-    cout << "Transfer rate (mean):   " << tp << pf[i] << "B/s" << endl;
-    cout << "Transfer rate (median): " << mediantp << pf[i] << "B/s" << endl;
+    cout << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << endl;
+    cout << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << endl;
     int j = 2;
-    while (f > 1000 && j < 8)
+    while (_f > 1000 && j < 8)
     {
-        f /= 1000;
-        medianf /= 1000;
+        _f /= 1000;
+        _medianf /= 1000;
         ++j;
     }
-    cout << f << " " << pf[j] << "FLOPS (mean)" << endl;
-    cout << medianf << " " << pf[j] << "FLOPS (median)" << endl;
+    cout << _f << " " << pf[j] << "FLOPS (mean)" << endl;
+    cout << _medianf << " " << pf[j] << "FLOPS (median)" << endl;
     if (info.scale != 1)
     {
         cout << "Dense version calculates " << info.scale << " times more flops.\n(Depends on used elements of Sparse/Banded Operands.)" << endl;
@@ -190,16 +201,16 @@ void Benchmark::evaluate(BenchmarkInfo info)
         time(&t);
         ofs << _id  << " - " << ctime(&t) << endl << endl;
         ofs << "Result:"<< endl;
-        ofs << "Function Calls: " << x << endl;
-        ofs << "Runtime - total:   " << total << "sec" << endl;
-        ofs << "Runtime - lowest:  " << min << "sec (" << xmin << ".)" << endl;
-        ofs << "Runtime - highest: " << max << "sec (" << xmax << ".)" << endl;
-        ofs << "Runtime - mean:    " << avg << "sec" << endl;
-        ofs << "Runtime - median:  " << median << "sec" << endl;
-        ofs << "Transfer rate (mean):   " << tp << pf[i] << "B/s" << endl;
-        ofs << "Transfer rate (median): " << mediantp << pf[i] << "B/s" << endl;
-        ofs << f << " " << pf[j] << "FLOPS (mean)" << endl;
-        ofs << medianf << " " << pf[j] << "FLOPS (median)" << endl;
+        ofs << "Function Calls: " << _x << endl;
+        ofs << "Runtime - total:   " << _total << "sec" << endl;
+        ofs << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << endl;
+        ofs << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
+        ofs << "Runtime - mean:    " << _avg << "sec" << endl;
+        ofs << "Runtime - median:  " << _median << "sec" << endl;
+        ofs << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << endl;
+        ofs << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << endl;
+        ofs << _f << " " << pf[j] << "FLOPS (mean)" << endl;
+        ofs << _medianf << " " << pf[j] << "FLOPS (median)" << endl;
         ofs << endl << endl << endl;
     }
 }
@@ -249,7 +260,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
                 ++blc;
             }
             calculate(*j);
-            ofs << std::setw(13) << medianf << "\t" << std::setw(11) << mediantp << "\t" << std::setw(11) << min << "\t" << std::setw(11) << max << "\t" << std::setw(12) << avg << "\t" << std::setw(14) << median << "\t" << std::setw(11) << f << "\t" << std::setw(9) << tp;
+            ofs << std::setw(13) << _medianf << "\t" << std::setw(11) << _mediantp << "\t" << std::setw(11) << _min << "\t" << std::setw(11) << _max << "\t" << std::setw(12) << _avg << "\t" << std::setw(14) << _median << "\t" << std::setw(11) << _f << "\t" << std::setw(9) << _tp;
             for (list<double>::iterator bl = _benchlist.begin() ; bl != _benchlist.end() ; ++bl)
             {
                ofs << "\t" << std::setw(8) << *bl;
@@ -263,15 +274,90 @@ const std::string Benchmark::id() const
     return _id;
 }
 
+void Benchmark::register_tag(std::string tag_name)
+{
+    _tag_name = tag_name;
+}
+
+std::string Benchmark::get_tag_name()
+{
+    return _tag_name;
+}
+
 int main(int argc, char** argv)
 {
     int result=EXIT_SUCCESS;
     list<int> runrs;
+    bool sse(true);
+    bool cell(true);
+    bool mc(true);
+    bool sc(true);
+    if (argc > 1)
+    {
+        sse = false;
+        cell = false;
+        mc = false;
+        sc = false;
+        for(int i(1) ; i < argc ; ++i)
+        {
+            if (honei::stringify(argv[i]) == "sse")
+            {
+                sse = true;
+            }
+            if (honei::stringify(argv[i]) == "cell")
+            {
+                cell = true;
+            }
+            if (honei::stringify(argv[i]) == "mc")
+            {
+                mc = true;
+            }
+            if (honei::stringify(argv[i]) == "cpu")
+            {
+                sse = true;
+                mc = true;
+                sc = true;
+            }
+            if (honei::stringify(argv[i]) == "sc")
+            {
+                sc = true;
+            }
+        }
+    }
     cout << "Select Benchmark you'd like to add to runlist:" << endl;
     int count = 1;
-    for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_tests()),i_end(BenchmarkList::instance()->end_tests()) ; i != i_end ; ++i, ++count)
+    for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; )
     {
-        cout << count << ": " << (*i)->id() << endl;
+        if (sse && (((*i)->get_tag_name() == "sse") || ((*i)->get_tag_name() == "mc-sse")))
+        {
+            cout << count << ": " << (*i)->id() << endl;
+            ++count;
+            ++i;
+            continue;
+        }
+        if (cell && ((*i)->get_tag_name() == "cell"))
+        {
+            cout << count << ": " << (*i)->id() << endl;
+            ++count;
+            ++i;
+            continue;
+        }
+        if (mc && ((*i)->get_tag_name() == "mc"))
+        {
+            cout << count << ": " << (*i)->id() << endl;
+            ++count;
+            ++i;
+            continue;
+        }
+        if (sc && ((*i)->get_tag_name() == "cpu"))
+        {
+            cout << count << ": " << (*i)->id() << endl;
+            ++count;
+            ++i;
+            continue;
+        }
+        i = BenchmarkList::instance()->erase(count);
+
     }
     cout << endl << "Choose: (1), (2), ..., (a)ll, (n)one" << endl;
     string a, tmp;
@@ -322,7 +408,7 @@ int main(int argc, char** argv)
         runrs.sort();
         int next = runrs.front();
         runrs.pop_front();
-        for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_tests()),i_end(BenchmarkList::instance()->end_tests()) ; i != i_end ; ++i, ++count)
+        for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; ++i, ++count)
         {
             if (next == count)
             {

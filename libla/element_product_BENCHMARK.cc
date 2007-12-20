@@ -24,6 +24,7 @@ class DenseMatrixElementProductBench :
         DenseMatrixElementProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -59,6 +60,7 @@ class SparseMatrixElementProductBench :
         SparseMatrixElementProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -100,6 +102,7 @@ class BandedMatrixElementProductBench :
         BandedMatrixElementProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }

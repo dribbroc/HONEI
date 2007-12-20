@@ -24,6 +24,7 @@ class BandedMatrixDenseVectorProductBench :
         BandedMatrixDenseVectorProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -74,6 +75,7 @@ class BandedMatrixDenseVectorProductBenchRelax :
         BandedMatrixDenseVectorProductBenchRelax(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -116,6 +118,7 @@ class DenseMatrixProductBench :
         DenseMatrixProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -155,6 +158,7 @@ class DenseMatrixDenseVectorProductBench :
         DenseMatrixDenseVectorProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -183,7 +187,7 @@ DenseMatrixDenseVectorProductBench<tags::CPU::SSE, float> DMDVPBenchfloatSSE("SS
 DenseMatrixDenseVectorProductBench<tags::CPU::SSE, double> DMDVPBenchdoubleSSE("SSE: Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, double", 64ul*64, 10);
 #endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseMatrixProductBench :
     public Benchmark
 {
@@ -194,6 +198,7 @@ class SparseMatrixProductBench :
         SparseMatrixProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -212,17 +217,17 @@ class SparseMatrixProductBench :
             DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(Product<>::value(sm, dm));
+                BENCHMARK(Product<Tag_>::value(sm, dm));
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(sm, dm));
             evaluate(info);
         }
 };
-SparseMatrixProductBench<float> SMPBenchfloat2("Matrix Product Benchmark sparse/dense - matrix size: 256x256, float", 256, 10);
-SparseMatrixProductBench<double> SMPBenchdouble2("Matrix Product Benchmark sparse/dense - matrix size: 256x256, double", 256, 10);
+SparseMatrixProductBench<tags::CPU, float> SMPBenchfloat2("Matrix Product Benchmark sparse/dense - matrix size: 256x256, float", 256, 10);
+SparseMatrixProductBench<tags::CPU, double> SMPBenchdouble2("Matrix Product Benchmark sparse/dense - matrix size: 256x256, double", 256, 10);
 
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixProductBench :
     public Benchmark
 {
@@ -233,6 +238,7 @@ class BandedMatrixProductBench :
         BandedMatrixProductBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -251,12 +257,12 @@ class BandedMatrixProductBench :
             DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             { 
-                BENCHMARK(Product<>::value(bm, dm));
+                BENCHMARK(Product<Tag_>::value(bm, dm));
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm, dm));
             evaluate(info);
         }
 };
-BandedMatrixProductBench<float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);
-BandedMatrixProductBench<double> BMPBenchdouble2("Matrix Product Benchmark banded/dense - matrix size: 256x256, double", 256, 10);
+BandedMatrixProductBench<tags::CPU, float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);
+BandedMatrixProductBench<tags::CPU, double> BMPBenchdouble2("Matrix Product Benchmark banded/dense - matrix size: 256x256, double", 256, 10);
 

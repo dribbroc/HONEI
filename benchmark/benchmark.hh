@@ -1,6 +1,9 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #define BENCHM
+#include <libutil/stringify.hh>
+#include <libutil/exception.hh>
+#include <libutil/tags.hh>
 #include <string> 
 #include <exception>
 #include <list>
@@ -53,8 +56,9 @@ class Benchmark
         const std::string _id;
         timeval _start, _end;
         list<double> _benchlist;
-        int x, xmin, xmax;
-        double total, min, max, avg, median, tp, mediantp, f, medianf;
+        int _x, _xmin, _xmax;
+        double _total, _min, _max, _avg, _median, _tp, _mediantp, _f, _medianf;
+        std::string _tag_name;
 
 
     public:
@@ -80,6 +84,12 @@ class Benchmark
         void evaluate(BenchmarkInfo info);
 
         void evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<int> cores, int count);
+
+        /// Register our target platform.
+        virtual void register_tag(std::string tag_name);
+
+        /// Returns our target platform.
+        virtual std::string get_tag_name();
 };
 
 /**

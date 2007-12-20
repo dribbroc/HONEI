@@ -178,11 +178,36 @@ namespace honei
         }
 
         template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT1_> & a)
+        {
+            BenchmarkInfo result;
+            for (unsigned long i(0) ; i < a.rows() ; ++i)
+            {
+                result += Reduction<rt_sum>::get_benchmark_info(a[i]);
+                result.scale += a[i].used_elements();
+            }
+            result.size.push_back(a.rows() * a.columns());
+            result.scale = (double(a.rows() * a.columns()) / result.scale);
+            return result;
+        }
+
+        template <typename DT1_>
         static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a)
         {
             BenchmarkInfo result;
             result.flops = a.size();
             result.load = sizeof(DT1_) * a.size();
+            result.store = sizeof(DT1_);
+            result.size.push_back(a.size());
+            return result;
+        }
+
+        template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(SparseVector<DT1_> & a)
+        {
+            BenchmarkInfo result;
+            result.flops = a.used_elements();
+            result.load = sizeof(DT1_) * a.used_elements();
             result.store = sizeof(DT1_);
             result.size.push_back(a.size());
             return result;

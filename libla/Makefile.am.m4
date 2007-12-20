@@ -90,9 +90,29 @@ BENCHMARKS = benchmarklist
 
 EXTRA_PROGRAMS = benchmark $(BENCHMARKS)
 
-bench: 
+bench:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	bash $(top_builddir)/libla/benchmark
+
+bench-sc: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libla/benchmark sc
+
+bench-sse: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libla/benchmark sse
+
+bench-mc: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libla/benchmark mc
+
+bench-cpu: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libla/benchmark cpu
+
+bench-cell: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libla/benchmark cell
 
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)

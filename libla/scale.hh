@@ -172,6 +172,34 @@ namespace honei
             result.size.push_back(b.rows() * b.columns());
             return result; 
         }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DT1_ a, SparseMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            for (typename MutableMatrix<DT2_>::ElementIterator l(b.begin_non_zero_elements()),
+                    l_end(b.end_non_zero_elements()) ; l != l_end ; ++l)
+            {
+                result.flops += 1;
+                result.load += sizeof(DT2_);
+                result.store += sizeof(DT2_);
+            }
+            result.size.push_back(b.rows() * b.columns());
+            result.load += sizeof(DT1_);
+            result.scale = (double(b.rows() * b.columns()) / result.flops);
+            return result; 
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DT1_ a, DenseVector<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = b.size();
+            result.load = b.size() * sizeof(DT2_) + sizeof(DT1_);
+            result.store = b.size() * sizeof(DT2_);
+            result.size.push_back(b.size());
+            return result; 
+        }
         #endif
     };
 

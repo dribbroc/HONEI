@@ -441,6 +441,18 @@ namespace honei
             result.size.push_back(b.rows() * b.columns());
             return result;
         }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVector<DT1_> & a, const  DenseVector<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size();
+            result.load = a.size() * (sizeof(DT1_) + sizeof(DT2_));
+            result.store = a.size() * sizeof(DT1_);
+            result.size.push_back(a.size());
+            result.size.push_back(b.size());
+            return result; 
+        }
         #endif
     };
 

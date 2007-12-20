@@ -24,6 +24,7 @@ class DenseVectorScaledSumBench :
         DenseVectorScaledSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }

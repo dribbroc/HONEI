@@ -487,6 +487,40 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, BandedMatrix<DT2_> & b)
+        {
+            BenchmarkInfo result;
+            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands()) ;
+                    r != r_end ; ++r)
+            {
+                if (! r.exists())
+                    continue;
+
+                unsigned long size(b.size());
+                unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
+                unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
+
+                for (typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements()) ;
+                        c != c_end ; ++c)
+                {
+                    if (row_index + c.index() >= size)
+                        break;
+
+                    if (col_index + c.index() >= size)
+                        break;
+
+                    result.flops += 1;
+                    result.load += sizeof(DT1_) + sizeof(DT2_);
+                    result.store += sizeof(DT1_);
+                }
+            }
+            result.size.push_back(a.rows() * a.columns());
+            result.size.push_back(b.size() * b.size());
+            result.scale = (double(a.rows() * a.columns()) / result.flops);
+            return result; 
+        }
+
+        template <typename DT1_, typename DT2_>
         static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b)
         {
             BenchmarkInfo result;

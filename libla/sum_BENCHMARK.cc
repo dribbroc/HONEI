@@ -12,7 +12,7 @@
 using namespace std;
 using namespace honei;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 
 class ScalarDenseMatrixSumBench :
     public Benchmark
@@ -25,6 +25,7 @@ class ScalarDenseMatrixSumBench :
         ScalarDenseMatrixSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size  = size;
             _count = count;
         }
@@ -37,14 +38,14 @@ class ScalarDenseMatrixSumBench :
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(Sum<>::value(DataType_ (alpha), dm0));
+                BENCHMARK(Sum<Tag_>::value(DataType_ (alpha), dm0));
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info(dm0, alpha));
             evaluate(info);
     }
 };
-ScalarDenseMatrixSumBench<float>  SDMSBenchfloat ("MatrixShift Benchmark - size: 4096x4096, float",  4096, 12);
-ScalarDenseMatrixSumBench<double> SDMSBenchdouble("MatrixShift Benchmark - size: 4096x4096, double", 4096, 12);
+ScalarDenseMatrixSumBench<tags::CPU, float>  SDMSBenchfloat ("MatrixShift Benchmark - size: 4096x4096, float",  4096, 12);
+ScalarDenseMatrixSumBench<tags::CPU, double> SDMSBenchdouble("MatrixShift Benchmark - size: 4096x4096, double", 4096, 12);
 
 
 
@@ -60,6 +61,7 @@ class DenseVectorSumBench :
         DenseVectorSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -99,6 +101,7 @@ class DenseVectorRangeSumBench :
         DenseVectorRangeSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -136,6 +139,7 @@ class DenseMatrixSumBench :
         DenseMatrixSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -178,6 +182,7 @@ class DenseMatrixBandedMatrixSumBench :
         DenseMatrixBandedMatrixSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
             _size = size;
             _count = count;
         }
@@ -196,7 +201,8 @@ class DenseMatrixBandedMatrixSumBench :
             {
                 BENCHMARK(Sum<Tag_>::value(dm0, bm));
             }
-            evaluate();
+            BenchmarkInfo info(Sum<>::get_benchmark_info(dm0, bm));
+            evaluate(info);
         }
 };
 
@@ -215,6 +221,7 @@ class DenseVectorSumBenchTestPlot :
         DenseVectorSumBenchTestPlot(const std::string & id) :
             Benchmark(id)
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run()

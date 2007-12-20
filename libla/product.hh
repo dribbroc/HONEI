@@ -918,7 +918,7 @@ namespace honei
             result.store = a.size() * a.size() * sizeof(DT1_);
             result.size.push_back(a.rows() * a.columns());
             result.size.push_back(b.size());
-            return result; 
+            return result;
         }
 
         template <typename DT1_, typename DT2_>
@@ -972,11 +972,87 @@ namespace honei
         static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            result.flops = 0;
-            result.load = 0;
-            result.store = 0;
+            DenseMatrix<DT2_> presult(b.rows(), b.columns(), DT2_(0));
+            unsigned long middle_index(a.size() -1);
+
+            // Calculation for lower part
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+                    vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
+            {
+                if (! vi.exists())
+                    continue;
+
+                for (unsigned int s(0) ; s < b.columns() ; ++s)
+                {
+                    // Temporary container for efficient calculation of elementwise vector product.
+                    DenseVector<DT2_> temp(b.rows(), DT2_(0));
+                    unsigned long real_index(middle_index - vi.index());
+                    typename Vector<DT2_>::ConstElementIterator c(b.column(s).begin_elements()),
+                                d(vi->element_at(real_index));
+                    for (typename Vector<DT2_>::ElementIterator x(temp.element_at(real_index)),
+                                x_end(temp.end_elements()) ; x != x_end ; ++x)
+                    {
+                        //*x = *c * *d;
+                        result.flops += 1;
+                        result.load += sizeof(DT2_) + sizeof(DT1_);
+                        result.store += sizeof(DT2_);
+                        ++c; ++d;
+                    }
+
+                    //Sum<>::value(presult.column(s), temp);
+                    result = result + Sum<>::get_benchmark_info(presult.column(s), temp);
+                }
+            }
+
+            // Calculation for diagonal
+            typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index));
+
+            if (vi.exists())
+            {
+                for (unsigned int s(0) ; s < b.columns() ; ++s)
+                {
+                    DenseVector<DT2_> temp(b.column(s).copy());
+                    //Sum<>::value(presult.column(s), ElementProduct<>::value(temp, *vi));
+                    result = result + ElementProduct<>::get_benchmark_info(temp, *vi);
+                    result = result + Sum<>::get_benchmark_info(presult.column(s), ElementProduct<>::value(temp, *vi));
+                }
+            }
+
+            // Calculation for upper part
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index+1)),
+                    vi_end(a.end_bands()) ; vi != vi_end ; ++vi)
+            {
+                if (! vi.exists())
+                    continue;
+
+                for (unsigned int s(0) ; s < b.columns() ; ++s)
+                {
+                    // Temporary container for efficient calculation of elementwise vector product.
+                    DenseVector<DT2_> temp(b.rows(), DT2_(0));
+
+                    unsigned long real_index(vi.index() - middle_index);
+                    typename Vector<DT2_>::ConstElementIterator c(b.column(s).element_at(real_index)),
+                            d(vi->begin_elements());
+                    unsigned long end(temp.size() - real_index);
+
+                    for (typename Vector<DT2_>::ElementIterator x(temp.begin_elements()),
+                            x_end(temp.element_at(end)) ; x != x_end ; ++x)
+                    {
+                        //*x = *c * *d;
+                        result.flops += 1;
+                        result.load += sizeof(DT2_) + sizeof(DT1_);
+                        result.store += sizeof(DT2_);
+                        ++c; ++d;
+                    }
+                    //Sum<>::value(presult.column(s), temp);
+                    result = result + Sum<>::get_benchmark_info(presult.column(s), temp);
+                }
+            }
             result.size.push_back(a.rows() * a.columns());
             result.size.push_back(b.rows() * b.columns());
+            DenseMatrix<DT1_> t1(a.size(), a.size());
+            BenchmarkInfo tinfo(get_benchmark_info(t1, t1));
+            result.scale = (double(tinfo.flops) / result.flops);
             return result;
         }
         #endif

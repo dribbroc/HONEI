@@ -221,6 +221,17 @@ namespace honei
             result.size.push_back(result.flops);
             return result; 
         }
+
+        template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVector<DT1_> & a)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size();
+            result.load = a.size() * sizeof(DT1_);
+            result.store = a.size() * sizeof(DT1_);
+            result.size.push_back(a.size());
+            return result; 
+        }
         #endif
     };
 

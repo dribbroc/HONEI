@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-20 David Gies <david-gies@gmxde>
+
+	* libla/Makefile.am.m4:
+	Benchmarks got new make targets bench-sc, bench-sse, bench-mc, bench-cpu (sc+sse+mc)
+	and bench-cell.
+	* benchmark/benchmark.hh, benchmark/benchmark.cc, libla/reduction_BENCHMARK.cc, 
+	libla/element_product_BENCHMARK.cc, libla/sum_BENCHMARK.cc, libla/element_inverse_BENCHMARK.cc,
+	libla/dot_product_BENCHMARK.cc, libla/scale_BENCHMARK.cc, libla/scaled_sum_BENCHMARK.cc, 
+	libla/product_BENCHMARK.cc: Added changes for the new make-targets.
+	* libla/sum.hh, libla/element_inverse.hh, libla/element_product.hh, libla/scale.hh, libla/product.hh,
+	libla/difference.hh, libla/reduction.hh, libla/scale.hh: Added BenchmarkInfos.
+
 2007-12-19 Markus Geveler <apryde@gmx.de>
 
 	* libswesolver_TEST.cc: Added new testcase, which computes a steady
