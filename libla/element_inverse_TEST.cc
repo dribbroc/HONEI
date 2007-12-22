@@ -155,12 +155,12 @@ class DenseVectorRangeElementInverseTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 for (int o(0) ; o < 4 ; ++o)
                 {
                     DenseVector<DataType_> dv1(size * 2, DataType_(0)), dv2(size, DataType_(0));
-                    DenseVectorRange<DataType_> dv1r(dv1, size, o + ((size -1) / 4));
+                    DenseVectorRange<DataType_> dv1r(dv1, size, o);
                     for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
                             j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                     {
@@ -223,7 +223,7 @@ class DenseVectorRangeElementInverseQuickTest :
             for (int o(0) ; o < 4 ; ++o)
             {
                 DenseVector<DataType_> dv1(size * 2, DataType_(0)), dv2(size, DataType_(0));
-                DenseVectorRange<DataType_> dv1r(dv1, size, o + ((size -1) / 4));
+                DenseVectorRange<DataType_> dv1r(dv1, size, o);
                 for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
