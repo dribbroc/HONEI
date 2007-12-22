@@ -46,3 +46,13 @@ DenseMatrixElementInverseBench<float, tags::CPU>  MEIBenchfloat ("Matrix Element
 DenseMatrixElementInverseBench<double, tags::CPU> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
 DenseMatrixElementInverseBench<float, tags::CPU::MultiCore>  MCMEIBenchfloat ("MC: Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
 DenseMatrixElementInverseBench<double, tags::CPU::MultiCore> MCMEIBenchdouble("MC: Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
+#ifdef HONEI_SSE
+DenseMatrixElementInverseBench<float, tags::CPU::MultiCore::SSE>  MCSSEMEIBenchfloat ("MC SSE Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
+DenseMatrixElementInverseBench<double, tags::CPU::MultiCore::SSE> MCSSEMEIBenchdouble("MC SSE Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
+DenseMatrixElementInverseBench<float, tags::CPU::SSE>  SSEMEIBenchfloat ("SSE Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
+DenseMatrixElementInverseBench<double, tags::CPU::SSE> SSEMEIBenchdouble("SSE Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
+#endif
+#ifdef HONEI_CELL
+DenseMatrixElementInverseBench<float, tags::Cell>  CELLMEIBenchfloat ("Cell Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
+DenseMatrixElementInverseBench<double, tags::Cell> CELLMEIBenchdouble("Cell Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
+#endif

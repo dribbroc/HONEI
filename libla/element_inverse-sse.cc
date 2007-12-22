@@ -33,6 +33,8 @@ namespace honei
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
                 float __attribute__((aligned(16))) a_data(float(1));
                 m8 = _mm_load_ps1(&a_data);
+                float __attribute__((aligned(16))) b_data(std::numeric_limits<float>::infinity());
+                m7 = _mm_load_ps1(&b_data);
 
                 unsigned long x_address = (unsigned long)x;
                 unsigned long x_offset = x_address % 16;
@@ -41,56 +43,69 @@ namespace honei
                 z_offset = (4 - z_offset) % 4;
 
                 unsigned long quad_start = z_offset;
-                unsigned long quad_end(size - ((size - quad_start) % 28));
-                if (size < 40)
+                unsigned long quad_end(size - ((size - quad_start) % 20));
+                if (size < 24)
                 {
                     quad_end = 0;
                     quad_start = 0;
                 }
 
-                for (unsigned long index = quad_start ; index < quad_end ; index += 28)
+                for (unsigned long index = quad_start ; index < quad_end ; index += 20)
                 {
                     m1 = _mm_load_ps(x + index);
                     m2 = _mm_load_ps(x + index + 4);
                     m3 = _mm_load_ps(x + index + 8);
                     m4 = _mm_load_ps(x + index + 12);
                     m5 = _mm_load_ps(x + index + 16);
-                    m6 = _mm_load_ps(x + index + 20);
-                    m7 = _mm_load_ps(x + index + 24);
 
                     m1 = _mm_div_ps(m8, m1);
                     m2 = _mm_div_ps(m8, m2);
                     m3 = _mm_div_ps(m8, m3);
                     m4 = _mm_div_ps(m8, m4);
                     m5 = _mm_div_ps(m8, m5);
-                    m6 = _mm_div_ps(m8, m6);
-                    m7 = _mm_div_ps(m8, m7);
+
+                    m6 = _mm_cmpneq_ps(m1, m7);
+                    m1 = _mm_and_ps(m1, m6);
+
+                    m6 = _mm_cmpneq_ps(m2, m7);
+                    m2 = _mm_and_ps(m2, m6);
+
+                    m6 = _mm_cmpneq_ps(m3, m7);
+                    m3 = _mm_and_ps(m3, m6);
+
+                    m6 = _mm_cmpneq_ps(m4, m7);
+                    m4 = _mm_and_ps(m4, m6);
+
+                    m6 = _mm_cmpneq_ps(m5, m7);
+                    m5 = _mm_and_ps(m5, m6);
 
                     _mm_stream_ps(x + index, m1);
                     _mm_stream_ps(x + index + 4, m2);
                     _mm_stream_ps(x + index + 8, m3);
                     _mm_stream_ps(x + index + 12, m4);
                     _mm_stream_ps(x + index + 16, m5);
-                    _mm_stream_ps(x + index + 20, m6);
-                    _mm_stream_ps(x + index + 24, m7);
                 }
 
                 for (unsigned long index = 0 ; index < quad_start ; index++)
                 {
-                    x[index] = float(1) / x[index];
+                    if (x[index] != float(0))
+                        x[index] = float(1) / x[index];
                 }
                 for (unsigned long index = quad_end ; index < size ; index++)
                 {
-                    x[index] = float(1) / x[index];
+                    if (x[index] != float(0))
+                        x[index] = float(1) / x[index];
                 }
                 _mm_sfence();
             }
 
             inline void element_inverse(double * x, unsigned long size)
             {
-                __m128d m1, m2, m3, m4, m5, m6, m7,  m8;
+                __m128d m1, m2, m3, m4, m5, m6, m7, m8;
                 double __attribute__((aligned(16))) a_data(double(1));
                 m8 = _mm_load_pd1(&a_data);
+                double __attribute__((aligned(16))) b_data(std::numeric_limits<double>::infinity());
+                m7 = _mm_load_pd1(&b_data);
 
                 unsigned long x_address = (unsigned long)x;
                 unsigned long x_offset = x_address % 16;
@@ -98,45 +113,56 @@ namespace honei
                 unsigned long z_offset(x_offset / 8);
 
                 unsigned long quad_start = z_offset;
-                unsigned long quad_end(size - ((size - quad_start) % 14));
-                if (size < 24)
+                unsigned long quad_end(size - ((size - quad_start) % 10));
+                if (size < 12)
                 {
                     quad_end = 0;
                     quad_start = 0;
                 }
 
-                for (unsigned long index = quad_start ; index < quad_end ; index += 14)
+                for (unsigned long index = quad_start ; index < quad_end ; index += 10)
                 {
                     m1 = _mm_load_pd(x + index);
                     m2 = _mm_load_pd(x + index + 2);
                     m3 = _mm_load_pd(x + index + 4);
                     m4 = _mm_load_pd(x + index + 6);
                     m5 = _mm_load_pd(x + index + 8);
-                    m6 = _mm_load_pd(x + index + 10);
-                    m7 = _mm_load_pd(x + index + 12);
 
                     m1 = _mm_div_pd(m8, m1);
                     m2 = _mm_div_pd(m8, m2);
                     m3 = _mm_div_pd(m8, m3);
                     m4 = _mm_div_pd(m8, m4);
                     m5 = _mm_div_pd(m8, m5);
-                    m6 = _mm_div_pd(m8, m6);
-                    m7 = _mm_div_pd(m8, m7);
+
+                    m6 = _mm_cmpneq_pd(m1, m7);
+                    m1 = _mm_and_pd(m1, m6);
+
+                    m6 = _mm_cmpneq_pd(m2, m7);
+                    m2 = _mm_and_pd(m2, m6);
+
+                    m6 = _mm_cmpneq_pd(m3, m7);
+                    m3 = _mm_and_pd(m3, m6);
+
+                    m6 = _mm_cmpneq_pd(m4, m7);
+                    m4 = _mm_and_pd(m4, m6);
+
+                    m6 = _mm_cmpneq_pd(m5, m7);
+                    m5 = _mm_and_pd(m5, m6);
 
                     _mm_stream_pd(x + index, m1);
                     _mm_stream_pd(x + index + 2, m2);
                     _mm_stream_pd(x + index + 4, m3);
                     _mm_stream_pd(x + index + 6, m4);
                     _mm_stream_pd(x + index + 8, m5);
-                    _mm_stream_pd(x + index + 10, m6);
-                    _mm_stream_pd(x + index + 12, m7);
                 }
                 for (unsigned long index = 0 ; index < quad_start ; index++)
                 {
+                    if (x[index] != double(0))
                     x[index] = double(1) / x[index];
                 }
                 for (unsigned long index = quad_end ; index < size ; index++)
                 {
+                    if (x[index] != double(0))
                     x[index] = double(1) / x[index];
                 }
                 _mm_sfence();
@@ -151,8 +177,6 @@ DenseVectorContinuousBase<float> & ElementInverse<tags::CPU::SSE>::value(DenseVe
 {
     CONTEXT("When inverting DenseVectorContinuousBase<float> with SSE:");
 
-    ElementInverse<tags::CPU>::value(x);
-    return x;
     intern::sse::element_inverse(x.elements(), x.size());
 
     return x;
@@ -162,8 +186,6 @@ DenseVectorContinuousBase<double> & ElementInverse<tags::CPU::SSE>::value(DenseV
 {
     CONTEXT("When inverting DenseVectorContinuousBase<double> with SSE:");
 
-    ElementInverse<tags::CPU>::value(x);
-    return x;
     intern::sse::element_inverse(x.elements(), x.size());
 
     return x;
@@ -173,7 +195,6 @@ DenseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<float> & 
 {
     CONTEXT("When inverting DenseMatrix<float> with SSE:");
 
-    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.rows() * x.columns());
 
     return x;
@@ -183,7 +204,6 @@ DenseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<double> 
 {
     CONTEXT("When inverting DenseMatrix<double> with SSE:");
 
-    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.rows() * x.columns());
 
     return x;
@@ -193,7 +213,6 @@ SparseVector<float> & ElementInverse<tags::CPU::SSE>::value(SparseVector<float> 
 {
     CONTEXT("When inverting SparseVector<float> with SSE:");
 
-    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.used_elements());
 
     return x;
@@ -203,7 +222,6 @@ SparseVector<double> & ElementInverse<tags::CPU::SSE>::value(SparseVector<double
 {
     CONTEXT("When inverting SparseVector<double> with SSE:");
 
-    return ElementInverse<tags::CPU>::value(x);
     intern::sse::element_inverse(x.elements(), x.used_elements());
     return x;
 }
@@ -212,7 +230,6 @@ SparseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<float> 
 {
     CONTEXT("When invertingSparseMatrix<float> with SSE:");
 
-    return ElementInverse<tags::CPU>::value(x);
     for (SparseMatrix<float>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)
     {
@@ -226,7 +243,6 @@ SparseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<double
 {
     CONTEXT("When inverting SparseMatrix<double> with SSE:");
 
-    return ElementInverse<tags::CPU>::value(x);
     for (SparseMatrix<double>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)
     {
