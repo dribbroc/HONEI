@@ -42,12 +42,28 @@ class DenseVectorElementInverseTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                        j(dv2.begin_elements()) ; i != i_end ; ++i)
+                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
-                    *i = i.index() - 5;
-                    if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                    else *j = DataType_(0);
-                    ++j;
+                    if (i.index() % 20 == 0)
+                    {
+                        *i = DataType_(-0.25) * (i.index() + 1);
+                        *j = 1 / ((DataType_(-0.25) * (i.index() + 1)));
+                    }
+                    else if (i.index() % 30 == 0)
+                    {
+                        *i = DataType_(0);
+                        *j = DataType_(0);
+                    }
+                    else if (i.index() % 33 == 0)
+                    {
+                        *i = DataType_(-0);
+                        *j = DataType_(-0);
+                    }
+                    else
+                    {
+                        *i = (i.index() + 1) / DataType_(1.234);
+                        *j = 1 / ((i.index() + 1) / DataType_(1.234));
+                    }
                 }
                 ElementInverse<Tag_>::value(dv1);
                 TEST_CHECK_EQUAL(dv1, dv2);
@@ -82,15 +98,31 @@ class DenseVectorElementInverseQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(22);
+            unsigned long size(4711);
             DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                    j(dv2.begin_elements()) ; i != i_end ; ++i)
+                    j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
-                *i = i.index() - 5;
-                if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                else *j = DataType_(0);
-                ++j;
+                if (i.index() % 20 == 0)
+                {
+                    *i = DataType_(-0.25) * (i.index() + 1);
+                    *j = 1 / ((DataType_(-0.25) * (i.index() + 1)));
+                }
+                else if (i.index() % 30 == 0)
+                {
+                    *i = DataType_(0);
+                    *j = DataType_(0);
+                }
+                else if (i.index() % 33 == 0)
+                {
+                    *i = DataType_(-0);
+                    *j = DataType_(-0);
+                }
+                else
+                {
+                    *i = (i.index() + 1) / DataType_(1.234);
+                    *j = 1 / ((i.index() + 1) / DataType_(1.234));
+                }
             }
             ElementInverse<Tag_>::value(dv1);
             TEST_CHECK_EQUAL(dv1, dv2);
@@ -108,6 +140,132 @@ DenseVectorElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementInverseQuickTest<tags::Cell, float> cell_dense_vector_element_inverse_quick_test_float("Cell float");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeElementInverseTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeElementInverseTest(const std::string & type) :
+            BaseTest("dense_vector_range_element_inverse_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                for (int o(0) ; o < 4 ; ++o)
+                {
+                    DenseVector<DataType_> dv1(size * 2, DataType_(0)), dv2(size, DataType_(0));
+                    DenseVectorRange<DataType_> dv1r(dv1, size, o + ((size -1) / 4));
+                    for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                            j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                    {
+                        if (i.index() % 20 == 0)
+                        {
+                            *i = DataType_(-0.25) * (i.index() + 1);
+                            *j = 1 / ((DataType_(-0.25) * (i.index() + 1)));
+                        }
+                        else if (i.index() % 30 == 0)
+                        {
+                            *i = DataType_(0);
+                            *j = DataType_(0);
+                        }
+                        else if (i.index() % 33 == 0)
+                        {
+                            *i = DataType_(-0);
+                            *j = DataType_(-0);
+                        }
+                        else
+                        {
+                            *i = (i.index() + 1) / DataType_(1.234);
+                            *j = 1 / ((i.index() + 1) / DataType_(1.234));
+                        }
+                    }
+                    ElementInverse<Tag_>::value(dv1r);
+                    TEST_CHECK_EQUAL(dv1r, dv2);
+                }
+            }
+        }
+};
+
+DenseVectorRangeElementInverseTest<tags::CPU, float> dense_vector_range_element_inverse_test_float("float");
+DenseVectorRangeElementInverseTest<tags::CPU, double> dense_vector_range_element_inverse_test_double("double");
+DenseVectorRangeElementInverseTest<tags::CPU::MultiCore, float> mc_dense_vector_range_element_inverse_test_float("MC float");
+DenseVectorRangeElementInverseTest<tags::CPU::MultiCore, double> mc_dense_vector_range_element_inverse_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeElementInverseTest<tags::CPU::SSE, float> sse_dense_vector_range_element_inverse_test_float("SSE float");
+DenseVectorRangeElementInverseTest<tags::CPU::SSE, double> sse_dense_vector_range_element_inverse_test_double("SSE double");
+DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_element_inverse_test_float("MC SSE float");
+DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_element_inverse_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+//DenseVectorRangeElementInverseTest<tags::Cell, float> cell_dense_vector_range_element_inverse_test_float("Cell float");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeElementInverseQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeElementInverseQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_element_inverse_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(4711);
+            for (int o(0) ; o < 4 ; ++o)
+            {
+                DenseVector<DataType_> dv1(size * 2, DataType_(0)), dv2(size, DataType_(0));
+                DenseVectorRange<DataType_> dv1r(dv1, size, o + ((size -1) / 4));
+                for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    if (i.index() % 20 == 0)
+                    {
+                        *i = DataType_(-0.25) * (i.index() + 1);
+                        *j = 1 / ((DataType_(-0.25) * (i.index() + 1)));
+                    }
+                    else if (i.index() % 30 == 0)
+                    {
+                        *i = DataType_(0);
+                        *j = DataType_(0);
+                    }
+                    else if (i.index() % 33 == 0)
+                    {
+                        *i = DataType_(-0);
+                        *j = DataType_(-0);
+                    }
+                    else
+                    {
+                        *i = (i.index() + 1) / DataType_(1.234);
+                        *j = 1 / ((i.index() + 1) / DataType_(1.234));
+                    }
+                }
+                ElementInverse<Tag_>::value(dv1r);
+                TEST_CHECK_EQUAL(dv1r, dv2);
+            }
+        }
+};
+
+DenseVectorRangeElementInverseQuickTest<tags::CPU, float> dense_vector_range_element_inverse_quick_test_float("float");
+DenseVectorRangeElementInverseQuickTest<tags::CPU, double> dense_vector_range_element_inverse_quick_test_double("double");
+DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_element_inverse_quick_test_float("MC float");
+DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_element_inverse_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeElementInverseQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_element_inverse_quick_test_float("SSE float");
+DenseVectorRangeElementInverseQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_element_inverse_quick_test_double("SSE double");
+DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_element_inverse_quick_test_float("MC SSE float");
+DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_element_inverse_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+//DenseVectorRangeElementInverseQuickTest<tags::Cell, float> cell_dense_vector_range_element_inverse_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -280,15 +438,31 @@ class DenseMatrixElementInverseTest :
         {
             for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size, size, DataType_(0)),
-                        dm2(size, size, DataType_(0));
+                DenseMatrix<DataType_> dm1(size, size + 3, DataType_(0)),
+                        dm2(size, size + 3, DataType_(0));
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
-                        j(dm2.begin_elements()) ; i != i_end ; ++i)
+                        j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
-                    *i = i.index() - 5;
-                    if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                    else *j = DataType_(0);
-                    ++j;
+                    if (i.index() % 20 == 0)
+                    {
+                        *i = DataType_(-0.25) * (i.index() + 1);
+                        *j = 1 / ((DataType_(-0.25) * (i.index() + 1)));
+                    }
+                    else if (i.index() % 30 == 0)
+                    {
+                        *i = DataType_(0);
+                        *j = DataType_(0);
+                    }
+                    else if (i.index() % 33 == 0)
+                    {
+                        *i = DataType_(-0);
+                        *j = DataType_(-0);
+                    }
+                    else
+                    {
+                        *i = (i.index() + 1) / DataType_(1.234);
+                        *j = 1 / ((i.index() + 1) / DataType_(1.234));
+                    }
                 }
 
                 TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(dm1), dm2);
@@ -322,15 +496,32 @@ class DenseMatrixElementInverseQuickTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> dm1(6, 3, DataType_(0)),
-                    dm2(6, 3, DataType_(0));
+            unsigned long size(333);
+            DenseMatrix<DataType_> dm1(size, size + 3, DataType_(0)),
+                    dm2(size, size + 3, DataType_(0));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
-                    j(dm2.begin_elements()) ; i != i_end ; ++i)
+                    j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
-                *i = i.index() - 5;
-                if (i.index() -5 != 0) *j = 1 / static_cast<DataType_>(i.index() - 5);
-                else *j = DataType_(0);
-                ++j;
+                if (i.index() % 20 == 0)
+                {
+                    *i = DataType_(-0.25) * (i.index() + 1);
+                    *j = 1 / ((DataType_(-0.25) * (i.index() + 1)));
+                }
+                else if (i.index() % 30 == 0)
+                {
+                    *i = DataType_(0);
+                    *j = DataType_(0);
+                }
+                else if (i.index() % 33 == 0)
+                {
+                    *i = DataType_(-0);
+                    *j = DataType_(-0);
+                }
+                else
+                {
+                    *i = (i.index() + 1) / DataType_(1.234);
+                    *j = 1 / ((i.index() + 1) / DataType_(1.234));
+                }
             }
 
             TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(dm1), dm2);
