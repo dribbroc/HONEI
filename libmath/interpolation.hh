@@ -72,39 +72,35 @@ namespace honei
                 ResPrec_ y_t_1(y / delta_y);
                 unsigned long x_t = (unsigned long)x_t_1;
                 unsigned long y_t = (unsigned long)y_t_1;
-                unsigned long i = long(x_t/delta_x);
-                unsigned long j = long(y_t/delta_y);
+                unsigned long j = (x_t);
+                unsigned long i = (y_t);
                 ResPrec_ l_1, l_2;
+
                 ///Perform bilinear interpolation:
                 if( i < height.rows() - 1 && j < height.columns() - 1)
                 {
-                    l_1 = (x - x_t) * (height[i][j+1] - height[i][j]) + height[i][j];
-                    l_2 = (x - x_t) * (height[i+1][j+1] - height[i+1][j]) + height[i+1][j];
+                    l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i][j+1] - height[i][j]) + height[i][j];
+                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i+1][j+1] - height[i+1][j]) + height[i+1][j];
                 }
                 else if( i >= height.rows() - 1 && j >= height.columns() - 1)
 
                 {
-                    l_1 = (x - x_t) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
-                    l_2 = (x - x_t) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
+                    l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
+                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
 
                 }
-
                 else if(i >= height.rows() - 1)
                 {
-                    l_1 = (x - x_t) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
-                    l_2 = (x - x_t) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
+                    l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
+                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
                 }
                 else if(j >= height.columns() - 1)
                 {
-                    l_1 = (x - x_t) * (height[i][height.columns() - 1] - height[i][height.columns() - 1]) + height[i][height.columns() - 1];
-                    l_2 = (x - x_t) * (height[i + 1][height.columns() - 1] - height[i + 1][height.columns() - 1]) + height[i+1][height.columns() - 1];
+                    l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i][height.columns() - 1] - height[i][height.columns() - 1]) + height[i][height.columns() - 1];
+                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i + 1][height.columns() - 1] - height[i + 1][height.columns() - 1]) + height[i+1][height.columns() - 1];
                 }
-                ResPrec_ result = (y - y_t) * (l_2 - l_1) + l_1;
-#ifdef SOLVER_DEBUG
-                cout<<"INTERP.: "<<result<<endl;
-#endif
+                ResPrec_ result = (y - ResPrec_(i * delta_y))/(ResPrec_(((i + 1) * delta_y) - (i * delta_y))) * (l_2 - l_1) + l_1;
                 return result;
-
             }
     };
 
@@ -129,13 +125,12 @@ namespace honei
                     ResPrec_ y_t_1(y / delta_y);
                     unsigned long x_t = (unsigned long)x_t_1;
                     unsigned long y_t = (unsigned long)y_t_1;
-
-                    unsigned long i(x_t/delta_x);
-                    unsigned long j(y_t/delta_y);
+                    unsigned long j = (x_t);
+                    unsigned long i = (y_t);
 
                     unsigned long nearest_x;
                     unsigned long nearest_y;
-                    if(x_t + delta_x/2 < x)
+                    if(x < ResPrec_(j * delta_x) + ResPrec_(delta_x/2))
                     {
                         nearest_x = j;
                     }
@@ -143,7 +138,8 @@ namespace honei
                     {
                         nearest_x = j + 1;
                     }
-                    if(y_t + delta_y/2 < y)
+
+                    if(y < ResPrec_(i * delta_y) + ResPrec_(delta_y/2))
                     {
                         nearest_y = i;
                     }
@@ -156,7 +152,7 @@ namespace honei
                     {
                         return height[nearest_y][nearest_x];
                     }
-                    else if(nearest_x >= height.columns() - 1 && nearest_y >= height.rows() - 1) 
+                    else if(nearest_x >= height.columns() - 1 && nearest_y >= height.rows() - 1)
                     {
                         return height[height.rows() - 1][height.columns() -1];
                     }
@@ -168,10 +164,8 @@ namespace honei
                     {
                         return height[height.rows() - 1][nearest_x];
                     }
-
                 }
         };
-
 }
 
 #endif

@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-23 Markus Geveler <apryde@gmx.de>
+
+	* libmath/interpolation.hh, libmath/interpolation_TEST.cc: Added some
+	tests for both interpolation methods, resolved one bug in
+	Interpolation.
+
 2007-12-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/element_inverse-sse.cc:
