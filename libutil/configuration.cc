@@ -65,16 +65,19 @@ Configuration::_read()
     std::string filename;
     if (! envvar)
     {
-        envvar = std::getenv("HOME");
-
-        if (! envvar)
+        if (0 != ::lstat("./honeirc", &stat_info))
         {
-            filename = "honeirc";
+            envvar = std::getenv("HOME");
+
+            if (envvar)
+            {
+                filename = std::string(envvar);
+                filename += "/.honeirc";
+            }
         }
         else
         {
-            filename = std::string(envvar);
-            filename += "/.honeirc";
+            filename = "./honeirc";
         }
     }
     else

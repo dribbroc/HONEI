@@ -1,0 +1,12 @@
+# This is the reference configuration file for HONEI
+# All used configuration keys are listed here, accompanied by
+# default values.
+
+# Cell
+
+# Number of SPEs
+cell::number-of-spes = 5
+
+
+# MultiCore
+
