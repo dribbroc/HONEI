@@ -5,15 +5,23 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-22 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/configuration.cc, libutil/configuration.hh,
+	libutil/configuration_TEST.cc, libutil/files.m4: Added Configuration
+	class.
+
 2007-12-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libla/banded_matrix.hh, libla/product_BENCHMARK.cc, libla/product-sse.cc:
-	Added NonZeroBandIterator and method non_zero_bands().
+	* libla/banded_matrix.hh, libla/product_BENCHMARK.cc,
+	libla/product-sse.cc: Added NonZeroBandIterator and method
+	non_zero_bands().
 
 2007-12-20 David Gies <david-gies@gmx.de>
 
-	* libswe/Makefile.am.m4, libgraph/Makefile.am.m4, libswe/solver_BENCHMARK.cc,
-	libgraph/position_BENCHMARK.cc: Applied Benchmark changes to folders libswe and libgraph.
+	* libswe/Makefile.am.m4, libgraph/Makefile.am.m4,
+	libswe/solver_BENCHMARK.cc, libgraph/position_BENCHMARK.cc: Applied
+	Benchmark changes to folders libswe and libgraph.
 
 2007-12-20 Sven Mallach <sven.mallach@honei.org>
 
@@ -26,14 +34,17 @@ see the NEWS file.
 2007-12-20 David Gies <david-gies@gmxde>
 
 	* libla/Makefile.am.m4:
-	Benchmarks got new make targets bench-sc, bench-sse, bench-mc, bench-cpu (sc+sse+mc)
-	and bench-cell.
-	* benchmark/benchmark.hh, benchmark/benchmark.cc, libla/reduction_BENCHMARK.cc, 
-	libla/element_product_BENCHMARK.cc, libla/sum_BENCHMARK.cc, libla/element_inverse_BENCHMARK.cc,
-	libla/dot_product_BENCHMARK.cc, libla/scale_BENCHMARK.cc, libla/scaled_sum_BENCHMARK.cc, 
-	libla/product_BENCHMARK.cc: Added changes for the new make-targets.
-	* libla/sum.hh, libla/element_inverse.hh, libla/element_product.hh, libla/scale.hh, libla/product.hh,
-	libla/difference.hh, libla/reduction.hh, libla/scale.hh: Added BenchmarkInfos.
+	Benchmarks got new make targets bench-sc, bench-sse, bench-mc,
+	bench-cpu (sc+sse+mc) and bench-cell.
+	* benchmark/benchmark.hh, benchmark/benchmark.cc,
+	libla/reduction_BENCHMARK.cc, libla/element_product_BENCHMARK.cc,
+	libla/sum_BENCHMARK.cc, libla/element_inverse_BENCHMARK.cc,
+	libla/dot_product_BENCHMARK.cc, libla/scale_BENCHMARK.cc,
+	libla/scaled_sum_BENCHMARK.cc, libla/product_BENCHMARK.cc: Added
+	changes for the new make-targets.
+	* libla/sum.hh, libla/element_inverse.hh, libla/element_product.hh,
+	libla/scale.hh, libla/product.hh, libla/difference.hh,
+	libla/reduction.hh, libla/scale.hh: Added BenchmarkInfos.
 
 2007-12-19 Markus Geveler <apryde@gmx.de>
 
@@ -42,7 +53,8 @@ see the NEWS file.
 
 2007-12-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libla/element_product_TEST.cc, libla/product-cell.cc, libla/product_TEST.cc, libla/scale_TEST.cc, libla/sum_TEST.cc:
+	* libla/element_product_TEST.cc, libla/product-cell.cc,
+	libla/product_TEST.cc, libla/scale_TEST.cc, libla/sum_TEST.cc:
 	Increased test size for cell and sse tests.
 
 2007-12-19 Markus Geveler <apryde@gmx.de>
