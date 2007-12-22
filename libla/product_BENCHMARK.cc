@@ -101,6 +101,7 @@ class BandedMatrixDenseVectorProductBenchRelax :
 
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, float> SSEBMDVPBenchfloatRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
+BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, double> SSEBMDVPBenchdoubleRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 10);
 #endif
 #ifdef HONEI_CELL
 BandedMatrixDenseVectorProductBenchRelax<tags::Cell, float> CELLBMDVPBenchfloatRelax("CELL Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);

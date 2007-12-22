@@ -222,90 +222,88 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
     unsigned long middle_index(a.rows() - 1);
     unsigned long quad_end, end, quad_start, start, op_offset;
 
-    // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
-    for (BandedMatrix<float>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
-            vi != vi_end ; ++vi)
+    for (BandedMatrix<float>::ConstVectorIterator band_it(a.begin_non_zero_bands()), it_end(a.end_non_zero_bands()) ;
+            band_it != it_end ; ++band_it)
     {
-        if (! vi.exists())
-            continue;
-        op_offset = vi.index() - middle_index;
-        end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
-        quad_end = end - (end % 8);
-        if (end < 32) quad_end = 0;
-
-        float * band_e = vi->elements();
-        float * b_e = b.elements();
-        float * r_e = result.elements();
-
-        for (unsigned long index = 0 ; index < quad_end ; index += 8)
+        // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+        if (band_it.index() >= middle_index)
         {
-            m2 = _mm_loadu_ps(b_e + index + op_offset);
-            m5 = _mm_loadu_ps(b_e + index + op_offset + 4);
-            m1 = _mm_load_ps(band_e + index);
-            m4 = _mm_load_ps(band_e + index + 4);
-            m3 = _mm_load_ps(r_e + index);
-            m6 = _mm_load_ps(r_e + index + 4);
+            op_offset = band_it.index() - middle_index;
+            end = a.size() - op_offset; //Calculation of the element-index to stop in iteration!
+            quad_end = end - (end % 8);
+            if (end < 32) quad_end = 0;
 
-            m1 = _mm_mul_ps(m1, m2);
-            m4 = _mm_mul_ps(m4, m5);
-            m1 = _mm_add_ps(m1, m3);
-            m4 = _mm_add_ps(m4, m6);
+            float * band_e = (*band_it).elements();
+            float * b_e = b.elements();
+            float * r_e = result.elements();
 
-            _mm_store_ps(r_e + index, m1);
-            _mm_store_ps(r_e + index + 4, m4);
+            for (unsigned long index = 0 ; index < quad_end ; index += 8)
+            {
+                m2 = _mm_loadu_ps(b_e + index + op_offset);
+                m5 = _mm_loadu_ps(b_e + index + op_offset + 4);
+                m1 = _mm_load_ps(band_e + index);
+                m4 = _mm_load_ps(band_e + index + 4);
+                m3 = _mm_load_ps(r_e + index);
+                m6 = _mm_load_ps(r_e + index + 4);
+
+                m1 = _mm_mul_ps(m1, m2);
+                m4 = _mm_mul_ps(m4, m5);
+                m1 = _mm_add_ps(m1, m3);
+                m4 = _mm_add_ps(m4, m6);
+
+                _mm_store_ps(r_e + index, m1);
+                _mm_store_ps(r_e + index + 4, m4);
+            }
+
+            for (unsigned long index = quad_end ; index < end ; index++) 
+            {
+                r_e[index] += band_e[index] * b_e[index + op_offset];
+            }
         }
 
-        for (unsigned long index = quad_end ; index < end ; index++) 
+        // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
+        else
         {
-            r_e[index] += band_e[index] * b_e[index + op_offset];
-        }
-    }
+            op_offset = middle_index - band_it.index();
+            start = op_offset; //Calculation of the element-index to start in iteration!
+            quad_start = start + (8 - (start % 8));
+            end = a.size();
+            quad_end = end - (end % 8);
+            if ( start + 32 > end)
+            {
+                quad_end = start;
+                quad_start = start;
+            }
+            float * band_e = (*band_it).elements();
+            float * b_e = b.elements();
+            float * r_e = result.elements();
 
-    // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
-    for (BandedMatrix<float>::ConstVectorIterator vi(a.begin_bands()), vi_end(a.band_at(middle_index)) ;
-            vi != vi_end ; ++vi)
-    {
-        if (! vi.exists())
-            continue;
-        op_offset = middle_index - vi.index();
-        start = op_offset; //Calculation of the element-index to start in iteration!
-        quad_start = start + (8 - (start % 8));
-        end = a.size();
-        quad_end = end - (end % 8);
-        if ( start + 32 > end)
-        {
-            quad_end = start;
-            quad_start = start;
-        }
-        float * band_e = vi->elements();
-        float * b_e = b.elements();
-        float * r_e = result.elements();
+            for (unsigned long index = start ; index < quad_start ; index++)
+            {
+                r_e[index] += band_e[index] * b_e[index - op_offset];
+            }
+            for (unsigned long index = quad_start ; index < quad_end ; index += 8)
+            {
+                m2 = _mm_loadu_ps(b_e + index - op_offset);
+                m5 = _mm_loadu_ps(b_e + index - op_offset + 4);
+                m1 = _mm_load_ps(band_e + index);
+                m4 = _mm_load_ps(band_e + index + 4);
+                m3 = _mm_load_ps(r_e + index);
+                m6 = _mm_load_ps(r_e + index + 4);
 
-        for (unsigned long index = start ; index < quad_start ; index++)
-        {
-            r_e[index] += band_e[index] * b_e[index - op_offset];
-        }
-        for (unsigned long index = quad_start ; index < quad_end ; index += 8)
-        {
-            m2 = _mm_loadu_ps(b_e + index - op_offset);
-            m5 = _mm_loadu_ps(b_e + index - op_offset + 4);
-            m1 = _mm_load_ps(band_e + index);
-            m4 = _mm_load_ps(band_e + index + 4);
-            m3 = _mm_load_ps(r_e + index);
-            m6 = _mm_load_ps(r_e + index + 4);
+                m1 = _mm_mul_ps(m1, m2);
+                m4 = _mm_mul_ps(m4, m5);
+                m1 = _mm_add_ps(m1, m3);
+                m4 = _mm_add_ps(m4, m6);
 
-            m1 = _mm_mul_ps(m1, m2);
-            m4 = _mm_mul_ps(m4, m5);
-            m1 = _mm_add_ps(m1, m3);
-            m4 = _mm_add_ps(m4, m6);
+                _mm_store_ps(r_e + index, m1);
+                _mm_store_ps(r_e + index + 4, m4);
+            }
 
-            _mm_store_ps(r_e + index, m1);
-            _mm_store_ps(r_e + index + 4, m4);
-        }
-
-        for (unsigned long index = quad_end ; index < end ; index++)
-        {
-            r_e[index] += band_e[index] * b_e[index - op_offset];
+            for (unsigned long index = quad_end ; index < end ; index++)
+            {
+                r_e[index] += band_e[index] * b_e[index - op_offset];
+            }
         }
     }
     return result;
@@ -327,90 +325,87 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     unsigned long middle_index(a.rows() - 1);
     unsigned long quad_end, end, quad_start, start, op_offset;
 
-    // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
-    for (BandedMatrix<double>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
-            vi != vi_end ; ++vi)
+    for (BandedMatrix<double>::ConstVectorIterator band_it(a.begin_non_zero_bands()), it_end(a.end_non_zero_bands()) ;
+            band_it != it_end ; ++band_it)
     {
-        if (! vi.exists())
-            continue;
-        op_offset = vi.index() - middle_index;
-        end = vi->size() - op_offset; //Calculation of the element-index to stop in iteration!
-        quad_end = end - (end % 4);
-        if (end < 12) quad_end = 0;
-
-        double * band_e = vi->elements();
-        double * b_e = b.elements();
-        double * r_e = result.elements();
-
-        for (unsigned long index = 0 ; index < quad_end ; index += 4)
+        // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+        if (band_it.index() >= middle_index)
         {
-            m2 = _mm_loadu_pd(b_e + index + op_offset);
-            m5 = _mm_loadu_pd(b_e + index + op_offset + 2);
-            m1 = _mm_load_pd(band_e + index);
-            m4 = _mm_load_pd(band_e + index + 2);
-            m3 = _mm_load_pd(r_e + index);
-            m6 = _mm_load_pd(r_e + index + 2);
+            op_offset = band_it.index() - middle_index;
+            end = a.size() - op_offset; //Calculation of the element-index to stop in iteration!
+            quad_end = end - (end % 4);
+            if (end < 12) quad_end = 0;
 
-            m1 = _mm_mul_pd(m1, m2);
-            m4 = _mm_mul_pd(m4, m5);
-            m1 = _mm_add_pd(m1, m3);
-            m4 = _mm_add_pd(m4, m6);
+            double * band_e = (*band_it).elements();
+            double * b_e = b.elements();
+            double * r_e = result.elements();
 
-            _mm_store_pd(r_e + index, m1);
-            _mm_store_pd(r_e + index + 2, m4);
+            for (unsigned long index = 0 ; index < quad_end ; index += 4)
+            {
+                m2 = _mm_loadu_pd(b_e + index + op_offset);
+                m5 = _mm_loadu_pd(b_e + index + op_offset + 2);
+                m1 = _mm_load_pd(band_e + index);
+                m4 = _mm_load_pd(band_e + index + 2);
+                m3 = _mm_load_pd(r_e + index);
+                m6 = _mm_load_pd(r_e + index + 2);
+
+                m1 = _mm_mul_pd(m1, m2);
+                m4 = _mm_mul_pd(m4, m5);
+                m1 = _mm_add_pd(m1, m3);
+                m4 = _mm_add_pd(m4, m6);
+
+                _mm_store_pd(r_e + index, m1);
+                _mm_store_pd(r_e + index + 2, m4);
+            }
+
+            for (unsigned long index = quad_end ; index < end ; index++) 
+            {
+                r_e[index] += band_e[index] * b_e[index + op_offset];
+            }
         }
-
-        for (unsigned long index = quad_end ; index < end ; index++) 
+        else
         {
-            r_e[index] += band_e[index] * b_e[index + op_offset];
-        }
-    }
+            // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
+            op_offset = middle_index - band_it.index();
+            start = op_offset; //Calculation of the element-index to start in iteration!
+            quad_start = start + (4 - (start % 4));
+            end = a.size();
+            quad_end = end - (end % 4);
+            if ( start + 12 > end)
+            {
+                quad_end = start;
+                quad_start = start;
+            }
+            double * band_e = (*band_it).elements();
+            double * b_e = b.elements();
+            double * r_e = result.elements();
 
-    // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
-    for (BandedMatrix<double>::ConstVectorIterator vi(a.begin_bands()), vi_end(a.band_at(middle_index)) ;
-            vi != vi_end ; ++vi)
-    {
-        if (! vi.exists())
-            continue;
-        op_offset = middle_index - vi.index();
-        start = op_offset; //Calculation of the element-index to start in iteration!
-        quad_start = start + (4 - (start % 4));
-        end = a.size();
-        quad_end = end - (end % 4);
-        if ( start + 12 > end)
-        {
-            quad_end = start;
-            quad_start = start;
-        }
-        double * band_e = vi->elements();
-        double * b_e = b.elements();
-        double * r_e = result.elements();
+            for (unsigned long index = start ; index < quad_start ; index++)
+            {
+                r_e[index] += band_e[index] * b_e[index - op_offset];
+            }
+            for (unsigned long index = quad_start ; index < quad_end ; index += 4)
+            {
+                m2 = _mm_loadu_pd(b_e + index - op_offset);
+                m5 = _mm_loadu_pd(b_e + index - op_offset + 2);
+                m1 = _mm_load_pd(band_e + index);
+                m4 = _mm_load_pd(band_e + index + 2);
+                m3 = _mm_load_pd(r_e + index);
+                m6 = _mm_load_pd(r_e + index + 2);
 
-        for (unsigned long index = start ; index < quad_start ; index++)
-        {
-            r_e[index] += band_e[index] * b_e[index - op_offset];
-        }
-        for (unsigned long index = quad_start ; index < quad_end ; index += 4)
-        {
-            m2 = _mm_loadu_pd(b_e + index - op_offset);
-            m5 = _mm_loadu_pd(b_e + index - op_offset + 2);
-            m1 = _mm_load_pd(band_e + index);
-            m4 = _mm_load_pd(band_e + index + 2);
-            m3 = _mm_load_pd(r_e + index);
-            m6 = _mm_load_pd(r_e + index + 2);
+                m1 = _mm_mul_pd(m1, m2);
+                m4 = _mm_mul_pd(m4, m5);
+                m1 = _mm_add_pd(m1, m3);
+                m4 = _mm_add_pd(m4, m6);
 
-            m1 = _mm_mul_pd(m1, m2);
-            m4 = _mm_mul_pd(m4, m5);
-            m1 = _mm_add_pd(m1, m3);
-            m4 = _mm_add_pd(m4, m6);
+                _mm_store_pd(r_e + index, m1);
+                _mm_store_pd(r_e + index + 2, m4);
+            }
 
-            _mm_store_pd(r_e + index, m1);
-            _mm_store_pd(r_e + index + 2, m4);
-        }
-
-        for (unsigned long index = quad_end ; index < end ; index++)
-        {
-            r_e[index] += band_e[index] * b_e[index - op_offset];
+            for (unsigned long index = quad_end ; index < end ; index++)
+            {
+                r_e[index] += band_e[index] * b_e[index - op_offset];
+            }
         }
     }
     return result;
@@ -465,9 +460,9 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
 
     DenseMatrix<float> result(a.rows(), b.columns(), float(0));
 
-    for (unsigned long i(0) ; i < a.rows() ; ++i)
+    for (unsigned long j(0) ; j < a.columns() ; ++j)
     {
-        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
             honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i,j), b[j].size());
         }
@@ -485,9 +480,9 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
 
     DenseMatrix<double> result(a.rows(), b.columns(), double(0));
 
-    for (unsigned long i(0) ; i < a.rows() ; ++i)
+    for (unsigned long j(0) ; j < a.columns() ; ++j)
     {
-        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
             honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i,j), b[j].size());
         }

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/banded_matrix.hh, libla/product_BENCHMARK.cc, libla/product-sse.cc:
+	Added NonZeroBandIterator and method non_zero_bands().
+
 2007-12-20 David Gies <david-gies@gmx.de>
 
 	* libswe/Makefile.am.m4, libgraph/Makefile.am.m4, libswe/solver_BENCHMARK.cc,

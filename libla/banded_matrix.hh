@@ -34,6 +34,7 @@
 
 #include <iterator>
 #include <tr1/memory>
+#include <list>
 
 namespace honei
 {
@@ -59,17 +60,22 @@ namespace honei
             /// Our zero vector.
             DenseVector<DataType_> _zero_vector;
 
+            /// SharedPointer to a list of our non-zero bands
+            std::tr1::shared_ptr<std::list<unsigned long> > _nze_list;
+
             /// Our implementation of ElementIteratorBase.
             template <typename ElementType_> class BandedElementIterator;
 
             /// Our implementation of VectorIteratorBase.
             template <typename ElementType_> class BandIterator;
+            template <typename ElementType_> class NonZeroBandIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
             friend class BandedElementIterator<DataType_>;
             friend class BandIterator<DataType_>;
+            friend class NonZeroBandIterator<DataType_>;
 
             /// Type of the const iterator over our elements.
             typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
@@ -94,7 +100,8 @@ namespace honei
             BandedMatrix(unsigned long size) :
                 _bands(2 * size - 1),
                 _size(size),
-                _zero_vector(size, DataType_(0))
+                _zero_vector(size, DataType_(0)),
+                _nze_list(new std::list<unsigned long>())
             {
                 CONTEXT("When creating BandedMatrix:");
                 ASSERT(size > 0, "size is zero!");
@@ -109,7 +116,8 @@ namespace honei
             BandedMatrix(unsigned long size, const DenseVector<DataType_> & diagonal) :
                 _bands(2 * size - 1),
                 _size(size),
-                _zero_vector(size, DataType_(0))
+                _zero_vector(size, DataType_(0)),
+                _nze_list(new std::list<unsigned long>())
             {
                 CONTEXT("When creating BandedMatrix with initial band:");
                 ASSERT(size > 0, "size is zero!");
@@ -118,6 +126,7 @@ namespace honei
                     throw VectorSizeDoesNotMatch(diagonal.size(), size);
 
                 _bands[size - 1].reset(new DenseVector<DataType_>(diagonal));
+                _nze_list->push_back(size - 1);
             }
             /// \}
 
@@ -181,6 +190,30 @@ namespace honei
                 return ConstVectorIterator(new BandIterator<DataType_>(*this, 2 * _size - 1));
             }
 
+            /// Returns iterator pointing to the first non zero band of the matrix.
+            VectorIterator begin_non_zero_bands()
+            {
+                return VectorIterator(new NonZeroBandIterator<DataType_>(*this, 0));
+            }
+
+            /// Returns iterator pointing behind the last band of the matrix.
+            VectorIterator end_non_zero_bands()
+            {
+                return VectorIterator(new NonZeroBandIterator<DataType_>(*this, 2 * _size - 1));
+            }
+
+            /// Returns iterator pointing to the first non zero band of the matrix.
+            ConstVectorIterator begin_non_zero_bands() const
+            {
+                return ConstVectorIterator(new NonZeroBandIterator<DataType_>(*this, 0));
+            }
+
+            /// Returns iterator pointing behind the last band of the matrix.
+            ConstVectorIterator end_non_zero_bands() const
+            {
+                return ConstVectorIterator(new NonZeroBandIterator<DataType_>(*this, 2 * _size - 1));
+            }
+
             /// Returns the number of our columns.
             virtual unsigned long columns() const
             {
@@ -199,6 +232,12 @@ namespace honei
                 return _size;
             }
 
+            /// Returns the number of our non zero bands.
+            unsigned long non_zero_bands() const
+            {
+                return _nze_list->size();
+            }
+
             /// Inserts a new Band in the matrix.
             void insert_band(signed long index, const DenseVector<DataType_> & vector)
             {
@@ -207,6 +246,10 @@ namespace honei
                     throw VectorSizeDoesNotMatch(_size, vector.size());
                 }
 
+                if (! _bands[index + _size - 1])
+                {
+                    _nze_list->push_back(index + _size - 1);
+                }
                 std::tr1::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(vector));
                 _bands[index + _size - 1] = temp;
 
@@ -220,9 +263,29 @@ namespace honei
                 ASSERT(std::abs(index) < _size, "index out of bounds!");
 
                 if (! _bands[index + _size - 1])
+                {
                     _bands[index + _size - 1].reset(new DenseVector<DataType_>(_size, DataType_(0)));
+                    _nze_list->push_back(index + _size - 1);
+                }
 
                 return *_bands[index + _size - 1];
+            }
+
+            /// Returns a band-vector by unsigned index.
+            DenseVector<DataType_> & band_unsigned(unsigned long index) const
+            {
+                CONTEXT("When retrieving unsigned band '" + stringify(index) + "' of matrix of size '"
+                        + stringify(_size) + "':");
+                ASSERT(index < 2 * _size - 1, "index out of bounds!");
+                ASSERT(index > 0, "index out of bounds!");
+
+                if (! _bands[index])
+                {
+                    _bands[index].reset(new DenseVector<DataType_>(_size, DataType_(0)));
+                    _nze_list->push_back(index);
+                }
+
+                return *_bands[index];
             }
 
             /// Returns a copy of the matrix.
@@ -238,9 +301,9 @@ namespace honei
                         std::tr1::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(
                                     _bands[i]->copy()));
                         result->_bands[i] = temp;
+                        result->_nze_list->push_back(i);
                     }
                 }
-
                 return result;
             }
     };
@@ -332,6 +395,7 @@ namespace honei
                 if (! _matrix._bands[_band_index() + _matrix._size - 1])
                 {
                     _matrix._bands[_band_index() + _matrix._size - 1].reset(new DenseVector<DataType_>(_matrix._size, DataType_(0)));
+                    _matrix._nze_list->push_back(_band_index() + _matrix._size - 1);
                 }
 
                 return (*_matrix._bands[_band_index() + _matrix._size - 1])[row()];
@@ -467,6 +531,7 @@ namespace honei
                 if (!_matrix._bands[_index])
                 {
                     _matrix._bands[_index].reset(new DenseVector<DataType_>(_matrix._size, DataType_(0)));
+                    _matrix._nze_list->push_back(_index);
                 }
 
                 return (*_matrix._bands[_index]);
@@ -511,6 +576,142 @@ namespace honei
             /// \}
     };
 
+    template <> template <typename DataType_> class BandedMatrix<DataType_>::NonZeroBandIterator<DataType_> :
+            public VectorIteratorBase<DataType_, DenseVector<DataType_> >
+    {
+            private:
+            /// Our parent matrix.
+            const BandedMatrix<DataType_> & _matrix;
+
+            /// Our index.
+            unsigned long _index;
+
+            /// Our position in the non zero element list
+            std::list<unsigned long>::iterator _position;
+
+        public:
+            /// \name Constructors
+            /// \{
+
+            /**
+             * Constructor.
+             *
+             * \param matrix The parent matrix that is referenced by the iterator.
+             * \param index The index into the matrix.
+             **/
+
+            NonZeroBandIterator(const BandedMatrix<DataType_> & matrix, unsigned long index) :
+                _matrix(matrix)
+            {
+                CONTEXT("When creating NonZeroBandIterator...");
+                ASSERT(index >= 0 && index <= 2 * matrix._size -1, "Index out of Bounds");
+                if (index == 2 * matrix._size - 1)
+                {
+                    _index = 2 * matrix._size - 1;
+                    _position = matrix._nze_list->end();
+                }
+                else
+                {
+                    std::list<unsigned long>::iterator temp = matrix._nze_list->begin();
+                    for (unsigned long i(0) ; i < index ; ++i)
+                    {
+                        temp++;
+                    }
+                    _position = temp;
+                    _index = *temp;
+                }
+                if (matrix._nze_list->size() == 0)
+                {
+                    _index = 2 * matrix._size - 1;
+                    _position = matrix._nze_list->end();
+                }
+            }
+
+            /// Copy-constructor.
+            NonZeroBandIterator(NonZeroBandIterator<DataType_> const & other) :
+                _matrix(other._matrix),
+                _index(other._index),
+                _position(other._position)
+
+            {
+            }
+
+            /// \}
+
+            /// \name Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            virtual VectorIteratorBase<DataType_, DenseVector<DataType_> > & operator++ ()
+            {
+                CONTEXT("When incrementing NonZeroBandIterator...");
+                ASSERT(_position != _matrix._nze_list->end(), "Incrementing end iterator.");
+                _position++;
+                if (_position == _matrix._nze_list->end())
+                {
+                    _index = 2 * _matrix._size - 1;
+                }
+                else
+                {
+                    _index = *_position;
+                }
+
+                return *this;
+            }
+
+            /// Equality operator.
+            virtual bool operator== (const VectorIteratorBase<DataType_, DenseVector<DataType_> > & other) const
+            {
+                return ((&_matrix == other.parent()) && (_index == other.index()));
+            }
+
+            /// Inequality operator.
+            virtual bool operator!= (const VectorIteratorBase<DataType_, DenseVector<DataType_> > & other) const
+            {
+                return ((&_matrix != other.parent()) || (_index != other.index()));
+            }
+
+            /// Dereference operator that returns an assignable reference.
+            virtual DenseVector<DataType_> & operator* ()
+            {
+                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
+                ASSERT(_matrix._bands[*_position] && *_position < 2 * _matrix._size -1 && *_position >= 0, "Index " + stringify(*_position) + " is out of bounds");
+                return (*_matrix._bands[*_position]);
+            }
+
+            /// Dereference operator that returns an unassignable reference.
+            virtual const DenseVector<DataType_> & operator* () const
+            {
+                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
+                ASSERT(_matrix._bands[*_position] && *_position < 2 * _matrix._size -1 && *_position >= 0, "Index " + stringify(*_position) + " is out of bounds");
+                return (*_matrix._bands[*_position]);
+            }
+
+            /// \}
+
+            /// \name IteratorTraits interface
+            /// \{
+
+            /// Returns true if the referenced vector already exists.
+            virtual bool exists() const
+            {
+                return true;
+            }
+
+            /// Returns our index.
+            virtual const unsigned long index() const
+            {
+                return _index;
+            }
+
+            /// Returns a pointer to our parent matrix.
+            virtual const Matrix<DataType_> * parent() const
+            {
+                return &_matrix;
+            }
+
+            /// \}
+    };
 
 }
 
