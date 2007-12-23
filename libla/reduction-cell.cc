@@ -468,7 +468,7 @@ namespace honei
         if (use_spe)
             instruction.wait();
 
-        return result += ppu_result;
+        return (result + ppu_result);
     }
 
     DenseVector<float>

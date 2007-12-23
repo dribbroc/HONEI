@@ -221,6 +221,10 @@ class SparseMatrixReductionToSumTest :
                         *i = DT_(-5);
                         dv1[i.row()] += DT_(-5);
                     }
+
+                    if ((i.index() % 10 == 0) && (i.index() % 4 == 0))
+                        dv1[i.row()] -= DT_(2);
+
                 }
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
@@ -272,6 +276,10 @@ class SparseMatrixReductionQuickTest :
                     *i = DT_(-5);
                     dv1[i.row()] += DT_(-5);
                 }
+
+                if ((i.index() % 10 == 0) && (i.index() % 4 == 0))
+                        dv1[i.row()] -= DT_(2);
+
             }
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
