@@ -25,6 +25,7 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/stringify.hh>
+#include <iostream>
 
 namespace honei
 {
@@ -40,12 +41,20 @@ namespace honei
         Operand oa = { &result };
         Operand ob = { a.elements() };
         Operand oc, od;
-        oc.u = a.size() / 4096;
-        od.u = a.size() % 4096;
+
+        unsigned offset((ob.u & 0xF) / sizeof(float));
+
+        if (offset > 0)
+            ob.u += 16 -(4 * offset); // Align the address for SPU.
+
+        if (a.size() < 5)
+            offset = 0;
+
+        oc.u = (a.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
+        od.u = (a.size() - ((4 - offset) % 4)) % (1024 * 4);
         od.u &= ~0xF;
 
-        unsigned rest_index(oc.u * 4096 + od.u);
-
+        unsigned rest_index(oc.u * 4096 + od.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
         od.u *= 4;
 
         bool use_spe(true);
@@ -65,7 +74,6 @@ namespace honei
         {
             ++oc.u;
         }
-
         SPEInstruction instruction(oc_dense_float_reduction_sum, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
@@ -74,6 +82,12 @@ namespace honei
         }
 
         float ppu_result(0.0f);
+
+        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
+        {
+            ppu_result += *i;
+        }
+
         for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
             ppu_result += *i;
@@ -186,6 +200,8 @@ namespace honei
         if (use_spe)
         {
             SPEManager::instance()->dispatch(instruction);
+            unsigned offset((ob.u & 0xF) / sizeof(float));
+            rest_index -=offset;
         }
 
         float ppu_result(a[0]);
@@ -314,6 +330,8 @@ namespace honei
         if (use_spe)
         {
             SPEManager::instance()->dispatch(instruction);
+            unsigned offset((ob.u & 0xF) / sizeof(float));
+            rest_index -=offset;
         }
 
         float ppu_result(a[0]);

@@ -303,9 +303,9 @@ class ScalarDenseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(3) ; size < (1 << 8) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseVector<DataType_> source(size * 2, DataType_(3));
+                DenseVector<DataType_> source(size * 4, DataType_(3));
                 DenseVectorRange<DataType_> dv(source, size, 3);
                 Scale<Tag_>::value(DataType_(2), dv);
                 DataType_ v1(Norm<vnt_l_one>::value(dv));
@@ -348,7 +348,7 @@ class ScalarDenseVectorProductQuickTest :
 #else
             unsigned long size(19);
 #endif
-            DenseVector<DataType_> source(size * 2, DataType_(3));
+            DenseVector<DataType_> source(size * 4, DataType_(3));
             DenseVectorRange<DataType_> dv1(source, size, 3);
 
             Scale<Tag_>::value(DataType_(2), dv1);

@@ -40,9 +40,6 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
-    unsigned offset((ea_a & 0xF) / sizeof(float));
-    ea_a &= ~0xF;
-
     debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
@@ -61,15 +58,11 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
         mfc_read_tag_status_all();
 
         unsigned i(0);
-        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+        for ( ; i < size / sizeof(vector float) ; ++i)
         {
-            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
         }
-        for (unsigned j(0) ; j < (4 - offset) ; j++)
-        {
-            acc.array[j] += a[current - 1].typed[i * 4 + j];
-        }
+
         --counter;
 
         unsigned temp(next);
@@ -83,14 +76,9 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
     mfc_read_tag_status_all();
 
     unsigned i(0);
-    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+    for ( ; i < size / sizeof(vector float) ; ++i)
     {
-        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
         acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
-    }
-    for (unsigned j(0) ; j < (4 - offset) ; j++)
-    {
-        acc.array[j] += a[current - 1].typed[i * 4 + j];
     }
 
     release_block(*block_a[0]);

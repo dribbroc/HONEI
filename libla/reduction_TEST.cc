@@ -281,6 +281,102 @@ SparseMatrixReductionQuickTest<tags::Cell, float> sparse_matrix_reduction_to_sum
 #endif
 
 template <typename Tag_, typename DT_>
+class DenseVectorRangeReductionToSumTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeReductionToSumTest(const std::string & type) :
+            BaseTest("dense_vector_range_reduction_to_sum_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 16) ; size <<= 1)
+            {
+                DenseVector<DT_> dv(size*4, DT_(100));
+                for(int i(0) ; i < 4 ; i++)
+                {
+                    DenseVectorRange<DT_> dvr(dv, size, i);
+                    for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                            i != i_end ; ++i)
+                    {
+                        *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
+                    }
+
+                    DT_ v1(Reduction<rt_sum, Tag_>::value(dvr));
+                    DT_ s1(size * (size + 1) / 2 / 1.23456789);
+                    //DT_ eps(exp(-19.72 + log(size) * 2.92257));
+                    DT_ eps(exp(-20 + log(size) * 4));
+                    TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
+                }
+            }
+        }
+};
+
+DenseVectorRangeReductionToSumTest<tags::CPU, float> dense_vector_range_reduction_to_sum_test_float("float");
+DenseVectorRangeReductionToSumTest<tags::CPU, double> dense_vector_range_reduction_to_sum_test_double("double");
+DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_vector_range_reduction_to_sum_test_float("MC float");
+DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_sum_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeReductionToSumTest<tags::CPU::SSE, float> sse_dense_vector_range_reduction_to_sum_test_float("SSE float");
+DenseVectorRangeReductionToSumTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_sum_test_double("SSE double");
+DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_reduction_to_sum_test_float("MC SSE float");
+DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_sum_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeReductionToSumTest<tags::Cell, float> dense_vector_range_reduction_to_sum_test_float_cell("Cell float");
+#endif
+
+template <typename Tag_, typename DT_>
+class DenseVectorRangeReductionToSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeReductionToSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_reduction_to_sum_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(19);
+            DenseVector<DT_> dv(size*4, DT_(100));
+            for (int i(0) ; i < 4 ; i++)
+            {
+                DenseVectorRange<DT_> dvr(dv, size, i);
+                for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
+                }
+
+                DT_ v1(Reduction<rt_sum, Tag_>::value(dvr));
+                DT_ s1(size * (size + 1) / 2 / 1.23456789);
+                //DT_ eps(exp(-19.72 + log(size) * 2.92257));
+                DT_ eps(exp(-20 + log(size) * 4));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
+            }
+        }
+};
+DenseVectorRangeReductionToSumQuickTest<tags::CPU, float>  dense_vector_range_reduction_to_sum_quick_test_float("float");
+DenseVectorRangeReductionToSumQuickTest<tags::CPU, double> dense_vector_range_reduction_to_sum_quick_test_double("double");
+DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_reduction_to_sum_quick_test_float("MC float");
+DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_sum_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeReductionToSumQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_reduction_to_sum_quick_test_float("SSE float");
+DenseVectorRangeReductionToSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_sum_quick_test_double("SSE double");
+DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_range_reduction_to_sum_quick_test_float("MC SSE float");
+DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeReductionToSumQuickTest<tags::Cell, float> dense_vector_range_reduction_to_sum_quick_test_float_cell("Cell float");
+#endif
+
+
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToSumTest :
     public BaseTest
 {
@@ -704,6 +800,115 @@ BandedMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_banded_matri
 BandedMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_min_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
+class DenseVectorRangeReductionToMinTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeReductionToMinTest(const std::string & type) :
+            BaseTest("dense_vector_range_reduction_to_min_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 16) ; size <<= 1)
+            {
+                DenseVector<DT_> dv(size*4, DT_(100));
+                for(int i(0) ; i < 4 ; i++)
+                {
+                    DenseVectorRange<DT_> dvr(dv, size, i);
+                    for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                            i != i_end ; ++i)
+                    {
+
+                        if (i.index() % 2 == 0)
+                            *i = i.index();
+                        else
+                            *i = i.index() * DT_(-1);
+                    }
+
+                    DT_ should;
+                    if ((size % 2 == 0) || (size == 1))
+                        should = dvr[size-1];
+                    else
+                        should = dvr[size-2];
+
+                    DT_ v1(Reduction<rt_min, Tag_>::value(dvr));
+                    TEST_CHECK_EQUAL(v1, should);
+                }
+            }
+        }
+};
+
+DenseVectorRangeReductionToMinTest<tags::CPU, float> dense_vector_range_reduction_to_min_test_float("float");
+DenseVectorRangeReductionToMinTest<tags::CPU, double> dense_vector_range_reduction_to_min_test_double("double");
+DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore, float> mc_dense_vector_range_reduction_to_min_test_float("MC float");
+DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_min_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeReductionToMinTest<tags::CPU::SSE, float> sse_dense_vector_range_reduction_to_min_test_float("SSE float");
+DenseVectorRangeReductionToMinTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_min_test_double("SSE double");
+DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_reduction_to_min_test_float("MC SSE float");
+DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_min_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeReductionToMinTest<tags::Cell, float> dense_vector_range_reduction_to_min_test_float_cell("Cell float");
+#endif
+
+template <typename Tag_, typename DT_>
+class DenseVectorRangeReductionToMinQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeReductionToMinQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_reduction_to_min_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DenseVector<DT_> dv(size*4, DT_(100));
+            for(int i(0) ; i < 4 ; i++)
+            {
+                DenseVectorRange<DT_> dvr(dv, size, i);
+                for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+
+                    if (i.index() % 2 == 0)
+                        *i = i.index();
+                    else
+                        *i = i.index() * DT_(-1);
+                }
+
+                DT_ should;
+                if ((size % 2 == 0) || (size == 1))
+                    should = dvr[size-1];
+                else
+                    should = dvr[size-2];
+
+                DT_ v1(Reduction<rt_min, Tag_>::value(dvr));
+                TEST_CHECK_EQUAL(v1, should);
+            }
+        }
+};
+DenseVectorRangeReductionToMinQuickTest<tags::CPU, float>  dense_vector_range_reduction_to_min_quick_test_float("float");
+DenseVectorRangeReductionToMinQuickTest<tags::CPU, double> dense_vector_range_reduction_to_min_quick_test_double("double");
+DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_reduction_to_min_quick_test_float("MC float");
+DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_min_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeReductionToMinQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_reduction_to_min_quick_test_float("SSE float");
+DenseVectorRangeReductionToMinQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_min_quick_test_double("SSE double");
+DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_range_reduction_to_min_quick_test_float("MC SSE float");
+DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_min_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeReductionToMinQuickTest<tags::Cell, float> dense_vector_range_reduction_to_min_quick_test_float_cell("Cell float");
+#endif
+
+template <typename Tag_, typename DT_>
 class DenseVectorReductionToMinTest :
     public BaseTest
 {
@@ -1085,6 +1290,116 @@ BandedMatrixReductionToMaxQuickTest<tags::CPU, float> banded_matrix_reduction_to
 BandedMatrixReductionToMaxQuickTest<tags::CPU, double> banded_matrix_reduction_to_max_quick_test_double("double");
 BandedMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_max_quick_test_float("MC float");
 BandedMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_max_quick_test_double("MC double");
+
+template <typename Tag_, typename DT_>
+class DenseVectorRangeReductionToMaxTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeReductionToMaxTest(const std::string & type) :
+            BaseTest("dense_vector_range_reduction_to_max_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 16) ; size <<= 1)
+            {
+                DenseVector<DT_> dv(size*4, DT_(100));
+                for(int j(0) ; j < 4 ; j++)
+                {
+                    DenseVectorRange<DT_> dvr(dv, size, j);
+                    for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                            i != i_end ; ++i)
+                    {
+
+                        if (i.index() % 2 == 0)
+                            *i = i.index();
+                        else
+                            *i = i.index() * DT_(-1);
+                    }
+
+                    DT_ should;
+                    if (size % 2 == 0)
+                        should = dvr[size-2];
+                    else
+                        should = dvr[size-1];
+
+                    DT_ v1(Reduction<rt_max, Tag_>::value(dvr));
+                    TEST_CHECK_EQUAL(v1, should);
+                }
+            }
+        }
+};
+
+DenseVectorRangeReductionToMaxTest<tags::CPU, float> dense_vector_range_reduction_to_max_test_float("float");
+DenseVectorRangeReductionToMaxTest<tags::CPU, double> dense_vector_range_reduction_to_max_test_double("double");
+DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore, float> mc_dense_vector_range_reduction_to_max_test_float("MC float");
+DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_max_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeReductionToMaxTest<tags::CPU::SSE, float> sse_dense_vector_range_reduction_to_max_test_float("SSE float");
+DenseVectorRangeReductionToMaxTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_max_test_double("SSE double");
+DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_reduction_to_max_test_float("MC SSE float");
+DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_max_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeReductionToMaxTest<tags::Cell, float> dense_vector_range_reduction_to_max_test_float_cell("Cell float");
+#endif
+
+template <typename Tag_, typename DT_>
+class DenseVectorRangeReductionToMaxQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeReductionToMaxQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_reduction_to_max_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(22);
+            DenseVector<DT_> dv(size*4, DT_(100));
+            for(int j(0) ; j < 4 ; j++)
+            {
+                DenseVectorRange<DT_> dvr(dv, size, j);
+                for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+
+                    if (i.index() % 2 == 0)
+                        *i = i.index();
+                    else
+                        *i = i.index() * DT_(-1);
+                }
+
+                DT_ should;
+                if (size % 2 == 0)
+                    should = dvr[size-2];
+                else
+                    should = dvr[size-1];
+
+                DT_ v1(Reduction<rt_max, Tag_>::value(dvr));
+                TEST_CHECK_EQUAL(v1, should);
+            }
+        }
+};
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU, float>  dense_vector_range_reduction_to_max_quick_test_float("float");
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU, double> dense_vector_range_reduction_to_max_quick_test_double("double");
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_reduction_to_max_quick_test_float("MC float");
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_max_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_reduction_to_max_quick_test_float("SSE float");
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_max_quick_test_double("SSE double");
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_range_reduction_to_max_quick_test_float("MC SSE float");
+DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_max_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeReductionToMaxQuickTest<tags::Cell, float> dense_vector_range_reduction_to_max_quick_test_float_cell("Cell float");
+#endif
+
 
 template <typename Tag_, typename DT_>
 class DenseVectorReductionToMaxTest :

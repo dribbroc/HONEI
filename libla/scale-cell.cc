@@ -96,6 +96,9 @@ namespace honei
         if (offset > 0)
             oa.u += 16 -(4 * offset); // Align the address for SPU.
 
+        if (b.size() < 5)
+            offset = 0;
+
         ob.u = (b.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
         oc.u = (b.size() - ((4 - offset) % 4)) % (1024 * 4);
         oc.u &= ~0xF;
