@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -24,8 +25,6 @@
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
 
-#include <cmath>
-
 using namespace honei::cell;
 
 unsigned dense_float_norm_l_two(const Instruction & inst)
@@ -40,9 +39,6 @@ unsigned dense_float_norm_l_two(const Instruction & inst)
     unsigned size(counter > 1 ? inst.size : inst.d.u);
     unsigned nextsize;
     unsigned current(1), next(2);
-
-    unsigned offset((ea_a & 0xF) / sizeof(float));
-    ea_a &= ~0xF;
 
     debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
@@ -61,13 +57,10 @@ unsigned dense_float_norm_l_two(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        unsigned i(0);
-        for( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+        for(unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
-            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
             acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
         }
-        acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
 
         --counter;
 
@@ -81,18 +74,14 @@ unsigned dense_float_norm_l_two(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    unsigned i(0);
-    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
-        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
         acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
     }
-    acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    acc.value = spu_mul(acc.value, acc.value);
     MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
 
     return result.mail;

@@ -57,8 +57,7 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        unsigned i(0);
-        for ( ; i < size / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
             acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
         }
@@ -75,8 +74,7 @@ unsigned dense_float_reduction_sum(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    unsigned i(0);
-    for ( ; i < size / sizeof(vector float) ; ++i)
+    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
         acc.value = spu_add(a[current - 1].vectorised[i], acc.value);
     }

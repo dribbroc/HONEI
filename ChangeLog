@@ -7,6 +7,16 @@ see the NEWS file.
 
 2007-12-23 Sven Mallach <sven.mallach@honei.org>
 
+	* cell/libla/dense_float_norm_l_one.cc,
+	cell/libla/dense_float_norm_l_two.cc, libla/norm-cell.cc,
+	libla/norm_TEST.cc: Fixed heavy computational and slighter bugs in
+	treatment of unaligned addresses. Optimized. Added even more
+	previously missing l2-norm with sqrt (quick)tests. Added DVR tests.
+	* cell/libla/dense_float_reduction_sum.cc, libla/reduction-cell.cc:
+	Removed overhead.
+
+2007-12-23 Sven Mallach <sven.mallach@honei.org>
+
 	* cell/libla/dense_float_reduction_sum.cc, libla/reduction-cell.cc,
 	libla/reduction_TEST.cc: Added DVR tests and fixed a lot of bugs.
 	* libla/scale-cell.cc, libla/scale_TEST.cc: Adoptions and minor

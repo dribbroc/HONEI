@@ -25,7 +25,6 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
 #include <libutil/stringify.hh>
-#include <iostream>
 
 namespace honei
 {
