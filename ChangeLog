@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/log.cc, libutil/log.hh: Reworked the finishing mechanism for
+	LogQueue's thread. Removed LogMessage's default CTOR and ensured that
+	its copy CTOR and assignment operator can't be used.
+	* libutil/spe_manager.cc: Added missing delete statement for
+	SPEManager's private implementation.
+
 2007-12-23 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/kernels/stand_alone-kernel.cc.in, cell/libutil/allocator.hh,

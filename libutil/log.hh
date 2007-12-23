@@ -42,8 +42,16 @@ namespace honei
     class LogMessage
     {
         private:
-            /// Default constructor.
+            /// \name Unwanted operations
+            /// \{
+
+            /// Unwanted copy constructor: Do not implement. See EffC++, Item 27.
             LogMessage();
+
+            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
+            LogMessage & operator= (LogMessage & other);
+
+            /// \}
 
         public:
             friend struct LogQueue;

@@ -38,6 +38,9 @@ namespace honei
     {
         struct LogData
         {
+            /// Our finish-the-thread flag.
+            bool finish_message;
+
             /// Our context.
             std::string context;
 
@@ -49,9 +52,19 @@ namespace honei
 
             /// Constructor.
             LogData(const std::string & c, LogLevel l, const std::string & m) :
+                finish_message(false),
                 context(c),
                 level(l),
                 message(m)
+            {
+            }
+
+            /// Constructor.
+            LogData() :
+                finish_message(true),
+                context(""),
+                level(ll_minimal),
+                message("")
             {
             }
         };
@@ -68,9 +81,6 @@ namespace honei
         /// Our work-pending condition variable.
         ConditionVariable * const work_pending;
 
-        /// Our finish-the-thread flag.
-        bool finish;
-
         /// Our logging thread.
         Thread * thread;
 
@@ -83,9 +93,11 @@ namespace honei
         /// Write out our log messages.
         void log_function()
         {
+            bool finish(false);
+
             while (true)
             {
-                intern::LogData * data;
+                intern::LogData * data(0);
 
                 {
                     Lock l(*mutex);
@@ -100,9 +112,18 @@ namespace honei
                     }
                     else
                     {
-                        ASSERT (messages.empty() == false, "Log: messages should not be empty!");
+                        ASSERT(! messages.empty(), "messages should not be empty!");
+
                         data = messages.front();
                         messages.pop_front();
+
+                        finish |= data->finish_message;
+                        if (data->finish_message)
+                        {
+                            delete data;
+                            data = 0;
+                            continue;
+                        }
                     }
                 }
 
@@ -119,19 +140,14 @@ namespace honei
         LogQueue() :
             mutex(new Mutex),
             work_pending(new ConditionVariable),
-            finish(false),
-            thread(new Thread(std::tr1::bind(std::tr1::mem_fn(&LogQueue::log_function), this)))
+            previous_context("(none)")
         {
+            thread = new Thread(std::tr1::bind(std::tr1::mem_fn(&LogQueue::log_function), this));
         }
 
         ~LogQueue()
         {
-            {
-                Lock l(*mutex);
-
-                finish = true;
-                work_pending->signal();
-            }
+            enqueue(new intern::LogData);
 
             delete thread;
             delete work_pending;
@@ -149,16 +165,13 @@ namespace honei
 
     namespace intern
     {
-        static LogQueue log_queue;
+        LogQueue log_queue;
     }
 
     LogMessage::LogMessage(const LogLevel level, const std::string & message)
     {
-        intern::log_queue.enqueue(new intern::LogData("In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " + Context::backtrace("\n ... "),
+        intern::log_queue.enqueue(new intern::LogData(
+                    "In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " + Context::backtrace("\n ... "),
                     level, message));
-    }
-
-    LogMessage::LogMessage()
-    {
     }
 }

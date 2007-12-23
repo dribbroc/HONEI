@@ -213,6 +213,8 @@ namespace honei
     SPEManager::~SPEManager()
     {
         CONTEXT("When destroying SPEManager:");
+
+        delete _imp;
     }
 
     SPEManager *
