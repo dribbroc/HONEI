@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/spe_manager.cc: Made use of Confiuration class when creating
+	SPEs.
+
+2007-12-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/log.cc, libutil/log.hh: Reworked the finishing mechanism for
 	LogQueue's thread. Removed LogMessage's default CTOR and ensured that
 	its copy CTOR and assignment operator can't be used.

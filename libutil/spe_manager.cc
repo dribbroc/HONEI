@@ -18,6 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <libutil/configuration.hh>
 #include <libutil/lock.hh>
 #include <libutil/log.hh>
 #include <libutil/mutex.hh>
@@ -138,7 +139,8 @@ namespace honei
         /// Constructor.
         Implementation() :
             mutex(new Mutex),
-            spe_count(spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1)) /// \todo USABLE or PHYSICAL?
+            spe_count(Configuration::instance()->get_value("cell::number-of-spes",
+                        spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1))) /// \todo USABLE or PHYSICAL?
         {
         }
 
