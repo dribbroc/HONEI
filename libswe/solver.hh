@@ -1489,6 +1489,10 @@ namespace honei {
         BandedMatrix<WorkPrec_> m2(_u->size());
         BandedMatrix<WorkPrec_> m3(_u->size());
         BandedMatrix<WorkPrec_> m4(_u->size());
+#ifdef SOLVER_BENCHMARK
+        timeval start, end;
+        gettimeofday(&start, 0);
+#endif
 
 #ifdef SOLVER_ASSEMBLY_DEBUG
         _assemble_matrix1_DEBUG<WorkPrec_>(m1, m3, &predictedu, &predictedv);
@@ -1510,17 +1514,28 @@ namespace honei {
 
         BandedMatrix<WorkPrec_> m8(_u->size());
         _quick_assemble_matrix4<WorkPrec_>(m2, m8);
+#ifdef SOLVER_BENCHMARK
+        gettimeofday(&end, 0);
+        cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< endl;
+#endif
+
         DenseVector<WorkPrec_> temp_u_c(predictedu.copy());
         DenseVector<WorkPrec_> temp_v_c(predictedv.copy());
         DenseVector<WorkPrec_> temp_u2_c(predictedu.copy());
         DenseVector<WorkPrec_> temp_w_c(predictedw.copy());
 
+#ifdef SOLVER_BENCHMARK
+        timeval start1, start2, end1, end2;
+        gettimeofday(&start1, 0);
+#endif
         DenseVector<WorkPrec_> temp1 = Product<Tag_>::value(m1,temp_v_c);
         DenseVector<WorkPrec_> temp2 = Product<Tag_>::value(m2,temp_w_c);
 
         DenseVector<WorkPrec_> temp3 = Product<Tag_>::value(m3,temp_u_c);
         DenseVector<WorkPrec_> temp4 = Product<Tag_>::value(m4,temp_u2_c);
-
+#ifdef SOLVER_BENCHMARK
+        gettimeofday(&end1, 0);
+#endif
         DenseVector<WorkPrec_> source_c(predictedu.copy());
 
         _source(source_c);
@@ -1539,12 +1554,18 @@ namespace honei {
         DenseVector<WorkPrec_> temp_v2_c(predictedv.copy());
         DenseVector<WorkPrec_> temp_w2_c(predictedw.copy());
         DenseVector<WorkPrec_> temp_u4_c(predictedu.copy());
+#ifdef SOLVER_BENCHMARK
+        gettimeofday(&start2, 0);
+#endif
 
         DenseVector<WorkPrec_> temp11 = Product<Tag_>::value(m5c,temp_v2_c);
         DenseVector<WorkPrec_> temp22 = Product<Tag_>::value(m6, temp_u3_c);
         DenseVector<WorkPrec_> temp33 = Product<Tag_>::value(m7c,temp_w2_c);
         DenseVector<WorkPrec_> temp44 = Product<Tag_>::value(m8, temp_u4_c);
-
+#ifdef SOLVER_BENCHMARK
+        gettimeofday(&end2, 0);
+        cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< endl;
+#endif
         DenseVector<WorkPrec_> v_c(predictedv.copy());
         DenseVector<WorkPrec_> w_c(predictedw.copy());
 

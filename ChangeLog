@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-12-23 Markus Geveler <apryde@gmx.de>
 
+	* libswe/solver.hh libswe/solver_TEST.cc: Added solver internal
+	benchmark in order to be able to benchmark solver modules separately
+	but within a solver timestep.
+
+2007-12-23 Markus Geveler <apryde@gmx.de>
+
 	* libmath/jacobi_kernel.hh, libmath/jacobi_kernel_TEST.cc,
 	libmath/files.m4: Added implementation of single step jacobi kernel
 	and a proper test environment as preparation for its SIMDIzation (SSE,

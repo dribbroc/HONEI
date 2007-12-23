@@ -16,7 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#define SOLVER_BENCHMARK 1
 #include <libswe/solver.hh>
 #include <libla/dense_vector.hh>
 #include <libla/dense_matrix.hh>
