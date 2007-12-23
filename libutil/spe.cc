@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <cell/interface.hh>
 #include <libutil/lock.hh>
 #include <libutil/log.hh>
 #include <libutil/mutex.hh>
@@ -60,15 +61,64 @@ struct SPE::Implementation
         return result++;
     }
 
-    static void * spe_thread_function(void * argument)
+    static inline std::string stop_reason(const spe_stop_info_t & stop_info)
+    {
+        std::string result("SPE: Reason: ");
+
+        switch (stop_info.stop_reason)
+        {
+            case SPE_EXIT:
+                result += "SPE exited with exit code '" + stringify(stop_info.result.spe_exit_code) + "'";
+                break;
+
+            case SPE_STOP_AND_SIGNAL:
+                result += "SPE stopped and signaled code '" + stringify(stop_info.result.spe_signal_code) + "'";
+                break;
+
+            case SPE_RUNTIME_ERROR:
+                result += "SPE runtime error";
+                break;
+
+            case SPE_RUNTIME_EXCEPTION:
+                result += "SPE runtime exception due to ";
+                switch (stop_info.result.spe_runtime_exception)
+                {
+                    case SPE_DMA_ALIGNMENT:
+                        result += "DMA alignment error";
+                        break;
+
+                    case SPE_DMA_SEGMENTATION:
+                        result += "DMA segmentation error";
+                        break;
+
+                    case SPE_DMA_STORAGE:
+                        result += "DMA storage error";
+                }
+                break;
+
+            case SPE_RUNTIME_FATAL:
+                result += "SPE runtime fatal error";
+                break;
+
+            case SPE_CALLBACK_ERROR:
+                result += "SPE callback error";
+                break;
+
+            default:
+                result += "unknown error (" + stringify(stop_info.stop_reason) + ")";
+        }
+
+        return result;
+    }
+
+    static void * thread_function(void * argument)
     {
         SPE * spe(static_cast<SPE *>(argument));
         Implementation * imp(spe->_imp.get());
-        CONTEXT("When running execution thread for SPE #" + stringify(imp->device) +" '"  + imp->kernel->kernel_info().name + "':");
 
-        unsigned int entry_point(SPE_DEFAULT_ENTRY);
-        spe_stop_info_t stop_info;
-        signed int retval(0);
+        CONTEXT("When running execution thread for SPE #"
+                + stringify(imp->device) + " with kernel '"  + imp->kernel->kernel_info().name + "':");
+
         {
             Lock l(*imp->mutex);
             imp->kernel->load(*spe);
@@ -76,68 +126,24 @@ struct SPE::Implementation
 
         try
         {
+            cell::LocalStoreAddress entry_point = { SPE_DEFAULT_ENTRY };
+            signed int retval(0);
+            spe_stop_info_t stop_info;
+
             do
             {
-                retval = spe_context_run(imp->context, &entry_point, 0, imp->kernel->argument(),
+                retval = spe_context_run(imp->context, &entry_point.value, 0, imp->kernel->argument(),
                         imp->kernel->environment(), &stop_info);
             }
             while (retval > 0);
-            LOGMESSAGE(ll_minimal, "SPE:  spe_context_run returned, stop_reason = " + stringify(stop_info.stop_reason) + ", entry = " + stringify(entry_point));
 
-            spe->dump("spu-" + stringify(spe->id()) + "-dump-final");
+            LOGMESSAGE(ll_minimal, "SPE #" + stringify(imp->device) + " stopped at " + stringify(entry_point));
+            LOGMESSAGE(ll_minimal, stop_reason(stop_info));
 
-//            if (retval < 0)
+            if (retval < 0)
             {
-                LOGMESSAGE(ll_minimal, "SPE #" + stringify(imp->device) + " stopped at " +
-                        stringify(reinterpret_cast<void *>(entry_point)));
-
-                std::string msg("Reason: ");
-                switch (stop_info.stop_reason)
-                {
-                    case SPE_EXIT:
-                        msg += "SPE exited with exit code '" + stringify(stop_info.result.spe_exit_code) + "'";
-                        break;
-
-                    case SPE_STOP_AND_SIGNAL:
-                        msg += "SPE stopped and signaled code '" + stringify(stop_info.result.spe_signal_code) + "'";
-                        break;
-
-                    case SPE_RUNTIME_ERROR:
-                        msg += "SPE runtime error";
-                        break;
-
-                    case SPE_RUNTIME_EXCEPTION:
-                        msg += "SPE runtime exception due to ";
-                        switch (stop_info.result.spe_runtime_exception)
-                        {
-                            case SPE_DMA_ALIGNMENT:
-                                msg += "DMA alignment error";
-                                break;
-
-                            case SPE_DMA_SEGMENTATION:
-                                msg += "DMA segmentation error";
-                                break;
-
-                            case SPE_DMA_STORAGE:
-                                msg += "DMA storage error";
-                        }
-                        break;
-
-                    case SPE_RUNTIME_FATAL:
-                        msg += "SPE runtime fatal error";
-                        break;
-
-                    case SPE_CALLBACK_ERROR:
-                        msg += "SPE callback error";
-                        break;
-
-                    default:
-                        msg += "unknown error (" + stringify(stop_info.stop_reason) + ")";
-                }
-                LOGMESSAGE(ll_minimal, msg);
-
-                if (retval < 0)
-                    throw SPEError("spe_context_run", errno);
+                spe->dump("spu-" + stringify(spe->id()) + "-dump-final");
+                throw SPEError("spe_context_run", errno);
             }
         }
         catch (Exception & e)
@@ -145,7 +151,8 @@ struct SPE::Implementation
             LOGMESSAGE(ll_minimal, e.message());
             throw;
         }
-        LOGMESSAGE(ll_minimal, "SPEThread exiting");
+
+        LOGMESSAGE(ll_minimal, "SPE: Thread exiting");
 
         pthread_exit(0);
     }
@@ -170,7 +177,7 @@ struct SPE::Implementation
     ~Implementation()
     {
         CONTEXT("When destroying SPE");
-        LOGMESSAGE(ll_minimal, "XXX: Destroying SPE::Implementation! :XXX");
+        LOGMESSAGE(ll_minimal, "SPE: Destroying SPE::Implementation!");
 
         pthread_join(*thread, 0);
 
@@ -186,7 +193,7 @@ struct SPE::Implementation
         while ((retval == -1) && (errno == EAGAIN) && (counter > 0))
         {
             LOGMESSAGE(ll_minimal, "SPE '" + stringify(device)
-                    + "' has still running threads on destruction.");
+                    + "' has running threads on destruction.");
             usleep(1000);
             --counter;
         }
@@ -280,7 +287,7 @@ SPE::run(const SPEKernel & kernel)
 
     _imp->thread = new pthread_t;
 
-    if (0 != (retval = pthread_create(_imp->thread, 0, &Implementation::spe_thread_function, new SPE(*this))))
+    if (0 != (retval = pthread_create(_imp->thread, 0, &Implementation::thread_function, new SPE(*this))))
         throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
 }
 
