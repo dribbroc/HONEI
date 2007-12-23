@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -66,6 +67,12 @@ class DenseVectorNormValueTest :
                 DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
                 DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
+
+                DataType_ v3(Norm<vnt_l_two, true, Tag_>::value(dv));
+                DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
+                s3 = sqrt(s3);
+                DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
             }
         }
 };
