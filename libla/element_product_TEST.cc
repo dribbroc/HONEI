@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
- *
+ * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
@@ -632,6 +632,36 @@ class SparseMatrixDenseMatrixElementProductTest :
 
             TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm01, dm03), MatrixRowsDoNotMatch);
             TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm02, dm03), MatrixColumnsDoNotMatch);
+
+            DataType_ factor_1(2.000012345);
+            DataType_ factor_2(- 3.000012345);
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
+            {
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(factor_1));
+                SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 7 + 1);
+                for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
+                    k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
+                {
+                    if (j.index() % 7 == 0)
+                    {
+                        *j = DataType_(factor_2);
+                        *k = DataType_(factor_1 * factor_2);
+                    }
+                }
+                ///Test critical elements with operator[] access:
+                sm2[0][0] = factor_2;
+                sm2[size][size - 1] = factor_2;
+
+                dm1[0][0] = DataType_(factor_1);
+                dm1[size][size - 1] = DataType_(factor_1);
+                sm3[0][0] = DataType_(factor_1 * factor_2);
+                sm3[size][size - 1] = DataType_(factor_1 * factor_2);
+
+
+                ElementProduct<>::value(sm2, dm1);
+
+                TEST_CHECK_EQUAL(sm2, sm3);
+            }
         }
 };
 SparseMatrixDenseMatrixElementProductTest<tags::CPU, float> sparse_matrix_dense_matrix_elementwise_product_test_float("float");
