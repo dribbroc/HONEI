@@ -84,19 +84,7 @@ struct SPE::Implementation
             while (retval > 0);
             LOGMESSAGE(ll_minimal, "SPE:  spe_context_run returned, stop_reason = " + stringify(stop_info.stop_reason) + ", entry = " + stringify(entry_point));
 
-            {
-                Lock ll(*imp->mutex);
-
-                std::string name("spu-final-dump");
-                std::fstream file(name.c_str(), std::ios::out);
-                char * area(static_cast<char *>(spe_ls_area_get(spe->context())));
-                for (char * c(area), * c_end(area + 256 * 1024) ; c != c_end ; ++c)
-                {
-                    file << *c;
-                }
-                LOGMESSAGE(ll_minimal, "SPE: Dumped LS content to file '" +
-                        name + "'");
-            }
+            spe->dump("spu-" + stringify(spe->id()) + "-dump-final");
 
 //            if (retval < 0)
             {
@@ -232,6 +220,23 @@ spe_context_ptr_t
 SPE::context() const
 {
     return _imp->context;
+}
+
+void
+SPE::dump(const std::string & filename) const
+{
+    CONTEXT("When dumping local store memory of SPE #" + stringify(_imp->device) + ":");
+    Lock l(*_imp->mutex);
+
+    std::fstream file(filename.c_str(), std::ios::out);
+    char * ls_area(static_cast<char *>(spe_ls_area_get(_imp->context)));
+
+    for (char * c(ls_area), * c_end(ls_area + 256 * 1024) ; c != c_end ; ++c)
+    {
+        file << *c;
+    }
+
+    LOGMESSAGE(ll_minimal, "SPE: Dumped LS content to file '" + filename + "'");
 }
 
 void

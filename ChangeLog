@@ -5,9 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-23 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/spe.cc, libutil/spe.hh: Added SPU::dump().
+	* libutil/spe_kernel.cc: Made use of new SPU::dump().
+
 2007-12-23 Markus Geveler <apryde@gmx.de>
 
-	* libla/element_product_TEST.cc: Added testcase to (previously quite
+	* libla/element_product_TEST.cc: Added test case to (previously quite
 	good) ElementProduct(SM, DM) - test.
 
 2007-12-23 Danny van Dyk <danny.dyk@uni-dortmund.de>

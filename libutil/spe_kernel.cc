@@ -259,16 +259,10 @@ namespace honei
                                 static unsigned counter(0);
                                 {
                                     Lock ll(*imp->mutex);
+                                    std::string filename("spu-" + stringify(spe->id()) + "-dump-"
+                                            + stringify(counter));
 
-                                    std::string name("spu-dump-" + stringify(counter));
-                                    std::fstream file(name.c_str(), std::ios::out);
-                                    char * area(static_cast<char *>(spe_ls_area_get(spe->context())));
-                                    for (char * c(area), * c_end(area + 256 * 1024) ; c != c_end ; ++c)
-                                    {
-                                        file << *c;
-                                    }
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: Dumped LS content to file '" +
-                                            name + "'");
+                                    spe->dump(filename);
                                     ++counter;
                                     spe->signal();
                                 }

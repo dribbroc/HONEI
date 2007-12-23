@@ -70,6 +70,9 @@ namespace honei
             /// Return out libspe2 context.
             spe_context_ptr_t context() const;
 
+            /// Dump the LS to file.
+            void dump(const std::string & filename) const;
+
             /// Run an SPE kernel.
             void run(const SPEKernel & kernel);
 
