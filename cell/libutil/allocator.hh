@@ -32,7 +32,7 @@ namespace honei
                 unsigned used : 1;
                 unsigned user_data : 31;
             public:
-                friend void init(const Environment & env);
+                friend void init_alloc(const Environment & env);
                 friend Allocation * acquire_block();
                 friend void release_block(Allocation & i);
                 friend void release_all_blocks();
@@ -47,7 +47,7 @@ namespace honei
             extern Allocation allocations[16]; /// \todo remove hardcoded numbers
         }
 
-        inline void init(const Environment & env)
+        inline void init_alloc(const Environment & env)
         {
             char * last_address(const_cast<char *>(reinterpret_cast<const char *>(env.begin)));
 

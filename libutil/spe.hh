@@ -57,14 +57,12 @@ namespace honei
             /// Constructor.
             SPE();
 
-            /// Constructor from existing implementation.
-            SPE(Implementation * imp);
-
             /// \}
 
         public:
             friend class SPEKernel;
             friend class SPEManager;
+            SPE(const SPE & other);
 
             /// Destructor.
             ~SPE();

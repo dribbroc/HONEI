@@ -98,6 +98,16 @@ namespace honei
              * Return the timepoint of the last finished instruction.
              */
             TimeStamp last_finished() const;
+
+            /**
+             * Return the KernelInfo of our Kernel.
+             */
+            const cell::KernelInfo kernel_info() const;
+
+            /**
+             * Return true, if the Kernel can handle the given OpCode
+             */
+            bool knows(cell::OpCode op_code);
     };
 }
 

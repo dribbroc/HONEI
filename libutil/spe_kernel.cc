@@ -42,6 +42,8 @@ namespace honei
     {
         /// Our SPE program.
         spe_program_handle_t handle;
+        /// Our set of supported opcodes.
+        std::set<OpCode> supported_opcodes;
 
         /// \name Shared data
         /// \{
@@ -63,6 +65,9 @@ namespace honei
 
         /// Our counter for finished instructions.
         unsigned finished_counter;
+
+        /// Our KernelInfo
+        Info kernel_info;
 
         /// \}
 
@@ -109,9 +114,9 @@ namespace honei
                 spe = imp->spe;
             }
 
+            CONTEXT("When handling SPE events for SPE #" + stringify(spe->id())+ " '" + spe->kernel()->kernel_info().name + "'");
             LOGMESSAGE(ll_minimal, "SPEKernel: Revceived have-been-loaded signal from SPE #" +
-                    stringify(spe->id()));
-            CONTEXT("When handling SPE events for SPE #" + stringify(spe->id()));
+                    stringify(spe->id()) + " '" + spe->kernel()->kernel_info().name + "'");
 
             SPEEvent event(*imp->spe, SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED);
             Instruction current_instruction;
@@ -291,6 +296,8 @@ namespace honei
                     LOGMESSAGE(ll_minimal, "SPEKernel: SPE stopped and signaled");
                     Lock ll(*imp->mutex);
 
+                    LOGMESSAGE(ll_minimal, "SPEKernel: Number of pending INTR mails is '" + stringify(spe_out_intr_mbox_status(spe->context())) + "'");
+
                     imp->instruction_finished->broadcast();
                     break;
                 }
@@ -300,6 +307,7 @@ namespace honei
                 }
             } while (true);
 
+            LOGMESSAGE(ll_minimal, "SPEKernel: Kernelthread stopped");
             pthread_exit(0);
         }
 
@@ -317,8 +325,10 @@ namespace honei
             instruction_finished(new ConditionVariable),
             thread(new pthread_t),
             attr(new pthread_attr_t),
-            spe(0)
+            spe(0),
+            kernel_info(info)
         {
+            Lock l(*mutex);
             int retval(0);
 
             if (0 != posix_memalign(reinterpret_cast<void **>(&instructions), 128, 8 * sizeof(Instruction))) /// \todo remove hardcoded numbers
@@ -340,30 +350,43 @@ namespace honei
 
             Instruction noop = { oc_noop };
             std::fill(instructions, instructions + 8, noop);
-
             ASSERT(kt_stand_alone == info.capabilities.type, "trying to use an unrecognised kernel type!");
+            for (unsigned i(0) ; i < info.capabilities.opcode_count ; ++i)
+            {
+                supported_opcodes.insert(info.capabilities.opcodes[i]);
+            }
+
 
             last_finished.take();
         }
 
         ~Implementation()
         {
-            int retval(0);
+            CONTEXT("When destroying SPEKernel '" + kernel_info.name + "'");
 
-            if (0 != (retval = pthread_join(*thread, 0)))
-                throw PThreadError("pthread_join", retval);
+            LOGMESSAGE(ll_minimal, "SPEKernel: Destroying SPEKernel");
+            {
+                Lock l(*mutex);
+                int retval(0);
 
-            free(instructions);
-            free(environment);
+                if (0 != (retval = pthread_join(*thread, 0)))
+                {
+                    throw PThreadError("pthread_join", retval);
+                }
 
-            if (0 != (retval = pthread_attr_destroy(attr)))
-                throw PThreadError("pthread_attr_destroy", retval);
+                free(instructions);
+                free(environment);
 
-            delete attr;
+                if (0 != (retval = pthread_attr_destroy(attr)))
+                    throw PThreadError("pthread_attr_destroy", retval);
+            }
             delete thread;
+            delete attr;
             delete instruction_finished;
             delete kernel_loaded;
+            delete spe;
             delete mutex;
+            LOGMESSAGE(ll_minimal, "SPEKernel destroyed");
         }
 
     };
@@ -373,12 +396,28 @@ namespace honei
     {
     }
 
+    SPEKernel::OpCodeIterator
+    SPEKernel::begin_supported_opcodes() const
+    {
+        Lock l(*_imp->mutex);
+
+        return OpCodeIterator(_imp->supported_opcodes.begin());
+    }
+
+    SPEKernel::OpCodeIterator
+    SPEKernel::end_supported_opcodes() const
+    {
+        Lock l(*_imp->mutex);
+
+        return OpCodeIterator(_imp->supported_opcodes.end());
+    }
+
     unsigned
     SPEKernel::enqueue(const SPEInstruction & instruction)
     {
-        CONTEXT("When enqueueing instruction:");
-        unsigned result;
         Lock l(*_imp->mutex);
+        CONTEXT("When enqueueing instruction to SPE #" +stringify(_imp->spe->id()));
+        unsigned result;
 
         while (_imp->spe_instruction_index == (_imp->next_free_index + 1) % 8) /// \todo remove hardcoded numbers
         {
@@ -393,6 +432,7 @@ namespace honei
 
         if (_imp->spe)
         {
+            LOGMESSAGE(ll_minimal, "SPEKernel: Sending start signal to SPE #" + stringify(_imp->spe->id()));
             _imp->spe->signal();
         }
         else
@@ -402,7 +442,6 @@ namespace honei
 
         return result;
     }
-
 
     void
     SPEKernel::wait(unsigned instruction_index) const
@@ -419,8 +458,13 @@ namespace honei
     void
     SPEKernel::load(const SPE & spe) const
     {
-        CONTEXT("When loading kernel into SPE #" + stringify(spe.id()) + ":");
         Lock l(*_imp->mutex);
+        CONTEXT("When loading kernel '"+_imp->kernel_info.name+"' into SPE #" + stringify(spe.id()) + ":");
+#ifdef DEBUG
+        char * ls_area = (char *)spe_ls_area_get (spe.context());
+        std::fill(ls_area, ls_area + spe_ls_size_get(spe.context()), 0x00);
+#endif
+        LOGMESSAGE(ll_minimal, "SPEKernel: Loading kernel into SPE #" + stringify(spe.id()));
         if (0 != spe_program_load(spe.context(), &_imp->handle))
         {
             throw SPEError("spe_program_load", errno);
@@ -429,10 +473,11 @@ namespace honei
         _imp->spe = new SPE(spe);
         _imp->kernel_loaded->signal_and_wait(_imp->mutex);
 
-        LOGMESSAGE(ll_minimal, "SPEKernel: Loading kernel into SPE");
+        LOGMESSAGE(ll_minimal, "SPEKernel: Loading kernel into SPE #" + stringify(spe.id()));
 
         if (_imp->initial_instructions)
         {
+            LOGMESSAGE(ll_minimal, "SPEKernel: Sending start signal to SPE #" + stringify(spe.id()));
             _imp->spe->signal();
             _imp->initial_instructions = false;
         }
@@ -453,6 +498,13 @@ namespace honei
         return _imp->last_finished;
     }
 
+    const cell::KernelInfo SPEKernel::kernel_info() const
+    {
+        Lock l (*_imp->mutex);
+
+        return _imp->kernel_info;
+    }
+
     void * SPEKernel::argument() const
     {
         Lock l(*_imp->mutex);
@@ -465,5 +517,17 @@ namespace honei
         Lock l(*_imp->mutex);
 
         return _imp->environment;
+    }
+
+    bool SPEKernel::knows(cell::OpCode op_code)
+    {
+        Lock l(*_imp->mutex);
+
+        for (OpCodeIterator op_it(begin_supported_opcodes()), op_end(end_supported_opcodes()) ;
+                op_it != op_end ; ++op_it)
+        {
+            if (*op_it == op_code) return true;
+        }
+        return false;
     }
 }

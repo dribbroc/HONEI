@@ -119,6 +119,14 @@ namespace honei
         return SPEKernelManager::ListIterator(_imp->kernels.end());
     }
 
+    unsigned long
+    SPEKernelManager::size() const
+    {
+        Lock l(*_imp->mutex);
+
+        return _imp->kernels.size();
+    }
+
     SPEKernelManager::ListIterator
     SPEKernelManager::find(const std::string & name) const
     {

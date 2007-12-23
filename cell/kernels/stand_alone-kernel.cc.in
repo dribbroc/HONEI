@@ -22,6 +22,7 @@
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
 #include <cell/libutil/transfer.hh>
+#include <cell/libutil/debug.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -29,6 +30,45 @@
 using namespace honei::cell;
 
 @FUNCTIONS@
+
+extern "C"
+{
+    extern char _end;
+}
+
+#ifdef DEBUG
+union ContextData
+{
+    void * untyped;
+    vector unsigned int vectorised;
+};
+
+ContextData context_array[14] = {
+    { reinterpret_cast<void *>(0x12345678) },
+    { reinterpret_cast<void *>(0x9ABCDEF0) },
+    { reinterpret_cast<void *>(0x12345678) },
+    { reinterpret_cast<void *>(0x9ABCDEF0) },
+    { reinterpret_cast<void *>(0x12345678) },
+    { reinterpret_cast<void *>(0x9ABCDEF0) },
+    { reinterpret_cast<void *>(0x12345678) },
+    { reinterpret_cast<void *>(0x9ABCDEF0) },
+    { reinterpret_cast<void *>(0x12345678) },
+    { reinterpret_cast<void *>(0x9ABCDEF0) },
+    { reinterpret_cast<void *>(0x12345678) },
+    { reinterpret_cast<void *>(0x9ABCDEF0) },
+    { reinterpret_cast<void *>(0x12345678) },
+    { reinterpret_cast<void *>(0x9ABCDEF0) },
+};
+ContextData * context_data = &context_array[1];
+#define CONTEXT \
+    asm("brsl %0, 1f\n" \
+        "1: nop\n" \
+        "stqd %0, 0(%1)\n" \
+        : /* none */ \
+        : "r" (0), "r" (context_array) \
+        : /* none */ \
+    );
+#endif
 
 int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp)
 {
@@ -39,7 +79,7 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
     mfc_get(&env, envp, multiple_of_sixteen(sizeof(Environment)), 0, 0, 0);
     mfc_write_tag_mask(1 << 0);
     mfc_read_tag_status_any();
-    init(env);
+    init_alloc(env);
 
     spu_read_signal1();
 
@@ -64,7 +104,6 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
                     spu_stop(0);
             }
         }
-
         spu_read_signal1();
 
         mfc_get(instructions, argp, sizeof(Instruction) * 8, 0, 0, 0);

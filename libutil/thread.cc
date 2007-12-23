@@ -22,6 +22,7 @@
 #include <libutil/mutex.hh>
 #include <libutil/stringify.hh>
 #include <libutil/thread.hh>
+#include <libutil/log.hh>
 
 #include <cerrno>
 
@@ -45,14 +46,27 @@ struct Thread::Implementation
 
     static void * thread_function(void * argument)
     {
+        CONTEXT("When runing libutil-thread");
         Implementation * imp(static_cast<Implementation *>(argument));
 
         /// \todo Implement exception handling for the call to function.
-        imp->function();
+        try
+        {
+            imp->function();
+        }
+        catch (Exception & e)
+        {
+            throw InternalError("Exception in Thread: " + stringify(e.what()));
+        }
+        catch (...)
+        {
+            LOGMESSAGE(ll_minimal, "Unexpected std::exception or similar in Thread!");
+        }
 
         Lock l(*imp->mutex);
         imp->completed = true;
 
+        LOGMESSAGE(ll_minimal, "Exiting thread function");
         pthread_exit(0);
     }
 

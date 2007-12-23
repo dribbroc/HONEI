@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -21,6 +22,7 @@
 #include <libutil/log.hh>
 #include <libutil/mutex.hh>
 #include <libutil/spe_instruction.hh>
+#include <cell/cell.hh>
 #include <libutil/spe_kernel.hh>
 #include <libutil/spe_kernel_manager.hh>
 #include <libutil/spe_manager.hh>
@@ -72,13 +74,65 @@ namespace honei
             //wenn alle kernel beschaeftigt sind, evtl kann ein kernel op der noch am rechnen ist?
             //sonst einfach blockieren und warten bis ein kernel frei wird,
             //wenn 6 spe's rechnen koennte der user eh nicht mehr viel mehr machen
+            //
+            /// \todo muster erkennen und einen kernel laden, der moeglichst viele ops unterstuetzt
 
-            ////Load balanced dispatching
             sort(spe_list.begin(), spe_list.end(), compare_by_load);
 
-            LOGMESSAGE(ll_minimal, "Dispatching to SPE #" + stringify(spe_list.begin()->id()) +
-                    " (load = " + stringify(spe_list.begin()->kernel()->instruction_load()) + ")");
-            instruction.enqueue_with(spe_list.begin()->kernel());
+            //wait until one spe is idle
+            while (spe_list.begin()->kernel()->instruction_load() != 0)
+            {
+                sort(spe_list.begin(), spe_list.end(), compare_by_load);
+            }
+
+            SPEList::iterator spe_it(spe_list.begin());
+
+            //search a spe that knows our instruction and is idle
+            while(spe_it != spe_list.end() && !spe_it->kernel()->knows(instruction.instruction().opcode) && spe_it->kernel()->instruction_load() == 0)
+            {
+                spe_it ++;
+            }
+
+            //if no spe can handle our instruction, load a new kernel in an idle spe
+            if(spe_it == spe_list.end() || spe_it->kernel()->instruction_load() != 0)
+            {
+#ifdef DEBUG
+                std::string msg("SPE map before reload: \n");
+                for (int i(0) ; i < spe_count ; ++i)
+                {
+                    msg += "SPE #" + stringify(spe_list.at(i).id()) + " : '" + stringify(spe_list.at(i).kernel()->kernel_info().name) +"'\n";
+                }
+                LOGMESSAGE(ll_minimal, msg);
+#endif
+                //LRU
+                //at least one spe should have load == 0
+                sort(spe_list.begin(), spe_list.end(), compare_by_last_finished);
+                spe_it = spe_list.begin();
+                while (spe_it->kernel()->instruction_load() != 0)
+                {
+                    ++spe_it;
+                }
+
+                //Halt the spe side
+                SPEInstruction inst_halt(cell::oc_halt, 0);
+                inst_halt.enqueue_with(spe_it->kernel());
+                inst_halt.wait();
+
+                SPEKernel kernel(*SPEKernelManager::instance()->find(instruction.instruction().opcode));
+                spe_it->run(kernel);
+#ifdef DEBUG
+                msg ="SPE map after reload: \n";
+                for (int i(0) ; i < spe_count ; ++i)
+                {
+                    msg += "SPE #" + stringify(spe_list.at(i).id()) + " : " + stringify(spe_list.at(i).kernel()->kernel_info().name) +"\n";
+                }
+                LOGMESSAGE(ll_minimal, msg);
+#endif
+            }
+
+            LOGMESSAGE(ll_minimal, "Dispatching to SPE #" + stringify(spe_it->id()) +
+                    " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify(instruction.instruction().opcode));
+            instruction.enqueue_with(spe_it->kernel());
         }
 
         /// Constructor.
@@ -91,13 +145,26 @@ namespace honei
         /// Destructor.
         ~Implementation()
         {
+            {
+                Lock l(*mutex);
+                std::vector<SPE>::iterator spe_it(spe_list.begin());
+                for ( ; spe_it != spe_list.end() ; ++spe_it)
+                {
+                    //Halt the spe side
+                    SPEInstruction inst_halt(cell::oc_halt, 0);
+                    inst_halt.enqueue_with(spe_it->kernel());
+                    inst_halt.wait();
+                }
+            }
             delete mutex;
+            LOGMESSAGE(ll_minimal, "All SPE's signaled halt, destoying SPEManager.");
         }
     };
 
     SPEManager::SPEManager() :
         _imp(new Implementation)
     {
+        CONTEXT("When creating SPEManager:");
         Lock l(*_imp->mutex);
 
         unsigned count(_imp->spe_count);
@@ -107,18 +174,45 @@ namespace honei
             _imp->spe_list.push_back(spe);
         }
 
-        SPEKernelManager::ListIterator reference(SPEKernelManager::instance()->find("reference"));
-        if (SPEKernelManager::instance()->end() == reference)
-            throw InternalError("Eek!");
+        count = _imp->spe_count;
+        unsigned long kernel_count = SPEKernelManager::instance()->size();
+        unsigned long spe_per_kernel = count / kernel_count;
 
-        for (std::vector<SPE>::iterator i(_imp->spe_list.begin()) ; i != _imp->spe_list.end() ; i++)
+        std::vector<SPE>::iterator spe_it(_imp->spe_list.begin());
+
+#if 0
+        for ( ; spe_it != _imp->spe_list.end() ; ++spe_it)
         {
-            i->run(SPEKernel(*reference));
+            spe_it->run(SPEKernel(*SPEKernelManager::instance()->find("test")));
         }
+#endif
+        for (SPEKernelManager::ListIterator k_it(SPEKernelManager::instance()->begin()), k_end(SPEKernelManager::instance()->end()) ;
+                k_it != k_end && spe_it != _imp->spe_list.end() ; ++k_it)
+        {
+            for (unsigned long i(0) ; i < spe_per_kernel && spe_it != _imp->spe_list.end() ; ++i)
+            {
+                spe_it->run(SPEKernel(*k_it));
+                spe_it ++;
+            }
+        }
+        for (SPEKernelManager::ListIterator k_it(SPEKernelManager::instance()->begin()), k_end(SPEKernelManager::instance()->end()) ;
+                k_it != k_end && spe_it != _imp->spe_list.end(); ++k_it, ++spe_it)
+        {
+                spe_it->run(SPEKernel(*k_it));
+        }
+#ifdef DEBUG
+        std::string msg("SPE map after constructor: \n");
+        for (int i(0) ; i < count ; ++i)
+        {
+            msg += "SPE #" + stringify(_imp->spe_list.at(i).id()) + " : '" + stringify(_imp->spe_list.at(i).kernel()->kernel_info().name) +"'\n";
+        }
+        LOGMESSAGE(ll_minimal, msg);
+#endif
     }
 
     SPEManager::~SPEManager()
     {
+        CONTEXT("When destroying SPEManager:");
     }
 
     SPEManager *
@@ -180,7 +274,7 @@ namespace honei
     {
         for ( ; begin != end ; ++begin)
         {
-            (*begin).wait();
+            begin->wait();
         }
     }
 }

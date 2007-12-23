@@ -23,6 +23,7 @@
 #include <libutil/exception.hh>
 #include <libutil/stringify.hh>
 #include <libutil/thread.hh>
+#include <libutil/assertion.hh>
 
 #include <iostream>
 #include <list>
@@ -99,6 +100,7 @@ namespace honei
                     }
                     else
                     {
+                        ASSERT (messages.empty() == false, "Log: messages should not be empty!");
                         data = messages.front();
                         messages.pop_front();
                     }

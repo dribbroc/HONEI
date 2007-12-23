@@ -78,6 +78,11 @@ namespace honei
             ListIterator end() const;
 
             /**
+             * Returns the number of listed kernels.
+             */
+            unsigned long size() const;
+
+            /**
              * Return an iterator pointing to the kernel with a given name.
              *
              * \param name Name of the kernel to be found.
