@@ -339,14 +339,14 @@ DenseVectorRangeReductionToSumTest<tags::CPU, float> dense_vector_range_reductio
 DenseVectorRangeReductionToSumTest<tags::CPU, double> dense_vector_range_reduction_to_sum_test_double("double");
 DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_vector_range_reduction_to_sum_test_float("MC float");
 DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_sum_test_double("MC double");
-/*
+
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToSumTest<tags::CPU::SSE, float> sse_dense_vector_range_reduction_to_sum_test_float("SSE float");
 DenseVectorRangeReductionToSumTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_sum_test_double("SSE double");
 DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_reduction_to_sum_test_float("MC SSE float");
 DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_sum_test_double("MC SSE double");
 #endif
-*/
+
 #ifdef HONEI_CELL
 DenseVectorRangeReductionToSumTest<tags::Cell, float> dense_vector_range_reduction_to_sum_test_float_cell("Cell float");
 #endif
@@ -387,14 +387,14 @@ DenseVectorRangeReductionToSumQuickTest<tags::CPU, float>  dense_vector_range_re
 DenseVectorRangeReductionToSumQuickTest<tags::CPU, double> dense_vector_range_reduction_to_sum_quick_test_double("double");
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_reduction_to_sum_quick_test_float("MC float");
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_sum_quick_test_double("MC double");
-/*
+
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_reduction_to_sum_quick_test_float("SSE float");
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_sum_quick_test_double("SSE double");
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_range_reduction_to_sum_quick_test_float("MC SSE float");
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_sum_quick_test_double("MC SSE double");
 #endif
-*/
+
 #ifdef HONEI_CELL
 DenseVectorRangeReductionToSumQuickTest<tags::Cell, float> dense_vector_range_reduction_to_sum_quick_test_float_cell("Cell float");
 #endif
