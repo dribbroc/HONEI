@@ -5,7 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-12-25 Danny van Dyk <danny.dyk@uni-dortmund.de>
+2007-12-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/product-cell.cc:
+	Fixed indentation. Fixed memory leak.
+
+2007-12-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product_BENCHMARK.cc:
 	Increased band count to see effects of multiple spu/cpu usage.
