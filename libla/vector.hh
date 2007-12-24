@@ -303,7 +303,7 @@ namespace honei
             }
 
             /// Comparison operator for less-than.
-            virtual bool operator< (const ElementIteratorWrapper<DataType_> & other) const
+            virtual bool operator< (const ConstElementIteratorWrapper<DataType_> & other) const
             {
                 return (*_iterator < *other._iterator);
             }
