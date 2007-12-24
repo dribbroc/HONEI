@@ -9,6 +9,8 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`boundary_types',      `hh',)
+add(`directions',          `hh',)
+add(`flow_processing',     `hh', `test')
 add(`implicit_solver',     `hh', `test')
 add(`limiter',             `hh', `test')
 add(`scenario',            `hh',)
