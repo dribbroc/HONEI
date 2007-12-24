@@ -167,7 +167,7 @@ namespace honei
             end = vi->size();
             quad_end = end - (end % 4);
             Operand oa = { vi->elements() + quad_start};
-            Operand ob = { b.elements() + quad_start - op_offset - (4 - (op_offset % 4)) };
+            Operand ob = { b.elements() + quad_start - op_offset - ((4 - (op_offset % 4)) % 4)};
             Operand oc = { results[counter]->elements() + quad_start};
             Operand od, oe, of, og;
 
