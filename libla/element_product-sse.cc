@@ -32,9 +32,9 @@ namespace honei
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
 
-                unsigned long a_address = (unsigned long)a;
+                unsigned long a_address = reinterpret_cast<unsigned long>(a);
                 unsigned long a_offset = a_address % 16;
-                unsigned long b_address = (unsigned long)b;
+                unsigned long b_address = reinterpret_cast<unsigned long>(b);
                 unsigned long b_offset = b_address % 16;
 
                 unsigned long x_offset(a_offset / 4);
@@ -42,14 +42,16 @@ namespace honei
 
                 unsigned long quad_start = x_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 16));
+
                 if (size < 24)
                 {
                     quad_end = 0;
                     quad_start = 0;
                 }
+
                 if (a_offset == b_offset)
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 16)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 16)
                     {
                         m1 = _mm_load_ps(a + index);
                         m3 = _mm_load_ps(a + index + 4);
@@ -73,7 +75,7 @@ namespace honei
                 }
                 else
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 16)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 16)
                     {
                         m1 = _mm_load_ps(a + index);
                         m3 = _mm_load_ps(a + index + 4);
@@ -95,14 +97,17 @@ namespace honei
                         _mm_stream_ps(a + index + 12, m7);
                     }
                 }
-                for (unsigned long index = 0 ; index < quad_start ; index++)
+
+                for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     a[index] *= b[index];
                 }
-                for (unsigned long index = quad_end ; index < size ; index++)
+
+                for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     a[index] *= b[index];
                 }
+
                 _mm_sfence();
             }
 
@@ -110,15 +115,16 @@ namespace honei
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
-                unsigned long a_address = (unsigned long)a;
+                unsigned long a_address = reinterpret_cast<unsigned long>(a);
                 unsigned long a_offset = a_address % 16;
-                unsigned long b_address = (unsigned long)b;
+                unsigned long b_address = reinterpret_cast<unsigned long>(b);
                 unsigned long b_offset = b_address % 16;
 
                 unsigned long x_offset(a_offset / 8);
 
                 unsigned long quad_start = x_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 8));
+
                 if (size < 16)
                 {
                     quad_end = 0;
@@ -127,7 +133,7 @@ namespace honei
 
                 if (a_offset == b_offset)
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 8)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
                     {
                         m1 = _mm_load_pd(a + index);
                         m3 = _mm_load_pd(a + index + 2);
@@ -151,7 +157,7 @@ namespace honei
                 }
                 else
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 8)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
                     {
                         m1 = _mm_load_pd(a + index);
                         m3 = _mm_load_pd(a + index + 2);
@@ -174,14 +180,16 @@ namespace honei
                     }
                 }
 
-                for (unsigned long index = 0 ; index < quad_start ; index++)
+                for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     a[index] *= b[index];
                 }
-                for (unsigned long index = quad_end ; index < size ; index++)
+
+                for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     a[index] *= b[index];
                 }
+
                 _mm_sfence();
             }
         }
@@ -190,9 +198,12 @@ namespace honei
 
 using namespace honei;
 
-DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
+DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise with SSE:");
+    CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
+            "with SSE:");
+
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
@@ -201,9 +212,11 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVe
     return a;
 }
 
-DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b)
+DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise with SSE:");
+    CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
+            "with SSE:");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -216,7 +229,6 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseV
 DenseMatrix<float> & ElementProduct<tags::CPU::SSE>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
     CONTEXT("When multiplying DenseMatrix<float> and DenseMatrix<float> elementwise with SSE:");
-
 
     if (a.columns() != b.columns())
     {
@@ -236,7 +248,6 @@ DenseMatrix<float> & ElementProduct<tags::CPU::SSE>::value(DenseMatrix<float> & 
 DenseMatrix<double> & ElementProduct<tags::CPU::SSE>::value(DenseMatrix<double> & a, const DenseMatrix<double> & b)
 {
     CONTEXT("When multiplying DenseMatrix<double> and DenseMatrix<double> elementwise with SSE:");
-
 
     if (a.columns() != b.columns())
     {

@@ -38,9 +38,9 @@ namespace honei
                     float f[4];
                 } m1, m2, m3, m4, m5, m6, m8;
 
-                unsigned long a_address = (unsigned long)a;
+                unsigned long a_address = reinterpret_cast<unsigned long>(a);
                 unsigned long a_offset = a_address % 16;
-                unsigned long b_address = (unsigned long)b;
+                unsigned long b_address = reinterpret_cast<unsigned long>(b);
                 unsigned long b_offset = b_address % 16;
 
                 unsigned long x_offset(a_offset / 4);
@@ -48,6 +48,7 @@ namespace honei
 
                 unsigned long quad_start = x_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 12));
+
                 if (size < 20)
                 {
                     quad_end = 0;
@@ -56,9 +57,9 @@ namespace honei
 
                 m8.m = _mm_setzero_ps();
 
-                if(a_offset == b_offset)
+                if (a_offset == b_offset)
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 12)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 12)
                     {
                         m1.m = _mm_load_ps(a + index);
                         m3.m = _mm_load_ps(a + index + 4);
@@ -77,7 +78,7 @@ namespace honei
                 }
                 else
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 12)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 12)
                     {
                         m1.m = _mm_load_ps(a + index);
                         m3.m = _mm_load_ps(a + index + 4);
@@ -99,22 +100,26 @@ namespace honei
                 result += m8.f[1];
                 result += m8.f[2];
                 result += m8.f[3];
+
                 _mm_sfence();
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     result += a[index] * b[index];
                 }
+
                 for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     result += a[index] * b[index];
                 }
+
                 return result;
             }
 
             inline double dot_product(double * a, double * b, unsigned long size)
             {
                 double __attribute__((aligned(16))) result(0);
+
                 union sse2
                 {
                     __m128d m;
@@ -130,16 +135,18 @@ namespace honei
 
                 unsigned long quad_start = x_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 6));
+
                 if (size < 16)
                 {
                     quad_start = 0;
                     quad_end = 0;
                 }
+
                 m8.m = _mm_setzero_pd();
 
-                if(a_offset == b_offset)
+                if (a_offset == b_offset)
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 6)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 6)
                     {
                         m1.m = _mm_load_pd(a + index);
                         m3.m = _mm_load_pd(a + index + 2);
@@ -158,7 +165,7 @@ namespace honei
                 }
                 else
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 6)
+                    for (unsigned long index(quad_start) ; index < quad_end ; index += 6)
                     {
                         m1.m = _mm_load_pd(a + index);
                         m3.m = _mm_load_pd(a + index + 2);
@@ -175,15 +182,17 @@ namespace honei
                         m8.m = _mm_add_pd(m5.m, m8.m);
                     }
                 }
+
                 result += m8.d[0];
                 result += m8.d[1];
+
                 _mm_sfence();
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     result += a[index] * b[index];
                 }
-                for (unsigned long index = quad_end ; index < size ; index++)
+                for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     result += a[index] * b[index];
                 }
@@ -196,10 +205,11 @@ namespace honei
 
 using namespace honei;
 
-
-float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
+float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> "
+            "with SSE:");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -207,9 +217,12 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> &
     return intern::sse::dot_product(a.elements(), b.elements(), a.size());
 }
 
-double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b)
+double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> "
+            "with SSE:");
+
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 

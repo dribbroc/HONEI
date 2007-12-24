@@ -36,7 +36,7 @@ namespace honei
                 float __attribute__((aligned(16))) b_data(std::numeric_limits<float>::infinity());
                 m7 = _mm_load_ps1(&b_data);
 
-                unsigned long x_address = (unsigned long)x;
+                unsigned long x_address = reinterpret_cast<unsigned long>(x);
                 unsigned long x_offset = x_address % 16;
 
                 unsigned long z_offset(x_offset / 4);
@@ -44,13 +44,14 @@ namespace honei
 
                 unsigned long quad_start = z_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 20));
+
                 if (size < 24)
                 {
                     quad_end = 0;
                     quad_start = 0;
                 }
 
-                for (unsigned long index = quad_start ; index < quad_end ; index += 20)
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 20)
                 {
                     m1 = _mm_load_ps(x + index);
                     m2 = _mm_load_ps(x + index + 4);
@@ -155,16 +156,19 @@ namespace honei
                     _mm_stream_pd(x + index + 6, m4);
                     _mm_stream_pd(x + index + 8, m5);
                 }
-                for (unsigned long index = 0 ; index < quad_start ; index++)
+
+                for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     if (x[index] != double(0))
                     x[index] = double(1) / x[index];
                 }
-                for (unsigned long index = quad_end ; index < size ; index++)
+
+                for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     if (x[index] != double(0))
                     x[index] = double(1) / x[index];
                 }
+
                 _mm_sfence();
             }
         }
@@ -223,6 +227,7 @@ SparseVector<double> & ElementInverse<tags::CPU::SSE>::value(SparseVector<double
     CONTEXT("When inverting SparseVector<double> with SSE:");
 
     intern::sse::element_inverse(x.elements(), x.used_elements());
+
     return x;
 }
 
@@ -251,3 +256,4 @@ SparseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<double
 
     return x;
 }
+

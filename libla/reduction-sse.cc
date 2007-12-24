@@ -37,7 +37,7 @@ namespace honei
                     float f[4];
                 } m1, m2, m3, m4, m5, m6, m7, m8;
 
-                unsigned long a_address = (unsigned long)a;
+                unsigned long a_address = reinterpret_cast<unsigned long>(a);
                 unsigned long a_offset = a_address % 16;
 
                 unsigned long x_offset(a_offset / 4);
@@ -45,6 +45,7 @@ namespace honei
 
                 unsigned long quad_start = x_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 28));
+
                 if (size < 32)
                 {
                     quad_end = 0;
@@ -52,7 +53,8 @@ namespace honei
                 }
 
                 m8.m = _mm_setzero_ps();
-                for (unsigned long index = quad_start ; index < quad_end ; index += 28)
+
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 28)
                 {
                     m1.m = _mm_load_ps(a + index);
                     m2.m = _mm_load_ps(a + index + 4);
@@ -70,6 +72,7 @@ namespace honei
                     m8.m = _mm_add_ps(m6.m, m8.m);
                     m8.m = _mm_add_ps(m7.m, m8.m);
                 }
+
                 result += m8.f[0];
                 result += m8.f[1];
                 result += m8.f[2];
@@ -79,10 +82,12 @@ namespace honei
                 {
                     result += a[index];
                 }
-                for (unsigned long index = quad_end ; index < size ; index++)
+
+                for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     result += a[index];
                 }
+
                 _mm_sfence();
 
                 return result;
@@ -104,14 +109,16 @@ namespace honei
 
                 unsigned long quad_start = x_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 14));
+
                 if (size < 20)
                 {
                     quad_start = 0;
                     quad_end = 0;
                 }
+
                 m8.m = _mm_setzero_pd();
 
-                for (unsigned long index = quad_start ; index < quad_end ; index += 14)
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 14)
                 {
                     m1.m = _mm_load_pd(a + index);
                     m2.m = _mm_load_pd(a + index + 2);
@@ -129,6 +136,7 @@ namespace honei
                     m8.m = _mm_add_pd(m6.m, m8.m);
                     m8.m = _mm_add_pd(m7.m, m8.m);
                 }
+
                 result += m8.d[0];
                 result += m8.d[1];
 
@@ -136,10 +144,12 @@ namespace honei
                 {
                     result += a[index];
                 }
+
                 for (unsigned long index = quad_end ; index < size ; index++)
                 {
                     result += a[index];
                 }
+
                 _mm_sfence();
 
                 return result;
@@ -233,3 +243,4 @@ DenseVector<double> Reduction<rt_sum, tags::CPU::SSE>::value(const SparseMatrix<
 
     return result;
 }
+

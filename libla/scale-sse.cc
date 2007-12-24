@@ -35,7 +35,7 @@ namespace honei
                 a_data= a;
                 m8 = _mm_load_ps1(&a_data);
 
-                unsigned long x_address = (unsigned long)x;
+                unsigned long x_address = reinterpret_cast<unsigned long>(x);
                 unsigned long x_offset = x_address % 16;
 
                 unsigned long z_offset(x_offset / 4);
@@ -43,13 +43,14 @@ namespace honei
 
                 unsigned long quad_start = z_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 28));
+
                 if (size < 32)
                 {
                     quad_end = 0;
                     quad_start = 0;
                 }
 
-                for (unsigned long index = quad_start ; index < quad_end ; index += 28)
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 28)
                 {
                     m1 = _mm_load_ps(x + index);
                     m2 = _mm_load_ps(x + index + 4);
@@ -76,14 +77,15 @@ namespace honei
                     _mm_stream_ps(x + index + 24, m7);
                 }
 
-                for (unsigned long index = 0 ; index < quad_start ; index++)
+                for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     x[index] *= a;
                 }
-                for (unsigned long index = quad_end ; index < size ; index++)
+                for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     x[index] *= a;
                 }
+
                 _mm_sfence();
             }
 
@@ -94,20 +96,21 @@ namespace honei
                 a_data= a;
                 m8 = _mm_load_pd1(&a_data);
 
-                unsigned long x_address = (unsigned long)x;
+                unsigned long x_address = reinterpret_cast<unsigned long>(x);
                 unsigned long x_offset = x_address % 16;
 
                 unsigned long z_offset(x_offset / 8);
 
                 unsigned long quad_start = z_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 14));
+
                 if (size < 16)
                 {
                     quad_end = 0;
                     quad_start = 0;
                 }
 
-                for (unsigned long index = quad_start ; index < quad_end ; index += 14)
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 14)
                 {
                     m1 = _mm_load_pd(x + index);
                     m2 = _mm_load_pd(x + index + 2);
@@ -134,14 +137,15 @@ namespace honei
                     _mm_stream_pd(x + index + 12, m7);
                 }
 
-                for (unsigned long index = 0 ; index < quad_start ; index++)
+                for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     x[index] *= a;
                 }
-                for (unsigned long index = quad_end ; index < size ; index++)
+                for (unsigned long index(quad_end) ; index < size ; index++)
                 {
                     x[index] *= a;
                 }
+
                 _mm_sfence();
             }
         }
@@ -228,3 +232,4 @@ SparseMatrix<double> & Scale<tags::CPU::SSE>::value(const double a, SparseMatrix
 
     return x;
 }
+
