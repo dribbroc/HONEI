@@ -54,5 +54,4 @@ DenseMatrixElementInverseBench<double, tags::CPU::SSE> SSEMEIBenchdouble("SSE Ma
 #endif
 #ifdef HONEI_CELL
 DenseMatrixElementInverseBench<float, tags::Cell>  CELLMEIBenchfloat ("Cell Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
-DenseMatrixElementInverseBench<double, tags::Cell> CELLMEIBenchdouble("Cell Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
 #endif
