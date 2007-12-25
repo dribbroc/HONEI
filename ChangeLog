@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-25 Thorsten Deinert<thorsten.deinert@uni-dortmund.de>
+
+        * libla/sum_TEST.cc:
+	Changed test for DM +  BM, uses random numbers for DM elements and for
+	DV elements of the DV used to construct the bands.
+
 2007-12-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product-cell.cc:

@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -26,9 +27,10 @@
 #include <limits>
 #include <tr1/memory>
 #include <iostream>
-
+#include <cstdlib>
 using namespace honei;
 using namespace tests;
+
 
 // Test cases for matrix operations
 
@@ -36,6 +38,12 @@ template <typename Tag_, typename DataType_>
 class BandedMatrixDenseMatrixSumTest :
     public BaseTest
 {
+    private: 
+        DataType_ getRandom() const
+        {
+            return DataType_(std::rand()) / DataType_(std::rand()-RAND_MAX / 2);
+        }
+
     public:
         BandedMatrixDenseMatrixSumTest(const std::string & type) :
             BaseTest("banded_matrix_dense_matrix_sum_test<" + type + ">")
@@ -47,25 +55,40 @@ class BandedMatrixDenseMatrixSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(2));
+                DenseVector<DataType_> dv1(size);
+                //randomize content
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()); i != i_end; ++i)
+                {
+                    *i = getRandom();
+                }
+
+                // multiple bands (with same vector, perhaps should be different)
                 BandedMatrix<DataType_> bm1(size, dv1);
                 bm1.insert_band(2,dv1);
                 bm1.insert_band(-3,dv1);
                 bm1.insert_band(4,dv1);
                 bm1.insert_band(-5,dv1);
-                DenseMatrix<DataType_> dm2(size, size, DataType_(1)), dm3(size, size, DataType_(1));
 
+                // randomized content for dense matrices
+                DenseMatrix<DataType_> dm2(size, size), dm3(size, size);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()), j(dm3.begin_elements());
+                    i != i_end; ++i, ++j)
+                {
+                    *i = *j = getRandom();
+                } 
+
+                // calculate reference result
                 typename MutableMatrix<DataType_>::ElementIterator k(dm3.begin_elements());
                 for (typename Matrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
                     i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
-                {
+                { 
                     if (*i != DataType_(0))
-                    {
-                        *k = DataType_(3);
+                     {
+                        *k = DataType_(*i) + dm2[i.row()][i.column()];
                     }
                 }
+                 
                 Sum<Tag_>::value(dm2, bm1);
-
                 TEST_CHECK_EQUAL(dm2, dm3);
             }
 
