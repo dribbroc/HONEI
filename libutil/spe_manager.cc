@@ -64,6 +64,12 @@ namespace honei
         /// Out list of SPEs.
         SPEList spe_list;
 
+        /// Our last 8 used OpCodes
+        cell::OpCode opcode_history[8];
+
+        /// Our counter to the next history position
+        unsigned int next_history_pos;
+
         /// Dispatch an SPEInstruction to an SPE.
         inline void dispatch(const SPEInstruction & instruction)
         {
@@ -76,7 +82,7 @@ namespace honei
             //sonst einfach blockieren und warten bis ein kernel frei wird,
             //wenn 6 spe's rechnen koennte der user eh nicht mehr viel mehr machen
             //
-            /// \todo muster erkennen und einen kernel laden, der moeglichst viele ops unterstuetzt
+            /// \todo was ist, wenn kein kernel den opcode unterstuetzt ?
 
             sort(spe_list.begin(), spe_list.end(), compare_by_load);
 
@@ -119,7 +125,34 @@ namespace honei
                 inst_halt.enqueue_with(spe_it->kernel());
                 inst_halt.wait();
 
-                SPEKernel kernel(*SPEKernelManager::instance()->find(instruction.instruction().opcode));
+                //find a kernel that supports the most last used ops
+                SPEKernelManager::MapIterator highest(SPEKernelManager::instance()->find(instruction.instruction().opcode));
+                unsigned int highest_count(0);
+                for (SPEKernelManager::MapIterator k_it(SPEKernelManager::instance()->find(instruction.instruction().opcode)),
+                        k_end(SPEKernelManager::instance()->upper_bound(instruction.instruction().opcode)) ;
+                        k_it != k_end ; ++k_it)
+                {
+                    unsigned int temp_count(0);
+                    for (unsigned i(0) ; i < 8 ; i++)
+                    {
+                        for (unsigned j(0) ; j < (*k_it).capabilities.opcode_count ; ++j)
+                        {
+                            if ((*k_it).capabilities.opcodes[j] == opcode_history[i]);
+                            {
+                                temp_count++;
+                                break;
+                            }
+                        }
+                    }
+                    if (temp_count > highest_count)
+                    {
+                        highest = k_it;
+                        highest_count = temp_count;
+                    }
+                }
+                LOGMESSAGE(ll_minimal, "Found new kernel(" + stringify ((*highest).name) +"), supporting " +
+                        stringify(highest_count) + " former used opcodes.");
+                SPEKernel kernel(*highest);
                 spe_it->run(kernel);
 #ifdef DEBUG
                 msg ="SPE map after reload: \n";
@@ -134,14 +167,19 @@ namespace honei
             LOGMESSAGE(ll_minimal, "Dispatching to SPE #" + stringify(spe_it->id()) +
                     " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify(instruction.instruction().opcode));
             instruction.enqueue_with(spe_it->kernel());
+
+            opcode_history[next_history_pos] = instruction.instruction().opcode;
+            next_history_pos = (next_history_pos + 1) % 8;
         }
 
         /// Constructor.
         Implementation() :
+            next_history_pos(0),
             mutex(new Mutex),
             spe_count(Configuration::instance()->get_value("cell::number-of-spes",
                         spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1))) /// \todo USABLE or PHYSICAL?
         {
+            std::fill(opcode_history, opcode_history + 8, cell::oc_noop);
         }
 
         /// Destructor.
