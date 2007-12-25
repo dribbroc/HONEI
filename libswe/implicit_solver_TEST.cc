@@ -229,7 +229,11 @@ class ImplicitSolverRuntimeTest :
         {
             Scenario<DataType_, IMPLICIT, REFLECT> scenario(4);
             DenseMatrix<DataType_> h_b(6, 6, DataType_(1));
-            DenseMatrix<DataType_> h(4 , 4, DataType_(1));
+            DenseMatrix<DataType_> h(4 , 4, DataType_(5));
+            h[1][1] = 10;
+            h[1][2] = 10;
+            h[2][1] = 10;
+            h[2][2] = 10;
             DenseMatrix<DataType_> xv_b(6, 6, DataType_(0));
             DenseMatrix<DataType_> xv(4 , 4, DataType_(0));
             DenseMatrix<DataType_> yv_b(6, 6, DataType_(0));
@@ -252,9 +256,9 @@ class ImplicitSolverRuntimeTest :
             DenseVector<DataType_> u_t(36, DataType_(0));
             DenseVector<DataType_> v_t(36, DataType_(0));
 
-            DataType_ delta_t(1/24);
-            DataType_ delta_x(1);
-            DataType_ delta_y(1);
+            DataType_ delta_t(5/24);
+            DataType_ delta_x(2);
+            DataType_ delta_y(2);
 
             scenario.delta_t = delta_t;
             scenario.delta_x = delta_x;
@@ -264,36 +268,35 @@ class ImplicitSolverRuntimeTest :
             scenario.v_temp = &v_t;
 
             ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
-            cout<<"After preproc:"<<endl;
 
             solver.do_preprocessing();
 
-            int timesteps = 10;
+            int timesteps = 1;
             for(int timestep = 0; timestep < timesteps; ++timestep)
             {
+                cout<<"Time: " << timestep << endl;
                 solver.solve(20);
-                cout<<"u: "<<u_t<<endl;
-                cout<<"v: "<<v_t<<endl;
             }
             cout<<"After solve:"<< endl;
 
             cout << h_b;
-
+            cout<<"u: "<<u_t<<endl;
+            cout<<"v: "<<v_t<<endl;
             TEST_CHECK(true);
 
         }
 };
-ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
-ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
-ImplicitSolverMatrixAssTest<tags::CPU, float> implicit_solver_matrix_test_float("float");
-ImplicitSolverRHSAssTest<tags::CPU, float> implicit_solver_rhs_test_float("float");
-ImplicitSolverCreationTest<tags::CPU, double> implicit_solver_creation_test_double("double");
-ImplicitSolverPreprocessingTest<tags::CPU, double> implicit_solver_preprocessing_test_double("double");
-ImplicitSolverMatrixAssTest<tags::CPU, double> implicit_solver_matrix_test_double("double");
-ImplicitSolverRHSAssTest<tags::CPU, double> implicit_solver_rhs_test_double("double");
+//ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
+//ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
+//ImplicitSolverMatrixAssTest<tags::CPU, float> implicit_solver_matrix_test_float("float");
+//ImplicitSolverRHSAssTest<tags::CPU, float> implicit_solver_rhs_test_float("float");
+//ImplicitSolverCreationTest<tags::CPU, double> implicit_solver_creation_test_double("double");
+//ImplicitSolverPreprocessingTest<tags::CPU, double> implicit_solver_preprocessing_test_double("double");
+//ImplicitSolverMatrixAssTest<tags::CPU, double> implicit_solver_matrix_test_double("double");
+//ImplicitSolverRHSAssTest<tags::CPU, double> implicit_solver_rhs_test_double("double");
 ImplicitSolverRuntimeTest<tags::CPU, float> implicit_solver_runtime_test_float("float");
-ImplicitSolverRuntimeTest<tags::CPU, double> implicit_solver_runtime_test_double("double");
-#ifdef HONEI_SSE
+//ImplicitSolverRuntimeTest<tags::CPU, double> implicit_solver_runtime_test_double("double");
+/*#ifdef HONEI_SSE
 ImplicitSolverRuntimeTest<tags::CPU::SSE, float> sse_implicit_solver_runtime_test_float("SSE float");
 ImplicitSolverRuntimeTest<tags::CPU::SSE, double> sse_implicit_solver_runtime_test_double("SSE double");
-#endif
+#endif*/

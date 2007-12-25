@@ -129,7 +129,7 @@ namespace honei {
                 while(i < ((_grid_width +  2)*(_grid_height + 2) - _grid_width - 2))
                 {
                     ///Assemble dd:
-                    dd[i] = ResPrec_(1) + ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column]*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x)));
+                    dd[i] = ResPrec_(1) +( ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column]*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x))));
                     ///Assemble ll:
                     dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(ResPrec_(4)*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
                     ///Assemble uu:
@@ -234,7 +234,6 @@ namespace honei {
 #ifdef SOLVER_VERBOSE
                 cout<<"Inserted bands in matrix assembly!" << endl;
 #endif
-
             }
 
             /**
