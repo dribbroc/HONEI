@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -27,4 +28,19 @@ namespace intern
         { 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 },
         { 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B }
     };
+
+    const vector unsigned long bitmasks[4] = {
+        { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF },
+        { 0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF },
+        { 0, 0, 0xFFFFFFFF, 0xFFFFFFFF },
+        { 0, 0, 0, 0xFFFFFFFF }
+    };
+
+    const vector unsigned long reverse_bitmasks[4] = {
+        { 0, 0, 0, 0 },
+        { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 },
+        { 0xFFFFFFFF, 0xFFFFFFFF, 0, 0 },
+        { 0xFFFFFFFF, 0, 0, 0 }
+    };
+
 }

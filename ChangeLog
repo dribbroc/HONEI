@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-26 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libutil/transfer.cc, cell/libutil/transfer.hh: Implemented
+	spu-only function insert which allows manipulation of an unaligned
+	vector by using shuffles and bit-selects only.
+
 2007-12-25 Markus Geveler <apryde@gmx.de>
 
 	* libvisual/engine_implicit.hh, libvisual/engine_implicit_TEST.cc,
@@ -21,27 +27,24 @@ see the NEWS file.
 
 2007-12-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libutil/spe_manager.cc:
-	Implemented a simple instruction history to choose the kernel,
-	supporting the most last-used opcodes.
+	* libutil/spe_manager.cc: Implemented a simple instruction history to
+	choose the kernel, supporting the most last-used opcodes.
 
 2007-12-25 Thorsten Deinert<thorsten.deinert@uni-dortmund.de>
 
-        * libla/sum_TEST.cc:
-	Changed test for DM +  BM, uses random numbers for DM elements and for
-	DV elements of the DV used to construct the bands.
+        * libla/sum_TEST.cc: Changed test for DM +  BM, uses random numbers
+	for DM elements and for DV elements of the DV used to construct the
+	bands.
 
 2007-12-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libla/product-cell.cc:
-	Fixed indentation. Fixed memory leak.
+	* libla/product-cell.cc: Fixed indentation. Fixed memory leak.
 
 2007-12-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libla/product_BENCHMARK.cc:
-	Increased band count to see effects of multiple spu/cpu usage.
-	* libla/product-cell.cc:
-	Added usage of the new NonZeroBandIterator.
+	* libla/product_BENCHMARK.cc: Increased band count to see effects of
+	multiple spu/cpu usage.
+	* libla/product-cell.cc: Added usage of the new NonZeroBandIterator.
 
 2007-12-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
@@ -49,8 +52,8 @@ see the NEWS file.
 
 2007-12-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
-	* libla/product-cell.cc:
-	Fixed a bug with multiple-of-4 band offsets below the diagonal band.
+	* libla/product-cell.cc: Fixed a bug with multiple-of-4 band offsets
+	below the diagonal band.
 
 2007-12-24 Sven Mallach <sven.mallach@honei.org>
 

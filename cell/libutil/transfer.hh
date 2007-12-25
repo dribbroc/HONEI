@@ -22,12 +22,14 @@
 #define CELL_GUARD_UTIL_TRANSFER_HH 1
 
 #include <cell/cell.hh>
-
 #include <spu_intrinsics.h>
 
 namespace intern
 {
     extern const vector unsigned char extract_patterns[4];
+    extern const vector unsigned long bitmasks[4];
+    extern const vector unsigned long reverse_bitmasks[4];
+
 }
 
 inline unsigned multiple_of_sixteen(unsigned u) __attribute__((always_inline));
@@ -55,6 +57,20 @@ template <> inline void extract<vector double>(vector double & first, const vect
 {
     /// \todo Should we use an own lookup pattern for double version to avoid multiplication?
     first = spu_shuffle(first, second, intern::extract_patterns[offset * 2]);
+}
+
+/* insert
+ * insert is a function that allows modifiying an unaligned vector by maintaining two aligned vectors and an offset.
+ * Please note that insert can only be used on SPU-side as it uses spu_intrinsics.h.
+ */
+
+template <typename DT_> inline void insert(DT_ & first, DT_ & second, DT_ & data, unsigned offset) __attribute__((always_inline));
+
+template <> inline void insert<vector float>(vector float & first, vector float & second, vector float & data, unsigned offset)
+{
+    data = spu_shuffle(data, data, intern::extract_patterns[(4 - offset) % 4]);
+    second = spu_sel(second, data, intern::reverse_bitmasks[(4 - offset) % 4]);
+    first = spu_sel(first, data, intern::bitmasks[offset]);
 }
 
 /* fill
