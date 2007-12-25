@@ -10,4 +10,4 @@ dnl on this file at present...
 
 add(`engine',               `hh', `test')
 add(`enginesolve',          `hh', `test')
-
+add(`engine_implicit',      `hh', `test')
