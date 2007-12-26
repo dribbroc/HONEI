@@ -86,7 +86,7 @@ template <> inline void fill<float>(void * address, unsigned long size, float va
     vector float v = { value, value, value, value };
 
     unsigned i(0);
-    for ( ; i < size / sizeof(float) ; ++i)
+    for ( ; i < size / sizeof(vector float) ; ++i)
     {
         p.vectorised[i] = v;
     }
