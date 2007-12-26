@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -313,7 +314,7 @@ namespace honei
         b_tile_rows = b.rows(); // Later user tiles' rows here
         b_tile_columns = b.columns(); // Later use tiles' columns here
 
-        DenseMatrix<float> result(a_tile_rows, b_tile_columns, float(0));
+        DenseMatrix<float> result(a_tile_rows, b_tile_columns, 0.0f);
 
         r_tile_rows = result.rows(); // Later use tiles' rows here
         r_tile_columns = result.columns(); // Later use tiles' columns here.
@@ -352,8 +353,8 @@ namespace honei
         // exceed 16 KB.
         unsigned rows_per_transfer;
         a_tile_columns > r_tile_columns ? rows_per_transfer = a_rows_per_transfer : rows_per_transfer = r_rows_per_transfer;
-        unsigned r_def_t_size(rows_per_transfer * r_tile_columns * 4);
-        unsigned a_def_t_size(rows_per_transfer * a_tile_columns * 4);
+        unsigned r_def_t_size(rows_per_transfer * r_row_bytes);
+        unsigned a_def_t_size(rows_per_transfer * a_row_bytes);
 
         for ( ; ; ) // Need two default aligned transfer size as closest to 16384 as possible.
         {
@@ -370,11 +371,12 @@ namespace honei
             }
         }
 
+        unsigned b_bytes(b_tile_rows * b_tile_columns * 4);
         of.u = a_tile_rows / rows_per_transfer;
-        og.u = (b_tile_rows * b_tile_columns * 4) / 16384;
-        oh.u = (a_tile_rows % rows_per_transfer) * a_tile_columns * 4;
-        oi.u = (b_tile_rows * b_tile_columns * 4) % 16384;
-        oj.u = (r_tile_rows % rows_per_transfer) * r_tile_columns * 4;
+        og.u = b_bytes / 16384;
+        oh.u = (a_tile_rows % rows_per_transfer) * a_row_bytes;
+        oi.u = b_bytes % 16384;
+        oj.u = (r_tile_rows % rows_per_transfer) * r_row_bytes;
         ok.u = r_def_t_size;
 
         // If there is a rest for a and r to transfer, we need one more transfer...
