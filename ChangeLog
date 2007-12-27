@@ -7,6 +7,12 @@ see the NEWS file.
 
 2007-12-27 Markus Geveler <apryde@gmx.de>
 
+	* libswe/post_processing.hh, libswe/post_processing_TEST.cc,
+	libswe/files.m4: Added post processing module to libSWE with GNUPLOT
+	implementation and preparation for HDF5, generated file is automatically deleted by its test.
+
+2007-12-27 Markus Geveler <apryde@gmx.de>
+
 	* libswe/assembly_processing.hh,
 	libswe/assembly_processing_TEST.cc, libswe/directions.hh: Added
 	standalone implementation of quick assembly procedures as preparation
