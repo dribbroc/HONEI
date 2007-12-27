@@ -56,9 +56,15 @@ class AssemblyProcessingTest:
             BandedMatrix<DT1_> m2(entries);
             BandedMatrix<DT1_> m3(entries);
             BandedMatrix<DT1_> m4(entries);
+            BandedMatrix<DT1_> m6(entries);
+            BandedMatrix<DT1_> m8(entries);
+
 
             AssemblyProcessing<tags::CPU, assembly_types::MAIN::M1M3>::value(m1, m3, u, v, delta_t, delta_x, d_width, d_height, c );
             AssemblyProcessing<tags::CPU, assembly_types::MAIN::M2M4>::value(m2, m4, u, w, delta_t, delta_y, d_width, d_height, d );
+            AssemblyProcessing<tags::CPU, assembly_types::QUICK::M6>::value(m1, m6, c, d_width, d_height);
+            AssemblyProcessing<tags::CPU, assembly_types::QUICK::M8>::value(m2, m8, d, d_width, d_height);
+
             cout << "Tested by visual verification M. Geveler 2007." << endl;
             TEST_CHECK(true);
         }

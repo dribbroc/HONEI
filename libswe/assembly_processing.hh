@@ -44,7 +44,8 @@ namespace honei
         };
         class QUICK
         {
-            class M3;
+            class M6;
+            class M8;
         };
     }
 
@@ -68,14 +69,14 @@ namespace honei
             static inline void value(BandedMatrix<WorkPrec_> &  m1, BandedMatrix<WorkPrec_> & m3, DenseVector<WorkPrec_> & u, DenseVector<WorkPrec_> & v, WorkPrec_ delta_t, WorkPrec_ delta_x, unsigned long d_width, unsigned long d_height, DenseVector<WorkPrec_> & c)
             {
                 ///The bands containing data.
-                DenseVector<WorkPrec_> m1diag(u.size(), WorkPrec_(0));      //zero
-                DenseVector<WorkPrec_> m1bandPlus1(u.size(), WorkPrec_(0)); //one
-                DenseVector<WorkPrec_> m1bandPlus2(u.size(), WorkPrec_(0)); //two
-                DenseVector<WorkPrec_> m1bandMinus1(u.size(), WorkPrec_(0));//three
-                DenseVector<WorkPrec_> m3diag(u.size(), WorkPrec_(0));      //zero
-                DenseVector<WorkPrec_> m3bandPlus1(u.size(), WorkPrec_(0)); //one
-                DenseVector<WorkPrec_> m3bandPlus2(u.size(), WorkPrec_(0)); //two
-                DenseVector<WorkPrec_> m3bandMinus1(u.size(), WorkPrec_(0));//three
+                DenseVector<WorkPrec_> m1diag(u.size(), WorkPrec_(0));
+                DenseVector<WorkPrec_> m1bandPlus1(u.size(), WorkPrec_(0));
+                DenseVector<WorkPrec_> m1bandPlus2(u.size(), WorkPrec_(0));
+                DenseVector<WorkPrec_> m1bandMinus1(u.size(), WorkPrec_(0));
+                DenseVector<WorkPrec_> m3diag(u.size(), WorkPrec_(0));
+                DenseVector<WorkPrec_> m3bandPlus1(u.size(), WorkPrec_(0));
+                DenseVector<WorkPrec_> m3bandPlus2(u.size(), WorkPrec_(0));
+                DenseVector<WorkPrec_> m3bandMinus1(u.size(), WorkPrec_(0));
 
                 ///Necessary values to be temporarily saved.
                 DenseVector<WorkPrec_> tempPlus((unsigned long)(3), WorkPrec_(0));
@@ -451,6 +452,141 @@ namespace honei
 #ifdef SOLVER_VERBOSE
         std::cout << "Finished Matrix Assembly 2.\n";
 #endif
+            }
+    };
+    template <>
+    struct AssemblyProcessing<tags::CPU, assembly_types::QUICK::M6>
+    {
+
+        public:
+            template <typename WorkPrec_>
+            static inline BandedMatrix<WorkPrec_> value(BandedMatrix<WorkPrec_> & m1, BandedMatrix<WorkPrec_> & result, DenseVector<WorkPrec_> & c, unsigned long d_width, unsigned long d_height)
+            {
+                ///Bands of the matrix which will be assembled.
+                DenseVector<WorkPrec_> m6diag = (m1.band((unsigned long)(0))).copy();
+                DenseVector<WorkPrec_> m6bandplus3 = (m1.band((unsigned long)(3))).copy();
+                DenseVector<WorkPrec_> m6bandplus6 = (m1.band((unsigned long)(6))).copy();
+                DenseVector<WorkPrec_> m6bandminus3 = (m1.band((unsigned long)(-3))).copy();
+                ///Needed Iterators.
+                typename DenseVector<WorkPrec_>::ElementIterator d(m6diag.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator b2(m6bandplus6.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3.begin_elements());
+
+                DenseVector<WorkPrec_> c_squared((c.copy()));
+                ElementProduct<tags::CPU>::value(c_squared, (c));
+
+                for( ; d.index() < 6*(d_width+4); ++d);
+                for( ; b1.index() < 6*(d_width+4); ++b1);
+                for( ; b2.index() < 6*(d_width+4); ++b2);
+                for( ; bminus1.index() < 6*(d_width+4); ++bminus1);
+
+                while(d.index() < 3*(d_width+4)*(d_height+2))
+                {
+                    ++d; ++d; ++d; ++d; ++d; ++d;
+                    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+                    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+                    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+
+                    for(unsigned long i = 0; i < d_width; ++i)
+                    {
+                        *d *= c_squared[0];
+                        *b1 *= c_squared[0];
+                        *b2 *= c_squared[0];
+                        *bminus1 *= c_squared[0];
+                        ++d; ++b1; ++b2; ++bminus1;
+                        *d *= c_squared[1];
+                        *b1 *= c_squared[1];
+                        *b2 *= c_squared[1];
+                        *bminus1 *= c_squared[1];
+                        ++d; ++b1; ++b2; ++bminus1;
+                        *d *= c_squared[2];
+                        *b1 *= c_squared[2];
+                        *b2 *= c_squared[2];
+                        *bminus1 *= c_squared[2];
+                        ++d; ++b1; ++b2; ++bminus1;
+                    }
+
+                    ++d; ++d; ++d; ++d; ++d; ++d;
+                    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+                    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+                    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+                }
+                result.insert_band(0, m6diag);
+                result.insert_band(3, m6bandplus3);
+                result.insert_band(6, m6bandplus6);
+                result.insert_band(-3, m6bandminus3);
+#ifdef SOLVER_VERBOSE
+                std::cout << "Finished Quick Assembly m2.\n";
+#endif
+                return result;
+
+            }
+    };
+    template <>
+    struct AssemblyProcessing<tags::CPU, assembly_types::QUICK::M8>
+    {
+
+        public:
+            template <typename WorkPrec_>
+            static inline BandedMatrix<WorkPrec_> value(BandedMatrix<WorkPrec_> & m2, BandedMatrix<WorkPrec_> & result, DenseVector<WorkPrec_> & dv, unsigned long d_width, unsigned long d_height)
+            {
+                DenseVector<WorkPrec_> m8diag = (m2.band((unsigned long)(0))).copy();
+                DenseVector<WorkPrec_> m8bandplus3 = (m2.band((unsigned long)(3*(d_width +4)))).copy();
+                DenseVector<WorkPrec_> m8bandplus6 = (m2.band((unsigned long)(6*(d_width +4)))).copy();
+                DenseVector<WorkPrec_> m8bandminus3 = (m2.band((unsigned long)((-3)*(d_width +4)))).copy();
+                ///Needed Iterators.
+                typename DenseVector<WorkPrec_>::ElementIterator d(m8diag.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6.begin_elements());
+                typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3.begin_elements());
+                DenseVector<WorkPrec_> d_squared(((dv.copy())));
+                ElementProduct<tags::CPU>::value(d_squared, (dv));
+
+                for( ; d.index() < 6*(d_width + 4); ++d);
+                for( ; b1.index() < 6*(d_width + 4); ++b1);
+                for( ; b2.index() < 6*(d_width + 4); ++b2);
+                for( ; bminus1.index() < 6*(d_width + 4); ++bminus1);
+
+                while(d.index() < 3*(d_width+4)*(d_height+2))
+                {
+                    ++d; ++d; ++d; ++d; ++d; ++d;
+                    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+                    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+                    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+
+                    for(unsigned long i = 0; i < d_width; ++i)
+                    {
+                        *d *= d_squared[0];
+                        *b1 *= d_squared[0];
+                        *b2 *= d_squared[0];
+                        *bminus1 *= d_squared[0];
+                        ++d; ++b1; ++b2; ++bminus1;
+                        *d *= d_squared[1];
+                        *b1 *= d_squared[1];
+                        *b2 *= d_squared[1];
+                        *bminus1 *= d_squared[1];
+                        ++d; ++b1; ++b2; ++bminus1;
+                        *d *= d_squared[2];
+                        *b1 *= d_squared[2];
+                        *b2 *= d_squared[2];
+                        *bminus1 *= d_squared[2];
+                        ++d; ++b1; ++b2; ++bminus1;
+                    }
+
+                    ++d; ++d; ++d; ++d; ++d; ++d;
+                    ++b1; ++b1; ++b1; ++b1; ++b1; ++b1;
+                    ++b2; ++b2; ++b2; ++b2; ++b2; ++b2;
+                    ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1; ++bminus1;
+                }
+                result.insert_band(0, m8diag);
+                result.insert_band(3*(d_width +4), m8bandplus3);
+                result.insert_band(6*(d_width +4), m8bandplus6);
+                result.insert_band((-3)*(d_width +4),m8bandminus3);
+#ifdef SOLVER_VERBOSE
+                std::cout << "Finished Quick Assembly m4.\n";
+#endif
+                return result;
             }
     };
 

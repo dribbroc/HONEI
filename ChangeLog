@@ -5,7 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2007-12-25 Markus Geveler <apryde@gmx.de>
+2007-12-27 Markus Geveler <apryde@gmx.de>
+
+	* libswe/assembly_processing.hh,
+	libswe/assembly_processing_TEST.cc, libswe/directions.hh: Added
+	standalone implementation of quick assembly procedures as preparation
+	for SIMDization, added namespace direction to honei.
+
+2007-12-26 Markus Geveler <apryde@gmx.de>
 
 	* libswe/assembly_processing.hh,
 	libswe/assembly_processing_TEST.cc, libswe/files.m4: Added

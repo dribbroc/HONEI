@@ -20,6 +20,8 @@
 #ifndef LIBSWE_GUARD_DIRECTIONS_HH
 #define LIBSWE_GUARD_DIRECTIONS_HH 1
 
+namespace honei
+{
     namespace directions
     {
         class X
@@ -30,5 +32,5 @@
         {
         };
     }
-
+}
 #endif
