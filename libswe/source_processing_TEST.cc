@@ -43,7 +43,7 @@ class SourceProcessingTest:
             DenseVector<DT1_> slopes_x(12000, DT1_(1));
             DenseVector<DT1_> slopes_y(12000, DT1_(1));
 
-            DenseVector<DT1_> result_x = SourceProcessing<tags::CPU, SIMPLE>::value(vector_x, slopes_x, slopes_y, DT1_(0));
+            DenseVector<DT1_> result_x = SourceProcessing<SIMPLE, tags::CPU>::value(vector_x, slopes_x, slopes_y, DT1_(0));
             DenseVector<DT1_> analytical_result_x(12000, DT1_(0));
             for(unsigned long i = 0; i < 12000; ++i)
             {

@@ -38,9 +38,13 @@ namespace honei
         class SIMPLE
         {
         };
+
+        class INTEGRAL
+        {
+        };
     }
 
-    template <typename Tag_, typename Type__>
+    template <typename Type_, typename Tag_>
     struct SourceProcessing
     {
     };
@@ -52,9 +56,22 @@ namespace honei
      *
      **/
     template <>
-    struct SourceProcessing<tags::CPU, source_types::SIMPLE>
+    struct SourceProcessing<source_types::SIMPLE, tags::CPU>
     {
         private:
+            /**
+             * \brief Implementation of elementwise source processing.
+             *
+             * \param h The height at current position.
+             * \param q1 The height times velocity in x direction.
+             * \param q2 The height times velocity in y direction.
+             * \param slope_x The slope value in x direction.
+             * \param slope_y The slope value in y direction.
+             * \param manning_n_squared The manning constant squared.
+             *
+             * \ingroup grplibswe
+             *
+             **/
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> _source(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2, WorkPrec_ slope_x, WorkPrec_ slope_y, WorkPrec_ manning_n_squared)
             {
@@ -84,40 +101,51 @@ namespace honei
             }
 
         public:
+            /**
+             * \brief Implementation of source processing.
+             *
+             * \param vector The target vector.
+             * \param bottom_slopes_x The vector containing the slope values (x direction).
+             * \param bottom_slopes_y The vector containing the slope values.(y direction)
+             * \param manning_n_squared The manning constant squared.
+             *
+             * \ingroup grplibswe
+             *
+             **/
             template <typename WorkPrec_>
-                static inline DenseVector<WorkPrec_> value(DenseVector<WorkPrec_> & vector, DenseVector<WorkPrec_> & bottom_slopes_x, DenseVector<WorkPrec_> & bottom_slopes_y, WorkPrec_ manning_n_squared)
+            static inline DenseVector<WorkPrec_> value(DenseVector<WorkPrec_> & vector, DenseVector<WorkPrec_> & bottom_slopes_x, DenseVector<WorkPrec_> & bottom_slopes_y, WorkPrec_ manning_n_squared)
+            {
+                typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
+                typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(bottom_slopes_x.begin_elements());
+                typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesyiterator(bottom_slopes_y.begin_elements());
+                DenseVector<WorkPrec_> temp((unsigned long)(3), WorkPrec_(0));
+                WorkPrec_ height, velocity1;
+                for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator, ++bottomslopesxiterator, ++bottomslopesyiterator)
                 {
-                    typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
-                    typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(bottom_slopes_x.begin_elements());
-                    typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesyiterator(bottom_slopes_y.begin_elements());
-                    DenseVector<WorkPrec_> temp((unsigned long)(3), WorkPrec_(0));
-                    WorkPrec_ height, velocity1;
-                    for (typename DenseVector<WorkPrec_>::ConstElementIterator readelementiterator(vector.begin_elements()), vector_end(vector.end_elements()); readelementiterator != vector_end; ++readelementiterator, ++writeelementiterator, ++bottomslopesxiterator, ++bottomslopesyiterator)
-                    {
-                        // Read height from given vector
-                        height = *readelementiterator;
-                        ++readelementiterator;
+                    // Read height from given vector
+                    height = *readelementiterator;
+                    ++readelementiterator;
 
-                        // Read velocity in x-direction
-                        velocity1 = *readelementiterator;
-                        ++readelementiterator;
+                    // Read velocity in x-direction
+                    velocity1 = *readelementiterator;
+                    ++readelementiterator;
 
-                        // Y-velocity does not have to be fetched explicitly, it can be accessed through *readelementiterator
+                    // Y-velocity does not have to be fetched explicitly, it can be accessed through *readelementiterator
 
-                        // Compute source-term for previously fetched values
-                        temp = _source(height, velocity1, *readelementiterator, *bottomslopesxiterator, *bottomslopesyiterator, manning_n_squared);
+                    // Compute source-term for previously fetched values
+                    temp = _source(height, velocity1, *readelementiterator, *bottomslopesxiterator, *bottomslopesyiterator, manning_n_squared);
 
-                        // Write computed values back to the given vector
-                        *writeelementiterator = temp[0]; // Write height
+                    // Write computed values back to the given vector
+                    *writeelementiterator = temp[0]; // Write height
 
-                        ++writeelementiterator;
-                        *writeelementiterator = temp[1]; // Write x-velocity
+                    ++writeelementiterator;
+                    *writeelementiterator = temp[1]; // Write x-velocity
 
-                        ++writeelementiterator;
-                        *writeelementiterator = temp[2]; // Write y-velocity
-                    }
-                    return vector;
+                    ++writeelementiterator;
+                    *writeelementiterator = temp[2]; // Write y-velocity
                 }
+                return vector;
+            }
     };
 }
 #endif

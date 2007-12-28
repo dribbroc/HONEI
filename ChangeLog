@@ -7,6 +7,11 @@ see the NEWS file.
 
 2007-12-28 Markus Geveler <apryde@gmx.de>
 
+	* libswe/source_processing.hh, libswe/source_processing_TEST.cc:
+	Changed order of template arguments, added documentation.
+
+2007-12-28 Markus Geveler <apryde@gmx.de>
+
 	* libswe/flow_processing.hh, libswe/flow_processing_TEST.cc,
 	libswe/scenario.hh: Added data to RelaxSolver Scenario, changed order
 	of template arguments in flow processing, added much documentation.
