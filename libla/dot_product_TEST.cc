@@ -24,7 +24,6 @@
 #include <libla/sparse_vector.hh>
 #include <unittest/unittest.hh>
 
-#include <iostream>
 #include <limits>
 #include <tr1/memory>
 
@@ -62,8 +61,9 @@ class DenseDotProductTest :
 
                 DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
                 DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-                float eps(exp(-20 + 3.88127 * log(size)));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
+                //float eps(exp(-20 + 3.88127 * log(size)));
+                //TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
+                TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (5*std::numeric_limits<DataType_>::epsilon()));
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -118,8 +118,9 @@ class DenseDotProductQuickTest :
 
             DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
             DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-            float eps(exp(-20 + 3.88127 * log(size)));
-            TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
+            //float eps(exp(-20 + 3.88127 * log(size)));
+            //TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
+            TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (5*std::numeric_limits<DataType_>::epsilon()));
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
@@ -139,6 +140,120 @@ DenseDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_
 #endif
 #ifdef HONEI_CELL
 DenseDotProductQuickTest<tags::Cell, float> cell_dense_dot_product_quick_test_float("Cell float");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeDotProductTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeDotProductTest(const std::string & type) :
+            BaseTest("dense_vector_range_dot_product_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                for (int i(0) ; i < 4 ; ++i)
+                {
+                    for (int j(0) ; j < 4 ; ++j)
+                    {
+                        DenseVector<DataType_> dv0 (size+3, DataType_(0)), dv1(size+3, DataType_(1));
+                        DenseVectorRange<DataType_> dvr0 (dv0, size, i), dvr1(dv1, size, j);
+
+                        DataType_ p0(DotProduct<Tag_>::value(dvr1, dvr0));
+                        DataType_ p1(DotProduct<Tag_>::value(dvr1, dvr1));
+                        TEST_CHECK_EQUAL_WITHIN_EPS(p0, 0, std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
+                    }
+                    DenseVector<DataType_> dv2(size+3);
+                    for (typename Vector<DataType_>::ElementIterator k(dv2.begin_elements()), k_end(dv2.end_elements()) ;
+                        k != k_end ; ++k)
+                    {
+                        *k = static_cast<DataType_>((k.index() + 1) / 1.23456789);
+                    }
+                    DenseVectorRange<DataType_> dvr2 (dv2, size, i);
+                    DataType_ v2(Norm<vnt_l_two, false>::value(dvr2));
+                    DataType_ p2(DotProduct<Tag_>::value(dvr2, dvr2));
+                    TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (5*std::numeric_limits<DataType_>::epsilon()));
+                }
+            }
+
+            DenseVector<DataType_> dv00(4, DataType_(1)), dv01(4, DataType_(1));
+            DenseVectorRange<DataType_> dvr00(dv00, 2, 2), dvr01(dv01, 3, 1);
+
+            TEST_CHECK_THROWS(DotProduct<Tag_>::value(dvr00, dvr01), VectorSizeDoesNotMatch);
+        }
+};
+
+DenseVectorRangeDotProductTest<tags::CPU, float> dense_vector_range_scalar_product_test_float("float");
+DenseVectorRangeDotProductTest<tags::CPU, double> dense_vector_range_scalar_product_test_double("double");
+DenseVectorRangeDotProductTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scalar_product_test_float("MC float");
+DenseVectorRangeDotProductTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scalar_product_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeDotProductTest<tags::CPU::SSE, float> sse_dense_vector_range_scalar_product_test_float("SSE float");
+DenseVectorRangeDotProductTest<tags::CPU::SSE, double> sse_dense_vector_range_scalar_product_test_double("SSE double");
+DenseVectorRangeDotProductTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_scalar_product_test_float("MC SSE float");
+DenseVectorRangeDotProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_scalar_product_test_double("MC SSE double");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeDotProductQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeDotProductQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_dot_product_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(120);
+            for (int i(0) ; i < 4 ; ++i)
+            {
+                for (int j(0) ; j < 4 ; ++j)
+                {
+                    DenseVector<DataType_> dv0 (size+3, DataType_(0)), dv1(size+3, DataType_(1));
+                    DenseVectorRange<DataType_> dvr0 (dv0, size, i), dvr1(dv1, size, j);
+
+                    DataType_ p0(DotProduct<Tag_>::value(dvr1, dvr0));
+                    DataType_ p1(DotProduct<Tag_>::value(dvr1, dvr1));
+                    TEST_CHECK_EQUAL_WITHIN_EPS(p0, 0, std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
+                }
+                DenseVector<DataType_> dv2(size+3);
+                for (typename Vector<DataType_>::ElementIterator k(dv2.begin_elements()), k_end(dv2.end_elements()) ;
+                    k != k_end ; ++k)
+                {
+                    *k = static_cast<DataType_>((k.index() + 1) / 1.23456789);
+                }
+                DenseVectorRange<DataType_> dvr2 (dv2, size, i);
+                DataType_ v2(Norm<vnt_l_two, false>::value(dvr2));
+                DataType_ p2(DotProduct<Tag_>::value(dvr2, dvr2));
+                TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (5*std::numeric_limits<DataType_>::epsilon()));
+            }
+
+            DenseVector<DataType_> dv00(4, DataType_(1)), dv01(4, DataType_(1));
+            DenseVectorRange<DataType_> dvr00(dv00, 2, 2), dvr01(dv01, 3, 1);
+
+            TEST_CHECK_THROWS(DotProduct<Tag_>::value(dvr00, dvr01), VectorSizeDoesNotMatch);
+        }
+};
+
+DenseVectorRangeDotProductQuickTest<tags::CPU, float> dense_vector_range_scalar_product_quick_test_float("float");
+DenseVectorRangeDotProductQuickTest<tags::CPU, double> dense_vector_range_scalar_product_quick_test_double("double");
+DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scalar_product_quick_test_float("MC float");
+DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scalar_product_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeDotProductQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_scalar_product_quick_test_float("SSE float");
+DenseVectorRangeDotProductQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_scalar_product_quick_test_double("SSE double");
+DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_scalar_product_quick_test_float("MC SSE float");
+DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_scalar_product_quick_test_double("MC SSE double");
 #endif
 
 template <typename Tag_, typename DataType_>

@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-28 David Gies <david-gies@gmx.de>
+
+	* libla/difference_TEST.cc, libla/dot_product_TEST.cc: Added DVR-Tests.
+
 2007-12-28 Markus Geveler <apryde@gmx.de>
 
 	* libswe/source_processing.hh, libswe/source_processing_TEST.cc:

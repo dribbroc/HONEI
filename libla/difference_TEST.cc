@@ -698,6 +698,88 @@ DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_q
 #endif
 
 template <typename Tag_, typename DT_>
+class DenseVectorRangeDifferenceTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeDifferenceTest(const std::string & type) :
+            BaseTest("dense_vector_range_difference_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                for (int i(0) ; i < 4 ; ++i)
+                {
+                    for (int j(0) ; j < 4 ; ++j)
+                    {
+                        DenseVector<DT_> dv1(size+3), dv3(size, DT_(i-j));
+                        for (typename DenseVector<DT_>::ElementIterator k(dv1.begin_elements()), k_end(dv1.end_elements()) ; k != k_end ; ++k)
+                            *k = k.index();
+                        DenseVector<DT_> dv2(dv1.copy());
+                        DenseVectorRange<DT_> dvr1(dv1, size, i), dvr2(dv2, size, j);
+                        Difference<Tag_>::value(dvr1, dvr2);
+                        TEST_CHECK_EQUAL(dvr1, dv3);
+                    }
+                }
+            }
+
+            DenseVector<DT_> dv1(4, DT_(3)), dv2(4, DT_(2));
+            DenseVectorRange<DT_> dvr1(dv1, 3, 1), dvr2(dv2, 2, 2);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(dvr1, dvr2), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorRangeDifferenceTest<tags::CPU, float> dense_vector_range_difference_test_float("float");
+DenseVectorRangeDifferenceTest<tags::CPU, double> dense_vector_range_difference_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorRangeDifferenceTest<tags::CPU::SSE, float> sse_dense_vector_range_difference_test_float("SSE float");
+DenseVectorRangeDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_range_difference_test_double("SSE double");
+#endif
+
+template <typename Tag_, typename DT_>
+class DenseVectorRangeDifferenceQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeDifferenceQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_difference_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(123);
+            for (int i(0) ; i < 4 ; ++i)
+            {
+                for (int j(0) ; j < 4 ; ++j)
+                {
+                    DenseVector<DT_> dv1(size+3), dv3(size, DT_(i-j));
+                    for (typename DenseVector<DT_>::ElementIterator k(dv1.begin_elements()), k_end(dv1.end_elements()) ; k != k_end ; ++k)
+                        *k = k.index();
+                    DenseVector<DT_> dv2(dv1.copy());
+                    DenseVectorRange<DT_> dvr1(dv1, size, i), dvr2(dv2, size, j);
+                    Difference<Tag_>::value(dvr1, dvr2);
+                    TEST_CHECK_EQUAL(dvr1, dv3);
+                }
+            }
+
+            DenseVector<DT_> dv1(4, DT_(3)), dv2(4, DT_(2));
+            DenseVectorRange<DT_> dvr1(dv1, 3, 1), dvr2(dv2, 2, 2);
+            TEST_CHECK_THROWS(Difference<Tag_>::value(dvr1, dvr2), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorRangeDifferenceQuickTest<tags::CPU, float> dense_vector_range_difference_quick_test_float("float");
+DenseVectorRangeDifferenceQuickTest<tags::CPU, double> dense_vector_range_difference_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_difference_quick_test_float("SSE float");
+DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_difference_quick_test_double("SSE double");
+#endif
+
+template <typename Tag_, typename DT_>
 class DenseVectorSparseVectorDifferenceTest :
     public BaseTest
 {
