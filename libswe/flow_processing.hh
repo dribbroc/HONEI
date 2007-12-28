@@ -33,7 +33,7 @@
 
 namespace honei
 {
-    template <typename Tag_, typename Direction_>
+    template <typename Direction_, typename Tag_ = tags::CPU>
     struct FlowProcessing
     {
     };
@@ -45,31 +45,46 @@ namespace honei
      *
      **/
     template <>
-    struct FlowProcessing<tags::CPU, directions::X>
+    struct FlowProcessing<directions::X, tags::CPU>
     {
         private:
+            /**
+             * \brief Implementation of elementwise flow processing in x direction.
+             * \param h The height at current position.
+             * \param q1 The product of h and velocity in x direction.
+             * \param q2 The product of h and velocity in y direction.
+             * \ingroup grplibswe
+             *
+             **/
             template <typename WorkPrec_>
-            static inline DenseVector<WorkPrec_> _flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
-            {
-                DenseVector<WorkPrec_> result((unsigned long)(3), WorkPrec_(0));
-
-                if (fabs(h) >= std::numeric_limits<WorkPrec_>::epsilon())
+                static inline DenseVector<WorkPrec_> _flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
                 {
-                    result[0] = q1;
-                    result[1] = (q1 * q1 / h) + (WorkPrec_(9.81) * h * h / WorkPrec_(2));
-                    result[2] = q1 * q2 / h;
-                }
-                else
-                {
-                    result[0] = q1;
-                    result[1] = (q1 * q1 / std::numeric_limits<WorkPrec_>::epsilon());
-                    result[2] = q1 * q2 / std::numeric_limits<WorkPrec_>::epsilon();
-                }
-                return result;
+                    DenseVector<WorkPrec_> result((unsigned long)(3), WorkPrec_(0));
 
-            }
+                    if (fabs(h) >= std::numeric_limits<WorkPrec_>::epsilon())
+                    {
+                        result[0] = q1;
+                        result[1] = (q1 * q1 / h) + (WorkPrec_(9.81) * h * h / WorkPrec_(2));
+                        result[2] = q1 * q2 / h;
+                    }
+                    else
+                    {
+                        result[0] = q1;
+                        result[1] = (q1 * q1 / std::numeric_limits<WorkPrec_>::epsilon());
+                        result[2] = q1 * q2 / std::numeric_limits<WorkPrec_>::epsilon();
+                    }
+                    return result;
+
+                }
 
         public:
+            /**
+             * \brief Implementation of flow processing in x direction.
+             * \param vector The vector for which the flow is to be computed.
+             *
+             * \ingroup grplibswe
+             *
+             **/
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> value(DenseVector<WorkPrec_> & vector)
             {
@@ -112,9 +127,17 @@ namespace honei
      *
      **/
     template <>
-    struct FlowProcessing<tags::CPU, directions::Y>
+    struct FlowProcessing<directions::Y, tags::CPU>
     {
         private:
+            /**
+             * \brief Implementation of elementwise flow processing in x direction.
+             * \param h The height at current position.
+             * \param q1 The product of h and velocity in x direction.
+             * \param q2 The product of h and velocity in y direction.
+             * \ingroup grplibswe
+             *
+             **/
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> _flow_y(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
             {
@@ -137,6 +160,13 @@ namespace honei
             }
 
         public:
+            /**
+             * \brief Implementation of flow processing in x direction.
+             * \param vector The vector for which the flow is to be computed.
+             *
+             * \ingroup grplibswe
+             *
+             **/
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> value(DenseVector<WorkPrec_> & vector)
             {
@@ -169,7 +199,7 @@ namespace honei
                 return vector;
 
             }
-        };
+    };
 
-    }
+}
 #endif

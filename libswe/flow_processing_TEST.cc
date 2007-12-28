@@ -40,8 +40,8 @@ class FlowProcessingTest:
         {
             DenseVector<DT1_> vector_x(12000, DT1_(1));
             DenseVector<DT1_> vector_y(12000, DT1_(1));
-            DenseVector<DT1_> result_x = FlowProcessing<tags::CPU, X>::value(vector_x);
-            FlowProcessing<tags::CPU, Y>::value(vector_y);
+            DenseVector<DT1_> result_x = FlowProcessing<X, tags::CPU>::value(vector_x);
+            FlowProcessing<Y, tags::CPU>::value(vector_y);
             DenseVector<DT1_> analytical_result_x(12000, DT1_(1));
             DenseVector<DT1_> analytical_result_y(12000, DT1_(1));
             for(unsigned long i = 0; i < 12000; ++i)

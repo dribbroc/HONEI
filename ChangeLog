@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-28 Markus Geveler <apryde@gmx.de>
+
+	* libswe/flow_processing.hh, libswe/flow_processing_TEST.cc,
+	libswe/scenario.hh: Added data to RelaxSolver Scenario, changed order
+	of template arguments in flow processing, added much documentation.
+
 2007-12-27 Markus Geveler <apryde@gmx.de>
 
 	* libswe/post_processing.hh, libswe/post_processing_TEST.cc,

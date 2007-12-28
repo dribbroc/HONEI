@@ -151,6 +151,9 @@ namespace honei
             ///Current timestep.
             unsigned int solve_time;
 
+            ///Relaxation parameter epsilon.
+            ResPrec_ eps;
+
             ///Dimensions of OMEGA:
             unsigned long d_width;
             unsigned long d_height;
@@ -161,8 +164,37 @@ namespace honei
             DenseMatrix<ResPrec_> * x_veloc;
             DenseMatrix<ResPrec_> * y_veloc;
 
-            ///The data to work on 
-            // \TODO: c, d, etc...
+            ///The data to work on
+            DenseVector<ResPrec_> * c;
+            DenseVector<ResPrec_> * d;
+
+            DenseVector<ResPrec_> * u_temp;
+            DenseVector<ResPrec_> * v_temp;
+            DenseVector<ResPrec_> * w_temp;
+
+            ///The boundary maps of the scalarfields:
+            DenseMatrix<ResPrec_>* height_bound;
+            DenseMatrix<ResPrec_>* bottom_bound;
+            DenseMatrix<ResPrec_>* x_veloc_bound;
+            DenseMatrix<ResPrec_>* y_veloc_bound;
+
+            ///Vectors for the bottom slopes.
+            DenseVector<ResPrec_> * _bottom_slopes_x;
+            DenseVector<ResPrec_> * _bottom_slopes_y;
+
+            /**
+             * Constructor for rectangular grid.
+             *
+             * \param grid_width The width of the grid.
+             * \param grid_height The height of the grid.
+             *
+             **/
+            Scenario(ResPrec_ gridwidth, ResPrec_ gridheight)
+            {
+                d_width = gridwidth;
+                d_height = gridheight;
+            }
+
     };
 
 }
