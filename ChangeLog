@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-28 Markus Geveler <apryde@gmx.de>
+
+	* libswe/boundary_types.hh, libswe/correction_processing_TEST.cc,
+	libswe/correction_processing.hh, libswe/files.m4,
+	libswe/implicit_solver.hh: Added implementation of standalone
+	correction as preparation for its SIMDization, added test, added tag
+	to boundary_types, added namespace boundaries to honei, adjusted
+	ImplicitSolver.
+
 2007-12-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* cell/kernels/kernel_reference.sk,

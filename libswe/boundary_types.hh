@@ -19,20 +19,25 @@
 
 #ifndef LIBSWE_GUARD_BOUNDARY_TYPES_HH
 #define LIBSWE_GUARD_BOUNDARY_TYPES_HH 1
-
-namespace boundaries 
+namespace honei
 {
-    class REFLECT
+    namespace boundaries 
     {
-    };
+        class REFLECT
+        {
+        };
 
-    class TRANSMIT
-    {
-    };
+        class TRANSMIT
+        {
+        };
 
-    class CONSTANT
-    {
-    };
+        class CONSTANT
+        {
+        };
+
+        class NONREFLECT
+        {
+        };
+    }
 }
-
 #endif

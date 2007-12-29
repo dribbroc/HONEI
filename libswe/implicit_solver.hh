@@ -54,6 +54,7 @@
 #include <libmath/jacobi.hh>
 
 using namespace std;
+using namespace honei;
 using namespace methods;
 using namespace swe_solvers;
 using namespace boundaries;
