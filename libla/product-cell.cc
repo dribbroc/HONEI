@@ -31,13 +31,13 @@ namespace bm_dv_product
     struct SPETask
     {
         honei::SPEInstruction spe_instruction;
-        float * band;
         unsigned int result_counter;
-        unsigned long start;
-        unsigned long end;
-        unsigned long quad_start;
-        unsigned long quad_end;
         bool use_spe;
+
+        SPETask() :
+            spe_instruction(honei::cell::oc_halt, 0)
+        {
+        }
     };
 }
 
@@ -126,13 +126,9 @@ namespace honei
                 }
 
                 /// \todo Find a way to use vector size above signed long max size
-                of.s = (signed)op_offset;
                 og.u = op_offset % 4;
                 bm_dv_product::SPETask task;
                 task.result_counter = counter;
-                task.band = band->elements();
-                task.start = start;
-                task.end = end;
                 if(quad_end > quad_start)
                 {
                     task.use_spe = true;
@@ -143,16 +139,14 @@ namespace honei
                     quad_start = 0;
                     quad_end = 0;
                 }
-                task.quad_start = quad_start;
-                task.quad_end = quad_end;
                 //std::cout<< "above D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
                 task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og);
                 task_list.push_back(task);
 
-                /*for (unsigned long index = quad_end ; index < end ; index++) 
-                  {
-                  results[counter]->elements()[index] += vi->elements()[index] * b.elements()[index + op_offset];
-                  }*/
+                for (unsigned long index = quad_end ; index < end ; index++)
+                {
+                    results[counter]->elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
+                }
                 counter = (counter + 1) % spe_count;
             }
 
@@ -184,13 +178,9 @@ namespace honei
                     ++od.u;
                 }
 
-                of.s = -1 * (signed)op_offset;
                 og.u = (4 - (op_offset % 4)) % 4;
                 bm_dv_product::SPETask task;
                 task.result_counter = counter;
-                task.band = band->elements();
-                task.start = start;
-                task.end = end;
                 if(quad_end > quad_start)
                 {
                     task.use_spe = true;
@@ -201,8 +191,6 @@ namespace honei
                     quad_start = 0;
                     quad_end = start;
                 }
-                task.quad_start = quad_start;
-                task.quad_end = quad_end;
                 //std::cout<< "below D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
                 task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og);
                 task_list.push_back(task);
@@ -211,10 +199,10 @@ namespace honei
                 {
                     results[counter]->elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                 }
-                /*for (unsigned long index = quad_end ; index < end ; index++)
-                  {
-                  results[counter]->elements()[index] += vi->elements()[index] * b.elements()[index - op_offset];
-                  }*/
+                for (unsigned long index = quad_end ; index < end ; index++)
+                {
+                    results[counter]->elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
+                }
                 counter = (counter + 1) % spe_count;
             }
         }
@@ -228,15 +216,6 @@ namespace honei
             }
             for (unsigned long j = 0 ; j < spe_count ; j++)
             {
-                for (unsigned long index = task_list.at(i + j).quad_end ; index < task_list.at(i + j).end ; index++) 
-                {
-                    results[task_list.at(i + j).result_counter]->elements()[index] +=
-                        task_list.at(i + j).band[index] *
-                        b.elements()[index + task_list.at(i + j).spe_instruction.instruction().f.s];
-                }
-            }
-            for (unsigned long j = 0 ; j < spe_count ; j++)
-            {
                 if(task_list.at(i + j).use_spe) task_list.at(i + j).spe_instruction.wait();
             }
         }
@@ -244,15 +223,6 @@ namespace honei
         for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
             if(task_list.at(i).use_spe) SPEManager::instance()->dispatch(task_list.at(i).spe_instruction);
-        }
-        for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
-        {
-            for (unsigned long index = task_list.at(i).quad_end ; index < task_list.at(i).end ; index++)
-            {
-                results[task_list.at(i).result_counter]->elements()[index] +=
-                    task_list.at(i).band[index] *
-                    b.elements()[index + task_list.at(i).spe_instruction.instruction().f.s];
-            }
         }
         for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
         {
