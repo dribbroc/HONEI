@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,73 +23,183 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_kernel.hh>
 
-namespace honei
+#include <tr1/functional>
+
+using namespace honei;
+
+struct SPEInstruction::Implementation
 {
-    SPEInstruction::SPEInstruction(const OpCode opcode, const unsigned size, const Operand a,
-            const Operand b, const Operand c, const Operand d, const Operand e,
-            const Operand f, const Operand g, const Operand h, const Operand i,
-            const Operand j, const Operand k, const Operand l, const Operand m,
-            const Operand n, const Operand o) :
-        _kernel(0),
-        _index(0)
+    /// Our kernel.
+    SPEKernel * kernel;
+
+    /// Our index.
+    unsigned index;
+
+    /// Our instruction structure.
+    Instruction instruction;
+
+    /// Constructor.
+    Implementation(const OpCode opcode, const unsigned size, const Operand & a,
+            const Operand & b, const Operand & c, const Operand & d, const Operand & e,
+            const Operand & f, const Operand & g, const Operand & h, const Operand & i,
+            const Operand & j, const Operand & k, const Operand & l, const Operand & m,
+            const Operand & n, const Operand & o) :
+        kernel(0),
+        index(0)
     {
-        _instruction.opcode = opcode;
-        _instruction.size = size;
-        _instruction.a = a;
-        _instruction.b = b;
-        _instruction.c = c;
-        _instruction.d = d;
-        _instruction.e = e;
-        _instruction.f = f;
-        _instruction.g = g;
-        _instruction.h = h;
-        _instruction.i = i;
-        _instruction.j = j;
-        _instruction.k = k;
-        _instruction.l = l;
-        _instruction.m = m;
-        _instruction.n = n;
-        _instruction.o = o;
+
+        instruction.opcode = opcode;
+        instruction.size = size;
+        instruction.a = a;
+        instruction.b = b;
+        instruction.c = c;
+        instruction.d = d;
+        instruction.e = e;
+        instruction.f = f;
+        instruction.g = g;
+        instruction.h = h;
+        instruction.i = i;
+        instruction.j = j;
+        instruction.k = k;
+        instruction.l = l;
+        instruction.m = m;
+        instruction.n = n;
+        instruction.o = o;
     }
 
-    SPEInstruction::~SPEInstruction()
+    inline void wait()
     {
-        wait();
-    }
-
-    void
-    SPEInstruction::enqueue_with(SPEKernel * kernel) const
-    {
-        #ifdef DEBUG
-        std::string msg("Enqueing SPEInstruction, opcode = " + stringify(_instruction.opcode) +
-                ", size = " + stringify(_instruction.size) + "\n");
-        msg += "a = " + stringify(_instruction.a.ea) + ", b = " + stringify(_instruction.b.ea) + "\n";
-        msg += "c = " + stringify(_instruction.c.ea) + ", d = " + stringify(_instruction.d.ea) + "\n";
-        msg += "e = " + stringify(_instruction.e.ea) + ", f = " + stringify(_instruction.f.ea) + "\n";
-        msg += "g = " + stringify(_instruction.g.ea) + ", h = " + stringify(_instruction.h.ea) + "\n";
-        msg += "i = " + stringify(_instruction.i.ea) + ", j = " + stringify(_instruction.j.ea) + "\n";
-        msg += "k = " + stringify(_instruction.k.ea) + ", l = " + stringify(_instruction.l.ea) + "\n";
-        msg += "m = " + stringify(_instruction.k.ea) + ", n = " + stringify(_instruction.l.ea) + "\n";
-        msg += "o = " + stringify(_instruction.m.ea) + "\n";
-        LOGMESSAGE(ll_minimal, msg);
-        #endif
-
-        _kernel = new SPEKernel(*kernel);
-        _index = kernel->enqueue(*this);
-    }
-
-    void
-    SPEInstruction::wait()
-    {
-        if (_kernel)
+        if (kernel)
         {
-            _kernel->wait(_index);
+            kernel->wait(index);
 
-            delete _kernel;
-            _kernel = 0;
+            delete kernel;
+            kernel = 0;
         }
     }
+};
 
-    const SPEInstruction::Operand
-    SPEInstruction::empty = { 0 };
+SPEInstruction::SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a,
+        const Operand & b, const Operand & c, const Operand & d, const Operand & e,
+        const Operand & f, const Operand & g, const Operand & h, const Operand & i,
+        const Operand & j, const Operand & k, const Operand & l, const Operand & m,
+        const Operand & n, const Operand & o) :
+    _imp(new Implementation(opcode, size, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o))
+{
+}
+
+SPEInstruction::~SPEInstruction()
+{
+    _imp->wait();
+}
+
+void
+SPEInstruction::_enqueue_with(SPEKernel * kernel) const
+{
+    LOGMESSAGE(ll_minimal, std::string("Enqueing SPEInstruction, opcode = " + stringify(_imp->instruction.opcode)
+                + ", size = " + stringify(_imp->instruction.size) + "\na = " + stringify(_imp->instruction.a.ea)
+                + ", b = " + stringify(_imp->instruction.b.ea) + "\nc = " + stringify(_imp->instruction.c.ea)
+                + ", d = " + stringify(_imp->instruction.d.ea) + "\ne = " + stringify(_imp->instruction.e.ea)
+                + ", f = " + stringify(_imp->instruction.f.ea) + "\ng = " + stringify(_imp->instruction.g.ea)
+                + ", h = " + stringify(_imp->instruction.h.ea) + "\ni = " + stringify(_imp->instruction.i.ea)
+                + ", j = " + stringify(_imp->instruction.j.ea) + "\nk = " + stringify(_imp->instruction.k.ea)
+                + ", l = " + stringify(_imp->instruction.l.ea) + "\nm = " + stringify(_imp->instruction.k.ea)
+                + ", n = " + stringify(_imp->instruction.l.ea) + "\no = " + stringify(_imp->instruction.m.ea)
+                + "\n"));
+
+    _imp->kernel = new SPEKernel(*kernel);
+    _imp->index = kernel->enqueue(*this);
+}
+
+SPEInstruction::Instruction
+SPEInstruction::instruction() const
+{
+    return _imp->instruction;
+}
+
+void
+SPEInstruction::wait() const
+{
+    _imp->wait();
+}
+
+const SPEInstruction::Operand
+SPEInstruction::empty = { 0 };
+
+struct SPEInstructionQueue::Implementation
+{
+    /// Our list of instructions.
+    std::list<SPEInstruction> instructions;
+};
+
+SPEInstructionQueue::SPEInstructionQueue() :
+    _imp(new Implementation)
+{
+}
+
+const SPEInstruction &
+SPEInstructionQueue::push_back(const SPEInstruction & instruction)
+{
+    if (_imp->instructions.size() > 0)
+    {
+        if (instruction.instruction().opcode != (*(_imp->instructions.begin())).instruction().opcode)
+            throw InternalError("SPEInstructionQueue: Inserting different opcodes in one Queue.");
+    }
+    if (_imp->instructions.size() > 7)
+            throw InternalError("SPEInstructionQueue: InstructionQueue size is limited to 8 elements due to restrictions in the spu programm.");
+
+    _imp->instructions.push_back(instruction);
+
+    return instruction;
+}
+
+void
+SPEInstructionQueue::wait() const
+{
+    std::for_each(_imp->instructions.begin(), _imp->instructions.end(),
+            std::tr1::bind(std::tr1::mem_fn(&SPEInstruction::wait), std::tr1::placeholders::_1));
+}
+
+std::list<SPEInstruction>::iterator
+SPEInstructionQueue::begin()
+{
+    return _imp->instructions.begin();
+}
+
+std::list<SPEInstruction>::iterator
+SPEInstructionQueue::end()
+{
+    return _imp->instructions.end();
+}
+
+void
+SPEInstructionQueue::_enqueue_with(SPEKernel * kernel)
+{
+    if (_imp->instructions.size() > 0)
+    {
+        for (std::list<SPEInstruction>::iterator i_it(_imp->instructions.begin()), i_end(_imp->instructions.end()) ;
+                i_it != i_end ; i_it++)
+        {
+            LOGMESSAGE(ll_minimal, std::string("Enqueing SPEInstruction, opcode = " + stringify((*i_it)._imp->instruction.opcode)
+                        + ", size = " + stringify((*i_it)._imp->instruction.size) + "\na = " + stringify((*i_it)._imp->instruction.a.ea)
+                        + ", b = " + stringify((*i_it)._imp->instruction.b.ea) + "\nc = " + stringify((*i_it)._imp->instruction.c.ea)
+                        + ", d = " + stringify((*i_it)._imp->instruction.d.ea) + "\ne = " + stringify((*i_it)._imp->instruction.e.ea)
+                        + ", f = " + stringify((*i_it)._imp->instruction.f.ea) + "\ng = " + stringify((*i_it)._imp->instruction.g.ea)
+                        + ", h = " + stringify((*i_it)._imp->instruction.h.ea) + "\ni = " + stringify((*i_it)._imp->instruction.i.ea)
+                        + ", j = " + stringify((*i_it)._imp->instruction.j.ea) + "\nk = " + stringify((*i_it)._imp->instruction.k.ea)
+                        + ", l = " + stringify((*i_it)._imp->instruction.l.ea) + "\nm = " + stringify((*i_it)._imp->instruction.k.ea)
+                        + ", n = " + stringify((*i_it)._imp->instruction.l.ea) + "\no = " + stringify((*i_it)._imp->instruction.m.ea)
+                        + "\n"));
+
+            (*i_it)._imp->kernel = new SPEKernel(*kernel);
+            (*i_it)._imp->index = kernel->enqueue_queue_element(*i_it);
+        }
+        (*_imp->instructions.begin())._imp->kernel->run_queue();
+    }
+}
+
+unsigned long
+SPEInstructionQueue::size()
+{
+    return _imp->instructions.size();
 }

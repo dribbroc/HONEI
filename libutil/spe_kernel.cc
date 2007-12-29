@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -523,5 +524,40 @@ namespace honei
             if (*op_it == op_code) return true;
         }
         return false;
+    }
+
+
+    unsigned int SPEKernel::enqueue_queue_element(const SPEInstruction & instruction)
+    {
+        Lock l(*_imp->mutex);
+        CONTEXT("When enqueueing batch instruction to SPE #" +stringify(_imp->spe->id()));
+        unsigned result;
+
+        while (_imp->spe_instruction_index == (_imp->next_free_index + 1) % 8) /// \todo remove hardcoded numbers
+        {
+            _imp->instruction_finished->wait(*_imp->mutex);
+        }
+
+        _imp->instructions[_imp->next_free_index] = instruction.instruction();
+        result = _imp->enqueued_counter;
+        ++_imp->next_free_index;
+        ++_imp->enqueued_counter;
+        _imp->next_free_index %= 8; /// \todo remove hardcoded numbers
+
+        if (!_imp->spe)
+        {
+            _imp->initial_instructions = true;
+        }
+
+        return result;
+    }
+
+    void SPEKernel::run_queue()
+    {
+        if (_imp->spe)
+        {
+            LOGMESSAGE(ll_minimal, "SPEKernel: Sending start signal to SPE #" + stringify(_imp->spe->id()));
+            _imp->spe->signal();
+        }
     }
 }

@@ -38,6 +38,7 @@
 namespace honei
 {
     class SPEInstruction;
+    class SPEInstructionQueue;
 
     /**
      * SPEManager handles all available SPEs and dispatches tasks to them.
@@ -72,6 +73,7 @@ namespace honei
 
         public:
             friend class SPEInstruction;
+            friend class SPEInstructionQueue;
 
             /// Return the only instance of SPEManager.
             static SPEManager * instance();
@@ -90,14 +92,14 @@ namespace honei
             /// Dispatch an SPETask to a SPE.
             void dispatch(const SPEInstruction & instruction);
 
-            // Dispatch all SPEInstructions from begin and before end to a SPE.
-            void dispatch(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end);
+            // Dispatch all SPEInstructions in the queue to one single SPE.
+            void dispatch(SPEInstructionQueue & instruction_queue);
 
             // Wait for a SPEinstructin to be finished.
             void wait(SPEInstruction & instruction);
 
-            // Wait foR ALL SPEInstrictions from begin and before end to be finished.
-            void wait(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end);
+            // Wait for all SPEInstrictions in the queue to finish.
+            void wait(SPEInstructionQueue & instruction_queue);
     };
 }
 

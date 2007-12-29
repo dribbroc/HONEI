@@ -72,6 +72,12 @@ namespace honei
             /// Enqueue an instruction.
             unsigned int enqueue(const SPEInstruction & instruction);
 
+            /// Enqueue an instruction for batch processing
+            unsigned int enqueue_queue_element(const SPEInstruction & instruction);
+
+            /// Run batch processing
+            void run_queue();
+
             /// Execute the kernel's PPE part.
             void operator() () throw ();
 

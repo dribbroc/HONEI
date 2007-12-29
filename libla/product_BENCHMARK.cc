@@ -86,9 +86,9 @@ class BandedMatrixDenseVectorProductBenchRelax :
             BandedMatrix<DataType_> bm1(_size, dv1);
             DenseVector<DataType_> dv4(_size, DataType_(3));
             DenseVector<DataType_> dv5(dv4.copy());
-            //bm1.insert_band(3, dv4.copy());
-            //bm1.insert_band(-3, dv5.copy());
-            //bm1.insert_band(15, dv5.copy());
+            bm1.insert_band(3, dv4.copy());
+            bm1.insert_band(-3, dv5.copy());
+            bm1.insert_band(15, dv5.copy());
             DenseVector<DataType_> dv2(_size, DataType_(4));
             for (unsigned long i(0) ; i < _count ; i++)
             {

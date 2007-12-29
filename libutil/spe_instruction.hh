@@ -23,9 +23,12 @@
 #include <cell/cell.hh>
 #include <libutil/spe_manager.hh>
 
+#include <list>
+
 namespace honei
 {
     class SPEKernel;
+    class SPEInstructionQueue;
 
     class SPEInstruction
     {
@@ -35,46 +38,69 @@ namespace honei
             typedef honei::cell::OpCode OpCode;
 
         private:
-            /// Our kernel.
-            mutable SPEKernel * _kernel;
+            struct Implementation;
 
-            /// Our index.
-            mutable unsigned _index;
-
-            /// Our instruction structure.
-            Instruction _instruction;
+            /// Our implementation.
+            std::tr1::shared_ptr<Implementation> _imp;
 
             static const Operand empty;
 
             /// Enqueue us with a given kernel.
-            void enqueue_with(SPEKernel * kernel) const;
+            void _enqueue_with(SPEKernel * kernel) const;
 
         public:
             friend class SPEManager::Implementation;
+            friend class SPEInstructionQueue;
 
             /// Constructor.
-            SPEInstruction() { }
-
-            /// Constructor.
-            SPEInstruction(const OpCode opcode, const unsigned size, const Operand a = empty,
-                    const Operand b = empty, const Operand c = empty, const Operand d = empty,
-                    const Operand e = empty, const Operand f = empty, const Operand g = empty,
-                    const Operand h = empty, const Operand i = empty, const Operand j = empty,
-                    const Operand k = empty, const Operand l = empty, const Operand m = empty,
-                    const Operand n = empty, const Operand o = empty);
+            SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a = empty,
+                    const Operand & b = empty, const Operand & c = empty, const Operand & d = empty,
+                    const Operand & e = empty, const Operand & f = empty, const Operand & g = empty,
+                    const Operand & h = empty, const Operand & i = empty, const Operand & j = empty,
+                    const Operand & k = empty, const Operand & l = empty, const Operand & m = empty,
+                    const Operand & n = empty, const Operand & o = empty);
 
             /// Destructor.
             ~SPEInstruction();
 
             /// Wait until we have been executed.
-            void wait();
+            void wait() const;
 
             /// Returns our instruction
-            Instruction instruction() const
-            {
-                return _instruction;
-            }
+            Instruction instruction() const;
+    };
+
+    class SPEInstructionQueue
+    {
+        private:
+            struct Implementation;
+
+            /// Our implementation.
+            Implementation * _imp;
+
+            /// Enqueue us with a given kernel.
+            void _enqueue_with(SPEKernel * kernel);
+
+        public:
+            friend class SPEManager::Implementation;
+
+            /// Constructor.
+            SPEInstructionQueue();
+
+            /// Insert an instruction at the end of the queue.
+            const SPEInstruction & push_back(const SPEInstruction & instruction);
+
+            /// Wait until all our instructions have been executed.
+            void wait() const;
+
+            /// Returns an iterator pointing to the front of our queue
+            std::list<SPEInstruction>::iterator begin();
+
+            /// Returns an iterator pointing to the front of our queue
+            std::list<SPEInstruction>::iterator end();
+
+            /// Returns our instruction count.
+            unsigned long size();
     };
 }
-
 #endif

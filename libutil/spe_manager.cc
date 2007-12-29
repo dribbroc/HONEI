@@ -70,18 +70,10 @@ namespace honei
         /// Our counter to the next history position
         unsigned int next_history_pos;
 
-        /// Dispatch an SPEInstruction to an SPE.
-        inline void dispatch(const SPEInstruction & instruction)
+        inline SPEList::iterator prepare_spe(const SPEInstruction & instruction)
         {
-            CONTEXT("When dispatching Instruction to an SPE");
+            CONTEXT("When preparing a SPE for instruction dispatching");
 
-            //todo
-            //schauen ob ein freier kernel op unterstuetzt.
-            //ansonsten einen kernel per LRU rauswerfen und neuen kernel der op beherrscht einladen.
-            //wenn alle kernel beschaeftigt sind, evtl kann ein kernel op der noch am rechnen ist?
-            //sonst einfach blockieren und warten bis ein kernel frei wird,
-            //wenn 6 spe's rechnen koennte der user eh nicht mehr viel mehr machen
-            //
             /// \todo was ist, wenn kein kernel den opcode unterstuetzt ?
 
             sort(spe_list.begin(), spe_list.end(), compare_by_load);
@@ -122,7 +114,7 @@ namespace honei
 
                 //Halt the spe side
                 SPEInstruction inst_halt(cell::oc_halt, 0);
-                inst_halt.enqueue_with(spe_it->kernel());
+                inst_halt._enqueue_with(spe_it->kernel());
                 inst_halt.wait();
 
                 //find a kernel that supports the most last used ops
@@ -137,6 +129,7 @@ namespace honei
                     {
                         for (unsigned j(0) ; j < (*k_it).capabilities.opcode_count ; ++j)
                         {
+                            std::cout<<"***"<<std::endl;
                             if ((*k_it).capabilities.opcodes[j] == opcode_history[i]);
                             {
                                 temp_count++;
@@ -163,13 +156,36 @@ namespace honei
                 LOGMESSAGE(ll_minimal, msg);
 #endif
             }
-
-            LOGMESSAGE(ll_minimal, "Dispatching to SPE #" + stringify(spe_it->id()) +
+            return spe_it;
+        }
+        /// Dispatch a SPEInstruction to a SPE.
+        inline void dispatch(const SPEInstruction & instruction)
+        {
+            CONTEXT("When dispatching Instruction to a SPE");
+            SPEList::iterator spe_it(prepare_spe(instruction));
+            LOGMESSAGE(ll_minimal, "Dispatching Instruction to SPE #" + stringify(spe_it->id()) +
                     " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify(instruction.instruction().opcode));
-            instruction.enqueue_with(spe_it->kernel());
+            instruction._enqueue_with(spe_it->kernel());
 
             opcode_history[next_history_pos] = instruction.instruction().opcode;
             next_history_pos = (next_history_pos + 1) % 8;
+        }
+
+        /// Dispatch a SPEInstructionQueue to a SPE
+        inline void dispatch(SPEInstructionQueue & instruction_queue)
+        {
+            CONTEXT("When dispatching InstructionQueue to a SPE");
+            if (instruction_queue.size() > 0)
+            {
+                SPEList::iterator spe_it = prepare_spe(*instruction_queue.begin());
+                LOGMESSAGE(ll_minimal, "Dispatching InstructionQueue to SPE #" + stringify(spe_it->id()) +
+                        " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify((*(instruction_queue.begin())).instruction().opcode));
+
+                instruction_queue._enqueue_with(spe_it->kernel());
+
+                opcode_history[next_history_pos] = (*instruction_queue.begin()).instruction().opcode;
+                next_history_pos = (next_history_pos + 1) % 8;
+            }
         }
 
         /// Constructor.
@@ -192,7 +208,7 @@ namespace honei
                 {
                     //Halt the spe side
                     SPEInstruction inst_halt(cell::oc_halt, 0);
-                    inst_halt.enqueue_with(spe_it->kernel());
+                    inst_halt._enqueue_with(spe_it->kernel());
                     inst_halt.wait();
                 }
             }
@@ -296,13 +312,11 @@ namespace honei
     }
 
     void
-    SPEManager::dispatch(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end)
+    SPEManager::dispatch(SPEInstructionQueue & instruction_queue)
     {
         Lock l(*_imp->mutex);
-        for ( ; begin != end ; ++begin)
-        {
-            _imp->dispatch(*begin);
-        }
+
+        _imp->dispatch(instruction_queue);
     }
 
     void
@@ -312,11 +326,8 @@ namespace honei
     }
 
     void
-    SPEManager::wait(std::vector<SPEInstruction>::iterator begin, std::vector<SPEInstruction>::iterator end)
+    SPEManager::wait(SPEInstructionQueue & instruction_queue)
     {
-        for ( ; begin != end ; ++begin)
-        {
-            begin->wait();
-        }
+        instruction_queue.wait();
     }
 }

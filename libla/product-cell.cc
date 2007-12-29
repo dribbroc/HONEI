@@ -26,21 +26,6 @@
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
 
-namespace bm_dv_product
-{
-    struct SPETask
-    {
-        honei::SPEInstruction spe_instruction;
-        unsigned int result_counter;
-        bool use_spe;
-
-        SPETask() :
-            spe_instruction(honei::cell::oc_halt, 0)
-        {
-        }
-    };
-}
-
 namespace honei
 {
     using namespace cell;
@@ -78,13 +63,18 @@ namespace honei
         unsigned int spe_count (std::min((unsigned)4 , SPEManager::instance()->spe_count()));
         //unsigned int spe_count(1);
 
-        typedef std::vector<bm_dv_product::SPETask> TaskList;
-        TaskList task_list;
         DenseVector<float> * results[4] = {
             new DenseVector<float>(b.size(), float(0)),
             new DenseVector<float>(b.size(), float(0)),
             new DenseVector<float>(b.size(), float(0)),
             new DenseVector<float>(b.size(), float(0)) };
+
+        SPEInstructionQueue * queues[4] = {
+            new SPEInstructionQueue,
+            new SPEInstructionQueue,
+            new SPEInstructionQueue,
+            new SPEInstructionQueue };
+
 
         unsigned int counter = 0;
 
@@ -127,21 +117,16 @@ namespace honei
 
                 /// \todo Find a way to use vector size above signed long max size
                 og.u = op_offset % 4;
-                bm_dv_product::SPETask task;
-                task.result_counter = counter;
                 if(quad_end > quad_start)
                 {
-                    task.use_spe = true;
                 }
                 else
                 {
-                    task.use_spe = false;
                     quad_start = 0;
                     quad_end = 0;
                 }
                 //std::cout<< "above D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
-                task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og);
-                task_list.push_back(task);
+                queues[counter]->push_back(SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og));
 
                 for (unsigned long index = quad_end ; index < end ; index++)
                 {
@@ -179,21 +164,16 @@ namespace honei
                 }
 
                 og.u = (4 - (op_offset % 4)) % 4;
-                bm_dv_product::SPETask task;
-                task.result_counter = counter;
                 if(quad_end > quad_start)
                 {
-                    task.use_spe = true;
                 }
                 else
                 {
-                    task.use_spe = false;
                     quad_start = 0;
                     quad_end = start;
                 }
                 //std::cout<< "below D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
-                task.spe_instruction = SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og);
-                task_list.push_back(task);
+                queues[counter]->push_back(SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og));
 
                 for (unsigned long index = start ; index < quad_start ; index++)
                 {
@@ -208,25 +188,14 @@ namespace honei
         }
 
         // dispatch instructions to spe's
-        for (unsigned long i = 0 ; i < task_list.size() - (task_list.size() % spe_count) ; i = i + spe_count)
-        {
-            for (unsigned long j = 0 ; j < spe_count ; j++)
-            {
-                if(task_list.at(i + j).use_spe) SPEManager::instance()->dispatch(task_list.at(i + j).spe_instruction);
-            }
-            for (unsigned long j = 0 ; j < spe_count ; j++)
-            {
-                if(task_list.at(i + j).use_spe) task_list.at(i + j).spe_instruction.wait();
-            }
-        }
 
-        for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
+        for (unsigned long i(0) ; i < 4 ; ++i)
         {
-            if(task_list.at(i).use_spe) SPEManager::instance()->dispatch(task_list.at(i).spe_instruction);
+            SPEManager::instance()->dispatch(*queues[i]);
         }
-        for (unsigned long i = task_list.size() - (task_list.size() % spe_count) ; i < task_list.size() ; ++i)
+        for (unsigned long i(0) ; i < 4 ; ++i)
         {
-            if(task_list.at(i).use_spe) task_list.at(i).spe_instruction.wait();
+            SPEManager::instance()->wait(*queues[i]);
         }
 
 
@@ -243,6 +212,7 @@ namespace honei
         for (unsigned long i(0) ; i < 4 ; ++i)
         {
             delete results[i];
+            delete queues[i];
         }
         return result;
     }
