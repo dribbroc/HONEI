@@ -80,7 +80,7 @@ namespace honei
             ++od.u;
         }
 
-        SPEInstruction instruction(oc_dense_dense_float_scaled_sum, 16 * 1024, oa, ob, oc, od, oe, of);
+        SPEInstruction instruction(oc_scaled_sum_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe, of);
 
         if (use_spe)
         {
@@ -147,7 +147,7 @@ namespace honei
             ++od.u;
         }
 
-        SPEInstruction instruction(oc_dense_dense_float_scaled_sum, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_scaled_sum_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {

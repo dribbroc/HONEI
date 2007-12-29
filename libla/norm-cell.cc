@@ -68,7 +68,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_norm_max, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_norm_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
@@ -140,7 +140,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_norm_l_one, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_norm_l_one_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -216,7 +216,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_norm_l_two, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_norm_l_two_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -291,7 +291,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_norm_l_two, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_norm_l_two_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {

@@ -39,7 +39,7 @@ using namespace honei::cell;
  * \operand g SIMD x_offset
  */
 
-void banded_dense_float_matrix_vector_product(const Instruction & inst)
+void product_banded_matrix_dense_vector_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_r(inst.c.ea), ea_result(inst.c.ea);
 

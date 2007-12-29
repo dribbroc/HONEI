@@ -44,7 +44,7 @@ using namespace honei::cell;
  * \operand j Size of the last transfer for r
  * \operand k default transfer size for r
  */
-void dense_dense_float_matrix_product(const Instruction & inst)
+void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_r(inst.c.ea);
     EffectiveAddress ea_r_start(inst.c.ea);

@@ -67,7 +67,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_dense_float_sum, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_sum_dense_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -127,7 +127,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_dense_float_sum, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_sum_dense_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -192,7 +192,7 @@ namespace honei
         Operand oj;
         oj.u = a.size();
 
-        SPEInstruction instruction(oc_dense_sparse_float_sum, 16384, oa, ob, oc, od, oe, of, og, oh, oi, oj);
+        SPEInstruction instruction(oc_sum_dense_sparse_float, 16384, oa, ob, oc, od, oe, of, og, oh, oi, oj);
 
         SPEManager::instance()->dispatch(instruction);
 
@@ -236,7 +236,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_scalar_float_sum, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_sum_dense_scalar_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -291,7 +291,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_scalar_float_sum, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_sum_dense_scalar_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {

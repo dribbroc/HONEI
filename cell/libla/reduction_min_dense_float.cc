@@ -1,6 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-/* Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
+/*
+ * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -24,11 +25,9 @@
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
 
-#include <cmath>
-
 using namespace honei::cell;
 
-unsigned dense_float_norm_max(const Instruction & inst)
+unsigned reduction_min_dense_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 
@@ -66,10 +65,10 @@ unsigned dense_float_norm_max(const Instruction & inst)
         for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
             extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-            bitMaskGT = spu_cmpabsgt(tmpVector.value, a[current - 1].vectorised[i]);
+            bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
             tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
-        bitMaskGT = spu_cmpabsgt(tmpVector.value, a[current - 1].vectorised[i]);
+        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
         tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
         --counter;
@@ -88,19 +87,19 @@ unsigned dense_float_norm_max(const Instruction & inst)
     for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
         extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-        bitMaskGT = spu_cmpabsgt(a[current - 1].vectorised[i], tmpVector.value);
-        tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
+        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
+        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
     }
-    bitMaskGT = spu_cmpabsgt(a[current - 1].vectorised[i], tmpVector.value);
-    tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
+
+    bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
+    tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    tmpVector.array[0] = fabs(tmpVector.array[0]) > fabs(tmpVector.array[1]) ? fabs(tmpVector.array[0]) : fabs(tmpVector.array[1]);
-    tmpVector.array[2] = fabs(tmpVector.array[2]) > fabs(tmpVector.array[3]) ? fabs(tmpVector.array[2]) : fabs(tmpVector.array[3]);
-
-    MailableResult<float> result = { tmpVector.array[0] > tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
+    tmpVector.array[0] = tmpVector.array[0] < tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
+    tmpVector.array[2] = tmpVector.array[2] < tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
+    MailableResult<float> result = { tmpVector.array[0] < tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
 
     return result.mail;
 }

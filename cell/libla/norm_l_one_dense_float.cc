@@ -27,7 +27,7 @@
 
 using namespace honei::cell;
 
-unsigned dense_float_reduction_min(const Instruction & inst)
+unsigned norm_l_one_dense_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 
@@ -40,15 +40,13 @@ unsigned dense_float_reduction_min(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
-    unsigned offset((ea_a & 0xF) / sizeof(float));
-    ea_a &= ~0xF;
-
     debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
 
-    vector unsigned int bitMaskGT;
-    Subscriptable<float> tmpVector = { spu_splats(inst.e.f) };
+    Subscriptable<float> acc = { spu_splats(0.0f) };
+    vector unsigned int mask = { 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF };
+    vector unsigned int int_values;
 
     while (counter > 1)
     {
@@ -61,15 +59,12 @@ unsigned dense_float_reduction_min(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        unsigned i(0);
-        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+        for(unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
-            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-            bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-            tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
+            int_values = reinterpret_cast<vector unsigned int>(a[current-1].vectorised[i]);
+            int_values = spu_and(int_values, mask);
+            acc.value = spu_add(reinterpret_cast<vector float>(int_values), acc.value);
         }
-        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
         --counter;
 
@@ -83,23 +78,17 @@ unsigned dense_float_reduction_min(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    unsigned i(0);
-    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+    for(unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
-        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
+        int_values = reinterpret_cast<vector unsigned int>(a[current-1].vectorised[i]);
+        int_values = spu_and(int_values, mask);
+        acc.value = spu_add(reinterpret_cast<vector float>(int_values), acc.value);
     }
-
-    bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-    tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    tmpVector.array[0] = tmpVector.array[0] < tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
-    tmpVector.array[2] = tmpVector.array[2] < tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
-    MailableResult<float> result = { tmpVector.array[0] < tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
+    MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
 
     return result.mail;
 }

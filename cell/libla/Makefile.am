@@ -7,24 +7,24 @@ DEFS = $(DEBUGDEF)
 
 noinst_LIBRARIES = libla_spe.a
 libla_spe_a_SOURCES = \
-	dense_dense_float_dot_product.cc \
-	dense_dense_float_element_product.cc \
-	dense_dense_float_matrix_product.cc \
-	dense_dense_float_sum.cc \
-	dense_scalar_float_sum.cc \
-	dense_dense_float_difference.cc \
-	dense_dense_float_matrix_vector_product.cc \
-	banded_dense_float_matrix_vector_product.cc \
-	dense_sparse_float_sum.cc \
-	dense_float_scale.cc \
-	dense_float_reduction_sum.cc \
-	dense_float_reduction_max.cc \
-	dense_float_reduction_min.cc \
-	dense_float_norm_max.cc \
-	dense_float_norm_l_one.cc \
-	dense_float_norm_l_two.cc \
-	float_element_inverse.cc \
-	dense_dense_float_scaled_sum.cc
+	dot_product_dense_dense_float.cc \
+	element_product_dense_dense_float.cc \
+	product_dense_matrix_dense_matrix_float.cc \
+	sum_dense_dense_float.cc \
+	sum_dense_scalar_float.cc \
+	difference_dense_dense_float.cc \
+	product_dense_matrix_dense_vector_float.cc \
+	product_banded_matrix_dense_vector_float.cc \
+	sum_dense_sparse_float.cc \
+	scale_dense_float.cc \
+	reduction_sum_dense_float.cc \
+	reduction_max_dense_float.cc \
+	reduction_min_dense_float.cc \
+	norm_max_dense_float.cc \
+	norm_l_one_dense_float.cc \
+	norm_l_two_dense_float.cc \
+	element_inverse_float.cc \
+	scaled_sum_dense_dense_float.cc
 
 libla_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 

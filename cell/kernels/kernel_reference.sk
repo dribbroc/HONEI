@@ -1,21 +1,21 @@
 # vim: set sw=4 sts=4 et tw=0 ft=bash :
 
 halt
-return_void     dense_dense_float_sum                       dense_dense_float_sum
-return_void     dense_scalar_float_sum                      dense_scalar_float_sum
-return_void     dense_sparse_float_sum                      dense_sparse_float_sum
-return_void     dense_dense_float_difference                dense_dense_float_difference
-return_dword    dense_dense_float_dot_product               dense_dense_float_dot_product
-return_void     dense_dense_float_element_product           dense_dense_float_element_product
-return_void     dense_dense_float_matrix_vector_product     dense_dense_float_matrix_vector_product
-return_void     banded_dense_float_matrix_vector_product    banded_dense_float_matrix_vector_product
-return_void     dense_dense_float_matrix_product            dense_dense_float_matrix_product
-return_dword    dense_float_reduction_sum                   dense_float_reduction_sum
-return_dword    dense_float_reduction_min                   dense_float_reduction_min
-return_dword    dense_float_reduction_max                   dense_float_reduction_max
-return_void     dense_float_scale                           dense_float_scale
-return_dword    dense_float_norm_max                        dense_float_norm_max
-return_dword    dense_float_norm_l_one                      dense_float_norm_l_one
-return_dword    dense_float_norm_l_two                      dense_float_norm_l_two
-return_void     float_element_inverse                       float_element_inverse
-return_void     dense_dense_float_scaled_sum                dense_dense_float_scaled_sum
+return_void     sum_dense_dense_float                       sum_dense_dense_float
+return_void     sum_dense_scalar_float                      sum_dense_scalar_float
+return_void     sum_dense_sparse_float                      sum_dense_sparse_float
+return_void     difference_dense_dense_float                difference_dense_dense_float
+return_dword    dot_product_dense_dense_float               dot_product_dense_dense_float
+return_void     element_product_dense_dense_float           element_product_dense_dense_float
+return_void     product_dense_matrix_dense_vector_float     product_dense_matrix_dense_vector_float
+return_void     product_banded_matrix_dense_vector_float    product_banded_matrix_dense_vector_float
+return_void     product_dense_matrix_dense_matrix_float     product_dense_matrix_dense_matrix_float
+return_dword    reduction_sum_dense_float                   reduction_sum_dense_float
+return_dword    reduction_min_dense_float                   reduction_min_dense_float
+return_dword    reduction_max_dense_float                   reduction_max_dense_float
+return_void     scale_dense_float                           scale_dense_float
+return_dword    norm_max_dense_float                        norm_max_dense_float
+return_dword    norm_l_one_dense_float                      norm_l_one_dense_float
+return_dword    norm_l_two_dense_float                      norm_l_two_dense_float
+return_void     element_inverse_float                       element_inverse_float
+return_void     scaled_sum_dense_dense_float                scaled_sum_dense_dense_float

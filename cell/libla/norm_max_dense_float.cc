@@ -24,9 +24,11 @@
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
 
+#include <cmath>
+
 using namespace honei::cell;
 
-unsigned dense_float_reduction_max(const Instruction & inst)
+unsigned norm_max_dense_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 
@@ -64,10 +66,10 @@ unsigned dense_float_reduction_max(const Instruction & inst)
         for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
             extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-            bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
+            bitMaskGT = spu_cmpabsgt(tmpVector.value, a[current - 1].vectorised[i]);
             tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
-        bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
+        bitMaskGT = spu_cmpabsgt(tmpVector.value, a[current - 1].vectorised[i]);
         tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
         --counter;
@@ -86,18 +88,17 @@ unsigned dense_float_reduction_max(const Instruction & inst)
     for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
         extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-        tmpVector.value = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
+        bitMaskGT = spu_cmpabsgt(a[current - 1].vectorised[i], tmpVector.value);
+        tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
     }
-
-    bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-    tmpVector.value = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
+    bitMaskGT = spu_cmpabsgt(a[current - 1].vectorised[i], tmpVector.value);
+    tmpVector.value  = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    tmpVector.array[0] = tmpVector.array[0] > tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
-    tmpVector.array[2] = tmpVector.array[2] > tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
+    tmpVector.array[0] = fabs(tmpVector.array[0]) > fabs(tmpVector.array[1]) ? fabs(tmpVector.array[0]) : fabs(tmpVector.array[1]);
+    tmpVector.array[2] = fabs(tmpVector.array[2]) > fabs(tmpVector.array[3]) ? fabs(tmpVector.array[2]) : fabs(tmpVector.array[3]);
 
     MailableResult<float> result = { tmpVector.array[0] > tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
 

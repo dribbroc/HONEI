@@ -26,7 +26,7 @@
 
 using namespace honei::cell;
 
-void dense_sparse_float_sum(const Instruction & inst)
+void sum_dense_sparse_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_c(inst.c.ea), ea_result(inst.a.ea);
 

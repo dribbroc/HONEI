@@ -1,7 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-/*
- * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
+/* Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -27,7 +26,7 @@
 
 using namespace honei::cell;
 
-unsigned dense_float_norm_l_one(const Instruction & inst)
+unsigned reduction_max_dense_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.b.ea);
 
@@ -40,13 +39,15 @@ unsigned dense_float_norm_l_one(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
+    unsigned offset((ea_a & 0xF) / sizeof(float));
+    ea_a &= ~0xF;
+
     debug_get(ea_a, a[current - 1].untyped, size);
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     ea_a += size;
 
-    Subscriptable<float> acc = { spu_splats(0.0f) };
-    vector unsigned int mask = { 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF };
-    vector unsigned int int_values;
+    vector unsigned int bitMaskGT;
+    Subscriptable<float> tmpVector = { spu_splats(inst.e.f) };
 
     while (counter > 1)
     {
@@ -59,12 +60,15 @@ unsigned dense_float_norm_l_one(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for(unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        unsigned i(0);
+        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
-            int_values = reinterpret_cast<vector unsigned int>(a[current-1].vectorised[i]);
-            int_values = spu_and(int_values, mask);
-            acc.value = spu_add(reinterpret_cast<vector float>(int_values), acc.value);
+            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
+            bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
+            tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
         }
+        bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
+        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
         --counter;
 
@@ -78,17 +82,24 @@ unsigned dense_float_norm_l_one(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for(unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+    unsigned i(0);
+    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
-        int_values = reinterpret_cast<vector unsigned int>(a[current-1].vectorised[i]);
-        int_values = spu_and(int_values, mask);
-        acc.value = spu_add(reinterpret_cast<vector float>(int_values), acc.value);
+        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
+        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
+        tmpVector.value = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
     }
+
+    bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
+    tmpVector.value = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
 
     release_block(*block_a[0]);
     release_block(*block_a[1]);
 
-    MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
+    tmpVector.array[0] = tmpVector.array[0] > tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
+    tmpVector.array[2] = tmpVector.array[2] > tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
+
+    MailableResult<float> result = { tmpVector.array[0] > tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
 
     return result.mail;
 }

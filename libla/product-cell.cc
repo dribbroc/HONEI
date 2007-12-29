@@ -44,7 +44,7 @@ namespace honei
         Operand oc = { result.elements() };
         Operand od;
         od.u = a.rows();
-        SPEInstruction instruction(oc_dense_dense_float_matrix_vector_product, x.size(), oa, ob, oc, od);
+        SPEInstruction instruction(oc_product_dense_matrix_dense_vector_float, x.size(), oa, ob, oc, od);
 
         SPEManager::instance()->dispatch(instruction);
 
@@ -126,7 +126,7 @@ namespace honei
                     quad_end = 0;
                 }
                 //std::cout<< "above D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
-                queues[counter]->push_back(SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                queues[counter]->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
 
                 for (unsigned long index = quad_end ; index < end ; index++)
                 {
@@ -173,7 +173,7 @@ namespace honei
                     quad_end = start;
                 }
                 //std::cout<< "below D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
-                queues[counter]->push_back(SPEInstruction(oc_banded_dense_float_matrix_vector_product, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                queues[counter]->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
 
                 for (unsigned long index = start ; index < quad_start ; index++)
                 {
@@ -343,7 +343,7 @@ namespace honei
             og.u++;
         }
 
-        SPEInstruction instruction(oc_dense_dense_float_matrix_product, a_def_t_size, oa, ob, oc, od, oe, of, og, oh, oi, oj, ok);
+        SPEInstruction instruction(oc_product_dense_matrix_dense_matrix_float, a_def_t_size, oa, ob, oc, od, oe, of, og, oh, oi, oj, ok);
 
         SPEManager::instance()->dispatch(instruction);
 

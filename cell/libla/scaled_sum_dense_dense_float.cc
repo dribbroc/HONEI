@@ -40,7 +40,7 @@ using namespace honei::cell;
  * \operand e Last transfer buffer size in bytes.
  * \operand f The alignment offset of second entity
  */
-void dense_dense_float_scaled_sum(const Instruction & inst)
+void scaled_sum_dense_dense_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_result(inst.a.ea);
 

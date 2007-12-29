@@ -61,7 +61,7 @@ namespace honei
             ++ob.u;
         }
 
-        SPEInstruction instruction(oc_float_element_inverse, 16 * 1024, oa, ob, oc);
+        SPEInstruction instruction(oc_element_inverse_float, 16 * 1024, oa, ob, oc);
 
         if (use_spe)
         {
@@ -115,7 +115,7 @@ namespace honei
             ++ob.u;
         }
 
-        SPEInstruction instruction(oc_float_element_inverse, 16 * 1024, oa, ob, oc);
+        SPEInstruction instruction(oc_element_inverse_float, 16 * 1024, oa, ob, oc);
 
         if (use_spe)
         {

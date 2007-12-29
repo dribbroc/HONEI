@@ -7,6 +7,51 @@ see the NEWS file.
 
 2007-12-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* cell/kernels/kernel_reference.sk,
+	-cell/libla/banded_dense_float_matrix_vector_product.cc,
+	-cell/libla/dense_dense_float_difference.cc,
+	-cell/libla/dense_dense_float_dot_product.cc,
+	-cell/libla/dense_dense_float_element_product.cc,
+	-cell/libla/dense_dense_float_matrix_product.cc,
+	-cell/libla/dense_dense_float_matrix_vector_product.cc,
+	-cell/libla/dense_dense_float_scaled_sum.cc,
+	-cell/libla/dense_dense_float_sum.cc,
+	-cell/libla/dense_float_norm_l_one.cc,
+	-cell/libla/dense_float_norm_l_two.cc,
+	-cell/libla/dense_float_norm_max.cc,
+	-cell/libla/dense_float_reduction_max.cc,
+	-cell/libla/dense_float_reduction_min.cc,
+	-cell/libla/dense_float_reduction_sum.cc,
+	-cell/libla/dense_float_scale.cc,
+	-cell/libla/dense_scalar_float_sum.cc,
+	-cell/libla/dense_sparse_float_sum.cc,
+	+cell/libla/difference_dense_dense_float.cc,
+	+cell/libla/dot_product_dense_dense_float.cc,
+	+cell/libla/element_inverse_float.cc,
+	+cell/libla/element_product_dense_dense_float.cc,
+	-cell/libla/float_element_inverse.cc, cell/libla/Makefile.am,
+	+cell/libla/norm_l_one_dense_float.cc,
+	+cell/libla/norm_l_two_dense_float.cc,
+	+cell/libla/norm_max_dense_float.cc,
+	+cell/libla/product_banded_matrix_dense_vector_float.cc,
+	+cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	+cell/libla/product_dense_matrix_dense_vector_float.cc,
+	+cell/libla/reduction_max_dense_float.cc,
+	+cell/libla/reduction_min_dense_float.cc,
+	+cell/libla/reduction_sum_dense_float.cc,
+	+cell/libla/scale_dense_float.cc,
+	+cell/libla/scaled_sum_dense_dense_float.cc,
+	+cell/libla/sum_dense_dense_float.cc,
+	+cell/libla/sum_dense_scalar_float.cc,
+	+cell/libla/sum_dense_sparse_float.cc, cell/opcodes.hh,
+	libla/difference-cell.cc, libla/dot_product-cell.cc,
+	libla/element_inverse-cell.cc, libla/element_product-cell.cc,
+	libla/norm-cell.cc, libla/product-cell.cc, libla/reduction-cell.cc,
+	libla/scale-cell.cc, libla/scaled_sum-cell.cc, libla/sum-cell.cc:
+	Revamped opcode naming convention.
+
+2007-12-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/product-cell.cc:
 	Added usage of InstructionQueue.
 	* libutil/spe_instruction.cc, libutil/spe_instruction.hh, libutil/spe_kernel.cc, libutil/spe_kernel.hh,

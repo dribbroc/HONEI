@@ -37,7 +37,7 @@ using namespace honei::cell;
  * \operand c Last transfer buffer size in bytes.
  * \operand d The scalar to use.
  */
-void dense_float_scale(const Instruction & inst)
+void scale_dense_float(const Instruction & inst)
 {
     EffectiveAddress ea_m(inst.a.ea), ea_r(inst.a.ea);
 

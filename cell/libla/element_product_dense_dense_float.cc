@@ -20,7 +20,7 @@
 
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
-#include <cell/libutil/debug.hh>
+#include <cell/libutil/transfer.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -28,7 +28,7 @@
 using namespace honei::cell;
 
 /*
- * dense_dense_float_sum
+ * dense_dense_float_element_product
  *
  * Calculate the sum of two dense entities.
  *
@@ -38,7 +38,7 @@ using namespace honei::cell;
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
  */
-void dense_dense_float_sum(const Instruction & inst)
+int element_product_dense_dense_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.b.ea), ea_result(inst.a.ea);
 
@@ -72,7 +72,7 @@ void dense_dense_float_sum(const Instruction & inst)
 
         for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
-            a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
+            a[current - 1].vectorised[i] = spu_mul(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
         }
 
         mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
@@ -90,9 +90,10 @@ void dense_dense_float_sum(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
+
     for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
-        a[current - 1].vectorised[i] = spu_add(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
+        a[current - 1].vectorised[i] = spu_mul(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
     }
 
     mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
@@ -104,4 +105,6 @@ void dense_dense_float_sum(const Instruction & inst)
     release_block(*block_a[1]);
     release_block(*block_b[0]);
     release_block(*block_b[1]);
+
+    return 0;
 }

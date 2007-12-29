@@ -67,7 +67,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_dense_float_element_product, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_element_product_dense_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -129,7 +129,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_dense_float_element_product, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_element_product_dense_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {

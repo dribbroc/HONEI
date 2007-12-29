@@ -26,7 +26,7 @@
 
 using namespace honei::cell;
 
-void float_element_inverse(const Instruction & inst)
+void element_inverse_float(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_result(inst.a.ea);
 

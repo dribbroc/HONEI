@@ -73,7 +73,7 @@ namespace honei
         {
             ++oc.u;
         }
-        SPEInstruction instruction(oc_dense_float_reduction_sum, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_reduction_sum_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -136,7 +136,7 @@ namespace honei
                 ++oc.u;
             }
 
-            SPEInstruction instruction(oc_dense_float_reduction_sum, 16 * 1024, oa, ob, oc, od);
+            SPEInstruction instruction(oc_reduction_sum_dense_float, 16 * 1024, oa, ob, oc, od);
 
             if (use_spe)
             {
@@ -194,7 +194,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_reduction_min, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_reduction_min_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
@@ -261,7 +261,7 @@ namespace honei
                 ++oc.u;
             }
 
-            SPEInstruction instruction(oc_dense_float_reduction_min, 16 * 1024, oa, ob, oc, od, oe);
+            SPEInstruction instruction(oc_reduction_min_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
             if (use_spe)
             {
@@ -324,7 +324,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_reduction_max, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_reduction_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
@@ -390,7 +390,7 @@ namespace honei
                 ++oc.u;
             }
 
-            SPEInstruction instruction(oc_dense_float_reduction_max, 16 * 1024, oa, ob, oc, od, oe);
+            SPEInstruction instruction(oc_reduction_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
             if (use_spe)
             {
@@ -452,7 +452,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_reduction_sum, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_reduction_sum_dense_float, 16 * 1024, oa, ob, oc, od);
 
         if (use_spe)
         {
@@ -524,7 +524,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_reduction_min, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_reduction_min_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
@@ -603,7 +603,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_dense_float_reduction_max, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_reduction_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
