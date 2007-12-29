@@ -20,113 +20,115 @@
 #ifndef LIBSWE_GUARD_SCENARIO_HH
 #define LIBSWE_GUARD_SCENARIO_HH 1
 
-#include <libswe/implicit_solver.hh>
+//#include <libswe/implicit_solver.hh>
 #include <libswe/boundary_types.hh>
 #include <libmath/methods.hh>
 
-namespace swe_solvers
-{
-    class RELAX
-    {
-    };
 
-    class IMPLICIT
-    {
-    };
-}
 namespace honei
 {
-
-    template<typename ResPrec_, typename SWESolver_, typename BoundaryType_>
-    class Scenario
+    namespace swe_solvers
     {
-    };
+        class RELAX
+        {
+        };
+
+        class IMPLICIT
+        {
+        };
+    }
+
+    using namespace swe_solvers;
+    template<typename ResPrec_, typename SWESolver_, typename BoundaryType_>
+        class Scenario
+        {
+        };
 
     template<typename ResPrec_>
-    class Scenario<ResPrec_, swe_solvers::IMPLICIT, boundaries::REFLECT>
-    {
+        class Scenario<ResPrec_, swe_solvers::IMPLICIT, boundaries::REFLECT>
+        {
 
-        private:
-            ///Flags for validation by ScenarioManager:
-            bool scalarfields_set;
-            bool boundaries_set;
-            bool delta_t_set;
+            private:
+                ///Flags for validation by ScenarioManager:
+                bool scalarfields_set;
+                bool boundaries_set;
+                bool delta_t_set;
 
-            bool allocation;
+                bool allocation;
 
-        public:
-            ///Our Problem size.
-            unsigned long n;
+            public:
+                ///Our Problem size.
+                unsigned long n;
 
-            ///Stepsize in x direction.
-            ResPrec_ delta_x;
-            ///Stepsize in y direction.
-            ResPrec_ delta_y;
-            ///Size of timestep.
-            ResPrec_ delta_t;
+                ///Stepsize in x direction.
+                ResPrec_ delta_x;
+                ///Stepsize in y direction.
+                ResPrec_ delta_y;
+                ///Size of timestep.
+                ResPrec_ delta_t;
 
-            ///Dimensions of OMEGA:
-            ResPrec_ d_width;
-            ResPrec_ d_height;
-            unsigned long grid_width;
-            unsigned long grid_height;
+                ///Dimensions of OMEGA:
+                ResPrec_ d_width;
+                ResPrec_ d_height;
+                unsigned long grid_width;
+                unsigned long grid_height;
 
-            ///The input- and to-be-updated - data.
-            DenseMatrix<ResPrec_> * bottom;
-            DenseMatrix<ResPrec_> * height;
-            DenseMatrix<ResPrec_> * x_veloc;
-            DenseMatrix<ResPrec_> * y_veloc;
+                ///The input- and to-be-updated - data.
+                DenseMatrix<ResPrec_> * bottom;
+                DenseMatrix<ResPrec_> * height;
+                DenseMatrix<ResPrec_> * x_veloc;
+                DenseMatrix<ResPrec_> * y_veloc;
 
-            ///The data to work on.
-            BandedMatrix<ResPrec_> * system_matrix;
-            DenseVector<ResPrec_> * right_hand_side;
-            DenseVector<ResPrec_> * u_temp;
-            DenseVector<ResPrec_> * v_temp;
+                ///The data to work on.
+                BandedMatrix<ResPrec_> * system_matrix;
+                DenseVector<ResPrec_> * right_hand_side;
+                DenseVector<ResPrec_> * u_temp;
+                DenseVector<ResPrec_> * v_temp;
 
-            ///The boundary maps of the scalarfields:
-            DenseMatrix<ResPrec_>* height_bound;
-            DenseMatrix<ResPrec_>* bottom_bound;
-            DenseMatrix<ResPrec_>* x_veloc_bound;
-            DenseMatrix<ResPrec_>* y_veloc_bound;
+                ///The boundary maps of the scalarfields:
+                DenseMatrix<ResPrec_>* height_bound;
+                DenseMatrix<ResPrec_>* bottom_bound;
+                DenseMatrix<ResPrec_>* x_veloc_bound;
+                DenseMatrix<ResPrec_>* y_veloc_bound;
 
 
-            /**
-             * Constructor for square shaped OMEGA.
-             *
-             * \param size Our problem size.
-             *
-             **/
-            Scenario(unsigned long size)
-            {
-                n = size;
-                grid_width = n;
-                grid_height = n;
-            }
+                /**
+                 * Constructor for square shaped OMEGA.
+                 *
+                 * \param size Our problem size.
+                 *
+                 **/
+                Scenario(unsigned long size)
+                {
+                    n = size;
+                    grid_width = n;
+                    grid_height = n;
+                }
 
-            /**
-             * Constructor for rectangular OMEGA.
-             *
-             * \param d_width The width of OMEGA (OMEGA x parameter interval range).
-             * \param d_height The height of OMEGA (OMEGA y parameter interval range).
-             * \param delta_x The stepsize in x direction.
-             * \param delta_y The stepsize in y direction.
-             *
-             **/
-            Scenario(ResPrec_ dwidth, ResPrec_ dheight, ResPrec_ deltax, ResPrec_ deltay)
-            {
-                d_width = dwidth;
-                d_height = dheight;
-                delta_x = deltax;
-                delta_y = deltay;
+                /**
+                 * Constructor for rectangular OMEGA.
+                 *
+                 * \param d_width The width of OMEGA (OMEGA x parameter interval range).
+                 * \param d_height The height of OMEGA (OMEGA y parameter interval range).
+                 * \param delta_x The stepsize in x direction.
+                 * \param delta_y The stepsize in y direction.
+                 *
+                 **/
+                Scenario(ResPrec_ dwidth, ResPrec_ dheight, ResPrec_ deltax, ResPrec_ deltay)
+                {
+                    d_width = dwidth;
+                    d_height = dheight;
+                    delta_x = deltax;
+                    delta_y = deltay;
 
-                //\TODO: catch error: d_width%delta_x !=0
-                grid_width = d_width/delta_x;
-                grid_height = d_height/delta_y;
-            }
+                    //\TODO: catch error: d_width%delta_x !=0
+                    grid_width = d_width/delta_x;
+                    grid_height = d_height/delta_y;
+                }
 
-            /**
-             * Constructor for rectangular grid.
-             *
+                /**
+                 * Constructor for rectangular grid.
+                 *
              * \param grid_width The width of the grid.
              * \param grid_height The height of the grid.
              *

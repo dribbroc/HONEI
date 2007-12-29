@@ -56,7 +56,6 @@
 using namespace std;
 using namespace honei;
 using namespace methods;
-using namespace swe_solvers;
 using namespace boundaries;
 
 namespace honei {
@@ -65,6 +64,7 @@ namespace honei {
     {
     };
 
+    using namespace swe_solvers;
     template<typename Tag_, typename ResPrec_>
     class ImplicitSolver<Tag_, ResPrec_, CG, REFLECT>
     {
