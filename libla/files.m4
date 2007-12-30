@@ -9,7 +9,7 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`absolute',                      `hh', `cc', `test')
-add(`algorithm',                     `hh')
+add(`algorithm',                     `hh', `test')
 add(`banded_matrix',                 `hh', `test')
 add(`dense_matrix',                  `hh', `test')
 add(`dense_matrix_tile',             `hh', `test')

@@ -273,7 +273,7 @@ namespace honei
             }
 
             /// Returns a band-vector by unsigned index.
-            DenseVector<DataType_> & band_unsigned(unsigned long index) const
+            DenseVector<DataType_> & band_unsigned(unsigned long index)
             {
                 CONTEXT("When retrieving unsigned band '" + stringify(index) + "' of matrix of size '"
                         + stringify(_size) + "':");
