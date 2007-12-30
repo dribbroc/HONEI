@@ -184,6 +184,9 @@ namespace honei
             DenseVector<ResPrec_> * _bottom_slopes_x;
             DenseVector<ResPrec_> * _bottom_slopes_y;
 
+            ///Manning constant:
+            ResPrec_ manning_n;
+
             /**
              * Constructor for rectangular grid.
              *

@@ -102,6 +102,10 @@ namespace honei {
     {
         ///Private members.
         private:
+
+            ///Our scenario:
+            Scenario<ResPrec_, RELAX, BoundaryType_> * scenario;
+
             ///Stepsize in x direction.
             ResPrec_ _delta_x;
             ///Stepsize in y direction.
@@ -135,34 +139,6 @@ namespace honei {
 
             ///Vector _d is the relaxation - Matrix D`s diagonal-vector (must be 3-dim.).
             DenseVector<ResPrec_> * _d;
-
-            /** Vectors contain the boundary - scalars => They have to be (2a+2b) - dimensional,
-              * if a is the number of cell-steps in x-direction and b represents the same for
-              * y- direction (For square - shaped grids it is 4n dimensional, where n = squareroot(N), and N is the total number of cells)
-              * This might be useful for very complicated simulation settings. In simpler cases, one should use the
-              * below options.
-              **/
-            DenseVector<ResPrec_> * _bottom_bound;
-            DenseVector<ResPrec_> * _height_bound;
-            DenseVector<ResPrec_> * _xveloc_bound;
-            DenseVector<ResPrec_> * _yveloc_bound;
-
-            /**
-              * Boundaries: Scalars for rectangular grids. Simple version of the above vector-
-              * based solution.
-              *
-              **/
-            ResPrec_ _north_bound;
-            ResPrec_ _south_bound;
-            ResPrec_ _west_bound;
-            ResPrec_ _east_bound;
-
-            ///Flags for boundary usage.
-            bool _simple_bound;
-            bool _usage_reflect;
-            bool _usage_constant;
-            bool _usage_cyclic;
-            bool _usage_transmissive;
 
             ///Vectors _u, _v, _w pointers are the relaxation vectors. size is 3N, where N is the total number of grid cells.
             ///If using boundary-mapping, the size is 3N + 4(w + h + 4).
@@ -721,11 +697,6 @@ namespace honei {
                 this->_delta_t = deltat;
                 this->_eps = eps;
                 this->_solve_time = 0;
-                this->_simple_bound = true;
-                this->_usage_reflect = true;
-                this->_usage_constant = false;
-                this->_usage_cyclic = false;
-                this->_usage_transmissive = false;
 
                 this->_n = _d_width * _d_height;
 
@@ -740,6 +711,38 @@ namespace honei {
                   _w_temp = new DenseVector<ResPrec_> (_w->copy());
                   */
             }
+            /**
+             * Second simple public constructor for tests.
+             *
+             * \param scenario Our scenario.
+             *
+             **/
+            RelaxSolver(Scenario<ResPrec_, RELAX, BoundaryType_> & scenario )
+            {
+                this->_height = scenario.height;
+                this->_bottom = scenario.bottom;
+                this->_x_veloc = scenario.x_veloc;
+                this->_y_veloc = scenario.y_veloc;
+                this->_u = scenario.u;
+                this->_v = scenario.v;
+                this->_w = scenario.w;
+                this->_d_width = scenario.d_width;
+                this->_d_height = scenario.d_height;
+                this->_delta_x = scenario.delta_x;
+                this->_delta_y = scenario.delta_y;
+                this->_delta_t = scenario.delta_t;
+                this->_eps = scenario.eps;
+                this->_solve_time = 0;
+                this->_n = _d_width * _d_height;
+
+                this->_bottom_slopes_x = scenario.bottom_slopes_x;
+                this->_bottom_slopes_y = scenario.bottom_slopes_y;
+
+                this->_c = scenario.c;
+                this->_d = scenario.d;
+                this->_manning_n_squared = scenario.manning_n * scenario.manning_n;
+            }
+
             /** Encapsulates computation in one timestep. In the driver-application, one
              * can simply write a loop in which solve is called at first and then the
              * renderable matrices are read out.
