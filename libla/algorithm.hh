@@ -62,7 +62,6 @@ namespace honei
     void convert(DenseVectorContinuousBase<DataType_> & copy, const DenseVectorContinuousBase<OrigType_> & orig)
     {
         CONTEXT("When converting DenseVectorContinuousBase to DenseVectorContinuousBase:");
-        ASSERT(orig.size() > 0, "size is zero!");
 
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
@@ -80,7 +79,6 @@ namespace honei
     void convert(DenseVectorBase<DataType_> & copy, const DenseVectorBase<OrigType_> & orig)
     {
         CONTEXT("When converting DenseVectorBase to DenseVectorBase:");
-        ASSERT(orig.size() > 0, "size is zero!");
 
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
@@ -97,7 +95,6 @@ namespace honei
     void convert(SparseVector<DataType_> & copy, const SparseVector<OrigType_> & orig)
     {
         CONTEXT("When converting SparseVector to SparseVector:");
-        ASSERT(orig.size() > 0, "size is zero!");
 
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
@@ -114,7 +111,6 @@ namespace honei
     void convert(DenseMatrix<DataType_> & copy, const Matrix<OrigType_> & orig)
     {
         CONTEXT("When converting DenseMatrix to DenseMatrix:");
-        ASSERT(orig.size() > 0, "size is zero!");
 
         if (copy.rows() != orig.rows())
             throw MatrixRowsDoNotMatch(orig.rows(), copy.rows());
@@ -134,7 +130,6 @@ namespace honei
     void convert(SparseMatrix<DataType_> & copy, const SparseMatrix<OrigType_> & orig)
     {
         CONTEXT("When converting SparseMatrix to SparseMatrix:");
-        ASSERT(orig.size() > 0, "size is zero!");
 
         if (copy.rows() != orig.rows())
             throw MatrixRowsDoNotMatch(orig.rows(), copy.rows());
@@ -151,7 +146,6 @@ namespace honei
     void convert(BandedMatrix<DataType_> & copy, const BandedMatrix<OrigType_> & orig)
     {
         CONTEXT("When converting BandedMatrix to BandedMatrix:");
-        ASSERT(orig.size() > 0, "size is zero!");
 
         if (copy.size() != orig.size())
             throw MatrixSizeDoesNotMatch(orig.size(), copy.size());
