@@ -716,10 +716,14 @@ class DenseVectorRangeDifferenceTest :
                 {
                     for (int j(0) ; j < 4 ; ++j)
                     {
-                        DenseVector<DT_> dv1(size+3), dv3(size, DT_(i-j));
-                        for (typename DenseVector<DT_>::ElementIterator k(dv1.begin_elements()), k_end(dv1.end_elements()) ; k != k_end ; ++k)
+                        DenseVector<DT_> dv1(size+3), dv2(size+3), dv3(size, DT_(i-j));
+                        for (typename DenseVector<DT_>::ElementIterator k(dv1.begin_elements()), l(dv2.begin_elements()),
+                                    k_end(dv1.end_elements()), l_end(dv2.end_elements()) ; k != k_end ; ++k, ++l)
+                        {
                             *k = k.index();
-                        DenseVector<DT_> dv2(dv1.copy());
+                            *l = k.index();
+                        }
+
                         DenseVectorRange<DT_> dvr1(dv1, size, i), dvr2(dv2, size, j);
                         Difference<Tag_>::value(dvr1, dvr2);
                         TEST_CHECK_EQUAL(dvr1, dv3);
@@ -737,6 +741,9 @@ DenseVectorRangeDifferenceTest<tags::CPU, double> dense_vector_range_difference_
 #ifdef HONEI_SSE
 DenseVectorRangeDifferenceTest<tags::CPU::SSE, float> sse_dense_vector_range_difference_test_float("SSE float");
 DenseVectorRangeDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_range_difference_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeDifferenceTest<tags::Cell, float> cell_dense_vector_range_difference_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -757,10 +764,14 @@ class DenseVectorRangeDifferenceQuickTest :
             {
                 for (int j(0) ; j < 4 ; ++j)
                 {
-                    DenseVector<DT_> dv1(size+3), dv3(size, DT_(i-j));
-                    for (typename DenseVector<DT_>::ElementIterator k(dv1.begin_elements()), k_end(dv1.end_elements()) ; k != k_end ; ++k)
+                    DenseVector<DT_> dv1(size+3), dv2(size+3), dv3(size, DT_(i-j));
+                    for (typename DenseVector<DT_>::ElementIterator k(dv1.begin_elements()), l(dv2.begin_elements()),
+                                k_end(dv1.end_elements()), l_end(dv2.end_elements()) ; k != k_end ; ++k, ++l)
+                    {
                         *k = k.index();
-                    DenseVector<DT_> dv2(dv1.copy());
+                        *l = k.index();
+                    }
+
                     DenseVectorRange<DT_> dvr1(dv1, size, i), dvr2(dv2, size, j);
                     Difference<Tag_>::value(dvr1, dvr2);
                     TEST_CHECK_EQUAL(dvr1, dv3);
@@ -777,6 +788,9 @@ DenseVectorRangeDifferenceQuickTest<tags::CPU, double> dense_vector_range_differ
 #ifdef HONEI_SSE
 DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_difference_quick_test_float("SSE float");
 DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_difference_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeDifferenceQuickTest<tags::Cell, float> cell_dense_vector_range_difference_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DT_>

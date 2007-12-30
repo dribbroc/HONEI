@@ -5,6 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-30 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/difference_TEST.cc: Debugged DVR tests and added
+	instantiations for Cell.
+
+2007-12-30 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/difference_dense_dense_float.cc,
+	libla/difference-cell.cc, libla/difference.hh, libla/sum-cell.cc:
+	Applied DVCB support to Difference(DV,DV) on Cell. Added one missing
+	if-case to Sum's PPU part.
+
 2007-12-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/relax_solver.hh, libswe/scenario.hh, relax_solver_TEST.cc:
