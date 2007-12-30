@@ -31,11 +31,6 @@ using namespace honei::cell;
 
 @FUNCTIONS@
 
-extern "C"
-{
-    extern char _end;
-}
-
 #ifdef DEBUG
 union ContextData
 {
