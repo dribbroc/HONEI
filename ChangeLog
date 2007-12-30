@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-30 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/norm_l_one_dense_float.cc,
+	cell/libla/norm_l_two_dense_float.cc,
+	cell/libla/reduction_sum_dense_float.cc, libla/files.m4,
+	libla/norm-cell.cc, libla/reduction-cell.cc, libla/scale-cell.cc,
+	libla/scaled_sum-cell.cc, libla/sum-cell.cc: Cleaned up with contexts
+	and obsolete headers.
+
 2007-12-30 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/algorithm.hh, libla/algorithm_TEST.cc,

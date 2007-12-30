@@ -35,7 +35,7 @@ namespace honei
     float
     Norm<vnt_max, false, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When applying max norm to a DenseVector<float> (Cell):");
+        CONTEXT("When applying max norm to DenseVectorContinuousBase<float> (Cell):");
 
         float result(0.0f);
 
@@ -100,7 +100,7 @@ namespace honei
     float
     Norm<vnt_l_one, false, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When applying L1-norm to a DenseVector<float> (Cell):");
+        CONTEXT("When applying L1-norm to DenseVectorContinuousBase<float> (Cell):");
         float result(0.0f);
 
         Operand oa = { &result };
@@ -175,7 +175,7 @@ namespace honei
     float
     Norm<vnt_l_two, true, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When applying L2-norm to a DenseVector<float> (Cell):");
+        CONTEXT("When applying L2-norm (with square-root) to DenseVectorContinuousBase<float> (Cell):");
 
         float result(0.0f);
 
@@ -250,7 +250,7 @@ namespace honei
     float
     Norm<vnt_l_two, false, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When applying L2-norm (quasi-dot-product-version) to a DenseVector<float> (Cell):");
+        CONTEXT("When applying L2-norm to DenseVectorContinuousBase<float> (Cell):");
 
         float result(0.0f);
 

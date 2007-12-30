@@ -31,7 +31,7 @@ namespace honei
     DenseVectorContinuousBase<float> &
     ScaledSum<tags::Cell>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const float & c)
     {
-        CONTEXT("When adding DenseVector<float> to scaled DenseVector<float> (Cell):");
+        CONTEXT("When adding DenseVectorContinuousBase<float> to scaled DenseVectorContinuousBase<float> (Cell):");
 
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());

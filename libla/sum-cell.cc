@@ -32,7 +32,7 @@ namespace honei
     DenseVectorContinuousBase<float> &
     Sum<tags::Cell>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
     {
-        CONTEXT("When adding DenseVector<float> to DenseVector<float> (Cell):");
+        CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> (Cell):");
 
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());

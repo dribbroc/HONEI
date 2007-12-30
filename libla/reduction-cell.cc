@@ -33,7 +33,7 @@ namespace honei
     float
     Reduction<rt_sum, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When reducing DenseVector<float> to Scalar by sum (Cell):");
+        CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by sum (Cell):");
 
         float result(0.0f);
 
@@ -161,7 +161,7 @@ namespace honei
     float
     Reduction<rt_min, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When reducing DenseVector<float> to Scalar by minimum (Cell):");
+        CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by minimum (Cell):");
 
         float result(0.0f);
 
@@ -291,7 +291,7 @@ namespace honei
     float
     Reduction<rt_max, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When reducing DenseVector<float> to Scalar by maximum (Cell):");
+        CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by maximum (Cell):");
 
         float result(0.0f);
 

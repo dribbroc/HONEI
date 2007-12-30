@@ -85,7 +85,7 @@ namespace honei
     DenseVectorContinuousBase<float> &
     Scale<tags::Cell>::value(const float a, DenseVectorContinuousBase<float> & b)
     {
-        CONTEXT("When scaling DenseVector<float> (Cell):");
+        CONTEXT("When scaling DenseVectorContinuousBase<float> (Cell):");
 
         Operand oa = { b.elements() };
         Operand ob, oc, od;
