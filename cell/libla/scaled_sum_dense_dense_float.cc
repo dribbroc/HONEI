@@ -28,7 +28,7 @@
 using namespace honei::cell;
 
 /*
- * dense_dense_float_scaled sum
+ * scaled_sum_dense_dense_float
  *
  * Calculate the scaled sum of two dense entities.
  *
@@ -68,25 +68,26 @@ void scaled_sum_dense_dense_float(const Instruction & inst)
     {
         nextsize = (counter == 2 ? inst.e.u : inst.size);
 
-        mfc_get(a[next - 1].untyped, ea_a - 16, nextsize, next, 0, 0);
-        mfc_get(b[next - 1].untyped, ea_b - 16, nextsize, next, 0, 0);
+        ea_a -= 16;
+        ea_b -= 16;
+        mfc_get(a[next - 1].untyped, ea_a, nextsize, next, 0, 0);
+        mfc_get(b[next - 1].untyped, ea_b, nextsize, next, 0, 0);
         ea_a += nextsize;
         ea_b += nextsize;
 
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        unsigned i(0);
-        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
             extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], b_offset);
             a[current - 1].vectorised[i] = spu_madd(b[current - 1].vectorised[i], scalar_vector, a[current - 1].vectorised[i]);
         }
 
-        if (counter == inst.d.u)
-            mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
-        else
-            mfc_putb(a[current - 1].untyped, ea_result - 16, size, current, 0, 0);
+        if (counter != inst.d.u)
+            ea_result -= 16;
+
+        mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
 
         ea_result += size;
 
@@ -99,42 +100,44 @@ void scaled_sum_dense_dense_float(const Instruction & inst)
         size = nextsize;
     }
 
+    mfc_write_tag_mask(1 << next); // Make sure earlier GETS/PUTS are done
+    mfc_read_tag_status_all();
+
     // For calculation of "the end" (see below)
-    mfc_get(a[next - 1].untyped, ea_a - 16, 16, next, 0, 0);
-    mfc_get(b[next - 1].untyped, ea_b - 16, 32, next, 0, 0);
+    mfc_get(a[next - 1].untyped, ea_a - 16, inst.d.u * 16, next, 0, 0);
+    mfc_get(b[next - 1].untyped, ea_b - 16, (inst.d.u * 16) + 16, next, 0, 0);
 
     mfc_write_tag_mask(1 << current); // Make sure earlier GETS/PUTS are done
     mfc_read_tag_status_all();
 
-    unsigned i(0);
-    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+    for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
         extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], b_offset);
         a[current - 1].vectorised[i] = spu_madd(b[current - 1].vectorised[i], scalar_vector, a[current - 1].vectorised[i]);
     }
 
-    if (counter == inst.d.u)
-        mfc_put(a[current - 1].untyped, ea_result, size, current, 0, 0);
-    else
-        mfc_put(a[current - 1].untyped, ea_result - 16, size, current, 0, 0);
+    if (counter != inst.d.u)
+        ea_result -= 16;
+
+    mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
 
     // Now calculate the last vector of a and the shuffled last two vectors of b.
     mfc_write_tag_mask(1 << next); // Assure that GET(next) is done
     mfc_read_tag_status_all();
 
-    extract(b[next - 1].vectorised[0], b[next - 1].vectorised[1], b_offset);
-    a[next - 1].vectorised[0] = spu_madd(b[next - 1].vectorised[0], scalar_vector, a[next - 1].vectorised[0]);
+    for (unsigned i(0) ; i < inst.d.u ; i++)
+    {
+        extract(b[next - 1].vectorised[i], b[next - 1].vectorised[i + 1], b_offset);
+        a[next - 1].vectorised[i] = spu_madd(b[next - 1].vectorised[i], scalar_vector, a[next - 1].vectorised[i]);
+    }
 
     mfc_write_tag_mask(1 << current); // Assure that PUT(current) is done
     mfc_read_tag_status_all();
 
-    mfc_put(a[next - 1].untyped, ea_result + size - 16, 16, next, 0, 0);
+    mfc_put(a[next - 1].untyped, ea_result + size - 16, inst.d.u * 16, next, 0, 0);
 
     mfc_write_tag_mask(1 << next); // Assure that PUT(next) is done
     mfc_read_tag_status_all();
 
-    release_block(*block_a[0]);
-    release_block(*block_a[1]);
-    release_block(*block_b[0]);
-    release_block(*block_b[1]);
+    release_all_blocks();
 }

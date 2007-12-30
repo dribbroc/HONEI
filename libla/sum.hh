@@ -609,7 +609,7 @@ namespace honei
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
 
-        static DenseVector<float> & value(DenseVector<float> & a, const DenseVector<float> & b);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
         static DenseVector<float> & value(DenseVector<float> & a, const SparseVector<float> & b);
 

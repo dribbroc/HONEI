@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-30 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/libla/scaled_sum_dense_dense_float.cc,
+	cell/libla/sum_dense_dense_float.cc, libla/sum-cell.cc, libla/sum.hh,
+	libla/sum_TEST.cc: Added DVCB support to Sum(DV,DV) on Cell. Added
+	tests. Adopted some changes to ScaledSum.
+
 2007-12-30 Markus Geveler <apryde@gmx.de>
 
 	* libswe/relax_solver.hh, libswe/scenario.hh: Removed unused members,
