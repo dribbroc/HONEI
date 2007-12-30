@@ -61,13 +61,30 @@ namespace honei
     template <typename DataType_, typename OrigType_>
     void convert(DenseVectorContinuousBase<DataType_> & copy, const DenseVectorContinuousBase<OrigType_> & orig)
     {
-        CONTEXT("When converting DenseVector to DenseVector:");
+        CONTEXT("When converting DenseVectorContinuousBase to DenseVectorContinuousBase:");
         ASSERT(orig.size() > 0, "size is zero!");
 
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
         /// \todo use typetraits convert
+        typename Vector<DataType_>::ElementIterator f(copy.begin_elements());
+        for (typename Vector<OrigType_>::ConstElementIterator i(orig.begin_elements()),
+                i_end(orig.end_elements()) ; i != i_end ; ++i, ++f)
+        {
+            *f = *i;
+        }
+    }
+
+    template <typename DataType_, typename OrigType_>
+    void convert(DenseVectorBase<DataType_> & copy, const DenseVectorBase<OrigType_> & orig)
+    {
+        CONTEXT("When converting DenseVectorBase to DenseVectorBase:");
+        ASSERT(orig.size() > 0, "size is zero!");
+
+        if (copy.size() != orig.size())
+            throw VectorSizeDoesNotMatch(orig.size(), copy.size());
+
         typename Vector<DataType_>::ElementIterator f(copy.begin_elements());
         for (typename Vector<OrigType_>::ConstElementIterator i(orig.begin_elements()),
                 i_end(orig.end_elements()) ; i != i_end ; ++i, ++f)
@@ -139,7 +156,7 @@ namespace honei
         if (copy.size() != orig.size())
             throw MatrixSizeDoesNotMatch(orig.size(), copy.size());
 
-        for (BandedMatrix<float>::ConstVectorIterator band(orig.begin_non_zero_bands()), band_end(orig.end_non_zero_bands()) ;
+        for (typename BandedMatrix<OrigType_>::ConstVectorIterator band(orig.begin_non_zero_bands()), band_end(orig.end_non_zero_bands()) ;
                 band != band_end ; ++band)
         {
             convert(copy.band_unsigned(band.index()), *band);
