@@ -73,6 +73,7 @@ using namespace boundaries;
 using namespace directions;
 using namespace assembly_types;
 using namespace source_types;
+using namespace swe_solvers;
 namespace honei {
 
     typedef unsigned long ulint;
@@ -97,14 +98,14 @@ namespace honei {
              typename PredictionPrec2_,
              typename InitPrec1_,
              typename InitPrec2_,
-             typename BoundaryType_>
-    class RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_, BoundaryType_, REFLECT>
+             typename SourceType_>
+    class RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_, SourceType_, REFLECT>
     {
         ///Private members.
         private:
 
             ///Our scenario:
-            Scenario<ResPrec_, RELAX, BoundaryType_> * scenario;
+            Scenario<ResPrec_, RELAX, REFLECT> * scenario;
 
             ///Stepsize in x direction.
             ResPrec_ _delta_x;
@@ -717,8 +718,9 @@ namespace honei {
              * \param scenario Our scenario.
              *
              **/
-            RelaxSolver(Scenario<ResPrec_, RELAX, BoundaryType_> & scenario )
+            RelaxSolver(Scenario<ResPrec_, swe_solvers::RELAX, REFLECT> & scenario )
             {
+                this->scenario = &scenario;
                 this->_height = scenario.height;
                 this->_bottom = scenario.bottom;
                 this->_x_veloc = scenario.x_veloc;

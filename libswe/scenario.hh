@@ -170,9 +170,9 @@ namespace honei
             DenseVector<ResPrec_> * c;
             DenseVector<ResPrec_> * d;
 
-            DenseVector<ResPrec_> * u_temp;
-            DenseVector<ResPrec_> * v_temp;
-            DenseVector<ResPrec_> * w_temp;
+            DenseVector<ResPrec_> * u;
+            DenseVector<ResPrec_> * v;
+            DenseVector<ResPrec_> * w;
 
             ///The boundary maps of the scalarfields:
             DenseMatrix<ResPrec_>* height_bound;
@@ -181,8 +181,8 @@ namespace honei
             DenseMatrix<ResPrec_>* y_veloc_bound;
 
             ///Vectors for the bottom slopes.
-            DenseVector<ResPrec_> * _bottom_slopes_x;
-            DenseVector<ResPrec_> * _bottom_slopes_y;
+            DenseVector<ResPrec_> * bottom_slopes_x;
+            DenseVector<ResPrec_> * bottom_slopes_y;
 
             ///Manning constant:
             ResPrec_ manning_n;
@@ -194,7 +194,7 @@ namespace honei
              * \param grid_height The height of the grid.
              *
              **/
-            Scenario(ResPrec_ gridwidth, ResPrec_ gridheight)
+            Scenario(unsigned long gridwidth, unsigned long gridheight)
             {
                 d_width = gridwidth;
                 d_height = gridheight;

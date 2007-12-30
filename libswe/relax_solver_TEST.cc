@@ -23,7 +23,7 @@
 #include <unittest/unittest.hh>
 #include <libutil/stringify.hh>
 #include <string>
-
+#include <libswe/scenario.hh>
 #include <sys/time.h>
 
 using namespace honei;
@@ -101,10 +101,26 @@ class RelaxSolverTest :
 
             double eps = 10e-6;
             DataType_ manning = DataType_(0);
+            Scenario<DataType_, swe_solvers::RELAX, boundaries::REFLECT> scenario(dwidth, dheight);
+            scenario.height = &height;
+            scenario.bottom = &bottom;
+            scenario.x_veloc = &u1;
+            scenario.y_veloc = &u2;
+            scenario.u = &u;
+            scenario.v = &v;
+            scenario.w = &w;
+            scenario.bottom_slopes_x = &bx;
+            scenario.bottom_slopes_y = &by;
+            scenario.c = &c;
+            scenario.d = &d;
+            scenario.delta_x = deltax;
+            scenario.delta_y = deltay;
+            scenario.delta_t = deltat;
+            scenario.eps = eps;
+            scenario.manning_n = manning;
 
             RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT> relax_solver
-                (&height, &bottom, &u1, &u2, &u, &v, &w,
-                dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d, manning);
+                (scenario);
             relax_solver.do_preprocessing();
             cout << "Height -field after preprocessing:\n";
             string outHeight = stringify(height);

@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-30 Markus Geveler <apryde@gmx.de>
+
+	* libswe/relax_solver.hh, libswe/scenario.hh, relax_solver_TEST.cc:
+	Made RelaxSolver use Scenario, resolved malformed template argument
+	list, adjusted test.
+
 2007-12-30 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/scaled_sum_dense_dense_float.cc,
