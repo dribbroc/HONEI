@@ -20,6 +20,7 @@
 
 #include <libla/dense_vector.hh>
 #include <libla/sparse_vector.hh>
+#include <libla/algorithm.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -239,3 +240,85 @@ class DenseVectorQuickTest :
 };
 DenseVectorQuickTest<float>  dense_vector_quick_test_float("float");
 DenseVectorQuickTest<double> dense_vector_quick_test_double("double");
+
+class DenseVectorConvertTest :
+    public BaseTest
+{
+    public:
+        DenseVectorConvertTest() :
+            BaseTest("dense_vector_convert_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
+            {
+                DenseVector<float> dvf1(size), dvf2(size), dvfr(size);
+                DenseVector<double> dvd1(size), dvd2(size), dvdr(size);
+                Vector<float>::ElementIterator fr(dvfr.begin_elements());
+                Vector<double>::ElementIterator dr(dvdr.begin_elements());
+                Vector<float>::ElementIterator f1(dvf1.begin_elements());
+                Vector<double>::ElementIterator d1(dvd1.begin_elements());
+                for (Vector<float>::ElementIterator i_end(dvf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+                {
+                    *fr = float(fr.index()) / 1.1234;
+                    *dr = double(fr.index()) / 1.1234;
+                    *f1 = float(fr.index()) / 1.1234;
+                    *d1 = double(fr.index()) / 1.1234;
+                }
+                convert(dvf2, dvd1);
+                convert(dvd2, dvf1);
+                TEST_CHECK_EQUAL(dvf2, dvfr);
+                for (Vector<double>::ConstElementIterator i(dvd2.begin_elements()), r(dvdr.begin_elements()), i_end(dvd2.end_elements())
+                        ; i != i_end ; ++i, ++r)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
+                }
+            }
+            DenseVector<double> dvf01(3), dvf02(3);
+            DenseVector<double> dvd01(2), dvd02(4);
+            TEST_CHECK_THROWS(convert(dvf01, dvd01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(convert(dvd02, dvf02), VectorSizeDoesNotMatch);
+        }
+} dense_vector_convert_test;
+
+class DenseVectorConvertQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorConvertQuickTest() :
+            QuickTest("dense_vector_convert_quick_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(4711);
+            DenseVector<float> dvf1(size), dvf2(size), dvfr(size);
+            DenseVector<double> dvd1(size), dvd2(size), dvdr(size);
+            Vector<float>::ElementIterator fr(dvfr.begin_elements());
+            Vector<double>::ElementIterator dr(dvdr.begin_elements());
+            Vector<float>::ElementIterator f1(dvf1.begin_elements());
+            Vector<double>::ElementIterator d1(dvd1.begin_elements());
+            for (Vector<float>::ElementIterator i_end(dvf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+            {
+                *fr = float(fr.index()) / 1.1234;
+                *dr = double(fr.index()) / 1.1234;
+                *f1 = float(fr.index()) / 1.1234;
+                *d1 = double(fr.index()) / 1.1234;
+            }
+            convert(dvf2, dvd1);
+            convert(dvd2, dvf1);
+            TEST_CHECK_EQUAL(dvf2, dvfr);
+            for (Vector<double>::ConstElementIterator i(dvd2.begin_elements()), r(dvdr.begin_elements()), i_end(dvd2.end_elements())
+                    ; i != i_end ; ++i, ++r)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
+            }
+            DenseVector<double> dvf01(3), dvf02(3);
+            DenseVector<double> dvd01(2), dvd02(4);
+            TEST_CHECK_THROWS(convert(dvf01, dvd01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(convert(dvd02, dvf02), VectorSizeDoesNotMatch);
+        }
+} dense_vector_convert_quick_test;

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-12-30 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/algorithm.hh, libla/dense_vector_TEST.cc:
+	Added convert method for DenseVectorContinuousBase.
+
 2007-12-29 Markus Geveler <apryde@gmx.de>
 
 	* libswe/relax_solver.hh, libswe/relax_solver_TEST.cc,

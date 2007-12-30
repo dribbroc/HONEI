@@ -34,7 +34,7 @@ namespace honei
      *
      * \ingroup grpalgorithm
      */
-    template <typename DT_> void copy(const DenseVector<DT_> & source, DenseVector<DT_> & dest);
+    template <typename DT_> void copy(const DenseVector<DT_> & source, DenseVector<DT_> & dest)
     {
         CONTEXT("When copying elements from DenseVector to DenseVector:");
         ASSERT(source.elements() != dest.elements(),
@@ -45,7 +45,32 @@ namespace honei
 
         TypeTraits<DT_>::copy(source.elements(), dest.elements(), source.size());
     }
+    /// \}
 
+    /**
+     * \{
+     *
+     * Converts data from a source container to a destination container.
+     *
+     * \ingroup grpalgorithm
+     */
+    template <typename DataType_, typename OrigType_>
+    void convert(DenseVectorContinuousBase<DataType_> & copy, const DenseVectorContinuousBase<OrigType_> & orig)
+    {
+        CONTEXT("When converting DenseVector to DenseVector:");
+        ASSERT(orig.size() > 0, "size is zero!");
+
+        if (copy.size() != orig.size())
+            throw VectorSizeDoesNotMatch(orig.size(), copy.size());
+
+        /// \todo use typetraits convert
+        typename Vector<DataType_>::ElementIterator f(copy.begin_elements());
+        for (typename Vector<OrigType_>::ConstElementIterator i(orig.begin_elements()),
+                i_end(orig.end_elements()) ; i != i_end ; ++i, ++f)
+        {
+            *f = *i;
+        }
+    }
     /// \}
 }
 
