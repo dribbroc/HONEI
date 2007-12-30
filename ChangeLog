@@ -7,6 +7,14 @@ see the NEWS file.
 
 2007-12-30 Sven Mallach <sven.mallach@honei.org>
 
+	* cell/libla/element_inverse_float.cc, libla/element_inverse-cell.cc,
+	libla/element_inverse.hh, libla/element_inverse_TEST.cc: Added support
+	for DVCB on Cell. Made tests use TEST_CHECK_EQUAL_WITHIN_EPS and
+	enabled Cell tests..
+	* cell/libla/scale_dense_float.cc: Removed obsolete header.
+
+2007-12-30 Sven Mallach <sven.mallach@honei.org>
+
 	* libla/difference_TEST.cc: Debugged DVR tests and added
 	instantiations for Cell.
 

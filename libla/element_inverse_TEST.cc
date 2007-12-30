@@ -65,8 +65,14 @@ class DenseVectorElementInverseTest :
                         *j = 1 / ((i.index() + 1) / DataType_(1.234));
                     }
                 }
+
                 ElementInverse<Tag_>::value(dv1);
-                TEST_CHECK_EQUAL(dv1, dv2);
+
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
+                }
             }
         }
 };
@@ -124,8 +130,14 @@ class DenseVectorElementInverseQuickTest :
                     *j = 1 / ((i.index() + 1) / DataType_(1.234));
                 }
             }
+
             ElementInverse<Tag_>::value(dv1);
-            TEST_CHECK_EQUAL(dv1, dv2);
+
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
+            }
         }
 };
 DenseVectorElementInverseQuickTest<tags::CPU, float> dense_vector_element_inverse_quick_test_float("float");
@@ -186,7 +198,11 @@ class DenseVectorRangeElementInverseTest :
                         }
                     }
                     ElementInverse<Tag_>::value(dv1r);
-                    TEST_CHECK_EQUAL(dv1r, dv2);
+                    for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                    {
+                        TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 *std::numeric_limits<DataType_>::epsilon());
+                    }
                 }
             }
         }
@@ -203,7 +219,7 @@ DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, float> sse_mc_dens
 DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_element_inverse_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//DenseVectorRangeElementInverseTest<tags::Cell, float> cell_dense_vector_range_element_inverse_test_float("Cell float");
+DenseVectorRangeElementInverseTest<tags::Cell, float> cell_dense_vector_range_element_inverse_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -219,7 +235,7 @@ class DenseVectorRangeElementInverseQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(4711);
+            unsigned long size(57);
             for (int o(0) ; o < 4 ; ++o)
             {
                 DenseVector<DataType_> dv1(size * 2, DataType_(0)), dv2(size, DataType_(0));
@@ -249,7 +265,11 @@ class DenseVectorRangeElementInverseQuickTest :
                     }
                 }
                 ElementInverse<Tag_>::value(dv1r);
-                TEST_CHECK_EQUAL(dv1r, dv2);
+                for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
+                }
             }
         }
 };
@@ -265,7 +285,7 @@ DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc
 DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_element_inverse_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//DenseVectorRangeElementInverseQuickTest<tags::Cell, float> cell_dense_vector_range_element_inverse_quick_test_float("Cell float");
+DenseVectorRangeElementInverseQuickTest<tags::Cell, float> cell_dense_vector_range_element_inverse_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -464,8 +484,13 @@ class DenseMatrixElementInverseTest :
                         *j = 1 / ((i.index() + 1) / DataType_(1.234));
                     }
                 }
+                ElementInverse<Tag_>::value(dm1);
 
-                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(dm1), dm2);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+                        j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
+                }
             }
         }
 };
@@ -524,7 +549,13 @@ class DenseMatrixElementInverseQuickTest :
                 }
             }
 
-            TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(dm1), dm2);
+            ElementInverse<Tag_>::value(dm1);
+
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+                    j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
+            }
         }
 };
 DenseMatrixElementInverseQuickTest<tags::CPU, float>  dense_matrix_element_inverse_quick_test_float("float");

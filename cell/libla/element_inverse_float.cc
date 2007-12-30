@@ -19,7 +19,6 @@
 
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
-#include <cell/libutil/transfer.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>

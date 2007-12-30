@@ -82,19 +82,27 @@ namespace honei
         return a;
     }
 
-    DenseVector<float> &
-    ElementInverse<tags::Cell>::value(DenseVector<float> & a)
+    DenseVectorContinuousBase<float> &
+    ElementInverse<tags::Cell>::value(DenseVectorContinuousBase<float> & a)
     {
-        CONTEXT("When inverting DenseVector<float> (Cell):");
+        CONTEXT("When inverting DenseVectorContinuousBase<float> (Cell):");
 
         Operand oa = { a.elements() };
         Operand ob, oc;
-        ob.u = a.size() / 4096;
-        oc.u = a.size() % 4096;
+
+        unsigned offset((oa.u & 0xF) / sizeof(float));
+        if (a.size() < 5)
+            offset = 0;
+
+        if (offset > 0)
+            oa.u += 16 -(4 * offset); // Align the address for SPU.
+
+
+        ob.u = (a.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
+        oc.u = (a.size() - ((4 - offset) % 4)) % (1024 * 4);
         oc.u &= ~0xF;
 
-        unsigned rest_index(ob.u * 4096 + oc.u);
-
+        unsigned rest_index(ob.u * 4096 + oc.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
         oc.u *= 4;
 
         bool use_spe(true);
@@ -122,9 +130,18 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
+        for (Vector<float>::ElementIterator i(a.begin_elements()),
+                i_end(a.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
+        {
+            if (*i == 0.0f)
+                continue;
+
+            *i = 1 / *i;
+        }
+
         for (Vector<float>::ElementIterator j(a.element_at(rest_index)), j_end(a.end_elements()) ; j != j_end ; ++j)
         {
-            if (*j == 0)
+            if (*j == 0.0f)
                 continue;
 
             *j = 1 / *j;
