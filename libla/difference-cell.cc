@@ -28,22 +28,38 @@ namespace honei
 {
     using namespace cell;
 
-    DenseVector<float> &
-    Difference<tags::Cell>::value(DenseVector<float> & a, const DenseVector<float> & b)
+    DenseVectorContinuousBase<float> &
+    Difference<tags::Cell>::value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
     {
-        CONTEXT("When subtracting DenseVector<float> from DenseVector<float> (Cell):");
+        CONTEXT("When subtracting DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> (Cell):");
 
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
         Operand oa = { a.elements() };
         Operand ob = { b.elements() };
-        Operand oc, od;
-        oc.u = a.size() / (1024 * 4);
-        od.u = a.size() % (1024 * 4);
+        Operand oc, od, oe;
+
+        unsigned a_offset((oa.u & 0xF) / sizeof(float)); // Alignment offset of a -> elements calculated on PPU.
+        if (a.size() < 5)
+            a_offset = 0;
+
+        ob.u += (4 * ((4 - a_offset) % 4)); // Adjust SPU start for b respecting the elements calculated on PPU.
+
+        unsigned b_offset((ob.u & 0xF) / sizeof(float)); // Alignment offset of b -> shuffle-factor on SPU.
+        oe.u = b_offset;
+
+        // Align the address for SPU.
+        if (a_offset > 0)
+            oa.u += 16 - (4 * a_offset);
+
+        ob.u -= (4 * b_offset);
+
+        oc.u = (b.size() - ((4 - a_offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
+        od.u = (b.size() - ((4 - a_offset) % 4)) % (1024 * 4);
         od.u &= ~0xF;
 
-        unsigned rest_index(oc.u * 4096 + od.u);
+        unsigned rest_index(oc.u * 4096 + od.u + ((4 - a_offset) % 4)); // Rest index dependent on offset and SPU part.
 
         od.u *= 4;
 
@@ -65,18 +81,26 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_difference_dense_dense_float, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_difference_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        Vector<float>::ConstElementIterator j(b.element_at(rest_index));
-        Vector<float>::ElementIterator i(a.element_at(rest_index)), i_end(a.end_elements());
-        for ( ; i != i_end ; ++i, ++j)
+        // Calculate the first a_offset elements on PPU.
+        Vector<float>::ConstElementIterator j(b.begin_elements());
+        for (Vector<float>::ElementIterator i(a.begin_elements()),
+                i_end(a.element_at((4 - a_offset) % 4)) ; i != i_end ; ++i, ++j)
         {
             *i -= *j;
+        }
+
+        Vector<float>::ConstElementIterator k(b.element_at(rest_index));
+        for (Vector<float>::ElementIterator i(a.element_at(rest_index)),
+                i_end(a.end_elements()) ; i != i_end ; ++i, ++k)
+        {
+            *i -= *k;
         }
 
         if (use_spe)

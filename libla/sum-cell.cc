@@ -42,6 +42,8 @@ namespace honei
         Operand oc, od, oe;
 
         unsigned a_offset((oa.u & 0xF) / sizeof(float)); // Alignment offset of a -> elements calculated on PPU.
+        if (a.size() < 5)
+            a_offset = 0;
 
         ob.u += (4 * ((4 - a_offset) % 4)); // Adjust SPU start for b respecting the elements calculated on PPU.
 

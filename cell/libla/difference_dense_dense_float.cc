@@ -19,6 +19,7 @@
 
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
+#include <cell/libutil/transfer.hh>
 #include <cell/libutil/debug.hh>
 
 #include <spu_intrinsics.h>
@@ -36,6 +37,7 @@ using namespace honei::cell;
  * \operand b Base address of second entity.
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
+ * \operand e alignment offset of entity b.
  */
 void difference_dense_dense_float(const Instruction & inst)
 {
@@ -52,6 +54,8 @@ void difference_dense_dense_float(const Instruction & inst)
     unsigned nextsize;
     unsigned current(1), next(2);
 
+    unsigned b_offset(inst.e.u);
+
     mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
     mfc_get(b[current - 1].untyped, ea_b, size, current, 0, 0);
     ea_a += size;
@@ -61,6 +65,9 @@ void difference_dense_dense_float(const Instruction & inst)
     {
         nextsize = (counter == 2 ? inst.d.u : inst.size);
 
+        ea_a -= 16;
+        ea_b -= 16;
+
         mfc_get(a[next - 1].untyped, ea_a, nextsize, next, 0, 0);
         mfc_get(b[next - 1].untyped, ea_b, nextsize, next, 0, 0);
         ea_a += nextsize;
@@ -69,10 +76,14 @@ void difference_dense_dense_float(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
+            extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], b_offset);
             a[current - 1].vectorised[i] = spu_sub(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
         }
+
+        if (counter != inst.c.u)
+            ea_result -= 16;
 
         mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
         ea_result += size;
@@ -86,21 +97,44 @@ void difference_dense_dense_float(const Instruction & inst)
         size = nextsize;
     }
 
+    mfc_write_tag_mask(1 << next);
+    mfc_read_tag_status_all();
+
+    // For calculation of "the end" (see below)
+    mfc_get(a[next - 1].untyped, ea_a - 16, (inst.c.u * 16), next, 0, 0);
+    mfc_get(b[next - 1].untyped, ea_b - 16, (inst.c.u * 16) + 16, next, 0, 0);
+
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+    for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
+        extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], b_offset);
         a[current - 1].vectorised[i] = spu_sub(a[current - 1].vectorised[i], b[current - 1].vectorised[i]);
     }
 
+    if (counter != inst.c.u)
+        ea_result -= 16;
+
     mfc_putb(a[current - 1].untyped, ea_result, size, current, 0, 0);
 
-    mfc_write_tag_mask(1 << current);
-    mfc_read_tag_status_all();
+    // Now calculate the last vectors of a and the shuffled last+1 vectors of b.
+    mfc_write_tag_mask(1 << next); // Assure that GET(next) is done
+    mfc_read_tag_status_any();
 
-    release_block(*block_a[0]);
-    release_block(*block_a[1]);
-    release_block(*block_b[0]);
-    release_block(*block_b[1]);
+    for(unsigned i(0) ; i < inst.c.u ; i++)
+    {
+        extract(b[next - 1].vectorised[i], b[next - 1].vectorised[i + 1], b_offset);
+        a[next - 1].vectorised[i] = spu_sub(a[next - 1].vectorised[i], b[next - 1].vectorised[i]);
+    }
+
+    mfc_write_tag_mask(1 << current);
+    mfc_read_tag_status_any();
+
+    mfc_put(a[next - 1].untyped, ea_result + size - 16, inst.c.u * 16, next, 0, 0);
+
+    mfc_write_tag_mask(1 << next); // Assure that PUT(next) is done
+    mfc_read_tag_status_any();
+
+    release_all_blocks();
 }
