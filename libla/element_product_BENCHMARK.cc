@@ -136,3 +136,47 @@ class BandedMatrixElementProductBench :
 BandedMatrixElementProductBench<tags::CPU, float> BMEPBenchfloat1("Matrix Elementwise Product Benchmark banded/dense - matrix size: 2048x2048, float", 2048, 10);
 BandedMatrixElementProductBench<tags::CPU, double> BMEPBenchdouble1("Matrix Elementwise Product Benchmark banded/dense - matrix size: 2048x2048, double", 2048, 10);
 
+template <typename Tag_, typename DataType_>
+
+class DenseVectorElementProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        DenseVectorElementProductBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DataType_ p0;
+            DenseVector<DataType_> dv1(_size, DataType_(rand()));
+            DenseVector<DataType_> dv2(_size, DataType_(rand()));
+
+            for(int i = 0; i < _count; ++i)
+            {
+                BENCHMARK(ElementProduct<Tag_>::value(dv1, dv2));
+            }
+        BenchmarkInfo info(ElementProduct<>::get_benchmark_info(dv1, dv2));
+        evaluate(info);
+        }
+};
+DenseVectorElementProductBench<tags::CPU, float> DVEPBenchfloat1("Vector Elementwise Product Benchmark dense/dense size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+DenseVectorElementProductBench<tags::CPU, double> DVEPBenchdouble1("Vector Elementwise Product Benchmark dense/dense size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+DenseVectorElementProductBench<tags::CPU::MultiCore, float> mc_DVEPBenchfloat1("MC: Vector Elementwise Product Benchmark dense/dense size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+DenseVectorElementProductBench<tags::CPU::MultiCore, double> mc_DVEPBenchdouble1("MC: Vector Elementwise Product Benchmark dense/dense size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+#ifdef HONEI_SSE
+DenseVectorElementProductBench<tags::CPU::SSE, float> SSEDVEPBenchfloat1("SSE: Vector Elementwise Product Benchmark dense/dense size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+DenseVectorElementProductBench<tags::CPU::SSE, double> SSEDVEPBenchdouble1("SSE: Vector Elementwise Product Benchmark dense/dense size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+DenseVectorElementProductBench<tags::CPU::MultiCore::SSE, float> MCSSEDVEPBenchfloat1("MC::SSE: Vector Elementwise Product Benchmark dense/dense size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+DenseVectorElementProductBench<tags::CPU::MultiCore::SSE, double> MCSSEDVEPBenchdouble1("MC::SSE: Vector Elementwise Product Benchmark dense/dense size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+#endif
+#ifdef HONEI_CELL
+DenseVectorElementProductBench<tags::Cell, float>  CELLDVEPBenchfloat ("Cell Vector Element Product Benchmark dense/dense size: 64^4, float",  64ul*64ul*64ul*64ul, 10);
+#endif
