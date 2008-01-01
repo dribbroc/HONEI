@@ -20,6 +20,7 @@
 
 #include <cell/cell.hh>
 #include <cell/libutil/allocator.hh>
+#include <cell/libutil/transfer.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -29,14 +30,16 @@ using namespace honei::cell;
 /*
  * dense_dense_float_dot_product
  *
- * Calculate the dot product of two dense vectors.
+ * Calculate the dot product of two instances of DenseVectorContinuousBase
  *
  * \size Default transfer buffer size in bytes.
  * \operand a Address of return value.
- * \operand b Base address of first vector.
- * \operand c Base address of second vector.
+ * \operand b Base address of first container.
+ * \operand c Base address of second container.
  * \operand d Number of transfers needed.
  * \operand e Last transfer buffer size in bytes.
+ * \operand f Alignment offset of container a
+ * \operand g Alignment offset of container b.
  */
 unsigned dot_product_dense_dense_float(const Instruction & inst)
 {
@@ -53,6 +56,9 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
     unsigned nextsize;
     unsigned current(0), next(1);
 
+    unsigned a_offset(inst.f.u);
+    unsigned b_offset(inst.g.u);
+
     mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
     mfc_get(b[current].untyped, ea_b, size, current, 0, 0);
     ea_a += size;
@@ -64,6 +70,9 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
     {
         nextsize = (counter == 2 ? inst.e.u : inst.size);
 
+        ea_a -= 16;
+        ea_b -= 16;
+
         mfc_get(a[next].untyped, ea_a, nextsize, next, 0, 0);
         mfc_get(b[next].untyped, ea_b, nextsize, next, 0, 0);
         ea_a += nextsize;
@@ -72,8 +81,10 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
         {
+            extract(a[current].vectorised[i], a[current].vectorised[i + 1], a_offset);
+            extract(b[current].vectorised[i], b[current].vectorised[i + 1], b_offset);
             acc.value = spu_madd(a[current].vectorised[i], b[current].vectorised[i], acc.value);
         }
 
@@ -86,18 +97,32 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
         size = nextsize;
     }
 
+    // For calculation of "the end"
+    mfc_get(a[next].untyped, ea_a - 16, (inst.d.u * 16) + 16, next, 0, 0);
+    mfc_get(b[next].untyped, ea_b - 16, (inst.d.u * 16) + 16, next, 0, 0);
+
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+    for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
     {
+        extract(a[current].vectorised[i], a[current].vectorised[i + 1], a_offset);
+        extract(b[current].vectorised[i], b[current].vectorised[i + 1], b_offset);
         acc.value = spu_madd(a[current].vectorised[i], b[current].vectorised[i], acc.value);
     }
 
-    release_block(*block_a[0]);
-    release_block(*block_a[1]);
-    release_block(*block_b[0]);
-    release_block(*block_b[1]);
+    // Now calculate the last vectors of a and the shuffled last+1 vectors of b.
+    mfc_write_tag_mask(1 << next); // Assure that GET(next) is done
+    mfc_read_tag_status_any();
+
+    for(unsigned i(0) ; i < inst.d.u ; i++)
+    {
+        extract(a[next].vectorised[i], a[next].vectorised[i + 1], a_offset);
+        extract(b[next].vectorised[i], b[next].vectorised[i + 1], b_offset);
+        acc.value = spu_madd(a[next].vectorised[i], b[next].vectorised[i], acc.value);
+    }
+
+    release_all_blocks();
 
     MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
 

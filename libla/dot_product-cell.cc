@@ -28,9 +28,9 @@ namespace honei
     using namespace cell;
 
     float
-    DotProduct<tags::Cell>::value(const DenseVector<float> & a, const DenseVector<float> & b)
+    DotProduct<tags::Cell>::value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
     {
-        CONTEXT("When adding DenseVector<float> to DenseVector<float> (Cell):");
+        CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> (Cell):");
 
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -39,7 +39,13 @@ namespace honei
         Operand oa = { &result };
         Operand ob = { a.elements() };
         Operand oc = { b.elements() };
-        Operand od, oe;
+        Operand od, oe, of, og;
+
+        of.u = ((ob.u & 0xF) / sizeof(float)); // Alignment offset of a -> shuffle-factor on SPU
+        og.u = ((oc.u & 0xF) / sizeof(float)); // Alignment offset of b -> shuffle-factor on SPU
+        ob.u -= (4 * of.u);
+        oc.u -= (4 * og.u);
+
         // hardcode transfer buffer size for now.
         od.u = a.size() / (1024 * 4);
         oe.u = a.size() % (1024 * 4);
@@ -67,7 +73,7 @@ namespace honei
             ++od.u;
         }
 
-        SPEInstruction instruction(oc_dot_product_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe);
+        SPEInstruction instruction(oc_dot_product_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe, of, og);
 
         if (use_spe)
         {
