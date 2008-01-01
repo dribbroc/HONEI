@@ -23,7 +23,7 @@
 #include <libla/norm.hh>
 #include <libla/sparse_vector.hh>
 #include <unittest/unittest.hh>
-#include <iostream>
+
 #include <limits>
 #include <tr1/memory>
 
@@ -375,7 +375,7 @@ class DenseVectorRangeDotProductCellTest :
                     }
                     DenseVectorRange<DataType_> dvr2(dv2, size, i);
                     DenseVectorRange<DataType_> dvr3(dv3, size, i);
-                    std::cout << dvr2 << std::endl;
+
                     DataType_ v2(Norm<vnt_l_two, false>::value(dvr2));
                     DataType_ p2(DotProduct<Tag_>::value(dvr2, dvr3));
                     float eps(exp(-20 + 4.3 * log(size)));
