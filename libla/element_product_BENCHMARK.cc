@@ -46,6 +46,12 @@ DenseMatrixElementProductBench<tags::CPU, float> DMEPBenchfloat1("Matrix Element
 DenseMatrixElementProductBench<tags::CPU, double> DMEPBenchdouble1("Matrix Elementwise Product Benchmark dense/dense - matrix size: 4096x4096, double", 4096, 10);
 DenseMatrixElementProductBench<tags::CPU::MultiCore, float> DMEPBenchfloat1mc("MC: Matrix Elementwise Product Benchmark dense/dense - matrix size: 4096x4096, float", 4096, 10);
 DenseMatrixElementProductBench<tags::CPU::MultiCore, double> DMEPBenchdouble1mc("MC: Matrix Elementwise Product Benchmark dense/dense - matrix size: 4096x4096, double", 4096, 10);
+#ifdef HONEI_SSE
+DenseMatrixElementProductBench<tags::CPU::SSE, float> SSEDMEPBenchfloat1("SSE Matrix Elementwise Product Benchmark dense/dense - matrix size: 4096x4096, float", 4096, 10);
+DenseMatrixElementProductBench<tags::CPU::SSE, double> SSEDMEPBenchdouble1("SSE Matrix Elementwise Product Benchmark dense/dense - matrix size: 4096x4096, double", 4096, 10);
+DenseMatrixElementProductBench<tags::CPU::MultiCore::SSE, float> SSEMCDMEPBenchfloat1mc("MC: SSE Matrix Elementwise Product Benchmark dense/dense - matrix size: 4096x4096, float", 4096, 10);
+DenseMatrixElementProductBench<tags::CPU::MultiCore::SSE, double> SSEMCDMEPBenchdouble1mc("MC: SSE Matrix Elementwise Product Benchmark dense/dense - matrix size: 4096x4096, double", 4096, 10);
+#endif
 
 
 template <typename Tag_, typename DataType_>
