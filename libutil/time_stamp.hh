@@ -53,6 +53,18 @@ namespace honei
                 gettimeofday(&_time, 0);
             }
 
+            /// Returns our seconds.
+            unsigned long sec()
+            {
+                return _time.tv_sec;
+            }
+
+            /// Returns our useconds.
+            long usec()
+            {
+                return _time.tv_usec;
+            }
+
             /**
              * Our comparison operator.
              *

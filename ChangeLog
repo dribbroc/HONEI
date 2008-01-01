@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-01 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/time_stamp.hh:
+	Added methods to retrieve the timed data.
+
 2008-01-01 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* libla/element_product.hh, libla/element_product_BENCHMARK.cc:
