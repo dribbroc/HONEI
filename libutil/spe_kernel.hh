@@ -89,6 +89,13 @@ namespace honei
             void wait(unsigned instruction_index) const;
 
             /**
+             * Returns if specified instruction has finished.
+             *
+             * \param instruction_index Index of the instruction that we are interested in.
+             */
+            bool finished(unsigned instruction_index) const;
+
+            /**
              * Load the kernel into a given SPE.
              *
              * \param spe The SPE into which the kernel shall be loaded.

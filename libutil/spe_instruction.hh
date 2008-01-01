@@ -66,6 +66,9 @@ namespace honei
             /// Wait until we have been executed.
             void wait() const;
 
+            /// Returns true if the instruction has been finished
+            bool finished() const;
+
             /// Returns our instruction
             Instruction instruction() const;
     };

@@ -77,6 +77,14 @@ struct SPEInstruction::Implementation
             kernel = 0;
         }
     }
+
+    inline bool finished()
+    {
+        if (kernel)
+            return kernel->finished(index);
+        else
+            return false;
+    }
 };
 
 SPEInstruction::SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a,
@@ -121,6 +129,12 @@ void
 SPEInstruction::wait() const
 {
     _imp->wait();
+}
+
+bool
+SPEInstruction::finished() const
+{
+    return _imp->finished();
 }
 
 const SPEInstruction::Operand

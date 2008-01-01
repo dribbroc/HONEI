@@ -35,7 +35,7 @@ class BandedMatrixDenseVectorProductBench :
             BandedMatrix<DataType_> bm1(_size, dv1);
             DenseVector<DataType_> dv4(_size, DataType_(3));
             DenseVector<DataType_> dv5(dv4.copy());
-            for (int i = 1; i < 50 && i < _size; i++)
+            for (int i = 1; i < 14 && i < _size; i++)
             {
                 bm1.insert_band(i * 3, dv4.copy());
                 bm1.insert_band(-1 * 5 * i, dv5.copy());

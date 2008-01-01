@@ -450,6 +450,15 @@ namespace honei
         }
     }
 
+    bool
+    SPEKernel::finished(unsigned instruction_index) const
+    {
+        CONTEXT("When looking up an instruction status");
+        Lock l(*_imp->mutex);
+
+        return (instruction_index < _imp->finished_counter);
+    }
+
     void
     SPEKernel::load(const SPE & spe) const
     {
