@@ -130,14 +130,14 @@ namespace honei {
                 while(i < ((_grid_width +  2)*(_grid_height + 2) - _grid_width - 2))
                 {
                     ///Assemble dd:
-                    dd[i] = ResPrec_(1) +( ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column]*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x))));
-                    ///Assemble ll:
-                    dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(ResPrec_(4)*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
-                    ///Assemble uu:
-                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(ResPrec_(4)*_delta_x * _delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
+                    dd[i] = ResPrec_(1) +(ResPrec_(2)*alpha*((*_height_bound)[actual_row][actual_column]*(ResPrec_(1)/(_delta_y*_delta_y) + ResPrec_(1)/(_delta_x*_delta_x))));
                     ///Assemble dl:
-                    ll[i] = alpha*(((*_bottom_bound)[actual_row - 1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(ResPrec_(4)*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
+                    dl[i] = alpha*(((*_bottom_bound)[actual_row][actual_column - 1] - (*_bottom_bound)[actual_row][actual_column + 1])/(ResPrec_(4)*_delta_x*_delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
                     ///Assemble du:
+                    du[i] = alpha*(((*_bottom_bound)[actual_row][actual_column + 1] - (*_bottom_bound)[actual_row][actual_column - 1])/(ResPrec_(4)*_delta_x * _delta_x) - (*_height_bound)[actual_row][actual_column]/(_delta_x * _delta_x));
+                    ///Assemble ll:
+                    ll[i] = alpha*(((*_bottom_bound)[actual_row - 1][actual_column] - (*_bottom_bound)[actual_row + 1][actual_column])/(ResPrec_(4)*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
+                    ///Assemble uu:
                     uu[i] = alpha*(((*_bottom_bound)[actual_row + 1][actual_column] - (*_bottom_bound)[actual_row - 1][actual_column])/(ResPrec_(4)*_delta_y*_delta_y) - (*_height_bound)[actual_row][actual_column]/(_delta_y * _delta_y));
                     ///Iterate:
                     if((actual_column) == _grid_width)
@@ -253,8 +253,8 @@ namespace honei {
                     unsigned long current_index(_grid_width + 3);
                     for(; current_index < (_grid_height + 2) * (_grid_width + 2) - (_grid_width + 2); ++current_index)
                     {
-                        WorkPrec_ current_x = WorkPrec_((j) * _delta_x);
-                        WorkPrec_ current_y = WorkPrec_((i) * _delta_y);
+                        WorkPrec_ current_x = WorkPrec_(j * _delta_x);
+                        WorkPrec_ current_y = WorkPrec_(i * _delta_y);
                         h[current_index] = Interpolation<Tag_, interpolation_methods::LINEAR>::value(_delta_x, _delta_y, *_height_bound,
                                 WorkPrec_(current_x - (_delta_t * (*_x_veloc_bound)[i][j])),
                                 WorkPrec_(current_y - (_delta_t * (*_y_veloc_bound)[i][j])));
@@ -426,7 +426,7 @@ namespace honei {
                 unsigned long index(_grid_width + 3);
                 unsigned long actual_row(1);
                 unsigned long actual_column(1);
-                WorkPrec_ gamma = - WorkPrec_(9.81) * _delta_t;
+                WorkPrec_ gamma = WorkPrec_(- 9.81) * _delta_t;
                 while(index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2))
                 {
                     WorkPrec_ h_new(w_new[index] - (*_bottom_bound)[actual_row][actual_column]);
@@ -455,8 +455,8 @@ namespace honei {
                     }
 
                     (*_height_bound)[actual_row][actual_column] = h_new;
-                    (*_x_veloc_bound)[actual_row][actual_column] = (gamma * delta_h_1 / _delta_x) + (*_u_temp)[index];
-                    (*_y_veloc_bound)[actual_row][actual_column] = (gamma * delta_h_2 / _delta_y) + (*_v_temp)[index];
+                    (*_x_veloc_bound)[actual_row][actual_column] = (gamma * (delta_h_1) / _delta_x) + (*_u_temp)[index];
+                    (*_y_veloc_bound)[actual_row][actual_column] = (gamma * (delta_h_2) / _delta_y) + (*_v_temp)[index];
 
                     //Iterate:
 
@@ -532,17 +532,17 @@ namespace honei {
                     (*_x_veloc_bound)[i][(_grid_width) + 1] = (*_x_veloc_bound)[i][(_grid_height)];
                     (*_y_veloc_bound)[i][(_grid_width) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
                 }
-                (*_height_bound)[0][0] = (*_height_bound)[0][1];
-                (*_height_bound)[0][_grid_width + 1] = (*_height_bound)[0][_grid_width];
-                (*_height_bound)[_grid_height + 1][0] = (*_height_bound)[_grid_height ][0];
+                (*_height_bound)[0][0] = (*_height_bound)[1][1];
+                (*_height_bound)[0][_grid_width + 1] = (*_height_bound)[1][_grid_width];
+                (*_height_bound)[_grid_height + 1][0] = (*_height_bound)[_grid_height ][1];
                 (*_height_bound)[_grid_height + 1][_grid_width + 1] = (*_height_bound)[_grid_height][_grid_width];
-                (*_x_veloc_bound)[0][0] = (*_x_veloc_bound)[0][1];
-                (*_x_veloc_bound)[0][_grid_width + 1] = (*_x_veloc_bound)[0][_grid_width];
-                (*_x_veloc_bound)[_grid_height + 1][0] = (*_x_veloc_bound)[_grid_height][0];
+                (*_x_veloc_bound)[0][0] = (*_x_veloc_bound)[1][1];
+                (*_x_veloc_bound)[0][_grid_width + 1] = (*_x_veloc_bound)[1][_grid_width];
+                (*_x_veloc_bound)[_grid_height + 1][0] = (*_x_veloc_bound)[_grid_height][1];
                 (*_x_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_x_veloc_bound)[_grid_height][_grid_width];
-                (*_y_veloc_bound)[0][0] = (*_y_veloc_bound)[0][1];
-                (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[0][_grid_width];
-                (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][0];
+                (*_y_veloc_bound)[0][0] = (*_y_veloc_bound)[1][1];
+                (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[1][_grid_width];
+                (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][1];
                 (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
 #ifdef SOLVER_VERBOSE
                 cout<<"Finished all!"<<endl;
@@ -628,21 +628,21 @@ namespace honei {
                     (*_y_veloc_bound)[i][(_grid_width) + 1] = (*_y_veloc_bound)[i][(_grid_height)];
                 }
                 //The rest:
-                (*_height_bound)[0][0] = (*_height_bound)[0][1];
-                (*_height_bound)[0][_grid_width + 1] = (*_height_bound)[0][_grid_width];
-                (*_height_bound)[_grid_height + 1][0] = (*_height_bound)[_grid_height ][0];
+                (*_height_bound)[0][0] = (*_height_bound)[1][1];
+                (*_height_bound)[0][_grid_width + 1] = (*_height_bound)[1][_grid_width];
+                (*_height_bound)[_grid_height + 1][0] = (*_height_bound)[_grid_height ][1];
                 (*_height_bound)[_grid_height + 1][_grid_width + 1] = (*_height_bound)[_grid_height][_grid_width];
-                (*_bottom_bound)[0][0] = (*_bottom_bound)[0][1];
-                (*_bottom_bound)[0][_grid_width + 1] = (*_bottom_bound)[0][_grid_width];
-                (*_bottom_bound)[_grid_height + 1][0] = (*_bottom_bound)[_grid_height][0];
+                (*_bottom_bound)[0][0] = (*_bottom_bound)[1][1];
+                (*_bottom_bound)[0][_grid_width + 1] = (*_bottom_bound)[1][_grid_width];
+                (*_bottom_bound)[_grid_height + 1][0] = (*_bottom_bound)[_grid_height][1];
                 (*_bottom_bound)[_grid_height + 1][_grid_width  + 1] = (*_bottom_bound)[_grid_height][_grid_width];
-                (*_x_veloc_bound)[0][0] = (*_x_veloc_bound)[0][1];
-                (*_x_veloc_bound)[0][_grid_width + 1] = (*_x_veloc_bound)[0][_grid_width];
-                (*_x_veloc_bound)[_grid_height + 1][0] = (*_x_veloc_bound)[_grid_height][0];
+                (*_x_veloc_bound)[0][0] = (*_x_veloc_bound)[1][1];
+                (*_x_veloc_bound)[0][_grid_width + 1] = (*_x_veloc_bound)[1][_grid_width];
+                (*_x_veloc_bound)[_grid_height + 1][0] = (*_x_veloc_bound)[_grid_height][1];
                 (*_x_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_x_veloc_bound)[_grid_height][_grid_width];
-                (*_y_veloc_bound)[0][0] = (*_y_veloc_bound)[0][1];
-                (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[0][_grid_width];
-                (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][0];
+                (*_y_veloc_bound)[0][0] = (*_y_veloc_bound)[1][1];
+                (*_y_veloc_bound)[0][_grid_width + 1] = (*_y_veloc_bound)[1][_grid_width];
+                (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][1];
                 (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
 
             }

@@ -287,7 +287,7 @@ class ImplicitSolverRuntimeTest :
         }
 };
 //ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
-//ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
+ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
 //ImplicitSolverMatrixAssTest<tags::CPU, float> implicit_solver_matrix_test_float("float");
 //ImplicitSolverRHSAssTest<tags::CPU, float> implicit_solver_rhs_test_float("float");
 //ImplicitSolverCreationTest<tags::CPU, double> implicit_solver_creation_test_double("double");

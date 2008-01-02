@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2007-01-02 Markus Geveler <apryde@gmx.de>
+
+	* libswe/implicit_solver.hh, libswe/implicit_solver_TEST.cc: Refined
+	boundary correction.
+
 2008-01-01 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libutil/spe_instruction.cc, libutil/spe_instruction.hh,
