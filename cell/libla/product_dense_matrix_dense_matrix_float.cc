@@ -23,6 +23,7 @@
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
+#include <stdio.h>
 
 using namespace honei::cell;
 
@@ -75,8 +76,8 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
     Pointer<float> b_comp = b[0];
 
-    unsigned last_a_size(multiple_of_sixteen(inst.h.u));
-    unsigned last_r_size(multiple_of_sixteen(inst.j.u));
+    const unsigned last_a_size(multiple_of_sixteen(inst.h.u));
+    const unsigned last_r_size(multiple_of_sixteen(inst.j.u));
     unsigned counter(inst.f.u);
     unsigned size(counter > 1 ? inst.size : last_a_size);
     unsigned r_size(counter > 1 ? inst.k.u : last_r_size);
@@ -90,8 +91,6 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
     ea_a += size;
     ea_r += r_size;
-
-    unsigned long b_offset(inst.e.u % 4); // The number of elements BEHIND the last complete vector in every column.
 
     union {
         unsigned long v;
@@ -125,9 +124,18 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     const unsigned vectors_per_row[4] = { 0, 1, 1, 1}; // Use b_offset as index into this array.
 
     unsigned long a_elem(0); // The actual considered element of matrix a
-    vector float a_elem_v;
-    unsigned act_a_row, act_b_row, vecs_in_act_b_row, b_vec_idx, r_vec_idx;
-    unsigned b_column_vecs(inst.e.u / 4);
+    vector float a_elem_v0, a_elem_v1, a_elem_v2, a_elem_v3;
+    unsigned b_vec_idx0, b_vec_idx1, b_vec_idx2, b_vec_idx3;
+    unsigned r_vec_idx0, r_vec_idx1, r_vec_idx2, r_vec_idx3;
+    vector float b_temp0, b_temp1, b_temp2, b_temp3;
+    vector float r_temp0, r_temp1, r_temp2, r_temp3;
+    vector float v0, v1, v2, v3;
+    unsigned act_a_row0, act_a_row1, act_a_row2, act_a_row3;
+    unsigned act_b_row0, act_b_row1, act_b_row2, act_b_row3;
+    unsigned typed_start;
+    const unsigned b_offset(inst.e.u % 4); // The number of elements BEHIND the last complete vector in every column.
+    const unsigned b_column_vecs(inst.e.u / 4);
+    const unsigned vecs_in_b_row(vectors_per_row[b_offset] + b_column_vecs);
 
     while (counter > 1)
     {
@@ -145,45 +153,109 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for( ; a_elem < inst.size / sizeof(float) ; a_elem++)
+        for( ; a_elem < inst.size / sizeof(vector float) ; a_elem++)
         {
-            a_elem_v = spu_splats(a[current - 1].typed[a_elem]);
-            act_a_row = a_elem / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-            act_b_row = a_elem % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            Subscriptable<float> four = { a[current - 1].vectorised[a_elem] };
+            a_elem_v0 = spu_splats(four.array[0]);
+            a_elem_v1 = spu_splats(four.array[1]);
+            a_elem_v2 = spu_splats(four.array[2]);
+            a_elem_v3 = spu_splats(four.array[3]);
 
-            vecs_in_act_b_row = vectors_per_row[b_offset] + b_column_vecs; // Number of vectors in actual row of b
-            b_vec_idx = (act_b_row * b_column_vecs) + ((act_b_row / 4) * b_offset) + vector_indices[b_offset][act_b_row % 4];
+            typed_start = 4 * a_elem;
 
-            r_vec_idx = (act_a_row * b_column_vecs) + ((act_a_row / 4) * b_offset) + vector_indices[b_offset][act_a_row % 4];
+            act_a_row0 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row0 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            typed_start++;
+            act_a_row1 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row1 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            typed_start++;
+            act_a_row2 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row2 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            typed_start++;
+            act_a_row3 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row3 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
 
-            for(unsigned i(0) ; i < vecs_in_act_b_row - 1 ; i++) // Make all computations except the last
+            b_vec_idx0 = (act_b_row0 * b_column_vecs) + ((act_b_row0 / 4) * b_offset) + vector_indices[b_offset][act_b_row0 % 4];
+            r_vec_idx0 = (act_a_row0 * b_column_vecs) + ((act_a_row0 / 4) * b_offset) + vector_indices[b_offset][act_a_row0 % 4];
+            b_vec_idx1 = (act_b_row1 * b_column_vecs) + ((act_b_row1 / 4) * b_offset) + vector_indices[b_offset][act_b_row1 % 4];
+            r_vec_idx1 = (act_a_row1 * b_column_vecs) + ((act_a_row1 / 4) * b_offset) + vector_indices[b_offset][act_a_row1 % 4];
+            b_vec_idx2 = (act_b_row2 * b_column_vecs) + ((act_b_row2 / 4) * b_offset) + vector_indices[b_offset][act_b_row2 % 4];
+            r_vec_idx2 = (act_a_row2 * b_column_vecs) + ((act_a_row2 / 4) * b_offset) + vector_indices[b_offset][act_a_row2 % 4];
+            b_vec_idx3 = (act_b_row3 * b_column_vecs) + ((act_b_row3 / 4) * b_offset) + vector_indices[b_offset][act_b_row3 % 4];
+            r_vec_idx3 = (act_a_row3 * b_column_vecs) + ((act_a_row3 / 4) * b_offset) + vector_indices[b_offset][act_a_row3 % 4];
+
+            for(unsigned i(0) ; i < vecs_in_b_row - 1 ; i++) // Make all computations except the last
             {
-                vector float b_temp(b_comp.vectorised[b_vec_idx]); // temp version needed, cause original matrix must not be changed!
-                vector float r_temp(r[current - 1].vectorised[r_vec_idx + i]); // result matrix must either never be changed!
-                extract(b_temp, b_comp.vectorised[b_vec_idx + 1], extract_offsets[b_offset][act_b_row % 4]);
-                extract(r_temp, r[current - 1].vectorised[r_vec_idx + i + 1], extract_offsets[b_offset][act_a_row % 4]);
+                b_temp0 = b_comp.vectorised[b_vec_idx0 + i]; // temp version needed, cause original matrix must not be changed!
+                r_temp0 = r[current - 1].vectorised[r_vec_idx0 + i]; // result matrix must either never be changed!
+                extract(b_temp0, b_comp.vectorised[b_vec_idx0 + i + 1], extract_offsets[b_offset][act_b_row0 % 4]);
+                extract(r_temp0, r[current - 1].vectorised[r_vec_idx0 + i + 1], extract_offsets[b_offset][act_a_row0 % 4]);
+                r_temp0 = spu_madd(a_elem_v0, b_temp0, r_temp0);
+                insert(r[current - 1].vectorised[r_vec_idx0 + i], r[current - 1].vectorised[r_vec_idx0 + i + 1],
+                        r_temp0, extract_offsets[b_offset][act_a_row0 % 4]);
 
-                r_temp = spu_madd(a_elem_v, b_temp, r_temp);
+                b_temp1 = b_comp.vectorised[b_vec_idx1 + i]; // temp version needed, cause original matrix must not be changed!
+                r_temp1 = r[current - 1].vectorised[r_vec_idx1 + i]; // result matrix must either never be changed!
+                extract(b_temp1, b_comp.vectorised[b_vec_idx1 + i + 1], extract_offsets[b_offset][act_b_row1 % 4]);
+                extract(r_temp1, r[current - 1].vectorised[r_vec_idx1 + i + 1], extract_offsets[b_offset][act_a_row1 % 4]);
+                r_temp1 = spu_madd(a_elem_v1, b_temp1, r_temp1);
+                insert(r[current - 1].vectorised[r_vec_idx1 + i], r[current - 1].vectorised[r_vec_idx1 + i + 1],
+                        r_temp1, extract_offsets[b_offset][act_a_row1 % 4]);
 
-                insert(r[current - 1].vectorised[r_vec_idx + i], r[current - 1].vectorised[r_vec_idx + i + 1],
-                        r_temp, extract_offsets[b_offset][act_a_row % 4]);
+                b_temp2 = b_comp.vectorised[b_vec_idx2 + i]; // temp version needed, cause original matrix must not be changed!
+                r_temp2 = r[current - 1].vectorised[r_vec_idx2 + i]; // result matrix must either never be changed!
+                extract(b_temp2, b_comp.vectorised[b_vec_idx2 + i + 1], extract_offsets[b_offset][act_b_row2 % 4]);
+                extract(r_temp2, r[current - 1].vectorised[r_vec_idx2 + i + 1], extract_offsets[b_offset][act_a_row2 % 4]);
+                r_temp2 = spu_madd(a_elem_v2, b_temp2, r_temp2);
+                insert(r[current - 1].vectorised[r_vec_idx2 + i], r[current - 1].vectorised[r_vec_idx2 + i + 1],
+                        r_temp2, extract_offsets[b_offset][act_a_row2 % 4]);
 
-                b_vec_idx++;
+                b_temp3 = b_comp.vectorised[b_vec_idx3 + i]; // temp version needed, cause original matrix must not be changed!
+                r_temp3 = r[current - 1].vectorised[r_vec_idx3 + i]; // result matrix must either never be changed!
+                extract(b_temp3, b_comp.vectorised[b_vec_idx3 + i + 1], extract_offsets[b_offset][act_b_row3 % 4]);
+                extract(r_temp3, r[current - 1].vectorised[r_vec_idx3 + i + 1], extract_offsets[b_offset][act_a_row3 % 4]);
+                r_temp3 = spu_madd(a_elem_v3, b_temp3, r_temp3);
+                insert(r[current - 1].vectorised[r_vec_idx3 + i], r[current - 1].vectorised[r_vec_idx3 + i + 1],
+                        r_temp3, extract_offsets[b_offset][act_a_row3 % 4]);
             }
-                // Now we handle the last vector in row where we perhaps must cut some elements that don't belong to the current row
+            // Now we handle the last vector in row where we perhaps must cut some elements that don't belong to the current row
+            r_vec_idx0 += (vecs_in_b_row - 1); // Take vector for the last computation of the possibly incomplete vector
+            r_vec_idx1 += (vecs_in_b_row - 1);
+            r_vec_idx2 += (vecs_in_b_row - 1); // Take vector for the last computation of the possibly incomplete vector
+            r_vec_idx3 += (vecs_in_b_row - 1);
 
-                r_vec_idx += (vecs_in_act_b_row - 1); // Take vector for the last computation of the possibly incomplete vector
+            b_temp0 = b_comp.vectorised[b_vec_idx0];
+            r_temp0 = r[current - 1].vectorised[r_vec_idx0];
+            extract(b_temp0, b_comp.vectorised[b_vec_idx0 + 1], extract_offsets[b_offset][act_b_row0 % 4]);
+            extract(r_temp0, r[current - 1].vectorised[r_vec_idx0 + 1], extract_offsets[b_offset][act_a_row0 % 4]);
+            v0 = spu_and(b_temp0, mask_vector[b_offset]);
+            r_temp0 = spu_madd(a_elem_v0, v0, r_temp0);
+            insert(r[current - 1].vectorised[r_vec_idx0], r[current - 1].vectorised[r_vec_idx0 + 1], r_temp0, extract_offsets[b_offset][act_a_row0 % 4]);
 
-                vector float b_temp(b_comp.vectorised[b_vec_idx]);
-                vector float r_temp(r[current - 1].vectorised[r_vec_idx]);
-                extract(b_temp, b_comp.vectorised[b_vec_idx + 1], extract_offsets[b_offset][act_b_row % 4]);
-                extract(r_temp, r[current - 1].vectorised[r_vec_idx + 1], extract_offsets[b_offset][act_a_row % 4]);
+            b_temp1 = b_comp.vectorised[b_vec_idx1];
+            r_temp1 = r[current - 1].vectorised[r_vec_idx1];
+            extract(b_temp1, b_comp.vectorised[b_vec_idx1 + 1], extract_offsets[b_offset][act_b_row1 % 4]);
+            extract(r_temp1, r[current - 1].vectorised[r_vec_idx1 + 1], extract_offsets[b_offset][act_a_row1 % 4]);
+            v1 = spu_and(b_temp1, mask_vector[b_offset]);
+            r_temp1 = spu_madd(a_elem_v1, v1, r_temp1);
+            insert(r[current - 1].vectorised[r_vec_idx1], r[current - 1].vectorised[r_vec_idx1 + 1], r_temp1, extract_offsets[b_offset][act_a_row1 % 4]);
 
-                vector float v(spu_and(b_temp, mask_vector[b_offset]));
-                r_temp = spu_madd(a_elem_v, v, r_temp);
+            b_temp2 = b_comp.vectorised[b_vec_idx2];
+            r_temp2 = r[current - 1].vectorised[r_vec_idx2];
+            extract(b_temp2, b_comp.vectorised[b_vec_idx2 + 1], extract_offsets[b_offset][act_b_row2 % 4]);
+            extract(r_temp2, r[current - 1].vectorised[r_vec_idx2 + 1], extract_offsets[b_offset][act_a_row2 % 4]);
+            v2 = spu_and(b_temp2, mask_vector[b_offset]);
+            r_temp2 = spu_madd(a_elem_v2, v2, r_temp2);
+            insert(r[current - 1].vectorised[r_vec_idx2], r[current - 1].vectorised[r_vec_idx2 + 1], r_temp2, extract_offsets[b_offset][act_a_row2 % 4]);
 
-                insert(r[current -1].vectorised[r_vec_idx], r[current - 1].vectorised[r_vec_idx + 1], r_temp, extract_offsets[b_offset][act_a_row % 4]);
-            }
+            b_temp3 = b_comp.vectorised[b_vec_idx3];
+            r_temp3 = r[current - 1].vectorised[r_vec_idx3];
+            extract(b_temp3, b_comp.vectorised[b_vec_idx3 + 1], extract_offsets[b_offset][act_b_row3 % 4]);
+            extract(r_temp3, r[current - 1].vectorised[r_vec_idx3 + 1], extract_offsets[b_offset][act_a_row3 % 4]);
+            v3 = spu_and(b_temp3, mask_vector[b_offset]);
+            r_temp3 = spu_madd(a_elem_v3, v3, r_temp3);
+            insert(r[current - 1].vectorised[r_vec_idx3], r[current - 1].vectorised[r_vec_idx3 + 1], r_temp3, extract_offsets[b_offset][act_a_row3 % 4]);
+        }
 
         debug_put(ea_r_start, r[current - 1].untyped, r_size);
         mfc_putb(r[current - 1].untyped, ea_r_start, r_size, current, 0, 0);
@@ -202,43 +274,110 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
     a_elem = 0; // The actual considered element of matrix a
 
-    for( ; a_elem < inst.size / sizeof(float) ; a_elem++)
+    for( ; a_elem < inst.size / sizeof(vector float) ; a_elem++)
     {
-        a_elem_v = spu_splats(a[current -1].typed[a_elem]);
-        act_a_row = a_elem / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-        act_b_row = a_elem % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        Subscriptable<float> four = { a[current - 1].vectorised[a_elem] };
+        a_elem_v0 = spu_splats(four.array[0]);
+        a_elem_v1 = spu_splats(four.array[1]);
+        a_elem_v2 = spu_splats(four.array[2]);
+        a_elem_v3 = spu_splats(four.array[3]);
 
-        vecs_in_act_b_row = vectors_per_row[b_offset] + b_column_vecs; // Number of vectors in actual row of b
-        b_vec_idx = (act_b_row * b_column_vecs) + ((act_b_row / 4) * b_offset) + vector_indices[b_offset][act_b_row % 4];
-        r_vec_idx = (act_a_row * b_column_vecs) + ((act_a_row / 4) * b_offset) + vector_indices[b_offset][act_a_row % 4];
+        typed_start = 4 * a_elem;
 
-        for(unsigned i(0) ; i < vecs_in_act_b_row - 1 ; i++) // Make all computations except the last
+        act_a_row0 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row0 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        typed_start++;
+        act_a_row1 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row1 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        typed_start++;
+        act_a_row2 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row2 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        typed_start++;
+        act_a_row3 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row3 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+
+        b_vec_idx0 = (act_b_row0 * b_column_vecs) + ((act_b_row0 / 4) * b_offset) + vector_indices[b_offset][act_b_row0 % 4];
+        r_vec_idx0 = (act_a_row0 * b_column_vecs) + ((act_a_row0 / 4) * b_offset) + vector_indices[b_offset][act_a_row0 % 4];
+        b_vec_idx1 = (act_b_row1 * b_column_vecs) + ((act_b_row1 / 4) * b_offset) + vector_indices[b_offset][act_b_row1 % 4];
+        r_vec_idx1 = (act_a_row1 * b_column_vecs) + ((act_a_row1 / 4) * b_offset) + vector_indices[b_offset][act_a_row1 % 4];
+        b_vec_idx2 = (act_b_row2 * b_column_vecs) + ((act_b_row2 / 4) * b_offset) + vector_indices[b_offset][act_b_row2 % 4];
+        r_vec_idx2 = (act_a_row2 * b_column_vecs) + ((act_a_row2 / 4) * b_offset) + vector_indices[b_offset][act_a_row2 % 4];
+        b_vec_idx3 = (act_b_row3 * b_column_vecs) + ((act_b_row3 / 4) * b_offset) + vector_indices[b_offset][act_b_row3 % 4];
+        r_vec_idx3 = (act_a_row3 * b_column_vecs) + ((act_a_row3 / 4) * b_offset) + vector_indices[b_offset][act_a_row3 % 4];
+
+        for(unsigned i(0) ; i < vecs_in_b_row - 1 ; i++) // Make all computations except the last
         {
-            vector float b_temp(b_comp.vectorised[b_vec_idx]); // temp version needed, cause original matrix must not be changed!
-            vector float r_temp(r[current - 1].vectorised[r_vec_idx + i]); // result matrix must either never be changed!
-            extract(b_temp, b_comp.vectorised[b_vec_idx + 1], extract_offsets[b_offset][act_b_row % 4]);
-            extract(r_temp, r[current - 1].vectorised[r_vec_idx + i + 1], extract_offsets[b_offset][act_a_row % 4]);
+            b_temp0 = b_comp.vectorised[b_vec_idx0 + i]; // temp version needed, cause original matrix must not be changed!
+            r_temp0 = r[current - 1].vectorised[r_vec_idx0 + i]; // result matrix must either never be changed!
+            extract(b_temp0, b_comp.vectorised[b_vec_idx0 + i + 1], extract_offsets[b_offset][act_b_row0 % 4]);
+            extract(r_temp0, r[current - 1].vectorised[r_vec_idx0 + i + 1], extract_offsets[b_offset][act_a_row0 % 4]);
+            r_temp0 = spu_madd(a_elem_v0, b_temp0, r_temp0);
+            insert(r[current - 1].vectorised[r_vec_idx0 + i], r[current - 1].vectorised[r_vec_idx0 + i + 1],
+                    r_temp0, extract_offsets[b_offset][act_a_row0 % 4]);
 
-            r_temp = spu_madd(a_elem_v, b_temp, r_temp);
+            b_temp1 = b_comp.vectorised[b_vec_idx1 + i]; // temp version needed, cause original matrix must not be changed!
+            r_temp1 = r[current - 1].vectorised[r_vec_idx1 + i]; // result matrix must either never be changed!
+            extract(b_temp1, b_comp.vectorised[b_vec_idx1 + i + 1], extract_offsets[b_offset][act_b_row1 % 4]);
+            extract(r_temp1, r[current - 1].vectorised[r_vec_idx1 + i + 1], extract_offsets[b_offset][act_a_row1 % 4]);
+            r_temp1 = spu_madd(a_elem_v1, b_temp1, r_temp1);
+            insert(r[current - 1].vectorised[r_vec_idx1 + i], r[current - 1].vectorised[r_vec_idx1 + i + 1],
+                    r_temp1, extract_offsets[b_offset][act_a_row1 % 4]);
 
-            insert(r[current - 1].vectorised[r_vec_idx + i], r[current - 1].vectorised[r_vec_idx + i + 1],
-                    r_temp, extract_offsets[b_offset][act_a_row % 4]);
+            b_temp2 = b_comp.vectorised[b_vec_idx2 + i]; // temp version needed, cause original matrix must not be changed!
+            r_temp2 = r[current - 1].vectorised[r_vec_idx2 + i]; // result matrix must either never be changed!
+            extract(b_temp2, b_comp.vectorised[b_vec_idx2 + i + 1], extract_offsets[b_offset][act_b_row2 % 4]);
+            extract(r_temp2, r[current - 1].vectorised[r_vec_idx2 + i + 1], extract_offsets[b_offset][act_a_row2 % 4]);
+            r_temp2 = spu_madd(a_elem_v2, b_temp2, r_temp2);
+            insert(r[current - 1].vectorised[r_vec_idx2 + i], r[current - 1].vectorised[r_vec_idx2 + i + 1],
+                    r_temp2, extract_offsets[b_offset][act_a_row2 % 4]);
 
-            b_vec_idx++;
+            b_temp3 = b_comp.vectorised[b_vec_idx3 + i]; // temp version needed, cause original matrix must not be changed!
+            r_temp3 = r[current - 1].vectorised[r_vec_idx3 + i]; // result matrix must either never be changed!
+            extract(b_temp3, b_comp.vectorised[b_vec_idx3 + i + 1], extract_offsets[b_offset][act_b_row3 % 4]);
+            extract(r_temp3, r[current - 1].vectorised[r_vec_idx3 + i + 1], extract_offsets[b_offset][act_a_row3 % 4]);
+            r_temp3 = spu_madd(a_elem_v3, b_temp3, r_temp3);
+            insert(r[current - 1].vectorised[r_vec_idx3 + i], r[current - 1].vectorised[r_vec_idx3 + i + 1],
+                    r_temp3, extract_offsets[b_offset][act_a_row3 % 4]);
+
         }
         // Now we handle the last vector in row where we perhaps must cut some elements that don't belong to the current row
 
-        r_vec_idx += (vecs_in_act_b_row - 1); // Take vector for the last computation of the possibly incomplete vector
+        r_vec_idx0 += (vecs_in_b_row - 1); // Take vector for the last computation of the possibly incomplete vector
+        r_vec_idx1 += (vecs_in_b_row - 1);
+        r_vec_idx2 += (vecs_in_b_row - 1); // Take vector for the last computation of the possibly incomplete vector
+        r_vec_idx3 += (vecs_in_b_row - 1);
 
-        vector float b_temp(b_comp.vectorised[b_vec_idx]);
-        vector float r_temp(r[current - 1].vectorised[r_vec_idx]);
-        extract(b_temp, b_comp.vectorised[b_vec_idx + 1], extract_offsets[b_offset][act_b_row % 4]);
-        extract(r_temp, r[current - 1].vectorised[r_vec_idx + 1], extract_offsets[b_offset][act_a_row % 4]);
+        b_temp0 = b_comp.vectorised[b_vec_idx0];
+        r_temp0 = r[current - 1].vectorised[r_vec_idx0];
+        extract(b_temp0, b_comp.vectorised[b_vec_idx0 + 1], extract_offsets[b_offset][act_b_row0 % 4]);
+        extract(r_temp0, r[current - 1].vectorised[r_vec_idx0 + 1], extract_offsets[b_offset][act_a_row0 % 4]);
+        v0 = spu_and(b_temp0, mask_vector[b_offset]);
+        r_temp0 = spu_madd(a_elem_v0, v0, r_temp0);
+        insert(r[current - 1].vectorised[r_vec_idx0], r[current - 1].vectorised[r_vec_idx0 + 1], r_temp0, extract_offsets[b_offset][act_a_row0 % 4]);
 
-        vector float v(spu_and(b_temp, mask_vector[b_offset]));
-        r_temp = spu_madd(a_elem_v, v, r_temp);
+        b_temp1 = b_comp.vectorised[b_vec_idx1];
+        r_temp1 = r[current - 1].vectorised[r_vec_idx1];
+        extract(b_temp1, b_comp.vectorised[b_vec_idx1 + 1], extract_offsets[b_offset][act_b_row1 % 4]);
+        extract(r_temp1, r[current - 1].vectorised[r_vec_idx1 + 1], extract_offsets[b_offset][act_a_row1 % 4]);
+        v1 = spu_and(b_temp1, mask_vector[b_offset]);
+        r_temp1 = spu_madd(a_elem_v1, v1, r_temp1);
+        insert(r[current - 1].vectorised[r_vec_idx1], r[current - 1].vectorised[r_vec_idx1 + 1], r_temp1, extract_offsets[b_offset][act_a_row1 % 4]);
 
-        insert(r[current - 1].vectorised[r_vec_idx], r[current - 1].vectorised[r_vec_idx + 1], r_temp, extract_offsets[b_offset][act_a_row % 4]);
+        b_temp2 = b_comp.vectorised[b_vec_idx2];
+        r_temp2 = r[current - 1].vectorised[r_vec_idx2];
+        extract(b_temp2, b_comp.vectorised[b_vec_idx2 + 1], extract_offsets[b_offset][act_b_row2 % 4]);
+        extract(r_temp2, r[current - 1].vectorised[r_vec_idx2 + 1], extract_offsets[b_offset][act_a_row2 % 4]);
+        v2 = spu_and(b_temp2, mask_vector[b_offset]);
+        r_temp2 = spu_madd(a_elem_v2, v2, r_temp2);
+        insert(r[current - 1].vectorised[r_vec_idx2], r[current - 1].vectorised[r_vec_idx2 + 1], r_temp2, extract_offsets[b_offset][act_a_row2 % 4]);
+
+        b_temp3 = b_comp.vectorised[b_vec_idx3];
+        r_temp3 = r[current - 1].vectorised[r_vec_idx3];
+        extract(b_temp3, b_comp.vectorised[b_vec_idx3 + 1], extract_offsets[b_offset][act_b_row3 % 4]);
+        extract(r_temp3, r[current - 1].vectorised[r_vec_idx3 + 1], extract_offsets[b_offset][act_a_row3 % 4]);
+        v3 = spu_and(b_temp3, mask_vector[b_offset]);
+        r_temp3 = spu_madd(a_elem_v3, v3, r_temp3);
+        insert(r[current - 1].vectorised[r_vec_idx3], r[current - 1].vectorised[r_vec_idx3 + 1], r_temp3, extract_offsets[b_offset][act_a_row3 % 4]);
     }
 
     debug_put(ea_r_start, r[current - 1].untyped, r_size);
