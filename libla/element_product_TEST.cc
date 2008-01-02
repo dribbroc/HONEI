@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Joachim Messer <joachim.messer@uni-dortmund.de>
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
@@ -45,8 +46,19 @@ class DenseVectorElementProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
-                    dv3(size, DataType_(6));
+                DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
+                    dv3(size, DataType_(0));
+
+                DataType_ sign_1(1), sign_2(1);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                {
+                    *i = sign_1 * i.index();
+                    *j = sign_2 * (size - i.index() - 1);
+                    *k = sign_1 * sign_2 * (i.index() * (size - i.index() - 1));
+                    sign_1 *= -1;
+                    sign_2 *= (-1) * sign_1;
+                }
                 ElementProduct<>::value(dv1, dv2);
 
                 TEST_CHECK_EQUAL(dv1, dv3);
@@ -93,8 +105,20 @@ class DenseVectorElementProductQuickTest :
 #else
             unsigned long size(19);
 #endif
-            DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(3)),
-                dv3(size, DataType_(6));
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
+                dv3(size, DataType_(0));
+
+            DataType_ sign_1(1), sign_2(1);
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            {
+                *i = sign_1 * i.index();
+                *j = sign_2 * (size - i.index() - 1);
+                *k = sign_1 * sign_2 * (i.index() * (size - i.index() - 1));
+                sign_1 *= -1;
+                sign_2 *= (-1) * sign_1;
+            }
+
             ElementProduct<Tag_>::value(dv1, dv2);
 
             TEST_CHECK_EQUAL(dv1, dv3);
@@ -120,6 +144,149 @@ DenseVectorElementProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 DenseVectorElementProductQuickTest<tags::Cell, float> cell_dense_vector_element_product_quick_test_float("Cell float");
 #endif
 
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeElementProductTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeElementProductTest(const std::string & type) :
+            BaseTest("dense_vector_range_elementwise_product_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
+                    dv3(size, DataType_(0));
+
+                DataType_ sign_1(1), sign_2(1);
+                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()); i != i_end ; ++i, ++j)
+                {
+                    *i = sign_1 * i.index();
+                    *j = sign_2 * (size - i.index() - 1);
+                    sign_1 *= -1;
+                    sign_2 *= (-1) * sign_1;
+                }
+
+                for (unsigned long range_size(1); range_size <= size-8; ++range_size)
+                {
+                    for (unsigned long offset1(4); offset1 < 8; ++offset1)
+                    {
+                        for (unsigned long offset2(4); offset2 < 8; ++offset2)
+                        {
+                            DenseVectorRange<DataType_> dvr1(dv1.copy(), range_size, offset1);
+                            DenseVectorRange<DataType_> dvr2(dv2, range_size, offset2);
+                            DenseVector<DataType_> dvr3(range_size, DataType_(0));
+                            for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()), 
+                                i_end(dvr3.end_elements()); i != i_end ; ++i)
+                            {
+                                *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * (i.index()+offset1) * (size - i.index() - offset2 -1);
+                            }
+
+                            ElementProduct<>::value(dvr1, dvr2);
+                            TEST_CHECK_EQUAL(dvr1, dvr3);
+                        }
+                    }
+                }
+
+            }
+
+            DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
+
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
+        }
+};
+
+DenseVectorRangeElementProductTest<tags::CPU, float> dense_vector_range_elementwise_product_test_float("float");
+DenseVectorRangeElementProductTest<tags::CPU, double> dense_vector_range_elementwise_product_test_double("double");
+DenseVectorRangeElementProductTest<tags::CPU::MultiCore, float> mc_dense_vector_range_elementwise_product_test_float("MC float");
+DenseVectorRangeElementProductTest<tags::CPU::MultiCore, double> mc_dense_vector_range_elementwise_product_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeElementProductTest<tags::CPU::SSE, float> sse_dense_vector_range_elementwise_product_test_float("sse float");
+DenseVectorRangeElementProductTest<tags::CPU::SSE, double> sse_dense_vector_range_elementwise_product_test_double("sse double");
+DenseVectorRangeElementProductTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_elementwise_product_test_float("MC SSE float");
+DenseVectorRangeElementProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_elementwise_product_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeElementProductTest<tags::Cell, float> cell_dense_vector_range_element_product_test_float("Cell float");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeElementProductQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeElementProductQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_elementwise_product_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+#if defined HONEI_CELL
+            unsigned long size(18225);
+#elif defined HONEI_SSE
+            unsigned long size(18225);
+#else
+            unsigned long size(19);
+#endif
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
+                dv3(size, DataType_(0));
+
+            DataType_ sign_1(1), sign_2(1);
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            {
+                *i = sign_1 * i.index();
+                *j = sign_2 * (size - i.index() - 1);
+                sign_1 *= -1;
+                sign_2 *= (-1) * sign_1;
+            }
+            for (unsigned long range_size(size-16); range_size <= size-8; ++range_size)
+            {
+                for (unsigned long offset1(4); offset1 < 8; ++offset1)
+                {
+                    for (unsigned long offset2(4); offset2 < 8; ++offset2)
+                    {
+                        DenseVectorRange<DataType_> dvr1(dv1.copy(), range_size, offset1);
+                        DenseVectorRange<DataType_> dvr2(dv2, range_size, offset2);
+                        DenseVector<DataType_> dvr3(range_size, DataType_(0));
+                        for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()),
+                            i_end(dvr3.end_elements()); i != i_end ; ++i)
+                        {
+                            *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * (i.index()+offset1) * (size - i.index() - offset2 -1);
+                        }
+
+                        ElementProduct<>::value(dvr1, dvr2);
+                        TEST_CHECK_EQUAL(dvr1, dvr3);
+                    }
+                }
+            }
+
+            DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
+
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
+
+        }
+};
+DenseVectorRangeElementProductQuickTest<tags::CPU, float> dense_vector_range_elementwise_product_quick_test_float("float");
+DenseVectorRangeElementProductQuickTest<tags::CPU, double> dense_vector_range_elementwise_product_quick_test_double("double");
+DenseVectorRangeElementProductQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_elementwise_product_quick_test_float("MC float");
+DenseVectorRangeElementProductQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_elementwise_product_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeElementProductQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_elementwise_product_quick_test_float("sse float");
+DenseVectorRangeElementProductQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_elementwise_product_quick_test_double("sse double");
+DenseVectorRangeElementProductQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_elementwise_product_quick_test_float("MC SSE float");
+DenseVectorRangeElementProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_elementwise_product_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseVectorRangeElementProductQuickTest<tags::Cell, float> cell_dense_vector_range_element_product_quick_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class SparseVectorDenseVectorElementProductTest :
@@ -538,8 +705,21 @@ class DenseMatrixElementProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(3)),
-                    dm3(size+1, size, DataType_(6));
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)), dm2(size+1, size, DataType_(0)),
+                    dm3(size+1, size, DataType_(0));
+
+                DataType_ sign_1(1), sign_2(1);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
+                    i_end(dm1.end_elements()), j(dm2.begin_elements()), k(dm3.begin_elements()) ; 
+                    i != i_end ; ++i, ++j, ++k)
+                {
+                    *i = sign_1 * i.index();
+                    *j = sign_2 * (size * (size + 1) - i.index() - 1);
+                    *k = sign_1 * sign_2 * (i.index() * (size * (size + 1) - i.index() - 1));
+                    sign_1 *= -1;
+                    sign_2 *= (-1) * sign_1;
+                }
+
                 ElementProduct<Tag_>::value(dm1, dm2);
 
                 TEST_CHECK_EQUAL(dm1, dm3);
@@ -574,8 +754,21 @@ class DenseMatrixElementProductQuickTest :
         virtual void run() const
         {
             unsigned long size(5);
-            DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(3)),
-                dm3(size+1, size, DataType_(6));
+            DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)), dm2(size+1, size, DataType_(0)),
+                dm3(size+1, size, DataType_(0));
+
+                DataType_ sign_1(1), sign_2(1);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
+                    i_end(dm1.end_elements()), j(dm2.begin_elements()), k(dm3.begin_elements()) ; 
+                    i != i_end ; ++i, ++j, ++k)
+                {
+                    *i = sign_1 * i.index();
+                    *j = sign_2 * (size * (size + 1) - i.index() - 1);
+                    *k = sign_1 * sign_2 * (i.index() * (size * (size + 1) - i.index() - 1));
+                    sign_1 *= -1;
+                    sign_2 *= (-1) * sign_1;
+                }
+
             ElementProduct<Tag_>::value(dm1, dm2);
 
             TEST_CHECK_EQUAL(dm1, dm3);
@@ -612,8 +805,8 @@ class SparseMatrixDenseMatrixElementProductTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
                 SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 7 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
-                    k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
+                for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), 
+                    j(sm2.begin_elements()), k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
                 {
                     if (j.index() % 7 == 0)
                     {
@@ -639,8 +832,8 @@ class SparseMatrixDenseMatrixElementProductTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(factor_1));
                 SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 7 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
-                    k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
+                for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), 
+                    j(sm2.begin_elements()), k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
                 {
                     if (j.index() % 7 == 0)
                     {
@@ -685,8 +878,7 @@ class SparseMatrixDenseMatrixElementProductQuickTest :
             unsigned long size (11);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
             SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 7 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements()),
-                k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
+            for (typename MutableMatrix<DataType_>::ElementIterator j_end(sm2.end_elements()), j(sm2.begin_elements())                , k(sm3.begin_elements()) ; j != j_end ; ++j, ++k)
             {
                 if (j.index() % 7 == 0)
                 {

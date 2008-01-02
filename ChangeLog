@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-02 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* libla/element_product_TEST.cc:
+	Improved (DV, DV) and (DM, DM) tests and added test for (DVR, DVR).
+
 2008-01-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product-cell.cc:
