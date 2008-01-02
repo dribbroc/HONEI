@@ -224,48 +224,46 @@ namespace honei
             }
 
             Scale<tags::CPU>::value(-1,b);
-            
-            int middle_index(a.rows() -1);
-            // If we are below the diagonal band, we start at Element index and go on until the last element.
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
-                    vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
-            {
-                if (!vi.exists())
-                    continue;
-                unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
-                unsigned long i(0);
-                for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
-                        c_end(vi->end_elements()) ; c != c_end ; ++c)
-                {
-                    b[start][i] += *c;
-                    ++start, ++i;
-                }
-            }
 
-            // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
+            int middle_index(a.rows() -1);
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
-                if (!vi.exists())
-                    continue;
-
-                //Calculation of the element-index to stop in iteration!
-                unsigned long offset(vi.index() - middle_index);
-                unsigned long end(vi->size() - offset);
-                unsigned long i(0);
-                for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
-                        c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                // If we are below the diagonal band, we start at Element index and go on until the last element.
+                if (vi.index() < middle_index)
                 {
-                    b[i][offset] +=  *c;
+                    unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                    {
+                        b[start][i] += *c;
+                        ++start, ++i;
+                    }
+                }
+
+                // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+                else
+                {
+
+                    //Calculation of the element-index to stop in iteration!
+                    unsigned long offset(vi.index() - middle_index);
+                    unsigned long end(vi->size() - offset);
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                    {
+                        b[i][offset] +=  *c;
                     ++offset, ++i;
+                    }
                 }
             }
-            
+
             return b;
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseMatrix<DT1_> & value(const BandedMatrix<DT2_> & a, SparseMatrix<DT1_> & b)
+        static SparseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, SparseMatrix<DT2_> & b)
         {
             CONTEXT("When subtracting SparseMatrix from BandedMatrix:");
 
@@ -278,42 +276,39 @@ namespace honei
             {
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
-            
-            Scale<tags::CPU>::value(-1,b);
-            
-            int middle_index(a.rows() -1);
-            // If we are below the diagonal band, we start at Element index and go on until the last element.
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
-                    vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
-            {
-                if (!vi.exists())
-                    continue;
-                unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
-                unsigned long i(0);
-                for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
-                        c_end(vi->end_elements()) ; c != c_end ; ++c)
-                {
-                    b[start][i] += *c;
-                    ++start, ++i;
-                }
-            }
 
-            // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
+            Scale<tags::CPU>::value(-1,b);
+
+            int middle_index(a.rows() -1);
+            for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
-                if (!vi.exists())
-                    continue;
-
-                //Calculation of the element-index to stop in iteration!
-                unsigned long offset(vi.index() - middle_index);
-                unsigned long end(vi->size() - offset);
-                unsigned long i(0);
-                for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
-                        c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                // If we are below the diagonal band, we start at Element index and go on until the last element.
+                if (vi.index() < middle_index)
                 {
-                    b[i][offset] +=  *c;
-                    ++offset, ++i;
+                    unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                    {
+                        b[start][i] += *c;
+                        ++start, ++i;
+                    }
+                }
+
+                // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+                else
+                {
+                    //Calculation of the element-index to stop in iteration!
+                    unsigned long offset(vi.index() - middle_index);
+                    unsigned long end(vi->size() - offset);
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                    {
+                        b[i][offset] +=  *c;
+                        ++offset, ++i;
+                    }
                 }
             }
 

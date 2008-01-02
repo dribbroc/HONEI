@@ -196,7 +196,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands()) ;
+            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
                     r != r_end ; ++r)
             {
                 if (! r.exists())
@@ -211,7 +211,7 @@ namespace honei
                 if (r.index() < size - 1)
                 {
                         c += ((size-1) - r.index());
-                }                
+                }
 
                 for ( ; c != c_end ; ++c)
                 {
