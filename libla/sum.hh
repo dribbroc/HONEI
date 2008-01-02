@@ -199,9 +199,6 @@ namespace honei
             for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
                     r != r_end ; ++r)
             {
-                if (! r.exists())
-                    continue;
-
                 unsigned long size(b.size());
                 unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
                 unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
