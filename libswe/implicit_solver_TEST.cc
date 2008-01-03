@@ -300,3 +300,6 @@ ImplicitSolverRuntimeTest<tags::CPU, float> implicit_solver_runtime_test_float("
 ImplicitSolverRuntimeTest<tags::CPU::SSE, float> sse_implicit_solver_runtime_test_float("SSE float");
 ImplicitSolverRuntimeTest<tags::CPU::SSE, double> sse_implicit_solver_runtime_test_double("SSE double");
 #endif*/
+#ifdef HONEI_CELL
+ImplicitSolverRuntimeTest<tags::Cell, float> cell_implicit_solver_runtime_test_float("cell float");
+#endif
