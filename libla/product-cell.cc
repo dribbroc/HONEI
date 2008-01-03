@@ -60,19 +60,9 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        SPEInstruction * instruction[2] = {
-            0, //new SPEInstruction(honei::cell::oc_noop, 0),
-            0 };//new SPEInstruction(honei::cell::oc_noop, 0) };
+        SPEInstructionStream * instruction(0);
 
-        //SPEManager::instance()->dispatch(*instruction[0]);
-        //SPEManager::instance()->dispatch(*instruction[1]);
-
-        DenseVector<float> * result[2] = {
-            new DenseVector<float>(b.size(), float(0)),
-            new DenseVector<float>(b.size(), float(0)) };
-
-
-        unsigned counter(0);
+        DenseVector<float> result(b.size(), float(0));
 
         unsigned long middle_index(a.rows() - 1);
         unsigned long quad_end, end, quad_start, start, x_offset, op_offset;
@@ -82,7 +72,6 @@ namespace honei
             // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
             if (band.index() >= middle_index)
             {
-
                 op_offset = band.index() - middle_index;
                 start = 0;
                 quad_start = 0;
@@ -91,7 +80,7 @@ namespace honei
 
                 Operand oa = { band->elements() + quad_start };
                 Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
-                Operand oc = { result[counter]->elements() + quad_start };
+                Operand oc = { result.elements() + quad_start };
                 Operand od, oe, of, og;
 
                 /// \todo use such a transfer size, that od.u is at least 2
@@ -120,24 +109,25 @@ namespace honei
                     quad_end = 0;
                 }
                 //std::cout<< "above D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
-                if (instruction[counter])
+                if (instruction == 0)
                 {
-                    instruction[counter]->wait();
-                    delete instruction[counter];
+                    instruction = new SPEInstructionStream(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                    SPEManager::instance()->dispatch(*instruction);
                 }
-                instruction[counter] = new SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og);
-                SPEManager::instance()->dispatch(*instruction[counter]);
+                else
+                {
+                    instruction->input(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                }
 
                 for (unsigned long index = quad_end ; index < end ; index++)
                 {
-                    result[counter]->elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
+                    result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                 }
             }
 
             // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
             else
             {
-
                 op_offset = middle_index - band.index();
                 start = op_offset; //Calculation of the element-index to start in iteration!
                 quad_start = start + ((4 - (start % 4)) % 4);
@@ -145,7 +135,7 @@ namespace honei
                 quad_end = end - (end % 4);
                 Operand oa = { band->elements() + quad_start};
                 Operand ob = { b.elements() + quad_start - op_offset - ((4 - (op_offset % 4)) % 4)};
-                Operand oc = { result[counter]->elements() + quad_start};
+                Operand oc = { result.elements() + quad_start};
                 Operand od, oe, of, og;
 
                 od.u = (quad_end - quad_start) / (1000 * 4);
@@ -172,35 +162,29 @@ namespace honei
                     quad_end = start;
                 }
                 //std::cout<< "below D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
-                if (instruction[counter])
+                if (instruction == 0)
                 {
-                    instruction[counter]->wait();
-                    delete instruction[counter];
+                    instruction = new SPEInstructionStream(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                    SPEManager::instance()->dispatch(*instruction);
                 }
-                instruction[counter] = new SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og);
-                SPEManager::instance()->dispatch(*instruction[counter]);
+                else
+                {
+                    instruction->input(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                }
 
                 for (unsigned long index = start ; index < quad_start ; index++)
                 {
-                    result[counter]->elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
+                    result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                 }
                 for (unsigned long index = quad_end ; index < end ; index++)
                 {
-                    result[counter]->elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
+                    result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                 }
             }
-            counter = (counter + 1) % 2;
         }
-        if (instruction[counter]) instruction[counter]->wait();
-        counter = (counter + 1) % 2;
-        if (instruction[counter]) instruction[counter]->wait();
-        Sum<tags::Cell>::value(*result[0], *result[1]);
-        DenseVector<float> end_result(*result[0]);
-        delete instruction[0];
-        delete instruction[1];
-        delete result[0];
-        delete result[1];
-        return end_result;
+        instruction->wait();
+        delete instruction;
+        return result;
     }
 
     DenseMatrix<float> Product<tags::Cell>::value(const DenseMatrix<float> & a, const DenseMatrix<float> & b)

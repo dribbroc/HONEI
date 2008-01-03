@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -24,11 +25,13 @@
 #include <libutil/spe_manager.hh>
 
 #include <list>
+#include <vector>
 
 namespace honei
 {
     class SPEKernel;
     class SPEInstructionQueue;
+    class SPEInstructionStream;
 
     class SPEInstruction
     {
@@ -51,6 +54,7 @@ namespace honei
         public:
             friend class SPEManager::Implementation;
             friend class SPEInstructionQueue;
+            friend class SPEInstructionStream;
 
             /// Constructor.
             SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a = empty,
@@ -90,8 +94,11 @@ namespace honei
             /// Constructor.
             SPEInstructionQueue();
 
+            /// Destructor.
+            ~SPEInstructionQueue();
+
             /// Insert an instruction at the end of the queue.
-            const SPEInstruction & push_back(const SPEInstruction & instruction);
+            void push_back(const SPEInstruction & instruction);
 
             /// Wait until all our instructions have been executed.
             void wait() const;
@@ -99,8 +106,44 @@ namespace honei
             /// Returns an iterator pointing to the front of our queue
             std::list<SPEInstruction>::iterator begin();
 
-            /// Returns an iterator pointing to the front of our queue
+            /// Returns an iterator pointing behind the last element of our queue
             std::list<SPEInstruction>::iterator end();
+
+            /// Returns our instruction count.
+            unsigned long size();
+    };
+
+    class SPEInstructionStream
+    {
+        private:
+            struct Implementation;
+
+            /// Our implementation.
+            Implementation * _imp;
+
+            /// Enqueue us with a given kernel.
+            void _enqueue_with(SPEKernel * kernel);
+
+        public:
+            friend class SPEManager::Implementation;
+
+            /// Constructor.
+            SPEInstructionStream(const SPEInstruction & instruction);
+
+            /// Destructor.
+            ~SPEInstructionStream();
+
+            /// Insert an instruction at the end of the queue.
+            void input(const SPEInstruction & instruction);
+
+            /// Wait until all our instructions have been executed.
+            void wait() const;
+
+            /// Returns an iterator pointing to the front of our stream
+            std::vector<SPEInstruction>::iterator begin();
+
+            /// Returns an iterator pointing behind the last element of our stream
+            std::vector<SPEInstruction>::iterator end();
 
             /// Returns our instruction count.
             unsigned long size();

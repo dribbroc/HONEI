@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/product-cell.cc, libutil/spe_instruction.cc,
+	libutil/spe_instruction.hh, libutil/spe_manager.cc,
+	libutil/spe_manager.hh:
+	Added an experimental instruction stream, that executes his
+	instructions once they are added instead of the instruction queue
+	collecting als instructions first.
+	Added instruction streams to Product(BM,DV) resulting in some nice
+	speedups.
+
 2008-01-02 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* libla/element_product_TEST.cc:

@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -39,6 +40,7 @@ namespace honei
 {
     class SPEInstruction;
     class SPEInstructionQueue;
+    class SPEInstructionStream;
 
     /**
      * SPEManager handles all available SPEs and dispatches tasks to them.
@@ -74,6 +76,7 @@ namespace honei
         public:
             friend class SPEInstruction;
             friend class SPEInstructionQueue;
+            friend class SPEInstructionStream;
 
             /// Return the only instance of SPEManager.
             static SPEManager * instance();
@@ -95,11 +98,17 @@ namespace honei
             // Dispatch all SPEInstructions in the queue to one single SPE.
             void dispatch(SPEInstructionQueue & instruction_queue);
 
+            // Dispatch all SPEInstructions in the stream to one single SPE.
+            void dispatch(SPEInstructionStream & instruction_stream);
+
             // Wait for a SPEinstructin to be finished.
             void wait(SPEInstruction & instruction);
 
             // Wait for all SPEInstrictions in the queue to finish.
             void wait(SPEInstructionQueue & instruction_queue);
+
+            // Wait for all SPEInstrictions in the stream so far to finish.
+            void wait(SPEInstructionStream & instruction_stream);
     };
 }
 
