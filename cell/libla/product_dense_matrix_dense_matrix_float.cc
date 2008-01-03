@@ -132,14 +132,18 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     vector float v0, v1, v2, v3;
     unsigned act_a_row0, act_a_row1, act_a_row2, act_a_row3;
     unsigned act_b_row0, act_b_row1, act_b_row2, act_b_row3;
-    unsigned typed_start;
     const unsigned b_offset(inst.e.u % 4); // The number of elements BEHIND the last complete vector in every column.
     const unsigned b_column_vecs(inst.e.u / 4);
     const unsigned vecs_in_b_row(vectors_per_row[b_offset] + b_column_vecs);
 
+    const vector unsigned vmul(spu_splats(4u));
+    const vector unsigned fu = {0u,1u,2u,3u};
+    Subscriptable<unsigned> typed_starts = { fu };
+
     while (counter > 1)
     {
         a_elem = 0;
+        typed_starts.value = fu;
         nextsize = (counter == 2 ? last_a_size : inst.size);
         r_nextsize = (counter == 2 ? last_r_size : inst.k.u);
 
@@ -161,19 +165,16 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             a_elem_v2 = spu_splats(four.array[2]);
             a_elem_v3 = spu_splats(four.array[3]);
 
-            typed_start = 4 * a_elem;
+            act_a_row0 = typed_starts.array[0] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row0 = typed_starts.array[0] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            act_a_row1 = typed_starts.array[1] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row1 = typed_starts.array[1] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            act_a_row2 = typed_starts.array[2] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row2 = typed_starts.array[2] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            act_a_row3 = typed_starts.array[3] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+            act_b_row3 = typed_starts.array[3] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
 
-            act_a_row0 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-            act_b_row0 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
-            typed_start++;
-            act_a_row1 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-            act_b_row1 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
-            typed_start++;
-            act_a_row2 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-            act_b_row2 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
-            typed_start++;
-            act_a_row3 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-            act_b_row3 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+            typed_starts.value = spu_add(typed_starts.value, vmul);
 
             b_vec_idx0 = (act_b_row0 * b_column_vecs) + ((act_b_row0 / 4) * b_offset) + vector_indices[b_offset][act_b_row0 % 4];
             r_vec_idx0 = (act_a_row0 * b_column_vecs) + ((act_a_row0 / 4) * b_offset) + vector_indices[b_offset][act_a_row0 % 4];
@@ -272,6 +273,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
+    typed_starts.value = fu;
     a_elem = 0; // The actual considered element of matrix a
 
     for( ; a_elem < inst.size / sizeof(vector float) ; a_elem++)
@@ -282,19 +284,16 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
         a_elem_v2 = spu_splats(four.array[2]);
         a_elem_v3 = spu_splats(four.array[3]);
 
-        typed_start = 4 * a_elem;
+        act_a_row0 = typed_starts.array[0] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row0 = typed_starts.array[0] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        act_a_row1 = typed_starts.array[1] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row1 = typed_starts.array[1] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        act_a_row2 = typed_starts.array[2] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row2 = typed_starts.array[2] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        act_a_row3 = typed_starts.array[3] / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
+        act_b_row3 = typed_starts.array[3] % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
 
-        act_a_row0 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-        act_b_row0 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
-        typed_start++;
-        act_a_row1 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-        act_b_row1 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
-        typed_start++;
-        act_a_row2 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-        act_b_row2 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
-        typed_start++;
-        act_a_row3 = typed_start / inst.d.u; // a_elem is in row a_elem / inst.size = a.columns()
-        act_b_row3 = typed_start % inst.d.u; // The row to multiply with is the index of a_elem modulo the number of rows of b
+        typed_starts.value = spu_add(typed_starts.value, vmul);
 
         b_vec_idx0 = (act_b_row0 * b_column_vecs) + ((act_b_row0 / 4) * b_offset) + vector_indices[b_offset][act_b_row0 % 4];
         r_vec_idx0 = (act_a_row0 * b_column_vecs) + ((act_a_row0 / 4) * b_offset) + vector_indices[b_offset][act_a_row0 % 4];

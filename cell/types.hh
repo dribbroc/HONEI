@@ -80,6 +80,12 @@ namespace honei
             unsigned long array[4];
         };
 
+        template <> union Subscriptable<unsigned>
+        {
+            vector unsigned value;
+            unsigned array[4];
+        };
+
         template <typename T_> union Vector;
 
         template <> union Vector<float>

@@ -44,6 +44,8 @@ namespace honei
         Operand od;
         od.u = (a.rows() * a.columns()) % (4 * 1024);
         od.u &= ~0xF;
+        Operand oe;
+        oe.u = 0;
 
         unsigned rest_index(oc.u * 4096 + od.u);
 
@@ -67,7 +69,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_element_product_dense_dense_float, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_element_product_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {
@@ -144,7 +146,7 @@ namespace honei
             ++oc.u;
         }
 
-        SPEInstruction instruction(oc_element_product_dense_dense_float, 16 * 1024, oa, ob, oc, od);
+        SPEInstruction instruction(oc_element_product_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe);
 
         if (use_spe)
         {

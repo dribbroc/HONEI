@@ -121,8 +121,11 @@ class DenseVectorElementProductQuickTest :
 
             ElementProduct<Tag_>::value(dv1, dv2);
 
-            TEST_CHECK_EQUAL(dv1, dv3);
-
+            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                k(dv3.begin_elements()) ; i != i_end ; ++i, ++k)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon() * size * i.index());
+            }
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
@@ -229,7 +232,7 @@ class DenseVectorRangeElementProductQuickTest :
         virtual void run() const
         {
 #if defined HONEI_CELL
-            unsigned long size(18225);
+            unsigned long size(10000);
 #elif defined HONEI_SSE
             unsigned long size(18225);
 #else
@@ -721,10 +724,12 @@ class DenseMatrixElementProductTest :
                 }
 
                 ElementProduct<Tag_>::value(dm1, dm2);
-
-                TEST_CHECK_EQUAL(dm1, dm3);
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
+                    i_end(dm1.end_elements()),k(dm3.begin_elements()) ; i != i_end ; ++i, ++k)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon() * size * size * i.index());
+                }
             }
-
             DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1)),
                 dm03(4, 2, static_cast<DataType_>(1));
 
