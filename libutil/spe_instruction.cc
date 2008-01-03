@@ -222,6 +222,12 @@ SPEInstructionQueue::size()
     return _imp->instructions.size();
 }
 
+bool
+SPEInstructionQueue::finished() const
+{
+    return _imp->instructions.back()._imp->finished();
+}
+
 struct SPEInstructionStream::Implementation
 {
     /// Our list of instructions.
@@ -312,4 +318,10 @@ unsigned long
 SPEInstructionStream::size()
 {
     return _imp->instructions.size();
+}
+
+bool
+SPEInstructionStream::finished() const
+{
+    return _imp->instructions.back()._imp->finished();
 }

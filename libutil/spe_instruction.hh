@@ -111,6 +111,9 @@ namespace honei
 
             /// Returns our instruction count.
             unsigned long size();
+
+            /// Returns true if all instructions have been finished
+            bool finished() const;
     };
 
     class SPEInstructionStream
@@ -147,6 +150,9 @@ namespace honei
 
             /// Returns our instruction count.
             unsigned long size();
+
+            /// Returns true if all instructions have been finished
+            bool finished() const;
     };
 }
 #endif

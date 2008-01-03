@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libutil/spe_instruction.cc, libutil/spe_instruction.hh:
+	Added finished() members.
+
+2008-01-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/product-cell.cc, libutil/spe_instruction.cc,
 	libutil/spe_instruction.hh, libutil/spe_manager.cc,
 	libutil/spe_manager.hh:
