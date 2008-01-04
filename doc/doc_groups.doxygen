@@ -10,6 +10,12 @@
 // ----- Library Groups -----
 
 /**
+ * \defgroup grpcell Cell BE Backend
+ *
+ * \ingroup grphonei
+ */
+
+/**
  * \defgroup grplibla LibLA: Linear Algebra Template Library
  *
  * \ingroup grphonei
@@ -37,6 +43,14 @@
  * \defgroup benchmarks Benchmark Framework
  *
  * \ingroup grphonei
+ */
+
+// ----- Cell BE Backend Groups -----
+
+/**
+ * \defgroup grpspeinterface SPE Interface
+ *
+ * \ingroup grpcell
  */
 
 // ----- LibLA Groups -----

@@ -40,19 +40,19 @@ namespace honei
          */
         enum KernelMessages
         {
-            km_instruction_finished = 1 << 0, /// < A completion message for an issued instruction.
-            km_result_dword, /// < A result message carrying a double word of data.
-            km_result_qword, /// < A result message carrying a quad word of data.
-            km_unknown_opcode, /// < An error message about an unknown opcode.
-            km_debug_get, /// < A debug message about a DMA GET transfer.
-            km_debug_put, /// < A debug message about a DMA PUT transfer.
-            km_debug_enter, /// < A debug message about entering a function.
-            km_debug_leave, /// < A debug message about leaving a function.
-            km_debug_acquire_block, /// < A debug message about acquiring an LS memory block.
-            km_debug_release_block, /// < A debug message about releasing an LS memory block.
-            km_debug_dump, /// < A debug message to trigger a complete dump of the SPE's LS memory.
-            km_last = km_debug_dump,
-            km_debug_value /// > debug message for the output of a single value
+            km_instruction_finished = 1 << 0, ///< A completion message for an issued instruction.
+            km_result_dword, ///< A result message carrying a double word of data.
+            km_result_qword, ///< A result message carrying a quad word of data.
+            km_unknown_opcode, ///< An error message about an unknown opcode.
+            km_debug_get, ///< A debug message about a DMA GET transfer.
+            km_debug_put, ///< A debug message about a DMA PUT transfer.
+            km_debug_enter, ///< A debug message about entering a function.
+            km_debug_leave, ///< A debug message about leaving a function.
+            km_debug_acquire_block, ///< A debug message about acquiring an LS memory block.
+            km_debug_release_block, ///< A debug message about releasing an LS memory block.
+            km_debug_dump, ///< A debug message to trigger a complete dump of the SPE's LS memory.
+            km_debug_value, ///< A debug message for the output of a single value.
+            km_last = km_debug_value
         };
 
         /**
@@ -62,22 +62,22 @@ namespace honei
          */
         enum KernelType
         {
-            kt_stand_alone = 1 << 0, /// < A kernel that is not interconnected with other SPE kernels.
-            kt_unknown, /// < An unknown (and thus invalid) kernel type.
+            kt_stand_alone = 1 << 0, ///< A kernel that is not interconnected with other SPE kernels.
+            kt_unknown, ///< An unknown (and thus invalid) kernel type.
             kt_last = kt_unknown
         };
 
         /**
-         * Environment is used to a running SPE kernel about the begin and end of
+         * Environment is used to inform a running SPE kernel about the begin and end of
          * its available data space in Local Store memory.
          *
          * \ingroup grpspeinterface
          */
         struct __attribute__((packed)) Environment
         {
-            LocalStoreAddress begin; /// < The begin of the available data space in Local Store memory.
+            LocalStoreAddress begin; ///< The begin of the available data space in Local Store memory.
 
-            LocalStoreAddress end; /// < The end of the available data space in Local Store memory.
+            LocalStoreAddress end; ///< The end of the available data space in Local Store memory.
         };
 
         /**
@@ -87,15 +87,15 @@ namespace honei
          */
         union Operand
         {
-            EffectiveAddress ea; /// < An effective address pointing to a PPE-side memory location.
+            EffectiveAddress ea; ///< An effective address pointing to a PPE-side memory location.
 
-            long long s; /// < A signed 64 bit integer value.
+            long long s; ///< A signed 64 bit integer value.
 
-            unsigned long long u; /// < An unsigned 64 bit integer value.
+            unsigned long long u; ///< An unsigned 64 bit integer value.
 
-            double d; /// < A double precision floating point value.
+            double d; ///< A double precision floating point value.
 
-            float f; /// < A double precision floating point value.
+            float f; ///< A double precision floating point value.
         };
 
         /**
@@ -106,11 +106,11 @@ namespace honei
          */
         struct __attribute__((packed)) Instruction
         {
-            OpCode opcode; /// < An instruction's OpCode.
+            OpCode opcode; ///< An instruction's OpCode.
 
-            unsigned size; /// < An instruction's default size.
+            unsigned size; ///< An instruction's default size.
 
-            /// \name An instructions's Operands a to o
+            /// \name An instruction's Operands a to o
             /// \{
 
             Operand a;
@@ -147,7 +147,7 @@ namespace honei
             const OpCode * opcodes;
         };
 
-#ifdef __PPU__
+#if defined(__PPU__) || defined(DOXYGEN)
 
         /**
          * Handle is the data type used to load a kernel program into an SPE.
@@ -164,11 +164,11 @@ namespace honei
          */
         struct KernelInfo
         {
-            const Capabilities capabilities; /// < A kernel's capabilities.
+            const Capabilities capabilities; ///< A kernel's capabilities.
 
-            const Environment environment; /// < A kernel's environment.
+            const Environment environment; ///< A kernel's environment.
 
-            const Handle handle; /// < A kernel's libspe2 handle.
+            const Handle handle; ///< A kernel's libspe2 handle.
 
             const std::string name; /// A kernel's name.
         };

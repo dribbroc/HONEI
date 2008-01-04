@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/interface.hh: Fixed documentation.
+	* doc/doc_groups.doxygen: Added groups for Cell BE Backend and its SPE
+	interface.
+	* doc/doxygen.conf: Added evaluation of .cc files while ignoring
+	benchmarks and test files.
+
 2008-01-03 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/product_dense_matrix_dense_matrix_float.cc: Minor
