@@ -32,6 +32,8 @@
 #  include <cstring>
 #endif
 
+#include <iostream>
+
 namespace honei
 {
     namespace intern
@@ -53,8 +55,8 @@ namespace honei
         template <> void
         PODTraits<float>::fill(float * dest, std::size_t count, const float & proto)
         {
+            /// \todo load data, mask and and it and store using vec_stl
             vector float vectorised_proto = { proto, proto, proto, proto };
-            vector float * vectorised_dest(reinterpret_cast<vector float *>(dest));
             std::size_t offset((reinterpret_cast<unsigned long long>(dest) & 0xF) / sizeof(float));
 
             for (unsigned i(0) ; i < std::min(count, offset) ; ++i)
@@ -62,10 +64,10 @@ namespace honei
                 dest[i] = proto;
             }
 
-            for (unsigned i(sizeof(vector float) - sizeof(float) * offset) ; i < (count - offset) * sizeof(float) ;
+            for (unsigned i(std::min(count, offset) * sizeof(float)) ; i < (count - offset) * sizeof(float) ;
                     i += sizeof(vector float))
             {
-                vec_st(vectorised_proto, i, vectorised_dest);
+                vec_stl(vectorised_proto, i, dest);
             }
 
             for (unsigned i((count - offset) & ~0x3) ; i < count ; ++i)
@@ -77,7 +79,30 @@ namespace honei
         template <> void
         PODTraits<double>::fill(double * dest, std::size_t count, const double & proto)
         {
-            std::fill_n(dest, count, proto);
+            union
+            {
+                double d[2];
+                vector unsigned int vui;
+            } vectorised_proto = { { proto, proto } };
+            vector unsigned int * vectorised_dest(reinterpret_cast<vector unsigned int *>(dest));
+            std::size_t offset((reinterpret_cast<unsigned long long>(dest) & 0xF) / sizeof(double));
+
+            /// \todo load data, mask and and it and store using vec_stl
+            for (unsigned i(0) ; i < std::min(count, offset) ; ++i)
+            {
+                dest[i] = proto;
+            }
+
+            for (unsigned i(std::min(count, offset) * sizeof(double)) ; i < (count - offset) * sizeof(double) ;
+                    i += 2 * sizeof(double))
+            {
+                vec_stl(vectorised_proto.vui, i, vectorised_dest);
+            }
+
+            for (unsigned i((count - offset) & ~0x3) ; i < count ; ++i)
+            {
+                dest[i] = proto;
+            }
         }
 
 #elif defined(__SSE__)

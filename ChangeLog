@@ -7,6 +7,12 @@ see the NEWS file.
 
 2008-01-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* libutil/type_traits.cc: Fixed TypeTraits<float>::fill(). Implemented
+	TypeTraits<double>::fill().
+	* libutil/type_traits_TEST.cc: Removed iostream header.
+
+2008-01-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* libutil/files.m4, libutil/type_traits_TEST.cc: Added test case for
 	type traits.
 

@@ -25,8 +25,6 @@
 #include <libutil/type_traits.hh>
 #include <unittest/unittest.hh>
 
-#include <iostream>
-
 using namespace honei;
 using namespace tests;
 
