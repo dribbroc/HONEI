@@ -32,8 +32,6 @@
 #  include <cstring>
 #endif
 
-#include <iostream>
-
 namespace honei
 {
     namespace intern
