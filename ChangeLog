@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libutil/files.m4, libutil/type_traits_TEST.cc: Added test case for
+	type traits.
+
 2008-01-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/interface.hh: Fixed documentation.

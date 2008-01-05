@@ -35,7 +35,7 @@ add(`general', `tags',                      `hh', `cc')
 add(`general', `time_stamp',                `hh', `test')
 add(`general', `thread',                    `hh', `cc', `test')
 add(`general', `thread_pool',               `hh',       `test')
-add(`general', `type_traits',               `hh', `cc')
+add(`general', `type_traits',               `hh', `cc', `test')
 add(`general', `worker',                    `hh', `cc', `test')
 add(`general', `wrapper',                   `hh')
 
