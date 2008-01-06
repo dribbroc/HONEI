@@ -85,7 +85,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        union Operand
+        union __attribute__((packed)) Operand
         {
             EffectiveAddress ea; ///< An effective address pointing to a PPE-side memory location.
 
@@ -95,7 +95,40 @@ namespace honei
 
             double d; ///< A double precision floating point value.
 
-            float f; ///< A double precision floating point value.
+            float f; ///< A single precision floating point value.
+
+            float fa[2]; ///< An array of two single precision floating point values.
+
+            /**
+             * \name Contructors
+             * \{
+             *
+             * Constructor.
+             */
+
+            Operand()
+            {
+            }
+
+            Operand(const EffectiveAddress & value) :
+                ea(value)
+            {
+            }
+
+#ifdef __PPU__
+            Operand(const unsigned long long & value) :
+                u(value)
+            {
+            }
+#endif
+
+            Operand(const float & first, const float & second)
+            {
+                fa[0] = first;
+                fa[1] = second;
+            }
+
+            /// \}
         };
 
         /**

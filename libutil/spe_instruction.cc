@@ -138,7 +138,7 @@ SPEInstruction::finished() const
 }
 
 const SPEInstruction::Operand
-SPEInstruction::empty = { 0 };
+SPEInstruction::empty = { static_cast<void *>(0) };
 
 struct SPEInstructionQueue::Implementation
 {
