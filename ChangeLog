@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-06 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/algorithm.hh, libutil/type_traits.cc, libutil/type_traits.hh:
+	Added ConversionTraits. Added them to algorithm::convert.
+
 2008-01-05 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* libutil/type_traits.cc: Fixed TypeTraits<float>::fill(). Implemented
