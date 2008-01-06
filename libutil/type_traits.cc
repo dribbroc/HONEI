@@ -31,7 +31,6 @@
 #else /* Unoptimised */
 #  include <cstring>
 #endif
-#include <iostream>
 
 namespace honei
 {
@@ -324,7 +323,6 @@ namespace honei
 
         void PODConversionTraits<float>::convert(double * copy, const float * orig, std::size_t count)
         {
-            std::cout<<"*";
             const float * s(orig);
             for (double * d(copy), * d_end(copy + count) ; d != d_end ; ++d, ++s)
             {
@@ -334,7 +332,6 @@ namespace honei
 
         void PODConversionTraits<double>::convert(float * copy, const double * orig, std::size_t count)
         {
-            std::cout<<"+";
             const double * s(orig);
             for (float * d(copy), * d_end(copy + count) ; d != d_end ; ++d, ++s)
             {
