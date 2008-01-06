@@ -220,6 +220,37 @@ namespace honei
                 ::free(location);
             }
         };
+
+        /**
+         * Conversion for data types with either a non-trivial constructor,
+         * assignment operator or destructor.
+         */
+        template <typename DT_> struct DefaultConversionTraits
+        {
+            template <typename CT_> void convert(CT_ * copy, const DT_ * orig, std::size_t count)
+            {
+                const DT_ * s(orig);
+                for (DT_ * d(copy), * d_end(copy + count) ; d != d_end ; ++d, ++s)
+                {
+                    *d = *s;
+                }
+            }
+        };
+
+        /**
+         * Conversion for POD.
+         */
+        template <typename DT_> struct PODConversionTraits
+        {
+        };
+        template <> struct PODConversionTraits<float>
+        {
+            static void convert(double * copy, const float * orig, std::size_t count);
+        };
+        template <> struct PODConversionTraits<double>
+        {
+            static void convert(float * copy, const double * orig, std::size_t count);
+        };
     }
 
     /**
@@ -230,20 +261,22 @@ namespace honei
     /// \{
 
     template <typename DT_> struct TypeTraits :
-        public intern::DefaultTraits<DT_>
+        public intern::DefaultTraits<DT_>,
+        public intern::DefaultConversionTraits<DT_>
     {
     };
 
     template <> struct TypeTraits<float> :
-        public intern::PODTraits<float>
+        public intern::PODTraits<float>,
+        public intern::PODConversionTraits<float>
     {
     };
 
     template <> struct TypeTraits<double> :
-        public intern::PODTraits<double>
+        public intern::PODTraits<double>,
+        public intern::PODConversionTraits<double>
     {
     };
-
     /// \}
 
 }

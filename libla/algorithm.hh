@@ -66,13 +66,7 @@ namespace honei
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
-        /// \todo use typetraits convert
-        typename Vector<DataType_>::ElementIterator f(copy.begin_elements());
-        for (typename Vector<OrigType_>::ConstElementIterator i(orig.begin_elements()),
-                i_end(orig.end_elements()) ; i != i_end ; ++i, ++f)
-        {
-            *f = *i;
-        }
+        TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.size());
     }
 
     template <typename DataType_, typename OrigType_>
@@ -99,7 +93,6 @@ namespace honei
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
-        /// \todo use typetraits convert
         for (typename Vector<OrigType_>::ConstElementIterator i(orig.begin_non_zero_elements()),
                 i_end(orig.end_non_zero_elements()) ; i != i_end ; ++i)
         {
@@ -108,7 +101,7 @@ namespace honei
     }
 
     template <typename DataType_, typename OrigType_>
-    void convert(DenseMatrix<DataType_> & copy, const Matrix<OrigType_> & orig)
+    void convert(DenseMatrix<DataType_> & copy, const DenseMatrix<OrigType_> & orig)
     {
         CONTEXT("When converting DenseMatrix to DenseMatrix:");
 
@@ -117,13 +110,7 @@ namespace honei
         if (copy.columns() != orig.columns())
             throw MatrixColumnsDoNotMatch(orig.columns(), copy.columns());
 
-        /// \todo use typetraits convert
-        typename MutableMatrix<DataType_>::ElementIterator f(copy.begin_elements());
-        for (typename Matrix<OrigType_>::ConstElementIterator i(orig.begin_elements()),
-                i_end(orig.end_elements()) ; i != i_end ; ++i, ++f)
-        {
-            *f = *i;
-        }
+        TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.columns() * orig.rows());
     }
 
     template <typename DataType_, typename OrigType_>
