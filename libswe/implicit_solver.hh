@@ -444,20 +444,15 @@ namespace honei {
                         delta_h_1 = (w_new[index] - w_new[index - 1]);
                         delta_h_2 = (w_new[index] - w_new[index - (_grid_width + 2)]);
                     }
-                    else if (index - 1 < 0 && index - (_grid_width + 2) < 0)
-                    {
-                        delta_h_1 = (w_new[index] - (w_new[index]));
-                        delta_h_2 = (w_new[index] - (w_new[index]));
-                    }
                     else if (index - 1 < 0)
                     {
-                        delta_h_1 = (w_new[index] - (w_new[index]));
-                        delta_h_2 = (w_new[index] - (w_new[index]));
+                        delta_h_1 = WorkPrec_(0);
+                        delta_h_2 = WorkPrec_(0);
                     }
                     else
                     {
-                        delta_h_1 = (w_new[index] - (w_new[index - 1]));
-                        delta_h_2 = (w_new[index] - (w_new[index]));
+                        delta_h_1 = (w_new[index] - w_new[index - 1]);
+                        delta_h_2 = WorkPrec_(0);
                     }
 
                     (*_height_bound)[actual_row][actual_column] = h_new;
