@@ -70,6 +70,18 @@ namespace honei
                 ///parameter space:
                 ResPrec_ x_t_1(x / delta_x);
                 ResPrec_ y_t_1(y / delta_y);
+
+                ///Catch GAMMA case (negative):
+                if(x_t_1 < ResPrec_(0))
+                {
+                    x_t_1 = ResPrec_(0);
+                }
+
+                if(y_t_1 < ResPrec_(0))
+                {
+                    y_t_1 = ResPrec_(0);
+                }
+
                 unsigned long x_t = (unsigned long)x_t_1;
                 unsigned long y_t = (unsigned long)y_t_1;
                 unsigned long j = (x_t);
@@ -77,13 +89,12 @@ namespace honei
                 ResPrec_ l_1, l_2;
 
                 ///Perform bilinear interpolation:
-                if( i < height.rows() - 1 && j < height.columns() - 1)
+                if(i < height.rows() - 1 && j < height.columns() - 1)
                 {
                     l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i][j+1] - height[i][j]) + height[i][j];
                     l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i+1][j+1] - height[i+1][j]) + height[i+1][j];
                 }
-                else if( i >= height.rows() - 1 && j >= height.columns() - 1)
-
+                else if(i >= height.rows() - 1 && j >= height.columns() - 1)
                 {
                     l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
                     l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
