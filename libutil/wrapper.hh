@@ -25,6 +25,93 @@
 
 namespace honei
 {
+    template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_, typename DT5_, typename DT6_>
+        class ResultFiveArgWrapper
+        {
+            private:
+                DT1_ & _result;
+
+                DT2_ _a;
+
+                DT3_ _b;
+
+                DT4_ _c;
+
+                DT5_ _d;
+
+                DT6_ _e;
+
+
+            public:
+
+                typedef void result_type;
+
+                ResultFiveArgWrapper(DT1_ & result, DT2_ & a, DT3_ & b, DT4_ & c, DT5_ & d, DT6_ & e):
+                    _result(result),
+                    _a(a),
+                    _b(b),
+                    _c(c),
+                    _d(d),
+                    _e(e)
+                {
+                }
+
+                void operator() ()
+                {
+                    _result = Tag_::value(_a, _b, _c, _d, _e);
+                }
+                
+                void operator()(Mutex * mutex)
+                {
+                    DT1_ temp(Tag_::value(_a, _b, _c, _d, _e));
+                    Lock l(*mutex);
+                    _result += temp;
+                }
+
+        };
+
+    template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_, typename DT5_>
+        class ResultFourArgWrapper
+        {
+            private:
+                DT1_ & _result;
+
+                DT2_ _a;
+
+                DT3_ _b;
+
+                DT4_ _c;
+
+                DT5_ _d;
+
+
+            public:
+
+                typedef void result_type;
+
+                ResultFourArgWrapper(DT1_ & result, DT2_ & a, DT3_ & b, DT4_ & c, DT5_ & d):
+                    _result(result),
+                    _a(a),
+                    _b(b),
+                    _c(c),
+                    _d(d)
+                {
+                }
+
+                void operator() ()
+                {
+                    _result = Tag_::value(_a, _b, _c, _d);
+                }
+                
+                void operator()(Mutex * mutex)
+                {
+                    DT1_ temp(Tag_::value(_a, _b, _c, _d));
+                    Lock l(*mutex);
+                    _result += temp;
+                }
+
+        };
+
     template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_>
         class FourArgWrapper
         {

@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-07 Mathias Kadolsky <mathkad@gmx.de>
+
+	* libgraph/{breadth_first_search.hh, breadth_first_search-mc.hh, files.m4}: MC variant added.
+	libgraph/breadth_first_search_BENCHMARK.cc: BENCHMARK for test-scenarios clique
+	and binary tree added.
+	libgraph/breadth_first_search_TEST.cc: Updated testcases.
+	libutil/wrapper.hh: ResultFiveArgWrapper and ResultFourArgWrapper added.
+
 2008-01-07 Markus Geveler <apryde@gmx.de>
 
 	* libswe/scenario.hh: Resolved compiler warnings.
