@@ -133,7 +133,7 @@ namespace honei
              * \param grid_height The height of the grid.
              *
              **/
-            Scenario(ResPrec_ gridwidth, ResPrec_ gridheight)
+            Scenario(unsigned long gridwidth, unsigned long gridheight)
             {
                 grid_width = gridwidth;
                 grid_height = gridheight;
