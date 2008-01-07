@@ -88,9 +88,8 @@ void product_banded_matrix_dense_vector_float(const Instruction & inst)
 
         for (unsigned i(0) ; i < size / 4 ; i++)
         {
-            vector float temp = b[current - 1].vectorised[i]; // temp version needed?
-            extract(temp, b[current - 1].vectorised[i + 1], x_offset);
-            r[current - 1].vectorised[i] = spu_madd(a[current - 1].vectorised[i], temp, r[current - 1].vectorised[i]);
+            extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], x_offset);
+            r[current - 1].vectorised[i] = spu_madd(a[current - 1].vectorised[i], b[current - 1].vectorised[i], r[current - 1].vectorised[i]);
         }
         debug_put(ea_result, r[current -1].untyped, size * sizeof(float));
         mfc_putb(r[current - 1].untyped, ea_result, size * sizeof(float), current, 0, 0);
@@ -109,13 +108,12 @@ void product_banded_matrix_dense_vector_float(const Instruction & inst)
 
     for (unsigned i(0) ; i < size / 4 ; i++)
     {
-        vector float temp = b[current - 1].vectorised[i]; // temp version needed?
-        extract(temp, b[current - 1].vectorised[i + 1], x_offset);
-        r[current - 1].vectorised[i] = spu_madd(a[current - 1].vectorised[i], temp, r[current - 1].vectorised[i]);
+        extract(b[current - 1].vectorised[i], b[current - 1].vectorised[i + 1], x_offset);
+        r[current - 1].vectorised[i] = spu_madd(a[current - 1].vectorised[i], b[current - 1].vectorised[i], r[current - 1].vectorised[i]);
     }
 
     debug_put(ea_result, r[current -1].untyped, size * sizeof(float));
-    mfc_putb(r[current - 1].untyped, ea_result, size * sizeof(float), current, 0, 0);
+    mfc_put(r[current - 1].untyped, ea_result, size * sizeof(float), current, 0, 0);
 
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
