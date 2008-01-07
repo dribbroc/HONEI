@@ -59,9 +59,9 @@ namespace honei
      * \ingroup grpalgorithm
      */
     template <typename DataType_, typename OrigType_>
-    void convert(DenseVectorContinuousBase<DataType_> & copy, const DenseVectorContinuousBase<OrigType_> & orig)
+    void convert(DenseVector<DataType_> & copy, const DenseVector<OrigType_> & orig)
     {
-        CONTEXT("When converting DenseVectorContinuousBase to DenseVectorContinuousBase:");
+        CONTEXT("When converting DenseVector to DenseVector:");
 
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());

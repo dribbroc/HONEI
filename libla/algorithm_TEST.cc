@@ -25,7 +25,6 @@
 using namespace honei;
 using namespace tests;
 
-
 class BandedMatrixConvertTest :
     public BaseTest
 {
@@ -70,6 +69,49 @@ class BandedMatrixConvertTest :
             TEST_CHECK_THROWS(convert(bmd02, bmf02), MatrixSizeDoesNotMatch);
         }
 } banded_matrix_convert_test;
+
+class BandedMatrixConvertQuickTest :
+    public QuickTest
+{
+    public:
+        BandedMatrixConvertQuickTest() :
+            QuickTest("banded_matrix_convert_quick_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(47);
+            BandedMatrix<float> bmf1(size), bmf2(size), bmfr(size);
+            BandedMatrix<double> bmd1(size), bmd2(size), bmdr(size);
+            MutableMatrix<float>::ElementIterator fr(bmfr.begin_elements());
+            MutableMatrix<double>::ElementIterator dr(bmdr.begin_elements());
+            MutableMatrix<float>::ElementIterator f1(bmf1.begin_elements());
+            MutableMatrix<double>::ElementIterator d1(bmd1.begin_elements());
+            for (MutableMatrix<float>::ElementIterator i_end(bmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+            {
+                if (fr.index() % 50 == 0)
+                {
+                    *fr = float(fr.index()) / 1.1234;
+                    *dr = double(fr.index()) / 1.1234;
+                    *f1 = float(fr.index()) / 1.1234;
+                    *d1 = double(fr.index()) / 1.1234;
+                }
+            }
+            convert(bmf2, bmd1);
+            convert(bmd2, bmf1);
+            TEST_CHECK_EQUAL(bmf2, bmfr);
+            for (Matrix<double>::ConstElementIterator i(bmd2.begin_elements()), r(bmdr.begin_elements()), i_end(bmd2.end_elements())
+                    ; i != i_end ; ++i, ++r)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
+            }
+            BandedMatrix<float> bmf01(3), bmf02(3);
+            BandedMatrix<double> bmd01(2), bmd02(4);
+            TEST_CHECK_THROWS(convert(bmf01, bmd01), MatrixSizeDoesNotMatch);
+            TEST_CHECK_THROWS(convert(bmd02, bmf02), MatrixSizeDoesNotMatch);
+        }
+} banded_matrix_convert_quick_test;
 
 class DenseMatrixConvertTest :
     public BaseTest

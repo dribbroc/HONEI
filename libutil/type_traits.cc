@@ -103,6 +103,24 @@ namespace honei
             }
         }
 
+        void PODConversionTraits<float>::convert(double * copy, const float * orig, std::size_t count)
+        {
+            const float * s(orig);
+            for (double * d(copy), * d_end(copy + count) ; d != d_end ; ++d, ++s)
+            {
+                *d = *s;
+            }
+        }
+
+        void PODConversionTraits<double>::convert(float * copy, const double * orig, std::size_t count)
+        {
+            const double * s(orig);
+            for (float * d(copy), * d_end(copy + count) ; d != d_end ; ++d, ++s)
+            {
+                *d = *s;
+            }
+        }
+
 #elif defined(__SSE__)
 
         template <> void
@@ -287,6 +305,109 @@ namespace honei
             }
         }
 
+        void PODConversionTraits<float>::convert(double * copy, const float * orig, std::size_t count)
+        {
+            __m128 m1, m2, m3, m4;
+            __m128d m5, m6, m7, m8;
+
+            unsigned long orig_address = (unsigned long)orig;
+            unsigned long orig_offset = orig_address % 16;
+
+            unsigned long x_offset(orig_offset / 4);
+            x_offset = (4 - x_offset) % 4;
+
+            unsigned long quad_start = x_offset;
+            unsigned long quad_end(count - 4 - ((count - quad_start) % 8));
+            if (count < 24)
+            {
+                quad_end = 0;
+                quad_start = 0;
+            }
+
+            for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
+            {
+                m1 = _mm_load_ps(orig + index);
+                m2 = _mm_load_ps(orig + index + 2);
+                m3 = _mm_load_ps(orig + index + 4);
+                m4 = _mm_load_ps(orig + index + 6);
+
+                m5 = _mm_cvtps_pd(m1);
+                m6 = _mm_cvtps_pd(m2);
+                m7 = _mm_cvtps_pd(m3);
+                m8 = _mm_cvtps_pd(m4);
+
+                _mm_stream_pd(copy + index, m5);
+                _mm_stream_pd(copy + index + 2, m6);
+                _mm_stream_pd(copy + index + 4, m7);
+                _mm_stream_pd(copy + index + 6, m8);
+            }
+
+            for (unsigned long index(0) ; index < quad_start ; index++)
+            {
+                copy[index] = orig[index];
+            }
+            for (unsigned long index(quad_end) ; index < count ; index++)
+            {
+                copy[index] = orig[index];
+            }
+        }
+
+        void PODConversionTraits<double>::convert(float * copy, const double * orig, std::size_t count)
+        {
+            //__m128d m1, m2, m3, m4;
+            //__m128 m5, m6, m7, m8;
+
+            unsigned long orig_address = (unsigned long)orig;
+            unsigned long orig_offset = orig_address % 16;
+
+            unsigned long x_offset(orig_offset / 4);
+            x_offset = (4 - x_offset) % 4;
+
+            unsigned long quad_start = x_offset;
+            unsigned long quad_end(count - 8 - ((count - quad_start) % 8));
+            if (count < 24)
+            {
+                quad_end = 0;
+                quad_start = 0;
+            }
+
+            for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
+            {
+                /*m1 = _mm_load_pd(orig + index);
+                m2 = _mm_load_pd(orig + index + 2);
+                m3 = _mm_load_pd(orig + index + 4);
+                m4 = _mm_load_pd(orig + index + 6);
+
+                m5 = _mm_cvtpd_ps(m1);
+                m6 = _mm_cvtpd_ps(m2);
+                m7 = _mm_cvtpd_ps(m3);
+                m8 = _mm_cvtpd_ps(m4);
+
+                _mm_stream_ps(copy + index, m5);
+                _mm_stream_ps(copy + index + 2, m6);
+                _mm_stream_ps(copy + index + 4, m7);
+                _mm_stream_ps(copy + index + 6, m8);*/
+
+                copy[index] = orig[index];
+                copy[index + 1] = orig[index + 1];
+                copy[index + 2] = orig[index + 2];
+                copy[index + 3] = orig[index + 3];
+                copy[index + 4] = orig[index + 4];
+                copy[index + 5] = orig[index + 5];
+                copy[index + 6] = orig[index + 6];
+                copy[index + 7] = orig[index + 7];
+            }
+
+            for (unsigned long index (0) ; index < quad_start ; index++)
+            {
+                copy[index] = orig[index];
+            }
+            for (unsigned long index(quad_end) ; index < count ; index++)
+            {
+                copy[index] = orig[index];
+            }
+        }
+
 #else /* Unoptimised */
 
         template <> void
@@ -319,8 +440,6 @@ namespace honei
             }
         }
 
-#endif
-
         void PODConversionTraits<float>::convert(double * copy, const float * orig, std::size_t count)
         {
             const float * s(orig);
@@ -338,5 +457,7 @@ namespace honei
                 *d = *s;
             }
         }
+#endif
+
     }
 }

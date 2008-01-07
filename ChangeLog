@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-07 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libla/algorithm.hh, libla/algorithm_TEST.cc, libutil/type_traits.cc:
+	Added sse version of convert.
+
+2008-01-07 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libvisual/files.m4, libvisual/solver_client.hh,
 	libvisual/solver_client_TEST.cc, libvisual/solver_server.hh,
 	libvisual/solver_server_TEST.cc:
