@@ -83,8 +83,8 @@ namespace honei
 
         Scenario<float, IMPLICIT, REFLECT> scenario(dwidth, dheight);
 
-        float deltax = 0.75;
-        float deltay = 0.75;
+        float deltax = 1.f;
+        float deltay = 1.f;
         float deltat = 0.05f;//1./22.;
 
 #ifdef HONEI_SSE

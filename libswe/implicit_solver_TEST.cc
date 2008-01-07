@@ -256,9 +256,9 @@ class ImplicitSolverRuntimeTest :
             DenseVector<DataType_> u_t(36, DataType_(0));
             DenseVector<DataType_> v_t(36, DataType_(0));
 
-            DataType_ delta_t(5/24);
-            DataType_ delta_x(2);
-            DataType_ delta_y(2);
+            DataType_ delta_t(0.05);
+            DataType_ delta_x(1);
+            DataType_ delta_y(1);
 
             scenario.delta_t = delta_t;
             scenario.delta_x = delta_x;
@@ -271,7 +271,7 @@ class ImplicitSolverRuntimeTest :
 
             solver.do_preprocessing();
 
-            int timesteps = 1;
+            int timesteps = 2;
             for(int timestep = 0; timestep < timesteps; ++timestep)
             {
                 cout<<"Time: " << timestep << endl;
@@ -280,14 +280,14 @@ class ImplicitSolverRuntimeTest :
             cout<<"After solve:"<< endl;
 
             cout << h_b;
-            cout<<"u: "<<u_t<<endl;
-            cout<<"v: "<<v_t<<endl;
+            cout<<"u: "<<xv_b<<endl;
+            cout<<"v: "<<yv_b<<endl;
             TEST_CHECK(true);
 
         }
 };
 //ImplicitSolverCreationTest<tags::CPU, float> implicit_solver_creation_test_float("float");
-ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
+//ImplicitSolverPreprocessingTest<tags::CPU, float> implicit_solver_preprocessing_test_float("float");
 //ImplicitSolverMatrixAssTest<tags::CPU, float> implicit_solver_matrix_test_float("float");
 //ImplicitSolverRHSAssTest<tags::CPU, float> implicit_solver_rhs_test_float("float");
 //ImplicitSolverCreationTest<tags::CPU, double> implicit_solver_creation_test_double("double");

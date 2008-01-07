@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-07 Markus Geveler <apryde@gmx.de>
 
+	* libswe/implicit_solver_TEST.cc, libvisual/engine_implicit.hh:
+	Updated testcases.
+
+2008-01-07 Markus Geveler <apryde@gmx.de>
+
 	* libswe/implicit_solver.hh: Optimized update computations.
 
 2008-01-07 Markus Geveler <apryde@gmx.de>
