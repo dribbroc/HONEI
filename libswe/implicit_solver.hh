@@ -225,6 +225,12 @@ namespace honei {
 
 #ifdef SOLVER_VERBOSE
                 cout<<"Finished correction in matrix assembly!" << endl;
+                cout<<"dd: " << dd << endl;
+                cout<<"dl: " << dl << endl;
+                cout<<"du: " << du << endl;
+                cout<<"ll: " << ll << endl;
+                cout<<"uu: " << uu << endl;
+
 #endif
                 ///Insert bands:
                 _system_matrix->insert_band(0, dd);
@@ -426,7 +432,7 @@ namespace honei {
                 unsigned long index(_grid_width + 3);
                 unsigned long actual_row(1);
                 unsigned long actual_column(1);
-                WorkPrec_ gamma = WorkPrec_(- 9.81) * _delta_t;
+                WorkPrec_ gamma = - WorkPrec_(9.81) * _delta_t;
                 while(index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2))
                 {
                     WorkPrec_ h_new(w_new[index] - (*_bottom_bound)[actual_row][actual_column]);
@@ -435,31 +441,30 @@ namespace honei {
 
                     if( index - 1 >= 0 && index - (_grid_width + 2) >= 0)
                     {
-                        delta_h_1 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row][actual_column - 1]));
-                        delta_h_2 = (h_new - (w_new[index - (_grid_width + 2)] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                        delta_h_1 = (w_new[index] - w_new[index - 1]);
+                        delta_h_2 = (w_new[index] - w_new[index - (_grid_width + 2)]);
                     }
                     else if (index - 1 < 0 && index - (_grid_width + 2) < 0)
                     {
-                        delta_h_1 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row][actual_column - 1]));
-                        delta_h_2 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                        delta_h_1 = (w_new[index] - (w_new[index]));
+                        delta_h_2 = (w_new[index] - (w_new[index]));
                     }
                     else if (index - 1 < 0)
                     {
-                        delta_h_1 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row][actual_column - 1]));
-                        delta_h_2 = (h_new - (w_new[index - (_grid_width + 2)] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                        delta_h_1 = (w_new[index] - (w_new[index]));
+                        delta_h_2 = (w_new[index] - (w_new[index]));
                     }
                     else
                     {
-                        delta_h_1 = (h_new - (w_new[index - 1] - (*_bottom_bound)[actual_row][actual_column - 1]));
-                        delta_h_2 = (h_new - (w_new[index] - (*_bottom_bound)[actual_row - 1][actual_column]));
+                        delta_h_1 = (w_new[index] - (w_new[index - 1]));
+                        delta_h_2 = (w_new[index] - (w_new[index]));
                     }
 
                     (*_height_bound)[actual_row][actual_column] = h_new;
-                    (*_x_veloc_bound)[actual_row][actual_column] = (gamma * (delta_h_1) / _delta_x) + (*_u_temp)[index];
-                    (*_y_veloc_bound)[actual_row][actual_column] = (gamma * (delta_h_2) / _delta_y) + (*_v_temp)[index];
+                    (*_x_veloc_bound)[actual_row][actual_column] = (gamma * (delta_h_1 / _delta_x)) + (*_u_temp)[index];
+                    (*_y_veloc_bound)[actual_row][actual_column] = (gamma * (delta_h_2 / _delta_y)) + (*_v_temp)[index];
 
                     //Iterate:
-
                     if((actual_column) == _grid_width)
                     {
                         ++actual_row;
@@ -501,10 +506,12 @@ namespace honei {
                 DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, std::numeric_limits<ResPrec_>::epsilon()));
 #ifdef SOLVER_VERBOSE
                 cout<<"Finished CG!"<< endl;
+                cout<<"u before update: " << *_x_veloc_bound << endl;
+                cout<<"u propagation: " << *_u_temp << endl;
 #endif
                 _update(w_new);
 #ifdef SOLVER_VERBOSE
-                cout<<"After update!"<<endl;
+                cout<<"u after update: "<< *_x_veloc_bound <<endl;
 #endif
 
                 ///Our boundary - correction:
@@ -545,7 +552,7 @@ namespace honei {
                 (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][1];
                 (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
 #ifdef SOLVER_VERBOSE
-                cout<<"Finished all!"<<endl;
+                cout<<"Corrected u: "<< *_x_veloc_bound << endl;
 #endif
 
             }

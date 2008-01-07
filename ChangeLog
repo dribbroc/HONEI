@@ -7,6 +7,10 @@ see the NEWS file.
 
 2008-01-07 Markus Geveler <apryde@gmx.de>
 
+	* libswe/implicit_solver.hh: Optimized update computations.
+
+2008-01-07 Markus Geveler <apryde@gmx.de>
+
 	* libmath/interpolation.hh: Applied changes to NN type interpolation,
 	optimized a lot..
 
