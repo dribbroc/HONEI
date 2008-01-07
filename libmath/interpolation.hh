@@ -75,11 +75,12 @@ namespace honei
                 if(x_t_1 < ResPrec_(0))
                 {
                     x_t_1 = ResPrec_(0);
+                    x = ResPrec_(0);
                 }
-
                 if(y_t_1 < ResPrec_(0))
                 {
                     y_t_1 = ResPrec_(0);
+                    y = ResPrec_(0);
                 }
 
                 unsigned long x_t = (unsigned long)x_t_1;
@@ -96,19 +97,29 @@ namespace honei
                 }
                 else if(i >= height.rows() - 1 && j >= height.columns() - 1)
                 {
-                    l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
-                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
-
+                    /*l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
+                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];*/
+                    if(i > j)
+                    {
+                        return height[i][height.columns() - 1];
+                    }
+                    else
+                    {
+                        return height[height.rows() - 1][j];
+                    }
                 }
                 else if(i >= height.rows() - 1)
                 {
-                    l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
-                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
+                    /*l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
+                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];*/
+                    return height[height.rows()][j];
                 }
                 else if(j >= height.columns() - 1)
                 {
-                    l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i][height.columns() - 1] - height[i][height.columns() - 1]) + height[i][height.columns() - 1];
-                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i + 1][height.columns() - 1] - height[i + 1][height.columns() - 1]) + height[i+1][height.columns() - 1];
+                    /*l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i][height.columns() - 1] - height[i][height.columns() - 1]) + height[i][height.columns() - 1];
+                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i + 1][height.columns() - 1] - height[i + 1][height.columns() - 1]) + height[i+1][height.columns() - 1];*/
+                    return height[i][height.columns() - 1];
+
                 }
                 ResPrec_ result = (y - ResPrec_(i * delta_y))/(ResPrec_(((i + 1) * delta_y) - (i * delta_y))) * (l_2 - l_1) + l_1;
                 return result;
@@ -128,7 +139,7 @@ namespace honei
                  * \param y The y value in parameter space.
                  */
                 template<typename ResPrec_>
-                static inline ResPrec_ value(const ResPrec_ delta_x, const ResPrec_ delta_y, const DenseMatrix<ResPrec_>& height, const ResPrec_ x, const ResPrec_ y)
+                static inline ResPrec_ value(const ResPrec_ delta_x, const ResPrec_ delta_y, const DenseMatrix<ResPrec_>& height, ResPrec_ x, ResPrec_ y)
                 {
                     ///Compute the lower left vertex of the cell, in which the vector (x y)^T falls in
                     ///parameter space:
@@ -138,6 +149,17 @@ namespace honei
                     unsigned long y_t = (unsigned long)y_t_1;
                     unsigned long j = (x_t);
                     unsigned long i = (y_t);
+                    ///Catch GAMMA case (negative):
+                    if(x_t_1 < ResPrec_(0))
+                    {
+                        x_t_1 = ResPrec_(0);
+                        x = ResPrec_(0);
+                    }
+                    if(y_t_1 < ResPrec_(0))
+                    {
+                        y_t_1 = ResPrec_(0);
+                        y = ResPrec_(0);
+                    }
 
                     unsigned long nearest_x;
                     unsigned long nearest_y;
