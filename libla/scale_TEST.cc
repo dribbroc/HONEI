@@ -32,12 +32,12 @@ using namespace tests;
 // Test cases for scaling matrices
 
 template <typename Tag_, typename DataType_>
-class ScalarBandedMatrixScaleTest :
+class BandedMatrixScaleTest :
     public BaseTest
 {
     public:
-        ScalarBandedMatrixScaleTest(const std::string & type) :
-            BaseTest("scalar_banded_matrix_scale_test<" + type + ">")
+        BandedMatrixScaleTest(const std::string & type) :
+            BaseTest("banded_matrix_scale_test<" + type + ">")
         {
         }
 
@@ -71,25 +71,25 @@ class ScalarBandedMatrixScaleTest :
             }
         }
 };
-ScalarBandedMatrixScaleTest<tags::CPU, float> scalar_banded_matrix_scale_test_float("float");
-ScalarBandedMatrixScaleTest<tags::CPU, double> scalar_banded_matrix_scale_test_double("double");
-ScalarBandedMatrixScaleTest<tags::CPU::MultiCore, float> mc_scalar_banded_matrix_scale_test_float("MC float");
-ScalarBandedMatrixScaleTest<tags::CPU::MultiCore, double> mc_scalar_banded_matrix_scale_test_double("MC double");
+BandedMatrixScaleTest<tags::CPU, float> banded_matrix_scale_test_float("float");
+BandedMatrixScaleTest<tags::CPU, double> banded_matrix_scale_test_double("double");
+BandedMatrixScaleTest<tags::CPU::MultiCore, float> mc_banded_matrix_scale_test_float("MC float");
+BandedMatrixScaleTest<tags::CPU::MultiCore, double> mc_banded_matrix_scale_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarBandedMatrixScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_banded_matrix_scale_test_float("MC SSE float");
-ScalarBandedMatrixScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_banded_matrix_scale_test_double("MC SSE double");
+BandedMatrixScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_banded_matrix_scale_test_float("MC SSE float");
+BandedMatrixScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_banded_matrix_scale_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//ScalarBandedMatrixScaleTest<tags::Cell, float> cell_scalar_banded_matrix_scale_test_float("Cell float");
+//BandedMatrixScaleTest<tags::Cell, float> cell_banded_matrix_scale_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
-class ScalarBandedMatrixScaleQuickTest :
+class BandedMatrixScaleQuickTest :
     public QuickTest
 {
     public:
-        ScalarBandedMatrixScaleQuickTest(const std::string & type) :
-            QuickTest("scalar_banded_matrix_scale_quick_test<" + type + ">")
+        BandedMatrixScaleQuickTest(const std::string & type) :
+            QuickTest("banded_matrix_scale_quick_test<" + type + ">")
         {
         }
 
@@ -121,16 +121,16 @@ class ScalarBandedMatrixScaleQuickTest :
             }
         }
 };
-ScalarBandedMatrixScaleQuickTest<tags::CPU, float> scalar_banded_matrix_scale_quick_test_float("float");
-ScalarBandedMatrixScaleQuickTest<tags::CPU, double> scalar_banded_matrix_scale_quick_test_double("double");
-ScalarBandedMatrixScaleQuickTest<tags::CPU::MultiCore, float> mc_scalar_banded_matrix_scale_quick_test_float("MC float");
-ScalarBandedMatrixScaleQuickTest<tags::CPU::MultiCore, double> mc_scalar_banded_matrix_scale_quick_test_double("MC double");
+BandedMatrixScaleQuickTest<tags::CPU, float> banded_matrix_scale_quick_test_float("float");
+BandedMatrixScaleQuickTest<tags::CPU, double> banded_matrix_scale_quick_test_double("double");
+BandedMatrixScaleQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_scale_quick_test_float("MC float");
+BandedMatrixScaleQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_scale_quick_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarBandedMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_banded_matrix_scale_quick_test_float("MC SSE float");
-ScalarBandedMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_banded_matrix_scale_quick_test_double("MC SSE double");
+BandedMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_banded_matrix_scale_quick_test_float("MC SSE float");
+BandedMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_banded_matrix_scale_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//ScalarBandedMatrixScaleQuickTest<tags::Cell, float> cell_scalar_banded_matrix_scale_quick_test_float("Cell float");
+//BandedMatrixScaleQuickTest<tags::Cell, float> cell_banded_matrix_scale_quick_test_float("Cell float");
 #endif
 
 
@@ -212,11 +212,11 @@ DenseMatrixScaleQuickTest<tags::Cell, float> cell_dense_matrix_scale_quick_test_
 #endif
 
 template <typename Tag_, typename DataType_>
-class ScalarSparseMatrixScalarTest :
+class SparseMatrixScalarTest :
     public BaseTest
 {
     public:
-        ScalarSparseMatrixScalarTest(const std::string & type) :
+        SparseMatrixScalarTest(const std::string & type) :
             BaseTest("sparse_matrix_scale_test<" + type + ">")
         {
             register_tag(Tag_::name);
@@ -243,27 +243,27 @@ class ScalarSparseMatrixScalarTest :
             }
         }
 };
-ScalarSparseMatrixScalarTest<tags::CPU, float> scalar_sparse_matrix_scalar_test_float("float");
-ScalarSparseMatrixScalarTest<tags::CPU, double> scalar_sparse_matrix_scalar_test_double("double");
-ScalarSparseMatrixScalarTest<tags::CPU::MultiCore, float> mc_scalar_sparse_matrix_scale_test_float("MC float");
-ScalarSparseMatrixScalarTest<tags::CPU::MultiCore, double> mc_scalar_sparse_matrix_scale_test_double("MC double");
+SparseMatrixScalarTest<tags::CPU, float> sparse_matrix_test_float("float");
+SparseMatrixScalarTest<tags::CPU, double> sparse_matrix_test_double("double");
+SparseMatrixScalarTest<tags::CPU::MultiCore, float> mc_sparse_matrix_scale_test_float("MC float");
+SparseMatrixScalarTest<tags::CPU::MultiCore, double> mc_sparse_matrix_scale_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarSparseMatrixScalarTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_sparse_matrix_scale_test_float("MC SSE float");
-ScalarSparseMatrixScalarTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_sparse_matrix_scale_test_double("MC SSE double");
-ScalarSparseMatrixScalarTest<tags::CPU::SSE, float> sse_scalar_sparse_matrix_scale_test_float("SSE float");
-ScalarSparseMatrixScalarTest<tags::CPU::SSE, double> sse_scalar_sparse_matrix_scale_test_double("SSE double");
+SparseMatrixScalarTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_scale_test_float("MC SSE float");
+SparseMatrixScalarTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_scale_test_double("MC SSE double");
+SparseMatrixScalarTest<tags::CPU::SSE, float> sse_sparse_matrix_scale_test_float("SSE float");
+SparseMatrixScalarTest<tags::CPU::SSE, double> sse_sparse_matrix_scale_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
 // NOT YET IMPLEMENTED:
-//ScalarSparseMatrixScalarTest<tags::Cell, float> cell_scalar_sparse_matrix_scalar_test_float("Cell float");
+//SparseMatrixScalarTest<tags::Cell, float> cell_sparse_matrix_scalar_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
-class ScalarSparseMatrixScaleQuickTest :
+class SparseMatrixScaleQuickTest :
     public QuickTest
 {
     public:
-        ScalarSparseMatrixScaleQuickTest(const std::string & type) :
+        SparseMatrixScaleQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_scale_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
@@ -288,18 +288,18 @@ class ScalarSparseMatrixScaleQuickTest :
             TEST_CHECK_EQUAL(sm1, sm2);
         }
 };
-ScalarSparseMatrixScaleQuickTest<tags::CPU, float> scalar_sparse_matrix_scale_quick_test_float("float");
-ScalarSparseMatrixScaleQuickTest<tags::CPU, double> scalar_sparse_matrix_scale_quick_test_double("double");
-ScalarSparseMatrixScaleQuickTest<tags::CPU::MultiCore, float> mc_scalar_sparse_matrix_scalar_quick_test_float("MC float");
-ScalarSparseMatrixScaleQuickTest<tags::CPU::MultiCore, double> mc_scalar_sparse_matrix_scalar_quick_test_double("MC double");
+SparseMatrixScaleQuickTest<tags::CPU, float> sparse_matrix_scale_quick_test_float("float");
+SparseMatrixScaleQuickTest<tags::CPU, double> sparse_matrix_scale_quick_test_double("double");
+SparseMatrixScaleQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_quick_test_float("MC float");
+SparseMatrixScaleQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_quick_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarSparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_sparse_matrix_scalar_quick_test_float("MC SSE float");
-ScalarSparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_sparse_matrix_scalar_quick_test_double("MC SSE double");
-ScalarSparseMatrixScaleQuickTest<tags::CPU::SSE, float> sse_scalar_sparse_matrix_scalar_quick_test_float("SSE float");
-ScalarSparseMatrixScaleQuickTest<tags::CPU::SSE, double> sse_scalar_sparse_matrix_scalar_quick_test_double("SSE double");
+SparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_scalar_quick_test_float("MC SSE float");
+ScalarSparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_quick_test_double("MC SSE double");
+ScalarSparseMatrixScaleQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_quick_test_float("SSE float");
+ScalarSparseMatrixScaleQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-//ScalarSparseMatrixScalarQuickTest<tags::Cell, float> cell_scalar_sparse_matrix_scalar_quick_test_float("Cell float");
+//SparseMatrixScalarQuickTest<tags::Cell, float> cell_sparse_matrix_scalar_quick_test_float("Cell float");
 #endif
 
 
@@ -307,11 +307,11 @@ ScalarSparseMatrixScaleQuickTest<tags::CPU::SSE, double> sse_scalar_sparse_matri
 // Test cases for scaling vectors
 
 template <typename Tag_, typename DataType_>
-class ScalarDenseVectorScaleTest :
+class DenseVectorScaleTest :
     public BaseTest
 {
     public:
-        ScalarDenseVectorScaleTest(const std::string & type) :
+        DenseVectorScaleTest(const std::string & type) :
             BaseTest("dense_vector_scale_test<" + type + ">")
         {
             register_tag(Tag_::name);
@@ -330,26 +330,26 @@ class ScalarDenseVectorScaleTest :
         }
 };
 
-ScalarDenseVectorScaleTest<tags::CPU, float> scalar_dense_vector_scale_test_float("float");
-ScalarDenseVectorScaleTest<tags::CPU, double> scalar_dense_vector_scale_test_double("double");
-ScalarDenseVectorScaleTest<tags::CPU::MultiCore, float> mc_scalar_dense_vector_scale_test_float("MC float");
-ScalarDenseVectorScaleTest<tags::CPU::MultiCore, double> mc_scalar_dense_vector_scale_test_double("MC double");
+DenseVectorScaleTest<tags::CPU, float> dense_vector_scale_test_float("float");
+DenseVectorScaleTest<tags::CPU, double> dense_vector_scale_test_double("double");
+DenseVectorScaleTest<tags::CPU::MultiCore, float> mc_dense_vector_scale_test_float("MC float");
+DenseVectorScaleTest<tags::CPU::MultiCore, double> mc_dense_vector_scale_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarDenseVectorScaleTest<tags::CPU::SSE, float> sse_scalar_dense_vector_scale_test_float("sse float");
-ScalarDenseVectorScaleTest<tags::CPU::SSE, double> sse_scalar_dense_vector_scale_test_double("sse double");
-ScalarDenseVectorScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_dense_vector_scale_test_float("MC SSE float");
-ScalarDenseVectorScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_dense_vector_scale_test_double("MC SSE double");
+DenseVectorScaleTest<tags::CPU::SSE, float> sse_dense_vector_scale_test_float("sse float");
+DenseVectorScaleTest<tags::CPU::SSE, double> sse_dense_vector_scale_test_double("sse double");
+DenseVectorScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_scale_test_float("MC SSE float");
+DenseVectorScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_scale_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-ScalarDenseVectorScaleTest<tags::Cell, float> cell_scalar_dense_vector_scale_test_float("Cell float");
+DenseVectorScaleTest<tags::Cell, float> cell_dense_vector_scale_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
-class ScalarDenseVectorScaleQuickTest :
+class DenseVectorScaleQuickTest :
     public QuickTest
 {
     public:
-        ScalarDenseVectorScaleQuickTest(const std::string & type) :
+       DenseVectorScaleQuickTest(const std::string & type) :
             QuickTest("dense_vector_scale_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
@@ -372,26 +372,26 @@ class ScalarDenseVectorScaleQuickTest :
             TEST_CHECK_EQUAL(v1, 6 * size);
         }
 };
-ScalarDenseVectorScaleQuickTest<tags::CPU, float>  scalar_dense_vector_scale_quick_test_float("float");
-ScalarDenseVectorScaleQuickTest<tags::CPU, double> scalar_dense_vector_scale_quick_test_double("double");
-ScalarDenseVectorScaleQuickTest<tags::CPU::MultiCore, float> mc_scalar_dense_vector_scale_quick_test_float("MC float");
-ScalarDenseVectorScaleQuickTest<tags::CPU::MultiCore, double> mc_scalar_dense_vector_scale_quick_test_double("MC double");
+DenseVectorScaleQuickTest<tags::CPU, float>  dense_vector_scale_quick_test_float("float");
+DenseVectorScaleQuickTest<tags::CPU, double> dense_vector_scale_quick_test_double("double");
+DenseVectorScaleQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_scale_quick_test_float("MC float");
+DenseVectorScaleQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_scale_quick_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarDenseVectorScaleQuickTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_scale_quick_test_float("sse float");
-ScalarDenseVectorScaleQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_scale_quick_test_double("sse double");
-ScalarDenseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_dense_vector_scale_quick_test_float("MC SSE float");
-ScalarDenseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_dense_vector_scale_quick_test_double("MC SSE double");
+DenseVectorScaleQuickTest<tags::CPU::SSE, float>  sse_dense_vector_scale_quick_test_float("sse float");
+DenseVectorScaleQuickTest<tags::CPU::SSE, double> sse_dense_vector_scale_quick_test_double("sse double");
+DenseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_scale_quick_test_float("MC SSE float");
+DenseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_scale_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-ScalarDenseVectorScaleQuickTest<tags::Cell, float> cell_scalar_dense_vector_scale_quick_test_float("Cell float");
+DenseVectorScaleQuickTest<tags::Cell, float> cell_dense_vector_scale_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
-class ScalarSparseVectorScaleTest :
+class SparseVectorScaleTest :
     public BaseTest
 {
     public:
-        ScalarSparseVectorScaleTest(const std::string & type) :
+        SparseVectorScaleTest(const std::string & type) :
             BaseTest("sparse_vector_scale_test<" + type + ">")
         {
             register_tag(Tag_::name);
@@ -414,26 +414,26 @@ class ScalarSparseVectorScaleTest :
         }
 };
 
-ScalarSparseVectorScaleTest<tags::CPU, float> scalar_sparse_vector_scale_test_float("float");
-ScalarSparseVectorScaleTest<tags::CPU, double> scalar_sparse_vector_scale_test_double("double");
-ScalarSparseVectorScaleTest<tags::CPU::MultiCore, float> mc_scalar_sparse_vector_scale_test_float("MC float");
-ScalarSparseVectorScaleTest<tags::CPU::MultiCore, double> mc_scalar_sparse_vector_scale_test_double("MC double");
+SparseVectorScaleTest<tags::CPU, float> sparse_vector_scale_test_float("float");
+SparseVectorScaleTest<tags::CPU, double> sparse_vector_scale_test_double("double");
+SparseVectorScaleTest<tags::CPU::MultiCore, float> mc_sparse_vector_scale_test_float("MC float");
+SparseVectorScaleTest<tags::CPU::MultiCore, double> mc_sparse_vector_scale_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarSparseVectorScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_sparse_vector_scale_test_float("MC SSE float");
-ScalarSparseVectorScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_sparse_vector_scale_test_double("MC SSE double");
-ScalarSparseVectorScaleTest<tags::CPU::SSE, float> sse_scalar_sparse_vector_scale_test_float("SSE float");
-ScalarSparseVectorScaleTest<tags::CPU::SSE, double> sse_scalar_sparse_vector_scale_test_double("SSE double");
+SparseVectorScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_vector_scale_test_float("MC SSE float");
+SparseVectorScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_vector_scale_test_double("MC SSE double");
+SparseVectorScaleTest<tags::CPU::SSE, float> sse_sparse_vector_scale_test_float("SSE float");
+SparseVectorScaleTest<tags::CPU::SSE, double> sse_sparse_vector_scale_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-//ScalarSparseVectorScaleTest<tags::Cell, float> cell_scalar_sparse_vector_scale_test_float("Cell float");
+//SparseVectorScaleTest<tags::Cell, float> cell_sparse_vector_scale_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
-class ScalarSparseVectorScaleQuickTest :
+class SparseVectorScaleQuickTest :
     public QuickTest
 {
     public:
-        ScalarSparseVectorScaleQuickTest(const std::string & type) :
+        SparseVectorScaleQuickTest(const std::string & type) :
             QuickTest("sparse_vector_scale_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
@@ -454,16 +454,99 @@ class ScalarSparseVectorScaleQuickTest :
         }
 };
 
-ScalarSparseVectorScaleQuickTest<tags::CPU, float> scalar_sparse_vector_scale_quick_test_float("float");
-ScalarSparseVectorScaleQuickTest<tags::CPU, double> scalar_sparse_vector_scale_quick_test_double("double");
-ScalarSparseVectorScaleQuickTest<tags::CPU::MultiCore, float> mc_scalar_sparse_vector_scale_quick_test_float("MC float");
-ScalarSparseVectorScaleQuickTest<tags::CPU::MultiCore, double> mc_scalar_sparse_vector_scale_quick_test_double("MC double");
+SparseVectorScaleQuickTest<tags::CPU, float> sparse_vector_scale_quick_test_float("float");
+SparseVectorScaleQuickTest<tags::CPU, double> sparse_vector_scale_quick_test_double("double");
+SparseVectorScaleQuickTest<tags::CPU::MultiCore, float> mc_sparse_vector_scale_quick_test_float("MC float");
+SparseVectorScaleQuickTest<tags::CPU::MultiCore, double> mc_sparse_vector_scale_quick_test_double("MC double");
 #ifdef HONEI_SSE
-ScalarSparseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_scalar_sparse_vector_scale_quick_test_float("MC SSE float");
-ScalarSparseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_sparse_vector_scale_quick_test_double("MC SSE double");
-ScalarSparseVectorScaleQuickTest<tags::CPU::SSE, float> sse_scalar_sparse_vector_scale_quick_test_float("SSE float");
-ScalarSparseVectorScaleQuickTest<tags::CPU::SSE, double> sse_scalar_sparse_vector_scale_quick_test_double("SSE double");
+SparseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_vector_scale_quick_test_float("MC SSE float");
+SparseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_vector_scale_quick_test_double("MC SSE double");
+SparseVectorScaleQuickTest<tags::CPU::SSE, float> sse_sparse_vector_scale_quick_test_float("SSE float");
+SparseVectorScaleQuickTest<tags::CPU::SSE, double> sse_sparse_vector_scale_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-//ScalarSparseVectorScaleQuickTest<tags::Cell, float> cell_scalar_sparse_vector_scale_quick_test_float("Cell float");
+//SparseVectorScaleQuickTest<tags::Cell, float> cell_sparse_vector_scale_quick_test_float("Cell float");
 #endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeScaleTest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeScaleTest(const std::string & type) :
+            BaseTest("dense_vector_range_scale_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
+            {
+                for (int i(0) ; i < 4 ; ++i)
+                {
+                    DenseVector<DataType_> source(size + 3, DataType_(3));
+                    DenseVectorRange<DataType_> dvr(source, size, i);
+                    Scale<Tag_>::value(DataType_(2), dvr);
+                    DataType_ rslt(Norm<vnt_l_one>::value(dvr));
+                    TEST_CHECK_EQUAL(rslt, 6 * size);
+                }
+            }
+        }
+};
+
+DenseVectorRangeScaleTest<tags::CPU, float> dense_vector_range_scale_test_float("float");
+DenseVectorRangeScaleTest<tags::CPU, double> dense_vector_range_scale_test_double("double");
+DenseVectorRangeScaleTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scale_test_float("MC float");
+DenseVectorRangeScaleTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scale_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorRangeScaleTest<tags::CPU::SSE, float> sse_dense_vector_range_scale_test_float("sse float");
+DenseVectorRangeScaleTest<tags::CPU::SSE, double> sse_dense_vector_range_scale_test_double("sse double");
+DenseVectorRangeScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_scale_test_float("MC SSE float");
+DenseVectorRangeScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_scale_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+//DenseVectorRangeScaleTest<tags::Cell, float> cell_dense_vector_range_scale_test_float("Cell float");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeScaleQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeScaleQuickTest(const std::string & type) :
+            QuickTest("dense_vector_range_scale_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
+            {
+                for (int i(0) ; i < 4 ; ++i)
+                {
+                    DenseVector<DataType_> source(size + 3, DataType_(3));
+                    DenseVectorRange<DataType_> dvr(source, size, i);
+                    Scale<Tag_>::value(DataType_(2), dvr);
+                    DataType_ rslt(Norm<vnt_l_one>::value(dvr));
+                    TEST_CHECK_EQUAL(rslt, 6 * size);
+                }
+            }
+        }
+};
+
+DenseVectorRangeScaleQuickTest<tags::CPU, float> dense_vector_range_scale_quick_test_float("float");
+DenseVectorRangeScaleQuickTest<tags::CPU, double> dense_vector_range_scale_quick_test_double("double");
+//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scale_quick_test_float("MC float");
+//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scale_quick_test_double("MC double");
+#ifdef HONEI_SSE
+//DenseVectorRangeScaleQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_scale_quick_test_float("sse float");
+//DenseVectorRangeScaleQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_scale_quick_test_double("sse double");
+//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_scale_quick_test_float("MC SSE float");
+//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_scale_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CELL
+//DenseVectorRangeScaleQuickTest<tags::Cell, float> cell_dense_vector_range_scale_quick_test_float("Cell float");
+#endif
+
