@@ -166,96 +166,98 @@ namespace honei
                 Mutex mutex[parts];
                 int middle_index(a.rows() -1);
 
-                // If we are above or on the diagonal band
-                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), 
-                     vi_end(a.end_bands()); vi != vi_end ; ++vi)
+                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+                        vi != vi_end ; ++vi)
                 {
-                    if (!vi.exists())
-                        continue;
-                    unsigned long i(0), offset(0);
-                    unsigned long end(vi->size() - (vi.index() - middle_index));
-                    while ((i < modulo) && (offset+div+1 < end))
+                    // If we are above or on the diagonal band
+                    if (middle_index < vi.index())
                     {
-                        DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
-                        DenseVectorRange<DT2_> range_2(b, div+1, offset + vi.index() - middle_index);
-                        DenseVectorRange<DT1_> res_range(result, div+1, offset);
-                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                            DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
-                        dispatched_tasks.push_back(tp->dispatch(func));
-                        ++i;
-                        offset+=div+1;
-                    }
-                    if (i == modulo)
-                    {
-                        while ((i < parts) && (offset+div  < end))
+                        if (!vi.exists())
+                            continue;
+                        unsigned long i(0), offset(0);
+                        unsigned long end(vi->size() - (vi.index() - middle_index));
+                        while ((i < modulo) && (offset+div+1 < end))
                         {
-                            DenseVectorRange<DT1_> range_1(*vi, div, offset);
-                            DenseVectorRange<DT2_> range_2(b, div, offset + vi.index() - middle_index);
-                            DenseVectorRange<DT1_> res_range(result, div, offset);
-                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
-                            dispatched_tasks.push_back(tp->dispatch(func));
-                            ++i;
-                            offset+=div;
-                        }
-                    }
-                    if (offset < end)
-                    {
-                        DenseVectorRange<DT1_> range_1(*vi, end - offset, offset);
-                        DenseVectorRange<DT2_> range_2(b, end - offset, offset + vi.index()-middle_index);
-                        DenseVectorRange<DT1_> res_range(result, end - offset, offset);
-                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                            DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
-                        dispatched_tasks.push_back(tp->dispatch(func));
-                    }
-                }
-                //if we are below the diagonal band
-                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
-                     vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
-                {
-                    if (!vi.exists())
-                        continue;
-                    unsigned long i(parts), offset(b.size());
-                    unsigned long start(middle_index - vi.index());
-                    while(i > modulo && offset-div > start)
-                    {
-                        --i;
-                        offset-=div;
-                        DenseVectorRange<DT1_> range_1(*vi, div, offset);
-                        DenseVectorRange<DT2_> range_2(b, div, offset - (middle_index - vi.index()));
-                        DenseVectorRange<DT1_> res_range(result, div, offset);
-                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                            DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
-                        dispatched_tasks.push_back(tp->dispatch(func));
-                    }
-                    if (i == modulo)
-                    {
-                        while(i > 0 && offset-div-1 > start)
-                        {
-                            --i;
-                            offset-=(div+1);
                             DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
-                            DenseVectorRange<DT2_> range_2(b, div+1, offset - (middle_index - vi.index()));
+                            DenseVectorRange<DT2_> range_2(b, div+1, offset + vi.index() - middle_index);
                             DenseVectorRange<DT1_> res_range(result, div+1, offset);
                             ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
                                 DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
                             dispatched_tasks.push_back(tp->dispatch(func));
+                            ++i;
+                            offset+=div+1;
+                        }
+                        if (i == modulo)
+                        {
+                            while ((i < parts) && (offset+div  < end))
+                            {
+                                DenseVectorRange<DT1_> range_1(*vi, div, offset);
+                                DenseVectorRange<DT2_> range_2(b, div, offset + vi.index() - middle_index);
+                                DenseVectorRange<DT1_> res_range(result, div, offset);
+                                ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
+                                    DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                                std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
+                                dispatched_tasks.push_back(tp->dispatch(func));
+                                ++i;
+                                offset+=div;
+                            }
+                        }
+                        if (offset < end)
+                        {
+                            DenseVectorRange<DT1_> range_1(*vi, end - offset, offset);
+                            DenseVectorRange<DT2_> range_2(b, end - offset, offset + vi.index()-middle_index);
+                            DenseVectorRange<DT1_> res_range(result, end - offset, offset);
+                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
+                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
+                            dispatched_tasks.push_back(tp->dispatch(func));
                         }
                     }
-                    if (offset > start)
+                    //if we are below the diagonal band
+                    else
                     {
-                        DenseVectorRange<DT1_> range_1(*vi, offset-start, start);
-                        DenseVectorRange<DT2_> range_2(b, offset-start, 0);
-                        DenseVectorRange<DT1_> res_range(result, offset-start, start);
-                        ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                            DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                        std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]); 
-                        dispatched_tasks.push_back(tp->dispatch(func));
+                        if (!vi.exists())
+                            continue;
+                        unsigned long i(parts), offset(b.size());
+                        unsigned long start(middle_index - vi.index());
+                        while(i > modulo && offset-div > start)
+                        {
+                            --i;
+                            offset-=div;
+                            DenseVectorRange<DT1_> range_1(*vi, div, offset);
+                            DenseVectorRange<DT2_> range_2(b, div, offset - (middle_index - vi.index()));
+                            DenseVectorRange<DT1_> res_range(result, div, offset);
+                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
+                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                            dispatched_tasks.push_back(tp->dispatch(func));
+                        }
+                        if (i == modulo)
+                        {
+                            while(i > 0 && offset-div-1 > start)
+                            {
+                                --i;
+                                offset-=(div+1);
+                                DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
+                                DenseVectorRange<DT2_> range_2(b, div+1, offset - (middle_index - vi.index()));
+                                DenseVectorRange<DT1_> res_range(result, div+1, offset);
+                                ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
+                                    DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                                std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
+                                dispatched_tasks.push_back(tp->dispatch(func));
+                            }
+                        }
+                        if (offset > start)
+                        {
+                            DenseVectorRange<DT1_> range_1(*vi, offset-start, start);
+                            DenseVectorRange<DT2_> range_2(b, offset-start, 0);
+                            DenseVectorRange<DT1_> res_range(result, offset-start, start);
+                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
+                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]); 
+                            dispatched_tasks.push_back(tp->dispatch(func));
+                        }
                     }
                 }
 
