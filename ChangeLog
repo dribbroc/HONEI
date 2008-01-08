@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libgraph/dijkstra.hh, libgraph/position.hh, libla/banded_matrix.hh,
+	libla/dense_matrix.hh, libla/dense_matrix_TEST.cc,
+	libla/sparse_matrix.hh, libla/sparse_matrix_TEST.cc,
+	libmath/jacobi.hh, libmath/jacobi_kernel_TEST.cc,
+	libswe/relax_solver.hh, libswe/solver.hh:
+	Changed return types of the copy() method for all matrices from
+	pointer to an object itself.
+	Applied changes where necessary.
+
 2008-01-08 Mathias Kadolsky <mathkad@gmx.de>
 
 	* libla/norm_TEST.cc: DVR-test for SSE added.

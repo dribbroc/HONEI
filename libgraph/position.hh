@@ -511,7 +511,7 @@
 
                 Implementation(DenseMatrix<DataType_> & coordinates, const SparseMatrix<bool> & neighbours, const DataType_ edge_length) :
                     _previous_coordinates(coordinates),
-                    _coordinates(*(coordinates.copy())),
+                    _coordinates(coordinates.copy()),
                     _neighbours(neighbours),
                     _square_edge_length(DataType_(edge_length * edge_length)),
                     _graph_distance(neighbours.columns(), neighbours.rows(), DataType_(2) * neighbours.columns()),
@@ -523,7 +523,6 @@
                     _step_widths(coordinates.rows(), DataType_(coordinates.rows() * edge_length / 20))
 
                 {
-
                 }
 
                 void init()
@@ -549,7 +548,8 @@
                     DenseMatrix<DataType_> square_dist(NodeDistance<Tag_>::value(_coordinates));
 
                     // _spring_force_parameters = mul( _graph_distance, square_dist) -1
-                    _spring_force_parameters = ElementProduct<Tag_>::value(*(_graph_distance.copy()), square_dist);
+                    _spring_force_parameters = _graph_distance.copy();
+                    _spring_force_parameters = ElementProduct<Tag_>::value(_spring_force_parameters, square_dist);
                     Sum<Tag_>::value(DataType_(-1), _spring_force_parameters);
 
 
@@ -558,7 +558,8 @@
 
                     // Calculating square_dist = (_spring_force_parameters - diag(sum_vec))
                     BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
-                    square_dist = Difference<Tag_>::value(diag, *(_spring_force_parameters.copy())); /// \todo Switch to MD::value(Dense, const Banded)
+                    square_dist = _spring_force_parameters.copy();
+                    square_dist = Difference<Tag_>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<Tag_>::value(DataType_(-1), square_dist);
 
                     // Calculating spring_forces = (_coordinates * square_dist)
@@ -575,7 +576,7 @@
                     }
 
                     // Calculate the new positions by using resulting forces
-                    if (result > std::numeric_limits<DataType_>::epsilon()) 
+                    if (result > std::numeric_limits<DataType_>::epsilon())
                     {
                         DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[max_node].copy());
                         Scale<Tag_>::value(_step_widths[max_node] / result, _spring_force_of_max_node);
@@ -595,7 +596,7 @@
                     DenseVector<DataType_> _spring_force_parameter_vector(_spring_force_parameters[max_node].copy());
 
                     // Calculate the difference between _previous_coordinates and the previous coordinates of max_node
-                    DenseMatrix<DataType_> _previous_coordinates_difference(*(_previous_coordinates.copy()));
+                    DenseMatrix<DataType_> _previous_coordinates_difference(_previous_coordinates.copy());
                     for (int i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_previous_coordinates_difference[i], _previous_coordinates[max_node]);
@@ -622,7 +623,7 @@
                     }
 
                     // Calculate the difference between _coordinates and the coordinates of max_node
-                    DenseMatrix<DataType_> _coordinates_difference(*(_coordinates.copy()));
+                    DenseMatrix<DataType_> _coordinates_difference(_coordinates.copy());
                     for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_coordinates_difference[i], _coordinates[max_node]);
@@ -746,7 +747,7 @@
 
                 Implementation(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
                     const SparseMatrix<DataType_> & weights_of_edges) :
-                    _previous_coordinates(*(coordinates.copy())),
+                    _previous_coordinates(coordinates.copy()),
                     _coordinates(coordinates),
                     _weights_of_nodes(weights_of_nodes),
                     _weights_of_edges(weights_of_edges),
@@ -763,7 +764,7 @@
 
                 Implementation(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
                     _coordinates(*graph.coordinates()),
-                    _previous_coordinates(*(graph.coordinates()->copy())),
+                    _previous_coordinates(graph.coordinates()->copy()),
                     _weights_of_nodes(*graph.nodeWeights()),
                     _weights_of_edges(*graph.edges()),
                     _graph_distance(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
@@ -837,8 +838,9 @@
                     // Calculate square_dist = d(i,j)^2
                     DenseMatrix<DataType_> square_dist(NodeDistance<Tag_>::value(_coordinates));
 
-                    // _spring_force_parameters = 1 / sum( _graph_distance, square_dist) 
-                    _spring_force_parameters = Sum<Tag_>::value(*(_graph_distance.copy()), square_dist);
+                    // _spring_force_parameters = 1 / sum( _graph_distance, square_dist)
+                    _spring_force_parameters = _graph_distance.copy();
+                    _spring_force_parameters = Sum<Tag_>::value(_spring_force_parameters, square_dist);
                     ElementInverse<Tag_>::value(_spring_force_parameters);
 
                     // Calculate square_dist = square_dist * 2
@@ -854,7 +856,8 @@
 
                     // Calculating square_dist = (_spring_force_parameters - diag(sum_vec))
                     BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
-                    square_dist = Difference<Tag_>::value(diag, *(_spring_force_parameters.copy())); /// \todo Switch to MD::value(Dense, const Banded)
+                    square_dist = _spring_force_parameters.copy();
+                    square_dist = Difference<Tag_>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<Tag_>::value(DataType_(-1), square_dist);
 
                     // Calculating spring_forces = (_coordinates * square_dist)
@@ -891,7 +894,7 @@
                     DenseVector<DataType_> _spring_force_parameter_vector(_spring_force_parameters[max_node].copy());
 
                     // Calculate the difference between _previous_coordinates and the previous coordinates of max_node
-                    DenseMatrix<DataType_> _previous_coordinates_difference(*(_previous_coordinates.copy()));
+                    DenseMatrix<DataType_> _previous_coordinates_difference(_previous_coordinates.copy());
                     for (int i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_previous_coordinates_difference[i], _previous_coordinates[max_node]);
@@ -922,7 +925,7 @@
                     }
 
                     // Calculate the difference between _coordinates and the coordinates of max_node
-                    DenseMatrix<DataType_> _coordinates_difference(*(_coordinates.copy()));
+                    DenseMatrix<DataType_> _coordinates_difference(_coordinates.copy());
                     for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_coordinates_difference[i], _coordinates[max_node]);

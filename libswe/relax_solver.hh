@@ -179,16 +179,12 @@ namespace honei {
                 AssemblyProcessing<tags::CPU, MAIN::M1M3>::value(m1, m3, predictedu, predictedv, _delta_t, _delta_x, _d_width, _d_height, *_c);
                 AssemblyProcessing<tags::CPU, MAIN::M2M4>::value(m2, m4, predictedu, predictedw, _delta_t, _delta_y, _d_width, _d_height, *_d);
 
-                BandedMatrix<WorkPrec_>* m5(m3.copy());
-                BandedMatrix<WorkPrec_> m5c = *m5;
-                delete m5;
+                BandedMatrix<WorkPrec_> m5c(m3.copy());
 
                 BandedMatrix<WorkPrec_> m6(_u->size());
                 AssemblyProcessing<tags::CPU, QUICK::M6>::value(m1, m6, *_c, _d_width, _d_height);
 
-                BandedMatrix<WorkPrec_>* m7(m4.copy());
-                BandedMatrix<WorkPrec_> m7c = *m7;
-                delete m7;
+                BandedMatrix<WorkPrec_> m7c(m4.copy());
 
                 BandedMatrix<WorkPrec_> m8(_u->size());
                 AssemblyProcessing<tags::CPU, QUICK::M8>::value(m2, m8, *_d, _d_width, _d_height);

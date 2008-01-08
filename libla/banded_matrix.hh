@@ -290,10 +290,10 @@ namespace honei
             }
 
             /// Returns a copy of the matrix.
-            virtual BandedMatrix * copy() const
+            virtual BandedMatrix copy() const
             {
                 CONTEXT("When creating copy() of a BandedMatrix:");
-                BandedMatrix * result(new BandedMatrix(_size));
+                BandedMatrix result(_size);
 
                 for (unsigned long i(0) ; i < 2 * _size - 1 ; ++i)
                 {
@@ -301,8 +301,8 @@ namespace honei
                     {
                         std::tr1::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(
                                     _bands[i]->copy()));
-                        result->_bands[i] = temp;
-                        result->_nze_list->push_back(i);
+                        result._bands[i] = temp;
+                        result._nze_list->push_back(i);
                     }
                 }
                 return result;

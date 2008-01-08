@@ -237,14 +237,14 @@ namespace honei
             }
 
             /// Returns a copy of the matrix.
-            virtual SparseMatrix * copy() const
+            virtual SparseMatrix copy() const
             {
-                SparseMatrix * result(new SparseMatrix(_columns, _rows, _capacity));
+                SparseMatrix result(_columns, _rows, _capacity);
 
                 for (unsigned long i(0) ; i < _rows ; ++i)
                 {
                     if (_row_vectors[i])
-                        result->_row_vectors[i].reset(new SparseVector<DataType_>(_row_vectors[i]->copy()));
+                        result._row_vectors[i].reset(new SparseVector<DataType_>(_row_vectors[i]->copy()));
                 }
 
                 return result;

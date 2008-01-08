@@ -125,8 +125,8 @@ namespace honei
             DataType_ help1;
 
             // Create the graph_distance_matrix and initialize previous_nodes
+            DenseMatrix<DataType_>  graph_distance_matrix(cost_matrix.copy());
             /// \todo Local copy needed or can wie directly work on the cost_matrix?
-            DenseMatrix<DataType_>  graph_distance_matrix(*cost_matrix.copy());
 
             for (typename MutableMatrix<int>::ElementIterator e(previous_nodes.begin_elements()),
                     e_end(previous_nodes.end_elements()); e != e_end ; ++e)

@@ -25,10 +25,10 @@ class SparseMatrixCopyTest :
             {
                 unsigned long columns(2 * size), rows(size);
                 SparseMatrix<DataType_> sm1(rows, columns, size / 10 + 1);
-                std::tr1::shared_ptr<SparseMatrix<DataType_> > sm2(sm1.copy());
+                SparseMatrix<DataType_> sm2(sm1.copy());
 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm2->begin_elements()),
-                        i_end(sm2->end_elements()) ; i != i_end ; ++i)
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                        i_end(sm2.end_elements()) ; i != i_end ; ++i)
                 {
                     typename Matrix<DataType_>::ConstElementIterator ci(i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ci, DataType_(0), std::numeric_limits<DataType_>::epsilon());
@@ -38,7 +38,7 @@ class SparseMatrixCopyTest :
                 }
 
                 for (typename Matrix<DataType_>::ConstElementIterator i(sm1.begin_elements()),
-                        i_end(sm1.end_elements()), j(sm2->begin_elements()) ; i != i_end ; ++i, ++j)
+                        i_end(sm1.end_elements()), j(sm2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
 

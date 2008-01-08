@@ -104,7 +104,7 @@ namespace honei
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                DenseMatrix<DT1_> difference(*system_matrix.copy());
+                DenseMatrix<DT1_> difference(system_matrix.copy());
                 ///Create Diagonal, invert, compute difference on the fly.
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
@@ -149,7 +149,7 @@ namespace honei
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                BandedMatrix<DT1_> difference(*system_matrix.copy());
+                BandedMatrix<DT1_> difference(system_matrix.copy());
                 ///Create Diagonal, invert, compute difference on the fly.
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
@@ -192,7 +192,7 @@ namespace honei
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                DenseMatrix<DT1_> difference(*system_matrix.copy());
+                DenseMatrix<DT1_> difference(system_matrix.copy());
                 ///Create Diagonal, invert, compute difference on the fly.
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
@@ -236,7 +236,7 @@ namespace honei
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                BandedMatrix<DT1_> difference(*system_matrix.copy());
+                BandedMatrix<DT1_> difference(system_matrix.copy());
                 ///Create Diagonal, invert, compute difference on the fly.
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
@@ -284,7 +284,7 @@ namespace honei
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                SparseMatrix<DT1_> difference(*system_matrix.copy());
+                SparseMatrix<DT1_> difference(system_matrix.copy());
                 ///Create Diagonal, invert, compute difference on the fly.
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
@@ -325,7 +325,7 @@ namespace honei
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                SparseMatrix<DT1_> difference(*system_matrix.copy());
+                SparseMatrix<DT1_> difference(system_matrix.copy());
                 ///Create Diagonal, invert, compute difference on the fly.
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {

@@ -1501,16 +1501,12 @@ namespace honei {
         _assemble_matrix1<WorkPrec_>(m1, m3, &predictedu, &predictedv);
         _assemble_matrix2<WorkPrec_>(m2, m4, &predictedu, &predictedw);
 #endif
-        BandedMatrix<WorkPrec_>* m5(m3.copy());
-        BandedMatrix<WorkPrec_> m5c = *m5;
-        delete m5;
+        BandedMatrix<WorkPrec_> m5c(m3.copy());
 
         BandedMatrix<WorkPrec_> m6(_u->size());
         _quick_assemble_matrix2<WorkPrec_>(m1, m6);
 
-        BandedMatrix<WorkPrec_>* m7(m4.copy());
-        BandedMatrix<WorkPrec_> m7c = *m7;
-        delete m7;
+        BandedMatrix<WorkPrec_> m7c(m4.copy());
 
         BandedMatrix<WorkPrec_> m8(_u->size());
         _quick_assemble_matrix4<WorkPrec_>(m2, m8);

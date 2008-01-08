@@ -91,7 +91,7 @@ class JacobiKernelTestBanded:
 
             DenseVector<DT1_> diag_inverted(b.size(), DT1_(0));
 
-            BandedMatrix<DT1_> difference(*A.copy());
+            BandedMatrix<DT1_> difference(A.copy());
             ///Create Diagonal, invert, compute difference on the fly.
             for(unsigned long i =0; i < diag.size(); ++i)
             {
