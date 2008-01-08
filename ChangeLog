@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-08 Mathias Kadolsky <mathkad@gmx.de>
+
+	* libla/norm_TEST.cc: DVR-test for SSE added.
+
 2008-01-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libgraph/abstract_graph.hh, libgraph/breadth_first_search.hh,

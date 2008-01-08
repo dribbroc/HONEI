@@ -199,6 +199,54 @@ DenseVectorRangeNormValueTest<tags::Cell, float> cell_dense_vector_range_norm_va
 #endif
 
 template <typename Tag_, typename DataType_>
+class DenseVectorRangeNormValueSSETest :
+    public BaseTest
+{
+    public:
+        DenseVectorRangeNormValueSSETest(const std::string & type) :
+            BaseTest("dense_vector_range_norm_value_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DataType_> d(size * 4, DataType_(100));
+                for (int j(0) ; j < 4 ; j++)
+                {
+                    DenseVectorRange<DataType_>dv(d, size, j);
+                    for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                            i != i_end ; ++i)
+                    {
+                        *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                    }
+
+                    DataType_ s(size);
+
+                    DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
+                    DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
+                    DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
+
+                    DataType_ v3(Norm<vnt_l_two, true, Tag_>::value(dv));
+                    DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
+                    s3 = sqrt(s3);
+                    DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
+                }
+            }
+        }
+};
+#ifdef HONEI_SSE
+DenseVectorRangeNormValueSSETest<tags::CPU::SSE, float> sse_dense_vector_range_norm_value_test_float("SSE float");
+DenseVectorRangeNormValueSSETest<tags::CPU::SSE, double> sse_dense_vector_range_norm_value_test_double("SSE double");
+DenseVectorRangeNormValueSSETest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_norm_value_test_float("MC SSE float");
+DenseVectorRangeNormValueSSETest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_norm_value_test_double("MC SSE double");
+#endif
+
+template <typename Tag_, typename DataType_>
 class DenseVectorRangeNormQuickTest :
     public QuickTest
 {
@@ -252,6 +300,52 @@ DenseVectorRangeNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_rang
 DenseVectorRangeNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_norm_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorRangeNormQuickTest<tags::Cell, float> cell_dense_vector_range_norm_quick_test_float("float (Cell)");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorRangeNormQuickSSETest :
+    public QuickTest
+{
+    public:
+        DenseVectorRangeNormQuickSSETest(const std::string & type) :
+            QuickTest("dense_vector_range_norm_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(5);
+            DenseVector<DataType_> d(size * 4, DataType_(100));
+            for (int j(0) ; j < 4 ; j++)
+            {
+                DenseVectorRange<DataType_> dv(d, size, j);
+                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
+                }
+
+                DataType_ s(size);
+
+                DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
+                DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
+                DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
+
+                DataType_ v3(Norm<vnt_l_two, true, Tag_>::value(dv));
+                DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
+                s3 = sqrt(s3);
+                DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
+            }
+        }
+};
+#ifdef HONEI_SSE
+DenseVectorRangeNormQuickSSETest<tags::CPU::SSE, float>  sse_dense_vector_range_norm_quick_test_float("SSE float");
+DenseVectorRangeNormQuickSSETest<tags::CPU::SSE, double> sse_dense_vector_range_norm_quick_test_double("SSE double");
+DenseVectorRangeNormQuickSSETest<tags::CPU::MultiCore::SSE, float>  mc_sse_dense_vector_range_norm_quick_test_float("MC SSE float");
+DenseVectorRangeNormQuickSSETest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_norm_quick_test_double("MC SSE double");
 #endif
 
 
