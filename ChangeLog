@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libla/dense_matrix.hh, libla/sparse_matrix.hh:
+	Added non optimised single element access operator.
+
+2008-01-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/product-mc.hh:
 	Ported mc-bmdv to the new NonZeroBandIterator.
 

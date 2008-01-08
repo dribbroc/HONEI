@@ -265,13 +265,13 @@ namespace honei
             /// Retrieves element at (row, column), unassignable.
             inline virtual const DataType_ & operator() (unsigned long row, unsigned long column) const
             {
-                return _elements.get()[column + row * _columns]; 
+                return _elements.get()[column + row * _columns];
             }
 
             /// Retrieves element at (row, column), assignable.
             inline virtual DataType_ & operator() (unsigned long row, unsigned long column)
             {
-                return _elements.get()[column + row * _columns]; 
+                return _elements.get()[column + row * _columns];
             }
 
             /// Retrieves column vector by index, zero-based, unassignable.

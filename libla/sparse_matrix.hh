@@ -215,6 +215,27 @@ namespace honei
                 return *_row_vectors[row];
             }
 
+            /// Retrieves element at (row, column), unassignable.
+            inline virtual const DataType_ & operator() (unsigned long row, unsigned long column) const
+            {
+                if (! _row_vectors[row])
+                    /// \todo access element directly
+                    return _zero_vector[0];
+
+                /// \todo access element directly
+                return (*_row_vectors[row])[column];
+            }
+
+            /// Retrieves element at (row, column), assignable.
+            inline virtual DataType_ & operator() (unsigned long row, unsigned long column)
+            {
+                if (! _row_vectors[row])
+                    _row_vectors[row].reset(new SparseVector<DataType_>(_columns, _capacity));
+
+                /// \todo access element directly
+                return (*_row_vectors[row])[column];
+            }
+
             /// Returns a copy of the matrix.
             virtual SparseMatrix * copy() const
             {
