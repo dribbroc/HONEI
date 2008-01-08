@@ -106,7 +106,7 @@ class EvolvingGraphTest :
             t2->addNode(eg.getNode(3));
             t2->addEdge(1,2,1);
             t2->addEdge(1,3,1);
-            eg.addTimeslice(t2);            
+            eg.addTimeslice(t2);
 
             // see what happens if we assemble the whole graph's matrices
             std::cout << "evolving graph with " << eg.nodeCount() << " nodes and " << eg.sliceCount() << " timeslices " << std::            endl;
@@ -129,7 +129,7 @@ class EvolvingGraphTest :
 
             // old version
             // Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1->coordinates(), *t1->nodeWeights(), *t1->edges()); 
-            // new version: 
+            // new version:
             Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1, (DataType_)2);
             positions2.update(0.01, 1000);
             std::cout << "coordinates for t1 after position2.update(0.01, 100):\n" << positions2.coordinates() << std::endl;       

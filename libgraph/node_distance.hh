@@ -86,7 +86,7 @@ namespace honei
         }
 
         template <typename DataType_>
-        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<bool> & neighbours, 
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<bool> & neighbours,
         SparseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range)
         {
@@ -120,7 +120,7 @@ namespace honei
         };
 
         template <typename DataType_>
-        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<DataType_> & edge_weights, 
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<DataType_> & edge_weights,
         SparseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range)
         {

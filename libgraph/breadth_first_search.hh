@@ -65,7 +65,7 @@ namespace honei
             for (typename Matrix<bool>::ConstElementIterator e(adjacency_matrix.begin_non_zero_elements()),
                         e_end(adjacency_matrix.end_non_zero_elements()); e != e_end ; ++e)
             {
-                if (*e != adjacency_matrix[e.column()][e.row()]) symmetric = false;
+                if (*e != adjacency_matrix(e.column(), e.row())) symmetric = false;
                 if (e.column() == e.row()) trace = false;
             }
 
@@ -98,8 +98,8 @@ namespace honei
             {
                 //Insert current starting-node into the queue; queue defines the order in which all nodes have to be visited
                 node_queue.push(i);
-                visited_nodes[i][i] = true;
-                distance_matrix[i][i] = DataType_(0);
+                visited_nodes(i, i) = true;
+                distance_matrix(i, i) = DataType_(0);
 
                 while (!node_queue.empty())
                 {
@@ -107,8 +107,8 @@ namespace honei
                     unsigned long current_node(node_queue.front());
 
                     // Delete the first element of the queue
-                    node_queue.pop(); 
-                    
+                    node_queue.pop();
+
                     // Auxiliary variable to check if the graph is coherent
                     number_of_nodes++;
 
@@ -117,16 +117,16 @@ namespace honei
                     e_end((adjacency_matrix[current_node]).end_non_zero_elements()); e != e_end ; ++e)
                     {
                         // Check that node has not been visited yet
-                        if (!visited_nodes[i][e.index()])
+                        if (!visited_nodes(i, e.index()))
                         {
                             // Insert current node (at the end of the queue)
                             node_queue.push(e.index());
 
                             // Mark node as visited
-                            visited_nodes[i][e.index()] = true;
+                            visited_nodes(i, e.index()) = true;
 
                             // Calculate the distance between the starting-node and the current node by dint of its predecessor
-                            distance_matrix[i][e.index()] = distance_matrix[i][current_node] + 1;
+                            distance_matrix(i, e.index()) = distance_matrix(i, current_node) + 1;
                         }
                     }
                 }
@@ -158,8 +158,8 @@ namespace honei
             for (typename Matrix<DataType_>::ConstElementIterator e(edge_weights.begin_non_zero_elements()),
                 e_end(edge_weights.end_non_zero_elements()); e != e_end ; ++e)
             {
-                if ((*e - edge_weights[e.column()][e.row()] > std::numeric_limits<DataType_>::epsilon())
-                || (*e - edge_weights[e.column()][e.row()] < - std::numeric_limits<DataType_>::epsilon())) symmetric = false;
+                if ((*e - edge_weights(e.column(), e.row()) > std::numeric_limits<DataType_>::epsilon())
+                || (*e - edge_weights(e.column(), e.row()) < - std::numeric_limits<DataType_>::epsilon())) symmetric = false;
                 if (e.column() == e.row()) trace = false;
             }
 
@@ -205,10 +205,10 @@ namespace honei
             {
                 // Insert current starting-node into the queue; queue defines the order in which all nodes have to be visited
                 node_queue.push(i);
-                visited_nodes[i][i] = true;
-                distance_matrix[i][i] = DataType_(0);
+                visited_nodes(i, i) = true;
+                distance_matrix(i, i) = DataType_(0);
 
-                while (!node_queue.empty()) 
+                while (!node_queue.empty())
                 {
                     // Return the first element of the queue
                     unsigned long current_node(node_queue.front());
@@ -224,16 +224,16 @@ namespace honei
                     e_end((edge_weights[current_node]).end_non_zero_elements()); e != e_end ; ++e)
                     {
                         // Check that node has not been visited yet
-                        if (!visited_nodes[i][e.index()])
+                        if (!visited_nodes(i, e.index()))
                         {
                             // Insert current node (at the end of the queue)
                             node_queue.push(e.index());
 
                             // Mark node as visited
-                            visited_nodes[i][e.index()] = true;
+                            visited_nodes(i, e.index()) = true;
 
                             // Calculate the distance between the starting-node and the current node by dint of its predecessor, involving the weights of the edges
-                            distance_matrix[i][e.index()] = distance_matrix[i][current_node] +
+                            distance_matrix(i, e.index()) = distance_matrix(i, current_node) +
                             (sqrt(node_weights[current_node] * node_weights[e.index()]) / *e);
                         }
                     }
@@ -260,8 +260,8 @@ namespace honei
             for (typename Matrix<DataType_>::ConstElementIterator e(edge_weights.begin_non_zero_elements()),
                 e_end(edge_weights.end_non_zero_elements()); e != e_end ; ++e)
             {
-                if ((*e - edge_weights[e.column()][e.row()] > std::numeric_limits<DataType_>::epsilon())
-                || (*e - edge_weights[e.column()][e.row()] < - std::numeric_limits<DataType_>::epsilon())) symmetric = false;
+                if ((*e - edge_weights(e.column(), e.row()) > std::numeric_limits<DataType_>::epsilon())
+                || (*e - edge_weights(e.column(), e.row()) < - std::numeric_limits<DataType_>::epsilon())) symmetric = false;
                 if (e.column() == e.row()) trace = false;
             }
 
@@ -307,8 +307,8 @@ namespace honei
             {
                 // Insert current starting-node into the queue; queue defines the order in which all nodes have to be visited
                 node_queue.push(i);
-                visited_nodes[i][i] = true;
-                distance_matrix[i][i] = DataType_(0);
+                visited_nodes(i, i) = true;
+                distance_matrix(i, i) = DataType_(0);
 
                 while (!node_queue.empty()) 
                 {
@@ -326,18 +326,18 @@ namespace honei
                     e_end((edge_weights[current_node]).end_non_zero_elements()); e != e_end ; ++e)
                     {
                         // Check that node has not been visited yet
-                        if (!visited_nodes[i][e.index()])
+                        if (!visited_nodes(i, e.index()))
                         {
                             // Insert current node (at the end of the queue)
                             node_queue.push(e.index());
 
                             // Mark node as visited
-                            visited_nodes[i][e.index()] = true;
+                            visited_nodes(i, e.index()) = true;
 
                             // Calculate the distance between the starting-node and the current node by dint of its predecessor, involving the weights of the edges
                             if (graph.sameTimeslice(i, e.index()))
                             {
-                                distance_matrix[i][e.index()] = distance_matrix[i][current_node] +
+                                distance_matrix(i, e.index()) = distance_matrix(i, current_node) +
                                 (sqrt(node_weights[current_node] * node_weights[e.index()]) / *e);
                             }
                         }

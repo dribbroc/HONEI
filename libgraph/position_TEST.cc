@@ -139,7 +139,7 @@ class KamadaKawaiPositionsQuickTest :
             for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
                 e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
-                if (adj[i] > std::numeric_limits<DataType_>::epsilon()) 
+                if (adj[i] > std::numeric_limits<DataType_>::epsilon())
                 {
                     *e = adj[i];
                 }
@@ -272,7 +272,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
             for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
-                *e = pos[i++]; 
+                *e = pos[i++];
             }
 
             i = 0;
@@ -288,7 +288,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
             for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
                     e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
             {
-                if (edge_weights[i] > std::numeric_limits<DataType_>::epsilon()) 
+                if (edge_weights[i] > std::numeric_limits<DataType_>::epsilon())
                 {
                     *e = edge_weights[i];
                 }
@@ -374,7 +374,7 @@ class KamadaKawaiPositionsTest :
             {
                 TEST_CHECK(true);
             }
-           
+
             // Creating a Positions object with the test scenario
             Positions<Tag_, DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
 
@@ -455,7 +455,7 @@ class FruchtermanReingoldPositionsTest :
             {
                 TEST_CHECK(true);
             }
-           
+
             // Creating a Positions object with the test scenario
             Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
 
@@ -539,7 +539,7 @@ class WeightedFruchtermanReingoldPositionsTest :
             // Creating a Positions object with the test scenario
             Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
 
-            // update the positions 
+            // update the positions
             position.update(0.00001,_nodecount * 5);
             std::cout << "max_node_force of WFR  "<< position.max_node_force() << std::endl;
             std::cout << "number_of_iterations of WFR  "<< position.number_of_iterations() << std::endl;

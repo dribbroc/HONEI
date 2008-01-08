@@ -31,7 +31,7 @@ using namespace honei;
 using namespace tests;
 
 template <typename DataType_>
-// our PositionsTest is a BaseTest. 
+// our PositionsTest is a BaseTest.
 class GraphTest :
     public BaseTest
 {
@@ -43,7 +43,7 @@ class GraphTest :
         }
 
     virtual void run() const
-    {    
+    {
         Graph<DataType_> g(5, 3);
         Node<DataType_> * node = new Node<DataType_>(1, 1, 1, 1, 1);
         g.addNode(node);

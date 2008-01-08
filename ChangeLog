@@ -7,6 +7,16 @@ see the NEWS file.
 
 2008-01-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* libgraph/abstract_graph.hh, libgraph/breadth_first_search.hh,
+	libgraph/breadth_first_search-mc.hh, libgraph/dijkstra.hh,
+	libgraph/dijkstra_TEST.cc, libgraph/evolving_graph.hh,
+	libgraph/evolving_graph_TEST.cc, libgraph/graph.hh,
+	libgraph/graph_TEST.cc, libgraph/node_distance.hh,
+	libgraph/position.hh, libgraph/position_TEST.cc:
+	Finished first stage of libgraph review.
+
+2008-01-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* libla/dense_matrix.hh, libla/sparse_matrix.hh:
 	Added non optimised single element access operator.
 

@@ -28,7 +28,7 @@
 #include <libgraph/abstract_graph.hh>
 #include <map>
 
-namespace honei 
+namespace honei
 {
 
     template <typename DataType_> class Graph: 
@@ -45,8 +45,8 @@ namespace honei
         /// sets edges[v_index][w_index] = edges[w_index][v_index] = weight
         void setEdgeWeightInternal(int v_index, int w_index, DataType_ weight)
         {
-            (*this->_edges)[v_index][w_index] = weight;
-            (*this->_edges)[w_index][v_index] = weight;
+            (*this->_edges)(v_index, w_index) = weight;
+            (*this->_edges)(w_index, v_index) = weight;
         }
 
     public:
@@ -63,13 +63,6 @@ namespace honei
             this->_nodeWeights = new DenseVector<DataType_>(nodes, (DataType_)1);
         }
 
-        ~Graph()
-        {
-            delete(this->_coordinates);
-            delete(this->_edges);
-            delete(this->_nodeWeights);
-        }
-
         /// adds a node to this graph, puts its initial position and its weight into the relevant matrices
         void addNode(NodeType * node)
         {
@@ -79,7 +72,7 @@ namespace honei
                 _nodeMapping[node->getID()] = _nodeCount;
                 for (int i(0); i < _coordinateDimensions; ++i)
                 {
-                    (*this->_coordinates)[_nodeCount][i] = i < node->getPosition()->size() ? (*node->getPosition())[i] : 0;
+                    (*this->_coordinates)(_nodeCount, i) = i < node->getPosition()->size() ? (*node->getPosition())[i] : 0;
                 }
                 (*this->_nodeWeights)[_nodeCount] = node->getWeight();
                 ++_nodeCount;

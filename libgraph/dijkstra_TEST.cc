@@ -59,7 +59,7 @@ class DijkstraQuickTest :
                         *f = cost[i];
                         i++;
                     }
-            
+
             // Creating a distance object with the test scenario
             DenseMatrix<DataType_> distance = Dijkstra<DataType_>::value(*pCost);
 
@@ -95,7 +95,6 @@ class DijkstraQuickTest :
 
             std::tr1::shared_ptr<DenseMatrix<int> > pNodes3(new DenseMatrix<int>(3, 7));
             TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost2, *pNodes3), MatrixRowsDoNotMatch);
-            
         }
 };
 

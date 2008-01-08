@@ -38,7 +38,7 @@ namespace honei
 
     /// \todo improving performance of Dijkstra, e.g. using priority queue
 
-    template <typename Tag_ = tags::CPU> struct Dijkstra
+    template <typename Tag_> struct Dijkstra
     {
         /**
          * Returns the resulting graph distance matrix.
@@ -87,7 +87,7 @@ namespace honei
                     // Update the graph distances from node i to each other node by using the costs of the current node
                     for (int n(0); n < v.size(); ++n)
                     {
-                        help1 = v[Index] + cost_matrix[n][Index];
+                        help1 = v[Index] + cost_matrix(n, Index);
                         if (set_of_nodes[n] == 1 && v[n] > help1)
                         {
                             v[n] = help1;
@@ -98,7 +98,7 @@ namespace honei
                 // Write the graph distances from node i to each other node represented by vector v into the corresponding column of the result matrix
                 for (int j(0); j < v.size() ; ++j)
                 {
-                    result[j][i] = v[j];
+                    result(j, i) = v[j];
                 }
             }
             return result;
@@ -125,6 +125,7 @@ namespace honei
             DataType_ help1;
 
             // Create the graph_distance_matrix and initialize previous_nodes
+            /// \todo Local copy needed or can wie directly work on the cost_matrix?
             DenseMatrix<DataType_>  graph_distance_matrix(*cost_matrix.copy());
 
             for (typename MutableMatrix<int>::ElementIterator e(previous_nodes.begin_elements()),
@@ -167,7 +168,7 @@ namespace honei
                     // Update the graph distances from node i to each other node by using the costs of the current node
                     for (int n(0); n < v.size(); ++n)
                     {
-                        help1 = v[Index] + cost_matrix[n][Index];
+                        help1 = v[Index] + cost_matrix(n, Index);
                         if (set_of_nodes[n] == true && v[n] > help1)
                         {
                             v[n] = help1;
@@ -178,11 +179,12 @@ namespace honei
             }
 
             // Write the graph distances from node i to each other node represented by graph_distance_matrix into the cost_matrix
-            for (typename MutableMatrix<DataType_>::ElementIterator e(graph_distance_matrix.begin_elements()),
+            /*for (typename MutableMatrix<DataType_>::ElementIterator e(graph_distance_matrix.begin_elements()),
                     e_end(graph_distance_matrix.end_elements()), f(cost_matrix.begin_elements()); e != e_end ; ++e, ++f)
-                    {
-                        *f = *e;
-                    }
+            {
+                *f = *e;
+            }*/
+            cost_matrix = graph_distance_matrix;
         }
     };
 }

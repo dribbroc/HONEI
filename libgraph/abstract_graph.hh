@@ -43,11 +43,18 @@ namespace honei
 
     virtual Node<DataType_> * getNodeByID(int id) = 0;
 
-    AbstractGraph() :        
+    AbstractGraph() :
         _coordinates(0),
         _edges(0),
         _nodeWeights(0)
-    {        
+    {
+    }
+
+    ~AbstractGraph()
+    {
+        delete _coordinates;
+        delete _edges;
+        delete _nodeWeights;
     }
 
     virtual DenseMatrix<DataType_> * coordinates()
@@ -59,14 +66,14 @@ namespace honei
     {
         return _nodeWeights;
     }
-    
+
     virtual SparseMatrix<DataType_> * edges()
     {
         return _edges;
     }
 
     virtual int nodeCount() = 0;
-        
+
     virtual bool sameTimeslice(int index1, int index2)
     {
         return true;

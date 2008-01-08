@@ -156,6 +156,11 @@
 #endif
             }
 
+            ~Positions()
+            {
+                delete _imp;
+            }
+
             void update(DataType_ eps, int timeout)
             {
                 _imp->init();
@@ -189,10 +194,10 @@
         {
             private:
                 /// position matrix - the coordinates of each node
-                DenseMatrix<DataType_> & _coordinates;
+                DenseMatrix<DataType_> _coordinates;
 
                 /// adjacence matrix - which nodes are neighbours?
-                const SparseMatrix<bool> & _neighbours;
+                const SparseMatrix<bool> _neighbours;
 
                 /// a scalar factor which determinates how much influence the distance has while calculating the forces.
                 const DataType_ _edge_length;
@@ -243,13 +248,13 @@
                     NodeDistance<Tag_>::value(_coordinates, _neighbours, square_dist, inv_square_dist, _repulsive_force_range);
 
                     // Calculate the single diagonal matrix containing the row sum vector of square_dist
-                    DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum, Tag_>::value(square_dist)));
+                    DenseVector<DataType_> sum_vec(Reduction<rt_sum, Tag_>::value(square_dist));
 
                     // Calculate the same stuff for inv_square_dist
-                    DenseVector<DataType_> * sum_vec_inv(new DenseVector<DataType_>(Reduction<rt_sum, Tag_>::value(inv_square_dist)));
+                    DenseVector<DataType_> sum_vec_inv(Reduction<rt_sum, Tag_>::value(inv_square_dist));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     Difference<Tag_>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<Tag_>::value(DataType_(-1), square_dist);
 
@@ -263,7 +268,7 @@
                     Scale<Tag_>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
-                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), *sum_vec_inv);
+                    BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), sum_vec_inv);
                     DenseMatrix<DataType_> diff(Sum<Tag_>::value(inv_square_dist, inv_diag));
 
                     // Calculating repulsive_forces = (diff * _coordinates)
@@ -318,13 +323,13 @@
         {
             private:
                 ///  position matrix - the coordinates of each node
-                DenseMatrix<DataType_> & _coordinates;
+                DenseMatrix<DataType_> _coordinates;
 
                 ///  weight vector - the weights of each node
-                const DenseVector<DataType_> & _weights_of_nodes;
+                const DenseVector<DataType_> _weights_of_nodes;
 
                 ///  edge weight matrix - the weights of each edge
-                const SparseMatrix<DataType_> & _weights_of_edges;
+                const SparseMatrix<DataType_> _weights_of_edges;
 
                 /// parameter matrix for repulsive forces
                 DenseMatrix<DataType_> _repulsive_force_parameter;
@@ -383,24 +388,24 @@
                     ElementProduct<Tag_>::value(square_dist, _attractive_force_parameter);
 
                     // Calculate the single diagonal matrix containing the row sum vector of square_dist
-                    DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum, Tag_>::value(square_dist)));
+                    DenseVector<DataType_> sum_vec(Reduction<rt_sum, Tag_>::value(square_dist));
 
                     // Calculate the same stuff for inv_square_dist
-                    DenseVector<DataType_> * sum_vec_inv(new DenseVector<DataType_>(Reduction<rt_sum, Tag_>::value(inv_square_dist)));
+                    DenseVector<DataType_> sum_vec_inv(Reduction<rt_sum, Tag_>::value(inv_square_dist));
 
                     // Calculating square_dist = (square_dist - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     Difference<Tag_>::value(diag, square_dist);
                     Scale<Tag_>::value(DataType_(-1), square_dist);
 
                     // Calculating attractive_forces = (square_dist * _coordinates)
                     DenseMatrix<DataType_> attractive_forces(Product<Tag_>::value(square_dist, _coordinates));
-                   
+
                     // Calculating inv_square_dist <- -inv_square_dist
                     Scale<Tag_>::value(DataType_(-1), inv_square_dist);
 
                     // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
-                    BandedMatrix<DataType_> inv_diag(sum_vec_inv->size(), *sum_vec_inv);
+                    BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), sum_vec_inv);
                     DenseMatrix<DataType_> diff(Sum<Tag_>::value(inv_square_dist, inv_diag));
 
                     // Calculating repulsive_forces = (diff * _coordinates)
@@ -469,13 +474,13 @@
         {
             private:
                 /// position matrix - the coordinates of each node
-                DenseMatrix<DataType_> & _coordinates;
+                DenseMatrix<DataType_> _coordinates;
 
                 /// previous position matrix
-                DenseMatrix<DataType_> & _previous_coordinates;
+                DenseMatrix<DataType_> _previous_coordinates;
 
                 /// adjacence matrix - which nodes are neighbours?
-                const SparseMatrix<bool> & _neighbours;
+                const SparseMatrix<bool> _neighbours;
 
                 /// a scalar factor which determinates how much influence the distance has while calculating the forces.
                 const DataType_ _square_edge_length;
@@ -527,7 +532,7 @@
                     for (typename Matrix<bool>::ConstElementIterator e(_neighbours.begin_non_zero_elements()),
                         e_end(_neighbours.end_non_zero_elements()) ; e != e_end ; ++e)
                     {
-                        _graph_distance[e.row()][e.column()] = 1;
+                        _graph_distance(e.row(), e.column()) = 1;
                     }
 
                     // Using Dijkstra to calculate the graph distance matrix
@@ -549,10 +554,10 @@
 
 
                     // Calculate the single diagonal matrix containing the row sum vector of _spring_force_parameters
-                    DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum, Tag_>::value(_spring_force_parameters)));
+                    DenseVector<DataType_> sum_vec(Reduction<rt_sum, Tag_>::value(_spring_force_parameters));
 
                     // Calculating square_dist = (_spring_force_parameters - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     square_dist = Difference<Tag_>::value(diag, *(_spring_force_parameters.copy())); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<Tag_>::value(DataType_(-1), square_dist);
 
@@ -613,7 +618,7 @@
                     Sum<Tag_>::value(DataType_(-1), _spring_force_parameters_of_max_node);
                     for (int i(0) ; i != _spring_force_parameters.rows() ; ++i)
                     {
-                        _spring_force_parameters[i][max_node] = _spring_force_parameters[max_node][i];
+                        _spring_force_parameters(i, max_node) = _spring_force_parameters(max_node, i);
                     }
 
                     // Calculate the difference between _coordinates and the coordinates of max_node
@@ -629,7 +634,7 @@
                     {
                         if (i != max_node)
                         {
-                            Scale<Tag_>::value(_spring_force_parameters[max_node][i], _coordinates_difference[i]);
+                            Scale<Tag_>::value(_spring_force_parameters(max_node, i), _coordinates_difference[i]);
                             Scale<Tag_>::value(_spring_force_parameter_vector[i], _previous_coordinates_difference[i]);
                             Sum<Tag_>::value(_coordinates_difference[max_node], _coordinates_difference[i]);
                             Difference<Tag_>::value(_coordinates_difference[i], _previous_coordinates_difference[i]);
@@ -659,11 +664,12 @@
                     }
 
                     // _previous_coordinates = _coordinates
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(_previous_coordinates.begin_elements()),
+                    /*for (typename MutableMatrix<DataType_>::ElementIterator e(_previous_coordinates.begin_elements()),
                         e_end(_previous_coordinates.end_elements()), k(_coordinates.begin_elements()) ; e != e_end ; ++e, ++k)
                     {
                         *e = *k;
-                    }
+                    }*/
+                    _previous_coordinates = _coordinates;
 
                     // Calculate the new step_width
                     if (max_node == _previous_max_node)
@@ -671,7 +677,7 @@
                         bool reducing_condition(true);
                         for (int i(0); i < _spring_forces.columns(); i++)
                         {
-                            if (fabs(_previous_spring_force[i] - _spring_forces[max_node][i] * (-1 / result)) > fabs(0.3 * _previous_spring_force[i]))
+                            if (fabs(_previous_spring_force[i] - _spring_forces(max_node, i) * (-1 / result)) > fabs(0.3 * _previous_spring_force[i]))
                             {
                                 reducing_condition = false;
                                 break;
@@ -700,16 +706,16 @@
         {
             private:
                 /// position matrix - the coordinates of each node
-                DenseMatrix<DataType_> & _coordinates;
+                DenseMatrix<DataType_> _coordinates;
 
                 /// previous position matrix
-                DenseMatrix<DataType_> & _previous_coordinates;
+                DenseMatrix<DataType_> _previous_coordinates;
 
                 /// weight vector - the weights of each node
-                const DenseVector<DataType_> & _weights_of_nodes;
+                const DenseVector<DataType_> _weights_of_nodes;
 
                 /// edge weight matrix - the weights of each edge
-                const SparseMatrix<DataType_> & _weights_of_edges;
+                const SparseMatrix<DataType_> _weights_of_edges;
 
                 /// graph distance matrix
                 DenseMatrix<DataType_> _graph_distance;
@@ -732,12 +738,12 @@
                 /// vector of step widths
                 DenseVector<DataType_> _step_widths;
 
-                /// Reference to graph object, if this method is used with graph types. 
-                AbstractGraph<DataType_> * _graph; 
-                
+                /// Reference to graph object, if this method is used with graph types.
+                AbstractGraph<DataType_> * _graph;
+
             public:
                 friend class Positions<Tag_, DataType_, WeightedKamadaKawai>;
-                
+
                 Implementation(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
                     const SparseMatrix<DataType_> & weights_of_edges) :
                     _previous_coordinates(*(coordinates.copy())),
@@ -755,7 +761,7 @@
                 {
                 }
 
-                Implementation(AbstractGraph<DataType_> & graph, int edge_length) :
+                Implementation(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
                     _coordinates(*graph.coordinates()),
                     _previous_coordinates(*(graph.coordinates()->copy())),
                     _weights_of_nodes(*graph.nodeWeights()),
@@ -801,9 +807,9 @@
                             sqrt(_weights_of_nodes[row] * _weights_of_nodes[previous_nodes[row][e.column()]]) /
                             _weights_of_edges[row][previous_nodes[row][e.column()]] :
                             0;
-                            row = previous_nodes[row][e.column()];
+                            row = previous_nodes(row, e.column());
                         }
-                    _graph_distance[e.column()][e.row()] = costs;
+                    _graph_distance(e.column(), e.row()) = costs;
                     }
 
                     // Calculate stepwidth
@@ -844,10 +850,10 @@
 
 
                     // Calculate the single diagonal matrix containing the row sum vector of _spring_force_parameters
-                    DenseVector<DataType_> * sum_vec(new DenseVector<DataType_>(Reduction<rt_sum, Tag_>::value(_spring_force_parameters)));
+                    DenseVector<DataType_> sum_vec(Reduction<rt_sum, Tag_>::value(_spring_force_parameters));
 
                     // Calculating square_dist = (_spring_force_parameters - diag(sum_vec))
-                    BandedMatrix<DataType_> diag(sum_vec->size(), *sum_vec);
+                    BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     square_dist = Difference<Tag_>::value(diag, *(_spring_force_parameters.copy())); /// \todo Switch to MD::value(Dense, const Banded)
                     Scale<Tag_>::value(DataType_(-1), square_dist);
 
@@ -912,7 +918,7 @@
                     Sum<Tag_>::value(DataType_(-1), _spring_force_parameters_of_max_node);
                     for (int i(0) ; i != _spring_force_parameters.rows() ; ++i)
                     {
-                        _spring_force_parameters[i][max_node] = _spring_force_parameters[max_node][i];
+                        _spring_force_parameters(i, max_node) = _spring_force_parameters(max_node, i);
                     }
 
                     // Calculate the difference between _coordinates and the coordinates of max_node
@@ -928,7 +934,7 @@
                     {
                         if (i != max_node)
                         {
-                            Scale<Tag_>::value(_spring_force_parameters[max_node][i], _coordinates_difference[i]);
+                            Scale<Tag_>::value(_spring_force_parameters(max_node, i), _coordinates_difference[i]);
                             Scale<Tag_>::value(_spring_force_parameter_vector[i], _previous_coordinates_difference[i]);
                             Sum<Tag_>::value(_coordinates_difference[max_node], _coordinates_difference[i]);
                             Difference<Tag_>::value(_coordinates_difference[i], _previous_coordinates_difference[i]);
@@ -958,11 +964,12 @@
                     }
 
                     // _previous_coordinates = _coordinates
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(_previous_coordinates.begin_elements()),
+                    /*for (typename MutableMatrix<DataType_>::ElementIterator e(_previous_coordinates.begin_elements()),
                         e_end(_previous_coordinates.end_elements()), k(_coordinates.begin_elements()) ; e != e_end ; ++e, ++k)
                     {
                         *e = *k;
-                    }
+                    }**/
+                    _previous_coordinates = _coordinates;
 
                     // Calculate the new step_width
                     if ((max_node == _previous_max_node) && (result > std::numeric_limits<DataType_>::epsilon()))
@@ -970,7 +977,7 @@
                         bool reducing_condition(true);
                         for (int i(0); i < _spring_forces.columns(); i++)
                         {
-                            if (fabs(_previous_spring_force[i] - _spring_forces[max_node][i] * (-1 / result)) > fabs(0.3 * _previous_spring_force[i]))
+                            if (fabs(_previous_spring_force[i] - _spring_forces(max_node, i) * (-1 / result)) > fabs(0.3 * _previous_spring_force[i]))
                             {
                                 reducing_condition = false;
                                 break;
