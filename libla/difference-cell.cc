@@ -117,7 +117,7 @@ namespace honei
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        Scale<tags::Cell>::value(-1.0f, b);
+        Scale<tags::Cell>::value(b, -1.0f);
         Sum<tags::Cell>::value(b, a);
 
         return b;

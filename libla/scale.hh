@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  * Copyright (c) 2007 Volker Jung <volker.jung@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -71,7 +71,7 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT2_> & value(const DT1_ a, DenseMatrix<DT2_> & x)
+        static DenseMatrix<DT2_> & value(DenseMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling DenseMatrix");
             for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_elements()),
@@ -84,7 +84,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseMatrix<DT2_> & value(const DT1_ a, SparseMatrix<DT2_> & x)
+        static SparseMatrix<DT2_> & value(SparseMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling SparseMatrix");
             for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
@@ -97,20 +97,20 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static BandedMatrix<DT2_> & value(const DT1_ a, BandedMatrix<DT2_> & x)
+        static BandedMatrix<DT2_> & value(BandedMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling BandedMatrix");
             for (typename BandedMatrix<DT2_>::VectorIterator l(x.begin_bands()),
                     l_end(x.end_bands()) ; l != l_end ; ++l)
             {
-                Scale<>::value(a, *l);
+                Scale<>::value(*l, a);
             }
 
             return x;
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorBase<DT2_> & value(const DT1_ a, DenseVectorBase<DT2_> & x)
+        static DenseVectorBase<DT2_> & value(DenseVectorBase<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling DenseVectorBase");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_elements()),
@@ -123,31 +123,31 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline DenseVector<DT2_> & value(const DT1_ a, DenseVector<DT2_> & x)
+        static inline DenseVector<DT2_> & value(DenseVector<DT2_> & x, const DT1_ a)
         {
             DenseVectorBase<DT2_> & temp = x;
-            Scale<>::value(a, temp);
+            Scale<>::value(temp, a);
             return x;
         }
 
         template <typename DT1_, typename DT2_>
-        static inline DenseVectorRange<DT2_> & value(const DT1_ a, DenseVectorRange<DT2_> & x)
+        static inline DenseVectorRange<DT2_> & value(DenseVectorRange<DT2_> & x, const DT1_ a)
         {
             DenseVectorBase<DT2_> & temp = x;
-            Scale<>::value(a, temp);
+            Scale<>::value(temp, a);
             return x;
         }
 
         template <typename DT1_, typename DT2_>
-        static inline DenseVectorSlice<DT2_> & value(const DT1_ a, DenseVectorSlice<DT2_> & x)
+        static inline DenseVectorSlice<DT2_> & value(DenseVectorSlice<DT2_> & x, const DT1_ a)
         {
             DenseVectorBase<DT2_> & temp = x;
-            Scale<>::value(a, temp);
+            Scale<>::value(temp, a);
             return x;
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT2_> & value(const DT1_ a, SparseVector<DT2_> & x)
+        static SparseVector<DT2_> & value(SparseVector<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling SparseVector");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
@@ -231,21 +231,21 @@ namespace honei
          * \retval x Will modify the entity x and return it.
          */
 
-        static DenseVectorContinuousBase<float> & value(const float a, DenseVectorContinuousBase<float> & x);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const float a);
 
-        static DenseVectorContinuousBase<double> & value(const double a, DenseVectorContinuousBase<double> & x);
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const double a);
 
-        static DenseMatrix<float> & value(const float a, DenseMatrix<float> & x);
+        static DenseMatrix<float> & value(DenseMatrix<float> & x, const float a);
 
-        static DenseMatrix<double> & value(const double a, DenseMatrix<double> & x);
+        static DenseMatrix<double> & value(DenseMatrix<double> & x, const double a);
 
-        static SparseVector<float> & value(const float a, SparseVector<float> & x);
+        static SparseVector<float> & value(SparseVector<float> & x, const float a);
 
-        static SparseVector<double> & value(const double a, SparseVector<double> & x);
+        static SparseVector<double> & value(SparseVector<double> & x, const double a);
 
-        static SparseMatrix<float> & value(const float a, SparseMatrix<float> & x);
+        static SparseMatrix<float> & value(SparseMatrix<float> & x, const float a);
 
-        static SparseMatrix<double> & value(const double a, SparseMatrix<double> & x);
+        static SparseMatrix<double> & value(SparseMatrix<double> & x, const double a);
         /// \}
     };
 
@@ -277,11 +277,11 @@ namespace honei
          * \retval x Will modify the entity x and return it.
          */
 
-        static DenseMatrix<float> & value(const float a, DenseMatrix<float> & x);
+        static DenseMatrix<float> & value(DenseMatrix<float> & x, const float a);
 
-        static DenseVectorContinuousBase<float> & value(const float a, DenseVectorContinuousBase<float> & x);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const float a);
 
-        static SparseVector<float> & value(const float a, SparseVector<float> & x);
+        static SparseVector<float> & value(SparseVector<float> & x, const float a);
 
         /// \}
     };

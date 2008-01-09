@@ -49,7 +49,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT2_> & value(const DT1_ a, DenseMatrix<DT2_> & x)
+        static DenseMatrix<DT2_> & value(DenseMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling DenseMatrix (MultiCore):");
 
@@ -70,13 +70,13 @@ namespace honei
                     for ( ; j < rest; ++j)
                     {
                         DenseVectorRange<DT2_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                     for ( ; j < num_parts; ++j)
                     {
                         DenseVectorRange<DT2_> range(x[i].range(chunk_size, j * chunk_size + rest));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                 }
@@ -85,7 +85,7 @@ namespace honei
             {
                 for (unsigned long i(0); i < x.rows(); ++i)
                 {
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, x[i]);
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(x[i], a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -99,7 +99,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseMatrix<DT2_> & value(const DT1_ a, SparseMatrix<DT2_> & x)
+        static SparseMatrix<DT2_> & value(SparseMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling SparseMatrix (MultiCore):");
 
@@ -120,8 +120,8 @@ namespace honei
                         typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
                         start += j * (chunk_size + 1);
                         stop += (j + 1) * (chunk_size + 1);
-                        ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
-                            wrapper(a, start, stop);
+                        ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
+                            wrapper(start, stop, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                     for ( ; j < num_parts; ++j)
@@ -129,16 +129,16 @@ namespace honei
                         typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
                         start += j * chunk_size + rest;
                         stop += (j + 1) * chunk_size + rest;
-                        ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
-                            wrapper(a, start, stop);
+                        ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
+                            wrapper(start, stop, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                 }
                 else
                 {
                     typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].end_non_zero_elements());
-                    ThreeArgWrapper< MCScale<Tag_>, const DT1_, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator >
-                        wrapper(a, start, stop);
+                        ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
+                            wrapper(start, stop, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -153,7 +153,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static BandedMatrix<DT2_> & value(const DT1_ a, BandedMatrix<DT2_> & x)
+        static BandedMatrix<DT2_> & value(BandedMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling BandedMatrix (MultiCore):");
 
@@ -182,22 +182,22 @@ namespace honei
                     for ( ; i < rest; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1) + x.size() - band_size));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                            wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                            wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                     for ( ; i < num_parts; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size, chunk_size + rest + x.size() - band_size));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                            wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                            wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                 }
                 else
                 {
                     DenseVectorRange<DT2_> range((*vi).range(band_size, x.size() - band_size));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> > wrapper(a, range);
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >  wrapper(range, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -216,21 +216,21 @@ namespace honei
                     for ( ; i < rest; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                            wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                            wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                     for ( ; i < num_parts; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size, i * chunk_size + rest));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                            wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                            wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                 }
                 else
                 {
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVector<DT2_> > wrapper(a, (*vi));
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVector<DT2_>, const DT1_ > wrapper((*vi), a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -255,23 +255,23 @@ namespace honei
                     for ( ; i < rest; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                            wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                            wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                     for ( ; i < num_parts; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size, i *  chunk_size + rest));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                            wrapper(a, range);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                            wrapper(range, a);
                         dispatched_tasks.push_back(tp->dispatch(wrapper));
                     }
                 }
                 else
                 {
                     DenseVectorRange<DT2_> range((*vi).range(band_size, 0));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                        wrapper(a, range);
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                        wrapper(range, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
             }
@@ -286,7 +286,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorContinuousBase<DT2_> & value(const DT1_ a, DenseVectorContinuousBase<DT2_> & x)
+        static DenseVectorContinuousBase<DT2_> & value(DenseVectorContinuousBase<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling DenseVectorContinuousBase (MultiCore):");
 
@@ -305,15 +305,15 @@ namespace honei
                 for ( ; i < rest; ++i)
                 {
                     DenseVectorRange<DT2_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT2_> >
-                        wrapper(a, range);
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                        wrapper(range, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
                 for ( ; i < num_parts; ++i)
                 {
                     DenseVectorRange<DT2_> range(x.range(chunk_size, i * chunk_size + rest));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, const DT1_,
-                        DenseVectorRange<DT2_> > wrapper(a, range);
+                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                        wrapper(range, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
 
@@ -325,14 +325,14 @@ namespace honei
             }
             else
             {
-                Scale<typename Tag_::DelegateTo>::value(a, x);
+                Scale<typename Tag_::DelegateTo>::value(x, a);
             }
 
             return x;
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorSlice<DT2_> & value(const DT1_ a, DenseVectorSlice<DT2_> & x)
+        static DenseVectorSlice<DT2_> & value(DenseVectorSlice<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling DenseVectorSlice (MultiCore):");
 
@@ -352,8 +352,8 @@ namespace honei
                     typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
                     start += i * (chunk_size + 1);
                     stop += (i + 1) * (chunk_size + 1);
-                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
+                        typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
                 for ( ; i < num_parts; ++i)
@@ -361,8 +361,8 @@ namespace honei
                     typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
                     start += i * chunk_size + rest;
                     stop += (i + 1) * chunk_size + rest;
-                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
+                        typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
 
@@ -374,14 +374,14 @@ namespace honei
             }
             else
             {
-                Scale<typename Tag_::DelegateTo>::value(a, x);
+                Scale<typename Tag_::DelegateTo>::value(x, a);
             }
 
             return x;
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT2_> value(const DT1_ a, SparseVector<DT2_> & x)
+        static SparseVector<DT2_> value(SparseVector<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling SparseVector (MultiCore):");
 
@@ -401,8 +401,8 @@ namespace honei
                     typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
                     start += i * (chunk_size + 1);
                     stop += (i + 1) * (chunk_size + 1);
-                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
+                        typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
 
@@ -411,8 +411,8 @@ namespace honei
                     typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
                     start += i * chunk_size + rest;
                     stop += (i + 1) * chunk_size + rest;
-                    ThreeArgWrapper< MCScale<Tag_>, const DT1_,
-                        typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator > wrapper(a, start, stop);
+                    ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
+                        typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
                     dispatched_tasks.push_back(tp->dispatch(wrapper));
                 }
 
@@ -425,14 +425,14 @@ namespace honei
             else
             {
                 typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.end_non_zero_elements());
-                MCScale<Tag_>::value(a, start, stop);
+                MCScale<Tag_>::value(start, stop, a);
             }
 
             return x;
         }
 
         template <typename DT1_, typename IT1_, typename IT2_>
-        static void value(const DT1_ a, IT1_ & x, const IT2_ & x_end)
+        static void value(IT1_ & x, const IT2_ & x_end, const DT1_ a)
         {
             CONTEXT("When calculating iterator-based scale:");
 

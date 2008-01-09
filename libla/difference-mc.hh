@@ -179,7 +179,7 @@ namespace honei
                 else
                 {
                    DenseVector<DT2_> band(r->copy());
-                   Scale<typename Tag_::DelegateTo>::value(DT1_(-1), band);
+                   Scale<typename Tag_::DelegateTo>::value(band, DT1_(-1));
                    a.band(r.index()-a.size()+1) = band;
                 }
             }
@@ -206,7 +206,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            Scale<Tag_>::value(-1,b);
+            Scale<Tag_>::value(b, -1);
 
             ThreadPool * p(ThreadPool::get_instance());
             PoolTask * pt[2];
@@ -376,7 +376,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            Scale<Tag_>::value(-1,b);
+            Scale<Tag_>::value(b, -1);
 
             unsigned long parts(8);
             unsigned long div = a.size() / parts;

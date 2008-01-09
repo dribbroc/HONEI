@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -228,7 +228,7 @@ namespace honei
     }
 
     DenseVector<float> &
-    Sum<tags::Cell>::value(const float & b, DenseVector<float> & a)
+    Sum<tags::Cell>::value(DenseVector<float> & a, const float & b)
     {
         CONTEXT("When adding float to DenseVector<float> (Cell):");
 
@@ -282,7 +282,7 @@ namespace honei
     }
 
     DenseMatrix<float> &
-    Sum<tags::Cell>::value(const float & b, DenseMatrix<float> & a)
+    Sum<tags::Cell>::value(DenseMatrix<float> & a, const float & b)
     {
         CONTEXT("When adding float to DenseMatrix<float> (Cell):");
 

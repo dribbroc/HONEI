@@ -28,7 +28,7 @@ namespace honei
     using namespace cell;
 
     DenseMatrix<float> &
-    Scale<tags::Cell>::value(const float a, DenseMatrix<float> & b)
+    Scale<tags::Cell>::value(DenseMatrix<float> & b, const float a)
     {
         CONTEXT("When scaling DenseMatrix<float> (Cell):");
 
@@ -83,7 +83,7 @@ namespace honei
     }
 
     DenseVectorContinuousBase<float> &
-    Scale<tags::Cell>::value(const float a, DenseVectorContinuousBase<float> & b)
+    Scale<tags::Cell>::value(DenseVectorContinuousBase<float> & b, const float a)
     {
         CONTEXT("When scaling DenseVectorContinuousBase<float> (Cell):");
 
@@ -150,15 +150,15 @@ namespace honei
     }
 
     SparseVector<float> &
-    Scale<tags::Cell>::value(const float a, SparseVector<float> & b)
+    Scale<tags::Cell>::value(SparseVector<float> & b, const float a)
     {
         CONTEXT("When scaling SparseVector<float> (Cell):");
 
         Operand oa = { b.elements() };
         Operand ob;
-        ob.u = b.size() / (1024 * 4);
+        ob.u = b.used_elements() / (1024 * 4);
         Operand oc;
-        oc.u = b.size() % (1024 * 4);
+        oc.u = b.used_elements() % (1024 * 4);
         oc.u &= ~0xF;
         Operand od;
         od.f = a;

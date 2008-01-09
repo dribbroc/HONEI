@@ -181,7 +181,7 @@ namespace honei
                 else
                 {
                     DenseVector<DT2_> band(r->copy());
-                    Scale<>::value(DT1_(-1), band);
+                    Scale<>::value(band, DT1_(-1));
                     a.band(r.index() - a.size() + 1) = band;
                 }
             }
@@ -223,7 +223,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            Scale<tags::CPU>::value(-1,b);
+            Scale<tags::CPU>::value(b, -1);
 
             int middle_index(a.rows() -1);
             for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
@@ -277,7 +277,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            Scale<tags::CPU>::value(-1,b);
+            Scale<tags::CPU>::value(b, -1);
 
             int middle_index(a.rows() -1);
             for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;

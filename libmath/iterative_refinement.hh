@@ -63,7 +63,7 @@ namespace honei
                 DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                 Difference<Tag_>::value(defect, right_hand_side);
 
-                Scale<Tag_>::value(DT1_(-1.), defect);
+                Scale<Tag_>::value(defect, DT1_(-1.));
                 DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                 unsigned long iter_number = 0;
@@ -86,11 +86,11 @@ namespace honei
                     {
                         if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                         {
-                            Scale<Tag_>::value(DT1_(1./alpha), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./alpha));
                         }
                         else
                         {
-                            Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                         }
                     }
 
@@ -114,7 +114,7 @@ namespace honei
                     }
 
                     ///Update solution:
-                    Scale<Tag_>::value(alpha, defect);
+                    Scale<Tag_>::value(defect, alpha);
                     Sum<Tag_>::value(x_actual, defect);
 
                     defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -146,7 +146,7 @@ namespace honei
                     DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                     Difference<Tag_>::value(defect, right_hand_side);
 
-                    Scale<Tag_>::value(DT1_(-1.), defect);
+                    Scale<Tag_>::value(defect, DT1_(-1.));
                     DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                     unsigned long iter_number = 0;
@@ -178,11 +178,11 @@ namespace honei
                         {
                             if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                             {
-                                Scale<Tag_>::value(DT1_(1./alpha), defect);
+                                Scale<Tag_>::value(defect, DT1_(1./alpha));
                             }
                             else
                             {
-                                Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                                Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                             }
                         }
 
@@ -206,7 +206,7 @@ namespace honei
                         }
 
                         ///Update solution:
-                        Scale<Tag_>::value(alpha, defect);
+                        Scale<Tag_>::value(defect, alpha);
                         Sum<Tag_>::value(x_actual, defect);
 
                         defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -241,7 +241,7 @@ namespace honei
                 DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                 Difference<Tag_>::value(defect, right_hand_side);
 
-                Scale<Tag_>::value(DT1_(-1.), defect);
+                Scale<Tag_>::value(defect, DT1_(-1.));
                 DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                 unsigned long iter_number = 0;
@@ -267,11 +267,11 @@ namespace honei
                     {
                         if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                         {
-                            Scale<Tag_>::value(DT1_(1./alpha), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./alpha));
                         }
                         else
                         {
-                            Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                         }
                     }
 
@@ -295,7 +295,7 @@ namespace honei
                     }
 
                     ///Update solution:
-                    Scale<Tag_>::value(alpha, defect);
+                    Scale<Tag_>::value(defect, alpha);
                     Sum<Tag_>::value(x_actual, defect);
 
                     defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -341,7 +341,7 @@ namespace honei
                 DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                 Difference<Tag_>::value(defect, right_hand_side);
 
-                Scale<Tag_>::value(DT1_(-1.), defect);
+                Scale<Tag_>::value(defect, DT1_(-1.));
                 DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                 unsigned long iter_number = 0;
@@ -364,11 +364,11 @@ namespace honei
                     {
                         if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                         {
-                            Scale<Tag_>::value(DT1_(1./alpha), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./alpha));
                         }
                         else
                         {
-                            Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                         }
                     }
 
@@ -392,7 +392,7 @@ namespace honei
                     }
 
                     ///Update solution:
-                    Scale<Tag_>::value(alpha, defect);
+                    Scale<Tag_>::value(defect, alpha);
                     Sum<Tag_>::value(x_actual, defect);
 
                     defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -424,7 +424,7 @@ namespace honei
                     DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                     Difference<Tag_>::value(defect, right_hand_side);
 
-                    Scale<Tag_>::value(DT1_(-1.), defect);
+                    Scale<Tag_>::value(defect, DT1_(-1.));
                     DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                     unsigned long iter_number = 0;
@@ -456,11 +456,11 @@ namespace honei
                         {
                             if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                             {
-                                Scale<Tag_>::value(DT1_(1./alpha), defect);
+                                Scale<Tag_>::value(defect, DT1_(1./alpha));
                             }
                             else
                             {
-                                Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                                Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                             }
                         }
 
@@ -484,7 +484,7 @@ namespace honei
                         }
 
                         ///Update solution:
-                        Scale<Tag_>::value(alpha, defect);
+                        Scale<Tag_>::value(defect, alpha);
                         Sum<Tag_>::value(x_actual, defect);
 
                         defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -519,7 +519,7 @@ namespace honei
                 DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                 Difference<Tag_>::value(defect, right_hand_side);
 
-                Scale<Tag_>::value(DT1_(-1.), defect);
+                Scale<Tag_>::value(defect, DT1_(-1.));
                 DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                 unsigned long iter_number = 0;
@@ -545,11 +545,11 @@ namespace honei
                     {
                         if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                         {
-                            Scale<Tag_>::value(DT1_(1./alpha), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./alpha));
                         }
                         else
                         {
-                            Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                         }
                     }
 
@@ -573,7 +573,7 @@ namespace honei
                     }
 
                     ///Update solution:
-                    Scale<Tag_>::value(alpha, defect);
+                    Scale<Tag_>::value(defect, alpha);
                     Sum<Tag_>::value(x_actual, defect);
 
                     defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -619,7 +619,7 @@ namespace honei
 
                         DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                         Difference<Tag_>::value(defect, right_hand_side);
-                        Scale<Tag_>::value(DT1_(-1.), defect);
+                        Scale<Tag_>::value(defect, DT1_(-1.));
 
                         DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
@@ -640,11 +640,11 @@ namespace honei
                             {
                                 if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                                 {
-                                    Scale<Tag_>::value(DT1_(1./alpha), defect);
+                                    Scale<Tag_>::value(defect, DT1_(1./alpha));
                                 }
                                 else
                                 {
-                                    Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                                    Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                                 }
                             }
 
@@ -668,7 +668,7 @@ namespace honei
                             }
 
                             ///Update solution:
-                            Scale<Tag_>::value(alpha, defect);
+                            Scale<Tag_>::value(defect, alpha);
                             Sum<Tag_>::value(x_actual, defect);
 
                             defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -699,7 +699,7 @@ namespace honei
                     DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                     Difference<Tag_>::value(defect, right_hand_side);
 
-                    Scale<Tag_>::value(DT1_(-1.), defect);
+                    Scale<Tag_>::value(defect, DT1_(-1.));
                     DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                     unsigned long iter_number = 0;
@@ -731,11 +731,11 @@ namespace honei
                         {
                             if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                             {
-                                Scale<Tag_>::value(DT1_(1./alpha), defect);
+                                Scale<Tag_>::value(defect, DT1_(1./alpha));
                             }
                             else
                             {
-                                Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                                Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                             }
                         }
 
@@ -759,7 +759,7 @@ namespace honei
                         }
 
                         ///Update solution:
-                        Scale<Tag_>::value(alpha, defect);
+                        Scale<Tag_>::value(defect, alpha);
                         Sum<Tag_>::value(x_actual, defect);
 
                         defect = Product<Tag_>::value(system_matrix, x_actual);
@@ -793,7 +793,7 @@ namespace honei
                 DenseVector<DT1_> defect = Product<Tag_>::value(system_matrix, x_actual);
                 Difference<Tag_>::value(defect, right_hand_side);
 
-                Scale<Tag_>::value(DT1_(-1.), defect);
+                Scale<Tag_>::value(defect, DT1_(-1.));
                 DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                 unsigned long iter_number = 0;
@@ -819,11 +819,11 @@ namespace honei
                     {
                         if(fabs(alpha) > std::numeric_limits<double>::epsilon())
                         {
-                            Scale<Tag_>::value(DT1_(1./alpha), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./alpha));
                         }
                         else
                         {
-                            Scale<Tag_>::value(DT1_(1./ std::numeric_limits<double>::epsilon()), defect);
+                            Scale<Tag_>::value(defect, DT1_(1./ std::numeric_limits<double>::epsilon()));
                         }
                     }
 
@@ -847,7 +847,7 @@ namespace honei
                     }
 
                     ///Update solution:
-                    Scale<Tag_>::value(alpha, defect);
+                    Scale<Tag_>::value(defect, alpha);
                     Sum<Tag_>::value(x_actual, defect);
 
                     defect = Product<Tag_>::value(system_matrix, x_actual);

@@ -256,16 +256,16 @@
                     // Calculating square_dist = (square_dist - diag(sum_vec))
                     BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     Difference<Tag_>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
-                    Scale<Tag_>::value(DataType_(-1), square_dist);
+                    Scale<Tag_>::value(square_dist, DataType_(-1));
 
                     // Calculating attractive_forces = (square_dist * _coordinates)
                     DenseMatrix<DataType_> attractive_forces(Product<Tag_>::value(square_dist, _coordinates));
 
                     // Calculating attractive_forces = (1/k^2 * attractive_forces)
-                    Scale<Tag_>::value(DataType_(1 / _square_edge_length), attractive_forces);
+                    Scale<Tag_>::value(attractive_forces, DataType_(1 / _square_edge_length));
 
                     // Calculating inv_square_dist <- -inv_square_dist
-                    Scale<Tag_>::value(DataType_(-1), inv_square_dist);
+                    Scale<Tag_>::value(inv_square_dist, DataType_(-1));
 
                     // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
                     BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), sum_vec_inv);
@@ -275,7 +275,7 @@
                     DenseMatrix<DataType_> repulsive_forces(Product<Tag_>::value(diff, _coordinates));
 
                     // Calculating repulsive_forces = (k^2 * repulsive_forces)
-                    Scale<Tag_>::value(_square_edge_length, repulsive_forces);
+                    Scale<Tag_>::value(repulsive_forces, _square_edge_length);
 
                     // Calculate the maximal force and the result forces
                     DataType_ result(0);
@@ -396,13 +396,13 @@
                     // Calculating square_dist = (square_dist - diag(sum_vec))
                     BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     Difference<Tag_>::value(diag, square_dist);
-                    Scale<Tag_>::value(DataType_(-1), square_dist);
+                    Scale<Tag_>::value(square_dist, DataType_(-1));
 
                     // Calculating attractive_forces = (square_dist * _coordinates)
                     DenseMatrix<DataType_> attractive_forces(Product<Tag_>::value(square_dist, _coordinates));
 
                     // Calculating inv_square_dist <- -inv_square_dist
-                    Scale<Tag_>::value(DataType_(-1), inv_square_dist);
+                    Scale<Tag_>::value(inv_square_dist, DataType_(-1));
 
                     // Calculating diff = (diag(sum_vec_inv) - inv_square_dist)
                     BandedMatrix<DataType_> inv_diag(sum_vec_inv.size(), sum_vec_inv);
@@ -539,7 +539,7 @@
 
                     // Mul(_graph_distance, _graph_distance) * _edge_length^2
                     ElementProduct<Tag_>::value(_graph_distance, _graph_distance);
-                    Scale<Tag_>::value(_square_edge_length, _graph_distance);
+                    Scale<Tag_>::value(_graph_distance, _square_edge_length);
 
                     // Calculate 1 / _graph_distance
                     ElementInverse<Tag_>::value(_graph_distance);
@@ -550,7 +550,7 @@
                     // _spring_force_parameters = mul( _graph_distance, square_dist) -1
                     _spring_force_parameters = _graph_distance.copy();
                     _spring_force_parameters = ElementProduct<Tag_>::value(_spring_force_parameters, square_dist);
-                    Sum<Tag_>::value(DataType_(-1), _spring_force_parameters);
+                    Sum<Tag_>::value(_spring_force_parameters, DataType_(-1));
 
 
                     // Calculate the single diagonal matrix containing the row sum vector of _spring_force_parameters
@@ -560,7 +560,7 @@
                     BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     square_dist = _spring_force_parameters.copy();
                     square_dist = Difference<Tag_>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
-                    Scale<Tag_>::value(DataType_(-1), square_dist);
+                    Scale<Tag_>::value(square_dist, DataType_(-1));
 
                     // Calculating spring_forces = (_coordinates * square_dist)
                     _spring_forces = Product<Tag_>::value(square_dist, _coordinates);
@@ -579,7 +579,7 @@
                     if (result > std::numeric_limits<DataType_>::epsilon())
                     {
                         DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[max_node].copy());
-                        Scale<Tag_>::value(_step_widths[max_node] / result, _spring_force_of_max_node);
+                        Scale<Tag_>::value(_spring_force_of_max_node, _step_widths[max_node] / result);
                         Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node);
                     }
 
@@ -600,7 +600,7 @@
                     for (int i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_previous_coordinates_difference[i], _previous_coordinates[max_node]);
-                        Scale<Tag_>::value(DataType_(-1), _previous_coordinates_difference[i]);
+                        Scale<Tag_>::value(_previous_coordinates_difference[i], DataType_(-1));
                     }
 
                     // Calculate the new _spring_force_parameters
@@ -616,7 +616,7 @@
                     }
 
                     ElementProduct<Tag_>::value(_spring_force_parameters_of_max_node, _graph_distance[max_node].copy());
-                    Sum<Tag_>::value(DataType_(-1), _spring_force_parameters_of_max_node);
+                    Sum<Tag_>::value(_spring_force_parameters_of_max_node, DataType_(-1));
                     for (int i(0) ; i != _spring_force_parameters.rows() ; ++i)
                     {
                         _spring_force_parameters(i, max_node) = _spring_force_parameters(max_node, i);
@@ -627,7 +627,7 @@
                     for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_coordinates_difference[i], _coordinates[max_node]);
-                        Scale<Tag_>::value(DataType_(-1), _coordinates_difference[i]);
+                        Scale<Tag_>::value(_coordinates_difference[i], DataType_(-1));
                     }
 
                     // Calculate the force difference (subtract the previous force of max_node and add the current force of max_node)
@@ -635,18 +635,18 @@
                     {
                         if (i != max_node)
                         {
-                            Scale<Tag_>::value(_spring_force_parameters(max_node, i), _coordinates_difference[i]);
-                            Scale<Tag_>::value(_spring_force_parameter_vector[i], _previous_coordinates_difference[i]);
+                            Scale<Tag_>::value(_coordinates_difference[i], _spring_force_parameters(max_node, i));
+                            Scale<Tag_>::value(_previous_coordinates_difference[i], _spring_force_parameter_vector[i]);
                             Sum<Tag_>::value(_coordinates_difference[max_node], _coordinates_difference[i]);
                             Difference<Tag_>::value(_coordinates_difference[i], _previous_coordinates_difference[i]);
                         }
                     }
                     Sum<Tag_>::value(_coordinates_difference[max_node], _spring_forces[max_node]);
-                    Scale<Tag_>::value(DataType_(-1), _coordinates_difference[max_node]);
+                    Scale<Tag_>::value(_coordinates_difference[max_node], DataType_(-1));
 
                     // previous_spring_force of max_node
                     DenseVector<DataType_> _previous_spring_force(_spring_forces[max_node].copy());
-                    Scale<Tag_>::value(DataType_(1 / Norm<vnt_l_two, true, Tag_>::value(_previous_spring_force)), _previous_spring_force);
+                    Scale<Tag_>::value(_previous_spring_force, DataType_(1 / Norm<vnt_l_two, true, Tag_>::value(_previous_spring_force)));
 
                     // Calculating _spring_forces = (_spring_forces + _force_difference)
                     Sum<Tag_>::value(_spring_forces, _coordinates_difference);
@@ -692,8 +692,8 @@
                     if (result > eps)
                         {
                             DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[max_node].copy());
-                            Scale<Tag_>::value(DataType_(_step_widths[max_node] / result), _spring_force_of_max_node);
-                            Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node);
+                            Scale<Tag_>::value(_spring_force_of_max_node, DataType_(_step_widths[max_node] / result));
+                            Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node) ;
                         }
 
                     max_force = result;
@@ -844,11 +844,11 @@
                     ElementInverse<Tag_>::value(_spring_force_parameters);
 
                     // Calculate square_dist = square_dist * 2
-                    Scale<Tag_>::value(DataType_(2), square_dist);
+                    Scale<Tag_>::value(square_dist, DataType_(2));
 
                     // _spring_force_parameters = _spring_force_parameters * square_dist -1
                     ElementProduct<Tag_>::value(_spring_force_parameters, square_dist);
-                    Sum<Tag_>::value(DataType_(-1), _spring_force_parameters);
+                    Sum<Tag_>::value(_spring_force_parameters, DataType_(-1));
 
 
                     // Calculate the single diagonal matrix containing the row sum vector of _spring_force_parameters
@@ -858,7 +858,7 @@
                     BandedMatrix<DataType_> diag(sum_vec.size(), sum_vec);
                     square_dist = _spring_force_parameters.copy();
                     square_dist = Difference<Tag_>::value(diag, square_dist); /// \todo Switch to MD::value(Dense, const Banded)
-                    Scale<Tag_>::value(DataType_(-1), square_dist);
+                    Scale<Tag_>::value(square_dist, DataType_(-1));
 
                     // Calculating spring_forces = (_coordinates * square_dist)
                     _spring_forces = Product<Tag_>::value(square_dist, _coordinates);
@@ -877,7 +877,7 @@
                     if (result > std::numeric_limits<DataType_>::epsilon()) 
                     {
                         DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[max_node].copy());
-                        Scale<Tag_>::value(_step_widths[max_node] / result, _spring_force_of_max_node);
+                        Scale<Tag_>::value(_spring_force_of_max_node, _step_widths[max_node] / result);
                         Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node);
                     }
 
@@ -898,7 +898,7 @@
                     for (int i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_previous_coordinates_difference[i], _previous_coordinates[max_node]);
-                        Scale<Tag_>::value(DataType_(-1), _previous_coordinates_difference[i]);
+                        Scale<Tag_>::value(_previous_coordinates_difference[i], DataType_(-1));
                     }
 
                     // Calculate the new _spring_force_parameters
@@ -916,9 +916,9 @@
                     DenseVector<DataType_> auxiliary2(_spring_force_parameters_of_max_node.copy());
                     Sum<Tag_>::value(auxiliary2, _graph_distance[max_node].copy());
                     ElementInverse<Tag_>::value(auxiliary2);
-                    Scale<Tag_>::value(DataType_(2), _spring_force_parameters_of_max_node);
+                    Scale<Tag_>::value(_spring_force_parameters_of_max_node, DataType_(2));
                     ElementProduct<Tag_>::value(_spring_force_parameters_of_max_node, auxiliary2);
-                    Sum<Tag_>::value(DataType_(-1), _spring_force_parameters_of_max_node);
+                    Sum<Tag_>::value(_spring_force_parameters_of_max_node, DataType_(-1));
                     for (int i(0) ; i != _spring_force_parameters.rows() ; ++i)
                     {
                         _spring_force_parameters(i, max_node) = _spring_force_parameters(max_node, i);
@@ -929,7 +929,7 @@
                     for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_coordinates_difference[i], _coordinates[max_node]);
-                        Scale<Tag_>::value(DataType_(-1), _coordinates_difference[i]);
+                        Scale<Tag_>::value(_coordinates_difference[i], DataType_(-1));
                     }
 
                     // Calculate the force difference (subtract the previous force of max_node and add the current force of max_node)
@@ -937,18 +937,18 @@
                     {
                         if (i != max_node)
                         {
-                            Scale<Tag_>::value(_spring_force_parameters(max_node, i), _coordinates_difference[i]);
-                            Scale<Tag_>::value(_spring_force_parameter_vector[i], _previous_coordinates_difference[i]);
+                            Scale<Tag_>::value(_coordinates_difference[i],_spring_force_parameters(max_node, i));
+                            Scale<Tag_>::value(_previous_coordinates_difference[i], _spring_force_parameter_vector[i]);
                             Sum<Tag_>::value(_coordinates_difference[max_node], _coordinates_difference[i]);
                             Difference<Tag_>::value(_coordinates_difference[i], _previous_coordinates_difference[i]);
                         }
                     }
                     Sum<Tag_>::value(_coordinates_difference[max_node], _spring_forces[max_node]);
-                    Scale<Tag_>::value(DataType_(-1), _coordinates_difference[max_node]);
+                    Scale<Tag_>::value(_coordinates_difference[max_node], DataType_(-1));
 
                     // previous_spring_force of max_node
                     DenseVector<DataType_> _previous_spring_force(_spring_forces[max_node].copy());
-                    Scale<Tag_>::value(DataType_(1 / Norm<vnt_l_two, true, Tag_>::value(_previous_spring_force)), _previous_spring_force);
+                    Scale<Tag_>::value(_previous_spring_force, DataType_(1 / Norm<vnt_l_two, true, Tag_>::value(_previous_spring_force)));
 
                     // Calculating _spring_forces = (_spring_forces + _force_difference)
                     Sum<Tag_>::value(_spring_forces, _coordinates_difference);
@@ -994,7 +994,7 @@
                     if (result > eps)
                     {
                         DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[max_node].copy());
-                        Scale<Tag_>::value(DataType_(_step_widths[max_node] / result), _spring_force_of_max_node);
+                        Scale<Tag_>::value(_spring_force_of_max_node, DataType_(_step_widths[max_node] / result));
                         Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node);
                     }
 

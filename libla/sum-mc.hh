@@ -190,7 +190,7 @@ namespace honei
         }
 
         template <typename DT1_>
-        static DenseMatrix<DT1_> & value(const DT1_  a, DenseMatrix<DT1_> & b)
+        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & b, const DT1_ a)
         { 
             CONTEXT("When adding scalar to DenseMatrix (MultiCore):");
 
@@ -198,7 +198,7 @@ namespace honei
             PoolTask * pt[b.rows()];
             for (unsigned long i = 0 ; i < b.rows() ; ++i)
             {
-                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, const DT1_, DenseVectorRange<DT1_> > mywrapper(a, b[i]);
+                TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DT1_ > mywrapper(b[i], a);
                 pt[i] = p->dispatch(mywrapper);
             }
             for (unsigned long i = 0; i < b.rows(); ++i)

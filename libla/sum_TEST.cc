@@ -665,7 +665,7 @@ class ScalarDenseMatrixSumTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(5));
-                Sum<Tag_>::value(DataType_(3), dm1);
+                Sum<Tag_>::value(dm1, DataType_(3));
 
                 TEST_CHECK_EQUAL(dm1, dm2);
             }
@@ -701,7 +701,7 @@ class ScalarDenseMatrixSumQuickTest :
         {
             unsigned long size(5);
             DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
-            Sum<Tag_>::value(DataType_(3), dm);
+            Sum<Tag_>::value(dm, DataType_(3));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
@@ -745,7 +745,7 @@ class ScalarDenseVectorSumTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(2)), dv2(size, DataType_(9));
-                Sum<Tag_>::value(DataType_(7), dv1);
+                Sum<Tag_>::value(dv1, DataType_(7));
 
                 TEST_CHECK_EQUAL(dv1, dv2);
             }
@@ -776,7 +776,7 @@ class ScalarDenseVectorSumQuickTest :
         {
             unsigned long size = 18;
             DenseVector<DataType_> dv1(size, DataType_(4)), dv2(size, DataType_(9));
-            Sum<Tag_>::value(DataType_(5), dv1);
+            Sum<Tag_>::value(dv1, DataType_(5));
 
             TEST_CHECK_EQUAL(dv1, dv2);
         }

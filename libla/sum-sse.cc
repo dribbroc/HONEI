@@ -385,7 +385,7 @@ DenseMatrix<double> & Sum<tags::CPU::SSE>::value(DenseMatrix<double> & a, const 
     return a;
 }
 
-DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(const float a, DenseVectorContinuousBase<float> & x)
+DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x, const float a)
 {
     CONTEXT("When adding DenseVectorContinuousBase<float> and float with SSE:");
 
@@ -394,7 +394,7 @@ DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(const float a, Den
     return x;
 }
 
-DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(const double a, DenseVectorContinuousBase<double> & x)
+DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x, const double a)
 {
     CONTEXT("When adding DenseVectorContinuousBase<double> and double with SSE:");
 
@@ -403,7 +403,7 @@ DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(const double a, D
     return x;
 }
 
-DenseMatrix<float> & Sum<tags::CPU::SSE>::value(const float a, DenseMatrix<float> & x)
+DenseMatrix<float> & Sum<tags::CPU::SSE>::value(DenseMatrix<float> & x, const float a)
 {
     CONTEXT("When adding DenseMatrix<float> and float with SSE:");
 
@@ -412,7 +412,7 @@ DenseMatrix<float> & Sum<tags::CPU::SSE>::value(const float a, DenseMatrix<float
     return x;
 }
 
-DenseMatrix<double> & Sum<tags::CPU::SSE>::value(const double a, DenseMatrix<double> & x)
+DenseMatrix<double> & Sum<tags::CPU::SSE>::value(DenseMatrix<double> & x, const double a)
 {
     CONTEXT("When adding DenseMatrix<double> and double with SSE:");
 

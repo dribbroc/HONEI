@@ -47,7 +47,7 @@ class BandedMatrixScaleTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
-                Scale<Tag_>::value(DataType_(3), bm1);
+                Scale<Tag_>::value(bm1, DataType_(3));
                 for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()),
                         ce_end(bm1.end_bands()) ; ce != ce_end ; ++ce)
                 {
@@ -98,7 +98,7 @@ class BandedMatrixScaleQuickTest :
             unsigned long size(20);
             DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
-            Scale<Tag_>::value(DataType_(3), bm1);
+            Scale<Tag_>::value(bm1, DataType_(3));
             for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()),
                     ce_end(bm1.end_bands()) ; ce != ce_end ; ++ce)
             {
@@ -150,7 +150,7 @@ class DenseMatrixScaleTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(6));
-                Scale<Tag_>::value(DataType_(3), dm1);
+                Scale<Tag_>::value(dm1, DataType_(3));
 
                 TEST_CHECK_EQUAL(dm1, dm2);
             }
@@ -185,7 +185,7 @@ class DenseMatrixScaleQuickTest :
         {
             unsigned long size(100);
             DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
-            Scale<Tag_>::value(DataType_(3), dm);
+            Scale<Tag_>::value(dm, DataType_(3));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
@@ -237,7 +237,7 @@ class SparseMatrixScalarTest :
                         *j = DataType_(6);
                     }
                 }
-                Scale<Tag_>::value(DataType_(3), sm1);
+                Scale<Tag_>::value(sm1, DataType_(3));
 
                 TEST_CHECK_EQUAL(sm1, sm2);
             }
@@ -283,7 +283,7 @@ class SparseMatrixScaleQuickTest :
                     *j = DataType_(6);
                 }
             }
-            Scale<Tag_>::value(DataType_(3), sm1);
+            Scale<Tag_>::value(sm1, DataType_(3));
 
             TEST_CHECK_EQUAL(sm1, sm2);
         }
@@ -323,7 +323,7 @@ class DenseVectorScaleTest :
             {
                 DenseVector<DataType_> source(size * 4, DataType_(3));
                 DenseVectorRange<DataType_> dv(source, size, 3);
-                Scale<Tag_>::value(DataType_(2), dv);
+                Scale<Tag_>::value(dv, DataType_(2));
                 DataType_ v1(Norm<vnt_l_one>::value(dv));
                 TEST_CHECK_EQUAL(v1, 6 * size);
             }
@@ -367,7 +367,7 @@ class DenseVectorScaleQuickTest :
             DenseVector<DataType_> source(size * 4, DataType_(3));
             DenseVectorRange<DataType_> dv1(source, size, 3);
 
-            Scale<Tag_>::value(DataType_(2), dv1);
+            Scale<Tag_>::value(dv1, DataType_(2));
             DataType_ v1(Norm<vnt_l_one>::value(dv1));
             TEST_CHECK_EQUAL(v1, 6 * size);
         }
@@ -407,7 +407,7 @@ class SparseVectorScaleTest :
                 {
                     if (i.index() % 10 == 0) *i = 3;
                 }
-                Scale<Tag_>::value(static_cast<DataType_>(2), sv1);
+                Scale<Tag_>::value(sv1, DataType_(2));
                 DataType_ v1(Norm<vnt_l_one>::value(sv1));
                 TEST_CHECK_EQUAL(v1, 6 * (size / 10 + 1));
             }
@@ -425,7 +425,7 @@ SparseVectorScaleTest<tags::CPU::SSE, float> sse_sparse_vector_scale_test_float(
 SparseVectorScaleTest<tags::CPU::SSE, double> sse_sparse_vector_scale_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-//SparseVectorScaleTest<tags::Cell, float> cell_sparse_vector_scale_test_float("Cell float");
+SparseVectorScaleTest<tags::Cell, float> cell_scalar_sparse_vector_product_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -448,7 +448,7 @@ class SparseVectorScaleQuickTest :
             {
                 if (i.index() % 10 == 0) *i = 3;
             }
-            Scale<Tag_>::value(static_cast<DataType_>(2), sv1);
+            Scale<Tag_>::value(sv1, DataType_(2));
             DataType_ v1(Norm<vnt_l_one>::value(sv1));
             TEST_CHECK_EQUAL(v1, 6 * (size / 10 + 1));
         }
@@ -465,7 +465,7 @@ SparseVectorScaleQuickTest<tags::CPU::SSE, float> sse_sparse_vector_scale_quick_
 SparseVectorScaleQuickTest<tags::CPU::SSE, double> sse_sparse_vector_scale_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-//SparseVectorScaleQuickTest<tags::Cell, float> cell_sparse_vector_scale_quick_test_float("Cell float");
+SparseVectorScaleQuickTest<tags::Cell, float> cell_scalar_sparse_vector_product_quick_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -487,7 +487,7 @@ class DenseVectorRangeScaleTest :
                 {
                     DenseVector<DataType_> source(size + 3, DataType_(3));
                     DenseVectorRange<DataType_> dvr(source, size, i);
-                    Scale<Tag_>::value(DataType_(2), dvr);
+                    Scale<Tag_>::value(dvr, DataType_(2));
                     DataType_ rslt(Norm<vnt_l_one>::value(dvr));
                     TEST_CHECK_EQUAL(rslt, 6 * size);
                 }
@@ -506,7 +506,7 @@ DenseVectorRangeScaleTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_
 DenseVectorRangeScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_scale_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//DenseVectorRangeScaleTest<tags::Cell, float> cell_dense_vector_range_scale_test_float("Cell float");
+DenseVectorRangeScaleTest<tags::Cell, float> cell_dense_vector_range_scale_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -528,7 +528,7 @@ class DenseVectorRangeScaleQuickTest :
                 {
                     DenseVector<DataType_> source(size + 3, DataType_(3));
                     DenseVectorRange<DataType_> dvr(source, size, i);
-                    Scale<Tag_>::value(DataType_(2), dvr);
+                    Scale<Tag_>::value(dvr, DataType_(2));
                     DataType_ rslt(Norm<vnt_l_one>::value(dvr));
                     TEST_CHECK_EQUAL(rslt, 6 * size);
                 }
@@ -538,15 +538,15 @@ class DenseVectorRangeScaleQuickTest :
 
 DenseVectorRangeScaleQuickTest<tags::CPU, float> dense_vector_range_scale_quick_test_float("float");
 DenseVectorRangeScaleQuickTest<tags::CPU, double> dense_vector_range_scale_quick_test_double("double");
-//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scale_quick_test_float("MC float");
-//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scale_quick_test_double("MC double");
+DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scale_quick_test_float("MC float");
+DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scale_quick_test_double("MC double");
 #ifdef HONEI_SSE
-//DenseVectorRangeScaleQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_scale_quick_test_float("sse float");
-//DenseVectorRangeScaleQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_scale_quick_test_double("sse double");
-//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_scale_quick_test_float("MC SSE float");
-//DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_scale_quick_test_double("MC SSE double");
+DenseVectorRangeScaleQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_scale_quick_test_float("sse float");
+DenseVectorRangeScaleQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_scale_quick_test_double("sse double");
+DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_scale_quick_test_float("MC SSE float");
+DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_scale_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-//DenseVectorRangeScaleQuickTest<tags::Cell, float> cell_dense_vector_range_scale_quick_test_float("Cell float");
+DenseVectorRangeScaleQuickTest<tags::Cell, float> cell_dense_vector_range_scale_quick_test_float("Cell float");
 #endif
 

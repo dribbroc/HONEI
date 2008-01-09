@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -274,7 +274,7 @@ namespace honei
          */
 
         template <typename DT_>
-        static DenseMatrix<DT_> & value(const DT_ a, DenseMatrix<DT_> & x)
+        static DenseMatrix<DT_> & value(DenseMatrix<DT_> & x, const DT_ a)
         {
             CONTEXT("When adding scalar to DenseMatrix:");
 
@@ -432,7 +432,7 @@ namespace honei
          */
 
         template <typename DT_>
-        static DenseVectorBase<DT_> & value(const DT_ a, DenseVectorBase<DT_> & x)
+        static DenseVectorBase<DT_> & value(DenseVectorBase<DT_> & x, const DT_ a)
         {
             CONTEXT("When adding scalar to DenseVectorBase:");
 
@@ -446,26 +446,26 @@ namespace honei
         }
 
         template <typename DT_>
-        static inline DenseVector<DT_> & value(const DT_ a, DenseVector<DT_> & x)
+        static inline DenseVector<DT_> & value(DenseVector<DT_> & x, const DT_ a)
         {
             DenseVectorBase<DT_> & temp = x;
-            Sum<>::value(a, temp);
+            Sum<>::value(temp, a);
             return x;
         }
 
         template <typename DT_>
-        static inline DenseVectorRange<DT_> & value(const DT_ a, DenseVectorRange<DT_> & x)
+        static inline DenseVectorRange<DT_> & value(DenseVectorRange<DT_> & x, const DT_ a)
         {
             DenseVectorBase<DT_> & temp = x;
-            Sum<>::value(a, temp);
+            Sum<>::value(temp, a);
             return x;
         }
 
         template <typename DT_>
-        static inline DenseVectorSlice<DT_> & value(const DT_ a, DenseVectorSlice<DT_> & x)
+        static inline DenseVectorSlice<DT_> & value(DenseVectorSlice<DT_> & x, const DT_ a)
         {
             DenseVectorBase<DT_> & temp = x;
-            Sum<>::value(a, temp);
+            Sum<>::value(temp, a);
             return x;
         }
         /// \}
@@ -588,7 +588,7 @@ namespace honei
          * \retval a The referenced matrix is changed by adding the given scalar to each of its elements.
          */
 
-        static DenseMatrix<float> & value(const float & b, DenseMatrix<float> & a);
+        static DenseMatrix<float> & value(DenseMatrix<float> & a, const float & b);
 
         /// \}
 
@@ -624,7 +624,7 @@ namespace honei
          * \retval Will modify the summand a and return it.
          */
 
-        static DenseVector<float> & value(const float & b, DenseVector<float> & a);
+        static DenseVector<float> & value(DenseVector<float> & a, const float & b);
 
         /// \}
     };
@@ -680,13 +680,13 @@ namespace honei
             return Sum<tags::CPU>::value(a, b);
         }
 
-        static DenseVectorContinuousBase<float> & value(const float a, DenseVectorContinuousBase<float> & x);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const float a);
 
-        static DenseVectorContinuousBase<double> & value(const double a, DenseVectorContinuousBase<double> & x);
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const double a);
 
-        static DenseMatrix<float> & value(const float a, DenseMatrix<float> & x);
+        static DenseMatrix<float> & value(DenseMatrix<float> & x, const float a);
 
-        static DenseMatrix<double> & value(const double a, DenseMatrix<double> & x);
+        static DenseMatrix<double> & value(DenseMatrix<double> & x, const double a);
         /// \}
     };
 
