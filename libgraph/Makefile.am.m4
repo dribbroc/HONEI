@@ -63,34 +63,39 @@ TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
-EXTRA_PROGRAMS = benchmarklist
+benchmark_SOURCES = bench.cc
+benchmark_LDADD = $(top_builddir)/benchmark/libbenchmark.a $(top_builddir)/libla/libla.la \
+	libgraph.la $(top_builddir)/libutil/libutil.la $(DYNAMIC_LD_LIBS)
+benchmark_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
+EXTRA_PROGRAMS = benchmark benchmarklist
 
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/libgraph/position_BENCHMARK
+	bash $(top_builddir)/libgraph/benchmark
 
 bench-sc: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/libgraph/position_BENCHMARK sc
+	bash $(top_builddir)/libgraph/benchmark sc
 
 bench-sse: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/libgraph/position_BENCHMARK sse
+	bash $(top_builddir)/libgraph/benchmark sse
 
 bench-mc: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/libgraph/position_BENCHMARK mc
+	bash $(top_builddir)/libgraph/benchmark mc
 
 bench-cpu: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/libgraph/position_BENCHMARK cpu
+	bash $(top_builddir)/libgraph/benchmark cpu
 
 bench-cell: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/libgraph/position_BENCHMARK cell
+	bash $(top_builddir)/libgraph/benchmark cell
 
 quickcheck: $(TESTS)
 	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check
