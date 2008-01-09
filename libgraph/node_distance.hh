@@ -78,7 +78,7 @@ namespace honei
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     DenseVector<DataType_> v_copy(v.copy());
-                    DataType_ d(Norm<>::value(Difference<>::value(v_copy, w)));
+                    DataType_ d(Norm<vnt_l_two, false, Tag_>::value(Difference<Tag_>::value(v_copy, w)));
                     *e = d;
                 }
             }
@@ -112,7 +112,7 @@ namespace honei
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     DenseVector<DataType_> v_copy(v.copy());
-                    DataType_ d(Norm<>::value(Difference<>::value(v_copy, w)));
+                    DataType_ d(Norm<vnt_l_two, false, Tag_>::value(Difference<Tag_>::value(v_copy, w)));
                     (d < square_force_range) && (d > std::numeric_limits<DataType_>::epsilon()) ? *e = 1 / d : *e = 0;
                     if (*g != false) *f = d;
                 }
@@ -146,12 +146,12 @@ namespace honei
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     DenseVector<DataType_> v_copy(v.copy());
-                    DataType_ d(Norm<>::value(Difference<>::value(v_copy, w)));
+                    DataType_ d(Norm<vnt_l_two, false, Tag_>::value(Difference<Tag_>::value(v_copy, w)));
                     (d < square_force_range) && (d > std::numeric_limits<DataType_>::epsilon()) ? *e = 1 / d : *e = 0;
                     if (*g > std::numeric_limits<DataType_>::epsilon()) *f = d;
                 }
             }
-        }
+        };
     };
 }
 #endif

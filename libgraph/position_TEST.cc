@@ -438,7 +438,7 @@ class FruchtermanReingoldPositionsTest :
             for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
                 e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
-                if (adj[i] > std::numeric_limits<DataType_>::epsilon()) 
+                if (adj[i] > std::numeric_limits<DataType_>::epsilon())
                 {
                     *e = adj[i];
                 }

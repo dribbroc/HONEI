@@ -238,7 +238,7 @@
                     _step_width(DataType_(coordinates.rows() * edge_length / 20)),
                     _repulsive_force_range(coordinates.rows() * edge_length)
                 {
-                } 
+                }
 
                 DataType_ value(const DataType_ & eps)
                 {
@@ -535,7 +535,7 @@
                     }
 
                     // Using Dijkstra to calculate the graph distance matrix
-                    Dijkstra<DataType_>::value(_graph_distance);
+                    Dijkstra<Tag_>::value(_graph_distance);
 
                     // Mul(_graph_distance, _graph_distance) * _edge_length^2
                     ElementProduct<Tag_>::value(_graph_distance, _graph_distance);
@@ -792,7 +792,7 @@
                     DenseMatrix<int> previous_nodes(_weights_of_edges.columns(), _weights_of_edges.rows(), 0);
 
                     // Calculate previous nodes
-                    Dijkstra<DataType_>::value(_graph_distance, previous_nodes);
+                    Dijkstra<Tag_>::value(_graph_distance, previous_nodes);
 
                     // Calculate a optimal distance
                     int row;

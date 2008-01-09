@@ -92,7 +92,8 @@ class KamadaKawaiPositionsBench :
             DataType_ max_node_force;
             for(int i = 0; i < _count; ++i)
             {
-                Positions<Tag_, DataType_, methods::KamadaKawai> position(*((*pPosition).copy()), *pNeighbour, 2);
+                DenseMatrix<DataType_> pos_copy(pPosition->copy());
+                Positions<Tag_, DataType_, methods::KamadaKawai> position(pos_copy, *pNeighbour, 2.0f);
                 BENCHMARK(position.update(0.00001, _nodecount * 10));
                 number_of_iterations = position.number_of_iterations();
                 max_node_force = position.max_node_force();
@@ -164,7 +165,8 @@ class FruchtermanReingoldPositionsBench :
             DataType_ max_node_force;
             for(int i = 0; i < _count; ++i)
             {
-                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*((*pPosition).copy()), *pNeighbour, 2);
+                DenseMatrix<DataType_> pos_copy(pPosition->copy());
+                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(pos_copy, *pNeighbour, 2);
                 BENCHMARK(position.update(0.00001, _nodecount * 5));
                 number_of_iterations = position.number_of_iterations();
                 max_node_force = position.max_node_force();
@@ -244,7 +246,8 @@ class WeightedKamadaKawaiPositionsBench :
             DataType_ max_node_force;
             for(int i = 0; i < _count; ++i)
             {
-                Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*((*pPosition).copy()), *pNode_Weights, *pEdge_Weights);
+                DenseMatrix<DataType_> pos_copy(pPosition->copy());
+                Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(pos_copy, *pNode_Weights, *pEdge_Weights);
                 BENCHMARK(position.update(0.00001, _nodecount * 10));
                 number_of_iterations = position.number_of_iterations();
                 max_node_force = position.max_node_force();
@@ -324,7 +327,8 @@ class WeightedFruchtermanReingoldPositionsBench :
             DataType_ max_node_force;
             for(int i = 0; i < _count; ++i)
             {
-                Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*((*pPosition).copy()), *pNode_Weights, *pEdge_Weights);
+                DenseMatrix<DataType_> pos_copy(pPosition->copy());
+                Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(pos_copy, *pNode_Weights, *pEdge_Weights);
                 BENCHMARK(position.update(0.00001, _nodecount * 5));
                 number_of_iterations = position.number_of_iterations();
                 max_node_force = position.max_node_force();
