@@ -31,7 +31,7 @@ using namespace honei;
 using namespace tests;
 
 template <typename Tag_, typename DataType_>
-// our PositionsTest is a BaseTest. 
+// our PositionsTest is a BaseTest.
 class EvolvingGraphTest :
     public BaseTest
  {
@@ -42,6 +42,7 @@ class EvolvingGraphTest :
         EvolvingGraphTest(const std::string & type) :
             BaseTest("evolving_graph_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
     virtual void run() const
@@ -141,3 +142,7 @@ class EvolvingGraphTest :
 // instantiate test cases
 EvolvingGraphTest<tags::CPU, float> evolving_graph_test_float("float");
 EvolvingGraphTest<tags::CPU, double> evolving_graph_test_doube("double");
+#ifdef HONEI_SSE
+EvolvingGraphTest<tags::CPU::SSE, float> sse_evolving_graph_test_float("SSE float");
+EvolvingGraphTest<tags::CPU::SSE, double> sse_evolving_graph_test_doube("SSE double");
+#endif

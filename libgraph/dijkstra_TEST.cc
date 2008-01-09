@@ -27,7 +27,7 @@
 using namespace honei;
 using  namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DijkstraQuickTest :
     public QuickTest
 {
@@ -35,6 +35,7 @@ class DijkstraQuickTest :
         DijkstraQuickTest(const std::string & type) :
             QuickTest("dijkstra_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -61,7 +62,7 @@ class DijkstraQuickTest :
                     }
 
             // Creating a distance object with the test scenario
-            DenseMatrix<DataType_> distance = Dijkstra<DataType_>::value(*pCost);
+            DenseMatrix<DataType_> distance = Dijkstra<Tag_>::value(*pCost);
 
             TEST_CHECK_EQUAL(distance[0][0], 0);
             TEST_CHECK_EQUAL(distance[1][1], 0);
@@ -69,13 +70,13 @@ class DijkstraQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[3][4], 2, std::numeric_limits<DataType_>::epsilon());
 
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost3(new DenseMatrix<DataType_>(3, 2));
-            TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost3), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost3), MatrixRowsDoNotMatch);
 
             // Creating an empty node matrix to compute the previous node matrix
             std::tr1::shared_ptr<DenseMatrix<int> > pNodes(new DenseMatrix<int>(7,7));
 
             // Computing graph distance matrix and previous node matrix
-            Dijkstra<DataType_>::value( *pCost2, *pNodes);
+            Dijkstra<Tag_>::value( *pCost2, *pNodes);
 
             TEST_CHECK_EQUAL((*pCost2)[0][0], 0);
             TEST_CHECK_EQUAL((*pCost2)[1][1], 0);
@@ -88,16 +89,20 @@ class DijkstraQuickTest :
             TEST_CHECK_EQUAL((*pNodes)[6][4], 5);
 
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost4(new DenseMatrix<DataType_>(3, 7));
-            TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost4, *pNodes), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost4, *pNodes), MatrixRowsDoNotMatch);
 
             std::tr1::shared_ptr<DenseMatrix<int> > pNodes2(new DenseMatrix<int>(7, 3));
-            TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost2, *pNodes2), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost2, *pNodes2), MatrixColumnsDoNotMatch);
 
             std::tr1::shared_ptr<DenseMatrix<int> > pNodes3(new DenseMatrix<int>(3, 7));
-            TEST_CHECK_THROWS(Dijkstra<DataType_>::value(*pCost2, *pNodes3), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost2, *pNodes3), MatrixRowsDoNotMatch);
         }
 };
 
 // instantiate test cases
-DijkstraQuickTest<float> dijkstra_quick_test_float("float");
-DijkstraQuickTest<double> dijkstra_quick_test_double("double");
+DijkstraQuickTest<tags::CPU, float> dijkstra_quick_test_float("float");
+DijkstraQuickTest<tags::CPU, double> dijkstra_quick_test_double("double");
+#ifdef HONEI_SSE
+DijkstraQuickTest<tags::CPU::SSE, float> sse_dijkstra_quick_test_float("SSE float");
+DijkstraQuickTest<tags::CPU::SSE, double> sse_dijkstra_quick_test_double("SSE double");
+#endif
