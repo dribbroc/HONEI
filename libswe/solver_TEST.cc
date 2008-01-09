@@ -134,7 +134,16 @@ class RelaxSolverTest :
             delete u;
             delete v;
             delete w;*/
-            TEST_CHECK(true);
+            bool pass = true;
+            for(unsigned long i(0); i < height.rows(); ++i)
+            {
+                for(unsigned long j(0); j < height.columns(); ++j)
+                {
+                    if(height[i][j] < DataType_(5.) || height[i][j] > DataType_(10.))
+                        pass = false;
+                }
+            }
+            TEST_CHECK(pass);
         }
 };
 RelaxSolverTest<tags::CPU, float> relax_solver_test_float("float");

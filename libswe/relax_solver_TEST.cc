@@ -137,28 +137,28 @@ class RelaxSolverTest :
             }
             cout << "Height -field after solve():\n";
             cout << stringify(height);
-            /*cout << "Relax - vectors after solve():\n";
-            cout << "u^T:\n";
-            cout << stringify(u) << endl;
-            cout << "v^T:\n";
-            cout << stringify(v) << endl;
-            cout << "w^T:\n";
-            cout << stringify(w) << endl;*/
-            /*delete height;
-            delete bottom;
-            delete u1;
-            delete u2;
-            delete u;
-            delete v;
-            delete w;*/
-            TEST_CHECK(true);
+
+            bool pass = true;
+            for(unsigned long i(0); i < height.rows(); ++i)
+            {
+                for(unsigned long j(0); j < height.columns(); ++j)
+                {
+                    if(height[i][j] < DataType_(5.) || height[i][j] > DataType_(10.))
+                        pass = false;
+                }
+            }
+            TEST_CHECK(pass);
         }
 };
 RelaxSolverTest<tags::CPU, float> relax_solver_test_float("float");
 RelaxSolverTest<tags::CPU, double> relax_solver_test_double("double");
+RelaxSolverTest<tags::CPU::MultiCore, float> mc_relax_solver_test_float("mc float");
+RelaxSolverTest<tags::CPU::MultiCore, double> mc_relax_solver_test_double("mc double");
 #ifdef HONEI_SSE
 RelaxSolverTest<tags::CPU::SSE, float> sse_relax_solver_test_float("sse float");
 RelaxSolverTest<tags::CPU::SSE, double> sse_relax_solver_test_double("sse double");
+RelaxSolverTest<tags::CPU::MultiCore::SSE, float> mc_sse_relax_solver_test_float("mc sse float");
+RelaxSolverTest<tags::CPU::MultiCore::SSE, double> ms_sse_relax_solver_test_double("mc sse double");
 #endif
 #ifdef HONEI_CELL
 RelaxSolverTest<tags::Cell, float> cell_relax_solver_test_float("cell float");
