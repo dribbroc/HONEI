@@ -225,8 +225,6 @@ namespace honei
 
 #if defined (HONEI_SSE)
             Scale<tags::CPU::SSE>::value(b, -1);
-#elif defined (HONEI_CELL)
-            Scale<tags::Cell>::value(b, -1);
 #else
             Scale<tags::CPU>::value(b, -1);
 #endif
@@ -285,8 +283,6 @@ namespace honei
 
 #if defined (HONEI_SSE)
             Scale<tags::CPU::SSE>::value(b, -1);
-#elif defined (HONEI_CELL)
-            Scale<tags::Cell>::value(b, -1);
 #else
             Scale<tags::CPU>::value(b, -1);
 #endif
