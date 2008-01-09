@@ -78,11 +78,10 @@ namespace honei
     template <>
     struct PostProcessing<output_types::GNUPLOT>
     {
-        CONTEXT("When processing RelaxSolver post output.");
-
         template<typename ResPrec_>
         static inline void value(DenseMatrix<ResPrec_> & height, unsigned long every, unsigned long d_width, unsigned long d_height, unsigned long solve_time)
         {
+            CONTEXT("When processing RelaxSolver post output.");
             if(solve_time % every == 0 || solve_time == 0)
             {
                 string filename;
