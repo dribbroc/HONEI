@@ -202,5 +202,19 @@ namespace honei
 
         return b;
     }
+
+    SparseMatrix<float> &
+    Scale<tags::Cell>::value(SparseMatrix<float> & b, const float a)
+    {
+        CONTEXT("When scaling SparseMatrix<float> (Cell):");
+
+        for (SparseMatrix<float>::RowIterator i(b.begin_non_zero_rows()), i_end(b.end_non_zero_rows()) ; i != i_end ; ++i)
+        {
+           *i = Scale<tags::Cell>::value(*i, a);
+        }
+
+        return b;
+    }
+
 }
 

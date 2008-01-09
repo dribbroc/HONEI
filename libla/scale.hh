@@ -283,6 +283,8 @@ namespace honei
 
         static SparseVector<float> & value(SparseVector<float> & x, const float a);
 
+        static SparseMatrix<float> & value(SparseMatrix<float> & x, const float a);
+
         /// \}
     };
 
