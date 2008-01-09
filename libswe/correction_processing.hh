@@ -69,6 +69,8 @@ namespace honei
             template <typename WorkPrec_>
             static inline void value(DenseVector<WorkPrec_>& predictedu, DenseVector<WorkPrec_>& predictedv, DenseVector<WorkPrec_>& predictedw, DenseVector<WorkPrec_>& u, DenseVector<WorkPrec_>& v, DenseVector<WorkPrec_>& w, unsigned long d_width, unsigned long d_height, DenseMatrix<WorkPrec_> height)
             {
+                CONTEXT("When processing RelaxSolver correction.");
+
                 ///correct first 2(w+4)+2 ghost cells (tripels)
                 typename DenseVector<WorkPrec_>::ElementIterator iter(u.begin_elements());
                 while(iter.index()<(6*(d_width+4)+6))

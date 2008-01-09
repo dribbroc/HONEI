@@ -59,6 +59,8 @@ namespace honei
             template <typename WorkPrec_>
                 static inline DenseVector<WorkPrec_> _flow_x(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
                 {
+                    CONTEXT("When processing RelaxSolver flow, direction: X");
+
                     DenseVector<WorkPrec_> result((unsigned long)(3), WorkPrec_(0));
 
                     if (fabs(h) >= std::numeric_limits<WorkPrec_>::epsilon())
@@ -88,6 +90,8 @@ namespace honei
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> value(DenseVector<WorkPrec_> & vector)
             {
+                CONTEXT("When processing RelaxSolver flow, direction: X");
+
                 typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
                 WorkPrec_ height, velocity1;
                 DenseVector<WorkPrec_> temp((unsigned long)(3), WorkPrec_(0));
@@ -141,6 +145,8 @@ namespace honei
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> _flow_y(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2)
             {
+                CONTEXT("When processing RelaxSolver flow, direction: Y");
+
                 DenseVector<WorkPrec_> result((unsigned long)(3), WorkPrec_(0));
 
                 if (fabs(h) >= std::numeric_limits<WorkPrec_>::epsilon())
@@ -170,6 +176,8 @@ namespace honei
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> value(DenseVector<WorkPrec_> & vector)
             {
+                CONTEXT("When processing RelaxSolver flow, direction: Y");
+
                 typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
                 WorkPrec_ height, velocity1;
                 DenseVector<WorkPrec_> temp((unsigned long)(3), WorkPrec_(0));
