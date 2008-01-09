@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* libla/scale_TEST.cc: Fixed test cases for the SSE backend.
+
 2008-01-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libgraph/dijkstra.hh, libgraph/position.hh, libla/banded_matrix.hh,
