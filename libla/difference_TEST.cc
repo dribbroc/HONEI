@@ -225,6 +225,11 @@ class BandedMatrixSparseMatrixDifferenceTest :
             {
                 DenseVector<DT_> dv1(size, DT_(2));
                 BandedMatrix<DT_> bm1(size, dv1);
+                bm1.insert_band(2,dv1);
+                bm1.insert_band(-2,dv1);
+                bm1.insert_band(-3,dv1);
+                bm1.insert_band(-4,dv1);
+                bm1.insert_band(5,dv1);
                 SparseMatrix<DT_> sm2(size, size, size / 8 + 1),
                         sm3(size, size, size / 8 + 1);
 

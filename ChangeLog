@@ -1,9 +1,14 @@
+
 ChangeLog for HONEI
 ===================
 
 This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
+
+2008-01-09 Andre Matuschek <andre@matuschek.org>
+
+	* libla/difference_TEST.cc: Improved test, possibly revealing a bug in difference (BM,SM) - MC.
 
 2008-01-09 David Gies <david-gies@gmx.de>
 
