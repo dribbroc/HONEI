@@ -223,7 +223,13 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
+#if defined (HONEI_SSE)
+            Scale<tags::CPU::SSE>::value(b, -1);
+#elif defined (HONEI_CELL)
+            Scale<tags::Cell>::value(b, -1);
+#else
             Scale<tags::CPU>::value(b, -1);
+#endif
 
             int middle_index(a.rows() -1);
             for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
@@ -277,7 +283,13 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
+#if defined (HONEI_SSE)
+            Scale<tags::CPU::SSE>::value(b, -1);
+#elif defined (HONEI_CELL)
+            Scale<tags::Cell>::value(b, -1);
+#else
             Scale<tags::CPU>::value(b, -1);
+#endif
 
             int middle_index(a.rows() -1);
             for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
