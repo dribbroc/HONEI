@@ -10,7 +10,7 @@ dnl on this file at present...
 
 add(`dijkstra',                         `hh', `test')
 add(`mask_error',                       `hh', `cc')
-add(`node_distance',                    `hh', `test')
+add(`node_distance',                    `hh', `test', `benchmark')
 add(`position',                         `hh', `test', `benchmark')
 add(`node',                             `hh')
 add(`abstract_graph',                   `hh')
