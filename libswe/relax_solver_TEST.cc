@@ -143,7 +143,7 @@ class RelaxSolverTest :
             {
                 for(unsigned long j(0); j < height.columns(); ++j)
                 {
-                    if(height[i][j] < DataType_(5.) || height[i][j] > DataType_(10.))
+                    if(height[i][j] < DataType_(4.8) || height[i][j] > DataType_(10.))
                         pass = false;
                 }
             }
