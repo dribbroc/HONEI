@@ -6,6 +6,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-10 Sven Mallach <sven.mallach@honei.org>
+
+	* libla/scale_BENCHMARK.cc, libla/sum_BENCHMARK.cc: Adjusted calls to
+	Scale and Sum to meet new function heads.
+
 2008-01-10 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* libla/element_product_TEST.cc: (DV, DV), (DVR, DVR), (DM, DM)

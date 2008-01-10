@@ -38,7 +38,7 @@ class ScalarDenseMatrixSumBench :
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(Sum<Tag_>::value(DataType_ (alpha), dm0));
+                BENCHMARK(Sum<Tag_>::value(dm0, DataType_ (alpha)));
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info(dm0, alpha));
             evaluate(info);
