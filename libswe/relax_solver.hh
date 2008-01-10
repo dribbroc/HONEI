@@ -371,7 +371,7 @@ namespace honei {
                 DenseVector<WorkPrec_> v_result_c(predictedv.copy());
                 Scale<Tag_>::value(v_result_c, _eps);
                 Scale<Tag_>::value(f_c, _delta_t);
-                Sum<Tag_>::value(f_c, v_result_c);
+                Sum<Tag_>::value(v_result_c, f_c);
                 DenseVector<WorkPrec_> innersum1(v_result_c.copy());
 
                 ///Apply flow to old u:
@@ -399,7 +399,7 @@ namespace honei {
 
                 Scale<Tag_>::value(w_result_c, _eps);
                 Scale<Tag_>::value(flow2_c, _delta_t);
-                Sum<Tag_>::value(flow2_c, w_result_c);
+                Sum<Tag_>::value(w_result_c, flow2_c);
                 DenseVector<WorkPrec_> innersum11(w_result_c.copy());
 
                 DenseVector<WorkPrec_> flow3_c(_u_temp->copy());

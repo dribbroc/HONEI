@@ -1646,7 +1646,7 @@ namespace honei {
         DenseVector<WorkPrec_> v_result_c(predictedv.copy());
         Scale<Tag_>::value(v_result_c, _eps);
         Scale<Tag_>::value(f_c, _delta_t);
-        Sum<Tag_>::value(f_c, v_result_c);
+        Sum<Tag_>::value(v_result_c, f_c);
         DenseVector<WorkPrec_> innersum1(v_result_c.copy());
 
         ///Apply flow to old u:
