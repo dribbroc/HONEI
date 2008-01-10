@@ -6,6 +6,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-10 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* libla/element_product_TEST.cc: (DV, DV), (DVR, DVR), (DM, DM)
+	Limited the value of used elements to avoid numerical issues for
+	huge sizes in the result.
+
 2008-01-10 Volker Jung <volker.jung@honei.org>
 
 	* libla/product-mc.hh: Added implementation for multiplying a

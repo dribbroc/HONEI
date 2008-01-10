@@ -49,13 +49,14 @@ class DenseVectorElementProductTest :
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
                     dv3(size, DataType_(0));
 
+                unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
                 DataType_ sign_1(1), sign_2(1);
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
-                    *i = sign_1 * i.index();
-                    *j = sign_2 * (size - i.index() - 1);
-                    *k = sign_1 * sign_2 * (i.index() * (size - i.index() - 1));
+                    *i = sign_1 * (i.index() % num_limit);
+                    *j = sign_2 * (num_limit - (i.index() % num_limit) - 1);
+                    *k = sign_1 * sign_2 * ((i.index() % num_limit) * (num_limit - (i.index() % num_limit) - 1));
                     sign_1 *= -1;
                     sign_2 *= (-1) * sign_1;
                 }
@@ -108,13 +109,14 @@ class DenseVectorElementProductQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
                 dv3(size, DataType_(0));
 
+            unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
             DataType_ sign_1(1), sign_2(1);
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                 j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
-                *i = sign_1 * i.index();
-                *j = sign_2 * (size - i.index() - 1);
-                *k = sign_1 * sign_2 * (i.index() * (size - i.index() - 1));
+                *i = sign_1 * (i.index() % num_limit);
+                *j = sign_2 * (num_limit - (i.index() % num_limit) - 1);
+                *k = sign_1 * sign_2 * ((i.index() % num_limit) * (num_limit - (i.index() % num_limit) - 1));
                 sign_1 *= -1;
                 sign_2 *= (-1) * sign_1;
             }
@@ -124,7 +126,7 @@ class DenseVectorElementProductQuickTest :
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                 k(dv3.begin_elements()) ; i != i_end ; ++i, ++k)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon() * size * i.index());
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
             }
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
@@ -165,12 +167,13 @@ class DenseVectorRangeElementProductTest :
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
                     dv3(size, DataType_(0));
 
+                unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
                 DataType_ sign_1(1), sign_2(1);
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()); i != i_end ; ++i, ++j)
                 {
-                    *i = sign_1 * i.index();
-                    *j = sign_2 * (size - i.index() - 1);
+                    *i = sign_1 * (i.index() % num_limit);
+                    *j = sign_2 * (num_limit - (i.index() % num_limit) - 1);
                     sign_1 *= -1;
                     sign_2 *= (-1) * sign_1;
                 }
@@ -187,7 +190,7 @@ class DenseVectorRangeElementProductTest :
                             for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()), 
                                 i_end(dvr3.end_elements()); i != i_end ; ++i)
                             {
-                                *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * (i.index()+offset1) * (size - i.index() - offset2 -1);
+                                *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index() + offset2)%num_limit) -1);
                             }
 
                             ElementProduct<>::value(dvr1, dvr2);
@@ -241,12 +244,13 @@ class DenseVectorRangeElementProductQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
                 dv3(size, DataType_(0));
 
+            unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
             DataType_ sign_1(1), sign_2(1);
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                 j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
-                *i = sign_1 * i.index();
-                *j = sign_2 * (size - i.index() - 1);
+                *i = sign_1 * (i.index() % num_limit);
+                *j = sign_2 * (num_limit - (i.index() % num_limit) - 1);
                 sign_1 *= -1;
                 sign_2 *= (-1) * sign_1;
             }
@@ -262,7 +266,7 @@ class DenseVectorRangeElementProductQuickTest :
                         for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()),
                             i_end(dvr3.end_elements()); i != i_end ; ++i)
                         {
-                            *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * (i.index()+offset1) * (size - i.index() - offset2 -1);
+                            *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index()+offset2)%num_limit) -1);
                         }
 
                         ElementProduct<>::value(dvr1, dvr2);
@@ -711,14 +715,15 @@ class DenseMatrixElementProductTest :
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)), dm2(size+1, size, DataType_(0)),
                     dm3(size+1, size, DataType_(0));
 
+                unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
                 DataType_ sign_1(1), sign_2(1);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
                     i_end(dm1.end_elements()), j(dm2.begin_elements()), k(dm3.begin_elements()) ; 
                     i != i_end ; ++i, ++j, ++k)
                 {
-                    *i = sign_1 * i.index();
-                    *j = sign_2 * (size * (size + 1) - i.index() - 1);
-                    *k = sign_1 * sign_2 * (i.index() * (size * (size + 1) - i.index() - 1));
+                    *i = sign_1 * (i.index() % num_limit);
+                    *j = sign_2 * (num_limit - (i.index() % num_limit)- 1);
+                    *k = sign_1 * sign_2 * ((i.index() % num_limit) * (num_limit - (i.index() % num_limit) - 1));
                     sign_1 *= -1;
                     sign_2 *= (-1) * sign_1;
                 }
@@ -727,7 +732,7 @@ class DenseMatrixElementProductTest :
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
                     i_end(dm1.end_elements()),k(dm3.begin_elements()) ; i != i_end ; ++i, ++k)
                 {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon() * size * size * i.index());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
                 }
             }
             DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1)),
@@ -762,17 +767,19 @@ class DenseMatrixElementProductQuickTest :
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)), dm2(size+1, size, DataType_(0)),
                 dm3(size+1, size, DataType_(0));
 
-                DataType_ sign_1(1), sign_2(1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
-                    i_end(dm1.end_elements()), j(dm2.begin_elements()), k(dm3.begin_elements()) ; 
-                    i != i_end ; ++i, ++j, ++k)
-                {
-                    *i = sign_1 * i.index();
-                    *j = sign_2 * (size * (size + 1) - i.index() - 1);
-                    *k = sign_1 * sign_2 * (i.index() * (size * (size + 1) - i.index() - 1));
-                    sign_1 *= -1;
-                    sign_2 *= (-1) * sign_1;
-                }
+            unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
+
+            DataType_ sign_1(1), sign_2(1);
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
+                i_end(dm1.end_elements()), j(dm2.begin_elements()), k(dm3.begin_elements()) ; 
+                i != i_end ; ++i, ++j, ++k)
+            {
+                *i = sign_1 * (i.index() % num_limit);
+                *j = sign_2 * (num_limit - (i.index() % num_limit) - 1);
+                *k = sign_1 * sign_2 * (i.index() * (num_limit - (i.index() % num_limit) - 1));
+                sign_1 *= -1;
+                sign_2 *= (-1) * sign_1;
+            }
 
             ElementProduct<Tag_>::value(dm1, dm2);
 
