@@ -271,6 +271,44 @@ namespace honei
             }
         }
 
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> value(const SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+        {
+            CONTEXT("When multiplying SparseMatrix with DenseMatrix (MultiCore):");
+
+            if (a.columns() != b.rows())
+                throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+            DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
+
+            ThreadPool * tp(ThreadPool::get_instance());
+
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+            Mutex mutex[a.rows()];
+
+            for (typename SparseMatrix<DT1_>::ConstRowIterator i(a.begin_non_zero_rows()), i_end(a.end_non_zero_rows()) ;
+                    i != i_end ; ++i)
+            {
+                for (typename Vector<DT1_>::ConstElementIterator vi((*i).begin_non_zero_elements()), vi_end((*i).end_non_zero_elements()) ;
+                        vi != vi_end ; ++vi)
+                {
+                    ThreeArgWrapper< ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_>, const DT1_ >
+                        wrapper(result[i.index()], b[vi.index()], *vi);
+                    std::tr1::function<void ()> func = std::tr1::bind(wrapper, &mutex[i.index()]);
+                    std::tr1::shared_ptr<PoolTask> p(tp->dispatch(func));
+                    dispatched_tasks.push_back(p);
+                }
+            }
+
+            while (! dispatched_tasks.empty())
+            {
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
+            }
+
+            return result;
+        }
     };
 }
 #endif

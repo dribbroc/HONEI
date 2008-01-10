@@ -900,9 +900,13 @@ class SparseMatrixDenseMatrixProductTest :
 };
 SparseMatrixDenseMatrixProductTest<tags::CPU, float> sparse_matrix_dense_matrix_product_test_float("float");
 SparseMatrixDenseMatrixProductTest<tags::CPU, double> sparse_matrix_dense_matrix_product_test_double("double");
+SparseMatrixDenseMatrixProductTest<tags::CPU::MultiCore, float> mc_sparse_matrix_dense_matrix_product_test_float("MC float");
+SparseMatrixDenseMatrixProductTest<tags::CPU::MultiCore, double> mc_sparse_matrix_dense_matrix_product_test_double("MC double");
 #ifdef HONEI_SSE
 SparseMatrixDenseMatrixProductTest<tags::CPU::SSE, float> sse_sparse_matrix_dense_matrix_product_test_float("SSE float");
 SparseMatrixDenseMatrixProductTest<tags::CPU::SSE, double> sse_sparse_matrix_dense_matrix_product_test_double("SSE double");
+SparseMatrixDenseMatrixProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_dense_matrix_product_test_float("MC SSE float");
+SparseMatrixDenseMatrixProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_dense_matrix_product_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 SparseMatrixDenseMatrixProductTest<tags::Cell, float> cell_sparse_matrix_dense_matrix_product_test_float("Cell float");
@@ -941,9 +945,13 @@ class SparseMatrixDenseMatrixProductQuickTest :
 };
 SparseMatrixDenseMatrixProductQuickTest<tags::CPU, float> sparse_matrix_dense_matrix_product_quick_test_float("float");
 SparseMatrixDenseMatrixProductQuickTest<tags::CPU, double> sparse_matrix_dense_matrix_product_quick_test_double("double");
+SparseMatrixDenseMatrixProductQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_dense_matrix_product_quick_test_float("MC float");
+SparseMatrixDenseMatrixProductQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_dense_matrix_product_quick_test_double("MC double");
 #ifdef HONEI_SSE
 SparseMatrixDenseMatrixProductQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_dense_matrix_product_quick_test_float("SSE float");
 SparseMatrixDenseMatrixProductQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_dense_matrix_product_quick_test_double("SSE double");
+SparseMatrixDenseMatrixProductQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_dense_matrix_product_quick_test_float("MC SSE float");
+SparseMatrixDenseMatrixProductQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_dense_matrix_product_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 SparseMatrixDenseMatrixProductQuickTest<tags::Cell, float> cell_sparse_matrix_dense_matrix_product_quick_test_float("Cell float");

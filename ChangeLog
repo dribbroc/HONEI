@@ -6,6 +6,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-10 Volker Jung <volker.jung@honei.org>
+
+	* libla/product-mc.hh: Added implementation for multiplying a
+	SparseMatrix with a DenseMatrix.
+	* libla/product_TEST.cc: Added tests for multicore-version of
+	SparseMatrix-DenseMatrix-Product.
+
 2008-01-10 Markus Geveler <apryde@gmx.de>
 
 	* libswe/solver_TEST.cc, libswe/relax_solver_TEST.cc: Adjusted
