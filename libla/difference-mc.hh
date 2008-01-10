@@ -404,7 +404,7 @@ namespace honei
                         --i;
                         offset-=div;
                         DenseVectorRange<DT2_> range_1(*vi, div, offset);
-                        FourArgWrapper<MCDifference<Tag_>, const DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size());
+                        FourArgWrapper<MCDifference<Tag_>, const DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size()+1);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
                         dispatched_tasks.push_back(tp->dispatch(func));
                     }
@@ -415,7 +415,7 @@ namespace honei
                             --i;
                             offset-=(div+1);
                             DenseVectorRange<DT2_> range_1(*vi, div+1, offset);
-                            FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size());
+                            FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size()+1);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
                             dispatched_tasks.push_back(tp->dispatch(func));
                         }

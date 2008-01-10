@@ -223,13 +223,12 @@ class BandedMatrixSparseMatrixDifferenceTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseVector<DT_> dv1(size, DT_(2));
+                DenseVector<DT_> dv1(size, DT_(3));
                 BandedMatrix<DT_> bm1(size, dv1);
-                bm1.insert_band(2,dv1);
-                bm1.insert_band(-2,dv1);
-                bm1.insert_band(-3,dv1);
-                bm1.insert_band(-4,dv1);
-                bm1.insert_band(5,dv1);
+                for (long band((-long(size-1)) + (rand() % 6)) ; (band < long(size)) ; band += (rand() % 6) + 1) 
+                {
+                    bm1.insert_band(band, dv1);
+                }
                 SparseMatrix<DT_> sm2(size, size, size / 8 + 1),
                         sm3(size, size, size / 8 + 1);
 
@@ -239,8 +238,8 @@ class BandedMatrixSparseMatrixDifferenceTest :
                 {
                     if (i.index() % 10 == 0)
                     {
-                        *i = DT_(1);
-                        *k = DT_(-1);
+                        *i = DT_(2);
+                        *k = DT_(-2);
                     }
                 }
 
@@ -250,7 +249,7 @@ class BandedMatrixSparseMatrixDifferenceTest :
                 {
                     if (*i != DT_(0))
                     {
-                        *k = DT_(2);
+                        *k = DT_(3);
                         if (i.index() % 10 == 0)
                             *k = DT_(1);
                     }
