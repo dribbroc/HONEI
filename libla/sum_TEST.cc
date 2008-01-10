@@ -28,6 +28,7 @@
 #include <tr1/memory>
 #include <iostream>
 #include <cstdlib>
+
 using namespace honei;
 using namespace tests;
 
@@ -482,9 +483,23 @@ class DenseMatrixSumTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(-3)),
                     dm3(size+1, size, DataType_(-1));
+
                 Sum<Tag_>::value(dm1, dm2);
 
                 TEST_CHECK_EQUAL(dm1, dm3);
+
+                DenseMatrix<DataType_> dm4(size + 1, size, DataType_(117));
+
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm4.begin_elements()), i_end(dm4.end_elements()),
+                        si(dm2.begin_elements()), ri(dm3.begin_elements()) ; i != i_end ; ++i, ++si, ++ri)
+                {
+                    *i  = *i + i.row() + i.column();
+                    *si = *si + si.row() - si.column();
+                    *ri = DataType_(117) + DataType_(2) * ri.row() - DataType_(3);
+                }
+
+                Sum<Tag_>::value(dm4, dm2);
+                TEST_CHECK_EQUAL(dm4, dm3);
             }
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
@@ -498,8 +513,8 @@ DenseMatrixSumTest<tags::CPU, double> dense_matrix_sum_test_double("double");
 DenseMatrixSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_sum_test_float("MC float");
 DenseMatrixSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_sum_test_double("MC double");
 #ifdef HONEI_SSE
-DenseMatrixSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_sum_test_float("MC float");
-DenseMatrixSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_sum_test_double("MC double");
+DenseMatrixSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_sum_test_float("MC SSE float");
+DenseMatrixSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_sum_test_double("MC SSE double");
 DenseMatrixSumTest<tags::CPU::SSE, float> sse_dense_matrix_sum_test_float("SSE float");
 DenseMatrixSumTest<tags::CPU::SSE, double> sse_dense_matrix_sum_test_double("SSE double");
 #endif
@@ -668,6 +683,27 @@ class ScalarDenseMatrixSumTest :
                 Sum<Tag_>::value(dm1, DataType_(3));
 
                 TEST_CHECK_EQUAL(dm1, dm2);
+
+                DenseMatrix<DataType_> dm3(size + 1, size, DataType_(0));
+                DenseMatrix<DataType_> dm4(size + 1, size, DataType_(0)),
+                                       dm5(size + 1, size, DataType_(0)),
+                                       dm6(size + 1, size, DataType_(0));
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements()),
+                        i_end(dm3.end_elements()), li(dm4.begin_elements()),
+                        mi(dm5.begin_elements()), ni(dm6.begin_elements())
+                        ; i != i_end ; ++i, ++li, ++mi, ++ni)
+                {
+                    *i = i.row() + i.column() - DataType_(size / 2);
+                    *li = *i;
+                    *mi = *i - 7;
+                    *ni = *i + 16501;
+                }
+                Sum<Tag_>::value(dm3, DataType_(0));
+                TEST_CHECK_EQUAL(dm3, dm4);
+                Sum<Tag_>::value(dm3, DataType_(-7));
+                TEST_CHECK_EQUAL(dm3, dm5);
+                Sum<Tag_>::value(dm3, DataType_(16508));
+                TEST_CHECK_EQUAL(dm3, dm6);
             }
         }
 };
