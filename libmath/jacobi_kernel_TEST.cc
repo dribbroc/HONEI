@@ -113,7 +113,7 @@ class JacobiKernelTestBanded:
             while(fabs(norm_x - norm_x_last) > konv_rad)
             {
 
-                JacobiKernel<Tag_>::value(A, b, x, diag_inverted, difference);
+                JacobiKernel<Tag_>::value(b, x, diag_inverted, difference);
                 norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                 norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                 x_last = x.copy();

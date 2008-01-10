@@ -11,6 +11,11 @@ see the NEWS file.
 	* libmath/jacobi_kernel_TEST.cc, libmath/jacobi_kernel.hh: Removed
 	unnessecary parameter.
 
+2008-01-10 Markus Geveler <apryde@gmx.de>
+
+	* libmath/jacobi_kernel_TEST.cc, libmath/jacobi_kernel.hh: Removed
+	unnessecary parameter.
+
 2008-01-09 Andre Matuschek <andre@matuschek.org>
 
 	* libla/difference_TEST.cc: Improved test, possibly revealing a bug in difference (BM,SM) - MC.
