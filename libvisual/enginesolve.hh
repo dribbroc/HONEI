@@ -21,7 +21,7 @@
 
 #include <GL/glut.h>
 #include <libla/dense_matrix.hh>
-#include <libswe/solver.hh>
+#include <libswe/relax_solver.hh>
 
 namespace honei
 {
@@ -83,7 +83,7 @@ namespace honei
         double eps = 10e-6;
         float manning = float(0);
 #ifdef HONEI_SSE
-        RelaxSolver<tags::CPU::SSE, float, float, float, float, float> solver( &height, &bottom, &u1, &u2, &u, &v, &w,
+        RelaxSolver<tags::CPU::SSE, float, float, float, float, float, SIMPLE, REFLECT> solver( &height, &bottom, &u1, &u2, &u, &v, &w,
                 dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d, manning);
 #elif defined HONEI_CELL
     RelaxSolver<tags::CELL, float, float, float, float, float> solver( &height, &bottom, &u1, &u2, &u, &v, &w,

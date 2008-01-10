@@ -17,7 +17,6 @@
  */
 
 #include <libvisual/enginesolve.hh>
-#include <libswe/solver.hh>
 #include <unittest/unittest.hh>
 #include <libutil/stringify.hh>
 #include <string>
