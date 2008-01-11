@@ -70,8 +70,7 @@ namespace honei
     struct JacobiKernel<tags::CPU::SSE>
     {
         public:
-            template<typename DT1_, typename DT2_>
-            static inline  DenseVector<DT1_> value(DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrix<DT1_> & difference);
+            static /*inline*/ DenseVector<float> value(DenseVector<float> & b, DenseVector<float> & x, DenseVector<float> & d, BandedMatrix<float> & a);
     };
 
     template<>
