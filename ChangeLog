@@ -6,6 +6,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-10 Mathias Kadolsky <mathkad@gmx.de>
+
+	* libla/product_TEST.cc: (BM, DV) Limited the value of used
+	elements in QuickTest to avoid numerical issues for huge sizes in the result.
+	* libla/norm_TEST.cc: Norm_l2(DVR) restructured.
+
 2008-01-10 Sven Mallach <sven.mallach@honei.org>
 
 	* libla/scale_BENCHMARK.cc, libla/sum_BENCHMARK.cc: Adjusted calls to

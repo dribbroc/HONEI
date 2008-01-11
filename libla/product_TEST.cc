@@ -112,16 +112,17 @@ class BandedMatrixDenseVectorProductQuickTest :
 #else
             unsigned long size(19);
 #endif
+            unsigned long num_limit(311); //value of used elements will be <= num_limit* size
             DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(1));
             DenseVector<DataType_> dv4(size, DataType_(0));
             DenseVector<DataType_> dv5(dv4.copy());
             DenseVector<DataType_> dv6(size, DataType_(-1)), dv7(size, DataType_(1));
             for (unsigned long i(0); i < size; ++i)
                 {
-                    (dv1)[i]= (-1)*DataType_(i+1);
-                    (dv2)[i]= DataType_(size-i);
-                    (dv4)[i]= DataType_(i+1);
-                    (dv5)[i]= DataType_(i+1);
+                    (dv1)[i]= (-1)*DataType_((i+1) % num_limit);
+                    (dv2)[i]= DataType_((size-i) % num_limit);
+                    (dv4)[i]= DataType_((i+1) % num_limit);
+                    (dv5)[i]= DataType_((i+1) % num_limit);
                 }
             BandedMatrix<DataType_> bm1(size, dv1);
             bm1.insert_band(1, dv4);
@@ -132,7 +133,7 @@ class BandedMatrixDenseVectorProductQuickTest :
             DenseVector<DataType_> dv3(size, DataType_(0));
             for (int i(1); i < size-1; ++i)
             {
-                (dv3)[i]= DataType_((i+1)*(size-i)); 
+                (dv3)[i]= DataType_((dv2[i-1] - dv2[i] + dv2[i+1])*((i+1) % num_limit));
             }
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
