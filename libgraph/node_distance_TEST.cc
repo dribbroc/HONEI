@@ -129,3 +129,7 @@ class NodeDistanceQuickTest :
 };
 NodeDistanceQuickTest<float, tags::CPU>  node_distance_quick_test_float("float");
 NodeDistanceQuickTest<double, tags::CPU> node_distance_quick_test_double("double");
+#ifdef HONEI_SSE
+NodeDistanceQuickTest<float, tags::CPU::SSE>  sse_node_distance_quick_test_float("sse float");
+NodeDistanceQuickTest<double, tags::CPU::SSE> sse_node_distance_quick_test_double("sse double");
+#endif

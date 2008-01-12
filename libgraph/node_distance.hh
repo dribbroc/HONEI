@@ -40,6 +40,7 @@
  **/
 namespace honei
 {
+    template <typename Tag_ = tags::CPU> struct NodeDistance;
     /**
      * \brief NodeDistance is used in the algorithm of Kamada-Kawai.
      * \brief Hardly surprising, NodeDistance computes the distance between nodes,
@@ -47,7 +48,7 @@ namespace honei
      *
      * \ingroup grplibgraph
      **/
-    template <typename Tag_> struct NodeDistance
+    template <> struct NodeDistance<tags::CPU>
     {
         /**
          * Returns the resulting distance matrix.
@@ -56,6 +57,7 @@ namespace honei
         template <typename DataType_>
         static DenseMatrix<DataType_> value(const DenseMatrix<DataType_> & pos_matrix)
         {
+            CONTEXT("When calculating the distance beetween nodes");
             // Create the result matrix
             DenseMatrix<DataType_> result(pos_matrix.rows(), pos_matrix.rows());
 
@@ -78,7 +80,7 @@ namespace honei
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     DenseVector<DataType_> v_copy(v.copy());
-                    DataType_ d(Norm<vnt_l_two, false, Tag_>::value(Difference<Tag_>::value(v_copy, w)));
+                    DataType_ d(Norm<vnt_l_two, false, tags::CPU>::value(Difference<tags::CPU>::value(v_copy, w)));
                     *e = d;
                 }
             }
@@ -112,12 +114,12 @@ namespace honei
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     DenseVector<DataType_> v_copy(v.copy());
-                    DataType_ d(Norm<vnt_l_two, false, Tag_>::value(Difference<Tag_>::value(v_copy, w)));
+                    DataType_ d(Norm<vnt_l_two, false, tags::CPU>::value(Difference<tags::CPU>::value(v_copy, w)));
                     (d < square_force_range) && (d > std::numeric_limits<DataType_>::epsilon()) ? *e = 1 / d : *e = 0;
                     if (*g != false) *f = d;
                 }
             }
-        };
+        }
 
         template <typename DataType_>
         static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<DataType_> & edge_weights,
@@ -146,12 +148,35 @@ namespace honei
                     // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
                     // l2-norm of tmp without a root. (see template parameter "root")
                     DenseVector<DataType_> v_copy(v.copy());
-                    DataType_ d(Norm<vnt_l_two, false, Tag_>::value(Difference<Tag_>::value(v_copy, w)));
+                    DataType_ d(Norm<vnt_l_two, false, tags::CPU>::value(Difference<tags::CPU>::value(v_copy, w)));
                     (d < square_force_range) && (d > std::numeric_limits<DataType_>::epsilon()) ? *e = 1 / d : *e = 0;
                     if (*g > std::numeric_limits<DataType_>::epsilon()) *f = d;
                 }
             }
-        };
+        }
     };
+
+    template <> struct NodeDistance<tags::CPU::SSE>
+    {
+        static DenseMatrix<float> value(const DenseMatrix<float> & pos_matrix);
+        static DenseMatrix<double> value(const DenseMatrix<double> & pos_matrix);
+
+        static void value(const DenseMatrix<float> & pos_matrix, const SparseMatrix<bool> & neighbours,
+                SparseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
+                const float repulsive_force_range);
+
+        static void value(const DenseMatrix<double> & pos_matrix, const SparseMatrix<bool> & neighbours,
+                SparseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
+                const double repulsive_force_range);
+
+        static void value(const DenseMatrix<float> & pos_matrix, const SparseMatrix<float> & edge_weights,
+                SparseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
+                const float repulsive_force_range);
+
+        static void value(const DenseMatrix<double> & pos_matrix, const SparseMatrix<double> & edge_weights,
+                SparseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
+                const double repulsive_force_range);
+    };
+
 }
 #endif

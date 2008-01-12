@@ -6,6 +6,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-12 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libgraph/files.m4, libgraph/Makefile.am.m4,
+	libgraph/node_distance.hh, libgraph/node_distance-sse.cc,
+	libgraph/node_distance_TEST.cc:
+	Added pre-sse version of NodeDistance.
+
 2008-01-11 Markus Geveler <apryde@gmx.de>
 
 	* libmath/jacobi_kernel_TEST.cc, libmath/jacobi_kernel-sse.cc,
