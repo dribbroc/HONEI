@@ -61,7 +61,7 @@ namespace honei
              * \param position The position at which the new element shall be inserted.
              * \param index The index of the new element.
              */
-            DataType_ & _insert_element(unsigned long position, unsigned long index) const;
+            void _insert_element(unsigned long position, unsigned long index) const;
 
             /// Our normal implementation of ElementIteratorBase.
             template <typename ElementType_> class SparseElementIterator;

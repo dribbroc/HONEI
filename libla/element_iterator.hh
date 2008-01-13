@@ -45,6 +45,9 @@ namespace honei
 
             /// Returns a pointer to our parent container.
             virtual const Vector<DataType_> * parent() const = 0;
+
+            /// Destructor.
+            virtual ~IteratorTraits() {}
     };
 
     /// Specialisation of IteratorTraits for matrix-like types.
@@ -62,6 +65,9 @@ namespace honei
 
             /// Returns a pointer to our parent container.
             virtual const Matrix<DataType_> * parent() const = 0;
+
+            /// Destructor.
+            virtual ~IteratorTraits() {}
     };
 
     /**
@@ -92,6 +98,9 @@ namespace honei
 
             /// Comparison operator for inequality.
             virtual bool operator!= (const IteratorBase<DataType_, Container_> & other) const = 0;
+
+            /// Destructor.
+            virtual ~IteratorBase() {}
     };
 }
 

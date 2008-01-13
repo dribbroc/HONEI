@@ -35,6 +35,9 @@ namespace honei
 
             /// Returns our index.
             virtual const unsigned long index() const = 0;
+
+            /// Destructor.
+            virtual ~VectorIteratorTraits() {}
     };
 
     template <typename DataType_, typename VectorType_> class VectorIteratorBase :

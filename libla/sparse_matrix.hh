@@ -699,6 +699,7 @@ namespace honei
                     if (_matrix._row_vectors[_index])
                         break;
                 }
+                return *this;
             }
 
             /// Dereference operator that returns assignable reference.

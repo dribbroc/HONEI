@@ -59,6 +59,9 @@ namespace tests
              */
             BaseTest(const std::string & id);
 
+            /// Destructor.
+            virtual ~BaseTest() {}
+
             /// Returns our id string.
             const std::string id() const;
 
@@ -143,6 +146,9 @@ namespace tests
              * \param id The testcase's id string.
              */
             QuickTest(const std::string & id);
+
+            /// Destructor.
+            virtual ~QuickTest() {}
 
             /// Returns whether we are a quick-test.
             virtual bool is_quick_test() const;

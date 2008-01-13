@@ -79,6 +79,9 @@ namespace honei
 
             /// Type of our elements.
             typedef DataType_ DataType;
+
+            /// Destructor.
+            virtual ~Vector() {}
     };
 
     /**
@@ -167,6 +170,9 @@ namespace honei
                 _iterator(other._iterator)
             {
             }
+
+            /// Destructor.
+            virtual ~ElementIteratorWrapper() {}
 
             /// \}
 
@@ -272,6 +278,9 @@ namespace honei
                 _iterator(other._iterator)
             {
             }
+
+            /// Destructor.
+            virtual ~ConstElementIteratorWrapper() {}
 
             /// \}
 

@@ -70,7 +70,7 @@ namespace honei
             /// \{
 
             /// Subscript operator, return element at given index.
-            DataType_ & operator[] (std::ptrdiff_t index) const;
+            DataType_ & operator[] (unsigned long index) const;
 
             /// Return whether we hold any data.
             bool operator! () const;
@@ -87,7 +87,7 @@ namespace honei
             void reset(unsigned long size, DataType_ * array) const;
     };
 
-    extern template class SharedArray<float>;
+/*    extern template class SharedArray<float>;
 
     extern template class SharedArray<double>;
 
@@ -97,7 +97,7 @@ namespace honei
 
     extern template class SharedArray<long>;
 
-    extern template class SharedArray<unsigned long>;
+    extern template class SharedArray<unsigned long>;*/
 }
 
 #endif

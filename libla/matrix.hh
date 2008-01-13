@@ -68,6 +68,9 @@ namespace honei
 
             /// Type of our elements.
             typedef DataType_ DataType;
+
+            /// Destructor.
+            virtual ~Matrix() {}
     };
 
     /**
@@ -89,6 +92,9 @@ namespace honei
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements() = 0;
+
+            /// Destructor.
+            virtual ~MutableMatrix() {}
     };
 
 
@@ -157,6 +163,9 @@ namespace honei
                 _iterator(other._iterator)
             {
             }
+
+            /// Destructor
+            virtual ~ElementIteratorWrapper() {}
 
             /// \}
 
@@ -275,6 +284,8 @@ namespace honei
             {
             }
 
+            /// Destructor
+            virtual ~ConstElementIteratorWrapper() {}
             /// \}
 
             /// \name Forward iterator interface

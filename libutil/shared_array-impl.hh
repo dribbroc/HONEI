@@ -101,7 +101,7 @@ namespace honei
     }
 
     template <typename DataType_>
-    DataType_ & SharedArray<DataType_>::operator[] (std::ptrdiff_t index) const
+    DataType_ & SharedArray<DataType_>::operator[] (unsigned long index) const
     {
         CONTEXT("When accessing SharedArray-element at index '" + stringify(index) + "' in array of size '" +
                 stringify(_imp->size) + "':");

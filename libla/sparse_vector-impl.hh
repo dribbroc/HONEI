@@ -104,7 +104,7 @@ namespace honei
     };
 
     template <typename DataType_>
-    DataType_ & SparseVector<DataType_>::_insert_element(unsigned long position, unsigned long index) const
+    void SparseVector<DataType_>::_insert_element(unsigned long position, unsigned long index) const
     {
         CONTEXT("When inserting element at position '" + stringify(position) + "' with index '" +
                 stringify(index) + "':");

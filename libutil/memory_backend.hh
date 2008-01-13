@@ -134,6 +134,9 @@ namespace honei
              * \param right idem
              */
             virtual void swap(const MemoryId left, const MemoryId right) = 0;
+
+            /// Destructor.
+            virtual ~MemoryBackend() {}
     };
 }
 

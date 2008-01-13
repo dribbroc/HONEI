@@ -6,6 +6,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-14 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/element_iterator.hh, libla/matrix.hh, libla/sparse_matrix.hh,
+	libla/sparse_vector.hh, libla/sparse_vector-impl.hh, libla/vector.hh,
+	libla/vector_iterator.hh, libutil/memory_backend.hh,
+	libutil/shared_array.hh, libutil/shared_array-impl.hh,
+	libutil/stringify.hh, unittest/unittest.hh:
+	Fixed compile warnings.
+
 2008-01-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/libutil/Makefile.am, cell/libutil/operation_one_float_dma.cc,
