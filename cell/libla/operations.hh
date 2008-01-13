@@ -28,6 +28,8 @@ namespace honei
     {
         namespace operations
         {
+            extern Operation<1, float, rtm_dma> element_inverse_float;
+
             extern Operation<1, float, rtm_mail> norm_max_dense_float;
 
             extern Operation<1, float, rtm_mail> norm_l_one_dense_float;

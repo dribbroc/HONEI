@@ -79,6 +79,49 @@ namespace honei
 
     template <unsigned number_of_entities_, typename DataType_, cell::ResultTransferMethod method_> class SPEFrameworkInstruction;
 
+    template <typename DataType_> class SPEFrameworkInstruction<1, DataType_, cell::rtm_dma> :
+        public SPEInstruction
+    {
+        private:
+            typedef cell::Instruction Instruction;
+
+            typedef cell::OpCode OpCode;
+
+            /// Index of the first element that is to be transfered.
+            unsigned _begin_transfers;
+
+            /// Index of the element behind the last element that is to be transfered.
+            unsigned _end_transfers;
+
+            /// Will the SPE be used?
+            bool _use_spe;
+
+        public:
+            /**
+             * Constructor.
+             *
+             * \param opcode The instruction's opcode.
+             * \param elements The pointer to the elements of the container.
+             * \param size The overall size of the container.
+             */
+            SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size);
+
+            unsigned transfer_begin() const
+            {
+                return _begin_transfers;
+            }
+
+            unsigned transfer_end() const
+            {
+                return _end_transfers;
+            }
+
+            bool use_spe() const
+            {
+                return _use_spe;
+            }
+    };
+
     template <typename DataType_> class SPEFrameworkInstruction<1, DataType_, cell::rtm_mail> :
         public SPEInstruction
     {
@@ -122,6 +165,8 @@ namespace honei
                 return _use_spe;
             }
     };
+
+    extern template class SPEFrameworkInstruction<1, float, cell::rtm_dma>;
 
     extern template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
 

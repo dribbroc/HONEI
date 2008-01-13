@@ -33,50 +33,30 @@ namespace honei
     {
         CONTEXT("When inverting DenseMatrix<float> (Cell):");
 
-        Operand oa = { a.elements() };
-        Operand ob, oc;
-        ob.u = (a.rows() * a.columns()) / 4096;
-        oc.u = (a.rows() * a.columns()) % 4096;
-        oc.u &= ~0xF;
+        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_element_inverse_float, a.elements(), a.rows() * a.columns());
 
-        unsigned rest_index(ob.u * 4096 + oc.u);
-
-        oc.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == oc.u)
-        {
-            if (ob.u > 0)
-            {
-                oc.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++ob.u;
-        }
-
-        SPEInstruction instruction(oc_element_inverse_float, 16 * 1024, oa, ob, oc);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (MutableMatrix<float>::ElementIterator j(a.element_at(rest_index)), j_end(a.end_elements()) ; j != j_end ; ++j)
+        for (MutableMatrix<float>::ElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            if (*j == 0)
-                continue;
-
-            *j = 1 / *j;
+            if (fabs(*i) <= std::numeric_limits<float>::epsilon())
+                *i = 0.0f;
+            else
+                *i = 1 / *i;
         }
 
-        if (use_spe)
+        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            if (fabs(*i) <= std::numeric_limits<float>::epsilon())
+                *i = 0.0f;
+            else
+                *i = 1 / *i;
+        }
+
+        if (instruction.use_spe())
             instruction.wait();
 
         return a;
@@ -87,71 +67,32 @@ namespace honei
     {
         CONTEXT("When inverting DenseVectorContinuousBase<float> (Cell):");
 
-        Operand oa = { a.elements() };
-        Operand ob, oc;
+        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_element_inverse_float, a.elements(), a.size());
 
-        unsigned offset((oa.u & 0xF) / sizeof(float));
-        if (a.size() < 5)
-            offset = 0;
-
-        if (offset > 0)
-            oa.u += 16 -(4 * offset); // Align the address for SPU.
-
-
-        ob.u = (a.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        oc.u = (a.size() - ((4 - offset) % 4)) % (1024 * 4);
-        oc.u &= ~0xF;
-
-        unsigned rest_index(ob.u * 4096 + oc.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
-        oc.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == oc.u)
-        {
-            if (ob.u > 0)
-            {
-                oc.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++ob.u;
-        }
-
-        SPEInstruction instruction(oc_element_inverse_float, 16 * 1024, oa, ob, oc);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (Vector<float>::ElementIterator i(a.begin_elements()),
-                i_end(a.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
+        for (Vector<float>::ElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            if (*i == 0.0f)
-                continue;
-
-            *i = 1 / *i;
+            if (fabs(*i) <= std::numeric_limits<float>::epsilon())
+                *i = 0.0f;
+            else
+                *i = 1 / *i;
         }
 
-        for (Vector<float>::ElementIterator j(a.element_at(rest_index)), j_end(a.end_elements()) ; j != j_end ; ++j)
+        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
-            if (*j == 0.0f)
-                continue;
-
-            *j = 1 / *j;
+            if (fabs(*i) <= std::numeric_limits<float>::epsilon())
+                *i = 0.0f;
+            else
+                *i = 1 / *i;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
             instruction.wait();
 
         return a;
     }
-
-
 }

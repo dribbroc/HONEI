@@ -39,6 +39,15 @@ namespace honei
         {
         };
 
+        template <> struct Operation<1, float, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on a given block of data.
+            void (*calculate)(vector float * elements, const unsigned size);
+        };
+
         template <> struct Operation<1, float, rtm_mail>
         {
             /// Our result type.
@@ -83,6 +92,9 @@ namespace honei
          */
 
         template <typename Operation_> typename Operation_::ResultType operation(const Operation_ & operation,
+                const Instruction & instruction);
+
+        template <> void operation<Operation<1, float, rtm_dma> >(const Operation<1, float, rtm_dma> & operation,
                 const Instruction & instruction);
 
         template <> unsigned operation<Operation<1, float, rtm_mail> >(const Operation<1, float, rtm_mail> & operation,

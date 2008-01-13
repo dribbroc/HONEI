@@ -8,6 +8,17 @@ see the NEWS file.
 
 2008-01-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* cell/libutil/Makefile.am, cell/libutil/operation_one_float_dma.cc,
+	cell/libutil/operations.hh, libutil/spe_instruction.cc,
+	libutil/spe_instruction.hh, misc/make_sk.bash: Added framework for
+	operations on one container that returns data via DMA.
+	* cell/kernels/kernel_reference.sk,
+	cell/libla/element_inverse_float.cc, cell/libla/operations.hh,
+	libla/element_inverse-cell.cc: Converted ElementInverse to make use
+	of the operations framework.
+
+2008-01-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* cell/libla/norm_l_one_dense_float.cc,
 	cell/libla/norm_l_two_dense_float.cc,
 	cell/libla/norm_max_dense_float.cc,

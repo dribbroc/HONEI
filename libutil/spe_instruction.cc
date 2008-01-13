@@ -140,6 +140,56 @@ const SPEInstruction::Operand
 SPEInstruction::empty = { static_cast<void *>(0) };
 
 template <typename DataType_>
+SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size) :
+    SPEInstruction(opcode, 16384, elements),
+    _use_spe(true)
+{
+    Instruction & instruction(_imp->instruction);
+    unsigned offset(instruction.a.u & 0xF), skip(0);
+
+    if (offset > 0)
+    {
+        instruction.a.u += 16 - offset; // Align the address.
+        skip = (16 - offset) / sizeof(DataType_);
+    }
+
+    if (size < 5)
+    {
+        offset = 0;
+        instruction.b.u = 0;
+        instruction.c.u = 0;
+        _begin_transfers = 0;
+        _end_transfers = 0;
+    }
+    else
+    {
+        instruction.b.u = (size - skip) / (16384 / sizeof(DataType_));
+        instruction.c.u = (size - skip) % (16384 / sizeof(DataType_));
+        instruction.c.u &= ~0xF;
+
+        _begin_transfers = skip;
+        _end_transfers = instruction.b.u * 4096 + instruction.c.u + skip;
+        instruction.c.u *= 4;
+    }
+
+    if (0 == instruction.c.u)
+    {
+        if (instruction.b.u > 0)
+        {
+            instruction.c.u = 16 * 1024;
+        }
+        else
+        {
+            _use_spe = false;
+        }
+    }
+    else
+    {
+        ++instruction.b.u;
+    }
+}
+
+template <typename DataType_>
 SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements,
         const unsigned size) :
     SPEInstruction(opcode, 16384, result, elements),
@@ -189,6 +239,8 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         ++instruction.c.u;
     }
 }
+
+template class SPEFrameworkInstruction<1, float, cell::rtm_dma>;
 
 template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
 

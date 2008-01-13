@@ -16,6 +16,10 @@ skopcodes=${1%.sk}.opcodes
         opcodes=( ${opcodes[@]} "oc_halt" )
     }
 
+    void() {
+        opcodes=( ${opcodes[@]} "oc_$1" )
+    }
+
     return_void() {
         opcodes=( ${opcodes[@]} "oc_$1" )
     }
@@ -59,6 +63,10 @@ skopcodes=${1%.sk}.opcodes
         echo "void ${2}(const Instruction &);"
     }
 
+    void() {
+        :
+    }
+
     return_dword() {
         echo "unsigned ${2}(const Instruction &);"
     }
@@ -87,7 +95,19 @@ skopcodes=${1%.sk}.opcodes
         echo
     }
 
+    void() {
+        echo "                case oc_${1}:"
+        echo "                    debug_enter();"
+        echo "                    operation(operations::${1}, instructions[instruction_index]);"
+        echo "                    debug_leave();"
+        echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
+        echo "                    break;"
+        echo
+    }
+
     return_void() {
+        echo ">>> return_void is deprecated syntax! <<<" >&2
+        echo ">>>     Please use 'void' instead!    <<<" >&2
         echo "                case oc_${1}:"
         echo "                    #ifdef DEBUG"
         echo "                    spu_write_out_intr_mbox(km_debug_enter);"
@@ -114,8 +134,8 @@ skopcodes=${1%.sk}.opcodes
     }
 
     return_dword() {
-        echo ">>> return_dword is deprecated syntax\! <<<" >&2
-        echo ">>>     Please use 'dword' instead\!    <<<" >&2
+        echo ">>> return_dword is deprecated syntax! <<<" >&2
+        echo ">>>     Please use 'dword' instead!    <<<" >&2
         echo "                case oc_${1}:"
         echo "                    #ifdef DEBUG"
         echo "                    spu_write_out_intr_mbox(km_debug_enter);"
