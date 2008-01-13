@@ -6,6 +6,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/libla/norm_l_one_dense_float.cc,
+	cell/libla/norm_l_two_dense_float.cc,
+	cell/libla/norm_max_dense_float.cc,
+	cell/libla/reduction_max_dense_float.cc,
+	cell/libla/reduction_min_dense_float.cc,
+	cell/libla/reduction_sum_dense_float.cc: Fixed include headers.
+
 2008-01-13 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/interface.hh, cell/types.hh, libutil/spe_kernel.cc,

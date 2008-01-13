@@ -19,7 +19,8 @@
 
 #include <cell/cell.hh>
 #include <cell/libla/operations.hh>
-#include <cell/libutil/allocator.hh>
+
+#include <spu_intrinsics.h>
 
 namespace honei
 {
@@ -56,3 +57,4 @@ namespace honei
         }
     }
 }
+
