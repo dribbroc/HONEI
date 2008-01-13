@@ -43,7 +43,7 @@ struct SPETransferList::Implementation
     /// Our actual number of elements.
     unsigned size;
 
-    /// Effective address (64 bit) of our first element
+    /// Effective address (64 bit) of the last added element. They all share the upper 32 bit.
     unsigned long long effective_address;
 
     Implementation(unsigned s, unsigned ts) :

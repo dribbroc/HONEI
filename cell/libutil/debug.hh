@@ -49,8 +49,6 @@ namespace honei
         inline void debug_putl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
                 const unsigned & size) __attribute__((always_inline));
 
-        inline void debug_acquire(const LocalStoreAddress & lsa) __attribute__((always_inline));
-
         inline void debug_release(const LocalStoreAddress & lsa) __attribute__((always_inline));
 
         inline void debug_value(const unsigned & value) __attribute__((always_inline));
