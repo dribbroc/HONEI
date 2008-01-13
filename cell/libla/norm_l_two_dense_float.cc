@@ -1,8 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
- * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
+ * Copyright (C) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,69 +18,35 @@
  */
 
 #include <cell/cell.hh>
+#include <cell/libla/operations.hh>
 #include <cell/libutil/allocator.hh>
 
-#include <spu_intrinsics.h>
-#include <spu_mfcio.h>
-
-using namespace honei::cell;
-
-unsigned norm_l_two_dense_float(const Instruction & inst)
+namespace honei
 {
-    EffectiveAddress ea_a(inst.b.ea);
-
-    Allocation * block_a[2] = { acquire_block(), acquire_block() };
-
-    Pointer<float> a[2] = { { block_a[0]->address} , { block_a[1]->address } };
-
-    unsigned counter(inst.c.u);
-    unsigned size(counter > 1 ? inst.size : inst.d.u);
-    unsigned nextsize;
-    unsigned current(1), next(2);
-
-    debug_get(ea_a, a[current - 1].untyped, size);
-    mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
-    ea_a += size;
-
-    Subscriptable<float> acc = { spu_splats(0.0f) };
-
-    while (counter > 1)
+    namespace cell
     {
-        nextsize = (counter == 2 ? inst.d.u : inst.size);
-
-        debug_get(ea_a, a[next - 1].untyped, nextsize);
-        mfc_get(a[next - 1].untyped, ea_a, nextsize, next, 0, 0);
-        ea_a += nextsize;
-
-        mfc_write_tag_mask(1 << current);
-        mfc_read_tag_status_all();
-
-        for(unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
+        namespace implementation
         {
-            acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
+            vector float norm_l_two_dense_float(const vector float & accumulator, vector float * elements, const unsigned size)
+            {
+                vector float result(accumulator);
+
+                for (unsigned i(0) ; i < size ; ++i)
+                {
+                    result = spu_madd(elements[i], elements[i], result);
+                }
+
+                return result;
+            }
         }
 
-        --counter;
-
-        unsigned temp(next);
-        next = current;
-        current = temp;
-
-        size = nextsize;
+        namespace operations
+        {
+            Operation<1, float, rtm_mail> norm_l_two_dense_float = {
+                &zero_float,
+                &implementation::norm_l_two_dense_float,
+                &sum_float
+            };
+        }
     }
-
-    mfc_write_tag_mask(1 << current);
-    mfc_read_tag_status_all();
-
-    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
-    {
-        acc.value = spu_madd(a[current -1].vectorised[i], a[current - 1].vectorised[i], acc.value);
-    }
-
-    release_block(*block_a[0]);
-    release_block(*block_a[1]);
-
-    MailableResult<float> result = { acc.array[0] + acc.array[1] + acc.array[2] + acc.array[3] };
-
-    return result.mail;
 }

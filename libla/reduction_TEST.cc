@@ -44,19 +44,24 @@ class BandedMatrixReductionToSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseVector<DT_> * dv1 (new DenseVector<DT_>(size, DT_(2)));
-                DenseVector<DT_> * dv2 (new DenseVector<DT_>(size, DT_(-2)));
-                BandedMatrix<DT_> bm1(size, *dv1);
-                bm1.insert_band(1, *dv1);
-                bm1.insert_band((size-1), *dv2);
-                bm1.insert_band( -1, *dv2);
-                bm1.insert_band((-(size-1)), *dv1);
-                bm1.insert_band(2, *dv1);
-                bm1.insert_band((size-2), *dv2);
-                bm1.insert_band(-2, *dv2);
-                bm1.insert_band((-(size-2)), *dv1);
+                DenseVector<DT_> dv1(size, DT_(2));
+                DenseVector<DT_> dv2(size, DT_(-2));
+                BandedMatrix<DT_> bm1(size, dv1);
+                bm1.insert_band(1, dv1);
+                bm1.insert_band((size - 1), dv2);
+                bm1.insert_band(-1, dv2);
+                bm1.insert_band(-size +1, dv1);
+                bm1.insert_band(2, dv1);
+                bm1.insert_band(size - 2, dv2);
+                bm1.insert_band(-2, dv2);
+                bm1.insert_band(-size + 2, dv1);
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(bm1));
-                TEST_CHECK_EQUAL(sum, *dv1);
+
+                for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()),
+                        i_end(sum.end_elements()), j(dv1.begin_elements()) ; i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
+                }
             }
         }
 };
@@ -79,20 +84,24 @@ class BandedMatrixReductionQuickTest :
         virtual void run() const
         {
             unsigned long size(20);
-            DenseVector<DT_> * dv1 (new DenseVector<DT_>(size, DT_(2)));
-            DenseVector<DT_> * dv2 (new DenseVector<DT_>(size, DT_(-2)));
-            BandedMatrix<DT_> bm1(size, *dv1);
-            bm1.insert_band(1, *dv1);
-            bm1.insert_band((size-1), *dv2);
-            bm1.insert_band( -1, *dv2);
-            bm1.insert_band((-(size-1)), *dv1);
-            bm1.insert_band(2, *dv1);
-            bm1.insert_band((size-2), *dv2);
-            bm1.insert_band(-2, *dv2);
-            bm1.insert_band((-(size-2)), *dv1);
+            DenseVector<DT_> dv1(size, DT_(2));
+            DenseVector<DT_> dv2(size, DT_(-2));
+            BandedMatrix<DT_> bm1(size, dv1);
+            bm1.insert_band(1, dv1);
+            bm1.insert_band((size - 1), dv2);
+            bm1.insert_band(-1, dv2);
+            bm1.insert_band(-size +1, dv1);
+            bm1.insert_band(2, dv1);
+            bm1.insert_band(size - 2, dv2);
+            bm1.insert_band(-2, dv2);
+            bm1.insert_band(-size + 2, dv1);
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(bm1));
 
-            TEST_CHECK_EQUAL(sum, *dv1);
+            for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()),
+                    i_end(sum.end_elements()), j(dv1.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
+            }
         }
 };
 BandedMatrixReductionQuickTest<tags::CPU, float> banded_matrix_reduction_to_sum_quick_test_float("float");
@@ -173,7 +182,11 @@ class DenseMatrixReductionQuickTest :
             }
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
-            TEST_CHECK_EQUAL(sum, dv1);
+            for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
+                    i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
+            }
         }
 };
 DenseMatrixReductionQuickTest<tags::CPU, float> dense_matrix_reduction_to_sum_quick_test_float("float");
@@ -228,7 +241,11 @@ class SparseMatrixReductionToSumTest :
                 }
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
-                TEST_CHECK_EQUAL(sum, dv1);
+                for (typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
+                    i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
+                }
             }
         }
 };
@@ -283,7 +300,11 @@ class SparseMatrixReductionQuickTest :
             }
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
-            TEST_CHECK_EQUAL(sum, dv1);
+            for (typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
+                    i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
+            }
         }
 };
 SparseMatrixReductionQuickTest<tags::CPU, float> sparse_matrix_reduction_to_sum_quick_test_float("float");
@@ -614,7 +635,7 @@ class DenseMatrixReductionToMinTest :
                     should = dm1[size-1][size-2];
 
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(dm1));
-            TEST_CHECK_EQUAL(v1[size-1], should);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -659,7 +680,7 @@ class DenseMatrixReductionToMinQuickTest :
                     should = dm1[size-1][size-2];
 
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(dm1));
-            TEST_CHECK_EQUAL(v1[size-1], should);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -704,7 +725,7 @@ class SparseMatrixReductionToMinTest :
                 should = sm1[size-1][size-2];
 
                 DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(sm1));
-                TEST_CHECK_EQUAL(v1[size-1], should);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -747,7 +768,7 @@ class SparseMatrixReductionToMinQuickTest :
                 should = sm1[size-1][size-2];
 
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(sm1));
-            TEST_CHECK_EQUAL(v1[size-1], should);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
         }
 };
 SparseMatrixReductionToMinQuickTest<tags::CPU, float> sparse_matrix_reduction_to_min_quick_test_float("float");
@@ -782,7 +803,7 @@ class BandedMatrixReductionToMinTest :
 
 
                 DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(bm1));
-                TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], (size*size - size), std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -814,7 +835,7 @@ class BandedMatrixReductionToMinQuickTest :
             }
 
             DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(bm1));
-            TEST_CHECK_EQUAL(v1[size-1], (size*size - size));
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], (size*size - size), std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -859,7 +880,7 @@ class DenseVectorRangeReductionToMinTest :
                         should = dvr[size-2];
 
                     DT_ v1(Reduction<rt_min, Tag_>::value(dvr));
-                    TEST_CHECK_EQUAL(v1, should);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(v1, should, std::numeric_limits<DT_>::epsilon());
                 }
             }
         }
@@ -916,7 +937,7 @@ class DenseVectorRangeReductionToMinQuickTest :
                     should = dvr[size-2];
 
                 DT_ v1(Reduction<rt_min, Tag_>::value(dvr));
-                TEST_CHECK_EQUAL(v1, should);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, should, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -959,7 +980,7 @@ class DenseVectorReductionToMinTest :
                 }
 
                 DT_ v1(Reduction<rt_min, Tag_>::value(dv1));
-                TEST_CHECK_EQUAL(v1, 500);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 500, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -995,7 +1016,7 @@ class DenseVectorReductionToMinQuickTest :
             }
 
             DT_ v1(Reduction<rt_min, Tag_>::value(dv1));
-            TEST_CHECK_EQUAL(v1, 500);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, 500, std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -1030,7 +1051,7 @@ class SparseVectorReductionToMinTest :
                 }
 
                 DT_ v1(Reduction<rt_min, Tag_>::value(sv1));
-                TEST_CHECK_EQUAL(v1, 0);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, 0, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -1065,7 +1086,7 @@ class SparseVectorReductionToMinQuickTest :
             }
 
             DT_ v1(Reduction<rt_min, Tag_>::value(sv1));
-            TEST_CHECK_EQUAL(v1, 0);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, 0, std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -1109,7 +1130,7 @@ class DenseMatrixReductionToMaxTest :
                 should = dm1[size-1][size-1];
 
             DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
-            TEST_CHECK_EQUAL(v1[size-1], should);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -1154,7 +1175,7 @@ class DenseMatrixReductionToMaxQuickTest :
                 should = dm1[size-1][size-1];
 
             DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(dm1));
-            TEST_CHECK_EQUAL(v1[size-1], should);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -1199,7 +1220,7 @@ class SparseMatrixReductionToMaxTest :
                 should = sm1[size-1][size-1];
 
                 DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(sm1));
-                TEST_CHECK_EQUAL(v1[size-1], should);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -1243,7 +1264,7 @@ class SparseMatrixReductionToMaxQuickTest :
                     should = sm1[size-1][size-1];
 
             DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(sm1));
-            TEST_CHECK_EQUAL(v1[size-1], should);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], should, std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -1278,7 +1299,7 @@ class BandedMatrixReductionToMaxTest :
                 }
 
                 DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(bm1));
-                TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], (size*size)-1, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -1310,7 +1331,7 @@ class BandedMatrixReductionToMaxQuickTest :
             }
 
             DenseVector<DT_> v1(Reduction<rt_max, Tag_>::value(bm1));
-            TEST_CHECK_EQUAL(v1[size-1], (size*size)-1);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], (size*size)-1, std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -1355,7 +1376,7 @@ class DenseVectorRangeReductionToMaxTest :
                         should = dvr[size-1];
 
                     DT_ v1(Reduction<rt_max, Tag_>::value(dvr));
-                    TEST_CHECK_EQUAL(v1, should);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(v1, should, std::numeric_limits<DT_>::epsilon());
                 }
             }
         }
@@ -1412,7 +1433,7 @@ class DenseVectorRangeReductionToMaxQuickTest :
                     should = dvr[size-1];
 
                 DT_ v1(Reduction<rt_max, Tag_>::value(dvr));
-                TEST_CHECK_EQUAL(v1, should);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, should, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -1456,7 +1477,7 @@ class DenseVectorReductionToMaxTest :
                 }
 
                 DT_ v1(Reduction<rt_max, Tag_>::value(dv1));
-                TEST_CHECK_EQUAL(v1, size-1);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, size-1, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -1489,7 +1510,7 @@ class DenseVectorReductionToMaxQuickTest :
             }
 
             DT_ v1(Reduction<rt_max,Tag_>::value(dv1));
-            TEST_CHECK_EQUAL(v1, size-1);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, size-1, std::numeric_limits<DT_>::epsilon());
         }
 };
 
@@ -1524,7 +1545,7 @@ class SparseVectorReductionToMaxTest :
                 }
 
                 DT_ v1(Reduction<rt_max, Tag_>::value(sv1));
-                TEST_CHECK_EQUAL(v1, size-1);
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, size-1, std::numeric_limits<DT_>::epsilon());
             }
         }
 };
@@ -1559,7 +1580,7 @@ class SparseVectorReductionToMaxQuickTest :
             }
 
             DT_ v1(Reduction<rt_max, Tag_>::value(sv1));
-            TEST_CHECK_EQUAL(v1, size-1);
+            TEST_CHECK_EQUAL_WITHIN_EPS(v1, size-1, std::numeric_limits<DT_>::epsilon());
         }
 };
 

@@ -1,7 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-/* Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+/* Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -18,88 +17,37 @@
  */
 
 #include <cell/cell.hh>
+#include <cell/libla/operations.hh>
 #include <cell/libutil/allocator.hh>
-#include <cell/libutil/transfer.hh>
 
-#include <spu_intrinsics.h>
-#include <spu_mfcio.h>
-
-using namespace honei::cell;
-
-unsigned reduction_max_dense_float(const Instruction & inst)
+namespace honei
 {
-    EffectiveAddress ea_a(inst.b.ea);
-
-    Allocation * block_a[2] = { acquire_block(), acquire_block() };
-
-    Pointer<float> a[2] = { { block_a[0]->address} , { block_a[1]->address } };
-
-    unsigned counter(inst.c.u);
-    unsigned size(counter > 1 ? inst.size : inst.d.u);
-    unsigned nextsize;
-    unsigned current(1), next(2);
-
-    unsigned offset((ea_a & 0xF) / sizeof(float));
-    ea_a &= ~0xF;
-
-    debug_get(ea_a, a[current - 1].untyped, size);
-    mfc_get(a[current - 1].untyped, ea_a, size, current, 0, 0);
-    ea_a += size;
-
-    vector unsigned int bitMaskGT;
-    Subscriptable<float> tmpVector = { spu_splats(inst.e.f) };
-
-    while (counter > 1)
+    namespace cell
     {
-        nextsize = (counter == 2 ? inst.d.u : inst.size);
-
-        debug_get(ea_a, a[next - 1].untyped, nextsize);
-        mfc_get(a[next - 1].untyped, ea_a, nextsize, next, 0, 0);
-        ea_a += nextsize;
-
-        mfc_write_tag_mask(1 << current);
-        mfc_read_tag_status_all();
-
-        unsigned i(0);
-        for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+        namespace implementation
         {
-            extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-            bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
-            tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
+            vector float reduction_max_dense_float(const vector float & accumulator, vector float * elements,
+                    const unsigned size)
+            {
+                vector float result(accumulator);
+
+                for (unsigned i(0) ; i < size ; ++i)
+                {
+                    vector unsigned is_greater_than(spu_cmpgt(result, elements[i]));
+                    result = spu_sel(elements[i], result, is_greater_than);
+                }
+
+                return result;
+            }
         }
-        bitMaskGT = spu_cmpgt(tmpVector.value, a[current - 1].vectorised[i]);
-        tmpVector.value = spu_sel(a[current - 1].vectorised[i], tmpVector.value, bitMaskGT);
 
-        --counter;
-
-        unsigned temp(next);
-        next = current;
-        current = temp;
-
-        size = nextsize;
+        namespace operations
+        {
+            Operation<1, float, rtm_mail> reduction_max_dense_float = {
+                &smallest_float,
+                &implementation::reduction_max_dense_float,
+                &max_float
+            };
+        }
     }
-
-    mfc_write_tag_mask(1 << current);
-    mfc_read_tag_status_all();
-
-    unsigned i(0);
-    for ( ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
-    {
-        extract(a[current - 1].vectorised[i], a[current - 1].vectorised[i+1], offset);
-        bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-        tmpVector.value = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
-    }
-
-    bitMaskGT = spu_cmpgt(a[current - 1].vectorised[i], tmpVector.value);
-    tmpVector.value = spu_sel(tmpVector.value, a[current - 1].vectorised[i], bitMaskGT);
-
-    release_block(*block_a[0]);
-    release_block(*block_a[1]);
-
-    tmpVector.array[0] = tmpVector.array[0] > tmpVector.array[1] ? tmpVector.array[0] : tmpVector.array[1];
-    tmpVector.array[2] = tmpVector.array[2] > tmpVector.array[3] ? tmpVector.array[2] : tmpVector.array[3];
-
-    MailableResult<float> result = { tmpVector.array[0] > tmpVector.array[2] ? tmpVector.array[0] : tmpVector.array[2] };
-
-    return result.mail;
 }

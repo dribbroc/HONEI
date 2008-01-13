@@ -20,6 +20,10 @@ skopcodes=${1%.sk}.opcodes
         opcodes=( ${opcodes[@]} "oc_$1" )
     }
 
+    dword() {
+        opcodes=( ${opcodes[@]} "oc_$1" )
+    }
+
     return_dword() {
         opcodes=( ${opcodes[@]} "oc_$1" )
     }
@@ -59,6 +63,10 @@ skopcodes=${1%.sk}.opcodes
         echo "unsigned ${2}(const Instruction &);"
     }
 
+    dword() {
+        :
+    }
+
     return_qword() {
         echo "unsigned long long ${2}(const Instruction &);"
     }
@@ -93,7 +101,21 @@ skopcodes=${1%.sk}.opcodes
         echo
     }
 
+    dword() {
+        echo "                case oc_${1}:"
+        echo "                    debug_enter();"
+        echo "                    retval = operation(operations::${1}, instructions[instruction_index]);"
+        echo "                    debug_leave();"
+        echo "                    spu_write_out_intr_mbox(km_result_dword);"
+        echo "                    spu_write_out_mbox(retval & 0xFFFFFFFF);"
+        echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
+        echo "                    break;"
+        echo
+    }
+
     return_dword() {
+        echo ">>> return_dword is deprecated syntax\! <<<" >&2
+        echo ">>>     Please use 'dword' instead\!    <<<" >&2
         echo "                case oc_${1}:"
         echo "                    #ifdef DEBUG"
         echo "                    spu_write_out_intr_mbox(km_debug_enter);"

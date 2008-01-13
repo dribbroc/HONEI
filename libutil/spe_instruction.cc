@@ -47,7 +47,6 @@ struct SPEInstruction::Implementation
         kernel(0),
         index(0)
     {
-
         instruction.opcode = opcode;
         instruction.size = size;
         instruction.a = a;
@@ -119,7 +118,7 @@ SPEInstruction::_enqueue_with(SPEKernel * kernel) const
     _imp->index = kernel->enqueue(*this);
 }
 
-SPEInstruction::Instruction
+SPEInstruction::Instruction &
 SPEInstruction::instruction() const
 {
     return _imp->instruction;
@@ -139,6 +138,59 @@ SPEInstruction::finished() const
 
 const SPEInstruction::Operand
 SPEInstruction::empty = { static_cast<void *>(0) };
+
+template <typename DataType_>
+SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements,
+        const unsigned size) :
+    SPEInstruction(opcode, 16384, result, elements),
+    _use_spe(true)
+{
+    Instruction & instruction(_imp->instruction);
+    unsigned offset(instruction.b.u & 0xF), skip(0);
+
+    if (offset > 0)
+    {
+        instruction.b.u += 16 - offset; // Align the address.
+        skip = (16 - offset) / sizeof(DataType_);
+    }
+
+    if (size < 5)
+    {
+        offset = 0;
+        instruction.c.u = 0;
+        instruction.d.u = 0;
+        _begin_transfers = 0;
+        _end_transfers = 0;
+    }
+    else
+    {
+        instruction.c.u = (size - skip) / (16384 / sizeof(DataType_));
+        instruction.d.u = (size - skip) % (16384 / sizeof(DataType_));
+        instruction.d.u &= ~0xF;
+
+        _begin_transfers = skip;
+        _end_transfers = instruction.c.u * 4096 + instruction.d.u + skip;
+        instruction.d.u *= 4;
+    }
+
+    if (0 == instruction.d.u)
+    {
+        if (instruction.c.u > 0)
+        {
+            instruction.d.u = 16 * 1024;
+        }
+        else
+        {
+            _use_spe = false;
+        }
+    }
+    else
+    {
+        ++instruction.c.u;
+    }
+}
+
+template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
 
 struct SPEInstructionQueue::Implementation
 {

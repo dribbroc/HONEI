@@ -6,6 +6,28 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* cell/libutil/debug.hh: Cleaned up, added debug_enter and
+	debug_leave.
+	* cell/interface.hh, cell/kernels/Makefile.am.m4,
+	cell/kernels/stand_alone-kernel.cc.in, cell/libla/Makefile.am,
+	cell/libutil/Makefile.am, cell/libutil/operation_one_float_mail.cc,
+	cell/libutil/operations.cc, cell/libutil/operations.hh,
+	cell/libutil/operation_two_float_mail.cc, libutil/spe_instruction.cc,
+	libutil/spe_instruction.hh, misc/make_sk.bash: Added operation
+	framework for dense and dense-like operations.
+	* cell/kernels/kernel_reference.sk, cell/libla/norm_l_one_dense_float.cc,
+	cell/libla/norm_l_two_dense_float.cc,
+	cell/libla/norm_max_dense_float.cc, cell/libla/operations.hh,
+	cell/libla/reduction_max_dense_float.cc,
+	cell/libla/reduction_min_dense_float.cc,
+	cell/libla/reduction_sum_dense_float.cc, libla/norm-cell.cc,
+	libla/reduction-cell.cc: Converted Norm and Reduction to make use of
+	new framework.
+	* libla/reduction_TEST.cc: Applied coding conventions (partially) and
+	fixed inappropriate use of TEST_CHECK_EQUAL!
+
 2008-01-12 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libgraph/files.m4, libgraph/Makefile.am.m4,

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007,2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
@@ -39,137 +39,61 @@ namespace honei
 
         float result(0.0f);
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od, oe;
-        oc.u = a.size() / 4096;
-        od.u = a.size() % 4096;
-        od.u &= ~0xF;
-        oe.f = a[0];
-        unsigned rest_index(oc.u * 4096 + od.u);
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_norm_max_dense_float, &result, a.elements(), a.size());
 
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_norm_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-        if (use_spe)
-        {
-            SPEManager::instance()->dispatch(instruction);
-            unsigned offset((ob.u & 0xF) / sizeof(float));
-            rest_index -=offset;
-        }
-
-        float ppu_result(a[0]);
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
-        {
-            ppu_result = (fabs(*i) > fabs(ppu_result)) ? fabs(*i) : fabs(ppu_result);
-        }
-
-        if (use_spe)
-        {
-            instruction.wait();
-            result = ppu_result > fabs(result) ? fabs(ppu_result) : fabs(result);
-        }
-        else
-        {
-            result = ppu_result;
-        }
-
-        return result;
-    }
-
-
-    float
-    Norm<vnt_l_one, false, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
-    {
-        CONTEXT("When applying L1-norm to DenseVectorContinuousBase<float> (Cell):");
-        float result(0.0f);
-
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od;
-
-        unsigned offset((ob.u & 0xF) / sizeof(float));
-
-        if (offset > 0)
-            ob.u += 16 -(4 * offset); // Align the address for SPU.
-
-        if (a.size() < 5)
-            offset = 0;
-
-        oc.u = (a.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        od.u = (a.size() - ((4 - offset) % 4)) % (1024 * 4);
-        od.u &= ~0xF;
-
-        unsigned rest_index(oc.u * 4096 + od.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_norm_l_one_dense_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
         float ppu_result(0.0f);
 
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
+        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            ppu_result += fabs(*i);
+            ppu_result = (ppu_result > fabs(*i)) ? ppu_result : fabs(*i);
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
-            ppu_result += fabs(*i);
+            ppu_result = (ppu_result > fabs(*i)) ? ppu_result : fabs(*i);
         }
 
-        if (use_spe)
-        {
+        if (instruction.use_spe())
             instruction.wait();
-            result = ppu_result + result;
-        }
-        else
+
+        return (ppu_result > result) ? ppu_result : result;
+    }
+
+    float
+    Norm<vnt_l_one, false, tags::Cell>::value(const DenseVectorContinuousBase<float> & a)
+    {
+        CONTEXT("When applying L1-norm to DenseVectorContinuousBase<float> (Cell):");
+
+        float result(0.0f);
+
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_norm_l_one_dense_float, &result, a.elements(), a.size());
+
+        if (instruction.use_spe())
         {
-            result = ppu_result;
+            SPEManager::instance()->dispatch(instruction);
         }
 
-        return result;
+        float ppu_result(0.0f);
+
+        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        {
+            ppu_result += fabs(*i);
+        }
+
+        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            ppu_result += fabs(*i);
+        }
+
+        if (instruction.use_spe())
+            instruction.wait();
+
+        return result + ppu_result;
     }
 
     float
@@ -177,74 +101,7 @@ namespace honei
     {
         CONTEXT("When applying L2-norm (with square-root) to DenseVectorContinuousBase<float> (Cell):");
 
-        float result(0.0f);
-
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od;
-
-        unsigned offset((ob.u & 0xF) / sizeof(float));
-
-        if (offset > 0)
-            ob.u += 16 -(4 * offset); // Align the address for SPU.
-
-        if (a.size() < 5)
-            offset = 0;
-
-        oc.u = (a.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        od.u = (a.size() - ((4 - offset) % 4)) % (1024 * 4);
-        od.u &= ~0xF;
-
-        unsigned rest_index(oc.u * 4096 + od.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_norm_l_two_dense_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
-        {
-            SPEManager::instance()->dispatch(instruction);
-        }
-
-        float ppu_result(0.0f);
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
-        {
-            ppu_result += *i * *i;
-        }
-
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
-        {
-            ppu_result += *i * *i;
-        }
-
-        if (use_spe)
-        {
-            instruction.wait();
-            result = sqrt(ppu_result + result);
-        }
-        else
-        {
-            result = sqrt(ppu_result);
-        }
-
-        return result;
+        return sqrt(Norm<vnt_l_two, false, tags::Cell>::value(a));
     }
 
     float
@@ -254,71 +111,35 @@ namespace honei
 
         float result(0.0f);
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od;
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_norm_l_two_dense_float, &result, a.elements(), a.size());
 
-        unsigned offset((ob.u & 0xF) / sizeof(float));
-
-        if (offset > 0)
-            ob.u += 16 -(4 * offset); // Align the address for SPU.
-
-        if (a.size() < 5)
-            offset = 0;
-
-        oc.u = (a.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        od.u = (a.size() - ((4 - offset) % 4)) % (1024 * 4);
-        od.u &= ~0xF;
-
-        unsigned rest_index(oc.u * 4096 + od.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_norm_l_two_dense_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
         float ppu_result(0.0f);
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
+
+        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            ppu_result += *i * *i;
+            float temp(fabs(*i));
+            temp *= temp;
+
+            ppu_result += temp;
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
-            ppu_result += *i * *i;
+            float temp(fabs(*i));
+            temp *= temp;
+
+            ppu_result += temp;
         }
 
-        if (use_spe)
-        {
+        if (instruction.use_spe())
             instruction.wait();
-            result = ppu_result + result;
-        }
-        else
-        {
-            result = ppu_result;
-        }
 
-        return result;
+        return result + ppu_result;
     }
 }
+

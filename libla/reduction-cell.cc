@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007,2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
@@ -37,62 +37,26 @@ namespace honei
 
         float result(0.0f);
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od;
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_sum_dense_float, &result, a.elements(), a.size());
 
-        unsigned offset((ob.u & 0xF) / sizeof(float));
-
-        if (offset > 0)
-            ob.u += 16 -(4 * offset); // Align the address for SPU.
-
-        if (a.size() < 5)
-            offset = 0;
-
-        oc.u = (a.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        od.u = (a.size() - ((4 - offset) % 4)) % (1024 * 4);
-        od.u &= ~0xF;
-
-        unsigned rest_index(oc.u * 4096 + od.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-        SPEInstruction instruction(oc_reduction_sum_dense_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
         float ppu_result(0.0f);
 
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
+        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
             ppu_result += *i;
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
             ppu_result += *i;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
             instruction.wait();
 
         return result += ppu_result;
@@ -105,56 +69,38 @@ namespace honei
 
         DenseVector<float> result(a.rows(), 0.0f);
 
-        for (unsigned i(0) ; i < a.rows() ; i++)
+        for (unsigned k(0) ; k < a.rows() ; k++)
         {
-            Operand oa = { result.elements() + i };
-            Operand ob = { a.elements() + (i * a.columns()) };
-            Operand oc, od;
-            oc.u = a.columns() / 4096;
-            od.u = a.columns() % 4096;
-            od.u &= ~0xF;
+            DenseVectorRange<float> row(a[k]);
 
-            unsigned rest_index(oc.u * 4096 + od.u);
+            SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_sum_dense_float, result.elements() + k,
+                    row.elements(), row.size());
 
-            od.u *= 4;
-
-            bool use_spe(true);
-
-            if (0 == od.u)
-            {
-                if (oc.u > 0)
-                {
-                    od.u = 16 * 1024;
-                }
-                else
-                {
-                    use_spe = false;
-                }
-            }
-            else
-            {
-                ++oc.u;
-            }
-
-            SPEInstruction instruction(oc_reduction_sum_dense_float, 16 * 1024, oa, ob, oc, od);
-
-            if (use_spe)
+            if (instruction.use_spe())
             {
                 SPEManager::instance()->dispatch(instruction);
             }
 
             float ppu_result(0.0f);
-            for (Vector<float>::ConstElementIterator j(a[i].element_at(rest_index)), j_end(a[i].end_elements()) ; j != j_end ; ++j)
+
+            for (Vector<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
+                    i != i_end ; ++i)
             {
-                ppu_result += *j;
+                ppu_result += *i;
             }
 
-            if (use_spe)
+            for (Vector<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ; i != i_end ; ++i)
+            {
+                ppu_result += *i;
+            }
+
+            if (instruction.use_spe())
                 instruction.wait();
 
-            result[i] += ppu_result;
+            result[k] += ppu_result;
 
         }
+
         return result;
     }
 
@@ -163,128 +109,72 @@ namespace honei
     {
         CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by minimum (Cell):");
 
-        float result(0.0f);
+        float result(std::numeric_limits<float>::max());
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od, oe;
-        oc.u = a.size() / 4096;
-        od.u = a.size() % 4096;
-        od.u &= ~0xF;
-        oe.f = a[0];
-        unsigned rest_index(oc.u * 4096 + od.u);
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_min_dense_float, &result, a.elements(), a.size());
 
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_reduction_min_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
-            unsigned offset((ob.u & 0xF) / sizeof(float));
-            rest_index -=offset;
         }
 
-        float ppu_result(a[0]);
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        float ppu_result(std::numeric_limits<float>::max());
+
+        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            ppu_result = (*i < ppu_result) ? *i : ppu_result;
+            ppu_result = (ppu_result < *i) ? ppu_result : *i;
         }
 
-        if (use_spe)
+        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
+            ppu_result = (ppu_result < *i) ? ppu_result : *i;
+        }
+
+        if (instruction.use_spe())
             instruction.wait();
-            result = ppu_result < result ? ppu_result : result;
-        }
-        else
-        {
-            result = ppu_result;
-        }
 
-        return result;
+        return (result < ppu_result) ? result : ppu_result;
     }
 
     DenseVector<float>
     Reduction<rt_min, tags::Cell>::value(const DenseMatrix<float> & a)
     {
-        CONTEXT("When reducing DenseMatrix<float> to Vector by min (Cell):");
+        CONTEXT("When reducing DenseMatrix<float> to Vector by minimum (Cell):");
 
-        DenseVector<float> result(a.rows(), 0.0f);
+        DenseVector<float> result(a.rows(), std::numeric_limits<float>::max());
 
-        for (unsigned i(0) ; i < a.rows() ; i++)
+        for (unsigned k(0) ; k < a.rows() ; k++)
         {
-            Operand oa = { result.elements() + i };
-            Operand ob = { a.elements() + (i * a.columns()) };
-            Operand oc, od, oe;
-            oc.u = a.columns() / 4096;
-            od.u = a.columns() % 4096;
-            od.u &= ~0xF;
-            oe.f = *(a.elements() + (i * a.columns()));
+            DenseVectorRange<float> row(a[k]);
 
-            unsigned rest_index(oc.u * 4096 + od.u);
+            SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_min_dense_float, result.elements() + k,
+                    row.elements(), row.size());
 
-            od.u *= 4;
-
-            bool use_spe(true);
-
-            if (0 == od.u)
-            {
-                if (oc.u > 0)
-                {
-                    od.u = 16 * 1024;
-                }
-                else
-                {
-                    use_spe = false;
-                }
-            }
-            else
-            {
-                ++oc.u;
-            }
-
-            SPEInstruction instruction(oc_reduction_min_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-            if (use_spe)
+            if (instruction.use_spe())
             {
                 SPEManager::instance()->dispatch(instruction);
             }
 
-            float ppu_result(*(a.elements() + (i * a.columns())));
-            for (Vector<float>::ConstElementIterator j(a[i].element_at(rest_index)), j_end(a[i].end_elements()) ; j != j_end ; ++j)
+            float ppu_result(std::numeric_limits<float>::max());
+
+            for (Vector<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
             {
-                ppu_result = (*j < ppu_result) ? *j : ppu_result;
+                ppu_result = (ppu_result < *i) ? ppu_result : *i;
             }
 
-            if (use_spe)
+            for (Vector<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ; i != i_end ; ++i)
+            {
+                ppu_result = (ppu_result < *i) ? ppu_result : *i;
+            }
+
+            if (instruction.use_spe())
             {
                 instruction.wait();
-                result[i] = ppu_result < result[i] ? ppu_result : result[i];
-            }
-            else
-            {
-               result[i] = ppu_result;
             }
 
-       }
+            result[k] = ppu_result < result[k] ? ppu_result : result[k];
+        }
+
         return result;
     }
 
@@ -293,182 +183,103 @@ namespace honei
     {
         CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by maximum (Cell):");
 
-        float result(0.0f);
+        float result(std::numeric_limits<float>::min());
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od, oe;
-        oc.u = a.size() / 4096;
-        od.u = a.size() % 4096;
-        od.u &= ~0xF;
-        oe.f = a[0];
-        unsigned rest_index(oc.u * 4096 + od.u);
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_max_dense_float, &result, a.elements(), a.size());
 
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_reduction_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
-            unsigned offset((ob.u & 0xF) / sizeof(float));
-            rest_index -=offset;
         }
 
-        float ppu_result(a[0]);
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ; i != i_end ; ++i)
+        float ppu_result(std::numeric_limits<float>::min());
+
+        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            ppu_result = (*i > ppu_result) ? *i : ppu_result;
+            ppu_result = (ppu_result > *i) ? ppu_result : *i;
         }
 
-        if (use_spe)
+        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
+            ppu_result = (ppu_result > *i) ? ppu_result : *i;
+        }
+
+        if (instruction.use_spe())
             instruction.wait();
-            result = ppu_result > result ? ppu_result : result;
-        }
-        else
-        {
-            result = ppu_result;
-        }
 
-        return result;
+        return (ppu_result > result) ? ppu_result : result;
     }
 
     DenseVector<float>
     Reduction<rt_max, tags::Cell>::value(const DenseMatrix<float> & a)
     {
-        CONTEXT("When reducing DenseMatrix<float> to Vector by max (Cell):");
+        CONTEXT("When reducing DenseMatrix<float> to Vector by sum (Cell):");
 
-        DenseVector<float> result(a.rows(), 0.0f);
+        DenseVector<float> result(a.rows(), std::numeric_limits<float>::min());
 
-        for (unsigned i(0) ; i < a.rows() ; i++)
+        for (unsigned k(0) ; k < a.rows() ; k++)
         {
-            Operand oa = { result.elements() + i };
-            Operand ob = { a.elements() + (i * a.columns()) };
-            Operand oc, od, oe;
-            oc.u = a.columns() / 4096;
-            od.u = a.columns() % 4096;
-            od.u &= ~0xF;
-            oe.f = *(a.elements() + (i * a.columns()));
-            unsigned rest_index(oc.u * 4096 + od.u);
+            DenseVectorRange<float> row(a[k]);
 
-            od.u *= 4;
+            SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_max_dense_float, result.elements() + k,
+                    row.elements(), row.size());
 
-            bool use_spe(true);
-
-            if (0 == od.u)
-            {
-                if (oc.u > 0)
-                {
-                    od.u = 16 * 1024;
-                }
-                else
-                {
-                    use_spe = false;
-                }
-            }
-            else
-            {
-                ++oc.u;
-            }
-
-            SPEInstruction instruction(oc_reduction_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-            if (use_spe)
+            if (instruction.use_spe())
             {
                 SPEManager::instance()->dispatch(instruction);
             }
 
-            float ppu_result(*(a.elements() + (i * a.columns())));
-            for (Vector<float>::ConstElementIterator j(a[i].element_at(rest_index)), j_end(a[i].end_elements()) ; j != j_end ; ++j)
+            float ppu_result(std::numeric_limits<float>::min());
+
+            for (Vector<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
             {
-                ppu_result = (*j > ppu_result) ? *j : ppu_result;
+                ppu_result = (ppu_result > *i) ? ppu_result : *i;
             }
 
-            if (use_spe)
+            for (Vector<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ; i != i_end ; ++i)
+            {
+                ppu_result = (ppu_result > *i) ? ppu_result : *i;
+            }
+
+            if (instruction.use_spe())
             {
                 instruction.wait();
-                result[i] = ppu_result > result[i] ? ppu_result : result[i];
+                result[k] = ppu_result > result[k] ? ppu_result : result[k];
             }
             else
             {
-               result[i] = ppu_result;
+               result[k] = ppu_result;
             }
-
         }
+
         return result;
     }
-   float
+
+    float
     Reduction<rt_sum, tags::Cell>::value(const SparseVector<float> & a)
     {
         CONTEXT("When reducing SparseVector<float> to Scalar by sum (Cell):");
 
         float result(0.0f);
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_sum_dense_float, &result, a.elements(), a.used_elements());
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od;
-        oc.u = a.used_elements() / 4096;
-        od.u = a.used_elements() % 4096;
-        od.u &= ~0xF;
-
-        unsigned rest_index(oc.u * 4096 + od.u);
-
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_reduction_sum_dense_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
         float ppu_result(0.0f);
-        for (unsigned i(rest_index); i < a.used_elements() ; i++)
+
+        for (Vector<float>::ConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
+                i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
         {
-            ppu_result += *(a.elements() + i);
+            ppu_result += *i;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
             instruction.wait();
 
-        return (result + ppu_result);
+        return result + ppu_result;
     }
 
     DenseVector<float>
@@ -494,61 +305,27 @@ namespace honei
 
         float result(0.0f);
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od, oe;
-        oc.u = a.used_elements() / 4096;
-        od.u = a.used_elements() % 4096;
-        od.u &= ~0xF;
-        oe.f = a.used_elements() < a.size() ? 0.0f : a[*a.indices()];
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_min_dense_float, &result, a.elements(), a.used_elements());
 
-        unsigned rest_index(oc.u * 4096 + od.u);
-
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_reduction_min_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        float ppu_result(oe.f);
+        float ppu_result(0.0f);
 
-        for (unsigned i(rest_index); i < a.used_elements() ; i++)
+        for (Vector<float>::ConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
+                i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
         {
-            ppu_result = *(a.elements() + i) < ppu_result ? *(a.elements() + i) : ppu_result;
+            ppu_result = (ppu_result < *i) ? ppu_result : *i;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
         {
             instruction.wait();
-            result = ppu_result < result ? ppu_result : result;
-        }
-        else
-        {
-            result = ppu_result;
         }
 
-        return result;
+        return (ppu_result < result) ? ppu_result : result;
     }
 
     DenseVector<float>
@@ -573,61 +350,27 @@ namespace honei
         CONTEXT("When reducing SparseVector<float> to Scalar by maximum (Cell):");
 
         float result(0.0f);
+        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_max_dense_float, &result, a.elements(), a.used_elements());
 
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc, od, oe;
-        oc.u = a.used_elements() / 4096;
-        od.u = a.used_elements() % 4096;
-        od.u &= ~0xF;
-        oe.f = a.used_elements() < a.size() ? 0.0f : a[*a.indices()];
-        unsigned rest_index(oc.u * 4096 + od.u);
-
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_reduction_max_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        float ppu_result(oe.f);
+        float ppu_result(0.0f);
 
-        for (unsigned i(rest_index); i < a.used_elements() ; i++)
+        for (Vector<float>::ConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
+                i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
         {
-            ppu_result = *(a.elements() + i) > ppu_result ? *(a.elements() + i) : ppu_result;
+            ppu_result = (ppu_result > *i) ? ppu_result : *i;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
         {
             instruction.wait();
-            result = ppu_result > result ? ppu_result : result;
-        }
-        else
-        {
-            result = ppu_result;
         }
 
-        return result;
+        return (ppu_result > result) ? ppu_result : result;
     }
 
     DenseVector<float>
@@ -645,5 +388,5 @@ namespace honei
 
         return result;
     }
-
 }
+

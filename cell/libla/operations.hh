@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (C) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,38 +17,30 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <cell/cell.hh>
-#include <cell/libla/operations.hh>
-#include <cell/libutil/allocator.hh>
+#ifndef CELL_GUARD_LIBLA_OPERATIONS_HH
+#define CELL_GUARD_LIBLA_OPERATIONS_HH 1
+
+#include <cell/libutil/operations.hh>
 
 namespace honei
 {
     namespace cell
     {
-        namespace implementation
-        {
-            vector float reduction_sum_dense_float(const vector float & accumulator, vector float * elements,
-                    const unsigned size)
-            {
-                vector float result(accumulator);
-
-                for (unsigned i(0) ; i < size ; ++i)
-                {
-                    result = spu_add(elements[i], result);
-                }
-
-                return result;
-            }
-        }
-
         namespace operations
         {
-            Operation<1, float, rtm_mail> reduction_sum_dense_float = {
-                &zero_float,
-                &implementation::reduction_sum_dense_float,
-                &sum_float
-            };
+            extern Operation<1, float, rtm_mail> norm_max_dense_float;
+
+            extern Operation<1, float, rtm_mail> norm_l_one_dense_float;
+
+            extern Operation<1, float, rtm_mail> norm_l_two_dense_float;
+
+            extern Operation<1, float, rtm_mail> reduction_max_dense_float;
+
+            extern Operation<1, float, rtm_mail> reduction_min_dense_float;
+
+            extern Operation<1, float, rtm_mail> reduction_sum_dense_float;
         }
     }
 }
 
+#endif

@@ -9,6 +9,9 @@ noinst_LIBRARIES = libutil_spe.a
 
 libutil_spe_a_SOURCES = \
 	allocator.cc \
+	operations.cc \
+	operation_one_float_mail.cc \
+	operation_two_float_mail.cc \
 	transfer.cc
 
 libutil_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti

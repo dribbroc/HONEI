@@ -25,6 +25,8 @@ libla_spe_a_SOURCES = \
 	norm_l_two_dense_float.cc \
 	element_inverse_float.cc \
 	scaled_sum_dense_dense_float.cc
+libla_spe_a_LIBADD = \
+	$(top_srcdir)/cell/libutil/libutil_spe.a
 
 libla_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 

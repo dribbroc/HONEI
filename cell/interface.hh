@@ -180,6 +180,21 @@ namespace honei
             const OpCode * opcodes;
         };
 
+        /**
+         * ResultTransferMethod enumerates all possible means to return data from the SPE
+         * to the caller.
+         *
+         * \ingroup grpspeinterface
+         */
+        enum ResultTransferMethod
+        {
+            rtm_none, ///< The result cannot be transfered.
+            rtm_mail, ///< The result will be transfered via mail.
+            rtm_dma, ///< The result will be transfered via DMA.
+        };
+
+
+
 #if defined(__PPU__) || defined(DOXYGEN)
 
         /**
