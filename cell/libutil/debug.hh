@@ -38,10 +38,18 @@ namespace honei
         inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
                 const unsigned & size) __attribute__((always_inline));
 
+        inline void debug_getl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
+                const unsigned & size) __attribute__((always_inline));
+
         inline void debug_leave() __attribute__((always_inline));
 
         inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
                 const unsigned & size) __attribute__((always_inline));
+
+        inline void debug_putl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
+                const unsigned & size) __attribute__((always_inline));
+
+        inline void debug_acquire(const LocalStoreAddress & lsa) __attribute__((always_inline));
 
         inline void debug_release(const LocalStoreAddress & lsa) __attribute__((always_inline));
 
@@ -84,6 +92,17 @@ namespace honei
 #endif
         }
 
+        inline void debug_getl(const EffectiveAddress & eah, const LocalStoreAddress & lsa,
+                const unsigned & size)
+        {
+#ifdef DEBUG
+            spu_write_out_intr_mbox(km_debug_getl);
+            spu_write_out_mbox(eah >> 32);
+            spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+            spu_write_out_mbox(size);
+#endif
+        }
+
         inline void debug_leave()
         {
 #ifdef DEBUG
@@ -98,6 +117,17 @@ namespace honei
             spu_write_out_intr_mbox(km_debug_put);
             spu_write_out_mbox(ea >> 32);
             spu_write_out_mbox(ea & 0xFFFFFFFF);
+            spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
+            spu_write_out_mbox(size);
+#endif
+        }
+
+        inline void debug_putl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
+                const unsigned & size)
+        {
+#ifdef DEBUG
+            spu_write_out_intr_mbox(km_debug_putl);
+            spu_write_out_mbox(ea >> 32);
             spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
             spu_write_out_mbox(size);
 #endif

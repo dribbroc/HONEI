@@ -205,6 +205,23 @@ namespace honei
                                 }
                                 continue;
 
+                            case km_debug_putl:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    LocalStoreAddress eah = { 0 };
+                                    LocalStoreAddress lsa = { 0 };
+                                    unsigned size(0);
+
+                                    spe_out_mbox_read(spe->context(), &eah.value, 1);
+                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                    spe_out_mbox_read(spe->context(), &size, 1);
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: PUTL transfer started, eah = " +
+                                            stringify(eah) + ", lsa = " + stringify(lsa) + " size = " +
+                                            stringify(size));
+                                }
+                                continue;
+
                             case km_debug_get:
                                 {
                                     Lock ll(*imp->mutex);
@@ -222,6 +239,24 @@ namespace honei
                                     spe_out_mbox_read(spe->context(), &size, 1);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: GET transfer started, ea = " +
                                             stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
+                                            stringify(size));
+                                }
+                                continue;
+
+                            case km_debug_getl:
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    /// \todo remove Hack
+                                    LocalStoreAddress eah = { 0 };
+                                    LocalStoreAddress lsa = { 0 };
+                                    unsigned size(0);
+
+                                    spe_out_mbox_read(spe->context(), &eah.value, 1);
+                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                    spe_out_mbox_read(spe->context(), &size, 1);
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: GETL transfer started, eah = " +
+                                            stringify(eah) + ", lsa = " + stringify(lsa) + " size = " +
                                             stringify(size));
                                 }
                                 continue;

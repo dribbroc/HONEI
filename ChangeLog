@@ -6,6 +6,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-13 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/interface.hh, cell/types.hh, libutil/spe_kernel.cc,
+	libutil/spe_transfer_list.cc, libutil/spe_transfer_list.hh,
+	libutil/spe_transfer_list_TEST.cc, libutil/debug.hh: Partially
+	reworked danny's pre-work for enabling DMA list tranfers on Cell.
+	Added assertions and exceptions and tests cases for them. Modified
+	debug.hh and SPE Kernel to enable debug_getl and debug_putl.
+
 2008-01-13 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* cell/libutil/debug.hh: Cleaned up, added debug_enter and

@@ -45,7 +45,9 @@ namespace honei
             km_result_qword, ///< A result message carrying a quad word of data.
             km_unknown_opcode, ///< An error message about an unknown opcode.
             km_debug_get, ///< A debug message about a DMA GET transfer.
+            km_debug_getl, ///< A debug message about a DMA GETL transfer.
             km_debug_put, ///< A debug message about a DMA PUT transfer.
+            km_debug_putl, ///< A debug message about a DMA PUTL transfer.
             km_debug_enter, ///< A debug message about entering a function.
             km_debug_leave, ///< A debug message about leaving a function.
             km_debug_acquire_block, ///< A debug message about acquiring an LS memory block.
