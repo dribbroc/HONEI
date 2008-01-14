@@ -17,7 +17,13 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "node_distance.hh"
+#include <libgraph/node_distance.hh>
+
+#if defined (__SSE3__)
+#include <pmmintrin.h>
+#else
+#include <emmintrin.h>
+#endif
 
 namespace honei
 {
@@ -25,6 +31,135 @@ namespace honei
     {
         namespace sse
         {
+#if defined (__SSE3__)
+            inline void node_distance(float * result, float * pos_matrix, float x, float y, unsigned long size)
+            {
+                __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+                float __attribute__((aligned(16))) coordinates[4];
+                coordinates[0] = x;
+                coordinates[1] = y;
+                coordinates[2] = x;
+                coordinates[3] = y;
+                m8 = _mm_load_ps(coordinates);
+
+                unsigned long result_address = (unsigned long)result;
+                unsigned long result_offset = result_address % 16;
+
+                unsigned long x_offset(result_offset / 4);
+                x_offset = (4 - x_offset) % 4;
+
+                unsigned long quad_start = x_offset;
+                unsigned long quad_end(size - ((size - quad_start) % 12));
+
+                if (size < 24)
+                {
+                    quad_end = 0;
+                    quad_start = 0;
+                }
+
+                for (unsigned long index(0) ; index < quad_start ; ++index)
+                {
+                    result[index] = ((x - pos_matrix[index * 2]) * (x - pos_matrix[index * 2])
+                            +  ((y - pos_matrix[index * 2 + 1]) * (y - pos_matrix[index * 2 + 1])));
+                }
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 12)
+                {
+                    m1 = _mm_load_ps(pos_matrix + (index * 2));
+                    m2 = _mm_load_ps(pos_matrix + (index * 2) + 4);
+                    m3 = _mm_load_ps(pos_matrix + (index * 2) + 8);
+                    m4 = _mm_load_ps(pos_matrix + (index * 2) + 12);
+                    m5 = _mm_load_ps(pos_matrix + (index * 2) + 16);
+                    m6 = _mm_load_ps(pos_matrix + (index * 2) + 20);
+                    m1 = _mm_sub_ps(m8, m1);
+                    m2 = _mm_sub_ps(m8, m2);
+                    m3 = _mm_sub_ps(m8, m3);
+                    m4 = _mm_sub_ps(m8, m4);
+                    m5 = _mm_sub_ps(m8, m5);
+                    m6 = _mm_sub_ps(m8, m6);
+                    m1 = _mm_mul_ps(m1, m1);
+                    m2 = _mm_mul_ps(m2, m2);
+                    m3 = _mm_mul_ps(m3, m3);
+                    m4 = _mm_mul_ps(m4, m4);
+                    m5 = _mm_mul_ps(m5, m5);
+                    m6 = _mm_mul_ps(m6, m6);
+                    m1 = _mm_hadd_ps(m1, m2);
+                    m3 = _mm_hadd_ps(m3, m4);
+                    m5 = _mm_hadd_ps(m5, m6);
+                    _mm_store_ps(result + index, m1);
+                    _mm_store_ps(result + index + 4, m3);
+                    _mm_store_ps(result + index + 8, m5);
+                }
+                for (unsigned long index(quad_end) ; index < size ; ++index)
+                {
+                    result[index] = ((x - pos_matrix[index * 2]) * (x - pos_matrix[index * 2])
+                            +  ((y - pos_matrix[index * 2 + 1]) * (y - pos_matrix[index * 2 + 1])));
+                }
+            }
+
+            inline void node_distance(double * result, double * pos_matrix, double x, double y, unsigned long size)
+            {
+                __m128d m1, m2, m3, m4, m5, m6, m8;
+                double __attribute__((aligned(16))) coordinates[4];
+                coordinates[0] = x;
+                coordinates[1] = y;
+                coordinates[2] = x;
+                coordinates[3] = y;
+                m8 = _mm_load_pd(coordinates);
+
+                unsigned long result_address = (unsigned long)result;
+                unsigned long result_offset = result_address % 16;
+
+                unsigned long x_offset(result_offset / 2);
+                x_offset = (2 - x_offset) % 2;
+
+                unsigned long quad_start = x_offset;
+                unsigned long quad_end(size - ((size - quad_start) % 6));
+
+                if (size < 24)
+                {
+                    quad_end = 0;
+                    quad_start = 0;
+                }
+
+                for (unsigned long index(0) ; index < quad_start ; ++index)
+                {
+                    result[index] = ((x - pos_matrix[index * 2]) * (x - pos_matrix[index * 2])
+                            +  ((y - pos_matrix[index * 2 + 1]) * (y - pos_matrix[index * 2 + 1])));
+                }
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 6)
+                {
+                    m1 = _mm_load_pd(pos_matrix + (index * 2));
+                    m2 = _mm_load_pd(pos_matrix + (index * 2) + 2);
+                    m3 = _mm_load_pd(pos_matrix + (index * 2) + 4);
+                    m4 = _mm_load_pd(pos_matrix + (index * 2) + 6);
+                    m5 = _mm_load_pd(pos_matrix + (index * 2) + 8);
+                    m6 = _mm_load_pd(pos_matrix + (index * 2) + 10);
+                    m1 = _mm_sub_pd(m8, m1);
+                    m2 = _mm_sub_pd(m8, m2);
+                    m3 = _mm_sub_pd(m8, m3);
+                    m4 = _mm_sub_pd(m8, m4);
+                    m5 = _mm_sub_pd(m8, m5);
+                    m6 = _mm_sub_pd(m8, m6);
+                    m1 = _mm_mul_pd(m1, m1);
+                    m2 = _mm_mul_pd(m2, m2);
+                    m3 = _mm_mul_pd(m3, m3);
+                    m4 = _mm_mul_pd(m4, m4);
+                    m5 = _mm_mul_pd(m5, m5);
+                    m6 = _mm_mul_pd(m6, m6);
+                    m1 = _mm_hadd_pd(m1, m2);
+                    m3 = _mm_hadd_pd(m3, m4);
+                    m5 = _mm_hadd_pd(m5, m6);
+                    _mm_store_pd(result + index, m1);
+                    _mm_store_pd(result + index + 2, m3);
+                    _mm_store_pd(result + index + 4, m5);
+                }
+                for (unsigned long index(quad_end) ; index < size ; ++index)
+                {
+                    result[index] = ((x - pos_matrix[index * 2]) * (x - pos_matrix[index * 2])
+                            +  ((y - pos_matrix[index * 2 + 1]) * (y - pos_matrix[index * 2 + 1])));
+                }
+            }
+#else
             inline void node_distance(float * result, float * pos_matrix, float x, float y, unsigned long size)
             {
                 for (unsigned long row(0) ; row < size ; ++row)
@@ -42,7 +177,7 @@ namespace honei
                             +  ((y - pos_matrix[row * 2 + 1]) * (y - pos_matrix[row * 2 + 1])));
                 }
             }
-
+#endif
             inline void invert_distance(float * dist, float square_force_range, unsigned long size)
             {
                 for (unsigned long index(0) ; index < size ; ++index)
