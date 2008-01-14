@@ -74,7 +74,10 @@ namespace honei
         {
             CONTEXT("When preparing a SPE for instruction dispatching");
 
-            /// \todo was ist, wenn kein kernel den opcode unterstuetzt ?
+            //check if any kernels knows the new opcode
+            if (SPEKernelManager::instance()->find(instruction.instruction().opcode)
+                    == SPEKernelManager::instance()->upper_bound(instruction.instruction().opcode))
+                    throw InternalError("SPEManager: No kernel supports opcode: " + stringify(instruction.instruction().opcode) + ".");
 
             sort(spe_list.begin(), spe_list.end(), compare_by_load);
 
