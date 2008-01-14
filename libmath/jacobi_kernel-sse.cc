@@ -134,8 +134,6 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
             }
             for (unsigned long index(quad_end) ; index < end ; index++)
             {
-                cout << index << endl;
-                cout << "accessing: " << index - op_offset << endl;
                 r_e_c[index] += (band_e[index] * x_e[index - op_offset]);
                 r_e[index] +=  (band_e[index] * x_e[index - op_offset] * d_e[index]);
             }
