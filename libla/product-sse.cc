@@ -202,6 +202,34 @@ namespace honei
                     x[index] += y[index] * b;
                 }
             }
+
+            inline void product_dm_nx2(float * result, const float * a, const float * b, unsigned long size)
+            {
+                float result1(0);
+                float result2(0);
+
+                for (unsigned long row(0) ; row < size ; ++row)
+                {
+                    result1 += a[row] * b[row * 2];
+                    result2 += a[row] * b[row * 2 + 1];
+                }
+                result[0] = result1;
+                result[1] = result2;
+            }
+
+            inline void product_dm_nx2(double * result, const double * a, const double * b, unsigned long size)
+            {
+                double result1(0);
+                double result2(0);
+
+                for (unsigned long row(0) ; row < size ; ++row)
+                {
+                    result1 += a[row] * b[row * 2];
+                    result2 += a[row] * b[row * 2 + 1];
+                }
+                result[0] = result1;
+                result[1] = result2;
+            }
         }
     }
 }
@@ -470,11 +498,21 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
 
     DenseMatrix<float> result(a.rows(), b.columns(), float(0));
 
-    for (unsigned long j(0) ; j < a.columns() ; ++j)
+    if (a.columns() == a.rows() && b.columns() == 2)
     {
         for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
-            honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i, j), b[j].size());
+            honei::intern::sse::product_dm_nx2(result[i].elements(), a[i].elements(), b.elements(), b.rows());
+        }
+    }
+    else
+    {
+        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        {
+            for (unsigned long i(0) ; i < a.rows() ; ++i)
+            {
+                honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i, j), b[j].size());
+            }
         }
     }
 
@@ -490,11 +528,21 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
 
     DenseMatrix<double> result(a.rows(), b.columns(), double(0));
 
-    for (unsigned long j(0) ; j < a.columns() ; ++j)
+    if (a.columns() == a.rows() && b.columns() == 2)
     {
         for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
-            honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i, j), b[j].size());
+            honei::intern::sse::product_dm_nx2(result[i].elements(), a[i].elements(), b.elements(), b.rows());
+        }
+    }
+    else
+    {
+        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        {
+            for (unsigned long i(0) ; i < a.rows() ; ++i)
+            {
+                honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i, j), b[j].size());
+            }
         }
     }
 
