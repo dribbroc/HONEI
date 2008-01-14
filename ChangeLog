@@ -6,6 +6,20 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-14 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/interface.hh, cell/kernels/kernel_reference.sk,
+	cell/libla/difference_dense_dense_float.cc,
+	cell/libla/element_product_dense_dense_float.cc,
+	cell/libla/operations.hh, cell/libla/sum_dense_dense_float.cc,
+	cell/libutil/Makefile.am, cell/libutil/operations.hh,
+	libla/difference-cell.cc, libla/difference.hh,
+	libla/difference_TEST.cc, libla/element_product-cell.cc,
+	libla/sum-cell.cc, libutil/spe_instruction.cc,
+	libutil/spe_instruction.hh: Implemented and optimized the combined
+	structure for dense_dense_entity operations: Sum, Difference,
+	ElementProduct. Added Difference(DM,DM) and tests.
+
 2008-01-14 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/element_iterator.hh, libla/matrix.hh, libla/sparse_matrix.hh,

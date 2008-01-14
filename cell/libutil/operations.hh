@@ -79,6 +79,16 @@ namespace honei
             float (*finish)(const vector float & accumulator);
         };
 
+        template <> struct Operation<2, float, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on given blocks of data.
+            void (*calculate)(vector float * a_elements, const vector float * b_elements, const unsigned size,
+                    vector float & b_carry, const unsigned b_offset);
+        };
+
         /// \}
 
         /**
@@ -101,6 +111,9 @@ namespace honei
                 const Instruction & instruction);
 
         template <> unsigned operation<Operation<2, float, rtm_mail> >(const Operation<2, float, rtm_mail> & operation,
+                const Instruction & instruction);
+
+        template <> void operation<Operation<2, float, rtm_dma> >(const Operation<2, float, rtm_dma> & operation,
                 const Instruction & instruction);
 
         /// \}

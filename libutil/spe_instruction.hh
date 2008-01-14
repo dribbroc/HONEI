@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -169,6 +170,52 @@ namespace honei
     extern template class SPEFrameworkInstruction<1, float, cell::rtm_dma>;
 
     extern template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
+
+    template <typename DataType_> class SPEFrameworkInstruction<2, DataType_, cell::rtm_dma> :
+        public SPEInstruction
+    {
+        private:
+            typedef cell::Instruction Instruction;
+
+            typedef cell::OpCode OpCode;
+
+            /// Index of the first element that is to be transfered.
+            unsigned _begin_transfers;
+
+            /// Index of the element behind the last element that is to be transfered.
+            unsigned _end_transfers;
+
+            /// Will the SPE be used?
+            bool _use_spe;
+
+        public:
+            /**
+             * Constructor.
+             *
+             * \param opcode The instruction's opcode.
+             * \param result The pointer to the pre-allocated result-memory.
+             * \param elements The pointer to the elements of the container.
+             * \param size The overall size of the container.
+             */
+            SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements, const unsigned size);
+
+            unsigned transfer_begin() const
+            {
+                return _begin_transfers;
+            }
+
+            unsigned transfer_end() const
+            {
+                return _end_transfers;
+            }
+
+            bool use_spe() const
+            {
+                return _use_spe;
+            }
+    };
+
+    extern template class SPEFrameworkInstruction<2, float, cell::rtm_dma>;
 
     class SPEInstructionQueue
     {

@@ -37,74 +37,29 @@ namespace honei
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        Operand oa = { a.elements() };
-        Operand ob = { b.elements() };
-        Operand oc, od, oe;
+        SPEFrameworkInstruction<2, float, rtm_dma> instruction(oc_sum_dense_dense_float, a.elements(), b.elements(), a.size());
 
-        unsigned a_offset((oa.u & 0xF) / sizeof(float)); // Alignment offset of a -> elements calculated on PPU.
-        if (a.size() < 5)
-            a_offset = 0;
-
-        ob.u += (4 * ((4 - a_offset) % 4)); // Adjust SPU start for b respecting the elements calculated on PPU.
-
-        unsigned b_offset((ob.u & 0xF) / sizeof(float)); // Alignment offset of b -> shuffle-factor on SPU.
-        oe.u = b_offset;
-
-        // Align the address for SPU.
-        if (a_offset > 0)
-            oa.u += 16 - (4 * a_offset);
-
-        ob.u -= (4 * b_offset);
-
-        oc.u = (b.size() - ((4 - a_offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        od.u = (b.size() - ((4 - a_offset) % 4)) % (1024 * 4);
-        od.u &= ~0xF;
-
-        unsigned rest_index(oc.u * 4096 + od.u + ((4 - a_offset) % 4)); // Rest index dependent on offset and SPU part.
-
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_sum_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        // Calculate the first 4 - a_offset elements on PPU.
+        // Calculate the first 4 - a_offset % 4 elements on PPU.
         Vector<float>::ConstElementIterator j(b.begin_elements());
         for (Vector<float>::ElementIterator i(a.begin_elements()),
-            i_end(a.element_at((4 - a_offset) % 4)) ; i != i_end ; ++i, ++j)
+            i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i, ++j)
         {
             *i += *j;
         }
 
-        Vector<float>::ConstElementIterator k(b.element_at(rest_index));
-        for (Vector<float>::ElementIterator i(a.element_at(rest_index)),
+        Vector<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
+        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
             i_end(a.end_elements()) ; i != i_end ; ++i, ++k)
         {
             *i += *k;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
             instruction.wait();
 
         return a;
@@ -120,54 +75,21 @@ namespace honei
         if (a.columns() != b.columns())
             throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
 
-        Operand oa = { a.elements() };
-        Operand ob = { b.elements() };
-        Operand oc, od;
-        // hardcode transfer buffer size for now.
-        oc.u = (a.rows() * a.columns()) / (1024 * 4);
-        od.u = (a.rows() * a.columns()) % (1024 * 4);
-        od.u &= ~0xF;
+        SPEFrameworkInstruction<2, float, rtm_dma> instruction(oc_sum_dense_dense_float, a.elements(), b.elements(), a.rows() * a.columns());
 
-        Operand oe; // Alignment-offset of Matrix b.
-        oe.u = 0;
-
-        unsigned rest_index(oc.u * 4096 + od.u);
-
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_sum_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        Matrix<float>::ConstElementIterator j(b.element_at(rest_index));
-        MutableMatrix<float>::ElementIterator i(a.element_at(rest_index)), i_end(a.end_elements());
-        for ( ; i != i_end ; ++i, ++j)
+        Matrix<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
+        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
+            i_end(a.end_elements()) ; i != i_end ; ++i, ++k)
         {
-            *i += *j;
+            *i += *k;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
             instruction.wait();
 
         return a;

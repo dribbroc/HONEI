@@ -1,8 +1,9 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -239,10 +240,85 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         ++instruction.c.u;
     }
 }
-
 template class SPEFrameworkInstruction<1, float, cell::rtm_dma>;
 
 template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
+
+template <typename DataType_>
+SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * a_elements,
+        DataType_ * b_elements, const unsigned size) :
+    SPEInstruction(opcode, 16384, a_elements, b_elements),
+    _use_spe(true)
+{
+    Instruction & instruction(_imp->instruction);
+
+    if (size < 5)
+    {
+        instruction.c.u = 0;
+        instruction.d.u = 0;
+        _begin_transfers = 0;
+        _end_transfers = 0;
+        _use_spe = false;
+    }
+    else
+    {
+        unsigned a_offset((instruction.a.u & 0xF) / sizeof(DataType_)); // Alignment offset of a -> elements calculated on PPU.
+        unsigned a_inv_offset((4 - a_offset) % 4);
+        instruction.b.u += (4 * a_inv_offset); // Adjust SPU start for b respecting the elements calculated on PPU.
+        unsigned b_offset((instruction.b.u & 0xF) / sizeof(DataType_)); // Alignment offset of b -> shuffle-factor on SPU.
+        instruction.e.u = b_offset;
+
+        // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
+        DataType_ carries[4] = { b_elements[a_inv_offset], b_elements[a_inv_offset + 1],
+            b_elements[a_inv_offset + 2], b_elements[a_inv_offset + 3] };
+
+        for (unsigned i(0) ; i < b_offset ; i++)
+        {
+            carries[3] = carries[2];
+            carries[2] = carries[1];
+            carries[1] = carries[0];
+            carries[0] = DataType_(0);
+        }
+
+        instruction.f.f = carries[0];
+        instruction.g.f = carries[1];
+        instruction.h.f = carries[2];
+        instruction.i.f = carries[3];
+
+        // Align the address for SPU.
+        instruction.a.u += (4 * a_inv_offset);
+        instruction.b.u += (4 * (4 - b_offset));
+
+        //Subtract PPU-calculated parts from size.
+        instruction.c.u = (size - a_inv_offset) / (1024 * 4);
+        instruction.d.u = (size - a_inv_offset) % (1024 * 4);
+        instruction.d.u &= ~0xF;
+
+        // Rest index dependent on offset and SPU part.
+        _begin_transfers = a_inv_offset;
+        _end_transfers = (instruction.c.u * 4096) + instruction.d.u + a_inv_offset;
+
+        instruction.d.u *= 4;
+    }
+
+    if (0 == instruction.d.u)
+    {
+        if (instruction.c.u > 0)
+        {
+            instruction.d.u = 16 * 1024;
+        }
+        else
+        {
+            _use_spe = false;
+        }
+    }
+    else
+    {
+        ++instruction.c.u;
+    }
+
+}
+template class SPEFrameworkInstruction<2, float, cell::rtm_dma>;
 
 struct SPEInstructionQueue::Implementation
 {

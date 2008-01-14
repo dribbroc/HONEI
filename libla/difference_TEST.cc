@@ -360,6 +360,9 @@ DenseMatrixDifferenceTest<tags::CPU, float> dense_matrix_difference_test_float("
 DenseMatrixDifferenceTest<tags::CPU, double> dense_matrix_difference_test_double("double");
 DenseMatrixDifferenceTest<tags::CPU::MultiCore, float> mc_dense_matrix_difference_test_float("MC float");
 DenseMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_dense_matrix_difference_test_double("MC double");
+#ifdef HONEI_CELL
+DenseMatrixDifferenceTest<tags::Cell, float> cell_dense_matrix_difference_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseMatrixDifferenceQuickTest :
@@ -391,6 +394,9 @@ DenseMatrixDifferenceQuickTest<tags::CPU, float> dense_matrix_difference_quick_t
 DenseMatrixDifferenceQuickTest<tags::CPU, double> dense_matrix_difference_quick_test_double("double");
 DenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_difference_quick_test_float("MC float");
 DenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_difference_quick_test_double("MC double");
+#ifdef HONEI_CELL
+DenseMatrixDifferenceQuickTest<tags::Cell, float> cell_dense_matrix_difference_quick_test_float("Cell float");
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseMatrixSparseMatrixDifferenceTest :
