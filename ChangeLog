@@ -8,6 +8,12 @@ see the NEWS file.
 
 2008-01-14 Sven Mallach <sven.mallach@honei.org>
 
+	* cell/libla/dot_product_dense_dense_float.cc,
+	libla/dot_product-cell.cc: Optimized handling of unaligned containers.
+	* libutil/spe_instruction.cc: Fixed calculation of _end_transfers.
+
+2008-01-14 Sven Mallach <sven.mallach@honei.org>
+
 	* libutil/spe_instruction.cc: Generalized and optimized
 	SPEFrameworkInstructions.
 

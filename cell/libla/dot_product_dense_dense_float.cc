@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -56,8 +56,8 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
     unsigned nextsize;
     unsigned current(0), next(1);
 
-    unsigned a_offset(inst.f.u);
-    unsigned b_offset(inst.g.u);
+    unsigned b_offset(inst.f.u);
+    vector float b_carry = { inst.g.f, inst.h.f, inst.i.f, inst.j.f };
 
     mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
     mfc_get(b[current].untyped, ea_b, size, current, 0, 0);
@@ -70,9 +70,6 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
     {
         nextsize = (counter == 2 ? inst.e.u : inst.size);
 
-        ea_a -= 16;
-        ea_b -= 16;
-
         mfc_get(a[next].untyped, ea_a, nextsize, next, 0, 0);
         mfc_get(b[next].untyped, ea_b, nextsize, next, 0, 0);
         ea_a += nextsize;
@@ -81,11 +78,11 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
         mfc_write_tag_mask(1 << current);
         mfc_read_tag_status_all();
 
-        for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+        for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
         {
-            extract(a[current].vectorised[i], a[current].vectorised[i + 1], a_offset);
-            extract(b[current].vectorised[i], b[current].vectorised[i + 1], b_offset);
-            acc.value = spu_madd(a[current].vectorised[i], b[current].vectorised[i], acc.value);
+            extract(b_carry, b[current].vectorised[i], b_offset);
+            acc.value = spu_madd(a[current].vectorised[i], b_carry, acc.value);
+            b_carry = b[current].vectorised[i];
         }
 
         --counter;
@@ -97,29 +94,14 @@ unsigned dot_product_dense_dense_float(const Instruction & inst)
         size = nextsize;
     }
 
-    // For calculation of "the end"
-    mfc_get(a[next].untyped, ea_a - 16, (inst.d.u * 16) + 16, next, 0, 0);
-    mfc_get(b[next].untyped, ea_b - 16, (inst.d.u * 16) + 16, next, 0, 0);
-
     mfc_write_tag_mask(1 << current);
     mfc_read_tag_status_all();
 
-    for (unsigned i(0) ; i < (size - sizeof(vector float)) / sizeof(vector float) ; ++i)
+    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
     {
-        extract(a[current].vectorised[i], a[current].vectorised[i + 1], a_offset);
-        extract(b[current].vectorised[i], b[current].vectorised[i + 1], b_offset);
-        acc.value = spu_madd(a[current].vectorised[i], b[current].vectorised[i], acc.value);
-    }
-
-    // Now calculate the last vectors of a and the shuffled last+1 vectors of b.
-    mfc_write_tag_mask(1 << next); // Assure that GET(next) is done
-    mfc_read_tag_status_any();
-
-    for(unsigned i(0) ; i < inst.d.u ; i++)
-    {
-        extract(a[next].vectorised[i], a[next].vectorised[i + 1], a_offset);
-        extract(b[next].vectorised[i], b[next].vectorised[i + 1], b_offset);
-        acc.value = spu_madd(a[next].vectorised[i], b[next].vectorised[i], acc.value);
+        extract(b_carry, b[current].vectorised[i], b_offset);
+        acc.value = spu_madd(a[current].vectorised[i], b_carry, acc.value);
+        b_carry = b[current].vectorised[i];
     }
 
     release_all_blocks();

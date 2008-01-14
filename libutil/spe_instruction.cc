@@ -169,7 +169,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
         instruction.c.u &= ~0xF;
 
         _begin_transfers = skip;
-        _end_transfers = instruction.b.u * sizeof(DataType_) * 1024 + instruction.c.u + skip;
+        _end_transfer = (instruction.b.u * (16384 / sizeof(DataType_))) + instruction.c.u + skip;
         instruction.c.u *= sizeof(DataType_);
     }
 
@@ -220,7 +220,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         instruction.d.u &= ~0xF;
 
         _begin_transfers = skip;
-        _end_transfers = instruction.c.u * sizeof(DataType_) * 1096 + instruction.d.u + skip;
+        _end_transfers = (instruction.c.u * (16384 / sizeof(DataType_))) + instruction.d.u + skip;
         instruction.d.u *= sizeof(DataType_);
     }
 
@@ -294,7 +294,7 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
 
         // Rest index dependent on offset and SPU part.
         _begin_transfers = skip;
-        _end_transfers = (instruction.c.u * 1024 * sizeof(DataType_)) + instruction.d.u + skip;
+        _end_transfers = (instruction.c.u * (16384 / sizeof(DataType_))) + instruction.d.u + skip;
 
         instruction.d.u *= sizeof(DataType_);
     }
