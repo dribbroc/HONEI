@@ -241,7 +241,7 @@ namespace honei
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
                             c_end(vi->end_elements()) ; c != c_end ; ++c)
                     {
-                        b[start][i] += *c;
+                        b(start, i) += *c;
                         ++start, ++i;
                     }
                 }
@@ -257,7 +257,7 @@ namespace honei
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
                             c_end(vi->element_at(end)) ; c != c_end ; ++c)
                     {
-                        b[i][offset] +=  *c;
+                        b(i, offset) +=  *c;
                     ++offset, ++i;
                     }
                 }

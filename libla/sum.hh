@@ -218,7 +218,7 @@ namespace honei
                     if (col_index >= size)
                         break;
 
-                    a[row_index][col_index] += *c;
+                    a(row_index, col_index) += *c;
                     ++row_index;
                     ++col_index;
                 }
