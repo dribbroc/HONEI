@@ -169,7 +169,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
         instruction.c.u &= ~0xF;
 
         _begin_transfers = skip;
-        _end_transfer = (instruction.b.u * (16384 / sizeof(DataType_))) + instruction.c.u + skip;
+        _end_transfers = (instruction.b.u * (16384 / sizeof(DataType_))) + instruction.c.u + skip;
         instruction.c.u *= sizeof(DataType_);
     }
 
