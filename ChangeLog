@@ -8,7 +8,7 @@ see the NEWS file.
 
 2008-01-14 Sven Mallach <sven.mallach@honei.org>
 
-	* cell/interface.hh, cell/kernels/kernel_reference.sk,
+	* cell/kernels/kernel_reference.sk,
 	cell/libla/difference_dense_dense_float.cc,
 	cell/libla/element_product_dense_dense_float.cc,
 	cell/libla/operations.hh, cell/libla/sum_dense_dense_float.cc,
