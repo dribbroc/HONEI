@@ -169,8 +169,8 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
         instruction.c.u &= ~0xF;
 
         _begin_transfers = skip;
-        _end_transfers = instruction.b.u * 4096 + instruction.c.u + skip;
-        instruction.c.u *= 4;
+        _end_transfers = instruction.b.u * sizeof(DataType_) * 1024 + instruction.c.u + skip;
+        instruction.c.u *= sizeof(DataType_);
     }
 
     if (0 == instruction.c.u)
@@ -220,8 +220,8 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         instruction.d.u &= ~0xF;
 
         _begin_transfers = skip;
-        _end_transfers = instruction.c.u * 4096 + instruction.d.u + skip;
-        instruction.d.u *= 4;
+        _end_transfers = instruction.c.u * sizeof(DataType_) * 1096 + instruction.d.u + skip;
+        instruction.d.u *= sizeof(DataType_);
     }
 
     if (0 == instruction.d.u)
@@ -263,42 +263,40 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     else
     {
         unsigned a_offset((instruction.a.u & 0xF) / sizeof(DataType_)); // Alignment offset of a -> elements calculated on PPU.
-        unsigned a_inv_offset((4 - a_offset) % 4);
-        instruction.b.u += (4 * a_inv_offset); // Adjust SPU start for b respecting the elements calculated on PPU.
+        unsigned skip((sizeof(DataType_) - a_offset) % sizeof(DataType_));
+        instruction.b.u += (sizeof(DataType_) * skip); // Adjust SPU start for b respecting the elements calculated on PPU.
         unsigned b_offset((instruction.b.u & 0xF) / sizeof(DataType_)); // Alignment offset of b -> shuffle-factor on SPU.
         instruction.e.u = b_offset;
 
-        // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
-        DataType_ carries[4] = { b_elements[a_inv_offset], b_elements[a_inv_offset + 1],
-            b_elements[a_inv_offset + 2], b_elements[a_inv_offset + 3] };
+        // Align the address for SPU.
+        instruction.a.u += (sizeof(DataType_) * skip);
+        instruction.b.u += (sizeof(DataType_) * (sizeof(DataType_) - b_offset));
 
-        for (unsigned i(0) ; i < b_offset ; i++)
+        // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
+        DataType_ * dma_start = reinterpret_cast<DataType_ *>(instruction.b.u);
+        if (sizeof(DataType_) == 4) // float
         {
-            carries[3] = carries[2];
-            carries[2] = carries[1];
-            carries[1] = carries[0];
-            carries[0] = DataType_(0);
+            instruction.f.f = *(dma_start - 4);
+            instruction.g.f = *(dma_start - 3);
+            instruction.h.f = *(dma_start - 2);
+            instruction.i.f = *(dma_start - 1);
+        }
+        else // double
+        {
+            instruction.f.f = *(dma_start - 2);
+            instruction.g.f = *(dma_start - 1);
         }
 
-        instruction.f.f = carries[0];
-        instruction.g.f = carries[1];
-        instruction.h.f = carries[2];
-        instruction.i.f = carries[3];
-
-        // Align the address for SPU.
-        instruction.a.u += (4 * a_inv_offset);
-        instruction.b.u += (4 * (4 - b_offset));
-
         //Subtract PPU-calculated parts from size.
-        instruction.c.u = (size - a_inv_offset) / (1024 * 4);
-        instruction.d.u = (size - a_inv_offset) % (1024 * 4);
+        instruction.c.u = (size - skip) / (1024 * sizeof(DataType_));
+        instruction.d.u = (size - skip) % (1024 * sizeof(DataType_));
         instruction.d.u &= ~0xF;
 
         // Rest index dependent on offset and SPU part.
-        _begin_transfers = a_inv_offset;
-        _end_transfers = (instruction.c.u * 4096) + instruction.d.u + a_inv_offset;
+        _begin_transfers = skip;
+        _end_transfers = (instruction.c.u * 1024 * sizeof(DataType_)) + instruction.d.u + skip;
 
-        instruction.d.u *= 4;
+        instruction.d.u *= sizeof(DataType_);
     }
 
     if (0 == instruction.d.u)

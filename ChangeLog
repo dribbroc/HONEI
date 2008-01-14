@@ -6,6 +6,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-14 Sven Mallach <sven.mallach@honei.org>
+
+	* libutil/spe_instruction.cc: Generalized and optimized
+	SPEFrameworkInstructions.
+
 2008-01-14 Markus Geveler <apryde@gmx.de>
 
 	* libmath/poisson_jackernel_double_banded_sse_TEST.cc, libmath/files.m4:
