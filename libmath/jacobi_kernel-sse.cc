@@ -169,3 +169,147 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
     x = result.copy();
     return result;
 }
+
+DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b, DenseVector<double> & x, DenseVector<double> & d, BandedMatrix<double> & a)
+{
+
+    CONTEXT("When performing singlestep Jacobi method with SSE.");
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    DenseVector<double> result(a.rows(), double(0));
+
+    __m128d m1, m2, m3, m4, m5, m6, m7, m8; //Two in addition for the diag_inv and rhs vectors!!!
+
+    unsigned long middle_index(a.rows() - 1);
+    unsigned long quad_end, end, quad_start, start, op_offset;
+    DenseVector<double> temp(result.copy());
+    double * r_e_c = temp.elements();
+
+    for (BandedMatrix<double>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
+            band != band_end ; ++band)
+    {
+        // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+        if (band.index() >= middle_index)
+        {
+            op_offset = band.index() - middle_index;
+
+            end = a.size() - op_offset; // Calculation of the element-index to stop in iteration!
+            quad_end = end - (end % 2);
+
+            if (end < 32)
+                quad_end = 0;
+
+            double * band_e = band->elements();
+            double * x_e = x.elements();
+            double * r_e = result.elements();
+            double * d_e = d.elements();
+
+
+            for (unsigned long index(0) ; index < quad_end ; index += 2)
+            {
+                m2 = _mm_loadu_pd(x_e + index + op_offset);
+                m1 = _mm_load_pd(band_e + index);
+                m3 = _mm_load_pd(r_e_c + index);
+                m4 = _mm_load_pd(d_e + index);
+
+                m1 = _mm_mul_pd(m1, m2);
+                m5 = _mm_add_pd(m1, m3);
+
+                _mm_store_pd(r_e_c + index, m5);
+
+                m1 = _mm_mul_pd(m1, m4);
+                m1 = _mm_add_pd(m1, m3);
+
+                _mm_store_pd(r_e + index, m1);
+            }
+
+            for (unsigned long index(quad_end) ; index < end ; index++) 
+            {
+                r_e_c[index] += (band_e[index] * x_e[index + op_offset]);
+                r_e[index] += (band_e[index] * x_e[index + op_offset] * d_e[index]);
+            }
+        }
+        else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
+        {
+            op_offset = middle_index - band.index();
+
+            start = op_offset; // Calculation of the element-index to start in iteration!
+            quad_start = start + (2 - (start % 2));
+            end = a.size();
+            quad_end = end - (end % 2);
+
+            if ( start + 32 > end)
+            {
+                quad_end = start;
+                quad_start = start;
+            }
+
+            double * band_e = band->elements();
+            double * x_e = x.elements();
+            double * r_e = result.elements();
+            double * d_e = d.elements();
+
+            for (unsigned long index(start) ; index < quad_start ; index++)
+            {
+                r_e_c[index] += (band_e[index] * x_e[index - op_offset]);
+                r_e[index] += (band_e[index] * x_e[index - op_offset] * d_e[index]);
+            }
+
+            for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
+            {
+                m2 = _mm_loadu_pd(x_e + index + op_offset);
+                m1 = _mm_load_pd(band_e + index);
+                m3 = _mm_load_pd(r_e_c + index);
+                m4 = _mm_load_pd(d_e + index);
+
+                m1 = _mm_mul_pd(m1, m2);
+                m5 = _mm_add_pd(m1, m3);
+
+                _mm_store_pd(r_e_c + index, m5);
+
+                m1 = _mm_mul_pd(m1, m4);
+                m1 = _mm_add_pd(m1, m3);
+
+                _mm_store_pd(r_e + index, m1);
+
+            }
+            for (unsigned long index(quad_end) ; index < end ; index++)
+            {
+                r_e_c[index] += (band_e[index] * x_e[index - op_offset]);
+                r_e[index] +=  (band_e[index] * x_e[index - op_offset] * d_e[index]);
+            }
+        }
+
+    }
+    //treat the d_e *.elem b_e product as if it was an additional band:
+    double * r_e = result.elements();
+    double * b_e = b.elements();
+    double * d_e = d.elements();
+    end = b.size(); // Calculation of the element-index to stop in iteration!
+    quad_end = end - (end % 2);
+
+    if (end < 32)
+        quad_end = 0;
+
+    for (unsigned long index(0) ; index < quad_end ; index += 2)
+    {
+        m1 = _mm_load_pd(d_e + index);
+        m2 = _mm_load_pd(r_e + index);
+        m3 = _mm_load_pd(b_e + index);
+        m1 = _mm_mul_pd(m1, m3);
+        m1 = _mm_add_pd(m1, m2);
+
+        _mm_store_pd(r_e + index, m1);
+    }
+
+    for (unsigned long index(quad_end) ; index < end ; index++) 
+    {
+        r_e[index] += (d_e[index] * b_e[index]);
+    }
+
+    x = result.copy();
+    return result;
+}

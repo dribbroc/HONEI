@@ -71,6 +71,9 @@ namespace honei
     {
         public:
             static /*inline*/ DenseVector<float> value(DenseVector<float> & b, DenseVector<float> & x, DenseVector<float> & d, BandedMatrix<float> & a);
+
+            static /*inline*/ DenseVector<double> value(DenseVector<double> & b, DenseVector<double> & x, DenseVector<double> & d, BandedMatrix<double> & a);
+
     };
 
     template<>

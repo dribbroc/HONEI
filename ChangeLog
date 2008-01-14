@@ -9,6 +9,13 @@ see the NEWS file.
 2008-01-14 Markus Geveler <apryde@gmx.de>
 
 	* libmath/jacobi_kernel-sse.cc,
+	libmath/jacobi_kernel_TEST.cc, libmath/jacobi_kernel.hh:
+	Added implementation of double precision Jacobi Kernel optimized with
+	SSE.
+
+2008-01-14 Markus Geveler <apryde@gmx.de>
+
+	* libmath/jacobi_kernel-sse.cc,
 	libmath/poisson_jackernel_float_banded_sse_TEST.cc, libmath/files.m4:
 	Added implementation of Poisson test for the new SSE Jacobi Kernel,
 	removed debug output.

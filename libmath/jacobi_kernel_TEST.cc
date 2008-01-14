@@ -259,5 +259,7 @@ JacobiKernelTestBanded<tags::CPU, float> jacobi_kernel_test_float_banded("float"
 JacobiKernelTestBanded<tags::CPU, double> jacobi_kernel_test_double_banded("double");
 #ifdef HONEI_SSE
 JacobiKernelTestBandedSSE<tags::CPU::SSE, float> jacobi_kernel_test_float_banded_sse("SSE float");
+JacobiKernelTestBandedSSE<tags::CPU::SSE, double> jacobi_kernel_test_double_banded_sse("SSE double");
+
 #endif
 
