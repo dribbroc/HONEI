@@ -22,7 +22,7 @@ class BenchmarkList
         }
 
     public:
-        typedef std::list<Benchmark*>::const_iterator Iterator;
+        typedef std::list<Benchmark*>::iterator Iterator;
 
         static BenchmarkList * instance()
         {
@@ -50,15 +50,9 @@ class BenchmarkList
             return _benchs.size();
         }
 
-        Iterator erase(int index)
+        Iterator erase(Iterator index)
         {
-            std::list<Benchmark*>::iterator er(_benchs.begin()), benchs_end(_benchs.end());
-            for (int i(1) ; ((i < index) && (er != benchs_end)) ; ++i) 
-                ++er;
-            if (er != benchs_end)
-                return _benchs.erase(er);
-            else
-                return er;               
+            return _benchs.erase(index);             
         }
 };
 
@@ -292,122 +286,139 @@ int main(int argc, char** argv)
     bool cell(true);
     bool mc(true);
     bool sc(true);
-    if (argc > 1)
+    bool interface(false);
+    if ((argc == 2) && (honei::stringify(argv[1]) == "i"))
+        interface = true;
+    else 
     {
-        sse = false;
-        cell = false;
-        mc = false;
-        sc = false;
-        for(int i(1) ; i < argc ; ++i)
+        if (argc > 1)
         {
-            if (honei::stringify(argv[i]) == "sse")
+            sse = false;
+            cell = false;
+            mc = false;
+            sc = false;
+            for(int i(1) ; i < argc ; ++i)
             {
-                sse = true;
-            }
-            if (honei::stringify(argv[i]) == "cell")
-            {
-                cell = true;
-            }
-            if (honei::stringify(argv[i]) == "mc")
-            {
-                mc = true;
-            }
-            if (honei::stringify(argv[i]) == "cpu")
-            {
-                sse = true;
-                mc = true;
-                sc = true;
-            }
-            if (honei::stringify(argv[i]) == "sc")
-            {
-                sc = true;
+                if (honei::stringify(argv[i]) == "sse")
+                {
+                    sse = true;
+                }
+                if (honei::stringify(argv[i]) == "cell")
+                {
+                    cell = true;
+                }
+                    if (honei::stringify(argv[i]) == "mc")
+                {
+                    mc = true;
+                }
+                if (honei::stringify(argv[i]) == "cpu")
+                {
+                    sse = true;
+                    mc = true;
+                    sc = true;
+                }
+                if (honei::stringify(argv[i]) == "sc")
+                {
+                    sc = true;
+                }
+                if (honei::stringify(argv[i]) == "i")
+                {
+                    interface = true;
+                }
             }
         }
     }
-    cout << "Select Benchmark you'd like to add to runlist:" << endl;
-    int count = 1;
     for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; )
     {
         if (sse && (((*i)->get_tag_name() == "sse") || ((*i)->get_tag_name() == "mc-sse")))
         {
-            cout << count << ": " << (*i)->id() << endl;
-            ++count;
             ++i;
             continue;
         }
         if (cell && ((*i)->get_tag_name() == "cell"))
         {
-            cout << count << ": " << (*i)->id() << endl;
-            ++count;
             ++i;
             continue;
         }
         if (mc && ((*i)->get_tag_name() == "mc"))
         {
-            cout << count << ": " << (*i)->id() << endl;
-            ++count;
             ++i;
             continue;
         }
         if (sc && ((*i)->get_tag_name() == "cpu"))
         {
-            cout << count << ": " << (*i)->id() << endl;
-            ++count;
             ++i;
             continue;
         }
-        i = BenchmarkList::instance()->erase(count);
-
+        i = BenchmarkList::instance()->erase(i);
     }
     if (BenchmarkList::instance()->begin_benchs() == BenchmarkList::instance()->end_benchs())
     {
         cout << "No relevant Benchmarks." << endl;
         return result;
     }
-    cout << endl << "Choose: (1), (2), ..., (a)ll, (n)one" << endl;
-    string a, tmp;
-    int b;
-    while (a != "n")
+    if (interface)
     {
-        cout << "Selection: ";
-        cin >> a;
-        cout << "Added: ";
-        if (a == "a")
+        int count = 1;
+        cout << "Select Benchmark you'd like to add to runlist:" << endl;
+        for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; )
         {
-            cout << "all" << endl;
-            a = "n";
-            runrs.clear();
-            for (int i = 0 ; i < BenchmarkList::instance()->bench_count() ; ++i)
-            {
-                runrs.push_back(i);
-            }
+            cout << count << ": " << (*i)->id() << endl;
+            ++count;
+            ++i;
         }
-        while ((a.length()>0) && (a != "n"))
+        cout << endl << "Choose: (1), (2), ..., (a)ll, (n)one" << endl;
+        string a, tmp;
+        int b;
+        while (a != "n")
         {
-            tmp = "";
-            b = a[0];
-            if ((b < 48) || (b > 57))
-                a.erase(0,1);
-            else
+            cout << "Selection: ";
+            cin >> a;
+            cout << "Added: ";
+            if (a == "a")
             {
-                while ((b >=  48) && (b <= 65))
+                cout << "all" << endl;
+                a = "n";
+                runrs.clear();
+                for (int i = 0 ; i < BenchmarkList::instance()->bench_count() ; ++i)
                 {
-                    tmp += a[0];
-                    a.erase(0,1);
-                    b = a[0];
-                } 
-                b = atoi(tmp.c_str());
-                if ((b > 0) && (b <= BenchmarkList::instance()->bench_count())) 
-                {
-                    runrs.push_back(b-1);
-                    cout << b << " ";
+                    runrs.push_back(i);
                 }
             }
+            while ((a.length()>0) && (a != "n"))
+            {
+                tmp = "";
+                b = a[0];
+                if ((b < 48) || (b > 57))
+                    a.erase(0,1);
+                else
+                {
+                    while ((b >=  48) && (b <= 65))
+                    {
+                        tmp += a[0];
+                        a.erase(0,1);
+                        b = a[0];
+                    } 
+                    b = atoi(tmp.c_str());
+                    if ((b > 0) && (b <= BenchmarkList::instance()->bench_count())) 
+                    {
+                        runrs.push_back(b-1);
+                        cout << b << " ";
+                    }
+                }
+            }
+            cout << endl;
+            if (a != "n") cout << "Add more? ";
         }
-        cout << endl;
-        if (a != "n") cout << "Add more? ";
-    }
-    count = 0;
+    } 
+    else 
+    {
+        for (int i = 0 ; i < BenchmarkList::instance()->bench_count() ; ++i)
+        {
+            runrs.push_back(i);
+        }
+    }        
+    int count = 0;
     if (runrs.size()>0)
     {
         runrs.sort();

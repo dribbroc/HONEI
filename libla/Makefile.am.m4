@@ -94,6 +94,10 @@ bench:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	bash $(top_builddir)/libla/benchmark
 
+bench-i:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/libla/benchmark i
+
 bench-sc: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	bash $(top_builddir)/libla/benchmark sc
