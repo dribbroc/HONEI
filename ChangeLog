@@ -6,6 +6,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-15 Volker Jung <volker.jung@honei.org>
+
+	* libutil/pool_thread.cc: Resolved warnings.
+
 2008-01-15 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc, libla/Makefile.am.m4: Benchmarks are now non-interactive per default.

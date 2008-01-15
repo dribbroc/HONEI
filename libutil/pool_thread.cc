@@ -110,11 +110,11 @@ struct PoolThread::Implementation
             _thread(new pthread_t),
             _pool_thread(pool_thread),
             _mutex(new Mutex),
-            _exit(false),
-            _pool(pool),
-            _task_has_run(true),
             _wake_up(new ConditionVariable),
-            _task(0)
+            _exit(false),
+            _task(0),
+            _task_has_run(true),
+            _pool(pool)
         {
             CONTEXT("When creating PoolThread::Implementation :");
 
