@@ -99,6 +99,7 @@ namespace honei
                 for (unsigned long i(0); i < parts; ++i)
                 {
                     pt[i]->wait_on();
+                    delete pt[i];
                 }
             }
             return a;
@@ -145,6 +146,7 @@ namespace honei
                 for (unsigned long i = 0; i < parts;  ++i)
                 {
                     pt[i]->wait_on();
+                    delete pt[i];
                 }
             }
             return a;
@@ -186,6 +188,7 @@ namespace honei
             for (unsigned long j = 0; j < taskcount; ++j)
             {
                 pt[j]->wait_on();
+                delete pt[j];
             }
 
             return a;
@@ -299,6 +302,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return a;
         }
@@ -328,6 +332,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return a;
         }
@@ -357,6 +362,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return a;
         }
@@ -388,7 +394,7 @@ namespace honei
             {
                 unsigned long modulo = a.size() % parts;
                 ThreadPool * tp(ThreadPool::get_instance());
-                std::list< PoolTask* > dispatched_tasks;
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 Mutex mutex[parts];
                 int middle_index(a.rows() -1);
                 //if we are below the diagonal band
@@ -406,7 +412,8 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, div, offset);
                         FourArgWrapper<MCDifference<Tag_>, const DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size()+1);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                        dispatched_tasks.push_back(tp->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                        dispatched_tasks.push_back(ptr);
                     }
                     if (i == modulo)
                     {
@@ -417,7 +424,8 @@ namespace honei
                             DenseVectorRange<DT2_> range_1(*vi, div+1, offset);
                             FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size()+1);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            dispatched_tasks.push_back(tp->dispatch(func));
+                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                            dispatched_tasks.push_back(ptr);
                         }
                     }
                     if (offset > start)
@@ -425,7 +433,8 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, offset-start, start);
                         FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, start, 0);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]);
-                        dispatched_tasks.push_back(tp->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
                 // If we are above or on the diagonal band
@@ -442,7 +451,8 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, div+1, offset);
                         FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index + offset);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                        dispatched_tasks.push_back(tp->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                        dispatched_tasks.push_back(ptr);
                         ++i;
                         offset+=div+1;
                     }
@@ -453,7 +463,8 @@ namespace honei
                             DenseVectorRange<DT2_> range_1(*vi, div, offset);
                             FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index+offset);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            dispatched_tasks.push_back(tp->dispatch(func));
+                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                            dispatched_tasks.push_back(ptr);
                             ++i;
                             offset+=div;
                         }
@@ -463,15 +474,15 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, end - offset, offset);
                         FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index+offset);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                        dispatched_tasks.push_back(tp->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
 
                 while(! dispatched_tasks.empty())
                 {
-                    PoolTask * pt = dispatched_tasks.front();
+                    dispatched_tasks.front()->wait_on();
                     dispatched_tasks.pop_front();
-                    pt->wait_on();
                 }
                 return b;
             }

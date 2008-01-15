@@ -71,7 +71,7 @@ namespace honei
             unsigned long rest(x.columns() % PARTS);
             unsigned long chunk_size(x.columns() / PARTS);
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             for (unsigned long i(0); i < x.rows(); ++i)
             {
@@ -80,7 +80,8 @@ namespace honei
                 {
                     DenseVectorRange<DT1_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
                     OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
 
                 }
                 if (chunk_size != 0)
@@ -89,7 +90,8 @@ namespace honei
                     {
                         DenseVectorRange<DT1_> range(x[i].range(chunk_size, j * chunk_size + rest));
                         OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
             }
@@ -110,7 +112,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             for (unsigned long i(0); i < x.rows(); ++i)
             {
@@ -124,7 +126,8 @@ namespace honei
                     stop += (j + 1) * (chunk_size + 1);
                     TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator >
                         wrapper(start, stop);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 if (chunk_size != 0)
@@ -136,7 +139,8 @@ namespace honei
                         stop += (j + 1) * chunk_size + rest;
                         TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator >
                             wrapper(start, stop);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
             }
@@ -157,7 +161,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list< PoolTask* > dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             typename BandedMatrix<DT1_>::VectorIterator vi(x.begin_bands());
 
@@ -178,7 +182,8 @@ namespace honei
                     DenseVectorRange<DT1_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1) + x.size() - band_size));
                     OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> >
                         wrapper(range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 if (chunk_size != 0)
@@ -188,7 +193,8 @@ namespace honei
                         DenseVectorRange<DT1_> range((*vi).range(chunk_size, chunk_size + rest + x.size() - band_size));
                         OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> >
                             wrapper(range);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
             }
@@ -205,7 +211,8 @@ namespace honei
                     DenseVectorRange<DT1_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
                     OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> >
                         wrapper(range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 if (chunk_size != 0)
@@ -215,7 +222,8 @@ namespace honei
                         DenseVectorRange<DT1_> range((*vi).range(chunk_size, i *  chunk_size + rest));
                         OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> >
                             wrapper(range);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
             }
@@ -238,7 +246,8 @@ namespace honei
                     DenseVectorRange<DT1_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
                     OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> >
                         wrapper(range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 if (chunk_size != 0)
@@ -248,7 +257,8 @@ namespace honei
                         DenseVectorRange<DT1_> range((*vi).range(chunk_size, i *  chunk_size + rest));
                         OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> >
                             wrapper(range);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
             }
@@ -273,14 +283,15 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list<PoolTask *> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             unsigned long i(0);
             for ( ; i < rest; ++i)
             {
                 DenseVectorRange<DT1_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
                 OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
             }
 
             if (chunk_size != 0)
@@ -289,7 +300,8 @@ namespace honei
                 {
                     DenseVectorRange<DT1_> range(x.range(chunk_size, i * chunk_size + rest));
                     OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 
@@ -313,7 +325,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list<PoolTask *> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             unsigned long i(0);
             for ( ; i < rest; ++i)
@@ -322,7 +334,8 @@ namespace honei
                 start += i * (chunk_size + 1);
                 stop += (i + 1) * (chunk_size + 1);
                 TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
             }
 
             if (chunk_size != 0)
@@ -333,7 +346,8 @@ namespace honei
                     start += i * chunk_size + rest;
                     stop += (i + 1) * chunk_size + rest;
                     TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(wrapper);
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 
@@ -355,7 +369,7 @@ namespace honei
             unsigned long chunk_size(x.used_elements() / PARTS);
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list<PoolTask *> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             unsigned long i(0);
             for ( ; i < rest; ++i)
@@ -364,7 +378,8 @@ namespace honei
                 start += i * (chunk_size + 1);
                 stop += (i + 1) * (chunk_size + 1);
                 TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
             }
 
             if (chunk_size != 0)
@@ -375,7 +390,8 @@ namespace honei
                     start += i * chunk_size + rest;
                     stop += (i + 1) * chunk_size + rest;
                     TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 

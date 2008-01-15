@@ -8,6 +8,15 @@ see the NEWS file.
 
 2008-01-15 Volker Jung <volker.jung@honei.org>
 
+	* libla/difference-mc.hh, libla/dot_product-mc.hh,
+	libla/element_inverse-mc.hh, libla/element_product-mc.hh,
+	libla/norm.hh, libla/product-mc.hh, libla/reduction.hh,
+	libla/scale-mc.hh: Fixed memory leaks in all multicore-implementations.
+	* libla/sum-mc.hh: Added missing return-statement in
+	DenseMatrix-BandedMatrix-Sum.
+
+2008-01-15 Volker Jung <volker.jung@honei.org>
+
 	* libutil/pool_thread.cc: Resolved warnings.
 
 2008-01-15 David Gies <david-gies@gmx.de>

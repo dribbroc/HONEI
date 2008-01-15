@@ -530,6 +530,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Norm<vnt_max, root_, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -592,6 +593,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Norm<vnt_l_one, root_, typename Tag_::DelegateTo>::value(preresult);
             return result;

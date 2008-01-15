@@ -102,6 +102,7 @@ namespace honei
                 for (unsigned long i(0); i < parts; ++i)
                 {
                     pt[i]->wait_on();
+                    delete pt[i];
                 }
             }
             return a;
@@ -148,6 +149,7 @@ namespace honei
                 for (unsigned long i = 0; i < parts;  ++i)
                 {
                     pt[i]->wait_on();
+                    delete pt[i];
                 }
             }
             return a;
@@ -184,6 +186,7 @@ namespace honei
             for (int j = 0 ; j < taskcount ; ++j )
             {
                 pt[j]->wait_on();
+                delete pt[j];
             }
             return a;
         }
@@ -213,6 +216,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return a;
         }
@@ -242,6 +246,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return a;
         }
@@ -271,6 +276,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return a;
         }

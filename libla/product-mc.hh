@@ -91,6 +91,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows();  ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -126,6 +127,7 @@ namespace honei
             for (unsigned long i = 0; (i < a.rows() * b.columns());  ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -162,7 +164,7 @@ namespace honei
             {
                 unsigned long modulo = b.size() % parts;
                 ThreadPool * tp(ThreadPool::get_instance());
-                std::list< PoolTask* > dispatched_tasks;
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 Mutex mutex[parts];
                 int middle_index(a.rows() -1);
 
@@ -183,8 +185,9 @@ namespace honei
                             DenseVectorRange<DT1_> res_range(result, div+1, offset);
                             ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
                                 DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
-                            dispatched_tasks.push_back(tp->dispatch(func));
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
+                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                            dispatched_tasks.push_back(ptr);
                             ++i;
                             offset+=div+1;
                         }
@@ -198,7 +201,8 @@ namespace honei
                                 ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
                                     DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                                 std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                                dispatched_tasks.push_back(tp->dispatch(func));
+                                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                                dispatched_tasks.push_back(ptr);
                                 ++i;
                                 offset+=div;
                             }
@@ -211,7 +215,8 @@ namespace honei
                             ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
                                 DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            dispatched_tasks.push_back(tp->dispatch(func));
+                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                            dispatched_tasks.push_back(ptr);
                         }
                     }
                     //if we are below the diagonal band
@@ -230,8 +235,9 @@ namespace honei
                             DenseVectorRange<DT1_> res_range(result, div, offset);
                             ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
                                 DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
-                            dispatched_tasks.push_back(tp->dispatch(func));
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
+                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                            dispatched_tasks.push_back(ptr);
                         }
                         if (i == modulo)
                         {
@@ -244,8 +250,9 @@ namespace honei
                                 DenseVectorRange<DT1_> res_range(result, div+1, offset);
                                 ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
                                     DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                                std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]); 
-                                dispatched_tasks.push_back(tp->dispatch(func));
+                                std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
+                                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                                dispatched_tasks.push_back(ptr);
                             }
                         }
                         if (offset > start)
@@ -255,17 +262,17 @@ namespace honei
                             DenseVectorRange<DT1_> res_range(result, offset-start, start);
                             ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
                                 DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]); 
-                            dispatched_tasks.push_back(tp->dispatch(func));
+                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]);
+                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                            dispatched_tasks.push_back(ptr);
                         }
                     }
                 }
 
                 while(! dispatched_tasks.empty())
                 {
-                    PoolTask * pt = dispatched_tasks.front();
+                    dispatched_tasks.front()->wait_on();
                     dispatched_tasks.pop_front();
-                    pt->wait_on();
                 }
                 return result;
             }
@@ -296,8 +303,8 @@ namespace honei
                     ThreeArgWrapper< ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_>, const DT1_ >
                         wrapper(result[i.index()], b[vi.index()], *vi);
                     std::tr1::function<void ()> func = std::tr1::bind(wrapper, &mutex[i.index()]);
-                    std::tr1::shared_ptr<PoolTask> p(tp->dispatch(func));
-                    dispatched_tasks.push_back(p);
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 

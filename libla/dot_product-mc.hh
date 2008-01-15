@@ -94,6 +94,7 @@ namespace honei
                 for (unsigned long i(0); i < parts; ++i)
                 {
                     pt[i]->wait_on();
+                    delete pt[i];
                 }
             }
             return result;
@@ -142,6 +143,7 @@ namespace honei
                 for (unsigned long i = 0; i < parts;  ++i)
                 {
                     pt[i]->wait_on();
+                    delete pt[i];
                 }
             }
             return result;

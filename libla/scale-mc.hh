@@ -55,7 +55,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.columns()));
 
@@ -71,13 +71,15 @@ namespace honei
                     {
                         DenseVectorRange<DT2_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                     for ( ; j < num_parts; ++j)
                     {
                         DenseVectorRange<DT2_> range(x[i].range(chunk_size, j * chunk_size + rest));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
             }
@@ -86,7 +88,8 @@ namespace honei
                 for (unsigned long i(0); i < x.rows(); ++i)
                 {
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(x[i], a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 
@@ -105,7 +108,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             for (unsigned long i(0); i < x.rows(); ++i)
             {
@@ -122,7 +125,8 @@ namespace honei
                         stop += (j + 1) * (chunk_size + 1);
                         ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
                             wrapper(start, stop, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                     for ( ; j < num_parts; ++j)
                     {
@@ -131,7 +135,8 @@ namespace honei
                         stop += (j + 1) * chunk_size + rest;
                         ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
                             wrapper(start, stop, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
                 else
@@ -139,7 +144,8 @@ namespace honei
                     typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].end_non_zero_elements());
                         ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
                             wrapper(start, stop, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 
@@ -159,7 +165,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list< PoolTask* > dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands());
 
@@ -184,21 +190,24 @@ namespace honei
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1) + x.size() - band_size));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                     for ( ; i < num_parts; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size, chunk_size + rest + x.size() - band_size));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
                 else
                 {
                     DenseVectorRange<DT2_> range((*vi).range(band_size, x.size() - band_size));
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >  wrapper(range, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 
@@ -218,20 +227,23 @@ namespace honei
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                     for ( ; i < num_parts; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size, i * chunk_size + rest));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
                 else
                 {
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVector<DT2_>, const DT1_ > wrapper((*vi), a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
 
@@ -257,14 +269,16 @@ namespace honei
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                     for ( ; i < num_parts; ++i)
                     {
                         DenseVectorRange<DT2_> range((*vi).range(chunk_size, i *  chunk_size + rest));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
-                        dispatched_tasks.push_back(tp->dispatch(wrapper));
+                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
                     }
                 }
                 else
@@ -272,7 +286,8 @@ namespace honei
                     DenseVectorRange<DT2_> range((*vi).range(band_size, 0));
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                         wrapper(range, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
             }
                 // Wait until all jobs are done.
@@ -292,7 +307,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::get_instance());
 
-            std::list<PoolTask *> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.size()));
 
@@ -307,14 +322,16 @@ namespace honei
                     DenseVectorRange<DT2_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                         wrapper(range, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
                 for ( ; i < num_parts; ++i)
                 {
                     DenseVectorRange<DT2_> range(x.range(chunk_size, i * chunk_size + rest));
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                         wrapper(range, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 while(! dispatched_tasks.empty())
@@ -344,7 +361,7 @@ namespace honei
 
                 ThreadPool * tp(ThreadPool::get_instance());
 
-                std::list<PoolTask *> dispatched_tasks;
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long i(0);
                 for ( ; i < rest; ++i)
@@ -354,7 +371,8 @@ namespace honei
                     stop += (i + 1) * (chunk_size + 1);
                     ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
                         typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
                 for ( ; i < num_parts; ++i)
                 {
@@ -363,7 +381,8 @@ namespace honei
                     stop += (i + 1) * chunk_size + rest;
                     ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
                         typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 while (! dispatched_tasks.empty())
@@ -393,7 +412,7 @@ namespace honei
                 unsigned long rest(x.used_elements() % chunk_size);
                 ThreadPool * tp(ThreadPool::get_instance());
 
-                std::list<PoolTask *> dispatched_tasks;
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long i(0);
                 for ( ; i < rest; ++i)
@@ -403,7 +422,8 @@ namespace honei
                     stop += (i + 1) * (chunk_size + 1);
                     ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
                         typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 for ( ; i < num_parts; ++i)
@@ -413,7 +433,8 @@ namespace honei
                     stop += (i + 1) * chunk_size + rest;
                     ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
                         typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 while (! dispatched_tasks.empty())

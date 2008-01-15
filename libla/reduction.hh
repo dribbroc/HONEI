@@ -650,6 +650,7 @@ namespace honei
             for (int i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -721,6 +722,7 @@ namespace honei
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -743,6 +745,7 @@ namespace honei
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -783,6 +786,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -828,6 +832,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -872,6 +877,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -925,6 +931,7 @@ namespace honei
             for (int i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -998,6 +1005,7 @@ namespace honei
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -1020,6 +1028,7 @@ namespace honei
             for (unsigned long i = 0; i < a.rows(); ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -1060,6 +1069,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -1106,6 +1116,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -1150,6 +1161,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -1204,6 +1216,7 @@ namespace honei
             for (int i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -1277,6 +1290,7 @@ namespace honei
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -1299,6 +1313,7 @@ namespace honei
             for (unsigned long i = 0 ; i < a.rows() ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             return result;
         }
@@ -1339,6 +1354,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -1383,6 +1399,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
             return result;
@@ -1427,6 +1444,7 @@ namespace honei
             for (unsigned long i(0) ; i < parts ; ++i)
             {
                 pt[i]->wait_on();
+                delete pt[i];
             }
             result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
             return result;
