@@ -38,13 +38,13 @@ class FlowProcessingTest:
 
         virtual void run() const
         {
-            DenseVector<DT1_> vector_x(12000, DT1_(1));
-            DenseVector<DT1_> vector_y(12000, DT1_(1));
-            DenseVector<DT1_> result_x = FlowProcessing<X, tags::CPU>::value(vector_x);
-            FlowProcessing<Y, tags::CPU>::value(vector_y);
-            DenseVector<DT1_> analytical_result_x(12000, DT1_(1));
-            DenseVector<DT1_> analytical_result_y(12000, DT1_(1));
-            for(unsigned long i = 0; i < 12000; ++i)
+            DenseVector<DT1_> vector_x(12003, DT1_(1));
+            DenseVector<DT1_> vector_y(12003, DT1_(1));
+            DenseVector<DT1_> result_x = FlowProcessing<X, Tag_>::value(vector_x);
+            FlowProcessing<Y, Tag_>::value(vector_y);
+            DenseVector<DT1_> analytical_result_x(12003, DT1_(1));
+            DenseVector<DT1_> analytical_result_y(12003, DT1_(1));
+            for(unsigned long i = 0; i < 12003; ++i)
             {
                 if((i + 2) % 3 == 0)
                     analytical_result_x[i] = DT1_(5.905);
@@ -59,4 +59,8 @@ class FlowProcessingTest:
 };
 FlowProcessingTest<tags::CPU, float> flow_test_float("float");
 FlowProcessingTest<tags::CPU, double> flow_test_double("double");
+#ifdef HONEI_SSE
+FlowProcessingTest<tags::CPU::SSE, float> flow_test_float_sse("float SSE");
+FlowProcessingTest<tags::CPU::SSE, double> flow_test_double_sse("double SSE");
+#endif
 
