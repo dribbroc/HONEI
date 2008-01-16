@@ -321,7 +321,7 @@ namespace honei {
                 DenseVector<WorkPrec_> vc(_v->copy());
                 DenseVector<WorkPrec_> u1_c(_u->copy());
                 DenseVector<WorkPrec_> u2_c(_u->copy());
-                FlowProcessing<directions::X, tags::CPU>::value(u1_c);
+                FlowProcessing<directions::X, Tag_>::value(u1_c);
 
                 Scale<Tag_>::value(vc, _eps);
                 Scale<Tag_>::value(u1_c, -_delta_t);
@@ -330,7 +330,7 @@ namespace honei {
 
                 Scale<Tag_>::value(tempsum, prefac);
                 DenseVector<WorkPrec_> wc(_w->copy());
-                FlowProcessing<directions::Y, tags::CPU>::value(u2_c);
+                FlowProcessing<directions::Y, Tag_>::value(u2_c);
 
                 Scale<Tag_>::value(wc, _eps);
                 Scale<Tag_>::value(u2_c, -_delta_t);
@@ -365,7 +365,7 @@ namespace honei {
             {
                 ///Apply flow to newest u:
                 DenseVector<WorkPrec_> f_c(predictedu.copy());
-                FlowProcessing<directions::X, tags::CPU>::value(f_c);
+                FlowProcessing<directions::X, Tag_>::value(f_c);
 
                 ///Compute linear combinations und accumulate:
                 DenseVector<WorkPrec_> v_result_c(predictedv.copy());
@@ -377,7 +377,7 @@ namespace honei {
                 ///Apply flow to old u:
 
                 DenseVector<WorkPrec_> flow_c(_u_temp->copy());
-                FlowProcessing<directions::X, tags::CPU>::value(flow_c);
+                FlowProcessing<directions::X, Tag_>::value(flow_c);
 
                 DenseVector<WorkPrec_> v_temp_result_c(_v_temp->copy());
 
@@ -393,7 +393,7 @@ namespace honei {
 
                 ///Repeat for w:
                 DenseVector<WorkPrec_> flow2_c(predictedu.copy());
-                FlowProcessing<directions::Y, tags::CPU>::value(flow2_c);
+                FlowProcessing<directions::Y, Tag_>::value(flow2_c);
 
                 DenseVector<WorkPrec_> w_result_c(predictedw.copy());
 
@@ -404,7 +404,7 @@ namespace honei {
 
                 DenseVector<WorkPrec_> flow3_c(_u_temp->copy());
 
-                FlowProcessing<directions::Y, tags::CPU>::value(flow3_c);
+                FlowProcessing<directions::Y, Tag_>::value(flow3_c);
 
                 DenseVector<WorkPrec_> w_temp_result_c(_w_temp->copy());
 
@@ -574,7 +574,7 @@ namespace honei {
                 cout << stringify(*_u) << endl;
 #endif
                 DenseVector<ResPrec_> uFlow = _u->copy();
-                FlowProcessing<directions::X, tags::CPU>::value(uFlow);
+                FlowProcessing<directions::X, Tag_>::value(uFlow);
                 (*_v) = uFlow;
 #ifdef SOLVER_VERBOSE
                 cout << "v^T after building:\n";
@@ -582,7 +582,7 @@ namespace honei {
 #endif
 
                 DenseVector<ResPrec_> u2Flow = _u->copy();
-                FlowProcessing<directions::Y, tags::CPU>::value(u2Flow);
+                FlowProcessing<directions::Y, Tag_>::value(u2Flow);
                 (*_w) = u2Flow;
 #ifdef SOLVER_VERBOSE
                 cout << "w^T after building:\n";
