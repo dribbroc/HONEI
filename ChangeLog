@@ -6,6 +6,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-16 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libvisual/Makefile.am.m4:
+	Added libswe.la.
+
 2008-01-16 Markus Geveler <apryde@gmx.de>
 
 	* libswe/correction_processing.hh: Fixed typo found while optimizing.
