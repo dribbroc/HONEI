@@ -6,6 +6,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-17 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libla/product_TEST.cc:
+	Improved dm*dm and sm*dm tests.
+
 2008-01-17 Markus Geveler <apryde@gmx.de>
 
 	* libswe/assembly_processing.hh,

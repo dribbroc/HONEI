@@ -65,7 +65,7 @@ class BandedMatrixDenseVectorProductTest :
                 (dv3)[size-1]= DataType_(size);
                 for (int i(1); i < size-1; ++i)
                 {
-                    (dv3)[i]= DataType_((i+1)*(size-i)); 
+                    (dv3)[i]= DataType_((i+1)*(size-i));
                 }
 
                 DenseVector<DataType_> prod (Product<Tag_>::value(bm1, dv2));
@@ -137,7 +137,7 @@ class BandedMatrixDenseVectorProductQuickTest :
             }
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
-            for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ; 
+            for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
                     it != i_end ; ++it, ++dit)
             {
                 //std::cout<<it.index() << " ";
@@ -498,7 +498,7 @@ class SparseMatrixSparseVectorProductTest :
 {
     public:
         SparseMatrixSparseVectorProductTest(const std::string & type) :
-            BaseTest("sparse__matrix_sparse_vector_product_test<" + type + ">")
+            BaseTest("sparse_matrix_sparse_vector_product_test<" + type + ">")
         {
         }
 
@@ -677,8 +677,32 @@ class DenseMatrixProductTest :
             int i(0);
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1, ++i)
             {
-                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
-                    dm3(size+1, size+1, DataType_(6 * size));
+                DenseMatrix<DataType_> dm1(size + 3, size + 2);
+                DenseMatrix<DataType_> dm2(size + 2, size + 1);
+                DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index()) / 1.23456;
+                }
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index()) / 3.9876;
+                }
+
+                typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+                for (unsigned int s(0) ; s < dm1.rows() ; ++s)
+                {
+                    const DenseVectorRange<DataType_> dm1_row(dm1[s]);
+                    for (unsigned int t(0); t < dm2.columns() ; ++t)
+                    {
+                        const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                        *i = DotProduct<>::value(dm2_column, dm1_row);
+                        ++i;
+                    }
+                }
+
                 DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
                 TEST_CHECK_EQUAL(prod, dm3);
             }
@@ -710,13 +734,35 @@ class DenseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(15);
+            unsigned long size(32);
 
-            DenseMatrix<DataType_> dm1(size, size, DataType_(2)), dm2(size, size, DataType_(3)),
-                dm3(size, size, DataType_(6 * size));
+            DenseMatrix<DataType_> dm1(size + 3, size + 2);
+            DenseMatrix<DataType_> dm2(size + 2, size + 1);
+            DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(i.index()) / 1.23456;
+            }
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(i.index()) / 3.9876;
+            }
+
+            typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+            for (unsigned int s(0) ; s < dm1.rows() ; ++s)
+            {
+                const DenseVectorRange<DataType_> dm1_row(dm1[s]);
+                for (unsigned int t(0); t < dm2.columns() ; ++t)
+                {
+                    const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                    *i = DotProduct<>::value(dm2_column, dm1_row);
+                    ++i;
+                }
+            }
 
             DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-
             TEST_CHECK_EQUAL(prod, dm3);
 
             DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
@@ -749,8 +795,31 @@ class DenseMatrixProductCellTest :
         {
             for (unsigned long size(2) ; size < (1 << 7) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size, size+1, DataType_(3)),
-                    dm3(size+1, size+1, DataType_(6 * size));
+                DenseMatrix<DataType_> dm1(size + 3, size + 2);
+                DenseMatrix<DataType_> dm2(size + 2, size + 1);
+                DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index()) / 1.23456;
+                }
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index()) / 3.9876;
+                }
+
+                typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+                for (unsigned int s(0) ; s < dm1.rows() ; ++s)
+                {
+                    const DenseVectorRange<DataType_> dm1_row(dm1[s]);
+                    for (unsigned int t(0); t < dm2.columns() ; ++t)
+                    {
+                        const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                        *i = DotProduct<>::value(dm2_column, dm1_row);
+                        ++i;
+                    }
+                }
                 DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
                 TEST_CHECK_EQUAL(prod, dm3);
             }
@@ -781,11 +850,32 @@ class DenseMatrixProductCellQuickTest :
         {
             unsigned long size(100);
 
-            DenseMatrix<DataType_> dm1(size, size, DataType_(2)), dm2(size, size, DataType_(3)),
-                dm3(size, size, DataType_(6 * size));
+            DenseMatrix<DataType_> dm1(size + 3, size + 2);
+            DenseMatrix<DataType_> dm2(size + 2, size + 1);
+            DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(i.index()) / 1.23456;
+            }
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(i.index()) / 3.9876;
+            }
 
+            typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+            for (unsigned int s(0) ; s < dm1.rows() ; ++s)
+            {
+                const DenseVectorRange<DataType_> dm1_row(dm1[s]);
+                for (unsigned int t(0); t < dm2.columns() ; ++t)
+                {
+                    const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                    *i = DotProduct<>::value(dm2_column, dm1_row);
+                    ++i;
+                }
+            }
             DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-
             TEST_CHECK_EQUAL(prod, dm3);
 
             DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
@@ -881,16 +971,41 @@ class SparseMatrixDenseMatrixProductTest :
         {
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
-                DenseMatrix<DataType_> dm2(size, size+1, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
-                SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
-                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                SparseMatrix<DataType_> sm1(size + 3, size + 2, size / 8 + 1);
+                DenseMatrix<DataType_> dm2(size + 2, size + 1);
+                DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
+                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+                        i != i_end ; ++i)
                 {
-                    *i = 3;
+                    if (i.index() % 14 == 0)
+                        *i = DataType_(i.index()) / 1.23456;
+                    if (i.index() % 21 == 0)
+                        *i = DataType_(i.index()) / 1.23456;
+                }
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index()) / 3.9876;
+                }
+
+                typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+                for (unsigned int s(0) ; s < sm1.rows() ; ++s)
+                {
+                    const SparseVector<DataType_> sm1_row(sm1[s]);
+                    for (unsigned int t(0); t < dm2.columns() ; ++t)
+                    {
+                        const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                        *i = DotProduct<>::value(sm1_row, dm2_column);
+                        ++i;
+                    }
                 }
                 DenseMatrix<DataType_> prod(Product<Tag_>::value(sm1, dm2));
 
-                TEST_CHECK_EQUAL(prod, dm3);
+                for (typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
+                        j(dm3.begin_elements()) ; i != i_end ; ++i,  ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+                }
             }
 
             SparseMatrix<DataType_> sm01(3, 4, 1);
@@ -927,16 +1042,41 @@ class SparseMatrixDenseMatrixProductQuickTest :
         virtual void run() const
         {
             unsigned long size(11);
-            DenseMatrix<DataType_> dm2(size, size+1, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
-            SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
-                i_end(sm1.end_elements()) ; i != i_end ; ++i)
+            SparseMatrix<DataType_> sm1(size + 3, size + 2, size / 8 + 1);
+            DenseMatrix<DataType_> dm2(size + 2, size + 1);
+            DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
+            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+                    i != i_end ; ++i)
             {
-                *i = 3;
+                if (i.index() % 14 == 0)
+                    *i = DataType_(i.index()) / 1.23456;
+                if (i.index() % 21 == 0)
+                    *i = DataType_(i.index()) / 1.23456;
+            }
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(i.index()) / 3.9876;
+            }
+
+            typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+            for (unsigned int s(0) ; s < sm1.rows() ; ++s)
+            {
+                const SparseVector<DataType_> sm1_row(sm1[s]);
+                for (unsigned int t(0); t < dm2.columns() ; ++t)
+                {
+                    const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                    *i = DotProduct<>::value(sm1_row, dm2_column);
+                    ++i;
+                }
             }
             DenseMatrix<DataType_> prod(Product<Tag_>::value(sm1, dm2));
 
-            TEST_CHECK_EQUAL(prod, dm3);
+            for (typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
+                        j(dm3.begin_elements()) ; i != i_end ; ++i,  ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+            }
 
             SparseMatrix<DataType_> sm01(3, 4, 1);
             DenseMatrix<DataType_> dm02(3, 3);
@@ -1306,7 +1446,7 @@ class DenseMatrixBandedMatrixProductTest :
                 BandedMatrix<DataType_> bm01(5);
 
                 TEST_CHECK_THROWS(Product<>::value(dm03, bm01), MatrixRowsDoNotMatch);
-            } 
+            }
         }
 };
 DenseMatrixBandedMatrixProductTest<float> dense_matrix_banded_matrix_product_test_float("float");
