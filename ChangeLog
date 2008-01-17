@@ -6,6 +6,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+
+2008-01-17 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+
+	* libvisual/{enginegraph.hh, enginegraph_TEST.cc, evolving_TEST.cc}:
+	Visualisation for libgraph, simple test case for wfr and wkk algos and
+	very simple evolving test. Nessecery update for libgraph files to
+	support wfr follows immediately.
+
 2008-01-17 Markus Geveler <apryde@gmx.de>
 
 	* libswe/relax_solver.hh, relax_solver_TEST.cc,

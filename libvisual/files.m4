@@ -9,6 +9,8 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`engine',               `hh', `test')
+add(`enginegraph',          `hh', `test')
+add(`evolving',                   `test')
 add(`enginesolve',          `hh', `test')
 add(`engine_implicit',      `hh', `test')
 add(`solver_server',        `hh', `test')
