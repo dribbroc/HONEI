@@ -1,7 +1,7 @@
 /* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2007 , 2008 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the SWE C++ library. LibSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
