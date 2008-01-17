@@ -14,6 +14,7 @@ $1_TEST_LDADD = \
 	libvisual.la \
 	$(top_builddir)/libutil/libutil.la \
 	$(top_builddir)/libswe/libswe.la \
+	$(top_builddir)/libgraph/libgraph.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl

@@ -6,6 +6,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-17 Markus Geveler <apryde@gmx.de>
+
+	* libswe/flow_processing-sse.cc: Fixed index bug.
+	* libvisual/Makefile.am.m4: Added libgraph.la.
+
 2008-01-17 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
 
 	* libgraph/{abstract_graph.hh, evolving_graph.cc, position.hh,
