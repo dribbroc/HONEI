@@ -135,5 +135,32 @@ namespace honei
 
             }
     };
+
+    template <>
+    struct CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
+    {
+        public:
+            static void value(DenseVector<float> & predictedu,
+                              DenseVector<float> & predictedv,
+                              DenseVector<float> & predictedw,
+                              DenseVector<float> & u,
+                              DenseVector<float> & v,
+                              DenseVector<float> & w,
+                              unsigned long d_width,
+                              unsigned long d_height,
+                              DenseMatrix<float> & height);
+
+            static void value(DenseVector<double> & predictedu,
+                              DenseVector<double> & predictedv,
+                              DenseVector<double> & predictedw,
+                              DenseVector<double> & u,
+                              DenseVector<double> & v,
+                              DenseVector<double> & w,
+                              unsigned long d_width,
+                              unsigned long d_height,
+                              DenseMatrix<double> & height);
+
+    };
+
 }
 #endif

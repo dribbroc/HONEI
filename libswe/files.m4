@@ -10,7 +10,7 @@ dnl on this file at present...
 
 add(`assembly_processing',  `hh', `test')
 add(`boundary_types',       `hh',)
-add(`correction_processing',`hh', `test')
+add(`correction_processing',`hh', `test', `sse')
 add(`directions',           `hh',)
 add(`flow_processing',      `hh', `test', `sse')
 add(`implicit_solver',      `hh', `test')

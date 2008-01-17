@@ -59,7 +59,30 @@ class CorrectionProcessingTest:
                     ref[i] = DT1_(5.5);
                 }
             }
-            CorrectionProcessing<REFLECT, tags::CPU >::value(pu, pv, pw, u, v, w, 1, 1, h);
+
+            CorrectionProcessing<REFLECT, Tag_>::value(pu, pv, pw, u, v, w, 1, 1, h);
+#ifndef HONEI_SSE
+            TEST_CHECK_EQUAL(u, ref);
+            TEST_CHECK_EQUAL(v, ref);
+            TEST_CHECK_EQUAL(w, ref);
+#endif
+
+#ifdef HONEI_SSE
+            //To normlize testcases for SSE
+            for(unsigned long i = 0; i < entries; i++)
+            {
+                if( i > 35 && i < 39)
+                {
+                }
+                else
+                {
+                    u[i] = DT1_(10);
+                    v[i] = DT1_(10);
+                    w[i] = DT1_(10);
+                }
+            }
+#endif
+
 
             TEST_CHECK_EQUAL(u, ref);
             TEST_CHECK_EQUAL(v, ref);
@@ -68,4 +91,7 @@ class CorrectionProcessingTest:
 };
 CorrectionProcessingTest<tags::CPU, float> correction_test_float("float");
 CorrectionProcessingTest<tags::CPU, double> correction_test_double("double");
-
+#ifdef HONEI_SSE
+CorrectionProcessingTest<tags::CPU::SSE, float> correction_test_float_sse("float SSE");
+//CorrectionProcessingTest<tags::CPU::SSE, double> correction_test_double_sse("double SSE");
+#endif

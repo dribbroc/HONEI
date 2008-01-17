@@ -765,7 +765,7 @@ namespace honei {
                 _do_setup_stage2<InitPrec2_>(predictedu_c, predictedv_c, predictedw_c);
 
                 _do_prediction<PredictionPrec2_>(predictedu_c, predictedv_c, predictedw_c);
-                CorrectionProcessing<REFLECT, tags::CPU>::value(predictedu_c, predictedv_c, predictedw_c, *_u, *_v, *_w, _d_width, _d_height, *_height);
+                CorrectionProcessing<REFLECT, Tag_>::value(predictedu_c, predictedv_c, predictedw_c, *_u, *_v, *_w, _d_width, _d_height, *_height);
                 ++_solve_time;
 
 #ifdef SOLVER_VERBOSE
