@@ -46,8 +46,8 @@ namespace honei
      * \ingroup grplibswe
      *
      **/
-    template <>
-    struct CorrectionProcessing<boundaries::REFLECT, tags::CPU>
+    template <typename Tag_>
+    struct CorrectionProcessing<boundaries::REFLECT, Tag_>
     {
         public:
             /**

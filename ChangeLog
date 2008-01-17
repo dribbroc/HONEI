@@ -8,6 +8,13 @@ see the NEWS file.
 
 2008-01-17 Markus Geveler <apryde@gmx.de>
 
+	* libswe/correction_processing.hh,
+	libswe/correction_processing_TEST.cc, relax_solver_TEST.cc: Added
+	unspecialized implementation of CorrectionProcessing, reenabled MC
+	tests, resolved the test bug for PS3.
+
+2008-01-17 Markus Geveler <apryde@gmx.de>
+
 	* libswe/flow_processing.hh, libswe/flow_processing_TEST.cc: Reenabled
 	MC tests, added Tag_ only unspecific implementation of FlowProcessing.
 
