@@ -49,7 +49,7 @@ namespace honei
         };
     }
 
-    template <typename Tag_, typename Type__>
+    template <typename Tag_, typename Type_>
     struct AssemblyProcessing
     {
     };
@@ -60,8 +60,8 @@ namespace honei
      * \ingroup grplibswe
      *
      **/
-    template <>
-    struct AssemblyProcessing<tags::CPU, assembly_types::MAIN::M1M3>
+    template <typename Tag_>
+    struct AssemblyProcessing<Tag_, assembly_types::MAIN::M1M3>
     {
 
         public:
@@ -252,8 +252,8 @@ namespace honei
             }
     };
 
-    template <>
-    struct AssemblyProcessing<tags::CPU, assembly_types::MAIN::M2M4>
+    template <typename Tag_>
+    struct AssemblyProcessing<Tag_, assembly_types::MAIN::M2M4>
     {
 
         public:
@@ -457,8 +457,8 @@ namespace honei
 #endif
             }
     };
-    template <>
-    struct AssemblyProcessing<tags::CPU, assembly_types::QUICK::M6>
+    template <typename Tag_>
+    struct AssemblyProcessing<Tag_, assembly_types::QUICK::M6>
     {
 
         public:
@@ -479,7 +479,7 @@ namespace honei
                 typename DenseVector<WorkPrec_>::ElementIterator bminus1(m6bandminus3.begin_elements());
 
                 DenseVector<WorkPrec_> c_squared((c.copy()));
-                ElementProduct<tags::CPU>::value(c_squared, (c));
+                ElementProduct<Tag_>::value(c_squared, (c));
 
                 for( ; d.index() < 6*(d_width+4); ++d);
                 for( ; b1.index() < 6*(d_width+4); ++b1);
@@ -528,8 +528,8 @@ namespace honei
 
             }
     };
-    template <>
-    struct AssemblyProcessing<tags::CPU, assembly_types::QUICK::M8>
+    template <typename Tag_>
+    struct AssemblyProcessing<Tag_, assembly_types::QUICK::M8>
     {
 
         public:
@@ -548,7 +548,7 @@ namespace honei
                 typename DenseVector<WorkPrec_>::ElementIterator b2(m8bandplus6.begin_elements());
                 typename DenseVector<WorkPrec_>::ElementIterator bminus1(m8bandminus3.begin_elements());
                 DenseVector<WorkPrec_> d_squared(((dv.copy())));
-                ElementProduct<tags::CPU>::value(d_squared, (dv));
+                ElementProduct<Tag_>::value(d_squared, (dv));
 
                 for( ; d.index() < 6*(d_width + 4); ++d);
                 for( ; b1.index() < 6*(d_width + 4); ++b1);

@@ -55,8 +55,8 @@ namespace honei
      * \ingroup grplibswe
      *
      **/
-    template <>
-    struct SourceProcessing<source_types::SIMPLE, tags::CPU>
+    template <typename Tag_>
+    struct SourceProcessing<source_types::SIMPLE, Tag_>
     {
         private:
             /**
