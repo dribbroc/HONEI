@@ -31,6 +31,7 @@
 #include <libla/sparse_matrix.hh>
 #include <libla/sparse_vector.hh>
 #include <libla/sum.hh>
+#include <libla/scaled_sum.hh>
 #include <libutil/pool_task.hh>
 #include <libutil/tags.hh>
 #include <libutil/thread_pool.hh>
@@ -96,6 +97,18 @@ namespace honei
             return result;
         }
 
+        // Help function for DenseMatrix * DenseMatrix MultiCore.
+        template <typename DT1_, typename DT2_>
+        static DenseVectorRange<DT1_> value(DenseVectorRange<DT1_> & a, const DenseMatrix<DT2_> & b, const DenseVectorRange<DT2_> & c)
+        {
+            for (unsigned long j(0) ; j < b.rows() ; ++j)
+            {
+                ScaledSum<Tag_>::value(a, b[j], c[j]);
+            }
+            return a;
+        }
+
+        
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
@@ -105,35 +118,29 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
             ThreadPool * p(ThreadPool::get_instance());
-            PoolTask   * pt[a.rows() * b.columns()];
+            PoolTask   * pt[a.rows()];
 
-
-            DenseMatrix<DT1_> result(a.rows(), b.columns());
-
-            for (unsigned int s(0) ; s < a.rows() ; ++s)
+            DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
+            
+            for (unsigned long i(0) ; i < a.rows() ; ++i)
             {
-                const DenseVectorRange<DT1_> a_row(a[s]);
-                for (unsigned int t(0); t < b.columns() ; ++t)
-                {
-                    const DenseVectorSlice<DT2_> b_column(b.column(t));
-                    //result[s][t] = DotProduct<>::value(b_column, a_row);
-                    ResultTwoArgWrapper< DotProduct<>, DT1_, const DenseVectorRange<DT1_>,
-                        const DenseVectorSlice<DT2_> > mywrapper(result[s][t], a_row, b_column);
-                    pt[s * b.columns() + t] = p->dispatch(mywrapper);
-                }
-
+                ResultThreeArgWrapper< MCProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>,
+                     const DenseMatrix<DT2_>, const DenseVectorRange<DT2_> > mywrapper(result[i], result[i], b, a[i]);
+                pt[i] = p->dispatch(mywrapper);
             }
 
-            for (unsigned long i = 0; (i < a.rows() * b.columns());  ++i)
+            for (unsigned long i = 0; (i < a.rows());  ++i)
             {
                 pt[i]->wait_on();
                 delete pt[i];
-            }
+            } 
+            
             return result;
         }
+        
 
 
-       // HelpFunction for BandedMatrix * DenseVector MultiCore
+       // Help function for BandedMatrix * DenseVector MultiCore
         template <typename DT1_, typename DT2_>
         static void value(DenseVectorRange<DT1_> & result, const DenseVectorRange<DT1_> & a, const DenseVectorRange<DT2_> & b, Mutex * mutex)
         {
