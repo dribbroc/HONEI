@@ -37,15 +37,8 @@ namespace honei
     struct FlowProcessing
     {
     };
-
-    /**
-     * \brief Implementation of flow processing in x direction.
-     *
-     * \ingroup grplibswe
-     *
-     **/
-    template <>
-    struct FlowProcessing<directions::X, tags::CPU>
+    template <typename Tag_>
+    struct FlowProcessing<directions::X, Tag_>
     {
         private:
             /**
@@ -130,8 +123,8 @@ namespace honei
      * \ingroup grplibswe
      *
      **/
-    template <>
-    struct FlowProcessing<directions::Y, tags::CPU>
+    template <typename Tag_>
+    struct FlowProcessing<directions::Y, Tag_>
     {
         private:
             /**
@@ -208,6 +201,7 @@ namespace honei
 
             }
     };
+
 
 ///---------SSE-----------
 

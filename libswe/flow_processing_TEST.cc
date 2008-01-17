@@ -59,8 +59,10 @@ class FlowProcessingTest:
 };
 FlowProcessingTest<tags::CPU, float> flow_test_float("float");
 FlowProcessingTest<tags::CPU, double> flow_test_double("double");
+FlowProcessingTest<tags::CPU::MultiCore, double> flow_test_double_mc("double MC");
+FlowProcessingTest<tags::CPU::MultiCore, float> flow_test_float_mc("float MC");
+
 #ifdef HONEI_SSE
 FlowProcessingTest<tags::CPU::SSE, float> flow_test_float_sse("float SSE");
 FlowProcessingTest<tags::CPU::SSE, double> flow_test_double_sse("double SSE");
 #endif
-
