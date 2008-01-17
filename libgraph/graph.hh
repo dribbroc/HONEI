@@ -27,6 +27,7 @@
 #include <libgraph/node.hh>
 #include <libgraph/abstract_graph.hh>
 #include <map>
+#include <cstdlib>
 
 namespace honei
 {
@@ -72,7 +73,7 @@ namespace honei
                 _nodeMapping[node->getID()] = _nodeCount;
                 for (int i(0); i < _coordinateDimensions; ++i)
                 {
-                    (*this->_coordinates)(_nodeCount, i) = i < node->getPosition()->size() ? (*node->getPosition())[i] : 0;
+                    (*this->_coordinates)(_nodeCount, i) = 2 - (DataType_)std::rand() / RAND_MAX * 4; // i < node->getPosition()->size() ? (*node->getPosition())[i] : std::rand();
                 }
                 (*this->_nodeWeights)[_nodeCount] = node->getWeight();
                 ++_nodeCount;
@@ -80,49 +81,49 @@ namespace honei
         }
 
         /// sets the edgeweight bewteen nodes with the given nodeIDs to weight. If weight = 0, the edge  actually will be removed
-        void setEdgeWeight(int sourceID, int destinationID, DataType_ weight)
+        inline void setEdgeWeight(int sourceID, int destinationID, DataType_ weight)
         {
             setEdgeWeightInternal(_nodeMapping[sourceID], _nodeMapping[destinationID], weight);
         }
 
         /// sets the edgeweight between two nodes to weight
-        void setEdgeWeight(NodeType * source, NodeType * destination, DataType_ weight)
+        inline void setEdgeWeight(NodeType * source, NodeType * destination, DataType_ weight)
         {
             setEdgeWeight(source->getID(), destination->getID(), weight);
         }
 
         /// adds an edge between nodes with the given nodeIDs and weight. In fact, if weight is 0, the edge will be removed
-        void addEdge(int sourceID, int destinationID, DataType_ weight = 1)
+        inline void addEdge(int sourceID, int destinationID, DataType_ weight = 1)
         {
             setEdgeWeight(sourceID, destinationID, weight);
         }
 
         /// adds an edge beween the nodes. 
-        void addEdge(NodeType * source, NodeType * destination, DataType_ weight = 1)
+        inline void addEdge(NodeType * source, NodeType * destination, DataType_ weight = 1)
         {
             setEdgeWeight(source, destination, weight);
         }
 
         /// removes an probably existing edge between the nodes given by their IDs.
-        void removeEdge(int sourceID, int destinationID)
+        inline void removeEdge(int sourceID, int destinationID)
         {
             setEdgeWeight(sourceID, destinationID, 0);
         }
 
         /// removes an edge between the nodes
-        void removeEdge(NodeType * source, NodeType * destination)
+        inline void removeEdge(NodeType * source, NodeType * destination)
         {
             setEdgeWeight(source, destination, 0);
         }
 
         /// returns the node at position index 
-        NodeType * getNode(int index)
+        inline NodeType * getNode(int index)
         {
             return _nodes[index];
         }
 
         /// returns the node with the given ID, if it is part of this graph.
-        NodeType *  getNodeByID(int ID)
+        inline NodeType *  getNodeByID(int ID)
         {
             return getNode(_nodeMapping[ID]);
         }
@@ -136,12 +137,11 @@ namespace honei
         }
 
         /// the number of actually contained nodes.
-        int nodeCount()
+        inline int nodeCount()
         {
             return _nodeCount;
         }
     };
 }
-
 #endif
 

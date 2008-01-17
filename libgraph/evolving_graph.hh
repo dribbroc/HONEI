@@ -27,7 +27,7 @@
 #include <libgraph/abstract_graph.hh>
 #include <libgraph/graph.hh>
 #include <map>
-
+#include <iostream>
 namespace honei
 {
 
@@ -57,7 +57,7 @@ namespace honei
                     for (typename DM::ConstElementIterator i(slice->coordinates()->begin_elements()),
                             i_end(slice->coordinates()->end_elements()); i != i_end; ++i)
                     {
-                        (*this->_coordinates)(offset + i.column(), i.row()) = *i;
+                        (*this->_coordinates)(offset + i.row(), i.column()) = *i;
                     }
                 }
             }
@@ -109,8 +109,8 @@ namespace honei
 
 
         public:
-            /// creates an evolving graph with given number of dimensions for the node coordinates sets optionally the weight for intertimeslice edges
-            EvolvingGraph(int coordinateDimensions, DataType_ interTimesliceWeight = (DataType_)1) :
+        /// creates an evolving graph with given number of dimensions for the node coordinates sets optionally the weight for intertimeslice edges
+        EvolvingGraph(int coordinateDimensions, DataType_ interTimesliceWeight = (DataType_)1) :
                 _slices(),
                 _nodes(),
                 _sliceOffset(),
@@ -120,31 +120,31 @@ namespace honei
         {
         }
 
-            /// adds a node to the evolving graph. this is necessary to put the same nodes to different timeslice-graphs
-            void addNode(NodeType * node)
-            {
-                _nodes[node->getID()] = node;
-            }
+        /// adds a node to the evolving graph. this is necessary to put the same nodes to different timeslice-graphs
+        inline void addNode(NodeType * node)
+        {
+            _nodes[node->getID()] = node;
+        }
 
-            /// returns the node with the given ID, if it was added.
-            NodeType * getNode(int id)
-            {
-                return _nodes[id];
-            }
+        /// returns the node with the given ID, if it was added.
+        inline NodeType * getNode(int id)
+        {
+            return _nodes[id];
+        }
 
-            NodeType * getNodeByID(int id)
-            {
+        inline NodeType * getNodeByID(int id)
+        {
             return getNode(id);
         }
 
         /// the number of DIFFERENT nodes contained in this graph - one node may occur many times in the assembled matrices 
-        int nodeCount()
+        inline int nodeCount()
         {
             return _nodes.size();
         }
 
         /// the number of timeslices in this evolving graph
-        int sliceCount()
+        inline int sliceCount()
         {
             return _slices.size();
         }
@@ -168,19 +168,19 @@ namespace honei
                 if (nodeIndex < _sliceOffset[t+1])
                     return t;
             }
-            return t+1;
+            return sliceCount()-1;
         }
 
         /// returns true if the indices are in the same timeslice - false otherwise
-        bool SameTimeslice(int index1, int index2)
+        virtual bool sameTimeslice(int index1, int index2)
         {
             int sliceIndex = getTimesliceIndex(index1);
-            return     (sliceIndex == sliceCount()-1 || index2 < _sliceOffset[sliceIndex+1]) &&
+            return (sliceIndex == sliceCount()-1 || index2 < _sliceOffset[sliceIndex+1]) &&
                 index2 >= _sliceOffset[sliceIndex];
         }
 
         /// returns the timslice graph at a given time t
-        GraphType * getTimeslice(int t)
+        inline GraphType * getTimeslice(int t)
         {
             return _slices[t];
         }
@@ -221,4 +221,3 @@ namespace honei
     };
 }
 #endif
-

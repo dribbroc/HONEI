@@ -135,7 +135,7 @@
 #endif
             }
 
-            Positions(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
+            Positions(AbstractGraph<DataType_> * graph, DataType_ edge_length) :
                 _imp(new methods::Implementation<Tag_, DataType_, GraphTag_>(graph, edge_length))
             {
                 /* Following lines not needed: Graph assembles matrices correctly - I hope so, at least.
@@ -169,6 +169,17 @@
                     --timeout;
                 }
                 while ((timeout > 0) && (_imp->value(eps) > eps));
+            }
+            
+            void init()
+            {
+                _imp->init();
+            }
+            
+            DataType_ step()
+            {
+                DataType_ dt(0);
+                return _imp->value(dt);
             }
 
             DenseMatrix<DataType_> & coordinates()
@@ -354,6 +365,9 @@
 
                 /// the _repulsive_force_range defines the range of the repulsive force
                 DataType_ _repulsive_force_range;
+                
+                 /// the graph object that contains information about timeslices, if used with graph classes.
+                AbstractGraph<DataType_> * _graph;
 
             public:
                 friend class Positions<Tag_, DataType_, WeightedFruchtermanReingold>;
@@ -370,7 +384,24 @@
                     _number_of_iterations(1),
                     max_force(0),
                     _step_width(0),
-                    _repulsive_force_range(0)
+                    _repulsive_force_range(0),
+                    _graph(0)
+                {
+                }
+                
+                Implementation(AbstractGraph<DataType_> * graph, DataType_ edgeLength) :
+                    _coordinates(*graph->coordinates()),
+                    _weights_of_nodes(*graph->nodeWeights()),
+                    _weights_of_edges(*graph->edges()),
+                    _repulsive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), 0),
+                    _attractive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), 0),
+                    _previous_max_Force(0),
+                    _previous_max_Force_2(0),
+                    _number_of_iterations(1),
+                    max_force(0),
+                    _step_width(0),
+                    _repulsive_force_range(0),
+                    _graph(graph)
                 {
                 }
 
@@ -762,11 +793,11 @@
                 {
                 }
 
-                Implementation(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
-                    _coordinates(*graph.coordinates()),
-                    _previous_coordinates(graph.coordinates()->copy()),
-                    _weights_of_nodes(*graph.nodeWeights()),
-                    _weights_of_edges(*graph.edges()),
+                Implementation(AbstractGraph<DataType_> * graph, DataType_ edge_length) :
+                    _coordinates(*graph->coordinates()),
+                    _previous_coordinates(graph->coordinates()->copy()),
+                    _weights_of_nodes(*graph->nodeWeights()),
+                    _weights_of_edges(*graph->edges()),
                     _graph_distance(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
                     _spring_forces(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
                     _spring_force_parameters(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
@@ -774,7 +805,7 @@
                     _number_of_iterations(1),
                     max_node(0),
                     _step_widths(_coordinates.rows(), DataType_(0)),
-                    _graph(&graph)
+                    _graph(graph)
                 {
                 }
 

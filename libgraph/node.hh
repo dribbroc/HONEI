@@ -43,6 +43,13 @@ namespace honei
                     _weight(weight)
         {
         }
+        
+        Node (int ID, DataType_ weight):
+            _position(new DV(2)),
+            _id(ID),
+            _weight(weight)
+        {
+        }
 
         /// creates a new node with a given id, weight and coordinates (x,y).
         Node(int ID, DataType_ weight, DataType_ x, DataType_ y) :
@@ -72,36 +79,34 @@ namespace honei
         }
 
         /// returns the initial weight of this node
-        DataType_ getWeight()
+        inline DataType_ getWeight()
         {
             return _weight;
         }
 
         /// sets the initial weight, which is put into graph's nodeWeight vector while adding the node
-        void setWeight(DataType_ weight)
+        inline void setWeight(DataType_ weight)
         {
                 _weight = weight;
         }
 
         /// returns the all important node ID
-        unsigned int getID()
+        inline unsigned int getID()
         {
             return _id;
         }
 
         /// returns the initial position of this node.
-        DenseVector<DataType_> * getPosition()
+        inline DenseVector<DataType_> * getPosition()
         {
             return _position;
         }
 
         /// sets the initial position.it i s put into graph's coordinate matrix when adding.
-        void setPosition(DenseVector<DataType_> * position)
+        inline void setPosition(DenseVector<DataType_> * position)
         {
             _position = position;
         }
     };
 }
-
 #endif
-

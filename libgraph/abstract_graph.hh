@@ -39,46 +39,52 @@ namespace honei
     public:
         virtual void addNode(Node<DataType_> * Node) = 0;
 
-    virtual Node<DataType_> * getNode(int index) = 0;
+        virtual Node<DataType_> * getNode(int index) = 0;
 
-    virtual Node<DataType_> * getNodeByID(int id) = 0;
+        virtual Node<DataType_> * getNodeByID(int id) = 0;
 
-    AbstractGraph() :
-        _coordinates(0),
-        _edges(0),
-        _nodeWeights(0)
-    {
-    }
+        AbstractGraph() :
+            _coordinates(0),
+            _edges(0),
+            _nodeWeights(0)
+        {
+        }
 
-    ~AbstractGraph()
-    {
-        delete _coordinates;
-        delete _edges;
-        delete _nodeWeights;
-    }
+        ~AbstractGraph()
+        {
+            delete _coordinates;
+            delete _edges;
+            delete _nodeWeights;
+        }
 
-    virtual DenseMatrix<DataType_> * coordinates()
-    {
-        return _coordinates;
-    }
+        virtual inline DenseMatrix<DataType_> * coordinates()
+        {
+            return _coordinates;
+        }
 
-    virtual DenseVector<DataType_> * nodeWeights()
-    {
-        return _nodeWeights;
-    }
+        virtual inline DenseVector<DataType_> * nodeWeights()
+        {
+            return _nodeWeights;
+        }
 
-    virtual SparseMatrix<DataType_> * edges()
-    {
-        return _edges;
-    }
+        virtual inline SparseMatrix<DataType_> * edges()
+        {
+            return _edges;
+        }
 
-    virtual int nodeCount() = 0;
+        virtual int nodeCount() = 0;
+        
+        virtual inline int getTimesliceIndex(int nodeIndex)
+        {
+            return 0;
+        }
 
-    virtual bool sameTimeslice(int index1, int index2)
-    {
-        return true;
-    }
+        virtual inline bool sameTimeslice(int index1, int index2)
+        {
+            return true;
+        }
     };
 }
 
 #endif
+
