@@ -277,7 +277,7 @@ class BandedMatrixSumTest :
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 DenseVector<DataType_> dv2(size, DataType_(3));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-                Sum<>::value(bm1, bm2);
+                Sum<Tag_>::value(bm1, bm2);
                 for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()),
                         ce_end(bm1.end_bands()) ; ce != ce_end ; ++ce)
                 {
@@ -328,7 +328,7 @@ class BandedMatrixSumQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(2));
             DenseVector<DataType_> dv2(size, DataType_(3));
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-            Sum<>::value(bm1, bm2);
+            Sum<Tag_>::value(bm1, bm2);
             for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()), ce_end(bm1.end_bands()) ;
                     ce != ce_end ; ++ce)
             {
@@ -397,7 +397,7 @@ class DenseMatrixSparseMatrixSumTest :
                         *k = DataType_((i.index() +1) * 2 / 1.23456789);
                     }
                 }
-                Sum<>::value(dm1, sm2);
+                Sum<Tag_>::value(dm1, sm2);
 
                 TEST_CHECK_EQUAL(dm1, dm3);
             }
@@ -450,7 +450,7 @@ class DenseMatrixSparseMatrixSumQuickTest :
                     *k = DataType_((i.index() +1) * 2 / 1.23456789);
                 }
             }
-            Sum<>::value(dm1, sm2);
+            Sum<Tag_>::value(dm1, sm2);
 
             TEST_CHECK_EQUAL(dm1, dm3);
 
@@ -598,7 +598,7 @@ class SparseMatrixSumTest :
                         *k = DataType_(-1);
                     }
                 }
-                Sum<>::value(sm1, sm2);
+                Sum<Tag_>::value(sm1, sm2);
 
                 TEST_CHECK_EQUAL(sm1, sm3);
             }
@@ -649,7 +649,7 @@ class SparseMatrixSumQuickTest :
                     *k = DataType_(-1);
                 }
             }
-            Sum<>::value(sm1, sm2);
+            Sum<Tag_>::value(sm1, sm2);
 
             TEST_CHECK_EQUAL(sm1, sm3);
 
@@ -1092,7 +1092,7 @@ class DenseVectorSparseVectorSumTest :
                     }
                 }
 
-                Sum<>::value(dv1, sv2);
+                Sum<Tag_>::value(dv1, sv2);
 
                 TEST_CHECK_EQUAL(dv1, dv3);
             }

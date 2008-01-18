@@ -6,6 +6,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-18 David Gies <david-gies@gmx.de>
+
+	* libla/sum_TEST.cc: Added some missing tags.
+
 2008-01-18 Markus Geveler <apryde@gmx.de>
 
 	* libswe/files.m4, libswe/relax_solver.hh,
