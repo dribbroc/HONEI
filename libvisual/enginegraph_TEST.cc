@@ -38,17 +38,17 @@ class EngineGraphTest :
 
             for (int i = 0; i < _nodeCount; i++)
                 g->addNode(new Node<DataType_>(i, 1));
-                
+
             for (int j = 1; j < _nodeCount; j++)
                     g->addEdge(0, j, 1);
             std::cout << "coordinates g: " << *g->coordinates();
             std::cout << "edge matrix\n" << *g->edges();
 
             std::cout << "\nCalculate Position";
-            
-            Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1));
-            
-            
+
+            Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(*g, (DataType_)1));
+
+
             char * c = "Test: Engine";
             char ** cp = &c;
             glutInit(pi,cp);

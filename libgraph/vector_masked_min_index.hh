@@ -51,7 +51,7 @@ namespace honei
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-            int i(0);
+            unsigned long i(0);
             for( ; i < mask.size() ; ++i)
             {
                 if (mask[i] == 1)
@@ -90,7 +90,7 @@ namespace honei
             if (vector.size() != mask.size())
                 throw VectorSizeDoesNotMatch(mask.size(), vector.size());
 
-            int i(0);
+            unsigned long i(0);
             for( ; i < mask.size() ; ++i)
             {
                 if (mask[i] == 1)

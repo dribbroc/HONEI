@@ -173,6 +173,8 @@ namespace honei
     extern template class DenseVector<int>;
 
     extern template class DenseVector<long>;
+
+    extern template class DenseVector<unsigned long>;
 }
 
 #endif

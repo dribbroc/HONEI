@@ -135,7 +135,7 @@
 #endif
             }
 
-            Positions(AbstractGraph<DataType_> * graph, DataType_ edge_length) :
+            Positions(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
                 _imp(new methods::Implementation<Tag_, DataType_, GraphTag_>(graph, edge_length))
             {
                 /* Following lines not needed: Graph assembles matrices correctly - I hope so, at least.
@@ -161,7 +161,7 @@
                 delete _imp;
             }
 
-            void update(DataType_ eps, int timeout)
+            void update(DataType_ eps, unsigned long timeout)
             {
                 _imp->init();
                 do
@@ -170,12 +170,12 @@
                 }
                 while ((timeout > 0) && (_imp->value(eps) > eps));
             }
-            
+
             void init()
             {
                 _imp->init();
             }
-            
+
             DataType_ step()
             {
                 DataType_ dt(0);
@@ -189,10 +189,10 @@
 
             DataType_ max_node_force()
             {
-                return _imp->max_force;
+                return _imp->_max_force;
             }
 
-            int number_of_iterations()
+            unsigned long number_of_iterations()
             {
                 return _imp->_number_of_iterations;
             }
@@ -208,7 +208,7 @@
                 DenseMatrix<DataType_> _coordinates;
 
                 /// adjacence matrix - which nodes are neighbours?
-                const SparseMatrix<bool> _neighbours;
+                const DenseMatrix<bool> _neighbours;
 
                 /// a scalar factor which determinates how much influence the distance has while calculating the forces.
                 const DataType_ _edge_length;
@@ -223,10 +223,10 @@
                 DataType_ _previous_max_Force_2;
 
                 /// number of iterations
-                int _number_of_iterations;
+                unsigned long _number_of_iterations;
 
                 /// the maximal force
-                DataType_ max_force;
+                DataType_ _max_force;
 
                 /// step width
                 DataType_ _step_width;
@@ -242,10 +242,10 @@
                     _neighbours(neighbours),
                     _edge_length(edge_length),
                     _square_edge_length(edge_length * edge_length),
-                    _previous_max_Force(0),
-                    _previous_max_Force_2(0),
+                    _previous_max_Force(DataType_(0)),
+                    _previous_max_Force_2(DataType_(0)),
                     _number_of_iterations(1),
-                    max_force(0),
+                    _max_force(DataType_(0)),
                     _step_width(DataType_(coordinates.rows() * edge_length / 20)),
                     _repulsive_force_range(coordinates.rows() * edge_length)
                 {
@@ -254,8 +254,8 @@
                 DataType_ value(const DataType_ & eps)
                 {
                     // Calculate inv_square_dist = (1 / d(i,j)^2) and _square_dist = (d(i,j)^2)
-                    DenseMatrix<DataType_> inv_square_dist(_neighbours.columns(), _neighbours.rows(), 0);
-                    SparseMatrix<DataType_> square_dist(_neighbours.columns(), _neighbours.rows());
+                    DenseMatrix<DataType_> inv_square_dist(_neighbours.columns(), _neighbours.rows(), DataType_(0));
+                    DenseMatrix<DataType_> square_dist(_neighbours.columns(), _neighbours.rows(), DataType_(0));
                     NodeDistance<Tag_>::value(_coordinates, _neighbours, square_dist, inv_square_dist, _repulsive_force_range);
 
                     // Calculate the single diagonal matrix containing the row sum vector of square_dist
@@ -314,11 +314,11 @@
                     for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
                         e_end(_coordinates.end_elements()), k(attractive_forces.begin_elements()) ; e != e_end ; ++e, ++k)
                     {
-                        result > eps ? *e = *e + _step_width / (resulting_forces[e.row()]) * *k : 0;
+                        result > eps ? *e = *e + _step_width / (resulting_forces[e.row()]) * *k : DataType_(0);
                     }
 
                     _number_of_iterations++;
-                    max_force = result;
+                    _max_force = result;
 
                     return result;
                 }
@@ -340,7 +340,7 @@
                 const DenseVector<DataType_> _weights_of_nodes;
 
                 ///  edge weight matrix - the weights of each edge
-                const SparseMatrix<DataType_> _weights_of_edges;
+                const DenseMatrix<DataType_> _weights_of_edges;
 
                 /// parameter matrix for repulsive forces
                 DenseMatrix<DataType_> _repulsive_force_parameter;
@@ -355,17 +355,17 @@
                 DataType_ _previous_max_Force_2;
 
                 /// number of iterations
-                int _number_of_iterations;
+                unsigned long _number_of_iterations;
 
                 /// the maximal force
-                DataType_ max_force;
+                DataType_ _max_force;
 
                 /// step width
                 DataType_ _step_width;
 
                 /// the _repulsive_force_range defines the range of the repulsive force
                 DataType_ _repulsive_force_range;
-                
+
                  /// the graph object that contains information about timeslices, if used with graph classes.
                 AbstractGraph<DataType_> * _graph;
 
@@ -379,37 +379,37 @@
                     _weights_of_edges(weights_of_edges),
                     _repulsive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), 0),
                     _attractive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), 0),
-                    _previous_max_Force(0),
-                    _previous_max_Force_2(0),
+                    _previous_max_Force(DataType_(0)),
+                    _previous_max_Force_2(DataType_(0)),
                     _number_of_iterations(1),
-                    max_force(0),
+                    _max_force(0),
                     _step_width(0),
                     _repulsive_force_range(0),
                     _graph(0)
                 {
                 }
-                
-                Implementation(AbstractGraph<DataType_> * graph, DataType_ edgeLength) :
-                    _coordinates(*graph->coordinates()),
-                    _weights_of_nodes(*graph->nodeWeights()),
-                    _weights_of_edges(*graph->edges()),
-                    _repulsive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), 0),
-                    _attractive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), 0),
-                    _previous_max_Force(0),
-                    _previous_max_Force_2(0),
+
+                Implementation(AbstractGraph<DataType_> & graph, DataType_ edgeLength) :
+                    _coordinates(*graph.coordinates()),
+                    _weights_of_nodes(*graph.nodeWeights()),
+                    _weights_of_edges(*graph.edges()),
+                    _repulsive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), DataType_(0)),
+                    _attractive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), DataType_(0)),
+                    _previous_max_Force(DataType_(0)),
+                    _previous_max_Force_2(DataType_(0)),
                     _number_of_iterations(1),
-                    max_force(0),
+                    _max_force(0),
                     _step_width(0),
                     _repulsive_force_range(0),
-                    _graph(graph)
+                    _graph(&graph)
                 {
                 }
 
                 DataType_ value(const DataType_ & eps)
                 {
                     // Calculate inv_square_dist = (1 / d(i,j)^2) and _square_dist = (d(i,j)^2)
-                    DenseMatrix<DataType_> inv_square_dist(_weights_of_edges.rows(), _weights_of_edges.columns(), 0);
-                    SparseMatrix<DataType_> square_dist(_weights_of_edges.rows(), _weights_of_edges.columns());
+                    DenseMatrix<DataType_> inv_square_dist(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0));
+                    DenseMatrix<DataType_> square_dist(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0));
                     NodeDistance<Tag_>::value(_coordinates, _weights_of_edges, square_dist, inv_square_dist, _repulsive_force_range);
 
                     // Calculate inv_square_dist = Mul(inv_square_dist,  _repulsive_force_parameter)
@@ -472,7 +472,7 @@
                     }
 
                     _number_of_iterations++;
-                    max_force = result;
+                    _max_force = result;
 
                     return result;
                 }
@@ -526,13 +526,13 @@
                 DenseMatrix<DataType_> _spring_force_parameters;
 
                 /// the maximal force
-                DataType_ max_force;
+                DataType_ _max_force;
 
                 /// number of iterations
-                int _number_of_iterations;
+                unsigned long _number_of_iterations;
 
                 /// index of node with maximal force
-                int max_node ;
+                unsigned long max_node ;
 
                 /// vector of step widths
                 DenseVector<DataType_> _step_widths;
@@ -548,7 +548,7 @@
                     _graph_distance(neighbours.columns(), neighbours.rows(), DataType_(2) * neighbours.columns()),
                     _spring_force_parameters(neighbours.columns(), neighbours.rows(), DataType_(0)),
                     _spring_forces(coordinates.columns(), coordinates.rows(), DataType_(0)),
-                    max_force(0),
+                    _max_force(DataType_(0)),
                     _number_of_iterations(1),
                     max_node(0),
                     _step_widths(coordinates.rows(), DataType_(coordinates.rows() * edge_length / 20))
@@ -614,7 +614,7 @@
                         Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node);
                     }
 
-                    max_force = result;
+                    _max_force = result;
                 }
 
 
@@ -628,7 +628,7 @@
 
                     // Calculate the difference between _previous_coordinates and the previous coordinates of max_node
                     DenseMatrix<DataType_> _previous_coordinates_difference(_previous_coordinates.copy());
-                    for (int i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_previous_coordinates_difference[i], _previous_coordinates[max_node]);
                         Scale<Tag_>::value(_previous_coordinates_difference[i], DataType_(-1));
@@ -636,7 +636,7 @@
 
                     // Calculate the new _spring_force_parameters
                     DenseVectorRange<DataType_> _spring_force_parameters_of_max_node(_spring_force_parameters[max_node]);
-                    for (int i(0) ; i != _spring_force_parameters_of_max_node.size() ; ++i)
+                    for (unsigned long i(0) ; i != _spring_force_parameters_of_max_node.size() ; ++i)
                     {
                         DenseVector<DataType_> auxiliary(_coordinates[i].copy());
                         Difference<Tag_>::value(auxiliary, _coordinates[max_node]);
@@ -648,21 +648,21 @@
 
                     ElementProduct<Tag_>::value(_spring_force_parameters_of_max_node, _graph_distance[max_node].copy());
                     Sum<Tag_>::value(_spring_force_parameters_of_max_node, DataType_(-1));
-                    for (int i(0) ; i != _spring_force_parameters.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _spring_force_parameters.rows() ; ++i)
                     {
                         _spring_force_parameters(i, max_node) = _spring_force_parameters(max_node, i);
                     }
 
                     // Calculate the difference between _coordinates and the coordinates of max_node
                     DenseMatrix<DataType_> _coordinates_difference(_coordinates.copy());
-                    for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_coordinates_difference[i], _coordinates[max_node]);
                         Scale<Tag_>::value(_coordinates_difference[i], DataType_(-1));
                     }
 
                     // Calculate the force difference (subtract the previous force of max_node and add the current force of max_node)
-                    for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         if (i != max_node)
                         {
@@ -683,7 +683,7 @@
                     Sum<Tag_>::value(_spring_forces, _coordinates_difference);
 
                     // previous_max_node
-                    int _previous_max_node(max_node);
+                    unsigned long _previous_max_node(max_node);
 
                     // Calculate the resulting forces, the maximal force and the node with maximal force
                     DataType_ result(0);
@@ -707,7 +707,7 @@
                     if (max_node == _previous_max_node)
                     {
                         bool reducing_condition(true);
-                        for (int i(0); i < _spring_forces.columns(); i++)
+                        for (unsigned long i(0); i < _spring_forces.columns(); i++)
                         {
                             if (fabs(_previous_spring_force[i] - _spring_forces(max_node, i) * (-1 / result)) > fabs(0.3 * _previous_spring_force[i]))
                             {
@@ -727,7 +727,7 @@
                             Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node) ;
                         }
 
-                    max_force = result;
+                    _max_force = result;
 
                     return result;
                 }
@@ -759,13 +759,13 @@
                 DenseMatrix<DataType_> _spring_force_parameters;
 
                 /// the maximal force
-                DataType_ max_force;
+                DataType_ _max_force;
 
                 /// number of iterations
-                int _number_of_iterations;
+                unsigned long _number_of_iterations;
 
                 /// index of node with maximal force
-                int max_node;
+                unsigned long max_node;
 
                 /// vector of step widths
                 DenseVector<DataType_> _step_widths;
@@ -785,7 +785,7 @@
                     _graph_distance(weights_of_edges.rows(), weights_of_edges.columns(), DataType_(0)),
                     _spring_forces(coordinates.rows(), coordinates.columns(), DataType_(0)),
                     _spring_force_parameters(weights_of_edges.rows(), weights_of_edges.rows(), DataType_(0)),
-                    max_force(0),
+                    _max_force(DataType_(0)),
                     _number_of_iterations(1),
                     max_node(0),
                     _step_widths(coordinates.rows(), DataType_(0)),
@@ -793,19 +793,19 @@
                 {
                 }
 
-                Implementation(AbstractGraph<DataType_> * graph, DataType_ edge_length) :
-                    _coordinates(*graph->coordinates()),
-                    _previous_coordinates(graph->coordinates()->copy()),
-                    _weights_of_nodes(*graph->nodeWeights()),
-                    _weights_of_edges(*graph->edges()),
+                Implementation(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
+                    _coordinates(*graph.coordinates()),
+                    _previous_coordinates(graph.coordinates()->copy()),
+                    _weights_of_nodes(*graph.nodeWeights()),
+                    _weights_of_edges(*graph.edges()),
                     _graph_distance(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
                     _spring_forces(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
                     _spring_force_parameters(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
-                    max_force(0),
+                    _max_force(DataType_(0)),
                     _number_of_iterations(1),
                     max_node(0),
                     _step_widths(_coordinates.rows(), DataType_(0)),
-                    _graph(graph)
+                    _graph(&graph)
                 {
                 }
 
@@ -820,15 +820,15 @@
                     }
 
                     // Initialize a matrix of previous_nodes
-                    DenseMatrix<int> previous_nodes(_weights_of_edges.columns(), _weights_of_edges.rows(), 0);
+                    DenseMatrix<unsigned long> previous_nodes(_weights_of_edges.columns(), _weights_of_edges.rows(), 0);
 
                     // Calculate previous nodes
                     Dijkstra<Tag_>::value(_graph_distance, previous_nodes);
 
                     // Calculate a optimal distance
-                    int row;
+                    unsigned long row;
                     DataType_ costs;
-                    for (typename MutableMatrix<int>::ElementIterator e(previous_nodes.begin_elements()),
+                    for (typename MutableMatrix<unsigned long>::ElementIterator e(previous_nodes.begin_elements()),
                         e_end(previous_nodes.end_elements()); e != e_end ; ++e)
                     {
                         row = e.row();
@@ -912,7 +912,7 @@
                         Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node);
                     }
 
-                    max_force = result;
+                    _max_force = result;
 
                 }
 
@@ -926,7 +926,7 @@
 
                     // Calculate the difference between _previous_coordinates and the previous coordinates of max_node
                     DenseMatrix<DataType_> _previous_coordinates_difference(_previous_coordinates.copy());
-                    for (int i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _previous_coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_previous_coordinates_difference[i], _previous_coordinates[max_node]);
                         Scale<Tag_>::value(_previous_coordinates_difference[i], DataType_(-1));
@@ -934,7 +934,7 @@
 
                     // Calculate the new _spring_force_parameters
                     DenseVectorRange<DataType_> _spring_force_parameters_of_max_node(_spring_force_parameters[max_node]);
-                    for (int i(0) ; i != _spring_force_parameters_of_max_node.size() ; ++i)
+                    for (unsigned long i(0) ; i != _spring_force_parameters_of_max_node.size() ; ++i)
                     {
                         DenseVector<DataType_> auxiliary(_coordinates[i].copy());
                         Difference<Tag_>::value(auxiliary, _coordinates[max_node]);
@@ -950,21 +950,21 @@
                     Scale<Tag_>::value(_spring_force_parameters_of_max_node, DataType_(2));
                     ElementProduct<Tag_>::value(_spring_force_parameters_of_max_node, auxiliary2);
                     Sum<Tag_>::value(_spring_force_parameters_of_max_node, DataType_(-1));
-                    for (int i(0) ; i != _spring_force_parameters.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _spring_force_parameters.rows() ; ++i)
                     {
                         _spring_force_parameters(i, max_node) = _spring_force_parameters(max_node, i);
                     }
 
                     // Calculate the difference between _coordinates and the coordinates of max_node
                     DenseMatrix<DataType_> _coordinates_difference(_coordinates.copy());
-                    for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         Difference<Tag_>::value(_coordinates_difference[i], _coordinates[max_node]);
                         Scale<Tag_>::value(_coordinates_difference[i], DataType_(-1));
                     }
 
                     // Calculate the force difference (subtract the previous force of max_node and add the current force of max_node)
-                    for (int i(0) ; i != _coordinates_difference.rows() ; ++i)
+                    for (unsigned long i(0) ; i != _coordinates_difference.rows() ; ++i)
                     {
                         if (i != max_node)
                         {
@@ -985,7 +985,7 @@
                     Sum<Tag_>::value(_spring_forces, _coordinates_difference);
 
                     // previous_max_node
-                    int _previous_max_node(max_node);
+                    unsigned long _previous_max_node(max_node);
 
                     // Calculate the resulting forces, the maximal force and the node with maximal force
                     DataType_ result(0);
@@ -1009,7 +1009,7 @@
                     if ((max_node == _previous_max_node) && (result > std::numeric_limits<DataType_>::epsilon()))
                     {
                         bool reducing_condition(true);
-                        for (int i(0); i < _spring_forces.columns(); i++)
+                        for (unsigned long i(0); i < _spring_forces.columns(); i++)
                         {
                             if (fabs(_previous_spring_force[i] - _spring_forces(max_node, i) * (-1 / result)) > fabs(0.3 * _previous_spring_force[i]))
                             {
@@ -1029,7 +1029,7 @@
                         Sum<Tag_>::value(_coordinates[max_node], _spring_force_of_max_node);
                     }
 
-                    max_force = result;
+                    _max_force = result;
 
                     return result;
                 }

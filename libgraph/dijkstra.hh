@@ -57,26 +57,26 @@ namespace honei
             DenseVector<bool> set_of_nodes(cost_matrix.column(0).size(), false);
 
             // Index of the current node
-            int Index;
+            unsigned long Index;
 
             // Auxiliary variables
             DataType_ help1;
 
             // Iterate over all columns in the given cost matrix
-            for (int i(0); i < cost_matrix.columns(); ++i)
+            for (unsigned long i(0); i < cost_matrix.columns(); ++i)
             {
                 // The column-vector represents the graph distances between node i and the other nodes, so we grab them from the matrix
                 DenseVectorSlice<DataType_> v(cost_matrix.column(i));
 
                 // Set the boolean vector representing the active set of nodes
-                for (int j(0); j < v.size(); ++j)
+                for (unsigned long j(0); j < v.size(); ++j)
                 {
                     i == j ? set_of_nodes[j] = false : set_of_nodes[j] = true;
                 }
 
                 v[i] = 0;
 
-                for (int j(0); j < v.size() - 1; ++j)
+                for (unsigned long j(0); j < v.size() - 1; ++j)
                 {
                     // Calculate the node with the shortest distance to the active set of nodes
                     Index = VectorMaskedMinIndex<>::value(v, set_of_nodes);
@@ -85,7 +85,7 @@ namespace honei
                     set_of_nodes[Index] = false;
 
                     // Update the graph distances from node i to each other node by using the costs of the current node
-                    for (int n(0); n < v.size(); ++n)
+                    for (unsigned long n(0); n < v.size(); ++n)
                     {
                         help1 = v[Index] + cost_matrix(n, Index);
                         if (set_of_nodes[n] == 1 && v[n] > help1)
@@ -96,7 +96,7 @@ namespace honei
                 }
 
                 // Write the graph distances from node i to each other node represented by vector v into the corresponding column of the result matrix
-                for (int j(0); j < v.size() ; ++j)
+                for (unsigned long j(0); j < v.size() ; ++j)
                 {
                     result(j, i) = v[j];
                 }
@@ -110,7 +110,7 @@ namespace honei
          * \param previous_nodes An empty matrix with the size of cost_matrix.
          */
         template <typename DataType_>
-        static void value(DenseMatrix<DataType_> & cost_matrix, DenseMatrix<int> & previous_nodes)
+        static void value(DenseMatrix<DataType_> & cost_matrix, DenseMatrix<unsigned long> & previous_nodes)
         {
             if (cost_matrix.rows() != cost_matrix.columns())
                 throw MatrixRowsDoNotMatch(cost_matrix.columns(), cost_matrix.rows());
@@ -128,7 +128,7 @@ namespace honei
             DenseMatrix<DataType_>  graph_distance_matrix(cost_matrix.copy());
             /// \todo Local copy needed or can wie directly work on the cost_matrix?
 
-            for (typename MutableMatrix<int>::ElementIterator e(previous_nodes.begin_elements()),
+            for (typename MutableMatrix<unsigned long>::ElementIterator e(previous_nodes.begin_elements()),
                     e_end(previous_nodes.end_elements()); e != e_end ; ++e)
                     {
                         *e = e.column();
@@ -138,26 +138,26 @@ namespace honei
             DenseVector<bool> set_of_nodes(cost_matrix.column(0).size(), false);
 
             // Index of the current node
-            int Index;
+            unsigned long Index;
 
             // Iterate over all columns in the given cost matrix
-            for (int i(0); i < cost_matrix.columns(); ++i)
+            for (unsigned long i(0); i < cost_matrix.columns(); ++i)
             {
                 // The column-vector represents the graph distances between node i and the other nodes, so we grab them from the matrix
                 DenseVectorSlice<DataType_> v(graph_distance_matrix.column(i));
 
                 // The column-vector represents the previous nodes. If i, p1, p2, j is the shortest path from node i to node j then p(j) = p2.
-                DenseVectorSlice<int> p(previous_nodes.column(i));
+                DenseVectorSlice<unsigned long> p(previous_nodes.column(i));
 
                 // Set the boolean vector representing the active set of nodes
-                for (int j(0); j < v.size(); ++j)
+                for (unsigned long j(0); j < v.size(); ++j)
                 {
                     i == j ? set_of_nodes[j] = false : set_of_nodes[j] = true;
                 }
 
                 v[i] = 0;
 
-                for (int j(0); j < v.size() - 1; ++j)
+                for (unsigned long j(0); j < v.size() - 1; ++j)
                 {
                     // Calculate the node with the shortest distance to the active set of nodes
                     Index = VectorMaskedMinIndex<>::value(v, set_of_nodes);
@@ -166,7 +166,7 @@ namespace honei
                     set_of_nodes[Index] = false;
 
                     // Update the graph distances from node i to each other node by using the costs of the current node
-                    for (int n(0); n < v.size(); ++n)
+                    for (unsigned long n(0); n < v.size(); ++n)
                     {
                         help1 = v[Index] + cost_matrix(n, Index);
                         if (set_of_nodes[n] == true && v[n] > help1)

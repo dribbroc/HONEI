@@ -58,7 +58,7 @@ class EngineEvolvingGraphTest :
             std::cout << "\nCalculate Position";
             //Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(&gl_globals::graph, (DataType_)1);
             
-            Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1));
+            Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(*eg, (DataType_)1));
             
             
             char * c = "Test: Engine";

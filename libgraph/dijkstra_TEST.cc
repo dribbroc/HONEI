@@ -50,7 +50,7 @@ class DijkstraQuickTest :
                                  14, 14, 14, 14, 14, 1, 14};
 
             // Now, fill that numbers into the real matrices
-            int i(0);
+            unsigned long i(0);
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost(new DenseMatrix<DataType_>(7,7));
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost2(new DenseMatrix<DataType_>(7,7));
             for (typename MutableMatrix<DataType_>::ElementIterator e(pCost->begin_elements()), f(pCost2->begin_elements()),
@@ -73,7 +73,7 @@ class DijkstraQuickTest :
             TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost3), MatrixRowsDoNotMatch);
 
             // Creating an empty node matrix to compute the previous node matrix
-            std::tr1::shared_ptr<DenseMatrix<int> > pNodes(new DenseMatrix<int>(7,7));
+            std::tr1::shared_ptr<DenseMatrix<unsigned long> > pNodes(new DenseMatrix<unsigned long>(7,7));
 
             // Computing graph distance matrix and previous node matrix
             Dijkstra<Tag_>::value( *pCost2, *pNodes);
@@ -91,10 +91,10 @@ class DijkstraQuickTest :
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pCost4(new DenseMatrix<DataType_>(3, 7));
             TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost4, *pNodes), MatrixRowsDoNotMatch);
 
-            std::tr1::shared_ptr<DenseMatrix<int> > pNodes2(new DenseMatrix<int>(7, 3));
+            std::tr1::shared_ptr<DenseMatrix<unsigned long> > pNodes2(new DenseMatrix<unsigned long>(7, 3));
             TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost2, *pNodes2), MatrixColumnsDoNotMatch);
 
-            std::tr1::shared_ptr<DenseMatrix<int> > pNodes3(new DenseMatrix<int>(3, 7));
+            std::tr1::shared_ptr<DenseMatrix<unsigned long> > pNodes3(new DenseMatrix<unsigned long>(3, 7));
             TEST_CHECK_THROWS(Dijkstra<Tag_>::value(*pCost2, *pNodes3), MatrixRowsDoNotMatch);
         }
 };

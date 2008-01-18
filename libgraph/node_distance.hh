@@ -65,7 +65,7 @@ namespace honei
             typename MutableMatrix<DataType_>::ElementIterator e(result.begin_elements());
 
             // Iterate over all nodes (=columns) in the given position matrix
-            for (int i =  0; i < pos_matrix.rows(); ++i)
+            for (unsigned long i =  0; i < pos_matrix.rows(); ++i)
             {
                 // The column-vector represents all n coordinates of node i, so we grab them from the matrix
                 DenseVectorRange<DataType_> v(pos_matrix[i]);
@@ -73,7 +73,7 @@ namespace honei
                 // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
                 // distance matrix is symmetric, result(i,j) equals result(j,i) and so were waiting for symmetric matrices
                 // to gain performance. So long, the trivial loops.
-                for (int j = 0; j < pos_matrix.rows(); ++j, ++e)
+                for (unsigned long j = 0; j < pos_matrix.rows(); ++j, ++e)
                 {
                     DenseVectorRange<DataType_> w(pos_matrix[j]);
                     // Now calculate difference tmp = v - w for each pair of nodes and
@@ -88,8 +88,8 @@ namespace honei
         }
 
         template <typename DataType_>
-        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<bool> & neighbours,
-        SparseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const DenseMatrix<bool> & neighbours,
+        DenseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range)
         {
             // Initialize ElementIterators
@@ -99,7 +99,7 @@ namespace honei
             DataType_ square_force_range(repulsive_force_range * repulsive_force_range);
 
             // Iterate over all nodes (=columns) in the given position matrix
-            for (int i =  0; i < pos_matrix.rows(); ++i)
+            for (unsigned long i =  0; i < pos_matrix.rows(); ++i)
             {
                 // The column-vector represents all n coordinates of node i, so we grab them from the matrix
                 DenseVectorRange<DataType_> v(pos_matrix[i]);
@@ -107,7 +107,7 @@ namespace honei
                 // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
                 // distance matrices are symmetric, and so we are waiting for symmetric matrices
                 // to gain performance. So long, the trivial loops.
-                for (int j = 0; j < pos_matrix.rows(); ++j, ++e, ++f, ++g)
+                for (unsigned long j = 0; j < pos_matrix.rows(); ++j, ++e, ++f, ++g)
                 {
                     DenseVectorRange<DataType_> w(pos_matrix[j]);
                     // Now calculate difference tmp = v - w for each pair of nodes and
@@ -122,8 +122,8 @@ namespace honei
         }
 
         template <typename DataType_>
-        static void value(const DenseMatrix<DataType_> & pos_matrix, const SparseMatrix<DataType_> & edge_weights,
-        SparseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const DenseMatrix<DataType_> & edge_weights,
+        DenseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range)
         {
             // Initialize ElementIterators
@@ -133,7 +133,7 @@ namespace honei
             DataType_ square_force_range(repulsive_force_range * repulsive_force_range);
 
             // Iterate over all nodes (=columns) in the given position matrix
-            for (int i =  0; i < pos_matrix.rows(); ++i)
+            for (unsigned long i =  0; i < pos_matrix.rows(); ++i)
             {
                 // The column-vector represents all n coordinates of node i, so we grab them from the matrix
                 DenseVectorRange<DataType_> v(pos_matrix[i]);
@@ -141,7 +141,7 @@ namespace honei
                 // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
                 // distance matrices are symmetric, and so we are waiting for symmetric matrices
                 // to gain performance. So long, the trivial loops.
-                for (int j = 0; j < pos_matrix.rows(); ++j, ++e, ++f, ++g)
+                for (unsigned long j = 0; j < pos_matrix.rows(); ++j, ++e, ++f, ++g)
                 {
                     DenseVectorRange<DataType_> w(pos_matrix[j]);
                     // Now calculate difference tmp = v - w for each pair of nodes and
@@ -161,20 +161,20 @@ namespace honei
         static DenseMatrix<float> value(const DenseMatrix<float> & pos_matrix);
         static DenseMatrix<double> value(const DenseMatrix<double> & pos_matrix);
 
-        static void value(const DenseMatrix<float> & pos_matrix, const SparseMatrix<bool> & neighbours,
-                SparseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
+        static void value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<bool> & neighbours,
+                DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
                 const float repulsive_force_range);
 
-        static void value(const DenseMatrix<double> & pos_matrix, const SparseMatrix<bool> & neighbours,
-                SparseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
+        static void value(const DenseMatrix<double> & pos_matrix, const DenseMatrix<bool> & neighbours,
+                DenseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
                 const double repulsive_force_range);
 
-        static void value(const DenseMatrix<float> & pos_matrix, const SparseMatrix<float> & edge_weights,
-                SparseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
+        static void value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<float> & edge_weights,
+                DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
                 const float repulsive_force_range);
 
-        static void value(const DenseMatrix<double> & pos_matrix, const SparseMatrix<double> & edge_weights,
-                SparseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
+        static void value(const DenseMatrix<double> & pos_matrix, const DenseMatrix<double> & edge_weights,
+                DenseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
                 const double repulsive_force_range);
     };
 

@@ -40,10 +40,10 @@ class KamadaKawaiPositionsBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        KamadaKawaiPositionsBench(const std::string & id, int nodecount, int count) :
+        KamadaKawaiPositionsBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -55,20 +55,20 @@ class KamadaKawaiPositionsBench :
         {
             // Creatoing test scenario
             DataType_ pos[2*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
+            for (unsigned long i(0); i < _nodecount; ++i)
             {
                     pos[2*i+1] = sin((DataType_)i /(DataType_)_nodecount * 2.0f * 3.14f);
                     pos[2*i] = cos((DataType_)i / (DataType_)_nodecount * 2.0f * 3.14f);
             }
 
             DataType_ adj[_nodecount*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
-                for (int j(0); j < _nodecount; ++j)
+            for (unsigned long i(0); i < _nodecount; ++i)
+                for (unsigned long j(0); j < _nodecount; ++j)
                     adj[i*_nodecount + j] = i == j ? 0 : 1;
 
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(_nodecount,2));
-            int i(0);
+            unsigned long i(0);
             for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
@@ -88,9 +88,9 @@ class KamadaKawaiPositionsBench :
             }
 
             // Creating a Positions object with the test scenario and update the positions
-            int number_of_iterations;
+            unsigned long number_of_iterations;
             DataType_ max_node_force;
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 DenseMatrix<DataType_> pos_copy(pPosition->copy());
                 Positions<Tag_, DataType_, methods::KamadaKawai> position(pos_copy, *pNeighbour, 2.0f);
@@ -110,10 +110,10 @@ class FruchtermanReingoldPositionsBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        FruchtermanReingoldPositionsBench(const std::string & id, int nodecount, int count) :
+        FruchtermanReingoldPositionsBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -125,20 +125,20 @@ class FruchtermanReingoldPositionsBench :
         {
             // Creatoing test scenario
             DataType_ pos[2*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
+            for (unsigned long i(0); i < _nodecount; ++i)
             {
                     pos[2*i+1] = sin((DataType_)i /(DataType_)_nodecount * 2.0f * 3.14f);
                     pos[2*i] = cos((DataType_)i / (DataType_)_nodecount * 2.0f * 3.14f);
             }
 
             DataType_ adj[_nodecount*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
-                for (int j(0); j < _nodecount; ++j)
+            for (unsigned long i(0); i < _nodecount; ++i)
+                for (unsigned long j(0); j < _nodecount; ++j)
                     adj[i*_nodecount + j] = i == j ? 0 : 1;
 
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(_nodecount,2));
-            int i(0);
+            unsigned long i(0);
             for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
@@ -161,9 +161,9 @@ class FruchtermanReingoldPositionsBench :
             Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
 
             // Creating a Positions object with the test scenario and update the positions
-            int number_of_iterations;
+            unsigned long number_of_iterations;
             DataType_ max_node_force;
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 DenseMatrix<DataType_> pos_copy(pPosition->copy());
                 Positions<Tag_, DataType_, methods::FruchtermanReingold> position(pos_copy, *pNeighbour, 2);
@@ -183,10 +183,10 @@ class WeightedKamadaKawaiPositionsBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        WeightedKamadaKawaiPositionsBench(const std::string & id, int nodecount, int count) :
+        WeightedKamadaKawaiPositionsBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -198,26 +198,26 @@ class WeightedKamadaKawaiPositionsBench :
         {
             // Creatoing test scenario
             DataType_ pos[2*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
+            for (unsigned long i(0); i < _nodecount; ++i)
             {
                     pos[2*i+1] = sin((DataType_)i /(DataType_)_nodecount * 2.0f * 3.14f);
                     pos[2*i] = cos((DataType_)i / (DataType_)_nodecount * 2.0f * 3.14f);
             }
 
             DataType_ edge_weights[_nodecount*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
-                for (int j(0); j < _nodecount; ++j)
+            for (unsigned long i(0); i < _nodecount; ++i)
+                for (unsigned long j(0); j < _nodecount; ++j)
                     edge_weights[i*_nodecount + j] = i == j ? 0 : 1;
 
             DataType_ node_weights[_nodecount];
-            for (int i(0); i < _nodecount; ++i)
+            for (unsigned long i(0); i < _nodecount; ++i)
             {
                     node_weights[i] = 1;
             }
 
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(_nodecount,2));
-            int i(0);
+            unsigned long i(0);
             for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
@@ -242,9 +242,9 @@ class WeightedKamadaKawaiPositionsBench :
             }
 
             // Creating a Positions object with the test scenario and update the positions
-            int number_of_iterations;
+            unsigned long number_of_iterations;
             DataType_ max_node_force;
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 DenseMatrix<DataType_> pos_copy(pPosition->copy());
                 Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(pos_copy, *pNode_Weights, *pEdge_Weights);
@@ -264,10 +264,10 @@ class WeightedFruchtermanReingoldPositionsBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        WeightedFruchtermanReingoldPositionsBench(const std::string & id, int nodecount, int count) :
+        WeightedFruchtermanReingoldPositionsBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -279,26 +279,26 @@ class WeightedFruchtermanReingoldPositionsBench :
         {
             // Creatoing test scenario
             DataType_ pos[2*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
+            for (unsigned long i(0); i < _nodecount; ++i)
             {
                     pos[2*i+1] = sin((DataType_)i /(DataType_)_nodecount * 2.0f * 3.14f);
                     pos[2*i] = cos((DataType_)i / (DataType_)_nodecount * 2.0f * 3.14f);
             }
 
             DataType_ edge_weights[_nodecount*_nodecount];
-            for (int i(0); i < _nodecount; ++i)
-                for (int j(0); j < _nodecount; ++j)
+            for (unsigned long i(0); i < _nodecount; ++i)
+                for (unsigned long j(0); j < _nodecount; ++j)
                     edge_weights[i*_nodecount + j] = i == j ? 0 : 1;
 
             DataType_ node_weights[_nodecount];
-            for (int i(0); i < _nodecount; ++i)
+            for (unsigned long i(0); i < _nodecount; ++i)
             {
                     node_weights[i] = 1;
             }
 
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(_nodecount,2));
-            int i(0);
+            unsigned long i(0);
             for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
@@ -323,9 +323,9 @@ class WeightedFruchtermanReingoldPositionsBench :
             }
 
             // Creating a Positions object with the test scenario and update the positions
-            int number_of_iterations;
+            unsigned long number_of_iterations;
             DataType_ max_node_force;
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 DenseMatrix<DataType_> pos_copy(pPosition->copy());
                 Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(pos_copy, *pNode_Weights, *pEdge_Weights);

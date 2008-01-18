@@ -150,6 +150,8 @@ namespace honei
     extern template class DenseVectorSlice<int>;
 
     extern template class DenseVectorSlice<long>;
+
+    extern template class DenseVectorSlice<unsigned long>;
 }
 
 #endif

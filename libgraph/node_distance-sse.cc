@@ -109,8 +109,7 @@ namespace honei
                 unsigned long result_address = (unsigned long)result;
                 unsigned long result_offset = result_address % 16;
 
-                unsigned long x_offset(result_offset / 2);
-                x_offset = (2 - x_offset) % 2;
+                unsigned long x_offset(result_offset / 8);
 
                 unsigned long quad_start = x_offset;
                 unsigned long quad_end(size - ((size - quad_start) % 6));
@@ -169,6 +168,7 @@ namespace honei
                 }
             }
 
+
             inline void node_distance(double * result, double * pos_matrix, double x, double y, unsigned long size)
             {
                 for (unsigned long row(0) ; row < size ; ++row)
@@ -178,6 +178,111 @@ namespace honei
                 }
             }
 #endif
+            inline void set_distance(float * dist, float * dist_src, float * mask, unsigned long size)
+            {
+                __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+                float __attribute__((aligned(16))) eps(std::numeric_limits<float>::epsilon());
+                m8 = _mm_load_ps1(&eps);
+
+                unsigned long dist_address = (unsigned long)dist;
+                unsigned long dist_offset = dist_address % 16;
+
+                unsigned long x_offset(dist_offset / 4);
+                x_offset = (4 - x_offset) % 4;
+
+                unsigned long quad_start = x_offset;
+                unsigned long quad_end(size - ((size - quad_start) % 12));
+
+                if (size < 24)
+                {
+                    quad_end = 0;
+                    quad_start = 0;
+                }
+
+                for (unsigned long index(0) ; index < quad_start ; ++index)
+                {
+                    if (mask[index] > std::numeric_limits<float>::epsilon())
+                            dist[index] = dist_src[index];
+                }
+                for (unsigned long index(quad_start) ; index < quad_end; index += 12)
+                {
+                    m1 = _mm_load_ps(dist_src + index);
+                    m2 = _mm_load_ps(mask + index);
+                    m3 = _mm_load_ps(dist_src + index + 4);
+                    m4 = _mm_load_ps(mask + index + 4);
+                    m5 = _mm_load_ps(dist_src + index + 8);
+                    m6 = _mm_load_ps(mask + index + 8);
+
+                    m7 = _mm_cmpgt_ps(m2, m8);
+                    m1 = _mm_and_ps(m1, m7);
+                    m7 = _mm_cmpgt_ps(m4, m8);
+                    m3 = _mm_and_ps(m3, m7);
+                    m7 = _mm_cmpgt_ps(m6, m8);
+                    m5 = _mm_and_ps(m5, m7);
+
+                    _mm_store_ps(dist + index, m1);
+                    _mm_store_ps(dist + index + 4, m3);
+                    _mm_store_ps(dist + index + 8, m5);
+                }
+                for (unsigned long index(quad_end) ; index < size ; ++index)
+                {
+                    if (mask[index] > std::numeric_limits<float>::epsilon())
+                            dist[index] = dist_src[index];
+                }
+            }
+
+            inline void set_distance(double * dist, double * dist_src, double * mask, unsigned long size)
+            {
+                __m128d m1, m2, m3, m4, m5, m6, m7, m8;
+                double __attribute__((aligned(16))) eps(std::numeric_limits<double>::epsilon());
+                m8 = _mm_load_pd1(&eps);
+
+                unsigned long dist_address = (unsigned long)dist;
+                unsigned long dist_offset = dist_address % 16;
+
+                unsigned long x_offset(dist_offset / 8);
+
+                unsigned long quad_start = x_offset;
+                unsigned long quad_end(size - ((size - quad_start) % 6));
+
+                if (size < 24)
+                {
+                    quad_end = 0;
+                    quad_start = 0;
+                }
+
+                for (unsigned long index(0) ; index < quad_start ; ++index)
+                {
+                    if (mask[index] > std::numeric_limits<double>::epsilon())
+                            dist[index] = dist_src[index];
+                }
+                for (unsigned long index(quad_start) ; index < quad_end; index += 6)
+                {
+                    m1 = _mm_load_pd(dist_src + index);
+                    m2 = _mm_load_pd(mask + index);
+                    m3 = _mm_load_pd(dist_src + index + 2);
+                    m4 = _mm_load_pd(mask + index + 2);
+                    m5 = _mm_load_pd(dist_src + index + 4);
+                    m6 = _mm_load_pd(mask + index + 4);
+
+                    m7 = _mm_cmpgt_pd(m2, m8);
+                    m1 = _mm_and_pd(m1, m7);
+                    m7 = _mm_cmpgt_pd(m4, m8);
+                    m3 = _mm_and_pd(m3, m7);
+                    m7 = _mm_cmpgt_pd(m6, m8);
+                    m5 = _mm_and_pd(m5, m7);
+
+                    _mm_store_pd(dist + index, m1);
+                    _mm_store_pd(dist + index + 2, m3);
+                    _mm_store_pd(dist + index + 4, m5);
+                }
+                for (unsigned long index(quad_end) ; index < size ; ++index)
+                {
+                    if (mask[index] > std::numeric_limits<double>::epsilon())
+                            dist[index] = dist_src[index];
+                }
+            }
+
             inline void invert_distance(float * dist, float square_force_range, unsigned long size)
             {
                 for (unsigned long index(0) ; index < size ; ++index)
@@ -237,8 +342,8 @@ DenseMatrix<double> NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double
     return result;
 }
 
-void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, const SparseMatrix<bool> & neighbours,
-        SparseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
+void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<bool> & neighbours,
+        DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
 {
     float square_force_range(repulsive_force_range * repulsive_force_range);
 
@@ -247,7 +352,7 @@ void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, 
         intern::sse::node_distance(inv_square_dist[i].elements(), pos_matrix.elements(), pos_matrix(i, 0), pos_matrix(i, 1), inv_square_dist[i].size());
     }
 
-    for(SparseMatrix<bool>::ConstElementIterator g(neighbours.begin_non_zero_elements()), g_end(neighbours.end_non_zero_elements()) ;
+    for(DenseMatrix<bool>::ConstElementIterator g(neighbours.begin_elements()), g_end(neighbours.end_elements()) ;
             g != g_end ; ++g)
     {
         if (*g != false)
@@ -257,8 +362,8 @@ void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, 
     intern::sse::invert_distance(inv_square_dist.elements(), square_force_range, inv_square_dist.columns() * inv_square_dist.rows());
 }
 
-void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix, const SparseMatrix<bool> & neighbours,
-        SparseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist, const double repulsive_force_range)
+void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix, const DenseMatrix<bool> & neighbours,
+        DenseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist, const double repulsive_force_range)
 {
     double square_force_range(repulsive_force_range * repulsive_force_range);
 
@@ -267,7 +372,7 @@ void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix,
         intern::sse::node_distance(inv_square_dist[i].elements(), pos_matrix.elements(), pos_matrix(i, 0), pos_matrix(i, 1), inv_square_dist[i].size());
     }
 
-    for(SparseMatrix<bool>::ConstElementIterator g(neighbours.begin_non_zero_elements()), g_end(neighbours.end_non_zero_elements()) ;
+    for(DenseMatrix<bool>::ConstElementIterator g(neighbours.begin_elements()), g_end(neighbours.end_elements()) ;
             g != g_end ; ++g)
     {
         if (*g != false)
@@ -277,8 +382,8 @@ void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix,
     intern::sse::invert_distance(inv_square_dist.elements(), square_force_range, inv_square_dist.columns() * inv_square_dist.rows());
 }
 
-void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, const SparseMatrix<float> & neighbours,
-        SparseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
+void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<float> & neighbours,
+        DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
 {
     float square_force_range(repulsive_force_range * repulsive_force_range);
 
@@ -287,18 +392,13 @@ void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, 
         intern::sse::node_distance(inv_square_dist[i].elements(), pos_matrix.elements(), pos_matrix(i, 0), pos_matrix(i, 1), inv_square_dist[i].size());
     }
 
-    for(SparseMatrix<float>::ConstElementIterator g(neighbours.begin_non_zero_elements()), g_end(neighbours.end_non_zero_elements()) ;
-            g != g_end ; ++g)
-    {
-        if (*g > std::numeric_limits<float>::epsilon())
-            square_dist(g.row(), g.column()) = inv_square_dist(g.row(), g.column());
-    }
+    intern::sse::set_distance(square_dist.elements(), inv_square_dist.elements(), neighbours.elements(), square_dist.columns() * square_dist.rows());
 
     intern::sse::invert_distance(inv_square_dist.elements(), square_force_range, inv_square_dist.columns() * inv_square_dist.rows());
 }
 
-void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix, const SparseMatrix<double> & neighbours,
-        SparseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist, const double repulsive_force_range)
+void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix, const DenseMatrix<double> & neighbours,
+        DenseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist, const double repulsive_force_range)
 {
     double square_force_range(repulsive_force_range * repulsive_force_range);
 
@@ -307,12 +407,7 @@ void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix,
         intern::sse::node_distance(inv_square_dist[i].elements(), pos_matrix.elements(), pos_matrix(i, 0), pos_matrix(i, 1), inv_square_dist[i].size());
     }
 
-    for(SparseMatrix<double>::ConstElementIterator g(neighbours.begin_non_zero_elements()), g_end(neighbours.end_non_zero_elements()) ;
-            g != g_end ; ++g)
-    {
-        if (*g > std::numeric_limits<double>::epsilon())
-            square_dist(g.row(), g.column()) = inv_square_dist(g.row(), g.column());
-    }
+    intern::sse::set_distance(square_dist.elements(), inv_square_dist.elements(), neighbours.elements(), square_dist.columns() * square_dist.rows());
 
     intern::sse::invert_distance(inv_square_dist.elements(), square_force_range, inv_square_dist.columns() * inv_square_dist.rows());
 }

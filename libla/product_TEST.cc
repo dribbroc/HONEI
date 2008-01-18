@@ -719,6 +719,8 @@ DenseMatrixProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_product_tes
 #ifdef HONEI_SSE
 DenseMatrixProductTest<tags::CPU::SSE, float> sse_dense_matrix_product_test_float("SSE float");
 DenseMatrixProductTest<tags::CPU::SSE, double> sse_dense_matrix_product_test_double("SSE double");
+DenseMatrixProductTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_product_test_float("MC SSE float");
+DenseMatrixProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_product_test_double("MC SSE double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -778,6 +780,8 @@ DenseMatrixProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_produc
 #ifdef HONEI_SSE
 DenseMatrixProductQuickTest<tags::CPU::SSE, float>  sse_dense_matrix_product_quick_test_float("SSE float");
 DenseMatrixProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_product_quick_test_double("SSE double");
+DenseMatrixProductQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_matrix_product_quick_test_float("MC SSE float");
+DenseMatrixProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_product_quick_test_double("MC SSE double");
 #endif
 
 template <typename Tag_, typename DataType_>

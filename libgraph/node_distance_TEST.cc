@@ -51,22 +51,22 @@ class NodeDistanceQuickTest :
                 *e = e.index();
             }
 
-            std::tr1::shared_ptr<SparseMatrix<bool> > pNeighbour(new SparseMatrix<bool>(3,3));
+            std::tr1::shared_ptr<DenseMatrix<bool> > pNeighbour(new DenseMatrix<bool>(3,3, false));
             (*pNeighbour)[0][1] = true;
             (*pNeighbour)[1][0] = true;
             (*pNeighbour)[1][2] = true;
             (*pNeighbour)[2][1] = true;
 
-            std::tr1::shared_ptr<SparseMatrix<DataType_> > weight_of_edges(new SparseMatrix<DataType_>(3,3));
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > weight_of_edges(new DenseMatrix<DataType_>(3,3, DataType_(0)));
             (*weight_of_edges)[0][1] = 1;
             (*weight_of_edges)[1][0] = 4;
             (*weight_of_edges)[1][2] = 3;
             (*weight_of_edges)[2][1] = 2;
 
-            std::tr1::shared_ptr<SparseMatrix<DataType_> > pSquarDist(new SparseMatrix<DataType_>(3,3));
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pInv_SquarDist(new DenseMatrix<DataType_>(3,3,0));
-            std::tr1::shared_ptr<SparseMatrix<DataType_> > pSquarDist2(new SparseMatrix<DataType_>(3,3));
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pInv_SquarDist2(new DenseMatrix<DataType_>(3,3,0));
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pSquarDist(new DenseMatrix<DataType_>(3,3, DataType_(0)));
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pInv_SquarDist(new DenseMatrix<DataType_>(3,3, DataType_(0)));
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pSquarDist2(new DenseMatrix<DataType_>(3,3, DataType_(0)));
+            std::tr1::shared_ptr<DenseMatrix<DataType_> > pInv_SquarDist2(new DenseMatrix<DataType_>(3,3, DataType_(0)));
             DataType_ range(3);
 
 

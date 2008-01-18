@@ -1,8 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007 Thorsten Deinert <thosten.deinert@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -129,11 +128,11 @@ class EvolvingGraphTest :
             std::cout << "t1.edges:\n" << *t1->edges() << std::endl;
 
             // old version
-            // Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1->coordinates(), *t1->nodeWeights(), *t1->edges()); 
+            // Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1->coordinates(), *t1->nodeWeights(), *t1->edges());
             // new version:
             Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1, (DataType_)2);
             positions2.update(0.01, 1000);
-            std::cout << "coordinates for t1 after position2.update(0.01, 100):\n" << positions2.coordinates() << std::endl;       
+            std::cout << "coordinates for t1 after position2.update(0.01, 100):\n" << positions2.coordinates() << std::endl;
             TEST_CHECK(true);
             delete(t1);
     }

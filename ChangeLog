@@ -6,6 +6,25 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* libgraph/breadth_first_search_BENCHMARK.cc,
+	libgraph/breadth_first_search_TEST.cc, libgraph/dijkstra.hh,
+	libgraph/dijkstra_TEST.cc, libgraph/evolving_graph_TEST.cc,
+	libgraph/node_distance_BENCHMARK.cc, libgraph/node_distance.hh,
+	libgraph/node_distance-sse.cc, libgraph/node_distance_TEST.cc,
+	libgraph/node.hh, libgraph/position_BENCHMARK.cc,
+	libgraph/position.hh, libgraph/vector_masked_max_index.hh,
+	libgraph/vector_masked_min_index.hh, libla/dense_vector.cc,
+	libla/dense_vector.hh, libla/dense_vector_range.cc,
+	libla/dense_vector_range.hh, libla/dense_vector_slice.cc,
+	libla/dense_vector_slice.hh, libla/product-sse.cc,
+	libla/product_TEST.cc, libvisual/enginegraph_TEST.cc,
+	libvisual/evolving_TEST.cc:
+	Changed the internal FR and WFR neighbour matrix from sparse to dense.
+	Applied changes to NodeDistance.
+	Applied coding conventions.
+
 2008-01-18 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc, libla/makefile.am.m4: Benchmarks evaluation to plotfile

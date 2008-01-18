@@ -426,7 +426,7 @@ class BreadthFirstSearchBinaryTreeTest :
 
         virtual void run() const
         {
-            
+
             // Create a binary tree with deep _nodecount
             SparseMatrix<bool>  pAdj(_nodecount, _nodecount);
             for (unsigned long i(0), column(1); column < _nodecount; i++, column +=2)

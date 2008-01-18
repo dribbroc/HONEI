@@ -30,21 +30,21 @@ namespace honei
     {
     private:
         // Graph<DataType_> _graph*;        // the graph this node belongs to
-        int _id;            // key to represent the node
+        unsigned long _id;            // key to represent the node
         DataType_ _weight;    // initial weight of the node
         typedef DenseVector<DataType_> DV; // initial position of this node
         DV *  _position;
 
     public:
         /// creates a new node with a given id, weight and a position defined by a DenseVector
-        Node(int ID, DataType_ weight, DV * position) :
+        Node(unsigned long ID, DataType_ weight, DV * position) :
                     _position(position),
                     _id(ID),
                     _weight(weight)
         {
         }
-        
-        Node (int ID, DataType_ weight):
+
+        Node (unsigned long ID, DataType_ weight):
             _position(new DV(2)),
             _id(ID),
             _weight(weight)
@@ -52,7 +52,7 @@ namespace honei
         }
 
         /// creates a new node with a given id, weight and coordinates (x,y).
-        Node(int ID, DataType_ weight, DataType_ x, DataType_ y) :
+        Node(unsigned long ID, DataType_ weight, DataType_ x, DataType_ y) :
             _position(new DV(2)),
             _id(ID),
             _weight(weight)
@@ -62,7 +62,7 @@ namespace honei
         }
 
         /// creates a new node with given id, weight and coordnates (x,y,z) - for people who like 3D graphs^^
-        Node(int ID, DataType_ weight, DataType_ x, DataType_ y, DataType_ z) :
+        Node(unsigned long ID, DataType_ weight, DataType_ x, DataType_ y, DataType_ z) :
             _position(new DV(3)),
             _id(ID),
             _weight(weight)
@@ -91,7 +91,7 @@ namespace honei
         }
 
         /// returns the all important node ID
-        inline unsigned int getID()
+        inline unsigned long getID()
         {
             return _id;
         }

@@ -205,6 +205,49 @@ namespace honei
 
             inline void product_dm_nx2(float * result, const float * a, const float * b, unsigned long size)
             {
+            /*
+                float __attribute__((aligned(16))) result1(0);
+                float __attribute__((aligned(16))) result2(0);
+
+                union sse4
+                {
+                    __m128 m;
+                    float f[4];
+                } m1, m2, m3, m4, m5, m6, m8;
+                m8.m = _mm_setzero_ps();
+
+                unsigned long a_address = (unsigned long)a;
+                unsigned long a_offset = a_address % 16;
+
+                unsigned long x_offset(a_offset / 4);
+                x_offset = (4 - x_offset) % 4;
+
+                unsigned long quad_start = x_offset;
+                unsigned long quad_end(size - ((size - quad_start) % 2));
+
+                if (size < 24)
+                {
+                    quad_end = 0;
+                    quad_start = 0;
+                }
+
+                for (unsigned long index(0) ; index < quad_start ; ++index)
+                {
+                    result1 += a[index] * b[index * 2];
+                    result2 += a[index] * b[index * 2 + 1];
+                }
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
+                {
+                    m1.m = _mm_set_ps(a[index], a[index], a[index + 1], a[index + 1]);
+                    m2.m = _mm_load_ps(b + index * 2);
+                    m2.m = _mm_mul_ps(m1.m, m2.m);
+                    m8.m = _mm_add_ps(m8.m, m1.m);
+                }
+                for (unsigned long index(quad_end) ; index < size ; ++index)
+                {
+                    result1 += a[index] * b[index * 2];
+                    result2 += a[index] * b[index * 2 + 1];
+                }*/
                 float result1(0);
                 float result2(0);
 

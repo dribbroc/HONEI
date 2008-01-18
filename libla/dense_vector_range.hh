@@ -156,6 +156,8 @@ namespace honei
     extern template class DenseVectorRange<int>;
 
     extern template class DenseVectorRange<long>;
+
+    extern template class DenseVectorRange<unsigned long>;
 }
 
 #endif

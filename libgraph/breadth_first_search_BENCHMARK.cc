@@ -34,10 +34,10 @@ class BreadthFirstSearchCliqueBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        BreadthFirstSearchCliqueBench(const std::string & id, int nodecount, int count) :
+        BreadthFirstSearchCliqueBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             _nodecount = nodecount;
@@ -61,7 +61,7 @@ class BreadthFirstSearchCliqueBench :
             DenseMatrix<long int> distance(_nodecount, _nodecount, 0);
 
             // Calculate distance matrix 
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(BreadthFirstSearch<Tag_>::value(distance, pAdj));
             }
@@ -75,10 +75,10 @@ class BreadthFirstSearchWeightedCliqueBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        BreadthFirstSearchWeightedCliqueBench(const std::string & id, int nodecount, int count) :
+        BreadthFirstSearchWeightedCliqueBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             _nodecount = nodecount;
@@ -109,7 +109,7 @@ class BreadthFirstSearchWeightedCliqueBench :
             DenseMatrix<DataType_> distance2(_nodecount, _nodecount, DataType_(0));
 
             // Calculate distance matrix
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(BreadthFirstSearch<Tag_>::value(distance2, pNW, pEW));
             }
@@ -123,10 +123,10 @@ class BreadthFirstSearchBinaryTreeBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        BreadthFirstSearchBinaryTreeBench(const std::string & id, int nodecount, int count) :
+        BreadthFirstSearchBinaryTreeBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             _nodecount = nodecount;
@@ -150,7 +150,7 @@ class BreadthFirstSearchBinaryTreeBench :
             DenseMatrix<long int> distance(_nodecount, _nodecount, 0);
 
             // Calculate distance matrix
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(BreadthFirstSearch<Tag_>::value(distance, pAdj));
             }
@@ -164,10 +164,10 @@ class BreadthFirstSearchWeightedBinaryTreeBench :
     public Benchmark
 {
     private:
-        int _nodecount;
-        int _count;
+        unsigned long _nodecount;
+        unsigned long _count;
     public:
-        BreadthFirstSearchWeightedBinaryTreeBench(const std::string & id, int nodecount, int count) :
+        BreadthFirstSearchWeightedBinaryTreeBench(const std::string & id, unsigned long nodecount, unsigned long count) :
             Benchmark(id)
         {
             _nodecount = nodecount;
@@ -199,7 +199,7 @@ class BreadthFirstSearchWeightedBinaryTreeBench :
             DenseMatrix<DataType_> distance2(_nodecount, _nodecount, DataType_(0));
 
             // Calculate distance matrix
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(BreadthFirstSearch<Tag_>::value(distance2, pNW, pEW));
             }
