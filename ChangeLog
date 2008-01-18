@@ -6,6 +6,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-18 Markus Geveler <apryde@gmx.de>
+
+	* libswe/files.m4, libswe/relax_solver.hh,
+	libswe/source_processing.hh, libswe/source_processing_TEST.cc: Added
+	SSE implementation of SourceProcessing, adjusted solver.
+
 2008-01-18 Sven Mallach <sven.mallach@honei.org>
 
 	* cell/libla/product_dense_matrix_dense_matrix_float.cc,

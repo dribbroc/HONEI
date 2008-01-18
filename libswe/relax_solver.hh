@@ -212,7 +212,7 @@ namespace honei {
 #endif
                 DenseVector<WorkPrec_> source_c(predictedu.copy());
 
-                SourceProcessing<source_types::SIMPLE, tags::CPU>::value(source_c, *_bottom_slopes_x, *_bottom_slopes_y, _manning_n_squared);
+                SourceProcessing<source_types::SIMPLE, Tag_>::value(source_c, *_bottom_slopes_x, *_bottom_slopes_y, _manning_n_squared);
 
                 DenseVector<WorkPrec_> predicted_u_temp_c(predictedu.copy());
 

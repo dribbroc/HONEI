@@ -57,3 +57,7 @@ class SourceProcessingTest:
 SourceProcessingTest<tags::CPU, float> source_test_float("float");
 SourceProcessingTest<tags::CPU, double> source_test_double("double");
 
+#ifdef HONEI_SSE
+SourceProcessingTest<tags::CPU::SSE, float> source_test_float_SSE("float SSE");
+SourceProcessingTest<tags::CPU::SSE, double> source_test_double_SSE("double SSE");
+#endif
