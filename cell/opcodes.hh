@@ -47,6 +47,7 @@ namespace honei
             oc_norm_l_two_dense_float,
             oc_element_inverse_float,
             oc_scaled_sum_dense_dense_float,
+            oc_node_distance_float,
 
             oc_test_instruction_finished = 1 << 30,
             oc_test_result_dword,

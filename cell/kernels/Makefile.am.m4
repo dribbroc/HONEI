@@ -40,6 +40,7 @@ $1_SOURCES = $1.cc
 $1_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 $1_LDADD = \
 	$(top_srcdir)/cell/libutil/libutil_spe.a \
+	$(top_srcdir)/cell/libgraph/libgraph_spe.a \
 	$(top_srcdir)/cell/libla/libla_spe.a \
 	$(top_srcdir)/cell/libutil/libutil_spe.a
 

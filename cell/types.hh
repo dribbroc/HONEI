@@ -58,6 +58,14 @@ namespace honei
             vector double * vectorised;
         };
 
+        template <> union Pointer<unsigned>
+        {
+            void * untyped;
+            unsigned adjustable;
+            unsigned * typed;
+            vector unsigned * vectorised;
+        };
+
         template <> union Pointer<unsigned long long>
         {
             void * untyped;

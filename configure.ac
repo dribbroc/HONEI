@@ -301,6 +301,7 @@ AC_OUTPUT(
 	cell/kernels/Makefile
 	cell/libla/Makefile
 	cell/libutil/Makefile
+	cell/libgraph/Makefile
 	doc/Makefile
 	libgraph/Makefile
 	libla/Makefile

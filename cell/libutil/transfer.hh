@@ -41,6 +41,15 @@ unsigned multiple_of_sixteen(unsigned u)
     return (r > 0) ? u + 16 - r : u;
 }
 
+inline unsigned truncate_of_sixteen(unsigned u) __attribute__((always_inline));
+
+unsigned truncate_of_sixteen(unsigned u)
+{
+    unsigned r(u & 0xF);
+
+    return (r > 0) ? u - r : u;
+}
+
 /* extract
  * extract is a function that allows extracting one vector out of two by maintaining an offset.
  * Please note that extract can only be used on SPU-side as it uses spu_intrinsics.h.
