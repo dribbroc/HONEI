@@ -8,6 +8,12 @@ see the NEWS file.
 
 2008-01-18 David Gies <david-gies@gmx.de>
 
+	* benchmark/benchmark.cc, libla/makefile.am.m4: Benchmarks evaluation to plotfile
+	now automatically generates a .plt file that creates .eps-images when opened with gnuplot.
+	make bench-pdf creates a pdf-file with "all" plots of the selected benchmarks that created .plt-files.
+
+2008-01-18 David Gies <david-gies@gmx.de>
+
 	* libla/sum_TEST.cc: Added some missing tags.
 
 2008-01-18 Markus Geveler <apryde@gmx.de>

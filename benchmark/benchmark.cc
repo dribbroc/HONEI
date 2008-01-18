@@ -215,27 +215,44 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
     BenchlistCopy = _benchlist;
     list<double>::iterator blc = BenchlistCopy.begin();
     list<BenchmarkInfo>::iterator j = info.begin();
-    size_t pos;
+    int sizes(0);
+    int nr(1);
     time_t t;
     time(&t);
-    std::string filename(std::string("PlotOut ") + ctime(&t));
-    while ((pos=filename.find(" "))!=-1) filename.replace(pos, 1, "_");
-    while ((pos=filename.find(":"))!=-1) filename.replace(pos, 1, "_");
-    filename.replace(32, 1, ".txt");
-    ofstream ofs(filename.c_str(), ios_base::out);
+    ifstream ifs("BenchmarkPlotData", ifstream::in);
+    if (ifs.is_open())
+    {
+        ifs.ignore(1, '#');
+        ifs >> nr;
+        ++nr;
+    }
+    ifs.close();
+    if (nr == 1)
+    {
+        ofstream ofs1("BenchmarkPlotData", ios_base::out);
+            ofs1 << "#1\n";
+        ofs1.close();
+    }
+    else
+    {
+        ofstream ofs1("BenchmarkPlotData", ios_base::in);
+            ofs1 << "#" << nr;
+        ofs1.close();
+    }
+    ofstream ofs("BenchmarkPlotData", ios_base::out | ios_base::app);
     if (!ofs)
         cout << "Can't write to file!" << endl;
     else
     {
         ofs.setf(ios::left, ios::adjustfield);
-        ofs << "#" << _id << "\n";
+        ofs << "#" << _id << " --- " << ctime(&t);
         ofs << "#Cores\t";
         if (!((j->size).empty()))
         {
-            int counter(1);
-            for(list<unsigned long>::iterator si((j->size).begin()); si != (j->size).end() ; ++si, ++counter)
+            sizes = 1;
+            for(list<unsigned long>::iterator si((j->size).begin()); si != (j->size).end() ; ++si, ++sizes)
             {
-                ofs << counter <<".operand size\t";
+                ofs << sizes <<".operand size\t";
             }
         }
         ofs << "median MFLOPS\tmedian MB/s\tmin runtime\tmax runtime\tmean runtime\tmedian runtime\tmean MFLOPS\tmean MB/s\tlist of all runtimes";
@@ -260,7 +277,33 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
                ofs << "\t" << std::setw(8) << *bl;
             }
         }
+        ofs << "\n\n\n";
     }
+    ofs.close();
+    --sizes;
+    size_t pos;
+    std::string filename(std::string("PlotOut_") + ctime(&t));
+    while ((pos=filename.find(" "))!=-1) filename.replace(pos, 1, "_");
+    while ((pos=filename.find(":"))!=-1) filename.replace(pos, 1, "_");
+    std::string eps1name(filename), eps2name(filename);
+    filename.replace(32, 1, ".plt");
+    eps1name.replace(32, 1, ".eps");
+    eps2name.replace(32, 1, "_2.eps");
+    ofstream ofs2(filename.c_str(), ios_base::out);
+    ofs2 << "set terminal postscript eps color\nset key below\n";
+    ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
+    ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 7+sizes << " t \"median runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 5+sizes << " t \"max runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 4+sizes << " t \"min runtime\" with linespoints\n";
+    ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
+    ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 2+sizes << " t \"median FLOPS\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 8+sizes << " t \"mean FLOPS\" with linespoints\n";   
+    ofs2.close();
+    ofstream ofs3("RecentPlots.tex", ios_base::app);
+    ofs3 << "\t\\begin{figure}\n";
+    ofs3 << "\t\\includegraphics{" << eps1name << "}\n";
+    ofs3 << "\t\\end{figure}\n";
+    ofs3 << "\t\\begin{figure}\n";
+    ofs3 << "\t\\includegraphics{" << eps2name << "}\n";
+    ofs3 << "\t\\end{figure}\n";
+    ofs3.close();
 }
 
 const std::string Benchmark::id() const
@@ -289,7 +332,7 @@ int main(int argc, char** argv)
     bool interface(false);
     if ((argc == 2) && (honei::stringify(argv[1]) == "i"))
         interface = true;
-    else 
+    else
     {
         if (argc > 1)
         {
@@ -417,7 +460,15 @@ int main(int argc, char** argv)
         {
             runrs.push_back(i);
         }
-    }        
+    }
+    time_t t;
+    time(&t);
+    ofstream ofs("RecentPlots.tex", ios_base::out);
+    ofs << "\\documentclass{report}\n";
+    ofs << "\\usepackage{epsfig}\n";
+    ofs << "\\usepackage{epstopdf}\n";
+    ofs << "\\begin{document}\n";
+    ofs.close();
     int count = 0;
     if (runrs.size()>0)
     {
@@ -452,5 +503,8 @@ int main(int argc, char** argv)
             }
         }
     }
+    ofstream ofs1("RecentPlots.tex", ios_base::out | ios_base::app);
+    ofs1 << "\\end{document}";
+
     return result;
 }

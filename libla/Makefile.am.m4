@@ -118,6 +118,13 @@ bench-cell:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	bash $(top_builddir)/libla/benchmark cell
 
+bench-pdf:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	$(top_builddir)/libla/benchmark i
+	~/../share/bin/gnuplot *.plt
+	pdflatex -shell-escape RecentPlots.tex
+	rm PlotOut_*
+
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 
