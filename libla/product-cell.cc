@@ -25,6 +25,7 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
+#include <libutil/time_stamp.hh>
 
 namespace honei
 {
@@ -60,9 +61,9 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        SPEInstructionStream * instruction(0);
-
-        DenseVector<float> result(b.size(), float(0));
+        SPEInstructionQueue instruction;
+        DenseVector<float> result(b.size(), 0.0f);
+        //DenseVector<float> result(b.size());
 
         unsigned long middle_index(a.rows() - 1);
         unsigned long quad_end, end, quad_start, start, x_offset, op_offset;
@@ -101,21 +102,12 @@ namespace honei
                 og.u = op_offset % 4;
                 if(quad_end > quad_start)
                 {
+                    instruction.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
                 }
                 else
                 {
                     quad_start = 0;
                     quad_end = 0;
-                    /// \todo Check for use_spe
-                }
-                if (instruction == 0)
-                {
-                    instruction = new SPEInstructionStream(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
-                    SPEManager::instance()->dispatch(*instruction);
-                }
-                else
-                {
-                    instruction->input(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
                 }
 
                 for (unsigned long index = quad_end ; index < end ; index++)
@@ -154,23 +146,13 @@ namespace honei
                 og.u = (4 - (op_offset % 4)) % 4;
                 if(quad_end > quad_start)
                 {
+                    instruction.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
                 }
                 else
                 {
                     quad_start = 0;
                     quad_end = start;
-                    /// \todo Check for use_spe
                 }
-                if (instruction == 0)
-                {
-                    instruction = new SPEInstructionStream(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
-                    SPEManager::instance()->dispatch(*instruction);
-                }
-                else
-                {
-                    instruction->input(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
-                }
-
                 for (unsigned long index = start ; index < quad_start ; index++)
                 {
                     result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
@@ -181,8 +163,9 @@ namespace honei
                 }
             }
         }
-        instruction->wait();
-        delete instruction;
+        SPEManager::instance()->dispatch(instruction);
+        instruction.wait();
+
         return result;
     }
 
@@ -222,7 +205,6 @@ namespace honei
         a_tile_columns = a.columns(); // Later use tiles' columns here
         b_tile_rows = b.rows(); // Later user tiles' rows here
         b_tile_columns = b.columns(); // Later use tiles' columns here
-
         DenseMatrix<float> result(a_tile_rows, b_tile_columns, 0.0f);
 
         r_tile_rows = result.rows(); // Later use tiles' rows here
