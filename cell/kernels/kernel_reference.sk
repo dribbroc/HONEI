@@ -1,6 +1,9 @@
 # vim: set sw=4 sts=4 et tw=0 ft=bash :
 
 halt
+
+# LibLA Operations
+##################
 void            sum_dense_dense_float                       sum_dense_dense_float
 return_void     sum_dense_scalar_float                      sum_dense_scalar_float
 return_void     sum_dense_sparse_float                      sum_dense_sparse_float
@@ -19,4 +22,11 @@ dword           norm_l_one_dense_float                      dense_entity
 dword           norm_l_two_dense_float                      dense_entity
 void            element_inverse_float                       dense_entity
 return_void     scaled_sum_dense_dense_float                scaled_sum_dense_dense_float
+
+# LibGraph Operations
+#####################
 return_void     node_distance_float                         node_distance_float
+
+# LibMath Operations
+####################
+void            sqrt_dense_float

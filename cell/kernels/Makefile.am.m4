@@ -42,6 +42,7 @@ $1_LDADD = \
 	$(top_srcdir)/cell/libutil/libutil_spe.a \
 	$(top_srcdir)/cell/libgraph/libgraph_spe.a \
 	$(top_srcdir)/cell/libla/libla_spe.a \
+	$(top_srcdir)/cell/libmath/libmath_spe.a \
 	$(top_srcdir)/cell/libutil/libutil_spe.a
 
 libcell-$1.o : $1

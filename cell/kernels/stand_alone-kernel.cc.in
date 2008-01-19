@@ -21,6 +21,7 @@
 
 #include <cell/cell.hh>
 #include <cell/libla/operations.hh>
+#include <cell/libmath/operations.hh>
 #include <cell/libutil/allocator.hh>
 #include <cell/libutil/transfer.hh>
 #include <cell/libutil/debug.hh>

@@ -29,6 +29,7 @@ namespace honei
             oc_noop = 1 << 0,
             oc_halt,
 
+            // LibLA opcodes
             oc_sum_dense_dense_float = 1 << 4,
             oc_sum_dense_scalar_float,
             oc_difference_dense_dense_float,
@@ -48,6 +49,9 @@ namespace honei
             oc_element_inverse_float,
             oc_scaled_sum_dense_dense_float,
             oc_node_distance_float,
+
+            // LibMath opcodes
+            oc_sqrt_dense_float,
 
             oc_test_instruction_finished = 1 << 30,
             oc_test_result_dword,
