@@ -98,7 +98,6 @@ namespace honei
                     ++od.u;
                 }
 
-                /// \todo Find a way to use vector size above signed long max size
                 og.u = op_offset % 4;
                 if(quad_end > quad_start)
                 {
@@ -107,8 +106,8 @@ namespace honei
                 {
                     quad_start = 0;
                     quad_end = 0;
+                    /// \todo Check for use_spe
                 }
-                //std::cout<< "above D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
                 if (instruction == 0)
                 {
                     instruction = new SPEInstructionStream(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
@@ -160,8 +159,8 @@ namespace honei
                 {
                     quad_start = 0;
                     quad_end = start;
+                    /// \todo Check for use_spe
                 }
-                //std::cout<< "below D: "<<od.u<<" E: "<<oe.u <<" spe: "<<task.use_spe<<" q_e: "<<quad_end<<std::endl;
                 if (instruction == 0)
                 {
                     instruction = new SPEInstructionStream(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
