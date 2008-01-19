@@ -11,9 +11,10 @@ see the NEWS file.
 	cell/kernels/Makefile.am.m4, cell/kernels/stand_alone-kernel.cc.in,
 	cell/Makefile.am.m4. configure.ac: Added infrastructure for libmath
 	operations on Cell.
-	* cell/kernels/kernel_reference.sk, cell/opcodes.hh, libmath/files.m4,
-	libmath/sqrt.hh, libmath/sqrt_TEST.cc: Added libmath operation Sqrt
-	for CPU and Cell.
+	* cell/libmath/sqrt_dense_float.cc, cell/kernels/kernel_reference.sk,
+	cell/opcodes.hh, libmath/files.m4, libmath/sqrt.hh,
+	libmath/sqrt-cell.cc, libmath/sqrt_TEST.cc: Added libmath operation
+	Sqrt for CPU and Cell.
 
 2008-01-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
