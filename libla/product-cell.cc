@@ -25,7 +25,6 @@
 #include <libutil/memory_backend_cell.hh>
 #include <libutil/spe_instruction.hh>
 #include <libutil/spe_manager.hh>
-#include <libutil/time_stamp.hh>
 
 namespace honei
 {
