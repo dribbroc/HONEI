@@ -205,7 +205,7 @@ namespace honei
 
             inline void product_dm_nx2(float * result, const float * a, const float * b, unsigned long size)
             {
-            /*
+                /*
                 float __attribute__((aligned(16))) result1(0);
                 float __attribute__((aligned(16))) result2(0);
 
@@ -238,16 +238,22 @@ namespace honei
                 }
                 for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
                 {
-                    m1.m = _mm_set_ps(a[index], a[index], a[index + 1], a[index + 1]);
+                    m1.m = _mm_set_ps(a[index +1 ], a[index + 1], a[index], a[index]);
                     m2.m = _mm_load_ps(b + index * 2);
                     m2.m = _mm_mul_ps(m1.m, m2.m);
-                    m8.m = _mm_add_ps(m8.m, m1.m);
+                    m8.m = _mm_add_ps(m8.m, m2.m);
                 }
+                result1 += m8.f[0];
+                result2 += m8.f[1];
+                result1 += m8.f[2];
+                result2 += m8.f[3];
                 for (unsigned long index(quad_end) ; index < size ; ++index)
                 {
                     result1 += a[index] * b[index * 2];
                     result2 += a[index] * b[index * 2 + 1];
-                }*/
+                }
+                result[0] = result1;
+                result[1] = result2;*/
                 float result1(0);
                 float result2(0);
 

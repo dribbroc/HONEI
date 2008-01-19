@@ -704,7 +704,11 @@ class DenseMatrixProductTest :
                 }
 
                 DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-                TEST_CHECK_EQUAL(prod, dm3);
+                for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
+                        j(dm3.begin_elements()); i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+                }
             }
 
             DenseMatrix<DataType_> dm01(3, 4, DataType_(1)), dm02(3, 3, DataType_(1));
@@ -765,7 +769,11 @@ class DenseMatrixProductQuickTest :
             }
 
             DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-            TEST_CHECK_EQUAL(prod, dm3);
+            for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
+                    j(dm3.begin_elements()); i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+            }
 
             DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
 
@@ -827,7 +835,11 @@ class DenseMatrixProductNX2Test :
                 }
 
                 DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-                TEST_CHECK_EQUAL(prod, dm3);
+                for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
+                        j(dm3.begin_elements()); i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+                }
             }
 
             DenseMatrix<DataType_> dm01(3, 4, DataType_(1)), dm02(3, 3, DataType_(1));
@@ -888,7 +900,11 @@ class DenseMatrixProductNX2QuickTest :
             }
 
             DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-            TEST_CHECK_EQUAL(prod, dm3);
+            for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
+                    j(dm3.begin_elements()); i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+            }
 
             DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
 
