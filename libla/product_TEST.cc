@@ -785,6 +785,129 @@ DenseMatrixProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matr
 #endif
 
 template <typename Tag_, typename DataType_>
+class DenseMatrixProductNX2Test :
+    public BaseTest
+{
+    public:
+        DenseMatrixProductNX2Test(const std::string & type) :
+            BaseTest("dense_matrix_nx2_product_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            int i(0);
+            for (unsigned long size(10) ; size < (1 << 11) ; size <<= 1, ++i)
+            {
+                DenseMatrix<DataType_> dm1(size, size);
+                DenseMatrix<DataType_> dm2(size, 2);
+                DenseMatrix<DataType_> dm3(size , 2, DataType_(0));
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index()) / 1.23456;
+                }
+                for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index()) / 3.9876;
+                }
+
+                typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+                for (unsigned int s(0) ; s < dm1.rows() ; ++s)
+                {
+                    const DenseVectorRange<DataType_> dm1_row(dm1[s]);
+                    for (unsigned int t(0); t < dm2.columns() ; ++t)
+                    {
+                        const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                        *i = DotProduct<>::value(dm2_column, dm1_row);
+                        ++i;
+                    }
+                }
+
+                DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
+                TEST_CHECK_EQUAL(prod, dm3);
+            }
+
+            DenseMatrix<DataType_> dm01(3, 4, DataType_(1)), dm02(3, 3, DataType_(1));
+
+            TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dm02), MatrixRowsDoNotMatch);
+        }
+};
+DenseMatrixProductNX2Test<tags::CPU, float> dense_matrix_product_nx2_test_float("float");
+DenseMatrixProductNX2Test<tags::CPU, double> dense_matrix_product_nx2_test_double("double");
+DenseMatrixProductNX2Test<tags::CPU::MultiCore, float> mc_dense_matrix_product_nx2_test_float("MC float");
+DenseMatrixProductNX2Test<tags::CPU::MultiCore, double> mc_dense_matrix_product_nx2_test_double("MC double");
+#ifdef HONEI_SSE
+DenseMatrixProductNX2Test<tags::CPU::SSE, float> sse_dense_matrix_product_nx2_test_float("SSE float");
+DenseMatrixProductNX2Test<tags::CPU::SSE, double> sse_dense_matrix_product_nx2_test_double("SSE double");
+DenseMatrixProductNX2Test<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_product_nx2_test_float("MC SSE float");
+DenseMatrixProductNX2Test<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_product_nx2_test_double("MC SSE double");
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseMatrixProductNX2QuickTest :
+    public QuickTest
+{
+    public:
+        DenseMatrixProductNX2QuickTest(const std::string & type) :
+            QuickTest("dense_matrix_product_nx2_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(32);
+
+            DenseMatrix<DataType_> dm1(size, size);
+            DenseMatrix<DataType_> dm2(size, 2);
+            DenseMatrix<DataType_> dm3(size , 2, DataType_(0));
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(i.index()) / 1.23456;
+            }
+            for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DataType_(i.index()) / 3.9876;
+            }
+
+            typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements());
+            for (unsigned int s(0) ; s < dm1.rows() ; ++s)
+            {
+                const DenseVectorRange<DataType_> dm1_row(dm1[s]);
+                for (unsigned int t(0); t < dm2.columns() ; ++t)
+                {
+                    const DenseVectorSlice<DataType_> dm2_column(dm2.column(t));
+                    *i = DotProduct<>::value(dm2_column, dm1_row);
+                    ++i;
+                }
+            }
+
+            DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
+            TEST_CHECK_EQUAL(prod, dm3);
+
+            DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
+
+            TEST_CHECK_THROWS(Product<Tag_>::value(dm02, dm01), MatrixRowsDoNotMatch);
+
+        }
+};
+DenseMatrixProductNX2QuickTest<tags::CPU, float>  dense_matrix_product_nx2_quick_test_float("float");
+DenseMatrixProductNX2QuickTest<tags::CPU, double> dense_matrix_product_nx2_quick_test_double("double");
+DenseMatrixProductNX2QuickTest<tags::CPU::MultiCore, float>  mc_dense_matrix_product_nx2_quick_test_float("MC float");
+DenseMatrixProductNX2QuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_product_nx2_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseMatrixProductNX2QuickTest<tags::CPU::SSE, float>  sse_dense_matrix_product_nx2_quick_test_float("SSE float");
+DenseMatrixProductNX2QuickTest<tags::CPU::SSE, double> sse_dense_matrix_product_nx2_quick_test_double("SSE double");
+DenseMatrixProductNX2QuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_matrix_product_nx2_quick_test_float("MC SSE float");
+DenseMatrixProductNX2QuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_product_nx2_quick_test_double("MC SSE double");
+#endif
+
+template <typename Tag_, typename DataType_>
 class DenseMatrixProductCellTest :
     public BaseTest
 {
