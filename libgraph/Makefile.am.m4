@@ -8,7 +8,7 @@ define(`testlist', `')dnl
 define(`headerlist', `')dnl
 define(`benchmarklist', `')dnl
 define(`sselist', `')dnl
-define(`cellist', `')dnl
+define(`celllist', `')dnl
 define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \

@@ -6,6 +6,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-19 Sven Mallach <sven.mallach@honei.org>
+
+	* cell/kernels/kernel_reference.sk, cell/libgraph/Makefile.am,
+	cell/libgraph/node_distance_float.cc, libgraph/files.m4,
+	libgraph/Makefile.am.m4, libgraph/node_distance-cell.cc,
+	libgraph/node_distance.hh: Implemented first part of node_distance.hh
+	for the CBEA.
+
 2008-01-19 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* libla/product_TEST.cc:

@@ -178,5 +178,20 @@ namespace honei
                 const double repulsive_force_range);
     };
 
+    template <> struct NodeDistance<tags::Cell>
+    {
+        static DenseMatrix<float> value(const DenseMatrix<float> & a);
+
+        /*
+        static void value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<bool> & neighbours,
+                DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
+                const float repulsive_force_range);
+
+        static void value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<float> & edge_weights,
+                DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
+                const float repulsive_force_range);
+        */
+    };
+
 }
 #endif

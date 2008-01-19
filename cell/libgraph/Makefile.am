@@ -7,6 +7,7 @@ DEFS = $(DEBUGDEF)
 
 noinst_LIBRARIES = libgraph_spe.a
 libgraph_spe_a_SOURCES = \
+	node_distance_float.cc
 libgraph_spe_a_LIBADD = \
 	$(top_srcdir)/cell/libutil/libutil_spe.a
 
