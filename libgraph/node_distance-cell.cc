@@ -50,12 +50,8 @@ namespace honei
             od.f = *(a.elements() + (i * 2));
             oe.f = *(a.elements() + (i * 2) + 1);
 
-            std::cout << "x: " << od.f << std::endl;
-            std::cout << "y: " << oe.f << std::endl;
-
             Operand of = { result_row.elements() };
             Operand og = { result_row.size() };
-            std::cout << og.u << std::endl;
 
             bool use_spe(true);
             if (0 == oc.u)
