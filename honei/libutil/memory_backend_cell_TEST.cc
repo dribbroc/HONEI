@@ -14,7 +14,7 @@
 #include <cmath>
 #include <map>
 
-#include <honei/libspe2.h>
+#include <libspe2.h>
 
 using namespace honei;
 using namespace tests;

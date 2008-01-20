@@ -7,6 +7,13 @@ see the NEWS file.
 
 2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/cell/interface.hh, honei/libutil/memory_backend_cell.cc,
+	honei/libutil/memory_backend_cell_TEST.cc, honei/libutil/spe.cc,
+	honei/libutil/spe.hh, honei/libutil/spe_manager.cc,
+	honei/libutil/spe_manager.hh: Follow-up changes for Cell platform.
+
+2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* autogen.bash, benchmark/benchmark.hh, -cell, -cell/cell.hh,
 	-cell/interface.hh, -cell/kernels, -cell/kernels/files.m4,
 	-cell/kernels/kernel_reference.sk, -cell/kernels/kernel_test.sk,

@@ -29,8 +29,8 @@
 #include <tr1/functional>
 #include <fstream>
 
-#include <honei/libspe2.h>
-#include <honei/libwrapiter/libwrapiter_forward_iterator.hh>
+#include <libspe2.h>
+#include <libwrapiter/libwrapiter_forward_iterator.hh>
 #include <pthread.h>
 
 using namespace honei;

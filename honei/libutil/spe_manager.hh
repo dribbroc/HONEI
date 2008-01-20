@@ -33,8 +33,8 @@
 #include <tr1/memory>
 #include <tr1/functional>
 
-#include <honei/libspe2.h>
-#include <honei/libwrapiter/libwrapiter_forward_iterator.hh>
+#include <libspe2.h>
+#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace honei
 {

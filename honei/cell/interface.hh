@@ -24,7 +24,7 @@
 #include <honei/cell/types.hh>
 
 #ifdef __PPU__
-#  include <honei/libspe2-types.h>
+#  include <libspe2-types.h>
 #  include <string>
 #endif
 

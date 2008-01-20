@@ -29,7 +29,7 @@
 #include <tr1/memory>
 #include <tr1/functional>
 
-#include <honei/libspe2.h>
+#include <libspe2.h>
 
 namespace honei
 {

@@ -34,7 +34,7 @@
 #include <set>
 #include <vector>
 
-#include <honei/libspe2.h>
+#include <libspe2.h>
 
 using namespace honei;
 
