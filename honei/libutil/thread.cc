@@ -66,7 +66,6 @@ struct Thread::Implementation
         Lock l(*imp->mutex);
         imp->completed = true;
 
-        LOGMESSAGE(ll_minimal, "Exiting thread function");
         pthread_exit(0);
     }
 

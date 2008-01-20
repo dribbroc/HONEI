@@ -48,19 +48,21 @@ namespace honei
             }
 
             /// Take a new time stamp.
-            void take()
+            TimeStamp take()
             {
                 gettimeofday(&_time, 0);
+
+                return *this;
             }
 
             /// Returns our seconds.
-            unsigned long sec()
+            unsigned long sec() const
             {
                 return _time.tv_sec;
             }
 
             /// Returns our useconds.
-            long usec()
+            long usec() const
             {
                 return _time.tv_usec;
             }

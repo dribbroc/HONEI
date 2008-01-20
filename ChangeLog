@@ -7,6 +7,21 @@ see the NEWS file.
 
 2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/libutil/thread.cc: Removed default LOGMESSAGE from Thread to
+	disarm static initialisation fiasco.
+	* honei/libutil/time_stamp.hh: Made sec() and usec() const. Made
+	take() chainable.
+	* honei/libutil/configuration.cc, honei/libutil/configuration.hh:
+	Added get_value method that returns strings.
+	* configure.ac, doc/doc_groups.doxygen, honei/libla/Makefile.am.m4,
+	honei/libmath/Makefile.am.m4, honei/libswe/Makefile.am.m4,
+	honei/libutil/files.m4, honei/libutil/Makefile.am.m4,
+	honei/libutil/profiler.cc, honei/libutil/profiler.hh,
+	honei/libutil/profiler_TEST.cc, honei/libvisual/Makefile.am.m4: Added
+	Profiler and its utilities.
+
+2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/cell/interface.hh, honei/libutil/memory_backend_cell.cc,
 	honei/libutil/memory_backend_cell_TEST.cc, honei/libutil/spe.cc,
 	honei/libutil/spe.hh, honei/libutil/spe_manager.cc,

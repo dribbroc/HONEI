@@ -142,6 +142,12 @@
  */
 
 /**
+ * \defgroup grpprofiler Built-in profiler
+ *
+ * \ingroup grplibutil
+ */
+
+/**
  * \defgroup grptags Tag types for distributing computation
  *
  * \ingroup grplibutil

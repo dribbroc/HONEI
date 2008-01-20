@@ -205,7 +205,7 @@ AC_ARG_ENABLE([sse],
 		  AC_MSG_RESULT([no])])
 AC_SUBST([ENABLE_SSE])
 AM_CONDITIONAL([SSE], test "x$ENABLE_SSE" = "xyes")
-if test "x$ENABLE_SSE" = "xyes" ; then
+if test "x$ENABLE_SSE" = "xyes"; then
 	dnl {{{ enable sse support
 	SSEDEF="-DHONEI_SSE"
 	dnl }}}
@@ -226,6 +226,21 @@ if test "x$ENABLE_DEBUG" = "xyes"; then
 fi
 AC_SUBST([DEBUGDEF])
 AM_CONDITIONAL([DEBUG], test "x$ENABLE_DEBUG" = "xyes")
+dnl }}}
+dnl {{{ check for profiler support
+AC_MSG_CHECKING([whether to build profiler support])
+AC_ARG_ENABLE([profiler],
+	AS_HELP_STRING([--enable-profiler], [Build profiler support (needs packages: none)]),
+		[ENABLE_PROFILER=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_PROFILER=yes
+		  AC_MSG_RESULT([yes])])
+AC_SUBST([ENABLE_PROFILER])
+if test "x$ENABLE_PROFILER" = "xyes"; then
+	PROFILERDEF="-DHONEI_PROFILER"
+fi
+AC_SUBST([PROFILERDEF])
+AM_CONDITIONAL([PROFILER], test "x$ENABLE_PROFILER" = "xyes")
 dnl }}}
 dnl }}}
 

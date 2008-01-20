@@ -65,7 +65,10 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
-	$(DEBUGDEF) $(SSEDEF) $(CELLDEF)
+	$(CELLDEF) \
+	$(SSEDEF) \
+	$(DEBUGDEF) \
+	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libmath.la
 

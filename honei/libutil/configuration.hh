@@ -84,6 +84,8 @@ namespace honei
             static Configuration * instance();
 
             /**
+             * \name Value Retrieval
+             * \{
              * Return the value for a named configuration entry.
              *
              * \param name The name of the configuration entry that shall be
@@ -92,6 +94,10 @@ namespace honei
              * is no configuration entry that matchs the name.
              */
             int get_value(const std::string & name, int default_value);
+
+            std::string get_value(const std::string & name, const std::string & default_value);
+
+            /// \}
 
             /// Re-read the configuration file.
             void reread();

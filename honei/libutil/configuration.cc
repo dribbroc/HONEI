@@ -35,10 +35,15 @@ ConfigurationError::ConfigurationError(const std::string & line) :
 
 struct Configuration::Implementation
 {
-    typedef std::map<std::string, int> ValueMap;
+    typedef std::map<std::string, int> IntValueMap;
 
-    /// Our map from names to values.
-    ValueMap value_map;
+    typedef std::map<std::string, std::string> StringValueMap;
+
+    /// Our map from names to integer values.
+    IntValueMap int_value_map;
+
+    /// Our map from names to string values.
+    StringValueMap string_value_map;
 };
 
 
@@ -82,7 +87,7 @@ Configuration::_read()
     }
     else
     {
-        filename = std::string(envvar);
+        filename = envvar;
     }
 
     if (0 == ::lstat(filename.c_str(), &stat_info))
@@ -109,15 +114,20 @@ Configuration::_read()
             if (key.size() - 1 != last_non_whitespace)
                 key.erase(last_non_whitespace + 1);
 
-            int value(0);
+            int int_value(0);
+            std::string string_value("");
             if (pos + 1 < line.size())
             {
-                std::string value_string(line.substr(pos + 1));
-                std::stringstream value_stream(value_string);
-                value_stream >> value;
+                string_value = line.substr(pos + 1);
+                std::string::size_type first_non_whitespace(string_value.find_first_not_of(" \t"));
+                string_value.erase(0, first_non_whitespace);
+
+                std::stringstream value_stream(string_value);
+                value_stream >> int_value;
             }
 
-            _imp->value_map.insert(std::make_pair(key, value));
+            _imp->int_value_map.insert(std::make_pair(key, int_value));
+            _imp->string_value_map.insert(std::make_pair(key, string_value));
         }
 
         file.close();
@@ -127,10 +137,24 @@ Configuration::_read()
 int
 Configuration::get_value(const std::string & name, int default_value)
 {
-    Implementation::ValueMap::const_iterator v(_imp->value_map.find(name));
+    Implementation::IntValueMap::const_iterator v(_imp->int_value_map.find(name));
     int result(default_value);
 
-    if (v != _imp->value_map.end())
+    if (v != _imp->int_value_map.end())
+    {
+        result = v->second;
+    }
+
+    return result;
+}
+
+std::string
+Configuration::get_value(const std::string & name, const std::string & default_value)
+{
+    Implementation::StringValueMap::const_iterator v(_imp->string_value_map.find(name));
+    std::string result(default_value);
+
+    if (v != _imp->string_value_map.end())
     {
         result = v->second;
     }
@@ -141,7 +165,8 @@ Configuration::get_value(const std::string & name, int default_value)
 void
 Configuration::reread()
 {
-    _imp->value_map.clear();
+    _imp->int_value_map.clear();
+    _imp->string_value_map.clear();
 
     _read();
 }

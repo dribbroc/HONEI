@@ -37,7 +37,8 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
-	$(DEBUGDEF)
+	$(DEBUGDEF) \
+	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libvisual.la
 
