@@ -7,6 +7,12 @@ see the NEWS file.
 
 2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/kernels/kernel_test.sk, misc/make_sk.bash: Finally
+	converted smart-kernel to new syntax.
+
+2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/libutil/thread.cc: Removed default LOGMESSAGE from Thread to
 	disarm static initialisation fiasco.
 	* honei/libutil/time_stamp.hh: Made sec() and usec() const. Made

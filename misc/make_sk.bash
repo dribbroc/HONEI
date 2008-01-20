@@ -20,19 +20,11 @@ skopcodes=${1%.sk}.opcodes
         opcodes=( ${opcodes[@]} "oc_$1" )
     }
 
-    return_void() {
-        opcodes=( ${opcodes[@]} "oc_$1" )
-    }
-
     dword() {
         opcodes=( ${opcodes[@]} "oc_$1" )
     }
 
-    return_dword() {
-        opcodes=( ${opcodes[@]} "oc_$1" )
-    }
-
-    return_qword() {
+    qword() {
         opcodes=( ${opcodes[@]} "oc_$1" )
     }
 
@@ -59,24 +51,22 @@ skopcodes=${1%.sk}.opcodes
         :
     }
 
-    return_void() {
-        echo "void ${2}(const Instruction &);"
-    }
-
     void() {
-        :
-    }
-
-    return_dword() {
-        echo "unsigned ${2}(const Instruction &);"
+        if [[ -n ${2} ]] ; then
+            echo "void ${2}(const Instruction &);"
+        fi
     }
 
     dword() {
-        :
+        if [[ -n ${2} ]] ; then
+            echo "unsigned ${2}(const Instruction &);"
+        fi
     }
 
-    return_qword() {
-        echo "unsigned long long ${2}(const Instruction &);"
+    qword() {
+        if [[ -n ${2} ]] ; then
+            echo "unsigned long long ${2}(const Instruction &);"
+        fi
     }
 
     source ${sksource} > ${skfunctions}
@@ -98,24 +88,12 @@ skopcodes=${1%.sk}.opcodes
     void() {
         echo "                case oc_${1}:"
         echo "                    debug_enter();"
-        echo "                    operation(operations::${1}, instructions[instruction_index]);"
+        if [[ -z ${2} ]] ; then
+            echo "                    operation(operations::${1}, instructions[instruction_index]);"
+        else
+            echo "                    ${2}(instructions[instruction_index]);"
+        fi
         echo "                    debug_leave();"
-        echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
-        echo "                    break;"
-        echo
-    }
-
-    return_void() {
-        echo ">>> return_void is deprecated syntax! <<<" >&2
-        echo ">>>     Please use 'void' instead!    <<<" >&2
-        echo "                case oc_${1}:"
-        echo "                    #ifdef DEBUG"
-        echo "                    spu_write_out_intr_mbox(km_debug_enter);"
-        echo "                    #endif"
-        echo "                    ${2}(instructions[instruction_index]);"
-        echo "                    #ifdef DEBUG"
-        echo "                    spu_write_out_intr_mbox(km_debug_leave);"
-        echo "                    #endif"
         echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
         echo "                    break;"
         echo
@@ -124,26 +102,12 @@ skopcodes=${1%.sk}.opcodes
     dword() {
         echo "                case oc_${1}:"
         echo "                    debug_enter();"
-        echo "                    retval = operation(operations::${1}, instructions[instruction_index]);"
+        if [[ -z ${2} ]] ; then
+            echo "                    retval = operation(operations::${1}, instructions[instruction_index]);"
+        else
+            echo "                    retval = ${2}(instructions[instruction_index]);"
+        fi
         echo "                    debug_leave();"
-        echo "                    spu_write_out_intr_mbox(km_result_dword);"
-        echo "                    spu_write_out_mbox(retval & 0xFFFFFFFF);"
-        echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
-        echo "                    break;"
-        echo
-    }
-
-    return_dword() {
-        echo ">>> return_dword is deprecated syntax! <<<" >&2
-        echo ">>>     Please use 'dword' instead!    <<<" >&2
-        echo "                case oc_${1}:"
-        echo "                    #ifdef DEBUG"
-        echo "                    spu_write_out_intr_mbox(km_debug_enter);"
-        echo "                    #endif"
-        echo "                    retval = ${2}(instructions[instruction_index]);"
-        echo "                    #ifdef DEBUG"
-        echo "                    spu_write_out_intr_mbox(km_debug_leave);"
-        echo "                    #endif"
         echo "                    spu_write_out_intr_mbox(km_result_dword);"
         echo "                    spu_write_out_mbox(retval & 0xFFFFFFFF);"
         echo "                    spu_write_out_intr_mbox(km_instruction_finished);"
@@ -153,14 +117,14 @@ skopcodes=${1%.sk}.opcodes
 
     return_qword() {
         echo "                case oc_${1}:"
-        echo "                    #ifdef DEBUG"
-        echo "                    spu_write_out_intr_mbox(km_debug_enter);"
-        echo "                    #endif"
-        echo "                    retval = ${2}(instructions[instruction_index]);"
-        echo "                    #ifdef DEBUG"
-        echo "                    spu_write_out_intr_mbox(km_debug_leave);"
-        echo "                    #endif"
-        echo "                    spu_write_out_intr_mbox(km_result_dword);"
+        echo "                    debug_enter();"
+        if [[ -z ${2} ]] ; then
+            echo "                    retval = operation(operations::${1}, instructions[instruction_index]);"
+        else
+            echo "                    retval = ${2}(instructions[instruction_index]);"
+        fi
+        echo "                    debug_leave();"
+        echo "                    spu_write_out_intr_mbox(km_result_qword);"
         echo "                    spu_write_out_mbox(retval & 0xFFFFFFFF);"
         echo "                    spu_write_out_mbox(retval >> 32);"
         echo "                    spu_write_out_intr_mbox(km_instruction_finished);"

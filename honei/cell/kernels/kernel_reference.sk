@@ -4,28 +4,28 @@ halt
 
 # LibLA Operations
 ##################
-void            sum_dense_dense_float                       sum_dense_dense_float
-return_void     sum_dense_scalar_float                      sum_dense_scalar_float
-return_void     sum_dense_sparse_float                      sum_dense_sparse_float
-void            difference_dense_dense_float                difference_dense_dense_float
-return_dword    dot_product_dense_dense_float               dot_product_dense_dense_float
-void            element_product_dense_dense_float           element_product_dense_dense_float
-return_void     product_dense_matrix_dense_vector_float     product_dense_matrix_dense_vector_float
-return_void     product_banded_matrix_dense_vector_float    product_banded_matrix_dense_vector_float
-return_void     product_dense_matrix_dense_matrix_float     product_dense_matrix_dense_matrix_float
-dword           reduction_sum_dense_float                   dense_entity
-dword           reduction_min_dense_float                   reduction_min_dense_float
-dword           reduction_max_dense_float                   reduction_max_dense_float
-return_void     scale_dense_float                           scale_dense_float
-dword           norm_max_dense_float                        dense_entity
-dword           norm_l_one_dense_float                      dense_entity
-dword           norm_l_two_dense_float                      dense_entity
-void            element_inverse_float                       dense_entity
-return_void     scaled_sum_dense_dense_float                scaled_sum_dense_dense_float
+void            sum_dense_dense_float
+void            sum_dense_scalar_float                      sum_dense_scalar_float
+void            sum_dense_sparse_float                      sum_dense_sparse_float
+void            difference_dense_dense_float
+dword           dot_product_dense_dense_float               dot_product_dense_dense_float
+void            element_product_dense_dense_float
+void            product_dense_matrix_dense_vector_float     product_dense_matrix_dense_vector_float
+void            product_banded_matrix_dense_vector_float    product_banded_matrix_dense_vector_float
+void            product_dense_matrix_dense_matrix_float     product_dense_matrix_dense_matrix_float
+dword           reduction_sum_dense_float
+dword           reduction_min_dense_float
+dword           reduction_max_dense_float
+void            scale_dense_float                           scale_dense_float
+dword           norm_max_dense_float
+dword           norm_l_one_dense_float
+dword           norm_l_two_dense_float
+void            element_inverse_float
+void            scaled_sum_dense_dense_float                scaled_sum_dense_dense_float
 
 # LibGraph Operations
 #####################
-return_void     node_distance_float                         node_distance_float
+void            node_distance_float                         node_distance_float
 
 # LibMath Operations
 ####################
