@@ -24,6 +24,7 @@
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/profiler.hh>
 #include <honei/libutil/spe_event.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_kernel.hh>
@@ -313,6 +314,22 @@ namespace honei
                                     spe_out_mbox_read(spe->context(), &value, 1);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: Value: " +
                                             stringify(value));
+                                }
+                                continue;
+
+                            case km_profiler:
+                                static const std::string function("spe-function");
+                                {
+                                    Lock ll(*imp->mutex);
+
+                                    LocalStoreAddress lsa;
+                                    unsigned decrementer;
+                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                    spe_out_mbox_read(spe->context(), &decrementer, 1);
+
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: Profiler mail received");
+
+                                    ProfilerMessage(function, stringify(lsa), decrementer);
                                 }
                                 continue;
 

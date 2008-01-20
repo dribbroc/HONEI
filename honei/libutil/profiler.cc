@@ -90,6 +90,9 @@ namespace honei
             /// Our time stamp.
             TimeStamp stamp;
 
+            /// Our time.
+            unsigned time;
+
             /// Constructor.
             ProfilerData(const std::string & f, const std::string & ta, ProfilerMessageType ty, int tid, TimeStamp s) :
                 finish(false),
@@ -108,6 +111,17 @@ namespace honei
                 tag(""),
                 type(pmt_stop),
                 thread(0)
+            {
+            }
+
+            /// Constructor.
+            ProfilerData(const std::string & f, const std::string & ta, unsigned ti) :
+                finish(false),
+                function(f),
+                tag(ta),
+                type(pmt_direct),
+                thread(0),
+                time(ti)
             {
             }
         };
@@ -262,12 +276,31 @@ namespace honei
                         {
                             TimingList list;
                             list.push_back(timing);
-                            i = results.insert(ResultMap::value_type(id, list)).first;
+                            results.insert(ResultMap::value_type(id, list));
                         }
                         else
                         {
                             i->second.push_back(timing);
                         }
+                    }
+                }
+                else if (data->type == pmt_direct)
+                {
+                    Lock l(*mutex);
+
+                    intern::ProfileId id(data->function, data->tag);
+                    float timing(data->time);
+
+                    ResultMap::iterator i(results.find(id)), i_end(results.end());
+                    if (i_end == i)
+                    {
+                        TimingList list;
+                        list.push_back(timing);
+                        results.insert(ResultMap::value_type(id, list));
+                    }
+                    else
+                    {
+                        i->second.push_back(timing);
                     }
                 }
                 else if (data->type == pmt_evaluate)
@@ -327,6 +360,7 @@ namespace honei
 
         ~Profiler()
         {
+            enqueue(new intern::ProfilerData("", "", pmt_evaluate, 0, TimeStamp()));
             enqueue(new intern::ProfilerData);
 
             delete thread;
@@ -364,5 +398,10 @@ namespace honei
     ProfilerMessage::ProfilerMessage(const EvaluationFunction & eval)
     {
         intern::profiler.enqueue(eval);
+    }
+
+    ProfilerMessage::ProfilerMessage(const std::string & function, const std::string & tag, unsigned time)
+    {
+        intern::profiler.enqueue(new intern::ProfilerData(function, tag, time));
     }
 }

@@ -36,6 +36,7 @@ namespace honei
     {
         pmt_start, //< A message that starts a profiling session.
         pmt_stop, //< A message that stops a profiling seesion and records it.
+        pmt_direct, //< A message that directly inject a result, e.g. from the SPU.
         pmt_evaluate //< A message that triggers evaluation of all recorded sessions.
     };
 
@@ -78,6 +79,15 @@ namespace honei
              * \param eval Evaluation-function object.
              */
             ProfilerMessage(const EvaluationFunction & eval);
+
+            /**
+             * Constructor.
+             *
+             * \param function Name of the function that was profiled.
+             * \param tag Named tag for a particular profiling purpose.
+             * \param time Time that the named session took to execute.
+             */
+            ProfilerMessage(const std::string & function, const std::string & tag, unsigned time);
     };
 
     /// Profile a function.

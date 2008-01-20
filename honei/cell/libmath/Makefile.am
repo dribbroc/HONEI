@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
 CXXFLAGS = $(SPU_CXXFLAGS)
-
+DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libmath_spe.a
 libmath_spe_a_SOURCES = \

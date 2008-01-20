@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
 CXXFLAGS= $(SPU_CXXFLAGS)
-DEFS = $(DEBUGDEF)
+DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libutil_spe.a
 
@@ -14,6 +14,7 @@ libutil_spe_a_SOURCES = \
 	operation_one_float_mail.cc \
 	operation_two_float_mail.cc \
 	operation_two_float_dma.cc \
+	profiler.cc \
 	transfer.cc
 
 libutil_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti

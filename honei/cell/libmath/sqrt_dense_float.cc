@@ -20,6 +20,7 @@
 #include <honei/cell/cell.hh>
 #include <honei/cell/libla/operations.hh>
 #include <honei/cell/libutil/debug.hh>
+#include <honei/cell/libutil/profiler.hh>
 
 #include <spu_intrinsics.h>
 
@@ -52,6 +53,8 @@ namespace honei
                 const vector unsigned exponent_sign_mask(spu_splats(0x40000000U));
                 const vector unsigned exponent_even_mask(spu_splats(0x00800000U));
                 const vector unsigned sign_mask(spu_splats(0x80000000U));
+
+                profiler_start();
 
                 for (unsigned i(0) ; i < size ; ++i)
                 {
@@ -153,6 +156,8 @@ namespace honei
 
                     elements[i] = y1;
                 }
+
+                profiler_stop();
             }
         }
 

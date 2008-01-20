@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
 CXXFLAGS = $(SPU_CXXFLAGS)
-DEFS = $(DEBUGDEF)
+DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libgraph_spe.a
 libgraph_spe_a_SOURCES = \

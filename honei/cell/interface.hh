@@ -54,7 +54,8 @@ namespace honei
             km_debug_release_block, ///< A debug message about releasing an LS memory block.
             km_debug_dump, ///< A debug message to trigger a complete dump of the SPE's LS memory.
             km_debug_value, ///< A debug message for the output of a single value.
-            km_last = km_debug_value
+            km_profiler, ///< A profiler message carrying address and clock cycles for a given session.
+            km_last = km_profiler
         };
 
         /**

@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
 CXXFLAGS = $(SPU_CXXFLAGS)
-DEFS = $(DEBUGDEF)
+DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libla_spe.a
 libla_spe_a_SOURCES = \

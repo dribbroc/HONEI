@@ -7,6 +7,17 @@ see the NEWS file.
 
 2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/libutil/profiler.cc: Fixed bug regarding profiler output at
+	exit.
+	* honei/cell/interface.hh, honei/cell/libgraph/Makefile.am,
+	honei/cell/libla/Makefile.am, honei/cell/libmath/Makefile.am,
+	honei/cell/libutil/Makefile.am, honei/cell/libutil/profiler.hh,
+	honei/libutil/profiler.hh, honei/libutil/spe_kernel.cc: Added initial profiler
+	support for SPE programs.
+	* honei/cell/libmath/sqrt_dense_float.cc: Added profiler session.
+
+2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/cell/kernels/kernel_reference.sk,
 	honei/cell/kernels/kernel_test.sk, misc/make_sk.bash: Finally
 	converted smart-kernel to new syntax.
