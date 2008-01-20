@@ -297,19 +297,20 @@ dnl output
 AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 	Makefile
-	cell/Makefile
-	cell/kernels/Makefile
-	cell/libla/Makefile
-	cell/libmath/Makefile
-	cell/libutil/Makefile
-	cell/libgraph/Makefile
-	doc/Makefile
-	libgraph/Makefile
-	libla/Makefile
-	libmath/Makefile
-	libswe/Makefile
-	libutil/Makefile
-	libvisual/Makefile
-	unittest/Makefile
 	benchmark/Makefile
+	doc/Makefile
+	honei/Makefile
+	honei/cell/Makefile
+	honei/cell/kernels/Makefile
+	honei/cell/libla/Makefile
+	honei/cell/libmath/Makefile
+	honei/cell/libutil/Makefile
+	honei/cell/libgraph/Makefile
+	honei/libgraph/Makefile
+	honei/libla/Makefile
+	honei/libmath/Makefile
+	honei/libswe/Makefile
+	honei/libutil/Makefile
+	honei/libvisual/Makefile
+	unittest/Makefile
 )

@@ -23,9 +23,9 @@
 #ifndef UNITTEST_GUARD_UNITTEST_HH
 #define UNITTEST_GUARD_UNITTEST_HH 1
 
-#include <libutil/stringify.hh>
-#include <libutil/exception.hh>
-#include <libutil/tags.hh>
+#include <honei/libutil/stringify.hh>
+#include <honei/libutil/exception.hh>
+#include <honei/libutil/tags.hh>
 
 #include <string>
 #include <exception>

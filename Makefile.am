@@ -5,15 +5,7 @@ MAINTAINERCLEANFILES = \
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = autogen.bash misc/do_m4.bash misc/generated-file.txt
 
-if CELL
-  CELLDIR = cell
-endif
-
-if VISUAL
-  VISUALDIR = libvisual
-endif
-
-SUBDIRS = $(CELLDIR) benchmark libutil libla libmath unittest libgraph libswe $(VISUALDIR)
+SUBDIRS = benchmark honei unittest
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) all

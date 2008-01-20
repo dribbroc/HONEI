@@ -17,14 +17,14 @@ get() {
     exit 127
 }
 
-misc/do_m4.bash cell/Makefile.am || exit $?
-misc/do_m4.bash cell/kernels/Makefile.am || exit $?
-misc/do_m4.bash libgraph/Makefile.am || exit $?
-misc/do_m4.bash libla/Makefile.am || exit $?
-misc/do_m4.bash libmath/Makefile.am || exit $?
-misc/do_m4.bash libswe/Makefile.am || exit $?
-misc/do_m4.bash libutil/Makefile.am || exit $?
-misc/do_m4.bash libvisual/Makefile.am || exit $?
+misc/do_m4.bash honei/cell/Makefile.am || exit $?
+misc/do_m4.bash honei/cell/kernels/Makefile.am || exit $?
+misc/do_m4.bash honei/libgraph/Makefile.am || exit $?
+misc/do_m4.bash honei/libla/Makefile.am || exit $?
+misc/do_m4.bash honei/libmath/Makefile.am || exit $?
+misc/do_m4.bash honei/libswe/Makefile.am || exit $?
+misc/do_m4.bash honei/libutil/Makefile.am || exit $?
+misc/do_m4.bash honei/libvisual/Makefile.am || exit $?
 run mkdir -p config
 run $(get libtoolize 1.5 ) --copy --force --automake
 rm -f config.cache
