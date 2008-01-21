@@ -1,6 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -30,13 +31,13 @@ namespace honei
         {
             void element_inverse_float(vector float * elements, const unsigned size)
             {
+                const Vector<float> one = { { 1.0f, 1.0f, 1.0f, 1.0f } };
+                const Vector<float> zero = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+                // Bitmask for the exponent field in single precision IEEE 754 floats.
+                const Vector<unsigned> mask = { { 0x7f800000U, 0x7f800000U, 0x7f800000U, 0x7f800000U } };
+
                 for (unsigned k(0) ; k < size ; ++k)
                 {
-                    const Vector<float> one = { { 1.0f, 1.0f, 1.0f, 1.0f } };
-                    const Vector<float> zero = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-                    // Bitmask for the exponent field in single precision IEEE 754 floats.
-                    const Vector<unsigned> mask = { { 0x7f800000U, 0x7f800000U, 0x7f800000U, 0x7f800000U } };
-
                     // Do FREST, FI and one step of Newton-Raphson as proposed
                     // in SPUISAv1.2, p. 215f.
                     Vector<float> v = { elements[k] };

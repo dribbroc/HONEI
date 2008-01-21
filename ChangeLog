@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-21 Sven Mallach <sven.mallach@honei.org>
 
+	* honei/cell/libla/element_inverse_float.cc: Pulled const parameters
+	out of the loop and fixed header.
+
+2008-01-21 Sven Mallach <sven.mallach@honei.org>
+
 	* honei/libla/difference.hh, honei/libla/sum.hh: Added Dummies to
 	allow compilation of Weighted Fruchterman Reinhold.
 
