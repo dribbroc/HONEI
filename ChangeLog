@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-21 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/libgraph/node_distance_float.cc,
+	honei/libgraph/node_distance-cell.cc, honei/libgraph/node_distance.hh,
+	honei/libgraph/node_distance_TEST.cc: Completed node_distance
+	computation on Cell and fixed compiler warnings.
+
 2008-01-20 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libutil/profiler.cc: Fixed bug regarding profiler output at

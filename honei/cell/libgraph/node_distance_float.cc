@@ -56,8 +56,7 @@ void node_distance_float(const Instruction & inst)
     unsigned nextsize;
     unsigned current(0), next(1);
 
-    vector float xy;
-    xy = spu_insert(inst.d.f, xy, 0);
+    vector float xy = spu_splats(inst.d.f);
     xy = spu_insert(inst.e.f, xy, 1);
     xy = spu_insert(inst.d.f, xy, 2);
     xy = spu_insert(inst.e.f, xy, 3);
@@ -66,7 +65,6 @@ void node_distance_float(const Instruction & inst)
     mfc_get(b.untyped, ea_b, inst.g.u, current, 0, 0);
     ea_a += size;
 
-    Subscriptable<float> result = { spu_splats(0.0f) };
     unsigned ctr(0);
 
     while (counter > 1)

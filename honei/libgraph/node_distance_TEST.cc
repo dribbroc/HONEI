@@ -134,3 +134,6 @@ NodeDistanceQuickTest<double, tags::CPU> node_distance_quick_test_double("double
 NodeDistanceQuickTest<float, tags::CPU::SSE>  sse_node_distance_quick_test_float("sse float");
 NodeDistanceQuickTest<double, tags::CPU::SSE> sse_node_distance_quick_test_double("sse double");
 #endif
+#ifdef HONEI_CELL
+NodeDistanceQuickTest<float, tags::Cell> cell_node_distance_quick_test_float("Cell float");
+#endif
