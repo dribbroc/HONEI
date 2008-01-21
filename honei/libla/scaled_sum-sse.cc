@@ -72,9 +72,9 @@ namespace honei
                         m3 = _mm_add_ps(m3, m4);
                         m5 = _mm_add_ps(m5, m6);
 
-                        _mm_stream_ps(x + index, m1);
-                        _mm_stream_ps(x + index + 4, m3);
-                        _mm_stream_ps(x + index + 8, m5);
+                        _mm_store_ps(x + index, m1);
+                        _mm_store_ps(x + index + 4, m3);
+                        _mm_store_ps(x + index + 8, m5);
                     }
                 }
                 else
@@ -97,9 +97,9 @@ namespace honei
                         m3 = _mm_add_ps(m3, m4);
                         m5 = _mm_add_ps(m5, m6);
 
-                        _mm_stream_ps(x + index, m1);
-                        _mm_stream_ps(x + index + 4, m3);
-                        _mm_stream_ps(x + index + 8, m5);
+                        _mm_store_ps(x + index, m1);
+                        _mm_store_ps(x + index + 4, m3);
+                        _mm_store_ps(x + index + 8, m5);
                     }
                 }
 
@@ -112,8 +112,6 @@ namespace honei
                 {
                     x[index] += y[index] * b;
                 }
-
-                _mm_sfence();
             }
 
             inline void scaled_sum(double * x, const double * y, double b, unsigned long size)
@@ -158,9 +156,9 @@ namespace honei
                         m3 = _mm_add_pd(m3, m4);
                         m5 = _mm_add_pd(m5, m6);
 
-                        _mm_stream_pd(x + index, m1);
-                        _mm_stream_pd(x + index + 2, m3);
-                        _mm_stream_pd(x + index + 4, m5);
+                        _mm_store_pd(x + index, m1);
+                        _mm_store_pd(x + index + 2, m3);
+                        _mm_store_pd(x + index + 4, m5);
                     }
                 }
                 else
@@ -182,9 +180,9 @@ namespace honei
                         m3 = _mm_add_pd(m3, m4);
                         m5 = _mm_add_pd(m5, m6);
 
-                        _mm_stream_pd(x + index, m1);
-                        _mm_stream_pd(x + index + 2, m3);
-                        _mm_stream_pd(x + index + 4, m5);
+                        _mm_store_pd(x + index, m1);
+                        _mm_store_pd(x + index + 2, m3);
+                        _mm_store_pd(x + index + 4, m5);
                     }
                 }
 
@@ -197,8 +195,6 @@ namespace honei
                 {
                     x[index] += y[index] * b;
                 }
-
-                _mm_sfence();
             }
 
             inline void scaled_sum(float * x, const float * y, const float * z, unsigned long size)
@@ -276,8 +272,6 @@ namespace honei
                 {
                     x[index] += y[index] * z[index];
                 }
-
-                _mm_sfence();
             }
 
             inline void scaled_sum(double * x, const double * y, const double * z, unsigned long size)
@@ -354,8 +348,6 @@ namespace honei
                 {
                     x[index] += y[index] * z[index];
                 }
-
-                _mm_sfence();
             }
         }
     }

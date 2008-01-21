@@ -101,8 +101,6 @@ namespace honei
                 result += m8.f[2];
                 result += m8.f[3];
 
-                _mm_sfence();
-
                 for (unsigned long index(0) ; index < quad_start ; index++)
                 {
                     result += a[index] * b[index];
@@ -185,8 +183,6 @@ namespace honei
 
                 result += m8.d[0];
                 result += m8.d[1];
-
-                _mm_sfence();
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
                 {

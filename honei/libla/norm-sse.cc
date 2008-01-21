@@ -93,7 +93,6 @@ namespace honei
                 {
                     result += a[index] * a[index];
                 }
-                _mm_sfence();
 
                 return result;
             }
@@ -160,8 +159,6 @@ namespace honei
                 {
                     result += a[index] * a[index];
                 }
-
-                _mm_sfence();
 
                 return result;
             }

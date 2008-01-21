@@ -107,8 +107,6 @@ namespace honei
                 {
                     a[index] += b[index];
                 }
-
-                _mm_sfence();
             }
 
             inline void sum(double * a, const double * b, unsigned long size)
@@ -189,8 +187,6 @@ namespace honei
                 {
                     a[index] += b[index];
                 }
-
-                _mm_sfence();
             }
 
             inline void sum(const float a, float * x, unsigned long size)
@@ -251,8 +247,6 @@ namespace honei
                 {
                     x[index] += a;
                 }
-
-                _mm_sfence();
             }
 
             inline void sum(const double a, double * x, unsigned long size)
@@ -312,8 +306,6 @@ namespace honei
                 {
                     x[index] += a;
                 }
-
-                _mm_sfence();
             }
         }
     }

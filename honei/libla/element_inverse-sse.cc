@@ -80,11 +80,11 @@ namespace honei
                     m6 = _mm_cmpneq_ps(m5, m7);
                     m5 = _mm_and_ps(m5, m6);
 
-                    _mm_stream_ps(x + index, m1);
-                    _mm_stream_ps(x + index + 4, m2);
-                    _mm_stream_ps(x + index + 8, m3);
-                    _mm_stream_ps(x + index + 12, m4);
-                    _mm_stream_ps(x + index + 16, m5);
+                    _mm_store_ps(x + index, m1);
+                    _mm_store_ps(x + index + 4, m2);
+                    _mm_store_ps(x + index + 8, m3);
+                    _mm_store_ps(x + index + 12, m4);
+                    _mm_store_ps(x + index + 16, m5);
                 }
 
                 for (unsigned long index = 0 ; index < quad_start ; index++)
@@ -97,7 +97,6 @@ namespace honei
                     if (x[index] != float(0))
                         x[index] = float(1) / x[index];
                 }
-                _mm_sfence();
             }
 
             inline void element_inverse(double * x, unsigned long size)
@@ -150,11 +149,11 @@ namespace honei
                     m6 = _mm_cmpneq_pd(m5, m7);
                     m5 = _mm_and_pd(m5, m6);
 
-                    _mm_stream_pd(x + index, m1);
-                    _mm_stream_pd(x + index + 2, m2);
-                    _mm_stream_pd(x + index + 4, m3);
-                    _mm_stream_pd(x + index + 6, m4);
-                    _mm_stream_pd(x + index + 8, m5);
+                    _mm_store_pd(x + index, m1);
+                    _mm_store_pd(x + index + 2, m2);
+                    _mm_store_pd(x + index + 4, m3);
+                    _mm_store_pd(x + index + 6, m4);
+                    _mm_store_pd(x + index + 8, m5);
                 }
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
@@ -168,8 +167,6 @@ namespace honei
                     if (x[index] != double(0))
                     x[index] = double(1) / x[index];
                 }
-
-                _mm_sfence();
             }
         }
     }

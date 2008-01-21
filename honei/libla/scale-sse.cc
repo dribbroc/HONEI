@@ -68,13 +68,13 @@ namespace honei
                     m6 = _mm_mul_ps(m6, m8);
                     m7 = _mm_mul_ps(m7, m8);
 
-                    _mm_stream_ps(x + index, m1);
-                    _mm_stream_ps(x + index + 4, m2);
-                    _mm_stream_ps(x + index + 8, m3);
-                    _mm_stream_ps(x + index + 12, m4);
-                    _mm_stream_ps(x + index + 16, m5);
-                    _mm_stream_ps(x + index + 20, m6);
-                    _mm_stream_ps(x + index + 24, m7);
+                    _mm_store_ps(x + index, m1);
+                    _mm_store_ps(x + index + 4, m2);
+                    _mm_store_ps(x + index + 8, m3);
+                    _mm_store_ps(x + index + 12, m4);
+                    _mm_store_ps(x + index + 16, m5);
+                    _mm_store_ps(x + index + 20, m6);
+                    _mm_store_ps(x + index + 24, m7);
                 }
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
@@ -85,8 +85,6 @@ namespace honei
                 {
                     x[index] *= a;
                 }
-
-                _mm_sfence();
             }
 
             inline void scale(const double a, double * x, unsigned long size)
@@ -128,13 +126,13 @@ namespace honei
                     m6 = _mm_mul_pd(m6, m8);
                     m7 = _mm_mul_pd(m7, m8);
 
-                    _mm_stream_pd(x + index, m1);
-                    _mm_stream_pd(x + index + 2, m2);
-                    _mm_stream_pd(x + index + 4, m3);
-                    _mm_stream_pd(x + index + 6, m4);
-                    _mm_stream_pd(x + index + 8, m5);
-                    _mm_stream_pd(x + index + 10, m6);
-                    _mm_stream_pd(x + index + 12, m7);
+                    _mm_store_pd(x + index, m1);
+                    _mm_store_pd(x + index + 2, m2);
+                    _mm_store_pd(x + index + 4, m3);
+                    _mm_store_pd(x + index + 6, m4);
+                    _mm_store_pd(x + index + 8, m5);
+                    _mm_store_pd(x + index + 10, m6);
+                    _mm_store_pd(x + index + 12, m7);
                 }
 
                 for (unsigned long index(0) ; index < quad_start ; index++)
@@ -145,8 +143,6 @@ namespace honei
                 {
                     x[index] *= a;
                 }
-
-                _mm_sfence();
             }
         }
     }
