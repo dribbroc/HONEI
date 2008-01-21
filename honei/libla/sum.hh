@@ -573,6 +573,13 @@ namespace honei
 
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
 
+        // Dummy
+        static DenseMatrix<float> & value(DenseMatrix<float> & a, const BandedMatrix<float> & b)
+        {
+            Sum<tags::CPU>::value(a, b);
+            return a;
+        }
+
         /// \}
 
 

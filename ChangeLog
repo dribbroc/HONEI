@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-21 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/libla/difference.hh, honei/libla/sum.hh: Added Dummies to
+	allow compilation of Weighted Fruchterman Reinhold.
+
 2008-01-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libla/difference-sse.cc, honei/libla/dot_product-sse.cc,

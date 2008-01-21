@@ -646,6 +646,13 @@ namespace honei
 
         static DenseVector<float> & value(const SparseVector<float> & a, DenseVector<float> & b);
 
+        // Dummy
+        static DenseMatrix <float> & value(const BandedMatrix<float> & a, DenseMatrix<float> & b)
+        {
+            Difference<tags::CPU>::value(a, b);
+
+            return b;
+        }
         /// \}
     };
 
