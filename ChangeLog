@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libswe/Makefile.am.m4:
+	Fixed wrong path in the benchmark targets.
+
 2008-01-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libgraph/Makefile.am.m4: Fixed wrong path in the
