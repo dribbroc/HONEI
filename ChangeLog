@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-21 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libgraph/Makefile.am.m4: Fixed wrong path in the
+	TESTS_ENVIRONMENT.
+
 2008-01-21 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/libgraph/node_distance_BENCHMARK.cc: Added Cell benchmarks.

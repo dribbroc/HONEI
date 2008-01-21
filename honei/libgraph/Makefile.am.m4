@@ -80,7 +80,7 @@ libgraph_includedir = $(includedir)/honei/libgraph
 libgraph_include_HEADERS = headerlist
 
 TESTS = testlist
-TESTS_ENVIRONMENT = bash $(top_builddir)/honei/unittest/run.sh
+TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
