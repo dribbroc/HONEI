@@ -196,7 +196,7 @@ NodeDistanceBench<tags::CPU::SSE, double, NodeDistanceMethods::ForWeightedFrucht
 #endif
 
 #ifdef HONEI_CELL
-NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForKamadaKawai> sse_node_distance_bench_float_KK("Cell NodeDistance for KK Benchmark float", 1000, 10);
-NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForFruchtermanReingold> sse_node_distance_bench_float_FR("Cell NodeDistance for FR Benchmark float", 1000, 10);
-NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> sse_node_distance_bench_float_WFR("Cell NodeDistance for WFR Benchmark float", 1000, 10);
+NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForKamadaKawai> cell_node_distance_bench_float_KK("Cell NodeDistance for KK Benchmark float", 1000, 10);
+NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForFruchtermanReingold> cell_node_distance_bench_float_FR("Cell NodeDistance for FR Benchmark float", 1000, 10);
+NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> cell_node_distance_bench_float_WFR("Cell NodeDistance for WFR Benchmark float", 1000, 10);
 #endif
