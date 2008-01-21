@@ -35,6 +35,7 @@ class NodeDistanceQuickTest :
         NodeDistanceQuickTest(const std::string & type) :
             QuickTest("node_distance_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
