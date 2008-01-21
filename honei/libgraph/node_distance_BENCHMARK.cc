@@ -185,6 +185,7 @@ NodeDistanceBench<tags::CPU, float, NodeDistanceMethods::ForFruchtermanReingold>
 NodeDistanceBench<tags::CPU, double, NodeDistanceMethods::ForFruchtermanReingold> node_distance_bench_double_FR("NodeDistance for FR Benchmark double", 1000, 10);
 NodeDistanceBench<tags::CPU, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> node_distance_bench_float_WFR("NodeDistance for WFR Benchmark float", 0100, 10);
 NodeDistanceBench<tags::CPU, double, NodeDistanceMethods::ForWeightedFruchtermanReingold> node_distance_bench_double_WFR("NodeDistance for WFR Benchmark double", 1000, 10);
+
 #ifdef HONEI_SSE
 NodeDistanceBench<tags::CPU::SSE, float, NodeDistanceMethods::ForKamadaKawai> sse_node_distance_bench_float_KK("SSE NodeDistance for KK Benchmark float", 1000, 10);
 NodeDistanceBench<tags::CPU::SSE, double, NodeDistanceMethods::ForKamadaKawai> sse_node_distance_bench_double_KK("SSE NodeDistance for KK Benchmark double", 1000, 10);
@@ -192,4 +193,10 @@ NodeDistanceBench<tags::CPU::SSE, float, NodeDistanceMethods::ForFruchtermanRein
 NodeDistanceBench<tags::CPU::SSE, double, NodeDistanceMethods::ForFruchtermanReingold> sse_node_distance_bench_double_FR("SSE NodeDistance for FR Benchmark double", 1000, 10);
 NodeDistanceBench<tags::CPU::SSE, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> sse_node_distance_bench_float_WFR("SSE NodeDistance for WFR Benchmark float", 1000, 10);
 NodeDistanceBench<tags::CPU::SSE, double, NodeDistanceMethods::ForWeightedFruchtermanReingold> sse_node_distance_bench_double_WFR("SSE NodeDistance for WFR Benchmark double", 1000, 10);
+#endif
+
+#ifdef HONEI_CELL
+NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForKamadaKawai> sse_node_distance_bench_float_KK("Cell NodeDistance for KK Benchmark float", 1000, 10);
+NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForFruchtermanReingold> sse_node_distance_bench_float_FR("Cell NodeDistance for FR Benchmark float", 1000, 10);
+NodeDistanceBench<tags::Cell, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> sse_node_distance_bench_float_WFR("Cell NodeDistance for WFR Benchmark float", 1000, 10);
 #endif

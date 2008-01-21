@@ -7,6 +7,10 @@ see the NEWS file.
 
 2008-01-21 Sven Mallach <sven.mallach@honei.org>
 
+	* honei/libgraph/node_distance_BENCHMARK.cc: Added Cell benchmarks.
+
+2008-01-21 Sven Mallach <sven.mallach@honei.org>
+
 	* honei/cell/libgraph/node_distance_float.cc,
 	honei/libgraph/node_distance-cell.cc, honei/libgraph/node_distance.hh,
 	honei/libgraph/node_distance_TEST.cc: Completed node_distance
