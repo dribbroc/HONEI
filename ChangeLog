@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libgraph/position_BENCHMARK.cc,
+	honei/libgraph/position_TEST.cc, honei/libla/product-cell.cc:
+	Added cell test and benchmark for FF and WFF.
 
 2008-01-22 Markus Geveler <apryde@gmx.de>
 

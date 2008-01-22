@@ -163,6 +163,7 @@ namespace honei
             }
         }
         SPEManager::instance()->dispatch(instruction);
+        /// \todo calc scalar parts here
         instruction.wait();
 
         return result;

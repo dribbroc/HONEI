@@ -104,6 +104,9 @@ FruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_fruchterman_re
 //FruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_fruchterman_reingold_positions_quick_test_float("MC SSE float");
 //FruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_fruchterman_reingold_positions_quick_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CELL
+FruchtermanReingoldPositionsQuickTest<tags::Cell, float> cell_fruchterman_reingold_positions_quick_test_float("Cell float");
+#endif
 
 
 template <typename Tag_, typename DataType_>
@@ -238,10 +241,12 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
 
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU, float> weighted_fruchterman_reingold_positions_quick_test_float("float");
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU, double> weighted_fruchterman_reingold_positions_quick_test_double("double");
-
 #ifdef HONEI_SSE
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_quick_test_float("SSE float");
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+WeightedFruchtermanReingoldPositionsQuickTest<tags::Cell, float> sse_weighted_fruchterman_reingold_positions_quick_test_float("sse float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -472,6 +477,9 @@ FruchtermanReingoldPositionsTest<tags::CPU, double> fruchterman_reingold_positio
 FruchtermanReingoldPositionsTest<tags::CPU::SSE, float> sse_fruchterman_reingold_positions_test_float("SSE float", 100);
 FruchtermanReingoldPositionsTest<tags::CPU::SSE, double> sse_fruchterman_reingold_positions_test_double("SSE double", 100);
 #endif
+#ifdef HONEI_CELL
+FruchtermanReingoldPositionsTest<tags::Cell, float> cell_fruchterman_reingold_positions_test_float("cell float", 100);
+#endif
 
 template <typename Tag_, typename DataType_>
 class WeightedFruchtermanReingoldPositionsTest :
@@ -551,6 +559,9 @@ WeightedFruchtermanReingoldPositionsTest<tags::CPU, double> weighted_fruchterman
 #ifdef HONEI_SSE
 WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_test_float("SSE float", 100);
 WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_test_double("SSE double", 100);
+#endif
+#ifdef HONEI_CELL
+WeightedFruchtermanReingoldPositionsTest<tags::Cell, float> cell_weighted_fruchterman_reingold_positions_test_float("cell float", 100);
 #endif
 
 template <typename Tag_, typename DataType_>
