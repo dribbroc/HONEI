@@ -28,7 +28,7 @@
 #include <honei/libswe/limiter.hh>
 /**
  * \file
- * Implementation of source processing functions for RelaxSolver.
+ * Implementation of assembly processing functions for RelaxSolver.
  *
  * \ingroup grplibswe
  **/
@@ -457,6 +457,7 @@ namespace honei
 #endif
             }
     };
+
     template <typename Tag_>
     struct AssemblyProcessing<Tag_, assembly_types::QUICK::M6>
     {
@@ -596,6 +597,16 @@ namespace honei
                 return result;
             }
     };
+
+    //------------------SSE--------------------
+    template<>
+    struct AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M6>
+    {
+        public:
+            static BandedMatrix<float> & value(BandedMatrix<float> & m1, BandedMatrix<float> & result, DenseVector<float> & c, unsigned long d_width, unsigned long d_height);
+            static BandedMatrix<double> & value(BandedMatrix<double> & m1, BandedMatrix<double> & result, DenseVector<double> & c, unsigned long d_width, unsigned long d_height);
+    };
+
 
 }
 #endif

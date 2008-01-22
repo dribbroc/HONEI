@@ -8,7 +8,7 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`assembly_processing',  `hh', `test')
+add(`assembly_processing',  `hh', `test', `sse')
 add(`boundary_types',       `hh',)
 add(`correction_processing',`hh', `test', `sse')
 add(`directions',           `hh',)

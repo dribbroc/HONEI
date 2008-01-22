@@ -182,7 +182,7 @@ namespace honei {
                 BandedMatrix<WorkPrec_> m5c(m3.copy());
 
                 BandedMatrix<WorkPrec_> m6(_u->size());
-                AssemblyProcessing<tags::CPU, QUICK::M6>::value(m1, m6, *_c, _d_width, _d_height);
+                AssemblyProcessing<Tag_, QUICK::M6>::value(m1, m6, *_c, _d_width, _d_height);
 
                 BandedMatrix<WorkPrec_> m7c(m4.copy());
 

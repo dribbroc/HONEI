@@ -71,4 +71,7 @@ class AssemblyProcessingTest:
 };
 AssemblyProcessingTest<tags::CPU, float> assembly_test_float("float");
 AssemblyProcessingTest<tags::CPU, double> assembly_test_double("double");
-
+#ifdef HONEI_SSE
+AssemblyProcessingTest<tags::CPU::SSE, float> assembly_test_float_sse("SSE float");
+AssemblyProcessingTest<tags::CPU::SSE, double> assembly_test_double_sse("SSE double");
+#endif
