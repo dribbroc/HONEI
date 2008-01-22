@@ -607,6 +607,12 @@ namespace honei
             static BandedMatrix<double> & value(BandedMatrix<double> & m1, BandedMatrix<double> & result, DenseVector<double> & c, unsigned long d_width, unsigned long d_height);
     };
 
-
+    template<>
+    struct AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M8>
+    {
+        public:
+            static BandedMatrix<float> & value(BandedMatrix<float> & m2, BandedMatrix<float> & result, DenseVector<float> & c, unsigned long d_width, unsigned long d_height);
+            static BandedMatrix<double> & value(BandedMatrix<double> & m2, BandedMatrix<double> & result, DenseVector<double> & c, unsigned long d_width, unsigned long d_height);
+    };
 }
 #endif

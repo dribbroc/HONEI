@@ -187,7 +187,7 @@ namespace honei {
                 BandedMatrix<WorkPrec_> m7c(m4.copy());
 
                 BandedMatrix<WorkPrec_> m8(_u->size());
-                AssemblyProcessing<tags::CPU, QUICK::M8>::value(m2, m8, *_d, _d_width, _d_height);
+                AssemblyProcessing<Tag_, QUICK::M8>::value(m2, m8, *_d, _d_width, _d_height);
 #ifdef SOLVER_BENCHMARK
                 gettimeofday(&end, 0);
                 cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< endl;
