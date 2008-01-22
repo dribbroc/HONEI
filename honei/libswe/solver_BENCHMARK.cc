@@ -32,14 +32,14 @@ using namespace honei;
 
 template <typename Tag_, typename DataType_>
 
-class RelaxSolverBench :
+class SolverBench :
     public Benchmark
 {
     private:
         unsigned long _size;
         int _count;
     public:
-        RelaxSolverBench(const std::string & id, unsigned long size, int count) :
+        SolverBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -119,27 +119,27 @@ class RelaxSolverBench :
         }
 };
 
-RelaxSolverBench<tags::CPU, float> relax_solver_bench_float_1("RelaxSolver Benchmark - size: 21, float", 21, 100);
-RelaxSolverBench<tags::CPU, double> relax_solver_bench_double_1("RelaxSolver Benchmark - size: 21, double", 21, 100);
-RelaxSolverBench<tags::CPU, float> relax_solver_bench_float_2("RelaxSolver Benchmark - size: 41, float", 41, 100);
-RelaxSolverBench<tags::CPU, double> relax_solver_bench_double_2("RelaxSolver Benchmark - size: 41, double", 41, 100);
-RelaxSolverBench<tags::CPU::MultiCore, float> mc_relax_solver_bench_float_1("MC RelaxSolver Benchmark - size: 21, float", 21, 100);
-RelaxSolverBench<tags::CPU::MultiCore, double> mc_relax_solver_bench_double_1("MC RelaxSolver Benchmark - size: 21, double", 21, 100);
-RelaxSolverBench<tags::CPU::MultiCore, float> mc_relax_solver_bench_float_2("MC RelaxSolver Benchmark - size: 41, float", 41, 100);
-RelaxSolverBench<tags::CPU::MultiCore, double> mc_relax_solver_bench_double_2("MC RelaxSolver Benchmark - size: 41, double", 41, 100);
+SolverBench<tags::CPU, float> solver_bench_float_1("Solver Benchmark - size: 21, float", 21, 100);
+SolverBench<tags::CPU, double> solver_bench_double_1("Solver Benchmark - size: 21, double", 21, 100);
+SolverBench<tags::CPU, float> solver_bench_float_2("Solver Benchmark - size: 41, float", 41, 100);
+SolverBench<tags::CPU, double> solver_bench_double_2("Solver Benchmark - size: 41, double", 41, 100);
+SolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_1("MC Solver Benchmark - size: 21, float", 21, 100);
+SolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_1("MC Solver Benchmark - size: 21, double", 21, 100);
+SolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_2("MC Solver Benchmark - size: 41, float", 41, 100);
+SolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_2("MC Solver Benchmark - size: 41, double", 41, 100);
 #ifdef HONEI_SSE
-RelaxSolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_relax_solver_bench_float_1("MC SSE RelaxSolver Benchmark - size: 21, float", 21, 100);
-RelaxSolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_relax_solver_bench_double_1("MC SSE RelaxSolver Benchmark - size: 21, double", 21, 100);
-RelaxSolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_relax_solver_bench_float_2("MC SSE RelaxSolver Benchmark - size: 41, float", 41, 100);
-RelaxSolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_relax_solver_bench_double_2("MC SSE RelaxSolver Benchmark - size: 41, double", 41, 100);
-RelaxSolverBench<tags::CPU::SSE, float> sse_relax_solver_bench_float_1("SSE RelaxSolver Benchmark - size: 21, float", 21, 100);
-RelaxSolverBench<tags::CPU::SSE, double> sse_relax_solver_bench_double_1("SSE RelaxSolver Benchmark - size: 21, double", 21, 100);
-RelaxSolverBench<tags::CPU::SSE, float> sse_relax_solver_bench_float_2("SSE RelaxSolver Benchmark - size: 41, float", 41, 100);
-RelaxSolverBench<tags::CPU::SSE, double> sse_relax_solver_bench_double_2("SSE RelaxSolver Benchmark - size: 41, double", 41, 100);
+SolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_solver_bench_float_1("MC SSE Solver Benchmark - size: 21, float", 21, 100);
+SolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_solver_bench_double_1("MC SSE Solver Benchmark - size: 21, double", 21, 100);
+SolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_solver_bench_float_2("MC SSE Solver Benchmark - size: 41, float", 41, 100);
+SolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_solver_bench_double_2("MC SSE Solver Benchmark - size: 41, double", 41, 100);
+SolverBench<tags::CPU::SSE, float> sse_solver_bench_float_1("SSE Solver Benchmark - size: 21, float", 21, 100);
+SolverBench<tags::CPU::SSE, double> sse_solver_bench_double_1("SSE Solver Benchmark - size: 21, double", 21, 100);
+SolverBench<tags::CPU::SSE, float> sse_solver_bench_float_2("SSE Solver Benchmark - size: 41, float", 41, 100);
+SolverBench<tags::CPU::SSE, double> sse_solver_bench_double_2("SSE Solver Benchmark - size: 41, double", 41, 100);
 #endif
 #ifdef HONEI_CELL
-RelaxSolverBench<tags::Cell, float> cell_relax_solver_bench_float_1("Cell RelaxSolverSum Benchmark - size: 21, float",
+SolverBench<tags::Cell, float> cell_solver_bench_float_1("Cell SolverSum Benchmark - size: 21, float",
         21, 100);
-RelaxSolverBench<tags::Cell, float> cell_relax_solver_bench_float_2("Cell RelaxSolverSum Benchmark - size: 41, float",
+SolverBench<tags::Cell, float> cell_solver_bench_float_2("Cell SolverSum Benchmark - size: 41, float",
         41, 100);
 #endif

@@ -8,6 +8,12 @@ see the NEWS file.
 
 2008-01-22 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/files.m4, honei/libswe/relax_solver_BENCHMARK.cc,
+	honei/libswe/solver_BENCHMARK.cc: Added RelaxSolver (modular)
+	benchmark.
+
+2008-01-22 Markus Geveler <apryde@gmx.de>
+
 	* honei/libswe/assembly_processing.hh,
 	honei/libswe/assembly_processing-sse.cc,
 	honei/libswe/assembly_processing_TEST.cc, honei/libswe/files.m4,
