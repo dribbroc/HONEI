@@ -26,6 +26,8 @@
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
 
+//#include <honei/libutil/time_stamp.hh>
+
 namespace honei
 {
     using namespace cell;
@@ -60,9 +62,15 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        SPEInstructionQueue instruction;
+        SPEInstructionQueue iq_upper, iq_lower;
+        //TimeStamp dt,ct, as1, as2;
+        //ct.take();
         DenseVector<float> result(b.size(), 0.0f);
+        //dt.take();
+        //std::cout<<"dv(0): "<<dt.sec() - ct.sec() << " "<<dt.usec() - ct.usec()<<std::endl;
+        /// \todo Fill the result vector on the spu side.
         //DenseVector<float> result(b.size());
+        //as1.take();
 
         unsigned long middle_index(a.rows() - 1);
         unsigned long quad_end, end, quad_start, start, x_offset, op_offset;
@@ -72,99 +80,209 @@ namespace honei
             // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
             if (band.index() >= middle_index)
             {
-                op_offset = band.index() - middle_index;
-                start = 0;
-                quad_start = 0;
-                end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
-                quad_end = end - (end % 4);
-
-                Operand oa = { band->elements() + quad_start };
-                Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
-                Operand oc = { result.elements() + quad_start };
-                Operand od, oe, of, og;
-
-                /// \todo use such a transfer size, that od.u is at least 2
-                od.u = (quad_end - quad_start) / (1000 * 4);
-                oe.u = (quad_end - quad_start) % (1000 * 4);
-                if (0 == oe.u)
                 {
-                    if (od.u > 0)
+                    // Lower result part
+                    op_offset = band.index() - middle_index;
+                    start = 0;
+                    quad_start = 0;
+                    end = std::min(band->size() - op_offset, result.size() / 2); //Calculation of the element-index to stop in iteration!
+                    quad_end = end - (end % 4);
+
+                    Operand oa = { band->elements() + quad_start };
+                    Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
+                    Operand oc = { result.elements() + quad_start };
+                    Operand od, oe, of, og;
+                    /// \todo use such a transfer size, that od.u is at least 2
+                    od.u = (quad_end - quad_start) / (1000 * 4);
+                    oe.u = (quad_end - quad_start) % (1000 * 4);
+                    if (0 == oe.u)
                     {
-                        oe.u = 1000 * 4;
+                        if (od.u > 0)
+                        {
+                            oe.u = 1000 * 4;
+                        }
+                    }
+                    else
+                    {
+                        ++od.u;
+                    }
+
+                    og.u = op_offset % 4;
+                    if(quad_end > quad_start)
+                    {
+                        iq_lower.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                    }
+                    else
+                    {
+                        quad_start = 0;
+                        quad_end = 0;
+                    }
+
+                    for (unsigned long index = quad_end ; index < end ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
                 }
-                else
-                {
-                    ++od.u;
-                }
 
-                og.u = op_offset % 4;
-                if(quad_end > quad_start)
                 {
-                    instruction.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
-                }
-                else
-                {
-                    quad_start = 0;
-                    quad_end = 0;
-                }
+                    // Upper result part
+                    op_offset = band.index() - middle_index;
+                    start = result.size() / 2;
+                    quad_start = start + ((4 - (start % 4)) % 4);
+                    end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
+                    quad_end = end - (end % 4);
 
-                for (unsigned long index = quad_end ; index < end ; index++)
-                {
-                    result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
+                    Operand oa = { band->elements() + quad_start };
+                    Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
+                    Operand oc = { result.elements() + quad_start };
+                    Operand od, oe, of, og, oh;
+
+                    /// \todo use such a transfer size, that od.u is at least 2
+                    od.u = (quad_end - quad_start) / (1000 * 4);
+                    oe.u = (quad_end - quad_start) % (1000 * 4);
+                    if (0 == oe.u)
+                    {
+                        if (od.u > 0)
+                        {
+                            oe.u = 1000 * 4;
+                        }
+                    }
+                    else
+                    {
+                        ++od.u;
+                    }
+
+                    og.u = op_offset % 4;
+                    if(quad_end > quad_start)
+                    {
+                        iq_upper.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                    }
+                    else
+                    {
+                        quad_start = result.size() / 2;
+                        quad_end = result.size() / 2;
+                    }
+
+                    for (unsigned long index = start ; index < quad_start ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
+                    }
+                    for (unsigned long index = quad_end ; index < end ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
+                    }
                 }
             }
 
             // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
             else
             {
-                op_offset = middle_index - band.index();
-                start = op_offset; //Calculation of the element-index to start in iteration!
-                quad_start = start + ((4 - (start % 4)) % 4);
-                end = band->size();
-                quad_end = end - (end % 4);
-                Operand oa = { band->elements() + quad_start};
-                Operand ob = { b.elements() + quad_start - op_offset - ((4 - (op_offset % 4)) % 4)};
-                Operand oc = { result.elements() + quad_start};
-                Operand od, oe, of, og;
-
-                od.u = (quad_end - quad_start) / (1000 * 4);
-                oe.u = (quad_end - quad_start) % (1000 * 4);
-                if (0 == oe.u)
                 {
-                    if (od.u > 0)
+                    // Lower result part
+                    op_offset = middle_index - band.index();
+                    start = op_offset; //Calculation of the element-index to start in iteration!
+                    quad_start = start + ((4 - (start % 4)) % 4);
+                    end = result.size() / 2;
+                    quad_end = end - (end % 4);
+                    Operand oa = { band->elements() + quad_start};
+                    Operand ob = { b.elements() + quad_start - op_offset - ((4 - (op_offset % 4)) % 4)};
+                    Operand oc = { result.elements() + quad_start};
+                    Operand od, oe, of, og;
+
+                    od.u = (quad_end - quad_start) / (1000 * 4);
+                    oe.u = (quad_end - quad_start) % (1000 * 4);
+                    if (0 == oe.u)
                     {
-                        oe.u = 1000 * 4;
+                        if (od.u > 0)
+                        {
+                            oe.u = 1000 * 4;
+                        }
+                    }
+                    else
+                    {
+                        ++od.u;
+                    }
+
+                    og.u = (4 - (op_offset % 4)) % 4;
+                    if(quad_end > quad_start)
+                    {
+                        iq_lower.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                    }
+                    else
+                    {
+                        quad_start = 0;
+                        quad_end = start;
+                    }
+
+                    for (unsigned long index = start ; index < quad_start ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
+                    }
+                    for (unsigned long index = quad_end ; index < end ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
                 }
-                else
-                {
-                    ++od.u;
-                }
 
-                og.u = (4 - (op_offset % 4)) % 4;
-                if(quad_end > quad_start)
                 {
-                    instruction.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
-                }
-                else
-                {
-                    quad_start = 0;
-                    quad_end = start;
-                }
-                for (unsigned long index = start ; index < quad_start ; index++)
-                {
-                    result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
-                }
-                for (unsigned long index = quad_end ; index < end ; index++)
-                {
-                    result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
+                    // Upper result part
+                    op_offset = middle_index - band.index();
+                    start = std::max(op_offset, result.size() / 2); //Calculation of the element-index to start in iteration!
+                    quad_start = start + ((4 - (start % 4)) % 4);
+                    end = band->size();
+                    quad_end = end - (end % 4);
+                    Operand oa = { band->elements() + quad_start};
+                    Operand ob = { b.elements() + quad_start - op_offset - ((4 - (op_offset % 4)) % 4)};
+                    Operand oc = { result.elements() + quad_start};
+                    Operand od, oe, of, og;
+
+                    od.u = (quad_end - quad_start) / (1000 * 4);
+                    oe.u = (quad_end - quad_start) % (1000 * 4);
+                    if (0 == oe.u)
+                    {
+                        if (od.u > 0)
+                        {
+                            oe.u = 1000 * 4;
+                        }
+                    }
+                    else
+                    {
+                        ++od.u;
+                    }
+
+                    og.u = (4 - (op_offset % 4)) % 4;
+                    if(quad_end > quad_start)
+                    {
+                        iq_upper.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                    }
+                    else
+                    {
+                        quad_start = 0;
+                        quad_end = start;
+                    }
+
+                    for (unsigned long index = start ; index < quad_start ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
+                    }
+                    for (unsigned long index = quad_end ; index < end ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
+                    }
                 }
             }
         }
-        SPEManager::instance()->dispatch(instruction);
+        /*as2.take();
+        std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
+        TimeStamp at, bt;
+        at.take();*/
+        SPEManager::instance()->dispatch(iq_upper);
+        SPEManager::instance()->dispatch(iq_lower);
+        iq_upper.wait();
+        iq_lower.wait();
         /// \todo calc scalar parts here
-        instruction.wait();
+        //bt.take();
+        //std::cout<<"wait: "<<bt.sec() - at.sec() << " "<<bt.usec() - at.usec()<<std::endl<<std::endl;
 
         return result;
     }
