@@ -631,7 +631,7 @@ namespace honei
          * \retval Will modify the summand a and return it.
          */
 
-        static DenseVector<float> & value(DenseVector<float> & a, const float & b);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const float & b);
 
         /// \}
     };

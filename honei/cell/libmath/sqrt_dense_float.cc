@@ -30,7 +30,7 @@ namespace honei
     {
         namespace implementation
         {
-            void sqrt_dense_float(vector float * elements, const unsigned size)
+            void sqrt_dense_float(vector float * elements, const unsigned size, const float scalar)
             {
                 const vector float c0(spu_splats(+2.44992202153062e-01f));
                 const vector float c1(spu_splats(+1.24103772746144e+00f));

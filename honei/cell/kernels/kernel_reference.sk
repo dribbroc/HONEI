@@ -5,7 +5,7 @@ halt
 # LibLA Operations
 ##################
 void            sum_dense_dense_float
-void            sum_dense_scalar_float                      sum_dense_scalar_float
+void            sum_dense_scalar_float
 void            sum_dense_sparse_float                      sum_dense_sparse_float
 void            difference_dense_dense_float
 dword           dot_product_dense_dense_float               dot_product_dense_dense_float
@@ -25,7 +25,8 @@ void            scaled_sum_dense_dense_float                scaled_sum_dense_den
 
 # LibGraph Operations
 #####################
-void            node_distance_float                         node_distance_float
+void            node_distance_float_wfr                     node_distance_float_wfr
+void            node_distance_float_wkk                     node_distance_float_wkk
 
 # LibMath Operations
 ####################

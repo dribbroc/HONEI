@@ -105,7 +105,7 @@ namespace honei
              * \param elements The pointer to the elements of the container.
              * \param size The overall size of the container.
              */
-            SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size);
+            SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size, const DataType_ scalar = DataType_(0));
 
             unsigned transfer_begin() const
             {

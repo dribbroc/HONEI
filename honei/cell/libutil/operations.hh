@@ -45,7 +45,7 @@ namespace honei
             typedef void ResultType;
 
             /// Performs calculation on a given block of data.
-            void (*calculate)(vector float * elements, const unsigned size);
+            void (*calculate)(vector float * elements, const unsigned size, const float optional_scalar);
         };
 
         template <> struct Operation<1, float, rtm_mail>

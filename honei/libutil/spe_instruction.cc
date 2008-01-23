@@ -141,7 +141,7 @@ const SPEInstruction::Operand
 SPEInstruction::empty = { static_cast<void *>(0) };
 
 template <typename DataType_>
-SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size) :
+SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size, const DataType_ scalar) :
     SPEInstruction(opcode, 16384, elements),
     _use_spe(true)
 {
@@ -171,6 +171,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
         _begin_transfers = skip;
         _end_transfers = (instruction.b.u * (16384 / sizeof(DataType_))) + instruction.c.u + skip;
         instruction.c.u *= sizeof(DataType_);
+        instruction.d.f = scalar;
     }
 
     if (0 == instruction.c.u)

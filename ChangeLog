@@ -5,6 +5,22 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-23 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/element_inverse_float.cc,
+	honei/cell/libla/operations.hh,
+	honei/cell/libla/sum_dense_scalar_float.cc,
+	honei/cell/libmath/sqrt_dense_float.cc,
+	honei/cell/libutil/operation_one_float_dma.cc,
+	honei/cell/libutil/operations.hh, honei/cell/opcodes.hh,
+	honei/libla/sum-cell.cc, honei/libla/sum.hh, honei/libla/sum_TEST.cc,
+	honei/libutil/spe_instruction.cc, honei/libutil/spe_instruction.hh:
+	Made SPEFrameworkOperations for one Container and dma-transfered
+	result able to take an additional scalar. Moved Sum(DM, scal) and
+	Sum(DV, scal) to SPEFrameworkInstructions. This implicitly includes
+	support for DVCB. Added tests vor Sum(DVR, scal).
+
 2008-01-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libgraph/position_BENCHMARK.cc,

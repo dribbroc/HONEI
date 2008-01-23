@@ -827,6 +827,76 @@ ScalarDenseVectorSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_su
 ScalarDenseVectorSumQuickTest<tags::Cell, float>  cell_scalar_dense_vector_sum_quick_test_float("Cell float");
 #endif
 
+template <typename Tag_, typename DataType_>
+class ScalarDenseVectorRangeSumTest :
+    public BaseTest
+{
+    public:
+        ScalarDenseVectorRangeSumTest(const std::string & type) :
+            BaseTest("scalar_dense_vector_range_sum_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                for (unsigned i(0) ; i < 4 ; i++)
+                {
+                    DenseVector<DataType_> dv1(size+4, DataType_(2)), dv2(size+4, DataType_(9));
+                    DenseVectorRange<DataType_> dvr1(dv1, size, i), dvr2(dv2, size, i);
+
+                    Sum<Tag_>::value(dvr1, DataType_(7));
+                    TEST_CHECK_EQUAL(dvr1, dvr2);
+                }
+            }
+        }
+};
+ScalarDenseVectorRangeSumTest<tags::CPU, float>  scalar_dense_vector_range_sum_test_float("float");
+ScalarDenseVectorRangeSumTest<tags::CPU, double> scalar_dense_vector_range_sum_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseVectorRangeSumTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_range_sum_test_float("SSE float");
+ScalarDenseVectorRangeSumTest<tags::CPU::SSE, double> sse_scalar_dense_vector_range_sum_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+ScalarDenseVectorRangeSumTest<tags::Cell, float> cell_scalar_dense_vector_range_sum_test_float("Cell float");
+#endif
+
+template <typename Tag_, typename DataType_>
+class ScalarDenseVectorRangeSumQuickTest :
+    public QuickTest
+{
+    public:
+        ScalarDenseVectorRangeSumQuickTest(const std::string & type) :
+            QuickTest("scalar_dense_vector_range_sum_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size = 18;
+            for (unsigned i(0) ; i < 4 ; i++)
+            {
+                DenseVector<DataType_> dv1(size+4, DataType_(2)), dv2(size+4, DataType_(9));
+                DenseVectorRange<DataType_> dvr1(dv1, size, i), dvr2(dv2, size, i);
+
+                Sum<Tag_>::value(dvr1, DataType_(7));
+                TEST_CHECK_EQUAL(dvr1, dvr2);
+            }
+        }
+};
+ScalarDenseVectorRangeSumQuickTest<tags::CPU, float>  scalar_dense_vector_range_sum_quick_test_float("float");
+ScalarDenseVectorRangeSumQuickTest<tags::CPU, double> scalar_dense_vector_range_sum_quick_test_double("double");
+#ifdef HONEI_SSE
+ScalarDenseVectorRangeSumQuickTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_range_sum_quick_test_float("SSE float");
+ScalarDenseVectorRangeSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_range_sum_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+ScalarDenseVectorRangeSumQuickTest<tags::Cell, float>  cell_scalar_dense_vector_range_sum_quick_test_float("Cell float");
+#endif
+
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeSumTest :

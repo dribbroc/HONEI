@@ -29,7 +29,7 @@ namespace honei
     {
         namespace implementation
         {
-            void element_inverse_float(vector float * elements, const unsigned size)
+            void element_inverse_float(vector float * elements, const unsigned size, const float scalar)
             {
                 const Vector<float> one = { { 1.0f, 1.0f, 1.0f, 1.0f } };
                 const Vector<float> zero = { { 0.0f, 0.0f, 0.0f, 0.0f } };

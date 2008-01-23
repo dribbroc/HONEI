@@ -48,7 +48,10 @@ namespace honei
             oc_norm_l_two_dense_float,
             oc_element_inverse_float,
             oc_scaled_sum_dense_dense_float,
-            oc_node_distance_float,
+
+            // LibGraph opcodes
+            oc_node_distance_float_wkk,
+            oc_node_distance_float_wfr,
 
             // LibMath opcodes
             oc_sqrt_dense_float,

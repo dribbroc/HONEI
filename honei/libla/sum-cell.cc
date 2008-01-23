@@ -149,55 +149,31 @@ namespace honei
         return a;
     }
 
-    DenseVector<float> &
-    Sum<tags::Cell>::value(DenseVector<float> & a, const float & b)
+    DenseVectorContinuousBase<float> &
+    Sum<tags::Cell>::value(DenseVectorContinuousBase<float> & a, const float & b)
     {
-        CONTEXT("When adding float to DenseVector<float> (Cell):");
+        CONTEXT("When adding float to DenseVectorContinuousBase<float> (Cell):");
 
-        Operand oa = { a.elements() };
-        Operand ob, oc, od;
-        ob.f = b;
-        // hardcode transfer buffer size for now.
-        oc.u = a.size() / (1024 * 4);
-        od.u = a.size() % (1024 * 4);
-        od.u &= ~0xF;
+        SPEFrameworkInstruction<1, float, rtm_dma> instruction(oc_sum_dense_scalar_float, a.elements(), a.size(), b);
 
-        unsigned rest_index(oc.u * 4096 + od.u);
-
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_sum_dense_scalar_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (Vector<float>::ElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ;
-                i != i_end ; ++i)
+        for (Vector<float>::ElementIterator i(a.begin_elements()),
+            i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
             *i += b;
         }
 
-        if (use_spe)
+        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
+                i_end(a.end_elements()) ; i != i_end ; ++i)
+        {
+            *i += b;
+        }
+
+        if (instruction.use_spe())
             instruction.wait();
 
         return a;
@@ -208,51 +184,20 @@ namespace honei
     {
         CONTEXT("When adding float to DenseMatrix<float> (Cell):");
 
-        Operand oa = { a.elements() };
-        Operand ob, oc, od;
-        ob.f = b;
-        // hardcode transfer buffer size for now.
-        unsigned size(a.rows() * a.columns());
-        oc.u = size / (1024 * 4);
-        od.u = size % (1024 * 4);
-        od.u &= ~0xF;
+        SPEFrameworkInstruction<1, float, rtm_dma> instruction(oc_sum_dense_scalar_float, a.elements(), a.rows() * a.columns(), b);
 
-        unsigned rest_index(oc.u * 4096 + od.u);
-
-        od.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == od.u)
-        {
-            if (oc.u > 0)
-            {
-                od.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++oc.u;
-        }
-
-        SPEInstruction instruction(oc_sum_dense_scalar_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (MutableMatrix<float>::ElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()) ;
+        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ;
                 i != i_end ; ++i)
         {
             *i += b;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
             instruction.wait();
 
         return a;
