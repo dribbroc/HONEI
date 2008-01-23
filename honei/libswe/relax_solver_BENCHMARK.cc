@@ -48,9 +48,8 @@ class RelaxSolverBench :
 
         virtual void run()
         {
-            ulint dwidth = 40;
-            ulint dheight = 40;
-            ulint timesteps = 50;
+            ulint dwidth = _size;
+            ulint dheight = _size;
 
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             //SCENARIO setup
