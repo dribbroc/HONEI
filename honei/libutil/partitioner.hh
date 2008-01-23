@@ -2,6 +2,7 @@
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2008 Joachim Messer <joachim.messer@uni-dortmund.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,16 +21,29 @@
 #ifndef LIBUTIL_GUARD_PARTITIONER_HH
 #define LIBUTIL_GUARD_PARTITIONER_HH 1
 
+#include <list>
 #include <tr1/functional>
 
 namespace honei
 {
+    struct Parts
+    {
+        unsigned long start;
+        unsigned long size;
+        Parts(unsigned long sstart, unsigned long ssize)
+        {
+            start = sstart;
+            size = ssize;
+        };
+    };
 
     class Partitioner
     {
         public:
-            Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size, 
+            Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
                     std::tr1::function<void(unsigned long, unsigned long)> dispatch);
+
+            static std::list<Parts> partition(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size);
     };
 }
 

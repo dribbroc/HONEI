@@ -24,11 +24,23 @@
 
 using namespace honei;
 
-Partitioner::Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size, 
+Partitioner::Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
         std::tr1::function<void(unsigned long, unsigned long)> dispatch)
 {
     CONTEXT("When partitioning problem of size " + overall_size);
+    std::list<Parts> partition(Partitioner::partition(max_count, best_part_size, overall_size));
+    for (std::list<Parts>::iterator i(partition.begin()), i_end(partition.end()) ;
+            i != i_end ; ++i)
+    {
+        dispatch(i->start, i->size);
+    }
+}
 
+std::list<Parts> Partitioner::partition(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size)
+{
+    CONTEXT("When partitioning problem of size " + overall_size);
+
+    std::list<Parts> result;
     unsigned part_size(0);
     unsigned count(0);
     if (best_part_size >= overall_size)
@@ -36,12 +48,12 @@ Partitioner::Partitioner(unsigned long max_count, unsigned long best_part_size, 
         part_size = (overall_size - overall_size % 32) / 2;
         if (part_size > 0)
         {
-            dispatch(0, part_size);
-            dispatch(part_size, part_size);
+            result.push_back(Parts(0, part_size));
+            result.push_back(Parts(part_size, part_size));
         }
         if (overall_size > 2 * part_size)
         {
-            dispatch(2 * part_size, overall_size - 2 * part_size);
+            result.push_back(Parts(2 * part_size, overall_size - 2 * part_size));
         }
 
     }
@@ -66,14 +78,16 @@ Partitioner::Partitioner(unsigned long max_count, unsigned long best_part_size, 
         unsigned long start(0);
         for (unsigned i(0); i < count; ++i)
         {
-            dispatch(start, part_size);
+            if (part_size > 0) 
+                result.push_back(Parts(start, part_size));
             start += part_size;
         }
 
         if (overall_size > start)
         {
-            dispatch(start, overall_size - start);
+            result.push_back(Parts(start, overall_size - start));
         }
     }
+    return result;
 }
 
