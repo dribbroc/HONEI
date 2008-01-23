@@ -26,8 +26,10 @@
 //#include <libutil/tags.hh>
 
 #include <algorithm>
+#ifdef HONEI_SSE
 #include <xmmintrin.h>
 #include <emmintrin.h>
+#endif
 
 namespace honei
 {
