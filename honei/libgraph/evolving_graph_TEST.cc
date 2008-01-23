@@ -145,3 +145,6 @@ EvolvingGraphTest<tags::CPU, double> evolving_graph_test_doube("double");
 EvolvingGraphTest<tags::CPU::SSE, float> sse_evolving_graph_test_float("SSE float");
 EvolvingGraphTest<tags::CPU::SSE, double> sse_evolving_graph_test_doube("SSE double");
 #endif
+#ifdef HONEI_CELL
+EvolvingGraphTest<tags::Cell, float> cell_evolving_graph_test_float("cell float");
+#endif

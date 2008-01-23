@@ -173,10 +173,12 @@ class KamadaKawaiPositionsQuickTest :
 
 KamadaKawaiPositionsQuickTest<tags::CPU, float> kamada_kawai_positions_quick_test_float("float");
 KamadaKawaiPositionsQuickTest<tags::CPU, double> kamada_kawai_positions_quick_test_double("double");
-
 #ifdef HONEI_SSE
 KamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_kamada_kawai_positions_quick_test_float("SSE float");
 KamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_kamada_kawai_positions_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+KamadaKawaiPositionsQuickTest<tags::Cell, float> cell_kamada_kawai_positions_quick_test_float("cell_float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -311,10 +313,12 @@ class WeightedKamadaKawaiPositionsQuickTest :
 
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU, float> weighted_kamada_kawai_positions_quick_test_float("float");
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU, double> weighted_kamada_kawai_positions_quick_test_double("double");
-
 #ifdef HONEI_SSE
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_quick_test_float("SSE float");
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_quick_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+WeightedKamadaKawaiPositionsQuickTest<tags::Cell, float> cell_weighted_kamada_kawai_positions_quick_test_float("cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -392,10 +396,12 @@ class KamadaKawaiPositionsTest :
 
 KamadaKawaiPositionsTest<tags::CPU, float> kamada_kawai_positions_test_float("float", 100);
 KamadaKawaiPositionsTest<tags::CPU, double> kamada_kawai_positions_test_double("double", 100);
-
 #ifdef HONEI_SSE
 KamadaKawaiPositionsTest<tags::CPU::SSE, float> sse_kamada_kawai_positions_test_float("SSE float", 100);
 KamadaKawaiPositionsTest<tags::CPU::SSE, double> sse_kamada_kawai_positions_test_double("SSE double", 100);
+#endif
+#ifdef HONEI_CELL
+KamadaKawaiPositionsTest<tags::Cell, float> cell_kamada_kawai_positions_test_float("cell float", 100);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -636,10 +642,12 @@ class WeightedKamadaKawaiPositionsTest :
             std::cout << "number_of_iterations of WKK  "<< position.number_of_iterations() << std::endl;
         }
 };
-
 WeightedKamadaKawaiPositionsTest<tags::CPU, float> weighted_kamada_kawai_positions_test_float("float", 100);
 WeightedKamadaKawaiPositionsTest<tags::CPU, double> weighted_kamada_kawai_positions_test_double("double", 100);
 #ifdef HONEI_SSE
 WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_test_float("SSE float", 100);
 WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_test_double("SSE double", 100);
+#endif
+#ifdef HONEI_CELL
+WeightedKamadaKawaiPositionsTest<tags::Cell, float> cell_weighted_kamada_kawai_positions_test_float("cell float", 100);
 #endif
