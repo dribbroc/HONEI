@@ -25,8 +25,7 @@ void            scaled_sum_dense_dense_float                scaled_sum_dense_den
 
 # LibGraph Operations
 #####################
-void            node_distance_float_wfr                     node_distance_float_wfr
-void            node_distance_float_wkk                     node_distance_float_wkk
+void            node_distance_float                         node_distance_float
 
 # LibMath Operations
 ####################

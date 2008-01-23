@@ -50,8 +50,7 @@ namespace honei
             oc_scaled_sum_dense_dense_float,
 
             // LibGraph opcodes
-            oc_node_distance_float_wkk,
-            oc_node_distance_float_wfr,
+            oc_node_distance_float,
 
             // LibMath opcodes
             oc_sqrt_dense_float,
