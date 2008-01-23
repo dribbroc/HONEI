@@ -24,6 +24,7 @@
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
 #include <honei/libutil/stringify.hh>
+#include <honei/libutil/partitioner.hh>
 
 namespace honei
 {
@@ -37,31 +38,49 @@ namespace honei
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        SPEFrameworkInstruction<2, float, rtm_dma> instruction(oc_sum_dense_dense_float, a.elements(), b.elements(), a.size());
+        unsigned long spe_count(std::min((unsigned long)2, SPEManager::instance()->spe_count()));
+        std::list<SPEFrameworkInstruction<2, float, rtm_dma> * > instructions;
+        std::list<Parts> partition(Partitioner::partition(spe_count, a.size() / spe_count, a.size()));
 
-        if (instruction.use_spe())
+        // Assemble instructions.
+        for (std::list<Parts>::iterator i(partition.begin()), i_end(partition.end()) ;
+                i != i_end ; ++i)
         {
-            SPEManager::instance()->dispatch(instruction);
+            SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>
+                (oc_sum_dense_dense_float, a.elements() + i->start, b.elements() + i->start, i->size);
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+            }
+            instructions.push_back(instruction);
         }
 
-        // Calculate the first 4 - a_offset % 4 elements on PPU.
-        Vector<float>::ConstElementIterator j(b.begin_elements());
-        for (Vector<float>::ElementIterator i(a.begin_elements()),
-            i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i, ++j)
+        std::list<Parts>::iterator p(partition.begin());
+        for (std::list<SPEFrameworkInstruction<2, float, rtm_dma> * >::iterator i(instructions.begin()), i_end(instructions.end()) ;
+                i != i_end ; ++i, ++p)
         {
-            *i += *j;
+            // Calculate the first 4 - a_offset % 4 elements on PPU.
+            for (unsigned long index(p->start) ; index < p->start + (*i)->transfer_begin() ; ++index)
+            {
+                a[index] += b[index];
+            }
+
+            // Calculate the last a_offset % 4 elements on PPU.
+            for (unsigned long index(p->start + (*i)->transfer_end()) ; index < p->start + p->size ; ++index)
+            {
+                a[index] += b[index];
+            }
+
         }
 
-        Vector<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
-        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
-            i_end(a.end_elements()) ; i != i_end ; ++i, ++k)
+        // Wait for the spu side
+        for (std::list<SPEFrameworkInstruction<2, float, rtm_dma> * >::iterator i(instructions.begin()), i_end(instructions.end()) ;
+                i != i_end ; ++i)
         {
-            *i += *k;
+            if ((*i)->use_spe())
+                (*i)->wait();
+            delete *i;
         }
-
-        if (instruction.use_spe())
-            instruction.wait();
-
         return a;
     }
 

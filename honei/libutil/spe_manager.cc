@@ -363,4 +363,10 @@ namespace honei
     {
         instruction_stream.wait();
     }
+
+    unsigned long
+    SPEManager::spe_count()
+    {
+        return _imp->spe_count;
+    }
 }

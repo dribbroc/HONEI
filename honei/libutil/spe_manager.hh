@@ -109,6 +109,9 @@ namespace honei
 
             // Wait for all SPEInstrictions in the stream so far to finish.
             void wait(SPEInstructionStream & instruction_stream);
+
+            // Returns the count of available spe's.
+            unsigned long spe_count();
     };
 }
 

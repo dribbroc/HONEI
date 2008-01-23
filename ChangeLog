@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libla/sum-cell.cc, honei/libutil/spe_manager.cc, honei/libutil/spe_manager.hh:
+	Added spe_count() member. Added multi spu version of Sum(dv, dv).
+
 2008-01-23 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libutil/files.m4, honei/libutil/partitioner.cc, honei/libutil/partitioner.hh:
