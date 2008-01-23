@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-23 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* honei/libutil/partitioner_TEST.cc: Added test for partitioning.
+
 2008-01-23 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/limiter_TEST.cc: Added memory cleanup to tests.
