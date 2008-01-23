@@ -21,7 +21,7 @@
 
 #include <limiter.hh>
 #include <unittest/unittest.hh>
-
+#include <iostream>
 #include <string>
 
 using namespace honei;
@@ -127,3 +127,147 @@ class VanLeerLimiterQuickTest :
 };
 VanLeerLimiterQuickTest<float> vl_limiter_quick_test_float("float");
 VanLeerLimiterQuickTest<double> vl_limiter_quick_test_double("double");
+
+class MinModLimiterIntrinFloatQuickTest :
+    public QuickTest
+{
+    public:
+        MinModLimiterIntrinFloatQuickTest(const std::string & type) :
+            QuickTest("mm_limiter_INTRIN_quick_test_float<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+
+            void * data;
+            posix_memalign(&data, 16, 200 * sizeof(float));
+            float * data_v = reinterpret_cast<float *>(data);
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                data_v[i] = float(-1.23456);
+            }
+
+            __m128 mm;
+            for(unsigned long i(0); i < 200; i += 4)
+            {
+                mm = _mm_load_ps(data_v + i);
+                mm = _mm_lim_ps(mm);
+                _mm_store_ps(data_v + i, mm);
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], float(0), std::numeric_limits<float>::epsilon());
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                data_v[i] = float(1.23456);
+            }
+
+            for(unsigned long i(0); i < 200; i += 4)
+            {
+                mm = _mm_load_ps(data_v + i);
+                mm = _mm_lim_ps(mm);
+                _mm_store_ps(data_v + i, mm);
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], float(1), std::numeric_limits<float>::epsilon());
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                data_v[i] = float(0.23456);
+            }
+
+            for(unsigned long i(0); i < 200; i += 4)
+            {
+                mm = _mm_load_ps(data_v + i);
+                mm = _mm_lim_ps(mm);
+                _mm_store_ps(data_v + i, mm);
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], float(0.23456), std::numeric_limits<float>::epsilon());
+            }
+
+        }
+};
+MinModLimiterIntrinFloatQuickTest mm_limiter_quick_test_intrin_float("float");
+
+class MinModLimiterIntrinDoubleQuickTest :
+    public QuickTest
+{
+    public:
+        MinModLimiterIntrinDoubleQuickTest(const std::string & type) :
+            QuickTest("mm_limiter_INTRIN_quick_test_double<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+
+            void * data;
+            posix_memalign(&data, 16, 200 * sizeof(double));
+            double * data_v = reinterpret_cast<double *>(data);
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                data_v[i] = double(-1.23456);
+            }
+
+            __m128d mm;
+            for(unsigned long i(0); i < 200; i += 2)
+            {
+                mm = _mm_load_pd(data_v + i);
+                mm = _mm_lim_pd(mm);
+                _mm_store_pd(data_v + i, mm);
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], double(0), std::numeric_limits<double>::epsilon());
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                data_v[i] = double(1.23456);
+            }
+
+            for(unsigned long i(0); i < 200; i += 2)
+            {
+                mm = _mm_load_pd(data_v + i);
+                mm = _mm_lim_pd(mm);
+                _mm_store_pd(data_v + i, mm);
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], double(1), std::numeric_limits<double>::epsilon());
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                data_v[i] = double(0.23456);
+            }
+
+            for(unsigned long i(0); i < 200; i += 2)
+            {
+                mm = _mm_load_pd(data_v + i);
+                mm = _mm_lim_pd(mm);
+                _mm_store_pd(data_v + i, mm);
+            }
+
+            for(unsigned long i(0); i < 200; i++)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], double(0.23456), std::numeric_limits<double>::epsilon());
+            }
+
+        }
+};
+MinModLimiterIntrinDoubleQuickTest mm_limiter_quick_test_intrin_double("double");

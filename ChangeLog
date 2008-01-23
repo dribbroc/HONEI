@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-23 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/limiter.hh, honei/libswe/limiter_TEST.cc: Added SSE
+	limiter intrinsics needed by AssemblyProcsessing<SSE> and its test.
+
 2008-01-23 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* honei/libutil/partitioner.hh, honei/libutil/partitioner.cc:
