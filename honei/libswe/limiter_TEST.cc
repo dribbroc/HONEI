@@ -197,6 +197,7 @@ class MinModLimiterIntrinFloatQuickTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], float(0.23456), std::numeric_limits<float>::epsilon());
             }
 
+            delete data_v;
         }
 };
 MinModLimiterIntrinFloatQuickTest mm_limiter_quick_test_intrin_float("float");
@@ -269,6 +270,7 @@ class MinModLimiterIntrinDoubleQuickTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(data_v[i], double(0.23456), std::numeric_limits<double>::epsilon());
             }
 
+            delete data_v;
         }
 };
 MinModLimiterIntrinDoubleQuickTest mm_limiter_quick_test_intrin_double("double");
