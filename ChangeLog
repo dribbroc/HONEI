@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-23 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/limiter.hh, honei/libswe/limiter_TEST.cc: Added missing
+	handling for non-SSE archs.
+
+2008-01-23 Markus Geveler <apryde@gmx.de>
+
 	* honei/libswe/limiter.hh, honei/libswe/limiter_TEST.cc: Added SSE
 	limiter intrinsics needed by AssemblyProcsessing<SSE> and its test.
 

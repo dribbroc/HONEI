@@ -133,7 +133,7 @@ namespace honei
     };
     static const VanLeerLimiter van_leer_limiter = VanLeerLimiter();
 
-    //vec remains invariant
+#ifdef HONEI_SSE
     __m128  _mm_lim_ps(__m128 vec)
     {
         float __attribute__((aligned(16))) zero(0.f);
@@ -157,7 +157,7 @@ namespace honei
 
         return result;
     }
-
+#endif
 }
 
 #endif
