@@ -19,6 +19,7 @@
 
 #include <honei/libutil/exception.hh>
 #include <honei/libutil/partitioner.hh>
+#include <honei/libutil/stringify.hh>
 
 #include <tr1/functional>
 
@@ -27,7 +28,7 @@ using namespace honei;
 Partitioner::Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
         std::tr1::function<void(unsigned long, unsigned long)> dispatch)
 {
-    CONTEXT("When partitioning problem of size " + overall_size);
+    CONTEXT("When partitioning problem of size '" + stringify(overall_size) + "':");
     std::list<Parts> partition(Partitioner::partition(max_count, best_part_size, overall_size));
     for (std::list<Parts>::iterator i(partition.begin()), i_end(partition.end()) ;
             i != i_end ; ++i)
@@ -38,7 +39,7 @@ Partitioner::Partitioner(unsigned long max_count, unsigned long best_part_size, 
 
 std::list<Parts> Partitioner::partition(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size)
 {
-    CONTEXT("When partitioning problem of size " + overall_size);
+    CONTEXT("When partitioning problem of size '" + stringify(overall_size) + "':");
 
     std::list<Parts> result;
     unsigned part_size(0);
