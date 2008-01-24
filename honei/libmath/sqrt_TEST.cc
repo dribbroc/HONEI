@@ -60,6 +60,10 @@ class SqrtBigValuesTest :
 };
 SqrtBigValuesTest<float, tags::CPU> sqrt_big_values_test_float("float", "tags::CPU");
 SqrtBigValuesTest<double, tags::CPU> sqrt_big_values_test_double("double", "tags::CPU");
+#ifdef HONEI_SSE
+SqrtBigValuesTest<float, tags::CPU::SSE> sse_sqrt_big_values_test_float("float", "tags::CPU::SSE");
+SqrtBigValuesTest<double, tags::CPU::SSE> sse_sqrt_big_values_test_double("double", "tags::CPU::SSE");
+#endif
 #ifdef HONEI_CELL
 SqrtBigValuesTest<float, tags::Cell> cell_sqrt_big_values_test_float("float", "tags::Cell");
 #endif
@@ -99,6 +103,10 @@ class SqrtSmallValuesTest :
 
 SqrtSmallValuesTest<float, tags::CPU> sqrt_small_values_test_float("float", "tags::CPU");
 SqrtSmallValuesTest<double, tags::CPU> sqrt_small_values_test_double("double", "tags::CPU");
+#ifdef HONEI_SSE
+SqrtSmallValuesTest<float, tags::CPU::SSE> sse_sqrt_small_values_test_float("float", "tags::CPU::SSE");
+SqrtSmallValuesTest<double, tags::CPU::SSE> sse_sqrt_small_values_test_double("double", "tags::CPU::SSE");
+#endif
 #ifdef HONEI_CELL
 SqrtSmallValuesTest<float, tags::Cell> cell_sqrt_small_values_test_float("float", "tags::Cell");
 #endif
@@ -138,6 +146,10 @@ class SqrtTinyValuesTest :
 
 SqrtTinyValuesTest<float, tags::CPU> sqrt_tiny_values_test_float("float", "tags::CPU");
 SqrtTinyValuesTest<double, tags::CPU> sqrt_tiny_values_test_double("double", "tags::CPU");
+#ifdef HONEI_SSE
+SqrtTinyValuesTest<float, tags::CPU::SSE> sse_sqrt_tiny_values_test_float("float", "tags::CPU::SSE");
+SqrtTinyValuesTest<double, tags::CPU::SSE> sse_sqrt_tiny_values_test_double("double", "tags::CPU::SSE");
+#endif
 #ifdef HONEI_CELL
 SqrtTinyValuesTest<float, tags::Cell> cell_sqrt_tiny_values_test_float("float", "tags::Cell");
 #endif

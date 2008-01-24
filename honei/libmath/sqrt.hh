@@ -71,6 +71,24 @@ namespace honei
      *
      * \ingroup grpmathoperations
      */
+    template <> struct Sqrt<tags::CPU::SSE>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x);
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x);
+    };
+
+    /**
+     * \brief Square root computation of the elements of the given entity.
+     *
+     * Sqrt is the template for the square root of the elements
+     * \f[
+     *     \texttt{Sqrt}(a): \quad a[i] \leftarrow \sqrt{a[i]},
+     * \f]
+     *
+     * of a given entity.
+     *
+     * \ingroup grpmathoperations
+     */
     template <> struct Sqrt<tags::Cell>
     {
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x);
