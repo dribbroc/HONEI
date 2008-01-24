@@ -69,8 +69,8 @@ class FlowProcessingTest:
 };
 FlowProcessingTest<tags::CPU, float> flow_test_float("float");
 FlowProcessingTest<tags::CPU, double> flow_test_double("double");
-//FlowProcessingTest<tags::CPU::MultiCore, double> flow_test_double_mc("double MC");
-//FlowProcessingTest<tags::CPU::MultiCore, float> flow_test_float_mc("float MC");
+FlowProcessingTest<tags::CPU::MultiCore, double> flow_test_double_mc("double MC");
+FlowProcessingTest<tags::CPU::MultiCore, float> flow_test_float_mc("float MC");
 #ifdef HONEI_CELL
 FlowProcessingTest<tags::Cell, float> flow_test_float_cell("float Cell");
 #endif
