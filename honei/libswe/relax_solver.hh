@@ -193,10 +193,10 @@ namespace honei {
                 cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< endl;
 #endif
 
-                DenseVector<WorkPrec_> temp_u_c(predictedu.copy());
-                DenseVector<WorkPrec_> temp_v_c(predictedv.copy());
-                DenseVector<WorkPrec_> temp_u2_c(predictedu.copy());
-                DenseVector<WorkPrec_> temp_w_c(predictedw.copy());
+                DenseVector<WorkPrec_> temp_u_c(predictedu);
+                DenseVector<WorkPrec_> temp_v_c(predictedv);
+                DenseVector<WorkPrec_> temp_u2_c(predictedu);
+                DenseVector<WorkPrec_> temp_w_c(predictedw);
 
 #ifdef SOLVER_BENCHMARK
                 timeval start1, start2, end1, end2;
@@ -224,10 +224,10 @@ namespace honei {
 #ifdef SOLVER_VERBOSE
                 cout << "First accu solved.\n";
 #endif
-                DenseVector<WorkPrec_> temp_u3_c(predictedu.copy());
-                DenseVector<WorkPrec_> temp_v2_c(predictedv.copy());
-                DenseVector<WorkPrec_> temp_w2_c(predictedw.copy());
-                DenseVector<WorkPrec_> temp_u4_c(predictedu.copy());
+                DenseVector<WorkPrec_> temp_u3_c(predictedu);
+                DenseVector<WorkPrec_> temp_v2_c(predictedv);
+                DenseVector<WorkPrec_> temp_w2_c(predictedw);
+                DenseVector<WorkPrec_> temp_u4_c(predictedu);
 #ifdef SOLVER_BENCHMARK
                 gettimeofday(&start2, 0);
 #endif
@@ -240,8 +240,8 @@ namespace honei {
                 gettimeofday(&end2, 0);
                 cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< endl;
 #endif
-                DenseVector<WorkPrec_> v_c(predictedv.copy());
-                DenseVector<WorkPrec_> w_c(predictedw.copy());
+                DenseVector<WorkPrec_> v_c(predictedv);
+                DenseVector<WorkPrec_> w_c(predictedw);
 
                 Sum<Tag_>::value(v_c, temp11);
                 Sum<Tag_>::value(v_c, temp22);
@@ -249,9 +249,9 @@ namespace honei {
                 Sum<Tag_>::value(w_c, temp44);
 
 
-                predictedu = predicted_u_temp_c.copy();
-                predictedv = v_c.copy();
-                predictedw = w_c.copy();
+                predictedu = predicted_u_temp_c;
+                predictedv = v_c;
+                predictedw = w_c;
 
 #ifdef SOLVER_VERBOSE
                 cout << "Second accu solved.\n";
@@ -416,8 +416,8 @@ namespace honei {
                 Sum<Tag_>::value(innersum11, innersum22);
                 Scale<Tag_>::value(innersum11, WorkPrec_(1)/(_eps + _delta_t));
 
-                predictedv = innersum1.copy();
-                predictedw = innersum11.copy();
+                predictedv = innersum1;
+                predictedw = innersum11;
 #ifdef SOLVER_VERBOSE
                 std::cout << "Finished Setup 2.\n";
 #endif
