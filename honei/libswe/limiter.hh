@@ -136,28 +136,35 @@ namespace honei
     static const VanLeerLimiter van_leer_limiter = VanLeerLimiter();
 
 #ifdef HONEI_SSE
-    __m128  _mm_lim_ps(__m128 vec)
+
+    namespace intern
     {
-        float __attribute__((aligned(16))) zero(0.f);
-        float __attribute__((aligned(16))) one(1.f);
+        namespace sse
+        {
+            __m128  _mm_lim_ps(__m128 vec)
+            {
+                float __attribute__((aligned(16))) zero(0.f);
+                float __attribute__((aligned(16))) one(1.f);
 
-        __m128 mm0 = _mm_set_ps1(zero);
-        __m128 mm1 = _mm_set_ps1(one);
-        __m128 result = _mm_max_ps( mm0, _mm_min_ps(mm1, vec));
+                __m128 mm0 = _mm_set_ps1(zero);
+                __m128 mm1 = _mm_set_ps1(one);
+                __m128 result = _mm_max_ps( mm0, _mm_min_ps(mm1, vec));
 
-        return result;
-    }
+                return result;
+            }
 
-    __m128d _mm_lim_pd(__m128d &  vec)
-    {
-        double __attribute__((aligned(16))) zero(0.);
-        double __attribute__((aligned(16))) one(1.);
+            __m128d _mm_lim_pd(__m128d &  vec)
+            {
+                double __attribute__((aligned(16))) zero(0.);
+                double __attribute__((aligned(16))) one(1.);
 
-        __m128d mm0 = _mm_set_pd1(zero);
-        __m128d mm1 = _mm_set_pd1(one);
-        __m128d result = _mm_max_pd( mm0, _mm_min_pd(mm1, vec));
+                __m128d mm0 = _mm_set_pd1(zero);
+                __m128d mm1 = _mm_set_pd1(one);
+                __m128d result = _mm_max_pd( mm0, _mm_min_pd(mm1, vec));
 
-        return result;
+                return result;
+            }
+        }
     }
 #endif
 }

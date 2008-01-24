@@ -129,6 +129,7 @@ VanLeerLimiterQuickTest<float> vl_limiter_quick_test_float("float");
 VanLeerLimiterQuickTest<double> vl_limiter_quick_test_double("double");
 
 #ifdef HONEI_SSE
+using namespace intern::sse;
 class MinModLimiterIntrinFloatQuickTest :
     public QuickTest
 {
