@@ -66,37 +66,41 @@ class PartitionerTest :
             unsigned long offset, count, ps, temp;
             bool aligned;
 
-            for (unsigned long size(100); size < (1 << 19); size += 100)
+            for (unsigned long size(0); size < (1 << 19); size += 100)
             {
                 Partitioner(max_count, best_part_size, size, tester);
 
-                ps = tester.list.front().second;
-                aligned = !(ps % 16);
-                TEST_CHECK_EQUAL(aligned, true);
-
-                if (size >= best_part_size)
-                {
-                    TEST_CHECK(ps >= best_part_size);
-                }
-
                 offset = 0;
                 count = 0;
+                temp = 0;
 
-                for ( ; offset <= size - ps; offset += ps)
+                while (! tester.list.empty())
                 {
+                    ps = tester.list.front().second;
+                    temp += ps;
                     tester.list.pop_front();
-                    ++count;
+
+                    if (! tester.list.empty())
+                    {
+                        aligned = !(ps % 16);
+                        TEST_CHECK_EQUAL(aligned, true);
+                        if (size >= best_part_size)
+                        {
+                            TEST_CHECK(ps >= best_part_size);
+                        }
+                        ++count;
+                    }
                 }
 
                 TEST_CHECK(count <= max_count);
 
-                temp = count * ps;
+                //temp = count * ps;
 
-                if (size > offset)
+                /*if (size > offset)
                 {
                     temp += tester.list.front().second;
                     tester.list.pop_front();
-                }
+                }*/
 
                 TEST_CHECK_EQUAL(size, temp);
             }

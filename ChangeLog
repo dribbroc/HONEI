@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-24 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* honei/libutil/partitioner.cc:
+	Fixed small bug in context call.
+	* honei/libutil/partitioner_TEST.cc:
+	Changed test to be more common;
+
 2008-01-24 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/assembly_processing.hh, honei/libswe/relax_solver.hh:
