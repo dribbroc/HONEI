@@ -100,6 +100,34 @@ class FlowProcessingTest:
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
             }
+
+            DenseVector<DT1_> vector_x_3(size, DT1_(1.23456));
+            DenseVector<DT1_> vector_y_3(size, DT1_(5.99999));
+            DenseVector<DT1_> cpu_result_x_3(size, DT1_(1.23456));
+            DenseVector<DT1_> cpu_result_y_3(size, DT1_(5.99999));
+
+            for(unsigned long i = 0; i < size; ++i)
+            {
+                if((i + 2) % 3 == 0)
+                {
+                    vector_x_3[i] = DT1_(- 1.987654321);
+                    cpu_result_x_3[i] = DT1_(- 1.987654321);
+                }
+                if((i + 1) % 3 == 0)
+                {
+                    vector_y_3[i] = DT1_(1000);
+                    cpu_result_y_3[i] = DT1_(1000);
+                }
+            }
+            FlowProcessing<X, Tag_>::value(vector_x_3);
+            FlowProcessing<Y, Tag_>::value(vector_y_3);
+            FlowProcessing<X, tags::CPU>::value(cpu_result_x_3);
+            FlowProcessing<Y, tags::CPU>::value(cpu_result_y_3);
+            for(unsigned long i(0); i < size; ++i )
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(vector_x_3[i], cpu_result_x_3[i], 2 * fabs(cpu_result_x_3[i])*std::numeric_limits<DT1_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(vector_y_3[i], cpu_result_y_3[i], 2 * fabs(cpu_result_y_3[i])* std::numeric_limits<DT1_>::epsilon());
+            }
         }
 };
 FlowProcessingTest<tags::CPU, float> flow_test_float("float");
