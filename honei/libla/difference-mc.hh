@@ -61,7 +61,6 @@ namespace honei
                     b[offset_y][offset_x] += *c;
                     ++offset_y, ++offset_x;
                 }
-
         }
 
         template <typename DT1_, typename DT2_>
@@ -115,7 +114,7 @@ namespace honei
             unsigned long parts(8);
             unsigned long modulo = b.used_elements() % parts;
             unsigned long div = b.used_elements() / parts;
-            if (div == 0) 
+            if (div == 0)
             {
                 Difference<typename Tag_::DelegateTo>::value(a, b);
             }
@@ -125,7 +124,7 @@ namespace honei
                 PoolTask * pt[parts];
                 typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
                 unsigned long offset;
-                for (int i(0); i < modulo; ++i) 
+                for (int i(0); i < modulo; ++i)
                 {
                     offset = r.index();
                     r += div;
@@ -193,88 +192,135 @@ namespace honei
 
             return a;
         }
-        
-        template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
-        {
-            CONTEXT("When subtracting DenseMatrix from BandedMatrix (MultiCore:");
 
-            if (a.columns() != a.rows())
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        {
+            CONTEXT("When subtracting DenseMatrix from BandedMatrix (MultiCore):");
+
+            unsigned long parts(PARTS);
+            unsigned long modulo(0);
+            unsigned long div(1);
+            unsigned long start(0);
+            unsigned long end(0);
+
+            if (b.columns() != b.rows())
             {
                 throw MatrixIsNotSquare(a.rows(), a.columns());
             }
 
-            if (a.rows() != b.rows())
+            if (b.rows() != a.rows())
             {
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
             Scale<Tag_>::value(b, -1);
 
+            if (a.size() < parts)
+            {
+                parts = a.size();
+            }
+            else
+            {
+                div = a.size() / parts;
+                modulo = a.size() % parts;
+            }
+
             ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[2];
-           
+            PoolTask * pt[parts];
 
-            ResultThreeArgWrapper< MCDifference<typename Tag_::DelegateTo>, DenseMatrix<DT2_>, const BandedMatrix<DT1_>,
-                DenseMatrix<DT2_>, const bool> mywrapper1 (b, a, b, true);
-            pt[0] = p->dispatch(mywrapper1);
+            for (int i(0) ; i < modulo ; ++i)
+            { // (div+1) elements, from (i * (div + 1)) to ((i+1) * (div + 1) - 1).
+                start = (i * (div + 1));
+                end   = ((i + 1) * (div + 1) - 1);
+                FourArgWrapper<MCDifference<typename Tag_::DelegateTo>, const BandedMatrix<DT1_>,
+                    DenseMatrix<DT2_>, unsigned long, unsigned long>
+                    mywrapper(a, b, start, end);
+                pt[i] = p->dispatch(mywrapper);
+           }
 
-            ResultThreeArgWrapper< MCDifference<typename Tag_::DelegateTo>, DenseMatrix<DT2_>, const BandedMatrix<DT1_>,
-                DenseMatrix<DT2_>, const bool> mywrapper2 (b, a, b, false);
-            pt[1] = p->dispatch(mywrapper2);
+            for (int i(modulo) ; i < parts ; ++i)
+            { // div elements, from (modulo + div * i) to (modulo + div * (i+1) - 1).
+                start = (modulo + (div * i));
+                end   = (modulo + (div * (i +1) - 1));
+                FourArgWrapper< MCDifference<typename Tag_::DelegateTo>, const BandedMatrix<DT1_>,
+                    DenseMatrix<DT2_>, unsigned long, unsigned long>
+                    mywrapper(a, b, start, end);
+                pt[i] = p->dispatch(mywrapper);
+            }
 
-            pt[0]->wait_on();
-            delete pt[0];
-            pt[1]->wait_on();
-            delete pt[1];
-            
+            for (int i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+                delete pt[i];
+            }
+
             return b;
-            
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b, const bool upper)
+        static void value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b, unsigned long start, unsigned long end)
         {
-            CONTEXT("When subtracting DenseMatrix from BandedMatrix (MultiCore:");
-            
-            int middle_index(a.rows() -1);
-            // If we are below the diagonal band, we start at Element index and go on until the last element.
-            if (!upper) {
-                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
-                        vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
-                {
-                    if (!vi.exists())
-                        continue;
-                    unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
-                    unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
-                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+            CONTEXT("When partial substracting BandedMatrix to DenseMatrix:");
+
+            unsigned long size(a.size());
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator r(a.begin_non_zero_bands()), r_end(a.end_non_zero_bands()) ;
+                    r != r_end ; ++r)
+            {
+
+                if (r.index() < a.size()-1)
+                { // lower part.
+                    unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
+                    unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
+                    typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+
+                    c += ((size-1) - r.index());
+
+                    for ( ; c != c_end ; ++c)
                     {
-                        b[start][i] += *c;
-                        ++start, ++i;
+                        if (row_index > end)
+                            break;
+
+                        if ((row_index >= start) && (row_index <= end))
+                        {
+                            b[row_index][col_index] += *c;
+                        }
+
+                        ++row_index;
+                        ++col_index;
                     }
                 }
-            } else {
-                // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
-                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)), vi_end(a.end_bands()) ;
-                        vi != vi_end ; ++vi)
-                {
-                    if (!vi.exists())
-                        continue;
-    
-                    //Calculation of the element-index to stop in iteration!
-                    unsigned long offset(vi.index() - middle_index);
-                    unsigned long end(vi->size() - offset);
-                    unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
-                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                else
+                { // upper part.
+                    unsigned long size(a.size());
+                    unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
+                    unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
+                    typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+                    c += start;
+                    row_index += start;
+                    col_index += start;
+
+                    for ( ; c != c_end ; ++c)
                     {
-                        b[i][offset] +=  *c;
-                        ++offset, ++i;
+                        if (row_index > end)
+                            break;
+
+                        if (row_index >= size)
+                            break;
+
+                        if (col_index >= size)
+                            break;
+
+                        if ((row_index >= start) && (row_index <= end))
+                        {
+                            b[row_index][col_index] += *c;
+                        }
+
+                        ++row_index;
+                        ++col_index;
                     }
-                } 
+                }
             }
-            return b;
         }
 
         template <typename DT1_, typename DT2_>

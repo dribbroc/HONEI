@@ -18,6 +18,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define PARTS 8
+
 #ifndef LIBLA_GUARD_SUM_MC_HH
 #define LIBLA_GUARD_SUM_MC_HH 1
 
@@ -56,7 +58,7 @@ namespace honei
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
-            unsigned long parts(8);
+            unsigned long parts(PARTS);
             unsigned long div = a.size() / parts;
             if (div == 0)
             {
@@ -97,10 +99,10 @@ namespace honei
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
-            unsigned long parts(8);
+            unsigned long parts(PARTS);
             unsigned long modulo = b.used_elements() % parts;
             unsigned long div = b.used_elements() / parts;
-            if (div == 0) 
+            if (div == 0)
             {
                 Sum<typename Tag_::DelegateTo>::value(a, b);
             }
@@ -110,7 +112,7 @@ namespace honei
                 PoolTask * pt[parts];
                 typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
                 unsigned long offset;
-                for (int i(0); i < modulo; ++i) 
+                for (int i(0); i < modulo; ++i)
                 {
                     offset = r.index();
                     r += div;
@@ -120,7 +122,7 @@ namespace honei
                     pt[i] = p->dispatch(mywrapper);
                     ++r;
                 }
-                for (unsigned long i(modulo); i < parts; ++i)
+                for (unsigned long i(modulo) ; i < parts; ++i)
                 {
                     offset = r.index();
                     r+= div-1;
@@ -130,7 +132,7 @@ namespace honei
                     pt[i] = p->dispatch(mywrapper);
                     ++r;
                 }
-                for (unsigned long i = 0; i < parts;  ++i)
+                for (unsigned long i = 0 ; i < parts ; ++i)
                 {
                     pt[i]->wait_on();
                     delete pt[i];
@@ -163,7 +165,7 @@ namespace honei
                 {
                     TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
                     pt[taskcount] = p->dispatch(mywrapper);
-                    ++taskcount; 
+                    ++taskcount;
                 }
                 else
                     a.band(r.index()) = r->copy();
@@ -179,7 +181,7 @@ namespace honei
 
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
-        { 
+        {
             CONTEXT("When adding DenseMatrix to DenseMatrix (MultiCore):");
 
             if (a.columns() != b.columns())
@@ -209,7 +211,7 @@ namespace honei
 
         template <typename DT1_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & b, const DT1_ a)
-        { 
+        {
             CONTEXT("When adding scalar to DenseMatrix (MultiCore):");
 
             ThreadPool * p(ThreadPool::get_instance());
@@ -229,7 +231,7 @@ namespace honei
 
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
-        { 
+        {
             CONTEXT("When adding DenseMatrix to SparseMatrix (MultiCore):");
 
             if (a.columns() != b.columns())
@@ -259,7 +261,7 @@ namespace honei
 
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
-        { 
+        {
             CONTEXT("When adding SparseMatrix to SparseMatrix (MultiCore):");
 
             if (a.columns() != b.columns())
@@ -287,10 +289,17 @@ namespace honei
             return a;
         }
 
+
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             CONTEXT("When adding BandedMatrix to DenseMatrix (MutiCore):");
+
+            unsigned long parts(PARTS);
+            unsigned long modulo(0);
+            unsigned long div(1);
+            unsigned long start(0);
+            unsigned long end(0);
 
             if (a.columns() != a.rows())
             {
@@ -302,88 +311,110 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
+            if (b.size() < parts)
+            {
+                parts = b.size();
+            }
+            else
+            {
+                div = b.size() / parts;
+                modulo = b.size() % parts;
+            }
+
             ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[2];
+            PoolTask * pt[parts];
 
-            ThreeArgWrapper< MCSum<typename Tag_::DelegateTo>,  DenseMatrix<DT1_>,
-                const BandedMatrix<DT2_>, const bool> mywrapper1 (a, b, true);
-            pt[0] = p->dispatch(mywrapper1);
+            for (int i(0) ; i < modulo ; ++i)
+            { // (div+1) elements, from (i * (div + 1)) to ((i+1) * (div + 1) - 1).
+                start = (i * (div + 1));
+                end   = ((i + 1) * (div + 1) - 1);
+                FourArgWrapper<MCSum<typename Tag_::DelegateTo>, DenseMatrix<DT1_>,
+                    const BandedMatrix<DT2_>, unsigned long, unsigned long>
+                    mywrapper(a, b, start, end);
+                pt[i] = p->dispatch(mywrapper);
+           }
 
-            ThreeArgWrapper< MCSum<typename Tag_::DelegateTo>,  DenseMatrix<DT1_>,
-                const BandedMatrix<DT2_>, const bool> mywrapper2 (a, b, false);
-            pt[1] = p->dispatch(mywrapper2);
+            for (int i(modulo) ; i < parts ; ++i)
+            { // div elements, from (modulo + div * i) to (modulo + div * (i+1) - 1).
+                start = (modulo + (div * i));
+                end   = (modulo + (div * (i +1) - 1));
+                FourArgWrapper< MCSum<typename Tag_::DelegateTo>, DenseMatrix<DT1_>,
+                    const BandedMatrix<DT2_>, unsigned long, unsigned long>
+                    mywrapper(a, b, start, end);
+                pt[i] = p->dispatch(mywrapper);
+            }
 
-            pt[0]->wait_on();
-            delete pt[0];
-            pt[1]->wait_on();
-            delete pt[1];
+            for (int i(0) ; i < parts ; ++i)
+            {
+                pt[i]->wait_on();
+                delete pt[i];
+            }
 
             return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b, const bool upper)
+        static void value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b, unsigned long start, unsigned long end)
         {
             CONTEXT("When partial adding BandedMatrix to DenseMatrix:");
 
             unsigned long size(b.size());
-
-            if (upper)
+            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
+                    r != r_end ; ++r)
             {
 
-                for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.band_at(size-1)), r_end(b.end_bands()) ;
-                        r != r_end ; ++r)
-                {
-                    if (! r.exists())
-                        continue;
-
+                if (r.index() < b.size()-1)
+                { // lower part.
                     unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
                     unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
-
                     typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+
+                    c += ((size-1) - r.index());
 
                     for ( ; c != c_end ; ++c)
                     {
+                        if (row_index > end)
+                            break;
+
+                        if ((row_index >= start) && (row_index <= end))
+                        {
+                            a[row_index][col_index] += *c;
+                        }
+
+                        ++row_index;
+                        ++col_index;
+                    }
+                }
+                else
+                { // upper part.
+                    unsigned long size(b.size());
+                    unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
+                    unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
+                    typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+                    c += start;
+                    row_index += start;
+                    col_index += start;
+
+                    for ( ; c != c_end ; ++c)
+                    {
+                        if (row_index > end)
+                            break;
+
                         if (row_index >= size)
                             break;
 
                         if (col_index >= size)
                             break;
 
-                        a[row_index][col_index] += *c;
+                        if ((row_index >= start) && (row_index <= end))
+                        {
+                            a[row_index][col_index] += *c;
+                        }
+
                         ++row_index;
                         ++col_index;
                     }
                 }
-                return a;
-            }
-            else
-            {
-                for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.band_at(size-1)) ;
-                        r != r_end ; ++r)
-                {
-                    if (! r.exists())
-                        continue;
-
-                    unsigned long size(b.size());
-                    unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
-                    unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
-
-                    typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
-
-                    if (r.index() < size - 1)
-                    {
-                            c += ((size-1) - r.index());
-                    }
-
-                    for ( ; c != c_end ; ++c)
-                    {
-                        a[row_index][col_index] += *c;
-                        ++row_index;
-                        ++col_index;
-                    }
-                }
-                return a;
             }
         }
     };

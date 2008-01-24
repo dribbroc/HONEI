@@ -26,7 +26,6 @@
 
 #include <limits>
 #include <tr1/memory>
-#include <iostream>
 #include <cstdlib>
 
 using namespace honei;
@@ -60,22 +59,23 @@ class BandedMatrixDenseMatrixSumTest :
                 //randomize content
                 for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()); i != i_end; ++i)
                 {
-                    *i = getRandom();
+                    *i = 5; //getRandom();
                 }
 
                 // multiple bands (with same vector, perhaps should be different)
                 BandedMatrix<DataType_> bm1(size, dv1);
-                bm1.insert_band(2,dv1);
-                bm1.insert_band(-3,dv1);
-                bm1.insert_band(4,dv1);
-                bm1.insert_band(-5,dv1);
+                bm1.insert_band( 2, dv1);
+                bm1.insert_band(-3, dv1);
+                bm1.insert_band( 4, dv1);
+                bm1.insert_band(-5, dv1);
+                bm1.insert_band(-(size - 1), dv1);  // Boundary element, lower left.
 
                 // randomized content for dense matrices
                 DenseMatrix<DataType_> dm2(size, size), dm3(size, size);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()), j(dm3.begin_elements());
                     i != i_end; ++i, ++j)
                 {
-                    *i = *j = getRandom();
+                    *i = *j = 2; //getRandom();
                 } 
 
                 // calculate reference result
@@ -88,7 +88,7 @@ class BandedMatrixDenseMatrixSumTest :
                         *k = DataType_(*i) + dm2[i.row()][i.column()];
                     }
                 }
-                 
+
                 Sum<Tag_>::value(dm2, bm1);
                 TEST_CHECK_EQUAL(dm2, dm3);
             }
@@ -1321,3 +1321,4 @@ class SparseVectorSumQuickTest :
 };
 SparseVectorSumQuickTest<float> sparse_vector_sum_quick_test_float("float");
 SparseVectorSumQuickTest<double> sparse_vector_sum_quick_test_double("double");
+
