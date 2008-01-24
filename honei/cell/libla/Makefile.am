@@ -15,6 +15,7 @@ libla_spe_a_SOURCES = \
 	difference_dense_dense_float.cc \
 	product_dense_matrix_dense_vector_float.cc \
 	product_banded_matrix_dense_vector_float.cc \
+	product_banded_matrix_dense_vector_double.cc \
 	sum_dense_sparse_float.cc \
 	scale_dense_float.cc \
 	reduction_sum_dense_float.cc \

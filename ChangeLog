@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/Makefile.am, honei/cell/opcodes.hh,
+	honei/libla/product_BENCHMARK.cc, honei/libla/product-cell.cc,
+	honei/libla/product.hh, honei/libla/product_TEST.cc:
+	Added double version of cell bmdv.
+
 2008-01-24 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/limiter.hh, honei/libswe/limiter_TEST.cc:
