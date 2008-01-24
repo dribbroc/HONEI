@@ -41,7 +41,7 @@ using namespace honei::cell;
  * \operand g size of result row.
  */
 
-void node_distance_float(const Instruction & inst)
+void node_distance_float_wkk(const Instruction & inst)
 {
     EffectiveAddress ea_a(inst.a.ea), ea_b(inst.f.u);
 

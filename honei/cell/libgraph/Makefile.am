@@ -7,7 +7,8 @@ DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libgraph_spe.a
 libgraph_spe_a_SOURCES = \
-	node_distance_float.cc
+	node_distance_float_wfr.cc \
+	node_distance_float_wkk.cc
 libgraph_spe_a_LIBADD = \
 	$(top_srcdir)/honei/cell/libutil/libutil_spe.a
 
