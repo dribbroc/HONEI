@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-24 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/assembly_processing.hh, honei/libswe/relax_solver.hh:
+	Reimplemented assembly main stages with alignment and without
+	iterators.
+
 2008-01-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libmath/files.m4, honei/libmath/sqrt.hh,
@@ -12,7 +18,7 @@ see the NEWS file.
 	honei/libutil/type_traits.cc:
 	Added Sqrt sse version.
 
-2008-01-23 Markus Geveler <apryde@gmx.de>
+2008-01-24 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/relax_solver.hh, relax_solver_TEST.cc: Resolved malformed call to post processing.
 

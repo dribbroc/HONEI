@@ -176,8 +176,8 @@ namespace honei {
                 gettimeofday(&start, 0);
 #endif
 
-                AssemblyProcessing<tags::CPU, MAIN::M1M3>::value(m1, m3, predictedu, predictedv, _delta_t, _delta_x, _d_width, _d_height, *_c);
-                AssemblyProcessing<tags::CPU, MAIN::M2M4>::value(m2, m4, predictedu, predictedw, _delta_t, _delta_y, _d_width, _d_height, *_d);
+                AssemblyProcessing<Tag_, MAIN::M1M3>::value(m1, m3, predictedu, predictedv, _delta_t, _delta_x, _d_width, _d_height, *_c);
+                AssemblyProcessing<Tag_, MAIN::M2M4>::value(m2, m4, predictedu, predictedw, _delta_t, _delta_y, _d_width, _d_height, *_d);
 
                 BandedMatrix<WorkPrec_> m5c(m3.copy());
 
