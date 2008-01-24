@@ -774,7 +774,7 @@ namespace honei {
 #endif
 
 #ifdef SOLVER_POSTPROCESSING
-                PostProcessing<GNUPLOT>::value(1);
+                PostProcessing<output_types::GNUPLOT>::value(*_height, 1, _d_width, _d_height, _solve_time);
 #endif
 
             }

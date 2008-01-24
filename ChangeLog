@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-23 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/relax_solver.hh, relax_solver_TEST.cc: Resolved malformed call to post processing.
+
 2008-01-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* configure.ac, honei/cell/kernels/kernel_reference.sk,
