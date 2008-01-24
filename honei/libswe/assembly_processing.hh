@@ -273,14 +273,14 @@ namespace honei
                     ++d;++b1;++b2;++bminus1;
                 }
 
-                m1.insert_band(0, m1diag.copy());
-                m1.insert_band(3, m1bandPlus1.copy());
-                m1.insert_band(6, m1bandPlus2.copy());
-                m1.insert_band((-3), m1bandMinus1.copy());
-                m3.insert_band(0, m3diag.copy());
-                m3.insert_band(3, m3bandPlus1.copy());
-                m3.insert_band(6, m3bandPlus2.copy());
-                m3.insert_band((-3), m3bandMinus1.copy());
+                m1.insert_band(0, m1diag);
+                m1.insert_band(3, m1bandPlus1);
+                m1.insert_band(6, m1bandPlus2);
+                m1.insert_band((-3), m1bandMinus1);
+                m3.insert_band(0, m3diag);
+                m3.insert_band(3, m3bandPlus1);
+                m3.insert_band(6, m3bandPlus2);
+                m3.insert_band((-3), m3bandMinus1);
 #ifdef SOLVER_VERBOSE
                 cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
                 cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
@@ -512,14 +512,14 @@ namespace honei
                     }
                 }
             }
-            m2.insert_band(0, m2diag.copy());
-            m2.insert_band(3*(d_width+4), m2bandPlus1.copy());
-            m2.insert_band(6*(d_width+4), m2bandPlus2.copy());
-            m2.insert_band((-3)*(d_width+4), m2bandMinus1.copy());
-            m4.insert_band(0, m4diag.copy());
-            m4.insert_band(3*(d_width+4), m4bandPlus1.copy());
-            m4.insert_band(6*(d_width+4), m4bandPlus2.copy());
-            m4.insert_band((-3)*(d_width+4), m4bandMinus1.copy());
+            m2.insert_band(0, m2diag);
+            m2.insert_band(3*(d_width+4), m2bandPlus1);
+            m2.insert_band(6*(d_width+4), m2bandPlus2);
+            m2.insert_band((-3)*(d_width+4), m2bandMinus1);
+            m4.insert_band(0, m4diag);
+            m4.insert_band(3*(d_width+4), m4bandPlus1);
+            m4.insert_band(6*(d_width+4), m4bandPlus2);
+            m4.insert_band((-3)*(d_width+4), m4bandMinus1);
 #ifdef SOLVER_VERBOSE
             std::cout << "Finished Matrix Assembly 2.\n";
 #endif
