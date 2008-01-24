@@ -30,3 +30,8 @@ void            node_distance_float                         node_distance_float
 # LibMath Operations
 ####################
 void            sqrt_dense_float
+
+# LibSWE Operations
+###################
+void            flow_processing_x_float
+void            flow_processing_y_float

@@ -22,6 +22,7 @@
 #include <honei/cell/cell.hh>
 #include <honei/cell/libla/operations.hh>
 #include <honei/cell/libmath/operations.hh>
+#include <honei/cell/libswe/operations.hh>
 #include <honei/cell/libutil/allocator.hh>
 #include <honei/cell/libutil/transfer.hh>
 #include <honei/cell/libutil/debug.hh>

@@ -38,13 +38,14 @@ class FlowProcessingTest:
 
         virtual void run() const
         {
-            DenseVector<DT1_> vector_x(12003, DT1_(1));
-            DenseVector<DT1_> vector_y(12003, DT1_(1));
-            DenseVector<DT1_> result_x = FlowProcessing<X, Tag_>::value(vector_x);
+            unsigned long size(12003);
+            DenseVector<DT1_> vector_x(size, DT1_(1));
+            DenseVector<DT1_> vector_y(size, DT1_(1));
+            FlowProcessing<X, Tag_>::value(vector_x);
             FlowProcessing<Y, Tag_>::value(vector_y);
-            DenseVector<DT1_> analytical_result_x(12003, DT1_(1));
-            DenseVector<DT1_> analytical_result_y(12003, DT1_(1));
-            for(unsigned long i = 0; i < 12003; ++i)
+            DenseVector<DT1_> analytical_result_x(size, DT1_(1));
+            DenseVector<DT1_> analytical_result_y(size, DT1_(1));
+            for(unsigned long i = 0; i < size; ++i)
             {
                 if((i + 2) % 3 == 0)
                     analytical_result_x[i] = DT1_(5.905);
@@ -53,15 +54,26 @@ class FlowProcessingTest:
                     analytical_result_y[i] = DT1_(5.905);
             }
 
-            TEST_CHECK_EQUAL(vector_x, analytical_result_x);
-            TEST_CHECK_EQUAL(vector_y, analytical_result_y);
+            for (typename Vector<DT1_>::ConstElementIterator i(vector_x.begin_elements()), i_end(vector_x.end_elements()),
+                    j(analytical_result_x.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
+            }
+
+            for (typename Vector<DT1_>::ConstElementIterator i(vector_y.begin_elements()), i_end(vector_y.end_elements()),
+                    j(analytical_result_y.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
+            }
         }
 };
 FlowProcessingTest<tags::CPU, float> flow_test_float("float");
 FlowProcessingTest<tags::CPU, double> flow_test_double("double");
-FlowProcessingTest<tags::CPU::MultiCore, double> flow_test_double_mc("double MC");
-FlowProcessingTest<tags::CPU::MultiCore, float> flow_test_float_mc("float MC");
-
+//FlowProcessingTest<tags::CPU::MultiCore, double> flow_test_double_mc("double MC");
+//FlowProcessingTest<tags::CPU::MultiCore, float> flow_test_float_mc("float MC");
+#ifdef HONEI_CELL
+FlowProcessingTest<tags::Cell, float> flow_test_float_cell("float Cell");
+#endif
 #ifdef HONEI_SSE
 FlowProcessingTest<tags::CPU::SSE, float> flow_test_float_sse("float SSE");
 FlowProcessingTest<tags::CPU::SSE, double> flow_test_double_sse("double SSE");

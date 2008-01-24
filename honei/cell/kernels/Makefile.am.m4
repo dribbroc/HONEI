@@ -1,5 +1,5 @@
 ifdef(`__gnu__',`',`errprint(`This is not GNU m4...
-')m4exit(1)') include(`misc/generated-file.txt')
+')m4exit(1)') dnl include(`misc/generated-file.txt')
 
 dnl vim: set ft=m4 noet :
 
@@ -43,6 +43,7 @@ $1_LDADD = \
 	$(top_srcdir)/honei/cell/libgraph/libgraph_spe.a \
 	$(top_srcdir)/honei/cell/libla/libla_spe.a \
 	$(top_srcdir)/honei/cell/libmath/libmath_spe.a \
+	$(top_srcdir)/honei/cell/libswe/libswe_spe.a \
 	$(top_srcdir)/honei/cell/libutil/libutil_spe.a
 
 libcell-$1.o : $1

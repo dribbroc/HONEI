@@ -55,6 +55,11 @@ namespace honei
             // LibMath opcodes
             oc_sqrt_dense_float,
 
+            // LibSWE opcodes
+            oc_flow_processing_x_float,
+            oc_flow_processing_y_float,
+
+            // Unittest opcodes
             oc_test_instruction_finished = 1 << 30,
             oc_test_result_dword,
             oc_test_result_qword,

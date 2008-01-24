@@ -317,10 +317,11 @@ AC_OUTPUT(
 	honei/Makefile
 	honei/cell/Makefile
 	honei/cell/kernels/Makefile
+	honei/cell/libgraph/Makefile
 	honei/cell/libla/Makefile
 	honei/cell/libmath/Makefile
+	honei/cell/libswe/Makefile
 	honei/cell/libutil/Makefile
-	honei/cell/libgraph/Makefile
 	honei/libgraph/Makefile
 	honei/libla/Makefile
 	honei/libmath/Makefile

@@ -37,6 +37,13 @@ namespace honei
     struct FlowProcessing
     {
     };
+
+    /**
+     * \brief Implementation of flow processing in x direction.
+     *
+     * \ingroup grplibswe
+     *
+     **/
     template <typename Tag_>
     struct FlowProcessing<directions::X, Tag_>
     {
@@ -115,6 +122,13 @@ namespace honei
                 return vector;
 
             }
+    };
+
+    template <>
+    struct FlowProcessing<directions::X, tags::Cell>
+    {
+        public:
+            static DenseVector<float> & value(DenseVector<float> & vector);
     };
 
     /**
@@ -202,6 +216,12 @@ namespace honei
             }
     };
 
+    template <>
+    struct FlowProcessing<directions::Y, tags::Cell>
+    {
+        public:
+            static DenseVector<float> & value(DenseVector<float> & vector);
+    };
 
 ///---------SSE-----------
 

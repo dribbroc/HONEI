@@ -5,6 +5,22 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-24 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* configure.ac, honei/cell/kernels/kernel_reference.sk,
+	honei/cell/kernels/Makefile.am.m4,
+	honei/cell/kernels/stand_alone-kernel.cc.in, honei/cell/libswe,
+	honei/cell/libswe/flow_processing_float.cc,
+	honei/cell/libswe/Makefile.am, honei/cell/libswe/operations.hh,
+	honei/cell/Makefile.am.m4, honei/cell/opcodes.hh,
+	honei/libswe/files.m4, honei/libswe/flow_processing-cell.cc,
+	honei/libswe/flow_processing.hh, honei/libswe/flow_processing_TEST.cc:
+	Added infrastructure for libswe on Cell. Added flow_processing_*_float
+	as first operations.
+	* honei/libutil/spe_instruction.cc, honei/libutil/spe_instruction.hh:
+	Added support for different quantisations than 16 bytes for SPE
+	operations where needed.
+
 2008-01-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libla/sum-cell.cc, honei/libutil/spe_manager.cc, honei/libutil/spe_manager.hh:
@@ -67,6 +83,7 @@ see the NEWS file.
 	Sum(DV, scal) to SPEFrameworkInstructions. This implicitly includes
 	support for DVCB. Added tests vor Sum(DVR, scal).
 
+>>>>>>> .r1408
 2008-01-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libgraph/position_BENCHMARK.cc,
