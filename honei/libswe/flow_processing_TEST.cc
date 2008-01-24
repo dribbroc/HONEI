@@ -1,9 +1,9 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2007, 2008 Markus Geveler <apryde@gmx.de>
  *
- * This file is part of the Math C++ library. LibMath is free software;
+ * This file is part of the SWE C++ library. LibSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
@@ -62,6 +62,28 @@ class FlowProcessingTest:
 
             for (typename Vector<DT1_>::ConstElementIterator i(vector_y.begin_elements()), i_end(vector_y.end_elements()),
                     j(analytical_result_y.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
+            }
+
+            //new testcase
+            DenseVector<DT1_> vector_x_2(size, DT1_(1.23456));
+            DenseVector<DT1_> vector_y_2(size, DT1_(5.99999));
+            FlowProcessing<X, Tag_>::value(vector_x_2);
+            FlowProcessing<Y, Tag_>::value(vector_y_2);
+            DenseVector<DT1_> cpu_result_x_2(size, DT1_(1.23456));
+            DenseVector<DT1_> cpu_result_y_2(size, DT1_(5.99999));
+            FlowProcessing<X, tags::CPU>::value(cpu_result_x_2);
+            FlowProcessing<Y, tags::CPU>::value(cpu_result_y_2);
+
+            for (typename Vector<DT1_>::ConstElementIterator i(vector_x_2.begin_elements()), i_end(vector_x_2.end_elements()),
+                    j(cpu_result_x_2.begin_elements()) ; i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
+            }
+
+            for (typename Vector<DT1_>::ConstElementIterator i(vector_y_2.begin_elements()), i_end(vector_y_2.end_elements()),
+                    j(cpu_result_y_2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
             }
