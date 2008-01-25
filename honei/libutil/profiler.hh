@@ -97,7 +97,7 @@ namespace honei
     }
 
 /**
- * \def PROFILER_EVALUTE
+ * \def PROFILER_EVALUATE
  *
  * \brief Convenience definition that provides a way to evalute the profilers
  * data.
@@ -109,9 +109,9 @@ namespace honei
  * \ingroup grpprofiler
  */
 #if defined (HONEI_PROFILER)
-#define PROFILER_EVALUTE profile("", "", honei::pmt_evaluate)
+#define PROFILER_EVALUATE profile("", "", honei::pmt_evaluate)
 #else
-#define PROFILER_EVALUTE
+#define PROFILER_EVALUATE
 #endif
 
 /**

@@ -137,7 +137,7 @@ class ProfilerTest :
                 bar();
             }
 
-            PROFILER_EVALUTE;
+            PROFILER_EVALUATE;
 
             {
                 Lock l(*_mutex);
