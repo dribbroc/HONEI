@@ -82,6 +82,13 @@ namespace honei
             float array[4];
         };
 
+        template <> union Subscriptable<double>
+        {
+            vector double value;
+            double array[2];
+        };
+
+
         template <> union Subscriptable<unsigned long>
         {
             vector unsigned long value;

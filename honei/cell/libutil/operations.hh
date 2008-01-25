@@ -89,6 +89,57 @@ namespace honei
                     vector float & b_carry, const unsigned b_offset);
         };
 
+        // the same for double
+        template <> struct Operation<1, double, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on a given block of data.
+            void (*calculate)(vector double * elements, const unsigned size, const double optional_scalar);
+        };
+
+        template <> struct Operation<1, double, rtm_mail>
+        {
+            /// Our result type.
+            typedef unsigned ResultType;
+
+            /// Initialises the accumulator.
+            vector double (*init)(void);
+
+            /// Performs calculation on a given block of data.
+            vector double (*calculate)(const vector double & accumulator, vector double * elements, const unsigned size);
+
+            /// Finishs the calculations and returns a scalar result suitable for mail transfer.
+            double (*finish)(const vector double & accumulator);
+        };
+
+        template <> struct Operation<2, double, rtm_mail>
+        {
+            /// Our result type.
+            typedef unsigned ResultType;
+
+            /// Initialises the accumulator.
+            vector double (*init)();
+
+            /// Performs calculation on given blocks of data.
+            vector double (*calculate)(const vector double & accumulator, vector double & carry,
+                    vector double * a_elements, vector double * b_elements, const unsigned size, const unsigned offset);
+
+            /// Finishs the calculations and returns a sclar result suitable for mail transfer.
+            double (*finish)(const vector double & accumulator);
+        };
+
+        template <> struct Operation<2, double, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on given blocks of data.
+            void (*calculate)(vector double * a_elements, const vector double * b_elements, const unsigned size,
+                    vector double & b_carry, const unsigned b_offset);
+        };
+
         /// \}
 
         /**
@@ -104,16 +155,16 @@ namespace honei
         template <typename Operation_> typename Operation_::ResultType operation(const Operation_ & operation,
                 const Instruction & instruction);
 
-        template <> void operation<Operation<1, float, rtm_dma> >(const Operation<1, float, rtm_dma> & operation,
+        template <> void operation<Operation<1, double, rtm_dma> >(const Operation<1, double, rtm_dma> & operation,
                 const Instruction & instruction);
 
-        template <> unsigned operation<Operation<1, float, rtm_mail> >(const Operation<1, float, rtm_mail> & operation,
+        template <> unsigned operation<Operation<1, double, rtm_mail> >(const Operation<1, double, rtm_mail> & operation,
                 const Instruction & instruction);
 
-        template <> unsigned operation<Operation<2, float, rtm_mail> >(const Operation<2, float, rtm_mail> & operation,
+        template <> unsigned operation<Operation<2, double, rtm_mail> >(const Operation<2, double, rtm_mail> & operation,
                 const Instruction & instruction);
 
-        template <> void operation<Operation<2, float, rtm_dma> >(const Operation<2, float, rtm_dma> & operation,
+        template <> void operation<Operation<2, double, rtm_dma> >(const Operation<2, double, rtm_dma> & operation,
                 const Instruction & instruction);
 
         /// \}
@@ -122,18 +173,20 @@ namespace honei
         /// \{
 
         /**
-         * Return a vector of biggest-possible floats.
+         * Return a vector of biggest-possible floats/double.
          *
          * \ingroup grpframework
          */
         vector float biggest_float();
+        vector double biggest_double();
 
         /**
-         * Return a vector of smalles-possible floats.
+         * Return a vector of smalles-possible floats/double.
          *
          * \ingroup grpframework
          */
         vector float smallest_float();
+        vector double smallest_double();
 
         /**
          * Return a zero vector.
@@ -141,6 +194,7 @@ namespace honei
          * \ingroup grpframework
          */
         vector float zero_float();
+        vector double zero_double();
 
         /**
          * Return the sum of all of the vector's elements.
@@ -148,6 +202,7 @@ namespace honei
          * \ingroup grpframework
          */
         float sum_float(const vector float & value);
+        double sum_double(const vector float & value);
 
         /**
          * Return the maximum of all of the vector's elements.
@@ -155,6 +210,7 @@ namespace honei
          * \ingroup grpframework
          */
         float max_float(const vector float & value);
+        double max_double(const vector double & value);
 
         /**
          * Return the minimum of all of the vector's elements.
@@ -162,6 +218,7 @@ namespace honei
          * \ingroup grpframework
          */
         float min_float(const vector float & value);
+        double max_double(const vector double & value);
 
         /// \}
     }

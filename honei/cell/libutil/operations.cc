@@ -76,5 +76,54 @@ namespace honei
             return result;
         }
 
+
+        // the same for double-precision
+        vector double biggest_double()
+        {
+            static const vector unsigned result = { 0x7FEFFFFF, 0xFFFFFFFF, 0x7FEFFFFF, 0xFFFFFFFF };
+
+            return reinterpret_cast<vector double>(result);
+        }
+
+        double max_double(const vector double & value)
+        {
+            Subscriptable<double> temp = { value };
+            double result(temp.array[0]);
+            result =  (result > temp.array[0]) ? result : temp.array[1] ;
+
+            return result;
+        }
+
+        double min_double(const vector double & value)
+        {
+            Subscriptable<double> temp = { value };
+            double result(temp.array[0]);
+            result = (result < temp.array[1]) ? result : temp.array[1];
+
+            return result;
+        }
+
+        vector double smallest_double()
+        {
+            static const vector unsigned result = { 0x00080000, 0x00000000, 0x00080000, 0x00000000 };
+
+            return reinterpret_cast<vector double>(result);
+        }
+
+        double sum_double(const vector double & value)
+        {
+            Subscriptable<double> temp = { value };
+
+            return temp.array[0] + temp.array[1];
+        }
+
+        vector double zero_double()
+        {
+            static const vector double result = { 0.0, 0.0 };
+
+            return result;
+        }
+
     }
+
 }
