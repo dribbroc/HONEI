@@ -88,40 +88,6 @@ namespace honei
         }
 
         template <typename DataType_>
-        static void value(const DenseMatrix<DataType_> & pos_matrix, const DenseMatrix<bool> & neighbours,
-        DenseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
-        const DataType_ repulsive_force_range)
-        {
-            // Initialize ElementIterators
-            typename MutableMatrix<DataType_>::ElementIterator e(inv_square_dist.begin_elements());
-            typename MutableMatrix<DataType_>::ElementIterator f(square_dist.begin_elements());
-            typename Matrix<bool>::ConstElementIterator g(neighbours.begin_elements());
-            DataType_ square_force_range(repulsive_force_range * repulsive_force_range);
-
-            // Iterate over all nodes (=columns) in the given position matrix
-            for (unsigned long i =  0; i < pos_matrix.rows(); ++i)
-            {
-                // The column-vector represents all n coordinates of node i, so we grab them from the matrix
-                DenseVectorRange<DataType_> v(pos_matrix[i]);
-
-                // Now, iterate over all nodes to calculate the distance between node i and node j. For the resulting
-                // distance matrices are symmetric, and so we are waiting for symmetric matrices
-                // to gain performance. So long, the trivial loops.
-                for (unsigned long j = 0; j < pos_matrix.rows(); ++j, ++e, ++f, ++g)
-                {
-                    DenseVectorRange<DataType_> w(pos_matrix[j]);
-                    // Now calculate difference tmp = v - w for each pair of nodes and
-                    // then, calculate d = tmp1^2 + tmp2^2 + ... + tmpN^2 which is the
-                    // l2-norm of tmp without a root. (see template parameter "root")
-                    DenseVector<DataType_> v_copy(v.copy());
-                    DataType_ d(Norm<vnt_l_two, false, tags::CPU>::value(Difference<tags::CPU>::value(v_copy, w)));
-                    (d < square_force_range) && (d > std::numeric_limits<DataType_>::epsilon()) ? *e = 1 / d : *e = 0;
-                    if (*g != false) *f = d;
-                }
-            }
-        }
-
-        template <typename DataType_>
         static void value(const DenseMatrix<DataType_> & pos_matrix, const DenseMatrix<DataType_> & edge_weights,
         DenseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range)
@@ -156,6 +122,8 @@ namespace honei
         }
     };
 
+    template <> struct NodeDistance<tags::CPU::MultiCore> : NodeDistance<tags::CPU> {};
+
     template <> struct NodeDistance<tags::CPU::SSE>
     {
         static DenseMatrix<float> value(const DenseMatrix<float> & pos_matrix);
@@ -177,6 +145,8 @@ namespace honei
                 DenseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
                 const double repulsive_force_range);
     };
+
+    template <> struct NodeDistance<tags::CPU::MultiCore::SSE> : NodeDistance<tags::CPU::SSE> {};
 
     template <> struct NodeDistance<tags::Cell>
     {

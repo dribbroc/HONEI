@@ -70,9 +70,8 @@ namespace honei
         double translation_z = 0;
 
         Color * colors[10];
-        int steps = 100;
+        int steps = 1;
         int actualstep = 0;
-
         void * graph;
             void * positions;
     }
@@ -83,12 +82,13 @@ namespace honei
         private:
         
         public:
-            static void setTestCase(AbstractGraph<DataType_> * graph, Positions<Tag_, DataType_, GraphTag_> * positions)
-                {
-                    gl_globals::graph = graph;
-                    gl_globals::positions = positions;
+            static void setTestCase(AbstractGraph<DataType_> &graph, Positions<Tag_, DataType_, GraphTag_> * positions, int steps)
+            {
+                gl_globals::steps = steps;
+                gl_globals::graph = &graph;
+                gl_globals::positions = positions;
                 positions->init();
-                }            
+            }            
             
             static void init(void)
             {
@@ -158,19 +158,19 @@ namespace honei
                         break;
 
                     case ',':
-                            gl_globals::translation_y_increment = gl_globals::translation_x_increment -0.1;
+                            gl_globals::translation_y_increment = gl_globals::translation_y_increment -0.1;
                         break;
 
                     case '.':
-                            gl_globals::translation_y_increment = gl_globals::translation_x_increment +0.1;
+                            gl_globals::translation_y_increment = gl_globals::translation_y_increment +0.1;
                         break;
 
                     case 'v':
-                            gl_globals::translation_y_increment = gl_globals::translation_x_increment -0.1;
+                            gl_globals::translation_z_increment = gl_globals::translation_z_increment -0.1;
                         break;
 
                     case 'b':
-                            gl_globals::translation_y_increment = gl_globals::translation_x_increment +0.1;
+                            gl_globals::translation_z_increment = gl_globals::translation_z_increment +0.1;
                         break;
                 }
             }
@@ -211,8 +211,8 @@ namespace honei
                 glRotatef(gl_globals::rotation_y,0.0,1.0,0.0);
                 glRotatef(gl_globals::rotation_z,0.0,0.0,1.0);
                 //new:
-                // glRotatef(-45.0f,1.0, 0.0, 0.0);
-                //glRotatef(45.0f,0.0, 0.0, 1.0);
+                glRotatef(-45.0f, 0.0, 1.0, 0.0);
+                //glRotatef(45.0f, 0.0, 0.0, 1.0);
                 gl_globals::translation_x = gl_globals::translation_x + gl_globals::translation_x_increment;
                 gl_globals::translation_y = gl_globals::translation_y + gl_globals::translation_y_increment;
                 gl_globals::translation_z = gl_globals::translation_z + gl_globals::translation_z_increment;
@@ -224,8 +224,12 @@ namespace honei
                     reinterpret_cast<AbstractGraph<DataType_> *>(gl_globals::graph);
                         Positions<Tag_, DataType_, GraphTag_> * positions =
                     reinterpret_cast<Positions<Tag_, DataType_, GraphTag_> *>(gl_globals::positions);
-                                
-                std::cout << "Iteration "<<  ++gl_globals::actualstep << "\t  Fehler: " << positions->step() << "\n";
+                //if (gl_globals::actualstep < 10)
+                {
+                for (int i = 0; i < gl_globals::steps; ++i)
+                    std::cout << "Iteration "<<  ++gl_globals::actualstep << "\t  Fehler: " << positions->step() << "\n";
+                }
+
                 glBegin(GL_LINES);
                 glLineWidth(5);
                 glColor3f(1, 0, 0);
@@ -252,7 +256,7 @@ namespace honei
                     glColor3f(c->r, c->g, c->b);
                     glTranslatef((GLfloat)dv[0], graph->getTimesliceIndex(i), (GLfloat)dv[1]);
                     GLUquadricObj  * quad = gluNewQuadric();
-                    gluSphere(quad, (GLfloat)(*graph->nodeWeights())[i] / 5, 10, 10);
+                    gluSphere(quad, (GLfloat)(*graph->nodeWeights())[i] / 16, 10, 10);
                     glPopMatrix();
                 }
 
@@ -261,7 +265,7 @@ namespace honei
                 {
                     if (i.row() > i.column())
                     {
-                        glLineWidth((GLfloat)*i * 10);
+                        glLineWidth((GLfloat)*i * 2);
                         if (graph->sameTimeslice(i.row(), i.column()))
                             glColor3f(1.0, 1.0, 1.0);
                         else

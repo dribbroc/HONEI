@@ -59,8 +59,8 @@ class FruchtermanReingoldPositionsQuickTest :
                 *e = pos[i++];
             }
             i = 0;
-            std::tr1::shared_ptr<SparseMatrix<bool> > pNeighbour(new SparseMatrix<bool>(2,2));
-            for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
+            std::tr1::shared_ptr<SparseMatrix<DataType_> > pNeighbour(new SparseMatrix<DataType_>(2,2));
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pNeighbour->begin_elements()),
                 e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
                 if (adj[i] > std::numeric_limits<DataType_>::epsilon()) 
@@ -70,19 +70,20 @@ class FruchtermanReingoldPositionsQuickTest :
                 i++;
             }
 
-            // Trying to throw a GraphError
+            /*/ Trying to throw a GraphError
             try
             {
-                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, -5);
+                Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, nodeWeights, *pNeighbour);
                 TEST_CHECK(false);
             }
             catch (GraphError e)
             {
                 TEST_CHECK(true);
-            }
+            }*/
 
             // Creating a Positions object with the test scenario
-            Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
+            DenseVector<DataType_> nodeWeights(2, DataType_(1)); 
+            Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, nodeWeights, *pNeighbour);
 
             // update the positions 
             position.update(0.01,25);
@@ -138,8 +139,8 @@ class KamadaKawaiPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<SparseMatrix<bool> > pNeighbour(new SparseMatrix<bool>(2,2));
-            for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
+            std::tr1::shared_ptr<SparseMatrix<DataType_> > pNeighbour(new SparseMatrix<DataType_>(2,2));
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pNeighbour->begin_elements()),
                 e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
                 if (adj[i] > std::numeric_limits<DataType_>::epsilon())
@@ -149,19 +150,20 @@ class KamadaKawaiPositionsQuickTest :
                 i++;
             }
 
-            // Trying to throw a GraphError
+            /*/ Trying to throw a GraphError
             try
             {
-                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, -5);
+                Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*pPosition, *pNeighbour, -5);
                 TEST_CHECK(false);
             }
             catch (GraphError e)
             {
                 TEST_CHECK(true);
-            }
+            }*/
 
             // Creating a Positions object with the test scenario
-            Positions<Tag_, DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
+            DenseVector<DataType_> nodeWeights(2, DataType_(1)); 
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*pPosition, nodeWeights, *pNeighbour);
 
             // update the positions 
             position.update(0.01,50);
@@ -362,8 +364,8 @@ class KamadaKawaiPositionsTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<SparseMatrix<bool> > pNeighbour(new SparseMatrix<bool>(_nodecount,_nodecount));
-            for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
+            std::tr1::shared_ptr<SparseMatrix<DataType_> > pNeighbour(new SparseMatrix<DataType_>(_nodecount,_nodecount));
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pNeighbour->begin_elements()),
                 e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
                 if (adj[i] > std::numeric_limits<DataType_>::epsilon()) 
@@ -373,19 +375,20 @@ class KamadaKawaiPositionsTest :
                 i++;
             }
 
-            // Trying to throw a GraphError
+            /*/ Trying to throw a GraphError
             try
             {
-                Positions<Tag_, DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, -5);
+                Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*pPosition, *pNeighbour, -5);
                 TEST_CHECK(false);
             }
             catch (GraphError e)
             {
                 TEST_CHECK(true);
-            }
+            }*/
 
             // Creating a Positions object with the test scenario
-            Positions<Tag_, DataType_, methods::KamadaKawai> position(*pPosition, *pNeighbour, 2);
+            DenseVector<DataType_> nodeWeights(_nodecount, DataType_(1)); 
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(*pPosition, nodeWeights, *pNeighbour);
 
             // update the positions 
             position.update(0.00001, _nodecount * 10);
@@ -445,8 +448,8 @@ class FruchtermanReingoldPositionsTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<SparseMatrix<bool> > pNeighbour(new SparseMatrix<bool>(_nodecount,_nodecount));
-            for (typename MutableMatrix<bool>::ElementIterator e(pNeighbour->begin_elements()),
+            std::tr1::shared_ptr<SparseMatrix<DataType_> > pNeighbour(new SparseMatrix<DataType_>(_nodecount,_nodecount));
+            for (typename MutableMatrix<DataType_>::ElementIterator e(pNeighbour->begin_elements()),
                 e_end(pNeighbour->end_elements()); e != e_end ; ++e)
             {
                 if (adj[i] > std::numeric_limits<DataType_>::epsilon())
@@ -456,19 +459,20 @@ class FruchtermanReingoldPositionsTest :
                 i++;
             }
 
-            // Trying to throw a GraphError
+            /*/ Trying to throw a GraphError
             try
             {
-                Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, -5);
+                Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, *pNeighbour, -5);
                 TEST_CHECK(false);
             }
             catch (GraphError e)
             {
                 TEST_CHECK(true);
-            }
+            }*/
 
             // Creating a Positions object with the test scenario
-            Positions<Tag_, DataType_, methods::FruchtermanReingold> position(*pPosition, *pNeighbour, 2);
+            DenseVector<DataType_> nodeWeights(_nodecount, DataType_(1)); 
+            Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, nodeWeights, *pNeighbour);
 
             // update the positions 
             position.update(0.00001,_nodecount * 5);

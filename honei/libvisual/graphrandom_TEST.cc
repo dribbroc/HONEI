@@ -6,6 +6,7 @@
 #include <string>
 #include <honei/libgraph/graph.hh>
 #include <honei/libgraph/position.hh>
+#include <cstdlib>
 
 //
 using namespace honei;
@@ -16,38 +17,44 @@ using namespace gl_globals;
 template <typename Tag_, typename DataType_, typename GraphTag_>
 class EngineGraphTest :
     public BaseTest
-{  
+{ 
     private:
         typedef EngineGraph<Tag_, DataType_, GraphTag_> Engine;
         int _nodeCount;
+        double _p;
+        static inline DataType_ randomWeight()
+        {
+            return DataType_((std::rand() % 4) + 1);
+        }
     public:
-        EngineGraphTest(const std::string & type, int nodeCount) :
-            BaseTest("EngineGraph test<" + type + ">")
+        EngineGraphTest(const std::string & type, int nodeCount, double p) :
+            BaseTest("EngineGraph test<" + type + ">"),
+            _nodeCount(nodeCount),
+            _p(p)
         {
             register_tag(Tag_::name);
-            _nodeCount = nodeCount;
         }
 
-  
+        
         virtual void run() const
-         {
+        {
             int i =1;
             int * pi = &i;
-            Graph<DataType_> g(_nodeCount, 2);
+            Graph<DataType_>  g(_nodeCount, 2);
             for (int i = 0; i < _nodeCount; i++)
-                g.addNode(new Node<DataType_>(i, 1 + std::rand() % 4));
-
-            for (int i = 0; i < _nodeCount; i++)
-                g.addNode(new Node<DataType_>(i, 1));
+                g.addNode(new Node<DataType_>(i, randomWeight()));
                 
             for (int j = 1; j < _nodeCount; j++)
-                    g.addEdge(0, j, 1);
-   //         std::cout << "coordinates g: " << *g->coordinates();
-   //         std::cout << "edge matrix\n" << *g->edges();
+                    g.addEdge(0, j, randomWeight());
 
-            std::cout << "\nCalculate Position";
+        for (int i = 1; i < _nodeCount; ++i)
+            for (int j = i+1; j < _nodeCount; ++j)
+                        if (std::rand() < RAND_MAX * _p)
+                            g.addEdge(i, j, randomWeight());
+
+            std::cout << "\nCalculate Position\n";
             
-            Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), 9);
+            Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), _nodeCount * 0.1);
             
             
             char * c = "Test: Engine";
@@ -69,5 +76,5 @@ class EngineGraphTest :
          }
 };
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 11);
-//EngineGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double2("wkk float big", 200);
-EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200);
+EngineGraphTest<tags::CPU::SSE, double, methods::WeightedFruchtermanReingold> engine_test_double2("wkk double big", 200, 0.05);
+//EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 20);

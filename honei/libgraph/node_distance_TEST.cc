@@ -53,11 +53,6 @@ class NodeDistanceQuickTest :
                 *e = e.index();
             }
 
-            std::tr1::shared_ptr<DenseMatrix<bool> > pNeighbour(new DenseMatrix<bool>(3,3, false));
-            (*pNeighbour)[0][1] = true;
-            (*pNeighbour)[1][0] = true;
-            (*pNeighbour)[1][2] = true;
-            (*pNeighbour)[2][1] = true;
 
             std::tr1::shared_ptr<DenseMatrix<DataType_> > weight_of_edges(new DenseMatrix<DataType_>(3,3, DataType_(0)));
             (*weight_of_edges)[0][1] = 1;
@@ -84,27 +79,6 @@ class NodeDistanceQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[2][1], 8, std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(distance[2][2], 0, std::numeric_limits<DataType_>::epsilon());
 
-            NodeDistance<Tag_>::value(*dm2, *pNeighbour, *pSquarDist, *pInv_SquarDist, range);
-
-            TEST_CHECK_EQUAL((*pSquarDist)[0][0], 0);
-            TEST_CHECK_EQUAL((*pSquarDist)[1][1], 0);
-            TEST_CHECK_EQUAL((*pSquarDist)[2][2], 0);
-            TEST_CHECK_EQUAL((*pSquarDist)[2][0], 0);
-            TEST_CHECK_EQUAL((*pSquarDist)[0][2], 0);
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pSquarDist)[0][1], 8, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pSquarDist)[1][0], 8, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pSquarDist)[1][2], 8, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pSquarDist)[2][1], 8, std::numeric_limits<DataType_>::epsilon());
-
-            TEST_CHECK_EQUAL((*pInv_SquarDist)[0][0], 0);
-            TEST_CHECK_EQUAL((*pInv_SquarDist)[1][1], 0);
-            TEST_CHECK_EQUAL((*pInv_SquarDist)[2][2], 0);
-            TEST_CHECK_EQUAL((*pInv_SquarDist)[2][0], 0);
-            TEST_CHECK_EQUAL((*pInv_SquarDist)[0][2], 0);
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pInv_SquarDist)[0][1], 0.125, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pInv_SquarDist)[1][0], 0.125, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pInv_SquarDist)[1][2], 0.125, std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS((*pInv_SquarDist)[2][1], 0.125, std::numeric_limits<DataType_>::epsilon());
 
             NodeDistance<Tag_>::value(*dm2, *weight_of_edges, *pSquarDist2, *pInv_SquarDist2, range);
 
@@ -131,9 +105,13 @@ class NodeDistanceQuickTest :
 };
 NodeDistanceQuickTest<float, tags::CPU>  node_distance_quick_test_float("float");
 NodeDistanceQuickTest<double, tags::CPU> node_distance_quick_test_double("double");
+NodeDistanceQuickTest<float, tags::CPU::MultiCore>  mc_node_distance_quick_test_float("mc float");
+NodeDistanceQuickTest<double, tags::CPU::MultiCore>  mc_node_distance_quick_test_double("mc double");
 #ifdef HONEI_SSE
 NodeDistanceQuickTest<float, tags::CPU::SSE>  sse_node_distance_quick_test_float("sse float");
 NodeDistanceQuickTest<double, tags::CPU::SSE> sse_node_distance_quick_test_double("sse double");
+NodeDistanceQuickTest<float, tags::CPU::MultiCore::SSE>  mc_sse_node_distance_quick_test_float("mc sse float");
+NodeDistanceQuickTest<double, tags::CPU::MultiCore::SSE> mc_sse_node_distance_quick_test_double("mc sse double");
 #endif
 #ifdef HONEI_CELL
 NodeDistanceQuickTest<float, tags::Cell> cell_node_distance_quick_test_float("Cell float");

@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-25 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+    * honei/libgraph/position.hh, honei/libgraph/position_TEST.cc, honei/libgraph/position-impl.hh, honei/libgraph/node_distance.hh, honei/libgraph/node_distance-sse.cc, honei/libgraph/node_distance-cell.cc honei/libgraph/node_distance_TEST.cc, honei/libgraph/breadth_first_search.hh, honei/libgraph/breadth_first_search-mc.hh, honei/libgraph/breadth_first_search_TEST.cc: LibGraph refactoring and cleanup. Unweighted algorithms removed. Dijkstra replaced by BFS in Kamada-Kawai.  
+    * honei/libgraph/breadth_first_search_BENCHMARK.cc, honei/libgraph/position_BENCHMARK.cc, honei/libgraph/node_distance_BENCHMARK.cc: Benchmarks for layout algorithmns and important steps.
+    * honei/libgraph/evolving_graph_TEST.cc: Changed to reflect changes in Positions
+    * honei/libvisual/enginegraph.hh: Improved visualisation for graphs. A given number of update-steps can be done before rendering to improve performace (rendering is slow...)
+    * honei/libvisual/graphrandom_TEST.cc, honei/libvisual/evolving_TEST.cc, honei/libvisual/enginegraph_TEST.cc: Some (small) test cases for graph algorithms
+
 2008-01-24 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/relax_solver.hh:
