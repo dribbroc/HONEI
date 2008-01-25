@@ -30,47 +30,6 @@ using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
-class BreadthFirstSearchCliqueBench :
-    public Benchmark
-{
-    private:
-        unsigned long _nodecount;
-        unsigned long _count;
-    public:
-        BreadthFirstSearchCliqueBench(const std::string & id, unsigned long nodecount, unsigned long count) :
-            Benchmark(id)
-        {
-            _nodecount = nodecount;
-            _count = count;
-            register_tag(Tag_::name);
-        }
-
-        virtual void run()
-        {
-            // Create a nodecount-clique
-            SparseMatrix<bool>  pAdj(_nodecount, _nodecount);
-            for (typename MutableMatrix<bool>::ElementIterator e(pAdj.begin_elements()), e_end(pAdj.end_elements()); e != e_end ; ++e)
-            {
-                if (e.row() != e.column())
-                {
-                    *e = true;
-                }
-            }
-
-            // Creating a distance object with the test scenario
-            DenseMatrix<long int> distance(_nodecount, _nodecount, 0);
-
-            // Calculate distance matrix 
-            for(unsigned long i = 0; i < _count; ++i)
-            {
-                BENCHMARK(BreadthFirstSearch<Tag_>::value(distance, pAdj));
-            }
-
-            evaluate();
-        }
-};
-
-template <typename Tag_, typename DataType_>
 class BreadthFirstSearchWeightedCliqueBench :
     public Benchmark
 {
@@ -112,47 +71,6 @@ class BreadthFirstSearchWeightedCliqueBench :
             for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(BreadthFirstSearch<Tag_>::value(distance2, pNW, pEW));
-            }
-
-            evaluate();
-        }
-};
-
-template <typename Tag_, typename DataType_>
-class BreadthFirstSearchBinaryTreeBench :
-    public Benchmark
-{
-    private:
-        unsigned long _nodecount;
-        unsigned long _count;
-    public:
-        BreadthFirstSearchBinaryTreeBench(const std::string & id, unsigned long nodecount, unsigned long count) :
-            Benchmark(id)
-        {
-            _nodecount = nodecount;
-            _count = count;
-            register_tag(Tag_::name);
-        }
-
-        virtual void run()
-        {
-            // Create a binary tree with deep _nodecount
-            SparseMatrix<bool>  pAdj(_nodecount, _nodecount);
-            for (unsigned long i(0), column(1); column < _nodecount; i++, column +=2)
-            {
-                pAdj[i][column] = true;
-                pAdj[column][i] = true;
-                pAdj[i][column + 1] = true;
-                pAdj[column + 1][i] = true;
-            }
-
-            // Creating a distance object with the test scenario
-            DenseMatrix<long int> distance(_nodecount, _nodecount, 0);
-
-            // Calculate distance matrix
-            for(unsigned long i = 0; i < _count; ++i)
-            {
-                BENCHMARK(BreadthFirstSearch<Tag_>::value(distance, pAdj));
             }
 
             evaluate();
@@ -208,18 +126,10 @@ class BreadthFirstSearchWeightedBinaryTreeBench :
         }
 };
 
-BreadthFirstSearchCliqueBench<tags::CPU, float> breadth_first_search_clique_bench_float("BFS Clique Benchmark float", 1000, 3);
-BreadthFirstSearchCliqueBench<tags::CPU, double> breadth_first_search_clique_bench_double("BFS Clique Benchmark double", 1000, 3);
-BreadthFirstSearchCliqueBench<tags::CPU::MultiCore, float> mc_breadth_first_search_clique_bench_float("MC BFS Clique Benchmark float", 1000, 3);
-BreadthFirstSearchCliqueBench<tags::CPU::MultiCore, double> mc_breadth_first_search_clique_bench_double("MC BFS Clique Benchmark double", 1000, 3);
 BreadthFirstSearchWeightedCliqueBench<tags::CPU, float> breadth_first_search_weighted_clique_bench_float("BFS WeightedClique Benchmark float", 1000, 3);
 BreadthFirstSearchWeightedCliqueBench<tags::CPU, double> breadth_first_search_weighted_clique_bench_double("BFS WeightedClique Benchmark double", 1000, 3);
 BreadthFirstSearchWeightedCliqueBench<tags::CPU::MultiCore, float> mc_breadth_first_search_weighted_clique_bench_float("MC BFS WeightedClique Benchmark float", 1000, 3);
 BreadthFirstSearchWeightedCliqueBench<tags::CPU::MultiCore, double> mc_breadth_first_search_weighted_clique_bench_double("MC BFS WeightedClique Benchmark double", 1000, 3);
-BreadthFirstSearchBinaryTreeBench<tags::CPU, float> breadth_first_search_binary_tree_bench_float("BFS BinaryTree Benchmark float", 30, 3);
-BreadthFirstSearchBinaryTreeBench<tags::CPU, double> breadth_first_search_binary_tree_bench_double("BFS BinaryTree Benchmark double", 30, 3);
-BreadthFirstSearchBinaryTreeBench<tags::CPU::MultiCore, float> mc_breadth_first_search_binary_tree_bench_float("MC BFS BinaryTree Benchmark float", 30, 3);
-BreadthFirstSearchBinaryTreeBench<tags::CPU::MultiCore, double> mc_breadth_first_search_binary_tree_bench_double("MC BFS BinaryTree Benchmark double", 30, 3);
 BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU, float> breadth_first_search_weighted_binary_tree_bench_float("BFS WeightedBinaryTree Benchmark float", 30, 3);
 BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU, double> breadth_first_search_weighted_binary_tree_bench_double("BFS WeightedBinaryTree Benchmark double", 30, 3);
 BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU::MultiCore, float> mc_breadth_first_search_weighted_binary_tree_bench_float("MC BFS WeightedBinaryTree Benchmark float", 30, 3);

@@ -69,5 +69,5 @@ class EngineGraphTest :
          }
 };
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 11);
-//EngineGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double2("wkk float big", 200);
-EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200);
+EngineGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double2("wkk float big", 200);
+//EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200);

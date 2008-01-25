@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libgraph/breadth_first_search_BENCHMARK.cc,
+	honei/libgraph/node_distance_BENCHMARK.cc,
+	honei/libgraph/node_distance.hh, honei/libgraph/node_distance-sse.cc,
+	honei/libgraph/position_BENCHMARK.cc,
+	honei/libvisual/enginegraph_TEST.cc, honei/libvisual/files.m4:
+	Fixed multiple compile errors. Removed nodedistance bool methods.
+
 2008-01-25 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
     * honei/libgraph/position.hh, honei/libgraph/position_TEST.cc, honei/libgraph/position-impl.hh, honei/libgraph/node_distance.hh, honei/libgraph/node_distance-sse.cc, honei/libgraph/node_distance-cell.cc honei/libgraph/node_distance_TEST.cc, honei/libgraph/breadth_first_search.hh, honei/libgraph/breadth_first_search-mc.hh, honei/libgraph/breadth_first_search_TEST.cc: LibGraph refactoring and cleanup. Unweighted algorithms removed. Dijkstra replaced by BFS in Kamada-Kawai.  
     * honei/libgraph/breadth_first_search_BENCHMARK.cc, honei/libgraph/position_BENCHMARK.cc, honei/libgraph/node_distance_BENCHMARK.cc: Benchmarks for layout algorithmns and important steps.

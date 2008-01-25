@@ -342,46 +342,6 @@ DenseMatrix<double> NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double
     return result;
 }
 
-void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<bool> & neighbours,
-        DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
-{
-    float square_force_range(repulsive_force_range * repulsive_force_range);
-
-    for (unsigned long i(0); i < pos_matrix.rows(); ++i)
-    {
-        intern::sse::node_distance(inv_square_dist[i].elements(), pos_matrix.elements(), pos_matrix(i, 0), pos_matrix(i, 1), inv_square_dist[i].size());
-    }
-
-    for(DenseMatrix<bool>::ConstElementIterator g(neighbours.begin_elements()), g_end(neighbours.end_elements()) ;
-            g != g_end ; ++g)
-    {
-        if (*g != false)
-            square_dist(g.row(), g.column()) = inv_square_dist(g.row(), g.column());
-    }
-
-    intern::sse::invert_distance(inv_square_dist.elements(), square_force_range, inv_square_dist.columns() * inv_square_dist.rows());
-}
-
-void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix, const DenseMatrix<bool> & neighbours,
-        DenseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist, const double repulsive_force_range)
-{
-    double square_force_range(repulsive_force_range * repulsive_force_range);
-
-    for (unsigned long i(0); i < pos_matrix.rows(); ++i)
-    {
-        intern::sse::node_distance(inv_square_dist[i].elements(), pos_matrix.elements(), pos_matrix(i, 0), pos_matrix(i, 1), inv_square_dist[i].size());
-    }
-
-    for(DenseMatrix<bool>::ConstElementIterator g(neighbours.begin_elements()), g_end(neighbours.end_elements()) ;
-            g != g_end ; ++g)
-    {
-        if (*g != false)
-            square_dist(g.row(), g.column()) = inv_square_dist(g.row(), g.column());
-    }
-
-    intern::sse::invert_distance(inv_square_dist.elements(), square_force_range, inv_square_dist.columns() * inv_square_dist.rows());
-}
-
 void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<float> & neighbours,
         DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
 {
