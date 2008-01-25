@@ -32,6 +32,7 @@
 #include <honei/libutil/pool_task.hh>
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
+#include <honei/libutil/benchmark_info.hh>
 
 ///\todo: Do not use define for setting size of multicore-partitions.
 // For optimization purposes
@@ -166,7 +167,6 @@ namespace honei
 
         /// \}
 
-        #ifdef BENCHM
         template <typename DT1_>
         static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a)
         {
@@ -212,7 +212,6 @@ namespace honei
             result.size.push_back(a.size());
             return result;
         }
-        #endif
     };
 
     /**

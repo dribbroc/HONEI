@@ -26,6 +26,7 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/sum-mc.hh>
 #include <honei/libutil/tags.hh>
+#include <honei/libutil/benchmark_info.hh>
 
 #include <algorithm>
 
@@ -470,7 +471,6 @@ namespace honei
         }
         /// \}
 
-        #ifdef BENCHM
         template <typename DT1_, typename DT2_>
         static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
@@ -487,34 +487,36 @@ namespace honei
         static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, BandedMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands()) ;
+            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
                     r != r_end ; ++r)
             {
-                if (! r.exists())
-                    continue;
-
                 unsigned long size(b.size());
                 unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
                 unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
 
-                for (typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements()) ;
-                        c != c_end ; ++c)
+                typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+
+                if (r.index() < size - 1)
                 {
-                    if (row_index + c.index() >= size)
+                        c += ((size-1) - r.index());
+                }
+
+                for ( ; c != c_end ; ++c)
+                {
+                    if (row_index >= size)
                         break;
 
-                    if (col_index + c.index() >= size)
+                    if (col_index >= size)
                         break;
 
+                    //a(row_index, col_index) += *c;
                     result.flops += 1;
                     result.load += sizeof(DT1_) + sizeof(DT2_);
                     result.store += sizeof(DT1_);
+                    ++row_index;
+                    ++col_index;
                 }
             }
-            result.size.push_back(a.rows() * a.columns());
-            result.size.push_back(b.size() * b.size());
-            result.scale = (double(a.rows() * a.columns()) / result.flops);
-            return result; 
         }
 
         template <typename DT1_, typename DT2_>
@@ -539,7 +541,6 @@ namespace honei
             result.size.push_back(a.rows() * a.columns());
             return result;
         }
-        #endif
     };
 
     /**

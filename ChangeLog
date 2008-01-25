@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-25 David Gies <david-gies@gmx.de>
+
+	* benchmark/benchmark.hh, honei/libutil/benchmark_info.hh: Moved struct BenchmarkInfo to libutil.
+	* honei/libla/dot_product.hh, honei/libla/element_inverse.hh, honei/libla/element_product.hh, 
+	honei/libla/product.hh, honei/libla/reduction.hh, honei/libla/scale.hh, honei/libla/scaled_sum.hh, 
+	honei/libla/sum.hh: Applied Changes and fixed outdated BenchmarkInfos.
+
 2008-01-25 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/libgraph/node_distance_float_wkk.cc,

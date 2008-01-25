@@ -33,9 +33,9 @@
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/sum.hh>
 #include <honei/libutil/tags.hh>
+#include <honei/libutil/benchmark_info.hh>
 
 #include <cmath>
-#include <iostream>
 
 namespace honei
 {
@@ -168,7 +168,6 @@ namespace honei
             {
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
-
             DenseVector<DT1_> result(a.rows(), DT1_(0));
             int middle_index(a.rows() -1);
             for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
@@ -905,14 +904,22 @@ namespace honei
 
         /// \}
 
-        #ifdef BENCHM
         template <typename DT1_, typename DT2_>
         static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, DenseVectorBase<DT2_> & b)
         {
             BenchmarkInfo result;
-            result.flops = a.size() * a.size() * 2;
-            result.load = a.size() * a.size() * (sizeof(DT1_) + sizeof(DT2_));
-            result.store = a.size() * a.size() * sizeof(DT1_);
+            unsigned long temp(0);
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+                    vi != vi_end ; ++vi)
+            {
+                temp = vi.index();
+                if (temp > (a.size() - 1))
+                    temp = ((2 * a.size() - 2) - temp);
+                ++temp;
+                result.flops += temp * 2;
+                result.load += temp * (sizeof(DT1_) + sizeof(DT2_));
+                result.store += temp * sizeof(DT1_);
+            }
             result.size.push_back(a.rows() * a.columns());
             result.size.push_back(b.size());
             return result;
@@ -1052,7 +1059,6 @@ namespace honei
             result.scale = (double(tinfo.flops) / result.flops);
             return result;
         }
-        #endif
     };
 
     /**
@@ -1116,7 +1122,6 @@ namespace honei
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
         static DenseMatrix<float> value(const DenseMatrix<float> & a, const DenseMatrix<float> & b);
         static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVector<float> & b);
-        static DenseVector<double> value(const BandedMatrix<double> & a, const DenseVector<double> & b);
         static DenseMatrix<float> value(const SparseMatrix<float> & a, const DenseMatrix<float> & b);
     };
 

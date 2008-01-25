@@ -36,6 +36,7 @@
 #include <honei/libutil/pool_task.hh>
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
+#include <honei/libutil/benchmark_info.hh>
 
 #include <algorithm>
 #include <iostream>
@@ -210,7 +211,6 @@ namespace honei
 
         /// \}
 
-        #ifdef BENCHM
         template <typename DT1_>
         static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a)
         {
@@ -232,7 +232,6 @@ namespace honei
             result.size.push_back(a.size());
             return result; 
         }
-        #endif
     };
 
     /**

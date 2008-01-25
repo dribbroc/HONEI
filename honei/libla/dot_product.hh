@@ -33,6 +33,7 @@
 #include <honei/libutil/pool_task.hh>
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
+#include <honei/libutil/benchmark_info.hh>
 #include <tr1/functional>
 
 
@@ -158,7 +159,6 @@ namespace honei
 
         /// \}
 
-        #ifdef BENCHM 
         template <typename DT1_, typename DT2_>
         static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b)
         {
@@ -212,7 +212,6 @@ namespace honei
             result.scale = (double(2 * a.size) / result.flops);
             return result;
         }
-        #endif
     };
 
     /**

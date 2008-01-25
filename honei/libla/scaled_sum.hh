@@ -25,6 +25,7 @@
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/vector_error.hh>
 #include <honei/libutil/tags.hh>
+#include <honei/libutil/benchmark_info.hh>
 
 namespace honei
 {
@@ -224,7 +225,6 @@ namespace honei
         }
         /// \}
 
-        #ifdef BENCHM
         template <typename DT1_, typename DT2_, typename DT3_>
         static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b, DT3_ c)
         {
@@ -236,7 +236,6 @@ namespace honei
             result.size.push_back(b.size());
             return result; 
         }
-        #endif
     };
 
     /**

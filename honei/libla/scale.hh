@@ -28,6 +28,7 @@
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
 #include <honei/libutil/tags.hh>
+#include <honei/libutil/benchmark_info.hh>
 
 #include <list>
 
@@ -161,7 +162,6 @@ namespace honei
 
         /// \}
 
-        #ifdef BENCHM
         template <typename DT1_, typename DT2_>
         static inline BenchmarkInfo get_benchmark_info(DT1_ a, DenseMatrix<DT2_> & b)
         {
@@ -200,7 +200,6 @@ namespace honei
             result.size.push_back(b.size());
             return result; 
         }
-        #endif
     };
 
     /**
