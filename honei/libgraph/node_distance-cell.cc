@@ -30,33 +30,44 @@ namespace honei
     DenseMatrix<float>
     NodeDistance<tags::Cell>::value(const DenseMatrix<float> & pos_matrix)
     {
-        CONTEXT("When calculating node distances for DenseMatrix<float> (Cell):");
+        CONTEXT("When calculating node distances (WKK) for DenseMatrix<float> (Cell):");
 
-        DenseMatrix<float> result(pos_matrix.rows(), pos_matrix.rows(), float(0));
+        std::list<SPEInstruction *> instructions;
+        DenseMatrix<float> result(pos_matrix.rows(), pos_matrix.rows());
 
-        for(unsigned i(0) ; i < pos_matrix.rows() ; i++)
+        unsigned a_rows = 16384 / (pos_matrix.rows() * 4);
+        if (a_rows > pos_matrix.rows())
+            a_rows = pos_matrix.rows();
+
+        while ((a_rows % 2) != 0 || (a_rows * pos_matrix.rows() % 4 != 0))
+            a_rows--;
+
+        unsigned needed_iterations = pos_matrix.rows() / a_rows;
+        unsigned ppu_start_row = needed_iterations * a_rows;
+        unsigned ppu_rows = (pos_matrix.rows() - ppu_start_row);
+
+        for (unsigned i(0) ; i < needed_iterations ; i++)
         {
-            unsigned off(pos_matrix.rows() % 16);
-            DenseVector<float> result_row(pos_matrix.rows() + 16 - off, float(0));
+            Operand oa = { pos_matrix.elements() + (i * a_rows * 2) };
+            Operand ob = { pos_matrix.elements() };
+            Operand oc;
+            oc.u = a_rows * 2;
 
-            Operand oa = { pos_matrix.elements() };
+            Operand od, oe; // Transfer sizes for B = pos_matrix (full matrix with partial transfers)
+            od.u = ((pos_matrix.rows() * 2)) / (16384 / sizeof(float));
+            oe.u = ((pos_matrix.rows() * 2)) % (16384 / sizeof(float));
 
-            Operand ob, oc;
-            ob.u = (pos_matrix.rows() * 2) / (16384 / sizeof(float));
-            oc.u = (pos_matrix.rows() * 2) % (16384 / sizeof(float));
             oc.u *= 4;
-
-            Operand od, oe;
-            od.f = *(pos_matrix.elements() + (i * 2));
-            oe.f = *(pos_matrix.elements() + (i * 2) + 1);
-
-            Operand of = { result_row.elements() };
-            Operand og = { result_row.size() };
+            oe.u *= 4;
+            Operand of = { result.elements() + (i * a_rows * pos_matrix.rows()) };
+            Operand og;
+            og.u = pos_matrix.rows();
 
             bool use_spe(true);
+
             if (0 == oc.u)
             {
-                if (ob.u > 0)
+                if (pos_matrix.rows() > 0)
                 {
                     oc.u = 16 * 1024;
                 }
@@ -65,124 +76,83 @@ namespace honei
                     use_spe = false;
                 }
             }
+
+            if (0 == oe.u)
+            {
+                if (od.u > 0)
+                {
+                    oe.u = 16 * 1024;
+                }
+            }
             else
             {
-                ++ob.u;
+                ++od.u;
             }
 
-            if (use_spe)
+            if (use_spe && i % 6 != 5)
             {
-                SPEInstruction instruction(oc_node_distance_float_wkk, 16384, oa, ob, oc, od, oe, of, og);
+                SPEInstruction * instruction = new SPEInstruction(oc_node_distance_float_wkk, 16384, oa, ob, oc, od, oe, of, og);
 
-                SPEManager::instance()->dispatch(instruction);
+                SPEManager::instance()->dispatch(*instruction);
 
-                instruction.wait();
+                instructions.push_back(instruction);
+            }
+            else
+            {
+                for(std::list<SPEInstruction * >::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; ++i)
+                {
+                        (*i)->wait();
+                }
+
+                SPEInstruction * instruction = new SPEInstruction(oc_node_distance_float_wkk, 16384, oa, ob, oc, od, oe, of, og);
+
+                SPEManager::instance()->dispatch(*instruction);
+
+                instructions.push_back(instruction);
+
             }
 
-            float * address = result.elements() + (result.rows() * i);
-            DenseVectorRange<float> res(result_row, pos_matrix.rows(), 0);
-            Vector<float>::ElementIterator i(res.begin_elements());
+        }
 
-            for (int j(0); j < result.rows() ; j++)
+        unsigned starting_point(ppu_start_row * pos_matrix.rows());
+
+        MutableMatrix<float>::ElementIterator j(result.element_at(starting_point));
+        for(Matrix<float>::ConstElementIterator k(pos_matrix.element_at(ppu_start_row * 2)), k_end(pos_matrix.end_elements()) ; k != k_end ; )
+        {
+            float a_x = *k;
+            ++k;
+            float a_y = *k;
+            ++k;
+
+            for (Matrix<float>::ConstElementIterator i(pos_matrix.begin_elements()), i_end(pos_matrix.end_elements()) ; i != i_end ; )
             {
-                address[j] = *i;
+                float x_temp = a_x - *i;
                 ++i;
+                float y_temp = a_y - *i;
+                ++i;
+                x_temp *= x_temp;
+                y_temp *= y_temp;
+
+                *j = x_temp + y_temp;
+
+                ++j;
             }
+        }
+
+        for(std::list<SPEInstruction * >::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; ++i)
+        {
+                (*i)->wait();
+                delete *i;
         }
 
         return result;
     }
 
     void
-    NodeDistance<tags::Cell>::value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<bool> & neighbours,
-        DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
-    {
-        CONTEXT("When calculating node distances for DenseMatrix<float> (Cell):");
-
-        MutableMatrix<float>::ElementIterator e(inv_square_dist.begin_elements());
-        MutableMatrix<float>::ElementIterator f(square_dist.begin_elements());
-        Matrix<bool>::ConstElementIterator g(neighbours.begin_elements());
-        float square_force_range(repulsive_force_range * repulsive_force_range);
-
-        DenseMatrix<float> result(pos_matrix.rows(), pos_matrix.rows(), float(0));
-
-        for(unsigned i(0) ; i < pos_matrix.rows() ; i++)
-        {
-            unsigned off(pos_matrix.rows() % 16);
-            DenseVector<float> result_row(pos_matrix.rows() + 16 - off, float(0));
-
-            Operand oa = { pos_matrix.elements() };
-
-            Operand ob, oc;
-            ob.u = (pos_matrix.rows() * 2) / (16384 / sizeof(float));
-            oc.u = (pos_matrix.rows() * 2) % (16384 / sizeof(float));
-            oc.u *= 4;
-
-            Operand od, oe;
-            od.f = *(pos_matrix.elements() + (i * 2));
-            oe.f = *(pos_matrix.elements() + (i * 2) + 1);
-
-            Operand of = { result_row.elements() };
-            Operand og = { result_row.size() };
-
-            bool use_spe(true);
-            if (0 == oc.u)
-            {
-                if (ob.u > 0)
-                {
-                    oc.u = 16 * 1024;
-                }
-                else
-                {
-                    use_spe = false;
-                }
-            }
-            else
-            {
-                ++ob.u;
-            }
-
-            if (use_spe)
-            {
-                SPEInstruction instruction(oc_node_distance_float_wkk, 16384, oa, ob, oc, od, oe, of, og);
-
-                SPEManager::instance()->dispatch(instruction);
-
-                instruction.wait();
-            }
-
-            float * address = result.elements() + (result.rows() * i);
-            DenseVectorRange<float> res(result_row, pos_matrix.rows(), 0);
-            Vector<float>::ElementIterator i(res.begin_elements());
-
-            for (int j(0); j < result.rows() ; j++)
-            {
-                address[j] = *i;
-                if (*i < square_force_range && *i > std::numeric_limits<float>::epsilon())
-                {
-                    *e = 1 / *i;
-                }
-                else
-                {
-                    *e = 0.0f;
-                }
-
-                if (*g)
-                {
-                    *f = *i;
-                }
-
-                ++i; ++e; ++f; ++g;
-            }
-
-        }
-    }
-
-    void
     NodeDistance<tags::Cell>::value(const DenseMatrix<float> & pos_matrix, const DenseMatrix<float> & edge_weights,
         DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist, const float repulsive_force_range)
     {
-        CONTEXT("When calculating node distances for DenseMatrix<float> (Cell):");
+        CONTEXT("When calculating node distances (WFR) for DenseMatrix<float> (Cell):");
 
         std::list<SPEInstruction *> instructions;
         float square_force_range(repulsive_force_range * repulsive_force_range);
@@ -266,9 +236,7 @@ namespace honei
                 SPEManager::instance()->dispatch(*instruction);
 
                 instructions.push_back(instruction);
-
             }
-
         }
 
         DenseMatrix<float> tiny_result(ppu_rows, pos_matrix.rows());
@@ -320,7 +288,5 @@ namespace honei
                 (*i)->wait();
                 delete *i;
         }
-
     }
-
 }
