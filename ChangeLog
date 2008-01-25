@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-25 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libgraph/position-impl.hh:
+	Added arch tags.
+
 2008-01-25 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.hh, honei/libutil/benchmark_info.hh: Moved struct BenchmarkInfo to libutil.
