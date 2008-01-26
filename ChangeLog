@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/fill_double.cc, honei/cell/libla/fill_float.cc,
+	honei/cell/libla/Makefile.am:
+	Fixed compile bugs. Temporary removed fill double version.
+
 2008-01-26 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/kernels/kernel_reference.sk,

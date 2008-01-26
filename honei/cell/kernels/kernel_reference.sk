@@ -24,7 +24,6 @@ dword           norm_l_two_dense_float
 void            element_inverse_float
 void            scaled_sum_dense_dense_float                scaled_sum_dense_dense_float
 void            fill_float
-void            fill_double
 
 # LibGraph Operations
 #####################

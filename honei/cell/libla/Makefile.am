@@ -26,8 +26,7 @@ libla_spe_a_SOURCES = \
 	norm_l_two_dense_float.cc \
 	element_inverse_float.cc \
 	scaled_sum_dense_dense_float.cc \
-	fill_float.cc \
-	fill_double.cc
+	fill_float.cc
 
 libla_spe_a_LIBADD = \
 	$(top_srcdir)/honei/cell/libutil/libutil_spe.a

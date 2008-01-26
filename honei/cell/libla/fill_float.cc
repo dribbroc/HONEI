@@ -28,11 +28,12 @@ namespace honei
     {
         namespace implementation
         {
-            void fill_float(vector float * elements, const unsigned size, const vector float scalars)
+            void fill_float(vector float * elements, const unsigned size, const float scalar)
             {
+                const vector float scalar_v(spu_splats(scalar));
                 for (unsigned k(0) ; k < size ; ++k)
                 {
-                    elements[k] = scalars;
+                    elements[k] = scalar_v;
                 }
             }
         }

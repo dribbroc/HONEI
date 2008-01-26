@@ -28,11 +28,12 @@ namespace honei
     {
         namespace implementation
         {
-            void fill_double(vector double * elements, const unsigned size, const vector double scalars)
+            void fill_double(vector double * elements, const unsigned size, const double scalar)
             {
+                const vector double scalar_v(spu_splats(scalar));
                 for (unsigned k(0) ; k < size ; ++k)
                 {
-                    elements[k] = scalars;
+                    elements[k] = scalar_v;
                 }
             }
         }
