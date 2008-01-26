@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-26 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/fill_double.cc, honei/cell/libla/fill_float.cc,
+	honei/cell/libla/Makefile.am, honei/cell/libla/operations.hh,
+	honei/cell/opcodes.hh: Implemented an operation to fill containers
+	with float and double values using one or more SPUs.
+
 2008-01-26 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* honei/libutil/wrapper.hh: Changed tags for profiling to be unique.
