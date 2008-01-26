@@ -37,6 +37,8 @@ namespace honei
     template <typename Tag_, typename DataType_> class SolverServer
     {
         private:
+            int _scenario;
+
             void _read_scenario(int c)
             {
                 char buffer[BUFFER_SIZE], scenario[BUFFER_SIZE];
@@ -44,6 +46,7 @@ namespace honei
 
                 bytes = recv(c, scenario, sizeof(scenario) - 1, 0);
                 scenario[bytes] = '\0';
+                _scenario = scenario[0];
 
                 std::cout<<"scenario choosen: "<<scenario<<std::endl;
             }
@@ -53,6 +56,7 @@ namespace honei
                 char buffer[DATA_SIZE], handshake[255] ;
                 int bytes;
 
+                /// \todo set solver scenarion = _scenario
                 double tve(4711.1234);
 
                 do

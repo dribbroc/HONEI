@@ -37,6 +37,8 @@ namespace honei
     template <typename Tag_, typename DataType_> class SolverClient
     {
         private:
+            int _socket;
+
             void _write_scenario(int c)
             {
                 char buffer[BUFFER_SIZE];
@@ -78,30 +80,32 @@ namespace honei
             }
 
         public:
-            void run()
+            void init(char *  hostname, int port)
             {
-                int s;
                 struct sockaddr_in srv;
 
-                s = socket(AF_INET, SOCK_STREAM, 0);
-                if (s == -1)
+                _socket = socket(AF_INET, SOCK_STREAM, 0);
+                if (_socket == -1)
                 {
                     perror("socket failed()");
                 }
 
-                srv.sin_addr = *(struct in_addr*) gethostbyname("localhost")->h_addr;
+                srv.sin_addr = *(struct in_addr*) gethostbyname(hostname)->h_addr;
 
-                srv.sin_port = htons(4711);
+                srv.sin_port = htons(port);
                 srv.sin_family = AF_INET;
 
-                if (connect(s, (struct sockaddr*)&srv, sizeof(srv)) == -1)
+                if (connect(_socket, (struct sockaddr*)&srv, sizeof(srv)) == -1)
                 {
                     perror("connect failed()");
                 }
 
-                _handling(s);
+            }
+            void run()
+            {
+                _handling(_socket);
 
-                close(s);
+                close(_socket);
             }
     };
 }

@@ -39,6 +39,7 @@ class SolverClientTest :
         virtual void run() const
         {
             SolverClient<Tag_, DataType_> solver_client;
+            solver_client.init("localhost", 4711);
             solver_client.run();
             TEST_CHECK(true);
         }
