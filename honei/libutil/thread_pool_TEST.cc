@@ -22,6 +22,7 @@
 #define DEBUG 1
 #endif
 
+#include <honei/libutil/lock.hh>
 #include <honei/libutil/pool_task.hh>
 #include <honei/libutil/pool_thread.hh>
 #include <honei/libutil/stringify.hh>
@@ -39,15 +40,18 @@ namespace
     {
         private:
             unsigned & _v;
+            Mutex * _mutex;
 
         public:
-            TestTask(unsigned & v) :
-                _v(v)
+            TestTask(unsigned & v, Mutex * mutex) :
+                _v(v),
+                _mutex(mutex)
             {
             }
 
             virtual void operator() ()
             {
+                Lock l(*_mutex);
                 ++_v;
             }
     };
@@ -65,7 +69,8 @@ class ThreadPoolTest :
         virtual void run() const
         {
             unsigned v(34);
-            TestTask t(v);
+            Mutex mutex;
+            TestTask t(v, &mutex);
             WorkerTask wt(t);
             ThreadPool * p(ThreadPool::get_instance(6));
             PoolTask * pt[500];
