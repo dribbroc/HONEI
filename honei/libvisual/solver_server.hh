@@ -46,9 +46,9 @@ namespace honei
 
                 bytes = recv(c, scenario, sizeof(scenario) - 1, 0);
                 scenario[bytes] = '\0';
-                _scenario = scenario[0];
+                _scenario = atoi(scenario);
 
-                std::cout<<"scenario choosen: "<<scenario<<std::endl;
+                std::cout<<"scenario choosen: "<<_scenario<<std::endl;
             }
 
             int _write_timesteps(int c)
@@ -117,6 +117,7 @@ namespace honei
 
                 for(;;)
                 {
+                    std::cout<<"Waiting for clients to connect."<<std::endl;
                     cli_size = sizeof(cli);
                     c = accept(s, (struct sockaddr*)&cli, (socklen_t*)&cli_size);
                     if (c == -1)

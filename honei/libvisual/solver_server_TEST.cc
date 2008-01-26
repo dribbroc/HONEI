@@ -43,4 +43,4 @@ class SoverServerTest :
             TEST_CHECK(true);
         }
 };
-//SoverServerTest<tags::CPU, double> solver_server_test_double("double");
+//SoverServerTest<tags::CPU, float> solver_server_test_double("float");

@@ -39,9 +39,9 @@ class SolverClientTest :
         virtual void run() const
         {
             SolverClient<Tag_, DataType_> solver_client;
-            solver_client.init("localhost", 4711);
+            solver_client.init("localhost", 4711, 12345);
             solver_client.run();
             TEST_CHECK(true);
         }
 };
-//SolverClientTest<tags::CPU, double> solver_client_test_double("double");
+//SolverClientTest<tags::CPU, float> solver_client_test_double("float");

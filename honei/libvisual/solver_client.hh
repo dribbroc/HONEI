@@ -28,6 +28,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <honei/libla/dense_matrix.hh>
 
 #define BUFFER_SIZE 1024
 #define DATA_SIZE 1234567
@@ -39,14 +40,16 @@ namespace honei
         private:
             int _socket;
 
-            void _write_scenario(int c)
+            void _write_scenario(int c, int scenario)
             {
                 char buffer[BUFFER_SIZE];
                 int bytes;
 
 
                 std::cout<<"Selecting scenario"<<std::endl;
-                strcpy(buffer, "123");
+                //strcpy(buffer, "4711");
+                //itoa(scenario, buffer, 10);
+                sprintf(buffer, "%i", scenario);
                 bytes = send(c, buffer, strlen(buffer), 0);
             }
 
@@ -74,14 +77,25 @@ namespace honei
 
             int _handling(int c)
             {
-                _write_scenario(c);
+                //_write_scenario(c, 12345);
                 _read_timesteps(c);
                 return 0;
             }
 
         public:
-            void init(char *  hostname, int port)
+            SolverClient() :
+                _socket(-1)
             {
+            }
+
+            ~SolverClient()
+            {
+                if (_socket != -1) close(_socket);
+            }
+
+            void init(char *  hostname, int port, int scenario)
+            {
+                if (_socket != -1) close(_socket);
                 struct sockaddr_in srv;
 
                 _socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -100,12 +114,17 @@ namespace honei
                     perror("connect failed()");
                 }
 
+                _write_scenario(_socket, 12345);
+
             }
             void run()
             {
                 _handling(_socket);
+            }
 
-                close(_socket);
+            DenseMatrix<DataType_> & do_step (DenseMatrix<DataType_> & height_field)
+            {
+                return height_field;
             }
     };
 }
