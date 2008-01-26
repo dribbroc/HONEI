@@ -22,6 +22,7 @@
 #define LIBLA_GUARD_WRAPPER_HH 1
 
 #include <honei/libutil/lock.hh>
+#include <honei/libutil/profiler.hh>
 
 namespace honei
 {
@@ -60,12 +61,57 @@ namespace honei
                 {
                     _result = Tag_::value(_a, _b, _c, _d, _e);
                 }
-                
+
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b, _c, _d, _e));
+                    PROFILER_START("mutex");
                     Lock l(*mutex);
+                    PROFILER_STOP("mutex");
                     _result += temp;
+                }
+
+        };
+
+    template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_, typename DT5_>
+        class FiveArgWrapper
+        {
+            private:
+                DT1_ _a;
+
+                DT2_ _b;
+
+                DT3_ _c;
+
+                DT4_ _d;
+
+                DT5_ _e;
+
+
+            public:
+
+                typedef void result_type;
+
+                FiveArgWrapper(DT1_ & a, DT2_ & b, DT3_ & c, DT4_ & d, DT5_ & e):
+                    _a(a),
+                    _b(b),
+                    _c(c),
+                    _d(d),
+                    _e(e)
+                {
+                }
+
+                void operator() ()
+                {
+                    Tag_::value(_a, _b, _c, _d, _e);
+                }
+
+                void operator()(Mutex * mutex)
+                {
+                    PROFILER_START("mutex");
+                    Lock l(*mutex);
+                    PROFILER_STOP("mutex");
+                    Tag_::value(_a, _b, _c, _d, _e);
                 }
 
         };
@@ -102,11 +148,13 @@ namespace honei
                 {
                     _result = Tag_::value(_a, _b, _c, _d);
                 }
-                
+
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b, _c, _d));
+                    PROFILER_START("mutex");
                     Lock l(*mutex);
+                    PROFILER_STOP("mutex");
                     _result += temp;
                 }
 
@@ -143,7 +191,9 @@ namespace honei
 
                 void operator() (Mutex * mutex)
                 {
+                    PROFILER_START("mutex");
                     Lock l(*mutex);
+                    PROFILER_STOP("mutex");
                     Tag_::value(_a, _b, _c, _d);
                 }
         };
@@ -177,11 +227,13 @@ namespace honei
                 {
                     _result = Tag_::value(_a, _b, _c);
                 }
-                
+
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b, _c));
+                    PROFILER_START("mutex");
                     Lock l(*mutex);
+                    PROFILER_STOP("mutex");
                     _result += temp;
                 }
 
@@ -216,11 +268,13 @@ namespace honei
 
                 void operator() (Mutex * mutex)
                 {
+                    PROFILER_START("mutex");
                     Lock l(*mutex);
+                    PROFILER_STOP("mutex");
                     Tag_::value(_a, _b, _c);
                 }
         };
-    
+
     template < typename Tag_, typename DT1_, typename DT2_, typename DT3_>
         class ResultTwoArgWrapper
         {
@@ -247,11 +301,13 @@ namespace honei
                 {
                     _result = Tag_::value(_a, _b);
                 }
-                
+
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b));
+                    PROFILER_START("mutex");
                     Lock l(*mutex);
+                    PROFILER_STOP("mutex");
                     _result += temp;
                 }
 
@@ -306,11 +362,13 @@ namespace honei
                 {
                     _result = Tag_::value(_a);
                 }
-                
+
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a));
+                    PROFILER_START("mutex");
                     Lock l(*mutex);
+                    PROFILER_STOP("mutex");
                     _result += temp;
                 }
 
