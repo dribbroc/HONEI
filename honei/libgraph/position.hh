@@ -201,14 +201,14 @@
                     _coordinates(coordinates),
                     _weights_of_nodes(weights_of_nodes),
                     _weights_of_edges(weights_of_edges),
-                    _repulsive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), 0),
-                    _attractive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), 0),
+                    _repulsive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), DataType_(0)),
+                    _attractive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), DataType_(0)),
                     _previous_max_Force(DataType_(0)),
                     _previous_max_Force_2(DataType_(0)),
                     _number_of_iterations(1),
                     _max_force(0),
                     _step_width(0),
-                    _repulsive_force_range(0)
+                    _repulsive_force_range(DataType_(0))
                 {
                 // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
                     typename MutableMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
@@ -240,7 +240,7 @@
                     _number_of_iterations(1),
                     _max_force(0),
                     _step_width(0),
-                    _repulsive_force_range(0)
+                    _repulsive_force_range(DataType_(0))
                 {
                     // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
                     typename MutableMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
@@ -306,7 +306,7 @@
                     for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements()) ;
                         i != i_end ; ++i)
                     {
-                        *i = Norm<vnt_l_two, true>::value(attractive_forces[i.index()]);
+                        *i = Norm<vnt_l_two, true, Tag_>::value(attractive_forces[i.index()]);
                         result = std::max(result, *i);
                     }
 
@@ -336,7 +336,7 @@
 
                 void init()
                 {
-                    
+
                 }
 
         };
@@ -461,7 +461,7 @@
                     for (typename DenseVector<DataType_>::ElementIterator i(resulting_forces.begin_elements()), i_end(resulting_forces.end_elements());
                         i != i_end ; ++i)
                     {
-                        *i = Norm<vnt_l_two, true>::value(_spring_forces[i.index()]);
+                        *i = Norm<vnt_l_two, true, Tag_>::value(_spring_forces[i.index()]);
                         *i > result ? result = *i, _max_node = i.index() : 0;
                     }
 
@@ -485,7 +485,7 @@
 
                     // previous_spring_force of _max_node
                     DenseVector<DataType_> _previous_spring_force(_spring_forces[_max_node].copy());
-                    Scale<>::value(_previous_spring_force, DataType_(1 / Norm<vnt_l_two, true>::value(_previous_spring_force)));
+                    Scale<>::value(_previous_spring_force, DataType_(1 / Norm<vnt_l_two, true, Tag_>::value(_previous_spring_force)));
 
                     // previous_max_node
                     int _previous_max_node(_max_node);
