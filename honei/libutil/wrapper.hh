@@ -65,9 +65,9 @@ namespace honei
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b, _c, _d, _e));
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<5,R>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<5,R>:mutex");
                     _result += temp;
                 }
 
@@ -108,9 +108,9 @@ namespace honei
 
                 void operator()(Mutex * mutex)
                 {
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<5>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<5>:mutex");
                     Tag_::value(_a, _b, _c, _d, _e);
                 }
 
@@ -152,9 +152,9 @@ namespace honei
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b, _c, _d));
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<4,R>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<4,R>:mutex");
                     _result += temp;
                 }
 
@@ -191,9 +191,9 @@ namespace honei
 
                 void operator() (Mutex * mutex)
                 {
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<4>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<4>:mutex");
                     Tag_::value(_a, _b, _c, _d);
                 }
         };
@@ -231,9 +231,9 @@ namespace honei
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b, _c));
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<3,R>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<3,R>:mutex");
                     _result += temp;
                 }
 
@@ -268,9 +268,9 @@ namespace honei
 
                 void operator() (Mutex * mutex)
                 {
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<3>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<3>:mutex");
                     Tag_::value(_a, _b, _c);
                 }
         };
@@ -305,9 +305,9 @@ namespace honei
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a, _b));
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<2,R>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<2,R>:mutex");
                     _result += temp;
                 }
 
@@ -366,9 +366,9 @@ namespace honei
                 void operator()(Mutex * mutex)
                 {
                     DT1_ temp(Tag_::value(_a));
-                    PROFILER_START("mutex");
+                    PROFILER_START("Wrapper<1,R>:mutex");
                     Lock l(*mutex);
-                    PROFILER_STOP("mutex");
+                    PROFILER_STOP("Wrapper<1,R>:mutex");
                     _result += temp;
                 }
 
