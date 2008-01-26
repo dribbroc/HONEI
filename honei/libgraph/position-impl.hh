@@ -92,7 +92,7 @@
                 {
                     // Calculate force parameter vector of node with maximal force(_auxiliary)
                     Difference<Tag_>::value(node_forces[pos_1], coordinates[_previous_max_node]);
-                    DataType_ _auxiliary(Norm<vnt_l_two, false>::value(node_forces[pos_1]));
+                    DataType_ _auxiliary(Norm<vnt_l_two, false, Tag_>::value(node_forces[pos_1]));
                     DataType_ _auxiliary2(_auxiliary * DataType_(2));
                     _auxiliary = _auxiliary + graph_distance[i];
                     (_auxiliary != 0) ? _auxiliary = _auxiliary2 / _auxiliary - DataType_(1): _auxiliary = DataType_(0);
@@ -104,7 +104,7 @@
                     // Calculate the _spring_forces = _spring_forces + node_forces
                     Sum<Tag_>::value(spring_forces[i], node_forces[pos_1]);
                     // Calculate the resulting forces, the maximal force and the node with maximal force
-                    DataType_ resulting_force(Norm<vnt_l_two, true>::value(spring_forces[i]));
+                    DataType_ resulting_force(Norm<vnt_l_two, true, Tag_>::value(spring_forces[i]));
                     resulting_force > result ? result = resulting_force, max_node = i : 0;
                     // Write new node_forces back
                     TypeTraits<DataType_>::copy(node_forces[pos_1].elements(), node_forces[pos_2].elements(), coordinates.columns());
@@ -114,7 +114,7 @@
                 }
                 // Calculate the _spring_forces at _previous_max_node = _spring_forces + _force_difference_of_max_node
                 Sum<Tag_>::value(spring_forces[_previous_max_node], _force_difference_of_max_node);
-                DataType_ resulting_force(Norm<vnt_l_two, true>::value(spring_forces[_previous_max_node]));
+                DataType_ resulting_force(Norm<vnt_l_two, true, Tag_>::value(spring_forces[_previous_max_node]));
                 // Calculate the resulting forces, the maximal force and the node with maximal force for _previous_max_node
                 resulting_force > result ? result = resulting_force, max_node = _previous_max_node: 0;
             }
