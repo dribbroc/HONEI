@@ -19,7 +19,7 @@
 
 #include <honei/cell/cell.hh>
 #include <honei/cell/libswe/operations.hh>
-#include <honei/cell/libutil/transfer.hh>
+#include <honei/cell/libswe/triple.hh>
 
 #include <spu_intrinsics.h>
 
@@ -29,46 +29,38 @@ namespace honei
     {
         namespace implementation
         {
-            void flow_processing_x_float(vector float * elements, const unsigned size, const float scalar)
+            void flow_processing_x_float(vector float * elements, const unsigned size, const float)
             {
                 const vector float one(spu_splats(1.0f));
                 const vector float gravity_by_two(spu_splats(9.81f / 2.0f));
-                const vector unsigned char extract_patterns[2] = {
-                    { 0x00, 0x01, 0x02, 0x03, 0x0C, 0x0D, 0x0E, 0x0F, 0x18, 0x19, 0x1A, 0x1B, 0x1F, 0x1F, 0x1F, 0x1F },
-                    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x14, 0x15, 0x16, 0x17 }
-                };
-                const vector unsigned char insert_patterns[2] = {
-                    { 0x00, 0x01, 0x02, 0x03, 0x10, 0x11, 0x12, 0x13, 0xFF, 0xFF, 0xFF, 0xFF, 0x04, 0x05, 0x06, 0x07 },
-                    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x10, 0x11, 0x12, 0x13, 0x0C, 0x0D, 0x0E, 0x0F }
-                };
+                const vector float eps(spu_splats(1.19209e-07f));
+                const vector float eps_inv(spu_splats(8.3886e+06f));
 
                 for (unsigned i(0) ; i + 2 < size ; i += 3)
                 {
-                    vector float h(spu_shuffle(elements[i], elements[i + 1], extract_patterns[0]));
-                    h = spu_shuffle(h, elements[i + 2], extract_patterns[1]);
-
-                    vector float q1(spu_shuffle(elements[i + 1], elements[i + 2], extract_patterns[0]));
-                    q1 = spu_shuffle(q1, elements[i], extract_patterns[1]);
-
-                    vector float q2(spu_shuffle(elements[i + 2], elements[i], extract_patterns[0]));
-                    q2 = spu_shuffle(q2, elements[i + 1], extract_patterns[1]);
+                    vector float h(extract_h(elements[i], elements[i + 1], elements[i + 2]));
+                    vector float q1(extract_q1(elements[i], elements[i + 1], elements[i + 2]));
+                    vector float q2(extract_q2(elements[i], elements[i + 1], elements[i + 2]));
 
                     vector float h_inv(spu_re(h));
                     vector float h_inv_t(spu_nmsub(h, h_inv, one));
                     h_inv = spu_madd(h_inv_t, h_inv, h_inv);
 
+                    vector unsigned h_smaller_than_eps(spu_cmpabsgt(eps, h));
+
                     vector float & result_h(q1);
                     vector float result_q1(spu_madd(spu_mul(q1, h_inv), q1, spu_mul(spu_mul(h, h), gravity_by_two)));
                     vector float result_q2(spu_mul(spu_mul(q1, h_inv), q2));
 
-                    elements[i] = spu_shuffle(result_h, result_q1, insert_patterns[0]);
-                    elements[i] = spu_shuffle(elements[i], result_q2, insert_patterns[1]);
+                    vector float result_q1_eps(spu_mul(spu_mul(q1, eps_inv), q1));
+                    vector float result_q2_eps(spu_mul(spu_mul(q1, eps_inv), q2));
 
-                    elements[i + 1] = spu_shuffle(result_q1, result_q2, insert_patterns[0]);
-                    elements[i + 1] = spu_shuffle(elements[i + 1], result_h, insert_patterns[1]);
+                    result_q1 = spu_sel(result_q1, result_q1_eps, h_smaller_than_eps);
+                    result_q2 = spu_sel(result_q2, result_q2_eps, h_smaller_than_eps);
 
-                    elements[i + 2] = spu_shuffle(result_q2, result_h, insert_patterns[0]);
-                    elements[i + 2] = spu_shuffle(elements[i + 2], result_q1, insert_patterns[1]);
+                    elements[i] = merge_result1(result_h, result_q1, result_q2);
+                    elements[i + 1] = merge_result2(result_h, result_q1, result_q2);
+                    elements[i + 2] = merge_result3(result_h, result_q1, result_q2);
                 }
             }
 
@@ -76,42 +68,34 @@ namespace honei
             {
                 const vector float one(spu_splats(1.0f));
                 const vector float gravity_by_two(spu_splats(9.81f / 2.0f));
-                const vector unsigned char extract_patterns[2] = {
-                    { 0x00, 0x01, 0x02, 0x03, 0x0C, 0x0D, 0x0E, 0x0F, 0x18, 0x19, 0x1A, 0x1B, 0x1F, 0x1F, 0x1F, 0x1F },
-                    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x14, 0x15, 0x16, 0x17 }
-                };
-                const vector unsigned char insert_patterns[2] = {
-                    { 0x00, 0x01, 0x02, 0x03, 0x10, 0x11, 0x12, 0x13, 0xFF, 0xFF, 0xFF, 0xFF, 0x04, 0x05, 0x06, 0x07 },
-                    { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x10, 0x11, 0x12, 0x13, 0x0C, 0x0D, 0x0E, 0x0F }
-                };
+                const vector float eps(spu_splats(1.19209e-07f));
+                const vector float eps_inv(spu_splats(8.3886e+06f));
 
                 for (unsigned i(0) ; i + 2 < size ; i += 3)
                 {
-                    vector float h(spu_shuffle(elements[i], elements[i + 1], extract_patterns[0]));
-                    h = spu_shuffle(h, elements[i + 2], extract_patterns[1]);
-
-                    vector float q1(spu_shuffle(elements[i + 1], elements[i + 2], extract_patterns[0]));
-                    q1 = spu_shuffle(q1, elements[i], extract_patterns[1]);
-
-                    vector float q2(spu_shuffle(elements[i + 2], elements[i], extract_patterns[0]));
-                    q2 = spu_shuffle(q2, elements[i + 1], extract_patterns[1]);
+                    vector float h(extract_h(elements[i], elements[i + 1], elements[i + 2]));
+                    vector float q1(extract_q1(elements[i], elements[i + 1], elements[i + 2]));
+                    vector float q2(extract_q2(elements[i], elements[i + 1], elements[i + 2]));
 
                     vector float h_inv(spu_re(h));
                     vector float h_inv_t(spu_nmsub(h, h_inv, one));
                     h_inv = spu_madd(h_inv_t, h_inv, h_inv);
 
+                    vector unsigned h_smaller_than_eps(spu_cmpabsgt(eps, h));
+
                     vector float & result_h(q2);
                     vector float result_q1(spu_mul(spu_mul(q1, h_inv), q2));
                     vector float result_q2(spu_madd(spu_mul(q2, h_inv), q2, spu_mul(spu_mul(h, h), gravity_by_two)));
 
-                    elements[i] = spu_shuffle(result_h, result_q1, insert_patterns[0]);
-                    elements[i] = spu_shuffle(elements[i], result_q2, insert_patterns[1]);
+                    vector float result_q1_eps(spu_mul(spu_mul(q1, eps_inv), q2));
+                    vector float result_q2_eps(spu_mul(spu_mul(q2, eps_inv), q2));
 
-                    elements[i + 1] = spu_shuffle(result_q1, result_q2, insert_patterns[0]);
-                    elements[i + 1] = spu_shuffle(elements[i + 1], result_h, insert_patterns[1]);
+                    result_q1 = spu_sel(result_q1, result_q1_eps, h_smaller_than_eps);
+                    result_q2 = spu_sel(result_q2, result_q2_eps, h_smaller_than_eps);
 
-                    elements[i + 2] = spu_shuffle(result_q2, result_h, insert_patterns[0]);
-                    elements[i + 2] = spu_shuffle(elements[i + 2], result_q1, insert_patterns[1]);
+                    elements[i] = merge_result1(result_h, result_q1, result_q2);
+                    elements[i + 1] = merge_result2(result_h, result_q1, result_q2);
+                    elements[i + 2] = merge_result3(result_h, result_q1, result_q2);
                 }
             }
         }

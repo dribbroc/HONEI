@@ -178,7 +178,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     {
         if (instruction.b.u > 0)
         {
-            instruction.c.u = (16384 / quantisation) * quantisation;
+            instruction.c.u = instruction.size;
         }
         else
         {
