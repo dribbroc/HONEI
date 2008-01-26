@@ -43,7 +43,7 @@ namespace
             Mutex * _mutex;
 
         public:
-            TestTask(unsigned & v, Mutex * mutex) :
+            TestTask(unsigned & v, Mutex * const mutex) :
                 _v(v),
                 _mutex(mutex)
             {

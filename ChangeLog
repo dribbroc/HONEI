@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-26 Joachim Messer <joachim.messer@uni-dortmund.de>
 
+	* honei/libutil/thread_pool_TEST.cc: Fixed bug caused by simultaneous
+	incrementation of variable being test checked.
+
+2008-01-26 Joachim Messer <joachim.messer@uni-dortmund.de>
+
 	* honei/libutil/wrapper.hh: Added FiveArgWrapper and profiling for
 	mutex calls of all wrappers.
 
