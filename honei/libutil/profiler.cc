@@ -245,7 +245,7 @@ namespace honei
                 {
                     Lock l(*mutex);
 
-                    SessionList::const_iterator i(sessions.begin()), i_end(sessions.end());
+                    SessionList::iterator i(sessions.begin()), i_end(sessions.end());
                     for ( ; i != i_end ; ++i)
                     {
                         // Compare thread first, as integer comparison is fast.
@@ -269,10 +269,10 @@ namespace honei
                     else
                     {
                         intern::ProfileId id(data->function, data->tag);
-                        float timing((data->stamp.usec() - i->stamp.usec()));
+                        float timing((data->stamp.usec() - i->stamp.usec()) + 1e6 * (data->stamp.sec() - i->stamp.sec()));
 
-                        ResultMap::iterator i(results.find(id)), i_end(results.end());
-                        if (i_end == i)
+                        ResultMap::iterator j(results.find(id)), j_end(results.end());
+                        if (j_end == j)
                         {
                             TimingList list;
                             list.push_back(timing);
@@ -280,8 +280,10 @@ namespace honei
                         }
                         else
                         {
-                            i->second.push_back(timing);
+                            j->second.push_back(timing);
                         }
+
+                        sessions.erase(i);
                     }
                 }
                 else if (data->type == pmt_direct)
