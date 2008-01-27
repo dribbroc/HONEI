@@ -27,6 +27,7 @@
 #include <honei/libutil/spe_manager.hh>
 
 //#include <honei/libutil/time_stamp.hh>
+#include <honei/libutil/profiler.hh>
 
 namespace honei
 {
@@ -59,13 +60,16 @@ namespace honei
     {
         CONTEXT("When calculating BandedMatrix<float>-DenseVector<float> product (Cell):");
 
+        PROFILER_START("Product<Cell>::value(dm, dm)");
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
         SPEInstructionQueue iq_upper, iq_lower;
         //TimeStamp dt,ct, as1, as2;
         //ct.take();
+        PROFILER_START("Product<Cell>::value(dm, dm)->DV(size, 0)");
         DenseVector<float> result(b.size(), 0.0f);
+        PROFILER_STOP("Product<Cell>::value(dm, dm)->DV(size, 0)");
         //dt.take();
         //std::cout<<"dv(0): "<<dt.sec() - ct.sec() << " "<<dt.usec() - ct.usec()<<std::endl;
         /// \todo Fill the result vector on the spu side.
@@ -276,6 +280,7 @@ namespace honei
         std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
         TimeStamp at, bt;
         at.take();*/
+        PROFILER_START("Product<Cell>::value(dm, dm)->dispatch");
         SPEManager::instance()->dispatch(iq_upper);
         SPEManager::instance()->dispatch(iq_lower);
         iq_upper.wait();
@@ -283,6 +288,8 @@ namespace honei
         /// \todo calc scalar parts here
         //bt.take();
         //std::cout<<"wait: "<<bt.sec() - at.sec() << " "<<bt.usec() - at.usec()<<std::endl<<std::endl;
+        PROFILER_STOP("Product<Cell>::value(dm, dm)->dispatch");
+        PROFILER_STOP("Product<Cell>::value(dm, dm)");
 
         return result;
     }
