@@ -47,39 +47,40 @@ namespace honei
 
 
                 std::cout<<"Selecting scenario"<<std::endl;
-                //strcpy(buffer, "4711");
-                //itoa(scenario, buffer, 10);
                 sprintf(buffer, "%i", scenario);
                 bytes = send(c, buffer, strlen(buffer), 0);
             }
 
-            void _read_timesteps(int c)
+            void _read_timestep(int c)
             {
                 char buffer[DATA_SIZE];
                 int bytes;
 
-                unsigned count(0);
-                do
-                {
-                    bytes = recv(c, buffer, sizeof(buffer) - 1, 0);
-                    buffer[bytes] = '\0';
-                    std::cout<<"Received tve: "<<buffer<<std::endl;
+                bytes = recv(c, buffer, sizeof(buffer) - 1, 0);
+                buffer[bytes] = '\0';
+                std::cout<<"Received tve: "<<buffer<<std::endl;
 
-                    strcpy(buffer, "c");
-                    bytes = send(c, buffer, 1, 0);
+                bytes = send(c, "c", 1, 0);
 
-                    count++;
-                }
-                while (count < 100);
-                strcpy(buffer, "q");
-                bytes = send(c, buffer, 1, 0);
             }
 
-            int _handling(int c)
+            void _restart(int c)
             {
-                //_write_scenario(c, 12345);
-                _read_timesteps(c);
-                return 0;
+                char buffer[DATA_SIZE];
+                int bytes;
+                bytes = recv(c, buffer, sizeof(buffer) - 1, 0);
+                std::cout<<"Restarting scenario."<<std::endl;
+                send(c, "r", 1 ,0);
+            }
+
+            void _quit(int c)
+            {
+                send(c, "q", 1 ,0);
+            }
+
+            void _shutdown(int c)
+            {
+                send(c, "x", 1, 0);
             }
 
         public:
@@ -117,14 +118,27 @@ namespace honei
                 _write_scenario(_socket, 12345);
 
             }
-            void run()
-            {
-                _handling(_socket);
-            }
 
             DenseMatrix<DataType_> & do_step (DenseMatrix<DataType_> & height_field)
             {
+                _read_timestep(_socket);
                 return height_field;
+            }
+
+            void restart_scenario()
+            {
+                _restart(_socket);
+            }
+
+            void quit_server()
+            {
+                _quit(_socket);
+                if (_socket != -1) close(_socket);
+            }
+
+            void shutdown_server()
+            {
+                _shutdown(_socket);
             }
     };
 }

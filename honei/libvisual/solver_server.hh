@@ -28,6 +28,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <honei/libla/dense_matrix.hh>
 
 #define BUFFER_SIZE 1024
 #define DATA_SIZE 1234567
@@ -56,11 +57,11 @@ namespace honei
                 char buffer[DATA_SIZE], handshake[255] ;
                 int bytes;
 
-                /// \todo set solver scenarion = _scenario
-                double tve(4711.1234);
+                float tve(47211.1234);
 
                 do
                 {
+                    // insert data calculation by solver here or directly before recv
                     std::cout<<"Sending tve (" << tve << ")"<<std::endl;
                     bytes = send(c, stringify(tve).c_str(), strlen(stringify(tve).c_str()), 0);
                     tve+=1.1;
@@ -127,6 +128,7 @@ namespace honei
 
                     if (_handling(c) == 2)
                     {
+                        //shutdown server
                         close(c);
                         return;
                     }
