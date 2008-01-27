@@ -345,8 +345,8 @@ namespace honei {
                 cout << stringify(*_w_temp) << endl;
                 std::cout << "Finished Setup 1.\n";
 #endif
-                sv = tempsum.copy();
-                sw = tempsum2.copy();
+                sv = tempsum;
+                sw = tempsum2;
 
             }
 

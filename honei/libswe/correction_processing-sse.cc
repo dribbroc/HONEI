@@ -54,6 +54,37 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
     float __attribute__((aligned(16))) one_half(0.5f);
     m1 = _mm_set_ps1(one_half);
 
+
+    float __attribute__((aligned(16))) v_c_e[v.size()];
+    float __attribute__((aligned(16))) u_c_e[u.size()];
+    float __attribute__((aligned(16))) w_c_e[w.size()];
+
+    unsigned long c_count(0);
+    for(unsigned long i(0); i < u.size(); ++i)
+    {
+        if(i < 6*(d_width+4)+6 || i >3 * ((d_height + 2) * (d_width + 4)))
+        {
+
+            v_c_e[i] = v_e[i];
+            u_c_e[i] = u_e[i];
+            w_c_e[i] = w_e[i];
+
+            ++c_count;
+        }
+        else if(c_count == d_width)
+        {
+            for(unsigned j(0); j < 12; ++j)
+            {
+                u_c_e[i + j] = u_e[i + j];
+                v_c_e[i + j] = v_e[i + j];
+                w_c_e[i + j] = w_e[i + j];
+            }
+            c_count =0;
+            i += 11;
+        }
+
+    }
+
     for(unsigned long i(0); i < sse_limit; i += 4)
     {
         m2 = _mm_load_ps(u_e + i);
@@ -85,6 +116,29 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
         w_e[i] = float(0.5) * (w_e[i] + w_p_e[i]);
     }
 
+    unsigned long col_count(0);
+    for(unsigned long i(0); i < u.size(); ++i)
+    {
+        if(i < 6*(d_width+4)+6 || i >3 * ((d_height + 2) * (d_width + 4)))
+        {
+            u_e[i] = u_c_e[i];
+            v_e[i] = v_c_e[i];
+            w_e[i] = w_c_e[i];
+
+            ++col_count;
+        }
+        else if(col_count == d_width)
+        {
+            for(unsigned j(0); j < 12; ++j)
+            {
+                u_e[i + j] = u_c_e[i + j];
+                v_e[i + j] = v_c_e[i + j];
+                w_e[i + j] = w_c_e[i + j];
+            }
+            col_count =0;
+            i += 11;
+        }
+    }
     ///Readout loop:
     unsigned long count(0);
     unsigned long h_i(0);
@@ -108,16 +162,16 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
 
 }
 
-void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
-                        ::value(DenseVector<double> & predictedu,
-                                DenseVector<double> & predictedv,
-                                DenseVector<double> & predictedw,
-                                DenseVector<double> & u,
-                                DenseVector<double> & v,
-                                DenseVector<double> & w,
-                                unsigned long d_width,
-                                unsigned long d_height,
-                                DenseMatrix<double> & height)
+    void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
+::value(DenseVector<double> & predictedu,
+        DenseVector<double> & predictedv,
+        DenseVector<double> & predictedw,
+        DenseVector<double> & u,
+        DenseVector<double> & v,
+        DenseVector<double> & w,
+        unsigned long d_width,
+        unsigned long d_height,
+        DenseMatrix<double> & height)
 {
     double * u_e = u.elements();
     double * v_e = v.elements();
@@ -131,10 +185,39 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
 
     unsigned long sse_steps((u.size() - (u.size() % 2)) / 2);
     unsigned long sse_limit(sse_steps * 2);
+    double __attribute__((aligned(16))) v_c_e[v.size()];
+    double __attribute__((aligned(16))) u_c_e[u.size()];
+    double __attribute__((aligned(16))) w_c_e[w.size()];
+
+    unsigned long c_count(0);
+    for(unsigned long i(0); i < u.size(); ++i)
+    {
+        if(i < 6*(d_width+4)+6 || i >3 * ((d_height + 2) * (d_width + 4)))
+        {
+
+            v_c_e[i] = v_e[i];
+            u_c_e[i] = u_e[i];
+            w_c_e[i] = w_e[i];
+
+            ++c_count;
+        }
+        else if(c_count == d_width)
+        {
+            for(unsigned j(0); j < 12; ++j)
+            {
+                u_c_e[i + j] = u_e[i + j];
+                v_c_e[i + j] = v_e[i + j];
+                w_c_e[i + j] = w_e[i + j];
+            }
+            c_count =0;
+            i += 11;
+        }
+
+    }
 
     ///SSE loop:
     __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-    float __attribute__((aligned(16))) one_half(0.5);
+    double __attribute__((aligned(16))) one_half(0.5);
     m1 = _mm_set_pd1(one_half);
 
     for(unsigned long i(0); i < sse_limit; i += 2)
@@ -166,6 +249,29 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
         u_e[i] = double(0.5) * (u_e[i] + u_p_e[i]);
         v_e[i] = double(0.5) * (v_e[i] + v_p_e[i]);
         w_e[i] = double(0.5) * (w_e[i] + w_p_e[i]);
+    }
+    unsigned long col_count(0);
+    for(unsigned long i(0); i < u.size(); ++i)
+    {
+        if(i < 6*(d_width+4)+6 || i >3 * ((d_height + 2) * (d_width + 4)))
+        {
+            u_e[i] = u_c_e[i];
+            v_e[i] = v_c_e[i];
+            w_e[i] = w_c_e[i];
+
+            ++col_count;
+        }
+        else if(col_count == d_width)
+        {
+            for(unsigned j(0); j < 12; ++j)
+            {
+                u_e[i + j] = u_c_e[i + j];
+                v_e[i + j] = v_c_e[i + j];
+                w_e[i + j] = w_c_e[i + j];
+            }
+            col_count =0;
+            i += 11;
+        }
     }
 
     ///Readout loop:
