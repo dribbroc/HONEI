@@ -250,8 +250,6 @@ namespace honei
                     size = 0;
                     lists.push_back(SPETransferList(2048, 16384));
                     nr_lists++;
-                    unsigned rowsize(i->used_elements() * sizeof(float));
-                    rowsize = rowsize % 16 == 0 ? rowsize : rowsize + 16 - (rowsize % 16);
                     lists.at(nr_lists).add(addresses[x], partrowsize);
                     size += partrowsize;
                 }
