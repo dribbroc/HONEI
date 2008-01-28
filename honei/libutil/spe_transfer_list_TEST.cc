@@ -52,18 +52,21 @@ class SPETransferListTest :
                 TEST_CHECK_EQUAL(list.size(), i + 1);
             }
 
-            TEST_CHECK_THROWS(list.add(data, 0), TransferListSizeExceeded);
+            // Check if list size exceeding causes retval 0.
+            SPETransferList::ListElement * retval = list.add(data, 0);
+            TEST_CHECK_EQUAL(reinterpret_cast<unsigned long long>(retval), 0);
 
             SPETransferList list2(6, 20);
 
             TEST_CHECK_THROWS(list2.add(data, 6 * sizeof(float)), TransferListTransferSizeExceeded);
 
+            // Check if two different EAHs cause retval 0.
             void * address(reinterpret_cast<void *>(0xFFFFFFFF00000000));
             void * address2(reinterpret_cast<void *>(0x0FFFFFFF00000000));
             SPETransferList list3(2, 1);
             list3.add(address, 0);
-            SPETransferList::ListElement * retval = list3.add(address2, 0);
-            TEST_CHECK_EQUAL(reinterpret_cast<unsigned long long>(retval), 0);
+            SPETransferList::ListElement * retval3 = list3.add(address2, 0);
+            TEST_CHECK_EQUAL(reinterpret_cast<unsigned long long>(retval3), 0);
 
         }
 } spe_transfer_list_test;

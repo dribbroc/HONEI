@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,6 +22,7 @@
 #include <honei/libutil/memory_backend_cell.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
+#include <honei/libutil/spe_transfer_list.hh>
 
 namespace honei
 {
@@ -208,9 +209,71 @@ namespace honei
     {
         CONTEXT("When scaling SparseMatrix<float> (Cell):");
 
-        for (SparseMatrix<float>::RowIterator i(b.begin_non_zero_rows()), i_end(b.end_non_zero_rows()) ; i != i_end ; ++i)
+        std::list<SPEInstruction *> instructions;
+        std::vector<SPETransferList> lists = std::vector<SPETransferList>();
+
+        lists.push_back(SPETransferList(2048, 16384));
+        unsigned nr_lists(0), dispatched(0), size(0);
+
+        for (SparseMatrix<float>::ConstRowIterator i(b.begin_non_zero_rows()), i_end(b.end_non_zero_rows()) ; i != i_end ; ++i)
         {
-           *i = Scale<tags::Cell>::value(*i, a);
+            void * address(i->elements());
+            unsigned rowsize(i->used_elements() * sizeof(float));
+            rowsize = rowsize % 16 == 0 ? rowsize : rowsize + 16 - (rowsize % 16);
+
+            ListElement * retval = lists.at(nr_lists).add(address, rowsize);
+
+            if (retval == 0)
+            {
+                // Dispatch old list
+                Operand oa = { lists.at(nr_lists).elements() };
+                Operand ob = { lists.at(nr_lists).effective_address() };
+                Operand oc;
+                oc.f = a;
+                Operand od = { size };
+                Operand oe = { lists.at(nr_lists).size() % 2 == 0 ? lists.at(nr_lists).size() : lists.at(nr_lists).size() + 1 };
+
+                SPEInstruction * instruction = new SPEInstruction(oc_scale_sparse_float, lists.at(nr_lists).size(), oa, ob, oc, od, oe);
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+                dispatched++;
+
+                // Add Element to new list
+                size = 0;
+                lists.push_back(SPETransferList(2048, 16384));
+                nr_lists++;
+                unsigned rowsize(i->used_elements() * sizeof(float));
+                rowsize = rowsize % 16 == 0 ? rowsize : rowsize + 16 - (rowsize % 16);
+                lists.at(nr_lists).add(address, rowsize);
+                size += rowsize;
+            }
+            else
+            {
+                size += rowsize;
+            }
+
+        }
+
+        if (dispatched == nr_lists && size != 0) // Maybe the last list didn't get full and therefore hasn't been dispatched
+        {
+            Operand oa = { lists.at(nr_lists).elements() };
+            Operand ob = { lists.at(nr_lists).effective_address() };
+            Operand oc; 
+            oc.f = a;
+            Operand od = { size };
+            Operand oe = { lists.at(nr_lists).size() % 2 == 0 ? lists.at(nr_lists).size() : lists.at(nr_lists).size() + 1 };
+
+            SPEInstruction * instruction = new SPEInstruction(oc_scale_sparse_float, lists.at(nr_lists).size(), oa, ob, oc, od, oe);
+            SPEManager::instance()->dispatch(*instruction);
+            instructions.push_back(instruction);
+            dispatched++;
+        }
+
+        for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; ++i)
+        {
+                (*i)->wait();
+
+                delete *i;
         }
 
         return b;

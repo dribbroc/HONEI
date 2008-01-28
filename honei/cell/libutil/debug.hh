@@ -90,12 +90,13 @@ namespace honei
 #endif
         }
 
-        inline void debug_getl(const EffectiveAddress & eah, const LocalStoreAddress & lsa,
+        inline void debug_getl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
                 const unsigned & size)
         {
 #ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_getl);
-            spu_write_out_mbox(eah >> 32);
+            spu_write_out_mbox(ea >> 32);
+            spu_write_out_mbox(ea & 0xFFFFFFFF);
             spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
             spu_write_out_mbox(size);
 #endif
@@ -126,6 +127,7 @@ namespace honei
 #ifdef DEBUG
             spu_write_out_intr_mbox(km_debug_putl);
             spu_write_out_mbox(ea >> 32);
+            spu_write_out_mbox(ea & 0xFFFFFFFF);
             spu_write_out_mbox(reinterpret_cast<unsigned int>(lsa));
             spu_write_out_mbox(size);
 #endif

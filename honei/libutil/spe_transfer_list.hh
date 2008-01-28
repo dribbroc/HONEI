@@ -27,22 +27,6 @@
 
 namespace honei
 {
-    /**
-     * TransferListSizeExceeded is thrown when an element is added although the list
-     * containts max_size elements.
-     *
-     * \ingroup grpcell
-     * \ingroup grpexceptions
-     */
-    struct TransferListSizeExceeded :
-        public Exception
-    {
-        TransferListSizeExceeded() :
-            Exception("Specified maximum number of list elements exceeded")
-        {
-        }
-    };
-
     struct TransferListTransferSizeExceeded :
         public Exception
     {

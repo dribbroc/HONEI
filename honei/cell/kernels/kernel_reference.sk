@@ -23,6 +23,7 @@ dword           norm_l_one_dense_float
 dword           norm_l_two_dense_float
 void            element_inverse_float
 void            scaled_sum_dense_dense_float                scaled_sum_dense_dense_float
+void            scale_sparse_float                          scale_sparse_float
 void            fill_float
 
 # LibGraph Operations

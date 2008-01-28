@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-28 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/libutil/debug.hh,  honei/cell/types.hh,
+	honei/libutil/spe_kernel.cc, honei/libutil/spe_transfer_list.cc,
+	honei/libutil/spe_transfer_list.hh,
+	honei/libutil/spe_transfer_list_TEST.cc: Fixed some issues concerning
+	DMA transfer lists, reworked exception concept and modified debug
+	output a little bit.
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/Makefile.am, honei/cell/opcodes.hh,
+	honei/libla/scale-cell.cc, honei/libla/scale_TEST.cc: Added
+	SPU-Scale(SM) being the first operation using DMA list transfers.
+
 2008-01-28 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/correction_processing-sse.cc,

@@ -127,7 +127,7 @@ namespace honei
 # error "You should not include this header in anything but Cell source code!"
 #endif
 
-        struct __attribute__((packed)) ListElement
+        struct __attribute__((packed)) __attribute__((aligned(8))) ListElement
         {
             unsigned stall_and_notify : 1;
             unsigned reserved : 16;

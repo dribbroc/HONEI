@@ -72,17 +72,16 @@ SPETransferList::SPETransferList(unsigned max_size, unsigned max_transfer_size) 
 SPETransferList::ListElement *
 SPETransferList::add(void * address, unsigned size, bool stall_and_notify)
 {
-    if (_imp->size >= _imp->max_size)
-        throw TransferListSizeExceeded();
-
-    if (_imp->transfer_size + size > _imp->max_transfer_size)
+    if (size > _imp->max_transfer_size)
         throw TransferListTransferSizeExceeded();
 
     unsigned long long element_ea(reinterpret_cast<unsigned long long>(address));
 
-    if ((element_ea >> 32) == (_imp->effective_address >> 32) || _imp->effective_address == 0x0)
+    if ( (((element_ea >> 32) == (_imp->effective_address >> 32)) || (_imp->effective_address == 0))
+            && (_imp->size + 1 <= _imp->max_size) )
     {
         _imp->effective_address = element_ea;
+
         ListElement * result(_imp->elements + _imp->size);
         result->stall_and_notify = stall_and_notify;
         result->reserved = 0;

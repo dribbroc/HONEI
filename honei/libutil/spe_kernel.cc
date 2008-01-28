@@ -210,15 +210,17 @@ namespace honei
                                 {
                                     Lock ll(*imp->mutex);
 
-                                    LocalStoreAddress eah = { 0 };
+                                    unsigned u[2];
                                     LocalStoreAddress lsa = { 0 };
                                     unsigned size(0);
 
-                                    spe_out_mbox_read(spe->context(), &eah.value, 1);
+                                    spe_out_mbox_read(spe->context(), u, 2);
                                     spe_out_mbox_read(spe->context(), &lsa.value, 1);
                                     spe_out_mbox_read(spe->context(), &size, 1);
+                                    EffectiveAddress eah = reinterpret_cast<void *>(u[0]);
+                                    EffectiveAddress eal = reinterpret_cast<void *>(u[1]);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: PUTL transfer started, eah = " +
-                                            stringify(eah) + ", lsa = " + stringify(lsa) + " size = " +
+                                            stringify(eah) + " eal = " + stringify(eal)  + ", lsa = " + stringify(lsa) + " size = " +
                                             stringify(size));
                                 }
                                 continue;
@@ -248,16 +250,18 @@ namespace honei
                                 {
                                     Lock ll(*imp->mutex);
 
-                                    /// \todo remove Hack
-                                    LocalStoreAddress eah = { 0 };
+                                    unsigned u[2];
+
                                     LocalStoreAddress lsa = { 0 };
                                     unsigned size(0);
 
-                                    spe_out_mbox_read(spe->context(), &eah.value, 1);
+                                    spe_out_mbox_read(spe->context(), u, 2);
                                     spe_out_mbox_read(spe->context(), &lsa.value, 1);
                                     spe_out_mbox_read(spe->context(), &size, 1);
+                                    EffectiveAddress eah = reinterpret_cast<void *>(u[0]);
+                                    EffectiveAddress eal = reinterpret_cast<void *>(u[1]);
                                     LOGMESSAGE(ll_minimal, "SPEKernel: GETL transfer started, eah = " +
-                                            stringify(eah) + ", lsa = " + stringify(lsa) + " size = " +
+                                            stringify(eah) + " eal = " + stringify(eal) + ", lsa = " + stringify(lsa) + " size = " +
                                             stringify(size));
                                 }
                                 continue;
