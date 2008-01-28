@@ -52,9 +52,9 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            CONTEXT("When adding DenseVector to DenseVector (MultiCore):");
+            CONTEXT("When adding DenseVectorContinuousBase to DenseVectorContinuousBase (MultiCore):");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -71,15 +71,15 @@ namespace honei
                 PoolTask * pt[parts];
                 for (int i(0); i < modulo; ++i)
                 {
-                    DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
-                    DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
+                    DenseVectorRange<DT1_> range_1(a.range(div+1, i*(div+1)));
+                    DenseVectorRange<DT2_> range_2(b.range(div+1, i*(div+1)));
                     TwoArgWrapper<Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
                     pt[i] = p->dispatch(mywrapper);
                 }
                 for (unsigned long i(modulo); i < parts; ++i)
                 {
-                    DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
-                    DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+                    DenseVectorRange<DT1_> range_1(a.range(div, modulo+(i*div)));
+                    DenseVectorRange<DT2_> range_2(b.range(div, modulo+(i*div)));
                     TwoArgWrapper<Sum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
                     pt[i] = p->dispatch(mywrapper);
                 }
