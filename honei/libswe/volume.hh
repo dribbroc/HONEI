@@ -19,7 +19,7 @@
 
 
 #ifndef LIBSWE_GUARD_VOLUME_HH
-#define LIBSWE_GUARD_VOLUME_SHOT_HH 1
+#define LIBSWE_GUARD_VOLUME_HH 1
 
 /**
  * \file
