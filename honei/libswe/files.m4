@@ -20,3 +20,5 @@ add(`scenario',             `hh',)
 add(`solver',               `hh', `test',         `benchmark')
 add(`source_processing',    `hh', `test', `sse')
 add(`relax_solver',         `hh', `test',         `benchmark')
+add(`volume',               `hh', `test')
+

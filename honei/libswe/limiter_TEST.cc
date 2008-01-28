@@ -4,6 +4,7 @@
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Volker Jung <volker.m.jung@t-online.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the SWE C++ library. LiSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General

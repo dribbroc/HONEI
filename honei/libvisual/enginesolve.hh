@@ -22,6 +22,9 @@
 #include <GL/glut.h>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libswe/relax_solver.hh>
+#include <honei/libswe/volume.hh>
+
+using namespace volume_types;
 
 namespace honei
 {
@@ -61,8 +64,8 @@ namespace honei
         GLint menu_id_rendering;
 
         //globally defined solver:
-        ulint dwidth =40;
-        ulint dheight =40;
+        ulint dwidth = 40;
+        ulint dheight = 40;
         //DenseMatrix<float> height(dheight, dwidth, float(5));
         DenseMatrix<float> height(dheight, dwidth, float(5));
 
@@ -120,88 +123,16 @@ namespace honei
                 //glEnable(GL_POLYGON_SMOOTH);
 
 
+                Volume<CYLINDRIC::STENCIL>::value(gl_globals::height, float(15.), gl_globals::dwidth/2, gl_globals::dheight/2);
 
-                //Solver setup (Scenario):
-                for(unsigned int i = 0; i < gl_globals::dheight; i++)
-                {
-                    if(i == gl_globals::dheight/2 -4 || i == gl_globals::dheight/2 +5)
-                    {
-                        gl_globals::height[i][gl_globals::dheight/2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +1] = float(15);
-                    }
-                    else if(i == gl_globals::dheight/2 -3 || i == gl_globals::dheight/2 +4)
-                    {
-                        gl_globals::height[i][gl_globals::dheight/2 -2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 -1] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 ] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +1] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +3] = float(15);
-                    }
-                    else if(i == gl_globals::dheight/2 -2 || i == gl_globals::dheight/2 -1 || i == gl_globals::dheight/2 +2 || i == gl_globals::dheight/2 + 3)
-                    {
-                        gl_globals::height[i][gl_globals::dheight/2 -3] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 -2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 -1] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +1] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +3] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +4] = float(15);
+                gl_globals::c[0] = 12;
+                gl_globals::c[1] = 7;
+                gl_globals::c[2] = 12;
+                gl_globals::d[0] = 12;
+                gl_globals::d[1] = 7;
+                gl_globals::d[2] = 12;
 
-                    }
-                    else if (i == gl_globals::dheight/2 || i == gl_globals::dheight/2 +1)
-                    {
-                        gl_globals::height[i][gl_globals::dheight/2 -4] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 -3] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 -2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 -1] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +1] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +2] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +3] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +4] = float(15);
-                        gl_globals::height[i][gl_globals::dheight/2 +5] = float(15);
-
-                    }
-                }
-                /*
-                for(ulint i = 0; i< gl_globals::height.rows(); ++i)
-                  {
-                  for(ulint j=gl_globals::height.columns()-10; j<gl_globals::height.columns(); ++j)
-                  {
-                  gl_globals::height[i][j] = float(10);
-                  }
-                  }
-                  for(ulint i = 0; i< gl_globals::bottom.rows(); ++i)
-                  {
-                  for(ulint j=0; j<gl_globals::bottom.columns()-10; ++j)
-                  {
-                  gl_globals::bottom[i][j] = float(1);
-                  if(j>4 && j< gl_globals::bottom.columns()-9)
-                  {
-                  if(i <8 || i > 13)
-                  gl_globals::bottom[i][j] = float(3);
-                  else
-                  gl_globals::bottom[i][j] = float(1);
-                  }
-                  }
-                  }*//*
-                  gl_globals::c[0] = 10;
-                  gl_globals::c[1] = 6;
-                  gl_globals::c[2] = 11;
-                  gl_globals::d[0] = 10;
-                  gl_globals::d[1] = 5;
-                  gl_globals::d[2] = 11;*/
-
-                  gl_globals::c[0] = 12;
-                  gl_globals::c[1] = 7;
-                  gl_globals::c[2] = 12;
-                  gl_globals::d[0] = 12;
-                  gl_globals::d[1] = 7;
-                  gl_globals::d[2] = 12;
-
-                  gl_globals::solver.do_preprocessing();
+                gl_globals::solver.do_preprocessing();
             }
 
             static void resize (int width, int height)
