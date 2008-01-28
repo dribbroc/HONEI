@@ -64,8 +64,8 @@ namespace honei
         GLint menu_id_rendering;
 
         //globally defined solver:
-        ulint dwidth = 40;
-        ulint dheight = 80;
+        ulint dwidth = 80;
+        ulint dheight = 40;
         //DenseMatrix<float> height(dheight, dwidth, float(5));
         DenseMatrix<float> height(dheight, dwidth, float(5));
 
@@ -124,6 +124,7 @@ namespace honei
 
 
                 Volume<CYLINDRIC::STENCIL>::value(gl_globals::height, float(15.), gl_globals::dwidth/2, gl_globals::dheight/2);
+                //Volume<CYLINDRIC::STENCIL>::value(gl_globals::bottom, float(3.), 10, 10);
 
                 gl_globals::c[0] = 12;
                 gl_globals::c[1] = 7;
@@ -421,8 +422,8 @@ namespace honei
                                 glVertex3d(i,j,gl_globals::height[j][i] + gl_globals::bottom[j][i]);
                                 glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
                                 glVertex3d(i+1,j,gl_globals::height[j][i+1] + gl_globals::bottom[j][i+1]);
-                                glVertex3d(i+1,j+1,gl_globals::height[j+1][i+1] + gl_globals::bottom[i+1][j+1]);
-                                glVertex3d(i,j+1,gl_globals::height[j+1][i] + gl_globals::bottom[i][j+1]);
+                                glVertex3d(i+1,j+1,gl_globals::height[j+1][i+1] + gl_globals::bottom[j+1][i+1]);
+                                glVertex3d(i,j+1,gl_globals::height[j+1][i] + gl_globals::bottom[j+1][i]);
                             }
                         }
                         glEnd();
@@ -435,9 +436,9 @@ namespace honei
                             for(unsigned int j = 0; j < gl_globals::dheight; j++)
                             {
                                 glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
-                                glVertex3d(i,j,gl_globals::height[j][i] + gl_globals::bottom[i][j]);
+                                glVertex3d(i,j,gl_globals::height[j][i] + gl_globals::bottom[j][i]);
                                 glColor4f(0.0, 0.0, 1.0, gl_globals::alpha);
-                                glVertex3d(i+1,j,gl_globals::height[j][i+1] + gl_globals::bottom[i+1][j]);
+                                glVertex3d(i+1,j,gl_globals::height[j][i+1] + gl_globals::bottom[j][i+1]);
                             }
                             ++i;
                             if (i >= gl_globals::dwidth-1)

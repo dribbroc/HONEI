@@ -8,6 +8,11 @@ see the NEWS file.
 2008-01-28 Markus Geveler <apryde@gmx.de>
 
 	* honei/libvisual/enginesolve.hh:
+	Applied further necessary adjustments.
+
+2008-01-28 Markus Geveler <apryde@gmx.de>
+
+	* honei/libvisual/enginesolve.hh:
 	Resolved severe problems of visualization engine with rectangular but
 	non-quadratic grids.
 
