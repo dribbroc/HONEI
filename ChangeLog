@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-28 Joachim Messer <joachim.messer@uni-dortmund.de>
 
+	* honei/libla/difference_TEST.cc:
+	Removed function calls without tag.
+
+2008-01-28 Joachim Messer <joachim.messer@uni-dortmund.de>
+
 	* honei/libla/sum-mc.hh, honei/libla/sum_TEST.cc:
 	Changed (DV, DV) to (DVCB, DVCB) and commented coresponding tests in.
 

@@ -345,7 +345,7 @@ class DenseMatrixDifferenceTest :
             {
                 DenseMatrix<DT_> dm1(size+1, size, DT_(2)), dm2(size+1, size, DT_(3)),
                     dm3(size+1, size, DT_(-1));
-                Difference<>::value(dm1, dm2);
+                Difference<Tag_>::value(dm1, dm2);
 
                 TEST_CHECK_EQUAL(dm1, dm3);
             }
@@ -380,7 +380,7 @@ class DenseMatrixDifferenceQuickTest :
             unsigned long size(5);
             DenseMatrix<DT_> dm1(size+1, size, DT_(2)), dm2(size+1, size, DT_(3)),
                 dm3(size+1, size, DT_(-1));
-            Difference<>::value(dm1, dm2);
+            Difference<Tag_>::value(dm1, dm2);
 
             TEST_CHECK_EQUAL(dm1, dm3);
 
@@ -435,7 +435,7 @@ class DenseMatrixSparseMatrixDifferenceTest :
                         *k = DT_((i.index() +1) / 1.23456789);
                     }
                 }
-                Difference<>::value(dm1, sm2);
+                Difference<Tag_>::value(dm1, sm2);
 
                 TEST_CHECK_EQUAL(dm1, dm3);
             }
@@ -488,7 +488,7 @@ class DenseMatrixSparseMatrixDifferenceQuickTest :
                     *k = DT_((i.index() +1) / 1.23456789);
                 }
             }
-            Difference<>::value(dm1, sm2);
+            Difference<Tag_>::value(dm1, sm2);
 
             TEST_CHECK_EQUAL(dm1, dm3);
 
@@ -540,7 +540,7 @@ class SparseMatrixDifferenceTest :
                         *k = DT_((i.index() +1) / 1.23456789);
                     }
                 }
-                Difference<>::value(sm1, sm2);
+                Difference<Tag_>::value(sm1, sm2);
 
                 TEST_CHECK_EQUAL(sm1, sm3);
             }
@@ -591,7 +591,7 @@ class SparseMatrixDifferenceQuickTest :
                     *k = DT_((i.index() +1) / 1.23456789);
                 }
             }
-            Difference<>::value(sm1, sm2);
+            Difference<Tag_>::value(sm1, sm2);
 
             TEST_CHECK_EQUAL(sm1, sm3);
 
@@ -748,9 +748,13 @@ class DenseVectorRangeDifferenceTest :
 };
 DenseVectorRangeDifferenceTest<tags::CPU, float> dense_vector_range_difference_test_float("float");
 DenseVectorRangeDifferenceTest<tags::CPU, double> dense_vector_range_difference_test_double("double");
+//DenseVectorRangeDifferenceTest<tags::CPU::MultiCore, float> mc_dense_vector_range_difference_test_float("MC float");
+//DenseVectorRangeDifferenceTest<tags::CPU::MultiCore, double> mc_dense_vector_range_difference_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeDifferenceTest<tags::CPU::SSE, float> sse_dense_vector_range_difference_test_float("SSE float");
 DenseVectorRangeDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_range_difference_test_double("SSE double");
+//DenseVectorRangeDifferenceTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_difference_test_float("MC SSE float");
+//DenseVectorRangeDifferenceTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_difference_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceTest<tags::Cell, float> cell_dense_vector_range_difference_test_float("Cell float");
@@ -795,9 +799,13 @@ class DenseVectorRangeDifferenceQuickTest :
 };
 DenseVectorRangeDifferenceQuickTest<tags::CPU, float> dense_vector_range_difference_quick_test_float("float");
 DenseVectorRangeDifferenceQuickTest<tags::CPU, double> dense_vector_range_difference_quick_test_double("double");
+//DenseVectorRangeDifferenceQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_difference_quick_test_float("MC float");
+//DenseVectorRangeDifferenceQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_difference_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_difference_quick_test_float("SSE float");
 DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_difference_quick_test_double("SSE double");
+//DenseVectorRangeDifferenceQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_difference_quick_test_float("MC SSE float");
+//DenseVectorRangeDifferenceQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_difference_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceQuickTest<tags::Cell, float> cell_dense_vector_range_difference_quick_test_float("Cell float");
@@ -838,7 +846,7 @@ class DenseVectorSparseVectorDifferenceTest :
                         *k = static_cast<DT_>((i.index() +1) / 1.23456789);
                     }
                 }
-                Difference<>::value(dv1, sv2);
+                Difference<Tag_>::value(dv1, sv2);
                 TEST_CHECK_EQUAL(dv1, dv3);
             }
 
