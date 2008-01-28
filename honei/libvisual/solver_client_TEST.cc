@@ -38,7 +38,7 @@ class SolverClientTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> hf(41, 41);
+            DenseMatrix<double> hf(4, 4);
             SolverClient<Tag_, DataType_> solver_client;
 
             solver_client.init("localhost", 4711, 12345);
@@ -49,12 +49,16 @@ class SolverClientTest :
             solver_client.do_step(hf);
             solver_client.do_step(hf);
             solver_client.do_step(hf);
+            solver_client.do_step(hf);
+            solver_client.do_step(hf);
+            solver_client.do_step(hf);
             solver_client.restart_scenario();
             solver_client.do_step(hf);
             solver_client.do_step(hf);
             solver_client.quit_server();
 
             solver_client.init("localhost", 4711, 12345);
+            solver_client.do_step(hf);
             solver_client.do_step(hf);
             solver_client.shutdown_server();
             TEST_CHECK(true);

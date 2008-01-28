@@ -5,9 +5,18 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libvisual/solver_client.hh,
+	honei/libvisual/solver_client_TEST.cc,
+	honei/libvisual/solver_server.hh:
+	Added test height field.
+
 2008-01-28 Markus Geveler <apryde@gmx.de>
 
-	* honei/libswe/files.m4, honei/libswe/limiter_TEST.cc, honei/libswe/volume.hh, honei/libswe/volume_TEST.cc, honei/libvisual/enginesolve.hh:
+	* honei/libswe/files.m4, honei/libswe/limiter_TEST.cc,
+	honei/libswe/volume.hh, honei/libswe/volume_TEST.cc,
+	honei/libvisual/enginesolve.hh:
 	Added implementation of Volume utility class to employ surface
 	structures, employed it within libvisual, cleaned up.
 

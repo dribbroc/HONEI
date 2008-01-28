@@ -31,7 +31,7 @@
 #include <honei/libla/dense_matrix.hh>
 
 #define BUFFER_SIZE 1024
-#define DATA_SIZE 1234567
+#define DATA_SIZE 5234567
 
 namespace honei
 {
@@ -39,6 +39,7 @@ namespace honei
     {
         private:
             int _socket;
+            char _data[DATA_SIZE];
 
             void _write_scenario(int c, int scenario)
             {
@@ -51,24 +52,35 @@ namespace honei
                 bytes = send(c, buffer, strlen(buffer), 0);
             }
 
-            void _read_timestep(int c)
+            void _read_timestep(int c, DenseMatrix<double> & height_field)
             {
-                char buffer[DATA_SIZE];
                 int bytes;
+                char delims[] = "#";
+                typename MutableMatrix<double>::ElementIterator i(height_field.begin_elements()), i_end(height_field.end_elements());
 
-                bytes = recv(c, buffer, sizeof(buffer) - 1, 0);
-                buffer[bytes] = '\0';
-                std::cout<<"Received tve: "<<buffer<<std::endl;
+                for (unsigned long row(0) ; row < height_field.rows() ; ++row)
+                {
+                    bytes = recv(c, _data, sizeof(_data) - 1, 0);
+                    _data[bytes] = '\0';
 
-                bytes = send(c, "c", 1, 0);
+                    char *result = NULL;
+                    result = strtok(_data, delims);
+                    while (result != NULL && i != i_end)
+                    {
+                        *i = atof(result);
+                        result = strtok(NULL, delims);
+                        ++i;
+                    }
 
+                    bytes = send(c, "c", 1, 0);
+                }
+                std::cout<<"got matrix: "<<height_field<<std::endl;
             }
 
             void _restart(int c)
             {
-                char buffer[DATA_SIZE];
                 int bytes;
-                bytes = recv(c, buffer, sizeof(buffer) - 1, 0);
+                bytes = recv(c, _data, sizeof(_data) - 1, 0);
                 std::cout<<"Restarting scenario."<<std::endl;
                 send(c, "r", 1 ,0);
             }
@@ -119,9 +131,9 @@ namespace honei
 
             }
 
-            DenseMatrix<DataType_> & do_step (DenseMatrix<DataType_> & height_field)
+            DenseMatrix<double> & do_step (DenseMatrix<double> & height_field)
             {
-                _read_timestep(_socket);
+                _read_timestep(_socket, height_field);
                 return height_field;
             }
 

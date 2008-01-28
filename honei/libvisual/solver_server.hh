@@ -21,6 +21,7 @@
 #include <honei/libla/dense_matrix.hh>
 #include <stdio.h>
 #include <iostream>
+#include <string>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -31,7 +32,6 @@
 #include <honei/libla/dense_matrix.hh>
 
 #define BUFFER_SIZE 1024
-#define DATA_SIZE 1234567
 
 namespace honei
 {
@@ -39,6 +39,7 @@ namespace honei
     {
         private:
             int _scenario;
+            DenseMatrix<DataType_> * _height_field;
 
             void _read_scenario(int c)
             {
@@ -49,25 +50,44 @@ namespace honei
                 scenario[bytes] = '\0';
                 _scenario = atoi(scenario);
 
+                delete _height_field;
+                _height_field = new DenseMatrix<DataType_>(4, 4, DataType_(0));
+                for (typename MutableMatrix<DataType_>::ElementIterator i(_height_field->begin_elements()),
+                        i_end(_height_field->end_elements()) ; i != i_end ; ++i)
+                {
+                    *i = DataType_(i.index() + 1) / DataType_(1.123);
+                }
                 std::cout<<"scenario choosen: "<<_scenario<<std::endl;
             }
 
             int _write_timesteps(int c)
             {
-                char buffer[DATA_SIZE], handshake[255] ;
+                char handshake[BUFFER_SIZE] ;
                 int bytes;
 
-                float tve(47211.1234);
+                std::string result;
 
                 do
                 {
-                    // insert data calculation by solver here or directly before recv
-                    std::cout<<"Sending tve (" << tve << ")"<<std::endl;
-                    bytes = send(c, stringify(tve).c_str(), strlen(stringify(tve).c_str()), 0);
-                    tve+=1.1;
+                    std::cout<<"Timestep:"<<std::endl;
+                    // insert data calculation by solver here
+                    for (unsigned long row(0) ; row < _height_field->rows() ; ++row)
+                    {
+                        result = "";
+                        for (typename DenseVector<DataType_>::ElementIterator i((*_height_field)[row].begin_elements()),
+                                i_end((*_height_field)[row].end_elements()) ; i != i_end ; ++i)
+                        {
+                            *i = *i + 1.1 * row;
+                            result += stringify(*i) + "a#";
+                        }
+                        std::cout<< "sending matrix row: "<<(*_height_field)[row]<<std::endl;
+                        bytes = send(c, result.c_str(), strlen(result.c_str()) - 2, 0);
 
-                    bytes = recv(c, handshake, sizeof(handshake) - 1, 0);
-                    handshake[bytes] = '\0';
+                        bytes = recv(c, handshake, sizeof(handshake) - 1, 0);
+                        handshake[bytes] = '\0';
+                        if (handshake[0] == 'r' || handshake[0] == 'q' || handshake[0] == 'x' || handshake[0] == 'e')
+                            break;
+                    }
                 }
                 while (handshake[0] != 'r' && handshake[0] != 'q' && handshake[0] != 'x');
                 if (handshake[0] == 'r')
@@ -84,6 +104,7 @@ namespace honei
                 int retval(0);
                 do
                 {
+                    std::cout<<"Starting timesteps..."<<std::endl;
                     retval = _write_timesteps(c);
                 }
                 while (retval == 1);
@@ -91,6 +112,16 @@ namespace honei
             }
 
         public:
+            SolverServer() :
+                _height_field(0)
+            {
+            }
+
+            ~SolverServer()
+            {
+                delete _height_field;
+            }
+
             void run()
             {
                 int s, c, cli_size;
