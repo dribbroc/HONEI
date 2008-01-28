@@ -65,7 +65,7 @@ namespace honei
 
         //globally defined solver:
         ulint dwidth = 40;
-        ulint dheight = 40;
+        ulint dheight = 80;
         //DenseMatrix<float> height(dheight, dwidth, float(5));
         DenseMatrix<float> height(dheight, dwidth, float(5));
 
@@ -366,11 +366,11 @@ namespace honei
                             for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
                             {
                                 glColor3f(1.0, 0.0, 0.0);
-                                glVertex3d(i,j,gl_globals::bottom[i][j]);
+                                glVertex3d(i,j,gl_globals::bottom[j][i]);
                                 glColor3f(1.0, 0.8, 0.0);
-                                glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
-                                glVertex3d(i+1,j+1,gl_globals::bottom[i+1][j+1]);
-                                glVertex3d(i,j+1,gl_globals::bottom[i][j+1]);
+                                glVertex3d(i+1,j,gl_globals::bottom[j][i+1]);
+                                glVertex3d(i+1,j+1,gl_globals::bottom[j+1][i+1]);
+                                glVertex3d(i,j+1,gl_globals::bottom[j+1][i]);
                             }
                         }
                         glEnd();
@@ -383,18 +383,18 @@ namespace honei
                             for(unsigned int j = 0; j < gl_globals::dheight; j++)
                             {
                                 glColor3f(1.0, 0.8, 0.0);
-                                glVertex3d(i,j,gl_globals::bottom[i][j]);
+                                glVertex3d(i,j,gl_globals::bottom[j][i]);
                                 glColor3f(1.0, 0.0, 0.0);
-                                glVertex3d(i+1,j,gl_globals::bottom[i+1][j]);
+                                glVertex3d(i+1,j,gl_globals::bottom[j][i+1]);
                             }
                             ++i;
                             if (i >= gl_globals::dwidth-1)
                                 break;
                             for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
                             {
-                                glVertex3d(i,j2,gl_globals::bottom[i][j2]);
+                                glVertex3d(i,j2,gl_globals::bottom[j2][i]);
                                 glColor3f(1.0, 0.8, 0.0);
-                                glVertex3d(i+1,j2,gl_globals::bottom[i+1][j2]);
+                                glVertex3d(i+1,j2,gl_globals::bottom[j2][i+1]);
                             }
                         }
                         glEnd();
@@ -418,11 +418,11 @@ namespace honei
                             for(unsigned int j = 0; j < gl_globals::dheight-1; ++j)
                             {
                                 glColor4f(0.0, 0.0, 1.0, gl_globals::alpha);
-                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
+                                glVertex3d(i,j,gl_globals::height[j][i] + gl_globals::bottom[j][i]);
                                 glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
-                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
-                                glVertex3d(i+1,j+1,gl_globals::height[i+1][j+1] + gl_globals::bottom[i+1][j+1]);
-                                glVertex3d(i,j+1,gl_globals::height[i][j+1] + gl_globals::bottom[i][j+1]);
+                                glVertex3d(i+1,j,gl_globals::height[j][i+1] + gl_globals::bottom[j][i+1]);
+                                glVertex3d(i+1,j+1,gl_globals::height[j+1][i+1] + gl_globals::bottom[i+1][j+1]);
+                                glVertex3d(i,j+1,gl_globals::height[j+1][i] + gl_globals::bottom[i][j+1]);
                             }
                         }
                         glEnd();
@@ -435,18 +435,18 @@ namespace honei
                             for(unsigned int j = 0; j < gl_globals::dheight; j++)
                             {
                                 glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
-                                glVertex3d(i,j,gl_globals::height[i][j] + gl_globals::bottom[i][j]);
+                                glVertex3d(i,j,gl_globals::height[j][i] + gl_globals::bottom[i][j]);
                                 glColor4f(0.0, 0.0, 1.0, gl_globals::alpha);
-                                glVertex3d(i+1,j,gl_globals::height[i+1][j] + gl_globals::bottom[i+1][j]);
+                                glVertex3d(i+1,j,gl_globals::height[j][i+1] + gl_globals::bottom[i+1][j]);
                             }
                             ++i;
                             if (i >= gl_globals::dwidth-1)
                                 break;
                             for(int j2 = gl_globals::dheight-2; j2 >= 0; --j2)
                             {
-                                glVertex3d(i,j2,gl_globals::height[i][j2] + gl_globals::bottom[i][j2]);
+                                glVertex3d(i,j2,gl_globals::height[j2][i] + gl_globals::bottom[j2][i]);
                                 glColor4f(0.0, 1.0, 1.0, gl_globals::alpha);
-                                glVertex3d(i+1,j2,gl_globals::height[i+1][j2] + gl_globals::bottom[i+1][j2]);
+                                glVertex3d(i+1,j2,gl_globals::height[j2][i+1] + gl_globals::bottom[j2][i+1]);
                             }
                         }
                         glEnd();
