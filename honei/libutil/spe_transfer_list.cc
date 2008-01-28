@@ -31,7 +31,7 @@ struct SPETransferList::Implementation
     /// Our elements.
     ListElement * elements;
 
-    /// Our maximal transfer size. (must be < 16 KB)
+    /// Our maximal transfer size per element. (must be < 16 KB)
     unsigned max_transfer_size;
 
     /// Our maximal number of elements. (must be < 2048)
@@ -66,7 +66,7 @@ SPETransferList::SPETransferList(unsigned max_size, unsigned max_transfer_size) 
     _imp(new Implementation(max_size, max_transfer_size))
 {
     ASSERT(max_size <= 2048, "Specified number of maximum ListElements exceeds 2048");
-    ASSERT(max_transfer_size <= 16384, "Specified maximum ListTransfer size exceeds 16 KB");
+    ASSERT(max_transfer_size <= 16384, "Specified maximum TransferList size exceeds 16 KB per ListElement");
 }
 
 SPETransferList::ListElement *

@@ -217,39 +217,50 @@ namespace honei
 
         for (SparseMatrix<float>::ConstRowIterator i(b.begin_non_zero_rows()), i_end(b.end_non_zero_rows()) ; i != i_end ; ++i)
         {
-            void * address(i->elements());
+            float * address(i->elements());
             unsigned rowsize(i->used_elements() * sizeof(float));
             rowsize = rowsize % 16 == 0 ? rowsize : rowsize + 16 - (rowsize % 16);
 
-            ListElement * retval = lists.at(nr_lists).add(address, rowsize);
+            unsigned parts((rowsize / 16384) + 1);
+            unsigned partrowsize(0);
+            float * addresses[parts];
 
-            if (retval == 0)
+            for (unsigned x(0) ; x < parts ; x++)
             {
-                // Dispatch old list
-                Operand oa = { lists.at(nr_lists).elements() };
-                Operand ob = { lists.at(nr_lists).effective_address() };
-                Operand oc;
-                oc.f = a;
-                Operand od = { size };
-                Operand oe = { lists.at(nr_lists).size() % 2 == 0 ? lists.at(nr_lists).size() : lists.at(nr_lists).size() + 1 };
+                addresses[x] = address + (x * 4096);
+                partrowsize = rowsize < 16384 ? rowsize : 16384;
+                ListElement * retval = lists.at(nr_lists).add(addresses[x], partrowsize);
 
-                SPEInstruction * instruction = new SPEInstruction(oc_scale_sparse_float, lists.at(nr_lists).size(), oa, ob, oc, od, oe);
-                SPEManager::instance()->dispatch(*instruction);
-                instructions.push_back(instruction);
-                dispatched++;
+                if (retval == 0)
+                {
+                    // Dispatch old list
+                    Operand oa = { lists.at(nr_lists).elements() };
+                    Operand ob = { lists.at(nr_lists).effective_address() };
+                    Operand oc;
+                    oc.f = a;
+                    Operand od = { size };
+                    Operand oe = { lists.at(nr_lists).size() % 2 == 0 ? lists.at(nr_lists).size() : lists.at(nr_lists).size() + 1 };
 
-                // Add Element to new list
-                size = 0;
-                lists.push_back(SPETransferList(2048, 16384));
-                nr_lists++;
-                unsigned rowsize(i->used_elements() * sizeof(float));
-                rowsize = rowsize % 16 == 0 ? rowsize : rowsize + 16 - (rowsize % 16);
-                lists.at(nr_lists).add(address, rowsize);
-                size += rowsize;
-            }
-            else
-            {
-                size += rowsize;
+                    SPEInstruction * instruction = new SPEInstruction(oc_scale_sparse_float, lists.at(nr_lists).size(), oa, ob, oc, od, oe);
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                    dispatched++;
+
+                    // Add Element to new list
+                    size = 0;
+                    lists.push_back(SPETransferList(2048, 16384));
+                    nr_lists++;
+                    unsigned rowsize(i->used_elements() * sizeof(float));
+                    rowsize = rowsize % 16 == 0 ? rowsize : rowsize + 16 - (rowsize % 16);
+                    lists.at(nr_lists).add(addresses[x], partrowsize);
+                    size += partrowsize;
+                }
+                else
+                {
+                    size += partrowsize;
+                }
+
+                rowsize -=partrowsize;
             }
 
         }
