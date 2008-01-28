@@ -9,4 +9,4 @@ cell::number-of-spes = 5
 
 
 # MultiCore
-
+mc::number-of-threads = 4

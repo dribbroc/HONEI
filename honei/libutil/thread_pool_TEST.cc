@@ -40,12 +40,12 @@ namespace
     {
         private:
             unsigned & _v;
-            Mutex * _mutex;
+            Mutex * const _mutex;
 
         public:
-            TestTask(unsigned & v, Mutex * const mutex) :
+            TestTask(unsigned & v) :
                 _v(v),
-                _mutex(mutex)
+                _mutex(new Mutex)
             {
             }
 
@@ -69,8 +69,7 @@ class ThreadPoolTest :
         virtual void run() const
         {
             unsigned v(34);
-            Mutex mutex;
-            TestTask t(v, &mutex);
+            TestTask t(v);
             WorkerTask wt(t);
             ThreadPool * p(ThreadPool::get_instance(6));
             PoolTask * pt[500];

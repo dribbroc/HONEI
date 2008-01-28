@@ -23,6 +23,7 @@
 
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/condition_variable.hh>
+#include <honei/libutil/configuration.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
 #include <honei/libutil/pool_task.hh>
@@ -31,8 +32,6 @@
 
 #include <list>
 #include <tr1/functional>
-
-#define DEFAULT_NUM_THREADS 4
 
 namespace honei
 {
@@ -67,6 +66,8 @@ namespace honei
             {
                 CONTEXT("When creating ThreadPool:");
 
+                Lock l(*_mutex);
+
                 for (unsigned long i(0); i < num_threads; ++i)
                 {
                     PoolThread * poolthread(new PoolThread(this));
@@ -79,8 +80,9 @@ namespace honei
         public:
 
             /// Returns the singleton instance of the pool.
-            //If it doesn't exist yet, it is created with numThreads threads. numThreads is ignored otherwise.
-            static ThreadPool * get_instance(unsigned long num_threads)
+            //If it doesn't exist yet, it is created with numThreads threads,
+            //otherwise it is created with a default number of threads.
+            static ThreadPool * get_instance(unsigned long num_threads = Configuration::instance()->get_value("mc::number-of-threads", 4))
             {
                 CONTEXT("When getting ThreadPool:");
 
@@ -88,17 +90,7 @@ namespace honei
                 return &result;
             }
 
-            /// Returns the singleton instance of the pool.
-            //If it doesn't exist yet, it is created with a default number of threads. Useful for convenience.
-            static ThreadPool * get_instance()
-            {
-                CONTEXT("When getting ThreadPool:");
-
-                static ThreadPool result(DEFAULT_NUM_THREADS);
-                return &result;
-            }
-
-           ///Destructor.
+            ///Destructor.
             ~ThreadPool()
             {
                 CONTEXT("When destroying ThreadPool:");

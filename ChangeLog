@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-28 Volker Jung <volker.jung@honei.org>
+
+	* honei/honeirc : Added entry for setting a number of threads for the
+	multicore-backend.
+	* honei/libutil/thread_pool.hh : ThreadPool now is a real singleton
+	and uses the Configuration-class for setting the default number of
+	threads.
+	* honei/libutil/thread_pool_TEST.cc : Reworked bugfix of the
+	TestTask-class.
+
 2008-01-28 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/libutil/debug.hh,  honei/cell/types.hh,
