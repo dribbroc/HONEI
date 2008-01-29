@@ -9,4 +9,32 @@ cell::number-of-spes = 5
 
 
 # MultiCore
+mc::num-cores = 2
+
 mc::number-of-threads = 4
+
+
+mc::difference[DVCB,DVCB]::min-part-size = 16
+mc::difference[DVCB,DVCB]::max-count = 4
+
+mc::difference[DVCB,SV]::min-part-size = 16
+mc::difference[DVCB,SV]::max-count = 4
+
+mc::difference[BM,BM]::min-part-size = 16
+mc::difference[BM,BM]::max-count = 4
+
+mc::difference[DM,BM]::min-part-size = 16
+mc::difference[DM,BM]::max-count = 4
+
+mc::difference[DM,DM]::min-part-size = 16
+mc::difference[DM,DM]::max-count = 4
+
+mc::difference[DM,SM]::min-part-size = 16
+mc::difference[DM,SM]::max-count = 4
+
+mc::difference[SM,SM]::min-part-size = 16
+mc::difference[SM,SM]::max-count = 4
+
+mc::difference[SM,BM]::min-part-size = 16
+mc::difference[SM,BM]::max-count = 4
+

@@ -29,8 +29,11 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/vector.hh>
+#include <honei/libutil/configuration.hh>
+#include <honei/libutil/partitioner.hh>
 #include <honei/libutil/tags.hh>
 
+#include <list>
 
 namespace honei
 {
@@ -64,88 +67,105 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            CONTEXT("When substracting DenseVector from DenseVector (MultiCore):");
+            CONTEXT("When substracting DenseVectorContinuousBase from DenseVectorContinuousBase (MultiCore):");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
-            unsigned long parts(8);
-            unsigned long div = a.size() / parts;
-            if (div == 0)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DVCB,DVCB]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
+
+            if (overall_size < 2 * min_part_size)
             {
                 Difference<typename Tag_::DelegateTo>::value(a,b);
             }
             else
             {
-                unsigned long modulo = a.size() % parts;
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::difference[DVCB,DVCB]::max-count", num_threads));
+                std::list<Parts> parts(Partitioner::partition(max_count, min_part_size, overall_size));
                 ThreadPool * p(ThreadPool::get_instance());
-                PoolTask * pt[parts];
-                for (int i(0); i < modulo; ++i)
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                Parts temp_part(parts.back());
+                unsigned long offset, part_size(temp_part.size);
+                if (part_size < min_part_size)
                 {
-                    DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
-                    DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
-                    TwoArgWrapper<Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
-                    pt[i] = p->dispatch(mywrapper);
+                    parts.pop_back();
+                    parts.back().size += part_size;
                 }
-                for (unsigned long i(modulo); i < parts; ++i)
+
+                while (! parts.empty())
                 {
-                    DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
-                    DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+                    temp_part = parts.back();
+                    offset = temp_part.start;
+                    part_size = temp_part.size;
+
+                    DenseVectorRange<DT1_> range_1(a.range(part_size, offset));
+                    DenseVectorRange<DT2_> range_2(b.range(part_size, offset));
                     TwoArgWrapper<Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
-                    pt[i] = p->dispatch(mywrapper);
+                    std::tr1::shared_ptr<PoolTask> ptr(p->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                    parts.pop_back();
                 }
-                for (unsigned long i(0); i < parts; ++i)
+                while (! dispatched_tasks.empty())
                 {
-                    pt[i]->wait_on();
-                    delete pt[i];
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
             return a;
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const SparseVector<DT2_> & b)
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const SparseVector<DT2_> & b)
         {
-            CONTEXT("When substracting DenseVector from SparseVector (MultiCore):");
+            CONTEXT("When substracting DenseVectorContinuousBase from SparseVector (MultiCore):");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
-            unsigned long parts(8);
-            unsigned long modulo = b.used_elements() % parts;
-            unsigned long div = b.used_elements() / parts;
-            if (div == 0)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DVCB,SV]::min-part-size", 1024));
+            unsigned long overall_size(b.used_elements());
+            if (overall_size < 2 * min_part_size)
             {
                 Difference<typename Tag_::DelegateTo>::value(a, b);
             }
             else
             {
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::difference[DVCB,DVCB]::max-count", num_threads ));
+                std::list<Parts> parts(Partitioner::partition(max_count, min_part_size, overall_size));
                 ThreadPool * p(ThreadPool::get_instance());
-                PoolTask * pt[parts];
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
-                unsigned long offset;
-                for (int i(0); i < modulo; ++i)
+
+                Parts temp_part(parts.back());
+                unsigned long offset, part_size(temp_part.size);
+                if (part_size < min_part_size)
                 {
+                    parts.pop_back();
+                    parts.back().size += part_size;
+
+                }
+                while (! parts.empty())
+                {
+                    temp_part = parts.front();
+                    part_size = temp_part.size;
                     offset = r.index();
-                    r += div;
-                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
-                    ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, (i*(div+1)));
-                    pt[i] = p->dispatch(mywrapper);
+                    r += (part_size - 1);
+                    DenseVectorRange<DT1_> range(a.range(r.index() - offset + 1, offset));
+                    ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, temp_part.start);
+                    std::tr1::shared_ptr<PoolTask> ptr(p->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                    parts.pop_front();
                     ++r;
                 }
-                for (unsigned long i(modulo); i < parts; ++i)
+
+                while (! dispatched_tasks.empty())
                 {
-                    offset = r.index();
-                    r+= div-1;
-                    DenseVectorRange<DT1_> range(a, r.index()-offset+1, offset);
-                    ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, modulo + (i*div));
-                    pt[i] = p->dispatch(mywrapper);
-                    ++r;
-                }
-                for (unsigned long i = 0; i < parts;  ++i)
-                {
-                    pt[i]->wait_on();
-                    delete pt[i];
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
             return a;
@@ -161,35 +181,50 @@ namespace honei
                 throw MatrixSizeDoesNotMatch(b.size(), a.size());
             }
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[2*a.rows()-1];
-            int taskcount(0);
-            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
-            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
-            for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[BM,BM]::min-part-size", 1024));
+            if (a.size() < 2 * min_part_size)
             {
-                if (! r.exists())
-                    continue;
+                Difference<typename Tag_::DelegateTo>::value(a, b);
+            }
+            else
+            {
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[2*a.rows()-1];
+                int taskcount(0);
+                typename BandedMatrix<DT1_>::VectorIterator l(a.begin_non_zero_bands()), l_end(a.end_non_zero_bands());
+                typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands());
+                unsigned long a_index, b_index;
+                while((l != l_end) && (r != r_end))
+                {
+                    a_index = l.index();
+                    b_index = r.index();
+                    if (a_index < b_index)
+                    {
+                        ++l;
+                    }
 
-                if (l.exists())
-                {
-                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
-                    pt[taskcount] = p->dispatch(mywrapper);
-                    ++taskcount;
+                    if (a_index == b_index)
+                    {
+                        TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
+                        pt[taskcount] = p->dispatch(mywrapper);
+                        ++taskcount;
+                        ++l;
+                        ++r;
+                    }
+                    else
+                    {
+                        DenseVector<DT2_> band(r->copy());
+                        Scale<typename Tag_::DelegateTo>::value(band, DT1_(-1));
+                        a.band(r.index()-a.size()+1) = band;
+                        ++r;
+                    }
                 }
-                else
+                for (unsigned long j = 0; j < taskcount; ++j)
                 {
-                   DenseVector<DT2_> band(r->copy());
-                   Scale<typename Tag_::DelegateTo>::value(band, DT1_(-1));
-                   a.band(r.index()-a.size()+1) = band;
+                    pt[j]->wait_on();
+                    delete pt[j];
                 }
             }
-            for (unsigned long j = 0; j < taskcount; ++j)
-            {
-                pt[j]->wait_on();
-                delete pt[j];
-            }
-
             return a;
         }
 
@@ -197,12 +232,6 @@ namespace honei
         static DenseMatrix<DT1_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
             CONTEXT("When subtracting DenseMatrix from BandedMatrix (MultiCore):");
-
-            unsigned long parts(PARTS);
-            unsigned long modulo(0);
-            unsigned long div(1);
-            unsigned long start(0);
-            unsigned long end(0);
 
             if (b.columns() != b.rows())
             {
@@ -214,45 +243,51 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            Scale<Tag_>::value(b, -1);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DM,BM]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
 
-            if (a.size() < parts)
+            if (overall_size < 2 * min_part_size)
             {
-                parts = a.size();
+                Difference<typename Tag_::DelegateTo>::value(a, b);
             }
+
             else
             {
-                div = a.size() / parts;
-                modulo = a.size() % parts;
-            }
+                Scale<Tag_>::value(b, -1);
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::difference[DM,BM]::max-count", num_threads ));
+                std::list<Parts> parts(Partitioner::partition(max_count, min_part_size, overall_size));
+                ThreadPool * p(ThreadPool::get_instance());
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            for (int i(0) ; i < modulo ; ++i)
-            { // (div+1) elements, from (i * (div + 1)) to ((i+1) * (div + 1) - 1).
-                start = (i * (div + 1));
-                end   = ((i + 1) * (div + 1) - 1);
-                FourArgWrapper<MCDifference<typename Tag_::DelegateTo>, const BandedMatrix<DT1_>,
-                    DenseMatrix<DT2_>, unsigned long, unsigned long>
-                    mywrapper(a, b, start, end);
-                pt[i] = p->dispatch(mywrapper);
-           }
+                Parts temp_part(parts.back());
+                unsigned long offset, part_size(temp_part.size);
+                if (part_size < min_part_size)
+                {
+                    parts.pop_back();
+                    parts.back().size += part_size;
+                }
 
-            for (int i(modulo) ; i < parts ; ++i)
-            { // div elements, from (modulo + div * i) to (modulo + div * (i+1) - 1).
-                start = (modulo + (div * i));
-                end   = (modulo + (div * (i +1) - 1));
-                FourArgWrapper< MCDifference<typename Tag_::DelegateTo>, const BandedMatrix<DT1_>,
-                    DenseMatrix<DT2_>, unsigned long, unsigned long>
-                    mywrapper(a, b, start, end);
-                pt[i] = p->dispatch(mywrapper);
-            }
+                while (! parts.empty())
+                {
+                    temp_part = parts.back();
+                    offset = temp_part.start;
+                    part_size = offset + temp_part.size - 1;
 
-            for (int i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
+                    FourArgWrapper<MCDifference<typename Tag_::DelegateTo>, const BandedMatrix<DT1_>,
+                        DenseMatrix<DT2_>, unsigned long, unsigned long>
+                        mywrapper(a, b, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(p->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                    parts.pop_back();
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
 
             return b;
@@ -338,17 +373,27 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DM,DM]::min-part-size", 1024));
+
+            if (a.rows() * a.columns() < 2 * min_part_size)
             {
-                TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(a[i], b[i]);
-                pt[i] = p->dispatch(mywrapper);
+                Difference<typename Tag_::DelegateTo>::value(a, b);
             }
-            for (unsigned long i = 0; i < a.rows(); ++i)
+
+            else
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[a.rows()];
+                for (unsigned long i = 0 ; i < a.rows() ; ++i)
+                {
+                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(a[i], b[i]);
+                    pt[i] = p->dispatch(mywrapper);
+                }
+                for (unsigned long i = 0; i < a.rows(); ++i)
+                {
+                    pt[i]->wait_on();
+                    delete pt[i];
+                }
             }
             return a;
         }
@@ -368,17 +413,26 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DM,SM]::min-part-size", 1024));
+            if (a.rows() * a.columns() < 2 * min_part_size)
             {
-                TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
-                pt[i] = p->dispatch(mywrapper);
+                Difference<typename Tag_::DelegateTo>::value(a, b);
             }
-            for (unsigned long i = 0; i < a.rows(); ++i)
+
+            else
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[a.rows()];
+                for (unsigned long i = 0 ; i < a.rows() ; ++i)
+                {
+                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
+                    pt[i] = p->dispatch(mywrapper);
+                }
+                for (unsigned long i = 0; i < a.rows(); ++i)
+                {
+                    pt[i]->wait_on();
+                    delete pt[i];
+                }
             }
             return a;
         }
@@ -398,17 +452,26 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[SM,SM]::min-part-size", 1024));
+            if (a.rows() * a.columns() < 2 * min_part_size)
             {
-                TwoArgWrapper< Difference<typename Tag_::DelegateTo>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
-                pt[i] = p->dispatch(mywrapper);
+                Difference<typename Tag_::DelegateTo>::value(a, b);
             }
-            for (unsigned long i = 0; i < a.rows(); ++i)
+
+            else
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                ThreadPool * p(ThreadPool::get_instance());
+                PoolTask * pt[a.rows()];
+                for (unsigned long i = 0 ; i < a.rows() ; ++i)
+                {
+                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
+                    pt[i] = p->dispatch(mywrapper);
+                }
+                for (unsigned long i = 0; i < a.rows(); ++i)
+                {
+                    pt[i]->wait_on();
+                    delete pt[i];
+                }
             }
             return a;
         }
@@ -428,27 +491,26 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            Scale<Tag_>::value(b, -1);
-
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[BM,SM]::min-part-size", 1024));
             unsigned long parts(8);
             unsigned long div = a.size() / parts;
-            if (div == 0)
+            if (a.size() < min_part_size)
             {
                 return Difference<typename Tag_::DelegateTo>::value(a,b);
             }
             else
             {
+                Scale<Tag_>::value(b, -1);
+
                 unsigned long modulo = a.size() % parts;
                 ThreadPool * tp(ThreadPool::get_instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 Mutex mutex[parts];
                 int middle_index(a.rows() -1);
                 //if we are below the diagonal band
-                for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_bands()),
+                for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_non_zero_bands()),
                      vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
                 {
-                    if (!vi.exists())
-                        continue;
                     unsigned long i(parts), offset(a.size());
                     unsigned long start(middle_index - vi.index());
                     while(i > modulo && offset-div > start)
@@ -485,10 +547,8 @@ namespace honei
                 }
                 // If we are above or on the diagonal band
                 for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.band_at(middle_index)),
-                     vi_end(a.end_bands()); vi != vi_end ; ++vi)
+                     vi_end(a.end_non_zero_bands()); vi != vi_end ; ++vi)
                 {
-                    if (!vi.exists())
-                        continue;
                     unsigned long i(0), offset(0);
                     unsigned long index(vi.index() - middle_index);
                     unsigned long end(vi->size() - index);

@@ -30,10 +30,21 @@ namespace honei
     {
         unsigned long start;
         unsigned long size;
+
+        Parts()
+        {
+        };
+
         Parts(unsigned long sstart, unsigned long ssize)
         {
             start = sstart;
             size = ssize;
+        };
+
+        void operator= (Parts part)
+        {
+            start = part.start;
+            size = part.size;
         };
     };
 

@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-29 Joachim Messer <joachim.messer@uni-dortmund.de>
+
+	* honei/libla/difference-mc.hh:
+	Added usage of configuration class and partitioner. Additional changes
+	in regards of correctness and efficiency.
+	* honei/honeirc:
+	Made coresponding entries.
+	* honei/libla/partitioner.hh:
+	Added default creator and operator= for struct Parts.
+
 2008-01-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libvisual/enginesolveremote.hh,
