@@ -376,7 +376,7 @@ namespace honei
                         if (row_index > end)
                             break;
 
-                        if ((row_index >= start) && (row_index <= end))
+                        if (row_index >= start)
                         {
                             a[row_index][col_index] += *c;
                         }
@@ -406,7 +406,7 @@ namespace honei
                         if (col_index >= size)
                             break;
 
-                        if ((row_index >= start) && (row_index <= end))
+                        if (row_index >= start)
                         {
                             a[row_index][col_index] += *c;
                         }

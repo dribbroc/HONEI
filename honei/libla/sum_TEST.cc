@@ -59,7 +59,7 @@ class BandedMatrixDenseMatrixSumTest :
                 //randomize content
                 for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()); i != i_end; ++i)
                 {
-                    *i = 5; //getRandom();
+                    *i =getRandom();
                 }
 
                 // multiple bands (with same vector, perhaps should be different)
@@ -75,7 +75,7 @@ class BandedMatrixDenseMatrixSumTest :
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()), j(dm3.begin_elements());
                     i != i_end; ++i, ++j)
                 {
-                    *i = *j = 2; //getRandom();
+                    *i = *j = getRandom();
                 } 
 
                 // calculate reference result

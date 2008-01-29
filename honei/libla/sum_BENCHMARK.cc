@@ -206,10 +206,10 @@ class DenseMatrixBandedMatrixSumBench :
         }
 };
 
-DenseMatrixBandedMatrixSumBench<tags::CPU, float> DMBMSBenchfloat1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
-DenseMatrixBandedMatrixSumBench<tags::CPU, double> DMBMSBenchdouble1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
-DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, float> DMBMSBenchfloat1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, float", 4048, 10);
-DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, double> DMSBMBenchdouble1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4048x4048, double", 4048, 10);
+DenseMatrixBandedMatrixSumBench<tags::CPU, float> DMBMSBenchfloat1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 8048x8048, float", 8048, 10);
+DenseMatrixBandedMatrixSumBench<tags::CPU, double> DMBMSBenchdouble1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 8048x8048, double", 8048, 10);
+DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, float> DMBMSBenchfloat1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 8048x8048, float", 8048, 10);
+DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, double> DMSBMBenchdouble1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 8048x8048, double", 8048, 10);
 
 
 
