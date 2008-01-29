@@ -68,7 +68,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
             CONTEXT("When calculating the product of  DenseVector elements (MultiCore):");
 
@@ -87,15 +87,15 @@ namespace honei
                 PoolTask * pt[parts];
                 for (int i(0); i < modulo; ++i)
                 {
-                    DenseVectorRange<DT1_> range_1(a, div+1, i*(div+1));
-                    DenseVectorRange<DT2_> range_2(b, div+1, i*(div+1));
+                    DenseVectorRange<DT1_> range_1(a.range(div+1, i*(div+1)));
+                    DenseVectorRange<DT2_> range_2(b.range(div+1, i*(div+1)));
                     TwoArgWrapper<ElementProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
                     pt[i] = p->dispatch(mywrapper);
                 }
                 for (unsigned long i(modulo); i < parts; ++i)
                 {
-                    DenseVectorRange<DT1_> range_1(a, div, modulo+(i*div));
-                    DenseVectorRange<DT2_> range_2(b, div, modulo+(i*div));
+                    DenseVectorRange<DT1_> range_1(a.range(div, modulo+(i*div)));
+                    DenseVectorRange<DT2_> range_2(b.range(div, modulo+(i*div)));
                     TwoArgWrapper<ElementProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
                     pt[i] = p->dispatch(mywrapper);
                 }
@@ -109,7 +109,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVector<DT2_> & b)
+        static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseVector and DenseVector elements (MultiCore):");
 
@@ -132,7 +132,7 @@ namespace honei
                 {
                     offset = r.index();
                     r += div;
-                    DenseVectorRange<DT2_> range(b, r.index()-offset+1, offset);
+                    DenseVectorRange<DT2_> range(b.range(r.index()-offset+1, offset));
                     ThreeArgWrapper<MCElementProduct<Tag_>, SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(a, range, (i*(div+1)));
                     pt[i] = p->dispatch(mywrapper);
                     ++r;
@@ -141,7 +141,7 @@ namespace honei
                 {
                     offset = r.index();
                     r+= div-1;
-                    DenseVectorRange<DT2_> range(b, r.index()-offset+1, offset);
+                    DenseVectorRange<DT2_> range(b.range(r.index()-offset+1, offset));
                     ThreeArgWrapper<MCElementProduct<Tag_>, SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(a, range, modulo + (i*div));
                     pt[i] = p->dispatch(mywrapper);
                     ++r;

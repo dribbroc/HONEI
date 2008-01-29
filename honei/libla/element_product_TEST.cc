@@ -60,7 +60,7 @@ class DenseVectorElementProductTest :
                     sign_1 *= -1;
                     sign_2 *= (-1) * sign_1;
                 }
-                ElementProduct<>::value(dv1, dv2);
+                ElementProduct<Tag_>::value(dv1, dv2);
 
                 TEST_CHECK_EQUAL(dv1, dv3);
             }
@@ -193,7 +193,7 @@ class DenseVectorRangeElementProductTest :
                                 *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index() + offset2)%num_limit) -1);
                             }
 
-                            ElementProduct<>::value(dvr1, dvr2);
+                            ElementProduct<Tag_>::value(dvr1, dvr2);
                             TEST_CHECK_EQUAL(dvr1, dvr3);
                         }
                     }
@@ -269,7 +269,7 @@ class DenseVectorRangeElementProductQuickTest :
                             *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index()+offset2)%num_limit) -1);
                         }
 
-                        ElementProduct<>::value(dvr1, dvr2);
+                        ElementProduct<Tag_>::value(dvr1, dvr2);
                         TEST_CHECK_EQUAL(dvr1, dvr3);
                     }
                 }
@@ -333,7 +333,7 @@ class SparseVectorDenseVectorElementProductTest :
             SparseVector<DataType_> sv01(3, 1);
             DenseVector<DataType_> dv02(4);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(sv01, dv02), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sv01, dv02), VectorSizeDoesNotMatch);
         }
 };
 SparseVectorDenseVectorElementProductTest<tags::CPU, float> sparse_vector_dense_vector_elementwise_product_test_float("float");
@@ -376,7 +376,7 @@ class SparseVectorDenseVectorElementProductQuickTest :
             SparseVector<DataType_> sv01(3, 1);
             DenseVector<DataType_> dv02(4);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(sv01, dv02), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sv01, dv02), VectorSizeDoesNotMatch);
         }
 };
 SparseVectorDenseVectorElementProductQuickTest<tags::CPU, float> sparse_vector_dense_vector_elementwise_product_quick_test_float("float");
@@ -563,7 +563,7 @@ class BandedMatrixElementProductTest :
                 DenseVector<DataType_> dv3(size, DataType_(6));
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
 
-                ElementProduct<>::value(bm1, bm2);
+                ElementProduct<Tag_>::value(bm1, bm2);
 
                 TEST_CHECK_EQUAL(bm1, bm3);
             }
@@ -597,7 +597,7 @@ class BandedMatrixElementProductQuickTest :
             DenseVector<DataType_> dv3(size, DataType_(6));
             BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2), bm3(size, dv3);
 
-            ElementProduct<>::value(bm1, bm2);
+            ElementProduct<Tag_>::value(bm1, bm2);
 
             TEST_CHECK_EQUAL(bm1, bm3);
 
@@ -827,7 +827,7 @@ class SparseMatrixDenseMatrixElementProductTest :
                     }
                 }
 
-                ElementProduct<>::value(sm2, dm1);
+                ElementProduct<Tag_>::value(sm2, dm1);
 
                 TEST_CHECK_EQUAL(sm2, sm3);
             }
@@ -863,7 +863,7 @@ class SparseMatrixDenseMatrixElementProductTest :
                 sm3[size][size - 1] = DataType_(factor_1 * factor_2);
 
 
-                ElementProduct<>::value(sm2, dm1);
+                ElementProduct<Tag_>::value(sm2, dm1);
 
                 TEST_CHECK_EQUAL(sm2, sm3);
             }
@@ -899,7 +899,7 @@ class SparseMatrixDenseMatrixElementProductQuickTest :
                 }
             }
 
-            ElementProduct<>::value(sm2, dm1);
+            ElementProduct<Tag_>::value(sm2, dm1);
 
             TEST_CHECK_EQUAL(sm2, sm3);
 
@@ -1036,7 +1036,7 @@ class SparseMatrixElementProductTest :
                     }
                 }
 
-                ElementProduct<>::value(sm1, sm2);
+                ElementProduct<Tag_>::value(sm1, sm2);
 
                 TEST_CHECK_EQUAL(sm1, sm3);
             }
@@ -1086,14 +1086,14 @@ class SparseMatrixElementProductQuickTest :
                 }
             }
 
-            ElementProduct<>::value(sm1, sm2);
+            ElementProduct<Tag_>::value(sm1, sm2);
 
             TEST_CHECK_EQUAL(sm1, sm3);
 
             SparseMatrix<DataType_> sm01(5, 5, 1), sm02(6, 6, 1), sm03(6, 5, 1);
 
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm03, sm01), MatrixRowsDoNotMatch);
-            TEST_CHECK_THROWS(ElementProduct<>::value(sm03, sm02), MatrixColumnsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm03, sm01), MatrixRowsDoNotMatch);
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(sm03, sm02), MatrixColumnsDoNotMatch);
         }
 };
 SparseMatrixElementProductQuickTest<tags::CPU, float> sparse_matrix_elementwise_product_quick_test_float("float");
