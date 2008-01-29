@@ -16,7 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libvisual/solver_server.hh>
+#include <honei/libvisual/engine_server.hh>
 #include <unittest/unittest.hh>
 #include <honei/libutil/stringify.hh>
 #include <string>
@@ -26,21 +26,21 @@ using namespace honei;
 using namespace tests;
 
 template <typename Tag_, typename DataType_>
-class SolverServerTest :
+class EngineServerTest :
     public BaseTest
 {
     public:
-        SolverServerTest(const std::string & type) :
-            BaseTest("SolverServer test<" + type + ">")
+        EngineServerTest(const std::string & type) :
+            BaseTest("EngineServer test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
-            SolverServer<Tag_, DataType_> solver_server;
-            solver_server.run();
+            EngineServer<Tag_, DataType_> engine_server;
+            engine_server.run();
             TEST_CHECK(true);
         }
 };
-//SolverServerTest<tags::CPU, float> solver_server_test_double("float");
+//EngineServerTest<tags::CPU, float> engine_server_test_double("float");

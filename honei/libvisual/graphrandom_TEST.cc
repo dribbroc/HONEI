@@ -54,7 +54,7 @@ class EngineGraphTest :
 
             std::cout << "\nCalculate Position\n";
             
-            Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), _nodeCount * 0.1);
+            Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), int(_nodeCount * 0.1));
             
             
             char * c = "Test: Engine";

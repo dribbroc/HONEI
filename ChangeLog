@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-29 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libvisual/engine_client.hh,
+	honei/libvisual/engine_client_TEST.cc,
+	honei/libvisual/engine_server.hh,
+	honei/libvisual/engine_server_TEST.cc, honei/libvisual/files.m4,
+	honei/libvisual/graphrandom_TEST.cc,
+	honei/libvisual/solver_server_TEST.cc:
+	Added engine_server and engine_client as templates for further
+	specializations.
+
 2008-01-29 Andre Matuschek <andre@matuschek.org>
 	* honei/libla/product-mc.hh: Removed redundant return value,
 	hopefully fixing segfaults.
