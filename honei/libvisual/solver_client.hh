@@ -47,7 +47,7 @@ namespace honei
                 int bytes;
 
 
-                std::cout<<"Selecting scenario"<<std::endl;
+                //std::cout<<"Selecting scenario"<<std::endl;
                 sprintf(buffer, "%i", scenario);
                 bytes = send(c, buffer, strlen(buffer), 0);
             }
@@ -74,14 +74,14 @@ namespace honei
 
                     bytes = send(c, "c", 1, 0);
                 }
-                std::cout<<"got matrix: "<<height_field<<std::endl;
+                //std::cout<<"got matrix: "<<height_field<<std::endl;
             }
 
             void _restart(int c)
             {
                 int bytes;
                 bytes = recv(c, _data, sizeof(_data) - 1, 0);
-                std::cout<<"Restarting scenario."<<std::endl;
+                //std::cout<<"Restarting scenario."<<std::endl;
                 send(c, "r", 1 ,0);
             }
 

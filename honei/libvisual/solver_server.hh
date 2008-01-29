@@ -30,16 +30,56 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <honei/libla/dense_matrix.hh>
+#include <honei/libswe/relax_solver.hh>
+#include <honei/libswe/volume.hh>
 
 #define BUFFER_SIZE 1024
 
+
+using namespace volume_types;
 namespace honei
 {
+    namespace globals {
+
+        //globally defined solver:
+        ulint dwidth = 41;
+        ulint dheight = 41;
+        //DenseMatrix<float> height(dheight, dwidth, float(5));
+        DenseMatrix<float> height(dheight, dwidth, float(5));
+
+        DenseMatrix<float> bottom(dheight, dwidth, float(0));
+        DenseMatrix<float> u1(dheight, dwidth, float(0));
+        DenseMatrix<float> u2(dheight, dwidth, float(0));
+        unsigned long entries = 3*((dwidth*dheight)+4*(dwidth+dheight+4));
+        DenseVector<float> u(entries, float(1));
+        DenseVector<float> v(entries, float(1));
+        DenseVector<float> w(entries, float(1));
+        DenseVector<float> bx (entries/3, float(1));
+        DenseVector<float> by (entries/3, float(1));
+        DenseVector<float> c (3,float(5));
+        DenseVector<float> d (3,float(5));
+        float deltax = 5;
+        float deltay = 5;
+        float deltat = 5./24.;
+        double eps = 10e-6;
+        float manning = float(0);
+#ifdef HONEI_SSE
+        RelaxSolver<tags::CPU::SSE, float, float, float, float, float, SIMPLE, REFLECT> solver( &height, &bottom, &u1, &u2, &u, &v, &w,
+                dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d, manning);
+#elif defined HONEI_CELL
+    RelaxSolver<tags::CELL, float, float, float, float, float> solver( &height, &bottom, &u1, &u2, &u, &v, &w,
+                dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d, manning);
+#else
+    RelaxSolver<tags::CPU, float, float, float, float, float> solver( &height, &bottom, &u1, &u2, &u, &v, &w,
+                dwidth, dheight, deltax, deltay, deltat, eps, &bx, &by, &c, &d, manning);
+#endif
+
+    }
+
     template <typename Tag_, typename DataType_> class SolverServer
     {
         private:
             int _scenario;
-            DenseMatrix<DataType_> * _height_field;
 
             void _read_scenario(int c)
             {
@@ -49,15 +89,7 @@ namespace honei
                 bytes = recv(c, scenario, sizeof(scenario) - 1, 0);
                 scenario[bytes] = '\0';
                 _scenario = atoi(scenario);
-
-                delete _height_field;
-                _height_field = new DenseMatrix<DataType_>(4, 4, DataType_(0));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(_height_field->begin_elements()),
-                        i_end(_height_field->end_elements()) ; i != i_end ; ++i)
-                {
-                    *i = DataType_(i.index() + 1) / DataType_(1.123);
-                }
-                std::cout<<"scenario choosen: "<<_scenario<<std::endl;
+                //std::cout<<"scenario choosen: "<<_scenario<<std::endl;
             }
 
             int _write_timesteps(int c)
@@ -66,21 +98,30 @@ namespace honei
                 int bytes;
 
                 std::string result;
+                //initial scenario setup
+                Volume<CYLINDRIC::STENCIL>::value(globals::height, float(15.), globals::dwidth/2, globals::dheight/2);
+                globals::c[0] = 12;
+                globals::c[1] = 7;
+                globals::c[2] = 12;
+                globals::d[0] = 12;
+                globals::d[1] = 7;
+                globals::d[2] = 12;
+                globals::solver.do_preprocessing();
 
                 do
                 {
-                    std::cout<<"Timestep:"<<std::endl;
+                    //std::cout<<"Timestep:"<<std::endl;
                     // insert data calculation by solver here
-                    for (unsigned long row(0) ; row < _height_field->rows() ; ++row)
+                    globals::solver.solve();
+                    for (unsigned long row(0) ; row < globals::height.rows() ; ++row)
                     {
                         result = "";
-                        for (typename DenseVector<DataType_>::ElementIterator i((*_height_field)[row].begin_elements()),
-                                i_end((*_height_field)[row].end_elements()) ; i != i_end ; ++i)
+                        for (typename DenseVector<DataType_>::ElementIterator i((globals::height)[row].begin_elements()),
+                                i_end((globals::height)[row].end_elements()) ; i != i_end ; ++i)
                         {
-                            *i = *i + 1.1 * row;
                             result += stringify(*i) + "a#";
                         }
-                        std::cout<< "sending matrix row: "<<(*_height_field)[row]<<std::endl;
+                        //std::cout<< "sending matrix row: "<<(globals::height)[row]<<std::endl;
                         bytes = send(c, result.c_str(), strlen(result.c_str()) - 2, 0);
 
                         bytes = recv(c, handshake, sizeof(handshake) - 1, 0);
@@ -112,14 +153,12 @@ namespace honei
             }
 
         public:
-            SolverServer() :
-                _height_field(0)
+            SolverServer()
             {
             }
 
             ~SolverServer()
             {
-                delete _height_field;
             }
 
             void run()
