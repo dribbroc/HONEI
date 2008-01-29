@@ -32,17 +32,23 @@ class VolumeQuickTest :
 {
     public:
         VolumeQuickTest(const std::string & type) :
-            QuickTest("water_shot_quick_test<" + type + ">")
+            QuickTest("volume_quick_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
             DenseMatrix<DataType_> height(30 ,30, DataType_(1));
-            Volume<CYLINDRIC::STENCIL>::value(height, DataType_(5), 0, 15);
-            Volume<CYLINDRIC::STENCIL>::value(height, DataType_(5), 15, 0);
-            Volume<CYLINDRIC::STENCIL>::value(height, DataType_(5), 29, 15);
-            Volume<CYLINDRIC::STENCIL>::value(height, DataType_(5), 15, 29);
+            Cylinder<DataType_> c1(height, DataType_(5), 0, 15);
+            Cylinder<DataType_> c2(height, DataType_(5), 15, 0);
+            Cylinder<DataType_> c3(height, DataType_(5), 29, 15);
+            Cylinder<DataType_> c4(height, DataType_(5), 15, 29);
+
+            c1.value();
+            c2.value();
+            c3.value();
+            c4.value();
+
             std::cout << height << std::endl;
             TEST_CHECK(true);
         }

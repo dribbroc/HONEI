@@ -33,6 +33,7 @@
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/dense_vector.hh>
 
+#include <vector>
 namespace volume_types
 {
     class CYLINDRIC
@@ -41,20 +42,48 @@ namespace volume_types
         class BRESENHAM;
     };
 }
-
+using namespace std;
 namespace honei
 {
-    template<typename VolumeType_>
-    struct Volume
+    class Volume
     {
+        private:
+            vector<Volume> object_list;
+
+        public:
+            void value()
+            {
+                for(vector<Volume>::iterator i(object_list.begin()); i != object_list.end(); ++i)
+                {
+                    (*i).value();
+                }
+            }
     };
 
-    template<>
-    struct Volume<volume_types::CYLINDRIC::STENCIL>
+    template<typename DataType_>
+    class Cylinder : public Volume
     {
         public:
-            template<typename DataType_>
-            static DenseMatrix<DataType_>& value(DenseMatrix<DataType_> & height, DataType_ h, signed long grid_x, signed long grid_y)
+            void value()
+            {
+                this->value(*_height, _h, _grid_x, _grid_y);
+            }
+
+            Cylinder(DenseMatrix<DataType_> & height, DataType_ h, signed long g_w, signed long g_h)
+            {
+                this->_height = &height;
+                this->_h = h;
+                this->_grid_x = g_w;
+                this->_grid_y = g_h;
+            }
+
+        private:
+            DenseMatrix<DataType_> * _height;
+            DataType_ _h;
+            signed long _grid_x;
+            signed long _grid_y;
+
+            void value(DenseMatrix<DataType_> & height, DataType_ h, signed long grid_x, signed long grid_y)
             {
                 if(grid_y >= 0 && grid_y < height.rows())
                 {

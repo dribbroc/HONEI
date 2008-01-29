@@ -99,7 +99,9 @@ namespace honei
 
                 std::string result;
                 //initial scenario setup
-                Volume<CYLINDRIC::STENCIL>::value(globals::height, float(15.), globals::dwidth/2, globals::dheight/2);
+                Cylinder<float> c1(globals::height, float(15.), globals::dwidth/2, globals::dheight/2);
+                c1.value();
+
                 globals::c[0] = 12;
                 globals::c[1] = 7;
                 globals::c[2] = 12;

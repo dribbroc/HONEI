@@ -64,7 +64,7 @@ namespace honei
         GLint menu_id_rendering;
 
         //globally defined solver:
-        ulint dwidth = 80;
+        ulint dwidth = 40;
         ulint dheight = 40;
         //DenseMatrix<float> height(dheight, dwidth, float(5));
         DenseMatrix<float> height(dheight, dwidth, float(5));
@@ -123,8 +123,8 @@ namespace honei
                 //glEnable(GL_POLYGON_SMOOTH);
 
 
-                Volume<CYLINDRIC::STENCIL>::value(gl_globals::height, float(15.), gl_globals::dwidth/2, gl_globals::dheight/2);
-                //Volume<CYLINDRIC::STENCIL>::value(gl_globals::bottom, float(3.), 10, 10);
+                Cylinder<float> c1(gl_globals::height, float(15.), gl_globals::dwidth/2, gl_globals::dheight/2);
+                c1.value();
 
                 gl_globals::c[0] = 12;
                 gl_globals::c[1] = 7;
