@@ -6,6 +6,15 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 2008-01-29 Andre Matuschek <andre@matuschek.org>
+	* honei/libla/product-mc.hh: Removed redundant return value,
+	hopefully fixing segfaults.
+	* honei/libla/product_TEST.cc: Changed absolute to relative deviation.
+
+2008-01-29 David Gies <david-gies@gmx.de>
+	* honei/libla/element_product_TEST.cc, honei/libla/element_product-mc.hh:
+	Added missing tags in tests and altered DV versions of element-product to DVCB.
+
+2008-01-29 Andre Matuschek <andre@matuschek.org>
 
 	* honei/libla/sum-mc.hh: Removed unnecessary conditions.
 	* honei/libla/sum_TEST: Removed forgotten simplifications in testcase.

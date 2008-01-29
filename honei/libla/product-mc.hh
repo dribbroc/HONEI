@@ -99,13 +99,12 @@ namespace honei
 
         // Help function for DenseMatrix * DenseMatrix MultiCore.
         template <typename DT1_, typename DT2_>
-        static DenseVectorRange<DT1_> value(DenseVectorRange<DT1_> & a, const DenseMatrix<DT2_> & b, const DenseVectorRange<DT2_> & c)
+        static void value(DenseVectorRange<DT1_> & a, const DenseMatrix<DT2_> & b, const DenseVectorRange<DT2_> & c)
         {
             for (unsigned long j(0) ; j < b.rows() ; ++j)
             {
                 ScaledSum<Tag_>::value(a, b[j], c[j]);
             }
-            return a;
         }
 
         
@@ -124,8 +123,8 @@ namespace honei
             
             for (unsigned long i(0) ; i < a.rows() ; ++i)
             {
-                ResultThreeArgWrapper< MCProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, DenseVectorRange<DT1_>,
-                     const DenseMatrix<DT2_>, const DenseVectorRange<DT2_> > mywrapper(result[i], result[i], b, a[i]);
+                ThreeArgWrapper< MCProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
+                     const DenseMatrix<DT2_>, const DenseVectorRange<DT2_> > mywrapper(result[i], b, a[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
 

@@ -709,7 +709,7 @@ class DenseMatrixProductTest :
                 for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
                         j(dm3.begin_elements()); i != i_end ; ++i, ++j)
                 {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i / *j, 1, std::numeric_limits<DataType_>::epsilon() * 3);
                 }
             }
 
@@ -774,7 +774,7 @@ class DenseMatrixProductQuickTest :
             for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
                     j(dm3.begin_elements()); i != i_end ; ++i, ++j)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i / *j, 1, std::numeric_limits<DataType_>::epsilon() * 3);
             }
 
             DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
