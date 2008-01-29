@@ -35,8 +35,6 @@
 
 #define BUFFER_SIZE 1024
 
-
-using namespace volume_types;
 namespace honei
 {
     namespace globals {

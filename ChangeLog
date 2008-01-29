@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-30 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/volume.hh, honei/libswe/volume_TEST.cc, honei/libvisual/enginesolve.hh, honei/libvisual/solver_server.hh:
+	Added implementation of Cuboid Volume, removed obsolete namespace.
+
 2008-01-29 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/volume.hh, honei/libswe/volume_TEST.cc, honei/libvisual/enginesolve.hh, honei/libvisual/solver_server.hh:

@@ -24,8 +24,6 @@
 #include <honei/libswe/relax_solver.hh>
 #include <honei/libswe/volume.hh>
 
-using namespace volume_types;
-
 namespace honei
 {
     namespace gl_globals {

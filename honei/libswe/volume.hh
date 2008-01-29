@@ -34,14 +34,7 @@
 #include <honei/libla/dense_vector.hh>
 
 #include <vector>
-namespace volume_types
-{
-    class CYLINDRIC
-    {
-        class STENCIL;
-        class BRESENHAM;
-    };
-}
+
 using namespace std;
 namespace honei
 {
@@ -240,5 +233,51 @@ namespace honei
 
             }
     };
+
+    template<typename DataType_>
+    class Cuboid : public Volume
+    {
+        public:
+            void value()
+            {
+                this->value(*_height, _l, _w, _h, _grid_x, _grid_y);
+            }
+
+            Cuboid(DenseMatrix<DataType_> & height, DataType_ l, DataType_ w, DataType_ h, signed long g_w, signed long g_h)
+            {
+                this->_height = &height;
+                this->_h = h;
+                this->_w = w;
+                this->_l = l;
+                this->_grid_x = g_w;
+                this->_grid_y = g_h;
+            }
+
+        private:
+            DenseMatrix<DataType_> * _height;
+            DataType_ _h;
+            DataType_ _w;
+            DataType_ _l;
+            signed long _grid_x;
+            signed long _grid_y;
+
+            void value(DenseMatrix<DataType_> & height, DataType_ l, DataType_ w, DataType_ h, signed long grid_x, signed long grid_y)
+            {
+                for(signed long i(grid_y); i < grid_y + l; ++i)
+                {
+                    if(i >= 0 && i < height.rows())
+                    {
+                        for(signed long j(grid_x); j < grid_x + w; ++j)
+                        {
+                            if(j >= 0 && j < height.columns())
+                            {
+                                height[i][j] = h;
+                            }
+                        }
+                    }
+                }
+            }
+    };
+
 }
 #endif
