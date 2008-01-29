@@ -21,11 +21,8 @@
 
 #include <GL/glut.h>
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libswe/relax_solver.hh>
-#include <honei/libswe/volume.hh>
 #include <honei/libvisual/solver_client.hh>
-
-using namespace volume_types;
+#include <honei/libutil/tags.hh>
 
 namespace honei
 {
@@ -65,8 +62,8 @@ namespace honei
         GLint menu_id_rendering;
 
         //globally defined solver:
-        ulint dwidth = 41;
-        ulint dheight = 41;
+        unsigned long dwidth = 41;
+        unsigned long  dheight = 41;
         DenseMatrix<double> height(dheight, dwidth, float(5));
 
         DenseMatrix<double> bottom(dheight, dwidth, float(0));
@@ -92,7 +89,7 @@ namespace honei
                 if (gl_globals::first_start)
                 {
                     gl_globals::first_start = false;
-                    gl_globals::client.init("lithium", 4711, 1);
+                    gl_globals::client.init("ps3", 4711, 1);
                 }
                 glClearColor(0.0, 0.0, 0.2, 0.0);
                 if (gl_globals::enable_shading) glShadeModel(GL_SMOOTH);
