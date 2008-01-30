@@ -33,23 +33,46 @@
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/dense_vector.hh>
 
-#include <vector>
-
+#include <list>
+#include <iostream>
 using namespace std;
 namespace honei
 {
     class Volume
     {
         private:
-            vector<Volume> object_list;
+            double _size;
+        public:
+
+            double size()
+            {
+                return this->_size;
+            }
+
+            virtual void value(void)
+            {
+            }
+    };
+
+    class VolumeList
+    {
+        private:
+            list<Volume *> object_list;
 
         public:
-            void value()
+
+            virtual void convex_hull()
             {
-                for(vector<Volume>::iterator i(object_list.begin()); i != object_list.end(); ++i)
+                for(list<Volume *>::iterator i(object_list.begin()); i != object_list.end(); ++i)
                 {
-                    (*i).value();
+                    Volume * current = (*i);
+                    current->value();
                 }
+            }
+
+            void insert(Volume * obj)
+            {
+                this->object_list.push_back(obj);
             }
     };
 
@@ -57,7 +80,7 @@ namespace honei
     class Cylinder : public Volume
     {
         public:
-            void value()
+            virtual void value()
             {
                 this->value(*_height, _h, _grid_x, _grid_y);
             }
@@ -238,7 +261,7 @@ namespace honei
     class Cuboid : public Volume
     {
         public:
-            void value()
+            virtual void value()
             {
                 this->value(*_height, _l, _w, _h, _grid_x, _grid_y);
             }

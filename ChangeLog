@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-30 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/volume.hh, honei/libswe/volume_TEST.cc:
+	Added implementation of VolumeList and its test.
+
 2008-01-30 Andre Matuschek <andre@matuschek.org>
 
 	* honei/libla/difference-mc.hh: Some minor optimations.

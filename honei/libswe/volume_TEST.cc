@@ -59,6 +59,17 @@ class VolumeQuickTest :
 
             std::cout << height2 << std::endl;
 
+            DenseMatrix<DataType_> height3(30 ,30, DataType_(1));
+            Cuboid<DataType_> q3(height3, DataType_(15), DataType_(10), DataType_(6), 5, 5);
+            Cylinder<DataType_> c5(height3, DataType_(5), 15, 29);
+
+            VolumeList v;
+            v.insert(&q3);
+            v.insert(&c5);
+            v.convex_hull();
+
+            std::cout << height3 << std::endl;
+
             TEST_CHECK(true);
         }
 };
