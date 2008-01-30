@@ -303,7 +303,7 @@ namespace honei
                     r != r_end ; ++r)
             {
 
-                if (r.index() < a.size()-1)
+                if (r.index() < size - 1)
                 { // lower part.
                     unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
                     unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
@@ -316,7 +316,7 @@ namespace honei
                         if (row_index > end)
                             break;
 
-                        if ((row_index >= start) && (row_index <= end))
+                        if (row_index >= start)
                         {
                             b[row_index][col_index] += *c;
                         }
@@ -327,7 +327,6 @@ namespace honei
                 }
                 else
                 { // upper part.
-                    unsigned long size(a.size());
                     unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
                     unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
                     typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
@@ -346,7 +345,7 @@ namespace honei
                         if (col_index >= size)
                             break;
 
-                        if ((row_index >= start) && (row_index <= end))
+                        if (row_index >= start)
                         {
                             b[row_index][col_index] += *c;
                         }
