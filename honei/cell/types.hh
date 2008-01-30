@@ -123,6 +123,11 @@ namespace honei
             unsigned int mail;
         };
 
+        template <> union MailableResult<double>
+        {
+            double value;
+            unsigned int mail;
+        };
 #else
 # error "You should not include this header in anything but Cell source code!"
 #endif

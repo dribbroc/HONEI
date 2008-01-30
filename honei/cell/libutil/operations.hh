@@ -202,7 +202,7 @@ namespace honei
          * \ingroup grpframework
          */
         float sum_float(const vector float & value);
-        double sum_double(const vector float & value);
+        double sum_double(const vector double & value);
 
         /**
          * Return the maximum of all of the vector's elements.

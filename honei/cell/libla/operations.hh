@@ -40,6 +40,8 @@ namespace honei
 
             extern Operation<1, float, rtm_mail> reduction_min_dense_float;
 
+            extern Operation<1, double, rtm_mail> reduction_sum_dense_double;
+
             extern Operation<1, float, rtm_mail> reduction_sum_dense_float;
 
             extern Operation<1, float, rtm_dma> sum_dense_scalar_float;

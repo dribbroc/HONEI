@@ -41,6 +41,7 @@ namespace honei
             oc_element_product_dense_dense_float,
             oc_sum_dense_sparse_float,
             oc_reduction_sum_dense_float,
+            oc_reduction_sum_dense_double,
             oc_reduction_max_dense_float,
             oc_reduction_min_dense_float,
             oc_scale_dense_float,
