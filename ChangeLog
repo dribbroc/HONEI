@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-30 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libutil/partitioner.cc, honei/libutil/partitioner.hh: Added
+	PartitionList and helpers, modified Partitioner's logic to make all
+	but the last partition be comprised by a multiple of 16 elements.
+	* honei/libutil/partitioner_TEST.cc: Adjusted test case.
+	* honei/libla/difference-mc.hh, honei/libla/sum-cell.cc,
+	honei/libla/sum_TEST.cc: Adjusted users of Partitioner.
+
 2008-01-30 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/volume.hh, honei/libswe/volume_TEST.cc:

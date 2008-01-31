@@ -21,40 +21,83 @@
 #ifndef LIBUTIL_GUARD_PARTITIONER_HH
 #define LIBUTIL_GUARD_PARTITIONER_HH 1
 
-#include <list>
 #include <tr1/functional>
+#include <tr1/memory>
+
+#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace honei
 {
-    struct Parts
+    struct Partition
     {
         unsigned long start;
         unsigned long size;
 
-        Parts()
+        Partition(unsigned long st, unsigned long si) :
+            start(st),
+            size(si)
         {
-        };
-
-        Parts(unsigned long sstart, unsigned long ssize)
-        {
-            start = sstart;
-            size = ssize;
-        };
-
-        void operator= (Parts part)
-        {
-            start = part.start;
-            size = part.size;
-        };
+        }
     };
 
+    class PartitionList
+    {
+        private:
+            struct Implementation;
+
+            /// Our implementation.
+            std::tr1::shared_ptr<Implementation> _imp;
+
+        public:
+            /// \name Creation
+            /// \{
+
+            PartitionList();
+
+            struct Filler;
+
+            /// \}
+
+            /// \name Iteration over our elements
+            /// \{
+
+            typedef libwrapiter::ForwardIterator<PartitionList, Partition> ConstIterator;
+
+            ConstIterator begin() const;
+
+            ConstIterator last() const;
+
+            ConstIterator end() const;
+
+            /// \}
+    };
+
+    class PartitionList::Filler
+    {
+        private:
+            /// Our partition list.
+            PartitionList _partition_list;
+
+        public:
+            /// Constructor.
+            Filler(const PartitionList & partition_list) :
+                _partition_list(partition_list)
+            {
+            }
+
+            /// Evaluation operator, used to fill the PartitionList.
+            void operator() (unsigned long start, unsigned long size);
+    };
+
+    /**
+     * Splits a problem of size overall_size into (at most) max_count + 1 parts, using at least best_part_size
+     * elements per partition for all but the last partition. Dispatches each partition to dispatch.
+     */
     class Partitioner
     {
         public:
             Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
                     std::tr1::function<void(unsigned long, unsigned long)> dispatch);
-
-            static std::list<Parts> partition(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size);
     };
 }
 

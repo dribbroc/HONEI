@@ -1,6 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2007 Joachim Messer <joachim.messer@uni-dortmund.de>
+ * Copyright (c) 2008 Joachim Messer <joachim.messer@uni-dortmund.de>
+ * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -29,24 +30,7 @@
 using namespace honei;
 using namespace tests;
 
-typedef std::list<std::pair<unsigned long, unsigned long> > PartitionList;
-
-struct PartitionerTester
-{
-    public: 
-        PartitionList & list;
-
-        PartitionerTester(PartitionList & l) :list(l)
-        {
-        }
-
-        void operator() (unsigned long start, unsigned long size)
-        {
-            list.push_back(std::make_pair(start, size));
-        }
-
-};
-
+template <unsigned long best_part_size_, unsigned long quantisation_>
 class PartitionerTest :
     public QuickTest
 {
@@ -58,51 +42,45 @@ class PartitionerTest :
 
         virtual void run() const
         {
-            unsigned long best_part_size(16 * 1024);
-            unsigned long max_count(16);
-
-            PartitionList list;
-            PartitionerTester tester(list);
-            unsigned long offset, count, ps, temp;
-            bool aligned;
-
-            for (unsigned long size(0); size < (1 << 19); size += 100)
+            for (unsigned long j(1), j_end(33) ; j != j_end ; ++j)
             {
-                Partitioner(max_count, best_part_size, size, tester);
+                unsigned long max_count(j);
 
-                offset = 0;
-                count = 0;
-                temp = 0;
-
-                while (! tester.list.empty())
+                for (unsigned long k(best_part_size_), k_end(1 << 16) ; k < k_end ; k += 100)
                 {
-                    ps = tester.list.front().second;
-                    temp += ps;
-                    tester.list.pop_front();
+                    unsigned long overall_size(k);
 
-                    if (! tester.list.empty())
+                    PartitionList partitions;
+                    Partitioner(max_count, best_part_size_, overall_size, PartitionList::Filler(partitions));
+
+                    unsigned long count(std::distance(partitions.begin(), partitions.end()));
+                    unsigned long sum(0);
+
+                    for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ; p != p_last ; ++p)
                     {
-                        aligned = !(ps % 16);
-                        TEST_CHECK_EQUAL(aligned, true);
-                        if (size >= best_part_size)
+                        unsigned long partition_size(p->size);
+                        sum += partition_size;
+
+                        TEST_CHECK_EQUAL(0, partition_size % quantisation_);
+
+                        if (overall_size > best_part_size_)
                         {
-                            TEST_CHECK(ps >= best_part_size);
+                            TEST_CHECK(partition_size >= best_part_size_);
                         }
-                        ++count;
                     }
+
+                    sum += partitions.last()->size;
+
+                    TEST_CHECK(count <= max_count + 1);
+                    TEST_CHECK_EQUAL(overall_size, sum);
                 }
-
-                TEST_CHECK(count <= max_count);
-
-                //temp = count * ps;
-
-                /*if (size > offset)
-                {
-                    temp += tester.list.front().second;
-                    tester.list.pop_front();
-                }*/
-
-                TEST_CHECK_EQUAL(size, temp);
             }
         }
-} partitioner_test;
+};
+
+PartitionerTest<16384, 16> partitioner_test_cell_16k_16;
+
+PartitionerTest<1024, 16> partitioner_test_mc_1k_16;
+PartitionerTest<4096, 16> partitioner_test_mc_4k_16;
+PartitionerTest<131072, 16> partitioner_test_mc_128k_16;
+

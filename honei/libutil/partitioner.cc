@@ -21,74 +21,93 @@
 #include <honei/libutil/partitioner.hh>
 #include <honei/libutil/stringify.hh>
 
-#include <tr1/functional>
+#include <list>
 
 using namespace honei;
+
+struct PartitionList::Implementation
+{
+    std::list<Partition> partitions;
+};
+
+PartitionList::PartitionList() :
+    _imp(new Implementation)
+{
+}
+
+PartitionList::ConstIterator
+PartitionList::begin() const
+{
+    return ConstIterator(_imp->partitions.begin());
+}
+
+PartitionList::ConstIterator
+PartitionList::last() const
+{
+    return ConstIterator(--_imp->partitions.end());
+}
+
+PartitionList::ConstIterator
+PartitionList::end() const
+{
+    return ConstIterator(_imp->partitions.end());
+}
+
+void
+PartitionList::Filler::operator() (unsigned long start, unsigned long size)
+{
+    _partition_list._imp->partitions.push_back(Partition(start, size));
+}
 
 Partitioner::Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
         std::tr1::function<void(unsigned long, unsigned long)> dispatch)
 {
     CONTEXT("When partitioning problem of size '" + stringify(overall_size) + "':");
-    std::list<Parts> partition(Partitioner::partition(max_count, best_part_size, overall_size));
-    for (std::list<Parts>::iterator i(partition.begin()), i_end(partition.end()) ;
-            i != i_end ; ++i)
-    {
-        dispatch(i->start, i->size);
-    }
-}
 
-std::list<Parts> Partitioner::partition(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size)
-{
-    CONTEXT("When partitioning problem of size '" + stringify(overall_size) + "':");
-
-    std::list<Parts> result;
     unsigned part_size(0);
     unsigned count(0);
+
     if (best_part_size >= overall_size)
     {
         part_size = (overall_size - overall_size % 32) / 2;
-        if (part_size > 0)
-        {
-            result.push_back(Parts(0, part_size));
-            result.push_back(Parts(part_size, part_size));
-        }
-        if (overall_size > 2 * part_size)
-        {
-            result.push_back(Parts(2 * part_size, overall_size - 2 * part_size));
-        }
 
+        dispatch(0, part_size);
+        dispatch(part_size, overall_size - part_size);
     }
     else
     {
         if (2 * best_part_size >= overall_size)
         {
-            part_size = best_part_size;
+            part_size = best_part_size - best_part_size % 16;
             count = 1;
         }
         else
         {
-            count = overall_size/best_part_size;
+            count = overall_size / best_part_size;
+
             if (count > max_count)
             {
                 count = max_count;
             }
-            part_size = overall_size/count;
+
+            part_size = overall_size / count;
             part_size = part_size - part_size % 16;
         }
 
         unsigned long start(0);
+
         for (unsigned i(0); i < count; ++i)
         {
             if (part_size > 0) 
-                result.push_back(Parts(start, part_size));
+                dispatch(start, part_size);
+
             start += part_size;
         }
 
         if (overall_size > start)
         {
-            result.push_back(Parts(start, overall_size - start));
+            dispatch(start, overall_size - start);
         }
     }
-    return result;
 }
 

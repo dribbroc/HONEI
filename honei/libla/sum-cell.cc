@@ -26,6 +26,8 @@
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/partitioner.hh>
 
+#include <iostream>
+
 namespace honei
 {
     using namespace cell;
@@ -38,42 +40,46 @@ namespace honei
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        unsigned long spe_count(std::min((unsigned long)2, SPEManager::instance()->spe_count()));
+        unsigned long skip(a.offset() & 0x3);
+        if (0 != skip)
+            skip = 4 - skip;
+
+        unsigned long spe_count(std::min(2ul, SPEManager::instance()->spe_count()));
+
         std::list<SPEFrameworkInstruction<2, float, rtm_dma> * > instructions;
-        std::list<Parts> partition(Partitioner::partition(spe_count, a.size() / spe_count, a.size()));
+        PartitionList partitions;
+        Partitioner(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
 
         // Assemble instructions.
-        for (std::list<Parts>::iterator i(partition.begin()), i_end(partition.end()) ;
-                i != i_end ; ++i)
+        for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                p != p_last ; ++p)
         {
-            SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>
-                (oc_sum_dense_dense_float, a.elements() + i->start, b.elements() + i->start, i->size);
+            SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(oc_sum_dense_dense_float,
+                    a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+
             if (instruction->use_spe())
             {
                 SPEManager::instance()->dispatch(*instruction);
             }
+
             instructions.push_back(instruction);
+
         }
 
-        std::list<Parts>::iterator p(partition.begin());
-        for (std::list<SPEFrameworkInstruction<2, float, rtm_dma> * >::iterator i(instructions.begin()), i_end(instructions.end()) ;
-                i != i_end ; ++i, ++p)
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip ; ++index)
         {
-            // Calculate the first 4 - a_offset % 4 elements on PPU.
-            for (unsigned long index(p->start) ; index < p->start + (*i)->transfer_begin() ; ++index)
-            {
-                a[index] += b[index];
-            }
-
-            // Calculate the last a_offset % 4 elements on PPU.
-            for (unsigned long index(p->start + (*i)->transfer_end()) ; index < p->start + p->size ; ++index)
-            {
-                a[index] += b[index];
-            }
-
+            a[index] += b[index];
         }
 
-        // Wait for the spu side
+        // Calculate the last elements on PPU (if needed).
+        PartitionList::ConstIterator p(partitions.last());
+        for (unsigned long index(skip + p->start) ; index < skip + p->start + p->size ; ++index)
+        {
+            a[index] += b[index];
+        }
+
+        // Wait for the SPU side
         for (std::list<SPEFrameworkInstruction<2, float, rtm_dma> * >::iterator i(instructions.begin()), i_end(instructions.end()) ;
                 i != i_end ; ++i)
         {
@@ -81,6 +87,7 @@ namespace honei
                 (*i)->wait();
             delete *i;
         }
+
         return a;
     }
 

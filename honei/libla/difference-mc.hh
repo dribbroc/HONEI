@@ -84,31 +84,26 @@ namespace honei
             {
                 unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
                 unsigned long max_count(Configuration::instance()->get_value("mc::difference[DVCB,DVCB]::max-count", num_threads));
-                std::list<Parts> parts(Partitioner::partition(max_count, min_part_size, overall_size));
-                ThreadPool * p(ThreadPool::get_instance());
+
+                PartitionList partitions;
+                Partitioner(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
+                ThreadPool * pool(ThreadPool::get_instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-                Parts temp_part(parts.back());
-                unsigned long offset, part_size(temp_part.size);
-                if (part_size < min_part_size)
-                {
-                    parts.pop_back();
-                    parts.back().size += part_size;
-                }
+                unsigned long offset, part_size;
 
-                while (! parts.empty())
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    temp_part = parts.back();
-                    offset = temp_part.start;
-                    part_size = temp_part.size;
+                    offset = p->start;
+                    part_size = p->size;
 
                     DenseVectorRange<DT1_> range_1(a.range(part_size, offset));
                     DenseVectorRange<DT2_> range_2(b.range(part_size, offset));
                     TwoArgWrapper<Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
-                    std::tr1::shared_ptr<PoolTask> ptr(p->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(pool->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
-                    parts.pop_back();
                 }
+
                 while (! dispatched_tasks.empty())
                 {
                     dispatched_tasks.front()->wait_on();
@@ -135,30 +130,24 @@ namespace honei
             {
                 unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
                 unsigned long max_count(Configuration::instance()->get_value("mc::difference[DVCB,DVCB]::max-count", num_threads ));
-                std::list<Parts> parts(Partitioner::partition(max_count, min_part_size, overall_size));
-                ThreadPool * p(ThreadPool::get_instance());
-                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                PartitionList partitions;
+                Partitioner(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
+                ThreadPool * pool(ThreadPool::get_instance());
+                std::list<std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
 
-                Parts temp_part(parts.back());
-                unsigned long offset, part_size(temp_part.size);
-                if (part_size < min_part_size)
-                {
-                    parts.pop_back();
-                    parts.back().size += part_size;
+                unsigned long offset, part_size;
 
-                }
-                while (! parts.empty())
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    temp_part = parts.front();
-                    part_size = temp_part.size;
+                    part_size = p->size;
                     offset = r.index();
-                    r += (part_size - 1);
+                    r += (p->size - 1);
                     DenseVectorRange<DT1_> range(a.range(r.index() - offset + 1, offset));
-                    ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, temp_part.start);
-                    std::tr1::shared_ptr<PoolTask> ptr(p->dispatch(mywrapper));
+                    ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, p->start);
+                    std::tr1::shared_ptr<PoolTask> ptr(pool->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
-                    parts.pop_front();
                     ++r;
                 }
 
@@ -257,30 +246,23 @@ namespace honei
 
                 unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
                 unsigned long max_count(Configuration::instance()->get_value("mc::difference[DM,BM]::max-count", num_threads ));
-                std::list<Parts> parts(Partitioner::partition(max_count, min_part_size, overall_size));
-                ThreadPool * p(ThreadPool::get_instance());
+                PartitionList partitions;
+                Partitioner(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
+                ThreadPool * pool(ThreadPool::get_instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-                Parts temp_part(parts.back());
-                unsigned long offset, part_size(temp_part.size);
-                if (part_size < min_part_size)
-                {
-                    parts.pop_back();
-                    parts.back().size += part_size;
-                }
+                unsigned long offset, part_size;
 
-                while (! parts.empty())
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    temp_part = parts.back();
-                    offset = temp_part.start;
-                    part_size = offset + temp_part.size - 1;
+                    offset = p->start;
+                    part_size = offset + p->size - 1;
 
                     FourArgWrapper<MCDifference<typename Tag_::DelegateTo>, const BandedMatrix<DT1_>,
                         DenseMatrix<DT2_>, unsigned long, unsigned long>
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(p->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(pool->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
-                    parts.pop_back();
                 }
 
                 while (! dispatched_tasks.empty())

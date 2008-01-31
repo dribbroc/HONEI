@@ -28,9 +28,10 @@
 #include <tr1/memory>
 #include <cstdlib>
 
+#include <iostream>
+
 using namespace honei;
 using namespace tests;
-
 
 // Test cases for matrix operations
 
@@ -928,6 +929,7 @@ class DenseVectorRangeSumTest :
                 for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
                         i_end(dvr1.end_elements()) ; i != i_end ; ++i)
                 {
+                    std::cout << "index = " << i.index() << std::endl;
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 5 + 1) * 3 / 1.23456789),
                             std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 5 + 1) * 3 / 1.23456789);
                 }
@@ -1035,6 +1037,7 @@ class DenseVectorSumTest :
                 for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                         i_end(dv1.end_elements()) ; i != i_end ; ++i)
                 {
+//                    std::cout << "i.index = " << i.index() << std::endl;
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 3 / 1.23456789),
                             std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 1) * 3 / 1.23456789);
                 }
