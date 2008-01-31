@@ -311,7 +311,7 @@
                     }
 
                     // Calculate the new _step_width
-                    if ((_number_of_iterations > 2) && (fabs(result - _previous_max_Force_2) <= fabs(0.2 * _previous_max_Force_2)))
+                    if ((_number_of_iterations > 2) && (_step_width > 10*std::numeric_limits<DataType_>::epsilon()) && (fabs(result - _previous_max_Force_2) <= fabs(0.2 * _previous_max_Force_2)))
                     {
                         if (_step_width > _repulsive_force_range / (_weights_of_edges.rows() * 20)) _step_width *= 0.5;
                         if (_step_width <= _repulsive_force_range  / (_weights_of_edges.rows() * 20)) _step_width *= 0.995;
@@ -325,7 +325,7 @@
                     for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
                         e_end(_coordinates.end_elements()), k(attractive_forces.begin_elements()) ; e != e_end ; ++e, ++k)
                     {
-                        result > eps ? *e = *e + _step_width / (resulting_forces[e.row()]) * *k : 0;
+                        result > eps && resulting_forces[e.row()] > 0 ? *e = *e + _step_width / (resulting_forces[e.row()]) * *k : 0;
                     }
 
                     _number_of_iterations++;
