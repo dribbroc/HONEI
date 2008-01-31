@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-01-31 Andre Matuschek <andre@matuschek.org>
+
+	* honei/libla/reduction_TEST.cc: Rewrote BandedMatrixReductionToMinTest.
+
 2008-01-30 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libutil/partitioner.cc, honei/libutil/partitioner.hh: Added

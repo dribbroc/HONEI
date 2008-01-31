@@ -25,6 +25,8 @@
 
 #include <limits>
 #include <tr1/memory>
+#include <cstdlib>
+#include <iostream>
 
 using namespace honei;
 using namespace tests;
@@ -792,18 +794,40 @@ class BandedMatrixReductionToMinTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+
+            for (unsigned long size(4) ; size < (1 << 10) ; size <<= 1)
             {
+                DenseVector<DT_>  result(size);
+                typename DenseVector<DT_>::ElementIterator resultIter(result.begin_elements());
                 BandedMatrix<DT_> bm1(size);
+                DT_ rand(0);
                 for (typename MutableMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    *i = i.index();
+                    rand = DT_(std::rand()) / DT_(std::rand()-RAND_MAX / 2);
+                    *i = rand;
+
+                    if ((i.index() != 0) && ((i.index() % size) == 0))
+                    {
+                        ++resultIter;
+                        *resultIter = rand;
+                    }
+
+                    if  (rand < *resultIter)
+                    {
+                        *resultIter = rand;
+                    }
                 }
 
-
                 DenseVector<DT_> v1(Reduction<rt_min, Tag_>::value(bm1));
-                TEST_CHECK_EQUAL_WITHIN_EPS(v1[size-1], (size*size - size), std::numeric_limits<DT_>::epsilon());
+               
+                for (typename DenseVector<DT_>::ElementIterator i(v1.begin_elements()), i_end(v1.end_elements()), r(result.begin_elements()) ; 
+                    i != i_end ; )
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, std::numeric_limits<DT_>::epsilon());
+                    ++r;
+                    ++i;
+                }
             }
         }
 };
