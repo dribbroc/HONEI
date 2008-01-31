@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-01-31 Andre Matuschek <andre@matuschek.org>
 
+	* honei/libla/reduction_TEST.cc: Removed bug in BandedMatrixReductionToMinTest
+	c&p'ed to BandedMatrixReductionToMaxTest and quicktests.
+
+2008-01-31 Andre Matuschek <andre@matuschek.org>
+
 	* honei/libla/reduction_TEST.cc: Rewrote BandedMatrixReductionToMinTest.
 
 2008-01-30 Danny van Dyk <danny.dyk@uni-dortmund.de>
