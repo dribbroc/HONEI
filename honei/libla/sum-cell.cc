@@ -48,7 +48,7 @@ namespace honei
 
         std::list<SPEFrameworkInstruction<2, float, rtm_dma> * > instructions;
         PartitionList partitions;
-        Partitioner(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+        Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
 
         // Assemble instructions.
         for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
