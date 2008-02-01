@@ -11,6 +11,7 @@ libutil_spe_a_SOURCES = \
 	allocator.cc \
 	operations.cc \
 	operation_one_float_dma.cc \
+	operation_one_double_dma.cc \
 	operation_one_float_mail.cc \
 	operation_two_float_mail.cc \
 	operation_two_float_dma.cc \

@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-01 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/libutil/Makefile.am,
+	honei/cell/libutil/operation_one_double_dma.cc:
+	Added spu side of operation_one_double_dma.
+
 2008-02-01 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/libutil/spe_instruction.cc, honei/libutil/spe_instruction.hh:
