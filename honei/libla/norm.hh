@@ -23,6 +23,7 @@
 
 #include <honei/libla/vector.hh>
 #include <honei/libla/dot_product.hh>
+#include <honei/libla/norm-fwd.hh>
 #include <honei/libutil/tags.hh>
 
 #include <cmath>
@@ -33,21 +34,6 @@
 
 namespace honei
 {
-    /**
-     * A VectorNormType is a template tag parameter for the VectorNorm class
-     * template. It governs the type of the (mathematical) norm that shall be
-     * computed.
-     *
-     * \ingroup grplaoperations
-     */
-    enum VectorNormType {
-        vnt_max = 0, /// < Maximum or infinity norm.
-        vnt_l_one, /// < One norm.
-        vnt_l_two, /// < Two norm.
-        // Extend here if higher norms are needed
-    };
-
-
     /**
      * \brief Norm of an entity.
      *

@@ -24,6 +24,7 @@
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/dense_vector.hh>
+#include <honei/libla/reduction-fwd.hh>
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/matrix_error.hh>
@@ -40,20 +41,6 @@
 
 namespace honei
 {
-    /**
-     * ReductionType is a template tag parameter for the Reduction class
-     * template. It governs the type of the (mathematical) reduction that shall
-     * be computed.
-     *
-     * \ingroup grplaoperations
-     */
-    enum ReductionType
-    {
-        rt_sum = 0,
-        rt_max,
-        rt_min
-    };
-
     template <ReductionType type_, typename Tag_ = tags::CPU> struct Reduction;
 
     /**

@@ -6,6 +6,12 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 2008-02-01 Danny van Dyk <danny.dyk@uni-dortmund.de>
+	* honei/libla/files.m4, honei/libla/Makefile.am.m4: Added
+	infrastructure for forward headers.
+	* honei/libla/norm.hh, honei/libla/reduction.hh: Split out operation
+	type enums to forward headers.
+
+2008-02-01 Danny van Dyk <danny.dyk@uni-dortmund.de>
 	* honei/libutil/configuration.hh, honei/libutil/configuration.cc:
 	Added means to modify and create new configuration entries at runtime.
 

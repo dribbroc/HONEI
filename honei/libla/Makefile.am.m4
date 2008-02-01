@@ -30,12 +30,14 @@ $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
 define(`addhh', `define(`filelist', filelist `$1.hh')define(`headerlist', headerlist `$1.hh')')dnl
 define(`addimpl', `define(`filelist', filelist `$1-impl.hh')define(`headerlist', headerlist `$1-impl.hh')')dnl
+define(`addfwd', `define(`filelist', filelist `$1-fwd.hh')define(`headerlist', headerlist `$1-fwd.hh')')dnl
 define(`addcc', `define(`filelist', filelist `$1.cc')')dnl
 define(`addcell', `define(`celllist', celllist `$1-cell.cc')')dnl
 define(`addsse', `define(`sselist', sselist `$1-sse.cc')')dnl
 define(`addthis', `dnl
 ifelse(`$2', `hh', `addhh(`$1')', `')dnl
 ifelse(`$2', `impl', `addimpl(`$1')', `')dnl
+ifelse(`$2', `fwd', `addfwd(`$1')', `')dnl
 ifelse(`$2', `cc', `addcc(`$1')', `')dnl
 ifelse(`$2', `cell', `addcell(`$1')', `')dnl
 ifelse(`$2', `sse', `addsse(`$1')', `')dnl
