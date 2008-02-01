@@ -223,6 +223,7 @@ namespace honei
     };
 
     extern template class SPEFrameworkInstruction<2, float, cell::rtm_dma>;
+    extern template class SPEFrameworkInstruction<2, double, cell::rtm_dma>;
 
     class SPEInstructionQueue
     {
