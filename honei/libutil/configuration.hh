@@ -93,9 +93,26 @@ namespace honei
              * \param default The default value that shall be returned if there
              * is no configuration entry that matchs the name.
              */
+
             int get_value(const std::string & name, int default_value);
 
             std::string get_value(const std::string & name, const std::string & default_value);
+
+            /// \}
+
+            /**
+             * \name Value Setting
+             * \{
+             * Set the value for a named configuration entry.
+             *
+             * \param name The name of the configuration entry that shall be
+             * modified.
+             * \param value The value that shall be used.
+             */
+
+            void set_value(const std::string & name, int value);
+
+            void set_value(const std::string & name, const std::string & value);
 
             /// \}
 

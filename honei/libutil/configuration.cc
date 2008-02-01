@@ -163,6 +163,36 @@ Configuration::get_value(const std::string & name, const std::string & default_v
 }
 
 void
+Configuration::set_value(const std::string & name, int value)
+{
+    Implementation::IntValueMap::iterator v(_imp->int_value_map.find(name));
+
+    if (v != _imp->int_value_map.end())
+    {
+        v->second = value;
+    }
+    else
+    {
+        v = _imp->int_value_map.insert(Implementation::IntValueMap::value_type(name, value)).first;
+    }
+}
+
+void
+Configuration::set_value(const std::string & name, const std::string & value)
+{
+    Implementation::StringValueMap::iterator v(_imp->string_value_map.find(name));
+
+    if (v != _imp->string_value_map.end())
+    {
+        v->second = value;
+    }
+    else
+    {
+        v = _imp->string_value_map.insert(Implementation::StringValueMap::value_type(name, value)).first;
+    }
+}
+
+void
 Configuration::reread()
 {
     _imp->int_value_map.clear();

@@ -74,18 +74,42 @@ class ConfigurationTest :
                     TEST_CHECK_EQUAL(Configuration::instance()->get_value("key-and-value-with-whitespaces", 3), 4);
                 }
 
+                {
+                    CONTEXT("When modifying configuration data:");
+
+                    Configuration::instance()->set_value("number-of-cores", 0);
+                    Configuration::instance()->set_value("key-with-trailing-whitespaces", 1);
+                    Configuration::instance()->set_value("value-with-leading-whitespaces", 2);
+                    Configuration::instance()->set_value("key-and-value-with-whitespaces", 3);
+
+                    TEST_CHECK_EQUAL(Configuration::instance()->get_value("number-of-cores", 1), 0);
+                    TEST_CHECK_EQUAL(Configuration::instance()->get_value("key-with-trailing-whitespaces", 2), 1);
+                    TEST_CHECK_EQUAL(Configuration::instance()->get_value("value-with-leading-whitespaces", 3), 2);
+                    TEST_CHECK_EQUAL(Configuration::instance()->get_value("key-and-value-with-whitespaces", 4), 3);
+                }
+
+                {
+                    CONTEXT("When creating new configuration data:");
+
+                    Configuration::instance()->set_value("new-int-value", 1234);
+                    Configuration::instance()->set_value("new-string-value", "abcdefg");
+
+                    TEST_CHECK_EQUAL(Configuration::instance()->get_value("new-int-value", 0), 1234);
+                    TEST_CHECK_EQUAL(Configuration::instance()->get_value("new-string-value", ""), "abcdefg");
+                }
+
                 std::remove(filename.c_str());
                 TEST_CHECK(true);
-            }
-            catch (Exception & e)
-            {
-                std::cout << e.backtrace("\n ...") << std::endl;
-                TEST_CHECK(false);
-            }
-            catch (std::exception & e)
-            {
-                std::cout << e.what() << std::endl;
-                TEST_CHECK(false);
-            }
+             }
+             catch (Exception & e)
+             {
+                 std::cout << e.backtrace("\n ...") << std::endl;
+                 TEST_CHECK(false);
+             }
+             catch (std::exception & e)
+             {
+                 std::cout << e.what() << std::endl;
+                 TEST_CHECK(false);
+             }
         }
 } configuration_test;

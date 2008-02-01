@@ -5,8 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-01 Danny van Dyk <danny.dyk@uni-dortmund.de>
+	* honei/libutil/configuration.hh, honei/libutil/configuration.cc:
+	Added means to modify and create new configuration entries at runtime.
+
 2008-01-31 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
-    * honei/libgraph/position.hh: fixed disappearing node.
+	* honei/libgraph/position.hh: fixed disappearing node.
 
 2008-01-31 Andre Matuschek <andre@matuschek.org>
 
