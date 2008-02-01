@@ -245,6 +245,10 @@ template class SPEFrameworkInstruction<1, float, cell::rtm_dma>;
 
 template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
 
+template class SPEFrameworkInstruction<1, double, cell::rtm_dma>;
+
+template class SPEFrameworkInstruction<1, double, cell::rtm_mail>;
+
 template <typename DataType_>
 SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * a_elements,
         DataType_ * b_elements, const unsigned size) :

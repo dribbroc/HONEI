@@ -174,6 +174,10 @@ namespace honei
 
     extern template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
 
+    extern template class SPEFrameworkInstruction<1, double, cell::rtm_dma>;
+
+    extern template class SPEFrameworkInstruction<1, double, cell::rtm_mail>;
+
     template <typename DataType_> class SPEFrameworkInstruction<2, DataType_, cell::rtm_dma> :
         public SPEInstruction
     {
