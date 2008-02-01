@@ -53,6 +53,12 @@ PartitionList::end() const
     return ConstIterator(_imp->partitions.end());
 }
 
+unsigned
+PartitionList::size() const
+{
+    return _imp->partitions.size();
+}
+
 void
 PartitionList::Filler::operator() (unsigned long start, unsigned long size)
 {

@@ -72,6 +72,9 @@ namespace honei
             ConstIterator end() const;
 
             /// \}
+
+            /// Return or size.
+            unsigned size() const;
     };
 
     class PartitionList::Filler

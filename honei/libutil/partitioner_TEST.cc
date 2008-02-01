@@ -53,7 +53,7 @@ class PartitionerTest :
                     PartitionList partitions;
                     Partitioner<Tag_>(max_count, best_part_size_, overall_size, PartitionList::Filler(partitions));
 
-                    unsigned long count(std::distance(partitions.begin(), partitions.end()));
+                    unsigned long count(partitions.size());
                     unsigned long sum(0);
 
                     for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ; p != p_last ; ++p)
