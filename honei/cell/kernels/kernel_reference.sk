@@ -7,10 +7,13 @@ halt
 void            sum_dense_dense_float
 void            sum_dense_dense_double
 void            sum_dense_scalar_float
+void            sum_dense_scalar_double
 void            sum_dense_sparse_float                      sum_dense_sparse_float
 void            difference_dense_dense_float
+void            difference_dense_dense_double
 dword           dot_product_dense_dense_float               dot_product_dense_dense_float
 void            element_product_dense_dense_float
+void            element_product_dense_dense_double
 void            product_dense_matrix_dense_vector_float     product_dense_matrix_dense_vector_float
 void            product_banded_matrix_dense_vector_float    product_banded_matrix_dense_vector_float
 void            product_banded_matrix_dense_vector_double    product_banded_matrix_dense_vector_double

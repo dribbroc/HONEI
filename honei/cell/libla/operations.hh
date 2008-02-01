@@ -46,6 +46,8 @@ namespace honei
 
             extern Operation<1, float, rtm_dma> sum_dense_scalar_float;
 
+            extern Operation<1, double, rtm_dma> sum_dense_scalar_double;
+
             extern Operation<1, float, rtm_dma> fill_float;
 
             extern Operation<1, double, rtm_dma> fill_double;
@@ -56,7 +58,11 @@ namespace honei
 
             extern Operation<2, float, rtm_dma> difference_dense_dense_float;
 
+            extern Operation<2, double, rtm_dma> difference_dense_dense_double;
+
             extern Operation<2, float, rtm_dma> element_product_dense_dense_float;
+
+            extern Operation<2, double, rtm_dma> element_product_dense_dense_double;
 
         }
     }

@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	+honei/cell/libla/difference_dense_dense_double.cc,
+	+honei/cell/libla/element_product_dense_dense_double.cc,
+	honei/cell/libla/Makefile.am, honei/cell/libla/operations.hh,
+	+honei/cell/libla/sum_dense_scalar_double.cc,
+	honei/cell/libutil/Makefile.am,
+	+honei/cell/libutil/operation_one_double_mail.cc,
+	+honei/cell/libutil/operation_two_double_mail.cc,
+	honei/cell/opcodes.hh:
+	Added some spu double code.
+
 2008-02-01 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/libutil/spe_instruction.cc, honei/libutil/spe_instruction.hh,

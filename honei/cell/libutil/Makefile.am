@@ -13,7 +13,9 @@ libutil_spe_a_SOURCES = \
 	operation_one_float_dma.cc \
 	operation_one_double_dma.cc \
 	operation_one_float_mail.cc \
+	operation_one_double_mail.cc \
 	operation_two_float_mail.cc \
+	operation_two_double_mail.cc \
 	operation_two_float_dma.cc \
 	operation_two_double_dma.cc \
 	profiler.cc \
