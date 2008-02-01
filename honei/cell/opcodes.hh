@@ -31,6 +31,7 @@ namespace honei
 
             // LibLA opcodes
             oc_sum_dense_dense_float = 1 << 4,
+            oc_sum_dense_dense_double,
             oc_sum_dense_scalar_float,
             oc_difference_dense_dense_float,
             oc_dot_product_dense_dense_float,

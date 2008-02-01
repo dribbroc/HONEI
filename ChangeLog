@@ -7,6 +7,17 @@ see the NEWS file.
 
 2008-02-01 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/Makefile.am, honei/cell/libla/operations.hh,
+	honei/cell/libla/sum_dense_dense_double.cc,
+	honei/cell/libutil/Makefile.am,
+	honei/cell/libutil/operation_two_double_dma.cc, honei/cell/opcodes.hh,
+	honei/cell/types.hh, honei/libla/sum_BENCHMARK.cc,
+	honei/libla/sum-cell.cc, honei/libla/sum.hh, honei/libla/sum_TEST.cc:
+	Added double version of Sum(dv,dv).
+
+2008-02-01 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/cell/libutil/Makefile.am,
 	honei/cell/libutil/operation_one_double_dma.cc:
 	Added spu side of operation_one_double_dma.

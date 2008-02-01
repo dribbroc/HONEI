@@ -109,6 +109,12 @@ namespace honei
             vector unsigned int vui;
         };
 
+        template <> union Vector<double>
+        {
+            vector double vd;
+            vector unsigned int vui;
+        };
+
         template <> union Vector<unsigned>
         {
             vector unsigned int vui;

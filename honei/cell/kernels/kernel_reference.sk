@@ -5,6 +5,7 @@ halt
 # LibLA Operations
 ##################
 void            sum_dense_dense_float
+void            sum_dense_dense_double
 void            sum_dense_scalar_float
 void            sum_dense_sparse_float                      sum_dense_sparse_float
 void            difference_dense_dense_float

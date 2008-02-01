@@ -952,6 +952,7 @@ DenseVectorRangeSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_r
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeSumTest<tags::Cell, float> cell_dense_vector_range_sum_test_float("Cell float");
+DenseVectorRangeSumTest<tags::Cell, double> cell_dense_vector_range_sum_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -1004,6 +1005,7 @@ DenseVectorRangeSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vec
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeSumQuickTest<tags::Cell, float> cell_dense_vector_range_sum_quick_test_float("Cell float");
+DenseVectorRangeSumQuickTest<tags::Cell, double> cell_dense_vector_range_sum_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -1065,6 +1067,7 @@ DenseVectorSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_sum_te
 #endif
 #ifdef HONEI_CELL
 DenseVectorSumTest<tags::Cell, float> cell_dense_vector_sum_test_float("Cell float");
+DenseVectorSumTest<tags::Cell, double> cell_dense_vector_sum_test_double("Cell double");
 #endif
 
 
@@ -1123,6 +1126,7 @@ DenseVectorSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_s
 #endif
 #ifdef HONEI_CELL
 DenseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sum_quick_test_float("Cell float");
+DenseVectorSumQuickTest<tags::Cell, double> cell_dense_vector_sum_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
