@@ -152,7 +152,8 @@ namespace honei
              * \param elements The pointer to the elements of the container.
              * \param size The overall size of the container.
              */
-            SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements, const unsigned size);
+            SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements, const unsigned size,
+                    const DataType_ scalar = DataType_(0));
 
             unsigned transfer_begin() const
             {
@@ -204,7 +205,53 @@ namespace honei
              * \param elements The pointer to the elements of the container.
              * \param size The overall size of the container.
              */
-            SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements, const unsigned size);
+            SPEFrameworkInstruction(const OpCode opcode, DataType_ * a_elements, DataType_ * b_elements, const unsigned size,
+                    const DataType_ scalar = DataType_(0));
+
+            unsigned transfer_begin() const
+            {
+                return _begin_transfers;
+            }
+
+            unsigned transfer_end() const
+            {
+                return _end_transfers;
+            }
+
+            bool use_spe() const
+            {
+                return _use_spe;
+            }
+    };
+
+    template <typename DataType_> class SPEFrameworkInstruction<2, DataType_, cell::rtm_mail> :
+        public SPEInstruction
+    {
+        private:
+            typedef cell::Instruction Instruction;
+
+            typedef cell::OpCode OpCode;
+
+            /// Index of the first element that is to be transfered.
+            unsigned _begin_transfers;
+
+            /// Index of the element behind the last element that is to be transfered.
+            unsigned _end_transfers;
+
+            /// Will the SPE be used?
+            bool _use_spe;
+
+        public:
+            /**
+             * Constructor.
+             *
+             * \param opcode The instruction's opcode.
+             * \param result The pointer to the pre-allocated result-memory.
+             * \param elements The pointer to the elements of the container.
+             * \param size The overall size of the container.
+             */
+            SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * a_elements, DataType_ * b_elements, const unsigned size,
+                    const DataType_ scalar = DataType_(0));
 
             unsigned transfer_begin() const
             {
@@ -224,6 +271,8 @@ namespace honei
 
     extern template class SPEFrameworkInstruction<2, float, cell::rtm_dma>;
     extern template class SPEFrameworkInstruction<2, double, cell::rtm_dma>;
+    extern template class SPEFrameworkInstruction<2, float, cell::rtm_mail>;
+    extern template class SPEFrameworkInstruction<2, double, cell::rtm_mail>;
 
     class SPEInstructionQueue
     {

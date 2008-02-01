@@ -28,7 +28,7 @@ namespace honei
     {
         namespace implementation
         {
-            vector float norm_l_one_dense_float(const vector float & accumulator, vector float * elements, const unsigned size)
+            vector float norm_l_one_dense_float(const vector float & accumulator, vector float * elements, const unsigned size, const float optional_scalar)
             {
                 const vector unsigned int mask = { 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF, 0x7FFFFFFF };
 

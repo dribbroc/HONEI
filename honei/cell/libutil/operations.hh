@@ -57,7 +57,7 @@ namespace honei
             vector float (*init)(void);
 
             /// Performs calculation on a given block of data.
-            vector float (*calculate)(const vector float & accumulator, vector float * elements, const unsigned size);
+            vector float (*calculate)(const vector float & accumulator, vector float * elements, const unsigned size, const float optional_scalar);
 
             /// Finishs the calculations and returns a scalar result suitable for mail transfer.
             float (*finish)(const vector float & accumulator);
@@ -73,7 +73,7 @@ namespace honei
 
             /// Performs calculation on given blocks of data.
             vector float (*calculate)(const vector float & accumulator, vector float & carry,
-                    vector float * a_elements, vector float * b_elements, const unsigned size, const unsigned offset);
+                    vector float * a_elements, vector float * b_elements, const unsigned size, const unsigned offset, const float optional_scalar);
 
             /// Finishs the calculations and returns a sclar result suitable for mail transfer.
             float (*finish)(const vector float & accumulator);
@@ -86,7 +86,7 @@ namespace honei
 
             /// Performs calculation on given blocks of data.
             void (*calculate)(vector float * a_elements, const vector float * b_elements, const unsigned size,
-                    vector float & b_carry, const unsigned b_offset);
+                    vector float & b_carry, const unsigned b_offset, const float optional_scalar);
         };
 
         // the same for double
@@ -108,7 +108,7 @@ namespace honei
             vector double (*init)(void);
 
             /// Performs calculation on a given block of data.
-            vector double (*calculate)(const vector double & accumulator, vector double * elements, const unsigned size);
+            vector double (*calculate)(const vector double & accumulator, vector double * elements, const unsigned size, const double optional_scalar);
 
             /// Finishs the calculations and returns a scalar result suitable for mail transfer.
             double (*finish)(const vector double & accumulator);
@@ -124,7 +124,7 @@ namespace honei
 
             /// Performs calculation on given blocks of data.
             vector double (*calculate)(const vector double & accumulator, vector double & carry,
-                    vector double * a_elements, vector double * b_elements, const unsigned size, const unsigned offset);
+                    vector double * a_elements, vector double * b_elements, const unsigned size, const unsigned offset, const double optional_scalar);
 
             /// Finishs the calculations and returns a sclar result suitable for mail transfer.
             double (*finish)(const vector double & accumulator);
@@ -137,7 +137,7 @@ namespace honei
 
             /// Performs calculation on given blocks of data.
             void (*calculate)(vector double * a_elements, const vector double * b_elements, const unsigned size,
-                    vector double & b_carry, const unsigned b_offset);
+                    vector double & b_carry, const unsigned b_offset, const double optional_scalar);
         };
 
         /// \}

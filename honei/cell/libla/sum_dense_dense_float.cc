@@ -31,7 +31,7 @@ namespace honei
         namespace implementation
         {
             void sum_dense_dense_float(vector float * a, const vector float * b,
-                    const unsigned size, vector float & b_carry, const unsigned b_offset)
+                    const unsigned size, vector float & b_carry, const unsigned b_offset, const float optional_scalar)
             {
                 for (unsigned i(0) ; i < size ; ++i)
                 {

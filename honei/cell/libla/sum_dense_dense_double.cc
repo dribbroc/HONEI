@@ -32,7 +32,7 @@ namespace honei
         namespace implementation
         {
             void sum_dense_dense_double(vector double * a, const vector double * b,
-                    const unsigned size, vector double & b_carry, const unsigned b_offset)
+                    const unsigned size, vector double & b_carry, const unsigned b_offset, const double optional_scalar)
             {
                 for (unsigned i(0) ; i < size ; ++i)
                 {

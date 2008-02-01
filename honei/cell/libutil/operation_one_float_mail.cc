@@ -44,6 +44,8 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
+            float scalar = instruction.e.f; // optional scalar value to be computed.
+
             debug_get(ea_a, a[current].untyped, size);
             mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
             ea_a += size;
@@ -61,7 +63,7 @@ namespace honei
                 mfc_write_tag_mask(1 << current);
                 mfc_read_tag_status_all();
 
-                acc.value = operation.calculate(acc.value, a[current].vectorised, size / sizeof(vector float));
+                acc.value = operation.calculate(acc.value, a[current].vectorised, size / sizeof(vector float), scalar);
 
                 --counter;
 
@@ -75,7 +77,7 @@ namespace honei
             mfc_write_tag_mask(1 << current);
             mfc_read_tag_status_all();
 
-            acc.value = operation.calculate(acc.value, a[current].vectorised, size / sizeof(vector float));
+            acc.value = operation.calculate(acc.value, a[current].vectorised, size / sizeof(vector float), scalar);
 
             release_block(*block_a[0]);
             release_block(*block_a[1]);

@@ -63,6 +63,8 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
+            float scalar = instruction.j.f; // optional scalar value to be computed.
+
             unsigned b_offset(instruction.e.u);
             vector float b_carry = { instruction.f.f, instruction.g.f, instruction.h.f, instruction.i.f };
 
@@ -83,7 +85,7 @@ namespace honei
                 mfc_write_tag_mask(1 << current);
                 mfc_read_tag_status_all();
 
-                operation.calculate(a[current].vectorised, b[current].vectorised, size / sizeof(vector float), b_carry, b_offset);
+                operation.calculate(a[current].vectorised, b[current].vectorised, size / sizeof(vector float), b_carry, b_offset, scalar);
 
                 mfc_putb(a[current].untyped, ea_result, size, current, 0, 0);
                 ea_result += size;
@@ -100,7 +102,7 @@ namespace honei
             mfc_write_tag_mask(1 << current);
             mfc_read_tag_status_all();
 
-            operation.calculate(a[current].vectorised, b[current].vectorised, size / sizeof(vector float), b_carry, b_offset);
+            operation.calculate(a[current].vectorised, b[current].vectorised, size / sizeof(vector float), b_carry, b_offset, scalar);
 
             mfc_put(a[current].untyped, ea_result, size, current, 0, 0);
             mfc_write_tag_mask(1 << current);

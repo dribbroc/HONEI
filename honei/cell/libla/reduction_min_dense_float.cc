@@ -29,7 +29,7 @@ namespace honei
         namespace implementation
         {
             vector float reduction_min_dense_float(const vector float & accumulator, vector float * elements,
-                    const unsigned size)
+                    const unsigned size, const float optional_scalar)
             {
                 vector float result(accumulator);
 

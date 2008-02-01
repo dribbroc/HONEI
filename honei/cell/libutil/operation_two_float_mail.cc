@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -47,6 +47,8 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
+            float scalar = instruction.k.f; // optional scalar value to be computed.
+
             unsigned offset(instruction.f.u);
 
             mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
@@ -55,7 +57,7 @@ namespace honei
             ea_b += size;
 
             vector float accumulator(operation.init());
-            vector float carry = { instruction.g.fa[0], instruction.g.fa[1], instruction.h.fa[0], instruction.h.fa[1] };
+            vector float carry = { instruction.g.f, instruction.h.f, instruction.i.f, instruction.j.f };
 
             while (counter > 1)
             {
@@ -71,7 +73,7 @@ namespace honei
                 mfc_read_tag_status_all();
 
                 accumulator = operation.calculate(accumulator, carry, a[current].vectorised, b[current].vectorised,
-                        size / sizeof(vector float), offset);
+                        size / sizeof(vector float), offset, scalar);
 
                 --counter;
 
@@ -86,7 +88,7 @@ namespace honei
             mfc_read_tag_status_all();
 
             accumulator = operation.calculate(accumulator, carry, a[current].vectorised, b[current].vectorised,
-                    size / sizeof(vector float), offset);
+                    size / sizeof(vector float), offset, scalar);
             release_all_blocks();
 
             MailableResult<float> result = { operation.finish(accumulator) };

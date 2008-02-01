@@ -28,7 +28,7 @@ namespace honei
     {
         namespace implementation
         {
-            vector float norm_l_two_dense_float(const vector float & accumulator, vector float * elements, const unsigned size)
+            vector float norm_l_two_dense_float(const vector float & accumulator, vector float * elements, const unsigned size, const float optional_scalar)
             {
                 vector float result(accumulator);
 

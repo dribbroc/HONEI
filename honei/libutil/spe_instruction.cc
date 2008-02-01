@@ -111,8 +111,8 @@ SPEInstruction::_enqueue_with(SPEKernel * kernel) const
                 + ", f = " + stringify(_imp->instruction.f.ea) + "\ng = " + stringify(_imp->instruction.g.ea)
                 + ", h = " + stringify(_imp->instruction.h.ea) + "\ni = " + stringify(_imp->instruction.i.ea)
                 + ", j = " + stringify(_imp->instruction.j.ea) + "\nk = " + stringify(_imp->instruction.k.ea)
-                + ", l = " + stringify(_imp->instruction.l.ea) + "\nm = " + stringify(_imp->instruction.k.ea)
-                + ", n = " + stringify(_imp->instruction.l.ea) + "\no = " + stringify(_imp->instruction.m.ea)
+                + ", l = " + stringify(_imp->instruction.l.ea) + "\nm = " + stringify(_imp->instruction.m.ea)
+                + ", n = " + stringify(_imp->instruction.n.ea) + "\no = " + stringify(_imp->instruction.o.ea)
                 + "\n"));
 
     _imp->kernel = new SPEKernel(*kernel);
@@ -201,7 +201,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
 
 template <typename DataType_>
 SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements,
-        const unsigned size) :
+        const unsigned size, const DataType_ scalar) :
     SPEInstruction(opcode, 16384, result, elements),
     _use_spe(true)
 {
@@ -231,6 +231,16 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         _begin_transfers = skip;
         _end_transfers = (instruction.c.u * (16384 / sizeof(DataType_))) + instruction.d.u + skip;
         instruction.d.u *= sizeof(DataType_);
+
+        if (sizeof(DataType_) == 4) // float
+        {
+            instruction.e.f = scalar;
+        }
+        else // double
+        {
+            instruction.e.d = scalar;
+        }
+
     }
 
     if (0 == instruction.d.u)
@@ -259,7 +269,7 @@ template class SPEFrameworkInstruction<1, double, cell::rtm_mail>;
 
 template <typename DataType_>
 SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * a_elements,
-        DataType_ * b_elements, const unsigned size) :
+        DataType_ * b_elements, const unsigned size, const DataType_ scalar) :
     SPEInstruction(opcode, 16384, a_elements, b_elements),
     _use_spe(true)
 {
@@ -293,11 +303,13 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
             instruction.g.f = *(dma_start - 3);
             instruction.h.f = *(dma_start - 2);
             instruction.i.f = *(dma_start - 1);
+            instruction.j.f = scalar;
         }
         else // double
         {
             instruction.f.d = *(dma_start - 2);
             instruction.g.d = *(dma_start - 1);
+            instruction.j.d = scalar;
         }
 
         //Subtract PPU-calculated parts from size.
@@ -331,6 +343,83 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
 }
 template class SPEFrameworkInstruction<2, float, cell::rtm_dma>;
 template class SPEFrameworkInstruction<2, double, cell::rtm_dma>;
+
+template <typename DataType_>
+SPEFrameworkInstruction<2, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * a_elements,
+        DataType_ * b_elements, const unsigned size, const DataType_ scalar) :
+    SPEInstruction(opcode, 16384, result, a_elements, b_elements),
+    _use_spe(true)
+{
+    Instruction & instruction(_imp->instruction);
+
+    if (size < 5)
+    {
+        instruction.d.u = 0;
+        instruction.e.u = 0;
+        _begin_transfers = 0;
+        _end_transfers = 0;
+        _use_spe = false;
+    }
+    else
+    {
+        unsigned a_offset((instruction.b.u & 0xF) / (16 / sizeof(DataType_))); // Alignment offset of a -> elements calculated on PPU.
+        unsigned skip((16 / sizeof(DataType_) - a_offset) % (16 / sizeof(DataType_)));
+        instruction.c.u += (sizeof(DataType_) * skip); // Adjust SPU start for b respecting the elements calculated on PPU.
+        unsigned b_offset((instruction.c.u & 0xF) / (16 / sizeof(DataType_))); // Alignment offset of b -> shuffle-factor on SPU.
+        instruction.f.u = b_offset;
+
+        // Align the address for SPU.
+        instruction.b.u += (sizeof(DataType_) * skip);
+        instruction.c.u += (sizeof(DataType_) * ((16 / sizeof(DataType_)) - b_offset));
+
+        // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
+        DataType_ * dma_start = reinterpret_cast<DataType_ *>(instruction.c.u);
+        if (sizeof(DataType_) == 4) // float
+        {
+            instruction.g.f = *(dma_start - 4);
+            instruction.h.f = *(dma_start - 3);
+            instruction.i.f = *(dma_start - 2);
+            instruction.j.f = *(dma_start - 1);
+            instruction.k.f = scalar;
+        }
+        else // double
+        {
+            instruction.g.d = *(dma_start - 2);
+            instruction.h.d = *(dma_start - 1);
+            instruction.k.d = scalar;
+        }
+
+        //Subtract PPU-calculated parts from size.
+        instruction.d.u = (size - skip) / (16384 / sizeof(DataType_));
+        instruction.e.u = (size - skip) % (16384 / sizeof(DataType_));
+        instruction.e.u &= ~0xF;
+
+        // Rest index dependent on offset and SPU part.
+        _begin_transfers = skip;
+        _end_transfers = (instruction.d.u * (16384 / sizeof(DataType_))) + instruction.e.u + skip;
+
+        instruction.e.u *= sizeof(DataType_);
+    }
+
+    if (0 == instruction.e.u)
+    {
+        if (instruction.d.u > 0)
+        {
+            instruction.e.u = 16 * 1024;
+        }
+        else
+        {
+            _use_spe = false;
+        }
+    }
+    else
+    {
+        ++instruction.d.u;
+    }
+
+}
+template class SPEFrameworkInstruction<2, float, cell::rtm_mail>;
+template class SPEFrameworkInstruction<2, double, cell::rtm_mail>;
 
 struct SPEInstructionQueue::Implementation
 {

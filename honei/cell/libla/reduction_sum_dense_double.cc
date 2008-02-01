@@ -29,7 +29,7 @@ namespace honei
         namespace implementation
         {
             vector double reduction_sum_dense_double(const vector double & accumulator, vector double * elements,
-                    const unsigned size)
+                    const unsigned size, const double optional_scalar)
             {
                 vector double result(accumulator);
 
