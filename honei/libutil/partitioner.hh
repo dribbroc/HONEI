@@ -21,6 +21,8 @@
 #ifndef LIBUTIL_GUARD_PARTITIONER_HH
 #define LIBUTIL_GUARD_PARTITIONER_HH 1
 
+#include <honei/libutil/tags.hh>
+
 #include <tr1/functional>
 #include <tr1/memory>
 
@@ -90,10 +92,22 @@ namespace honei
     };
 
     /**
+     * \name Partitioner
+     * \{
      * Splits a problem of size overall_size into (at most) max_count + 1 parts, using at least best_part_size
      * elements per partition for all but the last partition. Dispatches each partition to dispatch.
      */
-    class Partitioner
+
+    template <typename Tag_> class Partitioner;
+
+    template <> class Partitioner<tags::Cell>
+    {
+        public:
+            Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
+                    std::tr1::function<void(unsigned long, unsigned long)> dispatch);
+    };
+
+    template <> class Partitioner<tags::CPU::MultiCore>
     {
         public:
             Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,

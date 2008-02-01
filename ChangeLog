@@ -6,6 +6,12 @@ only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
 2008-02-01 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libla/difference-mc.hh, honei/libutil/partitioner.cc,
+	honei/libutil/partitioner.hh, honei/libutil/partitioner_TEST.cc: Split
+	Partitioner for Cell and MultiCore.
+
+2008-02-01 Danny van Dyk <danny.dyk@uni-dortmund.de>
 	* honei/libla/files.m4, honei/libla/Makefile.am.m4: Added
 	infrastructure for forward headers.
 	* honei/libla/norm.hh, honei/libla/norm-fwd.hh,

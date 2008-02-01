@@ -86,7 +86,7 @@ namespace honei
                 unsigned long max_count(Configuration::instance()->get_value("mc::difference[DVCB,DVCB]::max-count", num_threads));
 
                 PartitionList partitions;
-                Partitioner(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
                 ThreadPool * pool(ThreadPool::get_instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -132,7 +132,7 @@ namespace honei
                 unsigned long max_count(Configuration::instance()->get_value("mc::difference[DVCB,DVCB]::max-count", num_threads ));
 
                 PartitionList partitions;
-                Partitioner(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
                 ThreadPool * pool(ThreadPool::get_instance());
                 std::list<std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
@@ -247,7 +247,7 @@ namespace honei
                 unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
                 unsigned long max_count(Configuration::instance()->get_value("mc::difference[DM,BM]::max-count", num_threads ));
                 PartitionList partitions;
-                Partitioner(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, overall_size, PartitionList::Filler(partitions));
                 ThreadPool * pool(ThreadPool::get_instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 

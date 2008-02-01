@@ -30,13 +30,13 @@
 using namespace honei;
 using namespace tests;
 
-template <unsigned long best_part_size_, unsigned long quantisation_>
+template <typename Tag_, unsigned long best_part_size_, unsigned long quantisation_>
 class PartitionerTest :
     public QuickTest
 {
     public:
         PartitionerTest() :
-            QuickTest("partitioner_test")
+            QuickTest("partitioner_test<" + stringify(Tag_::name) + "," + stringify(best_part_size_) + "," + stringify(quantisation_) + ">")
         {
         }
 
@@ -51,7 +51,7 @@ class PartitionerTest :
                     unsigned long overall_size(k);
 
                     PartitionList partitions;
-                    Partitioner(max_count, best_part_size_, overall_size, PartitionList::Filler(partitions));
+                    Partitioner<Tag_>(max_count, best_part_size_, overall_size, PartitionList::Filler(partitions));
 
                     unsigned long count(std::distance(partitions.begin(), partitions.end()));
                     unsigned long sum(0);
@@ -78,9 +78,9 @@ class PartitionerTest :
         }
 };
 
-PartitionerTest<16384, 16> partitioner_test_cell_16k_16;
+PartitionerTest<tags::Cell, 16384, 16> partitioner_test_cell_16k_16;
 
-PartitionerTest<1024, 16> partitioner_test_mc_1k_16;
-PartitionerTest<4096, 16> partitioner_test_mc_4k_16;
-PartitionerTest<131072, 16> partitioner_test_mc_128k_16;
+PartitionerTest<tags::CPU::MultiCore, 1024, 16> partitioner_test_mc_1k_16;
+PartitionerTest<tags::CPU::MultiCore, 4096, 16> partitioner_test_mc_4k_16;
+PartitionerTest<tags::CPU::MultiCore, 131072, 16> partitioner_test_mc_128k_16;
 
