@@ -113,8 +113,8 @@ namespace honei
     template <> class Partitioner<tags::CPU::MultiCore>
     {
         public:
-            Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
-                    std::tr1::function<void(unsigned long, unsigned long)> dispatch);
+            Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long quantization,
+                    unsigned long overall_size, std::tr1::function<void(unsigned long, unsigned long)> dispatch);
     };
 }
 
