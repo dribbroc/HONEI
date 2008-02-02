@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -18,80 +18,31 @@
  */
 
 #include <honei/cell/cell.hh>
-#include <honei/cell/libutil/allocator.hh>
+#include <honei/cell/libla/operations.hh>
 
 #include <spu_intrinsics.h>
-#include <spu_mfcio.h>
 
-using namespace honei::cell;
-
-/*
- * dense_float_scale
- *
- * Scale a dense entity.
- *
- * \size Default transfer buffer size in bytes.
- * \operand a Base address of the entity.
- * \operand b Number of transfers needed.
- * \operand c Last transfer buffer size in bytes.
- * \operand d The scalar to use.
- */
-void scale_dense_float(const Instruction & inst)
+namespace honei
 {
-    EffectiveAddress ea_m(inst.a.ea), ea_r(inst.a.ea);
-
-    Allocation * block_m[2] = { acquire_block(), acquire_block() };
-    Pointer<float> m[2] = { { block_m[0]->address} , { block_m[1]->address } };
-
-    unsigned counter(inst.b.u);
-    unsigned size(counter > 1 ? inst.size : inst.c.u);
-    unsigned nextsize;
-    unsigned current(1), next(2);
-
-    mfc_get(m[current - 1].untyped, ea_m, size, current, 0, 0);
-    ea_m += size;
-
-    Subscriptable<float> scale_vector = { spu_splats(static_cast<float>(inst.d.f)) };
-
-    while (counter > 1)
+    namespace cell
     {
-        nextsize = (counter == 2 ? inst.c.u : inst.size);
-
-        mfc_get(m[next - 1].untyped, ea_m, nextsize, next, 0, 0);
-        ea_m += nextsize;
-
-        mfc_write_tag_mask(1 << current);
-        mfc_read_tag_status_all();
-
-        for (unsigned i(0); i < size / sizeof(vector float) ; ++i)
+        namespace implementation
         {
-            m[current - 1].vectorised[i] = spu_mul(m[current - 1].vectorised[i], scale_vector.value);
+            void scale_dense_float(vector float * elements, const unsigned size, const float scalar)
+            {
+                vector float scalar_vector = spu_splats(scalar);
+                for (unsigned i(0) ; i < size ; ++i)
+                {
+                    elements[i] = spu_mul(elements[i], scalar_vector);
+                }
+            }
         }
 
-        mfc_putb(m[current - 1].untyped, ea_r, size, current, 0, 0);
-        ea_r += size;
-        --counter;
-
-        unsigned temp(next);
-        next = current;
-        current = temp;
-
-        size = nextsize;
+        namespace operations
+        {
+            Operation<1, float, rtm_dma> scale_dense_float = {
+                &implementation::scale_dense_float,
+            };
+        }
     }
-
-    mfc_write_tag_mask(1 << current);
-    mfc_read_tag_status_all();
-
-    for (unsigned i(0) ; i < size / sizeof(vector float) ; ++i)
-    {
-        m[current - 1].vectorised[i] = spu_mul(m[current - 1].vectorised[i], scale_vector.value);
-    }
-
-    mfc_put(m[current - 1].untyped, ea_r, size, current, 0, 0);
-
-    mfc_write_tag_mask(1 << current);
-    mfc_read_tag_status_all();
-
-    release_block(*block_m[0]);
-    release_block(*block_m[1]);
 }

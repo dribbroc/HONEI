@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-02 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/operations.hh, honei/cell/libla/scale_dense_float.cc,
+	honei/libla/scale-cell.cc: Made Scale(Dense) use the
+	SPEInstructionFramework.
+
 2008-02-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/cell/kernels/kernel_reference.sk,

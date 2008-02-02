@@ -33,51 +33,24 @@ namespace honei
     {
         CONTEXT("When scaling DenseMatrix<float> (Cell):");
 
-        Operand oa = { b.elements() };
-        Operand ob;
-        ob.u = (b.rows() * b.columns()) / (1024 * 4);
-        Operand oc;
-        oc.u = (b.rows() * b.columns()) % (1024 * 4);
-        oc.u &= ~0xF;
-        Operand od;
-        od.f = a;
+        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_scale_dense_float, b.elements(), b.rows() * b.columns(), a);
 
-        unsigned rest_index(ob.u * 4096 + oc.u);
-
-        oc.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == oc.u)
-        {
-            if (ob.u > 0)
-            {
-                oc.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++ob.u;
-        }
-
-        SPEInstruction instruction(oc_scale_dense_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        MutableMatrix<float>::ElementIterator i(b.element_at(rest_index)), i_end(b.end_elements());
-        for ( ; i != i_end ; ++i)
+        for (MutableMatrix<float>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            *i *= od.f;
+            *i *= a;
         }
 
-        if (use_spe)
+        for (MutableMatrix<float>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
+        {
+            *i *= a;
+        }
+
+        if (instruction.use_spe())
             instruction.wait();
 
         return b;
@@ -88,63 +61,24 @@ namespace honei
     {
         CONTEXT("When scaling DenseVectorContinuousBase<float> (Cell):");
 
-        Operand oa = { b.elements() };
-        Operand ob, oc, od;
-        od.f = a;
+        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_scale_dense_float, b.elements(), b.size(), a);
 
-        unsigned offset((oa.u & 0xF) / sizeof(float));
-
-        if (offset > 0)
-            oa.u += 16 -(4 * offset); // Align the address for SPU.
-
-        if (b.size() < 5)
-            offset = 0;
-
-        ob.u = (b.size() - ((4 - offset) % 4)) / (1024 * 4); // Subtract PPU-calculated offset from size.
-        oc.u = (b.size() - ((4 - offset) % 4)) % (1024 * 4);
-        oc.u &= ~0xF;
-
-        unsigned rest_index(ob.u * 4096 + oc.u + ((4 - offset) % 4)); // Rest index for PPU dependent on offset and SPU part.
-        oc.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == oc.u)
-        {
-            if (ob.u > 0)
-            {
-                oc.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++ob.u;
-        }
-
-        SPEInstruction instruction(oc_scale_dense_float, 16 * 1024, oa, ob, oc, od);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (Vector<float>::ElementIterator i(b.begin_elements()),
-                i_end(b.element_at((4 - offset) % 4)) ; i != i_end ; ++i)
+        for (Vector<float>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
-            *i *= od.f;
+            *i *= a;
         }
 
-        for (Vector<float>::ElementIterator i(b.element_at(rest_index)),
-                i_end(b.end_elements()) ; i != i_end ; ++i)
+        for (Vector<float>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
         {
-            *i *= od.f;
+            *i *= a;
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
             instruction.wait();
 
         return b;
@@ -202,6 +136,7 @@ namespace honei
             instruction.wait();
 
         return b;
+
     }
 
     SparseMatrix<float> &
