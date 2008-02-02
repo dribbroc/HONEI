@@ -31,11 +31,11 @@ using namespace honei;
 using namespace tests;
 
 template <typename Tag_, unsigned long best_part_size_, unsigned long quantisation_>
-class PartitionerTest :
+class PartitionerTestCell :
     public QuickTest
 {
     public:
-        PartitionerTest() :
+        PartitionerTestCell() :
             QuickTest("partitioner_test<" + stringify(Tag_::name) + "," + stringify(best_part_size_) + "," + stringify(quantisation_) + ">")
         {
         }
@@ -78,9 +78,57 @@ class PartitionerTest :
         }
 };
 
-PartitionerTest<tags::Cell, 16384, 16> partitioner_test_cell_16k_16;
+PartitionerTestCell<tags::Cell, 16384, 16> partitioner_test_cell_16k_16;
 
-PartitionerTest<tags::CPU::MultiCore, 1024, 16> partitioner_test_mc_1k_16;
-PartitionerTest<tags::CPU::MultiCore, 4096, 16> partitioner_test_mc_4k_16;
-PartitionerTest<tags::CPU::MultiCore, 131072, 16> partitioner_test_mc_128k_16;
+template <typename Tag_, unsigned long best_part_size_, unsigned long quantisation_>
+class PartitionerTestMC :
+    public QuickTest
+{
+    public:
+        PartitionerTestMC() :
+            QuickTest("partitioner_test<" + stringify(Tag_::name) + "," + stringify(best_part_size_) + "," + stringify(quantisation_) + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long j(1), j_end(33) ; j != j_end ; ++j)
+            {
+                unsigned long max_count(j);
+
+                for (unsigned long k(best_part_size_ << 1), k_end(1 << 16) ; k < k_end ; k += 100)
+                {
+                    unsigned long overall_size(k);
+
+                    PartitionList partitions;
+                    Partitioner<Tag_>(max_count, best_part_size_, quantisation_, overall_size, PartitionList::Filler(partitions));
+
+                    unsigned long count(partitions.size());
+                    unsigned long sum(0);
+
+                    for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ; p != p_last ; ++p)
+                    {
+                        unsigned long partition_size(p->size);
+                        sum += partition_size;
+
+                        TEST_CHECK_EQUAL(0, partition_size % quantisation_);
+
+                        if (overall_size > best_part_size_)
+                        {
+                            TEST_CHECK(partition_size >= best_part_size_);
+                        }
+                    }
+
+                    sum += partitions.last()->size;
+
+                    TEST_CHECK(count <= max_count + 1);
+                    TEST_CHECK_EQUAL(overall_size, sum);
+                }
+            }
+        }
+};
+
+PartitionerTestMC<tags::CPU::MultiCore, 1024, 16> partitioner_test_mc_1k_16;
+PartitionerTestMC<tags::CPU::MultiCore, 4096, 16> partitioner_test_mc_4k_16;
+PartitionerTestMC<tags::CPU::MultiCore, 131072, 16> partitioner_test_mc_128k_16;
 
