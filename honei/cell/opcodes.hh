@@ -50,6 +50,7 @@ namespace honei
             oc_reduction_max_dense_float,
             oc_reduction_min_dense_float,
             oc_scale_dense_float,
+            oc_scale_dense_double,
             oc_norm_max_dense_float,
             oc_norm_l_one_dense_float,
             oc_norm_l_two_dense_float,

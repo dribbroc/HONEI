@@ -50,6 +50,8 @@ namespace honei
 
             extern Operation<1, float, rtm_dma> scale_dense_float;
 
+            extern Operation<1, double, rtm_dma> scale_dense_double;
+
             extern Operation<1, float, rtm_dma> fill_float;
 
             extern Operation<1, double, rtm_dma> fill_double;

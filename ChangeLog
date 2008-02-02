@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/Makefile.am, honei/cell/libla/operations.hh,
+	+honei/cell/libla/scale_dense_double.cc, honei/cell/opcodes.hh,
+	honei/honeirc:
+	Added spu side scale_dense double version.
+
 2008-02-02 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* honei/libla/difference-mc.hh, honei/libutil/partitioner.hh,
@@ -19,7 +27,6 @@ see the NEWS file.
 	honei/libla/scale-cell.cc: Made Scale(Dense) use the
 	SPEInstructionFramework.
 
->>>>>>> .r1518
 2008-02-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/cell/kernels/kernel_reference.sk,
@@ -51,7 +58,6 @@ see the NEWS file.
 	honei/cell/libla/operations.hh, honei/libla/dot_product-cell.cc: Made
 	DotProduct use the SPEInstructionFramework.
 
->>>>>>> .r1517
 2008-02-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libutil/partitioner.cc, honei/libutil/partitioner.hh,
