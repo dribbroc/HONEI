@@ -70,6 +70,8 @@ namespace honei
 
             extern Operation<2, float, rtm_dma> scaled_sum_dense_dense_float;
 
+            extern Operation<2, double, rtm_dma> scaled_sum_dense_dense_double;
+
         }
     }
 }

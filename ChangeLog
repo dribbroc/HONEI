@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/Makefile.am, honei/cell/libla/operations.hh,
+	+honei/cell/libla/scaled_sum_dense_dense_double.cc,
+	honei/cell/opcodes.hh, honei/honeirc:
+	Added spu side of scaled_sum double version.
+
 2008-02-02 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/kernels/kernel_reference.sk,

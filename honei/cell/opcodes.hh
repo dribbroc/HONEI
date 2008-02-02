@@ -55,6 +55,7 @@ namespace honei
             oc_norm_l_two_dense_float,
             oc_element_inverse_float,
             oc_scaled_sum_dense_dense_float,
+            oc_scaled_sum_dense_dense_double,
             oc_scale_sparse_float,
             oc_fill_float,
             oc_fill_double,

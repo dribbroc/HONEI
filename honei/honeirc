@@ -17,6 +17,8 @@ cell::dot_product_dense_dense_float_spec = 2
 cell::dot_product_dense_dense_double_spec = 2
 cell::element_product_dense_dense_float_spec = 2
 cell::element_product_dense_dense_double_spec = 2
+cell::scaled_sum_dense_dense_float_spec = 2
+cell::scaled_sum_dense_dense_double_spec = 2
 
 
 # MultiCore

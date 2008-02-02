@@ -32,6 +32,7 @@ libla_spe_a_SOURCES = \
 	norm_l_two_dense_float.cc \
 	element_inverse_float.cc \
 	scaled_sum_dense_dense_float.cc \
+	scaled_sum_dense_dense_double.cc \
 	scale_sparse_float.cc \
 	fill_float.cc
 
