@@ -102,7 +102,7 @@ WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore::SSE, float> 
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_weighted_fruchterman_reingold_positions_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
-WeightedFruchtermanReingoldPositionsQuickTest<tags::Cell, float> sse_weighted_fruchterman_reingold_positions_quick_test_float("sse float");
+WeightedFruchtermanReingoldPositionsQuickTest<tags::Cell, float> sse_weighted_fruchterman_reingold_positions_quick_test_float("cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
