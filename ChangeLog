@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-02 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/operations.hh,
+	honei/cell/libla/scaled_sum_dense_dense_float.cc,
+	honei/libla/scaled_sum-cell.cc: Made ScaledSum use the
+	SPEInstructionFramework.
+
 2008-02-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* +honei/cell/libla/dot_product_dense_dense_double.cc,
