@@ -52,17 +52,24 @@ namespace honei
         for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
                 p != p_last ; ++p)
         {
-            SPEFrameworkInstruction<2, float, rtm_dma> * instruction =
-                new SPEFrameworkInstruction<2, float, rtm_dma>(oc_sum_dense_dense_float,
-                        a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+            SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(
+                    oc_sum_dense_dense_float, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
 
             if (instruction->use_spe())
             {
                 SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
             }
+        }
 
+        PartitionList::ConstIterator p(partitions.last());
+        SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(
+                oc_sum_dense_dense_float, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+
+        if (instruction->use_spe())
+        {
+            SPEManager::instance()->dispatch(*instruction);
             instructions.push_back(instruction);
-
         }
 
         // Calculate the first elements on PPU (if needed).
@@ -72,8 +79,7 @@ namespace honei
         }
 
         // Calculate the last elements on PPU (if needed).
-        PartitionList::ConstIterator p(partitions.last());
-        for (unsigned long index(skip + p->start) ; index < skip + p->start + p->size ; ++index)
+        for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
         {
             a[index] += b[index];
         }
@@ -84,6 +90,7 @@ namespace honei
         {
             if ((*i)->use_spe())
                 (*i)->wait();
+
             delete *i;
         }
 
@@ -98,10 +105,7 @@ namespace honei
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        unsigned long skip(a.offset() & 0x3);
-        if (0 != skip)
-            skip = 2 - skip;
-
+        unsigned long skip(a.offset() & 0x1);
         unsigned long spe_count(std::min(2ul, SPEManager::instance()->spe_count()));
 
         std::list<SPEFrameworkInstruction<2, double, rtm_dma> * > instructions;
@@ -112,17 +116,25 @@ namespace honei
         for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
                 p != p_last ; ++p)
         {
-            SPEFrameworkInstruction<2, double, rtm_dma> * instruction =
-                new SPEFrameworkInstruction<2, double, rtm_dma>(oc_sum_dense_dense_double,
-                        a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+            SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
+                    oc_sum_dense_dense_double, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
 
             if (instruction->use_spe())
             {
                 SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+
             }
+        }
 
+        PartitionList::ConstIterator p(partitions.last());
+        SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
+                oc_sum_dense_dense_float, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+
+        if (instruction->use_spe())
+        {
+            SPEManager::instance()->dispatch(*instruction);
             instructions.push_back(instruction);
-
         }
 
         // Calculate the first elements on PPU (if needed).
@@ -132,8 +144,7 @@ namespace honei
         }
 
         // Calculate the last elements on PPU (if needed).
-        PartitionList::ConstIterator p(partitions.last());
-        for (unsigned long index(skip + p->start) ; index < skip + p->start + p->size ; ++index)
+        for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
         {
             a[index] += b[index];
         }

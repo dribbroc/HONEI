@@ -285,10 +285,10 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     }
     else
     {
-        unsigned a_offset((instruction.a.u & 0xF) / (16 / sizeof(DataType_))); // Alignment offset of a -> elements calculated on PPU.
+        unsigned a_offset((instruction.a.u & 0xF) / sizeof(DataType_)); // Alignment offset of a -> elements calculated on PPU.
         unsigned skip((16 / sizeof(DataType_) - a_offset) % (16 / sizeof(DataType_)));
         instruction.b.u += (sizeof(DataType_) * skip); // Adjust SPU start for b respecting the elements calculated on PPU.
-        unsigned b_offset((instruction.b.u & 0xF) / (16 / sizeof(DataType_))); // Alignment offset of b -> shuffle-factor on SPU.
+        unsigned b_offset((instruction.b.u & 0xF) / sizeof(DataType_)); // Alignment offset of b -> shuffle-factor on SPU.
         instruction.e.u = b_offset;
 
         // Align the address for SPU.
@@ -312,7 +312,7 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
             instruction.j.d = scalar;
         }
 
-        //Subtract PPU-calculated parts from size.
+        // Subtract PPU-calculated parts from size.
         instruction.c.u = (size - skip) / (16384 / sizeof(DataType_));
         instruction.d.u = (size - skip) % (16384 / sizeof(DataType_));
         instruction.d.u &= ~0xF;
@@ -328,7 +328,7 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     {
         if (instruction.c.u > 0)
         {
-            instruction.d.u = 16 * 1024;
+            instruction.d.u = instruction.size;
         }
         else
         {
