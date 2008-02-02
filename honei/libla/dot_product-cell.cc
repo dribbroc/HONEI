@@ -1,8 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007. 2008 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,6 +22,7 @@
 #include <honei/libutil/memory_backend_cell.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
+#include <honei/libutil/partitioner.hh>
 
 namespace honei
 {
@@ -36,86 +36,33 @@ namespace honei
         if (b.size() != a.size())
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-        float result(0.0f);
-        Operand oa = { &result };
-        Operand ob = { a.elements() };
-        Operand oc = { b.elements() };
-        Operand od, oe, of, og, oh, oi, oj;
+        float ppu_result(0.0f), spu_result(0.0f);
 
-        unsigned a_offset((ob.u & 0xF) / sizeof(float)); // Alignment offset of a -> elements calculated on PPU.
-        if (a.size() < 5)
-            a_offset = 0;
+        SPEFrameworkInstruction<2, float, rtm_mail> instruction(oc_dot_product_dense_dense_float, &spu_result,
+                        a.elements(), b.elements(), a.size());
 
-
-        unsigned skip = ((4 - a_offset) % 4);
-        oc.u += (4 * skip); // Adjust SPU start for b respecting the elements calculated on PPU.
-
-        unsigned b_offset((oc.u & 0xF) / sizeof(float)); // Alignment offset of b -> shuffle-factor on SPU.
-        of.u = b_offset;
-
-        // Align the address for SPU.
-        ob.u += (4 * skip);
-        oc.u += (4 * (4 - b_offset));
-
-        float * dma_start = reinterpret_cast<float *>(oc.u);
-        og.f = *(dma_start - 4);
-        oh.f = *(dma_start - 3);
-        oi.f = *(dma_start - 2);
-        oj.f = *(dma_start - 1);
-
-        //Subtract PPU-calculated parts from size.
-        od.u = (b.size() - skip) / (1024 * 4);
-        oe.u = (b.size() - skip) % (1024 * 4);
-        oe.u &= ~0xF;
-
-        // Rest index dependent on offset and SPU part.
-        unsigned rest_index(od.u * 4096 + oe.u + skip);
-
-        oe.u *= 4;
-
-        bool use_spe(true);
-
-        if (0 == oe.u)
-        {
-            if (od.u > 0)
-            {
-                oe.u = 16 * 1024;
-            }
-            else
-            {
-                use_spe = false;
-            }
-        }
-        else
-        {
-            ++od.u;
-        }
-        SPEInstruction instruction(oc_dot_product_dense_dense_float, 16 * 1024, oa, ob, oc, od, oe, of, og, oh, oi, oj);
-
-        if (use_spe)
+        if (instruction.use_spe())
         {
             SPEManager::instance()->dispatch(instruction);
         }
 
-        float rest_result(0.0f);
-
-        // Calculate the first 4 - a_offset elements on PPU.
-        Vector<float>::ConstElementIterator j(b.begin_elements());
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()),
-            i_end(a.element_at(skip)) ; i != i_end ; ++i, ++j)
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < instruction.transfer_begin() ; ++index)
         {
-            rest_result += *i * *j;
+            ppu_result += a[index] * b[index];
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(rest_index)), i_end(a.end_elements()),
-                j(b.element_at(rest_index)) ; i != i_end ; ++i, ++j)
+        // Calculate the last elements on PPU (if needed).
+        for (unsigned long index(instruction.transfer_end()) ; index < a.size() ; index++)
         {
-            rest_result += *i * *j;
+            ppu_result += a[index] * b[index];
         }
 
-        if (use_spe)
+        if (instruction.use_spe())
+        {
             instruction.wait();
+        }
 
-        return result + rest_result;
+        return ppu_result + spu_result;
     }
 }

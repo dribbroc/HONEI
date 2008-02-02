@@ -26,8 +26,6 @@
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/partitioner.hh>
 
-#include <iostream>
-
 namespace honei
 {
     using namespace cell;
