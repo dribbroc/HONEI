@@ -62,6 +62,8 @@ namespace honei
 
             extern Operation<2, float, rtm_mail> dot_product_dense_dense_float;
 
+            extern Operation<2, double, rtm_mail> dot_product_dense_dense_double;
+
             extern Operation<2, float, rtm_dma> element_product_dense_dense_float;
 
             extern Operation<2, double, rtm_dma> element_product_dense_dense_double;

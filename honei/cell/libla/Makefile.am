@@ -8,6 +8,7 @@ DEFS = $(DEBUGDEF) $(PROFILERDEF)
 noinst_LIBRARIES = libla_spe.a
 libla_spe_a_SOURCES = \
 	dot_product_dense_dense_float.cc \
+	dot_product_dense_dense_double.cc \
 	element_product_dense_dense_float.cc \
 	element_product_dense_dense_double.cc \
 	product_dense_matrix_dense_matrix_float.cc \

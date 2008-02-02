@@ -7,6 +7,17 @@
 # Number of SPEs
 cell::number-of-spes = 5
 
+cell::sum_dense_dense_float_spec = 2
+cell::sum_dense_dense_double_spec = 2
+cell::sum_dense_scalar_float_spec = 2
+cell::sum_dense_scalar_double_spec = 2
+cell::difference_dense_dense_float_spec = 2
+cell::difference_dense_dense_double_spec = 2
+cell::dot_product_dense_dense_float_spec = 2
+cell::dot_product_dense_dense_double_spec = 2
+cell::element_product_dense_dense_float_spec = 2
+cell::element_product_dense_dense_double_spec = 2
+
 
 # MultiCore
 mc::num-cores = 2
