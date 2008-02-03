@@ -7,9 +7,19 @@ see the NEWS file.
 
 2008-02-03 David Gies <david-gies@gmx.de>
 
+	* honei/libla/reduction_BENCHMARK.cc, honei/libla/sum_BENCHMARK.cc, 
+	honei/libla/element_inverse_BENCHMARK.cc, honei/libla/scale_BENCHMARK.cc,
+	honei/libla/product_BENCHMARK.cc, honei/libla/bench.cc: Added some Benchmarks.
+	* honei/libla/sum.hh, honei/libla/difference.hh, honei/libla/reduction.hh,
+	honei/libla/scale.hh: Applied some benchmark-info corrections.
+	* benchmark/benchmark.hh, benchmark/benchmark.cc: Evaluation to plotfile improved
+	and added parameter 'plot' to benchmarks.
+
+2008-02-03 David Gies <david-gies@gmx.de>
+
 	* honei/libla/difference-mc.hh, honei/libla/element_product-mc.hh,
 	honei/libla/sum-mc.hh: Added usage of configuration class and partitioner.
-	* honei/honeirc: Made coresponding entries.
+	* honei/honeirc: Made corresponding entries.
 
 2008-02-02 Joachim Messer <joachim.messer@uni-dortmund.de>
 
