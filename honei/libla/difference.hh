@@ -30,6 +30,7 @@
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/vector.hh>
 #include <honei/libutil/tags.hh>
+#include <honei/libutil/benchmark_info.hh>
 
 namespace honei
 {
@@ -496,7 +497,6 @@ namespace honei
         }
         /// \}
 
-        #ifdef BENCHM
         template <typename DT1_, typename DT2_>
         static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, SparseMatrix<DT2_> & b)
         {
@@ -512,10 +512,53 @@ namespace honei
         static inline BenchmarkInfo get_benchmark_info(BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            result.flops = a.rows() * a.columns();
-            result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
-            result.store = a.rows() * a.columns() * sizeof(DT1_);
-            result.size.push_back(a.rows() * a.columns());
+/*#if defined (HONEI_SSE)
+            Scale<tags::CPU::SSE>::value(b, -1);
+#else
+            Scale<tags::CPU>::value(b, -1);
+#endif*/
+
+            result = result + Scale<>::get_benchmark_info(b, DT2_(-1));
+            int middle_index(a.rows() -1);
+            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+                    vi != vi_end ; ++vi)
+            {
+                // If we are below the diagonal band, we start at Element index and go on until the last element.
+                if (vi.index() < middle_index)
+                {
+                    unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                    {
+                        //b(start, i) += *c;
+                        result.flops += 1;
+                        result.load += sizeof(DT1_) + sizeof(DT2_);
+                        result.store += sizeof(DT2_);
+                        ++start, ++i;
+                    }
+                }
+
+                // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
+                else
+                {
+
+                    //Calculation of the element-index to stop in iteration!
+                    unsigned long offset(vi.index() - middle_index);
+                    unsigned long end(vi->size() - offset);
+                    unsigned long i(0);
+                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                    {
+                        //b(i, offset) +=  *c;
+                        result.flops += 1;
+                        result.load += sizeof(DT1_) + sizeof(DT2_);
+                        result.store += sizeof(DT2_);
+                        ++offset, ++i;
+                    }
+                }
+            }
+            result.size.push_back(a.size() * a.size());
             result.size.push_back(b.rows() * b.columns());
             return result; 
         }
@@ -531,7 +574,6 @@ namespace honei
             result.size.push_back(b.size());
             return result; 
         }
-        #endif
     };
 
     /**

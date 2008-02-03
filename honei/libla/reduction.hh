@@ -170,7 +170,7 @@ namespace honei
             BenchmarkInfo result;
             for (unsigned long i(0) ; i < a.rows() ; ++i)
             {
-                result += Reduction<rt_sum>::get_benchmark_info(a[i]);
+                result = result + Reduction<rt_sum>::get_benchmark_info(a[i]);
                 result.scale += a[i].used_elements();
             }
             result.size.push_back(a.rows() * a.columns());

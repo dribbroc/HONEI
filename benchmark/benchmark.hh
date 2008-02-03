@@ -24,6 +24,7 @@ class Benchmark
         int _x, _xmin, _xmax;
         double _total, _min, _max, _avg, _median, _tp, _mediantp, _f, _medianf;
         std::string _tag_name;
+        bool _plots;
 
 
     public:
@@ -55,6 +56,8 @@ class Benchmark
 
         /// Returns our target platform.
         virtual std::string get_tag_name();
+
+        virtual bool plots();
 };
 
 /**

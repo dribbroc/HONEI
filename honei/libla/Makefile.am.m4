@@ -43,7 +43,7 @@ ifelse(`$2', `cell', `addcell(`$1')', `')dnl
 ifelse(`$2', `sse', `addsse(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')dnl
 ifelse(`$2', `benchmark', `addbench(`$1')', `')')dnl
-define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')')dnl
+define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')addthis(`$1',`$7')')dnl
 
 include(`honei/libla/files.m4')
 
@@ -127,10 +127,11 @@ bench-cell:
 
 bench-pdf:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	$(top_builddir)/honei/libla/benchmark i
+	$(top_builddir)/honei/libla/benchmark i plot
 	~/../share/bin/gnuplot *.plt
 	pdflatex -shell-escape RecentPlots.tex
-	rm PlotOut_*
+	rm PlotOut_*.plt
+	rm PlotOut_*.pdf
 
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)

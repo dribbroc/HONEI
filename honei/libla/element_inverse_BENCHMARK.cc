@@ -55,3 +55,47 @@ DenseMatrixElementInverseBench<double, tags::CPU::SSE> SSEMEIBenchdouble("SSE Ma
 #ifdef HONEI_CELL
 DenseMatrixElementInverseBench<float, tags::Cell>  CELLMEIBenchfloat ("Cell Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
 #endif
+
+template <typename DataType_, typename Tag_>
+
+class DenseVectorElementInverseBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+
+    public:
+        DenseVectorElementInverseBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size  = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DenseVector<DataType_> dv(_size, DataType_(rand()));
+            for(int i = 0; i < _count; ++i)
+            {
+                BENCHMARK(ElementInverse<Tag_>::value(dv));
+            }
+            BenchmarkInfo info(ElementInverse<>::get_benchmark_info(dv));
+            evaluate(info);
+        }
+};
+
+DenseVectorElementInverseBench<float, tags::CPU>  VEIBenchfloat ("Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorElementInverseBench<double, tags::CPU> VEIBenchdouble("Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorElementInverseBench<float, tags::CPU::MultiCore>  MCVEIBenchfloat ("MC: Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorElementInverseBench<double, tags::CPU::MultiCore> MCVEIBenchdouble("MC: Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
+#ifdef HONEI_SSE
+DenseVectorElementInverseBench<float, tags::CPU::MultiCore::SSE>  MCSSEVEIBenchfloat ("MC SSE Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorElementInverseBench<double, tags::CPU::MultiCore::SSE> MCSSEVEIBenchdouble("MC SSE Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorElementInverseBench<float, tags::CPU::SSE>  SSEVEIBenchfloat ("SSE Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorElementInverseBench<double, tags::CPU::SSE> SSEVEIBenchdouble("SSE Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
+#endif
+#ifdef HONEI_CELL
+DenseVectorElementInverseBench<float, tags::Cell>  CELLVEIBenchfloat ("Cell Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
+#endif

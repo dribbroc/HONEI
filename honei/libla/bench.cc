@@ -16,3 +16,4 @@
 #include <honei/libla/scale_BENCHMARK.cc>
 #include <honei/libla/scaled_sum_BENCHMARK.cc>
 #include <honei/libla/sum_BENCHMARK.cc>
+#include <honei/libla/difference_BENCHMARK.cc>

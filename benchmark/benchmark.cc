@@ -59,7 +59,8 @@ class BenchmarkList
 std::list<Benchmark *> BenchmarkList::_benchs;
 
 Benchmark::Benchmark(const std::string & id) :
-    _id(id)
+    _id(id),
+    _plots(false)
 {
     BenchmarkList::instance()->register_bench(this);
 }
@@ -282,6 +283,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
     ofs.close();
     --sizes;
     size_t pos;
+    bool plotsvx(not(*(info.begin()->size.begin()) == *((--info.end())->size.begin()))), plotcvx(not(*cores.begin() == *(--cores.end())));
     std::string filename(std::string("PlotOut_") + ctime(&t));
     while ((pos=filename.find(" "))!=-1) filename.replace(pos, 1, "_");
     while ((pos=filename.find(":"))!=-1) filename.replace(pos, 1, "_");
@@ -290,18 +292,63 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
     eps1name.replace(32, 1, ".eps");
     eps2name.replace(32, 1, "_2.eps");
     ofstream ofs2(filename.c_str(), ios_base::out);
-    ofs2 << "set terminal postscript eps color\nset key below\n";
-    ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
-    ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 7+sizes << " t \"median runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 5+sizes << " t \"max runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 4+sizes << " t \"min runtime\" with linespoints\n";
-    ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
-    ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 2+sizes << " t \"median FLOPS\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 8+sizes << " t \"mean FLOPS\" with linespoints\n";   
+    if (plotsvx && not plotcvx)
+    {
+        ofs2 << "set terminal postscript eps color\nset key below\nset yrange [0:]\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
+        ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 7+sizes << " t \"median runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 5+sizes << " t \"max runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 4+sizes << " t \"min runtime\" with linespoints\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
+        ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 2+sizes << " t \"median FLOPS\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 8+sizes << " t \"mean FLOPS\" with linespoints\n";
+    }
+    else if (plotcvx && not plotsvx)
+    {
+        ofs2 << "set terminal postscript eps color\nset key below\nset yrange [0:]\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"number of parts\"\nset ylabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
+        ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 7+sizes << " t \"median runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 5+sizes << " t \"max runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 4+sizes << " t \"min runtime\" with linespoints\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"number of parts\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
+        ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 2+sizes << " t \"median FLOPS\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 8+sizes << " t \"mean FLOPS\" with linespoints\n";
+    }
+    else if (plotcvx && plotsvx)
+    {
+        int xv(1), yv(1);
+        list<int>::iterator ci = cores.begin();
+        int st = *ci;
+        ++ci;
+        if (st != *ci)
+        {
+            while (st != *ci)
+            {
+                ++xv;
+                ++ci;
+            }
+            yv = int(cores.size() / xv);
+        }
+        else
+        {
+            while (st == *ci)
+            {
+                ++yv;
+                ++ci;
+            }
+            xv = int(cores.size() / yv);
+        }
+        ofs2 << "set terminal postscript eps color\nset key below\nset contour base\nset surface\nset dgrid3d " << yv << "," << xv << ", \nshow contour\nset zrange [0:]\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"number of parts\"\nset ylabel \"Operand Size\"\nset zlabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
+        ofs2 << "splot \"BenchmarkPlotData\" index " << nr-1 << " using 1:2:" << 7+sizes << " t \"median runtime\" with lines\n";
+        ofs2 << "set title \"" << _id << "\"\nset zlabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
+        ofs2 << "splot \"BenchmarkPlotData\" index " << nr-1 << " using 1:2:" << 2+sizes << " t \"median FLOPS\" with lines\n";
+    }
+    else
+    {
+        std::cout << "Can't find a way to plot data automatically" << std::endl;
+    }
     ofs2.close();
     ofstream ofs3("RecentPlots.tex", ios_base::app);
     ofs3 << "\t\\begin{figure}\n";
-    ofs3 << "\t\\includegraphics{" << eps1name << "}\n";
-    ofs3 << "\t\\end{figure}\n";
-    ofs3 << "\t\\begin{figure}\n";
-    ofs3 << "\t\\includegraphics{" << eps2name << "}\n";
+    ofs3 << "\t\\begin{center}\n";
+    ofs3 << "\t\t\\includegraphics{" << eps1name << "}\n";
+    ofs3 << "\t\t\\includegraphics{" << eps2name << "}\n";
+    ofs3 << "\t\\end{center}\n";
     ofs3 << "\t\\end{figure}\n";
     ofs3.close();
 }
@@ -321,6 +368,11 @@ std::string Benchmark::get_tag_name()
     return _tag_name;
 }
 
+bool Benchmark::plots()
+{
+    return _plots;
+}
+
 int main(int argc, char** argv)
 {
     int result=EXIT_SUCCESS;
@@ -330,8 +382,16 @@ int main(int argc, char** argv)
     bool mc(true);
     bool sc(true);
     bool interface(false);
+    bool plot(false);
     if ((argc == 2) && (honei::stringify(argv[1]) == "i"))
         interface = true;
+    else if ((argc == 2) && (honei::stringify(argv[1]) == "plot"))
+        plot = true;
+    else if ((argc == 3) && ( ((honei::stringify(argv[1]) == "i") && (honei::stringify(argv[2]) == "plot")) || ((honei::stringify(argv[1]) == "plot") && (honei::stringify(argv[2]) == "i")) ) )
+    {
+        interface = true;
+        plot = true;
+    }
     else
     {
         if (argc > 1)
@@ -368,27 +428,31 @@ int main(int argc, char** argv)
                 {
                     interface = true;
                 }
+                if (honei::stringify(argv[i]) == "plot")
+                {
+                    plot = true;
+                }
             }
         }
     }
     for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; )
     {
-        if (sse && (((*i)->get_tag_name() == "sse") || ((*i)->get_tag_name() == "mc-sse")))
+        if (sse && ((*i)->plots() == plot) && (((*i)->get_tag_name() == "sse") || ((*i)->get_tag_name() == "mc-sse")))
         {
             ++i;
             continue;
         }
-        if (cell && ((*i)->get_tag_name() == "cell"))
+        if (cell && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "cell"))
         {
             ++i;
             continue;
         }
-        if (mc && ((*i)->get_tag_name() == "mc"))
+            if (mc && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "mc"))
         {
             ++i;
             continue;
         }
-        if (sc && ((*i)->get_tag_name() == "cpu"))
+        if (sc && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "cpu"))
         {
             ++i;
             continue;
@@ -461,14 +525,16 @@ int main(int argc, char** argv)
             runrs.push_back(i);
         }
     }
-    time_t t;
-    time(&t);
-    ofstream ofs("RecentPlots.tex", ios_base::out);
-    ofs << "\\documentclass{report}\n";
-    ofs << "\\usepackage{epsfig}\n";
-    ofs << "\\usepackage{epstopdf}\n";
-    ofs << "\\begin{document}\n";
-    ofs.close();
+    if (plot)
+    {
+        ofstream ofs("RecentPlots.tex", ios_base::out);
+        ofs << "\\documentclass{report}\n";
+        ofs << "\\usepackage{fullpage}\n";
+        ofs << "\\usepackage{epsfig}\n";
+        ofs << "\\usepackage{epstopdf}\n";
+        ofs << "\\begin{document}\n";
+        ofs.close();
+    }
     int count = 0;
     if (runrs.size()>0)
     {
@@ -503,8 +569,10 @@ int main(int argc, char** argv)
             }
         }
     }
-    ofstream ofs1("RecentPlots.tex", ios_base::out | ios_base::app);
-    ofs1 << "\\end{document}";
-
+    if (plot)
+    {
+        ofstream ofs1("RecentPlots.tex", ios_base::out | ios_base::app);
+        ofs1 << "\\end{document}";
+    }
     return result;
 }

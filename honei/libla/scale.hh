@@ -163,7 +163,7 @@ namespace honei
         /// \}
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DT1_ a, DenseMatrix<DT2_> & b)
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT2_> & b, DT1_ a)
         {
             BenchmarkInfo result;
             result.flops = b.rows() * b.columns();
@@ -174,7 +174,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DT1_ a, SparseMatrix<DT2_> & b)
+        static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT2_> & b, DT1_ a)
         {
             BenchmarkInfo result;
             for (typename MutableMatrix<DT2_>::ElementIterator l(b.begin_non_zero_elements()),
@@ -191,7 +191,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DT1_ a, DenseVector<DT2_> & b)
+        static inline BenchmarkInfo get_benchmark_info(DenseVector<DT2_> & b, DT1_ a)
         {
             BenchmarkInfo result;
             result.flops = b.size();

@@ -12,13 +12,13 @@ struct BenchmarkInfo
     double scale;
     std::string scaleinfo;
 
-    BenchmarkInfo()
+    BenchmarkInfo() :
+        flops(0),
+        load(0),
+        store(0),
+        scale(1),
+        scaleinfo(" ")
     {
-        flops = 0;
-        load = 0;
-        store = 0;
-        scale = 1;
-        scaleinfo = " ";
     }
     
     BenchmarkInfo operator+(const BenchmarkInfo a) 

@@ -517,6 +517,7 @@ namespace honei
                     ++col_index;
                 }
             }
+            return result;
         }
 
         template <typename DT1_, typename DT2_>
@@ -539,6 +540,17 @@ namespace honei
             result.load = a.rows() * a.columns() * sizeof(DT1_) + sizeof(DT2_);
             result.store = a.rows() * a.columns() * sizeof(DT1_);
             result.size.push_back(a.rows() * a.columns());
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DT2_ b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size();
+            result.load = a.size() * sizeof(DT1_) + sizeof(DT2_);
+            result.store = a.size() * sizeof(DT1_);
+            result.size.push_back(a.size());
             return result;
         }
     };
