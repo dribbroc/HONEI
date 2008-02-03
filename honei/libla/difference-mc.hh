@@ -352,29 +352,71 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DM,DM]::min-part-size", 1024));
-
-            if (a.rows() * a.columns() < 2 * min_part_size)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DM,DM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::difference[DM,DM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            bool alt(false);
+            if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
+            {
+                overall_size = a.columns();
+                alt = true;
+            }
+            else if (overall_size < 2)
             {
                 Difference<typename Tag_::DelegateTo>::value(a, b);
             }
-
             else
             {
-                //ThreadPool * p(ThreadPool::get_instance());
-                PoolTask * pt[a.rows()];
-                for (unsigned long i = 0 ; i < a.rows() ; ++i)
+                PartitionList partitions;
+                if (!alt)
+                    Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                else
+                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                //ThreadPool * pool(ThreadPool::get_instance());
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(a[i], b[i]);
-                    pt[i] = ThreadPool::get_instance()->dispatch(mywrapper);
+                    offset = p->start;
+                    part_size = p->size;
+
+                    FiveArgWrapper< Difference<Tag_>, DenseMatrix<DT1_>, const DenseMatrix<DT2_>, unsigned long, unsigned long, bool> 
+                        mywrapper(a, b, offset, part_size, alt);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
-                for (unsigned long i = 0; i < a.rows(); ++i)
+
+                while (! dispatched_tasks.empty())
                 {
-                    pt[i]->wait_on();
-                    delete pt[i];
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
             return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b, unsigned long offset, unsigned long part_size, bool alt)
+        {
+            if (!alt)
+            {
+                for (unsigned long i(offset) ; i < (offset + part_size) ; ++i)
+                {
+                    Difference<typename Tag_::DelegateTo>::value(a[i], b[i]);
+                }
+            }
+            else
+            {
+                for (unsigned long i(0) ; i < a.rows() ; ++i)
+                {
+                    DenseVectorRange<DT1_> range_1(a[i], part_size, offset);
+                    DenseVectorRange<DT1_> range_2(b[i], part_size, offset);
+                    Difference<typename Tag_::DelegateTo>::value(range_1, range_2);
+                }
+            }
         }
 
         template <typename DT1_, typename DT2_>
@@ -392,28 +434,50 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DM,SM]::min-part-size", 1024));
-            if (a.rows() * a.columns() < 2 * min_part_size)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[DM,SM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::difference[DM,SM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < 2) || (a.columns() < min_part_size))
             {
-                Difference<typename Tag_::DelegateTo>::value(a, b);
+                Difference<typename Tag_::DelegateTo>::value(a,b);
             }
-
             else
             {
-                //ThreadPool * p(ThreadPool::get_instance());
-                PoolTask * pt[a.rows()];
-                for (unsigned long i = 0 ; i < a.rows() ; ++i)
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                //ThreadPool * pool(ThreadPool::get_instance());
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
-                    pt[i] = ThreadPool::get_instance()->dispatch(mywrapper);
+                    offset = p->start;
+                    part_size = p->size;
+
+                    FourArgWrapper< Difference<Tag_>, DenseMatrix<DT1_>, const SparseMatrix<DT2_>, unsigned long, unsigned long> 
+                        mywrapper(a, b, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
-                for (unsigned long i = 0; i < a.rows(); ++i)
+
+                while (! dispatched_tasks.empty())
                 {
-                    pt[i]->wait_on();
-                    delete pt[i];
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
             return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b, unsigned long offset, unsigned long part_size)
+        {
+            for (unsigned long i(offset) ; i < (offset + part_size) ; ++i)
+            {
+                Difference<typename Tag_::DelegateTo>::value(a[i], b[i]);
+            }
         }
 
         template <typename DT1_, typename DT2_>
@@ -431,28 +495,50 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[SM,SM]::min-part-size", 1024));
-            if (a.rows() * a.columns() < 2 * min_part_size)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::difference[SM,SM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::difference[SM,SM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < 2) || (a.columns() < min_part_size))
             {
-                Difference<typename Tag_::DelegateTo>::value(a, b);
+                Difference<typename Tag_::DelegateTo>::value(a,b);
             }
-
             else
             {
-                //ThreadPool * p(ThreadPool::get_instance());
-                PoolTask * pt[a.rows()];
-                for (unsigned long i = 0 ; i < a.rows() ; ++i)
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                //ThreadPool * pool(ThreadPool::get_instance());
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    TwoArgWrapper< Difference<typename Tag_::DelegateTo>, SparseVector<DT1_>, const SparseVector<DT2_> > mywrapper(a[i], b[i]);
-                    pt[i] = ThreadPool::get_instance()->dispatch(mywrapper);
+                    offset = p->start;
+                    part_size = p->size;
+
+                    FourArgWrapper< Difference<Tag_>, SparseMatrix<DT1_>, const SparseMatrix<DT2_>, unsigned long, unsigned long> 
+                        mywrapper(a, b, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
-                for (unsigned long i = 0; i < a.rows(); ++i)
+
+                while (! dispatched_tasks.empty())
                 {
-                    pt[i]->wait_on();
-                    delete pt[i];
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
             return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static void value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b, unsigned long offset, unsigned long part_size)
+        {
+            for (unsigned long i(offset) ; i < (offset + part_size) ; ++i)
+            {
+                Difference<typename Tag_::DelegateTo>::value(a[i], b[i]);
+            }
         }
 
         template <typename DT1_, typename DT2_>

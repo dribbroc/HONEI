@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-03 David Gies <david-gies@gmx.de>
+
+	* honei/libla/difference-mc.hh, honei/libla/element_product-mc.hh,
+	honei/libla/sum-mc.hh: Added usage of configuration class and partitioner.
+	* honei/honeirc: Made coresponding entries.
+
 2008-02-02 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* honei/libutil/partitioner_TEST: Splitted test for Cell and MC due to

@@ -53,3 +53,47 @@ mc::difference[SM,SM]::max-count = 4
 mc::difference[SM,BM]::min-part-size = 16
 mc::difference[SM,BM]::max-count = 4
 
+mc::sum[DVCB,DVCB]::min-part-size = 16
+mc::sum[DVCB,DVCB]::max-count = 4
+
+mc::sum[DVCB,SV]::min-part-size = 16
+mc::sum[DVCB,SV]::max-count = 4
+
+mc::sum[BM,BM]::min-part-size = 16
+mc::sum[BM,BM]::max-count = 4
+
+mc::sum[DM,BM]::min-part-size = 16
+mc::sum[DM,BM]::max-count = 4
+
+mc::sum[DM,DM]::min-part-size = 16
+mc::sum[DM,DM]::max-count = 4
+
+mc::sum[DM,SC]::min-part-size = 16
+mc::sum[DM,SC]::max-count = 4
+
+mc::sum[DVCB,SC]::min-part-size = 16
+mc::sum[DVCB,SC]::max-count = 4
+
+mc::sum[DM,SM]::min-part-size = 16
+mc::sum[DM,SM]::max-count = 4
+
+mc::sum[SM,SM]::min-part-size = 16
+mc::sum[SM,SM]::max-count = 4
+
+mc::element_product[DVCB,DVCB]::min-part-size = 16
+mc::element_product[DVCB,DVCB]::max-count = 4
+
+mc::element_product[SV,DVCB]::min-part-size = 16
+mc::element_product[SV,DVCB]::max-count = 4
+
+mc::element_product[BM,BM]::min-part-size = 16
+mc::element_product[BM,BM]::max-count = 4
+
+mc::element_product[DM,DM]::min-part-size = 16
+mc::element_product[DM,DM]::max-count = 4
+
+mc::element_product[SM,DM]::min-part-size = 16
+mc::element_product[SM,DM]::max-count = 4
+
+mc::element_product[SM,SM]::min-part-size = 16
+mc::element_product[SM,SM]::max-count = 4
