@@ -115,7 +115,7 @@ skopcodes=${1%.sk}.opcodes
         echo
     }
 
-    return_qword() {
+    qword() {
         echo "                case oc_${1}:"
         echo "                    debug_enter();"
         if [[ -z ${2} ]] ; then

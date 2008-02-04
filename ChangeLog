@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* misc/make_sk.bash: Fixed typo that lead to non-recognition of
+	'qword' operations.
+
 2008-02-04 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/files.m4, honei/libswe/scenario_manager.hh, honei/libswe/scenario_manager_TEST.cc:
