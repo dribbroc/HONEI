@@ -313,6 +313,8 @@ AM_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 	Makefile
 	benchmark/Makefile
+	clients/Makefile
+	clients/config/Makefile
 	doc/Makefile
 	honei/Makefile
 	honei/cell/Makefile

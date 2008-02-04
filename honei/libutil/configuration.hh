@@ -24,6 +24,8 @@
 
 #include <string>
 
+#include <libwrapiter/libwrapiter_forward_iterator.hh>
+
 namespace honei
 {
     /**
@@ -116,8 +118,24 @@ namespace honei
 
             /// \}
 
+            /**
+             * \name Iteration
+             * \{
+             */
+
+            typedef libwrapiter::ForwardIterator<Configuration, const std::pair<const std::string, std::string> > ConstIterator;
+
+            ConstIterator begin() const;
+
+            ConstIterator end() const;
+
+            /// \}
+
             /// Re-read the configuration file.
             void reread();
+
+            /// Return our configuration file's name.
+            std::string filename() const;
     };
 }
 

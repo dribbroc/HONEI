@@ -44,6 +44,9 @@ struct Configuration::Implementation
 
     /// Our map from names to string values.
     StringValueMap string_value_map;
+
+    /// Our configuration file's name.
+    std::string filename;
 };
 
 
@@ -67,7 +70,6 @@ Configuration::_read()
     char * envvar(std::getenv("HONEI_CONFIG"));
     struct stat stat_info;
 
-    std::string filename;
     if (! envvar)
     {
         if (0 != ::lstat("./honeirc", &stat_info))
@@ -76,25 +78,25 @@ Configuration::_read()
 
             if (envvar)
             {
-                filename = std::string(envvar);
-                filename += "/.honeirc";
+                _imp->filename = std::string(envvar);
+                _imp->filename += "/.honeirc";
             }
         }
         else
         {
-            filename = "./honeirc";
+            _imp->filename = "./honeirc";
         }
     }
     else
     {
-        filename = envvar;
+        _imp->filename = envvar;
     }
 
-    if (0 == ::lstat(filename.c_str(), &stat_info))
+    if (0 == ::lstat(_imp->filename.c_str(), &stat_info))
     {
-        CONTEXT("When reading configuration file '" + filename + "'");
+        CONTEXT("When reading configuration file '" + _imp->filename + "'");
 
-        std::fstream file(filename.c_str(), std::ios_base::in);
+        std::fstream file(_imp->filename.c_str(), std::ios_base::in);
         std::string line;
 
         while (std::getline(file, line))
@@ -192,6 +194,22 @@ Configuration::set_value(const std::string & name, const std::string & value)
     }
 }
 
+Configuration::ConstIterator
+Configuration::begin() const
+{
+    const Implementation & imp(*_imp);
+
+    return ConstIterator(imp.string_value_map.begin());
+}
+
+Configuration::ConstIterator
+Configuration::end() const
+{
+    const Implementation & imp(*_imp);
+
+    return ConstIterator(imp.string_value_map.end());
+}
+
 void
 Configuration::reread()
 {
@@ -199,4 +217,10 @@ Configuration::reread()
     _imp->string_value_map.clear();
 
     _read();
+}
+
+std::string
+Configuration::filename() const
+{
+    return _imp->filename;
 }

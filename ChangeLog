@@ -7,6 +7,16 @@ see the NEWS file.
 
 2008-02-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* clients, clients/config, clients/config/config.cc,
+	clients/config/Makefile.am, configure.ac, Makefile.am: Added
+	infrastructure for clients. Added 'honei-config' as first client
+	program.
+	* honei/libutil/configuration.cc, honei/libutil/configuration.hh:
+	Added means to retrive the configuration file's name and to iterate
+	over the key-value pairs.
+
+2008-02-04 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* misc/make_sk.bash: Fixed typo that lead to non-recognition of
 	'qword' operations.
 

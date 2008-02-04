@@ -5,7 +5,7 @@ MAINTAINERCLEANFILES = \
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = autogen.bash misc/do_m4.bash misc/generated-file.txt
 
-SUBDIRS = benchmark honei unittest
+SUBDIRS = benchmark honei clients unittest
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) all
