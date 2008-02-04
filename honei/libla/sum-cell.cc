@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -129,7 +129,7 @@ namespace honei
 
         PartitionList::ConstIterator p(partitions.last());
         SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
-                oc_sum_dense_dense_float, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+                oc_sum_dense_dense_double, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
 
         if (instruction->use_spe())
         {
