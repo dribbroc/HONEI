@@ -362,10 +362,10 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
     }
     else
     {
-        unsigned a_offset((instruction.b.u & 0xF) / (16 / sizeof(DataType_))); // Alignment offset of a -> elements calculated on PPU.
+        unsigned a_offset((instruction.b.u & 0xF) / sizeof(DataType_)); // Alignment offset of a -> elements calculated on PPU.
         unsigned skip((16 / sizeof(DataType_) - a_offset) % (16 / sizeof(DataType_)));
         instruction.c.u += (sizeof(DataType_) * skip); // Adjust SPU start for b respecting the elements calculated on PPU.
-        unsigned b_offset((instruction.c.u & 0xF) / (16 / sizeof(DataType_))); // Alignment offset of b -> shuffle-factor on SPU.
+        unsigned b_offset((instruction.c.u & 0xF) / sizeof(DataType_)); // Alignment offset of b -> shuffle-factor on SPU.
         instruction.f.u = b_offset;
 
         // Align the address for SPU.
