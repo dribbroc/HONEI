@@ -451,23 +451,31 @@ namespace honei
     template <> struct Norm<vnt_max, false, tags::Cell>
     {
         static float value(const DenseVectorContinuousBase<float> & a);
+        static double value(const DenseVectorContinuousBase<double> & a)
+        {
+            /// \todo Remove CPU dummy.
+            return Norm<vnt_max, false, tags::CPU>::value(a);
+        }
     };
 
     template <> struct Norm<vnt_l_one, false, tags::Cell>
     {
         static float value(const DenseVectorContinuousBase<float> & a);
+        static double value(const DenseVectorContinuousBase<double> & a);
     };
 
 
     template <> struct Norm<vnt_l_two, true, tags::Cell>
     {
         static float value(const DenseVectorContinuousBase<float> & a);
+        static double value(const DenseVectorContinuousBase<double> & a);
     };
 
 
     template <> struct Norm<vnt_l_two, false, tags::Cell>
     {
         static float value(const DenseVectorContinuousBase<float> & a);
+        static double value(const DenseVectorContinuousBase<double> & a);
     };
     // end of the template-Cell-part
 

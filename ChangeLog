@@ -5,6 +5,19 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_reference.sk,
+	honei/cell/libla/Makefile.am,
+	+honei/cell/libla/norm_l_one_dense_double.cc,
+	+honei/cell/libla/norm_l_two_dense_double.cc,
+	honei/cell/libla/operations.hh, honei/cell/opcodes.hh, honei/honeirc,
+	honei/libla/dot_product-cell.cc, honei/libla/norm-cell.cc,
+	honei/libla/norm.hh, honei/libla/norm_TEST.cc,
+	honei/libutil/spe_instruction.cc:
+	Added double version of norm. Applied multi spu changes.
+	Fixed bug in dot-product concerning the first three floats.
+
 2008-02-05 Markus Geveler <apryde@gmx.de>
 
 	* honei/libmath/poisson_iteref_pcg_float_banded_TEST.cc, poisson_iteref_cg_float_banded_TEST.cc,

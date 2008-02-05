@@ -23,7 +23,6 @@
 #include <honei/libutil/log.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_kernel.hh>
-#include <iostream>
 
 #include <tr1/functional>
 

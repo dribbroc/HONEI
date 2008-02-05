@@ -26,7 +26,9 @@ void            scale_dense_float
 void            scale_dense_double
 dword           norm_max_dense_float
 dword           norm_l_one_dense_float
+qword           norm_l_one_dense_double
 dword           norm_l_two_dense_float
+qword           norm_l_two_dense_double
 void            element_inverse_float
 void            scaled_sum_dense_dense_float
 void            scaled_sum_dense_dense_double

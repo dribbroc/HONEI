@@ -34,7 +34,11 @@ namespace honei
 
             extern Operation<1, float, rtm_mail> norm_l_one_dense_float;
 
+            extern Operation<1, double, rtm_mail> norm_l_one_dense_double;
+
             extern Operation<1, float, rtm_mail> norm_l_two_dense_float;
+
+            extern Operation<1, double, rtm_mail> norm_l_two_dense_double;
 
             extern Operation<1, float, rtm_mail> reduction_max_dense_float;
 
