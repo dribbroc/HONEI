@@ -167,7 +167,7 @@ class PoissonTestJACDenseDouble:
             //std::cout<< ref_sol_v <<endl;
             for(unsigned long i = 0; i < n; i++)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], 1e-12);
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], 1e-9);
             }
             DenseVector<double> x(n, double(0));
             Difference<Tag_>::value(result, ana_sol_v);
@@ -181,4 +181,7 @@ class PoissonTestJACDenseDouble:
 PoissonTestJACDenseDouble<tags::CPU, double> poisson_test_jac_dense_double("double");
 #ifdef HONEI_SSE
 PoissonTestJACDenseDouble<tags::CPU::SSE, double> poisson_test_jac_dense_double_sse("SSE double");
+#endif
+#ifdef HONEI_CELL
+PoissonTestJACDenseDouble<tags::Cell, double> poisson_test_jac_dense_double_cell("Cell double");
 #endif

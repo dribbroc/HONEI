@@ -185,3 +185,6 @@ PoissonTestCGDenseDouble<tags::CPU, double> poisson_test_cg_dense_double("double
 #ifdef HONEI_SSE
 PoissonTestCGDenseDouble<tags::CPU::SSE, double> poisson_test_cg_dense_double_sse("sse, double");
 #endif
+#ifdef HONEI_CELL
+PoissonTestCGDenseDouble<tags::Cell, double> poisson_test_cg_dense_double_cell("Cell, double");
+#endif
