@@ -9,6 +9,7 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`conjugate_gradients',              `hh', `test')
+add(`endian_swap',                      `hh')
 add(`iterative_refinement',             `hh', `test')
 add(`interpolation',                    `hh', `test')
 add(`jacobi',                           `hh', `test')
