@@ -51,7 +51,7 @@ namespace honei
         PartitionList partitions;
 
         // Calculate the first elements on PPU (if needed).
-        for (unsigned long index(0) ; index < skip && index<a.size() ; ++index)
+        for (unsigned long index(0) ; index < skip && index < a.size() ; ++index)
         {
             ppu_result += a[index] * b[index];
         }
@@ -130,7 +130,7 @@ namespace honei
         PartitionList partitions;
 
         // Calculate the first elements on PPU (if needed).
-        for (unsigned long index(0) ; index < skip && index<a.size() ; ++index)
+        for (unsigned long index(0) ; index < skip && index < a.size() ; ++index)
         {
             ppu_result += a[index] * b[index];
         }

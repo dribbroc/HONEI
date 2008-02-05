@@ -35,34 +35,6 @@ namespace honei
     {
         CONTEXT("When inverting DenseMatrix<float> (Cell):");
 
-    /*    SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_element_inverse_float, a.elements(), a.rows() * a.columns());
-
-        if (instruction.use_spe())
-        {
-            SPEManager::instance()->dispatch(instruction);
-        }
-
-        for (MutableMatrix<float>::ElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
-        {
-            if (fabs(*i) <= std::numeric_limits<float>::epsilon())
-                *i = 0.0f;
-            else
-                *i = 1 / *i;
-        }
-
-        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
-        {
-            if (fabs(*i) <= std::numeric_limits<float>::epsilon())
-                *i = 0.0f;
-            else
-                *i = 1 / *i;
-        }
-
-        if (instruction.use_spe())
-            instruction.wait();
-
-        return a;*/
-
         unsigned long spe_count(Configuration::instance()->get_value("cell::element_inverse_float", 2ul));
         spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
 
@@ -136,7 +108,7 @@ namespace honei
         PartitionList partitions;
 
         // Calculate the first elements on PPU (if needed).
-        for (unsigned long index(0) ; index < skip ; ++index)
+        for (unsigned long index(0) ; index < skip && index < a.size() ; ++index)
         {
             if (fabs(a[index]) <= std::numeric_limits<float>::epsilon())
                 a[index] = 0.0f;

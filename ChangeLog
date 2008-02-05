@@ -7,6 +7,14 @@ see the NEWS file.
 
 2008-02-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/libla/difference-cell.cc, honei/libla/dot_product-cell.cc,
+	honei/libla/element_inverse-cell.cc,
+	honei/libla/element_product-cell.cc, honei/libla/scale-cell.cc,
+	honei/libla/scaled_sum-cell.cc, honei/libla/sum-cell.cc:
+	Added special treatment for entity sizes below four.
+
+2008-02-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/cell/kernels/kernel_reference.sk, honei/honeirc,
 	honei/libla/norm-cell.cc, honei/libla/reduction-cell.cc,
 	honei/libla/reduction_TEST.cc:

@@ -74,7 +74,7 @@ namespace honei
         PartitionList partitions;
 
         // Calculate the first elements on PPU (if needed).
-        for (unsigned long index(0) ; index < skip ; ++index)
+        for (unsigned long index(0) ; index < skip && index < b.size() ; ++index)
         {
             b[index] *= a;
         }
@@ -142,7 +142,7 @@ namespace honei
         PartitionList partitions;
 
         // Calculate the first elements on PPU (if needed).
-        for (unsigned long index(0) ; index < skip ; ++index)
+        for (unsigned long index(0) ; index < skip && index < b.size() ; ++index)
         {
             b[index] *= a;
         }
