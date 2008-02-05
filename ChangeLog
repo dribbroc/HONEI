@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-05 Markus Geveler <apryde@gmx.de>
 
+	* honei/libmath/poisson_jackernel_float_banded_sse_TEST.cc, poisson_jackernel_double_banded_sse_TEST.cc:
+	Resolved access problem on non-intel archs.
+
+2008-02-05 Markus Geveler <apryde@gmx.de>
+
 	* honei/libmath/poisson_jac_float_banded_TEST.cc, poisson_jac_double_dense_TEST.cc, files.m4, endian_swap.hh:
 	Added big-endian solution for Cell, resolved type problems on non-intel archs.
 

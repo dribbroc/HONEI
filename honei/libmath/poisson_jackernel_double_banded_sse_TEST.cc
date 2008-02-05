@@ -23,6 +23,7 @@
 #include <unittest/unittest.hh>
 #include <honei/libutil/stringify.hh>
 #include <iostream>
+#include <endian_swap.hh>
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -65,6 +66,15 @@ class PoissonTestJACKernelBandedDoubleSSE:
 
             file = fopen("ehq.1.1.1.1.bin", "rb");
             fread(&n, sizeof(int), 1, file);
+#ifdef HONEI_CELL
+            unsigned char b1, b2, b3, b4;
+            b1 = n & 255;
+            b2 = ( n >> 8 ) & 255;
+            b3 = ( n>>16 ) & 255;
+            b4 = ( n>>24 ) & 255;
+            n = ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+#endif
+
             dd = new double[n];
             ll = new double[n];
             ld = new double[n];
@@ -91,7 +101,23 @@ class PoissonTestJACKernelBandedDoubleSSE:
             fread(ana_sol, sizeof(double), n, file);
             fread(ref_sol, sizeof(double), n, file);
             fclose(file);
-
+#ifdef HONEI_CELL
+            for(unsigned long i(0); i < n; ++i)
+            {
+                dd[i] = DoubleSwap(dd[i]);
+                ll[i] = DoubleSwap(ll[i]);
+                ld[i] = DoubleSwap(ld[i]);
+                lu[i] = DoubleSwap(lu[i]);
+                dl[i] = DoubleSwap(dl[i]);
+                du[i] = DoubleSwap(du[i]);
+                ul[i] = DoubleSwap(ul[i]);
+                ud[i] = DoubleSwap(ud[i]);
+                uu[i] = DoubleSwap(uu[i]);
+                b[i] = DoubleSwap(b[i]);
+                ana_sol[i] = DoubleSwap(ana_sol[i]);
+                ref_sol[i] = DoubleSwap(ref_sol[i]);
+            }
+#endif
             DenseVector<double> dd_v(n, double(0));
             DenseVector<double> ll_v(n, double(0));
             DenseVector<double> ld_v(n, double(0));
@@ -123,7 +149,7 @@ class PoissonTestJACKernelBandedDoubleSSE:
             //std::cout<<dd_v<<endl;
 
 
-            unsigned int root_n = (unsigned int)sqrt(n);
+            long root_n = (long)sqrt(n);
             BandedMatrix<double> A(n,dd_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
