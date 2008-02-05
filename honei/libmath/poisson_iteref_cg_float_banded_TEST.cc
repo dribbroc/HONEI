@@ -186,3 +186,6 @@ PoissonTestIterefCGBandedFloat<tags::CPU, float> poisson_test_iteref_cg_banded_f
 #ifdef HONEI_SSE
 PoissonTestIterefCGBandedFloat<tags::CPU::SSE, float> poisson_test_iteref_cg_banded_float_sse("SSE float");
 #endif
+#ifdef HONEI_CELL
+PoissonTestIterefCGBandedFloat<tags::Cell, float> poisson_test_cg_banded_float_cell("Cell float");
+#endif
