@@ -129,7 +129,7 @@ Partitioner<tags::CPU::MultiCore>::Partitioner(unsigned long max_count, unsigned
 
     if (overall_size < (best_part_size << 1))
     {
-        dispatch(0, part_size);
+        dispatch(0, overall_size);
     }
     else
     {
