@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-05 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/scenario_manager.hh:
+	Temporarily removed hdf5.
+
 2008-02-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/honeirc, honei/libla/difference_BENCHMARK.cc,

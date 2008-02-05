@@ -23,7 +23,6 @@
 
 #include <scenario.hh>
 #include <honei/libutil/exception.hh>
-#include <honei/libutil/hdf5.hh>
 
 /**
  * \file
@@ -302,8 +301,6 @@ namespace honei
              **/
             void save(const std::string filename)
             {
-                HDF5File create(filename);
-                //TODO complete
             }
 
             /**
@@ -312,7 +309,7 @@ namespace honei
              * \param filename The name of the HDF5 file.
              *
              **/
-            HDF5File load(const std::string filename)
+            void load(const std::string filename)
             {
                 //TODO
             }
