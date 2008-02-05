@@ -20,6 +20,7 @@ void            product_banded_matrix_dense_vector_float    product_banded_matri
 void            product_banded_matrix_dense_vector_double    product_banded_matrix_dense_vector_double
 void            product_dense_matrix_dense_matrix_float     product_dense_matrix_dense_matrix_float
 dword           reduction_sum_dense_float
+qword           reduction_sum_dense_double
 dword           reduction_min_dense_float
 dword           reduction_max_dense_float
 void            scale_dense_float

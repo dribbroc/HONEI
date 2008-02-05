@@ -4,6 +4,7 @@
  * Copyright (c) 2007,2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Till Barz <till.barz@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -25,6 +26,7 @@
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
 #include <honei/libutil/stringify.hh>
+#include <honei/libutil/partitioner.hh>
 
 namespace honei
 {
@@ -35,36 +37,83 @@ namespace honei
     {
         CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by sum (Cell):");
 
-        float result(0.0f);
-
-        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_reduction_sum_dense_float, &result, a.elements(), a.size());
-
-        if (instruction.use_spe())
-        {
-            SPEManager::instance()->dispatch(instruction);
-        }
-
         float ppu_result(0.0f);
+        unsigned long skip(a.offset() & 0x3);
+        if (0 != skip)
+            skip = 4 - skip;
 
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        unsigned long spe_count(Configuration::instance()->get_value("cell::reduction_sum_dense_float", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+
+        std::list<SPEFrameworkInstruction<1, float, rtm_mail> * > instructions;
+        std::list<float> spu_results;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip && index < a.size() ; ++index)
+        {
+            ppu_result += a[index];
+        }
+
+        if (skip < a.size())
+        {
+            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                spu_results.push_back(0.0f);
+                SPEFrameworkInstruction<1, float, rtm_mail> * instruction = new SPEFrameworkInstruction<1, float, rtm_mail>(
+                        oc_reduction_sum_dense_float, &(spu_results.back()), a.elements() + skip + p->start, p->size);
+
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
+
+
+            PartitionList::ConstIterator p(partitions.last());
+            spu_results.push_back(0.0f);
+            SPEFrameworkInstruction<1, float, rtm_mail> * instruction = new SPEFrameworkInstruction<1, float, rtm_mail>(
+                    oc_reduction_sum_dense_float, &(spu_results.back()), a.elements() + skip + p->start, p->size);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+
+
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
+            {
+                ppu_result += a[index];
+            }
+
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<1, float, rtm_mail> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
+
+                delete *i;
+            }
+        }
+        for (std::list<float>::iterator i(spu_results.begin()), i_end(spu_results.end()) ; i != i_end ; ++i)
         {
             ppu_result += *i;
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
-        {
-            ppu_result += *i;
-        }
-
-        if (instruction.use_spe())
-            instruction.wait();
-
-        return result += ppu_result;
+        return ppu_result;
     }
 
     DenseVector<float>
     Reduction<rt_sum, tags::Cell>::value(const DenseMatrix<float> & a)
     {
+        /// \todo Add multi spu version after one spu programm can produce the whole vector.
         CONTEXT("When reducing DenseMatrix<float> to Vector by sum (Cell):");
 
         DenseVector<float> result(a.rows(), 0.0f);
@@ -108,38 +157,83 @@ namespace honei
     double
     Reduction<rt_sum, tags::Cell>::value(const DenseVectorContinuousBase<double> & a)
     {
-        CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by double (Cell):");
+        CONTEXT("When reducing DenseVectorContinuousBase<double> to Scalar by sum (Cell):");
 
-        double result(0.0);
+        double ppu_result(0.0f);
+        unsigned long skip(a.offset() & 0x1);
 
-        SPEFrameworkInstruction<1, double, rtm_mail> instruction(oc_reduction_sum_dense_double, &result, a.elements(), a.size());
+        unsigned long spe_count(Configuration::instance()->get_value("cell::reduction_sum_dense_double", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
 
-        if (instruction.use_spe())
+        std::list<SPEFrameworkInstruction<1, double, rtm_mail> * > instructions;
+        std::list<double> spu_results;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip && index < a.size() ; ++index)
         {
-            SPEManager::instance()->dispatch(instruction);
+            ppu_result += a[index];
         }
 
-        double ppu_result(0.0);
+        if (skip < a.size())
+        {
+            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                spu_results.push_back(0.0f);
+                SPEFrameworkInstruction<1, double, rtm_mail> * instruction = new SPEFrameworkInstruction<1, double, rtm_mail>(
+                        oc_reduction_sum_dense_double, &(spu_results.back()), a.elements() + skip + p->start, p->size);
 
-        for (Vector<double>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
+
+
+            PartitionList::ConstIterator p(partitions.last());
+            spu_results.push_back(0.0f);
+            SPEFrameworkInstruction<1, double, rtm_mail> * instruction = new SPEFrameworkInstruction<1, double, rtm_mail>(
+                    oc_reduction_sum_dense_double, &(spu_results.back()), a.elements() + skip + p->start, p->size);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+
+
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
+            {
+                ppu_result += a[index];
+            }
+
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<1, double, rtm_mail> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
+
+                delete *i;
+            }
+        }
+        for (std::list<double>::iterator i(spu_results.begin()), i_end(spu_results.end()) ; i != i_end ; ++i)
         {
             ppu_result += *i;
         }
 
-        for (Vector<double>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
-        {
-            ppu_result += *i;
-        }
-
-        if (instruction.use_spe())
-            instruction.wait();
-
-        return result += ppu_result;
+        return ppu_result;
     }
 
     DenseVector<double>
     Reduction<rt_sum, tags::Cell>::value(const DenseMatrix<double> & a)
     {
+        /// \todo Add multi spu version after one spu programm can produce the whole vector.
         CONTEXT("When reducing DenseMatrix<double> to Vector by sum (Cell):");
 
         DenseVector<double> result(a.rows(), 0.0);
@@ -156,7 +250,7 @@ namespace honei
                 SPEManager::instance()->dispatch(instruction);
             }
 
-            float ppu_result(0.0);
+            double ppu_result(0.0);
 
             for (Vector<double>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
                     i != i_end ; ++i)
@@ -382,7 +476,7 @@ namespace honei
         CONTEXT("When reducing SparseVector<double> to Scalar by sum (Cell):");
 
         double result(0.0);
-        SPEFrameworkInstruction<1, double, rtm_mail> instruction(oc_reduction_sum_dense_float, &result, a.elements(), a.used_elements());
+        SPEFrameworkInstruction<1, double, rtm_mail> instruction(oc_reduction_sum_dense_double, &result, a.elements(), a.used_elements());
 
         if (instruction.use_spe())
         {

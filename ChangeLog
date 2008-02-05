@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_reference.sk, honei/honeirc,
+	honei/libla/norm-cell.cc, honei/libla/reduction-cell.cc,
+	honei/libla/reduction_TEST.cc:
+	Added double version of reduction. Applied multi spu changes.
+
 2008-02-05 Markus Geveler <apryde@gmx.de>
 
 	* honei/libmath/poisson_iteref_pcg_double_banded_TEST.cc, poisson_iteref_cg_double_banded_TEST.cc,

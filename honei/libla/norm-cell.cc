@@ -72,31 +72,6 @@ namespace honei
     {
         CONTEXT("When applying L1-norm to DenseVectorContinuousBase<float> (Cell):");
 
-        /*float result(0.0f);
-
-        SPEFrameworkInstruction<1, float, rtm_mail> instruction(oc_norm_l_one_dense_float, &result, a.elements(), a.size());
-
-        if (instruction.use_spe())
-        {
-            SPEManager::instance()->dispatch(instruction);
-        }
-
-        float ppu_result(0.0f);
-
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
-        {
-            ppu_result += fabs(*i);
-        }
-
-        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
-        {
-            ppu_result += fabs(*i);
-        }
-
-        if (instruction.use_spe())
-            instruction.wait();
-
-        return result + ppu_result;*/
         float ppu_result(0.0f);
         unsigned long skip(a.offset() & 0x3);
         if (0 != skip)
@@ -175,35 +150,8 @@ namespace honei
     {
         CONTEXT("When applying L1-norm to DenseVectorContinuousBase<double> (Cell):");
 
-        /*double result(0.0f);
-
-        SPEFrameworkInstruction<1, double, rtm_mail> instruction(oc_norm_l_one_dense_double, &result, a.elements(), a.size());
-
-        if (instruction.use_spe())
-        {
-            SPEManager::instance()->dispatch(instruction);
-        }
-
         double ppu_result(0.0f);
-
-        for (Vector<double>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
-        {
-            ppu_result += fabs(*i);
-        }
-
-        for (Vector<double>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
-        {
-            ppu_result += fabs(*i);
-        }
-
-        if (instruction.use_spe())
-            instruction.wait();
-
-        return result + ppu_result;*/
-        double ppu_result(0.0f);
-        unsigned long skip(a.offset() & 0x3);
-        if (0 != skip)
-            skip = 4 - skip;
+        unsigned long skip(a.offset() & 0x1);
 
         unsigned long spe_count(Configuration::instance()->get_value("cell::norm_l_one_dense_double", 2ul));
         spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
