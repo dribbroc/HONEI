@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libla/product_BENCHMARK.cc, honei/libla/product-cell.cc:
+	Advanced bmdv to more than 8 bands.
+
 2008-02-05 Markus Geveler <apryde@gmx.de>
 
 	* honei/libmath/poisson_jackernel_float_banded_TEST.cc, poisson_jackernel_double_banded_TEST.cc, files.m4:

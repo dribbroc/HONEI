@@ -25,9 +25,10 @@
 #include <honei/libutil/memory_backend_cell.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
+#include <honei/libutil/profiler.hh>
+#include <list>
 
 //#include <honei/libutil/time_stamp.hh>
-#include <honei/libutil/profiler.hh>
 
 namespace honei
 {
@@ -60,16 +61,17 @@ namespace honei
     {
         CONTEXT("When calculating BandedMatrix<float>-DenseVector<float> product (Cell):");
 
-        PROFILER_START("Product<Cell>::value(dm, dm)");
+        PROFILER_START("Product<Cell>::value(bm, dv)");
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        SPEInstructionQueue iq_upper, iq_lower;
+        /// \todo Remove SPEIQ list when one SPEInstructionQueue can handle more than 8 instructions.
+        std::list<SPEInstructionQueue *> iq_upper, iq_lower;
         //TimeStamp dt,ct, as1, as2;
         //ct.take();
-        PROFILER_START("Product<Cell>::value(dm, dm)->DV(size, 0)");
+        PROFILER_START("Product<Cell>::value(bm, dv)->DV(size, 0)");
         DenseVector<float> result(b.size(), 0.0f);
-        PROFILER_STOP("Product<Cell>::value(dm, dm)->DV(size, 0)");
+        PROFILER_STOP("Product<Cell>::value(bm, dv)->DV(size, 0)");
         //dt.take();
         //std::cout<<"dv(0): "<<dt.sec() - ct.sec() << " "<<dt.usec() - ct.usec()<<std::endl;
         /// \todo Fill the result vector on the spu side.
@@ -114,7 +116,15 @@ namespace honei
                     og.u = op_offset % 4;
                     if(quad_end > quad_start)
                     {
-                        iq_lower.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        if (iq_lower.empty() || iq_lower.back()->size() == 8)
+                        {
+                            iq_lower.push_back(new SPEInstructionQueue);
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -159,7 +169,15 @@ namespace honei
                     og.u = op_offset % 4;
                     if(quad_end > quad_start)
                     {
-                        iq_upper.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        if (iq_upper.empty() || iq_upper.back()->size() == 8)
+                        {
+                            iq_upper.push_back(new SPEInstructionQueue);
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -210,7 +228,15 @@ namespace honei
                     og.u = (4 - (op_offset % 4)) % 4;
                     if(quad_end > quad_start)
                     {
-                        iq_lower.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        if (iq_lower.empty() || iq_lower.back()->size() == 8)
+                        {
+                            iq_lower.push_back(new SPEInstructionQueue);
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -257,7 +283,15 @@ namespace honei
                     og.u = (4 - (op_offset % 4)) % 4;
                     if(quad_end > quad_start)
                     {
-                        iq_upper.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        if (iq_upper.empty() || iq_upper.back()->size() == 8)
+                        {
+                            iq_upper.push_back(new SPEInstructionQueue);
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -280,16 +314,24 @@ namespace honei
         std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
         TimeStamp at, bt;
         at.take();*/
-        PROFILER_START("Product<Cell>::value(dm, dm)->dispatch");
-        SPEManager::instance()->dispatch(iq_upper);
-        SPEManager::instance()->dispatch(iq_lower);
-        iq_upper.wait();
-        iq_lower.wait();
-        /// \todo calc scalar parts here
+        PROFILER_START("Product<Cell>::value(bm, dv)->dispatch");
+        for (std::list<SPEInstructionQueue *>::iterator i(iq_lower.begin()), i_end(iq_lower.end()), j(iq_upper.begin()), j_end(iq_upper.end()) ;
+                (i != i_end || j!= j_end) ; )
+        {
+            if (i != i_end) SPEManager::instance()->dispatch(*(*i));
+            if (j != j_end) SPEManager::instance()->dispatch(*(*j));
+            /// \todo calc scalar parts here
+            if (i != i_end) (*i)->wait();
+            if (j != j_end) (*j)->wait();
+            if (i != i_end) delete *i;
+            if (j != j_end) delete *j;
+            if (i != i_end) ++i;
+            if (j != j_end) ++j;
+        }
         //bt.take();
         //std::cout<<"wait: "<<bt.sec() - at.sec() << " "<<bt.usec() - at.usec()<<std::endl<<std::endl;
-        PROFILER_STOP("Product<Cell>::value(dm, dm)->dispatch");
-        PROFILER_STOP("Product<Cell>::value(dm, dm)");
+        PROFILER_STOP("Product<Cell>::value(bm, dv)->dispatch");
+        PROFILER_STOP("Product<Cell>::value(bm, dv)");
 
         return result;
     }
@@ -301,7 +343,8 @@ namespace honei
         if (b.size() != a.columns())
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
-        SPEInstructionQueue iq_upper, iq_lower;
+        /// \todo Remove SPEIQ list when one SPEInstructionQueue can handle more than 8 instructions.
+        std::list<SPEInstructionQueue *> iq_upper, iq_lower;
         //TimeStamp dt,ct, as1, as2;
         //ct.take();
         DenseVector<double> result(b.size(), 0.0f);
@@ -349,7 +392,15 @@ namespace honei
                     og.u = op_offset % 2;
                     if(quad_end > quad_start)
                     {
-                        iq_lower.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        if (iq_lower.empty() || iq_lower.back()->size() == 8)
+                        {
+                            iq_lower.push_back(new SPEInstructionQueue);
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -394,7 +445,15 @@ namespace honei
                     og.u = op_offset % 2;
                     if(quad_end > quad_start)
                     {
-                        iq_upper.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        if (iq_upper.empty() || iq_upper.back()->size() == 8)
+                        {
+                            iq_upper.push_back(new SPEInstructionQueue);
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -445,7 +504,15 @@ namespace honei
                     og.u = (2 - (op_offset % 2)) % 2;
                     if(quad_end > quad_start)
                     {
-                        iq_lower.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        if (iq_lower.empty() || iq_lower.back()->size() == 8)
+                        {
+                            iq_lower.push_back(new SPEInstructionQueue);
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -492,7 +559,15 @@ namespace honei
                     og.u = (2 - (op_offset % 2)) % 2;
                     if(quad_end > quad_start)
                     {
-                        iq_upper.push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        if (iq_upper.empty() || iq_upper.back()->size() == 8)
+                        {
+                            iq_upper.push_back(new SPEInstructionQueue);
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
+                        else
+                        {
+                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                        }
                     }
                     else
                     {
@@ -515,11 +590,19 @@ namespace honei
         std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
         TimeStamp at, bt;
         at.take();*/
-        SPEManager::instance()->dispatch(iq_upper);
-        SPEManager::instance()->dispatch(iq_lower);
-        iq_upper.wait();
-        iq_lower.wait();
-        /// \todo calc scalar parts here
+        for (std::list<SPEInstructionQueue *>::iterator i(iq_lower.begin()), i_end(iq_lower.end()), j(iq_upper.begin()), j_end(iq_upper.end()) ;
+                (i != i_end || j!= j_end) ; )
+        {
+            if (i != i_end) SPEManager::instance()->dispatch(*(*i));
+            if (j != j_end) SPEManager::instance()->dispatch(*(*j));
+            /// \todo calc scalar parts here
+            if (i != i_end) (*i)->wait();
+            if (j != j_end) (*j)->wait();
+            if (i != i_end) delete *i;
+            if (j != j_end) delete *j;
+            if (i != i_end) ++i;
+            if (j != j_end) ++j;
+        }
         //bt.take();
         //std::cout<<"wait: "<<bt.sec() - at.sec() << " "<<bt.usec() - at.usec()<<std::endl<<std::endl;
 
