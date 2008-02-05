@@ -586,6 +586,8 @@ namespace honei
 
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
 
+        static DenseMatrix<double> & value(DenseMatrix<double> & a, const DenseMatrix<double> & b);
+
         // Dummy
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const BandedMatrix<float> & b)
         {
@@ -609,6 +611,8 @@ namespace honei
          */
 
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const float & b);
+
+        static DenseMatrix<double> & value(DenseMatrix<double> & a, const double & b);
 
         /// \}
 
@@ -647,6 +651,8 @@ namespace honei
          */
 
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const float & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const double & b);
 
         /// \}
     };

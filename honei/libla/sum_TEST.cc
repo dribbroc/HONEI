@@ -519,6 +519,7 @@ DenseMatrixSumTest<tags::CPU::SSE, double> sse_dense_matrix_sum_test_double("SSE
 #endif
 #ifdef HONEI_CELL
 DenseMatrixSumTest<tags::Cell, float> cell_dense_matrix_sum_test_float("Cell float");
+DenseMatrixSumTest<tags::Cell, double> cell_dense_matrix_sum_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -559,6 +560,7 @@ DenseMatrixSumQuickTest<tags::CPU::SSE, double> sse_dense_matrix_sum_quick_test_
 #endif
 #ifdef HONEI_CELL
 DenseMatrixSumQuickTest<tags::Cell, float> cell_dense_matrix_sum_quick_test_float("Cell float");
+DenseMatrixSumQuickTest<tags::Cell, double> cell_dense_matrix_sum_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -718,6 +720,7 @@ ScalarDenseMatrixSumTest<tags::CPU::MultiCore, float> mc_scalar_dense_matrix_sum
 ScalarDenseMatrixSumTest<tags::CPU::MultiCore, double> mc_scalar_dense_matrix_sum_test_double("MC double");
 #ifdef HONEI_CELL
 ScalarDenseMatrixSumTest<tags::Cell, float> cell_scalar_dense_matrix_sum_test_float("Cell float");
+ScalarDenseMatrixSumTest<tags::Cell, double> cell_scalar_dense_matrix_sum_test_double("Cell double");
 #endif
 
 
@@ -760,6 +763,7 @@ ScalarDenseMatrixSumQuickTest<tags::CPU::MultiCore, float> mc_scalar_dense_matri
 ScalarDenseMatrixSumQuickTest<tags::CPU::MultiCore, double> mc_scalar_dense_matrix_sum_quick_test_double("MC double");
 #ifdef HONEI_CELL
 ScalarDenseMatrixSumQuickTest<tags::Cell, float> cell_scalar_dense_matrix_sum_quick_test_float("Cell float");
+ScalarDenseMatrixSumQuickTest<tags::Cell, double> cell_scalar_dense_matrix_sum_quick_test_double("Cell double");
 #endif
 
 // Test cases for vector operations
@@ -794,6 +798,7 @@ ScalarDenseVectorSumTest<tags::CPU::SSE, double> sse_scalar_dense_vector_sum_tes
 #endif
 #ifdef HONEI_CELL
 ScalarDenseVectorSumTest<tags::Cell, float> cell_scalar_dense_vector_sum_test_float("Cell float");
+ScalarDenseVectorSumTest<tags::Cell, double> cell_scalar_dense_vector_sum_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -824,6 +829,7 @@ ScalarDenseVectorSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vector_su
 #endif
 #ifdef HONEI_CELL
 ScalarDenseVectorSumQuickTest<tags::Cell, float>  cell_scalar_dense_vector_sum_quick_test_float("Cell float");
+ScalarDenseVectorSumQuickTest<tags::Cell, double>  cell_scalar_dense_vector_sum_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -860,6 +866,7 @@ ScalarDenseVectorRangeSumTest<tags::CPU::SSE, double> sse_scalar_dense_vector_ra
 #endif
 #ifdef HONEI_CELL
 ScalarDenseVectorRangeSumTest<tags::Cell, float> cell_scalar_dense_vector_range_sum_test_float("Cell float");
+ScalarDenseVectorRangeSumTest<tags::Cell, double> cell_scalar_dense_vector_range_sum_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -894,6 +901,7 @@ ScalarDenseVectorRangeSumQuickTest<tags::CPU::SSE, double> sse_scalar_dense_vect
 #endif
 #ifdef HONEI_CELL
 ScalarDenseVectorRangeSumQuickTest<tags::Cell, float>  cell_scalar_dense_vector_range_sum_quick_test_float("Cell float");
+ScalarDenseVectorRangeSumQuickTest<tags::Cell, double>  cell_scalar_dense_vector_range_sum_quick_test_double("Cell double");
 #endif
 
 

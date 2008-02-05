@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -42,16 +43,37 @@ namespace honei
         if (0 != skip)
             skip = 4 - skip;
 
-        unsigned long spe_count(std::min(2ul, SPEManager::instance()->spe_count()));
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_dense_float", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
 
         std::list<SPEFrameworkInstruction<2, float, rtm_dma> * > instructions;
         PartitionList partitions;
-        Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
 
-        // Assemble instructions.
-        for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
-                p != p_last ; ++p)
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip ; ++index)
         {
+            a[index] += b[index];
+        }
+
+        if (skip < a.size())
+        {
+            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(
+                        oc_sum_dense_dense_float, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
+
+
+            PartitionList::ConstIterator p(partitions.last());
             SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(
                     oc_sum_dense_dense_float, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
 
@@ -60,38 +82,23 @@ namespace honei
                 SPEManager::instance()->dispatch(*instruction);
                 instructions.push_back(instruction);
             }
-        }
 
-        PartitionList::ConstIterator p(partitions.last());
-        SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(
-                oc_sum_dense_dense_float, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
 
-        if (instruction->use_spe())
-        {
-            SPEManager::instance()->dispatch(*instruction);
-            instructions.push_back(instruction);
-        }
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
+            {
+                a[index] += b[index];
+            }
 
-        // Calculate the first elements on PPU (if needed).
-        for (unsigned long index(0) ; index < skip ; ++index)
-        {
-            a[index] += b[index];
-        }
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<2, float, rtm_dma> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
 
-        // Calculate the last elements on PPU (if needed).
-        for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
-        {
-            a[index] += b[index];
-        }
-
-        // Wait for the SPU side
-        for (std::list<SPEFrameworkInstruction<2, float, rtm_dma> * >::iterator i(instructions.begin()),
-                i_end(instructions.end()) ; i != i_end ; ++i)
-        {
-            if ((*i)->use_spe())
-                (*i)->wait();
-
-            delete *i;
+                delete *i;
+            }
         }
 
         return a;
@@ -106,36 +113,11 @@ namespace honei
             throw VectorSizeDoesNotMatch(b.size(), a.size());
 
         unsigned long skip(a.offset() & 0x1);
-        unsigned long spe_count(std::min(2ul, SPEManager::instance()->spe_count()));
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_dense_double", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
 
         std::list<SPEFrameworkInstruction<2, double, rtm_dma> * > instructions;
         PartitionList partitions;
-        Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
-
-        // Assemble instructions.
-        for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
-                p != p_last ; ++p)
-        {
-            SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
-                    oc_sum_dense_dense_double, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
-
-            if (instruction->use_spe())
-            {
-                SPEManager::instance()->dispatch(*instruction);
-                instructions.push_back(instruction);
-
-            }
-        }
-
-        PartitionList::ConstIterator p(partitions.last());
-        SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
-                oc_sum_dense_dense_double, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
-
-        if (instruction->use_spe())
-        {
-            SPEManager::instance()->dispatch(*instruction);
-            instructions.push_back(instruction);
-        }
 
         // Calculate the first elements on PPU (if needed).
         for (unsigned long index(0) ; index < skip ; ++index)
@@ -143,21 +125,51 @@ namespace honei
             a[index] += b[index];
         }
 
-        // Calculate the last elements on PPU (if needed).
-        for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
+        if (skip < a.size())
         {
-            a[index] += b[index];
-        }
+            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
+                        oc_sum_dense_dense_double, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
 
-        // Wait for the SPU side
-        for (std::list<SPEFrameworkInstruction<2, double, rtm_dma> * >::iterator i(instructions.begin()),
-                i_end(instructions.end()) ; i != i_end ; ++i)
-        {
-            if ((*i)->use_spe())
-                (*i)->wait();
-            delete *i;
-        }
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
 
+
+            PartitionList::ConstIterator p(partitions.last());
+            SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
+                    oc_sum_dense_dense_double, a.elements() + skip + p->start, b.elements() + skip + p->start, p->size);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+
+
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
+            {
+                a[index] += b[index];
+            }
+
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<2, double, rtm_dma> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
+
+                delete *i;
+            }
+        }
         return a;
     }
 
@@ -171,22 +183,122 @@ namespace honei
         if (a.columns() != b.columns())
             throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
 
-        SPEFrameworkInstruction<2, float, rtm_dma> instruction(oc_sum_dense_dense_float, a.elements(), b.elements(), a.rows() * a.columns());
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_dense_float", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
 
-        if (instruction.use_spe())
+        std::list<SPEFrameworkInstruction<2, float, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+
+        Partitioner<tags::Cell>(spe_count, std::max(a.rows() * a.columns() / spe_count, 16ul), a.rows() * a.columns(), PartitionList::Filler(partitions));
+        // Assemble instructions.
+        for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                p != p_last ; ++p)
         {
-            SPEManager::instance()->dispatch(instruction);
+            SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(
+                    oc_sum_dense_dense_float, a.elements() + p->start, b.elements() + p->start, p->size);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
         }
 
-        Matrix<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
-        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
-            i_end(a.end_elements()) ; i != i_end ; ++i, ++k)
+
+        PartitionList::ConstIterator p(partitions.last());
+        SPEFrameworkInstruction<2, float, rtm_dma> * instruction = new SPEFrameworkInstruction<2, float, rtm_dma>(
+                oc_sum_dense_dense_float, a.elements() + p->start, b.elements() + p->start, p->size);
+
+        if (instruction->use_spe())
         {
-            *i += *k;
+            SPEManager::instance()->dispatch(*instruction);
+            instructions.push_back(instruction);
         }
 
-        if (instruction.use_spe())
-            instruction.wait();
+
+        // Calculate the last elements on PPU (if needed).
+        for (unsigned long index(p->start + instruction->transfer_end()) ; index < a.rows() * a.columns() ; ++index)
+        {
+            a.elements()[index] += b.elements()[index];
+        }
+
+        // Wait for the SPU side
+        for (std::list<SPEFrameworkInstruction<2, float, rtm_dma> * >::iterator i(instructions.begin()),
+                i_end(instructions.end()) ; i != i_end ; ++i)
+        {
+            if ((*i)->use_spe())
+                (*i)->wait();
+
+            delete *i;
+        }
+
+
+        return a;
+    }
+
+    DenseMatrix<double> &
+    Sum<tags::Cell>::value(DenseMatrix<double> & a, const DenseMatrix<double> & b)
+    {
+        CONTEXT("When adding DenseMatrix<double> to DenseMatrix<double> (Cell):");
+
+        if (a.rows() != b.rows())
+            throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+        if (a.columns() != b.columns())
+            throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_dense_double", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+
+        std::list<SPEFrameworkInstruction<2, double, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+
+        Partitioner<tags::Cell>(spe_count, std::max(a.rows() * a.columns() / spe_count, 16ul), a.rows() * a.columns(), PartitionList::Filler(partitions));
+        // Assemble instructions.
+        for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                p != p_last ; ++p)
+        {
+            SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
+                    oc_sum_dense_dense_double, a.elements() + p->start, b.elements() + p->start, p->size);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+        }
+
+
+        PartitionList::ConstIterator p(partitions.last());
+        SPEFrameworkInstruction<2, double, rtm_dma> * instruction = new SPEFrameworkInstruction<2, double, rtm_dma>(
+                oc_sum_dense_dense_double, a.elements() + p->start, b.elements() + p->start, p->size);
+
+        if (instruction->use_spe())
+        {
+            SPEManager::instance()->dispatch(*instruction);
+            instructions.push_back(instruction);
+        }
+
+
+        // Calculate the last elements on PPU (if needed).
+        for (unsigned long index(p->start + instruction->transfer_end()) ; index < a.rows() * a.columns() ; ++index)
+        {
+            a.elements()[index] += b.elements()[index];
+        }
+
+        // Wait for the SPU side
+        for (std::list<SPEFrameworkInstruction<2, double, rtm_dma> * >::iterator i(instructions.begin()),
+                i_end(instructions.end()) ; i != i_end ; ++i)
+        {
+            if ((*i)->use_spe())
+                (*i)->wait();
+
+            delete *i;
+        }
+
 
         return a;
     }
@@ -250,27 +362,135 @@ namespace honei
     {
         CONTEXT("When adding float to DenseVectorContinuousBase<float> (Cell):");
 
-        SPEFrameworkInstruction<1, float, rtm_dma> instruction(oc_sum_dense_scalar_float, a.elements(), a.size(), b);
+        unsigned long skip(a.offset() & 0x3);
+        if (0 != skip)
+            skip = 4 - skip;
 
-        if (instruction.use_spe())
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_scalar_float", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+
+        std::list<SPEFrameworkInstruction<1, float, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip ; ++index)
         {
-            SPEManager::instance()->dispatch(instruction);
+            a[index] += b;
         }
 
-        for (Vector<float>::ElementIterator i(a.begin_elements()),
-            i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        if (skip < a.size())
         {
-            *i += b;
+            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                SPEFrameworkInstruction<1, float, rtm_dma> * instruction = new SPEFrameworkInstruction<1, float, rtm_dma>(
+                        oc_sum_dense_scalar_float, a.elements() + skip + p->start, p->size, b);
+
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
+
+
+            PartitionList::ConstIterator p(partitions.last());
+            SPEFrameworkInstruction<1, float, rtm_dma> * instruction = new SPEFrameworkInstruction<1, float, rtm_dma>(
+                    oc_sum_dense_scalar_float, a.elements() + skip + p->start, p->size, b);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+
+
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
+            {
+                a[index] += b;
+            }
+
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<1, float, rtm_dma> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
+
+                delete *i;
+            }
         }
 
-        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
-                i_end(a.end_elements()) ; i != i_end ; ++i)
+        return a;
+    }
+
+    DenseVectorContinuousBase<double> &
+    Sum<tags::Cell>::value(DenseVectorContinuousBase<double> & a, const double & b)
+    {
+        CONTEXT("When adding double to DenseVectorContinuousBase<double> (Cell):");
+
+        unsigned long skip(a.offset() & 0x1);
+
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_scalar_double", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+
+        std::list<SPEFrameworkInstruction<1, double, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip ; ++index)
         {
-            *i += b;
+            a[index] += b;
         }
 
-        if (instruction.use_spe())
-            instruction.wait();
+        if (skip < a.size())
+        {
+            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                SPEFrameworkInstruction<1, double, rtm_dma> * instruction = new SPEFrameworkInstruction<1, double, rtm_dma>(
+                        oc_sum_dense_scalar_double, a.elements() + skip + p->start, p->size, b);
+
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
+
+
+            PartitionList::ConstIterator p(partitions.last());
+            SPEFrameworkInstruction<1, double, rtm_dma> * instruction = new SPEFrameworkInstruction<1, double, rtm_dma>(
+                    oc_sum_dense_scalar_double, a.elements() + skip + p->start, p->size, b);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+
+
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < a.size() ; ++index)
+            {
+                a[index] += b;
+            }
+
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<1, double, rtm_dma> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
+
+                delete *i;
+            }
+        }
 
         return a;
     }
@@ -280,21 +500,115 @@ namespace honei
     {
         CONTEXT("When adding float to DenseMatrix<float> (Cell):");
 
-        SPEFrameworkInstruction<1, float, rtm_dma> instruction(oc_sum_dense_scalar_float, a.elements(), a.rows() * a.columns(), b);
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_scalar_float", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
 
-        if (instruction.use_spe())
+        std::list<SPEFrameworkInstruction<1, float, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+
+        Partitioner<tags::Cell>(spe_count, std::max(a.rows() * a.columns() / spe_count, 16ul), a.rows() * a.columns(), PartitionList::Filler(partitions));
+        // Assemble instructions.
+        for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                p != p_last ; ++p)
         {
-            SPEManager::instance()->dispatch(instruction);
+            SPEFrameworkInstruction<1, float, rtm_dma> * instruction = new SPEFrameworkInstruction<1, float, rtm_dma>(
+                    oc_sum_dense_scalar_float, a.elements() + p->start, p->size, b);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
         }
 
-        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ;
-                i != i_end ; ++i)
+
+        PartitionList::ConstIterator p(partitions.last());
+        SPEFrameworkInstruction<1, float, rtm_dma> * instruction = new SPEFrameworkInstruction<1, float, rtm_dma>(
+                oc_sum_dense_scalar_float, a.elements() + p->start, p->size, b);
+
+        if (instruction->use_spe())
         {
-            *i += b;
+            SPEManager::instance()->dispatch(*instruction);
+            instructions.push_back(instruction);
         }
 
-        if (instruction.use_spe())
-            instruction.wait();
+
+        // Calculate the last elements on PPU (if needed).
+        for (unsigned long index(p->start + instruction->transfer_end()) ; index < a.rows() * a.columns() ; ++index)
+        {
+            a.elements()[index] += b;
+        }
+
+        // Wait for the SPU side
+        for (std::list<SPEFrameworkInstruction<1, float, rtm_dma> * >::iterator i(instructions.begin()),
+                i_end(instructions.end()) ; i != i_end ; ++i)
+        {
+            if ((*i)->use_spe())
+                (*i)->wait();
+
+            delete *i;
+        }
+
+        return a;
+    }
+
+    DenseMatrix<double> &
+    Sum<tags::Cell>::value(DenseMatrix<double> & a, const double & b)
+    {
+        CONTEXT("When adding double to DenseMatrix<double> (Cell):");
+
+        unsigned long spe_count(Configuration::instance()->get_value("cell::sum_dense_scalar_double", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+
+        std::list<SPEFrameworkInstruction<1, double, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+
+        Partitioner<tags::Cell>(spe_count, std::max(a.rows() * a.columns() / spe_count, 16ul), a.rows() * a.columns(), PartitionList::Filler(partitions));
+        // Assemble instructions.
+        for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                p != p_last ; ++p)
+        {
+            SPEFrameworkInstruction<1, double, rtm_dma> * instruction = new SPEFrameworkInstruction<1, double, rtm_dma>(
+                    oc_sum_dense_scalar_double, a.elements() + p->start, p->size, b);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+        }
+
+
+        PartitionList::ConstIterator p(partitions.last());
+        SPEFrameworkInstruction<1, double, rtm_dma> * instruction = new SPEFrameworkInstruction<1, double, rtm_dma>(
+                oc_sum_dense_scalar_double, a.elements() + p->start, p->size, b);
+
+        if (instruction->use_spe())
+        {
+            SPEManager::instance()->dispatch(*instruction);
+            instructions.push_back(instruction);
+        }
+
+
+        // Calculate the last elements on PPU (if needed).
+        for (unsigned long index(p->start + instruction->transfer_end()) ; index < a.rows() * a.columns() ; ++index)
+        {
+            a.elements()[index] += b;
+        }
+
+        // Wait for the SPU side
+        for (std::list<SPEFrameworkInstruction<1, double, rtm_dma> * >::iterator i(instructions.begin()),
+                i_end(instructions.end()) ; i != i_end ; ++i)
+        {
+            if ((*i)->use_spe())
+                (*i)->wait();
+
+            delete *i;
+        }
 
         return a;
     }

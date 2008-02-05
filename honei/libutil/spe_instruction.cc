@@ -23,6 +23,7 @@
 #include <honei/libutil/log.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_kernel.hh>
+#include <iostream>
 
 #include <tr1/functional>
 
@@ -143,7 +144,8 @@ SPEInstruction::empty = { static_cast<void *>(0) };
 template <typename DataType_>
 SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size,
         const DataType_ scalar, const unsigned quantisation) :
-    SPEInstruction(opcode, ((16384 / quantisation) / 16) * 16 * quantisation, elements),
+    SPEInstruction(opcode, 16384, elements),
+    //SPEInstruction(opcode, ((16384 / quantisation) / 16) * 16 * quantisation, elements),
     _use_spe(true)
 {
     Instruction & instruction(_imp->instruction);
@@ -165,12 +167,19 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     }
     else
     {
-        instruction.b.u = (size - skip) * sizeof(DataType_) / instruction.size;
-        instruction.c.u = (size - skip) * sizeof(DataType_) % instruction.size;
-        instruction.c.u = ((instruction.c.u / quantisation) / 16) * quantisation * 16;
+        instruction.b.u = (size - skip) / (16384 / sizeof(DataType_));
+        instruction.c.u = (size - skip) % (16384 / sizeof(DataType_));
+        //instruction.b.u = (size - skip) * sizeof(DataType_) / instruction.size;
+        //instruction.c.u = (size - skip) * sizeof(DataType_) % instruction.size;
+        instruction.c.u &= ~0xF;
+        /// \todo Readd quantisation.
+        //instruction.c.u = ((instruction.c.u / quantisation) / 16) * quantisation * 16;
 
         _begin_transfers = skip;
-        _end_transfers = ((instruction.b.u * instruction.size + instruction.c.u) / (16 / sizeof(DataType_))) + skip;
+
+        _end_transfers = (instruction.b.u * (16384 / sizeof(DataType_))) + instruction.c.u + skip;
+        instruction.c.u *= sizeof(DataType_);
+        //_end_transfers = ((instruction.b.u * instruction.size + instruction.c.u) / (16 / sizeof(DataType_))) + skip;
 
         if (sizeof(DataType_) == 4) // float
         {
@@ -186,7 +195,8 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     {
         if (instruction.b.u > 0)
         {
-            instruction.c.u = instruction.size;
+            instruction.c.u = 16 * 1024;
+            //instruction.c.u = instruction.size;
         }
         else
         {

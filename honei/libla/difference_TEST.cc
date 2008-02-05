@@ -656,6 +656,7 @@ DenseVectorDifferenceTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceTest<tags::Cell, float> cell_dense_vector_difference_test_float("Cell float");
+DenseVectorDifferenceTest<tags::Cell, double> cell_dense_vector_difference_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -705,6 +706,7 @@ DenseVectorDifferenceQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_v
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_quick_test_float("Cell float");
+DenseVectorDifferenceQuickTest<tags::Cell, double> cell_dense_vector_difference_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -758,6 +760,7 @@ DenseVectorRangeDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_range_di
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceTest<tags::Cell, float> cell_dense_vector_range_difference_test_float("Cell float");
+DenseVectorRangeDifferenceTest<tags::Cell, double> cell_dense_vector_range_difference_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -809,6 +812,7 @@ DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_ran
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceQuickTest<tags::Cell, float> cell_dense_vector_range_difference_quick_test_float("Cell float");
+DenseVectorRangeDifferenceQuickTest<tags::Cell, double> cell_dense_vector_range_difference_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DT_>

@@ -27,7 +27,6 @@
 #include <honei/libutil/spe_manager.hh>
 #include <honei/libutil/profiler.hh>
 #include <list>
-#include <iostream>
 
 //#include <honei/libutil/time_stamp.hh>
 

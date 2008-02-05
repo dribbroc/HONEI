@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #define SOLVER_BENCHMARK 1
+
 #include <honei/libswe/solver.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/dense_matrix.hh>
@@ -157,6 +158,7 @@ RelaxSolverTest<tags::CPU::MultiCore::SSE, float> mc_sse_relax_solver_test_float
 RelaxSolverTest<tags::CPU::MultiCore::SSE, double> ms_sse_relax_solver_test_double("mc sse double");
 #endif
 #ifdef HONEI_CELL
-RelaxSolverTest<tags::Cell, float> cell_relax_solver_test_double("cell float");
+//RelaxSolverTest<tags::Cell, float> cell_relax_solver_test_float("cell float");
+RelaxSolverTest<tags::Cell, double> cell_relax_solver_test_double("cell double");
 #endif
 

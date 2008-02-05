@@ -48,6 +48,10 @@ DenseVectorDifferenceBench<tags::CPU::SSE, double> SSEDVDBenchdouble1("SSE Dense
 DenseVectorDifferenceBench<tags::CPU::MultiCore::SSE, float> MCSSEDVDBenchfloat1("MC::SSE Dense Vector Difference Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
 DenseVectorDifferenceBench<tags::CPU::MultiCore::SSE, double> MCSSEDVDBenchdouble1("MC::SSE Dense Vector Difference Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
 #endif
+#ifdef HONEI_CELL
+DenseVectorDifferenceBench<tags::Cell, float> CELLDVDBenchfloat1("Cell Dense Vector Difference Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorDifferenceBench<tags::Cell, double> CELLDVDBenchdouble1("Cell Dense Vector Difference Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+#endif
 
 template <typename Tag_, typename DataType_>
 class BandedMatrixDenseMatrixDifferenceBench :

@@ -322,8 +322,7 @@ class DenseVectorScaleTest :
         {
             for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseVector<DataType_> source(size * 4, DataType_(3));
-                DenseVectorRange<DataType_> dv(source, size, 3);
+                DenseVector<DataType_> dv(size, DataType_(3));
                 Scale<Tag_>::value(dv, DataType_(2));
                 DataType_ v1(Norm<vnt_l_one>::value(dv));
                 TEST_CHECK_EQUAL(v1, 6 * size);
@@ -343,6 +342,7 @@ DenseVectorScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_scal
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaleTest<tags::Cell, float> cell_dense_vector_scale_test_float("Cell float");
+DenseVectorScaleTest<tags::Cell, double> cell_dense_vector_scale_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -365,8 +365,7 @@ class DenseVectorScaleQuickTest :
 #else
             unsigned long size(19);
 #endif
-            DenseVector<DataType_> source(size * 4, DataType_(3));
-            DenseVectorRange<DataType_> dv1(source, size, 3);
+            DenseVector<DataType_> dv1(size, DataType_(3));
 
             Scale<Tag_>::value(dv1, DataType_(2));
             DataType_ v1(Norm<vnt_l_one>::value(dv1));
@@ -385,6 +384,7 @@ DenseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaleQuickTest<tags::Cell, float> cell_dense_vector_scale_quick_test_float("Cell float");
+DenseVectorScaleQuickTest<tags::Cell, double> cell_dense_vector_scale_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -508,6 +508,7 @@ DenseVectorRangeScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeScaleTest<tags::Cell, float> cell_dense_vector_range_scale_test_float("Cell float");
+DenseVectorRangeScaleTest<tags::Cell, double> cell_dense_vector_range_scale_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -549,5 +550,6 @@ DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_v
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeScaleQuickTest<tags::Cell, float> cell_dense_vector_range_scale_quick_test_float("Cell float");
+DenseVectorRangeScaleQuickTest<tags::Cell, double> cell_dense_vector_range_scale_quick_test_double("Cell double");
 #endif
 

@@ -83,6 +83,7 @@ DenseVectorElementProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_ve
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementProductTest<tags::Cell, float> cell_dense_vector_element_product_test_float("Cell float");
+DenseVectorElementProductTest<tags::Cell, double> cell_dense_vector_element_product_test_double("Cell double");
 #endif
 
 
@@ -147,6 +148,7 @@ DenseVectorElementProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementProductQuickTest<tags::Cell, float> cell_dense_vector_element_product_quick_test_float("Cell float");
+DenseVectorElementProductQuickTest<tags::Cell, double> cell_dense_vector_element_product_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -219,6 +221,7 @@ DenseVectorRangeElementProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementProductTest<tags::Cell, float> cell_dense_vector_range_element_product_test_float("Cell float");
+DenseVectorRangeElementProductTest<tags::Cell, double> cell_dense_vector_range_element_product_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -293,6 +296,7 @@ DenseVectorRangeElementProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_m
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementProductQuickTest<tags::Cell, float> cell_dense_vector_range_element_product_quick_test_float("Cell float");
+DenseVectorRangeElementProductQuickTest<tags::Cell, double> cell_dense_vector_range_element_product_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -748,6 +752,7 @@ DenseMatrixElementProductTest<tags::CPU::MultiCore, float> mc_dense_matrix_eleme
 DenseMatrixElementProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_elementwise_product_test_double("MC double");
 #ifdef HONEI_CELL
 DenseMatrixElementProductTest<tags::Cell, float> cell_dense_matrix_element_product_test_float("Cell float");
+DenseMatrixElementProductTest<tags::Cell, double> cell_dense_matrix_element_product_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -798,6 +803,7 @@ DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_
 DenseMatrixElementProductQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_elementwise_product_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseMatrixElementProductQuickTest<tags::Cell, float> cell_dense_matrix_element_product_quick_test_float("Cell float");
+DenseMatrixElementProductQuickTest<tags::Cell, double> cell_dense_matrix_element_product_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>

@@ -179,6 +179,7 @@ class DenseDotProductCellTest :
 
 #ifdef HONEI_CELL
 DenseDotProductCellTest<tags::Cell, float> cell_dense_scalar_product_test_float("Cell float");
+DenseDotProductCellTest<tags::Cell, double> cell_dense_scalar_product_test_double("Cell double");
 #endif
 
 
@@ -223,6 +224,7 @@ class DenseDotProductCellQuickTest :
 };
 #ifdef HONEI_CELL
 DenseDotProductCellQuickTest<tags::Cell, float> cell_dense_dot_product_quick_test_float("Cell float");
+DenseDotProductCellQuickTest<tags::Cell, double> cell_dense_dot_product_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -392,6 +394,7 @@ class DenseVectorRangeDotProductCellTest :
 
 #ifdef HONEI_CELL
 DenseVectorRangeDotProductCellTest<tags::Cell, float> cell_dense_vector_range_scalar_product_test_float("Cell float");
+DenseVectorRangeDotProductCellTest<tags::Cell, double> cell_dense_vector_range_scalar_product_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -444,6 +447,7 @@ class DenseVectorRangeDotProductCellQuickTest :
 
 #ifdef HONEI_CELL
 DenseVectorRangeDotProductCellQuickTest<tags::Cell, float> cell_dense_vector_range_scalar_product_quick_test_float("Cell float");
+DenseVectorRangeDotProductCellQuickTest<tags::Cell, double> cell_dense_vector_range_scalar_product_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>

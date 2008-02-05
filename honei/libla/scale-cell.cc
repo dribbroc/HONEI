@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,6 +24,7 @@
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
 #include <honei/libutil/spe_transfer_list.hh>
+#include <honei/libutil/partitioner.hh>
 
 namespace honei
 {
@@ -61,25 +63,135 @@ namespace honei
     {
         CONTEXT("When scaling DenseVectorContinuousBase<float> (Cell):");
 
-        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_scale_dense_float, b.elements(), b.size(), a);
+        unsigned long skip(b.offset() & 0x3);
+        if (0 != skip)
+            skip = 4 - skip;
 
-        if (instruction.use_spe())
+        unsigned long spe_count(Configuration::instance()->get_value("cell::scale_dense_float", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+
+        std::list<SPEFrameworkInstruction<1, float, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip ; ++index)
         {
-            SPEManager::instance()->dispatch(instruction);
+            b[index] *= a;
         }
 
-        for (Vector<float>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        if (skip < b.size())
         {
-            *i *= a;
+            Partitioner<tags::Cell>(spe_count, std::max(b.size() / spe_count, 16ul), b.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                SPEFrameworkInstruction<1, float, rtm_dma> * instruction = new SPEFrameworkInstruction<1, float, rtm_dma>(
+                        oc_scale_dense_float, b.elements() + skip + p->start, p->size, a);
+
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
+
+
+            PartitionList::ConstIterator p(partitions.last());
+            SPEFrameworkInstruction<1, float, rtm_dma> * instruction = new SPEFrameworkInstruction<1, float, rtm_dma>(
+                    oc_scale_dense_float, b.elements() + skip + p->start, p->size, a);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+
+
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < b.size() ; ++index)
+            {
+                b[index] *= a;
+            }
+
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<1, float, rtm_dma> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
+
+                delete *i;
+            }
         }
 
-        for (Vector<float>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
+        return b;
+    }
+
+    DenseVectorContinuousBase<double> &
+    Scale<tags::Cell>::value(DenseVectorContinuousBase<double> & b, const double a)
+    {
+        CONTEXT("When scaling DenseVectorContinuousBase<double> (Cell):");
+
+        unsigned long skip(b.offset() & 0x1);
+
+        unsigned long spe_count(Configuration::instance()->get_value("cell::scale_dense_double", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+
+        std::list<SPEFrameworkInstruction<1, double, rtm_dma> * > instructions;
+        PartitionList partitions;
+
+        // Calculate the first elements on PPU (if needed).
+        for (unsigned long index(0) ; index < skip ; ++index)
         {
-            *i *= a;
+            b[index] *= a;
         }
 
-        if (instruction.use_spe())
-            instruction.wait();
+        if (skip < b.size())
+        {
+            Partitioner<tags::Cell>(spe_count, std::max(b.size() / spe_count, 16ul), b.size() - skip, PartitionList::Filler(partitions));
+            // Assemble instructions.
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
+                    p != p_last ; ++p)
+            {
+                SPEFrameworkInstruction<1, double, rtm_dma> * instruction = new SPEFrameworkInstruction<1, double, rtm_dma>(
+                        oc_scale_dense_double, b.elements() + skip + p->start, p->size, a);
+
+                if (instruction->use_spe())
+                {
+                    SPEManager::instance()->dispatch(*instruction);
+                    instructions.push_back(instruction);
+                }
+            }
+
+
+            PartitionList::ConstIterator p(partitions.last());
+            SPEFrameworkInstruction<1, double, rtm_dma> * instruction = new SPEFrameworkInstruction<1, double, rtm_dma>(
+                    oc_scale_dense_double, b.elements() + skip + p->start, p->size, a);
+
+            if (instruction->use_spe())
+            {
+                SPEManager::instance()->dispatch(*instruction);
+                instructions.push_back(instruction);
+            }
+
+
+            // Calculate the last elements on PPU (if needed).
+            for (unsigned long index(skip + p->start + instruction->transfer_end()) ; index < b.size() ; ++index)
+            {
+                b[index] *= a;
+            }
+
+            // Wait for the SPU side
+            for (std::list<SPEFrameworkInstruction<1, double, rtm_dma> * >::iterator i(instructions.begin()),
+                    i_end(instructions.end()) ; i != i_end ; ++i)
+            {
+                if ((*i)->use_spe())
+                    (*i)->wait();
+
+                delete *i;
+            }
+        }
 
         return b;
     }
