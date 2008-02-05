@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-05 Markus Geveler <apryde@gmx.de>
 
+	* honei/libmath/poisson_pcg_float_banded_TEST.cc, poisson_pcg_double_banded_TEST.cc:
+	Applied endian solution on PCG JAC application.
+
+2008-02-05 Markus Geveler <apryde@gmx.de>
+
 	* honei/libmath/poisson_cg_float_banded_TEST.cc, poisson_cg_double_banded_TEST.cc:
 	Applied endian solution on CG application.
 
