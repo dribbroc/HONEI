@@ -25,7 +25,6 @@
 #include <iostream>
 
 using namespace honei;
-using namespace tests;
 using namespace std;
 namespace honei
 {
