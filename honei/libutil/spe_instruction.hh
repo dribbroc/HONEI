@@ -107,8 +107,8 @@ namespace honei
              * \param scalar The instruction's scalar parameter.
              * \param quantisation The minimal number of bytes that comprise an atom.
              */
-            SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size, const DataType_ scalar = DataType_(0),
-                    const unsigned quantisation = 16);
+            SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size,
+                    const DataType_ scalar = DataType_(0), const unsigned quantisation = 1);
 
             unsigned transfer_begin() const
             {

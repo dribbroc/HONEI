@@ -141,10 +141,8 @@ const SPEInstruction::Operand
 SPEInstruction::empty = { static_cast<void *>(0) };
 
 template <typename DataType_>
-SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size,
-        const DataType_ scalar, const unsigned quantisation) :
-    SPEInstruction(opcode, 16384, elements),
-    //SPEInstruction(opcode, ((16384 / quantisation) / 16) * 16 * quantisation, elements),
+SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * elements, const unsigned size, const DataType_ scalar, const unsigned quantisation) :
+    SPEInstruction(opcode, ((16384 / quantisation) / 16) * 16 * quantisation, elements),
     _use_spe(true)
 {
     Instruction & instruction(_imp->instruction);
@@ -166,19 +164,13 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     }
     else
     {
-        instruction.b.u = (size - skip) / (16384 / sizeof(DataType_));
-        instruction.c.u = (size - skip) % (16384 / sizeof(DataType_));
-        //instruction.b.u = (size - skip) * sizeof(DataType_) / instruction.size;
-        //instruction.c.u = (size - skip) * sizeof(DataType_) % instruction.size;
+        instruction.b.u = (size - skip) * sizeof(DataType_) / instruction.size;
+        instruction.c.u = (size - skip) * sizeof(DataType_) % instruction.size;
         instruction.c.u &= ~0xF;
-        /// \todo Readd quantisation.
-        //instruction.c.u = ((instruction.c.u / quantisation) / 16) * quantisation * 16;
+        instruction.c.u = ((instruction.c.u / quantisation) / 16) * quantisation * 16;
 
         _begin_transfers = skip;
-
-        _end_transfers = (instruction.b.u * (16384 / sizeof(DataType_))) + instruction.c.u + skip;
-        instruction.c.u *= sizeof(DataType_);
-        //_end_transfers = ((instruction.b.u * instruction.size + instruction.c.u) / (16 / sizeof(DataType_))) + skip;
+        _end_transfers = ((instruction.b.u * instruction.size + instruction.c.u) / sizeof(DataType_)) + skip;
 
         if (sizeof(DataType_) == 4) // float
         {
@@ -194,8 +186,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
     {
         if (instruction.b.u > 0)
         {
-            instruction.c.u = 16 * 1024;
-            //instruction.c.u = instruction.size;
+            instruction.c.u = instruction.size;
         }
         else
         {
@@ -233,13 +224,12 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
     }
     else
     {
-        instruction.c.u = (size - skip) / (16384 / sizeof(DataType_));
-        instruction.d.u = (size - skip) % (16384 / sizeof(DataType_));
+        instruction.c.u = (size - skip) * sizeof(DataType_) / instruction.size;
+        instruction.d.u = (size - skip) * sizeof(DataType_) % instruction.size;
         instruction.d.u &= ~0xF;
 
         _begin_transfers = skip;
-        _end_transfers = (instruction.c.u * (16384 / sizeof(DataType_))) + instruction.d.u + skip;
-        instruction.d.u *= sizeof(DataType_);
+        _end_transfers = (instruction.c.u * instruction.size + instruction.d.u) / sizeof(DataType_) + skip;
 
         if (sizeof(DataType_) == 4) // float
         {
@@ -249,14 +239,13 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         {
             instruction.e.d = scalar;
         }
-
     }
 
     if (0 == instruction.d.u)
     {
         if (instruction.c.u > 0)
         {
-            instruction.d.u = 16 * 1024;
+            instruction.d.u = instruction.size;
         }
         else
         {
@@ -268,6 +257,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         ++instruction.c.u;
     }
 }
+
 template class SPEFrameworkInstruction<1, float, cell::rtm_dma>;
 
 template class SPEFrameworkInstruction<1, float, cell::rtm_mail>;
