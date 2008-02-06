@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -33,7 +33,8 @@ namespace honei
     {
         CONTEXT("When flow-processing DenseVector<float> for X direction (Cell):");
 
-        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_flow_processing_x_float, a.elements(), a.size(), 0.0f, 12);
+        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_flow_processing_x_float, a.elements(),
+                a.size(), 0.0f, 12);
 
         if (instruction.use_spe())
         {
@@ -69,7 +70,8 @@ namespace honei
     {
         CONTEXT("When flow-processing DenseVector<float> for Y direction (Cell):");
 
-        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_flow_processing_y_float, a.elements(), a.size(), 0.0f, 12);
+        SPEFrameworkInstruction<1, float, cell::rtm_dma> instruction(oc_flow_processing_y_float, a.elements(),
+                a.size(), 0.0f, 3);
 
         if (instruction.use_spe())
         {
