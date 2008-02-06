@@ -171,7 +171,7 @@ class PoissonJACBenchDouble :
 };
 PoissonJACBenchDouble<tags::CPU, double> poisson_jac_bench_double("Poisson JAC benchmark double CPU");
 #ifdef HONEI_SSE
-PoissonJACBench<tags::CPU::SSE, double> poisson_jac_bench_double_sse("Poisson JAC benchmark double SSE");
+PoissonJACBenchDouble<tags::CPU::SSE, double> poisson_jac_bench_double_sse("Poisson JAC benchmark double SSE");
 #endif
 #ifdef HONEI_CELL
 PoissonJACBenchDouble<tags::Cell, double> poisson_jac_bench_double_cell("Poisson JAC benchmark double Cell");

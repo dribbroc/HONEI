@@ -171,7 +171,7 @@ class PoissonPCGBenchDouble :
 };
 PoissonPCGBenchDouble<tags::CPU, double> poisson_pcg_bench_double("Poisson PCG benchmark double CPU");
 #ifdef HONEI_SSE
-PoissonPCGBench<tags::CPU::SSE, double> poisson_pcg_bench_double_sse("Poisson PCG benchmark double SSE");
+PoissonPCGBenchDouble<tags::CPU::SSE, double> poisson_pcg_bench_double_sse("Poisson PCG benchmark double SSE");
 #endif
 #ifdef HONEI_CELL
 PoissonPCGBenchDouble<tags::Cell, double> poisson_pcg_bench_double_cell("Poisson PCG benchmark double Cell");
