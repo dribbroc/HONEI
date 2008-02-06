@@ -26,6 +26,16 @@ see the NEWS file.
 	poisson_pcg_double_banded_TEST.cc:
 	Adjusted double CELL tests.
 
+2008-02-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libswe/flow_processing-cell.cc: Fixed FlowProcessing to work
+	with new quantisation base.
+
+2008-02-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libutil/spe_instruction.cc, honei/libutil/spe_instruction.hh:
+	Re-added quantisation for one-container DMA operation.
+
 2008-02-06 Markus Geveler <apryde@gmx.de>
 
 	* honei/libmath/poisson_jac_float_banded_BENCHMARK.cc, files.m4:
