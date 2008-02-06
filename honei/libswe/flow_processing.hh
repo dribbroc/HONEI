@@ -129,6 +129,7 @@ namespace honei
     {
         public:
             static DenseVector<float> & value(DenseVector<float> & vector);
+            static DenseVector<double> & value(DenseVector<double> & vector);
     };
 
     /**
@@ -221,6 +222,7 @@ namespace honei
     {
         public:
             static DenseVector<float> & value(DenseVector<float> & vector);
+            static DenseVector<double> & value(DenseVector<double> & vector);
     };
 
 ///---------SSE-----------
