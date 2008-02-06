@@ -171,7 +171,7 @@ class PoissonTestPCGDenseDouble:
             //std::cout<< ref_sol_v <<endl;
             for(unsigned long i = 0; i < n; i++)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], 1e-09);
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i], 1e-07);
             }
             DenseVector<double> x(n, double(0));
             Difference<Tag_>::value(result, ana_sol_v);
