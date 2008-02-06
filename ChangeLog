@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-06 Markus Geveler <apryde@gmx.de>
+
+	* honei/libmath/poisson_jackernel_double_banded_BENCHMARK.cc, poisson_jackernel_float_banded_BENCHMARK.cc,
+	files.m4, poisson_jackernel_double_banded_sse_BENCHMARK.cc, poisson_jackernel_float_banded_sse_BENCHMARK.cc:
+	Added Jacobi (kernel driven) benchmarks (single and double precision).
+
 2008-02-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libutil/configuration.cc,
@@ -22,7 +28,7 @@ see the NEWS file.
 2008-02-06 Markus Geveler <apryde@gmx.de>
 
 	* honei/libmath/poisson_iteref_pcg_double_banded_BENCHMARK.cc, poisson_iteref_pcg_float_banded_BENCHMARK.cc,
-	files.m4, poisson_iteref_cg_double_banded_BENCHMARK.cc, poisson_iteref_cg_float_banded_BENCHMARK:
+	files.m4, poisson_iteref_cg_double_banded_BENCHMARK.cc, poisson_iteref_cg_float_banded_BENCHMARK.cc:
 	Added IterRef PCG(Jacobi) and CG solver benchmarks (libla-driven, single and double precision).
 
 2008-02-06 Markus Geveler <apryde@gmx.de>
