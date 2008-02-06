@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-06 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libutil/configuration.cc,
+	honei/libutil/configuration_TEST.cc: Made Configuration as thread-safe
+	as possible.
+
+	+ Fixes: ticket:101
+
 2008-02-06 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/solver_TEST.cc, relax_solver_TEST.cc, flow_processing.hh:

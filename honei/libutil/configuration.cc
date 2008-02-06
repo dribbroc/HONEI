@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,6 +19,8 @@
 
 #include <honei/libutil/configuration.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/lock.hh>
+#include <honei/libutil/mutex.hh>
 
 #include <fstream>
 #include <map>
@@ -39,6 +41,9 @@ struct Configuration::Implementation
 
     typedef std::map<std::string, std::string> StringValueMap;
 
+    /// Our mutex.
+    Mutex * const mutex;
+
     /// Our map from names to integer values.
     IntValueMap int_value_map;
 
@@ -47,6 +52,18 @@ struct Configuration::Implementation
 
     /// Our configuration file's name.
     std::string filename;
+
+    /// Constructor.
+    Implementation() :
+        mutex(new Mutex)
+    {
+    }
+
+    /// Destructor.
+    ~Implementation()
+    {
+        delete mutex;
+    }
 };
 
 
@@ -139,6 +156,7 @@ Configuration::_read()
 int
 Configuration::get_value(const std::string & name, int default_value)
 {
+    Lock l(*_imp->mutex);
     Implementation::IntValueMap::const_iterator v(_imp->int_value_map.find(name));
     int result(default_value);
 
@@ -153,6 +171,7 @@ Configuration::get_value(const std::string & name, int default_value)
 std::string
 Configuration::get_value(const std::string & name, const std::string & default_value)
 {
+    Lock l(*_imp->mutex);
     Implementation::StringValueMap::const_iterator v(_imp->string_value_map.find(name));
     std::string result(default_value);
 
@@ -167,6 +186,7 @@ Configuration::get_value(const std::string & name, const std::string & default_v
 void
 Configuration::set_value(const std::string & name, int value)
 {
+    Lock l(*_imp->mutex);
     Implementation::IntValueMap::iterator v(_imp->int_value_map.find(name));
 
     if (v != _imp->int_value_map.end())
@@ -182,6 +202,7 @@ Configuration::set_value(const std::string & name, int value)
 void
 Configuration::set_value(const std::string & name, const std::string & value)
 {
+    Lock l(*_imp->mutex);
     Implementation::StringValueMap::iterator v(_imp->string_value_map.find(name));
 
     if (v != _imp->string_value_map.end())
@@ -197,6 +218,7 @@ Configuration::set_value(const std::string & name, const std::string & value)
 Configuration::ConstIterator
 Configuration::begin() const
 {
+    Lock l(*_imp->mutex);
     const Implementation & imp(*_imp);
 
     return ConstIterator(imp.string_value_map.begin());
@@ -205,6 +227,7 @@ Configuration::begin() const
 Configuration::ConstIterator
 Configuration::end() const
 {
+    Lock l(*_imp->mutex);
     const Implementation & imp(*_imp);
 
     return ConstIterator(imp.string_value_map.end());
@@ -213,6 +236,8 @@ Configuration::end() const
 void
 Configuration::reread()
 {
+    Lock l(*_imp->mutex);
+
     _imp->int_value_map.clear();
     _imp->string_value_map.clear();
 
@@ -222,5 +247,7 @@ Configuration::reread()
 std::string
 Configuration::filename() const
 {
+    Lock l(*_imp->mutex);
+
     return _imp->filename;
 }
