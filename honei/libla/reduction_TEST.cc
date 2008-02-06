@@ -546,7 +546,8 @@ class SparseVectorReductionToSumTest :
                 }
 
                 DT_ v1(Reduction<rt_sum, Tag_>::value(sv1));
-                DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
+                DT_ eps1(exp(-20 + log(sv1.used_elements()) * 4));
+                //DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
             }
         }
