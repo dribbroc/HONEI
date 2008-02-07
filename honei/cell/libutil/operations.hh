@@ -230,7 +230,7 @@ namespace honei
          * \ingroup grpframework
          */
         float min_float(const vector float & value);
-        double max_double(const vector double & value);
+        double min_double(const vector double & value);
 
         /// \}
     }
