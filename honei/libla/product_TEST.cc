@@ -30,7 +30,7 @@
 
 using namespace honei;
 using namespace tests;
-
+/*
 template <typename Tag_, typename DataType_>
 class BandedMatrixDenseVectorProductTest :
     public BaseTest
@@ -263,7 +263,7 @@ class BandedMatrixSparseVectorProductQuickTest :
 };
 BandedMatrixSparseVectorProductQuickTest<float> banded_matrix_sparse_vector_product_quick_test_float("float");
 BandedMatrixSparseVectorProductQuickTest<double> banded_matrix_sparse_vector_product_quick_test_double("double");
-
+*/
 template <typename Tag_, typename DataType_>
 class DenseMatrixDenseVectorProductTest :
     public BaseTest
@@ -277,7 +277,7 @@ class DenseMatrixDenseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 11) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
                 DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
@@ -301,6 +301,9 @@ DenseMatrixDenseVectorProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_
 #ifdef HONEI_SSE
 DenseMatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_dense_matrix_dense_vector_product_test_float("SSE float");
 DenseMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseMatrixDenseVectorProductTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -342,7 +345,7 @@ DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_
 #ifdef HONEI_CELL
 DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
 #endif
-
+/*
 template <typename DataType_>
 class DenseMatrixSparseVectorProductTest :
     public BaseTest
@@ -1760,3 +1763,4 @@ class SparseMatrixBandedMatrixProductQuickTest :
 };
 SparseMatrixBandedMatrixProductQuickTest<float> sparse_matrix_banded_matrix_product_quick_test_float("float");
 SparseMatrixBandedMatrixProductQuickTest<double> sparse_matrix_banded_matrix_product_quick_test_double("double");
+*/

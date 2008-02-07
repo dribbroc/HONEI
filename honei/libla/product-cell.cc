@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -41,18 +41,88 @@ namespace honei
         if (x.size() != a.columns())
             throw VectorSizeDoesNotMatch(x.size(), a.columns());
 
-        DenseVector<float> result(a.rows());
+        DenseVector<float> result(a.rows(), 0.0f);
+
+        unsigned spu_rows(a.rows() & ~0x3);
+        unsigned ppu_rows(a.rows() - spu_rows);
+        bool use_spe(true);
+        if (a.rows() < 4)
+        {
+            spu_rows = 0;
+            ppu_rows = a.rows();
+            use_spe = false;
+        }
+
+        union addr
+        {
+            float * ptr;
+            unsigned long long value;
+        };
+
+        unsigned a_t_size(a.columns() * (4096 / (a.columns())));
+        while (a_t_size % 4 != 0)
+        {
+            a_t_size -= a.columns();
+        }
+        a_t_size *= 4;
+        addr one = { (a.elements() + a.columns()) };
+        unsigned a_offset(one.value & 0xf);
 
         Operand oa = { a.elements() };
         Operand ob = { x.elements() };
         Operand oc = { result.elements() };
-        Operand od;
-        od.u = a.rows();
-        SPEInstruction instruction(oc_product_dense_matrix_dense_vector_float, x.size(), oa, ob, oc, od);
 
-        SPEManager::instance()->dispatch(instruction);
+        Operand od, oe, of, og;
+        // Transfer only full rows.
+        od.u = (4 * spu_rows * a.columns()) / a_t_size;
+        oe.u = (4 * spu_rows * a.columns()) % a_t_size;
+        of.u = (4 * x.size()) / 16384;
+        og.u = (4 * x.size()) % 16384;
 
-        instruction.wait();
+        if (0 == oe.u)
+        {
+            if (od.u > 0)
+            {
+                oe.u = a_t_size;
+            }
+        }
+        else
+        {
+            ++od.u;
+        }
+        if (0 == og.u)
+        {
+            if (of.u > 0)
+            {
+                og.u = 16384;
+            }
+        }
+        else
+        {
+            ++of.u;
+        }
+
+        Operand oh;
+        oh.u = a.columns();
+        Operand oi;
+        oi.u = a_offset / sizeof(float);
+
+        SPEInstruction instruction(oc_product_dense_matrix_dense_vector_float, a_t_size, oa, ob, oc, od, oe, of, og, oh, oi);
+
+        if (use_spe)
+           SPEManager::instance()->dispatch(instruction);
+
+        for (unsigned i(0) ; i < ppu_rows ; i++)
+        {
+            DenseVectorRange<float> row = a[spu_rows + i];
+            for (Vector<float>::ConstElementIterator c(row.begin_elements()), c_end(row.end_elements()), d(x.begin_elements()) ; c != c_end ; ++c, ++d)
+            {
+                result[spu_rows + i] += *c * *d;
+            }
+        }
+
+        if (use_spe)
+           instruction.wait();
 
         return result;
     }

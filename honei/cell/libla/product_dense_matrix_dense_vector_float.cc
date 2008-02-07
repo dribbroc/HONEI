@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -32,88 +32,193 @@ using namespace honei::cell;
  * Calculate the product of a dense matrix and
  * a dense vector.
  *
- * \size The size of the vector and the number of columns of the matrix.
- * \operand a Base address of first entity.
- * \operand b Base address of second entity.
- * \operand d The number of rows of the matrix.
+ * \size The default transfer size for the matrix (representing full rows),
+ * \operand a Base address of the matrix.
+ * \operand b Base address of vector to multiply with.
+ * \operand c Base address of result vector.
+ * \operand d The number of transfers for the matrix.
+ * \operand e The last transfer size for the matrix.
+ * \operand f The number of transfers for the vector.
+ * \operand g The last transfer size for the vector.
+ * \operand h The number of columns of the matrix.
+ * \operand i matrix.columns() modulo 4
  */
+
 void product_dense_matrix_dense_vector_float(const Instruction & inst)
 {
-    Allocation * block_a(acquire_block());
-    Allocation * block_x(acquire_block());
-    Allocation * block_r(acquire_block());
+    EffectiveAddress ea_a(inst.a.ea), ea_x(inst.b.ea), ea_r(inst.c.ea);
 
-    Pointer<float> a = { block_a->address };
-    Pointer<float> x = { block_x->address };
-    Pointer<float> r = { block_r->address };
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
+    Allocation * block_x[2] = { acquire_block(), acquire_block() };
+    Allocation * block_r = acquire_block();
 
-    mfc_get(a.untyped, inst.a.ea, multiple_of_sixteen(inst.size * inst.d.u * sizeof(float)), 1, 0, 0);
-    mfc_get(x.untyped, inst.b.ea, multiple_of_sixteen(inst.size * sizeof(float)), 2, 0, 0);
-    mfc_write_tag_mask(1 << 2 | 1 << 1);
+    Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+    Pointer<float> x[2] = { { block_x[0]->address }, { block_x[1]->address } };
+    Pointer<float> r = { block_r->address};
+
+    unsigned a_cols(inst.h.u);
+    unsigned a_counter(inst.d.u);
+    unsigned x_counter(inst.f.u), x_get_counter(0);
+    unsigned a_size(a_counter > 1 ? inst.size : multiple_of_sixteen(inst.e.u));
+    unsigned x_size(x_counter > 1 ? 16384 : multiple_of_sixteen(inst.g.u));
+    unsigned r_size(a_counter > 1 ? inst.size / a_cols : (inst.e.u / a_cols));
+    unsigned a_nextsize, x_nextsize;
+    unsigned a_current(0), a_next(1);
+    unsigned x_current(0), x_next(1);
+    unsigned a_offset(inst.i.u);
+    unsigned act_offset(0);
+
+    mfc_get(a[a_current].untyped, inst.a.ea, a_size, 1, 0, 0);
+    mfc_get(x[x_current].untyped, inst.b.ea, x_size, 1, 0, 0);
+    mfc_write_tag_mask(1 << 1);
     mfc_read_tag_status_all();
 
-    unsigned offset = inst.size % 4;
-    union {
-        unsigned long v;
-        float f;
-    } u = {~0}; // im 2er-Kompl ist Negation von 0 = -1 = 111...111 (umweg ueber ~0 noetig da unsigned)
+    ea_a += a_size;
+    ea_x += x_size;
 
-    const vector float mask_vector[4] = { // offset is the index into this vector
-        { u.f, u.f, u.f, u.f },
-        { u.f, 0x0000, 0x0000, 0x0000 },
-        { u.f, u.f, 0x0000, 0x0000 },
-        { u.f, u.f, u.f, 0x0000 }
-    };
+    unsigned a_vecs(a_cols / 4);
+    unsigned a_idx(0);
 
-    // shuffle-offsets depend on a.columns() % 4 = offset and actual row in a % 4
-    const unsigned int extract_offsets[4][4] = {  // [offset][a_row % 4]
-        { 0, 0, 0, 0 }, // offset = 0, a_row % 4 = 0 - 3
-        { 0, 1, 2, 3 }, // offset = 1, ...
-        { 0, 2, 0, 2 },
-        { 0, 3, 2, 1 }
-    };
-
-    // the indices-offset of the FIRST vector that contains elements of a row in a assuming size < 4
-    const unsigned int vector_indices[4][4] = { // [offset][a_row % 4]
-        { 0, 0, 0, 0 },
-        { 0, 0, 0, 0 },
-        { 0, 0, 1, 1 },
-        { 0, 0, 1, 2 }
-    };
-
-    // the number of vectors in a row of a for a.columns() % 4 assuming size < 4
-    const unsigned int vectors_per_row[4] = { 0, 1, 1, 1 }; // Use offset as index into this array.
-
-    unsigned long r_elem(0); // The actual considered element of the result vector
-    unsigned long a_row(0);
-    for( ; r_elem < inst.d.u ; r_elem++)
+    while (a_counter > 1)
     {
-        unsigned long vecs_in_a_row = vectors_per_row[offset] + (inst.size / 4); // Number of vectors in actual row of a
-        unsigned long a_vec_idx = (a_row * (inst.size / 4)) + ((a_row / 4) * offset) + vector_indices[offset][a_row % 4];
-        Subscriptable<float> res = { spu_splats(0.0f) };
-        for(unsigned i(0) ; i < vecs_in_a_row - 1 ; i++) // Make all computations except the last
+        a_nextsize = (a_counter == 2 ? multiple_of_sixteen(inst.e.u) : a_size);
+
+        mfc_get(a[a_next].untyped, ea_a, a_nextsize, a_next, 0, 0);
+        ea_a += a_nextsize;
+
+        x_counter = inst.f.u;
+
+        mfc_write_tag_mask(1 << a_current);
+        mfc_read_tag_status_all();
+        a_idx = 0;
+        while (x_counter >= 1)
         {
-            vector float temp = a.vectorised[a_vec_idx + i]; // temp version needed, cause original matrix must not be changed!
-            extract(temp, a.vectorised[a_vec_idx + i + 1], extract_offsets[offset][a_row % 4]);
+            if (x_counter == 2)
+            {
+                x_nextsize = multiple_of_sixteen(inst.g.u);
+            }
+            else
+            {
+                x_nextsize = x_size;
+            }
 
-            res.value = spu_madd(temp, x.vectorised[i], res.value);
-       }
-        // Now we handle the last vector in row where we perhaps must cut some elements that don't belong to the current row
-        unsigned i = (vecs_in_a_row - 1); // Take vector for the last computation of the possibly incomplete vector
+            if (x_counter == 1)
+            {
+                ea_x = inst.b.ea;
+                x_nextsize = inst.f.u > 1 ? 16384 : multiple_of_sixteen(inst.g.u);
+            }
 
-        vector float temp = a.vectorised[a_vec_idx + i];
-        extract(temp, a.vectorised[a_vec_idx + i + 1], extract_offsets[offset][a_row % 4]);
+            mfc_get(x[x_next].untyped, ea_x, x_nextsize, x_next, 0, 0);
+            ea_x += x_nextsize;
 
-        Subscriptable<float> v = { spu_and(x.vectorised[i], mask_vector[offset]) };
+            mfc_write_tag_mask(1 << x_current);
+            mfc_read_tag_status_all();
 
-        res.value = spu_madd(temp, v.value, res.value);
+            for (unsigned i(0) ; i < (a_size / a_cols / 4) ; i++) // for rows
+            {
+                r.typed[i] = 0;
+                unsigned start(i * a_vecs);
+                Subscriptable<float> temp = { spu_splats(r.typed[i]) };
 
-        // Finished computation for one row of a -> one element of r: Cleaning up
-        r.typed[r_elem] = res.array[0] + res.array[1] + res.array[2] + res.array[3];
-        a_row++;
+                for (unsigned j(0) ; j < a_vecs ; j++, a_idx++) // for vecs in the row
+                {
+                    vector float a_cur = a[a_current].vectorised[a_idx];
+                    extract(a_cur, a[a_current].vectorised[a_idx + 1], act_offset);
+                    temp.value = spu_madd(a_cur, x[x_current].vectorised[j], temp.value);
+                }
+
+                r.typed[i] = temp.array[0] + temp.array[1] + temp.array[2] + temp.array[3];
+                act_offset = (act_offset + a_offset) % 4;
+
+                for (unsigned j(0) ; j < a_offset ; j++)
+                {
+                    r.typed[i] += a[a_current].typed[(4 * a_idx) + j] * x[x_current].typed[(4 * a_vecs) + j];
+                }
+
+                if ( i != 0 && i % 4 == 0 && act_offset > 0)
+                {
+                    a_idx++;
+                }
+            }
+
+            unsigned x_temp(x_current);
+            x_current = x_next;
+            x_next = x_temp;
+
+            x_counter--;
+        }
+
+        unsigned a_temp(a_current);
+        a_current = a_next;
+        a_next = a_temp;
+        a_counter--;
+
+        mfc_put(r.untyped, ea_r, r_size, 2, 0, 0);
+        mfc_write_tag_mask(1 << 2);
+        mfc_read_tag_status_all();
+
+        ea_r += r_size;
+        r_size = (a_counter == 2 ? inst.e.u / a_cols : inst.size / a_cols);
     }
 
-    mfc_put(r.untyped, inst.c.ea, multiple_of_sixteen(inst.d.u * sizeof(float)), 3, 0, 0);
-    mfc_write_tag_mask(1 << 3);
+    mfc_write_tag_mask(1 << a_current);
     mfc_read_tag_status_all();
+    x_counter = inst.f.u;
+    a_idx = 0;
+    while (x_counter >= 1)
+    {
+        if (x_counter == 2)
+        {
+            x_nextsize = multiple_of_sixteen(inst.g.u);
+        }
+        else
+        {
+            x_nextsize = x_size;
+        }
+
+        mfc_get(x[x_next].untyped, ea_x, x_nextsize, x_next, 0, 0);
+        ea_x += x_nextsize;
+
+        mfc_write_tag_mask(1 << x_current);
+        mfc_read_tag_status_all();
+
+        for (unsigned i(0) ; i < (a_size / a_cols / 4) ; i++) // for rows
+        {
+            r.typed[i] = 0;
+            unsigned start(i * a_vecs);
+            Subscriptable<float> temp = { spu_splats(r.typed[i]) };
+
+            for (unsigned j(0) ; j < a_vecs ; j++, a_idx++) // for vecs in the row
+            {
+                vector float a_cur = a[a_current].vectorised[a_idx];
+                extract(a_cur, a[a_current].vectorised[a_idx + 1], act_offset);
+                temp.value = spu_madd(a_cur, x[x_current].vectorised[j], temp.value);
+            }
+
+            r.typed[i] = temp.array[0] + temp.array[1] + temp.array[2] + temp.array[3];
+            act_offset = (act_offset + a_offset) % 4;
+
+            for (unsigned j(0) ; j < a_offset ; j++)
+            {
+                r.typed[i] += a[a_current].typed[(4 * a_idx) + j] * x[x_current].typed[(4 * a_vecs) + j];
+            }
+
+            if ( i != 0 && i % 4 == 0 && act_offset > 0)
+            {
+                a_idx++;
+            }
+
+        }
+
+         unsigned x_temp(x_current);
+         x_current = x_next;
+         x_next = x_temp;
+         x_counter--;
+    }
+
+    mfc_put(r.untyped, ea_r, r_size, 2, 0, 0);
+    mfc_write_tag_mask(1 << 2);
+    mfc_read_tag_status_all();
+
+    release_all_blocks();
 }

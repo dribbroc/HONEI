@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-08 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/libla/product_dense_matrix_dense_vector_float.cc,
+	honei/libla/product-cell.cc, honei/libla/product_TEST.cc: Added a
+	first simple implementation of Product(DM,DV) with double buffering.
+
 2008-02-07 Volker Jung <volker.jung@honei.org>
 
 	* honei/libla/dot_product-mc.hh, honei/libla/scale-mc.hh: Added usage
