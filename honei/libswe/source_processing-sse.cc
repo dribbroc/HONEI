@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/attributes.hh>
 #include <honei/libswe/source_processing.hh>
 
 #include <xmmintrin.h>
@@ -34,21 +35,21 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
     unsigned long tripels(vector.size()/3);
     unsigned long sse_tripels((tripels - (tripels % 4)) / 4);
     unsigned long sse_limit(sse_tripels * 12);
-    float __attribute__((aligned(16))) h_buffer[tripels];
-    float __attribute__((aligned(16))) q1_buffer[tripels];
-    float __attribute__((aligned(16))) q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) result_h[tripels];
-    float __attribute__((aligned(16))) result_q1[tripels];
-    float __attribute__((aligned(16))) result_q2[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_h[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_q1[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_q2[tripels];
 
-    float __attribute__((aligned(16))) result_pow[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_pow[tripels];
 
-    float __attribute__((aligned(16))) g(9.81f);
-    float __attribute__((aligned(16))) zero(0.f);
-    float __attribute__((aligned(16))) exponent(float(-7.f)/float(3.f));
-    float __attribute__((aligned(16))) minus_one(-1.f);
-    float __attribute__((aligned(16))) manning(manning_n_squared);
+    float HONEI_ATTRIBUTE(aligned(16)) g(9.81f);
+    float HONEI_ATTRIBUTE(aligned(16)) zero(0.f);
+    float HONEI_ATTRIBUTE(aligned(16)) exponent(float(-7.f)/float(3.f));
+    float HONEI_ATTRIBUTE(aligned(16)) minus_one(-1.f);
+    float HONEI_ATTRIBUTE(aligned(16)) manning(manning_n_squared);
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);
@@ -156,21 +157,21 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
     unsigned long tripels(vector.size()/3);
     unsigned long sse_tripels((tripels - (tripels % 2)) / 2);
     unsigned long sse_limit(sse_tripels * 6);
-    double __attribute__((aligned(16))) h_buffer[tripels];
-    double __attribute__((aligned(16))) q1_buffer[tripels];
-    double __attribute__((aligned(16))) q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) result_h[tripels];
-    double __attribute__((aligned(16))) result_q1[tripels];
-    double __attribute__((aligned(16))) result_q2[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_h[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_q1[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_q2[tripels];
 
-    double __attribute__((aligned(16))) result_pow[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_pow[tripels];
 
-    double __attribute__((aligned(16))) g(9.81);
-    double __attribute__((aligned(16))) zero(0.);
-    double __attribute__((aligned(16))) exponent(double(-7.)/double(3.));
-    double __attribute__((aligned(16))) minus_one(-1.);
-    double __attribute__((aligned(16))) manning(manning_n_squared);
+    double HONEI_ATTRIBUTE(aligned(16)) g(9.81);
+    double HONEI_ATTRIBUTE(aligned(16)) zero(0.);
+    double HONEI_ATTRIBUTE(aligned(16)) exponent(double(-7.)/double(3.));
+    double HONEI_ATTRIBUTE(aligned(16)) minus_one(-1.);
+    double HONEI_ATTRIBUTE(aligned(16)) manning(manning_n_squared);
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);

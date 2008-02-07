@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/attributes.hh>
 #include <honei/libswe/correction_processing.hh>
 
 #include <xmmintrin.h>
@@ -51,13 +52,13 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
     unsigned long sse_limit(sse_steps * 4);
     ///SSE loop:
     __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-    float __attribute__((aligned(16))) one_half(0.5f);
+    float HONEI_ATTRIBUTE(aligned(16)) one_half(0.5f);
     m1 = _mm_set_ps1(one_half);
 
 
-    float __attribute__((aligned(16))) v_c_e[v.size()];
-    float __attribute__((aligned(16))) u_c_e[u.size()];
-    float __attribute__((aligned(16))) w_c_e[w.size()];
+    float HONEI_ATTRIBUTE(aligned(16)) v_c_e[v.size()];
+    float HONEI_ATTRIBUTE(aligned(16)) u_c_e[u.size()];
+    float HONEI_ATTRIBUTE(aligned(16)) w_c_e[w.size()];
 
     unsigned long c_count(0);
     for(unsigned long i(0); i < u.size(); ++i)
@@ -185,9 +186,9 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
 
     unsigned long sse_steps((u.size() - (u.size() % 2)) / 2);
     unsigned long sse_limit(sse_steps * 2);
-    double __attribute__((aligned(16))) v_c_e[v.size()];
-    double __attribute__((aligned(16))) u_c_e[u.size()];
-    double __attribute__((aligned(16))) w_c_e[w.size()];
+    double HONEI_ATTRIBUTE(aligned(16)) v_c_e[v.size()];
+    double HONEI_ATTRIBUTE(aligned(16)) u_c_e[u.size()];
+    double HONEI_ATTRIBUTE(aligned(16)) w_c_e[w.size()];
 
     unsigned long c_count(0);
     for(unsigned long i(0); i < u.size(); ++i)
@@ -217,7 +218,7 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
 
     ///SSE loop:
     __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-    double __attribute__((aligned(16))) one_half(0.5);
+    double HONEI_ATTRIBUTE(aligned(16)) one_half(0.5);
     m1 = _mm_set_pd1(one_half);
 
     for(unsigned long i(0); i < sse_limit; i += 2)

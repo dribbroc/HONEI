@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Util C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,6 +20,8 @@
 #ifndef CELL_GUARD_UTIL_DEBUG_HH
 #define CELL_GUARD_UTIL_DEBUG_HH 1
 
+#include <honei/attributes.hh>
+
 #include <spu_mfcio.h>
 
 namespace honei
@@ -29,29 +31,29 @@ namespace honei
         /// \name Debug functions
         /// \{
 
-        inline void debug_acquire(const LocalStoreAddress & lsa) __attribute__((always_inline));
+        inline void debug_acquire(const LocalStoreAddress & lsa) HONEI_ATTRIBUTE(always_inline);
 
-        inline void debug_dump() __attribute__((always_inline));
+        inline void debug_dump() HONEI_ATTRIBUTE(always_inline);
 
-        inline void debug_enter() __attribute__((always_inline));
+        inline void debug_enter() HONEI_ATTRIBUTE(always_inline);
 
         inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) __attribute__((always_inline));
+                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
 
         inline void debug_getl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) __attribute__((always_inline));
+                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
 
-        inline void debug_leave() __attribute__((always_inline));
+        inline void debug_leave() HONEI_ATTRIBUTE(always_inline);
 
         inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) __attribute__((always_inline));
+                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
 
         inline void debug_putl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) __attribute__((always_inline));
+                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
 
-        inline void debug_release(const LocalStoreAddress & lsa) __attribute__((always_inline));
+        inline void debug_release(const LocalStoreAddress & lsa) HONEI_ATTRIBUTE(always_inline);
 
-        inline void debug_value(const unsigned & value) __attribute__((always_inline));
+        inline void debug_value(const unsigned & value) HONEI_ATTRIBUTE(always_inline);
 
         /// \}
 

@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/attributes.hh>
 #include <honei/libla/dot_product.hh>
 
 #include <xmmintrin.h>
@@ -30,7 +31,7 @@ namespace honei
         {
             inline float dot_product(const float * a, float * b, unsigned long size)
             {
-                float __attribute__((aligned(16))) result(0);
+                float HONEI_ATTRIBUTE(aligned(16)) result(0);
 
                 union sse4
                 {
@@ -116,7 +117,7 @@ namespace honei
 
             inline double dot_product(double * a, double * b, unsigned long size)
             {
-                double __attribute__((aligned(16))) result(0);
+                double HONEI_ATTRIBUTE(aligned(16)) result(0);
 
                 union sse2
                 {

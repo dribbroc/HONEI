@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/attributes.hh>
 #include <honei/libswe/flow_processing.hh>
 
 #include <xmmintrin.h>
@@ -33,13 +34,13 @@ DenseVector<float> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVec
     unsigned long tripels(vector.size()/3);
     unsigned long sse_tripels((tripels - (tripels % 4)) / 4);
     unsigned long sse_limit(sse_tripels * 12);
-    float __attribute__((aligned(16))) h_buffer[tripels];
-    float __attribute__((aligned(16))) q1_buffer[tripels];
-    float __attribute__((aligned(16))) q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) result_h[tripels];
-    float __attribute__((aligned(16))) result_q1[tripels];
-    float __attribute__((aligned(16))) result_q2[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_h[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_q1[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_q2[tripels];
 
     ///Alignment loop
     unsigned long buffer_i(0);
@@ -53,8 +54,8 @@ DenseVector<float> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVec
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
     __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-    float __attribute__((aligned(16))) g(9.81f);
-    float __attribute__((aligned(16))) two(2.0f);
+    float HONEI_ATTRIBUTE(aligned(16)) g(9.81f);
+    float HONEI_ATTRIBUTE(aligned(16)) two(2.0f);
     m4 = _mm_set_ps1(g);
     m5 = _mm_set_ps1(two);
     for(unsigned long i(0); i < tripels - (tripels % 4); i += 4)
@@ -131,13 +132,13 @@ DenseVector<float> FlowProcessing<directions::Y, tags::CPU::SSE>::value(DenseVec
     unsigned long tripels(vector.size()/3);
     unsigned long sse_tripels((tripels - (tripels % 4)) / 4);
     unsigned long sse_limit(sse_tripels * 12);
-    float __attribute__((aligned(16))) h_buffer[tripels];
-    float __attribute__((aligned(16))) q1_buffer[tripels];
-    float __attribute__((aligned(16))) q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) result_h[tripels];
-    float __attribute__((aligned(16))) result_q1[tripels];
-    float __attribute__((aligned(16))) result_q2[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_h[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_q1[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) result_q2[tripels];
 
     ///Alignment loop
     unsigned long buffer_i(0);
@@ -151,8 +152,8 @@ DenseVector<float> FlowProcessing<directions::Y, tags::CPU::SSE>::value(DenseVec
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
     __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-    float __attribute__((aligned(16))) g(9.81f);
-    float __attribute__((aligned(16))) two(2.0f);
+    float HONEI_ATTRIBUTE(aligned(16)) g(9.81f);
+    float HONEI_ATTRIBUTE(aligned(16)) two(2.0f);
     m4 = _mm_set_ps1(g);
     m5 = _mm_set_ps1(two);
     for(unsigned long i(0); i < tripels - (tripels % 4); i += 4)
@@ -228,13 +229,13 @@ DenseVector<double> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVe
     unsigned long tripels(vector.size()/3);
     unsigned long sse_tripels((tripels - (tripels % 2)) / 2);
     unsigned long sse_limit(sse_tripels * 6);
-    double __attribute__((aligned(16))) h_buffer[tripels];
-    double __attribute__((aligned(16))) q1_buffer[tripels];
-    double __attribute__((aligned(16))) q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) result_h[tripels];
-    double __attribute__((aligned(16))) result_q1[tripels];
-    double __attribute__((aligned(16))) result_q2[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_h[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_q1[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_q2[tripels];
 
     ///Alignment loop
     unsigned long buffer_i(0);
@@ -248,8 +249,8 @@ DenseVector<double> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVe
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
     __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-    double __attribute__((aligned(16))) g(9.81);
-    double __attribute__((aligned(16))) two(2.0);
+    double HONEI_ATTRIBUTE(aligned(16)) g(9.81);
+    double HONEI_ATTRIBUTE(aligned(16)) two(2.0);
     m4 = _mm_set_pd1(g);
     m5 = _mm_set_pd1(two);
     for(unsigned long i(0); i < tripels - (tripels % 4); i += 2)
@@ -326,13 +327,13 @@ DenseVector<double> FlowProcessing<directions::Y, tags::CPU::SSE>::value(DenseVe
     unsigned long tripels(vector.size()/3);
     unsigned long sse_tripels((tripels - (tripels % 2)) / 2);
     unsigned long sse_limit(sse_tripels * 6);
-    double __attribute__((aligned(16))) h_buffer[tripels];
-    double __attribute__((aligned(16))) q1_buffer[tripels];
-    double __attribute__((aligned(16))) q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) result_h[tripels];
-    double __attribute__((aligned(16))) result_q1[tripels];
-    double __attribute__((aligned(16))) result_q2[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_h[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_q1[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) result_q2[tripels];
 
     ///Alignment loop
     unsigned long buffer_i(0);
@@ -346,8 +347,8 @@ DenseVector<double> FlowProcessing<directions::Y, tags::CPU::SSE>::value(DenseVe
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
     __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-    double __attribute__((aligned(16))) g(9.81);
-    double __attribute__((aligned(16))) two(2.0);
+    double HONEI_ATTRIBUTE(aligned(16)) g(9.81);
+    double HONEI_ATTRIBUTE(aligned(16)) two(2.0);
     m4 = _mm_set_pd1(g);
     m5 = _mm_set_pd1(two);
     for(unsigned long i(0); i < tripels - (tripels % 4); i += 2)

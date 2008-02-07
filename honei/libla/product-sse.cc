@@ -18,6 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/attributes.hh>
 #include <honei/libla/product.hh>
 
 #include <xmmintrin.h>
@@ -35,7 +36,7 @@ namespace honei
                 _mm_prefetch(x, _MM_HINT_T0);
 
                 __m128 m1, m2, m3, m4, m5, m6, m8;
-                float __attribute__((aligned(16))) b_data;
+                float HONEI_ATTRIBUTE(aligned(16)) b_data;
                 b_data = b;
                 m8 = _mm_load1_ps(&b_data);
 
@@ -124,7 +125,7 @@ namespace honei
                 _mm_prefetch(x, _MM_HINT_T0);
 
                 __m128d m1, m2, m3, m4, m5, m6, m8;
-                double __attribute__((aligned(16))) b_data;
+                double HONEI_ATTRIBUTE(aligned(16)) b_data;
                 b_data = b;
                 m8 = _mm_load1_pd(&b_data);
 
@@ -206,8 +207,8 @@ namespace honei
             inline void product_dm_nx2(float * result, const float * a, const float * b, unsigned long size)
             {
                 /*
-                float __attribute__((aligned(16))) result1(0);
-                float __attribute__((aligned(16))) result2(0);
+                float HONEI_ATTRIBUTE(aligned(16)) result1(0);
+                float HONEI_ATTRIBUTE(aligned(16)) result2(0);
 
                 union sse4
                 {

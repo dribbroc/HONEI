@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,6 +19,8 @@
 
 #ifndef CELL_GUARD_TYPES_HH
 #define CELL_GUARD_TYPES_HH 1
+
+#include <honei/attributes.hh>
 
 namespace honei
 {
@@ -138,7 +140,7 @@ namespace honei
 # error "You should not include this header in anything but Cell source code!"
 #endif
 
-        struct __attribute__((packed)) __attribute__((aligned(8))) ListElement
+        struct HONEI_ATTRIBUTE(packed, aligned(8)) ListElement
         {
             unsigned stall_and_notify : 1;
             unsigned reserved : 16;

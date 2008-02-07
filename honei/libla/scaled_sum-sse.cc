@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/attributes.hh>
 #include <honei/libla/scaled_sum.hh>
 
 #include <xmmintrin.h>
@@ -31,7 +32,7 @@ namespace honei
             inline void scaled_sum(float * x, const float * y, float b, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m8;
-                float __attribute__((aligned(16))) b_data;
+                float HONEI_ATTRIBUTE(aligned(16)) b_data;
                 b_data = b;
                 m8 = _mm_load1_ps(&b_data);
 
@@ -117,7 +118,7 @@ namespace honei
             inline void scaled_sum(double * x, const double * y, double b, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m8;
-                double __attribute__((aligned(16))) b_data;
+                double HONEI_ATTRIBUTE(aligned(16)) b_data;
                 b_data = b;
                 m8 = _mm_load1_pd(&b_data);
 

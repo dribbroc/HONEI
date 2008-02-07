@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -21,7 +21,9 @@
 #ifndef CELL_GUARD_UTIL_TRANSFER_HH
 #define CELL_GUARD_UTIL_TRANSFER_HH 1
 
+#include <honei/attributes.hh>
 #include <honei/cell/cell.hh>
+
 #include <spu_intrinsics.h>
 
 namespace intern
@@ -29,10 +31,9 @@ namespace intern
     extern const vector unsigned char extract_patterns[4];
     extern const vector unsigned long bitmasks[4];
     extern const vector unsigned long reverse_bitmasks[4];
-
 }
 
-inline unsigned multiple_of_sixteen(unsigned u) __attribute__((always_inline));
+inline unsigned multiple_of_sixteen(unsigned u) HONEI_ATTRIBUTE(always_inline);
 
 unsigned multiple_of_sixteen(unsigned u)
 {
@@ -41,7 +42,7 @@ unsigned multiple_of_sixteen(unsigned u)
     return (r > 0) ? u + 16 - r : u;
 }
 
-inline unsigned truncate_of_sixteen(unsigned u) __attribute__((always_inline));
+inline unsigned truncate_of_sixteen(unsigned u) HONEI_ATTRIBUTE(always_inline);
 
 unsigned truncate_of_sixteen(unsigned u)
 {
@@ -55,7 +56,7 @@ unsigned truncate_of_sixteen(unsigned u)
  * Please note that extract can only be used on SPU-side as it uses spu_intrinsics.h.
  */
 
-template <typename DT_> inline void extract(DT_ & first, const DT_ & second, unsigned offset) __attribute__((always_inline));
+template <typename DT_> inline void extract(DT_ & first, const DT_ & second, unsigned offset) HONEI_ATTRIBUTE(always_inline);
 
 template <> inline void extract<vector float>(vector float & first, const vector float & second, unsigned offset)
 {
@@ -73,7 +74,7 @@ template <> inline void extract<vector double>(vector double & first, const vect
  * Please note that insert can only be used on SPU-side as it uses spu_intrinsics.h.
  */
 
-template <typename DT_> inline void insert(DT_ & first, DT_ & second, DT_ & data, unsigned offset) __attribute__((always_inline));
+template <typename DT_> inline void insert(DT_ & first, DT_ & second, DT_ & data, unsigned offset) HONEI_ATTRIBUTE(always_inline);
 
 template <> inline void insert<vector float>(vector float & first, vector float & second, vector float & data, unsigned offset)
 {
@@ -87,7 +88,7 @@ template <> inline void insert<vector float>(vector float & first, vector float 
  * Please note that fill can only be used with aligned addresses.
  */
 
-template <typename DT_> inline void fill(void * address, unsigned long size, DT_ value) __attribute__((always_inline));
+template <typename DT_> inline void fill(void * address, unsigned long size, DT_ value) HONEI_ATTRIBUTE(always_inline);
 
 template <> inline void fill<float>(void * address, unsigned long size, float value)
 {

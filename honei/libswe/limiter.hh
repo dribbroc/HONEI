@@ -4,7 +4,7 @@
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  * Copyright (c) 2007 Joachim Messer <joachim.messer@t-online.de>
  * Copyright (c) 2007 Volker Jung <volker.m.jung@t-online.de>
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the SWE C++ library. LibSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,12 +23,12 @@
 #ifndef LIBSWE_GUARD_LIMITER_HH
 #define LIBSWE_GUARD_LIMITER_HH 1
 
-//#include <libutil/tags.hh>
+#include <honei/attributes.hh>
 
 #include <algorithm>
 #ifdef HONEI_SSE
-#include <xmmintrin.h>
-#include <emmintrin.h>
+#  include <xmmintrin.h>
+#  include <emmintrin.h>
 #endif
 
 namespace honei
@@ -143,8 +143,8 @@ namespace honei
         {
             __m128  _mm_lim_ps(__m128 vec)
             {
-                float __attribute__((aligned(16))) zero(0.f);
-                float __attribute__((aligned(16))) one(1.f);
+                float HONEI_ATTRIBUTE(aligned(16)) zero(0.f);
+                float HONEI_ATTRIBUTE(aligned(16)) one(1.f);
 
                 __m128 mm0 = _mm_set_ps1(zero);
                 __m128 mm1 = _mm_set_ps1(one);
@@ -155,8 +155,8 @@ namespace honei
 
             __m128d _mm_lim_pd(__m128d &  vec)
             {
-                double __attribute__((aligned(16))) zero(0.);
-                double __attribute__((aligned(16))) one(1.);
+                double HONEI_ATTRIBUTE(aligned(16)) zero(0.);
+                double HONEI_ATTRIBUTE(aligned(16)) one(1.);
 
                 __m128d mm0 = _mm_set_pd1(zero);
                 __m128d mm1 = _mm_set_pd1(one);

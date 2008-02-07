@@ -21,6 +21,7 @@
 #ifndef LIBSWE_GUARD_ASSEMBLY_PROCESSING_HH
 #define LIBSWE_GUARD_ASSEMBLY_PROCESSING_HH 1
 
+#include <honei/attributes.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/product.hh>
@@ -94,15 +95,15 @@ namespace honei
                 WorkPrec_ * c_e = c.elements();
 
                 ///Necessary values to be temporarily saved.
-                WorkPrec_ __attribute__((aligned(16))) tempPlus[(unsigned long)(3)];
-                WorkPrec_ __attribute__((aligned(16))) tempTopPlus[(unsigned long)(3)];
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempPlus[(unsigned long)(3)];
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempTopPlus[(unsigned long)(3)];
 
-                WorkPrec_ __attribute__((aligned(16))) phiPlusOld[(unsigned long)(3)];
-                WorkPrec_ __attribute__((aligned(16))) phiPlusNew[(unsigned long)(3)];
-                WorkPrec_ __attribute__((aligned(16))) phiMinusNew[(unsigned long)(3)];
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) phiPlusOld[(unsigned long)(3)];
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) phiPlusNew[(unsigned long)(3)];
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) phiMinusNew[(unsigned long)(3)];
 
-                WorkPrec_ __attribute__((aligned(16))) tempMinus[(unsigned long)(3)];
-                WorkPrec_ __attribute__((aligned(16))) tempTopMinus[(unsigned long)(3)];
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempMinus[(unsigned long)(3)];
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempTopMinus[(unsigned long)(3)];
 
                 for(int i(0); i < 3; ++i)
                 {
@@ -115,10 +116,10 @@ namespace honei
                     tempTopMinus[i] = WorkPrec_(0);
                 }
 
-                WorkPrec_ __attribute__((aligned(16)))phiMinusOld;
-                WorkPrec_ __attribute__((aligned(16)))temp;
-                WorkPrec_ __attribute__((aligned(16)))tempTop;
-                WorkPrec_ __attribute__((aligned(16)))prefac = delta_t/(4*delta_x);
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16))phiMinusOld;
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16))temp;
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16))tempTop;
+                WorkPrec_ HONEI_ATTRIBUTE(aligned(16))prefac = delta_t/(4*delta_x);
 
                 ///Needed Iterators.
                 //typename DenseVector<WorkPrec_>::ElementIterator d(m1diag.begin_elements());
@@ -325,15 +326,15 @@ namespace honei
             WorkPrec_ * w_e = w.elements();
             WorkPrec_ * d_e = dv.elements();
 
-            WorkPrec_ __attribute__((aligned(16))) tempPlus[(unsigned long)(3)];
-            WorkPrec_ __attribute__((aligned(16))) tempTopPlus[(unsigned long)(3)];
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempPlus[(unsigned long)(3)];
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempTopPlus[(unsigned long)(3)];
 
-            WorkPrec_ __attribute__((aligned(16))) phiPlusOld[(unsigned long)(3)];
-            WorkPrec_ __attribute__((aligned(16))) phiPlusNew[(unsigned long)(3)];
-            WorkPrec_ __attribute__((aligned(16))) phiMinusNew[(unsigned long)(3)];
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) phiPlusOld[(unsigned long)(3)];
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) phiPlusNew[(unsigned long)(3)];
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) phiMinusNew[(unsigned long)(3)];
 
-            WorkPrec_ __attribute__((aligned(16))) tempMinus[(unsigned long)(3)];
-            WorkPrec_ __attribute__((aligned(16))) tempTopMinus[(unsigned long)(3)];
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempMinus[(unsigned long)(3)];
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempTopMinus[(unsigned long)(3)];
 
             for(int i(0); i < 3; ++i)
             {
@@ -346,10 +347,10 @@ namespace honei
                 tempTopMinus[i] = WorkPrec_(0);
             }
 
-            WorkPrec_ __attribute__((aligned(16)))phiMinusOld;
-            WorkPrec_ __attribute__((aligned(16)))temp;
-            WorkPrec_ __attribute__((aligned(16)))tempTop;
-            WorkPrec_ __attribute__((aligned(16)))prefac = delta_t/(4*delta_y);
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) phiMinusOld;
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) temp;
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) tempTop;
+            WorkPrec_ HONEI_ATTRIBUTE(aligned(16)) prefac = delta_t/(4*delta_y);
 
             for(unsigned long s=0; s< d_width; ++s)
             {

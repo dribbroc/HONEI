@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/attributes.hh>
 #include <honei/libswe/assembly_processing.hh>
 
 #include <xmmintrin.h>
@@ -47,9 +48,9 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
     unsigned long sse_tripels((tripels - (tripels % 4)) / 4);
     unsigned long sse_limit(sse_tripels * 12);
 
-    float __attribute__((aligned(16))) c1_buffer[4];
-    float __attribute__((aligned(16))) c2_buffer[4];
-    float __attribute__((aligned(16))) c3_buffer[4];
+    float HONEI_ATTRIBUTE(aligned(16)) c1_buffer[4];
+    float HONEI_ATTRIBUTE(aligned(16)) c2_buffer[4];
+    float HONEI_ATTRIBUTE(aligned(16)) c3_buffer[4];
 
     for(int i(0); i < 4; ++i)
     {
@@ -58,21 +59,21 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
         c3_buffer[i] = c[2];
     }
 
-    float __attribute__((aligned(16))) d_h_buffer[tripels];
-    float __attribute__((aligned(16))) d_q1_buffer[tripels];
-    float __attribute__((aligned(16))) d_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) d_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) d_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) d_q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) b1_h_buffer[tripels];
-    float __attribute__((aligned(16))) b1_q1_buffer[tripels];
-    float __attribute__((aligned(16))) b1_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b1_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b1_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b1_q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) b2_h_buffer[tripels];
-    float __attribute__((aligned(16))) b2_q1_buffer[tripels];
-    float __attribute__((aligned(16))) b2_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b2_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b2_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b2_q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) bm1_h_buffer[tripels];
-    float __attribute__((aligned(16))) bm1_q1_buffer[tripels];
-    float __attribute__((aligned(16))) bm1_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) bm1_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) bm1_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) bm1_q2_buffer[tripels];
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);
@@ -220,9 +221,9 @@ BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK:
     unsigned long sse_tripels((tripels - (tripels % 2)) / 2);
     unsigned long sse_limit(sse_tripels * 6);
 
-    double __attribute__((aligned(16))) c1_buffer[4];
-    double __attribute__((aligned(16))) c2_buffer[4];
-    double __attribute__((aligned(16))) c3_buffer[4];
+    double HONEI_ATTRIBUTE(aligned(16)) c1_buffer[4];
+    double HONEI_ATTRIBUTE(aligned(16)) c2_buffer[4];
+    double HONEI_ATTRIBUTE(aligned(16)) c3_buffer[4];
 
     for(int i(0); i < 2; ++i)
     {
@@ -231,21 +232,21 @@ BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK:
         c3_buffer[i] = c[2];
     }
 
-    double __attribute__((aligned(16))) d_h_buffer[tripels];
-    double __attribute__((aligned(16))) d_q1_buffer[tripels];
-    double __attribute__((aligned(16))) d_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) d_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) d_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) d_q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) b1_h_buffer[tripels];
-    double __attribute__((aligned(16))) b1_q1_buffer[tripels];
-    double __attribute__((aligned(16))) b1_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b1_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b1_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b1_q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) b2_h_buffer[tripels];
-    double __attribute__((aligned(16))) b2_q1_buffer[tripels];
-    double __attribute__((aligned(16))) b2_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b2_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b2_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b2_q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) bm1_h_buffer[tripels];
-    double __attribute__((aligned(16))) bm1_q1_buffer[tripels];
-    double __attribute__((aligned(16))) bm1_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) bm1_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) bm1_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) bm1_q2_buffer[tripels];
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);
@@ -395,9 +396,9 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
     unsigned long sse_tripels((tripels - (tripels % 4)) / 4);
     unsigned long sse_limit(sse_tripels * 12);
 
-    float __attribute__((aligned(16))) d1_buffer[4];
-    float __attribute__((aligned(16))) d2_buffer[4];
-    float __attribute__((aligned(16))) d3_buffer[4];
+    float HONEI_ATTRIBUTE(aligned(16)) d1_buffer[4];
+    float HONEI_ATTRIBUTE(aligned(16)) d2_buffer[4];
+    float HONEI_ATTRIBUTE(aligned(16)) d3_buffer[4];
 
     for(int i(0); i < 4; ++i)
     {
@@ -406,21 +407,21 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
         d3_buffer[i] = d[2];
     }
 
-    float __attribute__((aligned(16))) d_h_buffer[tripels];
-    float __attribute__((aligned(16))) d_q1_buffer[tripels];
-    float __attribute__((aligned(16))) d_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) d_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) d_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) d_q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) b1_h_buffer[tripels];
-    float __attribute__((aligned(16))) b1_q1_buffer[tripels];
-    float __attribute__((aligned(16))) b1_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b1_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b1_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b1_q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) b2_h_buffer[tripels];
-    float __attribute__((aligned(16))) b2_q1_buffer[tripels];
-    float __attribute__((aligned(16))) b2_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b2_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b2_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) b2_q2_buffer[tripels];
 
-    float __attribute__((aligned(16))) bm1_h_buffer[tripels];
-    float __attribute__((aligned(16))) bm1_q1_buffer[tripels];
-    float __attribute__((aligned(16))) bm1_q2_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) bm1_h_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) bm1_q1_buffer[tripels];
+    float HONEI_ATTRIBUTE(aligned(16)) bm1_q2_buffer[tripels];
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);
@@ -568,9 +569,9 @@ BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK:
     unsigned long sse_tripels((tripels - (tripels % 2)) / 2);
     unsigned long sse_limit(sse_tripels * 6);
 
-    double __attribute__((aligned(16))) d1_buffer[2];
-    double __attribute__((aligned(16))) d2_buffer[2];
-    double __attribute__((aligned(16))) d3_buffer[2];
+    double HONEI_ATTRIBUTE(aligned(16)) d1_buffer[2];
+    double HONEI_ATTRIBUTE(aligned(16)) d2_buffer[2];
+    double HONEI_ATTRIBUTE(aligned(16)) d3_buffer[2];
 
     for(int i(0); i < 2; ++i)
     {
@@ -579,21 +580,21 @@ BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK:
         d3_buffer[i] = d[2];
     }
 
-    double __attribute__((aligned(16))) d_h_buffer[tripels];
-    double __attribute__((aligned(16))) d_q1_buffer[tripels];
-    double __attribute__((aligned(16))) d_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) d_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) d_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) d_q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) b1_h_buffer[tripels];
-    double __attribute__((aligned(16))) b1_q1_buffer[tripels];
-    double __attribute__((aligned(16))) b1_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b1_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b1_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b1_q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) b2_h_buffer[tripels];
-    double __attribute__((aligned(16))) b2_q1_buffer[tripels];
-    double __attribute__((aligned(16))) b2_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b2_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b2_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) b2_q2_buffer[tripels];
 
-    double __attribute__((aligned(16))) bm1_h_buffer[tripels];
-    double __attribute__((aligned(16))) bm1_q1_buffer[tripels];
-    double __attribute__((aligned(16))) bm1_q2_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) bm1_h_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) bm1_q1_buffer[tripels];
+    double HONEI_ATTRIBUTE(aligned(16)) bm1_q2_buffer[tripels];
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);

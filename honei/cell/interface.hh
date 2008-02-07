@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,6 +20,7 @@
 #ifndef CELL_GUARD_INTERFACE_HH
 #define CELL_GUARD_INTERFACE_HH 1
 
+#include <honei/attributes.hh>
 #include <honei/cell/opcodes.hh>
 #include <honei/cell/types.hh>
 
@@ -76,7 +77,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        struct __attribute__((packed)) Environment
+        struct HONEI_ATTRIBUTE(packed) Environment
         {
             LocalStoreAddress begin; ///< The begin of the available data space in Local Store memory.
 
@@ -88,7 +89,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        union __attribute__((packed)) Operand
+        union HONEI_ATTRIBUTE(packed) Operand
         {
             EffectiveAddress ea; ///< An effective address pointing to a PPE-side memory location.
 
@@ -140,7 +141,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        struct __attribute__((packed)) Instruction
+        struct HONEI_ATTRIBUTE(packed) Instruction
         {
             OpCode opcode; ///< An instruction's OpCode.
 
@@ -175,7 +176,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        struct __attribute__((packed)) Capabilities
+        struct HONEI_ATTRIBUTE(packed) Capabilities
         {
             KernelType type;
 
@@ -196,8 +197,6 @@ namespace honei
             rtm_mail, ///< The result will be transfered via mail.
             rtm_dma, ///< The result will be transfered via DMA.
         };
-
-
 
 #if defined(__PPU__) || defined(DOXYGEN)
 
