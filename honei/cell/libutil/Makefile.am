@@ -18,6 +18,7 @@ libutil_spe_a_SOURCES = \
 	operation_two_double_mail.cc \
 	operation_two_float_dma.cc \
 	operation_two_double_dma.cc \
+	operation_three_float_dma.cc \
 	profiler.cc \
 	transfer.cc
 

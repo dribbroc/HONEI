@@ -89,6 +89,18 @@ namespace honei
                     vector float & b_carry, const unsigned b_offset, const float optional_scalar);
         };
 
+        template <> struct Operation<3, float, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on given blocks of data.
+            void (*calculate)(vector float * a_elements, const vector float * b_elements,
+                    const vector float * c_elements, const unsigned size,
+                    vector float & b_carry, const unsigned b_offset, vector float & c_carry,
+                    const unsigned c_offset, const float optional_scalar);
+        };
+
         // the same for double
         template <> struct Operation<1, double, rtm_dma>
         {
