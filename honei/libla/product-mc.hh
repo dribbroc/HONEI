@@ -101,9 +101,12 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static void value(DenseVectorRange<DT1_> & a, const DenseMatrix<DT2_> & b, const DenseVectorRange<DT2_> & c)
         {
+            CONTEXT("When partial multiplying DenseMatrix with DenseMatrix:");
+            
             for (unsigned long j(0) ; j < b.rows() ; ++j)
             {
-                ScaledSum<Tag_>::value(a, b[j], c[j]);
+                DenseVectorRange<DT2_> range(b[j]);
+                ScaledSum<Tag_>::value(a, range, c[j]);
             }
         }
 
