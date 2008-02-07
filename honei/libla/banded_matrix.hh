@@ -191,25 +191,25 @@ namespace honei
                 return ConstVectorIterator(new BandIterator<DataType_>(*this, 2 * _size - 1));
             }
 
-            /// Returns iterator pointing to the first non zero band of the matrix.
+            /// Returns iterator pointing to the first inserted non zero band of the matrix.
             VectorIterator begin_non_zero_bands()
             {
                 return VectorIterator(new NonZeroBandIterator<DataType_>(*this, 0));
             }
 
-            /// Returns iterator pointing behind the last band of the matrix.
+            /// Returns iterator pointing behind the last inserted band of the matrix.
             VectorIterator end_non_zero_bands()
             {
                 return VectorIterator(new NonZeroBandIterator<DataType_>(*this, 2 * _size - 1));
             }
 
-            /// Returns iterator pointing to the first non zero band of the matrix.
+            /// Returns iterator pointing to the first inserted non zero band of the matrix.
             ConstVectorIterator begin_non_zero_bands() const
             {
                 return ConstVectorIterator(new NonZeroBandIterator<DataType_>(*this, 0));
             }
 
-            /// Returns iterator pointing behind the last band of the matrix.
+            /// Returns iterator pointing behind the last inserted band of the matrix.
             ConstVectorIterator end_non_zero_bands() const
             {
                 return ConstVectorIterator(new NonZeroBandIterator<DataType_>(*this, 2 * _size - 1));
