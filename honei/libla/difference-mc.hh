@@ -356,11 +356,12 @@ namespace honei
             unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
             unsigned long max_count(Configuration::instance()->get_value("mc::difference[DM,DM]::max-count", num_threads));
             unsigned long overall_size(a.rows());
-            bool alt(false);
             if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
-                overall_size = a.columns();
-                alt = true;
+                for (int i(0) ; i < a.rows() ; ++i)
+                {
+                    Difference<Tag_>::value(a[i], b[i]);
+                }
             }
             else if (overall_size < 2)
             {
@@ -369,10 +370,7 @@ namespace honei
             else
             {
                 PartitionList partitions;
-                if (!alt)
-                    Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
-                else
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
                 //ThreadPool * pool(ThreadPool::get_instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -383,8 +381,8 @@ namespace honei
                     offset = p->start;
                     part_size = p->size;
 
-                    FiveArgWrapper< Difference<Tag_>, DenseMatrix<DT1_>, const DenseMatrix<DT2_>, unsigned long, unsigned long, bool> 
-                        mywrapper(a, b, offset, part_size, alt);
+                    FourArgWrapper< Difference<Tag_>, DenseMatrix<DT1_>, const DenseMatrix<DT2_>, unsigned long, unsigned long> 
+                        mywrapper(a, b, offset, part_size);
                     std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
@@ -399,23 +397,11 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static void value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b, unsigned long offset, unsigned long part_size, bool alt)
+        static void value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b, unsigned long offset, unsigned long part_size)
         {
-            if (!alt)
+            for (unsigned long i(offset) ; i < (offset + part_size) ; ++i)
             {
-                for (unsigned long i(offset) ; i < (offset + part_size) ; ++i)
-                {
-                    Difference<typename Tag_::DelegateTo>::value(a[i], b[i]);
-                }
-            }
-            else
-            {
-                for (unsigned long i(0) ; i < a.rows() ; ++i)
-                {
-                    DenseVectorRange<DT1_> range_1(a[i], part_size, offset);
-                    DenseVectorRange<DT1_> range_2(b[i], part_size, offset);
-                    Difference<typename Tag_::DelegateTo>::value(range_1, range_2);
-                }
+                Difference<typename Tag_::DelegateTo>::value(a[i], b[i]);
             }
         }
 

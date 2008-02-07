@@ -104,3 +104,72 @@ mc::element_product[SM,DM]::max-count = 4
 
 mc::element_product[SM,SM]::min-part-size = 16
 mc::element_product[SM,SM]::max-count = 4
+
+mc::rt_sum[BM]::min-part-size = 16
+mc::rt_sum[BM]::max-count = 4
+
+mc::rt_sum[DM]::min-part-size = 16
+mc::rt_sum[DM]::max-count = 4
+
+mc::rt_sum[SM]::min-part-size = 16
+mc::rt_sum[SM]::max-count = 4
+
+mc::rt_sum[DVCB]::min-part-size = 16
+mc::rt_sum[DVCB]::max-count = 4
+
+mc::rt_sum[DVS]::min-part-size = 16
+mc::rt_sum[DVS]::max-count = 4
+
+mc::rt_sum[SV]::min-part-size = 16
+mc::rt_sum[SV]::max-count = 4
+
+mc::rt_max[BM]::min-part-size = 16
+mc::rt_max[BM]::max-count = 4
+
+mc::rt_max[DM]::min-part-size = 16
+mc::rt_max[DM]::max-count = 4
+
+mc::rt_max[SM]::min-part-size = 16
+mc::rt_max[SM]::max-count = 4
+
+mc::rt_max[DVCB]::min-part-size = 16
+mc::rt_max[DVCB]::max-count = 4
+
+mc::rt_max[DVS]::min-part-size = 16
+mc::rt_max[DVS]::max-count = 4
+
+mc::rt_max[SV]::min-part-size = 16
+mc::rt_max[SV]::max-count = 4
+
+mc::rt_min[BM]::min-part-size = 16
+mc::rt_min[BM]::max-count = 4
+
+mc::rt_min[DM]::min-part-size = 16
+mc::rt_min[DM]::max-count = 4
+
+mc::rt_min[SM]::min-part-size = 16
+mc::rt_min[SM]::max-count = 4
+
+mc::rt_min[DVCB]::min-part-size = 16
+mc::rt_min[DVCB]::max-count = 4
+
+mc::rt_min[DVS]::min-part-size = 16
+mc::rt_min[DVS]::max-count = 4
+
+mc::rt_min[SV]::min-part-size = 16
+mc::rt_min[SV]::max-count = 4
+
+mc::element_inverse[DM]::min-part-size = 16
+mc::element_inverse[DM]::max-count = 4
+
+mc::element_inverse[SM]::min-part-size = 16
+mc::element_inverse[SM]::max-count = 4
+
+mc::element_inverse[DVCB]::min-part-size = 16
+mc::element_inverse[DVCB]::max-count = 4
+
+mc::element_inverse[DVS]::min-part-size = 16
+mc::element_inverse[DVS]::max-count = 4
+
+mc::element_inverse[SV]::min-part-size = 16
+mc::element_inverse[SV]::max-count = 4

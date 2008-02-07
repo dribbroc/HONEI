@@ -35,6 +35,8 @@
 #include <honei/libutil/pool_task.hh>
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
+#include <honei/libutil/configuration.hh>
+#include <honei/libutil/partitioner.hh>
 
 #include <algorithm>
 #include <iostream>
@@ -66,43 +68,53 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of DenseMatrix elements (MultiCore):");
 
-            ThreadPool * tp(ThreadPool::get_instance());
-
-            unsigned long rest(x.columns() % PARTS);
-            unsigned long chunk_size(x.columns() / PARTS);
-
-            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
-
-            for (unsigned long i(0); i < x.rows(); ++i)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::element_inverse[DM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::element_inverse[DM]::max-count", num_threads));
+            unsigned long overall_size(x.rows());
+            if ((overall_size < max_count) && ((x.columns() / min_part_size) > overall_size) && ((x.columns() / min_part_size) >= 2))
             {
-                unsigned long j(0);
-                for ( ; j < rest; ++j)
+                for (unsigned long i(0) ; i < x.rows() ; ++i)
                 {
-                    DenseVectorRange<DT1_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
-                    OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    ElementInverse<Tag_>::value(x[i]);
+                }
+            }
+            else if (overall_size < 2)
+            {
+                ElementInverse<typename Tag_::DelegateTo>::value(x);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    ThreeArgWrapper< ElementInverse<Tag_>, DenseMatrix<DT1_>, unsigned long, unsigned long> mywrapper(x, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
-
                 }
-                if (chunk_size != 0)
+                while (! dispatched_tasks.empty())
                 {
-                    for ( ; j < PARTS; ++j)
-                    {
-                        DenseVectorRange<DT1_> range(x[i].range(chunk_size, j * chunk_size + rest));
-                        OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                        dispatched_tasks.push_back(ptr);
-                    }
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
-
-            while(! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
-            }
-
             return x;
+        }
+
+        template <typename DT_>
+        static void value(DenseMatrix<DT_> & a, unsigned long start, unsigned long part_size)
+        {
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i)
+            {
+                ElementInverse<typename Tag_::DelegateTo>::value(a[i]);
+            }
         }
 
         template <typename DT1_>
@@ -110,48 +122,53 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of SparseMatrix elements (MultiCore):");
 
-            ThreadPool * tp(ThreadPool::get_instance());
-
-            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
-
-            for (unsigned long i(0); i < x.rows(); ++i)
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::element_inverse[SM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::element_inverse[SM]::max-count", num_threads));
+            unsigned long overall_size(x.rows());
+            if ((overall_size < max_count) && ((x.columns() / min_part_size) > overall_size) && ((x.columns() / min_part_size) >= 2))
             {
-                unsigned long chunk_size(x[i].used_elements() / PARTS);
-                unsigned long rest(x[i].used_elements() % PARTS);
-                unsigned long j(0);
-                for ( ; j < rest; ++j)
+                for (unsigned long i(0) ; i < x.rows() ; ++i)
                 {
-                    typename Vector<DT1_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
-                    start += j * (chunk_size + 1);
-                    stop += (j + 1) * (chunk_size + 1);
-                    TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator >
-                        wrapper(start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    ElementInverse<Tag_>::value(x[i]);
+                }
+            }
+            else if (overall_size < 2)
+            {
+                ElementInverse<typename Tag_::DelegateTo>::value(x);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    ThreeArgWrapper< ElementInverse<Tag_>, SparseMatrix<DT1_>, unsigned long, unsigned long> mywrapper(x, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
-
-                if (chunk_size != 0)
+                while (! dispatched_tasks.empty())
                 {
-                    for ( ; j < PARTS; ++j)
-                    {
-                        typename Vector<DT1_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
-                        start += j * chunk_size + rest;
-                        stop += (j + 1) * chunk_size + rest;
-                        TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator >
-                            wrapper(start, stop);
-                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                        dispatched_tasks.push_back(ptr);
-                    }
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
-
-            while (! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
-            }
-
             return x;
+        }
+
+        template <typename DT_>
+        static void value(SparseMatrix<DT_> & a, unsigned long start, unsigned long part_size)
+        {
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i)
+            {
+                ElementInverse<typename Tag_::DelegateTo>::value(a[i]);
+            }
         }
 
         template <typename DT1_>
@@ -277,86 +294,84 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of DenseVectorContinuousBase elements (MultiCore):");
 
-            unsigned long rest(x.size() % PARTS);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::element_inverse[DVCB]::min-part-size", 1024));
+            unsigned long overall_size(x.size());
 
-            unsigned long chunk_size(x.size() / PARTS);
-
-            ThreadPool * tp(ThreadPool::get_instance());
-
-            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
-
-            unsigned long i(0);
-            for ( ; i < rest; ++i)
+            if (overall_size < 2 * min_part_size)
             {
-                DenseVectorRange<DT1_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
-                OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                dispatched_tasks.push_back(ptr);
+                ElementInverse<typename Tag_::DelegateTo>::value(x);
             }
-
-            if (chunk_size != 0)
+            else
             {
-                for ( ; i < PARTS; ++i)
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::element_inverse[DVCB]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
                 {
-                    DenseVectorRange<DT1_> range(x.range(chunk_size, i * chunk_size + rest));
-                    OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > wrapper(range);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    offset = p->start;
+                    part_size = p->size;
+                    DenseVectorRange<DT1_> range(x.range(part_size, offset));
+                    OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > mywrapper(range);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
-            }
 
-            while(! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
-
             return x;
         }
+
 
         template <typename DT1_>
         static DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & x)
         {
             CONTEXT("When calculating the inverse value of DenseVectorSlice elements (MultiCore):");
 
-            unsigned long rest(x.size() % PARTS);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::element_inverse[DVS]::min-part-size", 64));
+            unsigned long overall_size(x.used_elements());
 
-            unsigned long chunk_size(x.size() / PARTS);
-
-            ThreadPool * tp(ThreadPool::get_instance());
-
-            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
-
-            unsigned long i(0);
-            for ( ; i < rest; ++i)
+            if (overall_size < 2 * min_part_size)
             {
-                typename Vector<DT1_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
-                start += i * (chunk_size + 1);
-                stop += (i + 1) * (chunk_size + 1);
-                TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                dispatched_tasks.push_back(ptr);
+                ElementInverse<typename Tag_::DelegateTo>::value(x);
             }
-
-            if (chunk_size != 0)
+            else
             {
-                for ( ; i < PARTS; ++i)
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::element_inverse[DVS]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
                 {
+                    offset = p->start;
+                    part_size = p->size;
                     typename Vector<DT1_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
-                    start += i * chunk_size + rest;
-                    stop += (i + 1) * chunk_size + rest;
-                    TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(wrapper);
+                    start += offset;
+                    stop += (offset + part_size);
+                    TwoArgWrapper< ElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator> mywrapper(start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
-            }
 
-            while (! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
-
             return x;
         }
 
@@ -365,42 +380,41 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of SparseVector elements (MultiCore):");
 
-            unsigned long rest(x.used_elements() % PARTS);
-            unsigned long chunk_size(x.used_elements() / PARTS);
-            ThreadPool * tp(ThreadPool::get_instance());
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::element_inverse[SV]::min-part-size", 64));
+            unsigned long overall_size(x.used_elements());
 
-            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
-
-            unsigned long i(0);
-            for ( ; i < rest; ++i)
+            if (overall_size < 2 * min_part_size)
             {
-                typename Vector<DT1_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
-                start += i * (chunk_size + 1);
-                stop += (i + 1) * (chunk_size + 1);
-                TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                dispatched_tasks.push_back(ptr);
+                ElementInverse<typename Tag_::DelegateTo>::value(x);
             }
-
-            if (chunk_size != 0)
+            else
             {
-                for ( ; i < PARTS; ++i)
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::element_inverse[SV]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
                 {
-                    typename Vector<DT1_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
-                    start += i * chunk_size + rest;
-                    stop += (i + 1) * chunk_size + rest;
-                    TwoArgWrapper< MCElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator > wrapper(start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                    offset = p->start;
+                    part_size = p->size;
+                    typename Vector<DT1_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
+                    start += offset;
+                    stop += (offset + part_size);
+                    TwoArgWrapper< ElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator> mywrapper(start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
-            }
 
-            while (! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
-
             return x;
         }
 

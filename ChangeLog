@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-06 David Gies <david-gies@gmx.de>
+
+	* honei/libla/element_inverse-mc.hh, honei/libla/reduction.hh, honei/honeirc:
+	Added usage of configuration class and partitioner.
+	* honei/libla/element_product-mc.hh, honei/libla/difference-mc.hh, honei/libla/sum-mc.hh, 
+	honei/libutil/benchmark_info.hh: Minor changes.
+
 2008-02-07 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/cell/interface.hh, honei/cell/libutil/Makefile.am,

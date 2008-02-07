@@ -2,12 +2,13 @@
 #define LIBUTIL_GUARD_BENCHMARK_INFO_HH 1
 
 #include <list>
+#include <iostream>
 
 struct BenchmarkInfo
 {
-    unsigned long flops;
-    unsigned long load;
-    unsigned long store;
+    unsigned long long flops;
+    unsigned long long load;
+    unsigned long long store;
     std::list<unsigned long> size;
     double scale;
     std::string scaleinfo;
@@ -29,7 +30,7 @@ struct BenchmarkInfo
         return *this;
     }
 
-    BenchmarkInfo operator*(int a) 
+    BenchmarkInfo operator*(unsigned long a) 
     {
         flops *= a;
         load *= a;

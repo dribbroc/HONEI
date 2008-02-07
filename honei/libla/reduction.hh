@@ -33,11 +33,9 @@
 #include <honei/libutil/pool_task.hh>
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
+#include <honei/libutil/configuration.hh>
+#include <honei/libutil/partitioner.hh>
 #include <honei/libutil/benchmark_info.hh>
-
-///\todo: Do not use define for setting size of multicore-partitions.
-// For optimization purposes
-#define PARTS 8
 
 namespace honei
 {
@@ -612,37 +610,42 @@ namespace honei
         static DenseVector<DT_> value(const BandedMatrix<DT_> & a)
         {
             CONTEXT("When reducing BandedMatrix to DenseVector by sum (MultiCore):");
-            unsigned long parts(PARTS);
-            unsigned long modulo(0);
-            unsigned long div(1);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_sum[BM]::min-part-size", 64));
+            unsigned long overall_size(a.size());
             DenseVector<DT_> result(a.size(), DT_(0));
-            if (a.band_at(a.size()-1).exists())
-                result = a.band(0);
-            if (a.size() < parts)
-                parts = a.size();
+            if (overall_size < 2 * min_part_size)
+            {
+                result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
+            }
             else
             {
-                div = a.size() / parts;
-                modulo = a.size() % parts;
-            }
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            for (int i(0) ; i < modulo ; ++i)
-            {
-                DenseVectorRange<DT_> range(result.range(div+1, i * (div + 1)));
-                ThreeArgWrapper< Reduction<rt_sum, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i*(div+1));
-                pt[i] = p->dispatch(mywrapper);
-            }
-            for (int i(modulo) ; i < parts ; ++i)
-            {
-                DenseVectorRange<DT_> range(result.range(div, modulo + div * i));
-                ThreeArgWrapper< Reduction<rt_sum, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i * div + modulo);
-                pt[i] = p->dispatch(mywrapper);
-            }
-            for (int i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
+                
+                if (a.band_at(a.size()-1).exists())
+                    result = a.band(0);
+
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_sum[BM]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    ThreeArgWrapper< Reduction<rt_sum, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, offset);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
         }
@@ -702,21 +705,56 @@ namespace honei
             CONTEXT("When reducing DenseMatrix to DenseVector by sum (MultiCore):");
             DenseVector<DT_> result(a.rows());
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_sum[DM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::rt_sum[DM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
                 typename Vector<DT_>::ElementIterator l(result.begin_elements());
-                l += i;
-                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*l, a[i]);
-                pt[i] = p->dispatch(mywrapper);
+                for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
+                {
+                    *l = Reduction<rt_sum, Tag_>::value(a[i]);
+                }
             }
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            else if (overall_size < 2)
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size; 
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    FourArgWrapper< Reduction<rt_sum, Tag_>, const DenseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
+        }
+
+        template <typename DT_>
+        static void value(const DenseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
+        {
+            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
+            {
+                *l = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a[i]);
+            }
         }
 
         template <typename DT_>
@@ -725,62 +763,99 @@ namespace honei
             CONTEXT("When reducing SparseMatrix to DenseVector by sum (MultiCore):");
             DenseVector<DT_> result(a.rows());
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_sum[SM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::rt_sum[SM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
                 typename Vector<DT_>::ElementIterator l(result.begin_elements());
-                l += i;
-                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const SparseVector<DT_> > mywrapper(*l, a[i]);
-                pt[i] = p->dispatch(mywrapper);
+                for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
+                {
+                    *l = Reduction<rt_sum, Tag_>::value(a[i]);
+                }
             }
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            else if (overall_size < 2)
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size; 
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    FourArgWrapper< Reduction<rt_sum, Tag_>, const SparseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
         }
 
         template <typename DT_>
+        static void value(const SparseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
+        {
+            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
+            {
+                *l = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a[i]);
+            }
+        }
+
+        template <typename DT_>
         static DT_ value(const DenseVectorContinuousBase<DT_> & a)
         {
-            CONTEXT("When reducing DenseVectorContinuousBase to Scalar by sum (MultiCore):");
             DT_ result(0);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_sum[DVCB]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
 
-            unsigned long parts(PARTS);
-            unsigned long div(a.size() / parts);
-            if (div <= 1) 
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < (modulo) ; ++i)
+            else
             {
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_sum[DVCB]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
                 typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                pri += i;
-                DenseVectorRange<DT_> range(a.range(div+1, i * (div + 1)));
-                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                pri += i;
-                DenseVectorRange<DT_> range(a.range(div, modulo + div * i));
-                ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++pri)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    DenseVectorRange<DT_> range(a.range(part_size, offset));
+                    ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*pri, range);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
@@ -789,44 +864,46 @@ namespace honei
         {
             CONTEXT("When reducing DenseVectorSlice to Scalar by sum (MultiCore):");
             DT_ result(0);
-            unsigned long parts(PARTS);
-            unsigned long div(a.size() / parts);
-            if (div <= 1) 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_sum[DVS]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
+
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                start += i * (div + 1);
-                stop += (i + 1) * (div +1);
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-                start += (div + 1);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                start += i * (div) + modulo;
-                stop += (i + 1) * (div) + modulo;
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_sum[DVS]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                int i(0);
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++i)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    pri += i;
+                    typename Vector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
+                    start += offset;
+                    stop += (offset + part_size);
+                    ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
@@ -835,43 +912,46 @@ namespace honei
         {
             CONTEXT("When reducing SparseVector to Scalar by sum (MultiCore):");
             DT_ result(0);
-            unsigned long parts(PARTS);
-            unsigned long div(a.used_elements() / parts);
-            if (div <= 1) 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_sum[SV]::min-part-size", 64));
+            unsigned long overall_size(a.used_elements());
+
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.used_elements() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                start += i * (div + 1);
-                stop += (i + 1) * (div +1);
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                start += i * (div) + modulo;
-                stop += (i + 1) * (div) + modulo;
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_sum[SV]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                int i(0);
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++i)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    pri += i;
+                    typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                    start += offset;
+                    stop += (offset + part_size);
+                    ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_sum, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
@@ -893,37 +973,42 @@ namespace honei
         static DenseVector<DT_> value(const BandedMatrix<DT_> & a)
         {
             CONTEXT("When reducing BandedMatrix to DenseVector by max (MultiCore):");
-            unsigned long parts(PARTS);
-            unsigned long modulo(0);
-            unsigned long div(1);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_max[BM]::min-part-size", 64));
+            unsigned long overall_size(a.size());
             DenseVector<DT_> result(a.size(), DT_(0));
-            if (a.band_at(a.size()-1).exists())
-                result = a.band(0);                
-            if (a.size() < parts)
-                parts = a.size();
+            if (overall_size < 2 * min_part_size)
+            {
+                result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
+            }
             else
             {
-                div = a.size() / parts;
-                modulo = a.size() % parts;
-            }
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            for (int i(0) ; i < modulo ; ++i)
-            {
-                DenseVectorRange<DT_> range(result.range(div+1, i * (div + 1)));
-                ThreeArgWrapper< Reduction<rt_max, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i*(div+1));
-                pt[i] = p->dispatch(mywrapper);
-            }
-            for (int i(modulo) ; i < parts ; ++i)
-            {
-                DenseVectorRange<DT_> range(result.range(div, modulo + div * i));
-                ThreeArgWrapper< Reduction<rt_max, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i * div + modulo);
-                pt[i] = p->dispatch(mywrapper);
-            }
-            for (int i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
+                
+                if (a.band_at(a.size()-1).exists())
+                    result = a.band(0);
+
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_max[BM]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    ThreeArgWrapper< Reduction<rt_max, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, offset);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
         }
@@ -985,21 +1070,56 @@ namespace honei
             CONTEXT("When reducing DenseMatrix to DenseVector by max (MultiCore):");
             DenseVector<DT_> result(a.rows());
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_max[DM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::rt_max[DM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
                 typename Vector<DT_>::ElementIterator l(result.begin_elements());
-                l += i;
-                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*l, a[i]);
-                pt[i] = p->dispatch(mywrapper);
+                for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
+                {
+                    *l = Reduction<rt_max, Tag_>::value(a[i]);
+                }
             }
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            else if (overall_size < 2)
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size; 
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    FourArgWrapper< Reduction<rt_max, Tag_>, const DenseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
+        }
+
+        template <typename DT_>
+        static void value(const DenseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
+        {
+            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
+            {
+                *l = Reduction<rt_max, typename Tag_::DelegateTo>::value(a[i]);
+            }
         }
 
         template <typename DT_>
@@ -1008,21 +1128,56 @@ namespace honei
             CONTEXT("When reducing SparseMatrix to DenseVector by max (MultiCore):");
             DenseVector<DT_> result(a.rows());
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_max[SM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::rt_max[SM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
                 typename Vector<DT_>::ElementIterator l(result.begin_elements());
-                l += i;
-                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const SparseVector<DT_> > mywrapper(*l, a[i]);
-                pt[i] = p->dispatch(mywrapper);
+                for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
+                {
+                    *l = Reduction<rt_max, Tag_>::value(a[i]);
+                }
             }
-            for (unsigned long i = 0; i < a.rows(); ++i)
+            else if (overall_size < 2)
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size; 
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    FourArgWrapper< Reduction<rt_max, Tag_>, const SparseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
+        }
+
+        template <typename DT_>
+        static void value(const SparseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
+        {
+            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
+            {
+                *l = Reduction<rt_max, typename Tag_::DelegateTo>::value(a[i]);
+            }
         }
 
         template <typename DT_>
@@ -1030,40 +1185,43 @@ namespace honei
         {
             CONTEXT("When reducing DenseVectorContinuousBase to Scalar by max (MultiCore):");
             DT_ result(0);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_max[DVCB]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
 
-            unsigned long parts(PARTS);
-            unsigned long div(a.size() / parts);
-            if (div <= 1) 
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_max[DVCB]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
                 typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                pri += i;
-                DenseVectorRange<DT_> range(a.range(div+1, i * (div + 1)));
-                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                pri += i;
-                DenseVectorRange<DT_> range(a.range(div, modulo + div * i));
-                ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++pri)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    DenseVectorRange<DT_> range(a.range(part_size, offset));
+                    ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*pri, range);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
@@ -1072,90 +1230,95 @@ namespace honei
         {
             CONTEXT("When reducing DenseVectorSlice to Scalar by max (MultiCore):");
             DT_ result(0);
-            unsigned long parts(PARTS);
-            unsigned long div(a.size() / parts);
-            if (div <= 1) 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_max[DVS]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
+
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                start += i * (div + 1);
-                stop += (i + 1) * (div +1);
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-                ++pri;
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                start += i * (div) + modulo;
-                stop += (i + 1) * (div) + modulo;
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-                ++pri;
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_max[DVS]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                int i(0);
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++i)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    pri += i;
+                    typename Vector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
+                    start += offset;
+                    stop += (offset + part_size);
+                    ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
+
 
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & a)
         {
             CONTEXT("When reducing SparseVector to Scalar by max (MultiCore):");
             DT_ result(0);
-            unsigned long parts(PARTS);
-            unsigned long div(a.used_elements() / parts);
-            if (div <= 1) 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_max[SV]::min-part-size", 64));
+            unsigned long overall_size(a.used_elements());
+
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_max, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.used_elements() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                start += i * (div + 1);
-                stop += (i + 1) * (div +1);
-                pri += i;
-                ThreeArgWrapper<Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                start += i * (div) + modulo;
-                stop += (i + 1) * (div) + modulo;
-                pri += i;
-                ThreeArgWrapper<Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_max[SV]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                int i(0);
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++i)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    pri += i;
+                    typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                    start += offset;
+                    stop += (offset + part_size);
+                    ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_max, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
@@ -1178,37 +1341,42 @@ namespace honei
         static DenseVector<DT_> value(const BandedMatrix<DT_> & a)
         {
             CONTEXT("When reducing BandedMatrix to DenseVector by min (MultiCore):");
-            unsigned long parts(PARTS);
-            unsigned long modulo(0);
-            unsigned long div(1);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_min[BM]::min-part-size", 64));
+            unsigned long overall_size(a.size());
             DenseVector<DT_> result(a.size(), DT_(0));
-            if (a.band_at(a.size()-1).exists())
-                result = a.band(0);                
-            if (a.size() < parts)
-                parts = a.size();
+            if (overall_size < 2 * min_part_size)
+            {
+                result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
+            }
             else
             {
-                div = a.size() / parts;
-                modulo = a.size() % parts;
-            }
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            for (int i(0) ; i < modulo ; ++i)
-            {
-                DenseVectorRange<DT_> range(result.range(div+1, i * (div + 1)));
-                ThreeArgWrapper< Reduction<rt_min, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i*(div+1));
-                pt[i] = p->dispatch(mywrapper);
-            }
-            for (int i(modulo) ; i < parts ; ++i)
-            {
-                DenseVectorRange<DT_> range(result.range(div, modulo + div * i));
-                ThreeArgWrapper< Reduction<rt_min, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, i * div + modulo);
-                pt[i] = p->dispatch(mywrapper);
-            }
-            for (int i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
+                
+                if (a.band_at(a.size()-1).exists())
+                    result = a.band(0);
+
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_min[BM]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    ThreeArgWrapper< Reduction<rt_min, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, offset);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
         }
@@ -1270,21 +1438,56 @@ namespace honei
             CONTEXT("When reducing DenseMatrix to DenseVector by min (MultiCore):");
             DenseVector<DT_> result(a.rows());
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_min[DM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::rt_min[DM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
                 typename Vector<DT_>::ElementIterator l(result.begin_elements());
-                l += i;
-                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*l, a[i]);
-                pt[i] = p->dispatch(mywrapper);
+                for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
+                {
+                    *l = Reduction<rt_min, Tag_>::value(a[i]);
+                }
             }
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            else if (overall_size < 2)
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size; 
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    FourArgWrapper< Reduction<rt_min, Tag_>, const DenseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
+        }
+
+        template <typename DT_>
+        static void value(const DenseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
+        {
+            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
+            {
+                *l = Reduction<rt_min, typename Tag_::DelegateTo>::value(a[i]);
+            }
         }
 
         template <typename DT_>
@@ -1293,21 +1496,56 @@ namespace honei
             CONTEXT("When reducing SparseMatrix to DenseVector by min (MultiCore):");
             DenseVector<DT_> result(a.rows());
 
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[a.rows()];
-            for (unsigned long i(0) ; i < a.rows() ; ++i) /// \todo VectorIterator!
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_min[SM]::min-part-size", 64));
+            unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+            unsigned long max_count(Configuration::instance()->get_value("mc::rt_min[SM]::max-count", num_threads));
+            unsigned long overall_size(a.rows());
+            if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
                 typename Vector<DT_>::ElementIterator l(result.begin_elements());
-                l += i;
-                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const SparseVector<DT_> > mywrapper(*l, a[i]);
-                pt[i] = p->dispatch(mywrapper);
+                for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
+                {
+                    *l = Reduction<rt_min, Tag_>::value(a[i]);
+                }
             }
-            for (unsigned long i = 0 ; i < a.rows() ; ++i)
+            else if (overall_size < 2)
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
+            }
+            else
+            {
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size; 
+                    DenseVectorRange<DT_> range(result.range(part_size, offset));
+                    FourArgWrapper< Reduction<rt_min, Tag_>, const SparseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             }
             return result;
+        }
+
+        template <typename DT_>
+        static void value(const SparseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
+        {
+            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
+            {
+                *l = Reduction<rt_min, typename Tag_::DelegateTo>::value(a[i]);
+            }
         }
 
         template <typename DT_>
@@ -1315,40 +1553,43 @@ namespace honei
         {
             CONTEXT("When reducing DenseVectorContinuousBase to Scalar by min (MultiCore):");
             DT_ result(0);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_min[DVCB]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
 
-            unsigned long parts(PARTS);
-            unsigned long div(a.size() / parts);
-            if (div <= 1) 
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_min[DVCB]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
                 typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                pri += i;
-                DenseVectorRange<DT_> range(a.range(div+1, i * (div + 1)));
-                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                pri += i;
-                DenseVectorRange<DT_> range(a.range(div, modulo + div * i));
-                ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++pri)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    DenseVectorRange<DT_> range(a.range(part_size, offset));
+                    ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*pri, range);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
@@ -1357,43 +1598,46 @@ namespace honei
         {
             CONTEXT("When reducing DenseVectorSlice to Scalar by min (MultiCore):");
             DT_ result(0);
-            unsigned long parts(PARTS);
-            unsigned long div(a.size() / parts);
-            if (div <= 1) 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_min[DVS]::min-part-size", 1024));
+            unsigned long overall_size(a.size());
+
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                start += i * (div + 1);
-                stop += (i + 1) * (div +1);
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                start += i * (div) + modulo;
-                stop += (i + 1) * (div) + modulo;
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator > wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_min[DVS]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                int i(0);
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    pri += i;
+                    typename Vector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
+                    start += offset;
+                    stop += (offset + part_size);
+                    ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
@@ -1402,43 +1646,46 @@ namespace honei
         {
             CONTEXT("When reducing SparseVector to Scalar by min (MultiCore):");
             DT_ result(0);
-            unsigned long parts(PARTS);
-            unsigned long div(a.used_elements() / parts);
-            if (div <= 1) 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::rt_min[SV]::min-part-size", 64));
+            unsigned long overall_size(a.used_elements());
+
+            if (overall_size < 2 * min_part_size)
             {
                 result = Reduction<rt_min, typename Tag_::DelegateTo>::value(a);
-                return result;
             }
-            unsigned long modulo = a.used_elements() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
-            PoolTask * pt[parts];
-            DenseVector<DT_> preresult(parts, DT_(0));
-            for (unsigned long i(0) ; i < modulo ; ++i)
+            else
             {
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                start += i * (div + 1);
-                stop += (i + 1) * (div +1);
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(modulo) ; i < parts ; ++i)
-            {
-                typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
-                start += i * (div) + modulo;
-                stop += (i + 1) * (div) + modulo;
-                pri += i;
-                ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> wrapper(pri, start, stop);
-                pt[i] = p->dispatch(wrapper);
-            }
-            for (unsigned long i(0) ; i < parts ; ++i)
-            {
-                pt[i]->wait_on();
-                delete pt[i];
-            }
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::rt_min[SV]::max-count", num_threads));
+
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
+                DenseVector<DT_> preresult(partitions.size(), DT_(0));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+                int i(0);
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++i)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    pri += i;
+                    typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
+                    start += offset;
+                    stop += (offset + part_size);
+                    ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
             result = Reduction<rt_min, typename Tag_::DelegateTo>::value(preresult);
+            }
             return result;
         }
 
