@@ -7,6 +7,10 @@ see the NEWS file.
 
 2008-02-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/cell/types.hh: Fixed compile bug on Cell BE.
+
+2008-02-08 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/cell/interface.hh, honei/cell/libla/scale_sparse_float.cc,
 	honei/cell/libutil/debug.hh, honei/cell/libutil/profiler.hh,
 	honei/cell/libutil/transfer.hh, honei/cell/types.hh,

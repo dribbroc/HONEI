@@ -140,7 +140,7 @@ namespace honei
 # error "You should not include this header in anything but Cell source code!"
 #endif
 
-        struct HONEI_ATTRIBUTE(packed, aligned(8)) ListElement
+        struct HONEI_ATTRIBUTE(packed) HONEI_ATTRIBUTE(aligned(8)) ListElement
         {
             unsigned stall_and_notify : 1;
             unsigned reserved : 16;
