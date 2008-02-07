@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) Joachim Messer <joachim.messer@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Volker Jung <volker.jung@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,18 +21,20 @@
 #ifndef LIBLA_GUARD_DOT_PRODUCT_MC_HH
 #define LIBLA_GUARD_DOT_PRODUCT_MC_HH 1
 
-#include <honei/libla/vector.hh>
 #include <honei/libla/dense_vector.hh>
+#include <honei/libla/dense_vector_range.hh>
 #include <honei/libla/dot_product.hh>
 #include <honei/libla/sparse_vector.hh>
+#include <honei/libla/vector.hh>
 #include <honei/libla/vector_error.hh>
-#include <honei/libutil/tags.hh>
-
-#include <honei/libla/dense_vector_range.hh>
 #include <honei/libutil/lock.hh>
+#include <honei/libutil/partitioner.hh>
 #include <honei/libutil/pool_task.hh>
+#include <honei/libutil/tags.hh>
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
+
+#include <list>
 #include <tr1/functional>
 
 
@@ -64,39 +67,41 @@ namespace honei
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::dotproduct[DVCB,DVCB]::min-part-size",
+                                            Configuration::instance()->get_value("mc::default-min-size", 1024)));
+
             DT1_ result(0);
-            unsigned long parts(8);
-            unsigned long div = a.size() / parts;
-            if (div == 0)
+            if (a.size() < (min_part_size << 1))
             {
                 result = DotProduct<typename Tag_::DelegateTo>::value(a,b);
             }
             else
             {
                 Mutex mutex;
-                unsigned long modulo = a.size() % parts;
-                ThreadPool * p(ThreadPool::get_instance());
-                PoolTask * pt[parts];
-                for (int i(0); i < modulo; ++i)
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+                PartitionList partitions;
+
+                Partitioner<typename tags::CPU::MultiCore>::Partitioner(Configuration::instance()->get_value("mc::dotproduct[DVCB,DVCB]::max-count",
+                                2 * Configuration::instance()->get_value("mc::num-cores", 2)),
+                            min_part_size, 16, a.size(), PartitionList::Filler(partitions));
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    DenseVectorRange<DT1_> range_1(a.range(div+1, i*(div+1)));
-                    DenseVectorRange<DT2_> range_2(b.range(div+1, i*(div+1)));
+                    DenseVectorRange<DT1_> range_1(a.range(p->size, p->start));
+                    DenseVectorRange<DT2_> range_2(b.range(p->size, p->start));
                     ResultTwoArgWrapper<DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(result, range_1, range_2);
-                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(std::tr1::bind(mywrapper, &mutex)));
+                    dispatched_tasks.push_back(ptr);
                 }
-                for (unsigned long i(modulo); i < parts; ++i)
+
+                while (! dispatched_tasks.empty())
                 {
-                    DenseVectorRange<DT1_> range_1(a.range(div, modulo+(i*div)));
-                    DenseVectorRange<DT2_> range_2(b.range(div, modulo+(i*div)));
-                    ResultTwoArgWrapper<DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(result, range_1, range_2);
-                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
-                }
-                for (unsigned long i(0); i < parts; ++i)
-                {
-                    pt[i]->wait_on();
-                    delete pt[i];
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
                 }
             }
+
             return result;
         }
 
@@ -107,43 +112,45 @@ namespace honei
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
+
             DT1_ result(0);
-            unsigned long parts(8);
-            unsigned long modulo = a.used_elements() % parts;
-            unsigned long div = a.used_elements() / parts;
-            if (div == 0)
+
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::dot-product[SV,DVCB]",
+                        Configuration::instance()->get_value("mc::num-cores", 1024)));
+
+            if (a.used_elements() < (min_part_size << 1))
             {
                 result = DotProduct<typename Tag_::DelegateTo>::value(a, b);
             }
             else
             {
                 Mutex mutex;
-                ThreadPool * p(ThreadPool::get_instance());
-                PoolTask * pt[parts];
+                std::list< PoolTask * > dispatched_tasks;
+
+                PartitionList partitions;
+
+                Partitioner<tags::CPU::MultiCore>::Partitioner(Configuration::instance()->get_value("mc::dot-product[SV,DVCB]::max-count",
+                                2 * Configuration::instance()->get_value("mc::num-cores", 2)),
+                        min_part_size, 16, a.used_elements(), PartitionList::Filler(partitions));
+
                 typename Vector<DT2_>::ConstElementIterator r(a.begin_non_zero_elements());
-                unsigned long offset;
-                for (int i(0); i < modulo; ++i) 
+                unsigned long offset(0);
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
                 {
                     offset = r.index();
-                    r += div;
-                    DenseVectorRange<DT2_> range(b.range(r.index()-offset+1, offset));
-                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_,const SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, (i*(div+1)));
-                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
+                    r += p->size;
+                    DenseVectorRange<DT2_> range(b.range(r.index() - offset + 1, offset));
+                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_,const SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long >
+                        mywrapper(result, a, range, offset);
+                    dispatched_tasks.push_back(ThreadPool::get_instance()->dispatch(std::tr1::bind(mywrapper, &mutex)));
                     ++r;
                 }
-                for (unsigned long i(modulo); i < parts; ++i)
+                while (! dispatched_tasks.empty())
                 {
-                    offset = r.index();
-                    r+= div-1;
-                    DenseVectorRange<DT2_> range(b.range(r.index()-offset+1, offset));
-                    ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_,const SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(result, a, range, modulo + (i*div));
-                    pt[i] = p->dispatch(std::tr1::bind(mywrapper, &mutex));
-                    ++r;
-                }
-                for (unsigned long i = 0; i < parts;  ++i)
-                {
-                    pt[i]->wait_on();
-                    delete pt[i];
+                    dispatched_tasks.front()->wait_on();
+                    PoolTask * temp(dispatched_tasks.front());
+                    dispatched_tasks.pop_front();
+                    delete temp;
                 }
             }
             return result;

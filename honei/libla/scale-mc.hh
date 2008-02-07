@@ -24,16 +24,15 @@
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/scale.hh>
 #include <honei/libla/sparse_matrix.hh>
+#include <honei/libutil/configuration.hh>
+#include <honei/libutil/log.hh>
+#include <honei/libutil/partitioner.hh>
+#include <honei/libutil/stringify.hh>
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libutil/wrapper.hh>
 #include <honei/libutil/tags.hh>
 #include <list>
 
-
-///\todo: Do not use define for setting size of multicore-partitions.
-// For optimization purposes
-#define MIN_CHUNK_SIZE 256
-#define PARTS 8
 
 namespace honei
 {
@@ -44,8 +43,8 @@ namespace honei
         template <typename DT_>
         static inline DT_ calculate_parts(const DT_ ref)
         {
-            if (ref / MIN_CHUNK_SIZE < PARTS) return ref / MIN_CHUNK_SIZE;
-            return PARTS;
+            if (ref / 4096 < 8) return ref / 4096;
+            return 8;
         }
 
         template <typename DT1_, typename DT2_>
@@ -57,26 +56,26 @@ namespace honei
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.columns()));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scale[DM]::min-part-size", 1024));
+            unsigned long overall_size(x.columns());
 
-            if (num_parts)
+
+            if (overall_size >= (min_part_size << 1))
             {
-                unsigned long chunk_size(x.columns() / num_parts);
-                unsigned long rest(x.columns() % chunk_size);
+
+                PartitionList partitions;
+
+                Partitioner<tags::CPU::MultiCore>::Partitioner(
+                    Configuration::instance()->get_value("mc::scale[DM]::max-count",
+                        2 * Configuration::instance()->get_value("mc::num-cores", 2)),
+                    min_part_size, 16, overall_size, PartitionList::Filler(partitions));
 
                 for (unsigned long i(0); i < x.rows(); ++i)
                 {
-                    unsigned long j(0);
-                    for ( ; j < rest; ++j)
+                    for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ;
+                            p != p_end ; ++p)
                     {
-                        DenseVectorRange<DT2_> range(x[i].range(chunk_size + 1, j * (chunk_size + 1)));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(range, a);
-                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                        dispatched_tasks.push_back(ptr);
-                    }
-                    for ( ; j < num_parts; ++j)
-                    {
-                        DenseVectorRange<DT2_> range(x[i].range(chunk_size, j * chunk_size + rest));
+                        DenseVectorRange<DT2_> range(x[i].range(p->size, p->start));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ > wrapper(range, a);
                         std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
                         dispatched_tasks.push_back(ptr);
@@ -110,29 +109,26 @@ namespace honei
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scale[SM]::min-part-size",
+                                            Configuration::instance()->get_value("mc::default-min-size", 1024)));
+
             for (unsigned long i(0); i < x.rows(); ++i)
             {
-                unsigned long num_parts(MCScale<Tag_>::calculate_parts(x[i].used_elements()));
-                if (num_parts)
+                if (x[i].used_elements() >= (min_part_size << 1))
                 {
-                    unsigned long chunk_size(x[i].used_elements() / num_parts);
-                    unsigned long rest(x[i].used_elements() % chunk_size);
-                    unsigned long j(0);
-                    for ( ; j < rest; ++j)
+                    PartitionList partitions;
+
+                    Partitioner<tags::CPU::MultiCore>(
+                            Configuration::instance()->get_value("mc::scale[SM]::max-count",
+                                2 * Configuration::instance()->get_value("mc::num-cores", 2)),
+                            min_part_size, 16, x[i].used_elements(), PartitionList::Filler(partitions));
+
+                    for ( PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                     {
-                        typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
-                        start += j * (chunk_size + 1);
-                        stop += (j + 1) * (chunk_size + 1);
-                        ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
-                            wrapper(start, stop, a);
-                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                        dispatched_tasks.push_back(ptr);
-                    }
-                    for ( ; j < num_parts; ++j)
-                    {
-                        typename Vector<DT2_>::ElementIterator start(x[i].begin_non_zero_elements()), stop(x[i].begin_non_zero_elements());
-                        start += j * chunk_size + rest;
-                        stop += (j + 1) * chunk_size + rest;
+                        typename Vector<DT2_>::ElementIterator start(x[i].non_zero_element_at(p->start)),
+                                stop(x[i].non_zero_element_at(p->start + p->size));
+                        start += p->start;
+                        stop += p->start + p->size;
                         ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator, typename Vector<DT2_>::ElementIterator, const DT1_ >
                             wrapper(start, stop, a);
                         std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
@@ -167,35 +163,29 @@ namespace honei
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scale[BM]::min-part-size",
+                                                Configuration::instance()->get_value("mc::default-min-size", 1024)));
+
+            unsigned long max_count(Configuration::instance()->get_value("mc::scale[BM]::max-count",
+                                        2 * Configuration::instance()->get_value("mc::num-cores", 2)));
+
             typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands());
 
             // Calculating lower triangular matrix.
-            for (typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands()), vi_end(x.band_at(x.size() - 1)) ;
+            for (typename BandedMatrix<DT2_>::VectorIterator vi_end(x.band_at(x.size() - 1)) ;
                     vi != vi_end ; ++vi)
             {
-                if (! vi.exists())
-                    continue;
-
                 unsigned long band_size(x.size() - vi.index() - 1);
-                unsigned long num_parts(MCScale<Tag_>::calculate_parts(band_size));
 
-                if (num_parts)
+                if (band_size >= (min_part_size << 1))
                 {
-                    unsigned long chunk_size(band_size / num_parts);
-                    unsigned long rest(band_size % chunk_size);
-                    unsigned long i(0);
+                    PartitionList partitions;
 
-                    for ( ; i < rest; ++i)
+                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, band_size, PartitionList::Filler(partitions));
+
+                    for ( typename PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
                     {
-                        DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1) + x.size() - band_size));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
-                            wrapper(range, a);
-                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                        dispatched_tasks.push_back(ptr);
-                    }
-                    for ( ; i < num_parts; ++i)
-                    {
-                        DenseVectorRange<DT2_> range((*vi).range(chunk_size, chunk_size + rest + x.size() - band_size));
+                        DenseVectorRange<DT2_> range((*vi).range(p->size, p->start + x.size() - band_size));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
                         std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
@@ -212,38 +202,32 @@ namespace honei
             }
 
             // Calculating diagonal band.
-            if (vi.exists())
             {
-                unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.size()));
-
-                if (num_parts)
+                typename BandedMatrix<DT2_>::VectorIterator vi_diag(x.band_at(x.size() - 1));
+                if (vi == vi_diag)
                 {
-                    unsigned long chunk_size(x.size() / num_parts);
-                    unsigned long rest(x.size() % chunk_size);
-                    unsigned long i(0);
 
-                    for ( ; i < rest; ++i)
+                    if (x.size() >= (min_part_size << 1))
                     {
-                        DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
-                            wrapper(range, a);
+                        PartitionList partitions;
+
+                        Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                        for ( typename PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end; ++p)
+                        {
+                            DenseVectorRange<DT2_> range((*vi).range(p->size, p->start));
+                            TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
+                                wrapper(range, a);
+                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
+                            dispatched_tasks.push_back(ptr);
+                        }
+                    }
+                    else
+                    {
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVector<DT2_>, const DT1_ > wrapper((*vi), a);
                         std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
                         dispatched_tasks.push_back(ptr);
                     }
-                    for ( ; i < num_parts; ++i)
-                    {
-                        DenseVectorRange<DT2_> range((*vi).range(chunk_size, i * chunk_size + rest));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
-                            wrapper(range, a);
-                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                        dispatched_tasks.push_back(ptr);
-                    }
-                }
-                else
-                {
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVector<DT2_>, const DT1_ > wrapper((*vi), a);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                    dispatched_tasks.push_back(ptr);
                 }
             }
 
@@ -252,29 +236,17 @@ namespace honei
             // Calculating upper traingular matrix.
             for (typename BandedMatrix<DT2_>::VectorIterator vi_end(x.end_bands()) ; vi != vi_end ; ++vi)
             {
-                if (! vi.exists())
-                    continue;
-
                 unsigned long band_size(2 * x.size() - vi.index() - 1);
-                unsigned long num_parts(MCScale<Tag_>::calculate_parts(band_size));
 
-                if (num_parts)
+                if (band_size >= (min_part_size << 1))
                 {
-                    unsigned long chunk_size(band_size / num_parts);
-                    unsigned long rest(band_size % chunk_size);
-                    unsigned long i(0);
+                    PartitionList partitions;
 
-                    for ( ; i < rest; ++i)
+                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, band_size, PartitionList::Filler(partitions));
+
+                    for ( typename PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                     {
-                        DenseVectorRange<DT2_> range((*vi).range(chunk_size + 1, i * (chunk_size + 1)));
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
-                            wrapper(range, a);
-                        std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                        dispatched_tasks.push_back(ptr);
-                    }
-                    for ( ; i < num_parts; ++i)
-                    {
-                        DenseVectorRange<DT2_> range((*vi).range(chunk_size, i *  chunk_size + rest));
+                        DenseVectorRange<DT2_> range((*vi).range(p->size, p->start));
                         TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                             wrapper(range, a);
                         std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
@@ -309,25 +281,22 @@ namespace honei
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.size()));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scale[DVCB]::min-part-size",
+                                            Configuration::instance()->get_value("mc::default-min-size", 1024)));
 
-            if (num_parts)
+            unsigned long max_count(Configuration::instance()->get_value("mc::scale[DVCB]::max-count",
+                                        Configuration::instance()->get_value("mc::num-cores", 2)));
+
+            if (x.size() >= (min_part_size << 1))
             {
-                unsigned long chunk_size(x.size() / num_parts);
-                unsigned long rest(x.size() % chunk_size);
+                PartitionList partitions;
 
-                unsigned long i(0);
-                for ( ; i < rest; ++i)
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+
+                for ( typename PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    DenseVectorRange<DT2_> range(x.range(chunk_size + 1, i * (chunk_size + 1)));
-                    TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
-                        wrapper(range, a);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                    dispatched_tasks.push_back(ptr);
-                }
-                for ( ; i < num_parts; ++i)
-                {
-                    DenseVectorRange<DT2_> range(x.range(chunk_size, i * chunk_size + rest));
+                    DenseVectorRange<DT2_> range(x.range(p->size, p->start));
                     TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVectorRange<DT2_>, const DT1_ >
                         wrapper(range, a);
                     std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
@@ -353,32 +322,26 @@ namespace honei
         {
             CONTEXT("When scaling DenseVectorSlice (MultiCore):");
 
-            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.size()));
-            if (num_parts)
-            {
-                unsigned long chunk_size(x.size() / num_parts);
-                unsigned long rest(x.size() % chunk_size);
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scale[DVS]::min-part-size",
+                                            Configuration::instance()->get_value("mc::default-min-size", 1024)));
 
+            if (x.size() >= (min_part_size << 1))
+            {
                 ThreadPool * tp(ThreadPool::get_instance());
 
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-                unsigned long i(0);
-                for ( ; i < rest; ++i)
+                PartitionList partitions;
+
+                Partitioner<tags::CPU::MultiCore>(
+                        Configuration::instance()->get_value("mc::scale[DVS]::max-count",
+                            2 * Configuration::instance()->get_value("mc::num-cores", 2)),
+                        min_part_size, 16, x.size(), PartitionList::Filler(partitions)
+                        );
+
+                for ( typename PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
                 {
-                    typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
-                    start += i * (chunk_size + 1);
-                    stop += (i + 1) * (chunk_size + 1);
-                    ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
-                        typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                    dispatched_tasks.push_back(ptr);
-                }
-                for ( ; i < num_parts; ++i)
-                {
-                    typename Vector<DT2_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
-                    start += i * chunk_size + rest;
-                    stop += (i + 1) * chunk_size + rest;
+                    typename Vector<DT2_>::ElementIterator start(x.element_at(p->start)), stop(x.element_at(p->size + p->start));
                     ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
                         typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
                     std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
@@ -404,33 +367,26 @@ namespace honei
         {
             CONTEXT("When scaling SparseVector (MultiCore):");
 
-            unsigned long num_parts(MCScale<Tag_>::calculate_parts(x.used_elements()));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scale[SV]::min-part-size",
+                                            Configuration::instance()->get_value("mc::default-min-size", 1024)));
 
-            if (num_parts)
+            if (x.used_elements() >= (min_part_size << 1))
             {
-                unsigned long chunk_size(x.used_elements() / num_parts);
-                unsigned long rest(x.used_elements() % chunk_size);
                 ThreadPool * tp(ThreadPool::get_instance());
 
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-                unsigned long i(0);
-                for ( ; i < rest; ++i)
-                {
-                    typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
-                    start += i * (chunk_size + 1);
-                    stop += (i + 1) * (chunk_size + 1);
-                    ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
-                        typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
-                    dispatched_tasks.push_back(ptr);
-                }
+                PartitionList partitions;
 
-                for ( ; i < num_parts; ++i)
+                Partitioner<tags::CPU::MultiCore>(
+                    Configuration::instance()->get_value("mc::scale[SV]::max-count",
+                        2 * Configuration::instance()->get_value("mc::num-cores", 2)),
+                    min_part_size, 16, x.used_elements(), PartitionList::Filler(partitions));
+
+                for ( typename PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    typename Vector<DT2_>::ElementIterator start(x.begin_non_zero_elements()), stop(x.begin_non_zero_elements());
-                    start += i * chunk_size + rest;
-                    stop += (i + 1) * chunk_size + rest;
+                    typename Vector<DT2_>::ElementIterator start(x.non_zero_element_at(p->start)),
+                            stop(x.non_zero_element_at(p->start + p->size));
                     ThreeArgWrapper< MCScale<Tag_>, typename Vector<DT2_>::ElementIterator,
                         typename Vector<DT2_>::ElementIterator, const DT1_ > wrapper(start, stop, a);
                     std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
