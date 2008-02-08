@@ -71,11 +71,10 @@ class ThreadPoolTest :
             unsigned v(34);
             TestTask t(v);
             WorkerTask wt(t);
-            ThreadPool * p(ThreadPool::get_instance(6));
             PoolTask * pt[500];
             for (unsigned i(0) ; i < 500 ; ++i)
             {
-                pt[i] = p->dispatch(wt);
+                pt[i] = ThreadPool::instance()->dispatch(wt);
             }
             for (unsigned i(0) ; i < 500 ; ++i)
             {

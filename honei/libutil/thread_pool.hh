@@ -82,7 +82,7 @@ namespace honei
             /// Returns the singleton instance of the pool.
             //If it doesn't exist yet, it is created with numThreads threads,
             //otherwise it is created with a default number of threads.
-            static ThreadPool * get_instance(unsigned long num_threads = Configuration::instance()->get_value("mc::number-of-threads", 4))
+            static ThreadPool * instance(unsigned long num_threads = Configuration::instance()->get_value("mc::number-of-threads", 4))
             {
                 CONTEXT("When getting ThreadPool:");
 

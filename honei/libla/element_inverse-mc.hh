@@ -96,7 +96,7 @@ namespace honei
                     offset = p->start;
                     part_size = p->size;
                     ThreeArgWrapper< ElementInverse<Tag_>, DenseMatrix<DT1_>, unsigned long, unsigned long> mywrapper(x, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -150,7 +150,7 @@ namespace honei
                     offset = p->start;
                     part_size = p->size;
                     ThreeArgWrapper< ElementInverse<Tag_>, SparseMatrix<DT1_>, unsigned long, unsigned long> mywrapper(x, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -176,7 +176,7 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of BandedMatrix elements (MultiCore):");
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -318,7 +318,7 @@ namespace honei
                     part_size = p->size;
                     DenseVectorRange<DT1_> range(x.range(part_size, offset));
                     OneArgWrapper< ElementInverse<typename Tag_::DelegateTo>, DenseVectorRange<DT1_> > mywrapper(range);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -362,7 +362,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     TwoArgWrapper< ElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator> mywrapper(start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -405,7 +405,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     TwoArgWrapper< ElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator> mywrapper(start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 

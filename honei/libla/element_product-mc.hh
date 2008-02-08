@@ -90,7 +90,7 @@ namespace honei
 
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -102,7 +102,7 @@ namespace honei
                     DenseVectorRange<DT1_> range_1(a.range(part_size, offset));
                     DenseVectorRange<DT2_> range_2(b.range(part_size, offset));
                     TwoArgWrapper<ElementProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -135,7 +135,7 @@ namespace honei
 
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list<std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 typename Vector<DT1_>::ConstElementIterator r(a.begin_non_zero_elements());
 
@@ -148,7 +148,7 @@ namespace honei
                     r += (p->size - 1);
                     DenseVectorRange<DT1_> range(b.range(r.index() - offset + 1, offset));
                     ThreeArgWrapper<ElementProduct<Tag_>, SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long > mywrapper(a, range, p->start);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                     ++r;
                 }
@@ -172,7 +172,7 @@ namespace honei
                 throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
             }
 
-            //ThreadPool * p(ThreadPool::get_instance());
+            //ThreadPool * p(ThreadPool::instance());
             PoolTask * pt[2 * a.size()-1];
             int taskcount(0);
             typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands());
@@ -186,7 +186,7 @@ namespace honei
                 }
 
                 TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
-                pt[taskcount] = ThreadPool::get_instance()->dispatch(mywrapper);
+                pt[taskcount] = ThreadPool::instance()->dispatch(mywrapper);
                 ++r;
                 ++taskcount;
             }
@@ -232,7 +232,7 @@ namespace honei
             {
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -243,7 +243,7 @@ namespace honei
                     part_size = p->size;
                     FourArgWrapper< ElementProduct<Tag_>, DenseMatrix<DT1_>, const DenseMatrix<DT2_>, unsigned long, unsigned long> 
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -292,7 +292,7 @@ namespace honei
             {
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -303,7 +303,7 @@ namespace honei
                     part_size = p->size;
                     FourArgWrapper< ElementProduct<Tag_>, SparseMatrix<DT1_>, const DenseMatrix<DT2_>, unsigned long, unsigned long> 
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -352,7 +352,7 @@ namespace honei
             {
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -363,7 +363,7 @@ namespace honei
                     part_size = p->size;
                     FourArgWrapper< ElementProduct<Tag_>, SparseMatrix<DT1_>, const SparseMatrix<DT2_>, unsigned long, unsigned long> 
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 

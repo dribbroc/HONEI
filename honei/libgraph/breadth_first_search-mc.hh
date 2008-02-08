@@ -79,7 +79,7 @@ namespace honei
             // Create the result
             bool result(true);
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list<PoolTask*> dispatched_tasks;
 
@@ -150,7 +150,7 @@ namespace honei
             // Create the result
             bool result(true);
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list<PoolTask*> dispatched_tasks;
 

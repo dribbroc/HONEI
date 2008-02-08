@@ -52,7 +52,7 @@ namespace honei
         {
             CONTEXT("When scaling DenseMatrix (MultiCore):");
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -105,7 +105,7 @@ namespace honei
         {
             CONTEXT("When scaling SparseMatrix (MultiCore):");
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -159,7 +159,7 @@ namespace honei
         {
             CONTEXT("When scaling BandedMatrix (MultiCore):");
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -277,7 +277,7 @@ namespace honei
         {
             CONTEXT("When scaling DenseVectorContinuousBase (MultiCore):");
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -327,7 +327,7 @@ namespace honei
 
             if (x.size() >= (min_part_size << 1))
             {
-                ThreadPool * tp(ThreadPool::get_instance());
+                ThreadPool * tp(ThreadPool::instance());
 
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
@@ -372,7 +372,7 @@ namespace honei
 
             if (x.used_elements() >= (min_part_size << 1))
             {
-                ThreadPool * tp(ThreadPool::get_instance());
+                ThreadPool * tp(ThreadPool::instance());
 
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 

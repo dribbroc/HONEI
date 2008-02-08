@@ -91,7 +91,7 @@ namespace honei
                     DenseVectorRange<DT1_> range_1(a.range(p->size, p->start));
                     DenseVectorRange<DT2_> range_2(b.range(p->size, p->start));
                     ResultTwoArgWrapper<DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(result, range_1, range_2);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(std::tr1::bind(mywrapper, &mutex)));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(std::tr1::bind(mywrapper, &mutex)));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -142,7 +142,7 @@ namespace honei
                     DenseVectorRange<DT2_> range(b.range(r.index() - offset + 1, offset));
                     ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_,const SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long >
                         mywrapper(result, a, range, offset);
-                    dispatched_tasks.push_back(ThreadPool::get_instance()->dispatch(std::tr1::bind(mywrapper, &mutex)));
+                    dispatched_tasks.push_back(ThreadPool::instance()->dispatch(std::tr1::bind(mywrapper, &mutex)));
                     ++r;
                 }
                 while (! dispatched_tasks.empty())

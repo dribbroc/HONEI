@@ -50,12 +50,12 @@ namespace
     };
 }
 
-class PoolTaskTest :
+class PoolThreadTest :
     public QuickTest
 {
     public:
-        PoolTaskTest() :
-            QuickTest("pool_task_test")
+        PoolThreadTest() :
+            QuickTest("pool_thread_test")
         {
         }
 
@@ -64,8 +64,7 @@ class PoolTaskTest :
             unsigned v(34);
             TestTask t(v);
             WorkerTask wt(t);
-            ThreadPool * pool = ThreadPool::get_instance(4);
-            PoolThread * poolthread(new PoolThread(pool));
+            PoolThread * poolthread(new PoolThread(ThreadPool::instance()));
             wt();
             TEST_CHECK_EQUAL(v, 35);
             PoolTask * pt(new PoolTask(wt));
@@ -73,4 +72,4 @@ class PoolTaskTest :
             pt->wait_on();
             TEST_CHECK_EQUAL(v, 36);
        }
-} pool_task_test;
+} pool_thread_test;

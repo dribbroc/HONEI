@@ -502,7 +502,7 @@ namespace honei
                 return result;
             }
             unsigned long modulo = x.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
+            ThreadPool * p(ThreadPool::instance());
             PoolTask * pt[parts];
             DenseVector<DT_> preresult(parts, DT_(0));
             for (unsigned long i(0) ; i < (modulo) ; ++i)
@@ -565,7 +565,7 @@ namespace honei
                 return result;
             }
             unsigned long modulo = x.size() % parts;
-            ThreadPool * p(ThreadPool::get_instance());
+            ThreadPool * p(ThreadPool::instance());
             PoolTask * pt[parts];
             DenseVector<DT_> preresult(parts, DT_(0));
             for (unsigned long i(0) ; i < (modulo) ; ++i)

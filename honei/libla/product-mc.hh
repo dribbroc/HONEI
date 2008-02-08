@@ -76,7 +76,7 @@ namespace honei
             DenseVector<DT1_> result(a.rows(), DT1_(0));
             typename Vector<DT1_>::ElementIterator l(result.begin_elements());
 
-            ThreadPool * p(ThreadPool::get_instance());
+            ThreadPool * p(ThreadPool::instance());
             PoolTask * pt[a.rows()];
 
             for (unsigned long i = 0; i < a.rows(); ++i)
@@ -119,7 +119,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            ThreadPool * p(ThreadPool::get_instance());
+            ThreadPool * p(ThreadPool::instance());
             PoolTask   * pt[a.rows()];
 
             DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
@@ -172,7 +172,7 @@ namespace honei
             else
             {
                 unsigned long modulo = b.size() % parts;
-                ThreadPool * tp(ThreadPool::get_instance());
+                ThreadPool * tp(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 Mutex mutex[parts];
                 int middle_index(a.rows() -1);
@@ -297,7 +297,7 @@ namespace honei
 
             DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
 
-            ThreadPool * tp(ThreadPool::get_instance());
+            ThreadPool * tp(ThreadPool::instance());
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 

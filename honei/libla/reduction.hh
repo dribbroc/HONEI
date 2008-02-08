@@ -637,7 +637,7 @@ namespace honei
                     part_size = p->size;
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     ThreeArgWrapper< Reduction<rt_sum, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, offset);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -735,7 +735,7 @@ namespace honei
                     part_size = p->size; 
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     FourArgWrapper< Reduction<rt_sum, Tag_>, const DenseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -793,7 +793,7 @@ namespace honei
                     part_size = p->size; 
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     FourArgWrapper< Reduction<rt_sum, Tag_>, const SparseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -845,7 +845,7 @@ namespace honei
                     part_size = p->size;
                     DenseVectorRange<DT_> range(a.range(part_size, offset));
                     ResultOneArgWrapper< Reduction<rt_sum, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*pri, range);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -893,7 +893,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -941,7 +941,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1000,7 +1000,7 @@ namespace honei
                     part_size = p->size;
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     ThreeArgWrapper< Reduction<rt_max, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, offset);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1100,7 +1100,7 @@ namespace honei
                     part_size = p->size; 
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     FourArgWrapper< Reduction<rt_max, Tag_>, const DenseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -1158,7 +1158,7 @@ namespace honei
                     part_size = p->size; 
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     FourArgWrapper< Reduction<rt_max, Tag_>, const SparseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -1211,7 +1211,7 @@ namespace honei
                     part_size = p->size;
                     DenseVectorRange<DT_> range(a.range(part_size, offset));
                     ResultOneArgWrapper< Reduction<rt_max, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*pri, range);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1259,7 +1259,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1308,7 +1308,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1368,7 +1368,7 @@ namespace honei
                     part_size = p->size;
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     ThreeArgWrapper< Reduction<rt_min, Tag_>, DenseVectorRange<DT_>, const BandedMatrix<DT_>, const unsigned long> mywrapper(range, a, offset);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1468,7 +1468,7 @@ namespace honei
                     part_size = p->size; 
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     FourArgWrapper< Reduction<rt_min, Tag_>, const DenseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -1526,7 +1526,7 @@ namespace honei
                     part_size = p->size; 
                     DenseVectorRange<DT_> range(result.range(part_size, offset));
                     FourArgWrapper< Reduction<rt_min, Tag_>, const SparseMatrix<DT_>, DenseVectorRange<DT_>, unsigned long, unsigned long> mywrapper(a, range, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
                 while (! dispatched_tasks.empty())
@@ -1579,7 +1579,7 @@ namespace honei
                     part_size = p->size;
                     DenseVectorRange<DT_> range(a.range(part_size, offset));
                     ResultOneArgWrapper< Reduction<rt_min, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > mywrapper(*pri, range);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1627,7 +1627,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -1675,7 +1675,7 @@ namespace honei
                     start += offset;
                     stop += (offset + part_size);
                     ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 

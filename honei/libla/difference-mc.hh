@@ -86,7 +86,7 @@ namespace honei
 
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -98,7 +98,7 @@ namespace honei
                     DenseVectorRange<DT1_> range_1(a.range(part_size, offset));
                     DenseVectorRange<DT2_> range_2(b.range(part_size, offset));
                     TwoArgWrapper<Difference<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_> > mywrapper(range_1, range_2);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -131,7 +131,7 @@ namespace honei
 
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list<std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
 
@@ -144,7 +144,7 @@ namespace honei
                     r += (p->size - 1);
                     DenseVectorRange<DT1_> range(a.range(r.index() - offset + 1, offset));
                     ThreeArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT1_>, const SparseVector<DT2_>, const unsigned long > mywrapper(range, b, p->start);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                     ++r;
                 }
@@ -175,7 +175,7 @@ namespace honei
             }
             else
             {
-                //ThreadPool * p(ThreadPool::get_instance());
+                //ThreadPool * p(ThreadPool::instance());
                 PoolTask * pt[2*a.rows()-1];
                 int taskcount(0);
                 typename BandedMatrix<DT1_>::VectorIterator l(a.begin_non_zero_bands()), l_end(a.end_non_zero_bands());
@@ -193,7 +193,7 @@ namespace honei
                     if (a_index == b_index)
                     {
                         TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
-                        pt[taskcount] = ThreadPool::get_instance()->dispatch(mywrapper);
+                        pt[taskcount] = ThreadPool::instance()->dispatch(mywrapper);
                         ++taskcount;
                         ++l;
                         ++r;
@@ -246,7 +246,7 @@ namespace honei
                 unsigned long max_count(Configuration::instance()->get_value("mc::difference[DM,BM]::max-count", num_threads ));
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -259,7 +259,7 @@ namespace honei
                     FourArgWrapper<MCDifference<typename Tag_::DelegateTo>, const BandedMatrix<DT1_>,
                         DenseMatrix<DT2_>, unsigned long, unsigned long>
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -371,7 +371,7 @@ namespace honei
             {
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -383,7 +383,7 @@ namespace honei
 
                     FourArgWrapper< Difference<Tag_>, DenseMatrix<DT1_>, const DenseMatrix<DT2_>, unsigned long, unsigned long> 
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -432,7 +432,7 @@ namespace honei
             {
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -444,7 +444,7 @@ namespace honei
 
                     FourArgWrapper< Difference<Tag_>, DenseMatrix<DT1_>, const SparseMatrix<DT2_>, unsigned long, unsigned long> 
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -493,7 +493,7 @@ namespace honei
             {
                 PartitionList partitions;
                 Partitioner<tags::CPU::MultiCore>(max_count, 1, 1, overall_size, PartitionList::Filler(partitions));
-                //ThreadPool * pool(ThreadPool::get_instance());
+                //ThreadPool * pool(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
@@ -505,7 +505,7 @@ namespace honei
 
                     FourArgWrapper< Difference<Tag_>, SparseMatrix<DT1_>, const SparseMatrix<DT2_>, unsigned long, unsigned long> 
                         mywrapper(a, b, offset, part_size);
-                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(mywrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
 
@@ -554,7 +554,7 @@ namespace honei
                 Scale<Tag_>::value(b, -1);
 
                 unsigned long modulo = a.size() % parts;
-                //ThreadPool * tp(ThreadPool::get_instance());
+                //ThreadPool * tp(ThreadPool::instance());
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
                 Mutex mutex[parts];
                 int middle_index(a.rows() -1);
@@ -571,7 +571,7 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, div, offset);
                         FourArgWrapper<MCDifference<Tag_>, const DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size()+1);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(func));
                         dispatched_tasks.push_back(ptr);
                     }
                     if (i == modulo)
@@ -583,7 +583,7 @@ namespace honei
                             DenseVectorRange<DT2_> range_1(*vi, div+1, offset);
                             FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, (vi.index()+offset)-a.size()+1);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(func));
+                            std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(func));
                             dispatched_tasks.push_back(ptr);
                         }
                     }
@@ -592,7 +592,7 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, offset-start, start);
                         FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, start, 0);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]);
-                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(func));
                         dispatched_tasks.push_back(ptr);
                     }
                 }
@@ -608,7 +608,7 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, div+1, offset);
                         FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index + offset);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(func));
                         dispatched_tasks.push_back(ptr);
                         ++i;
                         offset+=div+1;
@@ -620,7 +620,7 @@ namespace honei
                             DenseVectorRange<DT2_> range_1(*vi, div, offset);
                             FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index+offset);
                             std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(func));
+                            std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(func));
                             dispatched_tasks.push_back(ptr);
                             ++i;
                             offset+=div;
@@ -631,7 +631,7 @@ namespace honei
                         DenseVectorRange<DT2_> range_1(*vi, end - offset, offset);
                         FourArgWrapper<MCDifference<Tag_>, DenseVectorRange<DT2_>, SparseMatrix<DT1_>, const unsigned long, const unsigned long > mywrapper(range_1, b, offset, index+offset);
                         std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::get_instance()->dispatch(func));
+                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(func));
                         dispatched_tasks.push_back(ptr);
                     }
                 }
