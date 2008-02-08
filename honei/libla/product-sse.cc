@@ -499,9 +499,9 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     return result;
 }
 
-DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseVector<float> & b)
+DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<float> with DenseVector<float> with SSE:");
+    CONTEXT("When multiplying DenseMatrix<float> with DenseVectorContinuousBase<float> with SSE:");
 
     if (b.size() != a.columns())
     {
@@ -519,9 +519,9 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
     return result;
 }
 
-DenseVector<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a, const DenseVector<double> & b)
+DenseVector<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a, const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<double> with DenseVector<double> with SSE:");
+    CONTEXT("When multiplying DenseMatrix<double> with DenseVectorContinuousBase<double> with SSE:");
 
     if (b.size() != a.columns())
     {
