@@ -30,7 +30,7 @@
 
 using namespace honei;
 using namespace tests;
-/*
+
 template <typename Tag_, typename DataType_>
 class BandedMatrixDenseVectorProductTest :
     public BaseTest
@@ -263,7 +263,7 @@ class BandedMatrixSparseVectorProductQuickTest :
 };
 BandedMatrixSparseVectorProductQuickTest<float> banded_matrix_sparse_vector_product_quick_test_float("float");
 BandedMatrixSparseVectorProductQuickTest<double> banded_matrix_sparse_vector_product_quick_test_double("double");
-*/
+
 template <typename Tag_, typename DataType_>
 class DenseMatrixDenseVectorProductTest :
     public BaseTest
@@ -345,7 +345,7 @@ DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_
 #ifdef HONEI_CELL
 DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
 #endif
-/*
+
 template <typename DataType_>
 class DenseMatrixSparseVectorProductTest :
     public BaseTest
@@ -1763,4 +1763,4 @@ class SparseMatrixBandedMatrixProductQuickTest :
 };
 SparseMatrixBandedMatrixProductQuickTest<float> sparse_matrix_banded_matrix_product_quick_test_float("float");
 SparseMatrixBandedMatrixProductQuickTest<double> sparse_matrix_banded_matrix_product_quick_test_double("double");
-*/
+
