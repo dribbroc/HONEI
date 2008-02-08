@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/files.m4, +honei/cell/kernels/kernel_double.sk,
+	+honei/cell/kernels/kernel_float.sk,
+	-honei/cell/kernels/kernel_reference.sk:
+	Split kernel_reference in kernel_float and kernel_double.
+
 2008-02-08 Volker Jung <volker.jung@honei.org>
 
 	* honei/libutil/thread_pool.hh: Changed method name from

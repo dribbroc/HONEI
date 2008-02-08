@@ -1,0 +1,26 @@
+# vim: set sw=4 sts=4 et tw=0 ft=bash :
+
+halt
+
+# LibLA Operations
+##################
+void            sum_dense_dense_double
+void            sum_dense_scalar_double
+void            difference_dense_dense_double
+qword           dot_product_dense_dense_double
+void            element_product_dense_dense_double
+void            product_banded_matrix_dense_vector_double    product_banded_matrix_dense_vector_double
+qword           reduction_sum_dense_double
+void            scale_dense_double
+qword           norm_l_one_dense_double
+qword           norm_l_two_dense_double
+void            scaled_sum_dense_dense_double
+
+# LibGraph Operations
+#####################
+
+# LibMath Operations
+####################
+
+# LibSWE Operations
+###################

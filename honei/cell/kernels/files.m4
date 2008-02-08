@@ -7,5 +7,6 @@ dnl Makefile.am every time we add a source or test file. The first parameter is
 dnl the base filename with no extension; later parameters can be `cc, `sk'.
 dnl Note that there isn't much error checking done on this file at present...
 
-add(`kernel_reference',                   `stand_alone')
+add(`kernel_float',                       `stand_alone')
+add(`kernel_double',                       `stand_alone')
 add(`kernel_test',                        `stand_alone')
