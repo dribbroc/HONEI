@@ -225,7 +225,7 @@ namespace honei
             __m128 m1;
             float HONEI_ATTRIBUTE(aligned(16)) v_data;
             v_data= v;
-            m1 = _mm_load_ps1(&v_data);
+            m1 = _mm_load1_ps(&v_data);
 
             unsigned long dest_address = (unsigned long)dest;
             unsigned long dest_offset = dest_address % 16;
@@ -269,7 +269,7 @@ namespace honei
             __m128d m1;
             double HONEI_ATTRIBUTE(aligned(16)) v_data;
             v_data= v;
-            m1 = _mm_load_pd1(&v_data);
+            m1 = _mm_load1_pd(&v_data);
 
             unsigned long dest_address = (unsigned long)dest;
             unsigned long dest_offset = dest_address % 16;

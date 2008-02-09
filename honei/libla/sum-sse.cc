@@ -195,7 +195,7 @@ namespace honei
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
                 float HONEI_ATTRIBUTE(aligned(16)) a_data;
                 a_data= a;
-                m8 = _mm_load_ps1(&a_data);
+                m8 = _mm_load1_ps(&a_data);
 
                 unsigned long x_address = reinterpret_cast<unsigned long>(x);
                 unsigned long x_offset = x_address % 16;
@@ -255,7 +255,7 @@ namespace honei
                 __m128d m1, m2, m3, m4, m5, m6, m7,  m8;
                 double HONEI_ATTRIBUTE(aligned(16)) a_data;
                 a_data= a;
-                m8 = _mm_load_pd1(&a_data);
+                m8 = _mm_load1_pd(&a_data);
 
                 unsigned long x_address = reinterpret_cast<unsigned long>(x);
                 unsigned long x_offset = x_address % 16;

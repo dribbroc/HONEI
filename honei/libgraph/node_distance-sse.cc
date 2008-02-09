@@ -183,7 +183,7 @@ namespace honei
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
                 float HONEI_ATTRIBUTE(aligned(16)) eps(std::numeric_limits<float>::epsilon());
-                m8 = _mm_load_ps1(&eps);
+                m8 = _mm_load1_ps(&eps);
 
                 unsigned long dist_address = (unsigned long)dist;
                 unsigned long dist_offset = dist_address % 16;
@@ -236,7 +236,7 @@ namespace honei
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7, m8;
                 double HONEI_ATTRIBUTE(aligned(16)) eps(std::numeric_limits<double>::epsilon());
-                m8 = _mm_load_pd1(&eps);
+                m8 = _mm_load1_pd(&eps);
 
                 unsigned long dist_address = (unsigned long)dist;
                 unsigned long dist_offset = dist_address % 16;
