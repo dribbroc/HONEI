@@ -173,3 +173,12 @@ mc::element_inverse[DVS]::max-count = 4
 
 mc::element_inverse[SV]::min-part-size = 16
 mc::element_inverse[SV]::max-count = 4
+
+mc::product[DM,DVCB]::min-part-size = 16
+mc::product[DM,DVCB]::max-count = 4
+
+mc::product[BM,DVCB]::min-part-size = 16
+mc::product[BM,DVCB]::max-count = 4
+
+mc::product[SM,DM]::min-part-size = 16
+mc::product[SM,DM]::max-count = 4

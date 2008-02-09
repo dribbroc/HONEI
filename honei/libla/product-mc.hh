@@ -32,6 +32,8 @@
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/sum.hh>
 #include <honei/libla/scaled_sum.hh>
+#include <honei/libutil/configuration.hh>
+#include <honei/libutil/partitioner.hh>
 #include <honei/libutil/pool_task.hh>
 #include <honei/libutil/tags.hh>
 #include <honei/libutil/thread_pool.hh>
@@ -63,38 +65,78 @@ namespace honei
      */
     template <typename Tag_> struct MCProduct
     {
+        // Help function for DenseMatrix * DenseVector MultiCore.
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVector<DT2_> & b)
+        static void value(DenseVectorRange<DT1_> & result, const DenseMatrix<DT1_> & a,
+                const DenseVectorRange<DT2_> & b, const unsigned long offset, const unsigned long size)
         {
-            CONTEXT("When multiplying DenseMatrix with DenseVector(Base) (MultiCore):");
+            typename Vector<DT1_>::ElementIterator l(result.begin_elements());
+
+            for (unsigned long i(offset) ; i < offset + size ; ++i)
+            {
+                *l = DotProduct<Tag_>::value(a[i], b);
+                ++l;
+            }
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            CONTEXT("When multiplying DenseMatrix with DenseVectorContinuousBase (MultiCore):");
 
             if (b.size() != a.columns())
             {
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
-            DenseVector<DT1_> result(a.rows(), DT1_(0));
-            typename Vector<DT1_>::ElementIterator l(result.begin_elements());
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::product[DM,DVCB]::min-part-size", 256));
+            unsigned long overall_size(a.rows() * a.columns());
 
-            ThreadPool * p(ThreadPool::instance());
-            PoolTask * pt[a.rows()];
-
-            for (unsigned long i = 0; i < a.rows(); ++i)
+            if (overall_size < (min_part_size << 1))
             {
-
-                ResultTwoArgWrapper< DotProduct<typename Tag_::DelegateTo>, DT1_, const DenseVectorRange<DT1_>,
-                    const DenseVector<DT2_> > mywrapper(*l, a[i], b);
-                pt[i] = p->dispatch(mywrapper);
-
-                ++l;
+                return Product<typename Tag_::DelegateTo>::value(a,b);
             }
-
-            for (unsigned long i = 0; i < a.rows();  ++i)
+            else
             {
-                pt[i]->wait_on();
-                delete pt[i];
+                DenseVector<DT1_> result(a.rows(), DT1_(0));
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::product[DM,DVCB]::max-count", num_threads));
+                if (min_part_size > a.columns())
+                {
+                    min_part_size = min_part_size / a.columns() + (min_part_size % a.columns())? 1 : 0;
+                }
+                else
+                {
+                    min_part_size = 1;
+                }
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 1,  a.rows(), PartitionList::Filler(partitions));
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
+                {
+                    offset = p->start;
+                    part_size = p->size;
+
+                    DenseVectorRange<DT1_> res_range(result, part_size, offset);
+                    FiveArgWrapper< MCProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
+                        const DenseMatrix<DT1_>, const DenseVectorRange<DT2_>, const unsigned long,
+                        const unsigned long >
+                        mywrapper(res_range, a, b.range(b.size(), 0), offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
+
+                return result;
             }
-            return result;
         }
 
         // Help function for DenseMatrix * DenseMatrix MultiCore.
@@ -140,20 +182,59 @@ namespace honei
             return result;
         }
         
-
-
-       // Help function for BandedMatrix * DenseVector MultiCore
+        // Help function for BandedMatrix * DenseVector MultiCore
         template <typename DT1_, typename DT2_>
-        static void value(DenseVectorRange<DT1_> & result, const DenseVectorRange<DT1_> & a, const DenseVectorRange<DT2_> & b, Mutex * mutex)
+        static void value(DenseVectorRange<DT1_> & res_range, const BandedMatrix<DT1_> & a,
+                const DenseVectorRange<DT2_> & b, unsigned long offset, unsigned long size)
         {
-            DenseVector<DT1_> temp_result(a.copy());
-            ElementProduct<typename Tag_::DelegateTo>::value(temp_result, b);
-            Lock l(*mutex);
-            Sum<typename Tag_::DelegateTo>::value(result, temp_result);
+            int middle_index(a.rows() -1);
+
+                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+                        vi != vi_end ; ++vi)
+                {
+                    // If we are below the diagonal band
+                    if ((middle_index > vi.index()) && (offset + size > middle_index - vi.index()) )
+                    {
+                        unsigned long start(middle_index - vi.index());
+
+                        if (offset >= start)
+                        {
+                            DenseVectorRange<DT1_> range_1(*vi, size, offset);
+                            DenseVectorRange<DT2_> range_2(b.range(size, offset - start));
+                            ScaledSum<typename Tag_::DelegateTo>::value(res_range, range_1, range_2);
+                        }
+                        else
+                        {
+                            DenseVectorRange<DT1_> range_1(*vi, offset + size - start, start);
+                            DenseVectorRange<DT2_> range_2(b.range(offset + size - start, 0));
+                            DenseVectorRange<DT1_> res_r(res_range, offset + size - start, start - offset);
+                            ScaledSum<typename Tag_::DelegateTo>::value(res_r, range_1, range_2);
+                        }
+                    }
+                    // If we are above or on the diagonal band
+                    else if ((vi.index() >= middle_index) && (offset < vi->size() - vi.index() + middle_index))
+                    {
+                        unsigned long end(vi->size() - vi.index() + middle_index);
+
+                        if (end >= offset + size)
+                        {
+                            DenseVectorRange<DT1_> range_1(*vi, size, offset);
+                            DenseVectorRange<DT2_> range_2(b.range(size, offset + vi.index() - middle_index));
+                            ScaledSum<typename Tag_::DelegateTo>::value(res_range, range_1, range_2);
+                        }
+                        else
+                        {
+                            DenseVectorRange<DT1_> range_1(*vi, end - offset, offset);
+                            DenseVectorRange<DT2_> range_2(b.range(end - offset, offset + vi.index() - middle_index));
+                            DenseVectorRange<DT1_> res_r(res_range, end - offset, 0);
+                            ScaledSum<typename Tag_::DelegateTo>::value(res_r, range_1, range_2);
+                        }
+                    }
+                }
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
             CONTEXT("When multiplying BandedMatrix with DenseVector(MultiCore):");
 
@@ -162,120 +243,38 @@ namespace honei
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::product[BM,DV]::min-part-size", 1024));
+            unsigned long overall_size(a.rows());
+
             DenseVector<DT1_> result(a.rows(), DT1_(0));
-            unsigned long parts(8);
-            unsigned long div = b.size() / parts;
-            if (div == 0)
+
+            if (overall_size < (min_part_size << 1))
             {
-                return Product<typename Tag_::DelegateTo>::value(a,b);
+                DenseVectorRange<DT1_> _result(result.range(overall_size, 0));
+                const DenseVectorRange<DT2_> _b(b.range(b.size(), 0));
+                MCProduct<Tag_>::value(_result, a, _b, (unsigned long) 0, a.rows());
+                return result;
             }
             else
             {
-                unsigned long modulo = b.size() % parts;
-                ThreadPool * tp(ThreadPool::instance());
+                unsigned long num_threads(2 * Configuration::instance()->get_value("mc::num-cores", 2));
+                unsigned long max_count(Configuration::instance()->get_value("mc::product[BM,DVCB]::max-count", num_threads));
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16,  a.rows(), PartitionList::Filler(partitions));
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
-                Mutex mutex[parts];
-                int middle_index(a.rows() -1);
 
-                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
-                        vi != vi_end ; ++vi)
+                unsigned long offset, part_size;
+
+                for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()) ; p != p_end ; ++p)
                 {
-                    // If we are above or on the diagonal band
-                    if (middle_index < vi.index())
-                    {
-                        if (!vi.exists())
-                            continue;
-                        unsigned long i(0), offset(0);
-                        unsigned long end(vi->size() - (vi.index() - middle_index));
-                        while ((i < modulo) && (offset+div+1 < end))
-                        {
-                            DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
-                            DenseVectorRange<DT2_> range_2(b, div+1, offset + vi.index() - middle_index);
-                            DenseVectorRange<DT1_> res_range(result, div+1, offset);
-                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
-                            dispatched_tasks.push_back(ptr);
-                            ++i;
-                            offset+=div+1;
-                        }
-                        if (i == modulo)
-                        {
-                            while ((i < parts) && (offset+div  < end))
-                            {
-                                DenseVectorRange<DT1_> range_1(*vi, div, offset);
-                                DenseVectorRange<DT2_> range_2(b, div, offset + vi.index() - middle_index);
-                                DenseVectorRange<DT1_> res_range(result, div, offset);
-                                ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                                    DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                                std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
-                                dispatched_tasks.push_back(ptr);
-                                ++i;
-                                offset+=div;
-                            }
-                        }
-                        if (offset < end)
-                        {
-                            DenseVectorRange<DT1_> range_1(*vi, end - offset, offset);
-                            DenseVectorRange<DT2_> range_2(b, end - offset, offset + vi.index()-middle_index);
-                            DenseVectorRange<DT1_> res_range(result, end - offset, offset);
-                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
-                            dispatched_tasks.push_back(ptr);
-                        }
-                    }
-                    //if we are below the diagonal band
-                    else
-                    {
-                        if (!vi.exists())
-                            continue;
-                        unsigned long i(parts), offset(b.size());
-                        unsigned long start(middle_index - vi.index());
-                        while(i > modulo && offset-div > start)
-                        {
-                            --i;
-                            offset-=div;
-                            DenseVectorRange<DT1_> range_1(*vi, div, offset);
-                            DenseVectorRange<DT2_> range_2(b, div, offset - (middle_index - vi.index()));
-                            DenseVectorRange<DT1_> res_range(result, div, offset);
-                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
-                            dispatched_tasks.push_back(ptr);
-                        }
-                        if (i == modulo)
-                        {
-                            while(i > 0 && offset-div-1 > start)
-                            {
-                                --i;
-                                offset-=(div+1);
-                                DenseVectorRange<DT1_> range_1(*vi, div+1, offset);
-                                DenseVectorRange<DT2_> range_2(b, div+1, offset - (middle_index - vi.index()));
-                                DenseVectorRange<DT1_> res_range(result, div+1, offset);
-                                ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                                    DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                                std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i]);
-                                std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
-                                dispatched_tasks.push_back(ptr);
-                            }
-                        }
-                        if (offset > start)
-                        {
-                            DenseVectorRange<DT1_> range_1(*vi, offset-start, start);
-                            DenseVectorRange<DT2_> range_2(b, offset-start, 0);
-                            DenseVectorRange<DT1_> res_range(result, offset-start, start);
-                            ThreeArgWrapper<ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                                DenseVectorRange<DT1_>, DenseVectorRange<DT2_> > mywrapper(res_range, range_1, range_2);
-                            std::tr1::function<void ()> func = std::tr1::bind(mywrapper, &mutex[i-1]);
-                            std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
-                            dispatched_tasks.push_back(ptr);
-                        }
-                    }
+                    offset = p->start;
+                    part_size = p->size;
+
+                    DenseVectorRange<DT1_> res_range(result, part_size, offset);
+                    FiveArgWrapper<MCProduct<Tag_>, DenseVectorRange<DT1_>, const BandedMatrix<DT1_>, 
+                    const DenseVectorRange<DT2_>, const unsigned long, const unsigned long> mywrapper(res_range, a, b.range(b.size(), 0), offset, part_size);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
+                    dispatched_tasks.push_back(ptr);
                 }
 
                 while(! dispatched_tasks.empty())
@@ -287,6 +286,7 @@ namespace honei
             }
         }
 
+
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> value(const SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
@@ -295,35 +295,43 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::product[SM,DM]::min-part-size", 256));
+            unsigned long overall_size(a.rows() * a.columns());
 
-            ThreadPool * tp(ThreadPool::instance());
-
-            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
-
-            Mutex mutex[a.rows()];
-
-            for (typename SparseMatrix<DT1_>::ConstRowIterator i(a.begin_non_zero_rows()), i_end(a.end_non_zero_rows()) ;
-                    i != i_end ; ++i)
+            if (overall_size < (min_part_size << 1))
             {
-                for (typename Vector<DT1_>::ConstElementIterator vi((*i).begin_non_zero_elements()), vi_end((*i).end_non_zero_elements()) ;
-                        vi != vi_end ; ++vi)
+                return Product<typename Tag_::DelegateTo>::value(a,b);
+            }
+            else
+            {
+                DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
+
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                Mutex mutex[a.rows()];
+
+                for (typename SparseMatrix<DT1_>::ConstRowIterator i(a.begin_non_zero_rows()), i_end(a.end_non_zero_rows()) ;
+                        i != i_end ; ++i)
                 {
-                    ThreeArgWrapper< ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_>, const DT1_ >
-                        wrapper(result[i.index()], b[vi.index()], *vi);
-                    std::tr1::function<void ()> func = std::tr1::bind(wrapper, &mutex[i.index()]);
-                    std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(func));
-                    dispatched_tasks.push_back(ptr);
+                    for (typename Vector<DT1_>::ConstElementIterator vi((*i).begin_non_zero_elements()), vi_end((*i).end_non_zero_elements()) ;
+                            vi != vi_end ; ++vi)
+                    {
+                        ThreeArgWrapper< ScaledSum<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>, const DenseVectorRange<DT2_>, const DT1_ >
+                            wrapper(result[i.index()], b[vi.index()], *vi);
+                        std::tr1::function<void ()> func = std::tr1::bind(wrapper, &mutex[i.index()]);
+                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(func));
+                        dispatched_tasks.push_back(ptr);
+                    }
                 }
-            }
 
-            while (! dispatched_tasks.empty())
-            {
-                dispatched_tasks.front()->wait_on();
-                dispatched_tasks.pop_front();
-            }
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
 
-            return result;
+                return result;
+            }
         }
     };
 }
