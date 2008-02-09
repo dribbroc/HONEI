@@ -24,8 +24,10 @@
 #include <libebt/libebt.hh>
 #include <libebt/libebt_pthread_threads.hh>
 
+#include <cstring>
 #include <cxxabi.h>
 #include <iostream>
+
 using namespace honei;
 
 namespace

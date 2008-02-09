@@ -65,18 +65,18 @@ namespace honei
             std::tr1::shared_ptr<std::list<unsigned long> > _nze_list;
 
             /// Our implementation of ElementIteratorBase.
-            template <typename ElementType_> class BandedElementIterator;
+            class BandedElementIterator;
 
             /// Our implementation of VectorIteratorBase.
-            template <typename ElementType_> class BandIterator;
-            template <typename ElementType_> class NonZeroBandIterator;
+            class BandIterator;
+            class NonZeroBandIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
-            friend class BandedElementIterator<DataType_>;
-            friend class BandIterator<DataType_>;
-            friend class NonZeroBandIterator<DataType_>;
+            friend class BandedElementIterator;
+            friend class BandIterator;
+            friend class NonZeroBandIterator;
 
             /// Type of the const iterator over our elements.
             typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
@@ -134,85 +134,85 @@ namespace honei
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements()
             {
-                return ElementIterator(new BandedElementIterator<DataType_>(*this, 0));
+                return ElementIterator(new BandedElementIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements()
             {
-                return ElementIterator(new BandedElementIterator<DataType_>(*this, _size * _size));
+                return ElementIterator(new BandedElementIterator(*this, _size * _size));
             }
 
             /// Returns const iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const
             {
-                return ConstElementIterator(new BandedElementIterator<DataType_>(*this, 0));
+                return ConstElementIterator(new BandedElementIterator(*this, 0));
             }
 
             /// Returns const iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const
             {
-                return ConstElementIterator(new BandedElementIterator<DataType_>(*this, _size * _size));
+                return ConstElementIterator(new BandedElementIterator(*this, _size * _size));
             }
 
             /// Returns iterator pointing to the first band of the matrix.
             VectorIterator begin_bands()
             {
-                return VectorIterator(new BandIterator<DataType_>(*this, 0));
+                return VectorIterator(new BandIterator(*this, 0));
             }
 
             /// Returns iterator pointing to a given band of the matrix.
             VectorIterator band_at(unsigned long index)
             {
-                return VectorIterator(new BandIterator<DataType_>(*this, index));
+                return VectorIterator(new BandIterator(*this, index));
             }
 
             /// Returns iterator pointing behind the last band of the matrix.
             VectorIterator end_bands()
             {
-                return VectorIterator(new BandIterator<DataType_>(*this, 2 * _size - 1));
+                return VectorIterator(new BandIterator(*this, 2 * _size - 1));
             }
 
             /// Returns iterator pointing to the first band of the matrix.
             ConstVectorIterator begin_bands() const
             {
-                return ConstVectorIterator(new BandIterator<DataType_>(*this, 0));
+                return ConstVectorIterator(new BandIterator(*this, 0));
             }
 
             /// Returns iterator pointing to a given band of the matrix.
             ConstVectorIterator band_at(unsigned long index) const
             {
-                return VectorIterator(new BandIterator<DataType_>(*this, index));
+                return VectorIterator(new BandIterator(*this, index));
             }
 
             /// Returns iterator pointing behind the last band of the matrix.
             ConstVectorIterator end_bands() const
             {
-                return ConstVectorIterator(new BandIterator<DataType_>(*this, 2 * _size - 1));
+                return ConstVectorIterator(new BandIterator(*this, 2 * _size - 1));
             }
 
             /// Returns iterator pointing to the first inserted non zero band of the matrix.
             VectorIterator begin_non_zero_bands()
             {
-                return VectorIterator(new NonZeroBandIterator<DataType_>(*this, 0));
+                return VectorIterator(new NonZeroBandIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last inserted band of the matrix.
             VectorIterator end_non_zero_bands()
             {
-                return VectorIterator(new NonZeroBandIterator<DataType_>(*this, 2 * _size - 1));
+                return VectorIterator(new NonZeroBandIterator(*this, 2 * _size - 1));
             }
 
             /// Returns iterator pointing to the first inserted non zero band of the matrix.
             ConstVectorIterator begin_non_zero_bands() const
             {
-                return ConstVectorIterator(new NonZeroBandIterator<DataType_>(*this, 0));
+                return ConstVectorIterator(new NonZeroBandIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last inserted band of the matrix.
             ConstVectorIterator end_non_zero_bands() const
             {
-                return ConstVectorIterator(new NonZeroBandIterator<DataType_>(*this, 2 * _size - 1));
+                return ConstVectorIterator(new NonZeroBandIterator(*this, 2 * _size - 1));
             }
 
             /// Returns the number of our columns.
@@ -316,7 +316,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      **/
-    template <> template <typename DataType_> class BandedMatrix<DataType_>::BandedElementIterator<DataType_> :
+    template <> template <typename DataType_> class BandedMatrix<DataType_>::BandedElementIterator :
         public MatrixElementIterator
     {
         private:
@@ -357,7 +357,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            BandedElementIterator(BandedElementIterator<DataType_> const & other) :
+            BandedElementIterator(BandedElementIterator const & other) :
                 _matrix(other._matrix),
                 _index(other._index)
             {
@@ -467,7 +467,7 @@ namespace honei
             /// \}
     };
 
-    template <> template <typename DataType_> class BandedMatrix<DataType_>::BandIterator<DataType_> :
+    template <> template <typename DataType_> class BandedMatrix<DataType_>::BandIterator :
             public VectorIteratorBase<DataType_, DenseVector<DataType_> >
     {
             private:
@@ -495,7 +495,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            BandIterator(BandIterator<DataType_> const & other) :
+            BandIterator(BandIterator const & other) :
                 _matrix(other._matrix),
                 _index(other._index)
             {
@@ -577,7 +577,7 @@ namespace honei
             /// \}
     };
 
-    template <> template <typename DataType_> class BandedMatrix<DataType_>::NonZeroBandIterator<DataType_> :
+    template <> template <typename DataType_> class BandedMatrix<DataType_>::NonZeroBandIterator :
             public VectorIteratorBase<DataType_, DenseVector<DataType_> >
     {
             private:
@@ -629,7 +629,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            NonZeroBandIterator(NonZeroBandIterator<DataType_> const & other) :
+            NonZeroBandIterator(NonZeroBandIterator const & other) :
                 _matrix(other._matrix),
                 _index(other._index),
                 _position(other._position)

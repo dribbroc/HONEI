@@ -7,6 +7,25 @@ see the NEWS file.
 
 2008-02-09 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/libla/banded_matrix.hh, honei/libla/dense_matrix.hh,
+	honei/libla/dense_matrix_tile.hh, honei/libla/dense_vector-impl.hh,
+	honei/libla/dense_vector.hh, honei/libla/dense_vector_range-impl.hh,
+	honei/libla/dense_vector_range.hh,
+	honei/libla/dense_vector_slice-impl.hh,
+	honei/libla/dense_vector_slice.hh, honei/libla/matrix.hh,
+	honei/libla/product-sse.cc, honei/libla/sparse_matrix.hh,
+	honei/libla/sparse_vector-impl.hh, honei/libla/sparse_vector.hh,
+	honei/libla/vector.hh, honei/libswe/limiter.hh,
+	honei/libswe/relax_solver.hh, honei/libswe/solver.hh,
+	honei/libutil/configuration.cc, honei/libutil/exception.cc,
+	honei/libutil/memory_backend.hh, honei/libutil/memory_manager_TEST.cc,
+	honei/libutil/pool_thread.cc, honei/libutil/thread.cc,
+	honei/libutil/type_traits_TEST.cc, honei/libutil/worker.cc:
+	Removed templates from nested iterator classes.
+	Added missing headers.
+
+2008-02-09 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/libgraph/node_distance-sse.cc,
 	honei/libla/element_inverse-sse.cc, honei/libla/scale-sse.cc,
 	honei/libla/sum-sse.cc, honei/libutil/type_traits.cc:

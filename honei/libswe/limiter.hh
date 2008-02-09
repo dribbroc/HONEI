@@ -26,6 +26,7 @@
 #include <honei/attributes.hh>
 
 #include <algorithm>
+#include <limits>
 #ifdef HONEI_SSE
 #  include <xmmintrin.h>
 #  include <emmintrin.h>

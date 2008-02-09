@@ -12,6 +12,7 @@
 #include <unittest/unittest.hh>
 
 #include <cmath>
+#include <limits>
 #include <map>
 #include <iostream>
 

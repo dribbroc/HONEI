@@ -64,16 +64,16 @@ namespace honei
             void _insert_element(unsigned long position, unsigned long index) const;
 
             /// Our normal implementation of ElementIteratorBase.
-            template <typename ElementType_> class SparseElementIterator;
+            class SparseElementIterator;
 
             /// Our smart implementation of ElementIteratorBase.
-            template <typename ElementType_> class NonZeroElementIterator;
+            class NonZeroElementIterator;
 
             typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
 
         public:
-            friend class SparseElementIterator<DataType_>;
-            friend class NonZeroElementIterator<DataType_>;
+            friend class SparseElementIterator;
+            friend class NonZeroElementIterator;
 
             /// Type of the const iterator over our elements.
             typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;

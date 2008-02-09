@@ -49,7 +49,7 @@ namespace honei
         public Exception
     {
         protected:
-            MemoryBackendError(const tags::TagValue tag, const DeviceId tag, const std::string & msg);
+            MemoryBackendError(const tags::TagValue tag, const DeviceId id, const std::string & msg);
     };
 
     /**

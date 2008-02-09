@@ -29,6 +29,7 @@
 
 #include <list>
 
+#include <cstring>
 #include <cerrno>
 
 using namespace honei;

@@ -58,18 +58,18 @@ namespace honei
             const SparseVector<DataType_> _zero_vector;
 
             /// Our implementation of ElementIteratorBase.
-            template <typename ElementType_> class SparseElementIterator;
+            class SparseElementIterator;
             /// Our smart implementation of ElementIteratorBase.
-            template <typename ElementType_> class NonZeroElementIterator;
+            class NonZeroElementIterator;
             /// Our smart implementation of VectorIteratorBase.
-            template <typename ElementType_> class NonZeroRowIterator;
+            class NonZeroRowIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
-            friend class SparseElementIterator<DataType_>;
-            friend class NonZeroElementIterator<DataType_>;
-            friend class NonZeroRowIterator<DataType_>;
+            friend class SparseElementIterator;
+            friend class NonZeroElementIterator;
+            friend class NonZeroRowIterator;
 
             /// Type of the const iterator over our elements.
             typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
@@ -116,73 +116,73 @@ namespace honei
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const
             {
-                return ConstElementIterator(new SparseElementIterator<DataType_>(*this, 0));
+                return ConstElementIterator(new SparseElementIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const
             {
-                return ConstElementIterator(new SparseElementIterator<DataType_>(*this, _rows * _columns));
+                return ConstElementIterator(new SparseElementIterator(*this, _rows * _columns));
             }
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements()
             {
-                return ElementIterator(new SparseElementIterator<DataType_>(*this, 0));
+                return ElementIterator(new SparseElementIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements()
             {
-                return ElementIterator(new SparseElementIterator<DataType_>(*this, _rows * _columns));
+                return ElementIterator(new SparseElementIterator(*this, _rows * _columns));
             }
 
             /// Returns const iterator pointing to the first non-zero element of the matrix.
             virtual ConstElementIterator begin_non_zero_elements() const
             {
-                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this));
+                return ConstElementIterator(new NonZeroElementIterator(*this));
             }
 
             /// Returns const iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_non_zero_elements() const
             {
-                return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, 0 /* Dummy */));
+                return ConstElementIterator(new NonZeroElementIterator(*this, 0 /* Dummy */));
             }
 
             /// Returns iterator pointing to the first non-zero element of the matrix.
             virtual ElementIterator begin_non_zero_elements()
             {
-                return ElementIterator(new NonZeroElementIterator<DataType_>(*this));
+                return ElementIterator(new NonZeroElementIterator(*this));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_non_zero_elements()
             {
-                return ElementIterator(new NonZeroElementIterator<DataType_>(*this, 0 /* Dummy */));
+                return ElementIterator(new NonZeroElementIterator(*this, 0 /* Dummy */));
             }
 
             /// Returns const iterator pointing to the first row of the matrix.
             ConstRowIterator begin_non_zero_rows() const
             {
-                return ConstRowIterator(new NonZeroRowIterator<DataType_>(*this, 0));
+                return ConstRowIterator(new NonZeroRowIterator(*this, 0));
             }
 
             /// Returns const iterator pointing behind the last row of the matrix.
             ConstRowIterator end_non_zero_rows() const
             {
-                return ConstRowIterator(new NonZeroRowIterator<DataType_>(*this, _rows));
+                return ConstRowIterator(new NonZeroRowIterator(*this, _rows));
             }
 
             /// Returns iterator pointing to the first row of the matrix.
             RowIterator begin_non_zero_rows()
             {
-                return RowIterator(new NonZeroRowIterator<DataType_>(*this, 0));
+                return RowIterator(new NonZeroRowIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last row of the matrix.
             RowIterator end_non_zero_rows()
             {
-                return RowIterator(new NonZeroRowIterator<DataType_>(*this, _rows));
+                return RowIterator(new NonZeroRowIterator(*this, _rows));
             }
 
             /// Returns the number of our columns.
@@ -256,7 +256,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      **/
-    template <> template <typename DataType_> class SparseMatrix<DataType_>::SparseElementIterator<DataType_> :
+    template <> template <typename DataType_> class SparseMatrix<DataType_>::SparseElementIterator :
         public MatrixElementIterator
     {
         private:
@@ -301,7 +301,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            SparseElementIterator(SparseElementIterator<DataType_> const & other) :
+            SparseElementIterator(SparseElementIterator const & other) :
                 _matrix(other._matrix),
                 _index(other._index),
                 _iter(other._iter),
@@ -320,7 +320,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual SparseElementIterator<DataType_> & operator++ ()
+            virtual SparseElementIterator & operator++ ()
             {
                 CONTEXT("When incrementing iterator by one:");
 
@@ -344,7 +344,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual SparseElementIterator<DataType_> & operator+= (const unsigned long step)
+            virtual SparseElementIterator & operator+= (const unsigned long step)
             {
                 CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
 
@@ -444,7 +444,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      **/
-    template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroElementIterator<DataType_> :
+    template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroElementIterator :
         public MatrixElementIterator
     {
         private:
@@ -533,7 +533,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            NonZeroElementIterator(NonZeroElementIterator<DataType_> const & other) :
+            NonZeroElementIterator(NonZeroElementIterator const & other) :
                 _matrix(other._matrix),
                 _index(other._index),
                 _iter(other._iter),
@@ -554,7 +554,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual NonZeroElementIterator<DataType_> & operator++ ()
+            virtual NonZeroElementIterator & operator++ ()
             {
                     ++_iter;
                     _column= _iter.index();
@@ -572,7 +572,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual NonZeroElementIterator<DataType_> & operator+= (const unsigned long step)
+            virtual NonZeroElementIterator & operator+= (const unsigned long step)
             {
                 /// \todo
 
@@ -653,7 +653,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      **/
-    template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroRowIterator<DataType_> :
+    template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroRowIterator :
         public VectorIteratorBase<DataType_, SparseVector<DataType_> >
     {
         private:
@@ -679,7 +679,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            NonZeroRowIterator(NonZeroRowIterator<DataType_> const & other) :
+            NonZeroRowIterator(NonZeroRowIterator const & other) :
                 _matrix(other._matrix),
                 _index(other._index)
             {
@@ -691,7 +691,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual NonZeroRowIterator<DataType_> & operator++ ()
+            virtual NonZeroRowIterator & operator++ ()
             {
                 while (_index < _matrix._rows)
                 {

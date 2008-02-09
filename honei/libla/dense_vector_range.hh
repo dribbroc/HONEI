@@ -43,7 +43,7 @@ namespace honei
             std::tr1::shared_ptr<Implementation> _imp;
 
             /// Our implementation of ElementIteratorBase.
-            template <typename ElementType_> class DenseElementIterator;
+            class DenseElementIterator;
 
             typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
 
@@ -59,7 +59,7 @@ namespace honei
             DenseVectorRange(const SharedArray<DataType_> & source, const unsigned long size, const unsigned long offset);
 
         public:
-            friend class DenseElementIterator<DataType_>;
+            friend class DenseElementIterator;
             friend class DenseMatrix<DataType_>;
             friend class DenseMatrixTile<DataType_>;
 

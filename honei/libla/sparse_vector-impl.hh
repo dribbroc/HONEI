@@ -164,61 +164,61 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::begin_elements() const
     {
-        return ConstElementIterator(new SparseElementIterator<DataType_>(*this, 0));
+        return ConstElementIterator(new SparseElementIterator(*this, 0));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new SparseElementIterator<DataType_>(*this, _imp->_size));
+        return ConstElementIterator(new SparseElementIterator(*this, _imp->_size));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::begin_elements()
     {
-        return ElementIterator(new SparseElementIterator<DataType_>(*this, 0));
+        return ElementIterator(new SparseElementIterator(*this, 0));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::end_elements()
     {
-        return ElementIterator(new SparseElementIterator<DataType_>(*this, _imp->_size));
+        return ElementIterator(new SparseElementIterator(*this, _imp->_size));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::begin_non_zero_elements() const
     {
-        return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, 0));
+        return ConstElementIterator(new NonZeroElementIterator(*this, 0));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::end_non_zero_elements() const
     {
-        return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, _imp->_used_elements));
+        return ConstElementIterator(new NonZeroElementIterator(*this, _imp->_used_elements));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::begin_non_zero_elements()
     {
-        return ElementIterator(new NonZeroElementIterator<DataType_>(*this, 0));
+        return ElementIterator(new NonZeroElementIterator(*this, 0));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::end_non_zero_elements()
     {
-        return ElementIterator(new NonZeroElementIterator<DataType_>(*this, _imp->_used_elements));
+        return ElementIterator(new NonZeroElementIterator(*this, _imp->_used_elements));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::non_zero_element_at(unsigned long pos)
     {
-        return ElementIterator(new NonZeroElementIterator<DataType_>(*this, pos));
+        return ElementIterator(new NonZeroElementIterator(*this, pos));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::non_zero_element_at(unsigned long pos) const
     {
-        return ConstElementIterator(new NonZeroElementIterator<DataType_>(*this, pos));
+        return ConstElementIterator(new NonZeroElementIterator(*this, pos));
     }
 
     template <typename DataType_>
@@ -305,7 +305,7 @@ namespace honei
      *
      * \ingroup grpvector
      */
-    template <> template <typename DataType_> class SparseVector<DataType_>::SparseElementIterator<DataType_> :
+    template <> template <typename DataType_> class SparseVector<DataType_>::SparseElementIterator :
         public VectorElementIterator
     {
         private:
@@ -336,7 +336,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            SparseElementIterator(const SparseElementIterator<DataType_> & other) :
+            SparseElementIterator(const SparseElementIterator & other) :
                 _vector(other._vector),
                 _pos(other._pos),
                 _index(other._index)
@@ -354,7 +354,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual SparseElementIterator<DataType_> & operator++ ()
+            virtual SparseElementIterator & operator++ ()
             {
                 CONTEXT("When incrementing iterator by one:");
 
@@ -366,7 +366,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual SparseElementIterator<DataType_> & operator+= (const unsigned long step)
+            virtual SparseElementIterator & operator+= (const unsigned long step)
             {
                 CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
 
@@ -443,7 +443,7 @@ namespace honei
      *
      * \ingroup grpvector
      */
-    template <> template <typename DataType_> class SparseVector<DataType_>::NonZeroElementIterator<DataType_> :
+    template <> template <typename DataType_> class SparseVector<DataType_>::NonZeroElementIterator :
         public VectorElementIterator
     {
         private:
@@ -474,7 +474,7 @@ namespace honei
             }
 
             /// Copy-cnstructor.
-            NonZeroElementIterator(NonZeroElementIterator<DataType_> const & other) :
+            NonZeroElementIterator(NonZeroElementIterator const & other) :
                 _vector(other._vector),
                 _pos(other._pos),
                 _index(other._index)
@@ -492,7 +492,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual NonZeroElementIterator<DataType_> & operator++ ()
+            virtual NonZeroElementIterator & operator++ ()
             {
                 CONTEXT("When incrementing iterator by one:");
                 if (_vector._imp->_indices[_pos] == _index)
@@ -520,7 +520,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual NonZeroElementIterator<DataType_> & operator+= (const unsigned long step)
+            virtual NonZeroElementIterator & operator+= (const unsigned long step)
             {
                 CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
 

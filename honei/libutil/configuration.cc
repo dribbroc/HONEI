@@ -22,6 +22,7 @@
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
 
+#include <cstdlib>
 #include <fstream>
 #include <map>
 #include <string>

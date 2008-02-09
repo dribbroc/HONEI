@@ -42,7 +42,7 @@ namespace honei
             std::tr1::shared_ptr<Implementation> _imp;
 
             /// Our implementation of ElementIteratorBase.
-            template <typename ElementType_> class DenseElementIterator;
+            class DenseElementIterator;
 
             typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
 
@@ -60,7 +60,7 @@ namespace honei
                     const unsigned long stepsize);
 
         public:
-            friend class DenseElementIterator<DataType_>;
+            friend class DenseElementIterator;
             friend class DenseMatrix<DataType_>;
             friend class DenseMatrixTile<DataType_>;
 

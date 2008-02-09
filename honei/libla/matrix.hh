@@ -45,8 +45,8 @@ namespace honei
             typedef ElementIteratorBase<DataType_> MatrixElementIterator;
 
             /// Type of the const iterator over our elements.
-            template <typename ElementType_> class ConstElementIteratorWrapper;
-            typedef ConstElementIteratorWrapper<DataType_> ConstElementIterator;
+            class ConstElementIteratorWrapper;
+            typedef ConstElementIteratorWrapper ConstElementIterator;
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const = 0;
@@ -84,8 +84,8 @@ namespace honei
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
             /// Type of the iterator over our elements.
-            template <typename ElementType_> class ElementIteratorWrapper;
-            typedef ElementIteratorWrapper<DataType_> ElementIterator;
+            class ElementIteratorWrapper;
+            typedef ElementIteratorWrapper ElementIterator;
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements() = 0;
@@ -134,7 +134,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      */
-    template <> template <typename DataType_> class MutableMatrix<DataType_>::ElementIteratorWrapper<DataType_> :
+    template <> template <typename DataType_> class MutableMatrix<DataType_>::ElementIteratorWrapper :
         public std::iterator<std::forward_iterator_tag, DataType_>
     {
         private:
@@ -159,7 +159,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            ElementIteratorWrapper(const ElementIteratorWrapper<DataType_> & other) :
+            ElementIteratorWrapper(const ElementIteratorWrapper & other) :
                 _iterator(other._iterator)
             {
             }
@@ -173,7 +173,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual ElementIteratorWrapper<DataType_> & operator++ ()
+            virtual ElementIteratorWrapper & operator++ ()
             {
                 ++(*_iterator);
 
@@ -181,7 +181,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual ElementIteratorWrapper<DataType_> & operator+= (unsigned int step)
+            virtual ElementIteratorWrapper & operator+= (unsigned int step)
             {
                 *_iterator += step;
 
@@ -195,19 +195,19 @@ namespace honei
             }
 
             /// Comparison operator for less-than.
-            virtual bool operator< (const ElementIteratorWrapper<DataType_> & other) const
+            virtual bool operator< (const ElementIteratorWrapper & other) const
             {
                 return (*_iterator < *other._iterator);
             }
 
             /// Comparison operator for equality.
-            virtual bool operator== (const ElementIteratorWrapper<DataType_> & other) const
+            virtual bool operator== (const ElementIteratorWrapper & other) const
             {
                 return (*_iterator == *other._iterator);
             }
 
             /// Comparison operator for inequality.
-            virtual bool operator!= (const ElementIteratorWrapper<DataType_> & other) const
+            virtual bool operator!= (const ElementIteratorWrapper & other) const
             {
                 return (*_iterator != *other._iterator);
             }
@@ -250,7 +250,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      */
-    template <> template <typename DataType_> class Matrix<DataType_>::ConstElementIteratorWrapper<DataType_> :
+    template <> template <typename DataType_> class Matrix<DataType_>::ConstElementIteratorWrapper :
         public std::iterator<std::forward_iterator_tag, const DataType_>
     {
         private:
@@ -273,7 +273,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            ConstElementIteratorWrapper(const ConstElementIteratorWrapper<DataType_> & other) :
+            ConstElementIteratorWrapper(const ConstElementIteratorWrapper & other) :
                 _iterator(other._iterator)
             {
             }
@@ -292,7 +292,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual ConstElementIteratorWrapper<DataType_> & operator++ ()
+            virtual ConstElementIteratorWrapper & operator++ ()
             {
                 ++(*_iterator);
 
@@ -300,7 +300,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual ConstElementIteratorWrapper<DataType_> & operator+= (unsigned int step)
+            virtual ConstElementIteratorWrapper & operator+= (unsigned int step)
             {
                 *_iterator += step;
 
@@ -316,19 +316,19 @@ namespace honei
             }
 
             /// Comparison operator for less-than.
-            virtual bool operator< (const ConstElementIteratorWrapper<DataType_> & other) const
+            virtual bool operator< (const ConstElementIteratorWrapper & other) const
             {
                 return (*_iterator < *other._iterator);
             }
 
             /// Comparison operator for equality.
-            virtual bool operator== (const ConstElementIteratorWrapper<DataType_> & other) const
+            virtual bool operator== (const ConstElementIteratorWrapper & other) const
             {
                 return (*_iterator == *other._iterator);
             }
 
             /// Comparison operator for inequality.
-            virtual bool operator!= (const ConstElementIteratorWrapper<DataType_> & other) const
+            virtual bool operator!= (const ConstElementIteratorWrapper & other) const
             {
                 return (*_iterator != *other._iterator);
             }

@@ -24,6 +24,7 @@
 #include <honei/libutil/thread.hh>
 #include <honei/libutil/log.hh>
 
+#include <cstring>
 #include <cerrno>
 
 #include <pthread.h>

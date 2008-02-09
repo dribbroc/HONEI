@@ -30,7 +30,7 @@ namespace honei
     {
         namespace sse
         {
-            inline void product_dm(float * x, const float * y, float b, unsigned long size)
+            inline void product_dm(float * x, float * y, float b, unsigned long size)
             {
                 _mm_prefetch(y, _MM_HINT_T0);
                 _mm_prefetch(x, _MM_HINT_T0);
@@ -119,7 +119,7 @@ namespace honei
                 }
             }
 
-            inline void product_dm(double * x, const double * y, double b, unsigned long size)
+            inline void product_dm(double * x, double * y, double b, unsigned long size)
             {
                 _mm_prefetch(y, _MM_HINT_T0);
                 _mm_prefetch(x, _MM_HINT_T0);

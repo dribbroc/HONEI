@@ -69,12 +69,12 @@ namespace honei
             SharedArray<std::tr1::shared_ptr<DenseVectorSlice<DataType_> > > _column_vectors;
 
             /// Our implementation of ElementIteratorBase.
-            template <typename ElementType_> class DenseElementIterator;
+            class DenseElementIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
-            friend class DenseElementIterator<DataType_>;
+            friend class DenseElementIterator;
 
             /// Type of the const iterator over our elements.
             typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
@@ -118,27 +118,27 @@ namespace honei
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const
             {
-                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+                return ConstElementIterator(new DenseElementIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const
             {
                 return ConstElementIterator(
-                        new DenseElementIterator<DataType_>(*this, _rows * _columns));
+                        new DenseElementIterator(*this, _rows * _columns));
             }
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements()
             {
-                return ElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+                return ElementIterator(new DenseElementIterator(*this, 0));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements()
             {
                 return ElementIterator(
-                        new DenseElementIterator<DataType_>(*this, _rows * _columns));
+                        new DenseElementIterator(*this, _rows * _columns));
             }
 
             /// Returns the number of our columns.
@@ -238,7 +238,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      */
-    template <> template <typename DataType_> class DenseMatrixTile<DataType_>::DenseElementIterator<DataType_> :
+    template <> template <typename DataType_> class DenseMatrixTile<DataType_>::DenseElementIterator :
         public MatrixElementIterator
     {
         private:
@@ -275,7 +275,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            DenseElementIterator(DenseElementIterator<DataType_> const & other) :
+            DenseElementIterator(DenseElementIterator const & other) :
                 _tile(other._tile),
                 _index(other._index),
                 _pos(other._pos)
@@ -288,7 +288,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual DenseElementIterator<DataType_> & operator++ ()
+            virtual DenseElementIterator & operator++ ()
             {
                 CONTEXT("When incrementing iterator by one:");
 
@@ -306,7 +306,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual DenseElementIterator<DataType_> & operator+= (const unsigned long step)
+            virtual DenseElementIterator & operator+= (const unsigned long step)
             {
                 CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
 

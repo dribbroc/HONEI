@@ -51,6 +51,7 @@
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/banded_matrix.hh>
 #include <cmath>
+#include <limits>
 #include <honei/libswe/limiter.hh>
 #include <honei/libla/scale.hh>
 #include <honei/libla/dot_product.hh>

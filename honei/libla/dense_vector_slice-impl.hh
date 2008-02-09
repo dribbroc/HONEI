@@ -89,37 +89,37 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVectorSlice<DataType_>::begin_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+        return ConstElementIterator(new DenseElementIterator(*this, 0));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVectorSlice<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator<DataType_>(*this, _imp->size));
+        return ConstElementIterator(new DenseElementIterator(*this, _imp->size));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVectorSlice<DataType_>::element_at(unsigned long index) const
     {
-        return ConstElementIterator(new DenseElementIterator<DataType_>(*this, index));
+        return ConstElementIterator(new DenseElementIterator(*this, index));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator DenseVectorSlice<DataType_>::begin_elements()
     {
-        return ElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+        return ElementIterator(new DenseElementIterator(*this, 0));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator DenseVectorSlice<DataType_>::end_elements()
     {
-        return ElementIterator(new DenseElementIterator<DataType_>(*this, _imp->size));
+        return ElementIterator(new DenseElementIterator(*this, _imp->size));
     }
 
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator DenseVectorSlice<DataType_>::element_at(unsigned long index)
     {
-        return ElementIterator(new DenseElementIterator<DataType_>(*this, index));
+        return ElementIterator(new DenseElementIterator(*this, index));
     }
 
     template <typename DataType_>
@@ -179,7 +179,7 @@ namespace honei
      *
      * \ingroup grpvector
      **/
-    template <> template <typename DataType_> class DenseVectorSlice<DataType_>::DenseElementIterator<DataType_> :
+    template <> template <typename DataType_> class DenseVectorSlice<DataType_>::DenseElementIterator :
         public VectorElementIterator
         {
             private:
@@ -206,7 +206,7 @@ namespace honei
                 }
 
                 /// Copy-constructor.
-                DenseElementIterator(DenseElementIterator<DataType_> const & other) :
+                DenseElementIterator(DenseElementIterator const & other) :
                     _slice(other._slice),
                     _index(other._index)
                 {
@@ -223,7 +223,7 @@ namespace honei
                 /// \{
 
                 /// Preincrement operator.
-                virtual DenseElementIterator<DataType_> & operator++ ()
+                virtual DenseElementIterator & operator++ ()
                 {
                     CONTEXT("When incrementing iterator by one:");
 
@@ -233,7 +233,7 @@ namespace honei
                 }
 
                 /// In-place-add operator.
-                virtual DenseElementIterator<DataType_> & operator+= (const unsigned long step)
+                virtual DenseElementIterator & operator+= (const unsigned long step)
                 {
                     CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
 

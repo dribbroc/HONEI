@@ -69,12 +69,12 @@ namespace honei
             SharedArray<std::tr1::shared_ptr<DenseVectorSlice<DataType_> > > _column_vectors;
 
             /// Our implementation of ElementIteratorBase.
-            template <typename ElementType_> class DenseElementIterator;
+            class DenseElementIterator;
 
             typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
-            friend class DenseElementIterator<DataType_>;
+            friend class DenseElementIterator;
             friend class DenseMatrixTile<DataType_>;
 
             /// Type of the const iterator over our elements.
@@ -199,37 +199,37 @@ namespace honei
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const
             {
-                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+                return ConstElementIterator(new DenseElementIterator(*this, 0));
             }
 
             /// Returns iterator pointing to a given element of the matrix.
             virtual ConstElementIterator element_at(unsigned long index) const
             {
-                 return ConstElementIterator(new DenseElementIterator<DataType_>(*this, index));
+                 return ConstElementIterator(new DenseElementIterator(*this, index));
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const
             {
-                return ConstElementIterator(new DenseElementIterator<DataType_>(*this, _rows * _columns));
+                return ConstElementIterator(new DenseElementIterator(*this, _rows * _columns));
             }
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements()
             {
-                return ElementIterator(new DenseElementIterator<DataType_>(*this, 0));
+                return ElementIterator(new DenseElementIterator(*this, 0));
             }
 
             /// Returns iterator pointing to a given element of the matrix.
             virtual ElementIterator element_at(unsigned long index)
             {
-                 return ElementIterator(new DenseElementIterator<DataType_>(*this, index));
+                 return ElementIterator(new DenseElementIterator(*this, index));
             }
 
            /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements()
             {
-                return ElementIterator(new DenseElementIterator<DataType_>(*this, _rows * _columns));
+                return ElementIterator(new DenseElementIterator(*this, _rows * _columns));
             }
 
             /// Returns the number of our columns.
@@ -314,7 +314,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      */
-    template <> template <typename DataType_> class DenseMatrix<DataType_>::DenseElementIterator<DataType_> :
+    template <> template <typename DataType_> class DenseMatrix<DataType_>::DenseElementIterator :
         public MatrixElementIterator
     {
         private:
@@ -341,7 +341,7 @@ namespace honei
             }
 
             /// Copy-constructor.
-            DenseElementIterator(DenseElementIterator<DataType_> const & other) :
+            DenseElementIterator(DenseElementIterator const & other) :
                 _matrix(other._matrix),
                 _index(other._index)
             {
@@ -353,7 +353,7 @@ namespace honei
             /// \{
 
             /// Preincrement operator.
-            virtual DenseElementIterator<DataType_> & operator++ ()
+            virtual DenseElementIterator & operator++ ()
             {
                 CONTEXT("When incrementing iterator by one:");
 
@@ -363,7 +363,7 @@ namespace honei
             }
 
             /// In-place-add operator.
-            virtual DenseElementIterator<DataType_> & operator+= (const unsigned long step)
+            virtual DenseElementIterator & operator+= (const unsigned long step)
             {
                 CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
 
