@@ -22,7 +22,7 @@
 #include <honei/cell/cell.hh>
 #include <honei/cell/libutil/allocator.hh>
 #include <honei/cell/libutil/transfer.hh>
-#include <honei/cell/libutil/operations.hh>
+#include <honei/cell/libutil/operation_framework.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>

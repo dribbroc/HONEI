@@ -20,7 +20,7 @@
 #ifndef CELL_GUARD_LIBMATH_OPERATIONS_HH
 #define CELL_GUARD_LIBMATH_OPERATIONS_HH 1
 
-#include <honei/cell/libutil/operations.hh>
+#include <honei/cell/libutil/operation_framework.hh>
 
 namespace honei
 {

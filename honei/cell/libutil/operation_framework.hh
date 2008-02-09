@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef CELL_GUARD_UTIL_OPERATIONS_HH
-#define CELL_GUARD_UTIL_OPERATIONS_HH 1
+#ifndef CELL_GUARD_UTIL_OPERATION_FRAMEWORK_HH
+#define CELL_GUARD_UTIL_OPERATION_FRAMEWORK_HH 1
 
 #include <honei/cell/interface.hh>
 
@@ -48,6 +48,15 @@ namespace honei
             void (*calculate)(vector float * elements, const unsigned size, const float optional_scalar);
         };
 
+        template <> struct Operation<1, double, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on a given block of data.
+            void (*calculate)(vector double * elements, const unsigned size, const double optional_scalar);
+        };
+
         template <> struct Operation<1, float, rtm_mail>
         {
             /// Our result type.
@@ -57,10 +66,47 @@ namespace honei
             vector float (*init)(void);
 
             /// Performs calculation on a given block of data.
-            vector float (*calculate)(const vector float & accumulator, vector float * elements, const unsigned size, const float optional_scalar);
+            vector float (*calculate)(const vector float & accumulator, vector float * elements, const unsigned size,
+                    const float optional_scalar);
 
             /// Finishs the calculations and returns a scalar result suitable for mail transfer.
             float (*finish)(const vector float & accumulator);
+        };
+
+        template <> struct Operation<1, double, rtm_mail>
+        {
+            /// Our result type.
+            typedef unsigned ResultType;
+
+            /// Initialises the accumulator.
+            vector double (*init)(void);
+
+            /// Performs calculation on a given block of data.
+            vector double (*calculate)(const vector double & accumulator, vector double * elements, const unsigned size,
+                    const double optional_scalar);
+
+            /// Finishs the calculations and returns a scalar result suitable for mail transfer.
+            double (*finish)(const vector double & accumulator);
+        };
+
+        template <> struct Operation<2, float, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on given blocks of data.
+            void (*calculate)(vector float * a_elements, const vector float * b_elements, const unsigned size,
+                    vector float & b_carry, const unsigned b_offset, const float optional_scalar);
+        };
+
+        template <> struct Operation<2, double, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on given blocks of data.
+            void (*calculate)(vector double * a_elements, const vector double * b_elements, const unsigned size,
+                    vector double & b_carry, const unsigned b_offset, const double optional_scalar);
         };
 
         template <> struct Operation<2, float, rtm_mail>
@@ -79,53 +125,6 @@ namespace honei
             float (*finish)(const vector float & accumulator);
         };
 
-        template <> struct Operation<2, float, rtm_dma>
-        {
-            /// Our result type.
-            typedef void ResultType;
-
-            /// Performs calculation on given blocks of data.
-            void (*calculate)(vector float * a_elements, const vector float * b_elements, const unsigned size,
-                    vector float & b_carry, const unsigned b_offset, const float optional_scalar);
-        };
-
-        template <> struct Operation<3, float, rtm_dma>
-        {
-            /// Our result type.
-            typedef void ResultType;
-
-            /// Performs calculation on given blocks of data.
-            void (*calculate)(vector float * a_elements, const vector float * b_elements,
-                    const vector float * c_elements, const unsigned size,
-                    vector float & b_carry, const unsigned b_offset, vector float & c_carry,
-                    const unsigned c_offset, const float optional_scalar);
-        };
-
-        // the same for double
-        template <> struct Operation<1, double, rtm_dma>
-        {
-            /// Our result type.
-            typedef void ResultType;
-
-            /// Performs calculation on a given block of data.
-            void (*calculate)(vector double * elements, const unsigned size, const double optional_scalar);
-        };
-
-        template <> struct Operation<1, double, rtm_mail>
-        {
-            /// Our result type.
-            typedef unsigned ResultType;
-
-            /// Initialises the accumulator.
-            vector double (*init)(void);
-
-            /// Performs calculation on a given block of data.
-            vector double (*calculate)(const vector double & accumulator, vector double * elements, const unsigned size, const double optional_scalar);
-
-            /// Finishs the calculations and returns a scalar result suitable for mail transfer.
-            double (*finish)(const vector double & accumulator);
-        };
-
         template <> struct Operation<2, double, rtm_mail>
         {
             /// Our result type.
@@ -142,14 +141,15 @@ namespace honei
             double (*finish)(const vector double & accumulator);
         };
 
-        template <> struct Operation<2, double, rtm_dma>
+        template <> struct Operation<3, float, rtm_dma>
         {
             /// Our result type.
             typedef void ResultType;
 
             /// Performs calculation on given blocks of data.
-            void (*calculate)(vector double * a_elements, const vector double * b_elements, const unsigned size,
-                    vector double & b_carry, const unsigned b_offset, const double optional_scalar);
+            void (*calculate)(vector float * a_elements, const vector float * b_elements, const vector float * c_elements,
+                    const unsigned size, vector float & b_carry, const unsigned b_offset, vector float & c_carry,
+                    const unsigned c_offset, const float optional_scalar);
         };
 
         /// \}
@@ -158,7 +158,7 @@ namespace honei
          * \name Operation Skeletons
          * \{
          *
-         * Function operation is a skeleton that executed a given operation's
+         * Function operation is a skeleton that executes a given operation's
          * methods.
          *
          * \ingroup grpframework
@@ -167,16 +167,31 @@ namespace honei
         template <typename Operation_> typename Operation_::ResultType operation(const Operation_ & operation,
                 const Instruction & instruction);
 
+        template <> void operation<Operation<1, float, rtm_dma> >(const Operation<1, float, rtm_dma> & operation,
+                const Instruction & instruction);
+
         template <> void operation<Operation<1, double, rtm_dma> >(const Operation<1, double, rtm_dma> & operation,
+                const Instruction & instruction);
+
+        template <> unsigned operation<Operation<1, float, rtm_mail> >(const Operation<1, float, rtm_mail> & operation,
                 const Instruction & instruction);
 
         template <> unsigned operation<Operation<1, double, rtm_mail> >(const Operation<1, double, rtm_mail> & operation,
                 const Instruction & instruction);
 
-        template <> unsigned operation<Operation<2, double, rtm_mail> >(const Operation<2, double, rtm_mail> & operation,
+        template <> void operation<Operation<2, float, rtm_dma> >(const Operation<2, float, rtm_dma> & operation,
                 const Instruction & instruction);
 
         template <> void operation<Operation<2, double, rtm_dma> >(const Operation<2, double, rtm_dma> & operation,
+                const Instruction & instruction);
+
+        template <> unsigned operation<Operation<2, float, rtm_mail> >(const Operation<2, float, rtm_mail> & operation,
+                const Instruction & instruction);
+
+        template <> unsigned operation<Operation<2, double, rtm_mail> >(const Operation<2, double, rtm_mail> & operation,
+                const Instruction & instruction);
+
+        template <> void operation<Operation<3, float, rtm_dma> >(const Operation<3, float, rtm_dma> & operation,
                 const Instruction & instruction);
 
         /// \}
@@ -185,52 +200,82 @@ namespace honei
         /// \{
 
         /**
-         * Return a vector of biggest-possible floats/double.
+         * \{
+         * Return a vector of biggest-possible values
          *
          * \ingroup grpframework
          */
+
         vector float biggest_float();
+
         vector double biggest_double();
 
+        /// \}
+
         /**
-         * Return a vector of smalles-possible floats/double.
+         * \{
+         * Return a vector of smallesit-possible values
          *
          * \ingroup grpframework
          */
+
         vector float smallest_float();
+
         vector double smallest_double();
 
+        /// \}
+
         /**
+         * \{
          * Return a zero vector.
          *
          * \ingroup grpframework
          */
+
         vector float zero_float();
+
         vector double zero_double();
 
+        /// \}
+
         /**
+         * \{
          * Return the sum of all of the vector's elements.
          *
          * \ingroup grpframework
          */
+
         float sum_float(const vector float & value);
+
         double sum_double(const vector double & value);
 
+        /// \}
+
         /**
+         * \{
          * Return the maximum of all of the vector's elements.
          *
          * \ingroup grpframework
          */
+
         float max_float(const vector float & value);
+
         double max_double(const vector double & value);
 
+        /// \}
+
         /**
+         * \{
          * Return the minimum of all of the vector's elements.
          *
          * \ingroup grpframework
          */
+
         float min_float(const vector float & value);
+
         double min_double(const vector double & value);
+
+        /// \}
 
         /// \}
     }

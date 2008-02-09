@@ -5,6 +5,27 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/cell/libla/operations.hh, honei/cell/libmath/operations.hh,
+	honei/cell/libswe/operations.hh,
+	+honei/cell/libutil/operation_framework.cc,
+	+honei/cell/libutil/operation_framework.hh,
+	honei/cell/libutil/operation_one_double_dma.cc,
+	honei/cell/libutil/operation_one_double_mail.cc,
+	honei/cell/libutil/operation_one_float_dma.cc,
+	honei/cell/libutil/operation_one_float_mail.cc,
+	-honei/cell/libutil/operations.cc, -honei/cell/libutil/operations.hh,
+	honei/cell/libutil/operation_three_float_dma.cc,
+	honei/cell/libutil/operation_two_double_dma.cc,
+	honei/cell/libutil/operation_two_double_mail.cc,
+	honei/cell/libutil/operation_two_float_dma.cc,
+	honei/cell/libutil/operation_two_float_mail.cc: Moved
+	'operations' to 'operation_framework' to stop confusion with other
+	files named 'operations'. Fixed doxygen comments. Scrubbed up
+	Till's deletion of float-typed operations!
+	* honei/cell/libutil/Makefile.am: Added headers.
+
 2008-02-09 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* honei/libla/product-mc.hh, honei/honeirc:

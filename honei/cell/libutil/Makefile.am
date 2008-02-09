@@ -7,9 +7,14 @@ DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libutil_spe.a
 
+libutil_spe_a_HEADER = \
+	allocator.hh \
+	operation_framework.hh \
+	profiler.hh \
+	transfer.hh
 libutil_spe_a_SOURCES = \
 	allocator.cc \
-	operations.cc \
+	operation_framework.cc \
 	operation_one_float_dma.cc \
 	operation_one_double_dma.cc \
 	operation_one_float_mail.cc \
