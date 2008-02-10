@@ -5,6 +5,24 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-10 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* -honei/attributes.hh, honei/cell/interface.hh,
+	honei/cell/libla/scale_sparse_float.cc, honei/cell/libutil/debug.hh,
+	honei/cell/libutil/profiler.hh, honei/cell/libutil/transfer.hh,
+	honei/cell/types.hh, honei/libgraph/node_distance-sse.cc,
+	honei/libla/dot_product-sse.cc, honei/libla/element_inverse-sse.cc,
+	honei/libla/norm-sse.cc, honei/libla/product-sse.cc,
+	honei/libla/reduction-sse.cc, honei/libla/scaled_sum-sse.cc,
+	honei/libla/scale-sse.cc, honei/libla/sum-sse.cc,
+	honei/libswe/assembly_processing.hh,
+	honei/libswe/assembly_processing-sse.cc,
+	honei/libswe/correction_processing-sse.cc,
+	honei/libswe/flow_processing-sse.cc, honei/libswe/limiter.hh,
+	honei/libswe/source_processing-sse.cc, +honei/libutil/attributes.hh,
+	honei/libutil/type_traits.cc: Split HONEI_ATTRIBUTES into
+	HONEI_ALIGNED, HONEI_INLINE and HONEI_PACKED.
+
 2008-02-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/cell/interface.hh,

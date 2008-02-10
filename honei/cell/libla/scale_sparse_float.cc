@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/cell/cell.hh>
 #include <honei/cell/libutil/allocator.hh>
 #include <honei/cell/libutil/transfer.hh>
@@ -45,7 +45,7 @@ void scale_sparse_float(const Instruction & inst)
     EffectiveAddress ea_list(inst.a.ea);
     vector float scalar = spu_splats(inst.c.f);
 
-    ListElement list[inst.size] HONEI_ATTRIBUTE(aligned(8));
+    ListElement list[inst.size] HONEI_ALIGNED(8);
 
     debug_get(ea_list, list, sizeof(ListElement) * inst.e.u);
     mfc_get(list, ea_list, sizeof(ListElement) * inst.e.u, 0, 0, 0);

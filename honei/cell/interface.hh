@@ -20,7 +20,7 @@
 #ifndef CELL_GUARD_INTERFACE_HH
 #define CELL_GUARD_INTERFACE_HH 1
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/cell/opcodes.hh>
 #include <honei/cell/types.hh>
 
@@ -77,7 +77,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        struct HONEI_ATTRIBUTE(packed) Environment
+        struct HONEI_PACKED Environment
         {
             LocalStoreAddress begin; ///< The begin of the available data space in Local Store memory.
 
@@ -89,7 +89,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        union HONEI_ATTRIBUTE(packed) Operand
+        union HONEI_PACKED Operand
         {
             EffectiveAddress ea; ///< An effective address pointing to a PPE-side memory location.
 
@@ -160,7 +160,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        struct HONEI_ATTRIBUTE(packed) Instruction
+        struct HONEI_PACKED Instruction
         {
             OpCode opcode; ///< An instruction's OpCode.
 
@@ -195,7 +195,7 @@ namespace honei
          *
          * \ingroup grpspeinterface
          */
-        struct HONEI_ATTRIBUTE(packed) Capabilities
+        struct HONEI_PACKED Capabilities
         {
             KernelType type;
 

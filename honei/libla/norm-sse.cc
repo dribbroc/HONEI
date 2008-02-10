@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/libla/norm.hh>
 
 #include <xmmintrin.h>
@@ -31,7 +31,7 @@ namespace honei
         {
             inline float norm_l2(const float * a, unsigned long size)
             {
-                float HONEI_ATTRIBUTE(aligned(16)) result(0);
+                float HONEI_ALIGNED(16) result(0);
                 union sse4
                 {
                     __m128 m;
@@ -100,7 +100,7 @@ namespace honei
 
             inline double norm_l2(double * a, unsigned long size)
             {
-                double HONEI_ATTRIBUTE(aligned(16)) result(0);
+                double HONEI_ALIGNED(16) result(0);
                 union sse2
                 {
                     __m128d m;

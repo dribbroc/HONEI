@@ -20,7 +20,7 @@
 #ifndef CELL_GUARD_UTIL_DEBUG_HH
 #define CELL_GUARD_UTIL_DEBUG_HH 1
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 
 #include <spu_mfcio.h>
 
@@ -31,29 +31,29 @@ namespace honei
         /// \name Debug functions
         /// \{
 
-        inline void debug_acquire(const LocalStoreAddress & lsa) HONEI_ATTRIBUTE(always_inline);
+        inline void debug_acquire(const LocalStoreAddress & lsa) HONEI_INLINE;
 
-        inline void debug_dump() HONEI_ATTRIBUTE(always_inline);
+        inline void debug_dump() HONEI_INLINE;
 
-        inline void debug_enter() HONEI_ATTRIBUTE(always_inline);
+        inline void debug_enter() HONEI_INLINE;
 
         inline void debug_get(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
+                const unsigned & size) HONEI_INLINE;
 
         inline void debug_getl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
+                const unsigned & size) HONEI_INLINE;
 
-        inline void debug_leave() HONEI_ATTRIBUTE(always_inline);
+        inline void debug_leave() HONEI_INLINE;
 
         inline void debug_put(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
+                const unsigned & size) HONEI_INLINE;
 
         inline void debug_putl(const EffectiveAddress & ea, const LocalStoreAddress & lsa,
-                const unsigned & size) HONEI_ATTRIBUTE(always_inline);
+                const unsigned & size) HONEI_INLINE;
 
-        inline void debug_release(const LocalStoreAddress & lsa) HONEI_ATTRIBUTE(always_inline);
+        inline void debug_release(const LocalStoreAddress & lsa) HONEI_INLINE;
 
-        inline void debug_value(const unsigned & value) HONEI_ATTRIBUTE(always_inline);
+        inline void debug_value(const unsigned & value) HONEI_INLINE;
 
         /// \}
 

@@ -20,7 +20,7 @@
 #ifndef CELL_GUARD_UTIL_PROFILER_HH
 #define CELL_GUARD_UTIL_PROFILER_HH 1
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/cell/interface.hh>
 
 #include <spu_mfcio.h>
@@ -48,9 +48,9 @@ namespace honei
             /// \}
         }
 
-        inline void profiler_start() HONEI_ATTRIBUTE(always_inline);
+        inline void profiler_start() HONEI_INLINE;
 
-        inline void profiler_stop() HONEI_ATTRIBUTE(always_inline);
+        inline void profiler_stop() HONEI_INLINE;
 
         inline void profiler_start()
         {

@@ -21,7 +21,7 @@
 #ifndef CELL_GUARD_UTIL_TRANSFER_HH
 #define CELL_GUARD_UTIL_TRANSFER_HH 1
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/cell/cell.hh>
 
 #include <spu_intrinsics.h>
@@ -33,7 +33,7 @@ namespace intern
     extern const vector unsigned long reverse_bitmasks[4];
 }
 
-inline unsigned multiple_of_sixteen(unsigned u) HONEI_ATTRIBUTE(always_inline);
+inline unsigned multiple_of_sixteen(unsigned u) HONEI_INLINE;
 
 unsigned multiple_of_sixteen(unsigned u)
 {
@@ -42,7 +42,7 @@ unsigned multiple_of_sixteen(unsigned u)
     return (r > 0) ? u + 16 - r : u;
 }
 
-inline unsigned truncate_of_sixteen(unsigned u) HONEI_ATTRIBUTE(always_inline);
+inline unsigned truncate_of_sixteen(unsigned u) HONEI_INLINE;
 
 unsigned truncate_of_sixteen(unsigned u)
 {
@@ -56,7 +56,7 @@ unsigned truncate_of_sixteen(unsigned u)
  * Please note that extract can only be used on SPU-side as it uses spu_intrinsics.h.
  */
 
-template <typename DT_> inline void extract(DT_ & first, const DT_ & second, unsigned offset) HONEI_ATTRIBUTE(always_inline);
+template <typename DT_> inline void extract(DT_ & first, const DT_ & second, unsigned offset) HONEI_INLINE;
 
 template <> inline void extract<vector float>(vector float & first, const vector float & second, unsigned offset)
 {
@@ -74,7 +74,7 @@ template <> inline void extract<vector double>(vector double & first, const vect
  * Please note that insert can only be used on SPU-side as it uses spu_intrinsics.h.
  */
 
-template <typename DT_> inline void insert(DT_ & first, DT_ & second, DT_ & data, unsigned offset) HONEI_ATTRIBUTE(always_inline);
+template <typename DT_> inline void insert(DT_ & first, DT_ & second, DT_ & data, unsigned offset) HONEI_INLINE;
 
 template <> inline void insert<vector float>(vector float & first, vector float & second, vector float & data, unsigned offset)
 {
@@ -88,7 +88,7 @@ template <> inline void insert<vector float>(vector float & first, vector float 
  * Please note that fill can only be used with aligned addresses.
  */
 
-template <typename DT_> inline void fill(void * address, unsigned long size, DT_ value) HONEI_ATTRIBUTE(always_inline);
+template <typename DT_> inline void fill(void * address, unsigned long size, DT_ value) HONEI_INLINE;
 
 template <> inline void fill<float>(void * address, unsigned long size, float value)
 {

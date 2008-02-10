@@ -22,12 +22,15 @@
 
 #if defined (__GNUC__)
 #  if defined (__ICC)
-#    error "ICC not supported yet!"
-#  else
-#    define HONEI_ATTRIBUTE(x) __attribute__((x))
+#    warning "You are using the Intel C++ Compiler."
 #  endif
+#  define HONEI_ALIGNED(x) __attribute__((__aligned__(x)))
+#  define HONEI_INLINE __attribute__((__always_inline__))
+#  define HONEI_PACKED __attribute__((packed))
 #elif defined (DOXYGEN)
-#  define HONEI_ATTRIBUTE(x)
+#  define HONEI_ALIGNED(x)
+#  define HONEI_INLINE
+#  define HONEI_PACKED
 #else
 #  error "Your compiler is not supported yet!"
 #endif

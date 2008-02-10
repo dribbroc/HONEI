@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/libla/scale.hh>
 
 #include <xmmintrin.h>
@@ -32,7 +32,7 @@ namespace honei
             inline void scale(const float a, float * x, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-                float HONEI_ATTRIBUTE(aligned(16)) a_data;
+                float HONEI_ALIGNED(16) a_data;
                 a_data= a;
                 m8 = _mm_load1_ps(&a_data);
 
@@ -91,7 +91,7 @@ namespace honei
             inline void scale(const double a, double * x, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7,  m8;
-                double HONEI_ATTRIBUTE(aligned(16)) a_data;
+                double HONEI_ALIGNED(16) a_data;
                 a_data= a;
                 m8 = _mm_load1_pd(&a_data);
 

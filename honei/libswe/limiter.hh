@@ -23,7 +23,7 @@
 #ifndef LIBSWE_GUARD_LIMITER_HH
 #define LIBSWE_GUARD_LIMITER_HH 1
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 
 #include <algorithm>
 #include <limits>
@@ -144,8 +144,8 @@ namespace honei
         {
             __m128  _mm_lim_ps(__m128 vec)
             {
-                float HONEI_ATTRIBUTE(aligned(16)) zero(0.f);
-                float HONEI_ATTRIBUTE(aligned(16)) one(1.f);
+                float HONEI_ALIGNED(16) zero(0.f);
+                float HONEI_ALIGNED(16) one(1.f);
 
                 __m128 mm0 = _mm_set_ps1(zero);
                 __m128 mm1 = _mm_set_ps1(one);
@@ -156,8 +156,8 @@ namespace honei
 
             __m128d _mm_lim_pd(__m128d &  vec)
             {
-                double HONEI_ATTRIBUTE(aligned(16)) zero(0.);
-                double HONEI_ATTRIBUTE(aligned(16)) one(1.);
+                double HONEI_ALIGNED(16) zero(0.);
+                double HONEI_ALIGNED(16) one(1.);
 
                 __m128d mm0 = _mm_set_pd1(zero);
                 __m128d mm1 = _mm_set_pd1(one);

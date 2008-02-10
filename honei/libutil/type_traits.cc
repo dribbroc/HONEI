@@ -18,7 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/libutil/type_traits.hh>
 
 #if defined(__ALTIVEC__)
@@ -223,7 +223,7 @@ namespace honei
         PODTraits<float>::fill(float * dest, std::size_t count, const float & v)
         {
             __m128 m1;
-            float HONEI_ATTRIBUTE(aligned(16)) v_data;
+            float HONEI_ALIGNED(16) v_data;
             v_data= v;
             m1 = _mm_load1_ps(&v_data);
 
@@ -267,7 +267,7 @@ namespace honei
         PODTraits<double>::fill(double * dest, std::size_t count, const double & v)
         {
             __m128d m1;
-            double HONEI_ATTRIBUTE(aligned(16)) v_data;
+            double HONEI_ALIGNED(16) v_data;
             v_data= v;
             m1 = _mm_load1_pd(&v_data);
 

@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/libgraph/node_distance.hh>
 
 #if defined (__SSE3__)
@@ -36,7 +36,7 @@ namespace honei
             inline void node_distance(float * result, float * pos_matrix, float x, float y, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-                float HONEI_ATTRIBUTE(aligned(16)) coordinates[4];
+                float HONEI_ALIGNED(16) coordinates[4];
                 coordinates[0] = x;
                 coordinates[1] = y;
                 coordinates[2] = x;
@@ -100,7 +100,7 @@ namespace honei
             inline void node_distance(double * result, double * pos_matrix, double x, double y, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m8;
-                double HONEI_ATTRIBUTE(aligned(16)) coordinates[4];
+                double HONEI_ALIGNED(16) coordinates[4];
                 coordinates[0] = x;
                 coordinates[1] = y;
                 coordinates[2] = x;
@@ -182,7 +182,7 @@ namespace honei
             inline void set_distance(float * dist, float * dist_src, float * mask, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-                float HONEI_ATTRIBUTE(aligned(16)) eps(std::numeric_limits<float>::epsilon());
+                float HONEI_ALIGNED(16) eps(std::numeric_limits<float>::epsilon());
                 m8 = _mm_load1_ps(&eps);
 
                 unsigned long dist_address = (unsigned long)dist;
@@ -235,7 +235,7 @@ namespace honei
             inline void set_distance(double * dist, double * dist_src, double * mask, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-                double HONEI_ATTRIBUTE(aligned(16)) eps(std::numeric_limits<double>::epsilon());
+                double HONEI_ALIGNED(16) eps(std::numeric_limits<double>::epsilon());
                 m8 = _mm_load1_pd(&eps);
 
                 unsigned long dist_address = (unsigned long)dist;

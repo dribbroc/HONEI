@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/attributes.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/libla/element_inverse.hh>
 
 #include <xmmintrin.h>
@@ -32,9 +32,9 @@ namespace honei
             inline void element_inverse(float * x, unsigned long size)
             {
                 __m128 m1, m2, m3, m4, m5, m6, m7, m8;
-                float HONEI_ATTRIBUTE(aligned(16)) a_data(float(1));
+                float HONEI_ALIGNED(16) a_data(float(1));
                 m8 = _mm_load1_ps(&a_data);
-                float HONEI_ATTRIBUTE(aligned(16)) b_data(std::numeric_limits<float>::infinity());
+                float HONEI_ALIGNED(16) b_data(std::numeric_limits<float>::infinity());
                 m7 = _mm_load1_ps(&b_data);
 
                 unsigned long x_address = reinterpret_cast<unsigned long>(x);
@@ -103,9 +103,9 @@ namespace honei
             inline void element_inverse(double * x, unsigned long size)
             {
                 __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-                double HONEI_ATTRIBUTE(aligned(16)) a_data(double(1));
+                double HONEI_ALIGNED(16) a_data(double(1));
                 m8 = _mm_load1_pd(&a_data);
-                double HONEI_ATTRIBUTE(aligned(16)) b_data(std::numeric_limits<double>::infinity());
+                double HONEI_ALIGNED(16) b_data(std::numeric_limits<double>::infinity());
                 m7 = _mm_load1_pd(&b_data);
 
                 unsigned long x_address = (unsigned long)x;
