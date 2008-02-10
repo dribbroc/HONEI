@@ -36,11 +36,10 @@
  * \operand b Base address of second entity.
  * \operand c Number of transfers needed.
  * \operand d Last transfer buffer size in bytes.
- * \operand e alignment offset of entity b.
- * \operand f first element of carry_b (not transfered via dma)
- * \operand g second element of carry_b (not transfered via dma)
- * \operand h third element of carry_b (not transfered via dma)
- * \operand i fourth element of carry_b (not transfered via dma)
+ * \operand e Offset of entity b.
+ * \operand f First element of carry_b (not transfered via dma).
+ * \operand g Second element of carry_b (not transfered via dma).
+ * \operand h Scalar value.
 */
 
 namespace honei
@@ -64,7 +63,7 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
-            double scalar = instruction.j.d; // optional scalar value to be computed.
+            double scalar = instruction.h.d;
 
             unsigned b_offset(instruction.e.u);
             vector double b_carry = { instruction.f.d, instruction.g.d };

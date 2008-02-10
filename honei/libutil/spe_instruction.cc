@@ -26,6 +26,8 @@
 
 #include <tr1/functional>
 
+#include <iostream>
+
 using namespace honei;
 
 struct SPEInstruction::Implementation
@@ -295,21 +297,12 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
         instruction.b.u += (sizeof(DataType_) * ((16 / sizeof(DataType_)) - b_offset));
 
         // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
-        DataType_ * dma_start = reinterpret_cast<DataType_ *>(instruction.b.u);
-        if (sizeof(DataType_) == 4) // float
-        {
-            instruction.f.f = *(dma_start - 4);
-            instruction.g.f = *(dma_start - 3);
-            instruction.h.f = *(dma_start - 2);
-            instruction.i.f = *(dma_start - 1);
-            instruction.j.f = scalar;
-        }
-        else // double
-        {
-            instruction.f.d = *(dma_start - 2);
-            instruction.g.d = *(dma_start - 1);
-            instruction.j.d = scalar;
-        }
+        Operand * dma_start(reinterpret_cast<Operand *>(instruction.b.ea));
+        instruction.f = dma_start[-2];
+        instruction.g = dma_start[-1];
+
+        // Transmit scalar value.
+        instruction.h = Operand(scalar);
 
         // Subtract PPU-calculated parts from size.
         instruction.c.u = (size - skip) / (16384 / sizeof(DataType_));
@@ -372,23 +365,12 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         instruction.c.u += (sizeof(DataType_) * ((16 / sizeof(DataType_)) - b_offset));
 
         // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
-        DataType_ * dma_start = reinterpret_cast<DataType_ *>(instruction.c.u);
-        if (sizeof(DataType_) == 4) // float
-        {
-            instruction.g.f = *(dma_start - 4);
-            instruction.h.f = *(dma_start - 3);
-            instruction.i.f = *(dma_start - 2);
-            instruction.j.f = *(dma_start - 1);
-            instruction.k.f = scalar;
-        }
-        else // double
-        {
-            instruction.g.d = *(dma_start - 2);
-            instruction.h.d = *(dma_start - 1);
-            instruction.k.d = scalar;
-        }
+        Operand * dma_start(reinterpret_cast<Operand *>(instruction.c.ea));
+        instruction.g = dma_start[-2];
+        instruction.h = dma_start[-1];
+        instruction.i = Operand(scalar);
 
-        //Subtract PPU-calculated parts from size.
+        // Subtract PPU-calculated parts from size.
         instruction.d.u = (size - skip) / (16384 / sizeof(DataType_));
         instruction.e.u = (size - skip) % (16384 / sizeof(DataType_));
         instruction.e.u &= ~0xF;

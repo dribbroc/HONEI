@@ -120,16 +120,35 @@ namespace honei
             }
 
 #ifdef __PPU__
+            Operand(const unsigned & value) :
+                u(value)
+            {
+            }
+
+            Operand(const unsigned long & value) :
+                u(value)
+            {
+            }
+
             Operand(const unsigned long long & value) :
                 u(value)
             {
             }
 #endif
+            Operand(const float & value) :
+                f(value)
+            {
+            }
 
             Operand(const float & first, const float & second)
             {
                 fa[0] = first;
                 fa[1] = second;
+            }
+
+            Operand(const double & value) :
+                d(value)
+            {
             }
 
             /// \}

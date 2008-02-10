@@ -7,6 +7,16 @@ see the NEWS file.
 
 2008-02-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/cell/interface.hh,
+	honei/cell/libutil/operation_two_double_dma.cc,
+	honei/cell/libutil/operation_two_double_mail.cc,
+	honei/cell/libutil/operation_two_float_dma.cc,
+	honei/cell/libutil/operation_two_float_mail.cc,
+	honei/libutil/spe_instruction.cc: Unified handling of carry and scalar
+	payload for different data types.
+
+2008-02-09 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/cell/libla/operations.hh, honei/cell/libmath/operations.hh,
 	honei/cell/libswe/operations.hh,
 	+honei/cell/libutil/operation_framework.cc,

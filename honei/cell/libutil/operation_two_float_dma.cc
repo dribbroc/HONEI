@@ -63,10 +63,10 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
-            float scalar = instruction.j.f; // optional scalar value to be computed.
+            float scalar = instruction.h.f;
 
             unsigned b_offset(instruction.e.u);
-            vector float b_carry = { instruction.f.f, instruction.g.f, instruction.h.f, instruction.i.f };
+            vector float b_carry = { instruction.f.fa[0], instruction.f.fa[1], instruction.g.fa[0], instruction.g.fa[1] };
 
             mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
             mfc_get(b[current].untyped, ea_b, size, current, 0, 0);

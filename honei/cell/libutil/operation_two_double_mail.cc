@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
@@ -48,7 +48,7 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
-            double scalar = instruction.k.d; // optional scalar value to be computed.
+            double scalar = instruction.i.d;
 
             unsigned offset(instruction.f.u);
 
