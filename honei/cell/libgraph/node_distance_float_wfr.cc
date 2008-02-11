@@ -82,8 +82,6 @@ void node_distance_float_wfr(const Instruction & inst)
 
     ea_b += b_size;
 
-    mfc_get(e.untyped, ea_e, result_part_size * 4, 2, 0, 0);
-    mfc_get(f.untyped, ea_f, result_part_size * 4, 2, 0, 0);
     mfc_get(g.untyped, ea_g, result_part_size * 4, 2, 0, 0);
 
     vector float num_limits = spu_splats(inst.j.f);
@@ -122,7 +120,7 @@ void node_distance_float_wfr(const Instruction & inst)
                 d.typed[ctr] = temp.array[0] + temp.array[1];
                 d.typed[ctr + 1] = temp.array[2] + temp.array[3];
 
-                ctr++; ctr++;
+                ctr += 2;
             }
             for(unsigned k(0) ; k < rest / sizeof(float) ; k += 2)
             {
@@ -168,7 +166,7 @@ void node_distance_float_wfr(const Instruction & inst)
             d.typed[ctr] = temp.array[0] + temp.array[1];
             d.typed[ctr + 1] = temp.array[2] + temp.array[3];
 
-            ctr++; ctr++;
+            ctr += 2;
         }
         for(unsigned k(0) ; k < rest / sizeof(float) ; k += 2)
         {
