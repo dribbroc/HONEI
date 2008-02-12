@@ -182,3 +182,27 @@ mc::product[BM,DVCB]::max-count = 4
 
 mc::product[SM,DM]::min-part-size = 16
 mc::product[SM,DM]::max-count = 4
+
+mc::dot-product[DVCB,DVCB]::min-part-size = 16
+mc::dot-product[DVCB,DVCB]::max-count = 4
+
+mc::dot-product[SV,DVCB]::min-part-size = 16
+mc::dot-product[SV,DVCB]::max-count = 4
+
+mc::scale[DM]::min-part-size = 16
+mc::scale[DM]::max-count = 4
+
+mc::scale[SM]::min-part-size = 16
+mc::scale[SM]::max-count = 4
+
+mc::scale[BM]::min-part-size = 16
+mc::scale[BM]::max-count = 4
+
+mc::scale[DVCB]::min-part-size = 16
+mc::scale[DVCB]::max-count = 4
+
+mc::scale[DVS]::min-part-size = 16
+mc::scale[DVS]::max-count = 4
+
+mc::scale[SV]::min-part-size = 16
+mc::scale[SV]::max-count = 4
