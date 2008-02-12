@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-12 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libutil/profiler.cc: Fixed c&p typo that made the profiler
+	show the average timings instead of the lowest.
+
 2008-02-12 Mathias Kadolsky <mathkad@gmx.de>
 
 	* honei/libgraph/node_distance_TEST.cc: Base test added,

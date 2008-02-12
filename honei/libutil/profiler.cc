@@ -356,7 +356,7 @@ namespace honei
                         std::tr1::mem_fn(&Profiler::evaluation_printer),
                         this, std::tr1::placeholders::_1, std::tr1::placeholders::_2,
                         std::tr1::placeholders::_3, std::tr1::placeholders::_4,
-                        std::tr1::placeholders::_5, std::tr1::placeholders::_5)));
+                        std::tr1::placeholders::_5, std::tr1::placeholders::_6)));
             thread = new Thread(std::tr1::bind(std::tr1::mem_fn(&Profiler::profiler_function), this));
         }
 
