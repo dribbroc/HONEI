@@ -170,10 +170,10 @@ class PoissonCGBench :
             evaluate();
         }
 };
-PoissonCGBench<tags::CPU, float> poisson_jac_bench_float("Poisson CG benchmark float CPU");
+PoissonCGBench<tags::CPU, float> poisson_cg_bench_float("Poisson CG benchmark float CPU");
 #ifdef HONEI_SSE
-PoissonCGBench<tags::CPU::SSE, float> poisson_jac_bench_float_sse("Poisson CG benchmark float SSE");
+PoissonCGBench<tags::CPU::SSE, float> poisson_cg_bench_float_sse("Poisson CG benchmark float SSE");
 #endif
 #ifdef HONEI_CELL
-PoissonCGBench<tags::Cell, float> poisson_jac_bench_float_cell("Poisson CG benchmark float Cell");
+PoissonCGBench<tags::Cell, float> poisson_cg_bench_float_cell("Poisson CG benchmark float Cell");
 #endif

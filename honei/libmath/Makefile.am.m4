@@ -86,9 +86,53 @@ TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
-EXTRA_PROGRAMS = benchmarklist
+benchmark_SOURCES = bench.cc
+benchmark_LDADD = \
+	$(top_builddir)/benchmark/libbenchmark.a \
+	$(top_builddir)/honei/libla/libla.la \
+	libmath.la \
+	$(top_builddir)/honei/libutil/libutil.la \
+	$(DYNAMIC_LD_LIBS)
 
-bench: benchm
+BENCHMARKS = benchmarklist
+
+EXTRA_PROGRAMS = benchmark $(BENCHMARKS)
+
+bench:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/honei/libmath/benchmark
+
+bench-i:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/honei/libmath/benchmark i
+
+bench-sc: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/honei/libmath/benchmark sc
+
+bench-sse: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/honei/libmath/benchmark sse
+
+bench-mc: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/honei/libmath/benchmark mc
+
+bench-cpu: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/honei/libmath/benchmark cpu
+
+bench-cell: 
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	bash $(top_builddir)/honei/libmath/benchmark cell
+
+bench-pdf:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	$(top_builddir)/honei/libmath/benchmark i plot
+	~/../share/bin/gnuplot *.plt
+	pdflatex -shell-escape RecentPlots.tex
+	rm PlotOut_*.plt
+	rm PlotOut_*.pdf
 
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)

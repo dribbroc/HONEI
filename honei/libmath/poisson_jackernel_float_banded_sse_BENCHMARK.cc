@@ -31,11 +31,11 @@ using namespace honei;
 
 template <typename Tag_, typename DataType_>
 
-class PoissonJACKernelBench :
+class PoissonJACKernelBenchSSE :
     public Benchmark
 {
     public:
-        PoissonJACKernelBench(const std::string & id) :
+        PoissonJACKernelBenchSSE(const std::string & id) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -196,5 +196,5 @@ class PoissonJACKernelBench :
         }
 };
 #ifdef HONEI_SSE
-PoissonJACKernelBench<tags::CPU::SSE, float> poisson_jack_bench_float_sse("Poisson JACKernel benchmark float SSE");
+PoissonJACKernelBenchSSE<tags::CPU::SSE, float> poisson_jack_bench_float_sse1("Poisson JACKernel benchmark float SSE");
 #endif
