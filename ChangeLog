@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-12 Mathias Kadolsky <mathkad@gmx.de>
+
+	* honei/libgraph/node_distance_TEST.cc: Base test added,
+	honei/libgraph/node_distance.hh, node_distance-mc.hh: MC version added,
+	honei/libutil/wrapper.hh: SixArgWrapper added.
+
 2008-02-12 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* honei/libla/dot_product-mc.hh: Fixed iteration bug in (SV,DVCB)

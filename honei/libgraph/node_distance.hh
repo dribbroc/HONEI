@@ -29,6 +29,7 @@
 #include <honei/libla/difference.hh>
 #include <honei/libla/matrix_error.hh>
 #include <honei/libla/norm.hh>
+#include <honei/libgraph/node_distance-mc.hh>
 #include <honei/libutil/tags.hh>
 
 /**
@@ -92,6 +93,27 @@ namespace honei
         DenseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range)
         {
+            if (! edge_weights.square())
+                throw MatrixIsNotSquare(edge_weights.rows(), edge_weights.columns());
+
+            if (! square_dist.square())
+                throw MatrixIsNotSquare(square_dist.rows(), square_dist.columns());
+
+            if (! inv_square_dist.square())
+                throw MatrixIsNotSquare(inv_square_dist.rows(), inv_square_dist.columns());
+
+            if (edge_weights.rows() != pos_matrix.rows())
+                throw MatrixRowsDoNotMatch(pos_matrix.rows(), edge_weights.rows());
+
+            if (square_dist.rows() != pos_matrix.rows())
+                throw MatrixRowsDoNotMatch(pos_matrix.rows(), square_dist.rows());
+
+            if (inv_square_dist.rows() != pos_matrix.rows())
+                throw MatrixRowsDoNotMatch(pos_matrix.rows(), inv_square_dist.rows());
+
+            if (repulsive_force_range < 0)
+                throw GraphError("Repulsive-Force-Range must be positiv");
+
             // Initialize ElementIterators
             typename MutableMatrix<DataType_>::ElementIterator e(inv_square_dist.begin_elements());
             typename MutableMatrix<DataType_>::ElementIterator f(square_dist.begin_elements());
@@ -122,7 +144,7 @@ namespace honei
         }
     };
 
-    template <> struct NodeDistance<tags::CPU::MultiCore> : NodeDistance<tags::CPU> {};
+    template <> struct NodeDistance<tags::CPU::MultiCore> : public MCNodeDistance<tags::CPU::MultiCore> {};
 
     template <> struct NodeDistance<tags::CPU::SSE>
     {

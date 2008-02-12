@@ -27,6 +27,52 @@
 namespace honei
 {
     template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_, typename DT5_, typename DT6_>
+        class SixArgWrapper
+        {
+            private:
+                DT1_ _a;
+
+                DT2_ _b;
+
+                DT3_ _c;
+
+                DT4_ _d;
+
+                DT5_ _e;
+
+                DT6_ _f;
+
+
+            public:
+
+                typedef void result_type;
+
+                SixArgWrapper(DT1_ & a, DT2_ & b, DT3_ & c, DT4_ & d, DT5_ & e, DT6_ & f):
+                    _a(a),
+                    _b(b),
+                    _c(c),
+                    _d(d),
+                    _e(e),
+                    _f(f)
+                {
+                }
+
+                void operator() ()
+                {
+                    Tag_::value(_a, _b, _c, _d, _e, _f);
+                }
+
+                void operator()(Mutex * mutex)
+                {
+                    PROFILER_START("Wrapper<6>:mutex");
+                    Lock l(*mutex);
+                    PROFILER_STOP("Wrapper<6>:mutex");
+                    Tag_::value(_a, _b, _c, _d, _e, _f);
+                }
+
+        };
+
+    template < typename Tag_, typename DT1_, typename DT2_, typename DT3_, typename DT4_, typename DT5_, typename DT6_>
         class ResultFiveArgWrapper
         {
             private:
