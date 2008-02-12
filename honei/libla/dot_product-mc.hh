@@ -138,10 +138,10 @@ namespace honei
                 for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p)
                 {
                     offset = r.index();
-                    r += p->size;
+                    r += (p->size - 1);
                     DenseVectorRange<DT2_> range(b.range(r.index() - offset + 1, offset));
                     ResultThreeArgWrapper<MCDotProduct<Tag_>, DT1_,const SparseVector<DT1_>, const DenseVectorRange<DT2_>, const unsigned long >
-                        mywrapper(result, a, range, offset);
+                        mywrapper(result, a, range, p->start);
                     dispatched_tasks.push_back(ThreadPool::instance()->dispatch(std::tr1::bind(mywrapper, &mutex)));
                     ++r;
                 }
