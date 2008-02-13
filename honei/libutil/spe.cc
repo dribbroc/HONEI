@@ -159,9 +159,9 @@ struct SPE::Implementation
 
     /// Constructor.
     Implementation() :
+        mutex(new Mutex),
         context(spe_context_create(SPE_EVENTS_ENABLE, 0)),
         device(next_device_id()),
-        mutex(new Mutex),
         thread(0),
         kernel(0)
     {

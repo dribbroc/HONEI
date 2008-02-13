@@ -171,11 +171,11 @@ namespace honei
                                     Lock ll(*imp->mutex);
 
                                     imp->instructions[imp->spe_instruction_index].opcode = oc_noop;
-                                    ++imp->finished_counter;
                                     ++imp->spe_instruction_index;
                                     imp->spe_instruction_index %= 8; /// \todo remove hardcoded numbers
                                     current_instruction = imp->instructions[imp->spe_instruction_index];
 
+                                    ++imp->finished_counter;
                                     imp->instruction_finished->broadcast();
                                     imp->last_finished.take();
                                 }

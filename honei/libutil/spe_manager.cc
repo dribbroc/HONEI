@@ -190,7 +190,7 @@ namespace honei
             }
         }
 
-        /// Dispatch a SPEInstructionQueue to a SPE
+        /// Dispatch a SPEInstructionStream to a SPE
         inline void dispatch(SPEInstructionStream & instruction_stream)
         {
             CONTEXT("When dispatching InstructionStream to a SPE");
