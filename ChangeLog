@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-13 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/honeirc:
+	Adjustet spe counts.
+
+2008-02-13 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/libla/sum-cell.cc, honei/libutil/spe.cc,
 	honei/libutil/spe_kernel.cc, honei/libutil/spe_manager.cc:
 	Lowered the chance for a deadlock condition variable
