@@ -128,7 +128,7 @@ bench-cell:
 bench-pdf:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	$(top_builddir)/honei/libla/benchmark i plot
-	~/../share/bin/gnuplot *.plt
+	gnuplot *.plt
 	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt
 	rm PlotOut_*.pdf
