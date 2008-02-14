@@ -466,8 +466,8 @@ namespace honei
     unsigned
     SPEKernel::enqueue(const SPEInstruction & instruction)
     {
+        CONTEXT("When enqueueing instruction to SPE #" + ((_imp->spe) ? stringify(_imp->spe->id()) : std::string("(anonymous)")));
         Lock l(*_imp->mutex);
-        CONTEXT("When enqueueing instruction to SPE #" +stringify(_imp->spe->id()));
         unsigned result;
 
         while (_imp->spe_instruction_index == (_imp->next_free_index + 1) % 8) /// \todo remove hardcoded numbers
