@@ -46,7 +46,7 @@ class PartitionerTestCell :
             {
                 unsigned long max_count(j);
 
-                for (unsigned long k(best_part_size_), k_end(1 << 16) ; k < k_end ; k += 100)
+                for (unsigned long k(best_part_size_), k_end(64ul*64*64*128) ; k < k_end ; k += 30101)
                 {
                     unsigned long overall_size(k);
 
@@ -85,7 +85,7 @@ class PartitionerTestCell :
 };
 
 PartitionerTestCell<tags::Cell, 16384, 16> partitioner_test_cell_16k_16;
-PartitionerTestCell<tags::Cell, 64ul*64*64*64, 16> partitioner_test_cell_64_16;
+PartitionerTestCell<tags::Cell, 64ul*64*64*32, 16> partitioner_test_cell_64_16;
 
 
 template <typename Tag_, unsigned long best_part_size_, unsigned long quantisation_>
