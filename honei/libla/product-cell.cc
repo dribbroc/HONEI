@@ -42,87 +42,127 @@ namespace honei
             throw VectorSizeDoesNotMatch(x.size(), a.columns());
 
         DenseVector<float> result(a.rows(), 0.0f);
+        std::list<SPEInstruction *> instructions;
 
-        unsigned spu_rows(a.rows() & ~0x3);
-        unsigned ppu_rows(a.rows() - spu_rows);
+        unsigned long spe_count(Configuration::instance()->get_value("cell::product_dense_matrix_dense_vector_float", 4ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+        std::cout << "a.rows() = " << a.rows() << std::endl;
+        std::cout << "spe_count " << spe_count << std::endl;
+        unsigned rows_per_spe(a.rows() / spe_count);
+        unsigned ppu_rows(0);
         bool use_spe(true);
-        if (a.rows() < 4)
+
+        if (a.rows() < (4 * spe_count))
         {
-            spu_rows = 0;
             ppu_rows = a.rows();
+            spe_count = 0;
+            rows_per_spe = 0;
             use_spe = false;
         }
 
-        union addr
-        {
-            float * ptr;
-            unsigned long long value;
-        };
-
-        unsigned a_t_size(a.columns() * (4096 / (a.columns())));
-        while (a_t_size % 4 != 0)
-        {
-            a_t_size -= a.columns();
-        }
-        a_t_size *= 4;
-        addr one = { (a.elements() + a.columns()) };
-        unsigned a_offset(one.value & 0xf);
-
-        Operand oa = { a.elements() };
-        Operand ob = { x.elements() };
-        Operand oc = { result.elements() };
-
-        Operand od, oe, of, og;
-        // Transfer only full rows.
-        od.u = (4 * spu_rows * a.columns()) / a_t_size;
-        oe.u = (4 * spu_rows * a.columns()) % a_t_size;
-        of.u = (4 * x.size()) / 16384;
-        og.u = (4 * x.size()) % 16384;
-
-        if (0 == oe.u)
-        {
-            if (od.u > 0)
-            {
-                oe.u = a_t_size;
-            }
-        }
-        else
-        {
-            ++od.u;
-        }
-        if (0 == og.u)
-        {
-            if (of.u > 0)
-            {
-                og.u = 16384;
-            }
-        }
-        else
-        {
-            ++of.u;
-        }
-
-        Operand oh;
-        oh.u = a.columns();
-        Operand oi;
-        oi.u = a_offset / sizeof(float);
-
-        SPEInstruction instruction(oc_product_dense_matrix_dense_vector_float, a_t_size, oa, ob, oc, od, oe, of, og, oh, oi);
-
         if (use_spe)
-           SPEManager::instance()->dispatch(instruction);
+        {
+            unsigned parts(spe_count);
+            while (rows_per_spe > 4096)
+            {
+                rows_per_spe /= 2;
+                parts *= 2;
+            }
+            rows_per_spe & ~0x3;
+            ppu_rows = a.rows() - (spe_count * rows_per_spe);
+
+            union addr
+            {
+                float * ptr;
+                unsigned long long value;
+            };
+
+            unsigned a_t_size(a.columns() * (4096 / (a.columns())));
+            while (a_t_size % 4 != 0)
+            {
+                a_t_size -= a.columns();
+            }
+            a_t_size *= 4;
+            std::cout << "ROWS PER SPE : " << rows_per_spe << std::endl;
+
+            for (unsigned i(0) ; i < parts ; i++)
+            {
+                addr one = { (a.elements() +  a.columns()) };
+                unsigned a_offset(one.value & 0xf);
+
+                Operand oa = { a.elements() + (rows_per_spe * i * a.columns()) };
+                Operand ob = { x.elements() };
+                Operand oc = { result.elements() + (rows_per_spe * i) };
+
+                Operand od, oe, of, og;
+                // Transfer only full rows.
+                od.u = (4 * rows_per_spe * a.columns()) / a_t_size;
+                oe.u = (4 * rows_per_spe * a.columns()) % a_t_size;
+                of.u = (4 * x.size()) / 16384;
+                og.u = (4 * x.size()) % 16384;
+
+                if (0 == oe.u)
+                {
+                    if (od.u > 0)
+                    {
+                        oe.u = a_t_size;
+                    }
+                }
+                else
+                {
+                    ++od.u;
+                }
+
+                if (0 == og.u)
+                {
+                    if (of.u > 0)
+                    {
+                        og.u = 16384;
+                    }
+                }
+                else
+                {
+                    ++of.u;
+                }
+
+                Operand oh;
+                oh.u = a.columns();
+                Operand oi;
+                oi.u = a_offset / sizeof(float);
+
+                if (i % spe_count == 0) // wait for the last parts to have finished.
+                {
+                    for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; i++)
+                    {
+                        (*i)->wait();
+                        delete *i;
+                        instructions.erase(i);
+                    }
+                }
+
+                SPEInstruction * instruction = new SPEInstruction(oc_product_dense_matrix_dense_vector_float, a_t_size, oa, ob, oc, od, oe, of, og, oh, oi);
+                instructions.push_back(instruction);
+                SPEManager::instance()->dispatch(*instruction);
+            }
+        }
 
         for (unsigned i(0) ; i < ppu_rows ; i++)
         {
-            DenseVectorRange<float> row = a[spu_rows + i];
+            DenseVectorRange<float> row = a[(spe_count * rows_per_spe) + i];
             for (Vector<float>::ConstElementIterator c(row.begin_elements()), c_end(row.end_elements()), d(x.begin_elements()) ; c != c_end ; ++c, ++d)
             {
-                result[spu_rows + i] += *c * *d;
+                result[(spe_count * rows_per_spe) + i] += *c * *d;
             }
         }
 
         if (use_spe)
-           instruction.wait();
+        {
+            for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; i++)
+            {
+                (*i)->wait();
+                delete *i;
+            }
+        }
 
         return result;
     }

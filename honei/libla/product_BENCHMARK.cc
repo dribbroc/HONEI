@@ -191,6 +191,9 @@ DenseMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> DMDVPBench
 DenseMatrixDenseVectorProductBench<tags::CPU::SSE, float> DMDVPBenchfloatSSE("SSE: Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, float", 64ul*64, 10);
 DenseMatrixDenseVectorProductBench<tags::CPU::SSE, double> DMDVPBenchdoubleSSE("SSE: Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, double", 64ul*64, 10);
 #endif
+#ifdef HONEI_CELL
+DenseMatrixDenseVectorProductBench<tags::Cell, float> DMDVPBenchfloatCell("Cell: Matrix-Vector Product Benchmark dense/dense - matrix size: 64^2, float", 64ul*64, 10);
+#endif
 
 template <typename Tag_, typename DataType_>
 class SparseMatrixProductBench :

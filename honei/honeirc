@@ -31,7 +31,7 @@ cell::norm_l_one_dense_float = 4
 cell::norm_l_one_dense_double = 4
 cell::reduction_sum_dense_float = 4
 cell::reduction_sum_dense_double = 4
-
+cell::product_dense_matrix_dense_vector_float = 4
 
 # MultiCore
 mc::num-cores = 2

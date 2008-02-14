@@ -58,17 +58,19 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
 
     unsigned a_cols(inst.h.u);
     unsigned a_counter(inst.d.u);
-    unsigned x_counter(inst.f.u), x_get_counter(0);
+    unsigned x_counter(inst.f.u);
     unsigned a_size(a_counter > 1 ? inst.size : multiple_of_sixteen(inst.e.u));
     unsigned x_size(x_counter > 1 ? 16384 : multiple_of_sixteen(inst.g.u));
-    unsigned r_size(a_counter > 1 ? inst.size / a_cols : (inst.e.u / a_cols));
+    unsigned r_size(((a_counter - 1) * (inst.size / a_cols)) + inst.e.u / a_cols);
     unsigned a_nextsize, x_nextsize;
     unsigned a_current(0), a_next(1);
     unsigned x_current(0), x_next(1);
     unsigned a_offset(inst.i.u);
     unsigned act_offset(0);
 
+    debug_get(inst.a.ea, a[a_current].untyped, a_size);
     mfc_get(a[a_current].untyped, inst.a.ea, a_size, 1, 0, 0);
+    debug_get(inst.b.ea, x[x_current].untyped, x_size);
     mfc_get(x[x_current].untyped, inst.b.ea, x_size, 1, 0, 0);
     mfc_write_tag_mask(1 << 1);
     mfc_read_tag_status_all();
@@ -78,19 +80,22 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
 
     unsigned a_vecs(a_cols / 4);
     unsigned a_idx(0);
+    unsigned r_idx(0);
 
     while (a_counter > 1)
     {
         a_nextsize = (a_counter == 2 ? multiple_of_sixteen(inst.e.u) : a_size);
 
+        debug_get(ea_a, a[a_next].untyped, a_nextsize);
         mfc_get(a[a_next].untyped, ea_a, a_nextsize, a_next, 0, 0);
         ea_a += a_nextsize;
 
         x_counter = inst.f.u;
+        a_idx = 0;
 
         mfc_write_tag_mask(1 << a_current);
         mfc_read_tag_status_all();
-        a_idx = 0;
+
         while (x_counter >= 1)
         {
             if (x_counter == 2)
@@ -108,6 +113,7 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
                 x_nextsize = inst.f.u > 1 ? 16384 : multiple_of_sixteen(inst.g.u);
             }
 
+            debug_get(ea_x, x[x_next].untyped, x_nextsize);
             mfc_get(x[x_next].untyped, ea_x, x_nextsize, x_next, 0, 0);
             ea_x += x_nextsize;
 
@@ -116,9 +122,8 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
 
             for (unsigned i(0) ; i < (a_size / a_cols / 4) ; i++) // for rows
             {
-                r.typed[i] = 0;
-                unsigned start(i * a_vecs);
-                Subscriptable<float> temp = { spu_splats(r.typed[i]) };
+                r.typed[r_idx] = 0.0f;
+                Subscriptable<float> temp = { spu_splats(r.typed[r_idx]) };
 
                 for (unsigned j(0) ; j < a_vecs ; j++, a_idx++) // for vecs in the row
                 {
@@ -127,18 +132,21 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
                     temp.value = spu_madd(a_cur, x[x_current].vectorised[j], temp.value);
                 }
 
-                r.typed[i] = temp.array[0] + temp.array[1] + temp.array[2] + temp.array[3];
+                r.typed[r_idx] = temp.array[0] + temp.array[1] + temp.array[2] + temp.array[3];
+
                 act_offset = (act_offset + a_offset) % 4;
 
                 for (unsigned j(0) ; j < a_offset ; j++)
                 {
-                    r.typed[i] += a[a_current].typed[(4 * a_idx) + j] * x[x_current].typed[(4 * a_vecs) + j];
+                    r.typed[r_idx] += a[a_current].typed[(4 * a_idx) + j] * x[x_current].typed[(4 * a_vecs) + j];
                 }
 
                 if ( i != 0 && i % 4 == 0 && act_offset > 0)
                 {
                     a_idx++;
                 }
+
+                r_idx++;
             }
 
             unsigned x_temp(x_current);
@@ -152,19 +160,13 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
         a_current = a_next;
         a_next = a_temp;
         a_counter--;
-
-        mfc_put(r.untyped, ea_r, r_size, 2, 0, 0);
-        mfc_write_tag_mask(1 << 2);
-        mfc_read_tag_status_all();
-
-        ea_r += r_size;
-        r_size = (a_counter == 2 ? inst.e.u / a_cols : inst.size / a_cols);
     }
 
     mfc_write_tag_mask(1 << a_current);
     mfc_read_tag_status_all();
     x_counter = inst.f.u;
     a_idx = 0;
+
     while (x_counter >= 1)
     {
         if (x_counter == 2)
@@ -176,6 +178,7 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
             x_nextsize = x_size;
         }
 
+        debug_get(ea_x, x[x_next].untyped, x_nextsize);
         mfc_get(x[x_next].untyped, ea_x, x_nextsize, x_next, 0, 0);
         ea_x += x_nextsize;
 
@@ -184,9 +187,8 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
 
         for (unsigned i(0) ; i < (a_size / a_cols / 4) ; i++) // for rows
         {
-            r.typed[i] = 0;
-            unsigned start(i * a_vecs);
-            Subscriptable<float> temp = { spu_splats(r.typed[i]) };
+            r.typed[r_idx] = 0.0f;
+            Subscriptable<float> temp = { spu_splats(r.typed[r_idx]) };
 
             for (unsigned j(0) ; j < a_vecs ; j++, a_idx++) // for vecs in the row
             {
@@ -195,12 +197,12 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
                 temp.value = spu_madd(a_cur, x[x_current].vectorised[j], temp.value);
             }
 
-            r.typed[i] = temp.array[0] + temp.array[1] + temp.array[2] + temp.array[3];
+            r.typed[r_idx] = temp.array[0] + temp.array[1] + temp.array[2] + temp.array[3];
             act_offset = (act_offset + a_offset) % 4;
 
             for (unsigned j(0) ; j < a_offset ; j++)
             {
-                r.typed[i] += a[a_current].typed[(4 * a_idx) + j] * x[x_current].typed[(4 * a_vecs) + j];
+                r.typed[r_idx] += a[a_current].typed[(4 * a_idx) + j] * x[x_current].typed[(4 * a_vecs) + j];
             }
 
             if ( i != 0 && i % 4 == 0 && act_offset > 0)
@@ -208,6 +210,7 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
                 a_idx++;
             }
 
+            r_idx++;
         }
 
          unsigned x_temp(x_current);
@@ -216,6 +219,7 @@ void product_dense_matrix_dense_vector_float(const Instruction & inst)
          x_counter--;
     }
 
+    debug_put(ea_r, r.untyped, r_size);
     mfc_put(r.untyped, ea_r, r_size, 2, 0, 0);
     mfc_write_tag_mask(1 << 2);
     mfc_read_tag_status_all();
