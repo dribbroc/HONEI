@@ -71,6 +71,12 @@ class PartitionerTestCell :
 
                     sum += partitions.last()->size;
 
+                    if (count > max_count)
+                    {
+                        /// \todo Remove hardcoded 'do not use spe number'
+                        TEST_CHECK(partitions.last()->size < 16);
+                    }
+
                     TEST_CHECK(count <= max_count + 1);
                     TEST_CHECK_EQUAL(overall_size, sum);
                 }
@@ -79,6 +85,8 @@ class PartitionerTestCell :
 };
 
 PartitionerTestCell<tags::Cell, 16384, 16> partitioner_test_cell_16k_16;
+PartitionerTestCell<tags::Cell, 64ul*64*64*64, 16> partitioner_test_cell_64_16;
+
 
 template <typename Tag_, unsigned long best_part_size_, unsigned long quantisation_>
 class PartitionerTestMC :

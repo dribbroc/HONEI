@@ -114,6 +114,7 @@ bench-cpu:
 bench-cell: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	bash $(top_builddir)/honei/libswe/solver_BENCHMARK cell
+	bash $(top_builddir)/honei/libswe/relax_solver_BENCHMARK cell
 
 quickcheck: $(TESTS)
 	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check
