@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-15 Sven Mallach <sven.mallach@honei.org>
 
+	* honei/cell/libgraph/node_distance_float_wfr.cc,
+	honei/libgraph/node_distance-cell.cc: Fixed bug that made tests fail.
+
+2008-02-15 Sven Mallach <sven.mallach@honei.org>
+
 	* honei/libla/product-cell.cc: Removed some debug output.
 
 2008-02-15 David Gies <david-gies@gmx.de>

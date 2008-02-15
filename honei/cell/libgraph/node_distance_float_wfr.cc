@@ -82,6 +82,8 @@ void node_distance_float_wfr(const Instruction & inst)
 
     ea_b += b_size;
 
+    fill(f.untyped, 32768, 0.0f);
+
     mfc_get(g.untyped, ea_g, result_part_size * 4, 2, 0, 0);
 
     vector float num_limits = spu_splats(inst.j.f);
@@ -202,8 +204,8 @@ void node_distance_float_wfr(const Instruction & inst)
             f.vectorised[i] = spu_sel(f.vectorised[i], d.vectorised[i], greater_than2);
     }
 
-    mfc_put(e.untyped, ea_e, multiple_of_sixteen(result_part_size * 4), 2, 0, 0);
-    mfc_put(f.untyped, ea_f, multiple_of_sixteen(result_part_size * 4), 2, 0, 0);
+    mfc_put(e.untyped, ea_e, result_part_size * 4, 2, 0, 0);
+    mfc_put(f.untyped, ea_f, result_part_size * 4, 2, 0, 0);
 
     mfc_write_tag_mask(1 << 2);
     mfc_read_tag_status_all();

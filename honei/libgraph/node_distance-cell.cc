@@ -114,31 +114,33 @@ namespace honei
 
         }
 
-        unsigned starting_point(ppu_start_row * pos_matrix.rows());
-
-        MutableMatrix<float>::ElementIterator j(result.element_at(starting_point));
-        for(Matrix<float>::ConstElementIterator k(pos_matrix.element_at(ppu_start_row * 2)), k_end(pos_matrix.end_elements()) ; k != k_end ; )
+        if (ppu_rows > 0)
         {
-            float a_x = *k;
-            ++k;
-            float a_y = *k;
-            ++k;
+            unsigned starting_point(ppu_start_row * pos_matrix.rows());
 
-            for (Matrix<float>::ConstElementIterator i(pos_matrix.begin_elements()), i_end(pos_matrix.end_elements()) ; i != i_end ; )
+            MutableMatrix<float>::ElementIterator j(result.element_at(starting_point));
+            for(Matrix<float>::ConstElementIterator k(pos_matrix.element_at(ppu_start_row * 2)), k_end(pos_matrix.end_elements()) ; k != k_end ; )
             {
-                float x_temp = a_x - *i;
-                ++i;
-                float y_temp = a_y - *i;
-                ++i;
-                x_temp *= x_temp;
-                y_temp *= y_temp;
+                float a_x = *k;
+                ++k;
+                float a_y = *k;
+                ++k;
 
-                *j = x_temp + y_temp;
+                for (Matrix<float>::ConstElementIterator i(pos_matrix.begin_elements()), i_end(pos_matrix.end_elements()) ; i != i_end ; )
+                {
+                    float x_temp = a_x - *i;
+                    ++i;
+                    float y_temp = a_y - *i;
+                    ++i;
+                    x_temp *= x_temp;
+                    y_temp *= y_temp;
 
-                ++j;
+                    *j = x_temp + y_temp;
+
+                    ++j;
+                }
             }
         }
-
         for(std::list<SPEInstruction * >::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; ++i)
         {
                 (*i)->wait();
