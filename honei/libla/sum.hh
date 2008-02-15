@@ -543,12 +543,23 @@ namespace honei
             return result;
         }
 
-        template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DT2_ b)
+        template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, float b)
         {
             BenchmarkInfo result;
             result.flops = a.size();
-            result.load = a.size() * sizeof(DT1_) + sizeof(DT2_);
+            result.load = a.size() * sizeof(DT1_) + sizeof(float);
+            result.store = a.size() * sizeof(DT1_);
+            result.size.push_back(a.size());
+            return result;
+        }
+
+        template <typename DT1_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, double b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size();
+            result.load = a.size() * sizeof(DT1_) + sizeof(double);
             result.store = a.size() * sizeof(DT1_);
             result.size.push_back(a.size());
             return result;

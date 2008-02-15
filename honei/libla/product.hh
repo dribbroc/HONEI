@@ -920,7 +920,7 @@ namespace honei
                 result.load += temp * (sizeof(DT1_) + sizeof(DT2_));
                 result.store += temp * sizeof(DT1_);
             }
-            result.size.push_back(a.rows() * a.columns());
+            result.size.push_back(a.size());
             result.size.push_back(b.size());
             return result;
         }
@@ -932,6 +932,7 @@ namespace honei
             DenseVector<DT1_> temp1(a.columns());
             DenseVector<DT2_> temp2(b.rows());
             result = DotProduct<>::get_benchmark_info(temp1, temp2) * (a.rows() * a.columns());
+            result.size.clear();
             result.size.push_back(a.rows() * a.columns());
             result.size.push_back(b.rows() * b.columns());
             return result;
@@ -943,6 +944,7 @@ namespace honei
             BenchmarkInfo result;
             DenseVector<DT1_> temp(a.columns());
             result = DotProduct<>::get_benchmark_info(temp, b) * a.rows();
+            result.size.clear();
             result.size.push_back(a.rows() * a.columns());
             result.size.push_back(b.size());
             return result;
