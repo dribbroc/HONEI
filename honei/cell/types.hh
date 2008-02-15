@@ -147,7 +147,17 @@ namespace honei
             unsigned transfer_size : 15;
             unsigned effective_address_low;
         };
-    }
-}
 
+        template <typename T_> union Pointer;
+
+        template <> union Pointer<ListElement>
+        {
+            void * untyped;
+            ListElement le;
+        };
+
+    }
+
+
+}
 #endif

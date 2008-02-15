@@ -7,6 +7,13 @@ see the NEWS file.
 
 2008-02-15 Sven Mallach <sven.mallach@honei.org>
 
+	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/cell/types.hh, honei/libla/product-cell.cc,
+	honei/libla/product_TEST.cc, : Added a first pre-version of the 4-SPE
+	DenseMatrix product to support debugging race conditions.
+
+2008-02-15 Sven Mallach <sven.mallach@honei.org>
+
 	* honei/cell/libgraph/node_distance_float_wfr.cc,
 	honei/libgraph/node_distance-cell.cc: Fixed bug that made tests fail.
 

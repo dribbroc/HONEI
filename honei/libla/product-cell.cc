@@ -26,6 +26,7 @@
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_manager.hh>
 #include <honei/libutil/profiler.hh>
+#include <honei/libutil/spe_transfer_list.hh>
 #include <list>
 
 //#include <honei/libutil/time_stamp.hh>
@@ -735,129 +736,472 @@ namespace honei
         if (a.columns() != b.rows())
             throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-        /* \\\todo: Tiling. */
+        DenseMatrix<float> result(a.rows(), b.columns());
+        std::list<SPEInstruction *> instructions;
+        bool use_spe(true);
 
-        /* We assume to have complete matrices or complete matrix tiles
-         * at this point. So later here will be another for-loop that calls the
-         * spe program for every pair (triple with result) of tiles.
-         * This for loop will be responsible for transfering the logically
-         * correct pairs of tiles to the spe.
-         * The spe program itself can then compute the same way, as if it would
-         * do, if it got complete matrices as operands.
-         */
-
-        unsigned a_tile_rows;
-        unsigned a_tile_columns;
-        unsigned b_tile_rows;
-        unsigned b_tile_columns;
-        unsigned r_tile_rows;
-        unsigned r_tile_columns;
-
-        // Beginning of double buffering.
-
-        /* For the first source Matrix (a) and the result Matrix (r) we apply double buffering,
-         * while we always transfer the whole second source Matrix (b).
-         * For a and r we always pull as many complete rows that fit into 16 KB.
-         */
-
-        a_tile_rows = a.rows(); // Later use tiles' rows here
-        a_tile_columns = a.columns(); // Later use tiles' columns here
-        b_tile_rows = b.rows(); // Later user tiles' rows here
-        b_tile_columns = b.columns(); // Later use tiles' columns here
-        DenseMatrix<float> result(a_tile_rows, b_tile_columns, 0.0f);
-
-        r_tile_rows = result.rows(); // Later use tiles' rows here
-        r_tile_columns = result.columns(); // Later use tiles' columns here.
-
-        Operand oa = { a.elements() }; // Later use tiles' elements here
-        Operand ob = { b.elements() }; // Later use tiles' elements here
-        Operand oc = { result.elements() }; // Later use tiles' elements here
-        Operand od, oe;
-        od.u = a.columns(); // Later use tiles' columns here
-        oe.u = b.columns(); // Later use tiles' columns here
-
-        // We now need to know how much of the tiles we can transfer at most
-        // using one dma transfer.
-        // For the tile of a the number of columns decides, because we can then see
-        // how many rows we can transfer within 16 KB. We do the same for the tile of r.
-        // There is only one problem. Because r can have less or more columns as a, we
-        // can have different default transfer sizes for them. But we need exactly the
-        // same number of rows of a and r to let the spe-program work correctly.
-        // So we need a # of rows, for that both transfersizes are % 16 == 0.
-
-        Operand of; // Will transfer the number of full transfers for a.
-        Operand og; // Will transfer the number of blocks to reserve for b.
-        Operand oh; // Will transfer the size of a last transfer for a,
-        Operand oi; // Will transfer the size of a last transfer for b.
-        Operand oj; // Will transfer the size of a last transfer for r.
-        Operand ok; // Will transfer the default transfer size for r.
-
-        unsigned a_row_bytes(a_tile_columns * 4); // Bytes per row
-        unsigned a_rows_per_transfer(16384 / a_row_bytes);
-
-        unsigned r_row_bytes(r_tile_columns * 4);
-        unsigned r_rows_per_transfer(16384 / r_row_bytes);
-
-        // r can have more or less columns than a.
-        // We must start with the bigger one to assure that we don't
-        // exceed 16 KB.
-        unsigned rows_per_transfer;
-        a_tile_columns > r_tile_columns ? rows_per_transfer = a_rows_per_transfer : rows_per_transfer = r_rows_per_transfer;
-        unsigned r_def_t_size(rows_per_transfer * r_row_bytes);
-        unsigned a_def_t_size(rows_per_transfer * a_row_bytes);
-
-        for ( ; ; ) // Need two default aligned transfer size as closest to 16384 as possible.
+        union addr
         {
-            if (a_def_t_size % 16 == 0 && r_def_t_size % 16 == 0)
-            {
+            float * ptr;
+            unsigned long long value;
+        };
+
+        unsigned a_half_rows = a.rows() / 2;
+        for (; ;)
+        {
+            if ((a_half_rows * b.columns()) % 4 == 0)
                 break;
-            }
-            a_def_t_size -= a_row_bytes;
-            r_def_t_size -= r_row_bytes;
-            rows_per_transfer--;
-            if (a_def_t_size <= 0 || r_def_t_size <= 0)
-            {
-                std::cout << "Could not find an alignment" << std::endl;
-            }
+            else
+                a_half_rows++;
+        }
+        // find a t_size that represents full rows!
+        unsigned a_t_size(a.columns() * (4096 / (a.columns())));
+
+        while (a_t_size % 4 != 0)
+        {
+            a_t_size -= a.columns();
+        }
+        unsigned a_div(a_t_size / a.columns()); // number of rows in one transfer
+        a_t_size *= 4;
+        //std::cout << a_t_size << std::endl;
+
+        unsigned a_half_size = a_half_rows * a.columns() * 4;
+        unsigned a_2nd_half_rows = a.rows() - a_half_rows;
+        unsigned a_2nd_half_size = a_2nd_half_rows * a.columns() * 4;
+        unsigned a_typed_offset = (a_half_rows * a.columns()) % 4;
+
+        unsigned b_half_rows = b.rows() / 2;
+        unsigned b_rest_rows = b.rows() % 2;
+
+        unsigned b_half_cols = ((b.columns() / 2 ) & ~0x3) - 4;
+        unsigned ppu_if1_cols = 4;
+        unsigned ppu_if2_cols = 4 + (b.columns() & 0x3);
+        unsigned b_2nd_half_cols = b.columns() - 4 - b_half_cols - ppu_if2_cols;
+/*
+        std::cout << "a_half_rows : " << a_half_rows << std::endl;
+        std::cout << "a_2nd_half_rows : " << a_2nd_half_rows << std::endl;
+
+        std::cout << "b_half_cols : " << b_half_cols << std::endl;
+        std::cout << "b_2nd_half_cols : " << b_2nd_half_cols << std::endl;
+        std::cout << "ppu_if1_cols : " << ppu_if1_cols << std::endl;
+        std::cout << "ppu_if2_cols : " << ppu_if2_cols << std::endl;
+        std::cout << "R0 size: " << a_half_rows * b_half_cols * 4 << std::endl;
+*/
+        unsigned ppu_columns(ppu_if1_cols + ppu_if2_cols);
+
+        if (a.rows() < 8 || b.columns() < 8)
+        {
+            use_spe = false;
+            ppu_columns = b.columns();
+            ppu_if1_cols = b.columns();
+            ppu_if2_cols = 0;
+            b_half_cols = 0;
         }
 
-        unsigned b_bytes(b_tile_rows * b_tile_columns * 4);
-        of.u = a_tile_rows / rows_per_transfer;
-        og.u = b_bytes / 16384;
-        oh.u = (a_tile_rows % rows_per_transfer) * a_row_bytes;
-        oi.u = b_bytes % 16384;
-        oj.u = (r_tile_rows % rows_per_transfer) * r_row_bytes;
-        ok.u = r_def_t_size;
+        std::vector<SPETransferList> b02_lists = std::vector<SPETransferList>();
+        b02_lists.push_back(SPETransferList(2048, 16384));
 
-        // If there is a rest for a and r to transfer, we need one more transfer...
-        // Else if there is no rest, the last transfer size is equal to the normal one.
-        if (0 != oh.u || 0 != oj.u)
+        std::vector<SPETransferList> b13_lists = std::vector<SPETransferList>();
+        b13_lists.push_back(SPETransferList(2048, 16384));
+
+        unsigned b02_nr_lists(0), b13_nr_lists(0);
+
+        if (use_spe)
         {
-            of.u++;
+        for (unsigned i(0) ; i < b.rows() ; ++i)
+        {
+            addr address1;
+            address1.ptr = b.elements() + i * b.columns();
+            unsigned off1(address1.value & 0xF);
+            address1.value &= ~0xF; // truncate address
+            unsigned t_size1 = (off1 == 0 ? b_half_cols * 4 : (b_half_cols * 4) + 16);
+            ListElement * retval1(0);
+            if ((b02_lists.at(b02_nr_lists).transfer_size() + t_size1) <= 16384)
+            {
+                retval1 = b02_lists.at(b02_nr_lists).add(address1.ptr, t_size1);
+            }
+
+            if (retval1 == 0)
+            {
+                b02_lists.push_back(SPETransferList(2048, 16384));
+                b02_nr_lists++;
+                b02_lists.at(b02_nr_lists).add(address1.ptr, t_size1);
+
+            }
+
+            addr address2;
+            address2.ptr = ((b.elements() + b_half_cols + ppu_if1_cols) + i * b.columns());
+            unsigned off2(address2.value & 0xF);
+            address2.value &= ~0xF; // truncate address
+            unsigned t_size2 = (off2 == 0 ? b_2nd_half_cols * 4 : (b_2nd_half_cols * 4) + 16);
+
+            ListElement * retval2(0);
+            if ((b13_lists.at(b13_nr_lists).transfer_size() + t_size2) <= 16384)
+            {
+                retval2 = b13_lists.at(b13_nr_lists).add(address2.ptr, t_size2);
+            }
+
+            if (retval2 == 0)
+            {
+                b13_lists.push_back(SPETransferList(2048, 16384));
+                b13_nr_lists++;
+                b13_lists.at(b13_nr_lists).add(address2.ptr, t_size2);
+            }
+
+        }
+        }
+        unsigned long long b02_sizes[b02_lists.size()] __attribute__((aligned(16)));
+        void * b02_ptrs[b02_lists.size()] __attribute__((aligned(16)));
+        unsigned long long b02_eahs[b02_lists.size()] __attribute__((aligned(16)));
+
+        for (unsigned i(0) ; i < b02_lists.size() ; i++)
+        {
+            b02_sizes[i] = b02_lists.at(i).size();
+            b02_eahs[i] = b02_lists.at(i).effective_address();
+            b02_ptrs[i] = b02_lists.at(i).elements();
+        }
+
+        std::vector<SPETransferList> r0_lists = std::vector<SPETransferList>();
+        r0_lists.push_back(SPETransferList(2048, 16384));
+        std::vector<SPETransferList> r1_lists = std::vector<SPETransferList>();
+        r1_lists.push_back(SPETransferList(2048, 16384));
+        std::vector<SPETransferList> r2_lists = std::vector<SPETransferList>();
+        r2_lists.push_back(SPETransferList(2048, 16384));
+        std::vector<SPETransferList> r3_lists = std::vector<SPETransferList>();
+        r3_lists.push_back(SPETransferList(2048, 16384));
+
+        unsigned r0_nr_lists(0), r1_nr_lists(0), r2_nr_lists(0), r3_nr_lists(0);
+        if (use_spe)
+        {
+        for (unsigned i(0) ; i < result.rows() ; ++i)
+        {
+            if (i < a_half_rows)
+            {
+                addr address1;
+                address1.ptr = result.elements() + i * result.columns();
+                unsigned off1(address1.value & 0xF);
+                address1.value &= ~0xF; // truncate address
+                unsigned t_size1 = ((b_half_cols * 4) + 16);
+
+                ListElement * retval1(0);
+                if ((r0_lists.at(r0_nr_lists).transfer_size() + t_size1) <= 16384)
+                {
+                    if (! ((i != 0) && (i % a_div == 0)))
+                    {
+                        retval1 = r0_lists.at(r0_nr_lists).add(address1.ptr, t_size1);
+                    }
+                }
+
+                if (retval1 == 0)
+                {
+                    r0_lists.push_back(SPETransferList(2048, 16384));
+                    r0_nr_lists++;
+                    r0_lists.at(r0_nr_lists).add(address1.ptr, t_size1);
+                }
+
+                addr address2;
+                address2.ptr = ((result.elements() + b_half_cols + ppu_if1_cols) + i * result.columns());
+                unsigned off2(address2.value & 0xF);
+                address2.value &= ~0xF; // truncate address
+                unsigned t_size2 = (b_2nd_half_cols * 4) + 16;
+
+                ListElement * retval2(0);
+                if ((r1_lists.at(r1_nr_lists).transfer_size() + t_size2) <= 16384)
+                {
+                    if (! ((i != 0) && (i % a_div == 0)))
+                    {
+                        retval2 = r1_lists.at(r1_nr_lists).add(address2.ptr, t_size2);
+                    }
+                }
+
+                if (retval2 == 0)
+                {
+                    r1_lists.push_back(SPETransferList(2048, 16384));
+                    r1_nr_lists++;
+                    r1_lists.at(r1_nr_lists).add(address2.ptr, t_size2);
+                }
+            }
+            else
+            {
+                addr address1;
+                address1.ptr = result.elements() + i * result.columns();
+                unsigned off1(address1.value & 0xF);
+                address1.value &= ~0xF; // truncate address
+                unsigned t_size1 = (b_half_cols * 4) + 16;
+                ListElement * retval1(0);
+                if ((r2_lists.at(r2_nr_lists).transfer_size() + t_size1) <= 16384)
+                {
+                    if (! (((i - a_half_rows) != 0) && ((i - a_half_rows) % a_div == 0)))
+                    {
+                        retval1 = r2_lists.at(r2_nr_lists).add(address1.ptr, t_size1);
+                    }
+                }
+
+                if (retval1 == 0)
+                {
+                    r2_lists.push_back(SPETransferList(2048, 16384));
+                    r2_nr_lists++;
+                    r2_lists.at(r2_nr_lists).add(address1.ptr, t_size1);
+                }
+
+                addr address2;
+                address2.ptr = ((result.elements() + b_half_cols + ppu_if1_cols) + i * result.columns());
+                unsigned off2(address2.value & 0xF);
+                address2.value &= ~0xF; // truncate address
+//                unsigned t_size2 = (off2 == 0 ? b_2nd_half_cols * 4 : (b_2nd_half_cols * 4) + 16);
+                unsigned t_size2 = (b_2nd_half_cols * 4) + 16;
+
+                ListElement * retval2(0);
+                if ((r3_lists.at(r3_nr_lists).transfer_size() + t_size2) <= 16384)
+                {
+                    if (! (((i - a_half_rows) != 0) && ((i - a_half_rows) % a_div == 0)))
+                    {
+                        retval2 = r3_lists.at(r3_nr_lists).add(address2.ptr, t_size2);
+                    }
+                }
+
+                if (retval2 == 0)
+                {
+                    r3_lists.push_back(SPETransferList(2048, 16384));
+                    r3_nr_lists++;
+                    r3_lists.at(r3_nr_lists).add(address2.ptr, t_size2);
+                }
+            }
+
+        }
+        }
+        unsigned long long r0_sizes[r0_lists.size()] __attribute__((aligned(16)));
+        void * r0_ptrs[r0_lists.size()] __attribute__((aligned(16)));
+        unsigned long long r0_eahs[r0_lists.size()] __attribute__((aligned(16)));
+
+        for (unsigned i(0) ; i < r0_lists.size() ; i++)
+        {
+            r0_sizes[i] = r0_lists.at(i).size();
+            r0_eahs[i] = r0_lists.at(i).effective_address();
+            r0_ptrs[i] = r0_lists.at(i).elements();
+        }
+
+        unsigned long long r1_sizes[r1_lists.size()] __attribute__((aligned(16)));
+        unsigned long long r1_eahs[r1_lists.size()] __attribute__((aligned(16)));
+        void * r1_ptrs[r1_lists.size()] __attribute__((aligned(16)));
+
+        for (unsigned i(0) ; i < r1_lists.size() ; i++)
+        {
+            r1_sizes[i] = r1_lists.at(i).size();
+            r1_eahs[i] = r1_lists.at(i).effective_address();
+            r1_ptrs[i] = r1_lists.at(i).elements();
+        }
+        unsigned long long r2_sizes[r2_lists.size()] __attribute__((aligned(16)));
+        void * r2_ptrs[r2_lists.size()] __attribute__((aligned(16)));
+        unsigned long long r2_eahs[r2_lists.size()] __attribute__((aligned(16)));
+
+        for (unsigned i(0) ; i < r2_lists.size() ; i++)
+        {
+            r2_sizes[i] = r2_lists.at(i).size();
+            r2_eahs[i] = r2_lists.at(i).effective_address();
+            r2_ptrs[i] = r2_lists.at(i).elements();
+        }
+
+        unsigned long long r3_sizes[r3_lists.size()] __attribute__((aligned(16)));
+        unsigned long long r3_eahs[r3_lists.size()] __attribute__((aligned(16)));
+        void * r3_ptrs[r3_lists.size()] __attribute__((aligned(16)));
+
+        for (unsigned i(0) ; i < r3_lists.size() ; i++)
+        {
+            r3_sizes[i] = r3_lists.at(i).size();
+            r3_eahs[i] = r3_lists.at(i).effective_address();
+            r3_ptrs[i] = r3_lists.at(i).elements();
+        }
+
+        // Shared Operands
+        Operand oa0 = { a.elements() };
+
+        Operand ob0 = { a_half_size / a_t_size }; // # of DBs
+        Operand oc0 = { a_half_size % a_t_size }; // rest
+
+        if (oc0.u == 0)
+        {
+            if (ob0.u > 0)
+                oc0.u = a_t_size;
         }
         else
         {
-            oh.u = a_def_t_size;
-            oj.u = r_def_t_size;
+            ob0.u++;
         }
+        //std::cout << "TRANSFERS FOR A: " << ob0.u << std::endl;
+        Operand oa1 = { a.elements() + (a_half_rows * a.columns()) }; //truncated
+        oa1.u &= ~0xF;
 
-        // If a fits into one transfer, we should say that it is one transfer needed and set last size.
-        if (0 == of.u)
+        Operand ob1 = { (a_2nd_half_size + (4 * a_typed_offset)) / a_t_size  }; // # of DBs
+        Operand oc1 = { (a_2nd_half_size + (4 * a_typed_offset)) % a_t_size  }; // rest (m_of_s on SPU)
+
+        if (oc1.u == 0)
         {
-            of.u++;
-            oh.u = a_row_bytes * a_tile_columns;
+            if (ob1.u > 0)
+                oc1.u = a_t_size;
         }
-
-        if (oi.u != 0) // if we need one more block for rest rows of b.
+        else
         {
-            og.u++;
+            ob1.u++;
         }
 
-        SPEInstruction instruction(oc_product_dense_matrix_dense_matrix_float, a_def_t_size, oa, ob, oc, od, oe, of, og, oh, oi, oj, ok);
+        Operand oi0 = { 0llu }; // a_typed_offset
+        Operand oi1 = { a_typed_offset };
+        Operand oo = { a.columns() };
 
-        SPEManager::instance()->dispatch(instruction);
+        //std::cout << "A TYPED OFFSET: " << oi1.u << std::endl;
+        { // DISPATCH FOR R[0] and R[2]
+            Operand od = { &b02_ptrs };
+            Operand oe = { &b02_sizes };
+            Operand of = { &b02_eahs };
+            Operand og = { b02_lists.size() };
+            //std::cout << "B02 LIST SIZE: " << og.u << std::endl;
+            Operand oh = { b.elements() + b.columns() };
+            oh.u &= 0xF; // Want the offset of the first row!
 
-        instruction.wait();
+            Operand oj = { b_half_cols };
+
+            Operand ok0 = { r0_lists.size() };
+            //std::cout << "R0 LIST SIZE: " << ok0.u << std::endl;
+
+            Operand ok1 = { r2_lists.size() };
+
+            Operand ol0 = { &r0_ptrs };
+            Operand ol1 = { &r2_ptrs };
+
+            Operand om0 = { &r0_sizes };
+            Operand om1 = { &r2_sizes };
+
+            Operand on0 = { &r0_eahs };
+            Operand on1 = { &r2_eahs };
+
+            SPEInstruction * instruction0 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi0,
+                    oj, ok0, ol0, om0, on0, oo);
+            SPEInstruction * instruction1 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi1,
+                    oj, ok1, ol1, om1, on1, oo);
+
+            if (use_spe)
+            {
+            SPEManager::instance()->dispatch(*instruction0);
+            instructions.push_back(instruction0);
+            SPEManager::instance()->dispatch(*instruction1);
+            instructions.push_back(instruction1);
+            }
+        }
+
+        unsigned long long b13_sizes[b13_lists.size()] __attribute__((aligned(16)));
+        unsigned long long b13_eahs[b13_lists.size()] __attribute__((aligned(16)));
+        void * b13_ptrs[b13_lists.size()] __attribute__((aligned(16)));
+
+        for (unsigned i(0) ; i < b13_lists.size() ; i++)
+        {
+            b13_sizes[i] = b13_lists.at(i).size();
+            b13_eahs[i] = b13_lists.at(i).effective_address();
+            b13_ptrs[i] = b13_lists.at(i).elements();
+        }
+
+        { // DISPATCH FOR R[1] and R[3]
+
+            Operand od = { &b13_ptrs };
+            Operand oe = { &b13_sizes };
+            Operand of = { &b13_eahs };
+
+            Operand og = { b13_lists.size() };
+
+            Operand oh = { (b.elements() + b_half_cols + ppu_if1_cols) + b.columns() };
+            oh.u &= 0xF;
+
+            Operand oj = { b_2nd_half_cols };
+
+            Operand ok0 = { r1_lists.size() };
+            Operand ok1 = { r3_lists.size() };
+
+            Operand ol0 = { &r1_ptrs };
+            Operand ol1 = { &r3_ptrs };
+
+            Operand om0 = { &r1_sizes };
+            Operand om1 = { &r3_sizes };
+
+            Operand on0 = { &r1_eahs };
+            Operand on1 = { &r3_eahs };
+
+            SPEInstruction * instruction2 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi0, oj,
+                    ok0, ol0, om0, on0, oo);
+            SPEInstruction * instruction3 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi1, oj,
+                    ok1, ol1, om1, on1, oo);
+
+            if (use_spe)
+            {
+            SPEManager::instance()->dispatch(*instruction2);
+            instructions.push_back(instruction2);
+            SPEManager::instance()->dispatch(*instruction3);
+            instructions.push_back(instruction3);
+            }
+        }
+
+        float * b_if1_start;
+        float * b_if2_start;
+
+        float cols[ppu_columns][result.rows()];
+
+        for (unsigned x(0) ; x < ppu_columns ; ++x)
+        {
+            TypeTraits<float>::fill(cols[x], result.rows(), 0.0f);
+        }
+
+        float * a_elem = a.elements();
+        //for(Matrix<float>::ConstElementIterator j(a.begin_elements()), j_end(a.end_elements()) ; j != j_end ; ++j)
+        for(unsigned j(0) ; j < a.rows() * a.columns() ; ++j)
+        {
+            if (j % a.columns() == 0)
+            {
+                // Reset in case of new Row in A
+                b_if1_start = b.elements() + b_half_cols;
+                b_if2_start = b.elements() + (b.columns() - ppu_if2_cols);
+            }
+
+            unsigned i(0);
+            for( ; i < ppu_if1_cols ; i++)
+            {
+                cols[i][j / a.columns()] += *a_elem * b_if1_start[i];
+            }
+
+            for(unsigned k(0) ; k < ppu_if2_cols ; k++)
+            {
+                cols[i+k][j / a.columns()] += *a_elem * b_if2_start[k];
+            }
+
+            b_if1_start += b.columns();
+            b_if2_start += b.columns();
+            a_elem++;
+
+        }
+
+        for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; ++i)
+        {
+                (*i)->wait();
+
+                delete *i;
+        }
+
+        // COPY cols to Matrix.
+        unsigned i(0);
+        for (unsigned j(b_half_cols) ; i < ppu_if1_cols ; i++, j++)
+        {
+            DenseVectorSlice<float> slice(result.column(j));
+            for(DenseVectorSlice<float>::ElementIterator ei(slice.begin_elements()), ei_end(slice.end_elements()) ; ei != ei_end ; ++ei)
+            {
+                *ei = cols[i][ei.index()];
+            }
+        }
+        for (unsigned k(0), j(b.columns() - ppu_if2_cols) ; k < ppu_if2_cols ; k++, j++)
+        {
+            DenseVectorSlice<float> slice(result.column(j));
+            for(DenseVectorSlice<float>::ElementIterator ei(slice.begin_elements()), ei_end(slice.end_elements()) ; ei != ei_end ; ++ei)
+            {
+                *ei = cols[i+k][ei.index()];
+            }
+        }
 
         return result;
     }
