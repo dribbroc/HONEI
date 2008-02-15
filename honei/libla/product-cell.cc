@@ -46,8 +46,6 @@ namespace honei
 
         unsigned long spe_count(Configuration::instance()->get_value("cell::product_dense_matrix_dense_vector_float", 4ul));
         spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
-        std::cout << "a.rows() = " << a.rows() << std::endl;
-        std::cout << "spe_count " << spe_count << std::endl;
         unsigned rows_per_spe(a.rows() / spe_count);
         unsigned ppu_rows(0);
         bool use_spe(true);
@@ -83,7 +81,6 @@ namespace honei
                 a_t_size -= a.columns();
             }
             a_t_size *= 4;
-            std::cout << "ROWS PER SPE : " << rows_per_spe << std::endl;
 
             for (unsigned i(0) ; i < parts ; i++)
             {

@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-15 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/libla/product-cell.cc: Removed some debug output.
+
 2008-02-15 David Gies <david-gies@gmx.de>
 
 	* honei/libla/sum.hh, honei/libla/product.hh, honei/libla/reduction.hh:
