@@ -755,14 +755,21 @@ namespace honei
                 a_half_rows++;
         }
         // find a t_size that represents full rows!
-        unsigned a_t_size(a.columns() * (4096 / (a.columns())));
 
+        unsigned a_t_size(a.columns() * (4096 / (a.columns())));
+        /*
         while (a_t_size % 4 != 0)
         {
             a_t_size -= a.columns();
         }
-        unsigned a_div(a_t_size / a.columns()); // number of rows in one transfer
-        a_t_size *= 4;
+        */
+        unsigned a_div = a_t_size / a.columns(); // number of rows in one transfer
+        while(a_div % 4 != 0)
+            a_div--;
+
+        //std::cout << "ADIV = " << a_div << std::endl;
+        //a_t_size *= 4;
+        a_t_size = 4 * (a_div * a.columns());
         //std::cout << a_t_size << std::endl;
 
         unsigned a_half_size = a_half_rows * a.columns() * 4;
