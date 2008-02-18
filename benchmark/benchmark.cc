@@ -240,6 +240,14 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
             ofs1 << "#" << nr;
         ofs1.close();
     }
+    ofstream ofs3("RecentPlots.tex", ios_base::app);
+    ofs3 << "\t\\begin{table}[H]\n";
+    ofs3 << "\t\\caption{" << _id << "}\n";
+    ofs3 << "\t\\centering\n";
+    ofs3 << "\t\\begin{tabular}{c c c c c}\n"; 
+    ofs3 << "\t\t\\hline\\hline\n";
+    ofs3 << "\t\tX & operand size & median runtime & median MFLOPS & median transferrate\\\\ [0.5ex]\n";
+    ofs3 << "\t\t\\hline\n";
     ofstream ofs("BenchmarkPlotData", ios_base::out | ios_base::app);
     if (!ofs)
         cout << "Can't write to file!" << endl;
@@ -272,6 +280,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
                 ++blc;
             }
             calculate(*j);
+            ofs3 << "\t\t" << *i << " & " << (j->size).front() << " & " << _median << " & " << _medianf << " & " << _mediantp << " \\\\\n";
             ofs << std::setw(13) << _medianf << "\t" << std::setw(11) << _mediantp << "\t" << std::setw(11) << _min << "\t" << std::setw(11) << _max << "\t" << std::setw(12) << _avg << "\t" << std::setw(14) << _median << "\t" << std::setw(11) << _f << "\t" << std::setw(9) << _tp;
             for (list<double>::iterator bl = _benchlist.begin() ; bl != _benchlist.end() ; ++bl)
             {
@@ -343,8 +352,10 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
         std::cout << "Can't find a way to plot data automatically" << std::endl;
     }
     ofs2.close();
-    ofstream ofs3("RecentPlots.tex", ios_base::app);
-    ofs3 << "\t\\begin{figure}\n";
+    ofs3 << "\t\t\\hline\n";
+    ofs3 << "\t\\end{tabular}\n";
+    ofs3 << "\t\\end{table}\n";
+    ofs3 << "\t\\begin{figure}[H]\n";
     ofs3 << "\t\\begin{center}\n";
     ofs3 << "\t\t\\includegraphics{" << eps1name << "}\n";
     ofs3 << "\t\t\\includegraphics{" << eps2name << "}\n";
@@ -527,12 +538,17 @@ int main(int argc, char** argv)
     }
     if (plot)
     {
+        time_t t;
+        time(&t);
         ofstream ofs("RecentPlots.tex", ios_base::out);
         ofs << "\\documentclass{report}\n";
         ofs << "\\usepackage{fullpage}\n";
         ofs << "\\usepackage{epsfig}\n";
         ofs << "\\usepackage{epstopdf}\n";
+        ofs << "\\usepackage{float}\n";
         ofs << "\\begin{document}\n";
+        ofs << "\t\\pagestyle{myheadings}\n"; 
+        ofs << "\t\\markboth{}{" << ctime(&t) << "}\n";
         ofs.close();
     }
     int count = 0;

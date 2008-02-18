@@ -93,9 +93,17 @@ benchmark_LDADD = \
 	$(DYNAMIC_LD_LIBS)
 benchmark_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
+selected_benchmarks_SOURCES = selected_benchmarks.cc
+selected_benchmarks_LDADD = \
+	$(top_builddir)/benchmark/libbenchmark.a \
+	libla.la \
+	$(top_builddir)/honei/libutil/libutil.la \
+	$(DYNAMIC_LD_LIBS)
+selected_benchmarks_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
 BENCHMARKS = benchmarklist
 
-EXTRA_PROGRAMS = benchmark $(BENCHMARKS)
+EXTRA_PROGRAMS = benchmark selected_benchmarks $(BENCHMARKS)
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
@@ -128,6 +136,14 @@ bench-cell:
 bench-pdf:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	$(top_builddir)/honei/libla/benchmark i plot
+	gnuplot *.plt
+	pdflatex -shell-escape RecentPlots.tex
+	rm PlotOut_*.plt
+	rm PlotOut_*.pdf
+
+sel-benchs:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	$(top_builddir)/honei/libla/selected_benchmarks plot
 	gnuplot *.plt
 	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt
