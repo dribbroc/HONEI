@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-19 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libutil/spe_kernel.cc: Fixed dreaded Cell deadlock by ensuring
+	that all pending instructions are marked as finished when SPE throw a
+	STOPPED event.
+
 2008-02-18 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libla/selected_benchmarks.cc, honei/libswe/Makefile.am.m4,

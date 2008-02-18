@@ -348,6 +348,7 @@ namespace honei
                     Lock ll(*imp->mutex);
 
                     LOGMESSAGE(ll_minimal, "SPEKernel: Number of pending INTR mails is '" + stringify(spe_out_intr_mbox_status(spe->context())) + "'");
+                    imp->finished_counter = imp->enqueued_counter + 1;
 
                     imp->instruction_finished->broadcast();
                     break;
