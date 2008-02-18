@@ -190,23 +190,6 @@ namespace honei
             }
         }
 
-        /// Dispatch a SPEInstructionStream to a SPE
-        inline void dispatch(SPEInstructionStream & instruction_stream)
-        {
-            CONTEXT("When dispatching InstructionStream to a SPE");
-            if (instruction_stream.size() > 0)
-            {
-                SPEList::iterator spe_it = prepare_spe(*instruction_stream.begin());
-                LOGMESSAGE(ll_minimal, "Dispatching InstructionStream to SPE #" + stringify(spe_it->id()) +
-                        " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify((*(instruction_stream.begin())).instruction().opcode));
-
-                instruction_stream._enqueue_with(spe_it->kernel());
-
-                opcode_history[next_history_pos] = (*instruction_stream.begin()).instruction().opcode;
-                next_history_pos = (next_history_pos + 1) % 8;
-            }
-        }
-
         /// Constructor.
         Implementation() :
             next_history_pos(0),
@@ -339,14 +322,6 @@ namespace honei
     }
 
     void
-    SPEManager::dispatch(SPEInstructionStream & instruction_stream)
-    {
-        Lock l(*_imp->mutex);
-
-        _imp->dispatch(instruction_stream);
-    }
-
-    void
     SPEManager::wait(SPEInstruction & instruction)
     {
         instruction.wait();
@@ -356,12 +331,6 @@ namespace honei
     SPEManager::wait(SPEInstructionQueue & instruction_queue)
     {
         instruction_queue.wait();
-    }
-
-    void
-    SPEManager::wait(SPEInstructionStream & instruction_stream)
-    {
-        instruction_stream.wait();
     }
 
     unsigned long

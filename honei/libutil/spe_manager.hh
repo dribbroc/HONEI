@@ -40,7 +40,6 @@ namespace honei
 {
     class SPEInstruction;
     class SPEInstructionQueue;
-    class SPEInstructionStream;
 
     /**
      * SPEManager handles all available SPEs and dispatches tasks to them.
@@ -76,7 +75,6 @@ namespace honei
         public:
             friend class SPEInstruction;
             friend class SPEInstructionQueue;
-            friend class SPEInstructionStream;
 
             /// Return the only instance of SPEManager.
             static SPEManager * instance();
@@ -98,17 +96,11 @@ namespace honei
             // Dispatch all SPEInstructions in the queue to one single SPE.
             void dispatch(SPEInstructionQueue & instruction_queue);
 
-            // Dispatch all SPEInstructions in the stream to one single SPE.
-            void dispatch(SPEInstructionStream & instruction_stream);
-
             // Wait for a SPEinstructin to be finished.
             void wait(SPEInstruction & instruction);
 
             // Wait for all SPEInstrictions in the queue to finish.
             void wait(SPEInstructionQueue & instruction_queue);
-
-            // Wait for all SPEInstrictions in the stream so far to finish.
-            void wait(SPEInstructionStream & instruction_stream);
 
             // Returns the count of available spe's.
             unsigned long spe_count();

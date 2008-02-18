@@ -32,7 +32,6 @@ namespace honei
 {
     class SPEKernel;
     class SPEInstructionQueue;
-    class SPEInstructionStream;
 
     class SPEInstruction
     {
@@ -55,7 +54,6 @@ namespace honei
         public:
             friend class SPEManager::Implementation;
             friend class SPEInstructionQueue;
-            friend class SPEInstructionStream;
 
             /// Constructor.
             SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a = empty,
@@ -361,43 +359,5 @@ namespace honei
             bool finished() const;
     };
 
-    class SPEInstructionStream
-    {
-        private:
-            struct Implementation;
-
-            /// Our implementation.
-            Implementation * _imp;
-
-            /// Enqueue us with a given kernel.
-            void _enqueue_with(SPEKernel * kernel);
-
-        public:
-            friend class SPEManager::Implementation;
-
-            /// Constructor.
-            SPEInstructionStream(const SPEInstruction & instruction);
-
-            /// Destructor.
-            ~SPEInstructionStream();
-
-            /// Insert an instruction at the end of the queue.
-            void input(const SPEInstruction & instruction);
-
-            /// Wait until all our instructions have been executed.
-            void wait() const;
-
-            /// Returns an iterator pointing to the front of our stream
-            std::vector<SPEInstruction>::iterator begin();
-
-            /// Returns an iterator pointing behind the last element of our stream
-            std::vector<SPEInstruction>::iterator end();
-
-            /// Returns our instruction count.
-            unsigned long size();
-
-            /// Returns true if all instructions have been finished
-            bool finished() const;
-    };
 }
 #endif

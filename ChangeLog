@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-18 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* spe_instruction.cc, spe_instruction.hh, spe_manager.cc, spe_manager.hh:
+	Removed SPEInstructionStream.
+
 2008-02-18 Markus Geveler <apryde@gmx.de>
 
 	* libla/product.hh: While performing my experiments with non-libla
