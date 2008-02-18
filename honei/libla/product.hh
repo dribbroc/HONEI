@@ -917,7 +917,7 @@ namespace honei
                     temp = ((2 * a.size() - 2) - temp);
                 ++temp;
                 result.flops += temp * 2;
-                result.load += temp * (sizeof(DT1_) + sizeof(DT2_));
+                result.load += temp * (sizeof(DT1_) + sizeof(DT2_) + sizeof(DT1_));
                 result.store += temp * sizeof(DT1_);
             }
             result.size.push_back(a.size());
