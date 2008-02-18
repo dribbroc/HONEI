@@ -75,7 +75,7 @@ lib_LTLIBRARIES = libswe.la
 libswe_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libswe_la_LIBADD = \
 	$(top_builddir)/honei/libutil/libutil.la \
-	$(top_builddir)/honei/libla/libla.la
+	$(top_builddir)/honei/libla/libla.la \
 	$(CELLLIB)
 
 libswe_includedir = $(includedir)/honei/libswe
@@ -86,7 +86,16 @@ TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
-EXTRA_PROGRAMS = benchmarklist
+selected_benchmarks_SOURCES = selected_benchmarks.cc
+selected_benchmarks_LDADD = \
+	$(top_builddir)/benchmark/libbenchmark.a \
+	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/libutil/libutil.la \
+	libswe.la \
+	$(DYNAMIC_LD_LIBS)
+selected_benchmarks_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
+EXTRA_PROGRAMS = benchmarklist selected_benchmarks
 
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
@@ -115,6 +124,14 @@ bench-cell:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	bash $(top_builddir)/honei/libswe/solver_BENCHMARK cell
 	bash $(top_builddir)/honei/libswe/relax_solver_BENCHMARK cell
+
+sel-benchs:
+	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
+	$(top_builddir)/honei/libswe/selected_benchmarks plot
+	gnuplot *.plt
+	pdflatex -shell-escape RecentPlots.tex
+	rm PlotOut_*.plt
+	rm PlotOut_*.pdf
 
 quickcheck: $(TESTS)
 	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check

@@ -30,7 +30,6 @@ using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
-
 class RelaxSolverBench :
     public Benchmark
 {

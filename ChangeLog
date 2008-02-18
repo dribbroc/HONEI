@@ -7,6 +7,13 @@ see the NEWS file.
 
 2008-02-18 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/libla/selected_benchmarks.cc, honei/libswe/Makefile.am.m4,
+	honei/libswe/relax_solver_BENCHMARK.cc,
+	honei/libswe/selected_benchmarks.cc:
+	Added first 'selected benchmark' in libswe: RelaxSolverBenchmark.
+
+2008-02-18 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* spe_instruction.cc, spe_instruction.hh, spe_manager.cc, spe_manager.hh:
 	Removed SPEInstructionStream.
 
