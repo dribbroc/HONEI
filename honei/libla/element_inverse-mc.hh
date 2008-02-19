@@ -401,7 +401,8 @@ namespace honei
                 {
                     offset = p->start;
                     part_size = p->size;
-                    typename Vector<DT1_>::ElementIterator start(x.begin_elements()), stop(x.begin_elements());
+                    typename Vector<DT1_>::ElementIterator start(x.begin_non_zero_elements()),
+                             stop(x.begin_non_zero_elements());
                     start += offset;
                     stop += (offset + part_size);
                     TwoArgWrapper< ElementInverse<Tag_>, typename Vector<DT1_>::ElementIterator, typename Vector<DT1_>::ElementIterator> mywrapper(start, stop);
