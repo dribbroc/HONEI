@@ -35,18 +35,12 @@ namespace honei
     protected:
         DenseMatrix<DataType_> * _coordinates;
         SparseMatrix< DataType_ > * _edges;
-        DenseVector<DataType_> * _nodeWeights;
+        DenseVector<DataType_> * _node_weights;
     public:
-        virtual void addNode(Node<DataType_> * Node) = 0;
-
-        virtual Node<DataType_> * getNode(int index) = 0;
-
-        virtual Node<DataType_> * getNodeByID(int id) = 0;
-
         AbstractGraph() :
             _coordinates(0),
             _edges(0),
-            _nodeWeights(0)
+            _node_weights(0)
         {
         }
 
@@ -54,7 +48,7 @@ namespace honei
         {
             delete _coordinates;
             delete _edges;
-            delete _nodeWeights;
+            delete _node_weights;
         }
 
         virtual inline DenseMatrix<DataType_> * coordinates()
@@ -62,9 +56,9 @@ namespace honei
             return _coordinates;
         }
 
-        virtual inline DenseVector<DataType_> * nodeWeights()
+        virtual inline DenseVector<DataType_> * node_weights()
         {
-            return _nodeWeights;
+            return _node_weights;
         }
 
         virtual inline SparseMatrix<DataType_> * edges()
@@ -72,14 +66,14 @@ namespace honei
             return _edges;
         }
 
-        virtual int nodeCount() = 0;
-        
-        virtual inline int getTimesliceIndex(int nodeIndex)
+        virtual int node_count() = 0;
+                
+        virtual inline int timeslice_index(int node_index)
         {
             return 0;
         }
 
-        virtual inline bool sameTimeslice(int index1, int index2)
+        virtual inline bool same_timeslice(int index1, int index2)
         {
             return true;
         }

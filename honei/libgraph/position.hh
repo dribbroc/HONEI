@@ -152,6 +152,11 @@
             {
                 return _imp->_number_of_iterations;
             }
+            
+            inline DataType_ step_width()
+            {
+                return _imp->step_width();
+            }
     };
 
     namespace methods
@@ -195,6 +200,11 @@
 
             public:
                 friend class Positions<Tag_, DataType_, WeightedFruchtermanReingold>;
+                
+                inline DataType_ step_width()
+                {
+                    return _step_width;
+                }
 
                 Implementation(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
                     const SparseMatrix<DataType_> & weights_of_edges) :
@@ -231,7 +241,7 @@
 
                 Implementation(AbstractGraph<DataType_> & graph, DataType_ edgeLength) :
                     _coordinates(*graph.coordinates()),
-                    _weights_of_nodes(*graph.nodeWeights()),
+                    _weights_of_nodes(*graph.node_weights()),
                     _weights_of_edges(*graph.edges()),
                     _repulsive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), DataType_(0)),
                     _attractive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), DataType_(0)),
@@ -254,7 +264,7 @@
                             DataType_ length_of_edge(sqrt(node_weight) / *g);
                             if ((length_of_edge) > _repulsive_force_range) _repulsive_force_range = length_of_edge;
                         }
-                        *e = (graph.sameTimeslice(e.row(), e.column())) ?
+                        *e = (graph.same_timeslice(e.row(), e.column())) ?
                            node_weight * node_weight: 0;
                         *f = *g * *g * *g * *g;
                     }
@@ -313,9 +323,15 @@
                     // Calculate the new _step_width
                     if ((_number_of_iterations > 2) && (_step_width > 10*std::numeric_limits<DataType_>::epsilon()) && (fabs(result - _previous_max_Force_2) <= fabs(0.2 * _previous_max_Force_2)))
                     {
-                        if (_step_width > _repulsive_force_range / (_weights_of_edges.rows() * 20)) _step_width *= 0.5;
-                        if (_step_width <= _repulsive_force_range  / (_weights_of_edges.rows() * 20)) _step_width *= 0.995;
+                        if (_step_width > _repulsive_force_range / (_weights_of_edges.rows() * 20)) _step_width *= 0.995;
+                        if (_step_width <= _repulsive_force_range  / (_weights_of_edges.rows() * 20))
+                        {
+                            _step_width *= 0.995 ;
+                        }
                     }
+                    
+                    if (_number_of_iterations == 400)
+                        _repulsive_force_range *= 0.5;
 
                     // Calculate the new previous forces
                     _previous_max_Force_2 = _previous_max_Force;
@@ -338,6 +354,8 @@
                 {
 
                 }
+                
+                
 
         };
 
@@ -377,6 +395,11 @@
 
             public:
                 friend class Positions<Tag_, DataType_, WeightedKamadaKawai>;
+                
+                inline DataType_ step_width()
+                {
+                    return _step_widths[_max_node];
+                }
 
                 Implementation(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
                     const SparseMatrix<DataType_> & weights_of_edges) :
@@ -390,7 +413,7 @@
                     _max_node(0),
                     node_forces(coordinates.rows() * coordinates.rows(), coordinates.columns(), DataType_(0)),
                     _step_widths(coordinates.rows(), DataType_(0))
-                {
+                {                    
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<>::value(_graph_distance, _weights_of_nodes, _weights_of_edges))
                         throw GraphError("Graph has to be coherently");
@@ -398,7 +421,7 @@
 
                 Implementation(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
                     _coordinates(*graph.coordinates()),
-                    _weights_of_nodes(*graph.nodeWeights()),
+                    _weights_of_nodes(*graph.node_weights()),
                     _weights_of_edges(*graph.edges()),
                     _graph_distance(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
                     _spring_forces(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
@@ -408,9 +431,11 @@
                     node_forces(_coordinates.rows() * _coordinates.rows(), _coordinates.columns(), DataType_(0)),
                     _step_widths(_coordinates.rows(), DataType_(0))
                 {
+                    
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<>::value(_graph_distance, _weights_of_nodes, _weights_of_edges, graph))
                         throw GraphError("Graph has to be coherently");
+                    
                 }
 
                 void init()
@@ -426,17 +451,16 @@
                             stepwidth = auxiliary;
                         }
                     }
-
+                                    
                     // Fill vector of _step_widths with stepwidth
                     for (typename DenseVector<DataType_>::ElementIterator i(_step_widths.begin_elements()), i_end(_step_widths.end_elements()) ;
                         i != i_end ; ++i)
                     {
                         *i = stepwidth;
                     }
-
                     // Calculate square _graph_distance
                     ElementProduct<Tag_>::value(_graph_distance, _graph_distance);
-
+                    
                     // Calculate square_dist = d(i,j)^2
                     DenseMatrix<DataType_> square_dist(NodeDistance<Tag_>::value(_coordinates));
 
@@ -454,7 +478,7 @@
 
                     // Calculate all forces of a node and the spring_forces
                     ImplementationComponents<Tag_, DataType_, WeightedKamadaKawai>::initializeForces(_spring_force_parameters, _coordinates, _spring_forces, node_forces);
-
+                    
                     // Calculate the resulting forces, the maximal force and the node with maximal force
                     DataType_ result(0);
                     DenseVector<DataType_> resulting_forces(_coordinates.rows(), DataType_(0));
@@ -464,7 +488,7 @@
                         *i = Norm<vnt_l_two, true, Tag_>::value(_spring_forces[i.index()]);
                         *i > result ? result = *i, _max_node = i.index() : 0;
                     }
-
+                    
                     // Calculate the new positions by using resulting forces
                     if (result > std::numeric_limits<DataType_>::epsilon()) 
                     {

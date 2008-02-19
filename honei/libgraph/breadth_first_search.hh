@@ -212,7 +212,7 @@ namespace honei
 
                             // Calculate the distance between the starting-node and the current node by dint of its predecessor, involving the weights of the edges
                             distance_matrix(i, e.index()) = distance_matrix(i, current_node) +
-                            (graph.sameTimeslice(current_node, e.index()) ?
+                            (graph.same_timeslice(current_node, e.index()) ?
                             (sqrt(node_weights[current_node] * node_weights[e.index()]) / *e):
                             0);
                         }
