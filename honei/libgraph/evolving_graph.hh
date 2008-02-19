@@ -24,10 +24,13 @@
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/sparse_matrix.hh>
+#include <honei/libla/scale.hh>
+#include <honei/libla/sum.hh>
 #include <honei/libgraph/abstract_graph.hh>
 #include <honei/libgraph/graph.hh>
 #include <map>
 #include <iostream>
+#include <math.h>
 namespace honei
 {
 
@@ -41,18 +44,23 @@ namespace honei
             typedef DenseVector<DataType_> DV;
             typedef SparseMatrix<DataType_> SM;
             std::vector<GraphType *> _slices;
-            std::map<int, NodeType *> _nodes;
-            std::vector<int> _sliceOffset;
-            int _totalNodeCount;
-            int _coordinateDimensions;
-            DataType_ _interTimesliceWeight;
+            std::vector<DM *> _interpolation_coordinates;
+//            std::map<int, NodeType> _nodes;
+            std::vector<int> _slice_offset;
+            
+            DM _last_interpolation;
+            float _last_alpha;;
+           
+            int _total_node_count;
+            int _coordinate_dimensions;
+            DataType_ _intertimeslice_weight;
 
             void assemble_coordinates()
             {
-                this->_coordinates = new DM(_totalNodeCount, _coordinateDimensions );
-                for (int t(0); t < sliceCount(); ++t)
+                this->_coordinates = new DM(_total_node_count, _coordinate_dimensions );
+                for (int t(0); t < slice_count(); ++t)
                 {
-                    int offset = _sliceOffset[t];
+                    int offset = _slice_offset[t];
                     GraphType * slice = _slices[t];
                     for (typename DM::ConstElementIterator i(slice->coordinates()->begin_elements()),
                             i_end(slice->coordinates()->end_elements()); i != i_end; ++i)
@@ -63,126 +71,173 @@ namespace honei
             }
 
             /// creates and returns the complete nodeweight vector for the whole evolving graph
-            void assemble_nodeWeights()
+            void assemble_node_weights()
             {
-                this->_nodeWeights = new DV(_totalNodeCount);
-                for (int t(0); t < sliceCount(); ++t)
+                this->_node_weights = new DV(_total_node_count);
+                for (int t(0); t < slice_count(); ++t)
                 {
-                    int offset = _sliceOffset[t];
+                    int offset = _slice_offset[t];
                     GraphType * slice = _slices[t];
-                    for (typename DV::ConstElementIterator i(slice->nodeWeights()->begin_elements()),
-                            i_end(slice->nodeWeights()->end_elements()); i != i_end; ++i)
+                    for (typename DV::ConstElementIterator i(slice->node_weights()->begin_elements()),
+                            i_end(slice->node_weights()->end_elements()); i != i_end; ++i)
                     {
-                        (*this->_nodeWeights)[offset + i.index()] = *i;
+                        (*this->_node_weights)[offset + i.index()] = *i;
                     }
                 }
             }
 
             /// creates and returns the complete edge matrix for the whole evolviong graph.
-            void assemble_edges()
+void assemble_edges()
+{
+    this->_edges = new SM(_total_node_count, _total_node_count);
+    for (int t(0); t < slice_count(); ++t)
+    {
+        int offset = _slice_offset[t];
+        GraphType * slice = _slices[t];
+        for (typename SM::ConstElementIterator i(slice->edges()->begin_non_zero_elements()),
+                i_end(slice->edges()->end_non_zero_elements()); i != i_end; ++i)
+        {
+            (*this->_edges)(offset + i.row(), offset + i.column()) = *i;
+        }
+        if (t > 0)
+        {
+            GraphType * last_slice = _slices[t-1];
+            for (int i = 0; i < slice->node_count(); ++i)
             {
-                this->_edges = new SM(_totalNodeCount, _totalNodeCount);
-                for (int t(0); t < sliceCount(); ++t)
+                int last_index(last_slice->get_node_index(slice->get_node(i).id()));
+                if (last_index >= 0)
                 {
-                    int offset = _sliceOffset[t];
-                    GraphType * slice = _slices[t];
-                    for (typename SM::ConstElementIterator i(slice->edges()->begin_non_zero_elements()),
-                            i_end(slice->edges()->end_non_zero_elements()); i != i_end; ++i)
-                    {
-                        (*this->_edges)(offset + i.row(), offset + i.column()) = *i;
-                    }
-                    if (t > 0)
-                    {
-                        GraphType * last_slice = _slices[t-1];
-                        for (int i = 0; i < slice->nodeCount(); ++i)
-                        {
-                            int last_index(last_slice->getNodeIndex(slice->getNode(i)->getID()));
-                            if (last_index >= 0)
-                            {
-                                (*this->_edges)(_sliceOffset[t-1] + last_index, offset + i) = _interTimesliceWeight;
-                                (*this->_edges)(offset + i, _sliceOffset[t-1] + last_index) = _interTimesliceWeight;
-                            }
-                        }
-                    }
+                    (*this->_edges)(_slice_offset[t-1] + last_index, offset + i) = _intertimeslice_weight;
+                    (*this->_edges)(offset + i, _slice_offset[t-1] + last_index) = _intertimeslice_weight;
                 }
             }
+        }
+    }
+}
 
 
         public:
         /// creates an evolving graph with given number of dimensions for the node coordinates sets optionally the weight for intertimeslice edges
-        EvolvingGraph(int coordinateDimensions, DataType_ interTimesliceWeight = (DataType_)1) :
+        EvolvingGraph(int coordinate_dimensions, DataType_ intertimeslice_weight = (DataType_)1) :
                 _slices(),
-                _nodes(),
-                _sliceOffset(),
-                _totalNodeCount(0),
-                _coordinateDimensions(coordinateDimensions),
-                _interTimesliceWeight(interTimesliceWeight)
+//                _nodes(),
+                _slice_offset(),
+                _total_node_count(0),
+                _last_interpolation(0,0),
+                _coordinate_dimensions(coordinate_dimensions),
+                _intertimeslice_weight(intertimeslice_weight),
+                _interpolation_coordinates()
         {
+        }
+        
+        ~EvolvingGraph()
+        {
+          //  for(int i(0);  i < _interpolation_coordinates.size(); ++i)
+          //      if (_interpolation_coordinates[i] != 0)
+          //          delete(_interpolation_coordinates[i]);
         }
 
         /// adds a node to the evolving graph. this is necessary to put the same nodes to different timeslice-graphs
-        inline void addNode(NodeType * node)
+/*        void add_node(NodeType & node)
         {
-            _nodes[node->getID()] = node;
-        }
+            _nodes[node.id()] = node;
+        } 
+        
+        /// adds a node to the evolving graph. this is necessary to put the same nodes to different timeslice-graphs
+        void add_node(int timeslice_index, int node_id)
+        {
+            
+            NodeType node(node_id);
+            if (_nodes.find(node_id) == _nodes.end())
+            {
+                _nodes[node_id] = node;
+            }
+            else
+                node = _nodes[node_id];            
+            _slices[timeslice_index]->add_node(&node);
+        } 
+        
+        void add_node(int timeslice_index, int node_id, DataType_ weight)
+        {
+            NodeType node(node_id, weight);
+            if (_nodes.find(node_id) == _nodes.end())
+            {
+                _nodes[node_id] = node;                
+            }
+            else
+            {
+                node = _nodes[node_id];
+                node.set_weight(weight);
+            }        
+            _slices[timeslice_index]->add_node(&node);
+        } 
+        
 
         /// returns the node with the given ID, if it was added.
-        inline NodeType * getNode(int id)
+        inline NodeType & get_node(int id)
         {
             return _nodes[id];
         }
 
-        inline NodeType * getNodeByID(int id)
+        inline NodeType & get_node_by_id(int id)
         {
-            return getNode(id);
+            return get_node(id);
         }
-
+*/
         /// the number of DIFFERENT nodes contained in this graph - one node may occur many times in the assembled matrices 
-        inline int nodeCount()
+        inline int node_count()
         {
-            return _nodes.size();
+            return _total_node_count;
         }
+        
 
         /// the number of timeslices in this evolving graph
-        inline int sliceCount()
+        inline int slice_count()
         {
             return _slices.size();
         }
 
         /// adds a timeslice to the evolving graph
-        void addTimeslice(GraphType * sliceGraph)
+        GraphType & add_timeslice(int node_count)
         {
-            _slices.push_back(sliceGraph);
-            _sliceOffset.push_back(_totalNodeCount);
-            _totalNodeCount += sliceGraph->nodeCount();
+            GraphType * g(new GraphType(node_count, 2));
+            _slices.push_back(g);
+            _slice_offset.push_back(_total_node_count);
+            _total_node_count += node_count;
+            return *_slices.back();
         }
 
         /// creates and returns the complete coordinate matrix for the whole evolving graph
 
         /// returns the index of the timeslice that contains the given nodeIndex
-        int getTimesliceIndex(int nodeIndex)
+        int get_timeslice_index(int node_index)
         {
             int t(0);
-            for (; t < sliceCount()  - 1; ++t)
+            for (; t < slice_count()  - 1; ++t)
             {
-                if (nodeIndex < _sliceOffset[t+1])
+                if (node_index < _slice_offset[t+1])
                     return t;
             }
-            return sliceCount()-1;
+            return slice_count()-1;
         }
 
         /// returns true if the indices are in the same timeslice - false otherwise
-        virtual bool sameTimeslice(int index1, int index2)
+        virtual bool same_timeslice(int index1, int index2)
         {
-            int sliceIndex = getTimesliceIndex(index1);
-            return (sliceIndex == sliceCount()-1 || index2 < _sliceOffset[sliceIndex+1]) &&
-                index2 >= _sliceOffset[sliceIndex];
+            int slice_index = get_timeslice_index(index1);
+            return (slice_index == slice_count()-1 || index2 < _slice_offset[slice_index+1]) &&
+                index2 >= _slice_offset[slice_index];
         }
 
         /// returns the timslice graph at a given time t
-        inline GraphType * getTimeslice(int t)
+        inline GraphType & get_timeslice(int t)
         {
-            return _slices[t];
+            return *_slices[t];
+        }
+        
+        inline GraphType & last_timeslice()
+        {
+            return *_slices.back();
         }
 
         DenseMatrix<DataType_> * coordinates()
@@ -192,11 +247,11 @@ namespace honei
             return this->_coordinates;
         }
 
-        DenseVector<DataType_> * nodeWeights()
+        DenseVector<DataType_> * node_weights()
         {
-            if (!this->_nodeWeights)
-                assemble_nodeWeights();
-            return this->_nodeWeights;
+            if (!this->_node_weights)
+                assemble_node_weights();
+            return this->_node_weights;
         }
 
         SparseMatrix<DataType_> * edges()
@@ -206,17 +261,51 @@ namespace honei
             return this->_edges;
         }
 
-        void reassemble_Graph()
+        void reassemble_graph()
         {
             if(this->_coordinates)
                 delete(this->_coordinates);
             assemble_coordinates();
-            if(this->_nodeWeights)
-                delete(this->_nodeWeights);
-            assemble_nodeWeights();
+            if(this->_node_weights)
+                delete(this->_node_weights);
+            assemble_node_weights();
             if(this->_edges)
                 delete(this->_edges);
             assemble_edges();
+        }
+        
+        void update_slice_coordinates(DM & new_coordinates)
+        {
+      //      std::cout << "update slice coordinates\n";
+            for (int timeslice_idx(0); timeslice_idx < slice_count(); ++timeslice_idx)
+            {
+                DM * slice_coordinates(_slices[timeslice_idx]->coordinates());
+                typename DM::ConstElementIterator k(new_coordinates.begin_elements());
+                k += _slice_offset[timeslice_idx] * _coordinate_dimensions;
+            
+                for (typename DM::ElementIterator i(slice_coordinates->begin_elements()), end_i(slice_coordinates->end_elements());
+                i != end_i; ++i, ++k)
+                {                
+                    *i = *k;
+                }
+            }                
+        }
+        
+        void update_slice_coordinates()
+        {
+      //      std::cout << "update slice coordinates\n";
+            for (int timeslice_idx(0); timeslice_idx < slice_count(); ++timeslice_idx)
+            {
+                DM * slice_coordinates(_slices[timeslice_idx]->coordinates());
+                typename DM::ConstElementIterator k(this->_coordinates->begin_elements());
+                k += _slice_offset[timeslice_idx] * _coordinate_dimensions;
+            
+                for (typename DM::ElementIterator i(slice_coordinates->begin_elements()), end_i(slice_coordinates->end_elements());
+                i != end_i; ++i, ++k)
+                {                
+                    *i = *k;
+                }
+            }                
         }
     };
 }

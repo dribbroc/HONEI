@@ -42,17 +42,18 @@ class EngineGraphTest :
             int * pi = &i;
             Graph<DataType_>  g(_nodeCount, 2);
             for (int i = 0; i < _nodeCount; i++)
-                g.addNode(new Node<DataType_>(i, randomWeight()));
+                g.add_node(i, randomWeight());
                 
-            for (int j = 1; j < _nodeCount; j++)
-                    g.addEdge(0, j, randomWeight());
+            //for (int j = 1; j < _nodeCount; j++)
+            //        g.addEdge(0, j, randomWeight());
 
-        for (int i = 1; i < _nodeCount; ++i)
+        for (int i = 0; i < _nodeCount; ++i)
             for (int j = i+1; j < _nodeCount; ++j)
                         if (std::rand() < RAND_MAX * _p)
-                            g.addEdge(i, j, randomWeight());
+                            g.add_edge(i, j, randomWeight());
 
             std::cout << "\nCalculate Position\n";
+            std::cout << *g.edges();
             
             Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), int(_nodeCount * 0.1));
             
@@ -76,5 +77,5 @@ class EngineGraphTest :
          }
 };
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 11);
-EngineGraphTest<tags::CPU::SSE, double, methods::WeightedFruchtermanReingold> engine_test_double2("wkk double big", 200, 0.05);
-//EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 20);
+//EngineGraphTest<tags::CPU::SSE, double, methods::WeightedFruchtermanReingold> engine_test_double2("wkk double big", 200, .01345);
+EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200, 0.33);

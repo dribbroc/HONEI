@@ -24,9 +24,8 @@
 
 #include <GL/glut.h>
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libgraph/abstract_graph.hh>
 #include <honei/libgraph/evolving_graph.hh>
-#include <honei/libgraph/position.hh>
+#include <honei/libgraph/evolving_animator.hh>
 #include <iostream>
 
 namespace honei
@@ -70,25 +69,20 @@ namespace honei
         double translation_z = 0;
 
         Color * colors[10];
-        int steps = 1;
-        int actualstep = 0;
+        float ebene_z = 0.0f;
         bool calculate = false;
-        void * graph;
-            void * positions;
+        void * animator;
     }
     
-    template <typename Tag_, typename DataType_, typename GraphTag_>
-    class EngineGraph
+    template <typename Tag_, typename DataType_>
+    class EngineEvolving
     {
         private:
         
         public:
-            static void setTestCase(AbstractGraph<DataType_> &graph, Positions<Tag_, DataType_, GraphTag_> * positions, int steps)
-            {                
-                gl_globals::steps = steps;
-                gl_globals::graph = &graph;
-                gl_globals::positions = positions;
-                positions->init();
+            static void setTestCase(EvolvingAnimator<Tag_, DataType_> & animator)
+            {               
+                gl_globals::animator = &animator;
             }            
             
             static void init(void)
@@ -179,6 +173,9 @@ namespace honei
                     case 'p':
                             gl_globals::calculate = false;
                         break;
+                    case 's':
+                            getAnimator()->rewind();
+                        break;
                 }
             }
 
@@ -199,6 +196,11 @@ namespace honei
                         gl_globals::rotation_y_increment = gl_globals::rotation_y_increment -0.5;
                         break;
                 }
+            }
+            
+            static inline EvolvingAnimator<Tag_, DataType_> * getAnimator()
+            {
+                return reinterpret_cast<EvolvingAnimator<Tag_, DataType_> *> (gl_globals::animator);
             }
 
             static void display(void)
@@ -227,18 +229,11 @@ namespace honei
                 glTranslatef(gl_globals::translation_x, 0.0, 0.0);
                 glTranslatef(0.0, gl_globals::translation_y, 0.0);
                 glTranslatef(0.0, 0.0 , gl_globals::translation_z);
-                AbstractGraph<DataType_> * graph =
-                    reinterpret_cast<AbstractGraph<DataType_> *>(gl_globals::graph);
-                        Positions<Tag_, DataType_, GraphTag_> * positions =
-                    reinterpret_cast<Positions<Tag_, DataType_, GraphTag_> *>(gl_globals::positions);
-                //if (gl_globals::actualstep < 10)
-                if (gl_globals::calculate)
-                {                 
-                    for (int i = 0; i < gl_globals::steps; ++i)
-                        positions->step();
-                     //   std::cout << "Iteration "<<  ++gl_globals::actualstep << "\t  Fehler: " << positions->step() << "    step_width: " << positions->step_width() << "\n";
-                }
+                
+                
+                //int timeslice = (int)gl_globals::time;     
 
+                // generate coordinate system
                 glBegin(GL_LINES);
                 glLineWidth(5);
                 glColor3f(1, 0, 0);
@@ -255,39 +250,53 @@ namespace honei
 
                 glEnd();
                 glFlush();
-
+                
+                EvolvingAnimator<Tag_, DataType_> * animator(getAnimator());
+                std::cout << "bg\n";
                 // build geometry
-                for(unsigned int i = 0; i < graph->coordinates()->rows(); ++i)
+                for(unsigned int i = 0; i < animator->coordinates().rows(); ++i)
                 {
-                    DenseVectorRange<DataType_> dv((*graph->coordinates())[i]);
+                    
+                    DenseVectorRange<DataType_> dv(animator->coordinates()[i]);
+                    std::cout << "be\n";
                     glPushMatrix();
-                    Color * c =  gl_globals::colors[graph->timeslice_index(i) % 7];
+                    Color * c =  gl_globals::colors[0]; //timeslice % 7];
                     glColor3f(c->r, c->g, c->b);
-                    glTranslatef((GLfloat)dv[0], graph->timeslice_index(i), (GLfloat)dv[1]);
+                    glTranslatef((GLfloat)dv[0], (GLfloat)dv[1], gl_globals::ebene_z);
                     GLUquadricObj  * quad = gluNewQuadric();
-                    gluSphere(quad, (GLfloat)(*graph->node_weights())[i] / 16, 4, 4);
+                    gluSphere(quad, (GLfloat)(*animator->node_weights())[i] / 16, 4, 4);
                     glPopMatrix();
                 }
-
+                
                 glBegin(GL_LINES);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(graph->edges()->begin_non_zero_elements()), i_end(graph->edges()->end_non_zero_elements()); i != i_end ; ++i)
+                /*
+                for (typename MutableMatrix<DataType_>::ElementIterator i(animator->edges()->begin_non_zero_elements()), i_end(animator->edges()->end_non_zero_elements()); i != i_end ; ++i)
                 {
                     if (i.row() > i.column())
                     {
-                        glLineWidth((GLfloat)*i * 2);
-                        if (graph->same_timeslice(i.row(), i.column()))
-                            glColor3f(1.0, 1.0, 1.0);
-                        else
-                            glColor3f(0.5, 0.5, 0.5);
-                        DenseVectorRange<DataType_> v1((*graph->coordinates())[i.row()]);
-                        DenseVectorRange<DataType_> v2((*graph->coordinates())[i.column()]);
-                        glVertex3f((GLfloat) v1[0], graph->timeslice_index(i.row()), (GLfloat)v1[1]);
-                        glVertex3f((GLfloat) v2[0], graph->timeslice_index(i.column()), (GLfloat)v2[1]);
+                    
+                        glLineWidth((GLfloat)*i * 5);
+                        glColor3f(1.0, 1.0, 1.0);
+                        DenseVectorRange<DataType_> v1(animator->coordinates()[i.row()]);
+                        DenseVectorRange<DataType_> v2(animator->coordinates()[i.column()]);
+                        glVertex3f((GLfloat) v1[0], (GLfloat)v1[1], gl_globals::ebene_z);
+                        glVertex3f((GLfloat) v2[0], (GLfloat)v2[1], gl_globals::ebene_z);
+                        
                     }
-                }
+                }*/
+                
                 glEnd();
                 glFlush();
                 glutSwapBuffers();
+                std::cout << "time = " << animator->time() << "\n";
+                if (gl_globals::calculate)
+                {
+                    animator->next_step();
+                }
+                if (animator->end())
+                {
+                    gl_globals::calculate = false;
+                }
             }
     };
 }

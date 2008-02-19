@@ -29,83 +29,41 @@ namespace honei
     template <typename DataType_> class Node
     {
     private:
-        // Graph<DataType_> _graph*;        // the graph this node belongs to
         unsigned long _id;            // key to represent the node
         DataType_ _weight;    // initial weight of the node
-        typedef DenseVector<DataType_> DV; // initial position of this node
-        DV *  _position;
+
 
     public:
-        /// creates a new node with a given id, weight and a position defined by a DenseVector
-        Node(unsigned long ID, DataType_ weight, DV * position) :
-                    _position(position),
-                    _id(ID),
-                    _weight(weight)
+
+        Node () :
+            _id(0),
+            _weight(1)
         {
         }
 
-        Node (unsigned long ID, DataType_ weight):
-            _position(new DV(2)),
+        Node (unsigned long ID, DataType_ weight = 1):
             _id(ID),
             _weight(weight)
         {
         }
 
-        /// creates a new node with a given id, weight and coordinates (x,y).
-        Node(unsigned long ID, DataType_ weight, DataType_ x, DataType_ y) :
-            _position(new DV(2)),
-            _id(ID),
-            _weight(weight)
-        {
-            (*_position)[0] = x;
-            (*_position)[1] = y;
-        }
-
-        /// creates a new node with given id, weight and coordnates (x,y,z) - for people who like 3D graphs^^
-        Node(unsigned long ID, DataType_ weight, DataType_ x, DataType_ y, DataType_ z) :
-            _position(new DV(3)),
-            _id(ID),
-            _weight(weight)
-        {
-            (*_position)[0] = x;
-            (*_position)[1] = y;
-            (*_position)[2] = z;
-        }
-
-        ~Node()
-        {
-            if (_position)
-                delete(_position);
-        }
 
         /// returns the initial weight of this node
-        inline DataType_ getWeight()
+        inline DataType_ get_weight()
         {
             return _weight;
         }
 
         /// sets the initial weight, which is put into graph's nodeWeight vector while adding the node
-        inline void setWeight(DataType_ weight)
+        inline void set_weight(DataType_ weight)
         {
                 _weight = weight;
         }
 
         /// returns the all important node ID
-        inline unsigned long getID()
+        inline unsigned long id()
         {
             return _id;
-        }
-
-        /// returns the initial position of this node.
-        inline DenseVector<DataType_> * getPosition()
-        {
-            return _position;
-        }
-
-        /// sets the initial position.it i s put into graph's coordinate matrix when adding.
-        inline void setPosition(DenseVector<DataType_> * position)
-        {
-            _position = position;
         }
     };
 }

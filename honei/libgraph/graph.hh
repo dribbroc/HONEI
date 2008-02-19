@@ -38,13 +38,13 @@ namespace honei
     private:
         typedef    Node<DataType_> NodeType;
         NodeType** _nodes;
-        int _nodeCount;
-        int _maxNodes;
-        int _coordinateDimensions;
-    std::map<int, int> _nodeMapping;
+        int _node_count;
+        int _max_nodes;
+        int _coordinate_dimensions;
+        std::map<int, int> _node_mapping;
 
         /// sets edges[v_index][w_index] = edges[w_index][v_index] = weight
-        void setEdgeWeightInternal(int v_index, int w_index, DataType_ weight)
+        void set_edge_weight_internal(int v_index, int w_index, DataType_ weight)
         {
             (*this->_edges)(v_index, w_index) = weight;
             (*this->_edges)(w_index, v_index) = weight;
@@ -52,94 +52,100 @@ namespace honei
 
     public:
         /// constructs new graph with given number of nodes and a given dimension for the coordinates
-        Graph(int nodes, int coordinateDimensions) :
-            _coordinateDimensions(coordinateDimensions),
-            _nodeMapping(),
-            _nodeCount(0),
-            _maxNodes(nodes)
+        Graph(int nodes, int coordinate_dimensions) :
+            _coordinate_dimensions(coordinate_dimensions),
+            _node_mapping(),
+            _node_count(0),
+            _max_nodes(nodes)
         {
             _nodes = new NodeType*[nodes];
-        this->_coordinates = new DenseMatrix<DataType_>(nodes, coordinateDimensions);
+            this->_coordinates = new DenseMatrix<DataType_>(nodes, coordinate_dimensions);
             this->_edges = new SparseMatrix<DataType_>(nodes, nodes);
-            this->_nodeWeights = new DenseVector<DataType_>(nodes, (DataType_)1);
+            this->_node_weights = new DenseVector<DataType_>(nodes, (DataType_)1);
         }
 
         /// adds a node to this graph, puts its initial position and its weight into the relevant matrices
-        void addNode(NodeType * node)
+        void add_node(NodeType * node)
         {
-            if (_nodeCount < _maxNodes)
+            if (_node_count < _max_nodes)
             {
-                _nodes[_nodeCount] = node;
-                _nodeMapping[node->getID()] = _nodeCount;
-                for (int i(0); i < _coordinateDimensions; ++i)
-                {
-                    (*this->_coordinates)(_nodeCount, i) = 2 - (DataType_)std::rand() / RAND_MAX * 4; // i < node->getPosition()->size() ? (*node->getPosition())[i] : std::rand();
+                _nodes[_node_count] = node;
+                _node_mapping[node->id()] = _node_count;
+                for (int i(0); i < _coordinate_dimensions; ++i)
+                {                
+                    (*this->_coordinates)(_node_count, i) = _max_nodes/20 - (DataType_)std::rand() / RAND_MAX * _max_nodes/10; 
                 }
-                (*this->_nodeWeights)[_nodeCount] = node->getWeight();
-                ++_nodeCount;
+                (*this->_node_weights)[_node_count] = node->get_weight();
+                ++_node_count;
             }
         }
-
-        /// sets the edgeweight bewteen nodes with the given nodeIDs to weight. If weight = 0, the edge  actually will be removed
-        inline void setEdgeWeight(int sourceID, int destinationID, DataType_ weight)
+        
+        void add_node(int id, DataType_ weight = DataType_(1))
         {
-            setEdgeWeightInternal(_nodeMapping[sourceID], _nodeMapping[destinationID], weight);
+            NodeType * node(new NodeType(id, weight));
+            add_node(node);
+        }
+                
+        /// sets the edgeweight bewteen nodes with the given nodeIDs to weight. If weight = 0, the edge  actually will be removed
+        inline void set_edge_weight(int source_id, int destination_id, DataType_ weight)
+        {
+            set_edge_weight_internal(_node_mapping[source_id], _node_mapping[destination_id], weight);
         }
 
         /// sets the edgeweight between two nodes to weight
-        inline void setEdgeWeight(NodeType * source, NodeType * destination, DataType_ weight)
+        inline void set_edge_weight(NodeType & source, NodeType & destination, DataType_ weight)
         {
-            setEdgeWeight(source->getID(), destination->getID(), weight);
+            set_edge_weight(source.id(), destination.id(), weight);
         }
 
         /// adds an edge between nodes with the given nodeIDs and weight. In fact, if weight is 0, the edge will be removed
-        inline void addEdge(int sourceID, int destinationID, DataType_ weight = 1)
+        inline void add_edge(int source_id, int destination_id, DataType_ weight = 1)
         {
-            setEdgeWeight(sourceID, destinationID, weight);
+            set_edge_weight(source_id, destination_id, weight);
         }
 
         /// adds an edge beween the nodes. 
-        inline void addEdge(NodeType * source, NodeType * destination, DataType_ weight = 1)
+        inline void add_edge(NodeType & source, NodeType & destination, DataType_ weight = 1)
         {
-            setEdgeWeight(source, destination, weight);
+            set_edge_weight(source, destination, weight);
         }
 
         /// removes an probably existing edge between the nodes given by their IDs.
-        inline void removeEdge(int sourceID, int destinationID)
+        inline void remove_edge(int source_id, int destination_id)
         {
-            setEdgeWeight(sourceID, destinationID, 0);
+            set_edge_weight(source_id, destination_id, 0);
         }
 
         /// removes an edge between the nodes
-        inline void removeEdge(NodeType * source, NodeType * destination)
+        inline void remove_edge(NodeType & source, NodeType & destination)
         {
-            setEdgeWeight(source, destination, 0);
+            set_edge_weight(source, destination, 0);
         }
 
         /// returns the node at position index 
-        inline NodeType * getNode(int index)
+        inline NodeType & get_node(int index)
         {
-            return _nodes[index];
+            return *_nodes[index];
         }
 
         /// returns the node with the given ID, if it is part of this graph.
-        inline NodeType *  getNodeByID(int ID)
+        inline NodeType &  get_node_by_id(int id)
         {
-            return getNode(_nodeMapping[ID]);
+            return get_node(_node_mapping[id]);
         }
 
         /// returns the position index of a Node given by its id if it is part of this graph - or -1 otherwise.
-        int getNodeIndex(int id)
+        int get_node_index(int id)
         {
-             if (_nodeMapping.find(id) != _nodeMapping.end())
-                return _nodeMapping[id];
+             if (_node_mapping.find(id) != _node_mapping.end())
+                return _node_mapping[id];
             return -1;
         }
 
         /// the number of actually contained nodes.
-        inline int nodeCount()
+        inline int node_count()
         {
-            return _nodeCount;
+            return _node_count;
         }
     };
 }

@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-19 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+    * honei/libgraph/{abstract_graph.hh, node.hh, graph.hh, evolving_graph.hh,
+        evolving_graph_TEST.cc, graph_TEST.cc},
+      honei/libvisual/{enginegraph.hh, enginegraph_TEST.cc, evolving_TEST.cc,
+        graphrandom_TEST.cc}: changed some names to be consistent with 
+      code conventions.
+    * honei/libgraph/{evolving_animator.hh, files.m4}, 
+      honei/libvisual/{engine_evolving.hh, engine_evolving_TEST, files.m4}: 
+      Added support for animating evolving graphs.
+
 2008-02-19 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libutil/spe_kernel.cc: Fixed dreaded Cell deadlock by ensuring

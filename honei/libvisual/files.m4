@@ -10,6 +10,7 @@ dnl on this file at present...
 
 add(`engine',               `hh', `test')
 add(`enginegraph',          `hh', `test')
+add(`engine_evolving',          `hh', `test')
 add(`evolving',                   `test')
 add(`enginesolve',          `hh', `test')
 add(`enginesolveremote',    `hh', `test')

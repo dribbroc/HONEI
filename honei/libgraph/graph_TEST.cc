@@ -45,20 +45,17 @@ class GraphTest :
     virtual void run() const
     {
         Graph<DataType_> g(5, 3);
-        Node<DataType_> * node = new Node<DataType_>(1, 1, 1, 1, 1);
-        g.addNode(node);
-            g.addNode(new Node<DataType_>(2,2,2,2,2));
-        g.addNode(new Node<DataType_>(3,3,3,3,3));
-            g.addNode(new Node<DataType_>(4,4,4,4,4));
-        g.addNode(new Node<DataType_>(6,6,6,6,6));
-            g.addEdge(1,2, 7);
-        g.addEdge(2,3, 4);
-        g.addEdge(g.getNode(4), g.getNodeByID(6), 11);
+        g.add_node(1);
+        g.add_node(2,2);
+        g.add_node(3,3);
+        g.add_node(4,4);
+        g.add_node(6,6);
+        g.add_edge(1,2, 7);
+        g.add_edge(2,3, 4);
+        g.add_edge(g.get_node(4), g.get_node_by_id(6), 11);
         std::cout << *g.coordinates() << std::endl;
-        std::cout << *g.nodeWeights() << std::endl;
+        std::cout << *g.node_weights() << std::endl;
         std::cout << *g.edges() << std::endl;
-
-        delete(node);
         TEST_CHECK(true);
     }
 };

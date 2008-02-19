@@ -1,11 +1,12 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax nu : */
 
-#include <honei/libvisual/enginegraph.hh>
+#include <honei/libvisual/engine_evolving.hh>
 #include <unittest/unittest.hh>
 #include <honei/libutil/stringify.hh>
 #include <string>
 #include <honei/libgraph/graph.hh>
 #include <honei/libgraph/evolving_graph.hh>
+#include <honei/libgraph/evolving_animator.hh>
 #include <honei/libgraph/position.hh>
 
 using namespace honei;
@@ -14,19 +15,18 @@ using namespace std;
 using namespace gl_globals;
 
 template <typename Tag_, typename DataType_, typename GraphTag_>
-class EngineEvolvingGraphTest :
+class EngineEvolvingTest :
     public BaseTest
 {
     private:
-        typedef EngineGraph<Tag_, DataType_, GraphTag_> Engine;
+        typedef EngineEvolving<Tag_, DataType_> Engine;
         typedef Node<DataType_> ND;
         int _nodes, _slices;
     public:
-        EngineEvolvingGraphTest(const std::string & type, int nodes, int slices) :
-            BaseTest("EngineGraph test<" + type + ">"),
+        EngineEvolvingTest(const std::string & type, int nodes, int slices) :
+            BaseTest("EngineEvolving test<" + type + ">"),
             _nodes(nodes),
             _slices(slices)
-            
         {
             register_tag(Tag_::name);
         }
@@ -34,7 +34,7 @@ class EngineEvolvingGraphTest :
         virtual void run() const
         {
             int i =1;
-            int * pi = &i;
+            int * pi = &i;            
             int nps = _nodes * _slices;
             
             EvolvingGraph<DataType_> eg(2, 4);
@@ -43,12 +43,13 @@ class EngineEvolvingGraphTest :
             {
                 Graph<DataType_> & g(eg.add_timeslice((t+1) * _nodes - t*0));
                 for (int n(t*0); n < (t+1)*_nodes; ++n)
-                    g.add_node(t, n);
+                    g.add_node(n);
                 for (int n(t*0); n < (t+1)*_nodes; ++n)
                     for (int m(n+1); m < (t+1)*_nodes; ++m)
                         g.add_edge(n, m, 1);
             }
             /*
+
             eg.addNode(new Node<DataType_>(1, 1));
             eg.addNode(new Node<DataType_>(2, 1));
             eg.addNode(new Node<DataType_>(3, 1));
@@ -87,17 +88,23 @@ class EngineEvolvingGraphTest :
             t3->addEdge(1,4,1);
             t3->addEdge(3,4,1);
             t3->addEdge(1,3,1);
-            eg.addTimeslice(t3);            
+            eg.addTimeslice(t3);
             */
-            std::cout << "Evolving: " << eg.coordinates()->rows() << " Nodes, " << eg.edges()->rows() << "² Edges\n";
             std::cout << "coordinates eg: " << *eg.coordinates();
             std::cout << "edge matrix\n" << *eg.edges();
-            
-            
+
             std::cout << "\nCalculate Position\n";
-            //Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(&gl_globals::graph, (DataType_)1);
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(eg, (DataType_)1);
+            positions.update(0.0000001, 1000);
+            std::cout << "Iterations: " << positions.number_of_iterations() << "\n";
             
-            Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1), 5);
+            std::cout << "update coordinates in timeslice graphs\n"; 
+            eg.update_slice_coordinates(positions.coordinates());
+            std::cout << "\nprepare interpolation (generate final coordinate matrices)\n";
+            
+            EvolvingAnimator<Tag_, DataType_> animator(eg, 0.01f);            
+            animator.prepare_interpolation();
+            Engine::setTestCase(animator);
             
 
             char * c = "Test: Engine";
@@ -119,5 +126,5 @@ class EngineEvolvingGraphTest :
             TEST_CHECK(true);
         }
 };
-EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double", 5, 5);
-//EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double");
+//EngineEvolvingTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double");
+EngineEvolvingTest<tags::CPU, float, methods::WeightedKamadaKawai> engine_test_double("wkk double", 5, 5);

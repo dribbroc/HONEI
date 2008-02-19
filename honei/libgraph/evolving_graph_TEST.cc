@@ -22,6 +22,7 @@
 
 #include <honei/libgraph/evolving_graph.hh>
 #include <honei/libgraph/position.hh>
+#include <honei/libgraph/evolving_animator.hh>
 
 #include <string>
 #include <iostream>
@@ -48,73 +49,71 @@ class EvolvingGraphTest :
          {
             /* // create evolving graph and some nodes
             EvolvingGraph<DataType_> eg(2,1);
-            eg.addNode(new NodeType(1, 1, 1, 1));
-            eg.addNode(new NodeType(2, 2, 2, 2));
-            eg.addNode(new NodeType(3, 3, 3, 3));
+            eg.add_node(new NodeType(1, 1, 1, 1));
+            eg.add_node(new NodeType(2, 2, 2, 2));
+            eg.add_node(new NodeType(3, 3, 3, 3));
 
             // create a graph for timeslice 1, add some nodes already defined and define some edges
             Graph<DataType_> * t1 = new Graph<DataType_>(3,2);
-            t1->addNode(eg.getNode(1));
-            t1->addNode(eg.getNode(2));
-            t1->addNode(eg.getNode(3));
-            t1->addEdge(1,2, 1);
-            t1->addEdge(2,3, 2);
+            t1->add_node(eg.get_node(1));
+            t1->add_node(eg.get_node(2));
+            t1->add_node(eg.get_node(3));
+            t1->add_edge(1,2, 1);
+            t1->add_edge(2,3, 2);
             // add the whole stuff to the ev.graph
             eg.addTimeslice(t1);
 
             // same procedure for timeslice 2
-            eg.addNode(new NodeType(4, 4, 4, 4));
+            eg.add_node(new NodeType(4, 4, 4, 4));
             Graph<DataType_> * t2 = new Graph<DataType_>(3,2);
-            t2->addNode(eg.getNode(1));
-            t2->addNode(eg.getNode(3));
-            t2->addNode(eg.getNode(4));
-            t2->addEdge(3,4, 3);
-            t2->addEdge(1,4, 4);
+            t2->add_node(eg.get_node(1));
+            t2->add_node(eg.get_node(3));
+            t2->add_node(eg.get_node(4));
+            t2->add_edge(3,4, 3);
+            t2->add_edge(1,4, 4);
             eg.addTimeslice(t2);
 
             // and also for timeslice 3
-            eg.addNode(new NodeType(5, 5, 5, 5));
-            eg.addNode(new NodeType(6, 6, 6, 6));
+            eg.add_node(new NodeType(5, 5, 5, 5));
+            eg.add_node(new NodeType(6, 6, 6, 6));
             t2 = new Graph<DataType_>(5,2);
-            t2->addNode(eg.getNode(1));
-            t2->addNode(eg.getNode(3));
-            t2->addNode(eg.getNode(4));
-            t2->addNode(eg.getNode(5));
-            t2->addNode(eg.getNode(6));
-            t2->addEdge(3,4, 3);
-            t2->addEdge(1,4, 4);
-            t2->addEdge(3,5, 2);
-            t2->addEdge(4,5, 4);
+            t2->add_node(eg.get_node(1));
+            t2->add_node(eg.get_node(3));
+            t2->add_node(eg.get_node(4));
+            t2->add_node(eg.get_node(5));
+            t2->add_node(eg.get_node(6));
+            t2->add_edge(3,4, 3);
+            t2->add_edge(1,4, 4);
+            t2->add_edge(3,5, 2);
+            t2->add_edge(4,5, 4);
             eg.addTimeslice(t2);*/
-
+            //std::cout << "90\n";
             EvolvingGraph<DataType_> eg(2,1);
             // Creating nodes
-            eg.addNode(new Node<DataType_>(1, 2, -2, 1));
-            eg.addNode(new Node<DataType_>(2, 2, 8, 1));
-            eg.addNode(new Node<DataType_>(3, 1, 0, 0));
-            eg.addNode(new Node<DataType_>(4, 1, 1, 0));
-
-            Graph<DataType_> * t1 = new Graph<DataType_>(2, 2);
-            t1->addNode(eg.getNode(1));
-            t1->addNode(eg.getNode(2));
-            t1->addEdge(1, 2, 1);
-            eg.addTimeslice(t1);
-
-            Graph<DataType_> * t2 = new Graph<DataType_>(3, 2);
-            t2->addNode(eg.getNode(1));
-            t2->addNode(eg.getNode(2));
-            t2->addNode(eg.getNode(3));
-            t2->addEdge(1,2,1);
-            t2->addEdge(1,3,1);
-            eg.addTimeslice(t2);
+            
+            //std::cout << "94\n";
+            Graph<DataType_> & t1(eg.add_timeslice(2));
+            Graph<DataType_> & t2(eg.add_timeslice(3));
+            
+            //std::cout << "98\n";
+            t1.add_node(1, 1);
+            t1.add_node(4, 1);
+            //std::cout << "101\n";
+            t1.add_edge(1, 4, 1);
+            
+            t2.add_node(1);
+            t2.add_node(2, 2);
+            t2.add_node(3, 3);
+            t2.add_edge(1,2,1);
+            t2.add_edge(1,3,1);
 
             // see what happens if we assemble the whole graph's matrices
-            std::cout << "evolving graph with " << eg.nodeCount() << " nodes and " << eg.sliceCount() << " timeslices " << std::            endl;
+            std::cout << "evolving graph with " << eg.node_count() << " nodes and " << eg.slice_count() << " timeslices " << std::endl;
             std::cout << "Coordinates: " << std::endl;
             std::cout << *eg.coordinates() << std::endl;
 
             std::cout << " NodeWeights: " << std::endl;
-            std::cout << *eg.nodeWeights() << std::endl;
+            std::cout << *eg.node_weights() << std::endl;
             std::cout << "Edges: " << std::endl;
             std::cout << *eg.edges() << std::endl;
 
@@ -122,19 +121,16 @@ class EvolvingGraphTest :
             positions.update(0.01, 100);
             std::cout << "coordinates for eg after position.update(0.01, 100):\n" << positions.coordinates() << std::endl;
 
+            eg.update_slice_coordinates();
+            for (int i(0); i < eg.slice_count(); ++i)
+                std::cout << "timeslice " << i << " after update:\n" << *eg.get_timeslice(i).coordinates() << std::endl;
 
-            std::cout << "Graph t1 before update - t1.coordinates:\n" << *t1->coordinates() << std::endl;
-            std::cout << "t1.NodeWeights:\n " << *t1->nodeWeights() << std::endl;
-            std::cout << "t1.edges:\n" << *t1->edges() << std::endl;
-
-            // old version
-            // Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1->coordinates(), *t1->nodeWeights(), *t1->edges());
-            // new version:
-            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions2(*t1, (DataType_)2);
-            positions2.update(0.01, 1000);
-            std::cout << "coordinates for t1 after position2.update(0.01, 100):\n" << positions2.coordinates() << std::endl;
+                
+            EvolvingAnimator<Tag_, DataType_> animator(eg, 0.1f);
+            
+            for (animator.prepare_interpolation(); !animator.end(); animator.next_step())
+                std::cout << animator.time() << std::endl;
             TEST_CHECK(true);
-            delete(t1);
     }
 };
 
