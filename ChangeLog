@@ -7,6 +7,13 @@ see the NEWS file.
 
 2008-02-19 Joachim Messer <joachim.messer@uni-dortmund.de>
 
+	* honei/libutil/partitioner.cc: Now prohibiting best_part_sizes
+	smaller than quantization value.
+	* honei/libla/dot_product-mc.hh:
+	Fixed call of configuration in (SV,DV).
+
+2008-02-19 Joachim Messer <joachim.messer@uni-dortmund.de>
+
 	* honei/libla/element_inverse-mc.hh:
 	Fixed bug in (SV).
 

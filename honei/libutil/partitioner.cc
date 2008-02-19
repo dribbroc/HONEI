@@ -127,6 +127,10 @@ Partitioner<tags::CPU::MultiCore>::Partitioner(unsigned long max_count, unsigned
     unsigned count(0);
     unsigned modulo(0);
 
+    if (best_part_size < quantization)
+    {
+        best_part_size = quantization;
+    }
     if (overall_size < (best_part_size << 1))
     {
         dispatch(0, overall_size);

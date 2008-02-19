@@ -115,7 +115,7 @@ namespace honei
 
             DT1_ result(0);
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::dot-product[SV,DVCB]",
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::dot-product[SV,DVCB]::min-part-size",
                         Configuration::instance()->get_value("mc::num-cores", 1024)));
 
             if (a.used_elements() < (min_part_size << 1))
