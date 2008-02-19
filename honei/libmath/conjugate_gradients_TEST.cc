@@ -426,8 +426,75 @@ ConjugateGradientsTestDenseJAC<tags::CPU::SSE, float> sse_cg_test_float_dense_ja
 ConjugateGradientsTestDenseJAC<tags::CPU::SSE, double> sse_cg_test_double_dense_jac("SSE double");
 ConjugateGradientsTestBandedJAC<tags::CPU::SSE, float> sse_cg_test_float_banded_jac("SSE float");
 ConjugateGradientsTestBandedJAC<tags::CPU::SSE, double> sse_cg_test_double_banded_jac("SSE double");
-
-
-
-
 #endif
+
+template <typename Tag_, typename DT1_>
+class ConjugateGradientsMIXEDPRECTestBanded:
+    public BaseTest
+{
+    public:
+        ConjugateGradientsMIXEDPRECTestBanded(const std::string & tag) :
+            BaseTest("Conjugate gradients solver MIXEDPREC test (Banded system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            DenseVector<DT1_> diag(3, DT1_(1));
+            DenseVector<DT1_> bp1(3, DT1_(1));
+            DenseVector<DT1_> bp2(3, DT1_(1));
+            DenseVector<DT1_> bm1(3, DT1_(1));
+            DenseVector<DT1_> bm2(3, DT1_(1));
+
+            diag[0] = DT1_(7);
+            diag[1] = DT1_(6);
+            diag[2] = DT1_(5);
+            bp1[0] = DT1_(-2);
+            bp1[1] = DT1_(2);
+            bp1[2] = DT1_(0);
+            bp2[0] = DT1_(0);
+            bp2[1] = DT1_(0);
+            bp2[2] = DT1_(0);
+            bm1[0] = DT1_(0);
+            bm1[1] = DT1_(-2);
+            bm1[2] = DT1_(2);
+            bm2[0] = DT1_(0);
+            bm2[1] = DT1_(0);
+            bm2[2] = DT1_(0);
+
+            BandedMatrix<DT1_> A(3);
+            A.insert_band(0, diag);
+            A.insert_band(1, bp1);
+            A.insert_band(2, bp2);
+            A.insert_band(-1, bm1);
+            A.insert_band(-2, bm2);
+
+            DenseVector<DT1_> b(3, DT1_(1));
+            b[0] = DT1_(3);
+            b[1] = DT1_(3);
+            b[2] = DT1_(0);
+
+            std::cout<<"A:"<<A<<endl;
+            std::cout<<"b:"<<b<<endl;
+
+            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,long(2));
+            DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
+            DenseVector<DT1_> x_analytical(3, DT1_(1));
+            x_analytical[0] = DT1_(2./3.);
+            x_analytical[1] = DT1_(5./6.);
+            x_analytical[2] = DT1_(-1./3.);
+            DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
+
+            cout<<"RESULT(v1):"<<result<<endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
+
+            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,double(std::numeric_limits<double>::epsilon()), 20);
+            DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
+
+            cout<<"RESULT(v2):"<<result_2<<endl;
+        }
+};
+ConjugateGradientsMIXEDPRECTestBanded<tags::CPU, float> cg_test_mixed_banded1("float");
+

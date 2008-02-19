@@ -33,7 +33,7 @@
 #include <honei/libmath/methods.hh>
 #include <honei/libla/element_product.hh>
 #include <honei/libla/sparse_matrix.hh>
-
+#include <honei/libla/algorithm.hh>
 using namespace std;
 using namespace methods;
 namespace honei
@@ -266,9 +266,6 @@ namespace honei
             */
 
             /// \{
-
-
-
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
             {
@@ -329,10 +326,12 @@ namespace honei
 
 
             }
+
+            ///Mixed precision implementations:
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad, int mixed_prec_iter_num)
             {
-                CONTEXT("When solving sparse linear system with CG (with given convergence parameter):");
+                CONTEXT("When solving banded linear system with CG (with given convergence parameter), MIXEDPREC:");
 
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
@@ -345,21 +344,80 @@ namespace honei
 
                 DT1_ norm_x_last = DT1_(0);
                 DT1_ norm_x = DT1_(1);
+                unsigned long iteration_count(0);
+
+                BandedMatrix<double> bm_c(system_matrix.size());
+                DenseVector<double> b_c(right_hand_side.size());
 
                 while(norm_x - norm_x_last > konv_rad)
                 {
+                    if(iteration_count % mixed_prec_iter_num != 0)
+                    {
+                        cg_kernel(system_matrix, right_hand_side, g, x, u);
+                        norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                        norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                        x_last = x.copy();
+                    }
+                    else
+                    {
+                        DenseVector<double> x_c(right_hand_side.size());
+                        DenseVector<double> x_last_c(right_hand_side.size());
+                        DenseVector<double> g_c(right_hand_side.size());
+                        DenseVector<double> u_c(right_hand_side.size());
 
-                    cg_kernel(system_matrix, right_hand_side, g, x, u);
-                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
-                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
-                    x_last = x.copy();
+                        convert(bm_c, system_matrix);
+                        convert(b_c, right_hand_side);
+                        convert(x_c, x);
+                        convert(x_last_c, x_last);
+                        convert(g_c, g);
+                        convert(u_c, u);
+                        cg_kernel(bm_c, b_c, g_c, x_c, u_c);
+                        norm_x = Norm<vnt_l_two, false, Tag_>::value(x_c);
+                        norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last_c);
+                        x_last_c = x_c.copy();
+
+                        convert(x, x_c);
+                        convert(x_last, x_last_c);
+                        convert(g, g_c);
+                        convert(u, u_c);
+                    }
+                    ++iteration_count;
                 }
                 return x;
-
-
             }
 
-   };
+
+            template <typename DT1_, typename DT2_>
+                static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+                {
+                    CONTEXT("When solving sparse linear system with CG (with given convergence parameter):");
+
+
+                    DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+                    DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                    Difference<Tag_>::value(g, right_hand_side);
+                    DenseVector<DT1_> g_c(g.copy());
+                    Scale<Tag_>::value(g_c, DT1_(-1.));
+                    DenseVector<DT1_> u(g_c.copy());
+                    DenseVector<DT1_> x_last(x.copy());
+
+                    DT1_ norm_x_last = DT1_(0);
+                    DT1_ norm_x = DT1_(1);
+
+                    while(norm_x - norm_x_last > konv_rad)
+                    {
+
+                        cg_kernel(system_matrix, right_hand_side, g, x, u);
+                        norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                        norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                        x_last = x.copy();
+                    }
+                    return x;
+
+
+                }
+
+    };
 
     /**
      * \brief Solution of LES with PCG - Jacobi.
@@ -372,53 +430,53 @@ namespace honei
      */
 
     template <typename Tag_>
-    struct ConjugateGradients<Tag_, methods::JAC>
-    {
-        private:
-            template<typename DT1_, typename DT2_>
-            static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
-            {
+        struct ConjugateGradients<Tag_, methods::JAC>
+        {
+            private:
+                template<typename DT1_, typename DT2_>
+                    static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
+                    {
 
-                DT1_ alpha, beta, upper, lower;
-                upper = DotProduct<Tag_>::value(former_residual, former_gradient);
-                DenseVector<DT1_> temp = Product<Tag_>::value(system_matrix, utility);
-                lower = DotProduct<Tag_>::value(temp, utility);
-                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
-                {
-                    alpha = upper/lower;
-                }
-                else
-                {
-                    alpha = upper/ std::numeric_limits<DT1_>::epsilon();
-                }
-                ///Compute new result:
-                Scale<Tag_>::value(utility, alpha);
-                DenseVector<DT1_> temp2(utility.copy());
-                Sum<Tag_>::value(former_result, temp2);
+                        DT1_ alpha, beta, upper, lower;
+                        upper = DotProduct<Tag_>::value(former_residual, former_gradient);
+                        DenseVector<DT1_> temp = Product<Tag_>::value(system_matrix, utility);
+                        lower = DotProduct<Tag_>::value(temp, utility);
+                        if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                        {
+                            alpha = upper/lower;
+                        }
+                        else
+                        {
+                            alpha = upper/ std::numeric_limits<DT1_>::epsilon();
+                        }
+                        ///Compute new result:
+                        Scale<Tag_>::value(utility, alpha);
+                        DenseVector<DT1_> temp2(utility.copy());
+                        Sum<Tag_>::value(former_result, temp2);
 
-                ///Compute new residual:
-                Scale<Tag_>::value(temp, alpha);
-                DenseVector<DT1_> temp3(temp.copy());
-                Difference<Tag_>::value(former_residual, temp3);
-                ///Compute new gradient:
-                DenseVector<DT1_> r_c = former_residual.copy();
-                ElementProduct<Tag_>::value(r_c, diag_inverted);
-                former_gradient = r_c;
+                        ///Compute new residual:
+                        Scale<Tag_>::value(temp, alpha);
+                        DenseVector<DT1_> temp3(temp.copy());
+                        Difference<Tag_>::value(former_residual, temp3);
+                        ///Compute new gradient:
+                        DenseVector<DT1_> r_c = former_residual.copy();
+                        ElementProduct<Tag_>::value(r_c, diag_inverted);
+                        former_gradient = r_c;
 
-                ///Compute new utility:
-                DT1_ upper_2;
-                upper_2 = DotProduct<Tag_>::value(former_gradient, former_residual);
-                lower = upper;
-                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
-                {
-                    beta = upper_2/lower;
-                }
-                else
-                {
-                    beta = upper_2/ std::numeric_limits<DT1_>::epsilon();
-                }
+                        ///Compute new utility:
+                        DT1_ upper_2;
+                        upper_2 = DotProduct<Tag_>::value(former_gradient, former_residual);
+                        lower = upper;
+                        if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                        {
+                            beta = upper_2/lower;
+                        }
+                        else
+                        {
+                            beta = upper_2/ std::numeric_limits<DT1_>::epsilon();
+                        }
 
-                Scale<Tag_>::value(utility, beta);
+                        Scale<Tag_>::value(utility, beta);
                 Sum<Tag_>::value(utility, former_gradient);
             }
 

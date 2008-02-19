@@ -29,5 +29,6 @@ add(`poisson_cg_float_banded',                `test',                   `benchma
 add(`poisson_pcg_float_banded',               `test',                   `benchmark')
 add(`poisson_iteref_cg_float_banded',         `test',                   `benchmark')
 add(`poisson_iteref_pcg_float_banded',        `test',                   `benchmark')
+add(`poisson_mixedprec_cg',                   `test')
 add(`quadrature',                       `hh', `test')
 add(`sqrt',                             `hh', `test', `sse', `cell')
