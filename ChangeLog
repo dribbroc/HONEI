@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-19 Markus Geveler <apryde@gmx.de>
+
+	* honei/libla/product_BENCHMARK.cc, honei/libla/scaled_sum_BENCHMARK.cc:
+	Added Q1 BMDV benchmark, added missing ScaledSum SSE benchmark.
+
 2008-02-19 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
     * honei/libgraph/{abstract_graph.hh, node.hh, graph.hh, evolving_graph.hh,
         evolving_graph_TEST.cc, graph_TEST.cc},

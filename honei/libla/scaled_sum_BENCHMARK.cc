@@ -46,7 +46,8 @@ class DenseVectorScaledSumBench :
 DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat1("Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorScaledSumBench<tags::CPU, double> DVSSBenchdouble1("Dense Vector ScaledSum Benchmark - vector size: 10,000, double", 10000, 10);
 #ifdef HONEI_SSE
-DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat1("SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat1("SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 100);
+DenseVectorScaledSumBench<tags::CPU::SSE, double> SSEDVSSBenchdouble1("SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 100);
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat1("CELL Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
