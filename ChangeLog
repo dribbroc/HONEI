@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-19 Markus Geveler <apryde@gmx.de>
 
+	* honei/libmath/files.m4, honei/libmath/poisson_mixedprec_cg_BENCHMARK.cc:
+	Added proper benchmark for new CG version.
+
+2008-02-19 Markus Geveler <apryde@gmx.de>
+
 	* honei/libmath/conjugate_gradients.hh, honei/libmath/conjugate_gradients_TEST.cc, honei/libmath/files.m4, honei/libmath/poisson_mixedprec_cg_TEST.cc:
 	Added implementation of another mixed precision cg version and several
 	tests, including a Poisson test.
