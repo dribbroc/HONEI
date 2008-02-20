@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-20 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/libla/product-sse.cc:
+	Added experimental prefetching of follow-up bands.
+
+2008-02-20 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/libla/selected_benchmarks.cc, honei/libla/sum_BENCHMARK.cc,
 	honei/libswe/selected_benchmarks.cc:
 	Modified some problem sizes, increased iteration counts.

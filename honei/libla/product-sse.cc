@@ -308,6 +308,13 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
         if (band.index() >= middle_index)
         {
+            float * band_e = band->elements();
+            _mm_prefetch(band_e, _MM_HINT_T0);
+            float * b_e = b.elements();
+            _mm_prefetch(b_e, _MM_HINT_T0);
+            float * r_e = result.elements();
+            _mm_prefetch(r_e, _MM_HINT_T0);
+
             op_offset = band.index() - middle_index;
             end = a.size() - op_offset; // Calculation of the element-index to stop in iteration!
             quad_end = end - (end % 8);
@@ -315,9 +322,6 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             if (end < 32)
                 quad_end = 0;
 
-            float * band_e = band->elements();
-            float * b_e = b.elements();
-            float * r_e = result.elements();
 
             for (unsigned long index(0) ; index < quad_end ; index += 8)
             {
@@ -344,6 +348,13 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
         {
+            float * band_e = band->elements();
+            _mm_prefetch(band_e, _MM_HINT_T0);
+            float * b_e = b.elements();
+            _mm_prefetch(b_e, _MM_HINT_T0);
+            float * r_e = result.elements();
+            _mm_prefetch(r_e, _MM_HINT_T0);
+
             op_offset = middle_index - band.index();
             start = op_offset; // Calculation of the element-index to start in iteration!
             quad_start = start + (8 - (start % 8));
@@ -355,10 +366,6 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
                 quad_end = start;
                 quad_start = start;
             }
-
-            float * band_e = band->elements();
-            float * b_e = b.elements();
-            float * r_e = result.elements();
 
             for (unsigned long index(start) ; index < quad_start ; index++)
             {
@@ -415,6 +422,13 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
         if (band.index() >= middle_index)
         {
+            double * band_e = band->elements();
+            _mm_prefetch(band_e, _MM_HINT_T0);
+            double * b_e = b.elements();
+            _mm_prefetch(b_e, _MM_HINT_T0);
+            double * r_e = result.elements();
+            _mm_prefetch(r_e, _MM_HINT_T0);
+
             op_offset = band.index() - middle_index;
             end = a.size() - op_offset; // Calculation of the element-index to stop in iteration!
             quad_end = end - (end % 4);
@@ -422,9 +436,6 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
             if (end < 12)
                 quad_end = 0;
 
-            double * band_e = band->elements();
-            double * b_e = b.elements();
-            double * r_e = result.elements();
 
             for (unsigned long index(0) ; index < quad_end ; index += 4)
             {
@@ -451,6 +462,13 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
         {
+            double * band_e = band->elements();
+            _mm_prefetch(band_e, _MM_HINT_T0);
+            double * b_e = b.elements();
+            _mm_prefetch(b_e, _MM_HINT_T0);
+            double * r_e = result.elements();
+            _mm_prefetch(r_e, _MM_HINT_T0);
+
             op_offset = middle_index - band.index();
             start = op_offset; // Calculation of the element-index to start in iteration!
             quad_start = start + (4 - (start % 4));
@@ -462,10 +480,6 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
                 quad_end = start;
                 quad_start = start;
             }
-
-            double * band_e = band->elements();
-            double * b_e = b.elements();
-            double * r_e = result.elements();
 
             for (unsigned long index(start) ; index < quad_start ; index++)
             {
