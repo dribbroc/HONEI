@@ -136,8 +136,8 @@ DenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSEDVSBenchdouble1("MC:
 #endif
 #ifdef HONEI_CELL
 DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul * 64 * 64 * 64, 10);
-DenseVectorSumBench<tags::Cell, double> dvs_bench_cell_double("Cell Dense Vector Sum Benchmark - vector size: 64^4, double",
-        64ul * 64 * 64 * 64, 10);
+DenseVectorSumBench<tags::Cell, double> dvs_bench_cell_double("Cell Dense Vector Sum Benchmark - vector size: 64^3 * 35, double",
+        64ul * 64 * 64 * 35, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -179,7 +179,7 @@ DenseVectorRangeSumBench<tags::CPU::SSE, double> SSEDVRSBenchdouble1("SSE Dense 
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeSumBench<tags::Cell, float> CELLDVRSBenchfloat1("Cell Dense Vector Range Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorRangeSumBench<tags::Cell, double> CELLDVRSBenchdouble1("Cell Dense Vector Range Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorRangeSumBench<tags::Cell, double> CELLDVRSBenchdouble1("Cell Dense Vector Range Sum Benchmark - vector size: 64^3 * 35, double", 64ul*64*64 * 35, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -224,6 +224,7 @@ DenseMatrixSumBench<tags::CPU::MultiCore::SSE, double> DMSBenchdouble1mcsse("MC 
 #endif
 #ifdef HONEI_CELL
 DenseMatrixSumBench<tags::Cell, float> DMSBenchfloat1cell("Cell Dense Matrix Sum Benchmark - Matrix size: 4096x4096, 4096, float", 4096, 4096, 10);
+DenseMatrixSumBench<tags::Cell, double> DMSBenchdouble1cell("Cell Dense Matrix Sum Benchmark - Matrix size: 4096x4096, 4096, double", 4096, 4096, 10);
 #endif
 
 template <typename Tag_, typename DataType_>

@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-20 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libla/selected_benchmarks.cc, honei/libla/sum_BENCHMARK.cc,
+	honei/libswe/selected_benchmarks.cc:
+	Modified some problem sizes, increased iteration counts.
+
 2008-02-19 Joachim Messer <joachim.messer@uni-dortmund.de>
 
 	* honei/libutil/partitioner.cc: Now prohibiting best_part_sizes
@@ -24,7 +30,9 @@ see the NEWS file.
 
 2008-02-19 Markus Geveler <apryde@gmx.de>
 
-	* honei/libmath/conjugate_gradients.hh, honei/libmath/conjugate_gradients_TEST.cc, honei/libmath/files.m4, honei/libmath/poisson_mixedprec_cg_TEST.cc:
+	* honei/libmath/conjugate_gradients.hh,
+	honei/libmath/conjugate_gradients_TEST.cc, honei/libmath/files.m4,
+	honei/libmath/poisson_mixedprec_cg_TEST.cc:
 	Added implementation of another mixed precision cg version and several
 	tests, including a Poisson test.
 
@@ -37,10 +45,11 @@ see the NEWS file.
     * honei/libgraph/{abstract_graph.hh, node.hh, graph.hh, evolving_graph.hh,
         evolving_graph_TEST.cc, graph_TEST.cc},
       honei/libvisual/{enginegraph.hh, enginegraph_TEST.cc, evolving_TEST.cc,
-        graphrandom_TEST.cc}: changed some names to be consistent with 
+        graphrandom_TEST.cc}:
+	Changed some names to be consistent with 
       code conventions.
-    * honei/libgraph/{evolving_animator.hh, files.m4}, 
-      honei/libvisual/{engine_evolving.hh, engine_evolving_TEST, files.m4}: 
+    * honei/libgraph/{evolving_animator.hh, files.m4},
+      honei/libvisual/{engine_evolving.hh, engine_evolving_TEST, files.m4}:
       Added support for animating evolving graphs.
 
 2008-02-19 Danny van Dyk <danny.dyk@uni-dortmund.de>

@@ -126,7 +126,7 @@ class RelaxSolverBench :
                 relax_solver.do_preprocessing();
                 string outHeight = stringify(height);
 
-                for(int i = 0; i < 20; ++i)
+                for(int i = 0; i < 30; ++i)
                 {
                     BENCHMARK(relax_solver.solve());
                 }
@@ -135,23 +135,23 @@ class RelaxSolverBench :
                 infolist.push_back(info);
                 std::cout << "finished run " << counter << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 30);
         }
 };
 
 #ifndef HONEI_CELL
-RelaxSolverBench<tags::CPU, float> solver_bench_float_2("RelaxSolver Benchmark - float", 100);
-RelaxSolverBench<tags::CPU, double> solver_bench_double_2("RelaxSolver Benchmark - double", 100);
-RelaxSolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_2("MC RelaxSolver Benchmark - float", 100);
-RelaxSolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_2("MC RelaxSolver Benchmark - double", 100);
+RelaxSolverBench<tags::CPU, float> solver_bench_float_2("RelaxSolver Benchmark - float", 120);
+RelaxSolverBench<tags::CPU, double> solver_bench_double_2("RelaxSolver Benchmark - double", 120);
+RelaxSolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_2("MC RelaxSolver Benchmark - float", 120);
+RelaxSolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_2("MC RelaxSolver Benchmark - double", 120);
 #ifdef HONEI_SSE
-RelaxSolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_solver_bench_float_2("MC SSE RelaxSolver Benchmark - float", 100);
-RelaxSolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_solver_bench_double_2("MC SSE RelaxSolver Benchmark double", 100);
-RelaxSolverBench<tags::CPU::SSE, float> sse_solver_bench_float_2("SSE RelaxSolver Benchmark - float", 100);
-RelaxSolverBench<tags::CPU::SSE, double> sse_solver_bench_double_2("SSE RelaxSolver Benchmark - double", 100);
+RelaxSolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_solver_bench_float_2("MC SSE RelaxSolver Benchmark - float", 120);
+RelaxSolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_solver_bench_double_2("MC SSE RelaxSolver Benchmark double", 120);
+RelaxSolverBench<tags::CPU::SSE, float> sse_solver_bench_float_2("SSE RelaxSolver Benchmark - float", 120);
+RelaxSolverBench<tags::CPU::SSE, double> sse_solver_bench_double_2("SSE RelaxSolver Benchmark - double", 120);
 #endif
 #elif HONEI_CELL
 RelaxSolverBench<tags::Cell, float> cell_solver_bench_float_2("Cell RelaxSolverSum Benchmark - float",
-         100);
+         120);
 #endif
 

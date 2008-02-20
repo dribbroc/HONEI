@@ -36,7 +36,7 @@ class DenseVectorRTSBench :
                 cores.push_back(1);
                 DenseVector<DT_> dv((j + 1) * 131072, DT_(rand()));
                 DT_ dt;
-                for(int i(0) ; i < 20 ; ++i)
+                for(int i(0) ; i < 30 ; ++i)
                 {
                     BENCHMARK((dt = Reduction<rt_sum, Tag_>::value(dv)));
                 }
@@ -44,7 +44,7 @@ class DenseVectorRTSBench :
                 infolist.push_back(info);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 30);
         }
 };
 #ifndef HONEI_CELL
@@ -53,14 +53,14 @@ DenseVectorRTSBench<double, tags::CPU> DVRBD("SingleCore DenseVector Reduction t
 DenseVectorRTSBench<float, tags::CPU::MultiCore> DVRBMCF("MultiCore DenseVector Reduction to Sum Benchmark - float", 20);
 DenseVectorRTSBench<double, tags::CPU::MultiCore> DVRBMCD("MultiCore DenseVector Reduction to Sum Benchmark - double", 20);
 #ifdef HONEI_SSE
-DenseVectorRTSBench<float, tags::CPU::SSE> DVRBSSEF("SSE DenseVector Reduction to Sum Benchmark - float", 40);
-DenseVectorRTSBench<double, tags::CPU::SSE> DVRBSSED("SSE DenseVector Reduction to Sum Benchmark - double", 40);
-DenseVectorRTSBench<float, tags::CPU::MultiCore::SSE> DVRBMCSSEF("MultiCore SSE DenseVector Reduction to Sum Benchmark - float", 40);
-DenseVectorRTSBench<double, tags::CPU::MultiCore::SSE> DVRBMCSSED("MultiCore SSE DenseVector Reduction to Sum Benchmark - double", 40);
+DenseVectorRTSBench<float, tags::CPU::SSE> DVRBSSEF("SSE DenseVector Reduction to Sum Benchmark - float", 90);
+DenseVectorRTSBench<double, tags::CPU::SSE> DVRBSSED("SSE DenseVector Reduction to Sum Benchmark - double", 90);
+DenseVectorRTSBench<float, tags::CPU::MultiCore::SSE> DVRBMCSSEF("MultiCore SSE DenseVector Reduction to Sum Benchmark - float", 90);
+DenseVectorRTSBench<double, tags::CPU::MultiCore::SSE> DVRBMCSSED("MultiCore SSE DenseVector Reduction to Sum Benchmark - double", 90);
 #endif
 #elif HONEI_CELL
-DenseVectorRTSBench<float, tags::Cell> DVRBCF("CELL DenseVector Reduction to Sum Benchmark - float", 40);
-DenseVectorRTSBench<double, tags::Cell> DVRBCD("CELL DenseVector Reduction to Sum Benchmark - double", 40);
+DenseVectorRTSBench<float, tags::Cell> DVRBCF("CELL DenseVector Reduction to Sum Benchmark - float", 90);
+DenseVectorRTSBench<double, tags::Cell> DVRBCD("CELL DenseVector Reduction to Sum Benchmark - double", 90);
 #endif
 
 
@@ -90,7 +90,7 @@ class DenseVectorDotProductBench :
                 cores.push_back(1);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
-                for(int i(0) ; i < 20 ; ++i)
+                for(int i(0) ; i < 30 ; ++i)
                 {
                     BENCHMARK(DotProduct<Tag_>::value(dv0, dv1));
                 }
@@ -98,7 +98,7 @@ class DenseVectorDotProductBench :
                 infolist.push_back(info);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 30);
         }
 };
 #ifndef HONEI_CELL
@@ -107,14 +107,14 @@ DenseVectorDotProductBench<double, tags::CPU> DVDPBD("SingleCore DenseVector Dot
 DenseVectorDotProductBench<float, tags::CPU::MultiCore> DVDPBMCF("MultiCore DenseVector DotProduct Benchmark - float", 20);
 DenseVectorDotProductBench<double, tags::CPU::MultiCore> DVDPBMCD("MultiCore DenseVector DotProduct Benchmark - double", 20);
 #ifdef HONEI_SSE
-DenseVectorDotProductBench<float, tags::CPU::SSE> DVDPBSSEF("SSE DenseVector DotProduct Benchmark - float", 40);
-DenseVectorDotProductBench<double, tags::CPU::SSE> DVDPBSSED("SSE DenseVector DotProduct Benchmark - double", 40);
-DenseVectorDotProductBench<float, tags::CPU::MultiCore::SSE> DVDPBMCSSEF("MultiCore SSE DenseVector DotProduct Benchmark - float", 40);
-DenseVectorDotProductBench<double, tags::CPU::MultiCore::SSE> DVDPBMCSSED("MultiCore SSE DenseVector DotProduct Benchmark - double", 40);
+DenseVectorDotProductBench<float, tags::CPU::SSE> DVDPBSSEF("SSE DenseVector DotProduct Benchmark - float", 90);
+DenseVectorDotProductBench<double, tags::CPU::SSE> DVDPBSSED("SSE DenseVector DotProduct Benchmark - double", 90);
+DenseVectorDotProductBench<float, tags::CPU::MultiCore::SSE> DVDPBMCSSEF("MultiCore SSE DenseVector DotProduct Benchmark - float", 90);
+DenseVectorDotProductBench<double, tags::CPU::MultiCore::SSE> DVDPBMCSSED("MultiCore SSE DenseVector DotProduct Benchmark - double", 90);
 #endif
 #elif HONEI_CELL
-DenseVectorDotProductBench<float, tags::Cell> DVDPBCF("CELL DenseVector DotProduct Benchmark - float", 40);
-DenseVectorDotProductBench<double, tags::Cell> DVDPBCD("CELL DenseVector DotProduct Benchmark - double", 40);
+DenseVectorDotProductBench<float, tags::Cell> DVDPBCF("CELL DenseVector DotProduct Benchmark - float", 90);
+DenseVectorDotProductBench<double, tags::Cell> DVDPBCD("CELL DenseVector DotProduct Benchmark - double", 90);
 #endif
 
 
@@ -144,7 +144,7 @@ class DenseVectorSumBench :
                 cores.push_back(1);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
-                for(int i(0) ; i < 20 ; ++i)
+                for(int i(0) ; i < 30 ; ++i)
                 {
                     BENCHMARK(Sum<Tag_>::value(dv0, dv1));
                 }
@@ -152,7 +152,7 @@ class DenseVectorSumBench :
                 infolist.push_back(info);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 30);
         }
 };
 #ifndef HONEI_CELL
@@ -161,14 +161,14 @@ DenseVectorSumBench<double, tags::CPU> DVSBD("SingleCore DenseVector Sum Benchma
 DenseVectorSumBench<float, tags::CPU::MultiCore> DVSBMCF("MultiCore DenseVector Sum Benchmark - float", 20);
 DenseVectorSumBench<double, tags::CPU::MultiCore> DVSBMCD("MultiCore DenseVector Sum Benchmark - double", 20);
 #ifdef HONEI_SSE
-DenseVectorSumBench<float, tags::CPU::SSE> DVSBSSEF("SSE DenseVector Sum Benchmark - float", 40);
-DenseVectorSumBench<double, tags::CPU::SSE> DVSBSSED("SSE DenseVector Sum Benchmark - double", 40);
-DenseVectorSumBench<float, tags::CPU::MultiCore::SSE> DVSBMCSSEF("MultiCore SSE DenseVector Sum Benchmark - float", 40);
-DenseVectorSumBench<double, tags::CPU::MultiCore::SSE> DVSBMCSSED("MultiCore SSE DenseVector Sum Benchmark - double", 40);
+DenseVectorSumBench<float, tags::CPU::SSE> DVSBSSEF("SSE DenseVector Sum Benchmark - float", 90);
+DenseVectorSumBench<double, tags::CPU::SSE> DVSBSSED("SSE DenseVector Sum Benchmark - double", 90);
+DenseVectorSumBench<float, tags::CPU::MultiCore::SSE> DVSBMCSSEF("MultiCore SSE DenseVector Sum Benchmark - float", 90);
+DenseVectorSumBench<double, tags::CPU::MultiCore::SSE> DVSBMCSSED("MultiCore SSE DenseVector Sum Benchmark - double", 90);
 #endif
 #elif HONEI_CELL
-DenseVectorSumBench<float, tags::Cell> DVSBCF("CELL DenseVector Sum Benchmark - float", 40);
-DenseVectorSumBench<double, tags::Cell> DVSBCD("CELL DenseVector Sum Benchmark - double", 40);
+DenseVectorSumBench<float, tags::Cell> DVSBCF("CELL DenseVector Sum Benchmark - float", 90);
+DenseVectorSumBench<double, tags::Cell> DVSBCD("CELL DenseVector Sum Benchmark - double", 90);
 #endif
 
 
@@ -198,7 +198,7 @@ class DMDVProductBench :
                 cores.push_back(1);
                 DenseVector<DT_> dv((j + 1) * 128, DT_(rand()));
                 DenseMatrix<DT_> dm((j + 1) * 128, (j + 1) * 128, DT_(rand()));
-                for(int i(0) ; i < 20 ; ++i)
+                for(int i(0) ; i < 30 ; ++i)
                 {
                     BENCHMARK(Product<Tag_>::value(dm, dv));
                 }
@@ -206,7 +206,7 @@ class DMDVProductBench :
                 infolist.push_back(info);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 30);
         }
 };
 #ifndef HONEI_CELL
@@ -252,7 +252,7 @@ class DenseMatrixProductBench :
                 cores.push_back(1);
                 DenseMatrix<DT_> dm0((j + 1) * 16, (j + 1) * 16, DT_(rand()));
                 DenseMatrix<DT_> dm1((j + 1) * 16, (j + 1) * 16, DT_(rand()));
-                for(int i(0) ; i < 20 ; ++i)
+                for(int i(0) ; i < 30 ; ++i)
                 {
                     BENCHMARK(Product<Tag_>::value(dm0, dm1));
                 }
@@ -260,7 +260,7 @@ class DenseMatrixProductBench :
                 infolist.push_back(info);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 30);
         }
 };
 #ifndef HONEI_CELL
@@ -307,12 +307,12 @@ class BMDVProductBench :
                 DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
                 BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
-                for (int i = 1; i < 14 ; i++)
+                for (int i = 1; i < 5 ; i++)
                 {
                     bm.insert_band(i * 3, dv1.copy());
                     bm.insert_band(-1 * 5 * i, dv1.copy());
                 }
-                for(int i(0) ; i < 20 ; ++i)
+                for(int i(0) ; i < 30 ; ++i)
                 {
                     BENCHMARK(Product<Tag_>::value(bm, dv0));
                 }
@@ -320,7 +320,7 @@ class BMDVProductBench :
                 infolist.push_back(info);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 30);
         }
 };
 #ifndef HONEI_CELL
@@ -329,12 +329,12 @@ BMDVProductBench<double, tags::CPU> BMDVPBTPD("SingleCore BandedMatrix DenseVect
 BMDVProductBench<float, tags::CPU::MultiCore> BMDVPBMCF("MultiCore BandedMatrix DenseVector Product Benchmark - float", 20);
 BMDVProductBench<double, tags::CPU::MultiCore> BMDVPBMCD("MultiCore BandedMatrix DenseVector Product Benchmark - double", 20);
 #ifdef HONEI_SSE
-BMDVProductBench<float, tags::CPU::SSE> BMDVPBSSEF("SSE BandedMatrix DenseVector Product Benchmark - float", 40);
-BMDVProductBench<double, tags::CPU::SSE> BMDVPBSSED("SSE BandedMatrix DenseVector Product Benchmark - double", 40);
-BMDVProductBench<float, tags::CPU::MultiCore::SSE> BMDVPBMCSSEF("MultiCore SSE BandedMatrix DenseVector Product Benchmark - float", 40);
-BMDVProductBench<double, tags::CPU::MultiCore::SSE> BMDVPBMCSSED("MultiCore SSE BandedMatrix DenseVector Product Benchmark - double", 40);
+BMDVProductBench<float, tags::CPU::SSE> BMDVPBSSEF("SSE BandedMatrix DenseVector Product Benchmark - float", 50);
+BMDVProductBench<double, tags::CPU::SSE> BMDVPBSSED("SSE BandedMatrix DenseVector Product Benchmark - double", 50);
+BMDVProductBench<float, tags::CPU::MultiCore::SSE> BMDVPBMCSSEF("MultiCore SSE BandedMatrix DenseVector Product Benchmark - float", 50);
+BMDVProductBench<double, tags::CPU::MultiCore::SSE> BMDVPBMCSSED("MultiCore SSE BandedMatrix DenseVector Product Benchmark - double", 50);
 #endif
 #elif HONEI_CELL
-BMDVProductBench<float, tags::Cell> BMDVPBCF("CELL BandedMatrix DenseVector Product Benchmark - float", 40);
-BMDVProductBench<double, tags::Cell> BMDVPBCD("CELL BandedMatrix DenseVector Product Benchmark - double", 40);
+BMDVProductBench<float, tags::Cell> BMDVPBCF("CELL BandedMatrix DenseVector Product Benchmark - float", 50);
+BMDVProductBench<double, tags::Cell> BMDVPBCD("CELL BandedMatrix DenseVector Product Benchmark - double", 50);
 #endif
