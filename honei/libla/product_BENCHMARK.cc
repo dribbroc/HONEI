@@ -54,15 +54,15 @@ class Q1MatrixDenseVectorProductBench :
             evaluate(info);
         }
 };
-Q1MatrixDenseVectorProductBench<tags::CPU, float> Q1DVPBenchfloat("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
-Q1MatrixDenseVectorProductBench<tags::CPU, double> Q1DVPBenchdouble("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
-Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore, float> MCQ1DVPBenchfloat("MC Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
-Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore, double> MCQ1DVPBenchdouble("MC Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64*64, 10);
+Q1MatrixDenseVectorProductBench<tags::CPU, float> Q1DVPBenchfloat("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 100);
+Q1MatrixDenseVectorProductBench<tags::CPU, double> Q1DVPBenchdouble("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 100);
+Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore, float> MCQ1DVPBenchfloat("MC Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025*1025ul, 100);
+Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore, double> MCQ1DVPBenchdouble("MC Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^3, double", 1025ul*1025, 100);
 #ifdef HONEI_SSE
 Q1MatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEQ1DVPBenchfloat("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul*1025 , 100);
 Q1MatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEQ1DVPBenchdouble("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025 ,double", 1025ul*1025, 100);
-Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEQ1DVPBenchfloat("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
-Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEQ1DVPBenchdouble("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 10);
+Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEQ1DVPBenchfloat("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025ul*1025, 100);
+Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEQ1DVPBenchdouble("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, double", 1025*1025, 100);
 #endif
 #ifdef HONEI_CELL
 Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^2, float", 64ul*64ul, 10);
