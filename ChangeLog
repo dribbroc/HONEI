@@ -8,6 +8,11 @@ see the NEWS file.
 2008-02-20 Markus Geveler <apryde@gmx.de>
 
 	* honei/libla/product_BENCHMARK.cc:
+	Set iteration numbers in BMDV benchmarks to reasonable value 1000.
+
+2008-02-20 Markus Geveler <apryde@gmx.de>
+
+	* honei/libla/product_BENCHMARK.cc:
 	Healed Q1 benchmark.
 
 2008-02-20 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
