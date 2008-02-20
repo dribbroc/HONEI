@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -49,6 +49,9 @@ struct SPE::Implementation
 
     /// Our SPE (blocking) thread.
     pthread_t * thread;
+
+    /// Our thread's attributes.
+    pthread_attr_t * attr;
 
     /// Our current SPE kernel.
     SPEKernel * kernel;
@@ -163,6 +166,7 @@ struct SPE::Implementation
         context(spe_context_create(SPE_EVENTS_ENABLE, 0)),
         device(next_device_id()),
         thread(0),
+        attr(0),
         kernel(0)
     {
         if (! context)
@@ -183,6 +187,10 @@ struct SPE::Implementation
 
         // Kill the thread.
         delete thread;
+
+        pthread_attr_destroy(attr);
+
+        delete attr;
 
         // Delete mutex.
         delete mutex;
@@ -264,6 +272,13 @@ SPE::run(const SPEKernel & kernel)
         _imp->thread = 0;
     }
 
+    if (_imp->attr)
+    {
+        pthread_attr_destroy(_imp->attr);
+        delete _imp->attr;
+        _imp->attr = 0;
+    }
+
     _imp->kernel = new SPEKernel(kernel);
 
     // Release the context.
@@ -287,8 +302,17 @@ SPE::run(const SPEKernel & kernel)
 
     _imp->thread = new pthread_t;
 
-    if (0 != (retval = pthread_create(_imp->thread, 0, &Implementation::thread_function, new SPE(*this))))
+    _imp->attr = new pthread_attr_t;
+
+    if (0 != (retval = pthread_attr_init(_imp->attr)))
+        throw PThreadError("pthread_attr_init", retval);
+
+    if (0 != (retval = pthread_attr_setdetachstate(_imp->attr, PTHREAD_CREATE_JOINABLE)))
+        throw PThreadError("pthread_attr_setdetachstate", retval);
+
+    if (0 != (retval = pthread_create(_imp->thread, _imp->attr, &Implementation::thread_function, new SPE(*this))))
         throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
+
 }
 
 DeviceId

@@ -20,23 +20,27 @@
  */
 
 #include <honei/libutil/assertion.hh>
+#include <honei/libutil/condition_variable.hh>
+#include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
+#include <honei/libutil/mutex.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_kernel.hh>
 
 #include <tr1/functional>
 
-#include <iostream>
-
 using namespace honei;
 
 struct SPEInstruction::Implementation
 {
-    /// Our kernel.
-    SPEKernel * kernel;
+    /// Our mutex.
+    Mutex * const mutex;
 
-    /// Our index.
-    unsigned index;
+    /// Our condition variable.
+    ConditionVariable * const condition;
+
+    /// Our are-we-finished variable.
+    bool finished;
 
     /// Our instruction structure.
     Instruction instruction;
@@ -47,8 +51,9 @@ struct SPEInstruction::Implementation
             const Operand & f, const Operand & g, const Operand & h, const Operand & i,
             const Operand & j, const Operand & k, const Operand & l, const Operand & m,
             const Operand & n, const Operand & o) :
-        kernel(0),
-        index(0)
+        mutex(new Mutex),
+        condition(new ConditionVariable),
+        finished(false)
     {
         instruction.opcode = opcode;
         instruction.size = size;
@@ -69,23 +74,20 @@ struct SPEInstruction::Implementation
         instruction.o = o;
     }
 
-    inline void wait()
+    ~Implementation()
     {
-        if (kernel)
-        {
-            kernel->wait(index);
-
-            delete kernel;
-            kernel = 0;
-        }
+        delete mutex;
+        delete condition;
     }
 
-    inline bool finished()
+    inline void wait()
     {
-        if (kernel)
-            return kernel->finished(index);
-        else
-            return false;
+        Lock l(*mutex);
+
+        while (! finished)
+        {
+            condition->wait(*mutex);
+        }
     }
 };
 
@@ -100,31 +102,21 @@ SPEInstruction::SPEInstruction(const OpCode opcode, const unsigned size, const O
 
 SPEInstruction::~SPEInstruction()
 {
-    _imp->wait();
-}
-
-void
-SPEInstruction::_enqueue_with(SPEKernel * kernel) const
-{
-    LOGMESSAGE(ll_minimal, std::string("Enqueing SPEInstruction, opcode = " + stringify(_imp->instruction.opcode)
-                + ", size = " + stringify(_imp->instruction.size) + "\na = " + stringify(_imp->instruction.a.ea)
-                + ", b = " + stringify(_imp->instruction.b.ea) + "\nc = " + stringify(_imp->instruction.c.ea)
-                + ", d = " + stringify(_imp->instruction.d.ea) + "\ne = " + stringify(_imp->instruction.e.ea)
-                + ", f = " + stringify(_imp->instruction.f.ea) + "\ng = " + stringify(_imp->instruction.g.ea)
-                + ", h = " + stringify(_imp->instruction.h.ea) + "\ni = " + stringify(_imp->instruction.i.ea)
-                + ", j = " + stringify(_imp->instruction.j.ea) + "\nk = " + stringify(_imp->instruction.k.ea)
-                + ", l = " + stringify(_imp->instruction.l.ea) + "\nm = " + stringify(_imp->instruction.m.ea)
-                + ", n = " + stringify(_imp->instruction.n.ea) + "\no = " + stringify(_imp->instruction.o.ea)
-                + "\n"));
-
-    _imp->kernel = new SPEKernel(*kernel);
-    _imp->index = kernel->enqueue(*this);
 }
 
 SPEInstruction::Instruction &
 SPEInstruction::instruction() const
 {
     return _imp->instruction;
+}
+
+void
+SPEInstruction::set_finished()
+{
+    Lock l(*_imp->mutex);
+
+    _imp->finished = true;
+    _imp->condition->signal();
 }
 
 void
@@ -136,7 +128,9 @@ SPEInstruction::wait() const
 bool
 SPEInstruction::finished() const
 {
-    return _imp->finished();
+    Lock l(*_imp->mutex);
+
+    return _imp->finished;
 }
 
 const SPEInstruction::Operand
@@ -540,32 +534,6 @@ SPEInstructionQueue::end()
     return _imp->instructions.end();
 }
 
-void
-SPEInstructionQueue::_enqueue_with(SPEKernel * kernel)
-{
-    if (_imp->instructions.size() > 0)
-    {
-        for (std::list<SPEInstruction>::iterator i_it(_imp->instructions.begin()), i_end(_imp->instructions.end()) ;
-                i_it != i_end ; i_it++)
-        {
-            LOGMESSAGE(ll_minimal, std::string("(SPEInstructionQueue) Enqueing SPEInstruction, opcode = " + stringify((*i_it)._imp->instruction.opcode)
-                        + ", size = " + stringify((*i_it)._imp->instruction.size) + "\na = " + stringify((*i_it)._imp->instruction.a.ea)
-                        + ", b = " + stringify((*i_it)._imp->instruction.b.ea) + "\nc = " + stringify((*i_it)._imp->instruction.c.ea)
-                        + ", d = " + stringify((*i_it)._imp->instruction.d.ea) + "\ne = " + stringify((*i_it)._imp->instruction.e.ea)
-                        + ", f = " + stringify((*i_it)._imp->instruction.f.ea) + "\ng = " + stringify((*i_it)._imp->instruction.g.ea)
-                        + ", h = " + stringify((*i_it)._imp->instruction.h.ea) + "\ni = " + stringify((*i_it)._imp->instruction.i.ea)
-                        + ", j = " + stringify((*i_it)._imp->instruction.j.ea) + "\nk = " + stringify((*i_it)._imp->instruction.k.ea)
-                        + ", l = " + stringify((*i_it)._imp->instruction.l.ea) + "\nm = " + stringify((*i_it)._imp->instruction.k.ea)
-                        + ", n = " + stringify((*i_it)._imp->instruction.l.ea) + "\no = " + stringify((*i_it)._imp->instruction.m.ea)
-                        + "\n"));
-
-            (*i_it)._imp->kernel = new SPEKernel(*kernel);
-            (*i_it)._imp->index = kernel->enqueue_queue_element(*i_it);
-        }
-        (*_imp->instructions.begin())._imp->kernel->run_queue();
-    }
-}
-
 unsigned long
 SPEInstructionQueue::size()
 {
@@ -575,5 +543,7 @@ SPEInstructionQueue::size()
 bool
 SPEInstructionQueue::finished() const
 {
-    return _imp->instructions.back()._imp->finished();
+    Lock l(*_imp->instructions.back()._imp->mutex);
+
+    return _imp->instructions.back()._imp->finished;
 }

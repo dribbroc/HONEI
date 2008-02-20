@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
@@ -24,6 +24,7 @@
 
 #include <honei/cell/cell.hh>
 #include <honei/libutil/spe_manager.hh>
+#include <honei/libutil/spe_kernel.hh>
 
 #include <list>
 #include <vector>
@@ -48,12 +49,13 @@ namespace honei
 
             static const Operand empty;
 
-            /// Enqueue us with a given kernel.
-            void _enqueue_with(SPEKernel * kernel) const;
+            /// Set our state to finished.
+            void set_finished();
 
         public:
             friend class SPEManager::Implementation;
             friend class SPEInstructionQueue;
+            friend class SPEKernel::Implementation;
 
             /// Constructor.
             SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a = empty,
@@ -327,9 +329,6 @@ namespace honei
 
             /// Our implementation.
             Implementation * _imp;
-
-            /// Enqueue us with a given kernel.
-            void _enqueue_with(SPEKernel * kernel);
 
         public:
             friend class SPEManager::Implementation;

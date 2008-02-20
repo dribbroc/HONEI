@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -54,9 +54,13 @@ namespace honei
 
         public:
             friend class SPE::Implementation;
+            friend class SPEInstruction;
 
             /// Constructor.
             SPEKernel(const SPEKernel::Info & info);
+
+            /// Destructor.
+            ~SPEKernel();
 
             /// \name Iteration over supported opcodes.
             /// \{
@@ -70,7 +74,7 @@ namespace honei
             /// \}
 
             /// Enqueue an instruction.
-            unsigned int enqueue(const SPEInstruction & instruction);
+            void enqueue(const SPEInstruction & instruction);
 
             /// Enqueue an instruction for batch processing
             unsigned int enqueue_queue_element(const SPEInstruction & instruction);

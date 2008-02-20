@@ -1,8 +1,8 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -115,12 +115,12 @@ namespace honei
                     ++spe_it;
                 }
 
-                //Halt the spe side
+                // Halt the spe side.
                 SPEInstruction inst_halt(cell::oc_halt, 0);
-                inst_halt._enqueue_with(spe_it->kernel());
+                spe_it->kernel()->enqueue(inst_halt);
                 inst_halt.wait();
 
-                //find a kernel that supports the most last used ops
+                // Find a kernel that supports the most recently used operations.
                 SPEKernelManager::MapIterator highest(SPEKernelManager::instance()->find(instruction.instruction().opcode));
                 unsigned int highest_count(0);
                 for (SPEKernelManager::MapIterator k_it(SPEKernelManager::instance()->find(instruction.instruction().opcode)),
@@ -167,7 +167,7 @@ namespace honei
             SPEList::iterator spe_it(prepare_spe(instruction));
             LOGMESSAGE(ll_minimal, "Dispatching Instruction to SPE #" + stringify(spe_it->id()) +
                     " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify(instruction.instruction().opcode));
-            instruction._enqueue_with(spe_it->kernel());
+            spe_it->kernel()->enqueue(instruction);
 
             opcode_history[next_history_pos] = instruction.instruction().opcode;
             next_history_pos = (next_history_pos + 1) % 8;
@@ -183,10 +183,14 @@ namespace honei
                 LOGMESSAGE(ll_minimal, "Dispatching InstructionQueue to SPE #" + stringify(spe_it->id()) +
                         " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify((*(instruction_queue.begin())).instruction().opcode));
 
-                instruction_queue._enqueue_with(spe_it->kernel());
+                for (std::list<SPEInstruction>::iterator i(instruction_queue.begin()), i_end(instruction_queue.end()) ; i != i_end ; ++i)
+                {
+                    spe_it->kernel()->enqueue_queue_element(*i);
+                }
 
                 opcode_history[next_history_pos] = (*instruction_queue.begin()).instruction().opcode;
                 next_history_pos = (next_history_pos + 1) % 8;
+                spe_it->kernel()->run_queue();
             }
         }
 
@@ -210,7 +214,7 @@ namespace honei
                 {
                     //Halt the spe side
                     SPEInstruction inst_halt(cell::oc_halt, 0);
-                    inst_halt._enqueue_with(spe_it->kernel());
+                    spe_it->kernel()->enqueue(inst_halt);
                     inst_halt.wait();
                 }
             }

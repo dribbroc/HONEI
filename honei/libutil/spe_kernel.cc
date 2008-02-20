@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
@@ -35,6 +35,7 @@
 #include <limits>
 #include <fstream>
 #include <set>
+#include <syscall.h>
 
 namespace honei
 {
@@ -56,6 +57,9 @@ namespace honei
         /// Our queue of instructions.
         Instruction * instructions;
 
+        /// Our queue of SPE instructions.
+        SPEInstruction * spe_instructions[8];
+
         /// Our index on the currently executed instruction.
         unsigned spe_instruction_index;
 
@@ -64,9 +68,6 @@ namespace honei
 
         /// Our counter for enqueued instructions.
         unsigned enqueued_counter;
-
-        /// Our counter for finished instructions.
-        unsigned finished_counter;
 
         /// Our KernelInfo
         Info kernel_info;
@@ -105,7 +106,6 @@ namespace honei
         static void * kernel_thread(void * argument)
         {
             LOGMESSAGE(ll_minimal, "SPEKernel: Kernel thread started (anonymous)");
-
             Implementation * imp(static_cast<Implementation *>(argument));
 
             SPE * spe(0);
@@ -123,6 +123,7 @@ namespace honei
             SPEEvent event(*imp->spe, SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED);
             Instruction current_instruction;
 
+            volatile bool finished(false);
             do
             {
                 LOGMESSAGE(ll_minimal, "SPEKernel: Waiting for event");
@@ -133,231 +134,246 @@ namespace honei
                 ASSERT(! (e->events & ~(SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED)),
                         "unexpected event happened!");
 
-                if (e->events & SPE_EVENT_OUT_INTR_MBOX)
+                if (e->events & (SPE_EVENT_OUT_INTR_MBOX | SPE_EVENT_SPE_STOPPED))
                 {
-                    LOGMESSAGE(ll_minimal, "SPEKernel: Mail event pending");
-                    unsigned mail(0);
-
-                    int retval(spe_out_intr_mbox_read(spe->context(), &mail, 1, SPE_MBOX_ALL_BLOCKING));
-                    ASSERT(1 == retval, "weird return value in spe_*_mbox_read!");
-
-                    do
+                    if (e->events & SPE_EVENT_OUT_INTR_MBOX)
                     {
-                        switch (mail)
+                        LOGMESSAGE(ll_minimal, "SPEKernel: Mail event pending");
+                        unsigned mail(0);
+
+                        int retval(spe_out_intr_mbox_read(spe->context(), &mail, 1, SPE_MBOX_ALL_BLOCKING));
+                        ASSERT(1 == retval, "weird return value in spe_*_mbox_read!");
+
+                        do
                         {
-                            case km_result_dword:
-                                LOGMESSAGE(ll_minimal, "SPEKernel: km_result_dword received");
-                                {
-                                    Lock ll(*imp->mutex);
-
-                                    spe_out_mbox_read(spe->context(),
-                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 1);
-                                }
-                                continue;
-
-                            case km_result_qword:
-                                LOGMESSAGE(ll_minimal, "SPEKernel: km_result_qword received");
-                                {
-                                    Lock ll(*imp->mutex);
-
-                                    spe_out_mbox_read(imp->spe->context(),
-                                            reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 2);
-                                }
-                                continue;
-
-                            case km_instruction_finished:
-                                LOGMESSAGE(ll_minimal, "SPEKernel: km_instruction_finished received");
-                                {
-                                    Lock ll(*imp->mutex);
-
-                                    imp->instructions[imp->spe_instruction_index].opcode = oc_noop;
-                                    ++imp->spe_instruction_index;
-                                    imp->spe_instruction_index %= 8; /// \todo remove hardcoded numbers
-                                    current_instruction = imp->instructions[imp->spe_instruction_index];
-
-                                    ++imp->finished_counter;
-                                    imp->instruction_finished->broadcast();
-                                    imp->last_finished.take();
-                                }
-                                continue;
-
-                            case km_unknown_opcode:
-                                throw InternalError("SPEKernel: Kernel reported invalid opcode");
-                                continue;
-
-                            case km_debug_put:
-                                {
-                                    Lock ll(*imp->mutex);
-
-                                    union
+                            switch (mail)
+                            {
+                                case km_result_dword:
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: km_result_dword received");
                                     {
-                                        EffectiveAddress ea;
-                                        unsigned u[2];
-                                    } ea = { 0 };
-                                    LocalStoreAddress lsa = { 0 };
-                                    unsigned size(0);
+                                        Lock ll(*imp->mutex);
 
-                                    spe_out_mbox_read(spe->context(), ea.u, 2);
-                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
-                                    spe_out_mbox_read(spe->context(), &size, 1);
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: PUT transfer started, ea = " +
-                                            stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
-                                            stringify(size));
-                                }
-                                continue;
+                                        spe_out_mbox_read(spe->context(),
+                                                reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 1);
+                                    }
+                                    continue;
 
-                            case km_debug_putl:
-                                {
-                                    Lock ll(*imp->mutex);
-
-                                    unsigned u[2];
-                                    LocalStoreAddress lsa = { 0 };
-                                    unsigned size(0);
-
-                                    spe_out_mbox_read(spe->context(), u, 2);
-                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
-                                    spe_out_mbox_read(spe->context(), &size, 1);
-                                    EffectiveAddress eah = reinterpret_cast<void *>(u[0]);
-                                    EffectiveAddress eal = reinterpret_cast<void *>(u[1]);
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: PUTL transfer started, eah = " +
-                                            stringify(eah) + " eal = " + stringify(eal)  + ", lsa = " + stringify(lsa) + " size = " +
-                                            stringify(size));
-                                }
-                                continue;
-
-                            case km_debug_get:
-                                {
-                                    Lock ll(*imp->mutex);
-
-                                    union
+                                case km_result_qword:
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: km_result_qword received");
                                     {
-                                        EffectiveAddress ea;
+                                        Lock ll(*imp->mutex);
+
+                                        spe_out_mbox_read(imp->spe->context(),
+                                                reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 2);
+                                    }
+                                    continue;
+
+                                case km_instruction_finished:
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: km_instruction_finished received");
+                                    {
+                                        Lock ll(*imp->mutex);
+
+                                        imp->instructions[imp->spe_instruction_index].opcode = oc_noop;
+                                        if (imp->spe_instructions[imp->spe_instruction_index])
+                                        {
+                                            imp->spe_instructions[imp->spe_instruction_index]->set_finished();
+                                            delete imp->spe_instructions[imp->spe_instruction_index];
+                                            imp->spe_instructions[imp->spe_instruction_index] = 0;
+                                        }
+
+                                        ++imp->spe_instruction_index;
+                                        imp->spe_instruction_index %= 8; /// \todo remove hardcoded numbers
+                                        current_instruction = imp->instructions[imp->spe_instruction_index];
+
+                                        imp->instruction_finished->broadcast();
+
+                                        imp->last_finished.take();
+                                    }
+                                    continue;
+
+                                case km_unknown_opcode:
+                                    throw InternalError("SPEKernel: Kernel reported invalid opcode");
+                                    continue;
+
+                                case km_debug_put:
+                                    {
+                                        Lock ll(*imp->mutex);
+
+                                        union
+                                        {
+                                            EffectiveAddress ea;
+                                            unsigned u[2];
+                                        } ea = { 0 };
+                                        LocalStoreAddress lsa = { 0 };
+                                        unsigned size(0);
+
+                                        spe_out_mbox_read(spe->context(), ea.u, 2);
+                                        spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                        spe_out_mbox_read(spe->context(), &size, 1);
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: PUT transfer started, ea = " +
+                                                stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
+                                                stringify(size));
+                                    }
+                                    continue;
+
+                                case km_debug_putl:
+                                    {
+                                        Lock ll(*imp->mutex);
+
                                         unsigned u[2];
-                                    } ea = { 0 };
-                                    LocalStoreAddress lsa = { 0 };
-                                    unsigned size(0);
+                                        LocalStoreAddress lsa = { 0 };
+                                        unsigned size(0);
 
-                                    spe_out_mbox_read(spe->context(), ea.u, 2);
-                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
-                                    spe_out_mbox_read(spe->context(), &size, 1);
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: GET transfer started, ea = " +
-                                            stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
-                                            stringify(size));
-                                }
-                                continue;
+                                        spe_out_mbox_read(spe->context(), u, 2);
+                                        spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                        spe_out_mbox_read(spe->context(), &size, 1);
+                                        EffectiveAddress eah = reinterpret_cast<void *>(u[0]);
+                                        EffectiveAddress eal = reinterpret_cast<void *>(u[1]);
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: PUTL transfer started, eah = " +
+                                                stringify(eah) + " eal = " + stringify(eal)  + ", lsa = " + stringify(lsa) + " size = " +
+                                                stringify(size));
+                                    }
+                                    continue;
 
-                            case km_debug_getl:
-                                {
-                                    Lock ll(*imp->mutex);
+                                case km_debug_get:
+                                    {
+                                        Lock ll(*imp->mutex);
 
-                                    unsigned u[2];
+                                        union
+                                        {
+                                            EffectiveAddress ea;
+                                            unsigned u[2];
+                                        } ea = { 0 };
+                                        LocalStoreAddress lsa = { 0 };
+                                        unsigned size(0);
 
-                                    LocalStoreAddress lsa = { 0 };
-                                    unsigned size(0);
+                                        spe_out_mbox_read(spe->context(), ea.u, 2);
+                                        spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                        spe_out_mbox_read(spe->context(), &size, 1);
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: GET transfer started, ea = " +
+                                                stringify(ea.ea) + ", lsa = " + stringify(lsa) + " size = " +
+                                                stringify(size));
+                                    }
+                                    continue;
 
-                                    spe_out_mbox_read(spe->context(), u, 2);
-                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
-                                    spe_out_mbox_read(spe->context(), &size, 1);
-                                    EffectiveAddress eah = reinterpret_cast<void *>(u[0]);
-                                    EffectiveAddress eal = reinterpret_cast<void *>(u[1]);
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: GETL transfer started, eah = " +
-                                            stringify(eah) + " eal = " + stringify(eal) + ", lsa = " + stringify(lsa) + " size = " +
-                                            stringify(size));
-                                }
-                                continue;
+                                case km_debug_getl:
+                                    {
+                                        Lock ll(*imp->mutex);
 
-                            case km_debug_enter:
-                                LOGMESSAGE(ll_minimal, "SPEKernel: SPE entering instruction");
-                                continue;
+                                        unsigned u[2];
 
-                            case km_debug_leave:
-                                LOGMESSAGE(ll_minimal, "SPEKernel: SPE leaving instruction");
-                                continue;
+                                        LocalStoreAddress lsa = { 0 };
+                                        unsigned size(0);
 
-                            case km_debug_acquire_block:
-                                {
-                                    Lock ll(*imp->mutex);
+                                        spe_out_mbox_read(spe->context(), u, 2);
+                                        spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                        spe_out_mbox_read(spe->context(), &size, 1);
+                                        EffectiveAddress eah = reinterpret_cast<void *>(u[0]);
+                                        EffectiveAddress eal = reinterpret_cast<void *>(u[1]);
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: GETL transfer started, eah = " +
+                                                stringify(eah) + " eal = " + stringify(eal) + ", lsa = " + stringify(lsa) + " size = " +
+                                                stringify(size));
+                                    }
+                                    continue;
 
-                                    LocalStoreAddress lsa = { 0 };
-                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: Acquired block at " +
-                                            stringify(lsa));
-                                }
-                                continue;
+                                case km_debug_enter:
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: SPE entering instruction");
+                                    continue;
 
-                            case km_debug_release_block:
-                                {
-                                    Lock ll(*imp->mutex);
+                                case km_debug_leave:
+                                    LOGMESSAGE(ll_minimal, "SPEKernel: SPE leaving instruction");
+                                    continue;
 
-                                    LocalStoreAddress lsa = { 0 };
-                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: Released block at " +
-                                            stringify(lsa));
-                                }
-                                continue;
+                                case km_debug_acquire_block:
+                                    {
+                                        Lock ll(*imp->mutex);
 
-                            case km_debug_dump:
-                                static unsigned counter(0);
-                                {
-                                    Lock ll(*imp->mutex);
-                                    std::string filename("spu-" + stringify(spe->id()) + "-dump-"
-                                            + stringify(counter));
+                                        LocalStoreAddress lsa = { 0 };
+                                        spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: Acquired block at " +
+                                                stringify(lsa));
+                                    }
+                                    continue;
 
-                                    spe->dump(filename);
-                                    ++counter;
-                                    spe->signal();
-                                }
-                                continue;
+                                case km_debug_release_block:
+                                    {
+                                        Lock ll(*imp->mutex);
 
-                            case km_debug_value:
-                                {
-                                    Lock ll(*imp->mutex);
+                                        LocalStoreAddress lsa = { 0 };
+                                        spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: Released block at " +
+                                                stringify(lsa));
+                                    }
+                                    continue;
 
-                                    unsigned value = 0;
+                                case km_debug_dump:
+                                    static unsigned counter(0);
+                                    {
+                                        Lock ll(*imp->mutex);
+                                        std::string filename("spu-" + stringify(spe->id()) + "-dump-"
+                                                + stringify(counter));
 
-                                    spe_out_mbox_read(spe->context(), &value, 1);
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: Value: " +
-                                            stringify(value));
-                                }
-                                continue;
+                                        spe->dump(filename);
+                                        ++counter;
+                                        spe->signal();
+                                    }
+                                    continue;
 
-                            case km_profiler:
-                                static const std::string function("spe-function");
-                                {
-                                    Lock ll(*imp->mutex);
+                                case km_debug_value:
+                                    {
+                                        Lock ll(*imp->mutex);
 
-                                    LocalStoreAddress lsa;
-                                    unsigned decrementer;
-                                    spe_out_mbox_read(spe->context(), &lsa.value, 1);
-                                    spe_out_mbox_read(spe->context(), &decrementer, 1);
+                                        unsigned value = 0;
 
-                                    LOGMESSAGE(ll_minimal, "SPEKernel: Profiler mail received");
+                                        spe_out_mbox_read(spe->context(), &value, 1);
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: Value: " +
+                                                stringify(value));
+                                    }
+                                    continue;
 
-                                    ProfilerMessage(function, stringify(lsa), decrementer);
-                                }
-                                continue;
+                                case km_profiler:
+                                    static const std::string function("spe-function");
+                                    {
+                                        Lock ll(*imp->mutex);
 
+                                        LocalStoreAddress lsa;
+                                        unsigned decrementer;
+                                        spe_out_mbox_read(spe->context(), &lsa.value, 1);
+                                        spe_out_mbox_read(spe->context(), &decrementer, 1);
+
+                                        LOGMESSAGE(ll_minimal, "SPEKernel: Profiler mail received");
+
+                                        ProfilerMessage(function, stringify(lsa), decrementer);
+                                    }
+                                    continue;
+
+                            }
+
+                            throw InternalError("Unexpected mail received in interrupt mailbox!");
+                        } while (false);
+                    }
+
+                    if (e->events & SPE_EVENT_SPE_STOPPED)
+                    {
+                        LOGMESSAGE(ll_minimal, "SPEKernel: SPE stopped and signaled");
+                        Lock ll(*imp->mutex);
+
+                        for (unsigned i(0), i_end(8) ; i != i_end ; ++i)
+                        {
+                            if (imp->spe_instructions[i])
+                                imp->spe_instructions[i]->set_finished();
                         }
 
-                        throw InternalError("Unexpected mail received in interrupt mailbox!");
-                    } while (false);
-                }
-                else if (e->events & SPE_EVENT_SPE_STOPPED)
-                {
-                    LOGMESSAGE(ll_minimal, "SPEKernel: SPE stopped and signaled");
-                    Lock ll(*imp->mutex);
+                        imp->instruction_finished->broadcast();
 
-                    LOGMESSAGE(ll_minimal, "SPEKernel: Number of pending INTR mails is '" + stringify(spe_out_intr_mbox_status(spe->context())) + "'");
-                    imp->finished_counter = imp->enqueued_counter + 1;
-
-                    imp->instruction_finished->broadcast();
-                    break;
+                        finished = true;
+                    }
                 }
                 else
                 {
                     LOGMESSAGE(ll_minimal, "SPEKernel: Neither mail event nor stop event");
                 }
-            } while (true);
+            } while (! finished);
 
             LOGMESSAGE(ll_minimal, "SPEKernel: Kernelthread stopped");
             pthread_exit(0);
@@ -370,7 +386,6 @@ namespace honei
             spe_instruction_index(0),
             next_free_index(0),
             enqueued_counter(0),
-            finished_counter(0),
             initial_instructions(false),
             mutex(new Mutex),
             kernel_loaded(new SyncPoint(2)),
@@ -382,6 +397,8 @@ namespace honei
         {
             Lock l(*mutex);
             int retval(0);
+            for (unsigned i(0) ; i < 8 ; ++i)
+                spe_instructions[i] = 0;
 
             if (0 != posix_memalign(reinterpret_cast<void **>(&instructions), 128, 8 * sizeof(Instruction))) /// \todo remove hardcoded numbers
                 throw std::bad_alloc(); /// \todo exception hierarchy
@@ -397,7 +414,7 @@ namespace honei
             if (0 != (retval = pthread_attr_setdetachstate(attr, PTHREAD_CREATE_JOINABLE)))
                 throw PThreadError("pthread_attr_setdetachstate", retval);
 
-            if (0 != (retval = pthread_create(thread, 0, &kernel_thread, this)))
+            if (0 != (retval = pthread_create(thread, attr, &kernel_thread, this)))
                 throw PThreadError("pthread_create failed", retval);
 
             Instruction noop = { oc_noop };
@@ -408,7 +425,6 @@ namespace honei
                 supported_opcodes.insert(info.capabilities.opcodes[i]);
             }
 
-
             last_finished.take();
         }
 
@@ -418,13 +434,14 @@ namespace honei
 
             LOGMESSAGE(ll_minimal, "SPEKernel: Destroying SPEKernel");
             {
-                Lock l(*mutex);
+                //Lock l(*mutex);
                 int retval(0);
 
                 if (0 != (retval = pthread_join(*thread, 0)))
                 {
                     throw PThreadError("pthread_join", retval);
                 }
+
 
                 free(instructions);
                 free(environment);
@@ -448,6 +465,10 @@ namespace honei
     {
     }
 
+    SPEKernel::~SPEKernel()
+    {
+    }
+
     SPEKernel::OpCodeIterator
     SPEKernel::begin_supported_opcodes() const
     {
@@ -464,20 +485,33 @@ namespace honei
         return OpCodeIterator(_imp->supported_opcodes.end());
     }
 
-    unsigned
+    void
     SPEKernel::enqueue(const SPEInstruction & instruction)
     {
         CONTEXT("When enqueueing instruction to SPE #" + ((_imp->spe) ? stringify(_imp->spe->id()) : std::string("(anonymous)")));
-        Lock l(*_imp->mutex);
-        unsigned result;
+        LOGMESSAGE(ll_minimal, std::string("Enqueing SPEInstruction, opcode = " + stringify(instruction.instruction().opcode)
+                    + ", size = " + stringify(instruction.instruction().size) + "\na = " + stringify(instruction.instruction().a.ea)
+                    + ", b = " + stringify(instruction.instruction().b.ea) + "\nc = " + stringify(instruction.instruction().c.ea)
+                    + ", d = " + stringify(instruction.instruction().d.ea) + "\ne = " + stringify(instruction.instruction().e.ea)
+                    + ", f = " + stringify(instruction.instruction().f.ea) + "\ng = " + stringify(instruction.instruction().g.ea)
+                    + ", h = " + stringify(instruction.instruction().h.ea) + "\ni = " + stringify(instruction.instruction().i.ea)
+                    + ", j = " + stringify(instruction.instruction().j.ea) + "\nk = " + stringify(instruction.instruction().k.ea)
+                    + ", l = " + stringify(instruction.instruction().l.ea) + "\nm = " + stringify(instruction.instruction().m.ea)
+                    + ", n = " + stringify(instruction.instruction().n.ea) + "\no = " + stringify(instruction.instruction().o.ea)
+                    + "\n"));
+       Lock l(*_imp->mutex);
 
         while (_imp->spe_instruction_index == (_imp->next_free_index + 1) % 8) /// \todo remove hardcoded numbers
         {
             _imp->instruction_finished->wait(*_imp->mutex);
         }
 
+        if (_imp->spe_instructions[_imp->next_free_index])
+            delete _imp->spe_instructions[_imp->next_free_index];
+
+        _imp->spe_instructions[_imp->next_free_index] = new SPEInstruction(instruction);
         _imp->instructions[_imp->next_free_index] = instruction.instruction();
-        result = _imp->enqueued_counter;
+
         ++_imp->next_free_index;
         ++_imp->enqueued_counter;
         _imp->next_free_index %= 8; /// \todo remove hardcoded numbers
@@ -491,29 +525,6 @@ namespace honei
         {
             _imp->initial_instructions = true;
         }
-
-        return result;
-    }
-
-    void
-    SPEKernel::wait(unsigned instruction_index) const
-    {
-        CONTEXT("When waiting until instruction '" + stringify(instruction_index) + "' has finished:");
-        Lock l(*_imp->mutex);
-
-        while (instruction_index >= _imp->finished_counter)
-        {
-            _imp->instruction_finished->wait(*_imp->mutex);
-        }
-    }
-
-    bool
-    SPEKernel::finished(unsigned instruction_index) const
-    {
-        CONTEXT("When looking up an instruction status");
-        Lock l(*_imp->mutex);
-
-        return (instruction_index < _imp->finished_counter);
     }
 
     void
@@ -604,6 +615,10 @@ namespace honei
             _imp->instruction_finished->wait(*_imp->mutex);
         }
 
+        if (_imp->spe_instructions[_imp->next_free_index])
+            delete _imp->spe_instructions[_imp->next_free_index];
+
+        _imp->spe_instructions[_imp->next_free_index] = new SPEInstruction(instruction);
         _imp->instructions[_imp->next_free_index] = instruction.instruction();
         result = _imp->enqueued_counter;
         ++_imp->next_free_index;
