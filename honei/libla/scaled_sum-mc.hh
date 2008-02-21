@@ -29,11 +29,9 @@ namespace honei
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DT]", 1024));
-            unsigned long max_count(Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DT]",
-                                        Configuration::instance()->get_value("mc::number-of-threads", 2)));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DT]::min-part-size", 1024));
 
-            if(a.size() < 2 * min_part_size)
+            if (a.size() < 2 * min_part_size)
             {
                 ScaledSum<typename Tag_::DelegateTo>::value(a, b, c);
             }
@@ -41,7 +39,9 @@ namespace honei
             {
                 PartitionList partitions;
 
-                Partitioner<tags::CPU::MultiCore>(max_count,
+                Partitioner<tags::CPU::MultiCore>(
+                        Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DT]::max-count",
+                            Configuration::instance()->get_value("mc::number-of-threads", 2)),
                         min_part_size, 16, a.size(), PartitionList::Filler(partitions));
 
                 for (PartitionList::ConstIterator p(partitions.begin()),
@@ -77,11 +77,9 @@ namespace honei
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DVCB]", 1024));
-            unsigned long max_count(Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DVCB]",
-                                        Configuration::instance()->get_value("mc::number-of-threads", 2)));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DVCB]::min-part-size", 1024));
 
-            if(a.size() < 2 * min_part_size)
+            if (a.size() < 2 * min_part_size)
             {
                 ScaledSum<typename Tag_::DelegateTo>::value(a, b, c);
             }
@@ -89,7 +87,9 @@ namespace honei
             {
                 PartitionList partitions;
 
-                Partitioner<tags::CPU::MultiCore>(max_count,
+                Partitioner<tags::CPU::MultiCore>(
+                        Configuration::instance()->get_value("mc::scaled-sum[DVCB,DVCB,DVCB]::max-count",
+                            Configuration::instance()->get_value("mc::number-of-threads", 2)),
                         min_part_size, 16, a.size(), PartitionList::Filler(partitions));
 
                 for (PartitionList::ConstIterator p(partitions.begin()),
