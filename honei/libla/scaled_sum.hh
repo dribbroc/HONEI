@@ -22,6 +22,7 @@
 
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/dense_vector.hh>
+#include <honei/libla/scaled_sum-mc.hh>
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/vector_error.hh>
 #include <honei/libutil/tags.hh>
@@ -323,6 +324,10 @@ namespace honei
 
         /// \}
     };
+
+    template <> struct ScaledSum<tags::CPU::MultiCore> : public MCScaledSum<tags::CPU::MultiCore> {};
+
+    template <> struct ScaledSum<tags::CPU::MultiCore::SSE> : public MCScaledSum<tags::CPU::MultiCore::SSE> {};
 
 }
 #endif

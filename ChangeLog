@@ -5,6 +5,15 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-21 Volker Jung <volker.jung@honei.org>
+
+	* honei/honeirc, honei/libla/scaled_sum_BENCHMARK.cc,
+	honei/libla/scaled_sum.hh, honei/libla/scaled_sum-mc.hh,
+	honei/libla/scaled_sum_TEST.cc: Added implementation of ScaledSum for
+	MultiCore and MultiCore-SSE (versions (DVCB, DVCB, Scalar) and (DVCB,
+	DVCB, DVCB) only).
+
+
 2008-02-20 Markus Geveler <apryde@gmx.de>
 
 	* honei/libla/product_BENCHMARK.cc:
