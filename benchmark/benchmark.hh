@@ -49,7 +49,7 @@ class Benchmark
         /// generates a benchmark output with FLOPS and data transfer rate information.
         void evaluate(BenchmarkInfo info);
 
-        void evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<int> cores, int count);
+        void evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<std::string> cores, int count);
 
         /// Register our target platform.
         virtual void register_tag(std::string tag_name);

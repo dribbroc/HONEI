@@ -130,6 +130,7 @@ sel-benchs:
 	$(top_builddir)/honei/libswe/selected_benchmarks plot
 	gnuplot *.plt
 	pdflatex -shell-escape RecentPlots.tex
+	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt
 	rm PlotOut_*.pdf
 

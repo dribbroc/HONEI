@@ -43,11 +43,11 @@ class RelaxSolverBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long counter(10) ; counter <= _count ; counter+=10)
             {
                 unsigned long _size(counter);
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 ulint dwidth = _size;
                 ulint dheight = _size;
 

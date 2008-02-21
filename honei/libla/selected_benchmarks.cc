@@ -32,10 +32,10 @@ class DenseVectorRTSBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 DenseVector<DT_> dv((j + 1) * 131072, DT_(rand()));
                 for(int i(0) ; i < 20 ; ++i)
                 {
@@ -90,10 +90,10 @@ class DenseVectorDotProductBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
                 for(int i(0) ; i < 20 ; ++i)
@@ -149,10 +149,10 @@ class DenseVectorSumBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
                 for(int i(0) ; i < 20 ; ++i)
@@ -208,10 +208,10 @@ class DenseVectorScaledSumBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
                 DT_ alpha(rand());
@@ -267,10 +267,10 @@ class DMDVProductBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
                 DenseMatrix<DT_> dm((j + 1) * 64, (j + 1) * 64, DT_(rand()));
                 for(int i(0) ; i < 20 ; ++i)
@@ -326,10 +326,10 @@ class DenseMatrixProductBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 DenseMatrix<DT_> dm0((j + 1) * 32, (j + 1) * 32, DT_(rand()));
                 DenseMatrix<DT_> dm1((j + 1) * 32, (j + 1) * 32, DT_(rand()));
                 for(int i(0) ; i < 20 ; ++i)
@@ -385,10 +385,10 @@ class BMDVProductBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
                 BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
@@ -449,10 +449,10 @@ class BMDVQ1ProductBench :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             for (unsigned long j(0) ; j < _count ; ++j)
             {
-                cores.push_back(1);
+                cores.push_back(Tag_::name);
                 unsigned long _size((j+1) * 8192);
                 DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));

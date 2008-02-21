@@ -298,13 +298,14 @@ class DenseVectorSumBenchTestPlot :
         {
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
-            std::list<int> cores;
+            std::list<std::string> cores;
             // increasing sizes
+            // generating 2D plots: operand size vs. time and operand size vs. FLOPS
             if (_x == 0)
             {
                 for (unsigned long j(1) ; j < 51 ; ++j)
                 {
-                    cores.push_back(1);
+                    cores.push_back(Tag_::name);
                     DenseVector<DT_> dv0(j * 200000, DT_(rand()));
                     DenseVector<DT_> dv1(j * 200000, DT_(rand()));
                     for(int i(0) ; i < 20 ; ++i)
@@ -317,12 +318,13 @@ class DenseVectorSumBenchTestPlot :
                 }
             }
             // increasing maximum number of parts
+            // generating 2D plots: "cores" vs. time and "cores" vs. FLOPS
             if (_x == 1)
             {
                 for (unsigned long j(1) ; j < 21 ; ++j)
                 {
                     Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", j);
-                    cores.push_back(j);
+                    cores.push_back(stringify(j));
                     DenseVector<DT_> dv0(5000000, DT_(rand()));
                     DenseVector<DT_> dv1(5000000, DT_(rand()));
 
@@ -336,16 +338,20 @@ class DenseVectorSumBenchTestPlot :
                 }
             }
             // increasing maximum number of parts and sizes
+            // generating 3D-plots: cores vs. operand size vs time
+            // and cores vs. operand size vs. FLOPS
+            // ("cores" increased with the inner loop variable!)
             if (_x == 2)
             {
+                int temp(Configuration::instance()->get_value("mc::sum[DVCB,DVCB]::max-count", 2));
                 for (unsigned long j(1) ; j < 21 ; ++j)
                 {
                     for (unsigned long k(1) ; k < 21 ; ++k)
                     {
-                        Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", j);
-                        cores.push_back(j);
-                        DenseVector<DT_> dv0(k * 100000, DT_(rand()));
-                        DenseVector<DT_> dv1(k * 100000, DT_(rand()));
+                        Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", k);
+                        cores.push_back(stringify(k));
+                        DenseVector<DT_> dv0(j * 100000, DT_(rand()));
+                        DenseVector<DT_> dv1(j * 100000, DT_(rand()));
     
                         for(int i(0) ; i < 20 ; ++i)
                         {
@@ -356,13 +362,123 @@ class DenseVectorSumBenchTestPlot :
                         std::cout << "finished run " << (j-1)*20 + k << " / " << 400 << std::endl;
                     }
                 }
+                Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", temp);
             }
-
+            // increasing maximum number of parts and sizes
+            // generating 2D plots: operand size vs. time and operand size vs. FLOPS
+            // with multiple plots per diagram
+            // ("cores" increased with the outer loop variable!)
+            if (_x == 3)
+            {
+                int temp(Configuration::instance()->get_value("mc::sum[DVCB,DVCB]::max-count", 2));
+                for (unsigned long j(1) ; j < 5 ; ++j)
+                {
+                    for (unsigned long k(1) ; k < 21 ; ++k)
+                    {
+                        Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", j);
+                        cores.push_back(Tag_::name + "-" + stringify(j) + "parts");
+                        DenseVector<DT_> dv0(k * 100000, DT_(rand()));
+                        DenseVector<DT_> dv1(k * 100000, DT_(rand()));
+    
+                        for(int i(0) ; i < 20 ; ++i)
+                        {
+                            BENCHMARK(Sum<Tag_>::value(dv0, dv1));
+                        }
+                        info = Sum<>::get_benchmark_info(dv0, dv1);
+                        infolist.push_back(info);
+                        std::cout << "finished run " << (j-1)*20 + k << " / " << 80 << std::endl;
+                    }
+                }
+                Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", temp);
+            }
+            // increasing sizes and parts
+            // generating 2D plots: operand size vs. time and operand size vs. FLOPS
+            // with multiple plots per diagram
+            if (_x == 4)
+            {
+                // mc::sse
+                int temp(Configuration::instance()->get_value("mc::sum[DVCB,DVCB]::max-count", 2));
+                for (unsigned long j(1) ; j < 5 ; ++j)
+                {
+                    for (unsigned long k(1) ; k < 21 ; ++k)
+                    {
+                        Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", j);
+                        cores.push_back(Tag_::name + "-" + stringify(j) + "parts");
+                        DenseVector<DT_> dv0(k * 100000, DT_(rand()));
+                        DenseVector<DT_> dv1(k * 100000, DT_(rand()));
+    
+                        for(int i(0) ; i < 20 ; ++i)
+                        {
+                            BENCHMARK(Sum<Tag_>::value(dv0, dv1));
+                        }
+                        info = Sum<>::get_benchmark_info(dv0, dv1);
+                        infolist.push_back(info);
+                        std::cout << "finished run " << (j-1)*20 + k << " / " << 100 << std::endl;
+                    }
+                }
+                Configuration::instance()->set_value("mc::sum[DVCB,DVCB]::max-count", temp);
+                // sse
+                for (unsigned long k(1) ; k < 21 ; ++k)
+                {
+                    cores.push_back(Tag_::DelegateTo::name);
+                    DenseVector<DT_> dv0(k * 100000, DT_(rand()));
+                    DenseVector<DT_> dv1(k * 100000, DT_(rand()));
+    
+                    for(int i(0) ; i < 20 ; ++i)
+                    {
+                        BENCHMARK(Sum<typename Tag_::DelegateTo>::value(dv0, dv1));
+                    }
+                    info = Sum<>::get_benchmark_info(dv0, dv1);
+                    infolist.push_back(info);
+                    std::cout << "finished run " << 80 + k << " / " << 100 << std::endl;
+                }
+            }
+            // increasing sizes
+            // generating 2D plots: operand size vs. time and operand size vs. FLOPS
+            // with placeholder for more data
+            // (you need to paste the data manually into BenchmarkPlotData and RecentPlots.tex
+            // look for [PDH] - paste data here)
+            if (_x == 5)
+            {
+                // mc::sse
+                for (unsigned long k(1) ; k < 51 ; ++k)
+                {
+                    cores.push_back(Tag_::name);
+                    DenseVector<DT_> dv0(k * 200000, DT_(rand()));
+                    DenseVector<DT_> dv1(k * 200000, DT_(rand()));
+    
+                    for(int i(0) ; i < 20 ; ++i)
+                    {
+                        BENCHMARK(Sum<Tag_>::value(dv0, dv1));
+                    }
+                    info = Sum<>::get_benchmark_info(dv0, dv1);
+                    infolist.push_back(info);
+                    std::cout << "finished run " << k << " / " << 100 << std::endl;
+                }
+                // sse
+                for (unsigned long k(1) ; k < 51 ; ++k)
+                {
+                    cores.push_back(Tag_::DelegateTo::name);
+                    DenseVector<DT_> dv0(k * 200000, DT_(rand()));
+                    DenseVector<DT_> dv1(k * 200000, DT_(rand()));
+    
+                    for(int i(0) ; i < 20 ; ++i)
+                    {
+                        BENCHMARK(Sum<typename Tag_::DelegateTo>::value(dv0, dv1));
+                    }
+                    info = Sum<>::get_benchmark_info(dv0, dv1);
+                    infolist.push_back(info);
+                    std::cout << "finished run " << 50 + k << " / " << 100 << std::endl;
+                }
+                // cell placeholder
+                cores.push_back("cell");
+            }
             evaluate_to_plotfile(infolist, cores, 20);
         }
 };
-DenseVectorSumBenchTestPlot<double, tags::CPU> DVSBTP("Dense Vector Sum Benchmark - vector size: x * 200.000, 0<x<51 - double", 0);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore> MCDVSBTP("MC: Dense Vector Sum Benchmark - vector size: x * 200.000, 0<x<51 - double", 0);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore> MCDVSBTP1("MC: Dense Vector Sum Benchmark - vector size: 5.000.000, 1 - 20 parts - double", 1);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore> MCDVSBTP2("MC: Dense Vector Sum Benchmark - vector size: x * 100.000, 0<x<21, 1 - 20 parts - double", 2);
-
+DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP("MC::SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 0);
+DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP1("MC::SSE Dense Vector Sum Benchmark - vector size: 5.000.000 - parts: 1 to 20 - double", 1);
+DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP2("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 20 - double", 2);
+DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP3("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 4 - double", 3);
+DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP4("MC::SSE and SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 4);
+DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP5("MC::SSE, SSE and CELL Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 5);

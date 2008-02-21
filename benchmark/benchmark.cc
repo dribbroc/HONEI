@@ -210,25 +210,38 @@ void Benchmark::evaluate(BenchmarkInfo info)
     }
 }
 
-void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<int> cores, int count)
+void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<std::string> cores, int count)
 {
     std::list<double> BenchlistCopy;
     BenchlistCopy = _benchlist;
     list<double>::iterator blc = BenchlistCopy.begin();
     list<BenchmarkInfo>::iterator j = info.begin();
     int sizes(0);
-    int nr(1);
+    int nr(1), cnr(1);
+    std::string temp;
     time_t t;
     time(&t);
+    if ((cores.size() > 1) && (*(cores.begin()) == *(++cores.begin())) && (*(cores.begin()) != *(--cores.begin())))
+    {
+        temp = *cores.begin();
+        for (std::list<std::string>::iterator i = cores.begin() ; temp != *(--cores.end()) ; ++i)
+        {
+            if (temp != *i)
+            {
+                ++cnr;
+                temp = *i;
+            }
+        }
+    }
     ifstream ifs("BenchmarkPlotData", ifstream::in);
     if (ifs.is_open())
     {
         ifs.ignore(1, '#');
         ifs >> nr;
-        ++nr;
+        nr += cnr;
     }
     ifs.close();
-    if (nr == 1)
+    if (nr == cnr)
     {
         ofstream ofs1("BenchmarkPlotData", ios_base::out);
             ofs1 << "#1\n";
@@ -241,13 +254,15 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
         ofs1.close();
     }
     ofstream ofs3("RecentPlots.tex", ios_base::app);
-    ofs3 << "\t\\begin{table}[H]\n";
-    ofs3 << "\t\\caption{" << _id << "}\n";
-    ofs3 << "\t\\centering\n";
-    ofs3 << "\t\\begin{tabular}{c c c c c}\n"; 
-    ofs3 << "\t\t\\hline\\hline\n";
+    ofs3 << "\\section{" << _id << "}\n";
+    ofs3 << "\t\\begin{center}\n";
+    ofs3 << "\t\\begin{longtable}{c c c c c}\n";
     ofs3 << "\t\tX & operand size & median runtime & median MFLOPS & median transferrate\\\\ [0.5ex]\n";
     ofs3 << "\t\t\\hline\n";
+    ofs3 << "\t\t\\endfirsthead\n";
+    ofs3 << "\t\tX & operand size & median runtime & median MFLOPS & median transferrate\\\\ [0.5ex]\n";
+    ofs3 << "\t\t\\hline\n";
+    ofs3 << "\t\t\\endhead\n";
     ofstream ofs("BenchmarkPlotData", ios_base::out | ios_base::app);
     if (!ofs)
         cout << "Can't write to file!" << endl;
@@ -265,26 +280,44 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
             }
         }
         ofs << "median MFLOPS\tmedian MB/s\tmin runtime\tmax runtime\tmean runtime\tmedian runtime\tmean MFLOPS\tmean MB/s\tlist of all runtimes";
-        for(list<int>::iterator i = cores.begin() ; i != cores.end() ; ++i, ++j)
+        if (cnr > 1)
+            temp = *cores.begin();
+        for(std::list<std::string>::iterator i = cores.begin() ; i != cores.end() ; ++i)
         {
-            ofs << "\n" << std::setw(6) << *i << "\t";
-            if (!((j->size).empty()))
-                for(list<unsigned long>::iterator si((j->size).begin()) ; si != (j->size).end() ; ++si)
-                {
-                    ofs << std::setw(14) << *si << "\t";
-                } 
-            _benchlist.clear();
-            for(int k(0) ; k < count ;  ++k)
+            if ((cnr > 1) && (temp != *i))
             {
-                _benchlist.push_back(*blc);
-                ++blc;
+                ofs << "\n\n";
+                temp = *i;
             }
-            calculate(*j);
-            ofs3 << "\t\t" << *i << " & " << (j->size).front() << " & " << _median << " & " << _medianf << " & " << _mediantp << " \\\\\n";
-            ofs << std::setw(13) << _medianf << "\t" << std::setw(11) << _mediantp << "\t" << std::setw(11) << _min << "\t" << std::setw(11) << _max << "\t" << std::setw(12) << _avg << "\t" << std::setw(14) << _median << "\t" << std::setw(11) << _f << "\t" << std::setw(9) << _tp;
-            for (list<double>::iterator bl = _benchlist.begin() ; bl != _benchlist.end() ; ++bl)
+            if (j != info.end())
             {
-               ofs << "\t" << std::setw(8) << *bl;
+                ofs << "\n" << std::setw(6) << *i << "\t";
+                if (!((j->size).empty()))
+                    for(list<unsigned long>::iterator si((j->size).begin()) ; si != (j->size).end() ; ++si)
+                    {
+                        ofs << std::setw(14) << *si << "\t";
+                    }
+                _benchlist.clear();
+                for(int k(0) ; k < count ;  ++k)
+                {
+                    _benchlist.push_back(*blc);
+                    ++blc;
+                }
+                calculate(*j);
+                ofs3 << "\t\t" << *i << " & " << (j->size).front() << " & " << _median << " & " << _medianf << " & " << _mediantp << " \\\\\n";
+                ofs << std::setw(13) << _medianf << "\t" << std::setw(11) << _mediantp << "\t" << std::setw(11) << _min << "\t" << std::setw(11) << _max << "\t" << std::setw(12) << _avg << "\t" << std::setw(14) << _median << "\t" << std::setw(11) << _f << "\t" << std::setw(9) << _tp;
+                for (list<double>::iterator bl = _benchlist.begin() ; bl != _benchlist.end() ; ++bl)
+                {
+                    ofs << "\t" << std::setw(8) << *bl;
+                }
+                ++j;
+            }
+            else
+            {
+                ofs3 << "% [PDH] paste " << *i << " data here.\n";
+                ofs3 << "\t\t" << *i << " & " << 0 << " & " << 0 << " & " << 0 << " & " << 0 << " \\\\\n";
+                ofs << "\n# [PDH] paste " << *i << " data here.\n";
+                ofs << std::setw(13) << 0 << "\t" << std::setw(11) << 0 << "\t" << std::setw(11) << 0 << "\t" << std::setw(11) << 0 << "\t" << std::setw(12) << 0 << "\t" << std::setw(14) << 0 << "\t" << std::setw(11) << 0 << "\t" << std::setw(9) << 0;
             }
         }
         ofs << "\n\n\n";
@@ -296,10 +329,11 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
     std::string filename(std::string("PlotOut_") + ctime(&t));
     while ((pos=filename.find(" "))!=-1) filename.replace(pos, 1, "_");
     while ((pos=filename.find(":"))!=-1) filename.replace(pos, 1, "_");
-    std::string eps1name(filename), eps2name(filename);
+    std::string eps1name(filename), eps2name(filename), eps3name(filename);
     filename.replace(32, 1, ".plt");
     eps1name.replace(32, 1, ".eps");
     eps2name.replace(32, 1, "_2.eps");
+    eps3name.replace(32, 1, "_3.eps");
     ofstream ofs2(filename.c_str(), ios_base::out);
     if (plotsvx && not plotcvx)
     {
@@ -308,6 +342,8 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
         ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 7+sizes << " t \"median runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 5+sizes << " t \"max runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 4+sizes << " t \"min runtime\" with linespoints\n";
         ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
         ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 2+sizes << " t \"median FLOPS\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 8+sizes << " t \"mean FLOPS\" with linespoints\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MB/s\"\nset output \"" << eps3name << "\"\n";
+        ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 3+sizes << " t \"median transfer rate\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 2:" << 9+sizes << " t \"mean transfer rate\" with linespoints\n";
     }
     else if (plotcvx && not plotsvx)
     {
@@ -316,36 +352,81 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
         ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 7+sizes << " t \"median runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 5+sizes << " t \"max runtime\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 4+sizes << " t \"min runtime\" with linespoints\n";
         ofs2 << "set title \"" << _id << "\"\nset xlabel \"number of parts\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
         ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 2+sizes << " t \"median FLOPS\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 8+sizes << " t \"mean FLOPS\" with linespoints\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"number of parts\"\nset ylabel \"MB/s\"\nset output \"" << eps3name << "\"\n";
+        ofs2 << "plot \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 3+sizes << " t \"median transfer rate\" with linespoints, \"BenchmarkPlotData\" index " << nr-1 << " using 1:" << 9+sizes << " t \"mean transfer rate\" with linespoints\n";
     }
-    else if (plotcvx && plotsvx)
+    else if (plotcvx && plotsvx && (cnr == 1))
     {
         int xv(1), yv(1);
-        list<int>::iterator ci = cores.begin();
-        int st = *ci;
+        std::list<std::string>::iterator ci = cores.begin();
+        std::string st = *ci;
         ++ci;
-        if (st != *ci)
+        while (st != *ci)
         {
-            while (st != *ci)
-            {
-                ++xv;
-                ++ci;
-            }
-            yv = int(cores.size() / xv);
+            ++xv;
+            ++ci;
         }
-        else
-        {
-            while (st == *ci)
-            {
-                ++yv;
-                ++ci;
-            }
-            xv = int(cores.size() / yv);
-        }
+        yv = int(cores.size() / xv);
         ofs2 << "set terminal postscript eps color\nset key below\nset contour base\nset surface\nset dgrid3d " << yv << "," << xv << ", \nshow contour\nset zrange [0:]\n";
         ofs2 << "set title \"" << _id << "\"\nset xlabel \"number of parts\"\nset ylabel \"Operand Size\"\nset zlabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
         ofs2 << "splot \"BenchmarkPlotData\" index " << nr-1 << " using 1:2:" << 7+sizes << " t \"median runtime\" with lines\n";
         ofs2 << "set title \"" << _id << "\"\nset zlabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
         ofs2 << "splot \"BenchmarkPlotData\" index " << nr-1 << " using 1:2:" << 2+sizes << " t \"median FLOPS\" with lines\n";
+        ofs2 << "set title \"" << _id << "\"\nset zlabel \"MB/s\"\nset output \"" << eps3name << "\"\n";
+        ofs2 << "splot \"BenchmarkPlotData\" index " << nr-1 << " using 1:2:" << 3+sizes << " t \"median transfer rate\" with lines\n";
+    }
+    else if (plotcvx && plotsvx && (cnr > 1))
+    {
+        temp = *cores.begin();
+        std::list<std::string>::iterator cit = cores.begin();
+        ofs2 << "set terminal postscript eps color\nset key below\nset yrange [0:]\n";
+        ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
+        for (int i(0) ; i < cnr ; ++i)
+        {
+            if (i != 0)
+            {
+                ofs2 << ", ";
+                while (temp == *cit)
+                    ++cit;
+                temp = *cit;
+            }
+            else
+                ofs2 << "plot ";
+            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 7+sizes << " t \"" + temp + " median runtime\" with linespoints";
+            
+        }
+        temp = *cores.begin();
+        cit = cores.begin();
+        ofs2 << "\nset title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
+        for (int i(0) ; i < cnr ; ++i)
+        {
+            if (i != 0)
+            {
+                ofs2 << ", ";
+                while (temp == *cit)
+                    ++cit;
+                temp = *cit;
+            }
+            else
+                ofs2 << "plot ";
+            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 2+sizes << " t \"" + temp + " median FLOPS\" with linespoints";
+        }
+        temp = *cores.begin();
+        cit = cores.begin();
+        ofs2 << "\nset title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MB/s\"\nset output \"" << eps3name << "\"\n";
+        for (int i(0) ; i < cnr ; ++i)
+        {
+            if (i != 0)
+            {
+                ofs2 << ", ";
+                while (temp == *cit)
+                    ++cit;
+                temp = *cit;
+            }
+            else
+                ofs2 << "plot ";
+            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 3+sizes << " t \"" + temp + " median transfer rate\" with linespoints";
+        }
     }
     else
     {
@@ -353,14 +434,17 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<in
     }
     ofs2.close();
     ofs3 << "\t\t\\hline\n";
-    ofs3 << "\t\\end{tabular}\n";
-    ofs3 << "\t\\end{table}\n";
+    ofs3 << "\t\\end{longtable}\n";
     ofs3 << "\t\\begin{figure}[H]\n";
-    ofs3 << "\t\\begin{center}\n";
     ofs3 << "\t\t\\includegraphics{" << eps1name << "}\n";
-    ofs3 << "\t\t\\includegraphics{" << eps2name << "}\n";
-    ofs3 << "\t\\end{center}\n";
     ofs3 << "\t\\end{figure}\n";
+    ofs3 << "\t\\begin{figure}[H]\n";
+    ofs3 << "\t\t\\includegraphics{" << eps2name << "}\n";
+    ofs3 << "\t\\end{figure}\n";
+    ofs3 << "\t\\begin{figure}[H]\n";
+    ofs3 << "\t\t\\includegraphics{" << eps3name << "}\n";
+    ofs3 << "\t\\end{figure}\n";
+    ofs3 << "\t\\end{center}\n";
     ofs3.close();
 }
 
@@ -542,11 +626,15 @@ int main(int argc, char** argv)
         time(&t);
         ofstream ofs("RecentPlots.tex", ios_base::out);
         ofs << "\\documentclass{report}\n";
-        ofs << "\\usepackage{fullpage}\n";
+//        ofs << "\\usepackage{fullpage}\n";
         ofs << "\\usepackage{epsfig}\n";
         ofs << "\\usepackage{epstopdf}\n";
         ofs << "\\usepackage{float}\n";
+        ofs << "\\usepackage{hyperref}\n";
+        ofs << "\\usepackage{longtable}\n";
         ofs << "\\begin{document}\n";
+        ofs << "\\tableofcontents\n";
+        ofs << "\\newpage\n";
         ofs << "\t\\pagestyle{myheadings}\n"; 
         ofs << "\t\\markboth{}{" << ctime(&t) << "}\n";
         ofs.close();

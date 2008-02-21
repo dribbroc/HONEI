@@ -138,6 +138,7 @@ bench-pdf:
 	$(top_builddir)/honei/libla/benchmark i plot
 	gnuplot *.plt
 	pdflatex -shell-escape RecentPlots.tex
+	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt
 	rm PlotOut_*.pdf
 
@@ -145,6 +146,7 @@ sel-benchs:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
 	$(top_builddir)/honei/libla/selected_benchmarks plot
 	gnuplot *.plt
+	pdflatex -shell-escape RecentPlots.tex
 	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt
 	rm PlotOut_*.pdf
