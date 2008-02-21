@@ -3,42 +3,60 @@
 # default values.
 
 # Profiler
-#profiler::output = ~/honei.profile
+##########
+profiler::output = /dev/null
 
 # Cell
+######
 
-# Number of SPEs
+# Number of usable SPEs
 cell::number-of-spes = 5
 
+# Number of used SPEs on a per-operation base
 cell::sum_dense_dense_float = 4
 cell::sum_dense_dense_double = 4
+
 cell::sum_dense_scalar_float = 4
 cell::sum_dense_scalar_double = 4
+
 cell::difference_dense_dense_float = 4
 cell::difference_dense_dense_double = 4
+
 cell::dot_product_dense_dense_float = 4
 cell::dot_product_dense_dense_double = 4
+
 cell::element_product_dense_dense_float = 4
 cell::element_product_dense_dense_double = 4
+
 cell::scaled_sum_dense_dense_float = 4
 cell::scaled_sum_dense_dense_double = 4
+
 cell::scale_dense_float = 4
 cell::scale_dense_double = 4
+
 cell::element_inverse_float = 4
+
 cell::norm_l_two_dense_float = 4
 cell::norm_l_two_dense_double = 4
 cell::norm_l_one_dense_float = 4
 cell::norm_l_one_dense_double = 4
+
 cell::reduction_sum_dense_float = 4
 cell::reduction_sum_dense_double = 4
+
 cell::product_dense_matrix_dense_vector_float = 4
 
+
 # MultiCore
+###########
+
+# Number of cores on the CPU's die
 mc::num-cores = 2
 
+# Number of concurrent threads
 mc::number-of-threads = 2
 
-
+# Partition size and partition count settings on a per-operation base
 mc::difference[DVCB,DVCB]::min-part-size = 16
 mc::difference[DVCB,DVCB]::max-count = 2
 
