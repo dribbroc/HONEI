@@ -118,10 +118,15 @@ class DenseVectorSumBench :
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
             for(int i(0) ; i < _count; ++i)
             {
-                BENCHMARK(Sum<Tag_>::value(dv0, dv1));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        {
+                        Sum<Tag_>::value(dv0, dv1);
+                        }
+                        );
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info(dv0, dv1));
-            evaluate(info);
+            evaluate(info * 10);
         }
 };
 DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
@@ -129,15 +134,15 @@ DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchma
 DenseVectorSumBench<tags::CPU::MultiCore, float> MCDVSBenchfloat1("MC Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorSumBench<tags::CPU::MultiCore, double> MCDVSBenchdouble1("MC Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
-DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
-DenseVectorSumBench<tags::CPU::SSE, double> SSEDVSBenchdouble1("SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
-DenseVectorSumBench<tags::CPU::MultiCore::SSE, float> MCSSEDVSBenchfloat1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
-DenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSEDVSBenchdouble1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 50);
+DenseVectorSumBench<tags::CPU::SSE, double> SSEDVSBenchdouble1("SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 50);
+DenseVectorSumBench<tags::CPU::MultiCore::SSE, float> MCSSEDVSBenchfloat1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 50);
+DenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSEDVSBenchdouble1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 50);
 #endif
 #ifdef HONEI_CELL
-DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul * 64 * 64 * 64, 10);
+DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul * 64 * 64 * 64, 50);
 DenseVectorSumBench<tags::Cell, double> dvs_bench_cell_double("Cell Dense Vector Sum Benchmark - vector size: 64^3 * 35, double",
-        64ul * 64 * 64 * 35, 10);
+        64ul * 64 * 64 * 35, 50);
 #endif
 
 template <typename Tag_, typename DataType_>

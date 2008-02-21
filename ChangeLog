@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-21 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libla/product_BENCHMARK.cc,
+	honei/libla/selected_benchmarks.cc, honei/libla/sum_BENCHMARK.cc:
+	Unrolled benched op calls.
+
 2008-02-21 Volker Jung <volker.jung@honei.org>
 
 	* honei/honeirc, honei/libla/scaled_sum_BENCHMARK.cc,

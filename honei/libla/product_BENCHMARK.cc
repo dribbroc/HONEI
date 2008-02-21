@@ -48,10 +48,15 @@ class Q1MatrixDenseVectorProductBench :
             DenseVector<DataType_> dv2(_size, DataType_(4));
             for (unsigned long i(0) ; i < _count ; i++)
             {
-                BENCHMARK(Product<Tag_>::value(bm1, dv2));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        {
+                            Product<Tag_>::value(bm1, dv2);
+                        }
+                        );
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
-            evaluate(info);
+            evaluate(info * 10);
         }
 };
 Q1MatrixDenseVectorProductBench<tags::CPU, float> Q1DVPBenchfloat("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 100);
@@ -59,14 +64,14 @@ Q1MatrixDenseVectorProductBench<tags::CPU, double> Q1DVPBenchdouble("Banded Matr
 Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore, float> MCQ1DVPBenchfloat("MC Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025*1025ul, 100);
 Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore, double> MCQ1DVPBenchdouble("MC Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^3, double", 1025ul*1025, 100);
 #ifdef HONEI_SSE
-Q1MatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEQ1DVPBenchfloat("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul*1025 , 100);
+Q1MatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEQ1DVPBenchfloat("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 100);
 Q1MatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEQ1DVPBenchdouble("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025 ,double", 1025ul*1025, 100);
 Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEQ1DVPBenchfloat("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025ul*1025, 100);
 Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEQ1DVPBenchdouble("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, double", 1025*1025, 100);
 #endif
 #ifdef HONEI_CELL
-Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^2, float", 64ul*64ul, 10);
-Q1MatrixDenseVectorProductBench<tags::Cell, double> CELLQ1DVPBenchdouble("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 64^2, double", 64ul*64ul, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 100);
+Q1MatrixDenseVectorProductBench<tags::Cell, double> CELLQ1DVPBenchdouble("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, double", 1025ul * 1025, 100);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -100,10 +105,15 @@ class BandedMatrixDenseVectorProductBench :
             DenseVector<DataType_> dv2(_size, DataType_(4));
             for (unsigned long i(0) ; i < _count ; i++)
             {
-                BENCHMARK(Product<Tag_>::value(bm1, dv2));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        {
+                            Product<Tag_>::value(bm1, dv2);
+                        }
+                        );
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
-            evaluate(info);
+            evaluate(info * 10);
         }
 };
 
@@ -112,10 +122,10 @@ BandedMatrixDenseVectorProductBench<tags::CPU, double> BMDVPBenchdouble("Banded 
 BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore, float> MCBMDVPBenchfloat("MC Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 100);
 BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore, double> MCBMDVPBenchdouble("MC Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64*64, 100);
 #ifdef HONEI_SSE
-BandedMatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEBMDVPBenchfloat("SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float",64ul*64*64, 1000);
-BandedMatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEBMDVPBenchdouble("SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 1000);
-BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEBMDVPBenchfloat("MC::SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 1000);
-BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEBMDVPBenchdouble("MC::SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 1000);
+BandedMatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEBMDVPBenchfloat("SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64, 100);
+BandedMatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEBMDVPBenchdouble("SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 100);
+BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEBMDVPBenchfloat("MC::SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 100);
+BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEBMDVPBenchdouble("MC::SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 100);
 #endif
 #ifdef HONEI_CELL
 BandedMatrixDenseVectorProductBench<tags::Cell, float> CELLBMDVPBenchfloat("CELL Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 100);
@@ -151,20 +161,25 @@ class BandedMatrixDenseVectorProductBenchRelax :
             DenseVector<DataType_> dv2(_size, DataType_(4));
             for (unsigned long i(0) ; i < _count ; i++)
             {
-                BENCHMARK(Product<Tag_>::value(bm1, dv2));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 30 ; ++j)
+                        {
+                            Product<Tag_>::value(bm1, dv2);
+                        }
+                        );
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
-            evaluate(info);
+            evaluate(info * 30);
         }
 };
 
 #ifdef HONEI_SSE
-BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, float> SSEBMDVPBenchfloatRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
-BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, double> SSEBMDVPBenchdoubleRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 10);
+BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, float> SSEBMDVPBenchfloatRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64*64, 100);
+BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, double> SSEBMDVPBenchdoubleRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 100);
 #endif
 #ifdef HONEI_CELL
-BandedMatrixDenseVectorProductBenchRelax<tags::Cell, float> CELLBMDVPBenchfloatRelax("CELL Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 10);
-BandedMatrixDenseVectorProductBenchRelax<tags::Cell, double> CELLBMDVPBenchdoubleRelax("CELL Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 10);
+BandedMatrixDenseVectorProductBenchRelax<tags::Cell, float> CELLBMDVPBenchfloatRelax("CELL Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 100);
+BandedMatrixDenseVectorProductBenchRelax<tags::Cell, double> CELLBMDVPBenchdoubleRelax("CELL Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 100);
 #endif
 
 template <typename Tag_, typename DataType_>
