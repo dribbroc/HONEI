@@ -931,7 +931,7 @@ namespace honei
             BenchmarkInfo result;
             DenseVector<DT1_> temp1(a.columns());
             DenseVector<DT2_> temp2(b.rows());
-            result = DotProduct<>::get_benchmark_info(temp1, temp2) * (a.rows() * a.columns());
+            result = DotProduct<>::get_benchmark_info(temp1, temp2) * (a.rows() * b.columns());
             result.size.clear();
             result.size.push_back(a.rows() * a.columns());
             result.size.push_back(b.rows() * b.columns());
