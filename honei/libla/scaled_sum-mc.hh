@@ -62,6 +62,8 @@ namespace honei
                     dispatched_tasks.pop_front();
                 }
             }
+
+            return a;
         }
 
         template <typename DT1_, typename DT2_>
@@ -112,6 +114,8 @@ namespace honei
                     dispatched_tasks.pop_front();
                 }
             }
+
+            return a;
         }
     };
 
