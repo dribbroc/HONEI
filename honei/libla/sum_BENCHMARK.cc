@@ -476,9 +476,11 @@ class DenseVectorSumBenchTestPlot :
             evaluate_to_plotfile(infolist, cores, 20);
         }
 };
+#ifdef HONEI_SSE
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP("MC::SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 0);
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP1("MC::SSE Dense Vector Sum Benchmark - vector size: 5.000.000 - parts: 1 to 20 - double", 1);
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP2("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 20 - double", 2);
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP3("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 4 - double", 3);
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP4("MC::SSE and SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 4);
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP5("MC::SSE, SSE and CELL Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 5);
+#endif
