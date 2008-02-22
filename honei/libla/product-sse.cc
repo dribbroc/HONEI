@@ -571,9 +571,9 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
     }
     else
     {
-        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
-            for (unsigned long i(0) ; i < a.rows() ; ++i)
+            for (unsigned long j(0) ; j < a.columns() ; ++j)
             {
                 honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i, j), b[j].size());
             }
@@ -601,9 +601,9 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
     }
     else
     {
-        for (unsigned long j(0) ; j < a.columns() ; ++j)
+        for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
-            for (unsigned long i(0) ; i < a.rows() ; ++i)
+            for (unsigned long j(0) ; j < a.columns() ; ++j)
             {
                 honei::intern::sse::product_dm(result[i].elements(), b[j].elements(), a(i, j), b[j].size());
             }

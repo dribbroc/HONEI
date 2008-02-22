@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/libla/product-sse.cc, honei/libla/selected_benchmarks.cc:
+	Adjusted dm*dm benchmark size.
+
+2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/libla/selected_benchmarks.cc:
 	Fixed dm*dm benchmark size to run on cell, too.
 

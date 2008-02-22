@@ -54,10 +54,10 @@ class DenseVectorRTSBench :
         }
 };
 #ifndef HONEI_CELL
-DenseVectorRTSBench<float, tags::CPU> DVRBF("SingleCore DenseVector Reduction to Sum Benchmark - float", 20);
-DenseVectorRTSBench<double, tags::CPU> DVRBD("SingleCore DenseVector Reduction to Sum Benchmark - double", 20);
-DenseVectorRTSBench<float, tags::CPU::MultiCore> DVRBMCF("MultiCore DenseVector Reduction to Sum Benchmark - float", 20);
-DenseVectorRTSBench<double, tags::CPU::MultiCore> DVRBMCD("MultiCore DenseVector Reduction to Sum Benchmark - double", 20);
+//DenseVectorRTSBench<float, tags::CPU> DVRBF("SingleCore DenseVector Reduction to Sum Benchmark - float", 20);
+//DenseVectorRTSBench<double, tags::CPU> DVRBD("SingleCore DenseVector Reduction to Sum Benchmark - double", 20);
+//DenseVectorRTSBench<float, tags::CPU::MultiCore> DVRBMCF("MultiCore DenseVector Reduction to Sum Benchmark - float", 20);
+//DenseVectorRTSBench<double, tags::CPU::MultiCore> DVRBMCD("MultiCore DenseVector Reduction to Sum Benchmark - double", 20);
 #ifdef HONEI_SSE
 DenseVectorRTSBench<float, tags::CPU::SSE> DVRBSSEF("SSE DenseVector Reduction to Sum Benchmark - float", 90);
 DenseVectorRTSBench<double, tags::CPU::SSE> DVRBSSED("SSE DenseVector Reduction to Sum Benchmark - double", 90);
@@ -113,10 +113,10 @@ class DenseVectorDotProductBench :
         }
 };
 #ifndef HONEI_CELL
-DenseVectorDotProductBench<float, tags::CPU> DVDPBF("SingleCore DenseVector DotProduct Benchmark - float", 20);
-DenseVectorDotProductBench<double, tags::CPU> DVDPBD("SingleCore DenseVector DotProduct Benchmark - double", 20);
-DenseVectorDotProductBench<float, tags::CPU::MultiCore> DVDPBMCF("MultiCore DenseVector DotProduct Benchmark - float", 20);
-DenseVectorDotProductBench<double, tags::CPU::MultiCore> DVDPBMCD("MultiCore DenseVector DotProduct Benchmark - double", 20);
+//DenseVectorDotProductBench<float, tags::CPU> DVDPBF("SingleCore DenseVector DotProduct Benchmark - float", 20);
+//DenseVectorDotProductBench<double, tags::CPU> DVDPBD("SingleCore DenseVector DotProduct Benchmark - double", 20);
+//DenseVectorDotProductBench<float, tags::CPU::MultiCore> DVDPBMCF("MultiCore DenseVector DotProduct Benchmark - float", 20);
+//DenseVectorDotProductBench<double, tags::CPU::MultiCore> DVDPBMCD("MultiCore DenseVector DotProduct Benchmark - double", 20);
 #ifdef HONEI_SSE
 DenseVectorDotProductBench<float, tags::CPU::SSE> DVDPBSSEF("SSE DenseVector DotProduct Benchmark - float", 90);
 DenseVectorDotProductBench<double, tags::CPU::SSE> DVDPBSSED("SSE DenseVector DotProduct Benchmark - double", 90);
@@ -172,10 +172,10 @@ class DenseVectorSumBench :
         }
 };
 #ifndef HONEI_CELL
-DenseVectorSumBench<float, tags::CPU> DVSBF("SingleCore DenseVector Sum Benchmark - float", 20);
-DenseVectorSumBench<double, tags::CPU> DVSBD("SingleCore DenseVector Sum Benchmark - double", 20);
-DenseVectorSumBench<float, tags::CPU::MultiCore> DVSBMCF("MultiCore DenseVector Sum Benchmark - float", 20);
-DenseVectorSumBench<double, tags::CPU::MultiCore> DVSBMCD("MultiCore DenseVector Sum Benchmark - double", 20);
+//DenseVectorSumBench<float, tags::CPU> DVSBF("SingleCore DenseVector Sum Benchmark - float", 20);
+//DenseVectorSumBench<double, tags::CPU> DVSBD("SingleCore DenseVector Sum Benchmark - double", 20);
+//DenseVectorSumBench<float, tags::CPU::MultiCore> DVSBMCF("MultiCore DenseVector Sum Benchmark - float", 20);
+//DenseVectorSumBench<double, tags::CPU::MultiCore> DVSBMCD("MultiCore DenseVector Sum Benchmark - double", 20);
 #ifdef HONEI_SSE
 DenseVectorSumBench<float, tags::CPU::SSE> DVSBSSEF("SSE DenseVector Sum Benchmark - float", 90);
 DenseVectorSumBench<double, tags::CPU::SSE> DVSBSSED("SSE DenseVector Sum Benchmark - double", 90);
@@ -232,10 +232,10 @@ class DenseVectorScaledSumBench :
         }
 };
 #ifndef HONEI_CELL
-DenseVectorScaledSumBench<float, tags::CPU> DVSSBF("SingleCore DenseVector ScaledSum Benchmark - float", 20);
-DenseVectorScaledSumBench<double, tags::CPU> DVSSBD("SingleCore DenseVector ScaledSum Benchmark - double", 20);
-DenseVectorScaledSumBench<float, tags::CPU::MultiCore> DVSSBMCF("MultiCore DenseVector ScaledSum Benchmark - float", 20);
-DenseVectorScaledSumBench<double, tags::CPU::MultiCore> DVSSBMCD("MultiCore DenseVector ScaledSum Benchmark - double", 20);
+//DenseVectorScaledSumBench<float, tags::CPU> DVSSBF("SingleCore DenseVector ScaledSum Benchmark - float", 20);
+//DenseVectorScaledSumBench<double, tags::CPU> DVSSBD("SingleCore DenseVector ScaledSum Benchmark - double", 20);
+//DenseVectorScaledSumBench<float, tags::CPU::MultiCore> DVSSBMCF("MultiCore DenseVector ScaledSum Benchmark - float", 20);
+//DenseVectorScaledSumBench<double, tags::CPU::MultiCore> DVSSBMCD("MultiCore DenseVector ScaledSum Benchmark - double", 20);
 #ifdef HONEI_SSE
 DenseVectorScaledSumBench<float, tags::CPU::SSE> DVSSBSSEF("SSE DenseVector ScaledSum Benchmark - float", 90);
 DenseVectorScaledSumBench<double, tags::CPU::SSE> DVSSBSSED("SSE DenseVector ScaledSum Benchmark - double", 90);
@@ -290,10 +290,10 @@ class DMDVProductBench :
         }
 };
 #ifndef HONEI_CELL
-DMDVProductBench<float, tags::CPU> DMDVPBTPF("SingleCore DenseMatrix DenseVector Product Benchmark - float", 30);
-DMDVProductBench<double, tags::CPU> DMDVPBTPD("SingleCore DenseMatrix DenseVector Product Benchmark - double", 30);
-DMDVProductBench<float, tags::CPU::MultiCore> DMDVPBMCF("MultiCore DenseMatrix DenseVector Product Benchmark - float", 30);
-DMDVProductBench<double, tags::CPU::MultiCore> DMDVPBMCD("MultiCore DenseMatrix DenseVector Product Benchmark - double", 30);
+//DMDVProductBench<float, tags::CPU> DMDVPBTPF("SingleCore DenseMatrix DenseVector Product Benchmark - float", 30);
+//DMDVProductBench<double, tags::CPU> DMDVPBTPD("SingleCore DenseMatrix DenseVector Product Benchmark - double", 30);
+//DMDVProductBench<float, tags::CPU::MultiCore> DMDVPBMCF("MultiCore DenseMatrix DenseVector Product Benchmark - float", 30);
+//DMDVProductBench<double, tags::CPU::MultiCore> DMDVPBMCD("MultiCore DenseMatrix DenseVector Product Benchmark - double", 30);
 #ifdef HONEI_SSE
 DMDVProductBench<float, tags::CPU::SSE> DMDVPBSSEF("SSE DenseMatrix DenseVector Product Benchmark - float", 64);
 DMDVProductBench<double, tags::CPU::SSE> DMDVPBSSED("SSE DenseMatrix DenseVector Product Benchmark - double", 64);
@@ -330,29 +330,29 @@ class DenseMatrixProductBench :
             for (unsigned long j(0) ; j < _count ; ++j)
             {
                 cores.push_back(Tag_::name);
-                DenseMatrix<DT_> dm0((j + 1) * 60, (j + 1) * 60, DT_(rand()));
-                DenseMatrix<DT_> dm1((j + 1) * 60, (j + 1) * 60, DT_(rand()));
-                for(int i(0) ; i < 20 ; ++i)
+                DenseMatrix<DT_> dm0((j + 1) * 40, (j + 1) * 40, DT_(rand()));
+                DenseMatrix<DT_> dm1((j + 1) * 40, (j + 1) * 40, DT_(rand()));
+                for(int i(0) ; i < 10 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long j(0) ; j < 5 ; ++j)
                             {
                             Product<Tag_>::value(dm0, dm1);
                             }
                             );
                 }
                 info = Product<>::get_benchmark_info(dm0, dm1);
-                infolist.push_back(info * 10);
+                infolist.push_back(info * 5);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 20);
+            evaluate_to_plotfile(infolist, cores, 10);
         }
 };
 #ifndef HONEI_CELL
-DenseMatrixProductBench<float, tags::CPU> DMPBTPF("SingleCore DenseMatrix Product Benchmark - float", 15);
-DenseMatrixProductBench<double, tags::CPU> DMPBTPD("SingleCore DenseMatrix Product Benchmark - double", 15);
-DenseMatrixProductBench<float, tags::CPU::MultiCore> DMPBMCF("MultiCore DenseMatrix Product Benchmark - float", 15);
-DenseMatrixProductBench<double, tags::CPU::MultiCore> DMPBMCD("MultiCore DenseMatrix Product Benchmark - double", 15);
+//DenseMatrixProductBench<float, tags::CPU> DMPBTPF("SingleCore DenseMatrix Product Benchmark - float", 15);
+//DenseMatrixProductBench<double, tags::CPU> DMPBTPD("SingleCore DenseMatrix Product Benchmark - double", 15);
+//DenseMatrixProductBench<float, tags::CPU::MultiCore> DMPBMCF("MultiCore DenseMatrix Product Benchmark - float", 15);
+//DenseMatrixProductBench<double, tags::CPU::MultiCore> DMPBMCD("MultiCore DenseMatrix Product Benchmark - double", 15);
 #ifdef HONEI_SSE
 DenseMatrixProductBench<float, tags::CPU::SSE> DMPBSSEF("SSE DenseMatrix Product Benchmark - float", 64);
 DenseMatrixProductBench<double, tags::CPU::SSE> DMPBSSED("SSE DenseMatrix Product Benchmark - double", 64);
@@ -360,8 +360,8 @@ DenseMatrixProductBench<float, tags::CPU::MultiCore::SSE> DMPBMCSSEF("MultiCore 
 DenseMatrixProductBench<double, tags::CPU::MultiCore::SSE> DMPBMCSSED("MultiCore SSE DenseMatrix Product Benchmark - double", 64);
 #endif
 #elif HONEI_CELL
-DenseMatrixProductBench<float, tags::Cell> DMPBCF("CELL DenseMatrix Product Benchmark - float", 64);
-//DenseMatrixProductBench<double, tags::Cell> DMPBCD("CELL DenseMatrix Product Benchmark - double", 64);
+DenseMatrixProductBench<float, tags::Cell> DMPBCF("CELL DenseMatrix Product Benchmark - float", 20);
+//DenseMatrixProductBench<double, tags::Cell> DMPBCD("CELL DenseMatrix Product Benchmark - double", 20);
 #endif
 
 
@@ -413,10 +413,10 @@ class BMDVProductBench :
         }
 };
 #ifndef HONEI_CELL
-BMDVProductBench<float, tags::CPU> BMDVPBTPF("SingleCore BandedMatrix DenseVector Relax Product Benchmark - float", 20);
-BMDVProductBench<double, tags::CPU> BMDVPBTPD("SingleCore BandedMatrix DenseVector Relax Product Benchmark - double", 20);
-BMDVProductBench<float, tags::CPU::MultiCore> BMDVPBMCF("MultiCore BandedMatrix DenseVector Relax Product Benchmark - float", 20);
-BMDVProductBench<double, tags::CPU::MultiCore> BMDVPBMCD("MultiCore BandedMatrix DenseVector Relax Product Benchmark - double", 20);
+//BMDVProductBench<float, tags::CPU> BMDVPBTPF("SingleCore BandedMatrix DenseVector Relax Product Benchmark - float", 20);
+//BMDVProductBench<double, tags::CPU> BMDVPBTPD("SingleCore BandedMatrix DenseVector Relax Product Benchmark - double", 20);
+//BMDVProductBench<float, tags::CPU::MultiCore> BMDVPBMCF("MultiCore BandedMatrix DenseVector Relax Product Benchmark - float", 20);
+//BMDVProductBench<double, tags::CPU::MultiCore> BMDVPBMCD("MultiCore BandedMatrix DenseVector Relax Product Benchmark - double", 20);
 #ifdef HONEI_SSE
 BMDVProductBench<float, tags::CPU::SSE> BMDVPBSSEF("SSE BandedMatrix DenseVector Relax Product Benchmark - float", 150);
 BMDVProductBench<double, tags::CPU::SSE> BMDVPBSSED("SSE BandedMatrix DenseVector Relax Product Benchmark - double", 150);
@@ -484,10 +484,10 @@ class BMDVQ1ProductBench :
         }
 };
 #ifndef HONEI_CELL
-BMDVQ1ProductBench<float, tags::CPU> BMDVQ1PBTPF("SingleCore BandedMatrix DenseVector Q1 Product Benchmark - float", 20);
-BMDVQ1ProductBench<double, tags::CPU> BMDVQ1PBTPD("SingleCore BandedMatrix DenseVector Q1 Product Benchmark - double", 20);
-BMDVQ1ProductBench<float, tags::CPU::MultiCore> BMDVQ1PBMCF("MultiCore BandedMatrix DenseVector Q1 Product Benchmark - float", 20);
-BMDVQ1ProductBench<double, tags::CPU::MultiCore> BMDVQ1PBMCD("MultiCore BandedMatrix DenseVector Q1 Product Benchmark - double", 20);
+//BMDVQ1ProductBench<float, tags::CPU> BMDVQ1PBTPF("SingleCore BandedMatrix DenseVector Q1 Product Benchmark - float", 20);
+//BMDVQ1ProductBench<double, tags::CPU> BMDVQ1PBTPD("SingleCore BandedMatrix DenseVector Q1 Product Benchmark - double", 20);
+//BMDVQ1ProductBench<float, tags::CPU::MultiCore> BMDVQ1PBMCF("MultiCore BandedMatrix DenseVector Q1 Product Benchmark - float", 20);
+//BMDVQ1ProductBench<double, tags::CPU::MultiCore> BMDVQ1PBMCD("MultiCore BandedMatrix DenseVector Q1 Product Benchmark - double", 20);
 #ifdef HONEI_SSE
 BMDVQ1ProductBench<float, tags::CPU::SSE> BMDVQ1PBSSEF("SSE BandedMatrix DenseVector Q1 Product Benchmark - float", 150);
 BMDVQ1ProductBench<double, tags::CPU::SSE> BMDVQ1PBSSED("SSE BandedMatrix DenseVector Q1 Product Benchmark - double", 150);
