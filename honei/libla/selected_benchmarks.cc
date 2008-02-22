@@ -33,14 +33,14 @@ class DenseVectorRTSBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 DenseVector<DT_> dv((j + 1) * 131072, DT_(rand()));
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long k(0) ; k < 10 ; ++k)
                             {
                             (Reduction<rt_sum, Tag_>::value(dv));
                             }
@@ -91,7 +91,7 @@ class DenseVectorDotProductBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
@@ -99,7 +99,7 @@ class DenseVectorDotProductBench :
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long k(0) ; k < 10 ; ++k)
                             {
                             DotProduct<Tag_>::value(dv0, dv1);
                             }
@@ -150,7 +150,7 @@ class DenseVectorSumBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
@@ -158,7 +158,7 @@ class DenseVectorSumBench :
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long k(0) ; k < 10 ; ++k)
                             {
                             Sum<Tag_>::value(dv0, dv1);
                             }
@@ -209,7 +209,7 @@ class DenseVectorScaledSumBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
@@ -218,7 +218,7 @@ class DenseVectorScaledSumBench :
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long k(0) ; k < 10 ; ++k)
                             {
                             ScaledSum<Tag_>::value(dv0, dv1, alpha);
                             }
@@ -268,7 +268,7 @@ class DMDVProductBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
@@ -276,7 +276,7 @@ class DMDVProductBench :
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long k(0) ; k < 10 ; ++k)
                             {
                             Product<Tag_>::value(dm, dv);
                             }
@@ -295,14 +295,14 @@ class DMDVProductBench :
 //DMDVProductBench<float, tags::CPU::MultiCore> DMDVPBMCF("MultiCore DenseMatrix DenseVector Product Benchmark - float", 30);
 //DMDVProductBench<double, tags::CPU::MultiCore> DMDVPBMCD("MultiCore DenseMatrix DenseVector Product Benchmark - double", 30);
 #ifdef HONEI_SSE
-DMDVProductBench<float, tags::CPU::SSE> DMDVPBSSEF("SSE DenseMatrix DenseVector Product Benchmark - float", 64);
-DMDVProductBench<double, tags::CPU::SSE> DMDVPBSSED("SSE DenseMatrix DenseVector Product Benchmark - double", 64);
-DMDVProductBench<float, tags::CPU::MultiCore::SSE> DMDVPBMCSSEF("MultiCore SSE DenseMatrix DenseVector Product Benchmark - float", 64);
-DMDVProductBench<double, tags::CPU::MultiCore::SSE> DMDVPBMCSSED("MultiCore SSE DenseMatrix DenseVector Product Benchmark - double", 64);
+DMDVProductBench<float, tags::CPU::SSE> DMDVPBSSEF("SSE DenseMatrix DenseVector Product Benchmark - float", 90);
+DMDVProductBench<double, tags::CPU::SSE> DMDVPBSSED("SSE DenseMatrix DenseVector Product Benchmark - double", 90);
+DMDVProductBench<float, tags::CPU::MultiCore::SSE> DMDVPBMCSSEF("MultiCore SSE DenseMatrix DenseVector Product Benchmark - float", 90);
+DMDVProductBench<double, tags::CPU::MultiCore::SSE> DMDVPBMCSSED("MultiCore SSE DenseMatrix DenseVector Product Benchmark - double", 90);
 #endif
 #elif HONEI_CELL
-DMDVProductBench<float, tags::Cell> DMDVPBCF("CELL DenseMatrix DenseVector Product Benchmark - float", 64);
-//DMDVProductBench<double, tags::Cell> DMDVPBCD("CELL DenseMatrix DenseVector Product Benchmark - double", 64);
+DMDVProductBench<float, tags::Cell> DMDVPBCF("CELL DenseMatrix DenseVector Product Benchmark - float", 90);
+//DMDVProductBench<double, tags::Cell> DMDVPBCD("CELL DenseMatrix DenseVector Product Benchmark - double", 90);
 #endif
 
 
@@ -327,15 +327,15 @@ class DenseMatrixProductBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 DenseMatrix<DT_> dm0((j + 1) * 40, (j + 1) * 40, DT_(rand()));
                 DenseMatrix<DT_> dm1((j + 1) * 40, (j + 1) * 40, DT_(rand()));
-                for(int i(0) ; i < 10 ; ++i)
+                for(int i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 5 ; ++j)
+                            for (unsigned long k(0) ; k < 5 ; ++k)
                             {
                             Product<Tag_>::value(dm0, dm1);
                             }
@@ -345,7 +345,7 @@ class DenseMatrixProductBench :
                 infolist.push_back(info * 5);
                 std::cout << "finished run " << j + 1 << " / " << _count << std::endl;
             }
-            evaluate_to_plotfile(infolist, cores, 10);
+            evaluate_to_plotfile(infolist, cores, 5);
         }
 };
 #ifndef HONEI_CELL
@@ -386,7 +386,7 @@ class BMDVProductBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
@@ -399,7 +399,7 @@ class BMDVProductBench :
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long k(0) ; k < 10 ; ++k)
                             {
                             Product<Tag_>::value(bm, dv0);
                             }
@@ -450,7 +450,7 @@ class BMDVQ1ProductBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; ++j)
+            for (unsigned long j(0) ; j < _count ; j+=3)
             {
                 cores.push_back(Tag_::name);
                 unsigned long _size((j+1) * 8192);
@@ -470,7 +470,7 @@ class BMDVQ1ProductBench :
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
-                            for (unsigned long j(0) ; j < 10 ; ++j)
+                            for (unsigned long k(0) ; k < 10 ; ++k)
                             {
                             Product<Tag_>::value(bm, dv0);
                             }
