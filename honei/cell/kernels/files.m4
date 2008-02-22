@@ -8,5 +8,6 @@ dnl the base filename with no extension; later parameters can be `cc, `sk'.
 dnl Note that there isn't much error checking done on this file at present...
 
 add(`kernel_float',                       `stand_alone')
-add(`kernel_double',                       `stand_alone')
+add(`kernel_double',                      `stand_alone')
+add(`kernel_product_dm',                  `stand_alone')
 add(`kernel_test',                        `stand_alone')

@@ -1,0 +1,7 @@
+# vim: set sw=4 sts=4 et tw=0 ft=bash :
+
+halt
+
+# LibLA Operations
+##################
+void            product_dense_matrix_dense_matrix_float     product_dense_matrix_dense_matrix_float

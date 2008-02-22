@@ -12,7 +12,6 @@ dword           dot_product_dense_dense_float
 void            element_product_dense_dense_float
 void            product_dense_matrix_dense_vector_float     product_dense_matrix_dense_vector_float
 void            product_banded_matrix_dense_vector_float    product_banded_matrix_dense_vector_float
-void            product_dense_matrix_dense_matrix_float     product_dense_matrix_dense_matrix_float
 dword           reduction_sum_dense_float
 dword           reduction_min_dense_float
 dword           reduction_max_dense_float
