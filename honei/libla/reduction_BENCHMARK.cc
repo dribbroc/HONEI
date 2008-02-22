@@ -128,7 +128,7 @@ class DenseVectorReductionSPUPlot :
                 {
                     Configuration::instance()->set_value("cell::reduction_sum_dense_float", j);
                     Configuration::instance()->set_value("cell::reduction_sum_dense_double", j);
-                    cores.push_back(stringify(j) +"SPU's" );
+                    cores.push_back(stringify(j) +"SPUs" );
                     DenseVector<DT_> dv0(k * 150000, DT_(rand()));
                     DenseVector<DT_> dv1(k * 150000, DT_(rand()));
 

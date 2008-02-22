@@ -95,7 +95,7 @@ class DenseVectorScaledSumSPUPlot :
                 {
                     Configuration::instance()->set_value("cell::scaled_sum_dense_dense_float", j);
                     Configuration::instance()->set_value("cell::scaled_sum_dense_dense_double", j);
-                    cores.push_back(stringify(j) +"SPU's" );
+                    cores.push_back(stringify(j) +"SPUs" );
                     DenseVector<DT_> dv0(k * 150000, DT_(rand()));
                     DenseVector<DT_> dv1(k * 150000, DT_(rand()));
                     DT_ alpha(rand());
