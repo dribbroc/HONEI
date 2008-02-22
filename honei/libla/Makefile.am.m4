@@ -141,6 +141,7 @@ bench-pdf:
 	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt
 	rm PlotOut_*.pdf
+	rm PlotOut_*.eps
 
 sel-benchs:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
@@ -150,6 +151,7 @@ sel-benchs:
 	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt
 	rm PlotOut_*.pdf
+	rm PlotOut_*.eps
 
 benchm:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)

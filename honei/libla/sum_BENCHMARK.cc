@@ -485,7 +485,6 @@ DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP4("MC::SS
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP5("MC::SSE, SSE and CELL Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 5);
 #endif
 
-
 template <typename DT_, typename Tag_>
 class DenseVectorSumSPUPlot :
     public Benchmark
@@ -510,17 +509,17 @@ class DenseVectorSumSPUPlot :
             int temp(Configuration::instance()->get_value("cell::sum_dense_dense_float", 4));
             int temp2(Configuration::instance()->get_value("cell::sum_dense_dense_double", 4));
 
-            int max_spu(5);
+            int max_spu(6);
 
             for (unsigned long j(1) ; j <= max_spu ; ++j)
             {
-                for (unsigned long k(1) ; k < 100 ; k+=5)
+                for (unsigned long k(1) ; k < 81 ; k+=5)
                 {
                     Configuration::instance()->set_value("cell::sum_dense_dense_float", j);
                     Configuration::instance()->set_value("cell::sum_dense_dense_double", j);
                     cores.push_back(stringify(j) +"SPU's" );
-                    DenseVector<DT_> dv0(k * 100000, DT_(rand()));
-                    DenseVector<DT_> dv1(k * 100000, DT_(rand()));
+                    DenseVector<DT_> dv0(k * 150000, DT_(rand()));
+                    DenseVector<DT_> dv1(k * 150000, DT_(rand()));
 
                     for(int i(0) ; i < 20 ; ++i)
                     {
@@ -533,11 +532,13 @@ class DenseVectorSumSPUPlot :
                     }
                     info = Sum<>::get_benchmark_info(dv0, dv1);
                     infolist.push_back(info * 5);
-                    std::cout << "finished run " << (j-1)* max_spu + (k/5) << " / " << max_spu * 20 << std::endl;
+                    std::cout << ".";
+                    std::cout.flush();
                 }
             }
             Configuration::instance()->set_value("cell::sum_dense_dense_float", temp);
             Configuration::instance()->set_value("cell::sum_dense_dense_double", temp2);
+            std::cout<<std::endl;
             evaluate_to_plotfile(infolist, cores, 20);
         }
 };

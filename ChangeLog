@@ -7,6 +7,13 @@ see the NEWS file.
 
 2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/libla/dot_product_BENCHMARK.cc, honei/libla/Makefile.am.m4,
+	honei/libla/reduction_BENCHMARK.cc,
+	honei/libla/scaled_sum_BENCHMARK.cc, honei/libla/sum_BENCHMARK.cc:
+	Added multi SPU benchmaks.
+
+2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/cell/kernels/files.m4, honei/cell/kernels/kernel_float.sk,
 	+honei/cell/kernels/kernel_product_dm.sk:
 	Outsourced operation product_dm_dm to an own spu kernel.

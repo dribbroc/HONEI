@@ -95,3 +95,65 @@ SparseMatrixRowSumVectorBench<tags::CPU::SSE, double> SSESMRSVBenchdouble1("SSE 
 SparseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, float> SSESMRSVBenchfloat2("MC::SSE Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
 SparseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, double> SSESMRSVBenchdouble2("MC::SSE Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
 #endif
+
+template <typename DT_, typename Tag_>
+class DenseVectorReductionSPUPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseVectorReductionSPUPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            int temp(Configuration::instance()->get_value("cell::reduction_sum_dense_float", 4));
+            int temp2(Configuration::instance()->get_value("cell::reduction_sum_dense_double", 4));
+
+            int max_spu(6);
+
+            for (unsigned long j(1) ; j <= max_spu ; ++j)
+            {
+                for (unsigned long k(1) ; k < 81 ; k+=5)
+                {
+                    Configuration::instance()->set_value("cell::reduction_sum_dense_float", j);
+                    Configuration::instance()->set_value("cell::reduction_sum_dense_double", j);
+                    cores.push_back(stringify(j) +"SPU's" );
+                    DenseVector<DT_> dv0(k * 150000, DT_(rand()));
+                    DenseVector<DT_> dv1(k * 150000, DT_(rand()));
+
+                    for(int i(0) ; i < 20 ; ++i)
+                    {
+                        BENCHMARK(
+                                for (unsigned long l(0) ; l < 5 ; ++l)
+                                {
+                                (Reduction<rt_sum, Tag_>::value(dv0));
+                                }
+                                );
+                    }
+                    info = Reduction<rt_sum>::get_benchmark_info(dv0);
+                    infolist.push_back(info * 5);
+                    std::cout << ".";
+                    std::cout.flush();
+                }
+            }
+            Configuration::instance()->set_value("cell::reduction_sum_dense_float", temp);
+            Configuration::instance()->set_value("cell::reduction_sum_dense_double", temp2);
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 20);
+        }
+};
+#ifdef HONEI_CELL
+DenseVectorReductionSPUPlot<float, tags::Cell> DVRSPUF("Cell Dense Vector Reduction to Sum Benchmark - SPU Count: 1 to 6 - float");
+DenseVectorReductionSPUPlot<double, tags::Cell> DVRSPUD("Cell Dense Vector Recution to Sum Benchmark - SPU Count: 1 to 6 - double");
+#endif
