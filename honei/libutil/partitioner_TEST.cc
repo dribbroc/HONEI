@@ -27,6 +27,8 @@
 
 #include <list>
 
+#include <iostream> // <<-- Remove!
+
 using namespace honei;
 using namespace tests;
 
@@ -61,7 +63,7 @@ class PartitionerTestCell :
                         unsigned long partition_size(p->size);
                         sum += partition_size;
 
-                        TEST_CHECK_EQUAL(0, partition_size % quantisation_);
+                        TEST_CHECK(0 == partition_size % quantisation_);
 
                         if (overall_size > best_part_size_)
                         {
@@ -78,14 +80,14 @@ class PartitionerTestCell :
                     }
 
                     TEST_CHECK(count <= max_count + 1);
-                    TEST_CHECK_EQUAL(overall_size, sum);
+                    TEST_CHECK_EQUAL(sum, overall_size);
                 }
             }
         }
 };
 
 PartitionerTestCell<tags::Cell, 16384, 16> partitioner_test_cell_16k_16;
-PartitionerTestCell<tags::Cell, 64ul*64*64*32, 16> partitioner_test_cell_64_16;
+//PartitionerTestCell<tags::Cell, 64ul*64*64*32, 16> partitioner_test_cell_64_16;
 
 
 template <typename Tag_, unsigned long best_part_size_, unsigned long quantisation_>

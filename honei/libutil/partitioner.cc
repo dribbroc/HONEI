@@ -71,49 +71,41 @@ Partitioner<tags::Cell>::Partitioner(unsigned long max_count, unsigned long best
     CONTEXT("When partitioning problem of size '" + stringify(overall_size) + "' (Cell):");
 
     unsigned part_size(0);
+    unsigned rest(0);
     unsigned count(0);
 
-    if (best_part_size >= overall_size)
+    if (max_count * best_part_size >= overall_size)
     {
-        part_size = (overall_size - overall_size % 32) / 2;
-
-        dispatch(0, part_size);
-        dispatch(part_size, overall_size - part_size);
+        count = overall_size / best_part_size;
+        rest = overall_size % best_part_size;
+        rest = rest - rest % 16;
+        part_size = best_part_size;
     }
     else
     {
-        if (2 * best_part_size >= overall_size)
-        {
-            part_size = best_part_size - best_part_size % 16;
-            count = 1;
-        }
-        else
-        {
-            count = overall_size / best_part_size;
+        part_size = overall_size / max_count;
+        part_size = part_size - part_size % 16;
+        rest = overall_size % part_size;
+        rest = rest - rest % 16;
+        count = overall_size / part_size;
+    }
 
-            if (count > max_count)
-            {
-                count = max_count;
-            }
+    if (part_size > 0)
+        dispatch(0, part_size + rest);
 
-            part_size = overall_size / count;
-            part_size = part_size - part_size % 16;
-        }
+    unsigned long start(part_size + rest);
 
-        unsigned long start(0);
+    for (unsigned i(1); i < count; ++i)
+    {
+        if (part_size > 0) 
+            dispatch(start, part_size);
 
-        for (unsigned i(0); i < count; ++i)
-        {
-            if (part_size > 0) 
-                dispatch(start, part_size);
+        start += part_size;
+    }
 
-            start += part_size;
-        }
-
-        if (overall_size > start)
-        {
-            dispatch(start, overall_size - start);
-        }
+    if (overall_size > start)
+    {
+        dispatch(start, overall_size - start);
     }
 }
 
