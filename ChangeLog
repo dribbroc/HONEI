@@ -8,6 +8,11 @@ see the NEWS file.
 2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libla/sum_BENCHMARK.cc:
+	Changed multi SPU benchmark to run on cell instead of sse.
+
+2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libla/sum_BENCHMARK.cc:
 	Added multi SPU benchmark.
 
 2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
