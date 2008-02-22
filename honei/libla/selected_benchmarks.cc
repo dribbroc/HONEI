@@ -330,8 +330,8 @@ class DenseMatrixProductBench :
             for (unsigned long j(0) ; j < _count ; ++j)
             {
                 cores.push_back(Tag_::name);
-                DenseMatrix<DT_> dm0((j + 1) * 32, (j + 1) * 32, DT_(rand()));
-                DenseMatrix<DT_> dm1((j + 1) * 32, (j + 1) * 32, DT_(rand()));
+                DenseMatrix<DT_> dm0((j + 1) * 60, (j + 1) * 60, DT_(rand()));
+                DenseMatrix<DT_> dm1((j + 1) * 60, (j + 1) * 60, DT_(rand()));
                 for(int i(0) ; i < 20 ; ++i)
                 {
                     BENCHMARK(
@@ -354,14 +354,14 @@ DenseMatrixProductBench<double, tags::CPU> DMPBTPD("SingleCore DenseMatrix Produ
 DenseMatrixProductBench<float, tags::CPU::MultiCore> DMPBMCF("MultiCore DenseMatrix Product Benchmark - float", 15);
 DenseMatrixProductBench<double, tags::CPU::MultiCore> DMPBMCD("MultiCore DenseMatrix Product Benchmark - double", 15);
 #ifdef HONEI_SSE
-DenseMatrixProductBench<float, tags::CPU::SSE> DMPBSSEF("SSE DenseMatrix Product Benchmark - float", 128);
-DenseMatrixProductBench<double, tags::CPU::SSE> DMPBSSED("SSE DenseMatrix Product Benchmark - double", 128);
-DenseMatrixProductBench<float, tags::CPU::MultiCore::SSE> DMPBMCSSEF("MultiCore SSE DenseMatrix Product Benchmark - float", 128);
-DenseMatrixProductBench<double, tags::CPU::MultiCore::SSE> DMPBMCSSED("MultiCore SSE DenseMatrix Product Benchmark - double", 128);
+DenseMatrixProductBench<float, tags::CPU::SSE> DMPBSSEF("SSE DenseMatrix Product Benchmark - float", 64);
+DenseMatrixProductBench<double, tags::CPU::SSE> DMPBSSED("SSE DenseMatrix Product Benchmark - double", 64);
+DenseMatrixProductBench<float, tags::CPU::MultiCore::SSE> DMPBMCSSEF("MultiCore SSE DenseMatrix Product Benchmark - float", 64);
+DenseMatrixProductBench<double, tags::CPU::MultiCore::SSE> DMPBMCSSED("MultiCore SSE DenseMatrix Product Benchmark - double", 64);
 #endif
 #elif HONEI_CELL
-DenseMatrixProductBench<float, tags::Cell> DMPBCF("CELL DenseMatrix Product Benchmark - float", 128);
-//DenseMatrixProductBench<double, tags::Cell> DMPBCD("CELL DenseMatrix Product Benchmark - double", 128);
+DenseMatrixProductBench<float, tags::Cell> DMPBCF("CELL DenseMatrix Product Benchmark - float", 64);
+//DenseMatrixProductBench<double, tags::Cell> DMPBCD("CELL DenseMatrix Product Benchmark - double", 64);
 #endif
 
 
