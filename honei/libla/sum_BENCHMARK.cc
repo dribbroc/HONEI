@@ -484,3 +484,56 @@ DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP3("MC::SS
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP4("MC::SSE and SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 4);
 DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP5("MC::SSE, SSE and CELL Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 5);
 #endif
+
+
+template <typename DT_, typename Tag_>
+class DenseVectorSumSPUPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseVectorSumSPUPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            int temp(Configuration::instance()->get_value("cell::sum_dense_dense_float", 4));
+            int temp2(Configuration::instance()->get_value("cell::sum_dense_dense_double", 4));
+            for (unsigned long j(1) ; j < 7 ; ++j)
+            {
+                for (unsigned long k(1) ; k < 20 ; ++k)
+                {
+                    Configuration::instance()->set_value("cell::sum_dense_dense_float", j);
+                    Configuration::instance()->set_value("cell::sum_dense_dense_double", j);
+                    cores.push_back(stringify(j) +" SPU's" );
+                    DenseVector<DT_> dv0(k * 100000, DT_(rand()));
+                    DenseVector<DT_> dv1(k * 100000, DT_(rand()));
+
+                    for(int i(0) ; i < 20 ; ++i)
+                    {
+                        BENCHMARK(Sum<Tag_>::value(dv0, dv1));
+                    }
+                    info = Sum<>::get_benchmark_info(dv0, dv1);
+                    infolist.push_back(info);
+                    std::cout << "finished run " << (j-1)*20 + k << " / " << 120 << std::endl;
+                }
+            }
+            Configuration::instance()->set_value("cell::sum_dense_dense_float", temp);
+            Configuration::instance()->set_value("cell::sum_dense_dense_double", temp2);
+            evaluate_to_plotfile(infolist, cores, 20);
+        }
+};
+//#ifdef HONEI_CELL
+DenseVectorSumSPUPlot<float, tags::CPU::SSE> DVSSPUF("Cell Dense Vector Sum Benchmark - SPU Count: 1 to 6 - float");
+DenseVectorSumSPUPlot<double, tags::CPU::SSE> DVSSPUD("Cell Dense Vector Sum Benchmark - SPU Count: 1 to 6 - double");
+//#endif
