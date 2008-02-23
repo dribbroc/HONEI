@@ -1003,9 +1003,9 @@ class DenseMatrixProductCellQuickTest :
         {
             unsigned long size(128);
 
-            DenseMatrix<DataType_> dm1(size, size);
-            DenseMatrix<DataType_> dm2(size, size);
-            DenseMatrix<DataType_> dm3(size , size, DataType_(0));
+            DenseMatrix<DataType_> dm1(size + 3, size + 2);
+            DenseMatrix<DataType_> dm2(size + 2, size + 1);
+            DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
             {
@@ -1029,7 +1029,6 @@ class DenseMatrixProductCellQuickTest :
                 }
             }
             DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-            std::cout << prod << std::endl;
             for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
                     j(dm3.begin_elements()); i != i_end ; ++i, ++j)
             {
