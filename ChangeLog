@@ -5,6 +5,7 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+
 2008-02-23 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
@@ -15,6 +16,13 @@ see the NEWS file.
 
 	* honei/libla/selected_benchmarks.cc:
 	Reduced benchmark runtime.
+
+2008-02-22 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libutil/partitioner.cc: Made Partitioner<Cell> pass its test cases.
+	* honei/libutil/partitioner_TEST.cc: Removed bogus cell test case with
+	huge best partition size. Fixed parameter order in TEST_CHECK
+	invocations.
 
 2008-02-22 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
