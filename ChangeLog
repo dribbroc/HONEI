@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-23 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/libla/product_TEST.cc: Assured correct results for sizes above
+	128x128 and fixed accepted numerical deviation.
+
 2008-02-23 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libla/selected_benchmarks.cc:

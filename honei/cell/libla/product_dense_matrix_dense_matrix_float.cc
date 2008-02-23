@@ -89,7 +89,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
     Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
     Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
-    fill(r[0].untyped, 32768, 0.0f);
+    fill(r[0].untyped, 16384, 0.0f);
     unsigned b_size(list_sizes[b_counter]);
     debug_getl(list_eahs[b_counter], b[b_current].untyped, list_sizes[0] * sizeof(ListElement));
     mfc_getl(b[b_current].untyped, list_eahs[b_counter], list_ptr[0].untyped, list_sizes[0] * sizeof(ListElement), 6, 0, 0);
@@ -144,6 +144,8 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
         unsigned long a_elem(0); // The actual considered element of matrix a
         unsigned a_rows(a_size / 4 / a_cols);
         unsigned r_offset(0);
+        fill(r[r_current].untyped, 16384, 0.0f);
+
         for( ; ar < a_rows ; ar++)
         {
             b_counter = get_counter;

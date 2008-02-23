@@ -941,7 +941,7 @@ class DenseMatrixProductCellTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 9) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size + 3, size + 2);
                 DenseMatrix<DataType_> dm2(size + 2, size + 1);
@@ -973,7 +973,7 @@ class DenseMatrixProductCellTest :
                 for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
                         j(dm3.begin_elements()); i != i_end ; ++i, ++j)
                 {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, (30 * *i) * std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, (size / 3.5 * *i) * std::numeric_limits<DataType_>::epsilon());
                 }
             }
 
@@ -1003,9 +1003,9 @@ class DenseMatrixProductCellQuickTest :
         {
             unsigned long size(128);
 
-            DenseMatrix<DataType_> dm1(size + 3, size + 2);
-            DenseMatrix<DataType_> dm2(size + 2, size + 1);
-            DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
+            DenseMatrix<DataType_> dm1(size, size);
+            DenseMatrix<DataType_> dm2(size, size);
+            DenseMatrix<DataType_> dm3(size , size, DataType_(0));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
             {
@@ -1029,11 +1029,11 @@ class DenseMatrixProductCellQuickTest :
                 }
             }
             DenseMatrix<DataType_> prod(Product<Tag_>::value(dm1, dm2));
-
+            std::cout << prod << std::endl;
             for(typename Matrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
                     j(dm3.begin_elements()); i != i_end ; ++i, ++j)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, (30 * *i) * std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, (size / 3.5 * *i) * std::numeric_limits<DataType_>::epsilon());
             }
 
             DenseMatrix<DataType_> dm01(3, 3, DataType_(1)), dm02(3, 4, DataType_(1));
