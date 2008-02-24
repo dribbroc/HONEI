@@ -7,6 +7,12 @@ see the NEWS file.
 
 2008-02-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/honeirc, honei/libutil/partitioner.cc,
+	honei/libutil/partitioner_TEST.cc:
+	Fixed bugs concerning wrong part sizes.
+
+2008-02-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/libla/product_BENCHMARK.cc,
 	honei/libla/reduction_BENCHMARK.cc,
 	honei/libla/scaled_sum_BENCHMARK.cc, honei/libla/sum_BENCHMARK.cc:

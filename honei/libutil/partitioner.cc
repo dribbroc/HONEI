@@ -74,12 +74,17 @@ Partitioner<tags::Cell>::Partitioner(unsigned long max_count, unsigned long best
     unsigned rest(0);
     unsigned count(0);
 
-    if (max_count * best_part_size >= overall_size)
+    if ((best_part_size > overall_size))
+    {
+        count = 1;
+        part_size = overall_size;
+    }
+    else if (max_count * best_part_size >= overall_size)
     {
         count = overall_size / best_part_size;
         rest = overall_size % best_part_size;
         rest = rest - rest % 16;
-        part_size = best_part_size;
+        part_size = best_part_size - best_part_size % 16;
     }
     else
     {
@@ -91,14 +96,18 @@ Partitioner<tags::Cell>::Partitioner(unsigned long max_count, unsigned long best
     }
 
     if (part_size > 0)
+    {
         dispatch(0, part_size + rest);
+    }
 
     unsigned long start(part_size + rest);
 
     for (unsigned i(1); i < count; ++i)
     {
         if (part_size > 0) 
+        {
             dispatch(start, part_size);
+        }
 
         start += part_size;
     }

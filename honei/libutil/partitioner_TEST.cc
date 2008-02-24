@@ -42,52 +42,57 @@ class PartitionerTestCell :
         {
         }
 
+        virtual void run_test(unsigned max_count, unsigned long overall_size) const
+        {
+            PartitionList partitions;
+            Partitioner<Tag_>(max_count, best_part_size_, overall_size, PartitionList::Filler(partitions));
+
+            unsigned long count(partitions.size());
+            unsigned long sum(0);
+
+            for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ; p != p_last ; ++p)
+            {
+                unsigned long partition_size(p->size);
+                sum += partition_size;
+
+                TEST_CHECK(0 == partition_size % quantisation_);
+                TEST_CHECK(0 == sum % quantisation_);
+
+                if (overall_size > best_part_size_)
+                {
+                    TEST_CHECK(partition_size >= best_part_size_);
+                }
+            }
+
+            sum += partitions.last()->size;
+
+            if (count > max_count)
+            {
+                TEST_CHECK(partitions.last()->size < 16);
+            }
+
+            TEST_CHECK(count <= max_count + 1);
+            TEST_CHECK_EQUAL(sum, overall_size);
+        }
+
         virtual void run() const
         {
             for (unsigned long j(1), j_end(33) ; j != j_end ; ++j)
             {
-                unsigned long max_count(j);
+                for (unsigned long k(1), k_end(best_part_size_) ; k < k_end ; k += 10)
+                {
+                    run_test(j, k);
+                }
 
                 for (unsigned long k(best_part_size_), k_end(64ul*64*64*128) ; k < k_end ; k += 30101)
                 {
-                    unsigned long overall_size(k);
-
-                    PartitionList partitions;
-                    Partitioner<Tag_>(max_count, best_part_size_, overall_size, PartitionList::Filler(partitions));
-
-                    unsigned long count(partitions.size());
-                    unsigned long sum(0);
-
-                    for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ; p != p_last ; ++p)
-                    {
-                        unsigned long partition_size(p->size);
-                        sum += partition_size;
-
-                        TEST_CHECK(0 == partition_size % quantisation_);
-
-                        if (overall_size > best_part_size_)
-                        {
-                            TEST_CHECK(partition_size >= best_part_size_);
-                        }
-                    }
-
-                    sum += partitions.last()->size;
-
-                    if (count > max_count)
-                    {
-                        /// \todo Remove hardcoded 'do not use spe number'
-                        TEST_CHECK(partitions.last()->size < 16);
-                    }
-
-                    TEST_CHECK(count <= max_count + 1);
-                    TEST_CHECK_EQUAL(sum, overall_size);
+                    run_test(j, k);
                 }
             }
         }
 };
 
 PartitionerTestCell<tags::Cell, 16384, 16> partitioner_test_cell_16k_16;
-//PartitionerTestCell<tags::Cell, 64ul*64*64*32, 16> partitioner_test_cell_64_16;
 
 
 template <typename Tag_, unsigned long best_part_size_, unsigned long quantisation_>

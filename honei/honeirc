@@ -10,7 +10,7 @@ profiler::output = /dev/null
 ######
 
 # Number of usable SPEs
-cell::number-of-spes = 5
+cell::number-of-spes = 6
 
 # Number of used SPEs on a per-operation base
 cell::sum_dense_dense_float = 4
