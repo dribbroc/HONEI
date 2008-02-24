@@ -61,6 +61,7 @@ DenseVectorScaledSumBench<tags::CPU::MultiCore::SSE, double>
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat1("CELL Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::Cell, double> CellDVSSBenchdouble1("CELL Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
 
 template <typename DT_, typename Tag_>
