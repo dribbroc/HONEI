@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-24 Markus Geveler <apryde@gmx.de>
+
+	* honei/libmath/conjugate_gradients.hh:
+	Removed unnecessary copy calls in CG implementations.
 
 2008-02-23 Sven Mallach <sven.mallach@honei.org>
 

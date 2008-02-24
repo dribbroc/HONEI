@@ -95,8 +95,8 @@ namespace honei
                 Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
-                former_gradient = new_gradient.copy();
-                former_result = energy.copy();
+                former_gradient = new_gradient;//.copy();
+                former_result = energy;//.copy();
 
             }
 
@@ -137,8 +137,8 @@ namespace honei
                 Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
-                former_gradient = new_gradient.copy();
-                former_result = energy.copy();
+                former_gradient = new_gradient;//.copy();
+                former_result = energy;//.copy();
 
             }
 
@@ -179,8 +179,8 @@ namespace honei
                 Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
-                former_gradient = new_gradient.copy();
-                former_result = energy.copy();
+                former_gradient = new_gradient;//.copy();
+                former_result = energy;//.copy();
 
             }
 
