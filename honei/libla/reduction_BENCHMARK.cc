@@ -157,3 +157,66 @@ class DenseVectorReductionSPUPlot :
 DenseVectorReductionSPUPlot<float, tags::Cell> DVRSPUF("Cell Dense Vector Reduction to Sum Benchmark - SPU Count: 1 to 6 - float");
 DenseVectorReductionSPUPlot<double, tags::Cell> DVRSPUD("Cell Dense Vector Recution to Sum Benchmark - SPU Count: 1 to 6 - double");
 #endif
+
+
+template <typename DT_>
+class DenseVectorReductionVSPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseVectorReductionVSPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(tags::CPU::SSE::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            // mc::sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::MultiCore::SSE::name);
+                DenseVector<DT_> dv((j + 1) * 131072, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK((Reduction<rt_sum, tags::CPU::MultiCore::SSE>::value(dv)));
+                }
+                info = Reduction<rt_sum>::get_benchmark_info(dv);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            // sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::SSE::name);
+                DenseVector<DT_> dv((j + 1) * 131072, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK((Reduction<rt_sum, tags::CPU::SSE>::value(dv)));
+                }
+                info = Reduction<rt_sum>::get_benchmark_info(dv);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 5);
+        }
+};
+#ifdef HONEI_SSE
+DenseVectorReductionVSPlot<float> DVRVSF("MC vs SSE DenseVector Reduction to sum Benchmark - float");
+DenseVectorReductionVSPlot<double> DVRVSD("MC vs SSE DenseVector Reduction to sum Benchmark - double");
+#endif

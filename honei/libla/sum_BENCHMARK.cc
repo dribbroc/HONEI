@@ -406,7 +406,7 @@ class DenseVectorSumBenchTestPlot :
                         cores.push_back(Tag_::name + "-" + stringify(j) + "parts");
                         DenseVector<DT_> dv0(k * 100000, DT_(rand()));
                         DenseVector<DT_> dv1(k * 100000, DT_(rand()));
-    
+
                         for(int i(0) ; i < 20 ; ++i)
                         {
                             BENCHMARK(Sum<Tag_>::value(dv0, dv1));
@@ -423,7 +423,7 @@ class DenseVectorSumBenchTestPlot :
                     cores.push_back(Tag_::DelegateTo::name);
                     DenseVector<DT_> dv0(k * 100000, DT_(rand()));
                     DenseVector<DT_> dv1(k * 100000, DT_(rand()));
-    
+
                     for(int i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(Sum<typename Tag_::DelegateTo>::value(dv0, dv1));
@@ -477,12 +477,12 @@ class DenseVectorSumBenchTestPlot :
         }
 };
 #ifdef HONEI_SSE
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP("MC::SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 0);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP1("MC::SSE Dense Vector Sum Benchmark - vector size: 5.000.000 - parts: 1 to 20 - double", 1);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP2("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 20 - double", 2);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP3("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 4 - double", 3);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP4("MC::SSE and SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 4);
-DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP5("MC::SSE, SSE and CELL Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 5);
+//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP("MC::SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 0);
+//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP1("MC::SSE Dense Vector Sum Benchmark - vector size: 5.000.000 - parts: 1 to 20 - double", 1);
+//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP2("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 20 - double", 2);
+//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP3("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 4 - double", 3);
+//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP4("MC::SSE and SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 4);
+//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP5("MC::SSE, SSE and CELL Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 5);
 #endif
 
 template <typename DT_, typename Tag_>
@@ -545,4 +545,69 @@ class DenseVectorSumSPUPlot :
 #ifdef HONEI_CELL
 DenseVectorSumSPUPlot<float, tags::Cell> DVSSPUF("Cell Dense Vector Sum Benchmark - SPU Count: 1 to 6 - float");
 DenseVectorSumSPUPlot<double, tags::Cell> DVSSPUD("Cell Dense Vector Sum Benchmark - SPU Count: 1 to 6 - double");
+#endif
+
+
+template <typename DT_>
+class DenseVectorSumVSPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseVectorSumVSPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(tags::CPU::SSE::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            // mc::sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::MultiCore::SSE::name);
+                DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK((Sum<tags::CPU::MultiCore::SSE>::value(dv0, dv1)));
+                }
+                info = Sum<>::get_benchmark_info(dv0, dv1);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            // sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::SSE::name);
+                DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK((Sum<tags::CPU::SSE>::value(dv0, dv1)));
+                }
+                info = Sum<>::get_benchmark_info(dv0, dv1);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 5);
+        }
+};
+#ifdef HONEI_SSE
+DenseVectorSumVSPlot<float> DVSVSF("MC vs SSE DenseVector Sum Benchmark - float");
+DenseVectorSumVSPlot<double> DVSVSD("MC vs SSE DenseVector Sum Benchmark - double");
 #endif

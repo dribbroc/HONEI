@@ -344,3 +344,293 @@ class BandedMatrixProductBench :
 };
 BandedMatrixProductBench<tags::CPU, float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);
 BandedMatrixProductBench<tags::CPU, double> BMPBenchdouble2("Matrix Product Benchmark banded/dense - matrix size: 256x256, double", 256, 10);
+
+
+template <typename DT_>
+class BandedMatrixProductQ1VSPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        BandedMatrixProductQ1VSPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(tags::CPU::SSE::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            // mc::sse
+            for (unsigned long j(1) ; j < 160 ; j+=10)
+            {
+                cores.push_back(tags::CPU::MultiCore::SSE::name);
+                unsigned long _size((j+1) * 8192);
+                DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
+                BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
+                bm.insert_band(- (unsigned long)sqrt(_size) - 1, dv1.copy());
+                bm.insert_band(- (unsigned long)sqrt(_size), dv1.copy());
+                bm.insert_band(- (unsigned long)sqrt(_size) + 1, dv1.copy());
+                bm.insert_band(-1, dv1.copy());
+                bm.insert_band(0, dv1.copy());
+                bm.insert_band(1, dv1.copy());
+                bm.insert_band((unsigned long)sqrt(_size) - 1, dv1.copy());
+                bm.insert_band((unsigned long)sqrt(_size), dv1.copy());
+                bm.insert_band((unsigned long)sqrt(_size)+ 1, dv1.copy());
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(bm, dv0));
+                }
+                info = Product<>::get_benchmark_info(bm, dv0);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            // sse
+            for (unsigned long j(1) ; j < 160 ; j+=10)
+            {
+                cores.push_back(tags::CPU::SSE::name);
+                unsigned long _size((j+1) * 8192);
+                DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
+                BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
+                bm.insert_band(- (unsigned long)sqrt(_size) - 1, dv1.copy());
+                bm.insert_band(- (unsigned long)sqrt(_size), dv1.copy());
+                bm.insert_band(- (unsigned long)sqrt(_size) + 1, dv1.copy());
+                bm.insert_band(-1, dv1.copy());
+                bm.insert_band(0, dv1.copy());
+                bm.insert_band(1, dv1.copy());
+                bm.insert_band((unsigned long)sqrt(_size) - 1, dv1.copy());
+                bm.insert_band((unsigned long)sqrt(_size), dv1.copy());
+                bm.insert_band((unsigned long)sqrt(_size)+ 1, dv1.copy());
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::SSE>::value(bm, dv0));
+                }
+                info = Product<>::get_benchmark_info(bm, dv0);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 5);
+        }
+};
+#ifdef HONEI_SSE
+BandedMatrixProductQ1VSPlot<float> BMPQ1VSF("MC vs SSE Q1-BandedMatrix Product Benchmark - float");
+BandedMatrixProductQ1VSPlot<double> BMPQ1VSD("MC vs SSE Q1-BandedMatrix Product Benchmark - double");
+#endif
+
+template <typename DT_>
+class BandedMatrixProductRelaxVSPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        BandedMatrixProductRelaxVSPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(tags::CPU::SSE::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            // mc::sse
+            for (unsigned long j(1) ; j < 160 ; j+=10)
+            {
+                cores.push_back(tags::CPU::MultiCore::SSE::name);
+                unsigned long _size((j+1) * 8192);
+                DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
+                BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
+                bm.insert_band(3, dv1.copy());
+                bm.insert_band(-3, dv1.copy());
+                bm.insert_band(15, dv1.copy());
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(bm, dv0));
+                }
+                info = Product<>::get_benchmark_info(bm, dv0);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            // sse
+            for (unsigned long j(1) ; j < 160 ; j+=10)
+            {
+                cores.push_back(tags::CPU::SSE::name);
+                unsigned long _size((j+1) * 8192);
+                DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
+                BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
+                bm.insert_band(3, dv1.copy());
+                bm.insert_band(-3, dv1.copy());
+                bm.insert_band(15, dv1.copy());
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::SSE>::value(bm, dv0));
+                }
+                info = Product<>::get_benchmark_info(bm, dv0);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 5);
+        }
+};
+#ifdef HONEI_SSE
+BandedMatrixProductRelaxVSPlot<float> BMPRVSF("MC vs SSE Relax-BandedMatrix Product Benchmark - float");
+BandedMatrixProductRelaxVSPlot<double> BMPRVSD("MC vs SSE Relax-BandedMatrix Product Benchmark - double");
+#endif
+
+template <typename DT_>
+class DenseMatrixProductVSPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseMatrixProductVSPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(tags::CPU::SSE::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            // mc::sse
+            for (unsigned long k(1) ; k < 69 ; k+=5)
+            {
+                cores.push_back(tags::CPU::MultiCore::SSE::name);
+                DenseMatrix<DT_> dm0((k + 1) * 40, (k + 1) * 40, DT_(rand()));
+                DenseMatrix<DT_> dm1((k + 1) * 40, (k + 1) * 40, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(dm0, dm1));
+                }
+                info = Product<>::get_benchmark_info(dm0, dm1);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            // sse
+            for (unsigned long k(1) ; k < 69 ; k+=5)
+            {
+                cores.push_back(tags::CPU::SSE::name);
+                DenseMatrix<DT_> dm0((k + 1) * 40, (k + 1) * 40, DT_(rand()));
+                DenseMatrix<DT_> dm1((k + 1) * 40, (k + 1) * 40, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::SSE>::value(dm0, dm1));
+                }
+                info = Product<>::get_benchmark_info(dm0, dm1);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 5);
+        }
+};
+#ifdef HONEI_SSE
+DenseMatrixProductVSPlot<float> DMPVSF("MC vs SSE DenseMatrix Product Benchmark - float");
+DenseMatrixProductVSPlot<double> DMPVSD("MC vs SSE DenseMatrix Product Benchmark - double");
+#endif
+
+
+template <typename DT_>
+class DenseMatrixDenseVectorProductVSPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseMatrixDenseVectorProductVSPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(tags::CPU::SSE::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            // mc::sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::MultiCore::SSE::name);
+                DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
+                DenseMatrix<DT_> dm((j + 1) * 64, (j + 1) * 64, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(dm, dv));
+                }
+                info = Product<>::get_benchmark_info(dm, dv);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            // sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::SSE::name);
+                DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
+                DenseMatrix<DT_> dm((j + 1) * 64, (j + 1) * 64, DT_(rand()));
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK(Product<tags::CPU::SSE>::value(dm, dv));
+                }
+                info = Product<>::get_benchmark_info(dm, dv);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 5);
+        }
+};
+#ifdef HONEI_SSE
+DenseMatrixDenseVectorProductVSPlot<float> DMDVPVSF("MC vs SSE DenseMatrix DenseVector Product Benchmark - float");
+DenseMatrixDenseVectorProductVSPlot<double> DMDVPVSD("MC vs SSE DenseMatrix DenseVector Product Benchmark - double");
+#endif

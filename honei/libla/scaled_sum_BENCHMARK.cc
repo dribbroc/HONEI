@@ -126,3 +126,69 @@ class DenseVectorScaledSumSPUPlot :
 DenseVectorScaledSumSPUPlot<float, tags::Cell> DVSSSPUF("Cell Dense Vector ScaledSum Benchmark - SPU Count: 1 to 6 - float");
 DenseVectorScaledSumSPUPlot<double, tags::Cell> DVSSSPUD("Cell Dense Vector ScaledSum Benchmark - SPU Count: 1 to 6 - double");
 #endif
+
+template <typename DT_>
+class DenseVectorScaledSumVSPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseVectorScaledSumVSPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(tags::CPU::SSE::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            // mc::sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::MultiCore::SSE::name);
+                DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
+                DT_ alpha(rand());
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK((ScaledSum<tags::CPU::MultiCore::SSE>::value(dv0, dv1, alpha)));
+                }
+                info = ScaledSum<>::get_benchmark_info(dv0, dv1, alpha);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            // sse
+            for (unsigned long j(1) ; j < 95 ; j+=5)
+            {
+                cores.push_back(tags::CPU::SSE::name);
+                DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
+                DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
+                DT_ alpha(rand());
+
+                for(int i(0) ; i < 5 ; ++i)
+                {
+                    BENCHMARK((ScaledSum<tags::CPU::SSE>::value(dv0, dv1, alpha)));
+                }
+                info = ScaledSum<>::get_benchmark_info(dv0, dv1, alpha);
+                infolist.push_back(info);
+                std::cout<<".";
+                std::cout.flush();
+            }
+
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 5);
+        }
+};
+#ifdef HONEI_SSE
+DenseVectorScaledSumVSPlot<float> DVSSVSF("MC vs SSE DenseVector ScaledSum Benchmark - float");
+DenseVectorScaledSumVSPlot<double> DVSSVSD("MC vs SSE DenseVector ScaledSum Benchmark - double");
+#endif
