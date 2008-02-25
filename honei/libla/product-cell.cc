@@ -749,7 +749,7 @@ namespace honei
         unsigned a_half_rows = a.rows() / 2;
         for (; ;)
         {
-            if ((a_half_rows * b.columns()) % 4 == 0)
+            if ((a_half_rows * b.columns()) % 4 == 0 && (a_half_rows % 4 == 0))
                 break;
             else
                 a_half_rows++;
@@ -757,16 +757,17 @@ namespace honei
         // find a t_size that represents full rows!
 
         unsigned a_t_size(a.columns() * (4096 / (a.columns())));
-        /*
+        
         while (a_t_size % 4 != 0)
         {
             a_t_size -= a.columns();
         }
-        */
+        
         unsigned a_div = a_t_size / a.columns(); // number of rows in one transfer
+/*
         while(a_div % 4 != 0)
             a_div--;
-
+*/
         //std::cout << "ADIV = " << a_div << std::endl;
         //a_t_size *= 4;
         a_t_size = 4 * (a_div * a.columns());
@@ -1052,11 +1053,8 @@ namespace honei
             ob1.u++;
         }
 
-        Operand oi0 = { 0llu }; // a_typed_offset
-        Operand oi1 = { a_typed_offset };
-        Operand oo = { a.columns() };
+        Operand oi = { a.columns() };
 
-        //std::cout << "A TYPED OFFSET: " << oi1.u << std::endl;
         { // DISPATCH FOR R[0] and R[2]
             Operand od = { &b02_ptrs };
             Operand oe = { &b02_sizes };
@@ -1082,10 +1080,10 @@ namespace honei
             Operand on0 = { &r0_eahs };
             Operand on1 = { &r2_eahs };
 
-            SPEInstruction * instruction0 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi0,
-                    oj, ok0, ol0, om0, on0, oo);
-            SPEInstruction * instruction1 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi1,
-                    oj, ok1, ol1, om1, on1, oo);
+            SPEInstruction * instruction0 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi,
+                    oj, ok0, ol0, om0, on0);
+            SPEInstruction * instruction1 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi,
+                    oj, ok1, ol1, om1, on1);
 
             if (use_spe)
             {
@@ -1132,10 +1130,10 @@ namespace honei
             Operand on0 = { &r1_eahs };
             Operand on1 = { &r3_eahs };
 
-            SPEInstruction * instruction2 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi0, oj,
-                    ok0, ol0, om0, on0, oo);
-            SPEInstruction * instruction3 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi1, oj,
-                    ok1, ol1, om1, on1, oo);
+            SPEInstruction * instruction2 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi, oj,
+                    ok0, ol0, om0, on0);
+            SPEInstruction * instruction3 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi, oj,
+                    ok1, ol1, om1, on1);
 
             if (use_spe)
             {

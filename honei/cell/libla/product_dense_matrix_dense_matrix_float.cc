@@ -58,9 +58,8 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     Allocation * block_r[2] = { acquire_block(), acquire_block() };
 
     unsigned nr_of_lists(inst.g.u); // Number of Lists to be double buffered
-    unsigned a_cols(inst.o.u);
+    unsigned a_cols(inst.i.u);
     unsigned a_t_size(inst.size);
-    unsigned a_typed_offset(inst.i.u); // if we are in lower part of A our first row may have an offset
     unsigned long long list_sizes[nr_of_lists] __attribute__((aligned(16)));
     unsigned long long list_eahs[nr_of_lists] __attribute__((aligned(16)));
     EffectiveAddress list_ptrs[nr_of_lists] __attribute__((aligned(16)));
@@ -89,7 +88,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
     Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
     Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
-    fill(r[0].untyped, 16384, 0.0f);
+
     unsigned b_size(list_sizes[b_counter]);
     debug_getl(list_eahs[b_counter], b[b_current].untyped, list_sizes[0] * sizeof(ListElement));
     mfc_getl(b[b_current].untyped, list_eahs[b_counter], list_ptr[0].untyped, list_sizes[0] * sizeof(ListElement), 6, 0, 0);
@@ -129,6 +128,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     unsigned long b_offset(inst.h.u / 4); // Start offset of the row with index 1 (!) (row 0 has always index 0)
     unsigned b_vecs(inst.j.u / 4);
     unsigned ar(0);
+    unsigned r_offset(0);
 
     while (a_counter > 1) // db for A
     {
@@ -143,9 +143,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
         unsigned get_counter(0);
         unsigned long a_elem(0); // The actual considered element of matrix a
         unsigned a_rows(a_size / 4 / a_cols);
-        unsigned r_offset(0);
         fill(r[r_current].untyped, 16384, 0.0f);
-
         for( ; ar < a_rows ; ar++)
         {
             b_counter = get_counter;
@@ -183,12 +181,12 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
                         vector float r_temp(r[r_current].vectorised[r_idx]);
                         extract(r_temp, r[r_current].vectorised[r_idx+1], r_offset);
-                        r_temp = spu_madd(spu_splats(a[a_current].typed[a_elem + a_typed_offset]), temp, r_temp);
+                        r_temp = spu_madd(spu_splats(a[a_current].typed[a_elem]), temp, r_temp);
                         insert(r[r_current].vectorised[r_idx], r[r_current].vectorised[r_idx + 1], r_temp, r_offset);
 
                         //Subscriptable<float> fv = { temp };
                         //Subscriptable<float> rs = { r[r_current].vectorised[r_idx] };
-                        //printf("Multipyling: a_elem: %f * %f %f %f %f \n", a[a_current].typed[a_elem+ a_typed_offset], fv.array[0], fv.array[1], fv.array[2], fv.array[3]);
+                        //printf("Multipyling: a_elem: %f * %f %f %f %f \n", a[a_current].typed[a_elem], fv.array[0], fv.array[1], fv.array[2], fv.array[3]);
                         //printf("Result an pos: %u:     %f %f %f %f \n", r_idx, rs.array[0], rs.array[1], rs.array[2], rs.array[3]);
 
                         b_vec_idx++;
@@ -254,7 +252,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     unsigned get_counter(0);
     unsigned long a_elem(0); // The actual considered element of matrix a
     unsigned a_rows(a_size / 4 / a_cols);
-    unsigned r_offset(0);
+    //unsigned r_offset(0);
     fill(r[r_current].untyped, 16384, 0.0f);
 
     for( ; ar < a_rows ; ar++)
@@ -295,12 +293,12 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
                     vector float r_temp(r[r_current].vectorised[r_idx]);
                     extract(r_temp, r[r_current].vectorised[r_idx+1], r_offset);
-                    r_temp = spu_madd(spu_splats(a[a_current].typed[a_elem + a_typed_offset]), temp, r_temp);
+                    r_temp = spu_madd(spu_splats(a[a_current].typed[a_elem]), temp, r_temp);
                     insert(r[r_current].vectorised[r_idx], r[r_current].vectorised[r_idx + 1], r_temp, r_offset);
 /*
                     Subscriptable<float> fv = { temp };
                     Subscriptable<float> rs = { r_temp };
-                    printf("Multipyling: a_elem: %f * %f %f %f %f \n", a[a_current].typed[a_elem+ a_typed_offset], fv.array[0], fv.array[1], fv.array[2], fv.array[3]);
+                    printf("Multipyling: a_elem: %f * %f %f %f %f \n", a[a_current].typed[a_elem], fv.array[0], fv.array[1], fv.array[2], fv.array[3]);
                     printf("Result an pos: %u:     %f %f %f %f \n", r_idx, rs.array[0], rs.array[1], rs.array[2], rs.array[3]);
 */
                     b_vec_idx++;

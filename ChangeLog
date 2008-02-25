@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-25 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/libla/product-cell.cc: Changes to allow bigger matrix sizes.
+	* honei/libla/product_BENCHMARK.cc: Added benchmarks for 256x256 and
+	512x512.
+	* honei/libla/product_TEST.cc: Made tests even more complicated.
+
 2008-02-24 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/honeirc, honei/libutil/partitioner.cc,
