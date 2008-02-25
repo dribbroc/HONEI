@@ -5,7 +5,7 @@ Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
     LibLA
 
 Markus Geveler <apryde@gmx.de>
-    LibLA, LibSWE
+    LibLA, LibSWE, LibMath, LibVisual
 
 David Gies <david-gies@gmx.de>
     Benchmarks, Unit Tests
@@ -26,7 +26,7 @@ Joachim Messer <joachim.messer@t-online.de>
     LibSWE
 
 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
-    Unit Tests
+    LibLa, LibVisual, Unit Tests
 
 Danny van Dyk <danny.dyk@uni-dortmund.de>
     LibLA, LibSWE, LibUtil, Unit Tests

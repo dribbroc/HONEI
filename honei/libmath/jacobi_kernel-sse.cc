@@ -43,13 +43,19 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
     unsigned long quad_end, end, quad_start, start, op_offset;
     DenseVector<float> temp(result.copy());
     float * r_e_c = temp.elements();
+    float * x_e = x.elements();
+    float * r_e = result.elements();
+    float * d_e = d.elements();
 
     for (BandedMatrix<float>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
     {
+
+        float * band_e = band->elements();
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
         if (band.index() >= middle_index)
         {
+
             op_offset = band.index() - middle_index;
 
             end = a.size() - op_offset; // Calculation of the element-index to stop in iteration!
@@ -58,18 +64,13 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
             if (end < 32)
                 quad_end = 0;
 
-            float * band_e = band->elements();
-            float * x_e = x.elements();
-            float * r_e = result.elements();
-            float * d_e = d.elements();
-
-
             for (unsigned long index(0) ; index < quad_end ; index += 4)
             {
                 m2 = _mm_loadu_ps(x_e + index + op_offset);
                 m1 = _mm_load_ps(band_e + index);
                 m3 = _mm_load_ps(r_e_c + index);
                 m4 = _mm_load_ps(d_e + index);
+                m6 = _mm_load_ps(r_e + index);
 
                 m1 = _mm_mul_ps(m1, m2);
                 m5 = _mm_add_ps(m1, m3);
@@ -77,7 +78,7 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
                 _mm_store_ps(r_e_c + index, m5);
 
                 m1 = _mm_mul_ps(m1, m4);
-                m1 = _mm_add_ps(m1, m3);
+                m1 = _mm_add_ps(m1, m6);
 
                 _mm_store_ps(r_e + index, m1);
             }
@@ -103,10 +104,6 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
                 quad_start = start;
             }
 
-            float * band_e = band->elements();
-            float * x_e = x.elements();
-            float * r_e = result.elements();
-            float * d_e = d.elements();
 
             for (unsigned long index(start) ; index < quad_start ; index++)
             {
@@ -116,10 +113,11 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
 
             for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
             {
-                m2 = _mm_loadu_ps(x_e + index + op_offset);
+                m2 = _mm_loadu_ps(x_e + index - op_offset);
                 m1 = _mm_load_ps(band_e + index);
                 m3 = _mm_load_ps(r_e_c + index);
                 m4 = _mm_load_ps(d_e + index);
+                m6 = _mm_load_ps(r_e + index);
 
                 m1 = _mm_mul_ps(m1, m2);
                 m5 = _mm_add_ps(m1, m3);
@@ -127,7 +125,7 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
                 _mm_store_ps(r_e_c + index, m5);
 
                 m1 = _mm_mul_ps(m1, m4);
-                m1 = _mm_add_ps(m1, m3);
+                m1 = _mm_add_ps(m1, m6);
 
                 _mm_store_ps(r_e + index, m1);
 
@@ -141,9 +139,7 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
 
     }
     //treat the d_e *.elem b_e product as if it was an additional band:
-    float * r_e = result.elements();
     float * b_e = b.elements();
-    float * d_e = d.elements();
     end = b.size(); // Calculation of the element-index to stop in iteration!
     quad_end = end - (end % 4);
 
@@ -187,6 +183,10 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
     unsigned long quad_end, end, quad_start, start, op_offset;
     DenseVector<double> temp(result.copy());
     double * r_e_c = temp.elements();
+    double * x_e = x.elements();
+    double * r_e = result.elements();
+    double * d_e = d.elements();
+    double * b_e = b.elements();
 
     for (BandedMatrix<double>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
@@ -203,10 +203,6 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
                 quad_end = 0;
 
             double * band_e = band->elements();
-            double * x_e = x.elements();
-            double * r_e = result.elements();
-            double * d_e = d.elements();
-
 
             for (unsigned long index(0) ; index < quad_end ; index += 2)
             {
@@ -214,6 +210,7 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
                 m1 = _mm_load_pd(band_e + index);
                 m3 = _mm_load_pd(r_e_c + index);
                 m4 = _mm_load_pd(d_e + index);
+                m6 = _mm_load_pd(r_e + index);
 
                 m1 = _mm_mul_pd(m1, m2);
                 m5 = _mm_add_pd(m1, m3);
@@ -221,7 +218,7 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
                 _mm_store_pd(r_e_c + index, m5);
 
                 m1 = _mm_mul_pd(m1, m4);
-                m1 = _mm_add_pd(m1, m3);
+                m1 = _mm_add_pd(m1, m6);
 
                 _mm_store_pd(r_e + index, m1);
             }
@@ -248,9 +245,6 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
             }
 
             double * band_e = band->elements();
-            double * x_e = x.elements();
-            double * r_e = result.elements();
-            double * d_e = d.elements();
 
             for (unsigned long index(start) ; index < quad_start ; index++)
             {
@@ -260,10 +254,11 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
 
             for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
             {
-                m2 = _mm_loadu_pd(x_e + index + op_offset);
+                m2 = _mm_loadu_pd(x_e + index - op_offset);
                 m1 = _mm_load_pd(band_e + index);
                 m3 = _mm_load_pd(r_e_c + index);
                 m4 = _mm_load_pd(d_e + index);
+                m6 = _mm_load_pd(r_e + index);
 
                 m1 = _mm_mul_pd(m1, m2);
                 m5 = _mm_add_pd(m1, m3);
@@ -271,7 +266,7 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
                 _mm_store_pd(r_e_c + index, m5);
 
                 m1 = _mm_mul_pd(m1, m4);
-                m1 = _mm_add_pd(m1, m3);
+                m1 = _mm_add_pd(m1, m6);
 
                 _mm_store_pd(r_e + index, m1);
 
@@ -285,9 +280,6 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
 
     }
     //treat the d_e *.elem b_e product as if it was an additional band:
-    double * r_e = result.elements();
-    double * b_e = b.elements();
-    double * d_e = d.elements();
     end = b.size(); // Calculation of the element-index to stop in iteration!
     quad_end = end - (end % 2);
 

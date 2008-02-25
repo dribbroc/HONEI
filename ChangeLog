@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-25 Markus Geveler <apryde@gmx.de>
+
+	* AUTHORS, honei/libmath/ehq.1.1.1.1.bin, honei/libmath/jacobi_kernel-sse.cc:
+	Resolved numerical problems of JacobiKernel, added larger poisson test.
+
 2008-02-25 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
