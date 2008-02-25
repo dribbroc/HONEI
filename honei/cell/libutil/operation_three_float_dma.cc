@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -42,10 +43,10 @@
  * \operand i second element of carry_b (not transfered via dma)
  * \operand j third element of carry_b (not transfered via dma)
  * \operand k fourth element of carry_b (not transfered via dma)
- * \operand l first element of carry_b (not transfered via dma)
- * \operand m second element of carry_b (not transfered via dma)
- * \operand n third element of carry_b (not transfered via dma)
- * \operand o fourth element of carry_b (not transfered via dma)
+ * \operand l first element of carry_c (not transfered via dma)
+ * \operand m second element of carry_c (not transfered via dma)
+ * \operand n third element of carry_c (not transfered via dma)
+ * \operand o fourth element of carry_c (not transfered via dma)
  * \operand p scalar
 */
 
