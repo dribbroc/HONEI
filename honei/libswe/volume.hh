@@ -40,7 +40,7 @@ namespace honei
 {
     class Volume
     {
-        private:
+        protected:
             double _size;
         public:
 
@@ -274,6 +274,8 @@ namespace honei
                 this->_l = l;
                 this->_grid_x = g_w;
                 this->_grid_y = g_h;
+                //normalized volume:
+                this->_size = _w * _h * _l;
             }
 
         private:

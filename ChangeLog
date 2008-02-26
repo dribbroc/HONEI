@@ -7,6 +7,14 @@ see the NEWS file.
 
 2008-02-26 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/files.m4, honei/libswe/relax_solver_volume_steady_TEST.cc, honei/libswe/volume.hh:
+	Added a mass conservation test for RelaxSolver, based on the volume
+	computations added earlier, which is at the same time the proof for
+	RelaxSolver to be mass conservative even if run with SSE; Added
+	normalized volume computation to Cuboid.
+
+2008-02-26 Markus Geveler <apryde@gmx.de>
+
 	* honei/libmath/quadrature.hh, honei/libmath/quadrature_TEST.cc:
 	Added better testcase for 2D Integration, cleaned up Quadrature.
 
