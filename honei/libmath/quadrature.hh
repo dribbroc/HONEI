@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,6 +24,8 @@
 
 #include <honei/libutil/tags.hh>
 #include <functional>
+#include <honei/libmath/interpolation.hh>
+#include <honei/libla/dense_matrix.hh>
 
 namespace honei
 {
@@ -98,6 +101,77 @@ namespace honei
 
                 return result;
             }
+    };
+
+    /**
+     * Returns the Volume under a given scalarfield by applying Gaussian Quadrature in 2D.
+     *
+     */
+    template<typename Tag_, typename T_>
+    class GaussianQuadrature2D;
+
+    template<typename Tag_>
+    class GaussianQuadrature2D<Tag_, tags::Trapezoid>
+    {
+        private:
+            template< typename DT_>
+            static DT_ three_point(DenseMatrix<DT_> & s_f, unsigned long i, unsigned long j, unsigned long k, unsigned long l, DT_ delta_x, DT_ delta_y, DT_ right_border, DT_ left_border)
+            {
+                DT_ h = (right_border - left_border) / s_f.rows();
+                DT_ h_1 = (1./2. - 1./(2 *(sqrt(3)))) * h;
+                DT_ actual_x = ((k + i) * delta_x) + h_1;
+                DT_ actual_y = ((l + j) * delta_y) + h_1;
+
+                DT_ first_point = 5. * Interpolation<Tag_, interpolation_methods::LINEAR>::value(delta_x, delta_y, s_f, actual_x, actual_y);
+                actual_x = ((k + i) * delta_x) + h/2.;
+                actual_y = ((l + j) * delta_y) + h/2.;
+                DT_ second_point = 8. * Interpolation<Tag_, interpolation_methods::LINEAR>::value(delta_x, delta_y, s_f, actual_x, actual_y);
+
+                actual_x = ((k + i) * delta_x) - h_1;
+                actual_y = ((l + j) * delta_y) - h_1;
+                DT_ third_point = 5. * Interpolation<Tag_, interpolation_methods::LINEAR>::value(delta_x, delta_y, s_f, actual_x, actual_y);
+
+                std::cout << "Innermost: " << first_point + second_point + third_point << std::endl;
+                return first_point + second_point + third_point;
+            }
+
+        public:
+
+            /**
+             * Returns the Volume under a given scalarfield by applying Gaussian Quadrature in 2D. 
+             * \param scalarfield The discrete funktion, that is going to be integrated.
+             * \param left_border a in [a,b].
+             * \param right_border b in [a,b].
+             * \param delta_x The stepsize in x direction.
+             * \param delta_y The stepsize in y direction.
+             */
+            template<typename DT_>
+                static inline DT_ value(DenseMatrix<DT_>& scalar_field, DT_ left_border, DT_ right_border, DT_ delta_x, DT_ delta_y)
+                {
+                    DT_ result(0);
+                    for(unsigned long k(0); k < scalar_field.rows(); ++k)
+                    {
+                        DT_ outermost_sum(0);
+                        for(unsigned long l(0); l < scalar_field.rows(); ++l)
+                        {
+                            DT_ level_sum(0);
+                            for(unsigned long i(0); i <= 2; ++i)
+                            {
+                                DT_ innermost_sum(0);
+                                for(unsigned long j(0); j <= 2; ++j)
+                                {
+                                    innermost_sum += GaussianQuadrature2D<Tag_, tags::Trapezoid>::three_point(scalar_field, i, j, k, l, delta_x, delta_y, right_border, left_border);
+                                }
+                                innermost_sum *= ((right_border - left_border)/scalar_field.rows())/18;
+                                level_sum += innermost_sum;
+                            }
+                            level_sum *= ((right_border - left_border)/scalar_field.rows())/18;
+                            outermost_sum += level_sum;
+                        }
+                        result += outermost_sum;
+                    }
+                    return 2 * result;
+                }
     };
 }
 

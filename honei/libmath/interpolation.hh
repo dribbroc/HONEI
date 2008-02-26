@@ -88,7 +88,6 @@ namespace honei
                 unsigned long j = (x_t);
                 unsigned long i = (y_t);
                 ResPrec_ l_1, l_2;
-
                 ///Perform bilinear interpolation:
                 if(i < height.rows() - 1 && j < height.columns() - 1)
                 {
@@ -97,29 +96,17 @@ namespace honei
                 }
                 else if(i >= height.rows() - 1 && j >= height.columns() - 1)
                 {
-                    /*l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];
-                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][height.columns() - 1] - height[height.rows() - 1][height.columns() - 1]) + height[height.rows() - 1][height.columns() - 1];*/
-                    if(i > j)
-                    {
-                        return height[i][height.columns() - 1];
-                    }
-                    else
-                    {
-                        return height[height.rows() - 1][j];
-                    }
+
+                    return height[height.rows() -1][height.columns() - 1];
                 }
+
                 else if(i >= height.rows() - 1)
                 {
-                    /*l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];
-                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[height.rows() - 1][j+1] - height[height.rows() - 1][j]) + height[height.rows() - 1][j];*/
-                    return height[height.rows()][j];
+                    return height[height.rows() - 1][j];
                 }
                 else if(j >= height.columns() - 1)
                 {
-                    /*l_1 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i][height.columns() - 1] - height[i][height.columns() - 1]) + height[i][height.columns() - 1];
-                    l_2 = (x - ResPrec_(j * delta_x))/(ResPrec_(((j + 1) * delta_x) - (j * delta_x))) * (height[i + 1][height.columns() - 1] - height[i + 1][height.columns() - 1]) + height[i+1][height.columns() - 1];*/
                     return height[i][height.columns() - 1];
-
                 }
                 ResPrec_ result = (y - ResPrec_(i * delta_y))/(ResPrec_(((i + 1) * delta_y) - (i * delta_y))) * (l_2 - l_1) + l_1;
                 return result;

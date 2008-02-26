@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the Math C++ library. LibMath is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,6 +24,7 @@
 #include <cmath>
 #include <limits>
 #include <iostream>
+#include <honei/libswe/volume.hh>
 
 using namespace honei;
 using namespace tests;
@@ -66,3 +68,32 @@ class QuadratureTest :
 
 QuadratureTest<float, tags::Trapezoid> quadrature_test_float("float", "tags::Trapezoid");
 QuadratureTest<double, tags::Trapezoid> quadrature_test_double("double", "tags::Trapezoid");
+
+template <typename DataType_, typename QTag_>
+class Quadrature2DTest :
+    public BaseTest
+{
+    public:
+        Quadrature2DTest(const std::string & type, const std::string & tag) :
+            BaseTest("gaussian quadrature 2D<" + type + ", " + tag + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            DenseMatrix<DataType_> field(20, 20, DataType_(1));
+            Cuboid<DataType_> q_b1(field, 5, 5, DataType_(2), 10, 10);
+            q_b1.value();
+
+            DataType_ delta_x = 1;
+            DataType_ delta_y = 1;
+
+            DataType_ v = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(field, DataType_(0), DataType_(20), delta_x, delta_y);
+
+            std::cout<<"F(x):" << field << std::endl;
+            std::cout<<"Volume = "<< v << std::endl;
+            TEST_CHECK(true);
+        }
+};
+Quadrature2DTest<double, tags::Trapezoid> quadrature2D_test_double("double 2D", "tags::Trapezoid");
+

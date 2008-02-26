@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-26 Markus Geveler <apryde@gmx.de>
+
+	* honei/libmath/interpolation.hh, honei/libmath/quadrature.hh, honei/libmath/quadrature_TEST.cc:
+	Added implementation of 2D numerical integration by Gaussian
+	Quadrature for finite volume discretisations, adjusted numerical
+	interpolation, added test.
+
 2008-02-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/cell/kernels/kernel_double.sk,
