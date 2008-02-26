@@ -498,6 +498,7 @@ namespace honei
                     + ", j = " + stringify(instruction.instruction().j.ea) + "\nk = " + stringify(instruction.instruction().k.ea)
                     + ", l = " + stringify(instruction.instruction().l.ea) + "\nm = " + stringify(instruction.instruction().m.ea)
                     + ", n = " + stringify(instruction.instruction().n.ea) + "\no = " + stringify(instruction.instruction().o.ea)
+                    + ", p = " + stringify(instruction.instruction().p.ea)
                     + "\n"));
        Lock l(*_imp->mutex);
 
@@ -607,7 +608,18 @@ namespace honei
     unsigned int SPEKernel::enqueue_queue_element(const SPEInstruction & instruction)
     {
         Lock l(*_imp->mutex);
-        CONTEXT("When enqueueing batch instruction to SPE #" +stringify(_imp->spe->id()));
+        CONTEXT("When enqueueing batch instruction");
+        LOGMESSAGE(ll_minimal, std::string("Enqueing SPEInstruction to SPEInstructionQueue, opcode = " + stringify(instruction.instruction().opcode)
+                    + ", size = " + stringify(instruction.instruction().size) + "\na = " + stringify(instruction.instruction().a.ea)
+                    + ", b = " + stringify(instruction.instruction().b.ea) + "\nc = " + stringify(instruction.instruction().c.ea)
+                    + ", d = " + stringify(instruction.instruction().d.ea) + "\ne = " + stringify(instruction.instruction().e.ea)
+                    + ", f = " + stringify(instruction.instruction().f.ea) + "\ng = " + stringify(instruction.instruction().g.ea)
+                    + ", h = " + stringify(instruction.instruction().h.ea) + "\ni = " + stringify(instruction.instruction().i.ea)
+                    + ", j = " + stringify(instruction.instruction().j.ea) + "\nk = " + stringify(instruction.instruction().k.ea)
+                    + ", l = " + stringify(instruction.instruction().l.ea) + "\nm = " + stringify(instruction.instruction().m.ea)
+                    + ", n = " + stringify(instruction.instruction().n.ea) + "\no = " + stringify(instruction.instruction().o.ea)
+                    + ", p = " + stringify(instruction.instruction().p.ea)
+                    + "\n"));
         unsigned result;
 
         while (_imp->spe_instruction_index == (_imp->next_free_index + 1) % 8) /// \todo remove hardcoded numbers
@@ -637,7 +649,7 @@ namespace honei
     {
         if (_imp->spe)
         {
-            LOGMESSAGE(ll_minimal, "SPEKernel: Sending start signal to SPE #" + stringify(_imp->spe->id()));
+            LOGMESSAGE(ll_minimal, "SPEKernel: Sending (run_queue) start signal to SPE #" + stringify(_imp->spe->id()));
             _imp->spe->signal();
         }
     }

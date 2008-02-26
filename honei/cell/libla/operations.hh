@@ -80,6 +80,10 @@ namespace honei
 
             extern Operation<2, double, rtm_dma> scaled_sum_dense_dense_double;
 
+            extern Operation<3, float, rtm_dma> product_banded_matrix_dense_vector_float;
+
+            extern Operation<3, double, rtm_dma> product_banded_matrix_dense_vector_double;
+
         }
     }
 }

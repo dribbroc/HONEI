@@ -194,110 +194,62 @@ namespace honei
             // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
             if (band.index() >= middle_index)
             {
+                op_offset = band.index() - middle_index;
+                // Lower result part
+                start = 0;
+                end = std::min(band->size() - op_offset, result.size() / 2); //Calculation of the element-index to stop in iteration!
+                if (start < end)
                 {
-                    // Lower result part
-                    op_offset = band.index() - middle_index;
-                    start = 0;
-                    quad_start = 0;
-                    end = std::min(band->size() - op_offset, result.size() / 2); //Calculation of the element-index to stop in iteration!
-                    quad_end = end - (end % 4);
-
-                    Operand oa = { band->elements() + quad_start };
-                    Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
-                    Operand oc = { result.elements() + quad_start };
-                    Operand od, oe, of, og;
-                    /// \todo use such a transfer size, that od.u is at least 2
-                    od.u = (quad_end - quad_start) / (1000 * 4);
-                    oe.u = (quad_end - quad_start) % (1000 * 4);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 4;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = op_offset % 4;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, float, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_float,
+                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_lower.empty() || iq_lower.back()->size() == 7)
                         {
                             iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = 0;
-                        quad_end = 0;
-                    }
 
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
+                    }
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
                 }
 
+                // Upper result part
+                start = result.size() / 2;
+                end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
+                if (start < end)
                 {
-                    // Upper result part
-                    op_offset = band.index() - middle_index;
-                    start = result.size() / 2;
-                    quad_start = start + ((4 - (start % 4)) % 4);
-                    end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
-                    quad_end = end - (end % 4);
-
-                    Operand oa = { band->elements() + quad_start };
-                    Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 4) };
-                    Operand oc = { result.elements() + quad_start };
-                    Operand od, oe, of, og, oh;
-
-                    /// \todo use such a transfer size, that od.u is at least 2
-                    od.u = (quad_end - quad_start) / (1000 * 4);
-                    oe.u = (quad_end - quad_start) % (1000 * 4);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 4;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = op_offset % 4;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, float, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_float,
+                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_upper.empty() || iq_upper.back()->size() == 7)
                         {
                             iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = result.size() / 2;
-                        quad_end = result.size() / 2;
-                    }
 
-                    for (unsigned long index = start ; index < quad_start ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
@@ -307,111 +259,62 @@ namespace honei
             // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
             else
             {
+                op_offset = middle_index - band.index();
+                // Lower result part
+                start = op_offset; //Calculation of the element-index to start in iteration!
+                end = result.size() / 2;
+                if (start < end)
                 {
-                    // Lower result part
-                    op_offset = middle_index - band.index();
-                    start = op_offset; //Calculation of the element-index to start in iteration!
-                    quad_start = start + ((4 - (start % 4)) % 4);
-                    end = result.size() / 2;
-                    quad_end = end - (end % 4);
-                    Operand oa = { band->elements() + quad_start};
-                    Operand ob = { b.elements() + quad_start - op_offset - ((4 - (op_offset % 4)) % 4)};
-                    Operand oc = { result.elements() + quad_start};
-                    Operand od, oe, of, og;
-
-                    od.u = (quad_end - quad_start) / (1000 * 4);
-                    oe.u = (quad_end - quad_start) % (1000 * 4);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 4;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = (4 - (op_offset % 4)) % 4;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, float, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_float,
+                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_lower.empty() || iq_lower.back()->size() == 7)
                         {
                             iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = 0;
-                        quad_end = start;
-                    }
 
-                    for (unsigned long index = start ; index < quad_start ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
                 }
 
+                // Upper result part
+                start = std::max(op_offset, result.size() / 2); //Calculation of the element-index to start in iteration!
+                end = band->size();
+                if (start < end)
                 {
-                    // Upper result part
-                    op_offset = middle_index - band.index();
-                    start = std::max(op_offset, result.size() / 2); //Calculation of the element-index to start in iteration!
-                    quad_start = start + ((4 - (start % 4)) % 4);
-                    end = band->size();
-                    quad_end = end - (end % 4);
-                    Operand oa = { band->elements() + quad_start};
-                    Operand ob = { b.elements() + quad_start - op_offset - ((4 - (op_offset % 4)) % 4)};
-                    Operand oc = { result.elements() + quad_start};
-                    Operand od, oe, of, og;
-
-                    od.u = (quad_end - quad_start) / (1000 * 4);
-                    oe.u = (quad_end - quad_start) % (1000 * 4);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 4;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = (4 - (op_offset % 4)) % 4;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, float, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_float,
+                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_upper.empty() || iq_upper.back()->size() == 7)
                         {
                             iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_float, 1000 * 4, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = 0;
-                        quad_end = start;
-                    }
 
-                    for (unsigned long index = start ; index < quad_start ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
@@ -419,9 +322,9 @@ namespace honei
             }
         }
         /*as2.take();
-        std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
-        TimeStamp at, bt;
-        at.take();*/
+          std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
+          TimeStamp at, bt;
+          at.take();*/
         PROFILER_START("Product<Cell>::value(bm, dv)->dispatch");
         for (std::list<SPEInstructionQueue *>::iterator i(iq_lower.begin()), i_end(iq_lower.end()), j(iq_upper.begin()), j_end(iq_upper.end()) ;
                 (i != i_end || j != j_end) ; )
@@ -476,110 +379,62 @@ namespace honei
             // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
             if (band.index() >= middle_index)
             {
+                op_offset = band.index() - middle_index;
+                // Lower result part
+                start = 0;
+                end = std::min(band->size() - op_offset, result.size() / 2); //Calculation of the element-index to stop in iteration!
+                if (start < end)
                 {
-                    // Lower result part
-                    op_offset = band.index() - middle_index;
-                    start = 0;
-                    quad_start = 0;
-                    end = std::min(band->size() - op_offset, result.size() / 2); //Calculation of the element-index to stop in iteration!
-                    quad_end = end - (end % 2);
-
-                    Operand oa = { band->elements() + quad_start };
-                    Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 2) };
-                    Operand oc = { result.elements() + quad_start };
-                    Operand od, oe, of, og;
-                    /// \todo use such a transfer size, that od.u is at least 2
-                    od.u = (quad_end - quad_start) / (1000 * 2);
-                    oe.u = (quad_end - quad_start) % (1000 * 2);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 2;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = op_offset % 2;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, double, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_double,
+                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_lower.empty() || iq_lower.back()->size() == 7)
                         {
                             iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = 0;
-                        quad_end = 0;
-                    }
 
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
+                    {
+                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
+                    }
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
                 }
 
+                // Upper result part
+                start = result.size() / 2;
+                end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
+                if (start < end)
                 {
-                    // Upper result part
-                    op_offset = band.index() - middle_index;
-                    start = result.size() / 2;
-                    quad_start = start + ((2 - (start % 2)) % 2);
-                    end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
-                    quad_end = end - (end % 2);
-
-                    Operand oa = { band->elements() + quad_start };
-                    Operand ob = { b.elements() + quad_start + op_offset - (op_offset % 2) };
-                    Operand oc = { result.elements() + quad_start };
-                    Operand od, oe, of, og, oh;
-
-                    /// \todo use such a transfer size, that od.u is at least 2
-                    od.u = (quad_end - quad_start) / (1000 * 2);
-                    oe.u = (quad_end - quad_start) % (1000 * 2);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 2;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = op_offset % 2;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, double, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_double,
+                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_upper.empty() || iq_upper.back()->size() == 7)
                         {
                             iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = result.size() / 2;
-                        quad_end = result.size() / 2;
-                    }
 
-                    for (unsigned long index = start ; index < quad_start ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
@@ -589,111 +444,62 @@ namespace honei
             // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
             else
             {
+                op_offset = middle_index - band.index();
+                // Lower result part
+                start = op_offset; //Calculation of the element-index to start in iteration!
+                end = result.size() / 2;
+                if (start < end)
                 {
-                    // Lower result part
-                    op_offset = middle_index - band.index();
-                    start = op_offset; //Calculation of the element-index to start in iteration!
-                    quad_start = start + ((2 - (start % 2)) % 2);
-                    end = result.size() / 2;
-                    quad_end = end - (end % 2);
-                    Operand oa = { band->elements() + quad_start};
-                    Operand ob = { b.elements() + quad_start - op_offset - ((2 - (op_offset % 2)) % 2)};
-                    Operand oc = { result.elements() + quad_start};
-                    Operand od, oe, of, og;
-
-                    od.u = (quad_end - quad_start) / (1000 * 2);
-                    oe.u = (quad_end - quad_start) % (1000 * 2);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 2;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = (2 - (op_offset % 2)) % 2;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, double, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_double,
+                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_lower.empty() || iq_lower.back()->size() == 7)
                         {
                             iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_lower.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_lower.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = 0;
-                        quad_end = start;
-                    }
 
-                    for (unsigned long index = start ; index < quad_start ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
                 }
 
+                // Upper result part
+                start = std::max(op_offset, result.size() / 2); //Calculation of the element-index to start in iteration!
+                end = band->size();
+                if (start < end)
                 {
-                    // Upper result part
-                    op_offset = middle_index - band.index();
-                    start = std::max(op_offset, result.size() / 2); //Calculation of the element-index to start in iteration!
-                    quad_start = start + ((2 - (start % 2)) % 2);
-                    end = band->size();
-                    quad_end = end - (end % 2);
-                    Operand oa = { band->elements() + quad_start};
-                    Operand ob = { b.elements() + quad_start - op_offset - ((2 - (op_offset % 2)) % 2)};
-                    Operand oc = { result.elements() + quad_start};
-                    Operand od, oe, of, og;
-
-                    od.u = (quad_end - quad_start) / (1000 * 2);
-                    oe.u = (quad_end - quad_start) % (1000 * 2);
-                    if (0 == oe.u)
-                    {
-                        if (od.u > 0)
-                        {
-                            oe.u = 1000 * 2;
-                        }
-                    }
-                    else
-                    {
-                        ++od.u;
-                    }
-
-                    og.u = (2 - (op_offset % 2)) % 2;
-                    if(quad_end > quad_start)
+                    SPEFrameworkInstruction<3, double, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_double,
+                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
+                    if(spefi.use_spe())
                     {
                         if (iq_upper.empty() || iq_upper.back()->size() == 7)
                         {
                             iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                         else
                         {
-                            iq_upper.back()->push_back(SPEInstruction(oc_product_banded_matrix_dense_vector_double, 1000 * 2, oa, ob, oc, od, oe, of, og));
+                            iq_upper.back()->push_back(spefi);
                         }
                     }
-                    else
-                    {
-                        quad_start = 0;
-                        quad_end = start;
-                    }
 
-                    for (unsigned long index = start ; index < quad_start ; index++)
+                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
-                    for (unsigned long index = quad_end ; index < end ; index++)
+                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                     {
                         result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }

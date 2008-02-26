@@ -27,7 +27,7 @@
 #include <spu_mfcio.h>
 
 /*
- * operation_dense_dense_float
+ * operation_dense_dense_double
  *
  * Calculate an operation with two dense entities.
  *
@@ -41,12 +41,8 @@
  * \operand g alignment offset of entity c.
  * \operand h first element of carry_b (not transfered via dma)
  * \operand i second element of carry_b (not transfered via dma)
- * \operand j third element of carry_b (not transfered via dma)
- * \operand k fourth element of carry_b (not transfered via dma)
  * \operand l first element of carry_c (not transfered via dma)
  * \operand m second element of carry_c (not transfered via dma)
- * \operand n third element of carry_c (not transfered via dma)
- * \operand o fourth element of carry_c (not transfered via dma)
  * \operand p scalar
 */
 
@@ -55,7 +51,7 @@ namespace honei
     namespace cell
     {
         template <>
-        void operation<Operation<3, float, rtm_dma> >(const Operation<3, float, rtm_dma> & operation,
+        void operation<Operation<3, double, rtm_dma> >(const Operation<3, double, rtm_dma> & operation,
                 const Instruction & instruction)
         {
             EffectiveAddress ea_a(instruction.a.ea), ea_b(instruction.b.ea), ea_c(instruction.c.ea),
@@ -65,21 +61,21 @@ namespace honei
             Allocation * block_b[2] = { acquire_block(), acquire_block() };
             Allocation * block_c[2] = { acquire_block(), acquire_block() };
 
-            Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
-            Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
-            Pointer<float> c[2] = { { block_c[0]->address }, { block_c[1]->address } };
+            Pointer<double> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+            Pointer<double> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
+            Pointer<double> c[2] = { { block_c[0]->address }, { block_c[1]->address } };
 
             unsigned counter(instruction.d.u);
             unsigned size(counter > 1 ? instruction.size : instruction.e.u);
             unsigned nextsize;
             unsigned current(0), next(1);
 
-            float scalar = instruction.p.f; // optional scalar value to be computed.
+            double scalar = instruction.p.d; // optional scalar value to be computed.
 
             unsigned b_offset(instruction.f.u);
             unsigned c_offset(instruction.g.u);
-            vector float b_carry = { instruction.h.f, instruction.i.f, instruction.j.f, instruction.k.f };
-            vector float c_carry = { instruction.l.f, instruction.m.f, instruction.n.f, instruction.o.f };
+            vector double b_carry = { instruction.h.d, instruction.i.d};
+            vector double c_carry = { instruction.l.d, instruction.m.d};
 
             debug_get(ea_a, a[current].untyped, size);
             mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
@@ -109,7 +105,7 @@ namespace honei
                 mfc_read_tag_status_all();
 
                 operation.calculate(a[current].vectorised, b[current].vectorised, c[current].vectorised,
-                        size / sizeof(vector float), b_carry, b_offset, c_carry, c_offset, scalar);
+                        size / sizeof(vector double), b_carry, b_offset, c_carry, c_offset, scalar);
 
                 debug_put(ea_result, a[current].untyped, size);
                 mfc_putb(a[current].untyped, ea_result, size, current, 0, 0);
@@ -128,7 +124,7 @@ namespace honei
             mfc_read_tag_status_all();
 
             operation.calculate(a[current].vectorised, b[current].vectorised, c[current].vectorised,
-                    size / sizeof(vector float), b_carry, b_offset, c_carry, c_offset, scalar);
+                    size / sizeof(vector double), b_carry, b_offset, c_carry, c_offset, scalar);
 
             debug_put(ea_result, a[current].untyped, size);
             mfc_put(a[current].untyped, ea_result, size, current, 0, 0);

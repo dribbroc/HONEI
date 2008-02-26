@@ -5,6 +5,21 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-26 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/kernels/kernel_double.sk,
+	honei/cell/kernels/kernel_float.sk, honei/cell/libla/operations.hh,
+	honei/cell/libla/product_banded_matrix_dense_vector_double.cc,
+	honei/cell/libla/product_banded_matrix_dense_vector_float.cc,
+	honei/cell/libutil/Makefile.am,
+	honei/cell/libutil/operation_framework.hh,
+	honei/cell/libutil/operation_three_double_dma.cc,
+	honei/cell/libutil/operation_three_float_dma.cc,
+	honei/libla/product-cell.cc, honei/libutil/spe_kernel.cc:
+	Fixed a bug in operation_three_float_dma.
+	Added operation_three_double_dma.
+	Made bmdv use SPEFrameworkInstruction.
+
 2008-02-25 Markus Geveler <apryde@gmx.de>
 
 	* AUTHORS, honei/libmath/ehq.1.1.1.1.bin, honei/libmath/jacobi_kernel-sse.cc:
