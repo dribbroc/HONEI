@@ -77,6 +77,12 @@ using namespace source_types;
 using namespace swe_solvers;
 namespace honei {
 
+    namespace precision_modes
+    {
+        class FIXED;
+        class MIXED;
+    }
+using namespace precision_modes;
     typedef unsigned long ulint;
     typedef unsigned int uint;
     typedef unsigned short usint;
@@ -88,7 +94,8 @@ namespace honei {
              typename InitPrec1_,
              typename InitPrec2_,
              typename SourceType_,
-             typename BoundaryType_>
+             typename BoundaryType_,
+             typename PrecMode_>
     class RelaxSolver
     {
     };
@@ -98,9 +105,8 @@ namespace honei {
              typename PredictionPrec1_,
              typename PredictionPrec2_,
              typename InitPrec1_,
-             typename InitPrec2_,
-             typename SourceType_>
-    class RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_, SourceType_, REFLECT>
+             typename InitPrec2_>
+    class RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_, source_types::SIMPLE, REFLECT, FIXED>
     {
         ///Private members.
         private:

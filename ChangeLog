@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-27 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/relax_solver_BENCHMARK.cc, honei/libswe/relax_solver.hh, honei/libswe/relax_solver_TEST.cc, honei/libswe/relax_solver_volume_steady_TEST.cc, honei/libswe/scenario_manager_TEST.cc, honei/libswe/selected_benchmarks.cc, honei/libvisual/enginesolve.hh, honei/libvisual/solver_server.hh:
+	Added interface extension for mixed precision RelaxSolver
+	specializations, adjusted tests and benchmark in all affected libraries.
+
 2008-02-26 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/files.m4, honei/libswe/relax_solver_volume_steady_TEST.cc, honei/libswe/volume.hh:

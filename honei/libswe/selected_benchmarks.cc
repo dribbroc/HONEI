@@ -121,7 +121,7 @@ class RelaxSolverBench :
                 scenario.eps = eps;
                 scenario.manning_n = manning;
 
-                RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT> relax_solver
+                RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver
                     (scenario);
                 relax_solver.do_preprocessing();
                 string outHeight = stringify(height);

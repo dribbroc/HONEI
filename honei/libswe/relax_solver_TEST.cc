@@ -30,6 +30,7 @@ using namespace honei;
 using namespace tests;
 using namespace std;
 using namespace swe_solvers;
+using namespace precision_modes;
 
 template <typename Tag_, typename DataType_>
 class RelaxSolverTest :
@@ -119,7 +120,7 @@ class RelaxSolverTest :
             scenario.eps = eps;
             scenario.manning_n = manning;
 
-            RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT> relax_solver
+            RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT, FIXED> relax_solver
                 (scenario);
             relax_solver.do_preprocessing();
             cout << "Height -field after preprocessing:\n";
