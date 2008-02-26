@@ -90,9 +90,12 @@ class Quadrature2DTest :
 
             DataType_ v = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(field, DataType_(0), DataType_(20), delta_x, delta_y);
 
-            std::cout<<"F(x):" << field << std::endl;
-            std::cout<<"Volume = "<< v << std::endl;
-            TEST_CHECK(true);
+            //std::cout<<"F(x):" << field << std::endl;
+            //std::cout<<"Volume = "<< v << std::endl;
+            //TEST_CHECK(true);
+
+            DataType_ ana_vol = 425. ;
+            TEST_CHECK_EQUAL_WITHIN_EPS(v, ana_vol, std::numeric_limits<DataType_>::epsilon()*10e2);
         }
 };
 Quadrature2DTest<double, tags::Trapezoid> quadrature2D_test_double("double 2D", "tags::Trapezoid");

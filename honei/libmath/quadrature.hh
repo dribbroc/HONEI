@@ -131,7 +131,6 @@ namespace honei
                 actual_y = ((l + j) * delta_y) - h_1;
                 DT_ third_point = 5. * Interpolation<Tag_, interpolation_methods::LINEAR>::value(delta_x, delta_y, s_f, actual_x, actual_y);
 
-                std::cout << "Innermost: " << first_point + second_point + third_point << std::endl;
                 return first_point + second_point + third_point;
             }
 
