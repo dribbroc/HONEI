@@ -16,32 +16,38 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+#ifndef ALLBENCH
+#include <benchmark/benchmark.cc>
+#include <tr1/memory>
+#include <string>
+#endif
 #include <honei/libswe/relax_solver.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/dense_matrix.hh>
-#include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
-#include <string>
 #include <honei/libswe/scenario.hh>
 #include <honei/libswe/scenario_manager.hh>
-#include <sys/time.h>
 using namespace honei;
-using namespace tests;
 using namespace std;
 using namespace swe_solvers;
 
 template <typename Tag_, typename DT1_, typename DT2_>
-class RelaxSolverMIXEDPRECTest :
-    public BaseTest
+class RelaxSolverMIXEDPRECBench :
+    public Benchmark
 {
+    private:
+        unsigned long _size;
+        int _count;
     public:
-        RelaxSolverMIXEDPRECTest(const std::string & type) :
-            BaseTest("relax_solver_mixedprec_test<" + type + ">")
+        RelaxSolverMIXEDPRECBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
         {
             register_tag(Tag_::name);
+            _size = size;
+            _count = count;
         }
 
-        virtual void run() const
+        virtual void run()
         {
             unsigned long dwidth(40);
             unsigned long dheight(40);
@@ -138,45 +144,37 @@ class RelaxSolverMIXEDPRECTest :
 
             if(scen_man_2.validate() && scen_man.validate())
             {
-                RelaxSolver<Tag_, DT2_, DT2_, DT2_, DT2_, DT2_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver (scenario_2);
+                RelaxSolver<Tag_, DT2_, DT2_, DT2_, DT2_, DT2_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver
+                    (scenario_2);
 
-                RelaxSolver<Tag_, DT1_, DT1_, DT1_, DT1_, DT1_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver_double (scenario);
+                RelaxSolver<Tag_, DT1_, DT1_, DT1_, DT1_, DT1_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver_double(scenario);
                 relax_solver.do_preprocessing();
                 string outHeight = stringify(height_2);
 
-                for (ulint i = 1; i <= timesteps; ++i)
+                for (ulint i = 1; i <= _count; ++i)
                 {
                     if(i % k != 0)
                     {
-                        relax_solver.solve();
+                        BENCHMARK(relax_solver.solve());
                     }
                     else
                     {
 
-                        ScenarioManager<DT1_, swe_solvers::RELAX, boundaries::REFLECT>::convert_scenario(scenario, scenario_2);
-                        relax_solver_double.solve();
-                        ScenarioManager<DT2_, swe_solvers::RELAX, boundaries::REFLECT>::convert_scenario(scenario_2, scenario);
-                        //~relax_solver_double;
+                        BENCHMARK((ScenarioManager<DT1_, swe_solvers::RELAX, boundaries::REFLECT>::convert_scenario(scenario, scenario_2)));
+                        BENCHMARK(relax_solver_double.solve());
+                        BENCHMARK((ScenarioManager<DT2_, swe_solvers::RELAX, boundaries::REFLECT>::convert_scenario(scenario_2, scenario)));
                     }
-                    cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
                 }
+                evaluate();
 
-                bool pass = true;
-                for(unsigned long i(0); i < height_2.rows(); ++i)
-                {
-                    for(unsigned long j(0); j < height_2.columns(); ++j)
-                    {
-                        if(height_2[i][j] < DT2_(4.8) || height_2[i][j] > DT2_(10.))
-                            pass = false;
-                    }
-                }
-                TEST_CHECK(pass);
             }
+
         }
 };
-RelaxSolverMIXEDPRECTest<tags::CPU, double, float> relax_solver_mp1_test("double to float");
-RelaxSolverMIXEDPRECTest<tags::CPU::MultiCore, double, float> relax_solver_mp1_test_mc("MC double to float");
+RelaxSolverMIXEDPRECBench<tags::CPU, double, float> solver_bench_float_2("RelaxSolver Benchmark - size: 41, mixed", 41, 100);
+RelaxSolverMIXEDPRECBench<tags::CPU::MultiCore, double, float> mc_solver_bench_float_2("MC RelaxSolver Benchmark - size: 41, mixed", 41, 100);
 #ifdef HONEI_SSE
-RelaxSolverMIXEDPRECTest<tags::CPU::SSE, double, float> relax_solver_mp1_test_sse("SSE double to float");
-RelaxSolverMIXEDPRECTest<tags::CPU::MultiCore::SSE, double, float> relax_solver_mp1_test_mcsse("MC SSE double to float");
+RelaxSolverMIXEDPRECBench<tags::CPU::MultiCore::SSE, double, float> mc_sse_solver_bench_float_2("MC SSE RelaxSolver Benchmark - size: 41, mixed", 41, 100);
+RelaxSolverMIXEDPRECBench<tags::CPU::SSE, double, float> sse_solver_bench_float_2("SSE RelaxSolver Benchmark - size: 41, mixed", 41, 100);
 #endif
+

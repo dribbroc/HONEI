@@ -21,7 +21,7 @@ add(`scenario_manager',           `hh', `test')
 add(`solver',                     `hh', `test',         `benchmark')
 add(`source_processing',          `hh', `test', `sse')
 add(`relax_solver',               `hh', `test',         `benchmark')
-add(`relax_solver_mp1',                 `test')
+add(`relax_solver_mp1',                 `test',         `benchmark')
 add(`relax_solver_volume_steady',       `test')
 add(`volume',                     `hh', `test')
 

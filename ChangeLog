@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-27 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/files.m4, honei/libswe/relax_solver_mp1_BENCHMARK.cc, honei/libswe/relax_solver_mp1_TEST.cc:
+	Added benchmark for new RelaxSolver variant, adjusted test.
+
+2008-02-27 Markus Geveler <apryde@gmx.de>
+
 	* honei/libswe/files.m4, honei/libswe/relax_solver_mp1_TEST.cc:
 	Added implementation of test-driven mixed precision RelaxSolver
 	running every kth iteration in double and running in single otherwise.
