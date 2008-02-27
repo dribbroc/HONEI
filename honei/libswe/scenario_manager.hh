@@ -23,7 +23,7 @@
 
 #include <scenario.hh>
 #include <honei/libutil/exception.hh>
-
+#include <honei/libla/algorithm.hh>
 /**
  * \file
  * Implementation of ScenarioManager and related (mostly Exception - based) classes.
@@ -171,6 +171,35 @@ namespace honei
             {
                 this->_current_scenario = scenario;
                 this->_allocated_scenario_flag = true;
+            }
+
+            /**
+             * Converts all data from one precision to another - this will work only with target scenarios members all allocated, due to performance reasons, this wont be checked and allocation cant be done here!
+             *
+             * \param target Reference to target scenario object.
+             * \param source Reference to source scenario object.
+             **/
+            template <typename TargetDT_, typename SourceDT_>
+            static void convert_scenario(Scenario<TargetDT_, swe_solvers::RELAX, boundaries::REFLECT> & target,
+                                         Scenario<SourceDT_, swe_solvers::RELAX, boundaries::REFLECT> & source)
+            {
+                convert(*(target.height), *(source.height));
+                convert(*(target.bottom), *(source.bottom));
+                convert(*(target.x_veloc), *(source.x_veloc));
+                convert(*(target.y_veloc), *(source.y_veloc));
+                convert(*(target.bottom_slopes_x), *(source.bottom_slopes_x));
+                convert(*(target.bottom_slopes_y), *(source.bottom_slopes_y));
+
+                convert(*(target.u), *(source.u));
+                convert(*(target.v), *(source.v));
+                convert(*(target.w), *(source.w));
+                convert(*(target.c), *(source.c));
+                convert(*(target.d), *(source.c));
+
+                target.delta_x = (TargetDT_)source.delta_x;
+                target.delta_y = (TargetDT_)source.delta_y;
+                target.delta_t = (TargetDT_)source.delta_t;
+                target.manning_n = (TargetDT_)source.manning_n;
             }
 
             /**

@@ -7,6 +7,12 @@ see the NEWS file.
 
 2008-02-27 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/scenario_manager.hh, honei/libswe/scenario_manager_TEST.cc:
+	Added static Scenario precision conversion method to ScenarioManager
+	as preparation for mixed precision RelaxSolver variants and a test.
+
+2008-02-27 Markus Geveler <apryde@gmx.de>
+
 	* honei/libswe/relax_solver_BENCHMARK.cc, honei/libswe/relax_solver.hh, honei/libswe/relax_solver_TEST.cc, honei/libswe/relax_solver_volume_steady_TEST.cc, honei/libswe/scenario_manager_TEST.cc, honei/libswe/selected_benchmarks.cc, honei/libvisual/enginesolve.hh, honei/libvisual/solver_server.hh:
 	Added interface extension for mixed precision RelaxSolver
 	specializations, adjusted tests and benchmark in all affected libraries.
