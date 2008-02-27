@@ -168,7 +168,7 @@ namespace honei
     {
         CONTEXT("When filling DenseMatrix with '" + stringify(proto) + "':");
 
-        TypeTraits<DT_>::copy(dest.elements(), dest.size(), proto);
+        TypeTraits<DT_>::fill(dest.elements(), dest.rows() + dest.columns(), proto);
     }
 
     /// \}
