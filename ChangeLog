@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-27 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/libla/product-cell.cc: First step of optimizations.
+
 2008-02-27 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libla/algorithm.hh, honei/libla/algorithm_TEST.cc: Added
