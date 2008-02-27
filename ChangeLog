@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-27 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libla/algorithm.hh, honei/libla/algorithm_TEST.cc: Added
+	fill for DenseVectorContinuousBase and DenseMatrix. Added appropriate
+	test cases.
+
 2008-02-27 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/scenario_manager.hh, honei/libswe/scenario_manager_TEST.cc:

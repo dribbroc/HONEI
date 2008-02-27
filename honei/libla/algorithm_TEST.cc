@@ -550,3 +550,78 @@ class SparseVectorConvertQuickTest :
             TEST_CHECK_THROWS(convert(svd02, svf02), VectorSizeDoesNotMatch);
         }
 } sparse_vector_convert_quick_test;
+
+template <typename DT_>
+class DenseVectorContinuousBaseFillQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorContinuousBaseFillQuickTest(const std::string & type) :
+            QuickTest("dense_vector_continuous_base_fill_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(4711);
+            DenseVector<DT_> dv(2 * size);
+            DenseVectorRange<DT_> dvr1(dv, size / 3, 0);
+            DenseVectorRange<DT_> dvr2(dv, size, size / 3);
+            DenseVectorRange<DT_> dvr3(dv, size - 2 * size / 3, size + size / 3);
+
+            fill(dv, DT_(8.472));
+
+            for (typename Vector<DT_>::ConstElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(8.472), std::numeric_limits<DT_>::epsilon());
+            }
+
+            fill(dvr2, DT_(75.633));
+
+            for (typename Vector<DT_>::ConstElementIterator i(dvr1.begin_elements()), i_end(dvr1.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(8.472), std::numeric_limits<DT_>::epsilon());
+            }
+
+            for (typename Vector<DT_>::ConstElementIterator i(dvr2.begin_elements()), i_end(dvr2.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(75.633), std::numeric_limits<DT_>::epsilon());
+            }
+
+            for (typename Vector<DT_>::ConstElementIterator i(dvr3.begin_elements()), i_end(dvr3.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(8.472), std::numeric_limits<DT_>::epsilon());
+            }
+        }
+};
+
+DenseVectorContinuousBaseFillQuickTest<float> dense_vector_continuous_base_fill_quick_test_float("float");
+DenseVectorContinuousBaseFillQuickTest<double> dense_vector_continuous_base_fill_quick_test_double("double");
+
+template <typename DT_>
+class DenseMatrixFillQuickTest :
+    public QuickTest
+{
+    public:
+        DenseMatrixFillQuickTest(const std::string & type) :
+            QuickTest("dense_matrix_fill_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long rows(47), columns(11);
+            DenseVector<DT_> dm(47, 11);
+
+            fill(dm, DT_(8.472));
+
+            for (typename Matrix<DT_>::ConstElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(8.472), std::numeric_limits<DT_>::epsilon());
+            }
+        }
+};
+
+DenseVectorContinuousBaseFillQuickTest<float> dense_matrix_fill_quick_test_float("float");
+DenseVectorContinuousBaseFillQuickTest<double> dense_matrix_fill_quick_test_double("double");
+

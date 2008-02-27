@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -38,6 +38,7 @@ namespace honei
      *
      * \ingroup grpalgorithm
      */
+
     template <typename DT_> void copy(const DenseVector<DT_> & source, DenseVector<DT_> & dest)
     {
         CONTEXT("When copying elements from DenseVector to DenseVector:");
@@ -49,6 +50,7 @@ namespace honei
 
         TypeTraits<DT_>::copy(source.elements(), dest.elements(), source.size());
     }
+
     /// \}
 
     /**
@@ -58,8 +60,9 @@ namespace honei
      *
      * \ingroup grpalgorithm
      */
-    template <typename DataType_, typename OrigType_>
-    void convert(DenseVector<DataType_> & copy, const DenseVector<OrigType_> & orig)
+
+    template <typename DataType_, typename OrigType_> void convert(DenseVector<DataType_> & copy,
+            const DenseVector<OrigType_> & orig)
     {
         CONTEXT("When converting DenseVector to DenseVector:");
 
@@ -69,8 +72,8 @@ namespace honei
         TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.size());
     }
 
-    template <typename DataType_, typename OrigType_>
-    void convert(DenseVectorBase<DataType_> & copy, const DenseVectorBase<OrigType_> & orig)
+    template <typename DataType_, typename OrigType_> void convert(DenseVectorBase<DataType_> & copy,
+            const DenseVectorBase<OrigType_> & orig)
     {
         CONTEXT("When converting DenseVectorBase to DenseVectorBase:");
 
@@ -85,8 +88,8 @@ namespace honei
         }
     }
 
-    template <typename DataType_, typename OrigType_>
-    void convert(SparseVector<DataType_> & copy, const SparseVector<OrigType_> & orig)
+    template <typename DataType_, typename OrigType_> void convert(SparseVector<DataType_> & copy,
+            const SparseVector<OrigType_> & orig)
     {
         CONTEXT("When converting SparseVector to SparseVector:");
 
@@ -100,8 +103,8 @@ namespace honei
         }
     }
 
-    template <typename DataType_, typename OrigType_>
-    void convert(DenseMatrix<DataType_> & copy, const DenseMatrix<OrigType_> & orig)
+    template <typename DataType_, typename OrigType_> void convert(DenseMatrix<DataType_> & copy,
+            const DenseMatrix<OrigType_> & orig)
     {
         CONTEXT("When converting DenseMatrix to DenseMatrix:");
 
@@ -113,8 +116,8 @@ namespace honei
         TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.columns() * orig.rows());
     }
 
-    template <typename DataType_, typename OrigType_>
-    void convert(SparseMatrix<DataType_> & copy, const SparseMatrix<OrigType_> & orig)
+    template <typename DataType_, typename OrigType_> void convert(SparseMatrix<DataType_> & copy,
+            const SparseMatrix<OrigType_> & orig)
     {
         CONTEXT("When converting SparseMatrix to SparseMatrix:");
 
@@ -129,8 +132,8 @@ namespace honei
         }
     }
 
-    template <typename DataType_, typename OrigType_>
-    void convert(BandedMatrix<DataType_> & copy, const BandedMatrix<OrigType_> & orig)
+    template <typename DataType_, typename OrigType_> void convert(BandedMatrix<DataType_> & copy,
+            const BandedMatrix<OrigType_> & orig)
     {
         CONTEXT("When converting BandedMatrix to BandedMatrix:");
 
@@ -145,6 +148,31 @@ namespace honei
     }
 
     /// \}
+
+    /**
+     * \{
+     *
+     * Fills a container with a given prototype.
+     *
+     * \ingroup grpalgorithm
+     */
+
+    template <typename DT_> void fill(const DenseVectorContinuousBase<DT_> & dest, const DT_ & proto = DT_(0))
+    {
+        CONTEXT("When filling DenseVectorContinuousBase with '" + stringify(proto) + "':");
+
+        TypeTraits<DT_>::fill(dest.elements(), dest.size(), proto);
+    }
+
+    template <typename DT_> void fill(const DenseMatrix<DT_> & dest, const DT_ & proto = DT_(0))
+    {
+        CONTEXT("When filling DenseMatrix with '" + stringify(proto) + "':");
+
+        TypeTraits<DT_>::copy(dest.elements(), dest.size(), proto);
+    }
+
+    /// \}
+
 }
 
 #endif
