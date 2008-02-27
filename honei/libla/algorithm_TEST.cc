@@ -622,6 +622,6 @@ class DenseMatrixFillQuickTest :
         }
 };
 
-DenseVectorContinuousBaseFillQuickTest<float> dense_matrix_fill_quick_test_float("float");
-DenseVectorContinuousBaseFillQuickTest<double> dense_matrix_fill_quick_test_double("double");
+DenseMatrixFillQuickTest<float> dense_matrix_fill_quick_test_float("float");
+DenseMatrixFillQuickTest<double> dense_matrix_fill_quick_test_double("double");
 
