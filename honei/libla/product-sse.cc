@@ -20,7 +20,7 @@
 
 #include <honei/libutil/attributes.hh>
 #include <honei/libla/product.hh>
-
+#include <honei/libutil/time_stamp.hh>
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
@@ -288,14 +288,19 @@ using namespace honei;
 
 DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
+    TimeStamp aa, bb, dd, ee;
+    signed long long inner_usecs(0);
+    aa.take();
     CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> with SSE:");
 
     if (b.size() != a.columns())
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
-
+    dd.take();
     DenseVector<float> result(a.rows(), float(0));
+    ee.take();
+    std::cout << "Time for nullifying result vector: " << ee.usec() - dd.usec() << std::endl;
 
     __m128 m1, m2, m3, m4, m5, m6;
 
@@ -322,7 +327,8 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             if (end < 32)
                 quad_end = 0;
 
-
+            TimeStamp cc, dd;
+            cc.take();
             for (unsigned long index(0) ; index < quad_end ; index += 8)
             {
                 m2 = _mm_loadu_ps(b_e + index + op_offset);
@@ -341,10 +347,13 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
                 _mm_store_ps(r_e + index + 4, m4);
             }
 
+
             for (unsigned long index(quad_end) ; index < end ; index++) 
             {
                 r_e[index] += band_e[index] * b_e[index + op_offset];
             }
+            dd.take();
+            inner_usecs += (dd.usec() - cc.usec());
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
         {
@@ -366,6 +375,8 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
                 quad_end = start;
                 quad_start = start;
             }
+            TimeStamp cc, dd;
+            cc.take();
 
             for (unsigned long index(start) ; index < quad_start ; index++)
             {
@@ -393,10 +404,15 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
             for (unsigned long index(quad_end) ; index < end ; index++)
             {
                 r_e[index] += band_e[index] * b_e[index - op_offset];
+
             }
+            dd.take();
+            inner_usecs += (dd.usec() - cc.usec());
         }
     }
-
+    bb.take();
+    std::cout << "FULL SSE program execution time: " << bb.usec() - aa.usec() << std::endl;
+    std::cout << "SSE parts only execution time: " << inner_usecs << std::endl;
     return result;
 }
 
