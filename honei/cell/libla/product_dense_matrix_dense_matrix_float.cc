@@ -51,22 +51,27 @@ using namespace honei::cell;
 void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 {
     debug_value(0);
+    EffectiveAddress ea_a(inst.a.ea);
 
-    const unsigned nr_of_lists(inst.g.u); // Number of Lists to be double buffered
-    const unsigned a_cols(inst.i.u);
-    const unsigned a_t_size(inst.size);
-    unsigned list_sizes[nr_of_lists] __attribute__((aligned(16)));
+    Allocation * block_a[2] = { acquire_block(), acquire_block() };
+    Allocation * block_b[2] = { acquire_block(), acquire_block() };
+    Allocation * block_r[2] = { acquire_block(), acquire_block() };
+
+    unsigned nr_of_lists(inst.g.u); // Number of Lists to be double buffered
+    unsigned a_cols(inst.i.u);
+    unsigned a_t_size(inst.size);
+    unsigned long long list_sizes[nr_of_lists] __attribute__((aligned(16)));
     unsigned long long list_eahs[nr_of_lists] __attribute__((aligned(16)));
     EffectiveAddress list_ptrs[nr_of_lists] __attribute__((aligned(16)));
 
-    // GET list information for Matrix B
-    mfc_get(&list_sizes, inst.e.ea, multiple_of_sixteen(nr_of_lists * 4), 3, 0, 0);
+    mfc_get(&list_sizes, inst.e.ea, multiple_of_sixteen(nr_of_lists * 8), 3, 0, 0);
     mfc_get(&list_ptrs, inst.d.ea, multiple_of_sixteen(nr_of_lists * 8), 3, 0, 0);
     mfc_get(&list_eahs, inst.f.ea, multiple_of_sixteen(nr_of_lists * 8), 3, 0, 0);
-
+    mfc_write_tag_mask(1 << 3);
+    mfc_read_tag_status_all();
     debug_value(1);
-    unsigned a_counter(inst.b.u), b_counter(0);
-    unsigned a_size(a_counter > 1 ? a_t_size : multiple_of_sixteen(inst.c.u)), a_nextsize;
+    unsigned a_counter(inst.b.u);
+    unsigned a_size(a_counter > 1 ? a_t_size : multiple_of_sixteen(inst.c.u));
     unsigned a_current(0), a_next(1);
     unsigned b_current(0), b_next(1);
     unsigned r_current(0), r_next(1);
@@ -74,53 +79,44 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     Allocation * block_list[2] = { acquire_block(), acquire_block() };
     Pointer<ListElement> list_ptr[2] = { { block_list[0]->address }, { block_list[1]->address } };
 
-    // Assure that list information has arrived.
-    mfc_write_tag_mask(1 << 3);
-    mfc_read_tag_status_all();
-
-    // GET the first DMA List for Matrix B
+    unsigned b_counter(0);
     debug_get(list_ptrs[0], list_ptr[b_current].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[0]));
     mfc_get(list_ptr[b_current].untyped, list_ptrs[0], multiple_of_sixteen(sizeof(ListElement) * list_sizes[0]), 1, 0, 0);
+    mfc_write_tag_mask(1 << 1);
+    mfc_read_tag_status_all();
     debug_value(2);
-
-    const unsigned r_nr_of_lists(inst.k.u); // Number of Lists to be putted
-    unsigned r_list_sizes[r_nr_of_lists] __attribute__((aligned(16)));
-    unsigned long long r_list_eahs[r_nr_of_lists] __attribute__((aligned(16)));
-    EffectiveAddress r_list_ptrs[r_nr_of_lists] __attribute__((aligned(16)));
-
-    Allocation * block_a[2] = { acquire_block(), acquire_block() };
-    Allocation * block_b[2] = { acquire_block(), acquire_block() };
-    Allocation * block_r[2] = { acquire_block(), acquire_block() };
-
     Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
     Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
     Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
 
-    // Assure that first DMA List (B) has arrived
-    mfc_write_tag_mask(1 << 1);
-    mfc_read_tag_status_all();
-
-    // GET(L) the first DMA transfers using the first List for B
+    unsigned b_size(list_sizes[b_counter]);
     debug_getl(list_eahs[b_counter], b[b_current].untyped, list_sizes[0] * sizeof(ListElement));
     mfc_getl(b[b_current].untyped, list_eahs[b_counter], list_ptr[0].untyped, list_sizes[0] * sizeof(ListElement), 6, 0, 0);
     debug_value(3);
 
-    EffectiveAddress ea_a(inst.a.ea);
-    // GET the first part of Matrix A
+    unsigned a_nextsize, b_nextsize;
+
     debug_get(ea_a, a[a_current].untyped, a_size);
+    debug_value(33);
     mfc_get(a[a_current].untyped, ea_a, a_size, a_current, 0, 0);
+
     ea_a += a_size;
-
-    // GET list information for Matrix R
-    mfc_get(&r_list_sizes, inst.m.ea, multiple_of_sixteen(r_nr_of_lists * 4), 5, 0, 0);
-    mfc_get(&r_list_ptrs, inst.l.ea, multiple_of_sixteen(r_nr_of_lists * 8), 5, 0, 0);
-    mfc_get(&r_list_eahs, inst.n.ea, multiple_of_sixteen(r_nr_of_lists * 8), 5, 0, 0);
-
     debug_value(4);
 
+    unsigned r_nr_of_lists(inst.k.u); // Number of Lists to be putted
+    unsigned long long r_list_sizes[r_nr_of_lists] __attribute__((aligned(16)));
+    unsigned long long r_list_eahs[r_nr_of_lists] __attribute__((aligned(16)));
+    EffectiveAddress r_list_ptrs[r_nr_of_lists] __attribute__((aligned(16)));
+    debug_value(8);
+    mfc_get(&r_list_sizes, inst.m.ea, multiple_of_sixteen(r_nr_of_lists * 8), 5, 0, 0);
+    mfc_get(&r_list_ptrs, inst.l.ea, multiple_of_sixteen(r_nr_of_lists * 8), 5, 0, 0);
+    mfc_get(&r_list_eahs, inst.n.ea, multiple_of_sixteen(r_nr_of_lists * 8), 5, 0, 0);
+    mfc_write_tag_mask(1 << 5);
+    mfc_read_tag_status_all();
+    debug_value(9);
     Allocation * r_block_list[2] = { acquire_block(), acquire_block() };
     Pointer<ListElement> r_list_ptr[2] = { { r_block_list[0]->address }, { r_block_list[1]->address } };
-    const unsigned r_elem_t_size = ((inst.j.u * 4) + 16);
+    unsigned r_elem_t_size = ((inst.j.u * 4) + 16);
     union lsaddr
     {
         void * ptr;
@@ -129,15 +125,10 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     lsaddr lsa = { r[r_current].untyped };
     unsigned act_list(0);
 
-    const unsigned long b_offset(inst.h.u / 4); // Start offset of the row with index 1 (!) (row 0 has always index 0)
-    const unsigned b_vecs(inst.j.u / 4);
+    unsigned long b_offset(inst.h.u / 4); // Start offset of the row with index 1 (!) (row 0 has always index 0)
+    unsigned b_vecs(inst.j.u / 4);
     unsigned ar(0);
     unsigned r_offset(0);
-
-    // Assure that list information for Matrix R has arrived
-    mfc_write_tag_mask(1 << 5);
-    mfc_read_tag_status_all();
-    debug_value(5);
 
     while (a_counter > 1) // db for A
     {
@@ -163,6 +154,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                 debug_value(23);
                 b_counter++;
                 get_counter = b_counter % nr_of_lists;
+                b_nextsize = (list_sizes[get_counter]);
 
                 debug_get(list_ptrs[get_counter], list_ptr[b_next].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]));
                 mfc_get(list_ptr[b_next].untyped, list_ptrs[get_counter], multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]), 4, 0, 0);
@@ -175,41 +167,43 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                 mfc_write_tag_mask(1 << 9 + b_current);
                 mfc_read_tag_status_all();
 
-                const unsigned b_nr_rows(list_sizes[b_counter - 1]);
+                unsigned b_nr_rows(list_sizes[b_counter-1]);
                 unsigned b_vec_idx(0);
-
-                vector float r_temps[b_vecs];
-                const unsigned r_idx(ar * (b_vecs + 1));
-
-                for (unsigned i(0) ; i < b_vecs ; i++)
-                {
-                    vector float r_temp(r[r_current].vectorised[r_idx + i]);
-                    extract(r_temp, r[r_current].vectorised[r_idx + i + 1], r_offset);
-                    r_temps[i] = r_temp;
-                }
 
                 for (unsigned br(0) ; br < b_nr_rows ; br++, a_elem++)
                 {
-                    for(unsigned i(0) ; i < b_vecs ; i++, b_vec_idx++)
+                    unsigned r_idx(ar * (b_vecs + 1));
+
+                    for(unsigned i(0) ; i < b_vecs ; i++)
                     {
                         vector float temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
                         extract(temp, b[b_current].vectorised[b_vec_idx + 1], e_offset);
 
-                        r_temps[i] = spu_madd(spu_splats(a[a_current].typed[a_elem]), temp, r_temps[i]);
+                        vector float r_temp(r[r_current].vectorised[r_idx]);
+                        extract(r_temp, r[r_current].vectorised[r_idx+1], r_offset);
+                        r_temp = spu_madd(spu_splats(a[a_current].typed[a_elem]), temp, r_temp);
+                        insert(r[r_current].vectorised[r_idx], r[r_current].vectorised[r_idx + 1], r_temp, r_offset);
+
+                        //Subscriptable<float> fv = { temp };
+                        //Subscriptable<float> rs = { r[r_current].vectorised[r_idx] };
+                        //printf("Multipyling: a_elem: %f * %f %f %f %f \n", a[a_current].typed[a_elem], fv.array[0], fv.array[1], fv.array[2], fv.array[3]);
+                        //printf("Result an pos: %u:     %f %f %f %f \n", r_idx, rs.array[0], rs.array[1], rs.array[2], rs.array[3]);
+
+                        b_vec_idx++;
+                        r_idx++;
+                        if (i == b_vecs - 1 && e_offset > 0)
+                        {
+                            b_vec_idx++;
+                        }
                     }
 
-                    b_vec_idx++;
                     e_offset = (e_offset + b_offset) % 4;
-                }
-
-                for (unsigned i(0) ; i < b_vecs ; i++)
-                {
-                   insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
                 }
 
                 unsigned b_temp(b_next);
                 b_next = b_current;
                 b_current = b_temp;
+                b_size = b_nextsize;
 
             } // end while B
 
@@ -258,7 +252,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     unsigned get_counter(0);
     unsigned long a_elem(0); // The actual considered element of matrix a
     unsigned a_rows(a_size / 4 / a_cols);
-
+    //unsigned r_offset(0);
     fill(r[r_current].untyped, 16384, 0.0f);
 
     for( ; ar < a_rows ; ar++)
@@ -272,6 +266,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             b_counter++;
             get_counter = b_counter % nr_of_lists;
             debug_value(get_counter);
+            b_nextsize = (list_sizes[get_counter]);
 
             debug_get(list_ptrs[get_counter], list_ptr[b_next].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]));
             mfc_get(list_ptr[b_next].untyped, list_ptrs[get_counter], multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]), 4, 0, 0);
@@ -284,75 +279,74 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             mfc_write_tag_mask(1 << 9 + b_current);
             mfc_read_tag_status_all();
 
-            const unsigned b_nr_rows(list_sizes[b_counter - 1]);
+            unsigned b_nr_rows(list_sizes[b_counter-1]);
             unsigned b_vec_idx(0);
-
-            vector float r_temps[b_vecs];
-            const unsigned r_idx(ar * (b_vecs + 1));
-
-            for (unsigned i(0) ; i < b_vecs ; i++)
-            {
-                vector float r_temp(r[r_current].vectorised[r_idx + i]);
-                extract(r_temp, r[r_current].vectorised[r_idx + i + 1], r_offset);
-                r_temps[i] = r_temp;
-            }
 
             for (unsigned br(0) ; br < b_nr_rows ; br++, a_elem++)
             {
-                //unsigned r_idx(ar * (b_vecs + 1));
+                unsigned r_idx(ar * (b_vecs + 1));
 
-                for(unsigned i(0) ; i < b_vecs ; i++, b_vec_idx++)
+                for(unsigned i(0) ; i < b_vecs ; i++)
                 {
                     vector float temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
                     extract(temp, b[b_current].vectorised[b_vec_idx + 1], e_offset);
 
-                    r_temps[i] = spu_madd(spu_splats(a[a_current].typed[a_elem]), temp, r_temps[i]);
+                    vector float r_temp(r[r_current].vectorised[r_idx]);
+                    extract(r_temp, r[r_current].vectorised[r_idx+1], r_offset);
+                    r_temp = spu_madd(spu_splats(a[a_current].typed[a_elem]), temp, r_temp);
+                    insert(r[r_current].vectorised[r_idx], r[r_current].vectorised[r_idx + 1], r_temp, r_offset);
+/*
+                    Subscriptable<float> fv = { temp };
+                    Subscriptable<float> rs = { r_temp };
+                    printf("Multipyling: a_elem: %f * %f %f %f %f \n", a[a_current].typed[a_elem], fv.array[0], fv.array[1], fv.array[2], fv.array[3]);
+                    printf("Result an pos: %u:     %f %f %f %f \n", r_idx, rs.array[0], rs.array[1], rs.array[2], rs.array[3]);
+*/
+                    b_vec_idx++;
+                    r_idx++;
+                    if (i == b_vecs - 1 && e_offset > 0)
+                    {
+                        b_vec_idx++;
+                    }
                 }
 
-                b_vec_idx++;
                 e_offset = (e_offset + b_offset) % 4;
-            }
-
-            for (unsigned i(0) ; i < b_vecs ; i++)
-            {
-               insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
             }
 
             unsigned b_temp(b_next);
             b_next = b_current;
             b_current = b_temp;
+            b_size = b_nextsize;
+
         }
 
         r_offset = (r_offset + b_offset) % 4;
 
     }
-
     debug_value(7);
 
-    // PUT a_rows
-    unsigned iterations(0);
-    unsigned size_acc(0);
-    while (size_acc != a_rows)
-    {
-        size_acc += r_list_sizes[act_list + iterations];
-        iterations++;
-    }
+        // PUT a_rows
+        unsigned iterations(0);
+        unsigned size_acc(0);
+        while (size_acc != a_rows)
+        {
+            size_acc += r_list_sizes[act_list + iterations];
+            iterations++;
+        }
+        for (unsigned x(0) ; x < iterations ; x++)
+        {
+            debug_value(2882);
+            debug_value(r_current);
+            debug_value(act_list);
+            debug_get(r_list_ptrs[act_list], r_list_ptr[r_current].untyped, multiple_of_sixteen(sizeof(ListElement) * r_list_sizes[act_list]));
+            mfc_get(r_list_ptr[r_current].untyped, r_list_ptrs[act_list], multiple_of_sixteen(sizeof(ListElement) * r_list_sizes[act_list]), 4, 0, 0);
+            mfc_write_tag_mask(1 << 4);
+            mfc_read_tag_status_all();
 
-    for (unsigned x(0) ; x < iterations ; x++)
-    {
-        debug_value(2882);
-        debug_value(r_current);
-        debug_value(act_list);
-        debug_get(r_list_ptrs[act_list], r_list_ptr[r_current].untyped, multiple_of_sixteen(sizeof(ListElement) * r_list_sizes[act_list]));
-        mfc_get(r_list_ptr[r_current].untyped, r_list_ptrs[act_list], multiple_of_sixteen(sizeof(ListElement) * r_list_sizes[act_list]), 4, 0, 0);
-        mfc_write_tag_mask(1 << 4);
-        mfc_read_tag_status_all();
-
-        debug_putl(r_list_eahs[act_list], lsa.ptr, r_list_sizes[act_list] * sizeof(ListElement));
-        mfc_putl(lsa.ptr, r_list_eahs[act_list], r_list_ptr[r_current].untyped, r_list_sizes[act_list] * sizeof(ListElement), 6 + r_next, 0, 0);
-        act_list++;
-        lsa.value += r_list_sizes[act_list] * r_elem_t_size;
-    }
+            debug_putl(r_list_eahs[act_list], lsa.ptr, r_list_sizes[act_list] * sizeof(ListElement));
+            mfc_putl(lsa.ptr, r_list_eahs[act_list], r_list_ptr[r_current].untyped, r_list_sizes[act_list] * sizeof(ListElement), 6 + r_next, 0, 0);
+            act_list++;
+            lsa.value += r_list_sizes[act_list] * r_elem_t_size;
+        }
 
     mfc_write_tag_mask(1 << 6);
     mfc_read_tag_status_all();
