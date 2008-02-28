@@ -29,7 +29,8 @@
 #include <honei/libutil/spe_transfer_list.hh>
 #include <list>
 
-#include <honei/libutil/time_stamp.hh>
+//#include <iostream>
+//#include <honei/libutil/time_stamp.hh>
 
 namespace honei
 {
@@ -174,7 +175,15 @@ namespace honei
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
         /// \todo Remove SPEIQ list when one SPEInstructionQueue can handle more than 8 instructions.
-        std::list<SPEInstructionQueue *> iq_upper, iq_lower;
+        unsigned long spe_count(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_float", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+        if (b.size() < 128) spe_count = 1;
+        unsigned long partsize(b.size() / spe_count);
+        std::list<SPEInstructionQueue *> spe_lists[spe_count];
+        for (unsigned i(0) ; i < spe_count ; ++i)
+        {
+            spe_lists[i] = std::list<SPEInstructionQueue *>();
+        }
         //TimeStamp dt,ct, as1, as2;
         //ct.take();
         PROFILER_START("Product<Cell>::value(bm, dv)->DV(size, 0)");
@@ -195,63 +204,35 @@ namespace honei
             if (band.index() >= middle_index)
             {
                 op_offset = band.index() - middle_index;
-                // Lower result part
-                start = 0;
-                end = std::min(band->size() - op_offset, result.size() / 2); //Calculation of the element-index to stop in iteration!
-                if (start < end)
+                for (unsigned long part(0) ; part < spe_count ; ++part)
                 {
-                    SPEFrameworkInstruction<3, float, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_float,
-                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
-                    if(spefi.use_spe())
+                    start = part * partsize;
+                    end = std::min(band->size() - op_offset, (part + 1) * partsize); //Calculation of the element-index to stop in iteration!
+                    if (start < end)
                     {
-                        if (iq_lower.empty() || iq_lower.back()->size() == 7)
+                        SPEFrameworkInstruction<3, float, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_float,
+                                result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
+                        if(spefi.use_spe())
                         {
-                            iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(spefi);
+                            if (spe_lists[part].empty() || spe_lists[part].back()->size() == 7)
+                            {
+                                spe_lists[part].push_back(new SPEInstructionQueue);
+                                spe_lists[part].back()->push_back(spefi);
+                            }
+                            else
+                            {
+                                spe_lists[part].back()->push_back(spefi);
+                            }
                         }
-                        else
+                        //std::cout<<"above: "<<start<<" "<<start + spefi.transfer_begin()<<" "<<start + spefi.transfer_end() <<" "<<end<<" usespe: "<<spefi.use_spe()<<std::endl;
+                        for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                         {
-                            iq_lower.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                         }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
-                    }
-                }
-
-                // Upper result part
-                start = result.size() / 2;
-                end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
-                if (start < end)
-                {
-                    SPEFrameworkInstruction<3, float, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_float,
-                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
-                    if(spefi.use_spe())
-                    {
-                        if (iq_upper.empty() || iq_upper.back()->size() == 7)
+                        for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                         {
-                            iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                         }
-                        else
-                        {
-                            iq_upper.back()->push_back(spefi);
-                        }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
                 }
             }
@@ -260,90 +241,82 @@ namespace honei
             else
             {
                 op_offset = middle_index - band.index();
-                // Lower result part
-                start = op_offset; //Calculation of the element-index to start in iteration!
-                end = result.size() / 2;
-                if (start < end)
+                for (unsigned long part(0) ; part < spe_count ; ++part)
                 {
-                    SPEFrameworkInstruction<3, float, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_float,
-                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
-                    if(spefi.use_spe())
+                    start = std::max(part * partsize, op_offset);
+                    end = std::min(band->size(), (part + 1) * partsize); //Calculation of the element-index to stop in iteration!
+                    if (start < end)
                     {
-                        if (iq_lower.empty() || iq_lower.back()->size() == 7)
+                        SPEFrameworkInstruction<3, float, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_float,
+                                result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
+                        if(spefi.use_spe())
                         {
-                            iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(spefi);
+                            if (spe_lists[part].empty() || spe_lists[part].back()->size() == 7)
+                            {
+                                spe_lists[part].push_back(new SPEInstructionQueue);
+                                spe_lists[part].back()->push_back(spefi);
+                            }
+                            else
+                            {
+                                spe_lists[part].back()->push_back(spefi);
+                            }
                         }
-                        else
+                        //std::cout<<"below: "<<start<<" "<<start + spefi.transfer_begin()<<" "<<start + spefi.transfer_end() <<" "<<end<<" usespe: "<<spefi.use_spe()<<std::endl;
+                        for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                         {
-                            iq_lower.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                         }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
-                    }
-                }
-
-                // Upper result part
-                start = std::max(op_offset, result.size() / 2); //Calculation of the element-index to start in iteration!
-                end = band->size();
-                if (start < end)
-                {
-                    SPEFrameworkInstruction<3, float, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_float,
-                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
-                    if(spefi.use_spe())
-                    {
-                        if (iq_upper.empty() || iq_upper.back()->size() == 7)
+                        for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                         {
-                            iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                         }
-                        else
-                        {
-                            iq_upper.back()->push_back(spefi);
-                        }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
                 }
             }
         }
-        /*as2.take();
-          std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
-          TimeStamp at, bt;
-          at.take();*/
+        //as2.take();
+        //std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
+        //TimeStamp at, bt;
+        //at.take();
         PROFILER_START("Product<Cell>::value(bm, dv)->dispatch");
-        for (std::list<SPEInstructionQueue *>::iterator i(iq_lower.begin()), i_end(iq_lower.end()), j(iq_upper.begin()), j_end(iq_upper.end()) ;
-                (i != i_end || j != j_end) ; )
+        std::list<SPEInstructionQueue *>::iterator spe_iterators[spe_count];
+        for (unsigned long spe(0) ; spe < spe_count ; ++spe)
         {
-            if (i != i_end) SPEManager::instance()->dispatch(*(*i));
-            if (j != j_end) SPEManager::instance()->dispatch(*(*j));
-            /// \todo calc scalar parts here
-            if (i != i_end) (*i)->wait();
-            if (j != j_end) (*j)->wait();
-            if (i != i_end) ++i;
-            if (j != j_end) ++j;
+            spe_iterators[spe] = spe_lists[spe].begin();
         }
-        for (std::list<SPEInstructionQueue *>::iterator i(iq_lower.begin()), i_end(iq_lower.end()), j(iq_upper.begin()), j_end(iq_upper.end()) ;
-                (i != i_end || j != j_end) ; )
+        unsigned long finished_counter(0);
+        while (finished_counter < spe_count)
         {
-            if (i != i_end) delete *i;
-            if (j != j_end) delete *j;
-            if (i != i_end) ++i;
-            if (j != j_end) ++j;
+            finished_counter = 0;
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) SPEManager::instance()->dispatch(*(*spe_iterators[spe]));
+            }
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) (*spe_iterators[spe])->wait();
+            }
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) spe_iterators[spe]++;
+                else finished_counter++;
+            }
+        }
+
+        for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+        {
+            spe_iterators[spe] = spe_lists[spe].begin();
+        }
+        finished_counter = 0;
+        while (finished_counter < spe_count)
+        {
+            finished_counter = 0;
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) delete *spe_iterators[spe];
+                if (spe_iterators[spe] != spe_lists[spe].end()) spe_iterators[spe]++;
+                else finished_counter++;
+            }
         }
         //bt.take();
         //std::cout<<"wait: "<<bt.sec() - at.sec() << " "<<bt.usec() - at.usec()<<std::endl<<std::endl;
@@ -361,15 +334,16 @@ namespace honei
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
 
         /// \todo Remove SPEIQ list when one SPEInstructionQueue can handle more than 8 instructions.
-        std::list<SPEInstructionQueue *> iq_upper, iq_lower;
-        //TimeStamp dt,ct, as1, as2;
-        //ct.take();
+        unsigned long spe_count(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_double", 2ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+        if (b.size() < 64) spe_count = 1;
+        unsigned long partsize(b.size() / spe_count);
+        std::list<SPEInstructionQueue *> spe_lists[spe_count];
+        for (unsigned i(0) ; i < spe_count ; ++i)
+        {
+            spe_lists[i] = std::list<SPEInstructionQueue *>();
+        }
         DenseVector<double> result(b.size(), 0.0f);
-        //dt.take();
-        //std::cout<<"dv(0): "<<dt.sec() - ct.sec() << " "<<dt.usec() - ct.usec()<<std::endl;
-        /// \todo Fill the result vector on the spu side.
-        //DenseVector<double> result(b.size());
-        //as1.take();
 
         unsigned long middle_index(a.rows() - 1);
         unsigned long quad_end, end, quad_start, start, x_offset, op_offset;
@@ -380,63 +354,34 @@ namespace honei
             if (band.index() >= middle_index)
             {
                 op_offset = band.index() - middle_index;
-                // Lower result part
-                start = 0;
-                end = std::min(band->size() - op_offset, result.size() / 2); //Calculation of the element-index to stop in iteration!
-                if (start < end)
+                for (unsigned long part(0) ; part < spe_count ; ++part)
                 {
-                    SPEFrameworkInstruction<3, double, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_double,
-                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
-                    if(spefi.use_spe())
+                    start = part * partsize;
+                    end = std::min(band->size() - op_offset, (part + 1) * partsize); //Calculation of the element-index to stop in iteration!
+                    if (start < end)
                     {
-                        if (iq_lower.empty() || iq_lower.back()->size() == 7)
+                        SPEFrameworkInstruction<3, double, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_double,
+                                result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
+                        if(spefi.use_spe())
                         {
-                            iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(spefi);
+                            if (spe_lists[part].empty() || spe_lists[part].back()->size() == 7)
+                            {
+                                spe_lists[part].push_back(new SPEInstructionQueue);
+                                spe_lists[part].back()->push_back(spefi);
+                            }
+                            else
+                            {
+                                spe_lists[part].back()->push_back(spefi);
+                            }
                         }
-                        else
+                        for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                         {
-                            iq_lower.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                         }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
-                    }
-                }
-
-                // Upper result part
-                start = result.size() / 2;
-                end = band->size() - op_offset; //Calculation of the element-index to stop in iteration!
-                if (start < end)
-                {
-                    SPEFrameworkInstruction<3, double, rtm_dma> spefi(oc_product_banded_matrix_dense_vector_double,
-                            result.elements() + start, band->elements() + start, b.elements() + start + op_offset, end - start);
-                    if(spefi.use_spe())
-                    {
-                        if (iq_upper.empty() || iq_upper.back()->size() == 7)
+                        for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                         {
-                            iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                         }
-                        else
-                        {
-                            iq_upper.back()->push_back(spefi);
-                        }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index + op_offset];
                     }
                 }
             }
@@ -445,92 +390,77 @@ namespace honei
             else
             {
                 op_offset = middle_index - band.index();
-                // Lower result part
-                start = op_offset; //Calculation of the element-index to start in iteration!
-                end = result.size() / 2;
-                if (start < end)
+                for (unsigned long part(0) ; part < spe_count ; ++part)
                 {
-                    SPEFrameworkInstruction<3, double, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_double,
-                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
-                    if(spefi.use_spe())
+                    start = std::max(part * partsize, op_offset);
+                    end = std::min(band->size(), (part + 1) * partsize); //Calculation of the element-index to stop in iteration!
+                    if (start < end)
                     {
-                        if (iq_lower.empty() || iq_lower.back()->size() == 7)
+                        SPEFrameworkInstruction<3, double, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_double,
+                                result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
+                        if(spefi.use_spe())
                         {
-                            iq_lower.push_back(new SPEInstructionQueue);
-                            iq_lower.back()->push_back(spefi);
+                            if (spe_lists[part].empty() || spe_lists[part].back()->size() == 7)
+                            {
+                                spe_lists[part].push_back(new SPEInstructionQueue);
+                                spe_lists[part].back()->push_back(spefi);
+                            }
+                            else
+                            {
+                                spe_lists[part].back()->push_back(spefi);
+                            }
                         }
-                        else
+                        for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
                         {
-                            iq_lower.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                         }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
-                    }
-                }
-
-                // Upper result part
-                start = std::max(op_offset, result.size() / 2); //Calculation of the element-index to start in iteration!
-                end = band->size();
-                if (start < end)
-                {
-                    SPEFrameworkInstruction<3, double, rtm_dma> spefi (oc_product_banded_matrix_dense_vector_double,
-                            result.elements() + start, band->elements() + start, b.elements() + start - op_offset, end - start);
-                    if(spefi.use_spe())
-                    {
-                        if (iq_upper.empty() || iq_upper.back()->size() == 7)
+                        for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
                         {
-                            iq_upper.push_back(new SPEInstructionQueue);
-                            iq_upper.back()->push_back(spefi);
+                            result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                         }
-                        else
-                        {
-                            iq_upper.back()->push_back(spefi);
-                        }
-                    }
-
-                    for (unsigned long index(start) ; index < start + spefi.transfer_begin() ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
-                    }
-                    for (unsigned long index(start + spefi.transfer_end()) ; index < end ; index++)
-                    {
-                        result.elements()[index] += band->elements()[index] * b.elements()[index - op_offset];
                     }
                 }
             }
         }
-        /*as2.take();
-        std::cout<<"assembly: "<<as2.sec() - as1.sec() << " "<<as2.usec() - as1.usec()<<std::endl;
-        TimeStamp at, bt;
-        at.take();*/
-        for (std::list<SPEInstructionQueue *>::iterator i(iq_lower.begin()), i_end(iq_lower.end()), j(iq_upper.begin()), j_end(iq_upper.end()) ;
-                (i != i_end || j != j_end) ; )
+        std::list<SPEInstructionQueue *>::iterator spe_iterators[spe_count];
+        for (unsigned long spe(0) ; spe < spe_count ; ++spe)
         {
-            if (i != i_end) SPEManager::instance()->dispatch(*(*i));
-            if (j != j_end) SPEManager::instance()->dispatch(*(*j));
-            /// \todo calc scalar parts here
-            if (i != i_end) (*i)->wait();
-            if (j != j_end) (*j)->wait();
-            if (i != i_end) ++i;
-            if (j != j_end) ++j;
+            spe_iterators[spe] = spe_lists[spe].begin();
         }
-        for (std::list<SPEInstructionQueue *>::iterator i(iq_lower.begin()), i_end(iq_lower.end()), j(iq_upper.begin()), j_end(iq_upper.end()) ;
-                (i != i_end || j != j_end) ; )
+        unsigned long finished_counter(0);
+        while (finished_counter < spe_count)
         {
-            if (i != i_end) delete *i;
-            if (j != j_end) delete *j;
-            if (i != i_end) ++i;
-            if (j != j_end) ++j;
+            finished_counter = 0;
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) SPEManager::instance()->dispatch(*(*spe_iterators[spe]));
+            }
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) (*spe_iterators[spe])->wait();
+            }
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) spe_iterators[spe]++;
+                else finished_counter++;
+            }
         }
-        //bt.take();
-        //std::cout<<"wait: "<<bt.sec() - at.sec() << " "<<bt.usec() - at.usec()<<std::endl<<std::endl;
+
+        for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+        {
+            spe_iterators[spe] = spe_lists[spe].begin();
+        }
+        finished_counter = 0;
+        while (finished_counter < spe_count)
+        {
+            finished_counter = 0;
+            for (unsigned long spe(0) ; spe < spe_count ; ++spe)
+            {
+                if (spe_iterators[spe] != spe_lists[spe].end()) delete *spe_iterators[spe];
+                if (spe_iterators[spe] != spe_lists[spe].end()) spe_iterators[spe]++;
+                else finished_counter++;
+            }
+        }
 
         return result;
     }

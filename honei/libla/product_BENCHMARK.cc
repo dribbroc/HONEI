@@ -162,14 +162,14 @@ class BandedMatrixDenseVectorProductBenchRelax :
             for (unsigned long i(0) ; i < _count ; i++)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 30 ; ++j)
+                        for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                             Product<Tag_>::value(bm1, dv2);
                         }
                         );
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
-            evaluate(info * 30);
+            evaluate(info * 10);
         }
 };
 
@@ -346,6 +346,207 @@ class BandedMatrixProductBench :
 BandedMatrixProductBench<tags::CPU, float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);
 BandedMatrixProductBench<tags::CPU, double> BMPBenchdouble2("Matrix Product Benchmark banded/dense - matrix size: 256x256, double", 256, 10);
 
+
+template <typename DT_, typename Tag_>
+class DenseMatrixDenseVectorProductSPUPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        DenseMatrixDenseVectorProductSPUPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            int temp(Configuration::instance()->get_value("cell::product_dense_matrix_dense_vector_float", 4));
+
+            int max_spu(6);
+
+            for (unsigned long j(1) ; j <= max_spu ; ++j)
+            {
+                for (unsigned long k(1) ; k < 60 ; k+=4)
+                {
+                    Configuration::instance()->set_value("cell::product_dense_matrix_dense_vector_float", j);
+                    cores.push_back(stringify(j) +"SPUs" );
+                    DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
+                    DenseMatrix<DT_> dm((j + 1) * 64, (j + 1) * 64, DT_(rand()));
+
+                    std::cout<<"dv.size :"<<dv.size()<<" dm.columns: "<<dm.columns()<<" dm.rows: "<<dm.rows()<<" "<<j<<" spus"<<std::endl;
+                    for(int i(0) ; i < 20 ; ++i)
+                    {
+                        BENCHMARK(
+                                for (unsigned long l(0) ; l < 5 ; ++l)
+                                {
+                                Product<Tag_>::value(dm, dv);
+                                }
+                                );
+                    }
+                    info = Product<>::get_benchmark_info(dm, dv);
+                    infolist.push_back(info * 5);
+                    std::cout << ".";
+                    std::cout.flush();
+                }
+            }
+            Configuration::instance()->set_value("cell::product_dense_matrix_dense_vector_float", temp);
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 20);
+        }
+};
+#ifdef HONEI_CELL
+DenseMatrixDenseVectorProductSPUPlot<float, tags::Cell> DMDVPSPUF("Cell Dense Matrix Dense Vector Product Benchmark - SPU Count: 1 to 6 - float");
+#endif
+
+template <typename DT_, typename Tag_>
+class BandedMatrixProductQ1SPUPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        BandedMatrixProductQ1SPUPlot(const std::string & id) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _plots = true;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            int temp(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_float", 4));
+            int temp2(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_double", 4));
+
+            int max_spu(6);
+
+            for (unsigned long j(1) ; j <= max_spu ; ++j)
+            {
+                for (unsigned long k(1) ; k < 152 ; k+=5)
+                {
+                    Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_float", j);
+                    Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_double", j);
+                    cores.push_back(stringify(j) +"SPUs" );
+                    unsigned long _size((k+1) * 8192);
+                    DenseVector<DT_> dv0((k + 1) * 8192, DT_(rand()));
+                    DenseVector<DT_> dv1((k + 1) * 8192, DT_(rand()));
+                    BandedMatrix<DT_> bm((k + 1) * 8192, dv1);
+                    bm.insert_band(- (unsigned long)sqrt(_size) - 1, dv1.copy());
+                    bm.insert_band(- (unsigned long)sqrt(_size), dv1.copy());
+                    bm.insert_band(- (unsigned long)sqrt(_size) + 1, dv1.copy());
+                    bm.insert_band(-1, dv1.copy());
+                    bm.insert_band(0, dv1.copy());
+                    bm.insert_band(1, dv1.copy());
+                    bm.insert_band((unsigned long)sqrt(_size) - 1, dv1.copy());
+                    bm.insert_band((unsigned long)sqrt(_size), dv1.copy());
+                    bm.insert_band((unsigned long)sqrt(_size)+ 1, dv1.copy());
+
+                    for(int i(0) ; i < 10 ; ++i)
+                    {
+                        BENCHMARK(
+                                for (unsigned long l(0) ; l < 5 ; ++l)
+                                {
+                                Product<Tag_>::value(bm, dv0);
+                                }
+                                );
+                    }
+                    info = Product<>::get_benchmark_info(bm, dv0);
+                    infolist.push_back(info * 5);
+                    std::cout << ".";
+                    std::cout.flush();
+                }
+            }
+            Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_float", temp);
+            Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_double", temp2);
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 10);
+        }
+};
+#ifdef HONEI_CELL
+BandedMatrixProductQ1SPUPlot<float, tags::Cell> BMPQ1SPUF("Cell Q1 Banded Matrix Dense Vector Product Benchmark - SPU Count: 1 to 6 - float");
+BandedMatrixProductQ1SPUPlot<double, tags::Cell> BMPQ1SPUD("Cell Q1 Banded Matrix Dense Vector Product Benchmark - SPU Count: 1 to 6 - double");
+#endif
+
+
+template <typename DT_, typename Tag_>
+class BandedMatrixProductRelaxSPUPlot :
+    public Benchmark
+{
+    private:
+        int _x;
+
+    public:
+        BandedMatrixProductRelaxSPUPlot(const std::string & id, int x) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _plots = true;
+            _x = x;
+        }
+
+        virtual void run()
+        {
+            BenchmarkInfo info;
+            std::list<BenchmarkInfo> infolist;
+            std::list<std::string> cores;
+
+            int temp(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_float", 4));
+            int temp2(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_double", 4));
+
+            int max_spu(6);
+
+            for (unsigned long j(1) ; j <= max_spu ; ++j)
+            {
+                for (unsigned long k(1) ; k < _x ; k+=20)
+                {
+                    Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_float", j);
+                    Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_double", j);
+                    cores.push_back(stringify(j) +"SPUs" );
+
+                    DenseVector<DT_> dv0((k + 1) * 8192, DT_(rand()));
+                    DenseVector<DT_> dv1((k + 1) * 8192, DT_(rand()));
+                    BandedMatrix<DT_> bm((k + 1) * 8192, dv1);
+                    bm.insert_band(3, dv1.copy());
+                    bm.insert_band(-3, dv1.copy());
+                    bm.insert_band(15, dv1.copy());
+
+                    for(int i(0) ; i < 10 ; ++i)
+                    {
+                        BENCHMARK(
+                                for (unsigned long l(0) ; l < 5 ; ++l)
+                                {
+                                Product<Tag_>::value(bm, dv0);
+                                }
+                                );
+                    }
+                    info = Product<>::get_benchmark_info(bm, dv0);
+                    infolist.push_back(info * 5);
+                    std::cout << ".";
+                    std::cout.flush();
+                }
+            }
+            Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_float", temp);
+            Configuration::instance()->set_value("cell::product_banded_matrix_dense_vector_double", temp2);
+            std::cout<<std::endl;
+            evaluate_to_plotfile(infolist, cores, 10);
+        }
+};
+#ifdef HONEI_CELL
+BandedMatrixProductRelaxSPUPlot<float, tags::Cell> BMPRelaxSPUF("Cell Relax Banded Matrix Dense Vector Product Benchmark - SPU Count: 1 to 6 - float", 400);
+BandedMatrixProductRelaxSPUPlot<double, tags::Cell> BMPRelaxSPUD("Cell Relax Banded Matrix Dense Vector Product Benchmark - SPU Count: 1 to 6 - double", 180);
+#endif
 
 template <typename DT_>
 class BandedMatrixProductQ1VSPlot :

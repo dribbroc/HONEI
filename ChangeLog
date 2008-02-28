@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-28 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/honeirc, honei/libla/product_BENCHMARK.cc,
+	honei/libla/product-cell.cc, honei/libla/selected_benchmarks.cc:
+	Added support for a variable spu count in bmdv.
+
 2008-02-28 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libla/algorithm.hh, honei/libla/algorithm_TEST.cc: Added

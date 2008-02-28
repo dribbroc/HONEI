@@ -301,7 +301,7 @@ DMDVProductBench<float, tags::CPU::MultiCore::SSE> DMDVPBMCSSEF("MultiCore SSE D
 DMDVProductBench<double, tags::CPU::MultiCore::SSE> DMDVPBMCSSED("MultiCore SSE DenseMatrix DenseVector Product Benchmark - double", 90);
 #endif
 #elif HONEI_CELL
-DMDVProductBench<float, tags::Cell> DMDVPBCF("CELL DenseMatrix DenseVector Product Benchmark - float", 90);
+DMDVProductBench<float, tags::Cell> DMDVPBCF("CELL DenseMatrix DenseVector Product Benchmark - float", 54);
 //DMDVProductBench<double, tags::Cell> DMDVPBCD("CELL DenseMatrix DenseVector Product Benchmark - double", 90);
 #endif
 
@@ -360,7 +360,7 @@ DenseMatrixProductBench<float, tags::CPU::MultiCore::SSE> DMPBMCSSEF("MultiCore 
 DenseMatrixProductBench<double, tags::CPU::MultiCore::SSE> DMPBMCSSED("MultiCore SSE DenseMatrix Product Benchmark - double", 64);
 #endif
 #elif HONEI_CELL
-DenseMatrixProductBench<float, tags::Cell> DMPBCF("CELL DenseMatrix Product Benchmark - float", 20);
+DenseMatrixProductBench<float, tags::Cell> DMPBCF("CELL DenseMatrix Product Benchmark - float", 54);
 //DenseMatrixProductBench<double, tags::Cell> DMPBCD("CELL DenseMatrix Product Benchmark - double", 20);
 #endif
 
@@ -386,7 +386,7 @@ class BMDVProductBench :
             BenchmarkInfo info;
             std::list<BenchmarkInfo> infolist;
             std::list<std::string> cores;
-            for (unsigned long j(0) ; j < _count ; j+=3)
+            for (unsigned long j(0) ; j < _count ; j+=18)
             {
                 cores.push_back(Tag_::name);
                 DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
@@ -418,14 +418,14 @@ class BMDVProductBench :
 //BMDVProductBench<float, tags::CPU::MultiCore> BMDVPBMCF("MultiCore BandedMatrix DenseVector Relax Product Benchmark - float", 20);
 //BMDVProductBench<double, tags::CPU::MultiCore> BMDVPBMCD("MultiCore BandedMatrix DenseVector Relax Product Benchmark - double", 20);
 #ifdef HONEI_SSE
-BMDVProductBench<float, tags::CPU::SSE> BMDVPBSSEF("SSE BandedMatrix DenseVector Relax Product Benchmark - float", 150);
-BMDVProductBench<double, tags::CPU::SSE> BMDVPBSSED("SSE BandedMatrix DenseVector Relax Product Benchmark - double", 150);
-BMDVProductBench<float, tags::CPU::MultiCore::SSE> BMDVPBMCSSEF("MultiCore SSE BandedMatrix DenseVector Relax Product Benchmark - float", 150);
-BMDVProductBench<double, tags::CPU::MultiCore::SSE> BMDVPBMCSSED("MultiCore SSE BandedMatrix DenseVector Relax Product Benchmark - double", 150);
+BMDVProductBench<float, tags::CPU::SSE> BMDVPBSSEF("SSE BandedMatrix DenseVector Relax Product Benchmark - float", 400);
+BMDVProductBench<double, tags::CPU::SSE> BMDVPBSSED("SSE BandedMatrix DenseVector Relax Product Benchmark - double", 400);
+BMDVProductBench<float, tags::CPU::MultiCore::SSE> BMDVPBMCSSEF("MultiCore SSE BandedMatrix DenseVector Relax Product Benchmark - float", 400);
+BMDVProductBench<double, tags::CPU::MultiCore::SSE> BMDVPBMCSSED("MultiCore SSE BandedMatrix DenseVector Relax Product Benchmark - double", 400);
 #endif
 #elif HONEI_CELL
-BMDVProductBench<float, tags::Cell> BMDVPBCF("CELL BandedMatrix DenseVector Relax Product Benchmark - float", 150);
-BMDVProductBench<double, tags::Cell> BMDVPBCD("CELL BandedMatrix DenseVector Relax Product Benchmark - double", 150);
+BMDVProductBench<float, tags::Cell> BMDVPBCF("CELL BandedMatrix DenseVector Relax Product Benchmark - float", 400);
+BMDVProductBench<double, tags::Cell> BMDVPBCD("CELL BandedMatrix DenseVector Relax Product Benchmark - double", 200);
 #endif
 
 
