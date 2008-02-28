@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-28 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/files.m4, honei/libswe/relax_solver.hh, honei/libswe/relax_solver_mp2_BENCHMARK.cc, honei/libswe/relax_solver_mp2_TEST.cc:
+	Added implementation of a new mixedprec RelaxSolver variant, which
+	performs one of the prediction steps within one timestep in double and
+	computes in single otherwise, added a test and a benchmark.
+
 2008-02-27 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc: Tried to avoid Yellow lines in Benchmark-Plots. 
