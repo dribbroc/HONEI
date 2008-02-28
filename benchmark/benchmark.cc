@@ -377,12 +377,15 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
     }
     else if (plotcvx && plotsvx && (cnr > 1))
     {
+        int noyellow(1);
         temp = *cores.begin();
         std::list<std::string>::iterator cit = cores.begin();
         ofs2 << "set terminal postscript eps color\nset key below\nset yrange [0:]\n";
         ofs2 << "set title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"time in sec.\"\nset output \"" << eps1name << "\"\n";
-        for (int i(0) ; i < cnr ; ++i)
+        for (int i(0) ; i < cnr ; ++i, ++noyellow)
         {
+            if (noyellow == 6)
+                ++noyellow;
             if (i != 0)
             {
                 ofs2 << ", ";
@@ -392,14 +395,17 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
             }
             else
                 ofs2 << "plot ";
-            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 7+sizes << " t \"" + temp + " median runtime\" with linespoints";
+            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 7+sizes << " t \"" + temp + " median runtime\" with linespoints " << noyellow;
             
         }
         temp = *cores.begin();
         cit = cores.begin();
+        noyellow = 1;
         ofs2 << "\nset title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MFLOPS\"\nset output \"" << eps2name << "\"\n";
-        for (int i(0) ; i < cnr ; ++i)
+        for (int i(0) ; i < cnr ; ++i, ++noyellow)
         {
+            if (noyellow == 6)
+                ++noyellow;
             if (i != 0)
             {
                 ofs2 << ", ";
@@ -409,13 +415,16 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
             }
             else
                 ofs2 << "plot ";
-            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 2+sizes << " t \"" + temp + " median FLOPS\" with linespoints";
+            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 2+sizes << " t \"" + temp + " median FLOPS\" with linespoints " << noyellow;
         }
         temp = *cores.begin();
         cit = cores.begin();
+        noyellow = 1;
         ofs2 << "\nset title \"" << _id << "\"\nset xlabel \"Operand Size\"\nset ylabel \"MB/s\"\nset output \"" << eps3name << "\"\n";
-        for (int i(0) ; i < cnr ; ++i)
+        for (int i(0) ; i < cnr ; ++i, ++noyellow)
         {
+            if (noyellow == 6)
+                ++noyellow;
             if (i != 0)
             {
                 ofs2 << ", ";
@@ -425,7 +434,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
             }
             else
                 ofs2 << "plot ";
-            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 3+sizes << " t \"" + temp + " median transfer rate\" with linespoints";
+            ofs2 << "\"BenchmarkPlotData\" index " << nr - cnr + i << " using 2:" << 3+sizes << " t \"" + temp + " median transfer rate\" with linespoints " << noyellow;
         }
     }
     else

@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-27 David Gies <david-gies@gmx.de>
+
+	* benchmark/benchmark.cc: Tried to avoid Yellow lines in Benchmark-Plots. 
+
 2008-02-27 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/files.m4, honei/libswe/relax_solver_mp1_BENCHMARK.cc, honei/libswe/relax_solver_mp1_TEST.cc:
