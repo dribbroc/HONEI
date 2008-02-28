@@ -24,7 +24,7 @@
 #include <honei/libla/matrix_error.cc>
 #include <honei/libla/reduction.hh>
 #include <unittest/unittest.hh>
-#include <honei/libutil/time_stamp.hh>
+
 #include <limits>
 #include <tr1/memory>
 
@@ -68,12 +68,8 @@ class BandedMatrixDenseVectorProductTest :
                     (dv3)[i]= DataType_((i+1)*(size-i));
                 }
 
-                TimeStamp aa, bb;
-                aa.take();
                 DenseVector<DataType_> prod (Product<Tag_>::value(bm1, dv2));
-                bb.take();
 
-                std::cout << "Full execution time : " << bb.usec() - aa.usec() << std::endl;
                 TEST_CHECK_EQUAL(prod, dv3);
             }
 
