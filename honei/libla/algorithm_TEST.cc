@@ -25,6 +25,41 @@
 using namespace honei;
 using namespace tests;
 
+template <typename DT_>
+class IteratorToDenseVectorCopyTest :
+    public QuickTest
+{
+    public:
+        IteratorToDenseVectorCopyTest(const std::string & type) :
+            QuickTest("iterator_to_dense_vector_copy_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            DenseMatrix<DT_> dm(17, 9);
+            for (typename MutableMatrix<DT_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = DT_(i.row() + i.column() * 0.1f);
+            }
+
+            DenseVectorSlice<DT_> dvs(dm.column(0));
+
+            DenseVector<DT_> dv(16);
+            typename Vector<DT_>::ElementIterator begin(++dvs.begin_elements()), end(dvs.end_elements());
+            honei::copy(begin, end, dv);
+
+            for (typename Vector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, (i.index() + 1), std::numeric_limits<DT_>::epsilon());
+            }
+        }
+};
+IteratorToDenseVectorCopyTest<float> iterator_to_dense_vector_copy_test_float("float");
+IteratorToDenseVectorCopyTest<double> iterator_to_dense_vector_copy_test_double("double");
+
 class BandedMatrixConvertTest :
     public BaseTest
 {
