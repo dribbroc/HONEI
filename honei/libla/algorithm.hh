@@ -185,6 +185,16 @@ namespace honei
         TypeTraits<DT_>::fill(dest.elements(), dest.rows() * dest.columns(), proto);
     }
 
+    template <typename IT_, typename DT_> void fill(const IT_ & begin, const IT_ & end, const DT_ & proto = DT_(0))
+    {
+        CONTEXT("When filling elements of iterator range with '" + stringify(proto) + "':");
+
+        for (typename Vector<DT_>::ElementIterator i(begin), i_end(end) ; i != i_end ; ++i)
+        {
+            *i = proto;
+        }
+    }
+
     /// \}
 
 }

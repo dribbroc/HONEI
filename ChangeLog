@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-02-29 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/libla/algorithm.hh, honei/libla/algorithm_TEST.cc: Added
+	iterator based fill of iterator ranges and an appropriate test case.
+
+2008-02-29 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/libla/algorithm.hh: Fixed typo that caused test case to fail.
 
 2008-02-29 Sven Mallach <sven.mallach@honei.org>

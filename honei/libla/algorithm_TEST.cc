@@ -660,3 +660,34 @@ class DenseMatrixFillQuickTest :
 DenseMatrixFillQuickTest<float> dense_matrix_fill_quick_test_float("float");
 DenseMatrixFillQuickTest<double> dense_matrix_fill_quick_test_double("double");
 
+template <typename DT_>
+class IteratorFillQuickTest :
+    public QuickTest
+{
+    public:
+        IteratorFillQuickTest(const std::string & type) :
+            QuickTest("iterator_fill_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(123);
+            DenseVector<DT_> dv1(size, 1.2), dv2(size, DT_(1.2));
+            DenseVector<DT_> dvs(dv1, size / 5, size / 3, 2);
+
+            fill(dvs.begin_elements(), dvs.end_elements(), DT_(3.4));
+
+            for (typename Vector<DT_>::ElementIterator i(dv2.element_at(size / 3)), i_end(dv2.element_at(size / 3 + 2 * (size / 5))) ;
+                    i != i_end ; i += 2)
+            {
+                *i = DT_(3.4);
+            }
+
+            for (typename Vector<DT_>::ConstElementIterator i(dv1.begin_elements()), i_end(dv1.begin_elements()), j(dv1.begin_elements()) ;
+                    i != i_end ; ++i, ++j)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
+            }
+        }
+};
