@@ -34,7 +34,6 @@
 #include <honei/libla/element_product.hh>
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/algorithm.hh>
-using namespace std;
 using namespace methods;
 namespace honei
 {

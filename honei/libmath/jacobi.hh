@@ -31,8 +31,6 @@
 #include <honei/libla/norm.hh>
 #include <iostream>
 
-using namespace std;
-
 namespace honei
 {
     /**

@@ -25,7 +25,6 @@
 #include <iostream>
 
 using namespace honei;
-using namespace std;
 namespace honei
 {
     float FloatSwap( float f )

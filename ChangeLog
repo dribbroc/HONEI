@@ -5,6 +5,16 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-29 Markus Geveler <apryde@gmx.de>
+
+	* honei/libmath/conjugate_gradients.hh,
+	honei/libmath/endian_swap.hh,
+	honei/libmath/interpolation.hh,
+	honei/libmath/iterative_refinement.hh,
+	honei/libmath/jacobi.hh,
+	honei/libmath/parser.hh:
+	Removed use of namespace std in libmath headers.
+
 2008-02-27 Mathias Kadolsky <mathkad@gmx.de>
 
 	* honei/libgraph/position.hh: Noise for WFR added.

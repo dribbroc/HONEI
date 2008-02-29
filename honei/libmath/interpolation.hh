@@ -25,8 +25,6 @@
 #include <honei/libla/norm.hh>
 #include <algorithm>
 
-using namespace std;
-
 namespace honei
 {
     namespace interpolation_methods

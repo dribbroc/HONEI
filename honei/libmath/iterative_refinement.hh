@@ -24,7 +24,6 @@
 #include <honei/libmath/jacobi.hh>
 #include <honei/libmath/methods.hh>
 
-using namespace std;
 using namespace methods;
 namespace honei
 {
