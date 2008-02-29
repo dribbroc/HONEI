@@ -157,6 +157,11 @@
             {
                 return _imp->step_width();
             }
+
+            inline void step_width(DataType_ size)
+            {
+                _imp->step_width(size);
+            }
     };
 
     namespace methods
@@ -204,6 +209,11 @@
                 inline DataType_ step_width()
                 {
                     return _step_width;
+                }
+
+                inline void step_width(DataType_ size)
+                {
+                    _step_width = size;
                 }
 
                 Implementation(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
@@ -323,25 +333,26 @@
                     // Calculate the new _step_width
                     if ((_number_of_iterations > 2) && (_step_width > 10*std::numeric_limits<DataType_>::epsilon()) && (fabs(result - _previous_max_Force_2) <= fabs(0.2 * _previous_max_Force_2)))
                     {
-                        if (_step_width > _repulsive_force_range / (_weights_of_edges.rows() * 20)) _step_width *= 0.995;
+                        if (_step_width > _repulsive_force_range / (_weights_of_edges.rows() * 20)) _step_width *= 0.5;
                         if (_step_width <= _repulsive_force_range  / (_weights_of_edges.rows() * 20))
                         {
                             _step_width *= 0.995 ;
                         }
-                    }
-                    
-                    if (_number_of_iterations == 400)
-                        _repulsive_force_range *= 0.5;
+                    }                                      
 
                     // Calculate the new previous forces
                     _previous_max_Force_2 = _previous_max_Force;
                     _previous_max_Force = result;
 
                     // Calculate the new positions by using result forces
+                    DataType_ noise(1);
+                    DataType_ delta(_step_width);
                     for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
                         e_end(_coordinates.end_elements()), k(attractive_forces.begin_elements()) ; e != e_end ; ++e, ++k)
-                    {
-                        result > eps && resulting_forces[e.row()] > 0 ? *e = *e + _step_width / (resulting_forces[e.row()]) * *k : 0;
+                    {                        
+                        if (_step_width > _repulsive_force_range  / (_weights_of_edges.rows() * 5)) noise = (7.5 + ( rand() % 5 ) )/10;
+                        if ((resulting_forces[e.row()]) < _step_width) delta = resulting_forces[e.row()];
+                        result > eps && resulting_forces[e.row()] > 0 ? *e = *e + delta * noise/ (resulting_forces[e.row()]) * *k : 0;
                     }
 
                     _number_of_iterations++;

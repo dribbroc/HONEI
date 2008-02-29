@@ -5,6 +5,10 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-02-27 Mathias Kadolsky <mathkad@gmx.de>
+
+	* honei/libgraph/position.hh: Noise for WFR added.
+
 2008-02-27 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc, benchmakr/benchmark.hh: Removed "using namespace std"
