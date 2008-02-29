@@ -223,6 +223,7 @@ DenseMatrixProductBench<tags::CPU::MultiCore::SSE, double> SSEDMPBenchdouble2SSE
 #ifdef HONEI_CELL
 DenseMatrixProductBench<tags::Cell, float> CELLDMPBenchfloat("CELL Matrix Product Benchmark dense/dense - matrix size: 256x256, float", 256, 10);
 DenseMatrixProductBench<tags::Cell, float> CELLDMPBenchfloat2("CELL Matrix Product Benchmark dense/dense - matrix size: 512x512, float", 512, 10);
+DenseMatrixProductBench<tags::Cell, float> CELLDMPBenchfloat3("CELL Matrix Product Benchmark dense/dense - matrix size: 2048x2048, float", 2048, 10);
 #endif
 
 template <typename Tag_, typename DataType_>

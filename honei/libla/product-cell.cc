@@ -472,6 +472,8 @@ namespace honei
         if (a.columns() != b.rows())
             throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
+        //TimeStamp aa, bb, cc, dd, ee, ff, gg ,hh, ii, jj;
+        //aa.take();
         DenseMatrix<float> result(a.rows(), b.columns());
         std::list<SPEInstruction *> instructions;
         bool use_spe(true);
@@ -493,19 +495,16 @@ namespace honei
         // find a t_size that represents full rows!
 
         unsigned a_t_size(a.columns() * (4096 / (a.columns())));
-        
+
         while (a_t_size % 4 != 0)
         {
             a_t_size -= a.columns();
         }
-        
+
         unsigned a_div = a_t_size / a.columns(); // number of rows in one transfer
-/*
-        while(a_div % 4 != 0)
-            a_div--;
-*/
+
         //std::cout << "ADIV = " << a_div << std::endl;
-        //a_t_size *= 4;
+
         a_t_size = 4 * (a_div * a.columns());
         //std::cout << a_t_size << std::endl;
 
@@ -541,7 +540,7 @@ namespace honei
             ppu_if2_cols = 0;
             b_half_cols = 0;
         }
-
+        //bb.take();
         std::vector<SPETransferList> b02_lists = std::vector<SPETransferList>();
         b02_lists.push_back(SPETransferList(2048, 16384));
 
@@ -556,9 +555,9 @@ namespace honei
         {
             addr address1;
             address1.ptr = b.elements() + i * b.columns();
-            unsigned off1(address1.value & 0xF);
             address1.value &= ~0xF; // truncate address
-            unsigned t_size1 = (off1 == 0 ? b_half_cols * 4 : (b_half_cols * 4) + 16);
+
+            unsigned t_size1 = (b_half_cols * 4) + 16;
             ListElement * retval1(0);
             if ((b02_lists.at(b02_nr_lists).transfer_size() + t_size1) <= 16384)
             {
@@ -570,14 +569,13 @@ namespace honei
                 b02_lists.push_back(SPETransferList(2048, 16384));
                 b02_nr_lists++;
                 b02_lists.at(b02_nr_lists).add(address1.ptr, t_size1);
-
             }
 
             addr address2;
             address2.ptr = ((b.elements() + b_half_cols + ppu_if1_cols) + i * b.columns());
-            unsigned off2(address2.value & 0xF);
             address2.value &= ~0xF; // truncate address
-            unsigned t_size2 = (off2 == 0 ? b_2nd_half_cols * 4 : (b_2nd_half_cols * 4) + 16);
+
+            unsigned t_size2 = (b_2nd_half_cols * 4) + 16;
 
             ListElement * retval2(0);
             if ((b13_lists.at(b13_nr_lists).transfer_size() + t_size2) <= 16384)
@@ -594,7 +592,7 @@ namespace honei
 
         }
         }
-        unsigned long long b02_sizes[b02_lists.size()] __attribute__((aligned(16)));
+        unsigned b02_sizes[b02_lists.size()] __attribute__((aligned(16)));
         void * b02_ptrs[b02_lists.size()] __attribute__((aligned(16)));
         unsigned long long b02_eahs[b02_lists.size()] __attribute__((aligned(16)));
 
@@ -623,7 +621,6 @@ namespace honei
             {
                 addr address1;
                 address1.ptr = result.elements() + i * result.columns();
-                unsigned off1(address1.value & 0xF);
                 address1.value &= ~0xF; // truncate address
                 unsigned t_size1 = ((b_half_cols * 4) + 16);
 
@@ -645,7 +642,6 @@ namespace honei
 
                 addr address2;
                 address2.ptr = ((result.elements() + b_half_cols + ppu_if1_cols) + i * result.columns());
-                unsigned off2(address2.value & 0xF);
                 address2.value &= ~0xF; // truncate address
                 unsigned t_size2 = (b_2nd_half_cols * 4) + 16;
 
@@ -669,9 +665,10 @@ namespace honei
             {
                 addr address1;
                 address1.ptr = result.elements() + i * result.columns();
-                unsigned off1(address1.value & 0xF);
                 address1.value &= ~0xF; // truncate address
+
                 unsigned t_size1 = (b_half_cols * 4) + 16;
+
                 ListElement * retval1(0);
                 if ((r2_lists.at(r2_nr_lists).transfer_size() + t_size1) <= 16384)
                 {
@@ -690,9 +687,8 @@ namespace honei
 
                 addr address2;
                 address2.ptr = ((result.elements() + b_half_cols + ppu_if1_cols) + i * result.columns());
-                unsigned off2(address2.value & 0xF);
                 address2.value &= ~0xF; // truncate address
-//                unsigned t_size2 = (off2 == 0 ? b_2nd_half_cols * 4 : (b_2nd_half_cols * 4) + 16);
+
                 unsigned t_size2 = (b_2nd_half_cols * 4) + 16;
 
                 ListElement * retval2(0);
@@ -714,7 +710,7 @@ namespace honei
 
         }
         }
-        unsigned long long r0_sizes[r0_lists.size()] __attribute__((aligned(16)));
+        unsigned r0_sizes[r0_lists.size()] __attribute__((aligned(16)));
         void * r0_ptrs[r0_lists.size()] __attribute__((aligned(16)));
         unsigned long long r0_eahs[r0_lists.size()] __attribute__((aligned(16)));
 
@@ -725,7 +721,7 @@ namespace honei
             r0_ptrs[i] = r0_lists.at(i).elements();
         }
 
-        unsigned long long r1_sizes[r1_lists.size()] __attribute__((aligned(16)));
+        unsigned r1_sizes[r1_lists.size()] __attribute__((aligned(16)));
         unsigned long long r1_eahs[r1_lists.size()] __attribute__((aligned(16)));
         void * r1_ptrs[r1_lists.size()] __attribute__((aligned(16)));
 
@@ -735,7 +731,7 @@ namespace honei
             r1_eahs[i] = r1_lists.at(i).effective_address();
             r1_ptrs[i] = r1_lists.at(i).elements();
         }
-        unsigned long long r2_sizes[r2_lists.size()] __attribute__((aligned(16)));
+        unsigned r2_sizes[r2_lists.size()] __attribute__((aligned(16)));
         void * r2_ptrs[r2_lists.size()] __attribute__((aligned(16)));
         unsigned long long r2_eahs[r2_lists.size()] __attribute__((aligned(16)));
 
@@ -746,7 +742,7 @@ namespace honei
             r2_ptrs[i] = r2_lists.at(i).elements();
         }
 
-        unsigned long long r3_sizes[r3_lists.size()] __attribute__((aligned(16)));
+        unsigned r3_sizes[r3_lists.size()] __attribute__((aligned(16)));
         unsigned long long r3_eahs[r3_lists.size()] __attribute__((aligned(16)));
         void * r3_ptrs[r3_lists.size()] __attribute__((aligned(16)));
 
@@ -756,7 +752,7 @@ namespace honei
             r3_eahs[i] = r3_lists.at(i).effective_address();
             r3_ptrs[i] = r3_lists.at(i).elements();
         }
-
+        //cc.take();
         // Shared Operands
         Operand oa0 = { a.elements() };
 
@@ -829,8 +825,8 @@ namespace honei
             instructions.push_back(instruction1);
             }
         }
-
-        unsigned long long b13_sizes[b13_lists.size()] __attribute__((aligned(16)));
+        //dd.take();
+        unsigned b13_sizes[b13_lists.size()] __attribute__((aligned(16)));
         unsigned long long b13_eahs[b13_lists.size()] __attribute__((aligned(16)));
         void * b13_ptrs[b13_lists.size()] __attribute__((aligned(16)));
 
@@ -879,7 +875,7 @@ namespace honei
             instructions.push_back(instruction3);
             }
         }
-
+        //ee.take();
         float * b_if1_start;
         float * b_if2_start;
 
@@ -889,7 +885,7 @@ namespace honei
         {
             TypeTraits<float>::fill(cols[x], result.rows(), 0.0f);
         }
-
+        //ff.take();
         float * a_elem = a.elements();
         //for(Matrix<float>::ConstElementIterator j(a.begin_elements()), j_end(a.end_elements()) ; j != j_end ; ++j)
         for(unsigned j(0) ; j < a.rows() * a.columns() ; ++j)
@@ -917,14 +913,14 @@ namespace honei
             a_elem++;
 
         }
-
+        //gg.take();
         for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; ++i)
         {
                 (*i)->wait();
 
                 delete *i;
         }
-
+        //hh.take();
         // COPY cols to Matrix.
         unsigned i(0);
         for (unsigned j(b_half_cols) ; i < ppu_if1_cols ; i++, j++)
@@ -943,7 +939,17 @@ namespace honei
                 *ei = cols[i+k][ei.index()];
             }
         }
-
+        //ii.take();
+/*
+        std::cout << "PRE-WORK: " << bb.usec() - aa.usec() << "  GESAMT: " << bb.usec() - aa.usec() << std::endl;
+        std::cout << "LIST-CREATIONS: " << cc.usec() - bb.usec()  << "  GESAMT: " << cc.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER FIRST DISPATCH: " << dd.usec() - cc.usec()  << "  GESAMT: " << dd.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER SECOND DISPATCH: " << ee.usec() - dd.usec()  << "  GESAMT: " << ee.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER FILL OF PPU-ARRAY: " << ff.usec() - ee.usec()  << "  GESAMT: " << ff.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER PPU-CALCULATIONS: " << gg.usec() - ff.usec()  << "  GESAMT: " << gg.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER WAIT: " << hh.usec() - gg.usec()  << "  GESAMT: " << hh.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER PPU WRITE: " << ii.usec() - hh.usec()  << "  GESAMT: " << ii.usec() - aa.usec() << std::endl;
+*/
         return result;
     }
 
