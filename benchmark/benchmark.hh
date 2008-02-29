@@ -11,7 +11,6 @@
 #include <iostream>
 
 
-using namespace std;
 /**
  * Baseclass for all testingclasses
  */
@@ -20,7 +19,7 @@ class Benchmark
     protected:
         const std::string _id;
         timeval _start, _end;
-        list<double> _benchlist;
+        std::list<double> _benchlist;
         int _x, _xmin, _xmax;
         double _total, _min, _max, _avg, _median, _tp, _mediantp, _f, _medianf;
         std::string _tag_name;

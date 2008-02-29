@@ -8,7 +8,6 @@
 #include <fstream>
 
 // using namespace pg512;
-using namespace std;
 
 class Benchmark;
 
@@ -73,7 +72,7 @@ void Benchmark::calculate()
     _total = 0;
     _min = _benchlist.front();
     _max = _benchlist.front();
-    for (list<double>::iterator i = _benchlist.begin() ; i != _benchlist.end() ; ++i)
+    for (std::list<double>::iterator i = _benchlist.begin() ; i != _benchlist.end() ; ++i)
     {
         _total += *i;
         ++_x;
@@ -89,10 +88,10 @@ void Benchmark::calculate()
         } 
     }
     _avg = (_total/_x);
-    list<double> temp;
+    std::list<double> temp;
     temp = _benchlist;
     temp.sort();
-    list<double>::iterator m = temp.begin();
+    std::list<double>::iterator m = temp.begin();
     for(int i = 0 ; i < ((_x + 1) / 2) ; ++i)
     {
         ++m;
@@ -128,41 +127,41 @@ void Benchmark::calculate(BenchmarkInfo info)
 void Benchmark::evaluate()
 {
     calculate();
-    cout << "Function Calls: " << _x << endl;
-    cout << "Runtime - total:   " << _total << "sec" << endl;
-    cout << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << endl;
-    cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
-    cout << "Runtime - mean:    " << _avg << "sec" << endl;
-    cout << "Runtime - median:  " << _median << "sec" << endl;
-    ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
+    std::cout << "Function Calls: " << _x << std::endl;
+    std::cout << "Runtime - total:   " << _total << "sec" << std::endl;
+    std::cout << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << std::endl;
+    std::cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << std::endl;
+    std::cout << "Runtime - mean:    " << _avg << "sec" << std::endl;
+    std::cout << "Runtime - median:  " << _median << "sec" << std::endl;
+    std::ofstream ofs("BenchmarkOut.txt", std::ios_base::out | std::ios_base::app);
     if (!ofs)
-        cout << "Can't write to file!" << endl;
+        std::cout << "Can't write to file!" << std::endl;
     else
     {
         time_t t;
         time(&t);
-        ofs << _id  << " - " << ctime(&t) << endl << endl;
-        ofs << "Result:"<< endl;
-        ofs << "Function Calls: " << _x << endl;
-        ofs << "Runtime - total: " << _total << "sec" << endl;
-        ofs << "Runtime - lowest: " << _min << "sec (" << _xmin << ".)" << endl;
-        ofs << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
-        ofs << "Runtime - mean:    " << _avg << "sec" << endl;
-        ofs << "Runtime - median:  " << _median << "sec" << endl;
-        ofs << endl << endl << endl;
+        ofs << _id  << " - " << ctime(&t) << std::endl << std::endl;
+        ofs << "Result:"<< std::endl;
+        ofs << "Function Calls: " << _x << std::endl;
+        ofs << "Runtime - total: " << _total << "sec" << std::endl;
+        ofs << "Runtime - lowest: " << _min << "sec (" << _xmin << ".)" << std::endl;
+        ofs << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << std::endl;
+        ofs << "Runtime - mean:    " << _avg << "sec" << std::endl;
+        ofs << "Runtime - median:  " << _median << "sec" << std::endl;
+        ofs << std::endl << std::endl << std::endl;
     }
 }
 
 void Benchmark::evaluate(BenchmarkInfo info)
 {
     calculate(info);
-    cout << "Function Calls: " << _x << endl;
-    cout << "Runtime - total:   " << _total << "sec" << endl;
-    cout << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << endl;
-    cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
-    cout << "Runtime - mean:    " << _avg << "sec" << endl;
-    cout << "Runtime - median:  " << _median << "sec" << endl;
-    string pf = " KMGTPEZY";
+    std::cout << "Function Calls: " << _x << std::endl;
+    std::cout << "Runtime - total:   " << _total << "sec" << std::endl;
+    std::cout << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << std::endl;
+    std::cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << std::endl;
+    std::cout << "Runtime - mean:    " << _avg << "sec" << std::endl;
+    std::cout << "Runtime - median:  " << _median << "sec" << std::endl;
+    std::string pf = " KMGTPEZY";
     int i = 2;
     while (_tp > 1024 && i < 8)
     {
@@ -170,8 +169,8 @@ void Benchmark::evaluate(BenchmarkInfo info)
         _mediantp /= 1024;
         ++i;
     }
-    cout << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << endl;
-    cout << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << endl;
+    std::cout << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << std::endl;
+    std::cout << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << std::endl;
     int j = 2;
     while (_f > 1000 && j < 8)
     {
@@ -179,34 +178,34 @@ void Benchmark::evaluate(BenchmarkInfo info)
         _medianf /= 1000;
         ++j;
     }
-    cout << _f << " " << pf[j] << "FLOPS (mean)" << endl;
-    cout << _medianf << " " << pf[j] << "FLOPS (median)" << endl;
+    std::cout << _f << " " << pf[j] << "FLOPS (mean)" << std::endl;
+    std::cout << _medianf << " " << pf[j] << "FLOPS (median)" << std::endl;
     if (info.scale != 1)
     {
-        cout << "Dense version calculates " << info.scale << " times more flops.\n(Depends on used elements of Sparse/Banded Operands.)" << endl;
+        std::cout << "Dense version calculates " << info.scale << " times more flops.\n(Depends on used elements of Sparse/Banded Operands.)" << std::endl;
         if (info.scaleinfo != " ")
-            cout << info.scaleinfo << endl;
+            std::cout << info.scaleinfo << std::endl;
     }
-    ofstream ofs("BenchmarkOut.txt", ios_base::out | ios_base::app);
+    std::ofstream ofs("BenchmarkOut.txt", std::ios_base::out | std::ios_base::app);
     if (!ofs)
-        cout << "Can't write to file!" << endl;
+        std::cout << "Can't write to file!" << std::endl;
     else
     {
         time_t t;
         time(&t);
-        ofs << _id  << " - " << ctime(&t) << endl << endl;
-        ofs << "Result:"<< endl;
-        ofs << "Function Calls: " << _x << endl;
-        ofs << "Runtime - total:   " << _total << "sec" << endl;
-        ofs << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << endl;
-        ofs << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << endl;
-        ofs << "Runtime - mean:    " << _avg << "sec" << endl;
-        ofs << "Runtime - median:  " << _median << "sec" << endl;
-        ofs << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << endl;
-        ofs << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << endl;
-        ofs << _f << " " << pf[j] << "FLOPS (mean)" << endl;
-        ofs << _medianf << " " << pf[j] << "FLOPS (median)" << endl;
-        ofs << endl << endl << endl;
+        ofs << _id  << " - " << ctime(&t) << std::endl << std::endl;
+        ofs << "Result:"<< std::endl;
+        ofs << "Function Calls: " << _x << std::endl;
+        ofs << "Runtime - total:   " << _total << "sec" << std::endl;
+        ofs << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << std::endl;
+        ofs << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << std::endl;
+        ofs << "Runtime - mean:    " << _avg << "sec" << std::endl;
+        ofs << "Runtime - median:  " << _median << "sec" << std::endl;
+        ofs << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << std::endl;
+        ofs << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << std::endl;
+        ofs << _f << " " << pf[j] << "FLOPS (mean)" << std::endl;
+        ofs << _medianf << " " << pf[j] << "FLOPS (median)" << std::endl;
+        ofs << std::endl << std::endl << std::endl;
     }
 }
 
@@ -214,8 +213,8 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
 {
     std::list<double> BenchlistCopy;
     BenchlistCopy = _benchlist;
-    list<double>::iterator blc = BenchlistCopy.begin();
-    list<BenchmarkInfo>::iterator j = info.begin();
+    std::list<double>::iterator blc = BenchlistCopy.begin();
+    std::list<BenchmarkInfo>::iterator j = info.begin();
     int sizes(0);
     int nr(1), cnr(1);
     std::string temp;
@@ -233,7 +232,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
             }
         }
     }
-    ifstream ifs("BenchmarkPlotData", ifstream::in);
+    std::ifstream ifs("BenchmarkPlotData", std::ifstream::in);
     if (ifs.is_open())
     {
         ifs.ignore(1, '#');
@@ -243,17 +242,17 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
     ifs.close();
     if (nr == cnr)
     {
-        ofstream ofs1("BenchmarkPlotData", ios_base::out);
+        std::ofstream ofs1("BenchmarkPlotData", std::ios_base::out);
             ofs1 << "#1\n";
         ofs1.close();
     }
     else
     {
-        ofstream ofs1("BenchmarkPlotData", ios_base::in);
+        std::ofstream ofs1("BenchmarkPlotData", std::ios_base::in);
             ofs1 << "#" << nr;
         ofs1.close();
     }
-    ofstream ofs3("RecentPlots.tex", ios_base::app);
+    std::ofstream ofs3("RecentPlots.tex", std::ios_base::app);
     ofs3 << "\\section{" << _id << "}\n";
     ofs3 << "\t\\begin{center}\n";
     ofs3 << "\t\\begin{longtable}{c c c c c}\n";
@@ -263,18 +262,18 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
     ofs3 << "\t\tX & operand size & median runtime & median MFLOPS & median transferrate\\\\ [0.5ex]\n";
     ofs3 << "\t\t\\hline\n";
     ofs3 << "\t\t\\endhead\n";
-    ofstream ofs("BenchmarkPlotData", ios_base::out | ios_base::app);
+    std::ofstream ofs("BenchmarkPlotData", std::ios_base::out | std::ios_base::app);
     if (!ofs)
-        cout << "Can't write to file!" << endl;
+        std::cout << "Can't write to file!" << std::endl;
     else
     {
-        ofs.setf(ios::left, ios::adjustfield);
+        ofs.setf(std::ios::left, std::ios::adjustfield);
         ofs << "#" << _id << " --- " << ctime(&t);
         ofs << "#Cores\t";
         if (!((j->size).empty()))
         {
             sizes = 1;
-            for(list<unsigned long>::iterator si((j->size).begin()); si != (j->size).end() ; ++si, ++sizes)
+            for(std::list<unsigned long>::iterator si((j->size).begin()); si != (j->size).end() ; ++si, ++sizes)
             {
                 ofs << sizes <<".operand size\t";
             }
@@ -293,7 +292,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
             {
                 ofs << "\n" << std::setw(6) << *i << "\t";
                 if (!((j->size).empty()))
-                    for(list<unsigned long>::iterator si((j->size).begin()) ; si != (j->size).end() ; ++si)
+                    for(std::list<unsigned long>::iterator si((j->size).begin()) ; si != (j->size).end() ; ++si)
                     {
                         ofs << std::setw(14) << *si << "\t";
                     }
@@ -306,7 +305,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
                 calculate(*j);
                 ofs3 << "\t\t" << *i << " & " << (j->size).front() << " & " << _median << " & " << _medianf << " & " << _mediantp << " \\\\\n";
                 ofs << std::setw(13) << _medianf << "\t" << std::setw(11) << _mediantp << "\t" << std::setw(11) << _min << "\t" << std::setw(11) << _max << "\t" << std::setw(12) << _avg << "\t" << std::setw(14) << _median << "\t" << std::setw(11) << _f << "\t" << std::setw(9) << _tp;
-                for (list<double>::iterator bl = _benchlist.begin() ; bl != _benchlist.end() ; ++bl)
+                for (std::list<double>::iterator bl = _benchlist.begin() ; bl != _benchlist.end() ; ++bl)
                 {
                     ofs << "\t" << std::setw(8) << *bl;
                 }
@@ -334,7 +333,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
     eps1name.replace(32, 1, ".eps");
     eps2name.replace(32, 1, "_2.eps");
     eps3name.replace(32, 1, "_3.eps");
-    ofstream ofs2(filename.c_str(), ios_base::out);
+    std::ofstream ofs2(filename.c_str(), std::ios_base::out);
     if (plotsvx && not plotcvx)
     {
         ofs2 << "set terminal postscript eps color\nset key below\nset yrange [0:]\n";
@@ -480,7 +479,7 @@ bool Benchmark::plots()
 int main(int argc, char** argv)
 {
     int result=EXIT_SUCCESS;
-    list<int> runrs;
+    std::list<int> runrs;
     bool sse(true);
     bool cell(true);
     bool mc(true);
@@ -565,30 +564,30 @@ int main(int argc, char** argv)
     }
     if (BenchmarkList::instance()->begin_benchs() == BenchmarkList::instance()->end_benchs())
     {
-        cout << "No relevant Benchmarks." << endl;
+        std::cout << "No relevant Benchmarks." << std::endl;
         return result;
     }
     if (interface)
     {
         int count = 1;
-        cout << "Select Benchmark you'd like to add to runlist:" << endl;
+        std::cout << "Select Benchmark you'd like to add to runlist:" << std::endl;
         for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; )
         {
-            cout << count << ": " << (*i)->id() << endl;
+            std::cout << count << ": " << (*i)->id() << std::endl;
             ++count;
             ++i;
         }
-        cout << endl << "Choose: (1), (2), ..., (a)ll, (n)one" << endl;
-        string a, tmp;
+        std::cout << std::endl << "Choose: (1), (2), ..., (a)ll, (n)one" << std::endl;
+        std::string a, tmp;
         int b;
         while (a != "n")
         {
-            cout << "Selection: ";
-            cin >> a;
-            cout << "Added: ";
+            std::cout << "Selection: ";
+            std::cin >> a;
+            std::cout << "Added: ";
             if (a == "a")
             {
-                cout << "all" << endl;
+                std::cout << "all" << std::endl;
                 a = "n";
                 runrs.clear();
                 for (int i = 0 ; i < BenchmarkList::instance()->bench_count() ; ++i)
@@ -614,12 +613,12 @@ int main(int argc, char** argv)
                     if ((b > 0) && (b <= BenchmarkList::instance()->bench_count())) 
                     {
                         runrs.push_back(b-1);
-                        cout << b << " ";
+                        std::cout << b << " ";
                     }
                 }
             }
-            cout << endl;
-            if (a != "n") cout << "Add more? ";
+            std::cout << std::endl;
+            if (a != "n") std::cout << "Add more? ";
         }
     } 
     else 
@@ -633,7 +632,7 @@ int main(int argc, char** argv)
     {
         time_t t;
         time(&t);
-        ofstream ofs("RecentPlots.tex", ios_base::out);
+        std::ofstream ofs("RecentPlots.tex", std::ios_base::out);
         ofs << "\\documentclass{report}\n";
 //        ofs << "\\usepackage{fullpage}\n";
         ofs << "\\usepackage{epsfig}\n";
@@ -684,7 +683,7 @@ int main(int argc, char** argv)
     }
     if (plot)
     {
-        ofstream ofs1("RecentPlots.tex", ios_base::out | ios_base::app);
+        std::ofstream ofs1("RecentPlots.tex", std::ios_base::out | std::ios_base::app);
         ofs1 << "\\end{document}";
     }
     return result;
