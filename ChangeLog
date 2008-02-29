@@ -7,6 +7,16 @@ see the NEWS file.
 
 2008-02-29 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/implicit_solver.hh,
+	honei/libswe/post_processing.hh,
+	honei/libswe/relax_solver.hh,
+	honei/libswe/solver.hh,
+	honei/libswe/volume.hh,
+	honei/libvisual/engine_implicit.hh:
+	Removed use of namespace std in libswe and libvisual.
+
+2008-02-29 Markus Geveler <apryde@gmx.de>
+
 	* honei/libmath/conjugate_gradients.hh,
 	honei/libmath/endian_swap.hh,
 	honei/libmath/interpolation.hh,

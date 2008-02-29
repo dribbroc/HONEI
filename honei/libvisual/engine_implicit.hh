@@ -181,7 +181,7 @@ namespace honei
 
                     }
                 }
-                cout<<"HEIGHT"<<gl_globals::height<<endl;
+                std::cout<<"HEIGHT"<<gl_globals::height<<std::endl;
 
                 /*
                    for(ulint i = 0; i< gl_globals::height.rows(); ++i)
@@ -213,7 +213,7 @@ namespace honei
                 gl_globals::d[2] = 11;*/
 
                 gl_globals::solver.do_preprocessing();
-                cout<<"HEIGHT_BOUND"<<gl_globals::height_b<<endl;
+                std::cout<<"HEIGHT_BOUND"<<gl_globals::height_b<<std::endl;
 
             }
 

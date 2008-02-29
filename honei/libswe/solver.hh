@@ -62,7 +62,6 @@
 #include <iostream>
 #include <fstream>
 #include <sys/time.h>
-using namespace std;
 
 namespace honei {
 
@@ -594,10 +593,10 @@ namespace honei {
             }
 #ifdef SOLVER_VERBOSE
             std::cout << "Preproc: Mapping done.\n";
-            cout << stringify(hbound) << endl;
-            cout << stringify(bbound) << endl;
-            cout << stringify(u1bound) << endl;
-            cout << stringify(u2bound) << endl;
+            std::cout << stringify(hbound) << std::endl;
+            std::cout << stringify(bbound) << std::endl;
+            std::cout << stringify(u1bound) << std::endl;
+            std::cout << stringify(u2bound) << std::endl;
 #endif
 
        // }//TODO: the other cases of boundary usage
@@ -624,7 +623,7 @@ namespace honei {
         }
 #ifdef SOLVER_VERBOSE
         cout << "u^T after building:\n";
-        cout << stringify(*_u) << endl;
+        cout << stringify(*_u) << std::endl;
 #endif
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k2(_v->begin_elements());
@@ -649,8 +648,8 @@ namespace honei {
         _flow_x(uFlow);
         (*_v) = uFlow;
 #ifdef SOLVER_VERBOSE
-        cout << "v^T after building:\n";
-        cout << stringify(*_v) << endl;
+        std::cout << "v^T after building:\n";
+        std::cout << stringify(*_v) << std::endl;
 #endif
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k3(_w->begin_elements());
@@ -676,8 +675,8 @@ namespace honei {
         _flow_y(u2Flow);
         (*_w) = u2Flow;
 #ifdef SOLVER_VERBOSE
-        cout << "w^T after building:\n";
-        cout << stringify(*_w) << endl;
+        std::cout << "w^T after building:\n";
+        std::cout << stringify(*_w) << std::endl;
 #endif
         ///Now, that the relaxation vectors have been provided, the only thing left to do is to
         ///compute the bottom slopes.
@@ -721,9 +720,9 @@ namespace honei {
             }
         }
 #ifdef SOLVER_VERBOSE
-        cout << "Slopes after building:\n";
-        cout << stringify(*_bottom_slopes_x) << endl;
-        cout << stringify(*_bottom_slopes_y) << endl;
+        std::cout << "Slopes after building:\n";
+        std::cout << stringify(*_bottom_slopes_x) << std::endl;
+        std::cout << stringify(*_bottom_slopes_y) << std::endl;
         std::cout << "Finished preprocessing.\n";
 #endif
     }
@@ -1405,10 +1404,10 @@ namespace honei {
         m3.insert_band(6, m3bandPlus2.copy());
         m3.insert_band((-3), m3bandMinus1.copy());
 #ifdef SOLVER_VERBOSE
-        cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
-        cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
-        cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
-        cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(0))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(3))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(6))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(-3))) << std::endl;
         std::cout << "Finished Matrix Assembly 1.\n";
 #endif
     }
@@ -1435,7 +1434,7 @@ namespace honei {
         }
         else
         {
-            cout << "prefac is invalid!\n";
+            std::cout << "prefac is invalid!\n";
         }
         DenseVector<WorkPrec_> vc(_v->copy());
         DenseVector<WorkPrec_> u1_c(_u->copy());
@@ -1458,10 +1457,10 @@ namespace honei {
 
         Scale<Tag_>::value(tempsum2, prefac);
 #ifdef SOLVER_VERBOSE
-        cout << "Temp relax vectors after building:\n";
-        cout << stringify(*_u_temp) << endl;
-        cout << stringify(*_v_temp) << endl;
-        cout << stringify(*_w_temp) << endl;
+        std::cout << "Temp relax vectors after building:\n";
+        std::cout << stringify(*_u_temp) << std::endl;
+        std::cout << stringify(*_v_temp) << std::endl;
+        std::cout << stringify(*_w_temp) << std::endl;
         std::cout << "Finished Setup 1.\n";
 #endif
         sv = tempsum.copy();
@@ -1513,7 +1512,7 @@ namespace honei {
         _quick_assemble_matrix4<WorkPrec_>(m2, m8);
 #ifdef SOLVER_BENCHMARK
         gettimeofday(&end, 0);
-        cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< endl;
+        std::cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< std::endl;
 #endif
 
         DenseVector<WorkPrec_> temp_u_c(predictedu.copy());
@@ -1545,7 +1544,7 @@ namespace honei {
         Sum<Tag_>::value(predicted_u_temp_c, temp4);
         Sum<Tag_>::value(predicted_u_temp_c, source_c);
 #ifdef SOLVER_VERBOSE
-        cout << "First accu solved.\n";
+        std::cout << "First accu solved.\n";
 #endif
         DenseVector<WorkPrec_> temp_u3_c(predictedu.copy());
         DenseVector<WorkPrec_> temp_v2_c(predictedv.copy());
@@ -1561,7 +1560,7 @@ namespace honei {
         DenseVector<WorkPrec_> temp44 = Product<Tag_>::value(m8, temp_u4_c);
 #ifdef SOLVER_BENCHMARK
         gettimeofday(&end2, 0);
-        cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< endl;
+        std::cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< std::endl;
 #endif
         DenseVector<WorkPrec_> v_c(predictedv.copy());
         DenseVector<WorkPrec_> w_c(predictedw.copy());
@@ -1577,7 +1576,7 @@ namespace honei {
         predictedw = w_c.copy();
 
 #ifdef SOLVER_VERBOSE
-        cout << "Second accu solved.\n";
+        std::cout << "Second accu solved.\n";
 #endif
         //Correction of reflective boundaries
         for (unsigned long j = 0; j< 3*_d_width; ++j)
@@ -1739,7 +1738,7 @@ namespace honei {
          */
         }
 #ifdef SOLVER_VERBOSE
-        cout << stringify(iter.index()) << endl;
+        std::cout << stringify(iter.index()) << std::endl;
 #endif
         unsigned long count =0;//if made w steps, ignore four.
         ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
@@ -1847,7 +1846,7 @@ namespace honei {
                 count = 0;
             }
 #ifdef SOLVER_VERBOSE
-            cout << stringify(count)<<endl;
+            std::cout << stringify(count)<<std::endl;
 #endif
         }
         /*
@@ -1923,8 +1922,8 @@ namespace honei {
         */
 
 #ifdef SOLVER_VERBOSE
-        cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
-        cout << stringify(*_u)<<endl;
+        std::cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << std::endl;
+        std::cout << stringify(*_u)<<std::endl;
 #endif
 
 #ifdef SOLVER_POSTPROCESSING
@@ -2644,10 +2643,10 @@ namespace honei {
         m3.insert_band(6, m3bandPlus2.copy());
         m3.insert_band(-3,m3bandMinus1.copy());
 #ifdef SOLVER_VERBOSE
-        cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
-        cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
-        cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
-        cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(0))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(3))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(6))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(ulint(-3))) << std::endl;
         std::cout << "Finished Matrix Assembly 1.\n";
 #endif
     }
@@ -2999,10 +2998,10 @@ namespace honei {
         m4.insert_band(6*(_d_width +4), m4bandPlus2.copy());
         m4.insert_band(-3*(_d_width +4), m4bandMinus1.copy());
 #ifdef SOLVER_VERBOSE
-        cout << "M_2:" << stringify(m2.band(ulint(0))) << endl;
-        cout << "M_2:" << stringify(m2.band(ulint(3*(_d_width +4)))) << endl;
-        cout << "M_2:" << stringify(m2.band(ulint(6*(_d_width +4)))) << endl;
-        cout << "M_2:" << stringify(m2.band(ulint(-3*(_d_width +4)))) << endl;
+        std::cout << "M_2:" << stringify(m2.band(ulint(0))) << std::endl;
+        std::cout << "M_2:" << stringify(m2.band(ulint(3*(_d_width +4)))) << std::endl;
+        std::cout << "M_2:" << stringify(m2.band(ulint(6*(_d_width +4)))) << std::endl;
+        std::cout << "M_2:" << stringify(m2.band(ulint(-3*(_d_width +4)))) << std::endl;
         std::cout << "Finished Matrix Assembly 2.\n";
 #endif
     }
@@ -3031,8 +3030,8 @@ namespace honei {
     {
         if(_solve_time % every == 0 || _solve_time == 0)
         {
-            string filename;
-            ofstream file;
+            std::string filename;
+            std::ofstream file;
             filename = "rsolverfield" + stringify(_solve_time) + ".dat";
             file.open(filename.c_str());
 
@@ -3041,7 +3040,7 @@ namespace honei {
             {
                 for(ulint y = 0; y < _d_height; ++y)
                 {
-                    string record = stringify(x) + " " + stringify(y) + " " + stringify((*_height)[y][x]) + "\n";
+                    std::string record = stringify(x) + " " + stringify(y) + " " + stringify((*_height)[y][x]) + "\n";
                     file << record;
                 }
                 //Create empty record after each row:
@@ -3050,7 +3049,7 @@ namespace honei {
             file.close();
         }
 #ifdef SOLVER_VERBOSE
-        cout <<"Finished postprocessing." << endl;
+        std::cout <<"Finished postprocessing." << std::endl;
 #endif
 
     }

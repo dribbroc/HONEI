@@ -53,7 +53,6 @@
 #include <honei/libmath/conjugate_gradients.hh>
 #include <honei/libmath/jacobi.hh>
 
-using namespace std;
 using namespace honei;
 using namespace methods;
 using namespace boundaries;
@@ -224,12 +223,12 @@ namespace honei {
                 ll[(_grid_height + 2)* (_grid_width + 2) - 1] = ll[(_grid_height + 1)* (_grid_width + 2) - 2];
 
 #ifdef SOLVER_VERBOSE
-                cout<<"Finished correction in matrix assembly!" << endl;
-                cout<<"dd: " << dd << endl;
-                cout<<"dl: " << dl << endl;
-                cout<<"du: " << du << endl;
-                cout<<"ll: " << ll << endl;
-                cout<<"uu: " << uu << endl;
+                std::cout<<"Finished correction in matrix assembly!" << std::endl;
+                std::cout<<"dd: " << dd << std::endl;
+                std::cout<<"dl: " << dl << std::endl;
+                std::cout<<"du: " << du << std::endl;
+                std::cout<<"ll: " << ll << std::endl;
+                std::cout<<"uu: " << uu << std::endl;
 
 #endif
                 ///Insert bands:
@@ -239,7 +238,7 @@ namespace honei {
                 _system_matrix->insert_band(_grid_width + 2, uu);
                 _system_matrix->insert_band(-_grid_width - 2, ll);
 #ifdef SOLVER_VERBOSE
-                cout<<"Inserted bands in matrix assembly!" << endl;
+                std::cout<<"Inserted bands in matrix assembly!" << std::endl;
 #endif
             }
 
@@ -492,21 +491,21 @@ namespace honei {
                 _assemble_right_hand_side<ResPrec_>();
 
 #ifdef SOLVER_VERBOSE
-                cout<<"SYSTEM:A " << *_system_matrix << endl;
-                cout<<"SYSTEM:b " << *_right_hand_side << endl;
-                cout<<"HEIGHT_BOUND before solution: "<<endl;
-                cout<<*_height_bound;
-                cout<<"Finished assembly!"<<endl;
+                std::cout<<"SYSTEM:A " << *_system_matrix << std::endl;
+                std::cout<<"SYSTEM:b " << *_right_hand_side << std::endl;
+                std::cout<<"HEIGHT_BOUND before solution: "<<std::endl;
+                std::cout<<*_height_bound;
+                std::cout<<"Finished assembly!"<<std::endl;
 #endif
                 DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, std::numeric_limits<ResPrec_>::epsilon()));
 #ifdef SOLVER_VERBOSE
-                cout<<"Finished CG!"<< endl;
-                cout<<"u before update: " << *_x_veloc_bound << endl;
-                cout<<"u propagation: " << *_u_temp << endl;
+                std::cout<<"Finished CG!"<< std::endl;
+                std::cout<<"u before update: " << *_x_veloc_bound << std::endl;
+                std::cout<<"u propagation: " << *_u_temp << std::endl;
 #endif
                 _update(w_new);
 #ifdef SOLVER_VERBOSE
-                cout<<"u after update: "<< *_x_veloc_bound <<endl;
+                std::cout<<"u after update: "<< *_x_veloc_bound <<std::endl;
 #endif
 
                 ///Our boundary - correction:
@@ -547,7 +546,7 @@ namespace honei {
                 (*_y_veloc_bound)[_grid_height + 1][0] = (*_y_veloc_bound)[_grid_height][1];
                 (*_y_veloc_bound)[_grid_height + 1][_grid_width + 1] = (*_y_veloc_bound)[_grid_height][_grid_width];
 #ifdef SOLVER_VERBOSE
-                cout<<"Corrected u: "<< *_x_veloc_bound << endl;
+                std::cout<<"Corrected u: "<< *_x_veloc_bound << std::endl;
 #endif
 
             }

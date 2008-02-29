@@ -27,7 +27,6 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
 /**
  * \file
  * Implementation of source processing functions for RelaxSolver.
@@ -84,8 +83,8 @@ namespace honei
             CONTEXT("When processing RelaxSolver post output.");
             if(solve_time % every == 0 || solve_time == 0)
             {
-                string filename;
-                ofstream file;
+                std::string filename;
+                std::ofstream file;
                 filename = "out" + stringify(solve_time) + ".dat";
                 file.open(filename.c_str());
 
@@ -94,7 +93,7 @@ namespace honei
                 {
                     for(unsigned long y = 0; y < d_height; ++y)
                     {
-                        string record = stringify(x) + " " + stringify(y) + " " + stringify((height)[y][x]) + "\n";
+                        std::string record = stringify(x) + " " + stringify(y) + " " + stringify((height)[y][x]) + "\n";
                         file << record;
                     }
                     //Create empty record after each row:

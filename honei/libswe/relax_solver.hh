@@ -68,7 +68,6 @@
 #include <honei/libswe/correction_processing.hh>
 #include <honei/libla/algorithm.hh>
 
-using namespace std;
 using namespace honei;
 
 using namespace boundaries;
@@ -198,7 +197,7 @@ using namespace precision_modes;
                 AssemblyProcessing<Tag_, QUICK::M8>::value(m2, m8, *_d, _d_width, _d_height);
 #ifdef SOLVER_BENCHMARK
                 gettimeofday(&end, 0);
-                cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< endl;
+                std::cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< std::endl;
 #endif
 
                 DenseVector<WorkPrec_> temp_u_c(predictedu);
@@ -230,7 +229,7 @@ using namespace precision_modes;
                 Sum<Tag_>::value(predicted_u_temp_c, temp4);
                 Sum<Tag_>::value(predicted_u_temp_c, source_c);
 #ifdef SOLVER_VERBOSE
-                cout << "First accu solved.\n";
+                std::cout << "First accu solved.\n";
 #endif
                 DenseVector<WorkPrec_> temp_u3_c(predictedu);
                 DenseVector<WorkPrec_> temp_v2_c(predictedv);
@@ -246,7 +245,7 @@ using namespace precision_modes;
                 DenseVector<WorkPrec_> temp44 = Product<Tag_>::value(m8, temp_u4_c);
 #ifdef SOLVER_BENCHMARK
                 gettimeofday(&end2, 0);
-                cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< endl;
+                std::cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< std::endl;
 #endif
                 DenseVector<WorkPrec_> v_c(predictedv);
                 DenseVector<WorkPrec_> w_c(predictedw);
@@ -262,7 +261,7 @@ using namespace precision_modes;
                 predictedw = w_c;
 
 #ifdef SOLVER_VERBOSE
-                cout << "Second accu solved.\n";
+                std::cout << "Second accu solved.\n";
 #endif
                 //Correction of reflective boundaries
                 for (unsigned long j = 0; j< 3*_d_width; ++j)
@@ -324,7 +323,7 @@ using namespace precision_modes;
                 }
                 else
                 {
-                    cout << "prefac is invalid!\n";
+                    std::cout << "prefac is invalid!\n";
                 }
                 DenseVector<WorkPrec_> vc(_v->copy());
                 DenseVector<WorkPrec_> u1_c(_u->copy());
@@ -347,10 +346,10 @@ using namespace precision_modes;
 
                 Scale<Tag_>::value(tempsum2, prefac);
 #ifdef SOLVER_VERBOSE
-                cout << "Temp relax vectors after building:\n";
-                cout << stringify(*_u_temp) << endl;
-                cout << stringify(*_v_temp) << endl;
-                cout << stringify(*_w_temp) << endl;
+                std::cout << "Temp relax vectors after building:\n";
+                std::cout << stringify(*_u_temp) << std::endl;
+                std::cout << stringify(*_v_temp) << std::endl;
+                std::cout << stringify(*_w_temp) << std::endl;
                 std::cout << "Finished Setup 1.\n";
 #endif
                 sv = tempsum;
@@ -551,10 +550,10 @@ using namespace precision_modes;
                 }
 #ifdef SOLVER_VERBOSE
                 std::cout << "Preproc: Mapping done.\n";
-                cout << stringify(hbound) << endl;
-                cout << stringify(bbound) << endl;
-                cout << stringify(u1bound) << endl;
-                cout << stringify(u2bound) << endl;
+                std::cout << stringify(hbound) << std::endl;
+                std::cout << stringify(bbound) << std::endl;
+                std::cout << stringify(u1bound) << std::endl;
+                std::cout << stringify(u2bound) << std::endl;
 #endif
 
                 ///Building up the relaxation - vectors by concatenating the maps` rows.
@@ -578,23 +577,23 @@ using namespace precision_modes;
                     }
                 }
 #ifdef SOLVER_VERBOSE
-                cout << "u^T after building:\n";
-                cout << stringify(*_u) << endl;
+                std::cout << "u^T after building:\n";
+                std::cout << stringify(*_u) << std::endl;
 #endif
                 DenseVector<ResPrec_> uFlow = _u->copy();
                 FlowProcessing<directions::X, Tag_>::value(uFlow);
                 (*_v) = uFlow;
 #ifdef SOLVER_VERBOSE
-                cout << "v^T after building:\n";
-                cout << stringify(*_v) << endl;
+                std::cout << "v^T after building:\n";
+                std::cout << stringify(*_v) << std::endl;
 #endif
 
                 DenseVector<ResPrec_> u2Flow = _u->copy();
                 FlowProcessing<directions::Y, Tag_>::value(u2Flow);
                 (*_w) = u2Flow;
 #ifdef SOLVER_VERBOSE
-                cout << "w^T after building:\n";
-                cout << stringify(*_w) << endl;
+                std::cout << "w^T after building:\n";
+                std::cout << stringify(*_w) << std::endl;
 #endif
                 ///Now, that the relaxation vectors have been provided, the only thing left to do is to
                 ///compute the bottom slopes.
@@ -638,9 +637,9 @@ using namespace precision_modes;
                     }
                 }
 #ifdef SOLVER_VERBOSE
-                cout << "Slopes after building:\n";
-                cout << stringify(*_bottom_slopes_x) << endl;
-                cout << stringify(*_bottom_slopes_y) << endl;
+                std::cout << "Slopes after building:\n";
+                std::cout << stringify(*_bottom_slopes_x) << std::endl;
+                std::cout << stringify(*_bottom_slopes_y) << std::endl;
                 std::cout << "Finished preprocessing.\n";
 #endif
 
@@ -777,8 +776,8 @@ using namespace precision_modes;
                 ++_solve_time;
 
 #ifdef SOLVER_VERBOSE
-                cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
-                cout << stringify(*_u)<<endl;
+                std::cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << std::endl;
+                std::cout << stringify(*_u)<<std::endl;
 #endif
 
 #ifdef SOLVER_POSTPROCESSING
@@ -890,7 +889,7 @@ using namespace precision_modes;
                     AssemblyProcessing<Tag_, QUICK::M8>::value(m2, m8, *_d, _d_width, _d_height);
 #ifdef SOLVER_BENCHMARK
                     gettimeofday(&end, 0);
-                    cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< endl;
+                    std::cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< std::endl;
 #endif
 
                     DenseVector<WorkPrec_> temp_u_c(predictedu);
@@ -921,7 +920,7 @@ using namespace precision_modes;
                     Sum<Tag_>::value(predicted_u_temp_c, temp4);
                     Sum<Tag_>::value(predicted_u_temp_c, source_c);
 #ifdef SOLVER_VERBOSE
-                    cout << "First accu solved.\n";
+                    std::cout << "First accu solved.\n";
 #endif
                     DenseVector<WorkPrec_> temp_u3_c(predictedu);
                     DenseVector<WorkPrec_> temp_v2_c(predictedv);
@@ -937,7 +936,7 @@ using namespace precision_modes;
                     DenseVector<WorkPrec_> temp44 = Product<Tag_>::value(m8, temp_u4_c);
 #ifdef SOLVER_BENCHMARK
                     gettimeofday(&end2, 0);
-                    cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< endl;
+                    std::cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< std::endl;
 #endif
                     DenseVector<WorkPrec_> v_c(predictedv);
                     DenseVector<WorkPrec_> w_c(predictedw);
@@ -953,7 +952,7 @@ using namespace precision_modes;
                     predictedw = w_c;
 
 #ifdef SOLVER_VERBOSE
-                    cout << "Second accu solved.\n";
+                    std::cout << "Second accu solved.\n";
 #endif
                     //Correction of reflective boundaries
                     for (unsigned long j = 0; j< 3*_d_width; ++j)
@@ -1045,7 +1044,7 @@ using namespace precision_modes;
                     AssemblyProcessing<Tag_, QUICK::M8>::value(m2, m8, d_2, _d_width, _d_height);
 #ifdef SOLVER_BENCHMARK
                     gettimeofday(&end, 0);
-                    cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< endl;
+                    std::cout << "Assembly TOE: "<< (end.tv_sec - start.tv_sec) << " " << (end.tv_usec - start.tv_usec)<< std::endl;
 #endif
 
                     DenseVector<WorkPrec_> temp_u_c(predictedu);
@@ -1080,7 +1079,7 @@ using namespace precision_modes;
                     Sum<Tag_>::value(predicted_u_temp_c, temp4);
                     Sum<Tag_>::value(predicted_u_temp_c, source_c);
 #ifdef SOLVER_VERBOSE
-                    cout << "First accu solved.\n";
+                    std::cout << "First accu solved.\n";
 #endif
                     DenseVector<WorkPrec_> temp_u3_c(predictedu);
                     DenseVector<WorkPrec_> temp_v2_c(predictedv);
@@ -1096,7 +1095,7 @@ using namespace precision_modes;
                     DenseVector<WorkPrec_> temp44 = Product<Tag_>::value(m8, temp_u4_c);
 #ifdef SOLVER_BENCHMARK
                     gettimeofday(&end2, 0);
-                    cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< endl;
+                    std::cout << "Product TOE: "<< (end1.tv_sec - start1.tv_sec) + (end2.tv_sec - start2.tv_sec)<< " " << (end1.tv_usec - start1.tv_usec) + (end2.tv_usec - start2.tv_usec)<< std::endl;
 #endif
                     DenseVector<WorkPrec_> v_c(predictedv);
                     DenseVector<WorkPrec_> w_c(predictedw);
@@ -1112,7 +1111,7 @@ using namespace precision_modes;
                     predictedw = w_c;
 
 #ifdef SOLVER_VERBOSE
-                    cout << "Second accu solved.\n";
+                    std::cout << "Second accu solved.\n";
 #endif
                     //Correction of reflective boundaries
                     for (unsigned long j = 0; j< 3*_d_width; ++j)
@@ -1174,7 +1173,7 @@ using namespace precision_modes;
                     }
                     else
                     {
-                        cout << "prefac is invalid!\n";
+                        std::cout << "prefac is invalid!\n";
                     }
                     DenseVector<WorkPrec_> vc(_v->copy());
                     DenseVector<WorkPrec_> u1_c(_u->copy());
@@ -1197,10 +1196,10 @@ using namespace precision_modes;
 
                     Scale<Tag_>::value(tempsum2, prefac);
 #ifdef SOLVER_VERBOSE
-                    cout << "Temp relax vectors after building:\n";
-                    cout << stringify(*_u_temp) << endl;
-                    cout << stringify(*_v_temp) << endl;
-                    cout << stringify(*_w_temp) << endl;
+                    std::cout << "Temp relax vectors after building:\n";
+                    std::cout << stringify(*_u_temp) << std::endl;
+                    std::cout << stringify(*_v_temp) << std::endl;
+                    std::cout << stringify(*_w_temp) << std::endl;
                     std::cout << "Finished Setup 1.\n";
 #endif
                     sv = tempsum;
@@ -1401,10 +1400,10 @@ using namespace precision_modes;
                 }
 #ifdef SOLVER_VERBOSE
                 std::cout << "Preproc: Mapping done.\n";
-                cout << stringify(hbound) << endl;
-                cout << stringify(bbound) << endl;
-                cout << stringify(u1bound) << endl;
-                cout << stringify(u2bound) << endl;
+                std::cout << stringify(hbound) << std::endl;
+                std::cout << stringify(bbound) << std::endl;
+                std::cout << stringify(u1bound) << std::endl;
+                std::cout << stringify(u2bound) << std::endl;
 #endif
 
                 ///Building up the relaxation - vectors by concatenating the maps` rows.
@@ -1428,23 +1427,23 @@ using namespace precision_modes;
                     }
                 }
 #ifdef SOLVER_VERBOSE
-                cout << "u^T after building:\n";
-                cout << stringify(*_u) << endl;
+                std::cout << "u^T after building:\n";
+                std::cout << stringify(*_u) << std::endl;
 #endif
                 DenseVector<ResPrec_> uFlow = _u->copy();
                 FlowProcessing<directions::X, Tag_>::value(uFlow);
                 (*_v) = uFlow;
 #ifdef SOLVER_VERBOSE
-                cout << "v^T after building:\n";
-                cout << stringify(*_v) << endl;
+                std::cout << "v^T after building:\n";
+                std::cout << stringify(*_v) << std::endl;
 #endif
 
                 DenseVector<ResPrec_> u2Flow = _u->copy();
                 FlowProcessing<directions::Y, Tag_>::value(u2Flow);
                 (*_w) = u2Flow;
 #ifdef SOLVER_VERBOSE
-                cout << "w^T after building:\n";
-                cout << stringify(*_w) << endl;
+                std::cout << "w^T after building:\n";
+                std::cout << stringify(*_w) << std::endl;
 #endif
                 ///Now, that the relaxation vectors have been provided, the only thing left to do is to
                 ///compute the bottom slopes.
@@ -1488,9 +1487,9 @@ using namespace precision_modes;
                     }
                 }
 #ifdef SOLVER_VERBOSE
-                cout << "Slopes after building:\n";
-                cout << stringify(*_bottom_slopes_x) << endl;
-                cout << stringify(*_bottom_slopes_y) << endl;
+                std::cout << "Slopes after building:\n";
+                std::cout << stringify(*_bottom_slopes_x) << std::endl;
+                std::cout << stringify(*_bottom_slopes_y) << std::endl;
                 std::cout << "Finished preprocessing.\n";
 #endif
 
@@ -1643,8 +1642,8 @@ using namespace precision_modes;
                 ++_solve_time;
 
 #ifdef SOLVER_VERBOSE
-                cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << endl;
-                cout << stringify(*_u)<<endl;
+                std::cout << "Corrected u, finished solution, timestep:" << stringify(_solve_time) << std::endl;
+                std::cout << stringify(*_u)<<std::endl;
 #endif
 
 #ifdef SOLVER_POSTPROCESSING

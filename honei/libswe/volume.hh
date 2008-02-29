@@ -35,7 +35,6 @@
 
 #include <list>
 #include <iostream>
-using namespace std;
 namespace honei
 {
     class Volume
@@ -57,13 +56,13 @@ namespace honei
     class VolumeList
     {
         private:
-            list<Volume *> object_list;
+            std::list<Volume *> object_list;
 
         public:
 
             virtual void convex_hull()
             {
-                for(list<Volume *>::iterator i(object_list.begin()); i != object_list.end(); ++i)
+                for(std::list<Volume *>::iterator i(object_list.begin()); i != object_list.end(); ++i)
                 {
                     Volume * current = (*i);
                     current->value();
