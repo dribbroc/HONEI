@@ -51,7 +51,7 @@ namespace honei
         TypeTraits<DT_>::copy(source.elements(), dest.elements(), source.size());
     }
 
-    template <typename IT_, typename DT_> void copy(IT_ & begin, IT_ & end,
+    template <typename IT_, typename DT_> void copy(const IT_ & begin, const IT_ & end,
             DenseVector<DT_> & dest)
     {
         CONTEXT("When copying elements from iterator range to DenseVector:");
@@ -59,9 +59,10 @@ namespace honei
         if (end.index() - begin.index() != dest.size())
             throw VectorSizeDoesNotMatch(dest.size(), end.index() - begin.index());
 
-        for (typename Vector<DT_>::ElementIterator d(dest.begin_elements()) ; begin != end ; ++begin, ++d)
+        typename Vector<DT_>::ConstElementIterator i(begin), i_end(end);
+        for (typename Vector<DT_>::ElementIterator d(dest.begin_elements()) ; i != i_end ; ++i, ++d)
         {
-            *d = *begin;
+            *d = *i;
         }
     }
 
