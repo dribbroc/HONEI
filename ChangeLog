@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-01 Volker Jung <volker.jung@honei.org>
+
+	* honei/libla/dense_matrix_tile.hh,
+	honei/libla/dense_matrix_tile_TEST.cc: Added new constructor, which
+	creates a DenseMatrixTile of a DenseMatrixTile and added test.
+
 2008-02-29 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,

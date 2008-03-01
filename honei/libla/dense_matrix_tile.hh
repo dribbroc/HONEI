@@ -110,10 +110,26 @@ namespace honei
                 _column_offset(column_offset),
                 _source_columns(source._columns)
             {
-                CONTEXT("When creating DenseMatrixTile:");
+                CONTEXT("When creating DenseMatrixTile from DenseMatrix: ");
                 ASSERT(rows > 0, "number of rows is zero!");
                 ASSERT(columns > 0, "number of columns is zero!");
-           }
+            }
+
+            DenseMatrixTile(const DenseMatrixTile<DataType_> & source, const unsigned long rows, const unsigned long columns,
+                                const unsigned long row_offset, const unsigned long column_offset) :
+                _elements(source._elements),
+                _columns(columns),
+                _column_vectors(columns),
+                _rows(rows),
+                _row_vectors(rows),
+                _row_offset(source._row_offset + row_offset),
+                _column_offset(source._column_offset + column_offset),
+                _source_columns(source._source_columns)
+            {
+                CONTEXT("When creating DenseMatrixTile from DenseMatrixTile: ");
+                ASSERT(rows > 0, "number of rows is zero!");
+                ASSERT(columns > 0, "number of columns is zero!");
+            }
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const

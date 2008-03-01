@@ -42,6 +42,7 @@ class DenseMatrixTileCreationTest :
             {
                 DenseMatrix<DataType_> dm(size, size, DataType_(0));
                 DenseMatrixTile<DataType_> dmt(dm, size - 2, size - 2, 2, 1);
+                DenseMatrixTile<DataType_> dmt2(dmt, size - 4, size - 4, 3, 2);
                 TEST_CHECK(true);
             }
         }
@@ -98,7 +99,7 @@ class DenseMatrixTileEqualityTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
+            for (unsigned long size(20) ; size < (1 << 7) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm0(size, size, DataType_(0));
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), i_end(dm0.end_elements());
@@ -109,7 +110,10 @@ class DenseMatrixTileEqualityTest :
 
                 DenseMatrixTile<DataType_> dmt0(dm0, size / 10, size / 10, 0, size / 5);
                 DenseMatrixTile<DataType_> dmt1(dm0, size / 10, size / 10, size / 5, 0);
+                DenseMatrixTile<DataType_> dmt2(dmt0, size / 20, size / 20, 0, size / 10);
+                DenseMatrixTile<DataType_> dmt3(dmt1, size / 20 , size / 20, size / 10, 0);
                 TEST_CHECK_EQUAL(dmt0, dmt1);
+                TEST_CHECK_EQUAL(dmt2, dmt3);
             }
         }
 };
