@@ -26,19 +26,20 @@
 #include <sys/time.h>
 #include <volume.hh>
 #include <honei/libmath/quadrature.hh>
+
 using namespace honei;
 using namespace tests;
 using namespace std;
 using namespace swe_solvers;
 using namespace precision_modes;
 
-template <typename Tag_, typename DataType_>
-class RelaxSolverVolumeSteadyTest :
+template <typename Tag_>
+class RelaxSolverMIXEDPRECINNERVolTest :
     public BaseTest
 {
     public:
-        RelaxSolverVolumeSteadyTest(const std::string & type) :
-            BaseTest("relax_solver_volume_steady_test<" + type + ">")
+        RelaxSolverMIXEDPRECINNERVolTest(const std::string & type) :
+            BaseTest("relax_solver_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
@@ -49,22 +50,22 @@ class RelaxSolverVolumeSteadyTest :
             ulint dheight = 40;
             ulint timesteps = 5000;
 
-            DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
-            DenseMatrix<DataType_> bottom(dheight, dwidth, DataType_(1));
+            DenseMatrix<float> height(dheight, dwidth, float(5));
+            DenseMatrix<float> bottom(dheight, dwidth, float(1));
 
-            Cuboid<DataType_> a(height, DataType_(5), DataType_(5), DataType_(10), 20, 20);
+            Cuboid<float> a(height, float(5), float(5), float(10), 20, 20);
             a.value();
 
-            DenseMatrix<DataType_> u1(dheight, dwidth, DataType_(0));
-            DenseMatrix<DataType_> u2(dheight, dwidth, DataType_(0));
+            DenseMatrix<float> u1(dheight, dwidth, float(0));
+            DenseMatrix<float> u2(dheight, dwidth, float(0));
             unsigned long entries = 3*((dwidth*dheight)+4*(dwidth+dheight+4));
-            DenseVector<DataType_> u(entries, DataType_(1));
-            DenseVector<DataType_> v(entries, DataType_(1));
-            DenseVector<DataType_> w(entries, DataType_(1)); 
-            DenseVector<DataType_> bx (entries/3, DataType_(0));
-            DenseVector<DataType_> by (entries/3, DataType_(0));
-            DenseVector<DataType_> c (3,DataType_(5));
-            DenseVector<DataType_> d (3,DataType_(5));
+            DenseVector<float> u(entries, float(1));
+            DenseVector<float> v(entries, float(1));
+            DenseVector<float> w(entries, float(1)); 
+            DenseVector<float> bx (entries/3, float(0));
+            DenseVector<float> by (entries/3, float(0));
+            DenseVector<float> c (3,float(5));
+            DenseVector<float> d (3,float(5));
             //SCENARIO setup:
             c[0] = 10;
             c[1] = 6;
@@ -73,13 +74,13 @@ class RelaxSolverVolumeSteadyTest :
             d[1] = 5;
             d[2] = 11;
 
-            DataType_ deltax = 5;
-            DataType_ deltay = 5;
-            DataType_ deltat = 5./24.;
+            float deltax = 5;
+            float deltay = 5;
+            float deltat = 5./24.;
 
             double eps = 10e-6;
-            DataType_ manning = DataType_(0);
-            Scenario<DataType_, swe_solvers::RELAX, boundaries::REFLECT> scenario(dwidth, dheight);
+            float manning = float(0);
+            Scenario<float, swe_solvers::RELAX, boundaries::REFLECT> scenario(dwidth, dheight);
             scenario.height = &height;
             scenario.bottom = &bottom;
             scenario.x_veloc = &u1;
@@ -97,8 +98,12 @@ class RelaxSolverVolumeSteadyTest :
             scenario.eps = eps;
             scenario.manning_n = manning;
 
-            RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT, FIXED> relax_solver
-                (scenario);
+            DenseVector<double> bx_2(bx.size());
+            DenseVector<double> by_2(by.size());
+            convert(bx_2, bx);
+            convert(by_2, by);
+            RelaxSolver<Tag_, float, float, double, float, float, source_types::SIMPLE, boundaries::REFLECT, MIXED> relax_solver
+                (scenario, bx_2, by_2);
             relax_solver.do_preprocessing();
 
             for (ulint i = 1; i <= timesteps; ++i)
@@ -106,14 +111,15 @@ class RelaxSolverVolumeSteadyTest :
                 relax_solver.solve();
                 cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
             }
-            DataType_ ana_vol = 0.5 * a.size()* deltax * deltay + (dwidth * deltax * dheight * deltay * 5.);
+            double ana_vol = 0.5 * a.size()* deltax * deltay + (dwidth * deltax * dheight * deltay * 5.);
             std::cout << "Analytical start: " << ana_vol;
             std::cout << "Analytical target: " << ana_vol - 0.5 * a.size()* deltax * deltay<< std::endl<< std::endl;
-            DataType_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, DataType_(0), DataType_(deltax * dwidth), deltax, deltay);
+            double vol =(double)GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, float(0), float(deltax * dwidth), deltax, deltay);
             std::cout << "Vol.: " << vol << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 0.1);
+
         }
 };
 #ifdef HONEI_SSE
-RelaxSolverVolumeSteadyTest<tags::CPU::SSE, double> sse_relax_solver_vs_test_double("VS sse double");
-#endif 
+RelaxSolverMIXEDPRECINNERVolTest<tags::CPU::SSE> sse_relax_solver_mp2_test("sse mixedprec variant 2");
+#endif

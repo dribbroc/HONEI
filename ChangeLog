@@ -5,6 +5,14 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-02 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/files.m4,
+	honei/libswe/relax_solver_mp1_volume_steady_TEST.cc,
+	honei/libswe/relax_solver_mp2_volume_steady_TEST.cc,
+	honei/libswe/relax_solver_volume_steady_TEST.cc:
+	Added mass conservation test for mixed precision solvers.
+
 2008-03-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libla/product_BENCHMARK.cc:
