@@ -28,6 +28,7 @@
 #include <honei/libla/element_product.hh>
 #include <honei/libla/matrix_error.hh>
 #include <honei/libla/product-mc.hh>
+#include <honei/libla/scale.hh>
 #include <honei/libla/scaled_sum.hh>
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/sparse_vector.hh>
@@ -42,9 +43,9 @@ namespace honei
     /**
      * \brief Product of two entities.
      *
-     * MatrixProduct is the class template for the product operation
+     * MatrixProduct is the class template for the product operations
      * \f[
-     *     \texttt{Product}(a, b): \quad c \leftarrow a * b,
+     *     \texttt{Product}(a, b): \quad c \leftarrow a * b
      * \f]
      * which yields c, the product of entities a and b.
      *
@@ -58,13 +59,13 @@ namespace honei
     template <typename Tag_ = tags::CPU> struct Product
     {
         /**
-         * \name Matrix-Vector products
+         * \name Right-handed Matrix-Vector products
          * \{
          *
-         * \brief Returns the product of a Matrix and a Vector.
+         * \brief Returns the right-handed Matrix-Vector product.
          *
-         * \param a The matrix that is the first factor of the operation.
-         * \param b The vector that is the second factor of the operation.
+         * \param a The matrix that is the left-hand factor of the operation.
+         * \param b The vector that is the right-hand factor of the operation.
          *
          * \retval c Will create a new vector with Datatype of the first factor and return it.
          *
@@ -83,12 +84,11 @@ namespace honei
             }
 
             DenseVector<DT1_> result(a.rows());
-            typename Vector<DT1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < a.rows(); ++i)
+            for (typename Vector<DT1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements()) ;
+                    r != r_end ; ++r)
             {
-                DenseVectorRange<DT1_> dv(a[i]);
-                *l = DotProduct<Tag_>::value(b, dv);
-                ++l;
+                const DenseVectorRange<DT1_> dv(a[r.index()]);
+                *r = DotProduct<Tag_>::value(dv, b);
             }
 
             return result;
@@ -105,12 +105,11 @@ namespace honei
             }
 
             DenseVector<DT1_> result(a.rows());
-            typename Vector<DT1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < a.rows(); ++i)
+            for (typename Vector<DT1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements()) ;
+                    r != r_end ; ++r)
             {
-                DenseVectorRange<DT1_> dv(a[i]);
-                *l = DotProduct<Tag_>::value(b, dv);
-                ++l;
+                const DenseVectorRange<DT1_> dv(a[r.index()]);
+                *r = DotProduct<Tag_>::value(dv, b);
             }
 
             return result;
@@ -127,14 +126,13 @@ namespace honei
             }
 
             SparseVector<DT1_> result(a.rows(),1);
-            typename Vector<DT1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < a.rows(); ++i)
+            for (typename Vector<DT1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements()) ;
+                    r != r_end ; ++r)
             {
-                SparseVector<DT1_>  v(a[i]);
-                *l = DotProduct<Tag_>::value(v, b);
-                ++l;
+                const SparseVector<DT1_> sv(a[r.index()]);
+                *r = DotProduct<Tag_>::value(sv, b);
             }
-            ///\todo: perhaps sparsify
+
             return result;
         }
 
@@ -149,14 +147,13 @@ namespace honei
             }
 
             SparseVector<DT1_> result(a.rows(), a.rows());
-            typename SparseVector<DT1_>::ElementIterator l(result.begin_elements());
-            for (unsigned long i=0; i < a.rows(); ++i)
+            for (typename SparseVector<DT1_>::ElementIterator r(result.begin_elements()), r_end(result.end_elements()) ;
+                    r != r_end ; ++r)
             {
-                const SparseVector<DT1_> v(a[i]);
-                *l = DotProduct<Tag_>::value(b, v);
-                ++l;
+                const SparseVector<DT1_> sv(a[r.index()]);
+                *r = DotProduct<Tag_>::value(sv, b);
             }
-            ///\todo: perhaps sparsify
+
             return result;
         }
 
@@ -164,10 +161,12 @@ namespace honei
         static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When multiplying BandedMatrix with DenseVector(Base):");
+
             if (b.size() != a.columns())
             {
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
+
             DenseVector<DT1_> result(a.rows(), DT1_(0));
             int middle_index(a.rows() -1);
             for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
