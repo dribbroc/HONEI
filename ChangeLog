@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-02 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/libla/product-sse.cc:
+	Reimplemented general dm*dm product. This version is a simple approach
+	to mix cache-oblivious methods on the one hand and simd-orientated
+	input sizes on the other hand.
+
 2008-03-02 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/relax_solver_volume_steady_TEST.cc:
