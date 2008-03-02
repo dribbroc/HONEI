@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/libla/product.hh: Added left-handed Product(DVB, DM) and
+	Product(DVB, DMT).
+
+2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/libla/product.hh: Fixed inconsistencies in Product.
 
 2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>

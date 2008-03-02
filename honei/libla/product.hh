@@ -24,6 +24,7 @@
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/dense_matrix.hh>
+#include <honei/libla/dense_matrix_tile.hh>
 #include <honei/libla/dot_product.hh>
 #include <honei/libla/element_product.hh>
 #include <honei/libla/matrix_error.hh>
@@ -291,6 +292,67 @@ namespace honei
             }
 
             ///\todo: perhaps sparsify (*c can be zero)
+            return result;
+        }
+
+        /// \}
+
+        /**
+         * \name Left-handed Matrix-Vector products
+         * \{
+         *
+         * \brief Returns the left-handed Matrix-Vector product.
+         *
+         * \param b The vector that is the left-hand factor of the operation.
+         * \param a The matrix that is the right-hand factor of the operation.
+         *
+         * \retval c Will create a new vector with Datatype of the first factor and return it.
+         *
+         * \exception MatrixRowsDoNotMatch is thrown if the vector's size does not match the matrix's number
+         *            of rows.
+         */
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> value(const DenseVectorBase<DT1_> & a, const DenseMatrix<DT1_> & b)
+        {
+            CONTEXT("When multiplying DenseVector(Base) with DenseMatrix:");
+
+            if (b.rows() != a.size())
+            {
+                throw MatrixRowsDoNotMatch(a.size(), b.rows());
+            }
+
+            DenseVector<DT1_> result(b[0].copy());
+            Scale<tags::CPU>::value(result, a[0]);
+
+            for (typename Vector<DT1_>::ConstElementIterator i(a.element_at(1)), i_end(a.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                ScaledSum<tags::CPU>::value(result, b[i.index()], *i);
+            }
+
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> value(const DenseVectorBase<DT1_> & a, const DenseMatrixTile<DT2_> & b)
+        {
+            CONTEXT("When multiplying DenseVector(Base) with DenseMatrix:");
+
+            if (b.rows() != a.size())
+            {
+                throw MatrixRowsDoNotMatch(a.size(), b.rows());
+            }
+
+            DenseVector<DT1_> result(b[0].copy());
+            Scale<tags::CPU>::value(result, a[0]);
+
+            for (typename Vector<DT1_>::ConstElementIterator i(a.element_at(1)), i_end(a.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                ScaledSum<tags::CPU>::value(result, b[i.index()], *i);
+            }
+
             return result;
         }
 
