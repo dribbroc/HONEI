@@ -110,6 +110,26 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static DT1_ value(const DenseVectorBase<DT1_> & x, const SparseVector<DT2_> & y)
+        {
+            CONTEXT("When calculating Vector-SparseVector dot product:");
+
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            DT1_ result(0);
+
+            for (typename Vector<DT2_>::ConstElementIterator l(y.begin_non_zero_elements()),
+                    l_end(y.end_non_zero_elements()) ; l != l_end ; ++l )
+            {
+                result += (*l) * x[l.index()];
+            }
+
+            return result;
+        }
+
+
+        template <typename DT1_, typename DT2_>
         static DT1_ value(const SparseVector<DT1_> & x, const SparseVector<DT2_> & y)
         {
             CONTEXT("When calculating SparseVector-SparseVector dot product:");

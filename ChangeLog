@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/libla/dot_product.hh: Added DotProduct(DVB, SV) for tags CPU
+	and MC.
+
+2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/libla/algorithm.hh: Fixed arguments for iterator based copy().
 
 2008-03-01 Volker Jung <volker.jung@honei.org>

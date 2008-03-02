@@ -486,13 +486,16 @@ class SparseDenseDotProductTest :
                 }
 
                 DataType_ p0(DotProduct<Tag_>::value(sv1, dv2));
+                DataType_ p2(DotProduct<Tag_>::value(dv2, sv1));
                 TEST_CHECK_EQUAL_WITHIN_EPS(p0, p1, 2 * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
+                TEST_CHECK_EQUAL_WITHIN_EPS(p2, p1, 2 * size * sqrt(std::numeric_limits<DataType_>::epsilon()));
              }
 
             SparseVector<DataType_> sv00(1, 1);
             DenseVector<DataType_> dv01(2);
 
             TEST_CHECK_THROWS(DotProduct<>::value(sv00, dv01), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(DotProduct<>::value(dv01, sv00), VectorSizeDoesNotMatch);
         }
 };
 SparseDenseDotProductTest<tags::CPU, float> sparse_dense_scalar_product_test_float("float");
