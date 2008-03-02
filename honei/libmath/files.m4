@@ -10,6 +10,7 @@ dnl on this file at present...
 
 add(`conjugate_gradients',              `hh', `test')
 add(`endian_swap',                      `hh')
+add(`hessenberg',                       `hh', `test')
 add(`iterative_refinement',             `hh', `test')
 add(`interpolation',                    `hh', `test')
 add(`jacobi',                           `hh', `test')
@@ -30,5 +31,6 @@ add(`poisson_pcg_float_banded',               `test',                   `benchma
 add(`poisson_iteref_cg_float_banded',         `test',                   `benchmark')
 add(`poisson_iteref_pcg_float_banded',        `test',                   `benchmark')
 add(`poisson_mixedprec_cg',                   `test',                   `benchmark')
+add(`qr_decomposition',                 `hh', `test')
 add(`quadrature',                       `hh', `test')
 add(`sqrt',                             `hh', `test', `sse', `cell')

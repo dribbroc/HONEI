@@ -7,6 +7,13 @@ see the NEWS file.
 
 2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/libmath/files.m4, honei/libmath/hessenberg.hh,
+	honei/libmath/hessenberg_TEST.cc, honei/libmath/qr_decomposition.hh,
+	honei/libmath/qr_decomposition_TEST.cc: Added Hessenberg
+	transformation and QR decomposition.
+
+2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/libla/product.hh: Added left-handed Product(DVB, DM) and
 	Product(DVB, DMT).
 
