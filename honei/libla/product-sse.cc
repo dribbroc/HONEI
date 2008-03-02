@@ -403,9 +403,9 @@ namespace honei
 
 using namespace honei;
 
-    DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
-    {
-        CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> with SSE:");
+DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> with SSE:");
 
     if (b.size() != a.columns())
     {
