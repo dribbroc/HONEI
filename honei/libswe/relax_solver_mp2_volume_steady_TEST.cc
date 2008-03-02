@@ -111,12 +111,15 @@ class RelaxSolverMIXEDPRECINNERVolTest :
                 relax_solver.solve();
                 cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
             }
+
+            DenseMatrix<double> result(height.rows(), height.columns());
+            convert(result, height);
             double ana_vol = 0.5 * a.size()* deltax * deltay + (dwidth * deltax * dheight * deltay * 5.);
             std::cout << "Analytical start: " << ana_vol;
             std::cout << "Analytical target: " << ana_vol - 0.5 * a.size()* deltax * deltay<< std::endl<< std::endl;
-            double vol =(double)GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, float(0), float(deltax * dwidth), deltax, deltay);
+            double vol =(double)GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(result, double(0), double(deltax * dwidth), (double)deltax, (double)deltay);
             std::cout << "Vol.: " << vol << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 0.1);
+            TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 0.2);
 
         }
 };
