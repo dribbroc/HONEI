@@ -7,6 +7,12 @@ see the NEWS file.
 
 2008-03-02 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/relax_solver_volume_steady_TEST.cc:
+	Added volume and mass conservation error postprocessing to volume
+	test.
+
+2008-03-02 Markus Geveler <apryde@gmx.de>
+
 	* honei/libswe/relax_solver_mp2_volume_steady_TEST.cc:
 	Secured volume computation in double precision.
 
