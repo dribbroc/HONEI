@@ -7,7 +7,8 @@ see the NEWS file.
 
 2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
-	* honei/libla/dot_product.hh: Added DotProduct(DVB, SV) for tags CPU
+	* honei/libla/dot_product.hh, honei/libla/dot_product-mc.hh,
+	honei/libla/dot_product_TEST.cc: Added DotProduct(DVB, SV) for tags CPU
 	and MC.
 
 2008-03-02 Danny van Dyk <danny.dyk@uni-dortmund.de>

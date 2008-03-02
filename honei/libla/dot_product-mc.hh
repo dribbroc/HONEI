@@ -155,6 +155,12 @@ namespace honei
             }
             return result;
         }
+
+        template <typename DT1_, typename DT2_>
+        static DT1_ value(const DenseVectorContinuousBase<DT1_> & a, const SparseVector<DT2_> & b)
+        {
+            return value(b, a);
+        }
     };
 }
 
