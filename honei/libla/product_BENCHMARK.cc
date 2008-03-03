@@ -381,10 +381,9 @@ class DenseMatrixDenseVectorProductSPUPlot :
                 {
                     Configuration::instance()->set_value("cell::product_dense_matrix_dense_vector_float", j);
                     cores.push_back(stringify(j) +"SPUs" );
-                    DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
-                    DenseMatrix<DT_> dm((j + 1) * 64, (j + 1) * 64, DT_(rand()));
+                    DenseVector<DT_> dv((k + 1) * 64, DT_(rand()));
+                    DenseMatrix<DT_> dm((k + 1) * 64, (k + 1) * 64, DT_(rand()));
 
-                    std::cout<<"dv.size :"<<dv.size()<<" dm.columns: "<<dm.columns()<<" dm.rows: "<<dm.rows()<<" "<<j<<" spus"<<std::endl;
                     for(int i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(
