@@ -68,7 +68,7 @@ namespace honei
                 rows_per_spe /= 2;
                 parts *= 2;
             }
-            rows_per_spe & ~0x3;
+            rows_per_spe &= ~0x3;
             ppu_rows = a.rows() - (spe_count * rows_per_spe);
 
             union addr
