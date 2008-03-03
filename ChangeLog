@@ -7,6 +7,12 @@ see the NEWS file.
 
 2008-03-03 Sven Mallach <sven.mallach@honei.org>
 
+	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/libla/product_BENCHMARK.cc, honei/libla/product-cell.cc: First
+	step of some further optimizations.
+
+2008-03-03 Sven Mallach <sven.mallach@honei.org>
+
 	* honei/libla/product-cell.cc: Fixed a bug that caused problems when
 	using multiple SPUs.
 

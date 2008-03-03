@@ -80,7 +80,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
     // GET the first DMA List for Matrix B
     debug_get(list_ptrs[0], list_ptr[b_current].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[0]));
-    mfc_get(list_ptr[b_current].untyped, list_ptrs[0], multiple_of_sixteen(sizeof(ListElement) * list_sizes[0]), 1, 0, 0);
+    mfc_get(list_ptr[b_current].untyped, list_ptrs[0], multiple_of_sixteen(sizeof(ListElement) * list_sizes[0]), 10, 0, 0);
     debug_value(2);
 
     const unsigned r_nr_of_lists(inst.k.u); // Number of Lists to be putted
@@ -97,13 +97,17 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
 
     // Assure that first DMA List (B) has arrived
-    mfc_write_tag_mask(1 << 1);
+    mfc_write_tag_mask(1 << 10);
     mfc_read_tag_status_all();
 
     // GET(L) the first DMA transfers using the first List for B
     debug_getl(list_eahs[b_counter], b[b_current].untyped, list_sizes[0] * sizeof(ListElement));
     mfc_getl(b[b_current].untyped, list_eahs[b_counter], list_ptr[0].untyped, list_sizes[0] * sizeof(ListElement), 6, 0, 0);
     debug_value(3);
+
+    // GET the next DMA list for B
+    debug_get(list_ptrs[1 % nr_of_lists], list_ptr[1].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[1 % nr_of_lists]));
+    mfc_get(list_ptr[1].untyped, list_ptrs[1 % nr_of_lists], multiple_of_sixteen(sizeof(ListElement) * list_sizes[1 % nr_of_lists]), 10, 0, 0);
 
     fill(r[r_current].untyped, 16384, 0.0f);
 
@@ -139,6 +143,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     // Assure that list information for Matrix R has arrived
     mfc_write_tag_mask(1 << 5);
     mfc_read_tag_status_all();
+
     debug_value(5);
 
     while (a_counter > 1) // db for A
@@ -151,7 +156,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
         ea_a += a_nextsize;
 
-        unsigned get_counter(0);
+        unsigned get_counter(0), get_next_counter(0);
         unsigned long a_elem(0); // The actual considered element of matrix a
         unsigned a_rows(a_size / 4 / a_cols);
 
@@ -169,17 +174,23 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                 debug_value(23);
                 b_counter++;
                 get_counter = b_counter % nr_of_lists;
+                get_next_counter = (b_counter + 1) % nr_of_lists;
 
-                debug_get(list_ptrs[get_counter], list_ptr[b_next].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]));
-                mfc_get(list_ptr[b_next].untyped, list_ptrs[get_counter], multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]), 4, 0, 0);
-                mfc_write_tag_mask(1 << 4);
+                // Assure that next DMA List is ready
+                mfc_write_tag_mask(1 << 10);
                 mfc_read_tag_status_all();
 
+                // GETL next
                 debug_getl(list_eahs[get_counter], b[b_next].untyped, list_sizes[get_counter] * sizeof(ListElement));
                 mfc_getl(b[b_next].untyped, list_eahs[get_counter], list_ptr[b_next].untyped, list_sizes[get_counter] * sizeof(ListElement), 9 + b_next, 0, 0);
 
+                // Assure that last DMA GETL has finished
                 mfc_write_tag_mask(1 << 9 + b_current);
                 mfc_read_tag_status_all();
+
+                // GET second next DMA List for the following iteration
+                debug_get(list_ptrs[get_next_counter], list_ptr[b_current].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_next_counter]));
+                mfc_get(list_ptr[b_current].untyped, list_ptrs[get_next_counter], multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_next_counter]), 10, 0, 0);
 
                 const unsigned b_nr_rows(list_sizes[b_counter - 1]);
                 unsigned b_vec_idx(0);
@@ -235,15 +246,18 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             debug_value(1441);
             debug_value(r_current);
             debug_value(act_list);
+
             debug_get(r_list_ptrs[act_list], r_list_ptr[r_current].untyped, multiple_of_sixteen(sizeof(ListElement) * r_list_sizes[act_list]));
             mfc_get(r_list_ptr[r_current].untyped, r_list_ptrs[act_list], multiple_of_sixteen(sizeof(ListElement) * r_list_sizes[act_list]), 4, 0, 0);
+
             mfc_write_tag_mask(1 << 4);
             mfc_read_tag_status_all();
 
             debug_putl(r_list_eahs[act_list], lsa.ptr, r_list_sizes[act_list] * sizeof(ListElement));
             mfc_putl(lsa.ptr, r_list_eahs[act_list], r_list_ptr[r_current].untyped, r_list_sizes[act_list] * sizeof(ListElement), 6 + r_next, 0, 0);
-            act_list++;
+
             lsa.value += r_list_sizes[act_list] * r_elem_t_size;
+            act_list++;
         }
 
         fill(r[r_next].untyped, 16384, 0.0f);
@@ -263,11 +277,9 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     debug_value(44);
     mfc_write_tag_mask(1 << a_current);
     mfc_read_tag_status_all();
-    unsigned get_counter(0);
+    unsigned get_counter(0), get_next_counter(0);
     unsigned long a_elem(0); // The actual considered element of matrix a
     unsigned a_rows(a_size / 4 / a_cols);
-
-    //fill(r[r_current].untyped, 16384, 0.0f);
 
     for( ; ar < a_rows ; ar++)
     {
@@ -279,18 +291,25 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             debug_value(55);
             b_counter++;
             get_counter = b_counter % nr_of_lists;
+            get_next_counter = (b_counter + 1) % nr_of_lists;
             debug_value(get_counter);
 
-            debug_get(list_ptrs[get_counter], list_ptr[b_next].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]));
-            mfc_get(list_ptr[b_next].untyped, list_ptrs[get_counter], multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_counter]), 4, 0, 0);
-            mfc_write_tag_mask(1 << 4);
+            // Assure that next DMA List is ready
+            mfc_write_tag_mask(1 << 10);
             mfc_read_tag_status_all();
 
+            // GETL next
             debug_getl(list_eahs[get_counter], b[b_next].untyped, list_sizes[get_counter] * sizeof(ListElement));
             mfc_getl(b[b_next].untyped, list_eahs[get_counter], list_ptr[b_next].untyped, list_sizes[get_counter] * sizeof(ListElement), 9 + b_next, 0, 0);
 
+            // Assure that last DMA GETL has finished
             mfc_write_tag_mask(1 << 9 + b_current);
             mfc_read_tag_status_all();
+
+            // GET second next DMA List for the following iteration
+            debug_get(list_ptrs[get_next_counter], list_ptr[b_current].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_next_counter]));
+            mfc_get(list_ptr[b_current].untyped, list_ptrs[get_next_counter], multiple_of_sixteen(sizeof(ListElement) * list_sizes[get_next_counter]), 10, 0, 0);
+
 
             const unsigned b_nr_rows(list_sizes[b_counter - 1]);
             unsigned b_vec_idx(0);
@@ -307,8 +326,6 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
             for (unsigned br(0) ; br < b_nr_rows ; br++, a_elem++)
             {
-                //unsigned r_idx(ar * (b_vecs + 1));
-
                 for(unsigned i(0) ; i < b_vecs ; i++, b_vec_idx++)
                 {
                     vector float temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
@@ -358,8 +375,8 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
         debug_putl(r_list_eahs[act_list], lsa.ptr, r_list_sizes[act_list] * sizeof(ListElement));
         mfc_putl(lsa.ptr, r_list_eahs[act_list], r_list_ptr[r_current].untyped, r_list_sizes[act_list] * sizeof(ListElement), 6 + r_next, 0, 0);
-        act_list++;
         lsa.value += r_list_sizes[act_list] * r_elem_t_size;
+        act_list++;
     }
 
     mfc_write_tag_mask(1 << 6);

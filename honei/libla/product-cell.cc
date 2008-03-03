@@ -559,6 +559,7 @@ namespace honei
 
             unsigned t_size1 = (b_half_cols * 4) + 16;
             ListElement * retval1(0);
+            // The size of a TransferList has to be limited to 16 KB to fit in one allocation block on SPU.
             if ((b02_lists.at(b02_nr_lists).transfer_size() + t_size1) <= 16384)
             {
                 retval1 = b02_lists.at(b02_nr_lists).add(address1.ptr, t_size1);
@@ -596,11 +597,29 @@ namespace honei
         void * b02_ptrs[b02_lists.size()] __attribute__((aligned(16)));
         unsigned long long b02_eahs[b02_lists.size()] __attribute__((aligned(16)));
 
+        //dd.take();
+        unsigned b13_sizes[b13_lists.size()] __attribute__((aligned(16)));
+        unsigned long long b13_eahs[b13_lists.size()] __attribute__((aligned(16)));
+        void * b13_ptrs[b13_lists.size()] __attribute__((aligned(16)));
+
+
+        if (use_spe)
+        {
         for (unsigned i(0) ; i < b02_lists.size() ; i++)
         {
             b02_sizes[i] = b02_lists.at(i).size();
             b02_eahs[i] = b02_lists.at(i).effective_address();
             b02_ptrs[i] = b02_lists.at(i).elements();
+        }
+
+
+        for (unsigned i(0) ; i < b13_lists.size() ; i++)
+        {
+            b13_sizes[i] = b13_lists.at(i).size();
+            b13_eahs[i] = b13_lists.at(i).effective_address();
+            b13_ptrs[i] = b13_lists.at(i).elements();
+        }
+
         }
 
         std::vector<SPETransferList> r0_lists = std::vector<SPETransferList>();
@@ -613,6 +632,7 @@ namespace honei
         r3_lists.push_back(SPETransferList(2048, 16384));
 
         unsigned r0_nr_lists(0), r1_nr_lists(0), r2_nr_lists(0), r3_nr_lists(0);
+
         if (use_spe)
         {
         for (unsigned i(0) ; i < result.rows() ; ++i)
@@ -710,9 +730,25 @@ namespace honei
 
         }
         }
+
         unsigned r0_sizes[r0_lists.size()] __attribute__((aligned(16)));
         void * r0_ptrs[r0_lists.size()] __attribute__((aligned(16)));
         unsigned long long r0_eahs[r0_lists.size()] __attribute__((aligned(16)));
+
+        unsigned r1_sizes[r1_lists.size()] __attribute__((aligned(16)));
+        unsigned long long r1_eahs[r1_lists.size()] __attribute__((aligned(16)));
+        void * r1_ptrs[r1_lists.size()] __attribute__((aligned(16)));
+
+        unsigned r2_sizes[r2_lists.size()] __attribute__((aligned(16)));
+        void * r2_ptrs[r2_lists.size()] __attribute__((aligned(16)));
+        unsigned long long r2_eahs[r2_lists.size()] __attribute__((aligned(16)));
+
+        unsigned r3_sizes[r3_lists.size()] __attribute__((aligned(16)));
+        unsigned long long r3_eahs[r3_lists.size()] __attribute__((aligned(16)));
+        void * r3_ptrs[r3_lists.size()] __attribute__((aligned(16)));
+
+        if (use_spe)
+        {
 
         for (unsigned i(0) ; i < r0_lists.size() ; i++)
         {
@@ -721,20 +757,12 @@ namespace honei
             r0_ptrs[i] = r0_lists.at(i).elements();
         }
 
-        unsigned r1_sizes[r1_lists.size()] __attribute__((aligned(16)));
-        unsigned long long r1_eahs[r1_lists.size()] __attribute__((aligned(16)));
-        void * r1_ptrs[r1_lists.size()] __attribute__((aligned(16)));
-
         for (unsigned i(0) ; i < r1_lists.size() ; i++)
         {
             r1_sizes[i] = r1_lists.at(i).size();
             r1_eahs[i] = r1_lists.at(i).effective_address();
             r1_ptrs[i] = r1_lists.at(i).elements();
         }
-        unsigned r2_sizes[r2_lists.size()] __attribute__((aligned(16)));
-        void * r2_ptrs[r2_lists.size()] __attribute__((aligned(16)));
-        unsigned long long r2_eahs[r2_lists.size()] __attribute__((aligned(16)));
-
         for (unsigned i(0) ; i < r2_lists.size() ; i++)
         {
             r2_sizes[i] = r2_lists.at(i).size();
@@ -742,9 +770,6 @@ namespace honei
             r2_ptrs[i] = r2_lists.at(i).elements();
         }
 
-        unsigned r3_sizes[r3_lists.size()] __attribute__((aligned(16)));
-        unsigned long long r3_eahs[r3_lists.size()] __attribute__((aligned(16)));
-        void * r3_ptrs[r3_lists.size()] __attribute__((aligned(16)));
 
         for (unsigned i(0) ; i < r3_lists.size() ; i++)
         {
@@ -752,7 +777,9 @@ namespace honei
             r3_eahs[i] = r3_lists.at(i).effective_address();
             r3_ptrs[i] = r3_lists.at(i).elements();
         }
+
         //cc.take();
+
         // Shared Operands
         Operand oa0 = { a.elements() };
 
@@ -768,7 +795,7 @@ namespace honei
         {
             ob0.u++;
         }
-        //std::cout << "TRANSFERS FOR A: " << ob0.u << std::endl;
+
         Operand oa1 = { a.elements() + (a_half_rows * a.columns()) }; //truncated
         oa1.u &= ~0xF;
 
@@ -787,93 +814,75 @@ namespace honei
 
         Operand oi = { a.columns() };
 
-        { // DISPATCH FOR R[0] and R[2]
-            Operand od = { &b02_ptrs };
-            Operand oe = { &b02_sizes };
-            Operand of = { &b02_eahs };
-            Operand og = { b02_lists.size() };
-            //std::cout << "B02 LIST SIZE: " << og.u << std::endl;
-            Operand oh = { b.elements() + b.columns() };
-            oh.u &= 0xF; // Want the offset of the first row!
+        // DISPATCH FOR R[0] and R[2]
+        Operand od = { &b02_ptrs };
+        Operand oe = { &b02_sizes };
+        Operand of = { &b02_eahs };
+        Operand og = { b02_lists.size() };
+        //std::cout << "B02 LIST SIZE: " << og.u << std::endl;
+        Operand oh = { b.elements() + b.columns() };
+        oh.u &= 0xF; // Want the offset of the first row!
 
-            Operand oj = { b_half_cols };
+        Operand oj = { b_half_cols };
 
-            Operand ok0 = { r0_lists.size() };
-            //std::cout << "R0 LIST SIZE: " << ok0.u << std::endl;
+        Operand ok0 = { r0_lists.size() };
 
-            Operand ok1 = { r2_lists.size() };
+        Operand ok1 = { r2_lists.size() };
 
-            Operand ol0 = { &r0_ptrs };
-            Operand ol1 = { &r2_ptrs };
+        Operand ol0 = { &r0_ptrs };
+        Operand ol1 = { &r2_ptrs };
 
-            Operand om0 = { &r0_sizes };
-            Operand om1 = { &r2_sizes };
+        Operand om0 = { &r0_sizes };
+        Operand om1 = { &r2_sizes };
 
-            Operand on0 = { &r0_eahs };
-            Operand on1 = { &r2_eahs };
+        Operand on0 = { &r0_eahs };
+        Operand on1 = { &r2_eahs };
 
-            SPEInstruction * instruction0 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi,
-                    oj, ok0, ol0, om0, on0);
-            SPEInstruction * instruction1 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi,
-                    oj, ok1, ol1, om1, on1);
+        SPEInstruction * instruction0 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi,
+                oj, ok0, ol0, om0, on0);
+        SPEInstruction * instruction1 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi,
+                oj, ok1, ol1, om1, on1);
 
-            if (use_spe)
-            {
-            SPEManager::instance()->dispatch(*instruction0);
-            instructions.push_back(instruction0);
-            SPEManager::instance()->dispatch(*instruction1);
-            instructions.push_back(instruction1);
-            }
-        }
-        //dd.take();
-        unsigned b13_sizes[b13_lists.size()] __attribute__((aligned(16)));
-        unsigned long long b13_eahs[b13_lists.size()] __attribute__((aligned(16)));
-        void * b13_ptrs[b13_lists.size()] __attribute__((aligned(16)));
+        SPEManager::instance()->dispatch(*instruction0);
+        instructions.push_back(instruction0);
+        SPEManager::instance()->dispatch(*instruction1);
+        instructions.push_back(instruction1);
 
-        for (unsigned i(0) ; i < b13_lists.size() ; i++)
-        {
-            b13_sizes[i] = b13_lists.at(i).size();
-            b13_eahs[i] = b13_lists.at(i).effective_address();
-            b13_ptrs[i] = b13_lists.at(i).elements();
-        }
+        // DISPATCH FOR R[1] and R[3]
 
-        { // DISPATCH FOR R[1] and R[3]
+        Operand od2 = { &b13_ptrs };
+        Operand oe2 = { &b13_sizes };
+        Operand of2 = { &b13_eahs };
 
-            Operand od = { &b13_ptrs };
-            Operand oe = { &b13_sizes };
-            Operand of = { &b13_eahs };
+        Operand og2 = { b13_lists.size() };
 
-            Operand og = { b13_lists.size() };
+        Operand oh2 = { (b.elements() + b_half_cols + ppu_if1_cols) + b.columns() };
+        oh2.u &= 0xF;
 
-            Operand oh = { (b.elements() + b_half_cols + ppu_if1_cols) + b.columns() };
-            oh.u &= 0xF;
+        Operand oj2 = { b_2nd_half_cols };
 
-            Operand oj = { b_2nd_half_cols };
+        Operand ok20 = { r1_lists.size() };
+        Operand ok21 = { r3_lists.size() };
 
-            Operand ok0 = { r1_lists.size() };
-            Operand ok1 = { r3_lists.size() };
+        Operand ol20 = { &r1_ptrs };
+        Operand ol21 = { &r3_ptrs };
 
-            Operand ol0 = { &r1_ptrs };
-            Operand ol1 = { &r3_ptrs };
+        Operand om20 = { &r1_sizes };
+        Operand om21 = { &r3_sizes };
 
-            Operand om0 = { &r1_sizes };
-            Operand om1 = { &r3_sizes };
+        Operand on20 = { &r1_eahs };
+        Operand on21 = { &r3_eahs };
 
-            Operand on0 = { &r1_eahs };
-            Operand on1 = { &r3_eahs };
+        SPEInstruction * instruction2 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od2, oe2, of2, og2, oh2, oi, oj2,
+                ok20, ol20, om20, on20);
+        SPEInstruction * instruction3 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od2, oe2, of2, og2, oh2, oi, oj2,
+                ok21, ol21, om21, on21);
 
-            SPEInstruction * instruction2 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi, oj,
-                    ok0, ol0, om0, on0);
-            SPEInstruction * instruction3 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi, oj,
-                    ok1, ol1, om1, on1);
+        SPEManager::instance()->dispatch(*instruction2);
+        instructions.push_back(instruction2);
+        SPEManager::instance()->dispatch(*instruction3);
+        instructions.push_back(instruction3);
 
-            if (use_spe)
-            {
-            SPEManager::instance()->dispatch(*instruction2);
-            instructions.push_back(instruction2);
-            SPEManager::instance()->dispatch(*instruction3);
-            instructions.push_back(instruction3);
-            }
         }
         //ee.take();
         float * b_if1_start;
@@ -887,7 +896,7 @@ namespace honei
         }
         //ff.take();
         float * a_elem = a.elements();
-        //for(Matrix<float>::ConstElementIterator j(a.begin_elements()), j_end(a.end_elements()) ; j != j_end ; ++j)
+
         for(unsigned j(0) ; j < a.rows() * a.columns() ; ++j)
         {
             if (j % a.columns() == 0)
