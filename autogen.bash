@@ -17,6 +17,9 @@ get() {
     exit 127
 }
 
+local ACLOCAL_ARGS=
+[[ -n ${ACLOCAL_INCLUDE} ]] && ACLOCAL_ARGS="-I ${ACLOCAL_INCLUDE}"
+
 misc/do_m4.bash honei/cell/Makefile.am || exit $?
 misc/do_m4.bash honei/cell/kernels/Makefile.am || exit $?
 misc/do_m4.bash honei/libgraph/Makefile.am || exit $?
@@ -28,7 +31,7 @@ misc/do_m4.bash honei/libvisual/Makefile.am || exit $?
 run mkdir -p config
 run $(get libtoolize 1.5 ) --copy --force --automake
 rm -f config.cache
-run $(get aclocal 1.9 ) -I ${ACLOCAL_INCLUDE}
+run $(get aclocal 1.9 ) ${ACLOCAL_ARGS}
 run $(get autoheader 2.59 )
 run $(get autoconf 2.59 )
 run $(get automake 1.9 ) -a --copy

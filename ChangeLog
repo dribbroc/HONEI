@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-03-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* autogen.bash: Fixed autogen.bash to work on non-weird installs
+	again.
+
+2008-03-03 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* autogen.bash: Added means to point aclocal to the m4 files on weird
 	installs. Set environment variable ACLOCAL_INCLUDE accordingly.
 
