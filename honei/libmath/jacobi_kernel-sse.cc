@@ -37,7 +37,7 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
 
     DenseVector<float> result(a.rows(), float(0));
 
-    __m128 m1, m2, m3, m4, m5, m6, m7, m8; //Two in addition for the diag_inv and rhs vectors!!!
+    __m128 m1, m2, m3, m4, m5, m6; //Two in addition for the diag_inv and rhs vectors!!!
 
     unsigned long middle_index(a.rows() - 1);
     unsigned long quad_end, end, quad_start, start, op_offset;
@@ -177,7 +177,7 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
 
     DenseVector<double> result(a.rows(), double(0));
 
-    __m128d m1, m2, m3, m4, m5, m6, m7, m8; //Two in addition for the diag_inv and rhs vectors!!!
+    __m128d m1, m2, m3, m4, m5, m6; //Two in addition for the diag_inv and rhs vectors!!!
 
     unsigned long middle_index(a.rows() - 1);
     unsigned long quad_end, end, quad_start, start, op_offset;

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-05 Markus Geveler <apryde@gmx.de>
+
+	* honei/libmath/jacobi_kernel-sse.cc:
+	Removed unnecessary __m128 declarations.
+
 2008-03-04 Markus Geveler <apryde@gmx.de>
 
 	* honei/libswe/relax_solver_volume_steady_TEST.cc:
