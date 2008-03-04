@@ -139,3 +139,8 @@ class RelaxSolverVolumeSteadyTest :
 #ifdef HONEI_SSE
 RelaxSolverVolumeSteadyTest<tags::CPU::SSE, double> sse_relax_solver_vs_test_double("VS sse double");
 #endif
+
+#ifdef HONEI_CELL
+RelaxSolverVolumeSteadyTest<tags::Cell, float> sse_relax_solver_vs_test_float_cell("VS CELL float");
+RelaxSolverVolumeSteadyTest<tags::Cell, double> sse_relax_solver_vs_test_double_cell("VS CELL double");
+#endif

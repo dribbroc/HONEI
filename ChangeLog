@@ -5,10 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
-2008-03-03 Markus Geveler <apryde@gmx.de>
+2008-03-04 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/flow_processing.hh,
+	honei/libswe/relax_solver_TEST.cc,
+	honei/libswe/relax_solver_volume_steady_TEST.cc:
+	Forwarded FlowProcessing double version to PPU, added double tests.
+
+2008-03-04 Markus Geveler <apryde@gmx.de>
 
 	* honei/libmath/poisson_jac_double_dense_TEST.cc:
-	Adjusted test to pass on CELL BE.	
+	Adjusted test to pass on CELL BE.
 
 2008-03-03 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 

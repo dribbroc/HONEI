@@ -129,7 +129,11 @@ namespace honei
     {
         public:
             static DenseVector<float> & value(DenseVector<float> & vector);
-            static DenseVector<double> & value(DenseVector<double> & vector);
+            static DenseVector<double> & value(DenseVector<double> & vector)
+            {
+                FlowProcessing<directions::X, tags::CPU>::value(vector);
+                return vector;
+            }
     };
 
     /**
@@ -222,7 +226,11 @@ namespace honei
     {
         public:
             static DenseVector<float> & value(DenseVector<float> & vector);
-            static DenseVector<double> & value(DenseVector<double> & vector);
+            static DenseVector<double> & value(DenseVector<double> & vector)
+            {
+                FlowProcessing<directions::Y, tags::CPU>::value(vector);
+                return vector;
+            }
     };
 
 ///---------SSE-----------

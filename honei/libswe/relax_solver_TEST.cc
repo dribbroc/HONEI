@@ -163,5 +163,5 @@ RelaxSolverTest<tags::CPU::MultiCore::SSE, double> ms_sse_relax_solver_test_doub
 #endif
 #ifdef HONEI_CELL
 RelaxSolverTest<tags::Cell, float> cell_relax_solver_test_float("cell float");
-//RelaxSolverTest<tags::Cell, double> cell_relax_solver_test_double("cell double");
+RelaxSolverTest<tags::Cell, double> cell_relax_solver_test_double("cell double");
 #endif
