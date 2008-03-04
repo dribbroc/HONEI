@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-03-04 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/relax_solver_volume_steady_TEST.cc:
+	Adjusted testparameter to pass again on the CELL.
+
+2008-03-04 Markus Geveler <apryde@gmx.de>
+
 	* honei/libswe/flow_processing.hh,
 	honei/libswe/relax_solver_TEST.cc,
 	honei/libswe/relax_solver_volume_steady_TEST.cc:

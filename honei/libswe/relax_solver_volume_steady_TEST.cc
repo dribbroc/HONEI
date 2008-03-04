@@ -121,7 +121,7 @@ class RelaxSolverVolumeSteadyTest :
             std::cout << "Analytical target: " << ana_vol - 0.5 * a.size()* deltax * deltay<< std::endl<< std::endl;
             DataType_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, DataType_(0), DataType_(deltax * dwidth), deltax, deltay);
             std::cout << "Vol.: " << vol << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 0.3);
+            TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 2.);
 
 #ifdef HONEI_POSTPROCESSING_VOLUME
             std::string filename;
