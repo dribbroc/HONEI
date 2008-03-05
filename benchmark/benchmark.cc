@@ -216,11 +216,11 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
     std::list<double>::iterator blc = BenchlistCopy.begin();
     std::list<BenchmarkInfo>::iterator j = info.begin();
     int sizes(0);
-    int nr(1), cnr(1);
+    int nr, cnr(1);
     std::string temp;
     time_t t;
     time(&t);
-    if ((cores.size() > 1) && (*(cores.begin()) == *(++cores.begin())) && (*(cores.begin()) != *(--cores.begin())))
+    if ((cores.size() > 1) && (*(cores.begin()) == *(++cores.begin())) && (*(cores.begin()) != *(--cores.end())))
     {
         temp = *cores.begin();
         for (std::list<std::string>::iterator i = cores.begin() ; temp != *(--cores.end()) ; ++i)
@@ -232,6 +232,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
             }
         }
     }
+    nr = cnr;
     std::ifstream ifs("BenchmarkPlotData", std::ifstream::in);
     if (ifs.is_open())
     {
@@ -243,7 +244,7 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
     if (nr == cnr)
     {
         std::ofstream ofs1("BenchmarkPlotData", std::ios_base::out);
-            ofs1 << "#1\n";
+            ofs1 << "#" << nr << "\n";
         ofs1.close();
     }
     else

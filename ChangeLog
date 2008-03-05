@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-05 David Gies <david-gies@gmx.de>
+
+	* benchmark/benchmark.cc: Fixed bug that could lead to a defective
+	BenchmarkPlotData.
+
 2008-03-05 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
