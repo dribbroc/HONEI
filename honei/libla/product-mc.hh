@@ -138,17 +138,16 @@ namespace honei
                 return result;
             }
         }
-
+/*
         // Help function for DenseMatrix * DenseMatrix MultiCore.
         template <typename DT1_, typename DT2_>
-        static void value(DenseVectorRange<DT1_> & a, const DenseMatrix<DT2_> & b, const DenseVectorRange<DT2_> & c)
+        static void value(DenseVectorRange<DT1_> & a, const DenseMatrix<DT2_> & b, const DenseVectorRange<DT1_> & c)
         {
             CONTEXT("When partial multiplying DenseMatrix with DenseMatrix:");
             
             for (unsigned long j(0) ; j < b.rows() ; ++j)
             {
-                DenseVectorRange<DT2_> range(b[j]);
-                ScaledSum<Tag_>::value(a, range, c[j]);
+                ScaledSum<Tag_>::value(a, b[j], DT2_(c[j]));
             }
         }
 
@@ -169,7 +168,7 @@ namespace honei
             for (unsigned long i(0) ; i < a.rows() ; ++i)
             {
                 ThreeArgWrapper< MCProduct<typename Tag_::DelegateTo>, DenseVectorRange<DT1_>,
-                     const DenseMatrix<DT2_>, const DenseVectorRange<DT2_> > mywrapper(result[i], b, a[i]);
+                     const DenseMatrix<DT2_>, const DenseVectorRange<DT1_> > mywrapper(result[i], b, a[i]);
                 pt[i] = p->dispatch(mywrapper);
             }
 
@@ -181,7 +180,92 @@ namespace honei
             
             return result;
         }
-        
+
+*/
+
+        template <typename DT1_, typename DT2_>
+        static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+        {
+            CONTEXT("When multiplying DenseMatrix with DenseMatrix (MultiCore):");
+
+            if (a.columns() != b.rows())
+                throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+            unsigned long min_tile_size(Configuration::instance()->get_value("mc::product[DM,DM]::min_tile_size", 512));
+
+            if (a.rows() < min_tile_size || b.columns() < min_tile_size)
+            {
+                return Product<typename Tag_::DelegateTo>::value(a, b);
+            }
+            else
+            {
+                DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
+
+                std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+                unsigned long parts_row(a.rows() / min_tile_size);
+                unsigned long parts_col(b.columns() / min_tile_size);
+
+                unsigned long i(0);
+                for ( ; i + 1 < parts_row ; ++i)
+                {
+                    const DenseMatrixTile<DT1_> dmt_a(a, min_tile_size, a.columns(), i * min_tile_size, 0);
+                    unsigned long j(0);
+                    for ( ; j + 1 < parts_col ; ++j)
+                    {
+                        DenseMatrixTile<DT1_> dmt_r(result, min_tile_size, min_tile_size, i * min_tile_size, j * min_tile_size);
+                        const DenseMatrixTile<DT1_> dmt_b(b, b.rows(), min_tile_size, 0, j * min_tile_size);
+
+                        ThreeArgWrapper< Product<typename Tag_::DelegateTo>, DenseMatrixTile<DT1_>,
+                                            const DenseMatrixTile<DT1_>, const DenseMatrixTile<DT2_> >
+                                        wrapper(dmt_r, dmt_a, dmt_b);
+                        std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                        dispatched_tasks.push_back(ptr);
+                    }
+                    DenseMatrixTile<DT1_> dmt_r(result, min_tile_size, b.columns() % min_tile_size + min_tile_size, i * min_tile_size, j * min_tile_size);
+                    const DenseMatrixTile<DT2_> dmt_b(b, b.rows(), b.columns() % min_tile_size + min_tile_size, 0, j * min_tile_size);
+
+                    ThreeArgWrapper< Product<typename Tag_::DelegateTo>, DenseMatrixTile<DT1_>,
+                                            const DenseMatrixTile<DT1_>, const DenseMatrixTile<DT2_> >
+                                        wrapper(dmt_r, dmt_a, dmt_b);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                unsigned long j(0);
+                for ( ; j + 1 < parts_col ; ++j)
+                {
+                    DenseMatrixTile<DT1_> dmt_r(result, a.rows() % min_tile_size + min_tile_size, min_tile_size, i * min_tile_size, j * min_tile_size);
+                    const DenseMatrixTile<DT1_> dmt_a(a, a.rows() % min_tile_size + min_tile_size, a.columns(), i * min_tile_size, 0);
+                    const DenseMatrixTile<DT2_> dmt_b(b, b.rows(), min_tile_size, 0, j * min_tile_size);
+
+                    ThreeArgWrapper< Product<typename Tag_::DelegateTo>, DenseMatrixTile<DT1_>,
+                                            const DenseMatrixTile<DT1_>, const DenseMatrixTile<DT2_> >
+                                        wrapper(dmt_r, dmt_a, dmt_b);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
+                }
+                DenseMatrixTile<DT1_> dmt_r(result, a.rows() % min_tile_size + min_tile_size, b.columns() % min_tile_size + min_tile_size, i * min_tile_size, j * min_tile_size);
+                const DenseMatrixTile<DT1_> dmt_a(a, a.rows() % min_tile_size + min_tile_size, a.columns(), i * min_tile_size, 0);
+                const DenseMatrixTile<DT2_> dmt_b(b, b.rows(), b.columns() % min_tile_size + min_tile_size, 0, j * min_tile_size);
+
+                ThreeArgWrapper< Product<typename Tag_::DelegateTo>, DenseMatrixTile<DT1_>,
+                                        const DenseMatrixTile<DT1_>, const DenseMatrixTile<DT2_> >
+                                    wrapper(dmt_r, dmt_a, dmt_b);
+                std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
+
+                while (! dispatched_tasks.empty())
+                {
+                    dispatched_tasks.front()->wait_on();
+                    dispatched_tasks.pop_front();
+                }
+
+                return result;
+            }
+
+        }
+
+
         // Help function for BandedMatrix * DenseVector MultiCore
         template <typename DT1_, typename DT2_>
         static void value(DenseVectorRange<DT1_> & res_range, const BandedMatrix<DT1_> & a,

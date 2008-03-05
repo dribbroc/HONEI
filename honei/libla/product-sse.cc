@@ -282,7 +282,7 @@ namespace honei
                 result[1] = result2;
             }
 
-            void rec_dm_product(DenseMatrixTile<float> & r, DenseMatrixTile<float> & a, DenseMatrixTile<float> & b)
+            void rec_dm_product(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b)
             {
                 /// \todo Use Configuration.
                 unsigned long best_cache_size(1000000);
@@ -340,7 +340,7 @@ namespace honei
                 }
             }
 
-            void rec_dm_product(DenseMatrixTile<double> & r, DenseMatrixTile<double> & a, DenseMatrixTile<double> & b)
+            void rec_dm_product(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b)
             {
                 /// \todo Use Configuration.
                 unsigned long best_cache_size(500000);
@@ -759,4 +759,43 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const SparseMatrix<double> & 
 
     return result;
 }
+
+DenseMatrixTile<float> &
+Product<tags::CPU::SSE>::value(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b)
+{
+    CONTEXT("When multiplying DenseMatrixTile<float> with DenseMatrixTile<float> with SSE:");
+
+    if (a.columns() != b.rows() )
+        throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+    if (a.rows() != r.rows())
+        throw MatrixRowsDoNotMatch(r.rows(), a.rows());
+
+    if (b.columns() != r.columns())
+        throw MatrixColumnsDoNotMatch(r.columns(), b.columns());
+
+    honei::intern::sse::rec_dm_product(r, a, b);
+
+    return r;
+}
+
+DenseMatrixTile<double> &
+Product<tags::CPU::SSE>::value(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b)
+{
+    CONTEXT("When multiplying DenseMatrixTile<double> with DenseMatrixTile<double> with SSE:");
+
+    if (a.columns() != b.rows() )
+        throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+    if (a.rows() != r.rows())
+        throw MatrixRowsDoNotMatch(r.rows(), a.rows());
+
+    if (b.columns() != r.columns())
+        throw MatrixColumnsDoNotMatch(r.columns(), b.columns());
+
+    honei::intern::sse::rec_dm_product(r, a, b);
+
+    return r;
+}
+
 

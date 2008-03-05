@@ -197,6 +197,8 @@ mc::element_inverse[DVS]::max-count = 2
 mc::element_inverse[SV]::min-part-size = 16
 mc::element_inverse[SV]::max-count = 2
 
+mc::product[DM,DM]::min-tile-size = 512
+
 mc::product[DM,DVCB]::min-part-size = 16
 mc::product[DM,DVCB]::max-count = 2
 

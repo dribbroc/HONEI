@@ -400,6 +400,28 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static DenseMatrixTile<DT1_> & value(DenseMatrixTile<DT1_> & r, const DenseMatrixTile<DT1_> & a, const DenseMatrixTile<DT2_> & b)
+        {
+            CONTEXT("When multiplying DenseMatrixTile with DenseMatrixTile:");
+
+            if (a.columns() != b.rows())
+                throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+            typename MutableMatrix<DT1_>::ElementIterator i(r.begin_elements());
+
+            for (unsigned long j(0) ; j < a.rows() ; ++j)
+            {
+                for (unsigned long k(0) ; k < b.columns() ; ++k)
+                {
+                    *i += DotProduct<>::value(a[j], b.column(k));
+                    ++i;
+                }
+            }
+
+            return r;
+        }
+
+        template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
             CONTEXT("When multiplying DenseMatrix with SparseMatrix:");
@@ -1175,6 +1197,10 @@ namespace honei
         static DenseMatrix<float> value(const SparseMatrix<float> &a, const DenseMatrix<float> & b);
 
         static DenseMatrix<double> value(const SparseMatrix<double> &a, const DenseMatrix<double> & b);
+
+        static DenseMatrixTile<float> & value(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b);
+
+        static DenseMatrixTile<double> & value(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b);
 
         /// \}
     };
