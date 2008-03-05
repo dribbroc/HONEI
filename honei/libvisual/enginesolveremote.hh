@@ -198,9 +198,14 @@ namespace honei
                         gl_globals::translation_y_increment = gl_globals::translation_x_increment +0.1;
                         break;
 
+                    case '*':
+                        gl_globals::client.shutdown_server();
+                        exit(0)
+                        break;
+
                     case 'q':
                         gl_globals::client.quit_server();
-                        exit (0);
+                        exit(0);
                         break;
 
                     case char(27):

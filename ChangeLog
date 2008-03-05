@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-03-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* honei/libvisual/enginesolveremote.hh:
+	Added '*' key binding to remotely shutdown the server.
+
+2008-03-05 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* honei/libvisual/enginesolve.hh,
 	honei/libvisual/enginesolveremote.hh:
 	Fixed 'failed to create cursor' error.
