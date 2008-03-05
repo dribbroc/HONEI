@@ -558,7 +558,7 @@ namespace honei
 
             unsigned t_size1 = (b_half_cols * 4) + 16;
             ListElement * retval1(0);
-            // The size of a TransferList has to be limited to 16 KB to fit in one allocation block on SPU.
+
             if ((b02_lists.at(b02_nr_lists).transfer_size() + t_size1) <= 32768)
             {
                 retval1 = b02_lists.at(b02_nr_lists).add(address1.ptr, t_size1);
@@ -836,10 +836,10 @@ namespace honei
         Operand on0 = { &r0_eahs };
         Operand on1 = { &r2_eahs };
 
-        SPEInstruction * instruction0 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od, oe, of, og, oh, oi,
-                oj, ok0, ol0, om0, on0);
-        SPEInstruction * instruction1 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od, oe, of, og, oh, oi,
-                oj, ok1, ol1, om1, on1);
+        SPEInstruction * instruction0 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od,
+                oe, of, og, oh, oi, oj, ok0, ol0, om0, on0);
+        SPEInstruction * instruction1 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od,
+                oe, of, og, oh, oi, oj, ok1, ol1, om1, on1);
 
         SPEManager::instance()->dispatch(*instruction0);
         instructions.push_back(instruction0);
@@ -872,10 +872,10 @@ namespace honei
         Operand on20 = { &r1_eahs };
         Operand on21 = { &r3_eahs };
 
-        SPEInstruction * instruction2 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od2, oe2, of2, og2, oh2, oi, oj2,
-                ok20, ol20, om20, on20);
-        SPEInstruction * instruction3 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od2, oe2, of2, og2, oh2, oi, oj2,
-                ok21, ol21, om21, on21);
+        SPEInstruction * instruction2 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa0, ob0, oc0, od2,
+                oe2, of2, og2, oh2, oi, oj2, ok20, ol20, om20, on20);
+        SPEInstruction * instruction3 = new SPEInstruction(oc_product_dense_matrix_dense_matrix_float, a_t_size, oa1, ob1, oc1, od2,
+                oe2, of2, og2, oh2, oi, oj2, ok21, ol21, om21, on21);
 
         SPEManager::instance()->dispatch(*instruction2);
         instructions.push_back(instruction2);
@@ -893,7 +893,7 @@ namespace honei
         {
             TypeTraits<float>::fill(cols[x], result.rows(), 0.0f);
         }
-        //ff.take();
+
         float * a_elem = a.elements();
 
         for(unsigned j(0) ; j < a.rows() * a.columns() ; ++j)
@@ -922,6 +922,7 @@ namespace honei
 
         }
         //gg.take();
+
         for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; ++i)
         {
                 (*i)->wait();
@@ -933,18 +934,21 @@ namespace honei
         unsigned i(0);
         for (unsigned j(b_half_cols) ; i < ppu_if1_cols ; i++, j++)
         {
-            DenseVectorSlice<float> slice(result.column(j));
-            for(DenseVectorSlice<float>::ElementIterator ei(slice.begin_elements()), ei_end(slice.end_elements()) ; ei != ei_end ; ++ei)
+            float * slice_ptr(result.elements() + j);
+            for (unsigned x(0) ; x < result.rows() ; x++)
             {
-                *ei = cols[i][ei.index()];
+                *slice_ptr = cols[i][x];
+                slice_ptr += result.columns();
             }
         }
         for (unsigned k(0), j(b.columns() - ppu_if2_cols) ; k < ppu_if2_cols ; k++, j++)
         {
-            DenseVectorSlice<float> slice(result.column(j));
-            for(DenseVectorSlice<float>::ElementIterator ei(slice.begin_elements()), ei_end(slice.end_elements()) ; ei != ei_end ; ++ei)
+            float * slice_ptr(result.elements() + j);
+
+            for (unsigned x(0) ; x < result.rows() ; x++)
             {
-                *ei = cols[i+k][ei.index()];
+                *slice_ptr = cols[i+k][x];
+                slice_ptr += result.columns();
             }
         }
         //ii.take();
@@ -953,10 +957,10 @@ namespace honei
         std::cout << "LIST-CREATIONS: " << cc.usec() - bb.usec()  << "  GESAMT: " << cc.usec() - aa.usec() << std::endl;
         std::cout << "AFTER FIRST DISPATCH: " << dd.usec() - cc.usec()  << "  GESAMT: " << dd.usec() - aa.usec() << std::endl;
         std::cout << "AFTER SECOND DISPATCH: " << ee.usec() - dd.usec()  << "  GESAMT: " << ee.usec() - aa.usec() << std::endl;
-        std::cout << "AFTER FILL OF PPU-ARRAY: " << ff.usec() - ee.usec()  << "  GESAMT: " << ff.usec() - aa.usec() << std::endl;
-        std::cout << "AFTER PPU-CALCULATIONS: " << gg.usec() - ff.usec()  << "  GESAMT: " << gg.usec() - aa.usec() << std::endl;
-        std::cout << "AFTER WAIT: " << hh.usec() - gg.usec()  << "  GESAMT: " << hh.usec() - aa.usec() << std::endl;
-        std::cout << "AFTER PPU WRITE: " << ii.usec() - hh.usec()  << "  GESAMT: " << ii.usec() - aa.usec() << std::endl;
+        //std::cout << "AFTER FILL OF PPU-ARRAY: " << ff.usec() - ee.usec()  << "  GESAMT: " << ff.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER PPU-CALCULATIONS: " <<  gg.usec() - ee.usec()  << "  GESAMT: " << gg.usec() - aa.usec() << std::endl;
+        //std::cout << "AFTER WAIT: " << hh.usec() - gg.usec()  << "  GESAMT: " << hh.usec() - aa.usec() << std::endl;
+        std::cout << "AFTER PPU WRITE (4000 usec) AND WAIT: " << ii.usec() - gg.usec()  << "  GESAMT: " << ii.usec() - aa.usec() << std::endl;
 */
         return result;
     }
