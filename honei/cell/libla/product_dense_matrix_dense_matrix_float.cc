@@ -40,13 +40,12 @@ using namespace honei::cell;
  * \operand f Pointer to DMA transfer list effective addresses for the second matrix.
  * \operand g Number of DMA Lists for the second matrix.
  * \operand h Alignment offset of the second row of the second matrix.
- * \operand i Alignment offset to the first element of the first block of first matrix.
+ * \operand i Number of columns of first matrix.
  * \operand j Number of columns of second matrix.
  * \operand k Number of DMA Lists for the result matrix.
  * \operand l Pointer to DMA transfer list pointers for the result matrix.
  * \operand m Pointer to DMA transfer list sizes for the result matrix.
  * \operand n Pointer to DMA transfer list effective addresses for the result matrix.
- * \operand o Number of columns of first matrix.
  */
 void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 {
@@ -89,11 +88,11 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     EffectiveAddress r_list_ptrs[r_nr_of_lists] __attribute__((aligned(16)));
 
     Allocation * block_a[2] = { acquire_block(), acquire_block() };
-    Allocation * block_b[2] = { acquire_block(), acquire_block() };
+    Allocation * block_b[4] = { acquire_block(), acquire_block(), acquire_block(), acquire_block() };
     Allocation * block_r[2] = { acquire_block(), acquire_block() };
 
     Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
-    Pointer<float> b[2] = { { block_b[0]->address }, { block_b[1]->address } };
+    Pointer<float> b[2] = { { block_b[0]->address }, { block_b[2]->address } };
     Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
 
     // Assure that first DMA List (B) has arrived
@@ -126,7 +125,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
     Allocation * r_block_list[2] = { acquire_block(), acquire_block() };
     Pointer<ListElement> r_list_ptr[2] = { { r_block_list[0]->address }, { r_block_list[1]->address } };
-    const unsigned r_elem_t_size = ((inst.j.u * 4) + 16);
+    const unsigned r_elem_t_size((inst.j.u * 4) + 16);
     union lsaddr
     {
         void * ptr;
@@ -200,9 +199,8 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
                 for (unsigned i(0) ; i < b_vecs ; i++)
                 {
-                    vector float r_temp(r[r_current].vectorised[r_idx + i]);
-                    extract(r_temp, r[r_current].vectorised[r_idx + i + 1], r_offset);
-                    r_temps[i] = r_temp;
+                    r_temps[i] = r[r_current].vectorised[r_idx + i];
+                    extract(r_temps[i], r[r_current].vectorised[r_idx + i + 1], r_offset);
                 }
 
                 for (unsigned br(0) ; br < b_nr_rows ; br++, a_elem++)
@@ -221,7 +219,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
                 for (unsigned i(0) ; i < b_vecs ; i++)
                 {
-                   insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
+                    insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
                 }
 
                 unsigned b_temp(b_next);
@@ -319,9 +317,8 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
             for (unsigned i(0) ; i < b_vecs ; i++)
             {
-                vector float r_temp(r[r_current].vectorised[r_idx + i]);
-                extract(r_temp, r[r_current].vectorised[r_idx + i + 1], r_offset);
-                r_temps[i] = r_temp;
+                r_temps[i] = r[r_current].vectorised[r_idx + i];
+                extract(r_temps[i], r[r_current].vectorised[r_idx + i + 1], r_offset);
             }
 
             for (unsigned br(0) ; br < b_nr_rows ; br++, a_elem++)
@@ -340,7 +337,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
             for (unsigned i(0) ; i < b_vecs ; i++)
             {
-               insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
+                insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
             }
 
             unsigned b_temp(b_next);
@@ -374,7 +371,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
         mfc_read_tag_status_all();
 
         debug_putl(r_list_eahs[act_list], lsa.ptr, r_list_sizes[act_list] * sizeof(ListElement));
-        mfc_putl(lsa.ptr, r_list_eahs[act_list], r_list_ptr[r_current].untyped, r_list_sizes[act_list] * sizeof(ListElement), 6 + r_next, 0, 0);
+        mfc_putl(lsa.ptr, r_list_eahs[act_list], r_list_ptr[r_current].untyped, r_list_sizes[act_list] * sizeof(ListElement), 6, 0, 0);
         lsa.value += r_list_sizes[act_list] * r_elem_t_size;
         act_list++;
     }

@@ -502,10 +502,9 @@ namespace honei
         }
 
         unsigned a_div = a_t_size / a.columns(); // number of rows in one transfer
+        a_t_size = 4 * (a_div * a.columns());
 
         //std::cout << "ADIV = " << a_div << std::endl;
-
-        a_t_size = 4 * (a_div * a.columns());
         //std::cout << a_t_size << std::endl;
 
         unsigned a_half_size = a_half_rows * a.columns() * 4;
@@ -560,7 +559,7 @@ namespace honei
             unsigned t_size1 = (b_half_cols * 4) + 16;
             ListElement * retval1(0);
             // The size of a TransferList has to be limited to 16 KB to fit in one allocation block on SPU.
-            if ((b02_lists.at(b02_nr_lists).transfer_size() + t_size1) <= 16384)
+            if ((b02_lists.at(b02_nr_lists).transfer_size() + t_size1) <= 32768)
             {
                 retval1 = b02_lists.at(b02_nr_lists).add(address1.ptr, t_size1);
             }
@@ -579,7 +578,7 @@ namespace honei
             unsigned t_size2 = (b_2nd_half_cols * 4) + 16;
 
             ListElement * retval2(0);
-            if ((b13_lists.at(b13_nr_lists).transfer_size() + t_size2) <= 16384)
+            if ((b13_lists.at(b13_nr_lists).transfer_size() + t_size2) <= 32768)
             {
                 retval2 = b13_lists.at(b13_nr_lists).add(address2.ptr, t_size2);
             }
@@ -597,7 +596,6 @@ namespace honei
         void * b02_ptrs[b02_lists.size()] __attribute__((aligned(16)));
         unsigned long long b02_eahs[b02_lists.size()] __attribute__((aligned(16)));
 
-        //dd.take();
         unsigned b13_sizes[b13_lists.size()] __attribute__((aligned(16)));
         unsigned long long b13_eahs[b13_lists.size()] __attribute__((aligned(16)));
         void * b13_ptrs[b13_lists.size()] __attribute__((aligned(16)));
@@ -819,7 +817,7 @@ namespace honei
         Operand oe = { &b02_sizes };
         Operand of = { &b02_eahs };
         Operand og = { b02_lists.size() };
-        //std::cout << "B02 LIST SIZE: " << og.u << std::endl;
+
         Operand oh = { b.elements() + b.columns() };
         oh.u &= 0xF; // Want the offset of the first row!
 
@@ -847,6 +845,7 @@ namespace honei
         instructions.push_back(instruction0);
         SPEManager::instance()->dispatch(*instruction1);
         instructions.push_back(instruction1);
+        //dd.take();
 
         // DISPATCH FOR R[1] and R[3]
 
