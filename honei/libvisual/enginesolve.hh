@@ -148,10 +148,10 @@ namespace honei
 
             static void mouse (int button, int state, int x, int y)
             {
-                if (button == GLUT_LEFT_BUTTON && state ==GLUT_DOWN)
+                /*if (button == GLUT_LEFT_BUTTON && state ==GLUT_DOWN)
                     glutSetCursor(GLUT_CURSOR_INFO);
                 if (button == GLUT_LEFT_BUTTON && state ==GLUT_UP)
-                    glutSetCursor(GLUT_CURSOR_INHERIT);
+                    glutSetCursor(GLUT_CURSOR_INHERIT);*/
             }
 
             static void keyboard (unsigned char key, int x, int y)
