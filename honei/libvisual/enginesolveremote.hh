@@ -200,7 +200,7 @@ namespace honei
 
                     case '*':
                         gl_globals::client.shutdown_server();
-                        exit(0)
+                        exit(0);
                         break;
 
                     case 'q':
