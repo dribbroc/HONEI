@@ -180,3 +180,6 @@ RelaxSolverMIXEDPRECTest<tags::CPU::MultiCore, double, float> relax_solver_mp1_t
 RelaxSolverMIXEDPRECTest<tags::CPU::SSE, double, float> relax_solver_mp1_test_sse("SSE double to float");
 RelaxSolverMIXEDPRECTest<tags::CPU::MultiCore::SSE, double, float> relax_solver_mp1_test_mcsse("MC SSE double to float");
 #endif
+#ifdef HONEI_CELL
+RelaxSolverMIXEDPRECTest<tags::Cell, double, float> relax_solver_mp1_test_cell("CELL double to float");
+#endif

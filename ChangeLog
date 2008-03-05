@@ -7,6 +7,15 @@ see the NEWS file.
 
 2008-03-05 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/relax_solver_mp1_TEST.cc,
+	honei/libswe/relax_solver_mp1_volume_steady_TEST.cc,
+	honei/libswe/relax_solver_mp2_TEST.cc,
+	honei/libswe/relax_solver_mp2_volume_steady_TEST.cc:
+	Added several testcases concerning mixed precision mass conservation
+	tests on the CELL BE.
+
+2008-03-05 Markus Geveler <apryde@gmx.de>
+
 	* honei/libmath/jacobi_kernel-sse.cc:
 	Removed unnecessary __m128 declarations.
 

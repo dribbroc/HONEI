@@ -161,11 +161,14 @@ class RelaxSolverMIXEDPRECVolTest :
                 std::cout << "Analytical target: " << ana_vol - 0.5 * a.size()* deltax * deltay<< std::endl<< std::endl;
                 DT1_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, DT1_(0), DT1_(deltax * dwidth), deltax, deltay);
                 std::cout << "Vol.: " << vol << std::endl;
-                TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 0.2);
+                TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 2.);
 
             }
         }
 };
 #ifdef HONEI_SSE
 RelaxSolverMIXEDPRECVolTest<tags::CPU::SSE, double, float> relax_solver_mp1_test_sse("SSE double to float");
+#endif
+#ifdef HONEI_CELL
+RelaxSolverMIXEDPRECVolTest<tags::Cell, double, float> relax_solver_mp1_test_cell("CELL double to float");
 #endif

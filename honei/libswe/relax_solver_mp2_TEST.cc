@@ -143,3 +143,6 @@ class RelaxSolverMIXEDPRECINNERTest :
 #ifdef HONEI_SSE
 RelaxSolverMIXEDPRECINNERTest<tags::CPU::SSE> sse_relax_solver_mp2_test("sse mixedprec variant 2");
 #endif
+#ifdef HONEI_CELL
+RelaxSolverMIXEDPRECINNERTest<tags::Cell> cell_relax_solver_mp2_test("CELL mixedprec variant 2");
+#endif
