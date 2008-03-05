@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-05 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/libla/product-cell.cc: Slight improvements by using bigger
+	blocks for the list transfers.
+
 2008-03-05 Volker Jung <volker.jung@honei.org>
 
 	* honei/honeirc, honei/libla/product_BENCHMARK.cc,
