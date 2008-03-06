@@ -20,21 +20,17 @@
 #ifndef LIBUTIL_GUARD_LOCK_HH
 #define LIBUTIL_GUARD_LOCK_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/mutex.hh>
 
 namespace honei
 {
-    class Lock
+    class Lock :
+        public InstantiationPolicy<Lock, NonCopyable>
     {
         private:
             /// Our mutex.
             Mutex * const _mutex;
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            Lock(const Lock &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            Lock & operator= (const Lock &);
 
         public:
             /// (Explicit) constructor.
@@ -44,17 +40,12 @@ namespace honei
             ~Lock();
     };
 
-    class TryLock
+    class TryLock :
+        public InstantiationPolicy<TryLock, NonCopyable>
     {
         private:
             /// Our mutex.
             Mutex * _mutex;
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            TryLock(const TryLock &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            TryLock & operator= (const TryLock &);
 
         public:
             /// (Explicit) constructor.

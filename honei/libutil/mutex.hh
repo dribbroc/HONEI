@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,11 +20,14 @@
 #ifndef LIBUTIL_GUARD_MUTEX_HH
 #define LIBUTIL_GUARD_MUTEX_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
+
 #include <pthread.h>
 
 namespace honei
 {
-    class Mutex
+    class Mutex :
+        public InstantiationPolicy<Mutex, NonCopyable>
     {
         private:
             /// Our attributes.
@@ -32,12 +35,6 @@ namespace honei
 
             /// Our pthread mutex.
             pthread_mutex_t * const _mutex;
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            Mutex(const Mutex &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            Mutex & operator= (const Mutex &);
 
         public:
             /// (Explicit) constructor.

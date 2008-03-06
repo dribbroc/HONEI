@@ -18,9 +18,12 @@
  */
 
 #include <honei/libutil/assertion.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/memory_manager.hh>
 
 using namespace honei;
+
+template class InstantiationPolicy<MemoryManager, Singleton>;
 
 MemoryAddressNotKnown::MemoryAddressNotKnown(const void * address) :
     Exception("No memory id found for address '" + stringify(address) + "'")
@@ -40,22 +43,6 @@ MemoryIdNotKnown::MemoryIdNotKnown(const MemoryId id, const DeviceId device) :
 MemoryChunkSizeInvalid::MemoryChunkSizeInvalid(unsigned long size, const std::string & msg) :
     Exception("Chunk size '" + stringify(size) + "' is invalid: " + msg)
 {
-}
-
-MemoryManager::MemoryManager()
-{
-}
-
-MemoryManager::~MemoryManager()
-{
-}
-
-MemoryManager *
-MemoryManager::instance()
-{
-    static MemoryManager result;
-
-    return &result;
 }
 
 MemoryId

@@ -20,23 +20,19 @@
 #ifndef LIBUTIL_GUARD_CONDITION_VARIABLE_HH
 #define LIBUTIL_GUARD_CONDITION_VARIABLE_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/mutex.hh>
 
 #include <pthread.h>
 
 namespace honei
 {
-    class ConditionVariable
+    class ConditionVariable :
+        public InstantiationPolicy<ConditionVariable, NonCopyable>
     {
         private:
             /// Our pthread condition variable.
             pthread_cond_t * const _cond;
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            ConditionVariable(const ConditionVariable &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            ConditionVariable & operator= (const ConditionVariable &);
 
         public:
             /// Constructor.

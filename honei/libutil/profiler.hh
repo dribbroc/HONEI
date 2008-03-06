@@ -20,6 +20,8 @@
 #ifndef LIBUTIL_GUARD_PROFILER_HH
 #define LIBUTIL_GUARD_PROFILER_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
+
 #include <string>
 #include <tr1/functional>
 
@@ -45,20 +47,9 @@ namespace honei
      *
      * \ingroup grpprofiler
      */
-    class ProfilerMessage
+    class ProfilerMessage :
+        public InstantiationPolicy<ProfilerMessage, NonCopyable>
     {
-        private:
-            /// \name Unwanted operations
-            /// \{
-
-            /// Unwanted default constructor: Do not implement. See EffC++, Item 27.
-            ProfilerMessage();
-
-            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
-            ProfilerMessage & operator= (ProfilerMessage & other);
-
-            /// \}
-
         public:
             friend struct LogQueue;
 

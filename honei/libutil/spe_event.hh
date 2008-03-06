@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,11 +20,13 @@
 #ifndef LIBUTIL_GUARD_SPE_EVENT_HH
 #define LIBUTIL_GUARD_SPE_EVENT_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/spe_manager.hh>
 
 namespace honei
 {
-    class SPEEvent
+    class SPEEvent :
+        public InstantiationPolicy<SPEEvent, NonCopyable>
     {
         private:
             /// Our event handler.
@@ -35,12 +37,6 @@ namespace honei
 
             /// Our most recent event.
             spe_event_unit_t _recent_event;
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            SPEEvent(const SPEEvent &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            SPEEvent & operator= (const SPEEvent &);
 
         public:
             /// Constructor.

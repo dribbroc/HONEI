@@ -18,6 +18,7 @@
  */
 
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/partitioner.hh>
 #include <honei/libutil/stringify.hh>
 

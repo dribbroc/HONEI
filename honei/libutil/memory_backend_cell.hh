@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  * Copyright (c) 2007 Dirk Ribbrock <d_ribbrock@web.de>
  *
@@ -22,6 +22,7 @@
 #ifndef LIBUTIL_GUARD_MEMORY_BACKEND_CELL_HH
 #define LIBUTIL_GUARD_MEMORY_BACKEND_CELL_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/memory_backend.hh>
 
 #include <vector>
@@ -35,7 +36,8 @@ namespace honei
      * \ingroup grpgpubackend
      */
     class CellBackend :
-        public MemoryBackend
+        public MemoryBackend,
+        public InstantiationPolicy<CellBackend, Singleton>
     {
        private:
             struct Implementation;
@@ -52,12 +54,8 @@ namespace honei
             /// Constructor.
             CellBackend();
 
-            /// Destructor.
-            ~CellBackend();
-
         public:
-            /// Return the only instance of CellBackend.
-            static CellBackend * instance();
+            friend class InstantiationPolicy<CellBackend, Singleton>;
 
             /// \name MemoryBackend interface
             /// \{

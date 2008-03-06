@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,6 +20,7 @@
 #ifndef LIBUTIL_GUARD_SPE_KERNEL_MANAGER_HH
 #define LIBUTIL_GUARD_SPE_KERNEL_MANAGER_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/spe_kernel.hh>
 #include <iostream>
 
@@ -30,7 +31,8 @@ namespace honei
      *
      * \ingroup grpcell
      */
-    class SPEKernelManager
+    class SPEKernelManager :
+        public InstantiationPolicy<SPEKernelManager, Singleton>
     {
         private:
             struct Implementation;
@@ -47,17 +49,10 @@ namespace honei
             /// Destructor.
             ~SPEKernelManager();
 
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            SPEKernelManager(const SPEManager &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            const SPEKernelManager & operator= (const SPEManager &);
-
             /// \}
 
         public:
-            /// Return the only instance of SPEKernelManager.
-            static SPEKernelManager * instance();
+            friend class InstantiationPolicy<SPEKernelManager, Singleton>;
 
             /// Register a kernel with us.
             void register_kernel(const SPEKernel::Info & info);

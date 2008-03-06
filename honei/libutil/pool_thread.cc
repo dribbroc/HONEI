@@ -20,6 +20,7 @@
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/condition_variable.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
 #include <honei/libutil/stringify.hh>

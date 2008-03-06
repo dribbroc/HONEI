@@ -19,6 +19,7 @@
 
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
 #include <honei/libutil/mutex.hh>
@@ -43,6 +44,8 @@ namespace
 namespace honei
 {
     using namespace cell;
+
+    template class InstantiationPolicy<SPEKernelManager, Singleton>;
 
     struct SPEKernelManager::Implementation
     {
@@ -80,14 +83,6 @@ namespace honei
     SPEKernelManager::~SPEKernelManager()
     {
         delete _imp;
-    }
-
-    SPEKernelManager *
-    SPEKernelManager::instance()
-    {
-        static SPEKernelManager result;
-
-        return &result;
     }
 
     void

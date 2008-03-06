@@ -24,6 +24,7 @@
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/condition_variable.hh>
 #include <honei/libutil/configuration.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
 #include <honei/libutil/pool_task.hh>
@@ -37,7 +38,8 @@ namespace honei
 {
     typedef std::tr1::function<void () throw ()> WorkerTask;
 
-    class ThreadPool
+    class ThreadPool :
+        public InstantiationPolicy<ThreadPool, Singleton>
     {
         private:
             ///Our threads.
@@ -55,12 +57,8 @@ namespace honei
             ///Our condition variable.
             ConditionVariable * const _available;
 
-            /**
-             * Constructor.
-             *
-             * \param num_threads Number of threads the threadpool consists of.
-             */
-            ThreadPool(unsigned long num_threads) :
+            /// Constructor.
+            ThreadPool() :
                 _mutex(new Mutex),
                 _available(new ConditionVariable)
             {
@@ -68,7 +66,7 @@ namespace honei
 
                 Lock l(*_mutex);
 
-                for (unsigned long i(0); i < num_threads; ++i)
+                for (unsigned long i(0); i < Configuration::instance()->get_value("mc::number-of-threads", 4) ; ++i)
                 {
                     PoolThread * poolthread(new PoolThread(this));
                     _pool.push_back(poolthread);
@@ -78,17 +76,7 @@ namespace honei
 
 
         public:
-
-            /// Returns the singleton instance of the pool.
-            //If it doesn't exist yet, it is created with numThreads threads,
-            //otherwise it is created with a default number of threads.
-            static ThreadPool * instance(unsigned long num_threads = Configuration::instance()->get_value("mc::number-of-threads", 4))
-            {
-                CONTEXT("When getting ThreadPool:");
-
-                static ThreadPool result(num_threads);
-                return &result;
-            }
+            friend class InstantiationPolicy<ThreadPool, Singleton>;
 
             ///Destructor.
             ~ThreadPool()

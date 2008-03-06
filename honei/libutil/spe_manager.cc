@@ -19,6 +19,7 @@
  */
 
 #include <honei/libutil/configuration.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
 #include <honei/libutil/mutex.hh>
@@ -51,6 +52,8 @@ namespace
 
 namespace honei
 {
+    template class InstantiationPolicy<SPEManager, Singleton>
+
     struct SPEManager::Implementation
     {
         typedef std::vector<SPE> SPEList;
@@ -277,14 +280,6 @@ namespace honei
         CONTEXT("When destroying SPEManager:");
 
         delete _imp;
-    }
-
-    SPEManager *
-    SPEManager::instance()
-    {
-        static SPEManager result;
-
-        return &result;
     }
 
     SPEManager::Iterator

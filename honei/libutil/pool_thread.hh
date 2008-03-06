@@ -20,6 +20,7 @@
 #ifndef LIBUTIL_GUARD_POOL_THREAD_HH
 #define LIBUTIL_GUARD_POOL_THREAD_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/pool_task.hh>
 
 #include <tr1/functional>
@@ -30,24 +31,14 @@ namespace honei
 
     class ThreadPool;
 
-    class PoolThread
+    class PoolThread :
+        public InstantiationPolicy<PoolThread, NonCopyable>
     {
         private:
             struct Implementation;
 
             /// Our implementation.
             Implementation * _imp;
-
-            /// \name Unwanted operations.
-            /// \{
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            PoolThread(const PoolThread &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            PoolThread & operator= (const PoolThread &);
-
-            /// \}
 
         public:
             /// \name Constructor and destructor

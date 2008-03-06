@@ -20,30 +20,22 @@
 #ifndef LIBUTIL_GUARD_WORKER_HH
 #define LIBUTIL_GUARD_WORKER_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
+
 #include <tr1/functional>
 
 namespace honei
 {
     typedef std::tr1::function<void () throw ()> WorkerTask;
 
-    class WorkerThread
+    class WorkerThread :
+        public InstantiationPolicy<WorkerThread, NonCopyable>
     {
         private:
             struct Implementation;
 
             /// Our implementation.
             Implementation * _imp;
-
-            /// \name Unwanted operations.
-            /// \{
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            WorkerThread(const WorkerThread &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            WorkerThread & operator= (const WorkerThread &);
-
-            /// \}
 
         public:
             /// \name Constructor and destructor

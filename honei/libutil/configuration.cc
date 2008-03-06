@@ -19,6 +19,7 @@
 
 #include <honei/libutil/configuration.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
 
@@ -30,6 +31,8 @@
 #include <sys/stat.h>
 
 using namespace honei;
+
+template class InstantiationPolicy<Configuration, Singleton>;
 
 ConfigurationError::ConfigurationError(const std::string & line) :
     Exception("Invalid line in configuration file: '" + line + "'")
@@ -72,14 +75,6 @@ Configuration::Configuration() :
     _imp(new Implementation)
 {
     _read();
-}
-
-Configuration *
-Configuration::instance()
-{
-    static Configuration result;
-
-    return &result;
 }
 
 void

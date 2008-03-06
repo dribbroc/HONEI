@@ -20,6 +20,8 @@
 #ifndef LIBUTIL_GUARD_TYPE_TRAITS_HH
 #define LIBUTIL_GUARD_TYPE_TRAITS_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
+
 #include <cstdlib>
 #include <new>
 
@@ -37,7 +39,8 @@ namespace honei
         /**
          * Type traits for plain old data types.
          */
-        template <typename DT_> struct PODTraits
+        template <typename DT_> struct PODTraits :
+            public InstantiationPolicy<PODTraits<DT_>, NonInstantiable>
         {
             /**
              * Allocate memory that suffices to store count instances of
@@ -122,7 +125,8 @@ namespace honei
          * Type traits for data types with either a non-trivial constructor,
          * assignment operator or destructor.
          */
-        template <typename DT_> struct DefaultTraits
+        template <typename DT_> struct DefaultTraits :
+            public InstantiationPolicy<DefaultTraits<DT_>, NonInstantiable>
         {
             /**
              * Allocate memory that suffices to store count instances of

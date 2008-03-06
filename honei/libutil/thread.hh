@@ -20,6 +20,8 @@
 #ifndef LIBUTIL_GUARD_THREAD_HH
 #define LIBUTIL_GUARD_THREAD_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
+
 #include <tr1/functional>
 
 namespace honei
@@ -31,24 +33,14 @@ namespace honei
      * Thread uses POSIX threads internally and allows minimal synchronisation.
      * Thread guarantees that its function is finalised after destruction.
      */
-    class Thread
+    class Thread :
+        public InstantiationPolicy<Thread, NonCopyable>
     {
         private:
             struct Implementation;
 
             /// Our implementation.
             Implementation * _imp;
-
-            /// \name Unwanted operations.
-            /// \{
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            Thread(const Thread &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            Thread & operator= (const Thread &);
-
-            /// \}
 
         public:
             /// Our function type.

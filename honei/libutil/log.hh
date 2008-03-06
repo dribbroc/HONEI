@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,6 +19,8 @@
 
 #ifndef LIBUTIL_GUARD_LOG_HH
 #define LIBUTIL_GUARD_LOG_HH 1
+
+#include <honei/libutil/instantiation_policy.hh>
 
 #include <string>
 
@@ -39,20 +41,9 @@ namespace honei
     /**
      * LogMessage enqueues a log message with the LogMessageQueue.
      */
-    class LogMessage
+    class LogMessage :
+        public InstantiationPolicy<LogMessage, NonCopyable>
     {
-        private:
-            /// \name Unwanted operations
-            /// \{
-
-            /// Unwanted copy constructor: Do not implement. See EffC++, Item 27.
-            LogMessage();
-
-            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
-            LogMessage & operator= (LogMessage & other);
-
-            /// \}
-
         public:
             friend struct LogQueue;
 
@@ -63,6 +54,9 @@ namespace honei
              * \param messag Message to be logged.
              */
             LogMessage(const LogLevel level, const std::string & message);
+
+            /// Destructor.
+            ~LogMessage();
     };
 
     /// Log a message.

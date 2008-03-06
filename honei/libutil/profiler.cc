@@ -21,6 +21,7 @@
 #include <honei/libutil/condition_variable.hh>
 #include <honei/libutil/configuration.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/profiler.hh>
 #include <honei/libutil/stringify.hh>

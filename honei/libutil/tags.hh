@@ -20,6 +20,8 @@
 #ifndef LIBUTIL_GUARD_TAGS_HH
 #define LIBUTIL_GUARD_TAGS_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
+
 #include <ostream>
 
 namespace honei
@@ -44,7 +46,8 @@ namespace honei
          *
          * \ingroup grptagscpu
          */
-        struct CPU
+        struct CPU :
+            public InstantiationPolicy<CPU, NonCopyable>
         {
             const static TagValue tag_value = tv_cpu;
             const static std::string name;
@@ -54,7 +57,8 @@ namespace honei
              *
              * \ingroup grptagscpusse
              */
-            struct SSE
+            struct SSE :
+                public InstantiationPolicy<CPU::SSE, NonCopyable>
             {
                 const static TagValue tag_value = tv_cpu;
                 const static std::string name;
@@ -65,7 +69,8 @@ namespace honei
              *
              * \ingroup grptagscpumulticore
              */
-            struct MultiCore
+            struct MultiCore :
+                public InstantiationPolicy<MultiCore, NonCopyable>
             {
                 const static TagValue tag_value = tv_cpu_multi_core;
                 const static std::string name;
@@ -77,7 +82,8 @@ namespace honei
                  *
                  * \ingroup grptagscpumulticore
                  */
-                struct SSE
+                struct SSE :
+                    public InstantiationPolicy<MultiCore::SSE, NonCopyable>
                 {
                     const static TagValue tag_value = tv_cpu_multi_core;
                     const static std::string name;
@@ -92,7 +98,8 @@ namespace honei
          *
          * \ingroup grptagscell
          */
-        struct Cell
+        struct Cell :
+                public InstantiationPolicy<Cell, NonCopyable>
         {
             const static TagValue tag_value = tv_cell;
 
@@ -108,7 +115,8 @@ namespace honei
          *
          * \ingroup gtptagsgpu
          */
-        struct GPU
+        struct GPU :
+                public InstantiationPolicy<GPU, NonCopyable>
         {
             const static TagValue tag_value = tv_gpu;
             const static std::string name;

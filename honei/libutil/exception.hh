@@ -20,6 +20,8 @@
 #ifndef LIBUTIL_GUARD_EXCEPTION_HH
 #define LIBUTIL_GUARD_EXCEPTION_HH 1
 
+#include <honei/libutil/instantiation_policy.hh>
+
 #include <string>
 
 namespace honei
@@ -30,7 +32,8 @@ namespace honei
      * \ingroup grpexceptions
      * \nosubgrouping
      */
-    class Context
+    class Context :
+        public InstantiationPolicy<Context, NonCopyable>
     {
         private:
             /// Unwanted operations. Do not implement. See EffCpp, Item 27.
@@ -93,7 +96,8 @@ namespace honei
      * \nosubgrouping
      */
     class Exception :
-        public std::exception
+        public std::exception,
+        public InstantiationPolicy<Exception, NonCopyable>
     {
         private:
             const std::string _message;

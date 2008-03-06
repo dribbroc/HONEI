@@ -21,6 +21,7 @@
 #define LIBUTIL_GUARD_CONFIGURATION_HH 1
 
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy.hh>
 
 #include <string>
 
@@ -52,24 +53,14 @@ namespace honei
      *
      * \ingroup grpconfig
      */
-    class Configuration
+    class Configuration :
+        public InstantiationPolicy<Configuration, Singleton>
     {
         private:
             struct Implementation;
 
             /// Our implementation.
             Implementation * _imp;
-
-            /// \name Unwanted operations
-            /// \{
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            Configuration(const Configuration & other);
-
-            /// Unwanted assignment-operator: Do not implement. See EffCpp, Item 27.
-            const Configuration & operator= (const Configuration & other);
-
-            /// \}
 
             /**
              * Constructor.
@@ -82,8 +73,7 @@ namespace honei
             void _read();
 
         public:
-            /// Return the only instance of Configuration.
-            static Configuration * instance();
+            friend class InstantiationPolicy<Configuration, Singleton>;
 
             /**
              * \name Value Retrieval

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
@@ -24,6 +24,7 @@
 #include <honei/cell/cell.hh>
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/memory_backend.hh>
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/spe.hh>
@@ -46,7 +47,8 @@ namespace honei
      *
      * \ingroup grpcell
      */
-    class SPEManager
+    class SPEManager :
+        public InstantiationPolicy<SPEManager, Singleton>
     {
         private:
             /// Our implementation class.
@@ -64,20 +66,12 @@ namespace honei
             /// Destructor.
             ~SPEManager();
 
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            SPEManager(const SPEManager &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            const SPEManager & operator= (const SPEManager &);
-
             /// \}
 
         public:
+            friend class InstantiationPolicy<SPEManager, Singleton>;
             friend class SPEInstruction;
             friend class SPEInstructionQueue;
-
-            /// Return the only instance of SPEManager.
-            static SPEManager * instance();
 
             /// \name Iterate over our SPEs
             /// \{

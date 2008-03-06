@@ -19,6 +19,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/memory_manager.hh>
 #include <honei/libutil/memory_backend_cell.hh>
@@ -38,7 +39,7 @@
 
 using namespace honei;
 
-
+template class InstantiationPolicy<CellBackend, Singleton>;
 
 struct CellBackend::AccessCounter
 {
@@ -95,18 +96,6 @@ struct CellBackend::Implementation
 CellBackend::CellBackend() :
     _imp(new CellBackend::Implementation)
 {
-}
-
-CellBackend::~CellBackend()
-{
-}
-
-CellBackend *
-CellBackend::instance()
-{
-    static CellBackend result;
-
-    return &result;
 }
 
 MemoryBackend *

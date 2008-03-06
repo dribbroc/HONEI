@@ -22,6 +22,7 @@
 
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/memory_backend.hh>
 #include <honei/libutil/tags.hh>
 #include <honei/libutil/stringify.hh>
@@ -154,7 +155,8 @@ namespace honei
      *
      * \ingroup grpmemorymanager
      */
-    class MemoryManager
+    class MemoryManager :
+        public InstantiationPolicy<MemoryManager, Singleton>
     {
         public:
             /// \name Convenience types for backend handling
@@ -182,21 +184,6 @@ namespace honei
 
             /// Our map of tag values to backend instance functions. Unique per tag value.
             BackendMap _backend_map;
-
-            /// \name Basic operations
-            /// \{
-            /// Constructor.
-            MemoryManager();
-
-            /// Destructor.
-            ~MemoryManager();
-
-            /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-            MemoryManager(const MemoryManager &);
-
-            /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-            const MemoryManager & operator= (const MemoryManager &);
-            /// \}
 
             /// Return true if a memory id is in use.
             inline bool _id_used(const MemoryId id) const
@@ -231,9 +218,7 @@ namespace honei
 
         public:
             friend class MemoryBackendRegistrator;
-
-            /// Return the only instance of MemoryManager.
-            static MemoryManager * instance();
+            friend class InstantiationPolicy<MemoryManager, Singleton>;
 
             /**
              * Associate a local memory chunk with a memory id.
