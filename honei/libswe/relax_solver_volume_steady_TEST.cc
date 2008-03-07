@@ -123,7 +123,7 @@ class RelaxSolverVolumeSteadyTest :
             std::cout << "Vol.: " << vol << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 2.);
 
-#ifdef HONEI_POSTPROCESSING_VOLUME
+#ifdef SOLVER_POSTPROCESSING_VOLUME
             std::string filename;
             std::ofstream file;
             filename = "out_relax_vol_fixed.dat";

@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-07 Markus Geveler <apryde@gmx.de>
+
+	* honei/libswe/relax_solver_volume_steady_TEST.cc:
+	Fixed typo in symbol.
+
 2008-03-05 David Gies <david-gies@gmx.de>
 
 	* benchmark/benchmark.cc: Fixed bug that could lead to a defective
