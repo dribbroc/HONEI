@@ -207,7 +207,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                 {
                     vector float a_vec(spu_splats(a[a_current].typed[a_elem]));
 
-                    for(unsigned i(0) ; i < b_vecs ; i+ =2 , b_vec_idx += 2)
+                    for(unsigned i(0) ; i < b_vecs ; i += 2, b_vec_idx += 2)
                     {
                         vector float temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
                         vector float temp2 = b[b_current].vectorised[b_vec_idx + 1]; // temp version needed, cause original matrix must not be changed!
@@ -348,7 +348,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                 e_offset = (e_offset + b_offset) % 4;
             }
 
-            for (unsigned i(0) ; i < b_vecs ; i+=2)
+            for (unsigned i(0) ; i < b_vecs ; i += 2)
             {
                 insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
                 insert(r[r_current].vectorised[r_idx + i + 1], r[r_current].vectorised[r_idx + i + 2], r_temps[i + 1], r_offset);
