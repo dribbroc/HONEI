@@ -519,6 +519,19 @@ namespace honei
         unsigned ppu_if1_cols = 4;
         unsigned ppu_if2_cols = 4 + (b.columns() & 0x3);
         unsigned b_2nd_half_cols = b.columns() - 4 - b_half_cols - ppu_if2_cols;
+
+
+        if ((b_half_cols / 4) % 2 != 0)
+        {
+            b_half_cols -= 4;
+            ppu_if1_cols += 4;
+        }
+
+        if ((b_2nd_half_cols / 4) % 2 != 0)
+        {
+            b_2nd_half_cols -= 4;
+            ppu_if2_cols += 4;
+        }
 /*
         std::cout << "a_half_rows : " << a_half_rows << std::endl;
         std::cout << "a_2nd_half_rows : " << a_2nd_half_rows << std::endl;
