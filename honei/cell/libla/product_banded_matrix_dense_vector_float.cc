@@ -34,8 +34,6 @@ namespace honei
                     const unsigned size, vector float & b_carry, const unsigned b_offset, vector float & c_carry,
                     const unsigned c_offset, const float optional_scalar)
             {
-                vector float scalar_vector = spu_splats(optional_scalar);
-
                 for (unsigned i(0) ; i < size ; ++i)
                 {
                     extract(b_carry, b[i], b_offset);

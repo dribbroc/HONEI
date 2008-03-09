@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-09 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* honei/cell/libla/product_banded_matrix_dense_vector_double.cc,
+	honei/cell/libla/product_banded_matrix_dense_vector_float.cc:
+	Removed unused variables.
+
 2008-03-09 Sven Mallach <sven.mallach@honei.org>
 
 	* honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
