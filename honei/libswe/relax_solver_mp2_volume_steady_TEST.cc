@@ -26,7 +26,6 @@
 #include <sys/time.h>
 #include <volume.hh>
 #include <honei/libmath/quadrature.hh>
-
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -105,14 +104,22 @@ class RelaxSolverMIXEDPRECINNERVolTest :
             RelaxSolver<Tag_, float, float, double, float, float, source_types::SIMPLE, boundaries::REFLECT, MIXED> relax_solver
                 (scenario, bx_2, by_2);
             relax_solver.do_preprocessing();
+#ifdef SOLVER_POSTPROCESSING_VOLUME
+            double volumes[timesteps + 1];
+            volumes[0] = 0.;
+            DenseMatrix<double> result(height.rows(), height.columns());
+#endif
 
             for (ulint i = 1; i <= timesteps; ++i)
             {
                 relax_solver.solve();
+#ifdef SOLVER_POSTPROCESSING_VOLUME
+                convert(result, height);
+                volumes[i] = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(result, double(0), double(deltax * dwidth), (double)deltax, (double)deltay);
+#endif
                 cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
             }
 
-            DenseMatrix<double> result(height.rows(), height.columns());
             convert(result, height);
             double ana_vol = 0.5 * a.size()* deltax * deltay + (dwidth * deltax * dheight * deltay * 5.);
             std::cout << "Analytical start: " << ana_vol;
@@ -120,6 +127,17 @@ class RelaxSolverMIXEDPRECINNERVolTest :
             double vol =(double)GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(result, double(0), double(deltax * dwidth), (double)deltax, (double)deltay);
             std::cout << "Vol.: " << vol << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 2.);
+#ifdef SOLVER_POSTPROCESSING_VOLUME
+            std::string filename;
+            std::ofstream file;
+            filename = "out_relax_vol_mixed2.dat";
+            file.open(filename.c_str());
+            for(unsigned long i(1); i <= timesteps; ++i)
+            {
+                file << stringify(i) + " " + stringify(volumes[i]) + " " + stringify(fabs(volumes[i] - (ana_vol - 0.5 * a.size()* deltax * deltay) ))  +"\n";
+            }
+            file.close();
+#endif
 
         }
 };

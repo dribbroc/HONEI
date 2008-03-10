@@ -27,7 +27,6 @@
 #include <sys/time.h>
 #include <volume.hh>
 #include <honei/libmath/quadrature.hh>
-
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -141,17 +140,29 @@ class RelaxSolverMIXEDPRECVolTest :
                 relax_solver.do_preprocessing();
                 string outHeight = stringify(height_2);
 
+#ifdef SOLVER_POSTPROCESSING_VOLUME
+                DT1_ volumes[timesteps + 1];
+                volumes[0] = 0.;
+#endif
                 for (ulint i = 1; i <= timesteps; ++i)
                 {
                     if(i % k != 0)
                     {
                         relax_solver.solve();
+#ifdef SOLVER_POSTPROCESSING_VOLUME
+                volumes[i] = (DT1_)GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height_2, DT2_(0), DT2_(deltax * dwidth), DT2_(deltax), DT2_(deltay));
+#endif
+
                     }
                     else
                     {
 
                         ScenarioManager<DT1_, swe_solvers::RELAX, boundaries::REFLECT>::convert_scenario(scenario, scenario_2);
                         relax_solver_double.solve();
+#ifdef SOLVER_POSTPROCESSING_VOLUME
+                        volumes[i] = (DT1_)GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, DT1_(0), DT1_(deltax * dwidth), deltax, deltay);
+#endif
+
                         ScenarioManager<DT2_, swe_solvers::RELAX, boundaries::REFLECT>::convert_scenario(scenario_2, scenario);
                     }
                     cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
@@ -162,6 +173,17 @@ class RelaxSolverMIXEDPRECVolTest :
                 DT1_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, DT1_(0), DT1_(deltax * dwidth), deltax, deltay);
                 std::cout << "Vol.: " << vol << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(vol, (ana_vol - 0.5 * a.size()* deltax * deltay), 2.);
+#ifdef SOLVER_POSTPROCESSING_VOLUME
+                std::string filename;
+                std::ofstream file;
+                filename = "out_relax_vol_mixed1_k15.dat";
+                file.open(filename.c_str());
+                for(unsigned long i(1); i <= timesteps; ++i)
+                {
+                    file << stringify(i) + " " + stringify(volumes[i]) + " " + stringify(fabs(volumes[i] - (ana_vol - 0.5 * a.size()* deltax * deltay) ))  +"\n";
+                }
+                file.close();
+#endif
 
             }
         }
