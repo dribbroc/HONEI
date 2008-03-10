@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-03-10 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/relax_solver_mp2_volume_steady_TEST.cc:
+	Fixed compile bug.
+
+2008-03-10 Markus Geveler <apryde@gmx.de>
+
 	* honei/libswe/relax_solver_mp1_volume_steady_TEST.cc,
 	honei/libswe/relax_solver_mp2_volume_steady_TEST.cc,
 	honei/libswe/relax_solver_volume_steady_TEST.cc:

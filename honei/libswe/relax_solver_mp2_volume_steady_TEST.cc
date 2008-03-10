@@ -104,10 +104,11 @@ class RelaxSolverMIXEDPRECINNERVolTest :
             RelaxSolver<Tag_, float, float, double, float, float, source_types::SIMPLE, boundaries::REFLECT, MIXED> relax_solver
                 (scenario, bx_2, by_2);
             relax_solver.do_preprocessing();
+
+            DenseMatrix<double> result(height.rows(), height.columns());
 #ifdef SOLVER_POSTPROCESSING_VOLUME
             double volumes[timesteps + 1];
             volumes[0] = 0.;
-            DenseMatrix<double> result(height.rows(), height.columns());
 #endif
 
             for (ulint i = 1; i <= timesteps; ++i)
