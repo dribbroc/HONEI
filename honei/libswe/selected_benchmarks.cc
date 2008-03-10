@@ -124,7 +124,7 @@ class RelaxSolverBench :
                 RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver
                     (scenario);
                 relax_solver.do_preprocessing();
-                string outHeight = stringify(height);
+                std::string outHeight = stringify(height);
 
                 for(int i = 0; i < 30; ++i)
                 {
