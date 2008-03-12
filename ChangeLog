@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-03-13 Sven Mallach <sven.mallach@honei.org>
 
+	* honei/libla/product-cell.cc: Raised the maximum amount of columns to
+	the expected value of 2048 for double version of DM-Product.
+
+2008-03-13 Sven Mallach <sven.mallach@honei.org>
+
 	* honei/cell/kernels/kernel_product_dm.sk,
 	honei/cell/libla/Makefile.am,
 	honei/cell/libla/product_dense_matrix_dense_matrix_double.cc,

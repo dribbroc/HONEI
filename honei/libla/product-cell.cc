@@ -1013,7 +1013,7 @@ namespace honei
 
         unsigned a_t_size(a.columns() * (2048 / (a.columns())));
 
-        while (a_t_size % 8 != 0)
+        while (a_t_size % 2 != 0)
         {
             a_t_size -= a.columns();
         }
