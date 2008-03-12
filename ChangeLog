@@ -7,6 +7,10 @@ see the NEWS file.
 
 2008-03-13 Sven Mallach <sven.mallach@honei.org>
 
+	* honei/libla/product_TEST.cc: Added double tests for DM-Product.
+
+2008-03-13 Sven Mallach <sven.mallach@honei.org>
+
 	* honei/libla/product-cell.cc: Raised the maximum amount of columns to
 	the expected value of 2048 for double version of DM-Product.
 

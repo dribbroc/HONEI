@@ -988,6 +988,7 @@ class DenseMatrixProductCellTest :
 
 #ifdef HONEI_CELL
 DenseMatrixProductCellTest<tags::Cell, float> cell_dense_matrix_product_test_float("Cell float");
+DenseMatrixProductCellTest<tags::Cell, double> cell_dense_matrix_product_test_double("Cell double");
 #endif
 
 
@@ -1049,6 +1050,7 @@ class DenseMatrixProductCellQuickTest :
 };
 #ifdef HONEI_CELL
 DenseMatrixProductCellQuickTest<tags::Cell, float> cell_dense_matrix_product_quick_test_float("Cell float");
+DenseMatrixProductCellQuickTest<tags::Cell, double> cell_dense_matrix_product_quick_test_double("Cell double");
 #endif
 
 template <typename DataType_>
