@@ -12,6 +12,44 @@ using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
+class DenseVectorSumVectorBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        DenseVectorSumVectorBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DenseVector<DataType_> dm(_size, static_cast<DataType_>(rand()));
+            for(int i = 0; i < _count; ++i)
+            {
+                BENCHMARK((Reduction<rt_sum, Tag_>::value(dm)));
+            }
+            BenchmarkInfo info(Reduction<rt_sum>::get_benchmark_info(dm));
+            evaluate(info);
+        }
+};
+#ifdef HONEI_SSE
+DenseVectorSumVectorBench<tags::CPU::SSE, float> SSEDVSVBenchfloat1("SSE Dense Vector Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::CPU::SSE, double> SSEDVSVBenchdouble1("SSE Dense Vector Sum Vector Benchmark - matrix size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::CPU::MultiCore::SSE, float> SSEDVSVBenchfloat2("MC::SSE Vector Row Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::CPU::MultiCore::SSE, double> SSEDVSVBenchdouble2("MC::SSE Dense Vector Sum Vector Benchmark - matrix size: 64^4, double",64ul*64*64*64, 10);
+#endif
+#ifdef HONEI_CELL
+DenseVectorSumVectorBench<tags::Cell, float> CELLDVSVBenchfloat1("Cell Dense Vector Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::Cell, double> CELLDVSVBenchdouble1("Cell Dense Vector Sum Vector Benchmark - matrix size: 64^4, double", 64ul*64*64*64, 10);
+#endif
+
+template <typename Tag_, typename DataType_>
 class DenseMatrixRowSumVectorBench :
     public Benchmark
 {
