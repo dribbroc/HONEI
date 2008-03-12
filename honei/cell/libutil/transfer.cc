@@ -43,4 +43,14 @@ namespace intern
         { 0xFFFFFFFF, 0, 0, 0 }
     };
 
+    const vector unsigned long long double_bitmasks[2] = {
+        { 0xFFFFFFFFFFFFFFFFllu, 0xFFFFFFFFFFFFFFFFllu },
+        { 0llu, 0xFFFFFFFFFFFFFFFFllu }
+    };
+
+    const vector unsigned long long double_reverse_bitmasks[2] = {
+        { 0llu, 0llu },
+        { 0xFFFFFFFFFFFFFFFFllu, 0llu }
+    };
+
 }

@@ -31,6 +31,9 @@ namespace intern
     extern const vector unsigned char extract_patterns[4];
     extern const vector unsigned long bitmasks[4];
     extern const vector unsigned long reverse_bitmasks[4];
+    extern const vector unsigned long long double_bitmasks[2];
+    extern const vector unsigned long long double_reverse_bitmasks[2];
+
 }
 
 inline unsigned multiple_of_sixteen(unsigned u) HONEI_INLINE;
@@ -74,13 +77,20 @@ template <> inline void extract<vector double>(vector double & first, const vect
  * Please note that insert can only be used on SPU-side as it uses spu_intrinsics.h.
  */
 
-template <typename DT_> inline void insert(DT_ & first, DT_ & second, DT_ & data, unsigned offset) HONEI_INLINE;
+template <typename DT_> inline void insert(DT_ & first, DT_ & second, DT_ & data, unsigned long offset) HONEI_INLINE;
 
-template <> inline void insert<vector float>(vector float & first, vector float & second, vector float & data, unsigned offset)
+template <> inline void insert<vector float>(vector float & first, vector float & second, vector float & data, unsigned long offset)
 {
     data = spu_shuffle(data, data, intern::extract_patterns[(4 - offset) % 4]);
     second = spu_sel(second, data, intern::reverse_bitmasks[(4 - offset) % 4]);
     first = spu_sel(first, data, intern::bitmasks[offset]);
+}
+
+template <> inline void insert<vector double>(vector double & first, vector double & second, vector double & data, unsigned long offset)
+{
+    data = spu_shuffle(data, data, intern::extract_patterns[2 * ((2 - offset) % 2)]);
+    second = spu_sel(second, data, intern::double_reverse_bitmasks[(2 - offset) % 2]);
+    first = spu_sel(first, data, intern::double_bitmasks[offset]);
 }
 
 /* fill
@@ -113,7 +123,7 @@ template <> inline void fill<double>(void * address, unsigned long size, double 
     vector double v = { value, value };
 
     unsigned i(0);
-    for ( ; i < size / sizeof(double) ; ++i)
+    for ( ; i < size / sizeof(vector double) ; ++i)
     {
         p.vectorised[i] = v;
     }

@@ -5,6 +5,17 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-13 Sven Mallach <sven.mallach@honei.org>
+
+	* honei/cell/kernels/kernel_product_dm.sk,
+	honei/cell/libla/Makefile.am,
+	honei/cell/libla/product_dense_matrix_dense_matrix_double.cc,
+	honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/cell/libutil/transfer.cc, honei/cell/libutil/transfer.hh,
+	honei/cell/opcodes.hh, honei/libla/product-cell.cc,
+	honei/libla/product.hh: Added double version of Cell DM-Product. Works
+	only for a maximum of 512 columns yet.
+
 2008-03-12 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* honei/libla/reduction_BENCHMARK.cc:

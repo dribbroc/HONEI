@@ -27,7 +27,7 @@
 using namespace honei::cell;
 
 /*
- * dense_dense_float_matrix_product
+ * dense_dense_double_matrix_product
  *
  * Calculate the product of two dense matrices.
  *
@@ -47,7 +47,7 @@ using namespace honei::cell;
  * \operand m Pointer to DMA transfer list sizes for the result matrix.
  * \operand n Pointer to DMA transfer list effective addresses for the result matrix.
  */
-void product_dense_matrix_dense_matrix_float(const Instruction & inst)
+void product_dense_matrix_dense_matrix_double(const Instruction & inst)
 {
     debug_value(0);
 
@@ -91,9 +91,9 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     Allocation * block_b[4] = { acquire_block(), acquire_block(), acquire_block(), acquire_block() };
     Allocation * block_r[2] = { acquire_block(), acquire_block() };
 
-    Pointer<float> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
-    Pointer<float> b[2] = { { block_b[0]->address }, { block_b[2]->address } };
-    Pointer<float> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
+    Pointer<double> a[2] = { { block_a[0]->address }, { block_a[1]->address } };
+    Pointer<double> b[2] = { { block_b[0]->address }, { block_b[2]->address } };
+    Pointer<double> r[2] = { { block_r[0]->address }, { block_r[1]->address } };
 
     // Assure that first DMA List (B) has arrived
     mfc_write_tag_mask(1 << 10);
@@ -108,7 +108,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     debug_get(list_ptrs[1 % nr_of_lists], list_ptr[1].untyped, multiple_of_sixteen(sizeof(ListElement) * list_sizes[1 % nr_of_lists]));
     mfc_get(list_ptr[1].untyped, list_ptrs[1 % nr_of_lists], multiple_of_sixteen(sizeof(ListElement) * list_sizes[1 % nr_of_lists]), 10, 0, 0);
 
-    fill(r[r_current].untyped, 16384, 0.0f);
+    fill(r[r_current].untyped, 16384, double(0));
 
     EffectiveAddress ea_a(inst.a.ea);
     // GET the first part of Matrix A
@@ -125,7 +125,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
     Allocation * r_block_list[2] = { acquire_block(), acquire_block() };
     Pointer<ListElement> r_list_ptr[2] = { { r_block_list[0]->address }, { r_block_list[1]->address } };
-    const unsigned r_elem_t_size((inst.j.u * sizeof(float)) + 16);
+    const unsigned r_elem_t_size((inst.j.u * 8) + 16);
     union lsaddr
     {
         void * ptr;
@@ -134,8 +134,8 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     lsaddr lsa = { r[r_current].untyped };
     unsigned act_list(0);
 
-    const unsigned long b_offset(inst.h.u / sizeof(float)); // Start offset of the row with index 1 (!) (row 0 has always index 0)
-    const unsigned b_vecs(inst.j.u / 4);
+    const unsigned long b_offset(inst.h.u / sizeof(double)); // Start offset of the row with index 1 (!) (row 0 has always index 0)
+    const unsigned b_vecs(inst.j.u / 2);
     unsigned ar(0);
     unsigned r_offset(0);
 
@@ -157,7 +157,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
         unsigned get_counter(0), get_next_counter(0);
         unsigned long a_elem(0); // The actual considered element of matrix a
-        unsigned a_rows(a_size / sizeof(float) / a_cols);
+        unsigned a_rows(a_size / sizeof(double) / a_cols);
 
         mfc_write_tag_mask(1 << a_current);
         mfc_write_tag_mask(1 << 6 + r_current);
@@ -194,7 +194,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                 const unsigned b_nr_rows(list_sizes[b_counter - 1]);
                 unsigned b_vec_idx(0);
 
-                vector float r_temps[b_vecs];
+                vector double r_temps[b_vecs];
                 const unsigned r_idx(ar * (b_vecs + 1));
 
                 for (unsigned i(0) ; i < b_vecs ; i++)
@@ -205,12 +205,12 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
                 for (unsigned br(0) ; br < b_nr_rows ; br++, a_elem++)
                 {
-                    vector float a_vec(spu_splats(a[a_current].typed[a_elem]));
+                    vector double a_vec(spu_splats(a[a_current].typed[a_elem]));
 
                     for(unsigned i(0) ; i < b_vecs ; i += 2, b_vec_idx += 2)
                     {
-                        vector float temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
-                        vector float temp2 = b[b_current].vectorised[b_vec_idx + 1]; // temp version needed, cause original matrix must not be changed!
+                        vector double temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
+                        vector double temp2 = b[b_current].vectorised[b_vec_idx + 1]; // temp version needed, cause original matrix must not be changed!
 
                         extract(temp, temp2, e_offset);
                         extract(temp2, b[b_current].vectorised[b_vec_idx + 2], e_offset);
@@ -220,7 +220,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                     }
 
                     b_vec_idx++;
-                    e_offset = (e_offset + b_offset) % 4;
+                    e_offset = (e_offset + b_offset) % 2;
                 }
 
                 for (unsigned i(0) ; i < b_vecs ; i += 2)
@@ -235,7 +235,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
             } // end while B
 
-            r_offset = (r_offset + b_offset) % 4;
+            r_offset = (r_offset + b_offset) % 2;
         } // end for
 
         // PUT a_rows
@@ -265,7 +265,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             act_list++;
         }
 
-        fill(r[r_next].untyped, 16384, 0.0f);
+        fill(r[r_next].untyped, 16384, double(0));
 
         unsigned a_temp(a_next);
         a_next = a_current;
@@ -284,7 +284,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
     mfc_read_tag_status_all();
     unsigned get_counter(0), get_next_counter(0);
     unsigned long a_elem(0); // The actual considered element of matrix a
-    unsigned a_rows(a_size / sizeof(float) / a_cols);
+    unsigned a_rows(a_size / sizeof(double) / a_cols);
 
     for( ; ar < a_rows ; ar++)
     {
@@ -319,7 +319,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             const unsigned b_nr_rows(list_sizes[b_counter - 1]);
             unsigned b_vec_idx(0);
 
-            vector float r_temps[b_vecs];
+            vector double r_temps[b_vecs];
             const unsigned r_idx(ar * (b_vecs + 1));
 
             for (unsigned i(0) ; i < b_vecs ; i++)
@@ -330,12 +330,12 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
 
             for (unsigned br(0) ; br < b_nr_rows ; br++, a_elem++)
             {
-                vector float a_vec(spu_splats(a[a_current].typed[a_elem]));
+                vector double a_vec(spu_splats(a[a_current].typed[a_elem]));
 
                 for(unsigned i(0) ; i < b_vecs ; i += 2, b_vec_idx += 2)
                 {
-                    vector float temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
-                    vector float temp2 = b[b_current].vectorised[b_vec_idx + 1]; // temp version needed, cause original matrix must not be changed!
+                    vector double temp = b[b_current].vectorised[b_vec_idx]; // temp version needed, cause original matrix must not be changed!
+                    vector double temp2 = b[b_current].vectorised[b_vec_idx + 1]; // temp version needed, cause original matrix must not be changed!
 
                     extract(temp, temp2, e_offset);
                     extract(temp2, b[b_current].vectorised[b_vec_idx + 2], e_offset);
@@ -345,7 +345,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                 }
 
                 b_vec_idx++;
-                e_offset = (e_offset + b_offset) % 4;
+                e_offset = (e_offset + b_offset) % 2;
             }
 
             for (unsigned i(0) ; i < b_vecs ; i += 2)
@@ -359,7 +359,7 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
             b_current = b_temp;
         }
 
-        r_offset = (r_offset + b_offset) % 4;
+        r_offset = (r_offset + b_offset) % 2;
 
     }
 
