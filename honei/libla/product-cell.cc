@@ -166,6 +166,136 @@ namespace honei
         return result;
     }
 
+    DenseVector<double> Product<tags::Cell>::value(const DenseMatrix<double> & a, const DenseVector<double> & x)
+    {
+        CONTEXT("When calculating DenseMatrix<double>-DenseVector<double> product (Cell):");
+
+        if (x.size() != a.columns())
+            throw VectorSizeDoesNotMatch(x.size(), a.columns());
+
+        DenseVector<double> result(a.rows(), double(0));
+        std::list<SPEInstruction *> instructions;
+
+        unsigned long spe_count(Configuration::instance()->get_value("cell::product_dense_matrix_dense_vector_double", 4ul));
+        spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
+        unsigned rows_per_spe(a.rows() / spe_count);
+        unsigned ppu_rows(0);
+        bool use_spe(true);
+
+        if (a.rows() < (2 * spe_count))
+        {
+            ppu_rows = a.rows();
+            spe_count = 0;
+            rows_per_spe = 0;
+            use_spe = false;
+        }
+
+        if (use_spe)
+        {
+            unsigned parts(spe_count);
+            while (rows_per_spe > 2096)
+            {
+                rows_per_spe /= 2;
+                parts *= 2;
+            }
+            rows_per_spe &= ~0x1;
+            ppu_rows = a.rows() - (spe_count * rows_per_spe);
+
+            union addr
+            {
+                double * ptr;
+                unsigned long long value;
+            };
+
+            unsigned a_t_size(a.columns() * (2096 / (a.columns())));
+            while (a_t_size % 2 != 0)
+            {
+                a_t_size -= a.columns();
+            }
+            a_t_size *= 8;
+
+            for (unsigned i(0) ; i < parts ; i++)
+            {
+                addr one = { (a.elements() +  a.columns()) };
+                unsigned a_offset(one.value & 0xf);
+
+                Operand oa = { a.elements() + (rows_per_spe * i * a.columns()) };
+                Operand ob = { x.elements() };
+                Operand oc = { result.elements() + (rows_per_spe * i) };
+
+                Operand od, oe, of, og;
+                // Transfer only full rows.
+                od.u = (8 * rows_per_spe * a.columns()) / a_t_size;
+                oe.u = (8 * rows_per_spe * a.columns()) % a_t_size;
+                of.u = (8 * x.size()) / 16384;
+                og.u = (8 * x.size()) % 16384;
+
+                if (0 == oe.u)
+                {
+                    if (od.u > 0)
+                    {
+                        oe.u = a_t_size;
+                    }
+                }
+                else
+                {
+                    ++od.u;
+                }
+
+                if (0 == og.u)
+                {
+                    if (of.u > 0)
+                    {
+                        og.u = 16384;
+                    }
+                }
+                else
+                {
+                    ++of.u;
+                }
+
+                Operand oh;
+                oh.u = a.columns();
+                Operand oi;
+                oi.u = a_offset / sizeof(double);
+
+                if (i % spe_count == 0) // wait for the last parts to have finished.
+                {
+                    for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; i++)
+                    {
+                        (*i)->wait();
+                        delete *i;
+                        instructions.erase(i);
+                    }
+                }
+
+                SPEInstruction * instruction = new SPEInstruction(oc_product_dense_matrix_dense_vector_double, a_t_size, oa, ob, oc, od, oe, of, og, oh, oi);
+                instructions.push_back(instruction);
+                SPEManager::instance()->dispatch(*instruction);
+            }
+        }
+
+        for (unsigned i(0) ; i < ppu_rows ; i++)
+        {
+            DenseVectorRange<double> row = a[(spe_count * rows_per_spe) + i];
+            for (Vector<double>::ConstElementIterator c(row.begin_elements()), c_end(row.end_elements()), d(x.begin_elements()) ; c != c_end ; ++c, ++d)
+            {
+                result[(spe_count * rows_per_spe) + i] += *c * *d;
+            }
+        }
+
+        if (use_spe)
+        {
+            for(std::list<SPEInstruction *>::iterator i(instructions.begin()), i_end(instructions.end()) ; i != i_end ; i++)
+            {
+                (*i)->wait();
+                delete *i;
+            }
+        }
+
+        return result;
+    }
+
     DenseVector<float> Product<tags::Cell>::value(const BandedMatrix<float> & a, const DenseVector<float> & b)
     {
         CONTEXT("When calculating BandedMatrix<float>-DenseVector<float> product (Cell):");

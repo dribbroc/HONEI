@@ -1209,6 +1209,7 @@ namespace honei
     struct Product<tags::Cell>
     {
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVector<float> & b);
+        static DenseVector<double> value(const DenseMatrix<double> & a, const DenseVector<double> & b);
         static DenseMatrix<float> value(const DenseMatrix<float> & a, const DenseMatrix<float> & b);
         static DenseMatrix<double> value(const DenseMatrix<double> & a, const DenseMatrix<double> & b);
 

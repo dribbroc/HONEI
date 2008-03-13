@@ -41,6 +41,7 @@ namespace honei
             oc_product_dense_matrix_dense_matrix_float,
             oc_product_dense_matrix_dense_matrix_double,
             oc_product_dense_matrix_dense_vector_float,
+            oc_product_dense_matrix_dense_vector_double,
             oc_product_banded_matrix_dense_vector_float,
             oc_product_banded_matrix_dense_vector_double,
             oc_element_product_dense_dense_float,
