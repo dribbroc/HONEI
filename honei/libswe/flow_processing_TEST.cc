@@ -140,4 +140,6 @@ FlowProcessingTest<tags::Cell, float> flow_test_float_cell("float Cell");
 #ifdef HONEI_SSE
 FlowProcessingTest<tags::CPU::SSE, float> flow_test_float_sse("float SSE");
 FlowProcessingTest<tags::CPU::SSE, double> flow_test_double_sse("double SSE");
+FlowProcessingTest<tags::CPU::MultiCore::SSE, float> flow_test_float_mcsse("float MCSSE");
+FlowProcessingTest<tags::CPU::MultiCore::SSE, double> flow_test_double_mcsse("double MCSSE");
 #endif

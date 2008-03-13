@@ -251,5 +251,33 @@ namespace honei
             static DenseVector<double> value(DenseVector<double> & vector);
     };
 
+    template <>
+    struct FlowProcessing<directions::X, tags::CPU::MultiCore::SSE>
+    {
+        public:
+            static DenseVector<float> value(DenseVector<float> & vector)
+            {
+                return FlowProcessing<directions::X, tags::CPU::SSE>::value(vector);
+            }
+            static DenseVector<double> value(DenseVector<double> & vector)
+            {
+                return FlowProcessing<directions::X, tags::CPU::SSE>::value(vector);
+            }
+    };
+
+    template <>
+    struct FlowProcessing<directions::Y, tags::CPU::MultiCore::SSE>
+    {
+        public:
+            static DenseVector<float> value(DenseVector<float> & vector)
+            {
+                return FlowProcessing<directions::Y, tags::CPU::SSE>::value(vector);
+            }
+            static DenseVector<double> value(DenseVector<double> & vector)
+            {
+                return FlowProcessing<directions::Y, tags::CPU::SSE>::value(vector);
+            }
+    };
+
 }
 #endif

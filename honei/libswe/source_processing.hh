@@ -160,5 +160,22 @@ namespace honei
             static DenseVector<double> value(DenseVector<double> & vector, DenseVector<double> & bottom_slopes_x, DenseVector<double> & bottom_slopes_y, double manning_n_squared);
 
     };
+
+    template <>
+    struct SourceProcessing<source_types::SIMPLE, tags::CPU::MultiCore::SSE>
+    {
+        public:
+            static DenseVector<float> value(DenseVector<float> & vector, DenseVector<float> & bottom_slopes_x, DenseVector<float> & bottom_slopes_y, float manning_n_squared) 
+            {
+                return SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value(vector, bottom_slopes_x, bottom_slopes_y, manning_n_squared);
+            }
+            static DenseVector<double> value(DenseVector<double> & vector, DenseVector<double> & bottom_slopes_x, DenseVector<double> & bottom_slopes_y, double manning_n_squared)
+            {
+                return SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value(vector, bottom_slopes_x, bottom_slopes_y, manning_n_squared);
+
+            }
+
+    };
+
 }
 #endif

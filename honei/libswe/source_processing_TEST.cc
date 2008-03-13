@@ -56,8 +56,11 @@ class SourceProcessingTest:
 };
 SourceProcessingTest<tags::CPU, float> source_test_float("float");
 SourceProcessingTest<tags::CPU, double> source_test_double("double");
-
+SourceProcessingTest<tags::CPU::MultiCore, float> source_test_float_MC("float MC");
+SourceProcessingTest<tags::CPU::MultiCore, double> source_test_double_MC("double MC");
 #ifdef HONEI_SSE
 SourceProcessingTest<tags::CPU::SSE, float> source_test_float_SSE("float SSE");
 SourceProcessingTest<tags::CPU::SSE, double> source_test_double_SSE("double SSE");
+SourceProcessingTest<tags::CPU::MultiCore::SSE, float> source_test_float_MCSSE("float MCSSE");
+SourceProcessingTest<tags::CPU::MultiCore::SSE, double> source_test_double_MCSSE("double MCSSE");
 #endif

@@ -7,6 +7,15 @@ see the NEWS file.
 
 2008-03-13 Markus Geveler <apryde@gmx.de>
 
+	* honei/libswe/assembly_processing.hh,
+	honei/libswe/assembly_processing_TEST.cc,
+	honei/libswe/flow_processing.hh, honei/libswe/flow_processing_TEST.cc,
+	honei/libswe/source_processing.hh,
+	honei/libswe/source_processing_TEST.cc:
+	Forwarded mcsse swe module calls to sse.
+
+2008-03-13 Markus Geveler <apryde@gmx.de>
+
 	* honei/libmath/iterative_refinement.hh:
 	Applied usage of nonzero band iterator.
 	

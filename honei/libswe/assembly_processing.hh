@@ -683,5 +683,36 @@ namespace honei
                 static BandedMatrix<float> & value(BandedMatrix<float> & m2, BandedMatrix<float> & result, DenseVector<float> & c, unsigned long d_width, unsigned long d_height);
                 static BandedMatrix<double> & value(BandedMatrix<double> & m2, BandedMatrix<double> & result, DenseVector<double> & c, unsigned long d_width, unsigned long d_height);
         };
+//--------------------------MCSSE------------------------------------------
+    template<>
+        struct AssemblyProcessing<tags::CPU::MultiCore::SSE, assembly_types::QUICK::M6>
+        {
+            public:
+                static BandedMatrix<float> & value(BandedMatrix<float> & m1, BandedMatrix<float> & result, DenseVector<float> & c, unsigned long d_width, unsigned long d_height)
+                {
+                    return AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M6>::value(m1, result, c, d_width, d_height);
+                }
+                static BandedMatrix<double> & value(BandedMatrix<double> & m1, BandedMatrix<double> & result, DenseVector<double> & c, unsigned long d_width, unsigned long d_height)
+                {
+                    return AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M6>::value(m1, result, c, d_width, d_height);
+
+                }
+        };
+
+    template<>
+        struct AssemblyProcessing<tags::CPU::MultiCore::SSE, assembly_types::QUICK::M8>
+        {
+            public:
+                static BandedMatrix<float> & value(BandedMatrix<float> & m2, BandedMatrix<float> & result, DenseVector<float> & c, unsigned long d_width, unsigned long d_height)
+                {
+                    return AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M8>::value(m2, result, c, d_width, d_height);
+
+                }
+                static BandedMatrix<double> & value(BandedMatrix<double> & m2, BandedMatrix<double> & result, DenseVector<double> & c, unsigned long d_width, unsigned long d_height)
+                {
+                    return AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M8>::value(m2, result, c, d_width, d_height);
+                }
+        };
+
 }
 #endif
