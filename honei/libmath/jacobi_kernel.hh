@@ -60,7 +60,7 @@ namespace honei
 
                 Difference<tags::CPU>::value(temp2, temp);
                 ElementProduct<tags::CPU>::value(temp2, diag_inverted);
-                former_result = temp2.copy();
+                former_result = temp2;
 
                 return former_result;
             }
