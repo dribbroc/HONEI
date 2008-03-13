@@ -304,6 +304,7 @@ DenseMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_dense_matrix_dense
 #endif
 #ifdef HONEI_CELL
 DenseMatrixDenseVectorProductTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_test_float("Cell float");
+DenseMatrixDenseVectorProductTest<tags::Cell, double> cell_dense_matrix_dense_vector_product_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -344,6 +345,7 @@ DenseMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_dense_matrix_
 #endif
 #ifdef HONEI_CELL
 DenseMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_quick_test_float("Cell float");
+DenseMatrixDenseVectorProductQuickTest<tags::Cell, double> cell_dense_matrix_dense_vector_product_quick_test_double("Cell double");
 #endif
 
 template <typename DataType_>
