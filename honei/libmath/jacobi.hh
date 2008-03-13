@@ -68,7 +68,7 @@ namespace honei
 
                 Difference<Tag_>::value(temp2, temp);
                 ElementProduct<Tag_>::value(temp2, diag_inverted);
-                former_result = temp2.copy();
+                former_result = temp2;
             }
 
             template<typename DT1_, typename DT2_>
