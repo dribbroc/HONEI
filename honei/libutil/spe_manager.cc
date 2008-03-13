@@ -199,7 +199,7 @@ namespace honei
             next_history_pos(0),
             mutex(new Mutex),
             spe_count(std::min(Configuration::instance()->get_value("cell::number-of-spes",
-                        spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1)), spe_cpu_info_get(SPE_COUNT_USABLE_SPES, -1))) /// \todo USABLE or PHYSICAL?
+                        spe_cpu_info_get(SPE_COUNT_USABLE_SPES, 0)), spe_cpu_info_get(SPE_COUNT_USABLE_SPES, 0))) /// \todo USABLE or PHYSICAL?
         {
             std::fill(opcode_history, opcode_history + 8, cell::oc_noop);
         }
