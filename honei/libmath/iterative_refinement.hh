@@ -150,7 +150,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_bands()), i_end(system_matrix.end_bands());
+                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
                     for(; i != i_end; ++i)
                     {
                         DenseVector<float> band(right_hand_side.size());
@@ -195,6 +195,7 @@ namespace honei
                         }
 
                         inner_defect = ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, eps_inner);
+
                         //reconvert
                         typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
                         typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
@@ -428,7 +429,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_bands()), i_end(system_matrix.end_bands());
+                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
                     for(; i != i_end; ++i)
                     {
                         DenseVector<float> band(right_hand_side.size());
@@ -703,7 +704,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_bands()), i_end(system_matrix.end_bands());
+                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
                     for(; i != i_end; ++i)
                     {
                         DenseVector<float> band(right_hand_side.size());
