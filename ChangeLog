@@ -5,6 +5,13 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-13 Sven Mallach <sven.mallach@uni-dortmund.de>
+
+	* honei/cell/libla/product_dense_matrix_dense_matrix_double.cc,
+	honei/cell/libla/product_dense_matrix_dense_matrix_float.cc,
+	honei/libla/product-cell.cc: Improved the algorithms to get rid of
+	the zig-zag performance.
+
 2008-03-13 Markus Geveler <apryde@gmx.de>
 
 	* honei/libmath/jacobi_kernel.hh:

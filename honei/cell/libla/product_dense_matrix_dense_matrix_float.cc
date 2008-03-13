@@ -219,14 +219,22 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                         r_temps[i + 1] = spu_madd(a_vec, temp2, r_temps[i + 1]);
                     }
 
+                    if (b_vecs % 2 != 0)
+                    {
+                        vector float temp = b[b_current].vectorised[b_vec_idx - 1]; // temp version needed, cause original matrix must not be changed!
+                        extract(temp, b[b_current].vectorised[b_vec_idx], e_offset);
+                        r_temps[b_vecs] = spu_madd(a_vec, temp, r_temps[b_vecs]);
+                        b_vec_idx--;
+                    }
+
                     b_vec_idx++;
                     e_offset = (e_offset + b_offset) % 4;
                 }
 
-                for (unsigned i(0) ; i < b_vecs ; i += 2)
+                for (unsigned i(0) ; i < b_vecs ; i++)
                 {
                     insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
-                    insert(r[r_current].vectorised[r_idx + i + 1], r[r_current].vectorised[r_idx + i + 2], r_temps[i + 1], r_offset);
+//                    insert(r[r_current].vectorised[r_idx + i + 1], r[r_current].vectorised[r_idx + i + 2], r_temps[i + 1], r_offset);
                 }
 
                 unsigned b_temp(b_next);
@@ -344,14 +352,22 @@ void product_dense_matrix_dense_matrix_float(const Instruction & inst)
                     r_temps[i + 1] = spu_madd(a_vec, temp2, r_temps[i + 1]);
                 }
 
+                if (b_vecs % 2 != 0)
+                {
+                    vector float temp = b[b_current].vectorised[b_vec_idx - 1]; // temp version needed, cause original matrix must not be changed!
+                    extract(temp, b[b_current].vectorised[b_vec_idx], e_offset);
+                    r_temps[b_vecs] = spu_madd(a_vec, temp, r_temps[b_vecs]);
+                    b_vec_idx--;
+                }
+
                 b_vec_idx++;
                 e_offset = (e_offset + b_offset) % 4;
             }
 
-            for (unsigned i(0) ; i < b_vecs ; i += 2)
+            for (unsigned i(0) ; i < b_vecs ; i++)
             {
                 insert(r[r_current].vectorised[r_idx + i], r[r_current].vectorised[r_idx + i + 1], r_temps[i], r_offset);
-                insert(r[r_current].vectorised[r_idx + i + 1], r[r_current].vectorised[r_idx + i + 2], r_temps[i + 1], r_offset);
+//                insert(r[r_current].vectorised[r_idx + i + 1], r[r_current].vectorised[r_idx + i + 2], r_temps[i + 1], r_offset);
             }
 
             unsigned b_temp(b_next);
