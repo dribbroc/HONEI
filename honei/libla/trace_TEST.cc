@@ -23,8 +23,6 @@
 
 #include <limits>
 
-#include <iostream>
-
 using namespace honei;
 using namespace tests;
 

@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/libla/trace.hh>
 #include <honei/libmath/hessenberg.hh>
 #include <honei/libmath/qr_decomposition.hh>
 #include <unittest/unittest.hh>
@@ -45,9 +46,13 @@ class QRDecompositionTest :
             DenseMatrix<DT_> dm(size, size, DT_(1));
 
             Hessenberg<Tag_>::value(dm);
-            QRDecomposition<Tag_>::value(dm);
+            DT_ trace_hessenberg(Trace<Tag_>::value(dm));
 
-            // No checks yet.
+            QRDecomposition<Tag_>::value(dm);
+            DT_ trace_qr(Trace<Tag_>::value(dm));
+
+            TEST_CHECK_EQUAL_WITHIN_EPS(dm(0, 0), DT_(size), std::numeric_limits<DT_>::epsilon() * DT_(size));
+            TEST_CHECK_EQUAL_WITHIN_EPS(trace_qr, trace_hessenberg, std::numeric_limits<DT_>::epsilon() * trace_hessenberg);
         }
 };
 

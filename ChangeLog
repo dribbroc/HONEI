@@ -7,6 +7,13 @@ see the NEWS file.
 
 2008-03-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
+	* honei/libla/trace_TEST.cc: Removed unneeded iostream header.
+	* honei/libmath/qr_decomposition.hh,
+	honei/libmath/qr_decomposition_TEST.cc: Added QRDecomposition(DM) for
+	CPU. Input needs to be in Hessenberg form.
+
+2008-03-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
 	* honei/libla/files.m4, honei/libla/trace.hh,
 	honei/libla/trace_TEST.cc: Added Trace(DM) for CPU.
 
