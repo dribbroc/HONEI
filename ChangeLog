@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-17 Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+	* honei/libla/files.m4, honei/libla/trace.hh,
+	honei/libla/trace_TEST.cc: Added Trace(DM) for CPU.
+
 2008-03-13 Sven Mallach <sven.mallach@uni-dortmund.de>
 
 	* honei/cell/libla/product_dense_matrix_dense_matrix_double.cc,
