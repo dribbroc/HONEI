@@ -23,7 +23,6 @@
 #ifndef LIBGRAPH_GUARD_POSITIONS_HH
 #define LIBGRAPH_GUARD_POSITIONS_HH 1
 
-#include <honei/libgraph/dijkstra.hh>
 #include <honei/libgraph/node_distance.hh>
 #include <honei/libgraph/position-impl.hh>
 #include <honei/libgraph/breadth_first_search.hh>
@@ -31,6 +30,7 @@
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/difference.hh>
+#include <honei/libla/dot_product.hh>
 #include <honei/libla/element_inverse.hh>
 #include <honei/libla/element_product.hh>
 #include <honei/libla/matrix_error.hh>
@@ -46,6 +46,8 @@
 #include <cmath>
 #include <tr1/memory>
 #include <iostream>
+#include <fstream> 
+#include <queue>
 /**
  * \file
  *
@@ -64,6 +66,105 @@
         class Implementation;
 
     }
+
+        /**
+         * class template for statistics.
+         */
+    template <typename Tag_> class Statistics
+    {
+        public:
+            template <typename DataType_>
+            static void value(const unsigned long _number_of_iterations,
+            const DenseMatrix<DataType_> & square_dist, const DenseMatrix<DataType_> & _weights_of_edges, const DataType_ & max_force, 
+            DenseVector<DataType_> & statistic_result)
+            {
+                CONTEXT("When calculating the average edge length and the standard deviation of lengths:");
+
+                // statistic_result containing number of iterations, average length and standard deviation
+                statistic_result[0] = _number_of_iterations;
+                statistic_result[1] = 0;
+                statistic_result[2] = 0;
+                statistic_result[3] = max_force;
+                unsigned long number_of_edges(0);
+
+                // calculating average edge length
+                for (unsigned long i(0); i < square_dist.rows(); ++i)
+                {
+                    for (unsigned long j(i+1); j < square_dist.columns(); ++j)
+                    {
+                        if(_weights_of_edges[i][j] > 0)
+                        {
+                            statistic_result[1] += sqrt(square_dist[i][j]);
+                            number_of_edges++;
+                        }
+                    }
+                }
+                statistic_result[1] /= number_of_edges;
+
+                // calculating standard deviation of lengths
+                for (unsigned long i(0); i < square_dist.rows(); ++i)
+                {
+                    for (unsigned long j(i+1); j < square_dist.columns(); ++j)
+                    {
+                        if(_weights_of_edges[i][j] > 0)
+                        {
+                            DataType_ diff(sqrt(square_dist[i][j]) - statistic_result[1]);
+                            statistic_result[2] += diff*diff;
+                        }
+                    }
+                }
+                statistic_result[2] = sqrt(statistic_result[2] / (number_of_edges - 1));
+            }
+
+            template <typename DataType_>
+            static void value(const unsigned long _number_of_iterations,
+            const SparseMatrix<DataType_> & _weights_of_edges, const DataType_ & max_force, const DenseMatrix<DataType_> & _coordinates, 
+            DenseVector<DataType_> & statistic_result)
+            {
+                CONTEXT("When calculating the average edge length and the standard deviation of lengths:");
+
+                // statistic_result containing number of iterations, average length and standard deviation
+                statistic_result[0] = _number_of_iterations;
+                statistic_result[1] = 0;
+                statistic_result[2] = 0;
+                statistic_result[3] = max_force;
+                unsigned long number_of_edges(0);
+
+                // calculating average edge length
+                for (unsigned long i(0); i < _weights_of_edges.rows(); ++i)
+                {
+                    for (unsigned long j(i+1); j < _weights_of_edges.columns(); ++j)
+                    {
+                        if(_weights_of_edges[i][j] > 0)
+                        {
+                            DenseVector<DataType_> v(_coordinates.columns());
+                            TypeTraits<DataType_>::copy(_coordinates[i].elements(), v.elements(), _coordinates.columns());
+                            DataType_ d(Norm<vnt_l_two, true, tags::CPU>::value(Difference<tags::CPU>::value(v, _coordinates[j])));
+                            statistic_result[1] += d;
+                            number_of_edges++;
+                        }
+                    }
+                }
+                statistic_result[1] /= number_of_edges;
+
+                // calculating standard deviation of lengths
+                for (unsigned long i(0); i < _weights_of_edges.rows(); ++i)
+                {
+                    for (unsigned long j(i+1); j < _weights_of_edges.columns(); ++j)
+                    {
+                        if(_weights_of_edges[i][j] > 0)
+                        {
+                            DenseVector<DataType_> v(_coordinates.columns());
+                            TypeTraits<DataType_>::copy(_coordinates[i].elements(), v.elements(), _coordinates.columns());
+                            DataType_ d(Norm<vnt_l_two, true, tags::CPU>::value(Difference<tags::CPU>::value(v, _coordinates[j])));
+                            DataType_ diff(d - statistic_result[1]);
+                            statistic_result[2] += diff*diff;
+                        }
+                    }
+                }
+                statistic_result[2] = sqrt(statistic_result[2] / (number_of_edges - 1));
+            }
+    };
 
     template <typename Tag_ , typename DataType_, typename GraphTag_> class Positions
     {
@@ -162,6 +263,31 @@
             {
                 _imp->step_width(size);
             }
+
+            void noise_duration(DataType_ size)
+            {
+                _imp->noise_duration(size);
+            }
+
+            void statistic(unsigned long size)
+            {
+                _imp->statistic(size);
+            }
+
+            std::queue< DenseVector<DataType_> > statistic()
+            {
+                return _imp->statistic();
+            }
+
+            void get_statistic()
+            {
+                _imp->get_statistic();
+            }
+            
+            void get_statistic(char filename[])
+            {
+                _imp->get_statistic(filename);
+            }
     };
 
     namespace methods
@@ -185,35 +311,79 @@
                 /// parameter matrix for attractive forces
                 DenseMatrix<DataType_> _attractive_force_parameter;
 
-                /// previous max_Force
-                DataType_ _previous_max_Force;
-
-                /// ancestor of previous max_Force
-                DataType_ _previous_max_Force_2;
-
                 /// number of iterations
                 unsigned long _number_of_iterations;
 
                 /// the maximal force
                 DataType_ _max_force;
 
+                /// force direction
+                DenseMatrix<DataType_> _force_direction;
+
                 /// step width
-                DataType_ _step_width;
+                DenseVector<DataType_> _step_width;
+
+                /// _noise_duration - how long is a noise added to the forces (related to _step_with)?
+                DataType_ _noise_duration;
 
                 /// the _repulsive_force_range defines the range of the repulsive force
                 DataType_ _repulsive_force_range;
 
+                /// statistic_queue contains statistic values (number of iterations, average edge length, standard deviation of lengths and the maximum node force)
+                std::queue< DenseVector<DataType_> > statistic_queue;
+
+                /// _statistic_step defines the iterations, in which statistic values will be calculated
+                unsigned long _statistic_step;
+
             public:
                 friend class Positions<Tag_, DataType_, WeightedFruchtermanReingold>;
                 
-                inline DataType_ step_width()
+                inline DenseVector<DataType_> step_width()
                 {
                     return _step_width;
                 }
 
-                inline void step_width(DataType_ size)
+                inline void step_width(DenseVector<DataType_> size)
                 {
                     _step_width = size;
+                }
+
+                inline void noise_duration(DataType_ size)
+                {
+                    _noise_duration = size;
+                }
+
+                inline void statistic(unsigned long size)
+                {
+                    _statistic_step = size;
+                }
+
+                inline std::queue< DenseVector<DataType_> > statistic()
+                {
+                    return statistic_queue;
+                }
+
+                inline void get_statistic()
+                {
+                    std::cout<<"number of iterations: "<<"average edge length: "<<"standard deviation of lengths: "<<"maximum force: "<< std::endl;
+                    while (!statistic_queue.empty())
+                    {                        
+                        DenseVector<DataType_> current_value(statistic_queue.front());
+                        std::cout<<current_value[0]<<" "<<current_value[1]<<" "<<current_value[2]<<" "<<current_value[3]<< std::endl;
+                        statistic_queue.pop();
+                    }
+                }
+                
+                inline void get_statistic(char filename[])
+                {
+                    std::ofstream file(filename); 
+                    file<<"number_of_iterations: "<<"average_edge_length: "<<"standard_deviation_of_lengths: "<<"maximum_force: "<< std::endl;
+                    while (!statistic_queue.empty())
+                    {                        
+                        DenseVector<DataType_> current_value(statistic_queue.front());
+                        file<<current_value[0]<<" "<<current_value[1]<<" "<<current_value[2]<<" "<<current_value[3]<< std::endl;
+                        statistic_queue.pop();
+                    }
                 }
 
                 Implementation(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
@@ -223,14 +393,16 @@
                     _weights_of_edges(weights_of_edges),
                     _repulsive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), DataType_(0)),
                     _attractive_force_parameter(weights_of_edges.columns(), weights_of_edges.rows(), DataType_(0)),
-                    _previous_max_Force(DataType_(0)),
-                    _previous_max_Force_2(DataType_(0)),
                     _number_of_iterations(1),
                     _max_force(0),
-                    _step_width(0),
-                    _repulsive_force_range(DataType_(0))
+                    _force_direction(coordinates.rows(), coordinates.columns(), DataType_(0)),
+                    _step_width(weights_of_nodes),
+                    _repulsive_force_range(DataType_(0)),
+                    _noise_duration(DataType_(0)),
+                    _statistic_step(0)
                 {
-                // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
+                    // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
+                    DataType_ _max_ideal_length(0);
                     typename MutableMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
                     typename Matrix<DataType_>::ConstElementIterator g(_weights_of_edges.begin_elements());
                     for (typename MutableMatrix<DataType_>::ElementIterator e(_repulsive_force_parameter.begin_elements()),
@@ -240,13 +412,20 @@
                         if (*g > std::numeric_limits<DataType_>::epsilon())
                         {
                             DataType_ length_of_edge(sqrt(node_weight) / *g);
-                            if ((length_of_edge) > _repulsive_force_range) _repulsive_force_range = length_of_edge;
+                            if ((length_of_edge) > _max_ideal_length) _max_ideal_length = length_of_edge;
                         }
                         *e = node_weight * node_weight;
                         *f = *g * *g * *g * *g;
                     }
-                    _repulsive_force_range *= _weights_of_edges.rows();
-                    _step_width = _repulsive_force_range / 20;
+                    _noise_duration = _max_ideal_length / 40;
+                    _repulsive_force_range = _max_ideal_length * _weights_of_edges.rows();
+                    DataType_ s_w(_repulsive_force_range / 20);
+
+                    for (typename Vector<DataType_>::ElementIterator e(_step_width.begin_elements()),
+                        e_end(_step_width.end_elements()); e != e_end ; ++e)
+                        {
+                            *e = s_w;
+                        }
                 }
 
                 Implementation(AbstractGraph<DataType_> & graph, DataType_ edgeLength) :
@@ -255,14 +434,16 @@
                     _weights_of_edges(*graph.edges()),
                     _repulsive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), DataType_(0)),
                     _attractive_force_parameter(_weights_of_edges.columns(), _weights_of_edges.rows(), DataType_(0)),
-                    _previous_max_Force(DataType_(0)),
-                    _previous_max_Force_2(DataType_(0)),
                     _number_of_iterations(1),
                     _max_force(0),
-                    _step_width(0),
-                    _repulsive_force_range(DataType_(0))
+                    _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
+                    _step_width(_weights_of_nodes),
+                    _repulsive_force_range(DataType_(0)),
+                    _noise_duration(DataType_(0)),
+                    _statistic_step(0)
                 {
                     // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
+                    DataType_ _max_ideal_length(0);
                     typename MutableMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
                     typename Matrix<DataType_>::ConstElementIterator g(_weights_of_edges.begin_elements());
                     for (typename MutableMatrix<DataType_>::ElementIterator e(_repulsive_force_parameter.begin_elements()),
@@ -272,14 +453,21 @@
                         if (*g > std::numeric_limits<DataType_>::epsilon())
                         {
                             DataType_ length_of_edge(sqrt(node_weight) / *g);
-                            if ((length_of_edge) > _repulsive_force_range) _repulsive_force_range = length_of_edge;
+                            if ((length_of_edge) > _max_ideal_length) _max_ideal_length = length_of_edge;
                         }
                         *e = (graph.same_timeslice(e.row(), e.column())) ?
                            node_weight * node_weight: 0;
                         *f = *g * *g * *g * *g;
                     }
-                    _repulsive_force_range *= _weights_of_edges.rows();
-                    _step_width = _repulsive_force_range / 20;
+                    _noise_duration = _max_ideal_length / 40;
+                    _repulsive_force_range = _max_ideal_length * _weights_of_edges.rows();
+                    DataType_ s_w(_repulsive_force_range / 20);
+
+                    for (typename Vector<DataType_>::ElementIterator e(_step_width.begin_elements()),
+                        e_end(_step_width.end_elements()); e != e_end ; ++e)
+                        {
+                            *e = s_w;
+                        }
                 }
 
                 DataType_ value(const DataType_ & eps)
@@ -288,6 +476,7 @@
                     DenseMatrix<DataType_> inv_square_dist(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0));
                     DenseMatrix<DataType_> square_dist(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0));
                     NodeDistance<Tag_>::value(_coordinates, _weights_of_edges, square_dist, inv_square_dist, _repulsive_force_range);
+                    DenseMatrix<DataType_> square_dist_copy(square_dist.copy());
 
                     // Calculate inv_square_dist = Mul(inv_square_dist,  _repulsive_force_parameter)
                     ElementProduct<Tag_>::value(inv_square_dist, _repulsive_force_parameter);
@@ -331,30 +520,47 @@
                     }
 
                     // Calculate the new _step_width
-                    if ((_number_of_iterations > 2) && (_step_width > 10*std::numeric_limits<DataType_>::epsilon()) && (fabs(result - _previous_max_Force_2) <= fabs(0.2 * _previous_max_Force_2)))
+                    DenseMatrix<DataType_> scaled_forces(_force_direction.rows(), _force_direction.columns(), DataType_(0));
+                    for (typename MutableMatrix<DataType_>::ElementIterator e(scaled_forces.begin_elements()),
+                        e_end(scaled_forces.end_elements()), k(attractive_forces.begin_elements()); e != e_end ; ++e, ++k)
                     {
-                        if (_step_width > _repulsive_force_range / (_weights_of_edges.rows() * 20)) _step_width *= 0.5;
-                        if (_step_width <= _repulsive_force_range  / (_weights_of_edges.rows() * 20))
-                        {
-                            _step_width *= 0.995 ;
-                        }
-                    }                                      
-
-                    // Calculate the new previous forces
-                    _previous_max_Force_2 = _previous_max_Force;
-                    _previous_max_Force = result;
-
-                    // Calculate the new positions by using result forces
-                    DataType_ noise(1);
-                    DataType_ delta(_step_width);
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
-                        e_end(_coordinates.end_elements()), k(attractive_forces.begin_elements()) ; e != e_end ; ++e, ++k)
-                    {                        
-                        if (_step_width > _repulsive_force_range  / (_weights_of_edges.rows() * 5)) noise = (7.5 + ( rand() % 5 ) )/10;
-                        if ((resulting_forces[e.row()]) < _step_width) delta = resulting_forces[e.row()];
-                        result > eps && resulting_forces[e.row()] > 0 ? *e = *e + delta * noise/ (resulting_forces[e.row()]) * *k : 0;
+                        resulting_forces[e.row()] > 0  ? *e = *k / resulting_forces[e.row()] :
+                        *e = 0;
+                    }
+                    if (_number_of_iterations > 1)
+                    {
+                        for (typename Vector<DataType_>::ElementIterator e(_step_width.begin_elements()),
+                                e_end(_step_width.end_elements()); e != e_end ; ++e)
+                                {
+                                        DataType_ prod( DotProduct<Tag_>::value(_force_direction[e.index()], scaled_forces[e.index()]) );
+                                        if (prod > 0.8) *e *=1;
+                                        if ( (prod < -0.8) || (fabs(prod) < 0.2) ) *e *=0.5;
+                                }
                     }
 
+                    // Calculate the new positions by using scaled forces
+                    DataType_ noise(1);
+                    DataType_ delta(0);
+                    for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
+                        e_end(_coordinates.end_elements()), k(scaled_forces.begin_elements()) ; e != e_end ; ++e, ++k)
+                    {
+                        if ( e.column() == 0 )
+                        {
+                            _step_width[e.row()] > _noise_duration ? noise = (7.5 + ( rand() % 5 ) ) / 10 : noise = 1;
+                            delta = std::min(_step_width[e.row()], resulting_forces[e.row()]);
+                        }
+                        result > eps ? *e = *e + delta * noise * *k : 0;
+                    }
+
+                    // Calculate statistic values
+                    if ( (_statistic_step > 0) && (_number_of_iterations-1 == 0 || ((_number_of_iterations-1) % _statistic_step) == 0 ) )
+                    {
+                        DenseVector<DataType_> statistic_values(4, DataType_(0));
+                        Statistics<Tag_>::value(_number_of_iterations-1, square_dist_copy, _weights_of_edges, result, statistic_values);
+                        statistic_queue.push(statistic_values);
+                    }
+
+                    _force_direction = scaled_forces;
                     _number_of_iterations++;
                     _max_force = result;
 
@@ -363,11 +569,8 @@
 
                 void init()
                 {
-
+                        _number_of_iterations = 1;
                 }
-                
-                
-
         };
 
         template <typename Tag_, typename DataType_>
@@ -401,15 +604,70 @@
                 /// index of node with maximal force
                 int _max_node;
 
-                /// vector of step widths
-                DenseVector<DataType_> _step_widths;
+                /// force direction
+                DenseMatrix<DataType_> _force_direction;
+
+                /// vector of step width
+                DenseVector<DataType_> _step_width;
+
+                /// _noise_duration - how long is a noise added to the forces (related to _step_with)?
+                DataType_ _noise_duration;
+
+                /// statistic_queue contains statistic values (number of iterations, average edge length, standard deviation of lengths and the maximum node force)
+                std::queue< DenseVector<DataType_> > statistic_queue;
+
+                /// _statistic_step defines the iterations, in which statistic values will be calculated
+                unsigned long _statistic_step;
 
             public:
                 friend class Positions<Tag_, DataType_, WeightedKamadaKawai>;
-                
-                inline DataType_ step_width()
+
+                inline DenseVector<DataType_> step_width()
                 {
-                    return _step_widths[_max_node];
+                    return _step_width;
+                }
+
+                inline void step_width(DenseVector<DataType_> size)
+                {
+                    _step_width = size;
+                }
+
+                inline void statistic(unsigned long size)
+                {
+                    _statistic_step = size;
+                }
+
+                inline std::queue< DenseVector<DataType_> > statistic()
+                {
+                    return statistic_queue;
+                }
+
+                inline void get_statistic()
+                {
+                    std::cout<<"number of iterations: "<<"average edge length: "<<"standard deviation of lengths: "<<"maximum force: "<< std::endl;
+                    while (!statistic_queue.empty())
+                    {                        
+                        DenseVector<DataType_> current_value(statistic_queue.front());
+                        std::cout<<current_value[0]<<" "<<current_value[1]<<" "<<current_value[2]<<" "<<current_value[3]<< std::endl;
+                        statistic_queue.pop();
+                    }
+                }
+                
+                inline void get_statistic(char filename[])
+                {
+                    std::ofstream file(filename); 
+                    file<<"number_of_iterations: "<<"average_edge_length: "<<"standard_deviation_of_lengths: "<<"maximum_force: "<< std::endl;
+                    while (!statistic_queue.empty())
+                    {                        
+                        DenseVector<DataType_> current_value(statistic_queue.front());
+                        file<<current_value[0]<<" "<<current_value[1]<<" "<<current_value[2]<<" "<<current_value[3]<< std::endl;
+                        statistic_queue.pop();
+                    }
+                }
+
+                inline void noise_duration(DataType_ size)
+                {
+                    _noise_duration = size;
                 }
 
                 Implementation(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
@@ -423,8 +681,11 @@
                     _number_of_iterations(1),
                     _max_node(0),
                     node_forces(coordinates.rows() * coordinates.rows(), coordinates.columns(), DataType_(0)),
-                    _step_widths(coordinates.rows(), DataType_(0))
-                {                    
+                    _step_width(coordinates.rows(), DataType_(0)),
+                    _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
+                    _statistic_step(0),
+                    _noise_duration(0)
+                {
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<>::value(_graph_distance, _weights_of_nodes, _weights_of_edges))
                         throw GraphError("Graph has to be coherently");
@@ -440,17 +701,20 @@
                     _number_of_iterations(1),
                     _max_node(0),
                     node_forces(_coordinates.rows() * _coordinates.rows(), _coordinates.columns(), DataType_(0)),
-                    _step_widths(_coordinates.rows(), DataType_(0))
+                    _step_width(_coordinates.rows(), DataType_(0)),
+                    _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
+                    _statistic_step(0),
+                    _noise_duration(0)
                 {
-                    
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<>::value(_graph_distance, _weights_of_nodes, _weights_of_edges, graph))
                         throw GraphError("Graph has to be coherently");
-                    
                 }
 
                 void init()
                 {
+                    _number_of_iterations = 1;
+                    
                     // Calculate stepwidth
                     DataType_ stepwidth(0);
                     for (typename Matrix<DataType_>::ConstElementIterator e(_weights_of_edges.begin_non_zero_elements()),
@@ -462,18 +726,21 @@
                             stepwidth = auxiliary;
                         }
                     }
-                                    
-                    // Fill vector of _step_widths with stepwidth
-                    for (typename DenseVector<DataType_>::ElementIterator i(_step_widths.begin_elements()), i_end(_step_widths.end_elements()) ;
+                    _noise_duration = stepwidth / 20;
+
+                    // Fill vector of _step_width with stepwidth
+                    for (typename DenseVector<DataType_>::ElementIterator i(_step_width.begin_elements()), i_end(_step_width.end_elements()) ;
                         i != i_end ; ++i)
                     {
                         *i = stepwidth;
                     }
+
                     // Calculate square _graph_distance
                     ElementProduct<Tag_>::value(_graph_distance, _graph_distance);
-                    
+
                     // Calculate square_dist = d(i,j)^2
                     DenseMatrix<DataType_> square_dist(NodeDistance<Tag_>::value(_coordinates));
+                    DenseMatrix<DataType_> square_dist_copy(square_dist.copy());
 
                     // _spring_force_parameters = 1 / sum( _graph_distance, square_dist)
                     DenseMatrix<DataType_> _spring_force_parameters(_graph_distance.copy());
@@ -489,7 +756,7 @@
 
                     // Calculate all forces of a node and the spring_forces
                     ImplementationComponents<Tag_, DataType_, WeightedKamadaKawai>::initializeForces(_spring_force_parameters, _coordinates, _spring_forces, node_forces);
-                    
+
                     // Calculate the resulting forces, the maximal force and the node with maximal force
                     DataType_ result(0);
                     DenseVector<DataType_> resulting_forces(_coordinates.rows(), DataType_(0));
@@ -499,18 +766,25 @@
                         *i = Norm<vnt_l_two, true, Tag_>::value(_spring_forces[i.index()]);
                         *i > result ? result = *i, _max_node = i.index() : 0;
                     }
-                    
+
                     // Calculate the new positions by using resulting forces
                     if (result > std::numeric_limits<DataType_>::epsilon()) 
                     {
                         DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[_max_node].copy());
-                        Scale<>::value(_spring_force_of_max_node, _step_widths[_max_node] / result);
+                        Scale<>::value(_spring_force_of_max_node, _step_width[_max_node] / result);
                         Sum<>::value(_coordinates[_max_node], _spring_force_of_max_node);
+                    }
+
+                    // Calculate statistic values
+                    if ( (_statistic_step > 0) && (_number_of_iterations-1 == 0 || ((_number_of_iterations-1) % _statistic_step) == 0 ) )
+                    {
+                        DenseVector<DataType_> statistic_values(4, DataType_(0));
+                        Statistics<Tag_>::value(_number_of_iterations-1, _weights_of_edges, result, _coordinates, statistic_values);
+                        statistic_queue.push(statistic_values);
                     }
 
                     //std::cout << "_coordinates "<< _coordinates << std::endl;
                     _max_force = result;
-
                 }
 
                 DataType_ value(DataType_ & eps)
@@ -518,9 +792,8 @@
                     // Increment number of iterations
                     _number_of_iterations++;
 
-                    // previous_spring_force of _max_node
-                    DenseVector<DataType_> _previous_spring_force(_spring_forces[_max_node].copy());
-                    Scale<>::value(_previous_spring_force, DataType_(1 / Norm<vnt_l_two, true, Tag_>::value(_previous_spring_force)));
+                    // previous_spring_forces
+                    DenseMatrix<DataType_> _previous_spring_forces(_spring_forces.copy());
 
                     // previous_max_node
                     int _previous_max_node(_max_node);
@@ -530,27 +803,37 @@
                     ImplementationComponents<Tag_, DataType_, WeightedKamadaKawai>::calculateForces(_spring_forces, _max_node, _coordinates,
                     node_forces, _graph_distance[_previous_max_node], result);
 
-                    // Calculate the new step_width
-                    if (_max_node == _previous_max_node)
+                    // Calculate the new _step_width
+                    DenseVectorRange<DataType_> previous_force(_previous_spring_forces[_max_node]);
+                    DataType_ aux(Norm<vnt_l_two, true, Tag_>::value(_previous_spring_forces[_max_node]));
+                    DenseVector<DataType_> current_force(_spring_forces[_max_node].copy());
+                    for (typename DenseVector<DataType_>::ElementIterator i(previous_force.begin_elements()), i_end(previous_force.end_elements()), k(current_force.begin_elements());
+                        i != i_end ; ++i, ++k)
                     {
-                        bool reducing_condition(true);
-                        for (int i(0); i < _spring_forces.columns(); i++)
-                        {
-                            if (fabs(_previous_spring_force[i] - _spring_forces[_max_node][i] * (-1 / result)) > fabs(0.3 * _previous_spring_force[i]))
-                            {
-                                reducing_condition = false;
-                                break;
-                            }
-                        }
-                        if (reducing_condition) _step_widths[_max_node] = _step_widths[_max_node] / 2;
+                        *i /= aux;
+                        *k /= result;
                     }
+                    DataType_ prod( DotProduct<Tag_>::value(previous_force, current_force) );
+                    if (prod > 0.8) _step_width[_max_node] *=1.05;
+                    if ( (prod < -0.8) || (fabs(prod) < 0.2) ) _step_width[_max_node] *=0.35;
 
                     // Calculate the new positions by using resulting forces
+                    DataType_ noise(1);
                     if (result > eps)
                     {
-                        DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[_max_node].copy());
-                        Scale<>::value(_spring_force_of_max_node, DataType_(_step_widths[_max_node] / result));
-                        Sum<>::value(_coordinates[_max_node], _spring_force_of_max_node);
+                        //_step_width[_max_node] > _noise_duration ? noise = (7.5 + ( rand() % 5 ) ) / 10 : noise = 1;
+                        DataType_ delta(std::min(_step_width[_max_node], result));
+                        delta *=noise;
+                        Scale<>::value(current_force, delta);
+                        Sum<>::value(_coordinates[_max_node], current_force);
+                    }
+
+                    // Calculate statistic values
+                    if ( (_statistic_step > 0) && (_number_of_iterations-1 == 0 || ((_number_of_iterations-1) % _statistic_step) == 0 ) )
+                    {
+                        DenseVector<DataType_> statistic_values(4, DataType_(0));
+                        Statistics<Tag_>::value(_number_of_iterations-1, _weights_of_edges, result, _coordinates, statistic_values);
+                        statistic_queue.push(statistic_values);
                     }
 
                     _max_force = result;

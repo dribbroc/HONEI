@@ -372,3 +372,33 @@ void NodeDistance<tags::CPU::SSE>::value(const DenseMatrix<double> & pos_matrix,
 
     intern::sse::invert_distance(inv_square_dist.elements(), square_force_range, inv_square_dist.columns() * inv_square_dist.rows());
 }
+
+void NodeDistance<tags::CPU::SSE>::node_distance(float * result, float * pos_matrix, float x, float y, unsigned long size)
+{
+    intern::sse::node_distance(result, pos_matrix, x, y, size);
+}
+
+void NodeDistance<tags::CPU::SSE>::node_distance(double * result, double * pos_matrix, double x, double y, unsigned long size)
+{
+    intern::sse::node_distance(result, pos_matrix, x, y, size);
+}
+
+void NodeDistance<tags::CPU::SSE>::set_distance(float * dist, float * dist_src, float * mask, unsigned long size)
+{
+    intern::sse::set_distance(dist, dist_src, mask, size);
+}
+
+void NodeDistance<tags::CPU::SSE>::set_distance(double * dist, double * dist_src, double * mask, unsigned long size)
+{
+    intern::sse::set_distance(dist, dist_src, mask, size);
+}
+
+void NodeDistance<tags::CPU::SSE>::invert_distance(float * dist, float square_force_range, unsigned long size)
+{
+    intern::sse::invert_distance(dist, square_force_range, size);
+}
+
+void NodeDistance<tags::CPU::SSE>::invert_distance(double * dist, double square_force_range, unsigned long size)
+{
+    intern::sse::invert_distance(dist, square_force_range, size);
+}

@@ -83,13 +83,15 @@ class BreadthFirstSearchWeightedBinaryTreeBench :
 {
     private:
         unsigned long _nodecount;
+        unsigned long _depth;
         unsigned long _count;
     public:
-        BreadthFirstSearchWeightedBinaryTreeBench(const std::string & id, unsigned long nodecount, unsigned long count) :
+        BreadthFirstSearchWeightedBinaryTreeBench(const std::string & id, unsigned long depth, unsigned long count) :
             Benchmark(id)
         {
-            _nodecount = nodecount;
             _count = count;
+            _depth = depth;
+            _nodecount = (1 << (_depth + 1)) -1;
             register_tag(Tag_::name);
         }
 
@@ -130,8 +132,8 @@ BreadthFirstSearchWeightedCliqueBench<tags::CPU, float> breadth_first_search_wei
 BreadthFirstSearchWeightedCliqueBench<tags::CPU, double> breadth_first_search_weighted_clique_bench_double("BFS WeightedClique Benchmark double", 1000, 3);
 BreadthFirstSearchWeightedCliqueBench<tags::CPU::MultiCore, float> mc_breadth_first_search_weighted_clique_bench_float("MC BFS WeightedClique Benchmark float", 1000, 3);
 BreadthFirstSearchWeightedCliqueBench<tags::CPU::MultiCore, double> mc_breadth_first_search_weighted_clique_bench_double("MC BFS WeightedClique Benchmark double", 1000, 3);
-BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU, float> breadth_first_search_weighted_binary_tree_bench_float("BFS WeightedBinaryTree Benchmark float", 30, 3);
-BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU, double> breadth_first_search_weighted_binary_tree_bench_double("BFS WeightedBinaryTree Benchmark double", 30, 3);
-BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU::MultiCore, float> mc_breadth_first_search_weighted_binary_tree_bench_float("MC BFS WeightedBinaryTree Benchmark float", 30, 3);
-BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU::MultiCore, double> mc_breadth_first_search_weighted_binary_tree_bench_double("MC BFS WeightedBinaryTree Benchmark double", 30, 3);
+BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU, float> breadth_first_search_weighted_binary_tree_bench_float("BFS WeightedBinaryTree Benchmark float", 10, 3);
+BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU, double> breadth_first_search_weighted_binary_tree_bench_double("BFS WeightedBinaryTree Benchmark double", 10, 3);
+BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU::MultiCore, float> mc_breadth_first_search_weighted_binary_tree_bench_float("MC BFS WeightedBinaryTree Benchmark float", 10, 3);
+BreadthFirstSearchWeightedBinaryTreeBench<tags::CPU::MultiCore, double> mc_breadth_first_search_weighted_binary_tree_bench_double("MC BFS WeightedBinaryTree Benchmark double", 10, 3);
 

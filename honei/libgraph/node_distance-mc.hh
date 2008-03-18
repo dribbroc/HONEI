@@ -25,7 +25,9 @@
 #include <honei/libutil/thread_pool.hh>
 #include <honei/libgraph/graph_error.hh>
 #include <honei/libgraph/node_distance.hh>
+#include <honei/libutil/tags.hh>
 #include <iostream>
+
 
 // For optimization purposes
 #define MIN_CHUNK_SIZE 256
@@ -43,15 +45,18 @@ namespace honei
 
     template <typename Tag_> struct NodeDistance;
 
-    template <typename Tag_> struct MCNodeDistance
+    namespace intern
     {
         template <typename DataType_>
         static inline DataType_ calculate_parts(const DataType_ ref)
         {
-            if (ref / 16 < PARTS) return ref / 16;
-            return PARTS;
+            if (ref / 16 < 8) return ref / 16;
+            return 8;
         }
+    }
 
+    template <typename Tag_> struct MCNodeDistance
+    {
         template <typename DataType_>
         static DenseMatrix<DataType_> value(const DenseMatrix<DataType_> & pos_matrix)
         {
@@ -60,9 +65,9 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::instance());
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            unsigned long num_parts(MCNodeDistance<Tag_>::calculate_parts(result.rows()));
+            unsigned long num_parts(intern::calculate_parts(result.rows()));
 
             if (num_parts)
             {
@@ -76,13 +81,15 @@ namespace honei
                     DenseMatrixTile<DataType_> tile(result, rows, result.columns(), matrix_row, 0);
                     ThreeArgWrapper< MCNodeDistance<Tag_>, DenseMatrixTile<DataType_>, const DenseMatrix<DataType_>, unsigned long>
                     wrapper(tile, pos_matrix, matrix_row);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                     matrix_row += rows;
                 }
                 DenseMatrixTile<DataType_> tile(result, rows + rest_of_rows, result.columns(), matrix_row, 0);
                 ThreeArgWrapper< MCNodeDistance<Tag_>, DenseMatrixTile<DataType_>, const DenseMatrix<DataType_>, unsigned long>
                 wrapper(tile, pos_matrix, matrix_row);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
             }
             else
             {
@@ -126,9 +133,9 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::instance());
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            unsigned long num_parts(MCNodeDistance<Tag_>::calculate_parts(edge_weights.rows()));
+            unsigned long num_parts(intern::calculate_parts(edge_weights.rows()));
 
             if (num_parts)
             {
@@ -145,7 +152,8 @@ namespace honei
                     SixArgWrapper< MCNodeDistance<Tag_>, const DenseMatrix<DataType_>, const DenseMatrixTile<DataType_>,
                     DenseMatrixTile<DataType_>, DenseMatrixTile<DataType_>, const DataType_, unsigned long>
                     wrapper(pos_matrix, tile_1, tile_2, tile_3, repulsive_force_range, matrix_row);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                     matrix_row += rows;
                 }
                 DenseMatrixTile<DataType_> tile_1(edge_weights, rows + rest_of_rows, edge_weights.columns(), matrix_row, 0);
@@ -154,7 +162,8 @@ namespace honei
                 SixArgWrapper< MCNodeDistance<Tag_>, const DenseMatrix<DataType_>, const DenseMatrixTile<DataType_>,
                 DenseMatrixTile<DataType_>, DenseMatrixTile<DataType_>, const DataType_, unsigned long>
                 wrapper(pos_matrix, tile_1, tile_2, tile_3, repulsive_force_range, matrix_row);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
             }
             else
             {
@@ -171,7 +180,7 @@ namespace honei
         template <typename DataType_>
         static void value(DenseMatrixTile<DataType_> & result, const DenseMatrix<DataType_> & pos_matrix, unsigned long start)
         {
-            CONTEXT("When calculating the distance beetween nodes");
+            CONTEXT("When calculating the distance beetween nodes (with MC):");
 
             // Retrieving an ElementIterator e initialized to the first element in the result matrix
             typename DenseMatrixTile<DataType_>::ElementIterator e(result.begin_elements());
@@ -203,6 +212,8 @@ namespace honei
         DenseMatrixTile<DataType_> & square_dist, DenseMatrixTile<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range, unsigned long start)
         {
+            CONTEXT("When calculating the distance beetween nodes (with MC):");
+
             // Initialize ElementIterators
             typename DenseMatrixTile<DataType_>::ElementIterator e(inv_square_dist.begin_elements());
             typename DenseMatrixTile<DataType_>::ElementIterator f(square_dist.begin_elements());
@@ -230,6 +241,159 @@ namespace honei
                     if (*g > std::numeric_limits<DataType_>::epsilon()) *f = d;
                 }
             }
+        }
+    };
+
+    template <typename Tag_> struct MCSSENodeDistance
+    {
+        template <typename DataType_>
+        static DenseMatrix<DataType_> value(const DenseMatrix<DataType_> & pos_matrix)
+        {
+            // Create the result
+            DenseMatrix<DataType_> result(pos_matrix.rows(), pos_matrix.rows(), DataType_(0));
+
+            ThreadPool * tp(ThreadPool::instance());
+
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+            unsigned long num_parts(intern::calculate_parts(result.rows()));
+
+            if (num_parts)
+            {
+                unsigned long rows(result.rows() / num_parts);
+                unsigned long rest_of_rows(result.rows() % num_parts);
+                unsigned long matrix_row(0);
+                unsigned long i(0);
+
+                for ( ; i < num_parts - 1; ++i)
+                {
+                    DenseMatrixTile<DataType_> tile(result, rows, result.columns(), matrix_row, 0);
+                    ThreeArgWrapper< MCSSENodeDistance<Tag_>, DenseMatrixTile<DataType_>, const DenseMatrix<DataType_>, unsigned long>
+                    wrapper(tile, pos_matrix, matrix_row);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
+                    matrix_row += rows;
+                }
+                DenseMatrixTile<DataType_> tile(result, rows + rest_of_rows, result.columns(), matrix_row, 0);
+                ThreeArgWrapper< MCSSENodeDistance<Tag_>, DenseMatrixTile<DataType_>, const DenseMatrix<DataType_>, unsigned long>
+                wrapper(tile, pos_matrix, matrix_row);
+                std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
+            }
+            else
+            {
+                result = NodeDistance<typename Tag_::DelegateTo>::value(pos_matrix);
+            }
+
+            while(! dispatched_tasks.empty())
+            {
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
+            }
+
+            return result;
+        }
+
+        template <typename DataType_>
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const DenseMatrix<DataType_> & edge_weights,
+        DenseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
+        const DataType_ repulsive_force_range)
+        {
+            if (! edge_weights.square())
+                throw MatrixIsNotSquare(edge_weights.rows(), edge_weights.columns());
+
+            if (! square_dist.square())
+                throw MatrixIsNotSquare(square_dist.rows(), square_dist.columns());
+
+            if (! inv_square_dist.square())
+                throw MatrixIsNotSquare(inv_square_dist.rows(), inv_square_dist.columns());
+
+            if (edge_weights.rows() != pos_matrix.rows())
+                throw MatrixRowsDoNotMatch(pos_matrix.rows(), edge_weights.rows());
+
+            if (square_dist.rows() != pos_matrix.rows())
+                throw MatrixRowsDoNotMatch(pos_matrix.rows(), square_dist.rows());
+
+            if (inv_square_dist.rows() != pos_matrix.rows())
+                throw MatrixRowsDoNotMatch(pos_matrix.rows(), inv_square_dist.rows());
+
+            if (repulsive_force_range < 0)
+                throw GraphError("Repulsive-Force-Range must be positiv");
+
+            ThreadPool * tp(ThreadPool::instance());
+
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
+
+            unsigned long num_parts(intern::calculate_parts(edge_weights.rows()));
+
+            if (num_parts)
+            {
+                unsigned long rows(edge_weights.rows() / num_parts);
+                unsigned long rest_of_rows(edge_weights.rows() % num_parts);
+                unsigned long matrix_row(0);
+                unsigned long i(0);
+
+                for ( ; i < num_parts - 1; ++i)
+                {
+                    DenseMatrixTile<DataType_> tile_1(edge_weights, rows, edge_weights.columns(), matrix_row, 0);
+                    DenseMatrixTile<DataType_> tile_2(square_dist, rows, square_dist.columns(), matrix_row, 0);
+                    DenseMatrixTile<DataType_> tile_3(inv_square_dist, rows, inv_square_dist.columns(), matrix_row, 0);
+                    SixArgWrapper< MCSSENodeDistance<Tag_>, const DenseMatrix<DataType_>, const DenseMatrixTile<DataType_>,
+                    DenseMatrixTile<DataType_>, DenseMatrixTile<DataType_>, const DataType_, unsigned long>
+                    wrapper(pos_matrix, tile_1, tile_2, tile_3, repulsive_force_range, matrix_row);
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
+                    matrix_row += rows;
+                }
+                DenseMatrixTile<DataType_> tile_1(edge_weights, rows + rest_of_rows, edge_weights.columns(), matrix_row, 0);
+                DenseMatrixTile<DataType_> tile_2(square_dist, rows + rest_of_rows, square_dist.columns(), matrix_row, 0);
+                DenseMatrixTile<DataType_> tile_3(inv_square_dist, rows + rest_of_rows, inv_square_dist.columns(), matrix_row, 0);
+                SixArgWrapper< MCSSENodeDistance<Tag_>, const DenseMatrix<DataType_>, const DenseMatrixTile<DataType_>,
+                DenseMatrixTile<DataType_>, DenseMatrixTile<DataType_>, const DataType_, unsigned long>
+                wrapper(pos_matrix, tile_1, tile_2, tile_3, repulsive_force_range, matrix_row);
+                std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
+            }
+            else
+            {
+                NodeDistance<typename Tag_::DelegateTo>::value(pos_matrix, edge_weights, square_dist, inv_square_dist, repulsive_force_range);
+            }
+
+            while(! dispatched_tasks.empty())
+            {
+                dispatched_tasks.front()->wait_on();
+                dispatched_tasks.pop_front();
+            }
+        }
+
+        template <typename DataType_>
+        static void value(DenseMatrixTile<DataType_> & result, const DenseMatrix<DataType_> & pos_matrix, const unsigned long start)
+        {
+            CONTEXT("When calculating the distance beetween nodes (with MC-SSE):");
+
+            // Iterate over all nodes (=columns) in the given position matrix
+            for (unsigned long i = 0, j = result.columns(); i < result.rows(); ++i)
+            {
+                NodeDistance<typename Tag_::DelegateTo>::node_distance(result[i].elements(), pos_matrix.elements(), pos_matrix(i  + start, 0), pos_matrix(i + start, 1), j);
+            }
+        }
+
+        template <typename DataType_>
+        static void value(const DenseMatrix<DataType_> & pos_matrix, const DenseMatrixTile<DataType_> & edge_weights,
+        DenseMatrixTile<DataType_> & square_dist, DenseMatrixTile<DataType_> & inv_square_dist,
+        const DataType_ repulsive_force_range, unsigned long start)
+        {
+           CONTEXT("When calculating the distance and the inverse distance between nodes (with MC-SSE):");
+
+            // Iterate over all nodes (=columns) in the given position matrix
+            for (unsigned long i = 0, j = inv_square_dist.columns(); i < inv_square_dist.rows(); ++i)
+            {
+                NodeDistance<typename Tag_::DelegateTo>::node_distance(inv_square_dist[i].elements(), pos_matrix.elements(), pos_matrix(i + start, 0), pos_matrix(i + start, 1), j);
+            }
+
+            NodeDistance<typename Tag_::DelegateTo>::set_distance(square_dist.elements(), inv_square_dist.elements(), edge_weights.elements(), square_dist.columns() * square_dist.rows());
+
+            NodeDistance<typename Tag_::DelegateTo>::invert_distance(inv_square_dist.elements(), repulsive_force_range, inv_square_dist.columns() * inv_square_dist.rows());
         }
     };
 }

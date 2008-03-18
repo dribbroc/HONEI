@@ -35,7 +35,146 @@
 using namespace std;
 using namespace honei;
 
-template <typename Tag_, typename DataType_>
+namespace Scenarios
+{
+    struct Clique
+    {
+        static std::string get_name()
+        {
+            std::string name = "Clique";
+            return name;
+        }
+    };
+
+    struct SquareGrid
+    {
+        static std::string get_name()
+        {
+            std::string name = "SquareGrid";
+            return name;
+        }
+    };
+
+    struct BinaryTree
+    {
+        static std::string get_name()
+        {
+            std::string name = "BinaryTree";
+            return name;
+        }
+    };
+}
+
+template <typename DataType_, typename ST_>
+struct Scenario;
+
+template <typename DataType_>
+struct Scenario<DataType_, Scenarios::Clique>
+{
+    static void create(DenseMatrix<DataType_> & Position, DenseVector<DataType_> & Node_Weights, 
+    SparseMatrix<DataType_> & Edge_Weights)
+    {
+        unsigned long _nodecount(Position.rows());
+
+        // create Position
+        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+                    e_end(Position.end_elements());e != e_end ; ++e)
+            {
+                e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
+                *e = sin((DataType_) (e.row()) /(DataType_)_nodecount * 2.0f * 3.14f);
+            }
+
+        // create Node_Weights
+        for (typename Vector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
+                e_end(Node_Weights.end_elements()); e != e_end ; ++e)
+        {
+            *e = 1;
+        }
+
+        // create Edge_Weights
+        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+                    e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
+            {
+                if (e.row() != e.column()) *e = 1;
+            }
+    }
+};
+
+template <typename DataType_>
+struct Scenario<DataType_, Scenarios::SquareGrid>
+{
+    static void create(DenseMatrix<DataType_> & Position, DenseVector<DataType_> & Node_Weights, 
+    SparseMatrix<DataType_> & Edge_Weights)
+    {
+        unsigned long _nodecount(Position.rows());
+        unsigned long _nodecount_2((unsigned long)sqrt(_nodecount));
+
+        // create Position
+        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+                    e_end(Position.end_elements());e != e_end ; ++e)
+            {
+                e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
+                *e = sin((DataType_) (e.row()) /(DataType_)_nodecount * 2.0f * 3.14f);
+            }
+
+        // create Node_Weights
+        for (typename Vector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
+                e_end(Node_Weights.end_elements()); e != e_end ; ++e)
+        {
+            *e = 1;
+        }
+
+        // create Edge_Weights
+        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+                    e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
+            {
+                if ((((e.row() + 1 == e.column()) && (e.column() % _nodecount_2)) || (e.column() == e.row() + _nodecount_2)) && 
+                (e.row() != e.column())) 
+                {
+                    *e = 1;
+                    Edge_Weights[e.column()][e.row()] = 1;
+                }
+            }
+    }
+};
+
+template <typename DataType_>
+struct Scenario<DataType_, Scenarios::BinaryTree>
+{
+    static void create(DenseMatrix<DataType_> & Position, DenseVector<DataType_> & Node_Weights, 
+    SparseMatrix<DataType_> & Edge_Weights)
+    {
+        unsigned long _nodecount(Position.rows());
+
+        // create Position
+        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+                    e_end(Position.end_elements());e != e_end ; ++e)
+            {
+                e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
+                *e = sin((DataType_) (e.row()) /(DataType_)_nodecount * 2.0f * 3.14f);
+            }
+
+        // create Node_Weights
+        for (typename Vector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
+                e_end(Node_Weights.end_elements()); e != e_end ; ++e)
+        {
+            *e = 1;
+        }
+
+        // create Edge_Weights
+        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+                    e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
+            {
+                if ((e.column() == e.row() * 2 +1) || (e.column() == e.row() * 2 +2)) 
+                {
+                    *e = 1;
+                    Edge_Weights[e.column()][e.row()] = 1;
+                }
+            }
+    }
+};
+
+template <typename Tag_, typename DataType_, typename ST_>
 class WeightedKamadaKawaiPositionsBench :
     public Benchmark
 {
@@ -47,68 +186,35 @@ class WeightedKamadaKawaiPositionsBench :
             Benchmark(id)
         {
             register_tag(Tag_::name);
-            _nodecount = nodecount;
+            if (ST_::get_name() == "Clique") _nodecount = nodecount;
+            if (ST_::get_name() == "SquareGrid") _nodecount = nodecount*nodecount;
+            if (ST_::get_name() == "BinaryTree") _nodecount = (1 << (nodecount + 1)) -1;
             _count = count;
         }
 
         virtual void run()
         {
             // Creatoing test scenario
-            DataType_ pos[2*_nodecount];
-            for (unsigned long i(0); i < _nodecount; ++i)
-            {
-                    pos[2*i+1] = sin((DataType_)i /(DataType_)_nodecount * 2.0f * 3.14f);
-                    pos[2*i] = cos((DataType_)i / (DataType_)_nodecount * 2.0f * 3.14f);
-            }
-
-            DataType_ edge_weights[_nodecount*_nodecount];
-            for (unsigned long i(0); i < _nodecount; ++i)
-                for (unsigned long j(0); j < _nodecount; ++j)
-                    edge_weights[i*_nodecount + j] = i == j ? 0 : 1;
-
-            DataType_ node_weights[_nodecount];
-            for (unsigned long i(0); i < _nodecount; ++i)
-            {
-                    node_weights[i] = 1;
-            }
-
-            // Now, fill that numbers into the real matrices
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(_nodecount,2));
-            unsigned long i(0);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
-                    e_end(pPosition->end_elements());e != e_end ; ++e)
-            {
-                *e = pos[i++]; 
-            }
-
-            i = 0;
-            std::tr1::shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(_nodecount));
-            for (typename Vector<DataType_>::ElementIterator e(pNode_Weights->begin_elements()),
-                    e_end(pNode_Weights->end_elements()); e != e_end ; ++e)
-            {
-                *e = 3*node_weights[i++];
-            }
-
-            i = 0;
-            std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(_nodecount,_nodecount));
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
-                    e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
-            {
-                if (edge_weights[i] > std::numeric_limits<DataType_>::epsilon()) *e = edge_weights[i];
-                i++;
-            }
+            DenseMatrix<DataType_> Coordinates(_nodecount, 2, DataType_(0));
+            DenseVector<DataType_> Node_Weights(_nodecount, DataType_(0));
+            SparseMatrix<DataType_> Edge_Weights(_nodecount, _nodecount);
+            Scenario<DataType_, ST_>::create(Coordinates, Node_Weights, Edge_Weights);
 
             // Creating a Positions object with the test scenario and update the positions
             unsigned long number_of_iterations;
             DataType_ max_node_force;
+            DenseMatrix<DataType_> new_coordinates(_nodecount, 2, DataType_(0));
+            DenseMatrix<DataType_> pos_copy(Coordinates.copy());
+            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(pos_copy, Node_Weights, Edge_Weights);
             for(unsigned long i = 0; i < _count; ++i)
             {
-                DenseMatrix<DataType_> pos_copy(pPosition->copy());
-                Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(pos_copy, *pNode_Weights, *pEdge_Weights);
-                BENCHMARK(position.update(0.00001, _nodecount * 10));
+                BENCHMARK(position.update(0, _nodecount * 10));
                 number_of_iterations = position.number_of_iterations();
                 max_node_force = position.max_node_force();
+                new_coordinates = position.coordinates();
+                pos_copy = Coordinates.copy();
             }
+            std::cout << "number of nodes of WKK  "<< _nodecount << std::endl;
             std::cout << "Maximum node force of WKK:  "<< max_node_force << std::endl;
             std::cout << "Number of iterations of WKK:  "<< number_of_iterations << std::endl;
 
@@ -116,7 +222,7 @@ class WeightedKamadaKawaiPositionsBench :
         }
 };
 
-template <typename Tag_, typename DataType_>
+template <typename Tag_, typename DataType_, typename ST_>
 class WeightedFruchtermanReingoldPositionsBench :
     public Benchmark
 {
@@ -128,68 +234,35 @@ class WeightedFruchtermanReingoldPositionsBench :
             Benchmark(id)
         {
             register_tag(Tag_::name);
-            _nodecount = nodecount;
+            if (ST_::get_name() == "Clique") _nodecount = nodecount;
+            if (ST_::get_name() == "SquareGrid") _nodecount = nodecount*nodecount;
+            if (ST_::get_name() == "BinaryTree") _nodecount = (1 << (nodecount + 1)) -1;
             _count = count;
         }
 
         virtual void run()
         {
             // Creatoing test scenario
-            DataType_ pos[2*_nodecount];
-            for (unsigned long i(0); i < _nodecount; ++i)
-            {
-                    pos[2*i+1] = sin((DataType_)i /(DataType_)_nodecount * 2.0f * 3.14f);
-                    pos[2*i] = cos((DataType_)i / (DataType_)_nodecount * 2.0f * 3.14f);
-            }
-
-            DataType_ edge_weights[_nodecount*_nodecount];
-            for (unsigned long i(0); i < _nodecount; ++i)
-                for (unsigned long j(0); j < _nodecount; ++j)
-                    edge_weights[i*_nodecount + j] = i == j ? 0 : 1;
-
-            DataType_ node_weights[_nodecount];
-            for (unsigned long i(0); i < _nodecount; ++i)
-            {
-                    node_weights[i] = 1;
-            }
-
-            // Now, fill that numbers into the real matrices
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(_nodecount,2));
-            unsigned long i(0);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
-                    e_end(pPosition->end_elements());e != e_end ; ++e)
-            {
-                *e = pos[i++]; 
-            }
-
-            i = 0;
-            std::tr1::shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(_nodecount));
-            for (typename Vector<DataType_>::ElementIterator e(pNode_Weights->begin_elements()),
-                    e_end(pNode_Weights->end_elements()); e != e_end ; ++e)
-            {
-                *e = 3*node_weights[i++];
-            }
-
-            i = 0;
-            std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(_nodecount,_nodecount));
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
-                    e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
-            {
-                if (edge_weights[i] > std::numeric_limits<DataType_>::epsilon()) *e = edge_weights[i];
-                i++;
-            }
+            DenseMatrix<DataType_> Coordinates(_nodecount, 2, DataType_(0));
+            DenseVector<DataType_> Node_Weights(_nodecount, DataType_(0));
+            SparseMatrix<DataType_> Edge_Weights(_nodecount, _nodecount);
+            Scenario<DataType_, ST_>::create(Coordinates, Node_Weights, Edge_Weights);
 
             // Creating a Positions object with the test scenario and update the positions
             unsigned long number_of_iterations;
             DataType_ max_node_force;
+            DenseMatrix<DataType_> new_coordinates(_nodecount, 2, DataType_(0));
+            DenseMatrix<DataType_> pos_copy(Coordinates.copy());
+            Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(pos_copy, Node_Weights, Edge_Weights);                
             for(unsigned long i = 0; i < _count; ++i)
-            {
-                DenseMatrix<DataType_> pos_copy(pPosition->copy());
-                Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(pos_copy, *pNode_Weights, *pEdge_Weights);
-                BENCHMARK(position.update(0.00001, _nodecount * 5));
+            {                
+                BENCHMARK(position.update(0, _nodecount * 5));
                 number_of_iterations = position.number_of_iterations();
                 max_node_force = position.max_node_force();
+                new_coordinates = position.coordinates();
+                pos_copy = Coordinates.copy();
             }
+            std::cout << "number of nodes of WFR  "<< _nodecount << std::endl;
             std::cout << "Maximum node force of WFR:  "<< max_node_force << std::endl;
             std::cout << "Number of iterations of WFR:  "<< number_of_iterations << std::endl;
 
@@ -197,18 +270,32 @@ class WeightedFruchtermanReingoldPositionsBench :
         }
 };
 
-WeightedKamadaKawaiPositionsBench<tags::CPU, float> weighted_kamada_kawai_positions_bench_float("WeightedKamadaKawai Benchmark float", 200, 10);
-WeightedKamadaKawaiPositionsBench<tags::CPU, double> weighted_kamada_kawai_positions_bench_double("WeightedKamadaKawai Benchmark double", 200, 10);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU, float> weighted_fruchterman_reingold_positions_bench_float("WeightedFruchtermanReingold Benchmark float", 200, 10);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU, double> weighted_fruchterman_reingold_positions_bench_double("WeightedFruchtermanReingold Benchmark double", 200, 10);
+#define POSITIONBENCH Scenarios::SquareGrid // possible scenarios are: Clique, SquareGrid, BinaryTree
+#define POSITIONBENCHSIZE 20 //POSITIONBENCHSIZE = numbers of nodes (Clique), POSITIONBENCHSIZE = numbers of nodes in a line (SquareGrid), POSITIONBENCHSIZE = depth (BinaryTree)
+#define POSITIONBENCHCOUNT 3
+
+WeightedKamadaKawaiPositionsBench<tags::CPU, float, POSITIONBENCH> weighted_kamada_kawai_positions_bench_float("WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedKamadaKawaiPositionsBench<tags::CPU, double, POSITIONBENCH> weighted_kamada_kawai_positions_bench_double("WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU, float, POSITIONBENCH> weighted_fruchterman_reingold_positions_bench_float("WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU, double, POSITIONBENCH> weighted_fruchterman_reingold_positions_bench_double("WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore, float, POSITIONBENCH> mc_weighted_kamada_kawai_positions_bench_float("MC WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore, double, POSITIONBENCH> mc_weighted_kamada_kawai_positions_bench_double("MC WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore, float, POSITIONBENCH> mc_weighted_fruchterman_reingold_positions_bench_float("MC WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore, double, POSITIONBENCH> mc_weighted_fruchterman_reingold_positions_bench_double("MC WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 
 #ifdef HONEI_SSE
-WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_bench_float("SSE WeightedKamadaKawai Benchmark float", 200, 10);
-WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_bench_double("SSE WeightedKamadaKawai Benchmark double", 200, 10);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_bench_float("SSE WeightedFruchtermanReingold Benchmark float", 200, 10);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_bench_double("SSE WeightedFruchtermanReingold Benchmark double", 200, 10);
+WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, float, POSITIONBENCH> sse_weighted_kamada_kawai_positions_bench_float("SSE WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, double, POSITIONBENCH> sse_weighted_kamada_kawai_positions_bench_double("SSE WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, float, POSITIONBENCH> sse_weighted_fruchterman_reingold_positions_bench_float("SSE WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, double, POSITIONBENCH> sse_weighted_fruchterman_reingold_positions_bench_double("SSE WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore::SSE, float, POSITIONBENCH> mc_sse_weighted_kamada_kawai_positions_bench_float("MC SSE WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore::SSE, double, POSITIONBENCH> mc_sse_weighted_kamada_kawai_positions_bench_double("MC SSE WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, float, POSITIONBENCH> mc_sse_weighted_fruchterman_reingold_positions_bench_float("MC SSE WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, double, POSITIONBENCH> mc_sse_weighted_fruchterman_reingold_positions_bench_double("MC SSE WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 #endif
 #ifdef HONEI_CELL
-WeightedKamadaKawaiPositionsBench<tags::Cell, float> cell_weighted_kamada_kawai_positions_bench_float("Cell WeightedKamadaKawai Benchmark float", 200, 10);
-WeightedFruchtermanReingoldPositionsBench<tags::Cell, float> cell_weighted_fruchterman_reingold_positions_bench_float("Cell WeightedFruchtermanReingold Benchmark float", 200, 10);
+KamadaKawaiPositionsBench<tags::Cell, float, POSITIONBENCH> cell_kamada_kawai_positions_bench_float("Cell KamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedKamadaKawaiPositionsBench<tags::Cell, float, POSITIONBENCH> cell_weighted_kamada_kawai_positions_bench_float("Cell WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+FruchtermanReingoldPositionsBench<tags::Cell, float, POSITIONBENCH> cell_fruchterman_reingold_positions_bench_float("Cell FruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+WeightedFruchtermanReingoldPositionsBench<tags::Cell, float, POSITIONBENCH> cell_weighted_fruchterman_reingold_positions_bench_float("Cell WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 #endif

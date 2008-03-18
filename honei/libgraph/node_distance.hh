@@ -144,7 +144,7 @@ namespace honei
         }
     };
 
-    template <> struct NodeDistance<tags::CPU::MultiCore> : public MCNodeDistance<tags::CPU::MultiCore> {};
+
 
     template <> struct NodeDistance<tags::CPU::SSE>
     {
@@ -158,9 +158,19 @@ namespace honei
         static void value(const DenseMatrix<double> & pos_matrix, const DenseMatrix<double> & edge_weights,
                 DenseMatrix<double> & square_dist, DenseMatrix<double> & inv_square_dist,
                 const double repulsive_force_range);
+
+        static void node_distance(float * result, float * pos_matrix, float x, float y, unsigned long size);
+        static void node_distance(double * result, double * pos_matrix, double x, double y, unsigned long size);
+
+        static void set_distance(float * dist, float * dist_src, float * mask, unsigned long size);
+        static void set_distance(double * dist, double * dist_src, double * mask, unsigned long size);
+
+        static void invert_distance(float * dist, float square_force_range, unsigned long size);
+        static void invert_distance(double * dist, double square_force_range, unsigned long size);
     };
 
-    template <> struct NodeDistance<tags::CPU::MultiCore::SSE> : NodeDistance<tags::CPU::SSE> {};
+    template <> struct NodeDistance<tags::CPU::MultiCore> : public MCNodeDistance<tags::CPU::MultiCore> {};
+    template <> struct NodeDistance<tags::CPU::MultiCore::SSE> : public MCSSENodeDistance<tags::CPU::MultiCore::SSE> {};
 
     template <> struct NodeDistance<tags::Cell>
     {
@@ -170,6 +180,5 @@ namespace honei
                 DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
                 const float repulsive_force_range);
     };
-
 }
 #endif
