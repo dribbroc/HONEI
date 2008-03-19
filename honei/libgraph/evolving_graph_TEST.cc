@@ -124,6 +124,8 @@ class EvolvingGraphTest :
             eg.update_slice_coordinates();
             for (int i(0); i < eg.slice_count(); ++i)
                 std::cout << "timeslice " << i << " after update:\n" << *eg.get_timeslice(i).coordinates() << std::endl;
+            
+            eg.write_gml("evolving.gml", true);
 
                 
             EvolvingAnimator<Tag_, DataType_> animator(eg, 0.1f);

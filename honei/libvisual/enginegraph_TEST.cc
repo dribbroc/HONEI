@@ -6,6 +6,8 @@
 #include <string>
 #include <honei/libgraph/graph.hh>
 #include <honei/libgraph/position.hh>
+#include <honei/libgraph/test_scenario.hh>
+
 
 //
 using namespace honei;
@@ -19,13 +21,13 @@ class EngineGraphTest :
 {  
     private:
         typedef EngineGraph<Tag_, DataType_, GraphTag_> Engine;
-        int _nodeCount;
+        Graph<DataType_> * _graph;
     public:
-        EngineGraphTest(const std::string & type, int nodeCount) :
-            BaseTest("EngineGraph test<" + type + ">")
+        EngineGraphTest(const std::string & type, Graph<DataType_> * graph) :
+            BaseTest("EngineGraph test<" + type + ">"),
+            _graph(graph)
         {
             register_tag(Tag_::name);
-            _nodeCount = nodeCount;
         }
 
   
@@ -33,7 +35,7 @@ class EngineGraphTest :
          {
             int i =1;
             int * pi = &i;
-            Graph<DataType_> g(_nodeCount, 2);
+   /*         Graph<DataType_> g(_nodeCount, 2);
             for (int i = 0; i < _nodeCount; i++)
                 g.add_node(i, 1 + std::rand() % 4);
                 
@@ -43,8 +45,13 @@ class EngineGraphTest :
    //         std::cout << "edge matrix\n" << *g->edges();
 
             std::cout << "\nCalculate Position";
+     */
+     
             
-            Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), 29);
+            
+            Positions<Tag_, DataType_, GraphTag_> * fine(new Positions<Tag_, DataType_, GraphTag_>(*_graph, (DataType_)1));
+        //    fine->update(0, 256);
+            Engine::setTestCase(*_graph, fine, 29);
             
             
             char * c = "Test: Engine";
@@ -63,8 +70,9 @@ class EngineGraphTest :
 
             glutMainLoop();
             TEST_CHECK(true);
-         }
-};
+          }
+}; 
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 11);
-EngineGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double2("wkk float big", 100);
+
+EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_float("WFR Test Grid", TestScenario<float>::BinaryTree(10));
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200);

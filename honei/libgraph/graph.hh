@@ -29,6 +29,8 @@
 #include <map>
 #include <cstdlib>
 
+
+
 namespace honei
 {
 
@@ -42,6 +44,7 @@ namespace honei
         int _max_nodes;
         int _coordinate_dimensions;
         std::map<int, int> _node_mapping;
+        bool _random;
 
         /// sets edges[v_index][w_index] = edges[w_index][v_index] = weight
         void set_edge_weight_internal(int v_index, int w_index, DataType_ weight)
@@ -52,11 +55,12 @@ namespace honei
 
     public:
         /// constructs new graph with given number of nodes and a given dimension for the coordinates
-        Graph(int nodes, int coordinate_dimensions) :
+        Graph(int nodes, int coordinate_dimensions=2) :
             _coordinate_dimensions(coordinate_dimensions),
             _node_mapping(),
             _node_count(0),
-            _max_nodes(nodes)
+            _max_nodes(nodes),
+            _random(false)
         {
             _nodes = new NodeType*[nodes];
             this->_coordinates = new DenseMatrix<DataType_>(nodes, coordinate_dimensions);
@@ -70,14 +74,23 @@ namespace honei
             if (_node_count < _max_nodes)
             {
                 _nodes[_node_count] = node;
-                _node_mapping[node->id()] = _node_count;
-                for (int i(0); i < _coordinate_dimensions; ++i)
-                {                
-                    (*this->_coordinates)(_node_count, i) = _max_nodes/20 - (DataType_)std::rand() / RAND_MAX * _max_nodes/10; 
+                _node_mapping[node->id()] = _node_count;               
+                DataType_ angle((DataType_)std::rand() / RAND_MAX * 3.14 * 2);
+                DataType_ dist(DataType_(_max_nodes) / 20);
+                if (_random)
+                {
+                    dist *= (DataType_)std::rand() / RAND_MAX;
                 }
+                (*this->_coordinates)(_node_count, 0) =  dist * sin(angle); 
+                (*this->_coordinates)(_node_count, 1) =  dist * cos(angle);
                 (*this->_node_weights)[_node_count] = node->get_weight();
                 ++_node_count;
             }
+        }
+        
+        inline bool random_positions(bool value)
+        {
+            _random = value;
         }
         
         void add_node(int id, DataType_ weight = DataType_(1))

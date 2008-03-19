@@ -6,3 +6,4 @@
 #include <honei/libgraph/breadth_first_search_BENCHMARK.cc>
 #include <honei/libgraph/position_BENCHMARK.cc>
 #include <honei/libgraph/node_distance_BENCHMARK.cc>
+#include <honei/libgraph/graph_BENCHMARK.cc>

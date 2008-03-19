@@ -23,6 +23,8 @@
 
 #include <honei/libgraph/graph.hh>
 #include <honei/libgraph/abstract_graph.hh>
+#include <honei/libgraph/position.hh>
+#include <honei/libgraph/test_scenario.hh>
 
 #include <string>
 #include <iostream>
@@ -44,18 +46,14 @@ class GraphTest :
 
     virtual void run() const
     {
-        Graph<DataType_> g(5, 3);
-        g.add_node(1);
-        g.add_node(2,2);
-        g.add_node(3,3);
-        g.add_node(4,4);
-        g.add_node(6,6);
-        g.add_edge(1,2, 7);
-        g.add_edge(2,3, 4);
-        g.add_edge(g.get_node(4), g.get_node_by_id(6), 11);
-        std::cout << *g.coordinates() << std::endl;
-        std::cout << *g.node_weights() << std::endl;
-        std::cout << *g.edges() << std::endl;
+        Graph<DataType_> * g(TestScenario<DataType_>::Grid(6, 6));        
+        std::cout << *g->coordinates() << std::endl;
+        std::cout << *g->node_weights() << std::endl;
+        std::cout << *g->edges() << std::endl;
+        
+        Positions<tags::CPU::SSE, DataType_, methods::WeightedFruchtermanReingold> p(*g, DataType_(1));
+        p.update(0, 10000);
+        g->write_gml("test.gml",true);
         TEST_CHECK(true);
     }
 };

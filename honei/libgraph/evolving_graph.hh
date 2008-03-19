@@ -210,7 +210,7 @@ void assemble_edges()
         /// creates and returns the complete coordinate matrix for the whole evolving graph
 
         /// returns the index of the timeslice that contains the given nodeIndex
-        int get_timeslice_index(int node_index)
+        int timeslice_index(int node_index)
         {
             int t(0);
             for (; t < slice_count()  - 1; ++t)
@@ -224,7 +224,7 @@ void assemble_edges()
         /// returns true if the indices are in the same timeslice - false otherwise
         virtual bool same_timeslice(int index1, int index2)
         {
-            int slice_index = get_timeslice_index(index1);
+            int slice_index = timeslice_index(index1);
             return (slice_index == slice_count()-1 || index2 < _slice_offset[slice_index+1]) &&
                 index2 >= _slice_offset[slice_index];
         }
@@ -306,6 +306,11 @@ void assemble_edges()
                     *i = *k;
                 }
             }                
+        }
+        
+        virtual bool includes_timeslices()
+        {
+            return true;
         }
     };
 }

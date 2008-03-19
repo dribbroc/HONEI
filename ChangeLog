@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-19 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
+	* honei/libgraph.position.hh: Fixed WFR, so it doesn't maniplates
+	nodeweights anymore.
+	* honei/libgraph, honei/libvisual: Added TestScenarios and Grid
+	Benchmarks
+
 2008-03-18 Mathias Kadolsky <mathkad@gmx.de>
 
 	* honei/libgraph: Frick method implemented.	

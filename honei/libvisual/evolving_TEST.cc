@@ -37,13 +37,13 @@ class EngineEvolvingGraphTest :
             int * pi = &i;
             int nps = _nodes * _slices;
             
-            EvolvingGraph<DataType_> eg(2, 4);
+            EvolvingGraph<DataType_> eg(2, 0.5);
             
             for (int t(0); t < _slices; ++t)
             {
                 Graph<DataType_> & g(eg.add_timeslice((t+1) * _nodes - t*0));
                 for (int n(t*0); n < (t+1)*_nodes; ++n)
-                    g.add_node(t, n);
+                    g.add_node(n);
                 for (int n(t*0); n < (t+1)*_nodes; ++n)
                     for (int m(n+1); m < (t+1)*_nodes; ++m)
                         g.add_edge(n, m, 1);
@@ -90,8 +90,8 @@ class EngineEvolvingGraphTest :
             eg.addTimeslice(t3);            
             */
             std::cout << "Evolving: " << eg.coordinates()->rows() << " Nodes, " << eg.edges()->rows() << "² Edges\n";
-            std::cout << "coordinates eg: " << *eg.coordinates();
-            std::cout << "edge matrix\n" << *eg.edges();
+         //   std::cout << "coordinates eg: " << *eg.coordinates();
+         //   std::cout << "edge matrix\n" << *eg.edges();
             
             
             std::cout << "\nCalculate Position\n";
@@ -119,5 +119,5 @@ class EngineEvolvingGraphTest :
             TEST_CHECK(true);
         }
 };
-EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double", 5, 5);
+EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double", 4, 5);
 //EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double");

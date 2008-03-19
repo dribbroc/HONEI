@@ -26,6 +26,8 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libgraph/node.hh>
 #include <map>
+#include <fstream>
+
 
 namespace honei 
 {
@@ -67,6 +69,16 @@ namespace honei
         }
 
         virtual int node_count() = 0;
+        
+        virtual bool includes_timeslices()
+        {
+            return false;
+        }
+        
+        virtual inline int slice_count()
+        {
+            return 0;
+        }
                 
         virtual inline int timeslice_index(int node_index)
         {
@@ -76,6 +88,41 @@ namespace honei
         virtual inline bool same_timeslice(int index1, int index2)
         {
             return true;
+        }
+        
+        void write_gml(char filename[], bool include_coordinates = false)
+        {
+            std::ofstream fs(filename, std::ios_base::out);
+            fs << "graph [\n";
+            fs << "   directed 0\n";
+            fs << "   timeslices " << (includes_timeslices() ? "1" : "0") << "\n";
+            fs << "   coordinates " << (include_coordinates ? "1" : "0") << "\n";
+            for (int i(0); i < _node_weights->size(); ++i)
+            {
+                fs << "    node [\n";
+                fs << "        id " << i << "\n";
+                fs << "        weight " << (*_node_weights)[i] << "\n";
+                if (includes_timeslices())
+                    fs << "        timeslice " << timeslice_index(i) << "\n";
+                if (include_coordinates)
+                {
+                    fs << "        x " << (*_coordinates)(i, 0) << "\n";
+                    fs << "        y " << (*_coordinates)(i, 1) << "\n";
+                }
+                fs << "    ]\n";
+            }
+            for (typename DenseMatrix<DataType_>::ConstElementIterator i(_edges->begin_elements()), end_i(_edges->end_elements());
+                i != end_i; ++i)
+                if (i.column() > i.row() && *i > 0)
+                {
+                        fs << "    edge [\n";
+                        fs << "        source " << i.column() << "\n";
+                        fs << "        target " << i.row() << "\n";
+                        fs << "        weight " << *i << "\n";
+                        fs << "    ]\n";
+                }
+            fs << "]\n";                
+        fs.close();
         }
     };
 }

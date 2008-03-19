@@ -95,7 +95,7 @@ class EngineEvolvingTest :
 
             std::cout << "\nCalculate Position\n";
             Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(eg, (DataType_)1);
-            positions.update(0.0000001, 1000);
+      //      positions.update(0.0000001, 1000);
             std::cout << "Iterations: " << positions.number_of_iterations() << "\n";
             
             std::cout << "update coordinates in timeslice graphs\n"; 

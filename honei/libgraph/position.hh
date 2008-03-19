@@ -254,7 +254,7 @@
                 return _imp->_number_of_iterations;
             }
             
-            inline DataType_ step_width()
+            inline  DenseVector<DataType_> step_width()
             {
                 return _imp->step_width();
             }
@@ -396,7 +396,7 @@
                     _number_of_iterations(1),
                     _max_force(0),
                     _force_direction(coordinates.rows(), coordinates.columns(), DataType_(0)),
-                    _step_width(weights_of_nodes),
+                    _step_width(weights_of_nodes.size()),
                     _repulsive_force_range(DataType_(0)),
                     _noise_duration(DataType_(0)),
                     _statistic_step(0)
@@ -437,7 +437,7 @@
                     _number_of_iterations(1),
                     _max_force(0),
                     _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
-                    _step_width(_weights_of_nodes),
+                    _step_width(_weights_of_nodes.size()),
                     _repulsive_force_range(DataType_(0)),
                     _noise_duration(DataType_(0)),
                     _statistic_step(0)
@@ -533,7 +533,7 @@
                                 e_end(_step_width.end_elements()); e != e_end ; ++e)
                                 {
                                         DataType_ prod( DotProduct<Tag_>::value(_force_direction[e.index()], scaled_forces[e.index()]) );
-                                        if (prod > 0.8) *e *=1;
+                                        if (prod > 0.8) *e *=1.5;
                                         if ( (prod < -0.8) || (fabs(prod) < 0.2) ) *e *=0.5;
                                 }
                     }
