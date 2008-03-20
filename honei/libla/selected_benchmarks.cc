@@ -7,11 +7,9 @@
 #include <honei/libla/dot_product.hh>
 #include <honei/libla/scaled_sum.hh>
 
-
-
 using namespace honei;
 
-
+/*
 template <typename DT_, typename Tag_>
 class DenseVectorRTSBench :
     public Benchmark
@@ -304,7 +302,7 @@ DMDVProductBench<double, tags::CPU::MultiCore::SSE> DMDVPBMCSSED("MultiCore SSE 
 DMDVProductBench<float, tags::Cell> DMDVPBCF("CELL DenseMatrix DenseVector Product Benchmark - float", 54);
 //DMDVProductBench<double, tags::Cell> DMDVPBCD("CELL DenseMatrix DenseVector Product Benchmark - double", 90);
 #endif
-
+*/
 
 template <typename DT_, typename Tag_>
 class DenseMatrixProductBench :
@@ -354,16 +352,16 @@ class DenseMatrixProductBench :
 //DenseMatrixProductBench<float, tags::CPU::MultiCore> DMPBMCF("MultiCore DenseMatrix Product Benchmark - float", 15);
 //DenseMatrixProductBench<double, tags::CPU::MultiCore> DMPBMCD("MultiCore DenseMatrix Product Benchmark - double", 15);
 #ifdef HONEI_SSE
-DenseMatrixProductBench<float, tags::CPU::SSE> DMPBSSEF("SSE DenseMatrix Product Benchmark - float", 64);
-DenseMatrixProductBench<double, tags::CPU::SSE> DMPBSSED("SSE DenseMatrix Product Benchmark - double", 64);
-DenseMatrixProductBench<float, tags::CPU::MultiCore::SSE> DMPBMCSSEF("MultiCore SSE DenseMatrix Product Benchmark - float", 64);
-DenseMatrixProductBench<double, tags::CPU::MultiCore::SSE> DMPBMCSSED("MultiCore SSE DenseMatrix Product Benchmark - double", 64);
+DenseMatrixProductBench<float, tags::CPU::SSE> DMPBSSEF("SSE DenseMatrix Product Benchmark - float", 54);
+DenseMatrixProductBench<double, tags::CPU::SSE> DMPBSSED("SSE DenseMatrix Product Benchmark - double", 54);
+DenseMatrixProductBench<float, tags::CPU::MultiCore::SSE> DMPBMCSSEF("MultiCore SSE DenseMatrix Product Benchmark - float", 54);
+DenseMatrixProductBench<double, tags::CPU::MultiCore::SSE> DMPBMCSSED("MultiCore SSE DenseMatrix Product Benchmark - double", 54);
 #endif
 #elif HONEI_CELL
 DenseMatrixProductBench<float, tags::Cell> DMPBCF("CELL DenseMatrix Product Benchmark - float", 54);
 //DenseMatrixProductBench<double, tags::Cell> DMPBCD("CELL DenseMatrix Product Benchmark - double", 20);
 #endif
-
+/*
 
 template <typename DT_, typename Tag_>
 class BMDVProductBench :
@@ -498,3 +496,4 @@ BMDVQ1ProductBench<double, tags::CPU::MultiCore::SSE> BMDVQ1PBMCSSED("MultiCore 
 BMDVQ1ProductBench<float, tags::Cell> BMDVQ1PBCF("CELL BandedMatrix DenseVector Q1 Product Benchmark - float", 150);
 BMDVQ1ProductBench<double, tags::Cell> BMDVQ1PBCD("CELL BandedMatrix DenseVector Q1 Product Benchmark - double", 150);
 #endif
+*/
