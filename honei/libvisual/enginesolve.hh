@@ -23,10 +23,13 @@
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libswe/relax_solver.hh>
 #include <honei/libswe/volume.hh>
+#include <honei/libutil/time_stamp.hh>
 
 namespace honei
 {
     namespace gl_globals {
+
+        TimeStamp actual, last;
 
         double rotation_x_increment = 0;
         double rotation_y_increment = 0;
@@ -104,6 +107,7 @@ namespace honei
 
             static void init(void)
             {
+                gl_globals::last.take();
                 glClearColor(0.0, 0.0, 0.2, 0.0);
                 if (gl_globals::enable_shading) glShadeModel(GL_SMOOTH);
                 else glShadeModel(GL_FLAT);
@@ -352,6 +356,12 @@ namespace honei
                 glTranslatef(0.0, 0.0 , gl_globals::translation_z);
 
 
+                do
+                {
+                    gl_globals::actual.take();
+                }
+                while(gl_globals::actual.usec() - gl_globals::last.usec() < 60000ul); // 1/25 = 40000
+                gl_globals::last.take();
                 gl_globals::solver.solve();
 
 
