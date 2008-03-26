@@ -32,7 +32,7 @@
 using namespace honei;
 using namespace tests;
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 // our PositionsTest is a BaseTest.
 class GraphTest :
     public BaseTest
@@ -51,7 +51,7 @@ class GraphTest :
         std::cout << *g->node_weights() << std::endl;
         std::cout << *g->edges() << std::endl;
         
-        Positions<tags::CPU::SSE, DataType_, methods::WeightedFruchtermanReingold> p(*g, DataType_(1));
+        Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> p(*g, DataType_(1));
         p.update(0, 10000);
         g->write_gml("test.gml",true);
         TEST_CHECK(true);
@@ -59,5 +59,10 @@ class GraphTest :
 };
 
 // instantiate test cases
-GraphTest<float> graph_test_float("float");
-GraphTest<double> graph_test_doube("double");
+#ifdef HONEI_SSE
+GraphTest<tags::CPU::SSE, float> graph_test_float("sse float");
+GraphTest<tags::CPU::SSE, double> graph_test_doube("sse double");
+#endif
+#ifdef HONEI_CELL
+GraphTest<tags::Cell, float> graph_test_float("cell float");
+#endif
