@@ -315,6 +315,7 @@ AC_OUTPUT(
 	benchmark/Makefile
 	clients/Makefile
 	clients/config/Makefile
+	clients/swe/Makefile
 	doc/Makefile
 	honei/Makefile
 	honei/cell/Makefile

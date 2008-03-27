@@ -1,4 +1,4 @@
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = config
+SUBDIRS = swe config

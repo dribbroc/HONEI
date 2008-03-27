@@ -5,6 +5,12 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-03-27 Markus Geveler <apryde@gmx.de>
+
+	* clients/Makefile.am, clients/swe, clients/swe/honei_swe.cc,
+	clients/swe/Makefile.am, configure.ac:
+	Added infrastructure fo swe client.
+
 2008-03-27 Mathias Kadolsky <mathkad@gmx.de>
 
 	* honei/libgraph: libgraph updated and cleaned up.
