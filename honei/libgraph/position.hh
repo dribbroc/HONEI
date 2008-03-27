@@ -172,11 +172,35 @@
             /// Our implementation pattern.
             methods::Implementation<Tag_ ,DataType_, GraphTag_> * _imp;
 
+            inline void elements_check(const SparseMatrix<DataType_> & weights_of_edges, bool & trace, bool & symmetry, bool & positiv)
+            {
+                for (typename Matrix<DataType_>::ConstElementIterator e(weights_of_edges.begin_non_zero_elements()),
+                        e_end(weights_of_edges.end_non_zero_elements()); e != e_end ; ++e)
+                {
+                    if (*e != weights_of_edges(e.column(), e.row())) symmetry = false;
+                    if (e.column() == e.row()) trace = false;
+                    if (*e < 0) positiv = false;
+                }
+            }
+
+            inline void elements_check(const DenseVector<DataType_> & weights_of_nodes, bool & positiv)
+            {
+                for (typename Vector<DataType_>::ConstElementIterator e(weights_of_nodes.begin_elements()),
+                e_end(weights_of_nodes.end_elements()); e != e_end ; ++e)
+                {
+                    if (*e < 0) positiv = false;
+                }
+            }
+
         public:  
             Positions(DenseMatrix<DataType_> & coordinates, const DenseVector<DataType_> & weights_of_nodes,
                     const SparseMatrix<DataType_> & weights_of_edges) :
                 _imp(new methods::Implementation<Tag_, DataType_, GraphTag_>(coordinates, weights_of_nodes, weights_of_edges))
             {
+                bool symmetric(true);
+                bool trace(true);
+                bool positiv(true);
+                bool positiv_2(true);
                 if (coordinates.rows() != weights_of_edges.columns())
                     throw MatrixColumnsDoNotMatch(weights_of_edges.columns(), coordinates.columns());
 
@@ -185,11 +209,20 @@
 
                 if (weights_of_nodes.size() != coordinates.rows())
                     throw VectorSizeDoesNotMatch(weights_of_nodes.size(), coordinates.columns());
-#if 0
-                \todo Implement Trace
-                if (Trace<>::value(weights_of_edges) > std::numeric_limits<DataType_>::epsilon())
-                    throw MatrixHasNonVanishingTrace;
-#endif
+
+                elements_check(weights_of_edges, trace, symmetric, positiv);
+                if (! symmetric)
+                    throw GraphError("Matrix of edge-weights must be symmetric");
+
+                if (! trace)
+                    throw GraphError("Matrix of edge-weights has non vanishing trace");
+
+                if (! positiv)
+                    throw GraphError("Elements in edge-weights matrix must be positiv");
+
+                elements_check(weights_of_nodes, positiv_2);
+                if (! positiv_2)
+                    throw GraphError("Elements in node-weights vector must be positiv");
             }
 
             Positions(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
@@ -533,7 +566,7 @@
                                 e_end(_step_width.end_elements()); e != e_end ; ++e)
                                 {
                                         DataType_ prod( DotProduct<Tag_>::value(_force_direction[e.index()], scaled_forces[e.index()]) );
-                                        if (prod > 0.8) *e *=1.5;
+                                        if (prod > 0.8) *e *=1.0;
                                         if ( (prod < -0.8) || (fabs(prod) < 0.2) ) *e *=0.5;
                                 }
                     }
@@ -687,7 +720,7 @@
                     _noise_duration(0)
                 {
                     // Using BFS to calculate the graph distance matrix
-                    if (! BreadthFirstSearch<>::value(_graph_distance, _weights_of_nodes, _weights_of_edges))
+                    if (! BreadthFirstSearch<Tag_>::value(_graph_distance, _weights_of_nodes, _weights_of_edges))
                         throw GraphError("Graph has to be coherently");
                 }
 
@@ -707,7 +740,7 @@
                     _noise_duration(0)
                 {
                     // Using BFS to calculate the graph distance matrix
-                    if (! BreadthFirstSearch<>::value(_graph_distance, _weights_of_nodes, _weights_of_edges, graph))
+                    if (! BreadthFirstSearch<Tag_>::value(_graph_distance, _weights_of_nodes, _weights_of_edges, graph))
                         throw GraphError("Graph has to be coherently");
                 }
 

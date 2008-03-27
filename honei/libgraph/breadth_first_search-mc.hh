@@ -81,7 +81,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::instance());
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             unsigned long num_parts(MCBreadthFirstSearch<Tag_>::calculate_parts(distance_matrix.rows()));
 
@@ -98,14 +98,16 @@ namespace honei
                     ResultFourArgWrapper< MCBreadthFirstSearch<Tag_>, bool, DenseMatrixTile<DataType_>, const DenseVector<DataType_>, 
                     const SparseMatrix<DataType_>, unsigned long> 
                     wrapper(result, tile, node_weights, edge_weights, matrix_row);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                     matrix_row += rows;
                 }
                 DenseMatrixTile<DataType_> tile(distance_matrix, rows + rest_of_rows, distance_matrix.columns(), matrix_row, 0);
                 ResultFourArgWrapper< MCBreadthFirstSearch<Tag_>, bool, DenseMatrixTile<DataType_>, const DenseVector<DataType_>, 
                 const SparseMatrix<DataType_>, unsigned long> 
                 wrapper(result, tile, node_weights, edge_weights, matrix_row);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
             }
             else
             {
@@ -152,7 +154,7 @@ namespace honei
 
             ThreadPool * tp(ThreadPool::instance());
 
-            std::list<PoolTask*> dispatched_tasks;
+            std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
             unsigned long num_parts(MCBreadthFirstSearch<Tag_>::calculate_parts(distance_matrix.rows()));
 
@@ -170,14 +172,16 @@ namespace honei
                     ResultFiveArgWrapper< MCBreadthFirstSearch<Tag_>, bool, DenseMatrixTile<DataType_>, const DenseVector<DataType_>, 
                     const SparseMatrix<DataType_>, const AbstractGraph<DataType_>, unsigned long> 
                     wrapper(result, tile, node_weights, edge_weights, graph, matrix_row);
-                    dispatched_tasks.push_back(tp->dispatch(wrapper));
+                    std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                    dispatched_tasks.push_back(ptr);
                     matrix_row += rows;
                 }
                 DenseMatrixTile<DataType_> tile(distance_matrix, rows + rest_of_rows, distance_matrix.columns(), matrix_row, 0);
                 ResultFiveArgWrapper< MCBreadthFirstSearch<Tag_>, bool, DenseMatrixTile<DataType_>, const DenseVector<DataType_>, 
                 const SparseMatrix<DataType_>, const AbstractGraph<DataType_>, unsigned long> 
                 wrapper(result, tile, node_weights, edge_weights, graph, matrix_row);
-                dispatched_tasks.push_back(tp->dispatch(wrapper));
+                std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(wrapper));
+                dispatched_tasks.push_back(ptr);
             }
             else
             {

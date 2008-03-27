@@ -230,5 +230,7 @@ namespace honei
     };
 
     template <> struct BreadthFirstSearch<tags::CPU::MultiCore> : public MCBreadthFirstSearch<tags::CPU::MultiCore>{};
+    template <> struct BreadthFirstSearch<tags::CPU::SSE> : public BreadthFirstSearch<tags::CPU>{};
+    template <> struct BreadthFirstSearch<tags::CPU::MultiCore::SSE> : public MCBreadthFirstSearch<tags::CPU::MultiCore>{};
 }
 #endif
