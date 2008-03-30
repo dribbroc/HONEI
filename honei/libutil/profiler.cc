@@ -310,7 +310,7 @@ namespace honei
                     Lock l(*mutex);
 
                     output << "--------------------------------------------------------" << std::endl;
-                    output << "function[tag] : count highest[ms] average[ms] lowest[ms]" << std::endl;
+                    output << "function[tag] : count highest[us] average[us] lowest[us]" << std::endl;
                     output << "--------------------------------------------------------" << std::endl;
 
                     for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r)
