@@ -2,7 +2,8 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
 bin_PROGRAMS = honei-swe
-
+honei_swedir = $(top_srcdir)/clients/swe
+honei_swe_HEADERS = scenario_controller.hh
 honei_swe_SOURCES = honei_swe.cc
 honei_swe_LDADD = \
 	$(top_srcdir)/honei/libutil/libutil.la \

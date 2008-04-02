@@ -20,8 +20,12 @@
 
 #include <honei/libswe/relax_solver.hh>
 #include <iostream>
+#include <scenario_controller.hh>
 
 int main(int argc, char ** argv)
 {
+    ScenarioController<tags::CPU::SSE, float> controller(0);
 
+    controller.init();
+    controller.do_timestep();
 }

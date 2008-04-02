@@ -21,7 +21,7 @@
 #ifndef LIBSWE_GUARD_SCENARIO_MANAGER_HH
 #define LIBSWE_GUARD_SCENARIO_MANAGER_HH 1
 
-#include <scenario.hh>
+#include <honei/libswe/scenario.hh>
 #include <honei/libutil/exception.hh>
 #include <honei/libla/algorithm.hh>
 /**
