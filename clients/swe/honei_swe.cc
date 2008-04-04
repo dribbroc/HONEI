@@ -24,7 +24,13 @@
 
 int main(int argc, char ** argv)
 {
+#ifdef HONEI_SSE
     ScenarioController<tags::CPU::SSE, float> controller(0);
+#elif HONEI_CELL
+    ScenarioController<tags::Cell, float> controller(0);
+#else
+    ScenarioController<tags::CPU, float> controller(0);
+#endif
 
     controller.init();
     controller.do_timestep();

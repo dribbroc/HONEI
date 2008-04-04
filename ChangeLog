@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-04-04 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* clients/swe/honei_swe.cc:
+	Fixed compile errors on the cell be.
+
 2008-03-30 Danny van Dyk <danny.dyk@uni-dortmund.de>
 
 	* honei/libutil/profiler.cc: Fixed units in profiler output as certain people
