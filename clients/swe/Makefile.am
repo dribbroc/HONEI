@@ -1,6 +1,12 @@
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
+DEFS = \
+	$(CELLDEF) \
+	$(SSEDEF) \
+	$(DEBUGDEF) \
+	$(PROFILERDEF)
+
 bin_PROGRAMS = honei-swe
 honei_swedir = $(top_srcdir)/clients/swe
 honei_swe_HEADERS = scenario_controller.hh

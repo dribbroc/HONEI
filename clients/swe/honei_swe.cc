@@ -24,9 +24,9 @@
 
 int main(int argc, char ** argv)
 {
-#ifdef HONEI_SSE
+#if defined (HONEI_SSE)
     ScenarioController<tags::CPU::SSE, float> controller(0);
-#elif HONEI_CELL
+#elif defined (HONEI_CELL)
     ScenarioController<tags::Cell, float> controller(0);
 #else
     ScenarioController<tags::CPU, float> controller(0);
