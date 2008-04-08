@@ -1,4 +1,8 @@
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = swe config
+if VISUAL
+  VISUALDIR = swe
+endif
+
+SUBDIRS = $(VISUALDIR) config
