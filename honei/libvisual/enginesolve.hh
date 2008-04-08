@@ -325,7 +325,7 @@ namespace honei
                 }
             }
 
-            static void display(void)
+           static void display(void)
             {
                 //int l_index;
                 if (gl_globals::enable_shading) glShadeModel(GL_SMOOTH);

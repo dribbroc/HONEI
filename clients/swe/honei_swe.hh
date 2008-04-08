@@ -22,19 +22,52 @@
 #define SWE_HONEI_SWE_HH
 
 #include <scenario_controller.hh>
+#include <honei/libutil/time_stamp.hh>
 
 ScenarioController<tags::CPU::SSE, float> * controller_f;
 ScenarioController<tags::CPU::SSE, double> * controller_d;
+
+double rotation_x_increment;
+double rotation_y_increment;
+double rotation_z_increment;
+
+double translation_x_increment;
+double translation_y_increment;
+double translation_z_increment;
+
+bool filling;
+bool use_quads;
+bool show_ground;
+bool show_water;
+bool enable_shading;
+bool enable_alpha_blending;
+bool paused;
+bool fullscreen;
+
+float alpha;
+int screen_width;
+int screen_height;
+
+double rotation_x;
+double rotation_y;
+double rotation_z;
+
+double translation_x;
+double translation_y;
+double translation_z;
+
+TimeStamp actual, last;
+
 void switch_scenario(int id);
-void display();
-void resize(int width, int height);
-void keyboard(unsigned char key, int x, int y);
-void keyboard_s(int key, int x, int y);
-void mouse(int button, int state, int x, int y);
-void menu_rendering(GLint index);
-void menu_scenario(GLint index);
-void menu_main(GLint index);
-void ogl_init();
+static void resize(int width, int height);
+static void keyboard(unsigned char key, int x, int y);
+static void keyboard_s(int key, int x, int y);
+static void mouse(int button, int state, int x, int y);
+static void menu_rendering(GLint index);
+static void menu_scenario(GLint index);
+static void menu_main(GLint index);
+static void ogl_init();
+static void display();
 
 
 #endif

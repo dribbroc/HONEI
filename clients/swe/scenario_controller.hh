@@ -21,6 +21,7 @@
 #ifndef SWE_SCENARIO_CONTROLLER_HH
 #define SWE_SCENARIO_CONTROLLER_HH
 
+#include <GL/glut.h>
 #include <honei/libswe/volume.hh>
 #include <honei/libswe/relax_solver.hh>
 #include <honei/libswe/scenario_manager.hh>
@@ -137,14 +138,105 @@ template<typename Tag_, typename Prec_> class ScenarioController
             _solver->solve();
         }
 
-        DenseMatrix<Prec_>* get_field_water()
+        void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
         {
-            return _height;
+            if (show_ground)
+            {
+                if(use_quads)
+                {
+                    glBegin(GL_QUADS);
+                    for(unsigned int i = 0; i < _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j < _dheight-1; ++j)
+                        {
+                            glColor3f(1.0, 0.0, 0.0);
+                            glVertex3d(i,j,(*_bottom)[j][i]);
+                            glColor3f(1.0, 0.8, 0.0);
+                            glVertex3d(i+1,j, (*_bottom)[j][i+1]);
+                            glVertex3d(i+1,j+1, (*_bottom)[j+1][i+1]);
+                            glVertex3d(i,j+1, (*_bottom)[j+1][i]);
+                        }
+                    }
+                    glEnd();
+                }
+                else
+                {
+                    glBegin(GL_TRIANGLE_STRIP);
+                    for(unsigned int i = 0; i < _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j < _dheight; j++)
+                        {
+                            glColor3f(1.0, 0.8, 0.0);
+                            glVertex3d(i,j, (*_bottom)[j][i]);
+                            glColor3f(1.0, 0.0, 0.0);
+                            glVertex3d(i+1,j, (*_bottom)[j][i+1]);
+                        }
+                        ++i;
+                        if (i >= _dwidth-1)
+                            break;
+                        for(int j2 = _dheight-2; j2 >= 0; --j2)
+                        {
+                            glVertex3d(i,j2, (*_bottom)[j2][i]);
+                            glColor3f(1.0, 0.8, 0.0);
+                            glVertex3d(i+1,j2, (*_bottom)[j2][i+1]);
+                        }
+                    }
+                    glEnd();
+                }
+            }
+            if(enable_alpha_blending)
+            {
+                glEnable (GL_BLEND);
+                glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
+            else
+                glDisable (GL_BLEND);
+
+            if (show_water)
+            {
+                if(use_quads)
+                {
+                    glBegin(GL_QUADS);
+                    for(unsigned int i = 0; i < _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j <_dheight-1; ++j)
+                        {
+                            glColor4f(0.0, 0.0, 1.0, alpha);
+                            glVertex3d(i,j, (*_height)[j][i] + (*_bottom)[j][i]);
+                            glColor4f(0.0, 1.0, 1.0, alpha);
+                            glVertex3d(i+1,j, (*_height)[j][i+1] + (*_bottom)[j][i+1]);
+                            glVertex3d(i+1,j+1, (*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]);
+                            glVertex3d(i,j+1, (*_height)[j+1][i] + (*_bottom)[j+1][i]);
+                        }
+                    }
+                    glEnd();
+                }
+                else
+                {
+                    glBegin(GL_TRIANGLE_STRIP);
+                    for(unsigned int i = 0; i <  _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j <  _dheight; j++)
+                        {
+                            glColor4f(0.0, 1.0, 1.0,  alpha);
+                            glVertex3d(i,j, (*_height)[j][i] +  (*_bottom)[j][i]);
+                            glColor4f(0.0, 0.0, 1.0,  alpha);
+                            glVertex3d(i+1,j, (*_height)[j][i+1] +  (*_bottom)[j][i+1]);
+                        }
+                        ++i;
+                        if (i >=  _dwidth-1)
+                            break;
+                        for(int j2 =  _dheight-2; j2 >= 0; --j2)
+                        {
+                            glVertex3d(i,j2, (*_height)[j2][i] +  (*_bottom)[j2][i]);
+                            glColor4f(0.0, 1.0, 1.0,  alpha);
+                            glVertex3d(i+1,j2, (*_height)[j2][i+1] +  (*_bottom)[j2][i+1]);
+                        }
+                    }
+                    glEnd();
+                }
+            }
         }
 
-        DenseMatrix<Prec_>* get_field_bottom()
-        {
-            return _bottom;
-        }
 };
 #endif
