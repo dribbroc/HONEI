@@ -18,6 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <GL/glut.h>
 #include <honei/libswe/relax_solver.hh>
 #include <iostream>
 #include <honei_swe.hh>
@@ -25,6 +26,47 @@
 
 int main(int argc, char ** argv)
 {
+    //OGL
+#if 0
+    int i =1;
+    int * pi = &i;
+
+    char * c = "Visual SWE";
+    char ** cp = &c;
+    glutInit(pi,cp);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+    //glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
+    glutInitWindowSize(640, 480);
+    glutInitWindowPosition(0,0);
+    glutCreateWindow("HONEI SWE");
+    glutDisplayFunc(display);
+    glutIdleFunc(display);
+    glutReshapeFunc(resize);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(keyboard_s);
+    glutMouseFunc(mouse);
+    GLint menu_id_rendering = glutCreateMenu(menu_rendering);
+    glutAddMenuEntry("Toggle fill mode", 2);
+    glutAddMenuEntry("Toggle ground", 3);
+    glutAddMenuEntry("Toggle water", 4);
+    glutAddMenuEntry("Toggle shading", 5);
+    glutAddMenuEntry("Toggle primitive type", 6);
+    glutAddMenuEntry("Toggle alpha blending", 7);
+    GLint menu_id_scenario = glutCreateMenu(menu_scenario);
+    glutAddMenuEntry("todo", 1);
+    GLint menu_id_main = glutCreateMenu(menu_main);
+    glutAddMenuEntry("Restart scenario", 0);
+    glutAddSubMenu("Rendering", menu_id_rendering);
+    glutAddSubMenu("Scenarios", menu_id_scenario);
+    glutAddMenuEntry("Exit programm", 10);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+    glutMotionFunc(NULL);
+    glutPassiveMotionFunc(NULL);
+    ogl_init();
+    glutMainLoop();
+
+#endif
+
     controller_f = 0;
     controller_d = 0;
 
