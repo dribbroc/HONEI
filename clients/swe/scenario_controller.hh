@@ -57,10 +57,25 @@ template<typename Tag_, typename Prec_> class ScenarioController
             scenario_id(scen_id)
     {
     }
+        ~ScenarioController()
+        {
+            delete _height;
+            delete _bottom;
+            delete _u1;
+            delete _u2;
+            delete _u;
+            delete _v;
+            delete _w;
+            delete _bx;
+            delete _by;
+            delete _c;
+            delete _d;
+            delete _solver;
+        }
 
         static int get_precision(int scen_id)
         {
-            return 0;
+            return scen_id;
         }
 
         void init(void)

@@ -20,18 +20,49 @@
 
 #include <honei/libswe/relax_solver.hh>
 #include <iostream>
+#include <honei_swe.hh>
 #include <scenario_controller.hh>
 
 int main(int argc, char ** argv)
 {
-#if defined (HONEI_SSE)
-    ScenarioController<tags::CPU::SSE, float> controller(0);
-#elif defined (HONEI_CELL)
-    ScenarioController<tags::Cell, float> controller(0);
-#else
-    ScenarioController<tags::CPU, float> controller(0);
-#endif
+    controller_f = 0;
+    controller_d = 0;
 
-    controller.init();
-    controller.do_timestep();
+    switch_scenario(0);
+
+    if (controller_f)
+    {
+        controller_f->init();
+        controller_f->do_timestep();
+    }
+    else if (controller_d)
+    {
+        controller_d->init();
+        controller_d->do_timestep();
+    }
+
+
+
+    delete controller_f;
+    delete controller_d;
+}
+
+void switch_scenario(int id)
+{
+#if defined (HONEI_SSE)
+    if (ScenarioController<tags::CPU, float>::get_precision(id) == 0)
+    {
+        delete controller_f;
+        delete controller_d;
+        controller_d = 0;
+        controller_f = new ScenarioController<tags::CPU::SSE, float> (id);
+    }
+    else if (ScenarioController<tags::CPU, float>::get_precision(id) == 1)
+    {
+        delete controller_f;
+        delete controller_d;
+        controller_f = 0;
+        controller_d = new ScenarioController<tags::CPU::SSE, double> (id);
+    }
+#endif
 }
