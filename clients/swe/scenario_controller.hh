@@ -76,7 +76,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
 
         static int get_precision(int scen_id)
         {
-            return scen_id;
+            return 0; // todo return the right accuracy (0 or 1)
         }
 
         void init(void)

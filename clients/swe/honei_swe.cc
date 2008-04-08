@@ -81,7 +81,8 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Toggle primitive type", 6);
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
-    glutAddMenuEntry("todo", 1);
+    glutAddMenuEntry("Rain 90x90 float", 0);
+    glutAddMenuEntry("Scenario 1", 1);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
@@ -314,6 +315,8 @@ static void menu_rendering(GLint index)
 
 static void menu_scenario(GLint index)
 {
+    switch_scenario(index);
+    // todo pause rendering etc
 }
 
 static void menu_main(GLint index)

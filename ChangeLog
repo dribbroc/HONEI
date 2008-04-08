@@ -7,6 +7,11 @@ see the NEWS file.
 
 2008-04-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
+	* clients/swe/honei_swe.cc, clients/swe/scenario_controller.hh:
+	Added first simple scenario.
+
+2008-04-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
 	* clients/swe/honei_swe.cc, clients/swe/honei_swe.hh,
 	clients/swe/Makefile.am, clients/swe/scenario_controller.hh,
 	honei/libvisual/enginesolve.hh:
