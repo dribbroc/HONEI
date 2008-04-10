@@ -25,6 +25,7 @@
 #include <honei/libswe/volume.hh>
 #include <honei/libswe/relax_solver.hh>
 #include <honei/libswe/scenario_manager.hh>
+
 template<typename Tag_, typename Prec_> class ScenarioController
 {
     private:
@@ -76,11 +77,12 @@ template<typename Tag_, typename Prec_> class ScenarioController
 
         static int get_precision(int scen_id)
         {
-            return 0; // todo return the right accuracy (0 or 1)
+            return 0; // todo return the correct accuracy (0(float) or 1(double))
         }
 
         void init(void)
         {
+            //todo delete old data
             switch (scenario_id)
             {
                 //Rain 90x90:
@@ -131,6 +133,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         _solver->do_preprocessing();
                     }
             }
+            //break
         }
 
         void do_timestep(void)

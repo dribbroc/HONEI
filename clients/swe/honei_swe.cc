@@ -35,6 +35,7 @@ int main(int argc, char ** argv)
     translation_y_increment = 0;
     translation_z_increment = 0;
 
+    calc = true;
     filling = 1;
     use_quads = true;
     show_ground = true;
@@ -117,6 +118,10 @@ int main(int argc, char ** argv)
 
 void switch_scenario(int id)
 {
+    std::cout<<"switching to scenario: "<<id<<std::endl;
+    glutIdleFunc(NULL);
+    glutDisplayFunc(display_null);
+    calc = false;
 #if defined (HONEI_SSE)
     if (ScenarioController<tags::CPU, float>::get_precision(id) == 0)
     {
@@ -124,6 +129,7 @@ void switch_scenario(int id)
         delete controller_d;
         controller_d = 0;
         controller_f = new ScenarioController<tags::CPU::SSE, float> (id);
+        controller_f->init();
     }
     else if (ScenarioController<tags::CPU, float>::get_precision(id) == 1)
     {
@@ -131,8 +137,13 @@ void switch_scenario(int id)
         delete controller_d;
         controller_f = 0;
         controller_d = new ScenarioController<tags::CPU::SSE, double> (id);
+        controller_d->init();
     }
 #endif
+    std::cout<<"."<<std::endl;
+    calc = true;
+    glutDisplayFunc(display);
+    glutIdleFunc(display);
 }
 
 static void resize (int width, int height)
@@ -316,7 +327,6 @@ static void menu_rendering(GLint index)
 static void menu_scenario(GLint index)
 {
     switch_scenario(index);
-    // todo pause rendering etc
 }
 
 static void menu_main(GLint index)
@@ -354,7 +364,6 @@ static void ogl_init(void)
 
 static void display(void)
 {
-    //int l_index;
     if (enable_shading) glShadeModel(GL_SMOOTH);
     else glShadeModel(GL_FLAT);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -389,15 +398,18 @@ static void display(void)
     while(actual.usec() - last.usec() < 60000ul); // 1/25 = 40000
     last.take();
 
-    if (controller_f)
+    if (calc)
     {
-        controller_f->do_timestep();
-        controller_f->render(show_ground, use_quads, enable_alpha_blending, show_water, alpha);
-    }
-    else if (controller_d)
-    {
-        controller_d->do_timestep();
-        controller_d->render(show_ground, use_quads, enable_alpha_blending, show_water, alpha);
+        if (controller_f)
+        {
+            controller_f->do_timestep();
+            controller_f->render(show_ground, use_quads, enable_alpha_blending, show_water, alpha);
+        }
+        else if (controller_d)
+        {
+            controller_d->do_timestep();
+            controller_d->render(show_ground, use_quads, enable_alpha_blending, show_water, alpha);
+        }
     }
 
     glutSwapBuffers();

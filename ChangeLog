@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-04-10 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+	* clients/swe/honei_swe.cc, clients/swe/honei_swe.hh, clients/swe/scenario_controller.hh:
+	Fixed a bug when changing scenarios.
+
 2008-04-08 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* clients/swe/honei_swe.cc, clients/swe/scenario_controller.hh:

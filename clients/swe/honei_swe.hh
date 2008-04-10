@@ -35,6 +35,7 @@ double translation_x_increment;
 double translation_y_increment;
 double translation_z_increment;
 
+bool calc;
 bool filling;
 bool use_quads;
 bool show_ground;
@@ -68,6 +69,7 @@ static void menu_scenario(GLint index);
 static void menu_main(GLint index);
 static void ogl_init();
 static void display();
+static void display_null(){}
 
 
 #endif
