@@ -39,14 +39,14 @@ class DenseVectorSumVectorBench :
         }
 };
 #ifdef HONEI_SSE
-DenseVectorSumVectorBench<tags::CPU::SSE, float> SSEDVSVBenchfloat1("SSE Dense Vector Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorSumVectorBench<tags::CPU::SSE, double> SSEDVSVBenchdouble1("SSE Dense Vector Sum Vector Benchmark - matrix size: 64^4, double", 64ul*64*64*64, 10);
-DenseVectorSumVectorBench<tags::CPU::MultiCore::SSE, float> SSEDVSVBenchfloat2("MC::SSE Vector Row Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorSumVectorBench<tags::CPU::MultiCore::SSE, double> SSEDVSVBenchdouble2("MC::SSE Dense Vector Sum Vector Benchmark - matrix size: 64^4, double",64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::CPU::SSE, float> SSEDVSVBenchfloat1("SSE Dense Vector Reduction to Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::CPU::SSE, double> SSEDVSVBenchdouble1("SSE Dense Vector Reduction to Sum Vector Benchmark - matrix size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::CPU::MultiCore::SSE, float> SSEDVSVBenchfloat2("MC::SSE Vector Reduction to Row Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::CPU::MultiCore::SSE, double> SSEDVSVBenchdouble2("MC::SSE Dense Vector Reduction to Sum Vector Benchmark - matrix size: 64^4, double",64ul*64*64*64, 10);
 #endif
 #ifdef HONEI_CELL
-DenseVectorSumVectorBench<tags::Cell, float> CELLDVSVBenchfloat1("Cell Dense Vector Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorSumVectorBench<tags::Cell, double> CELLDVSVBenchdouble1("Cell Dense Vector Sum Vector Benchmark - matrix size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::Cell, float> CELLDVSVBenchfloat1("Cell Dense Vector Reduction to Sum Vector Benchmark - matrix size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumVectorBench<tags::Cell, double> CELLDVSVBenchdouble1("Cell Dense Vector Reduction to Sum Vector Benchmark - matrix size: 64^4, double", 64ul*64*64*64, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -77,15 +77,15 @@ class DenseMatrixRowSumVectorBench :
             evaluate(info);
         }
 };
-DenseMatrixRowSumVectorBench<tags::CPU, float> DMRSVBenchfloat1("Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-DenseMatrixRowSumVectorBench<tags::CPU, double> DMRSVBenchdouble1("Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
-DenseMatrixRowSumVectorBench<tags::CPU::MultiCore, float> DMRSVBenchfloat2("MC: Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-DenseMatrixRowSumVectorBench<tags::CPU::MultiCore, double> DMRSVBenchdouble2("MC: Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU, float> DMRSVBenchfloat1("Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU, double> DMRSVBenchdouble1("Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU::MultiCore, float> DMRSVBenchfloat2("MC: Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU::MultiCore, double> DMRSVBenchdouble2("MC: Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
 #ifdef HONEI_SSE
-DenseMatrixRowSumVectorBench<tags::CPU::SSE, float> SSEDMRSVBenchfloat1("SSE Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-DenseMatrixRowSumVectorBench<tags::CPU::SSE, double> SSEDMRSVBenchdouble1("SSE Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
-DenseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, float> SSEDMRSVBenchfloat2("MC::SSE Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-DenseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, double> SSEDMRSVBenchdouble2("MC::SSE Dense Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU::SSE, float> SSEDMRSVBenchfloat1("SSE Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU::SSE, double> SSEDMRSVBenchdouble1("SSE Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, float> SSEDMRSVBenchfloat2("MC::SSE Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+DenseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, double> SSEDMRSVBenchdouble2("MC::SSE Dense Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -123,15 +123,15 @@ class SparseMatrixRowSumVectorBench :
             evaluate(info);
         }
 };
-SparseMatrixRowSumVectorBench<tags::CPU, float> SMRSVBenchfloat1("Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-SparseMatrixRowSumVectorBench<tags::CPU, double> SMRSVBenchdouble1("Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
-SparseMatrixRowSumVectorBench<tags::CPU::MultiCore, float> SMRSVBenchfloat2("MC: Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-SparseMatrixRowSumVectorBench<tags::CPU::MultiCore, double> SMRSVBenchdouble2("MC: Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU, float> SMRSVBenchfloat1("Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU, double> SMRSVBenchdouble1("Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU::MultiCore, float> SMRSVBenchfloat2("MC: Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU::MultiCore, double> SMRSVBenchdouble2("MC: Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
 #ifdef HONEI_SSE
-SparseMatrixRowSumVectorBench<tags::CPU::SSE, float> SSESMRSVBenchfloat1("SSE Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-SparseMatrixRowSumVectorBench<tags::CPU::SSE, double> SSESMRSVBenchdouble1("SSE Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
-SparseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, float> SSESMRSVBenchfloat2("MC::SSE Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
-SparseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, double> SSESMRSVBenchdouble2("MC::SSE Sparse Matrix Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU::SSE, float> SSESMRSVBenchfloat1("SSE Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU::SSE, double> SSESMRSVBenchdouble1("SSE Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, float> SSESMRSVBenchfloat2("MC::SSE Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, float", 4096, 10);
+SparseMatrixRowSumVectorBench<tags::CPU::MultiCore::SSE, double> SSESMRSVBenchdouble2("MC::SSE Sparse Matrix Reduction to Row Sum Vector Benchmark - matrix size: 4096x4096, double", 4096, 10);
 #endif
 
 template <typename DT_, typename Tag_>
