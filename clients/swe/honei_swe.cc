@@ -83,7 +83,8 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
     glutAddMenuEntry("Rain 90x90 float", 0);
-    glutAddMenuEntry("Rain 64x64", 1);
+    glutAddMenuEntry("Rain 64x64 float", 1);
+    glutAddMenuEntry("Full dam break 90x90 float", 2);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
