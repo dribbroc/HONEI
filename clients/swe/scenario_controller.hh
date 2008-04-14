@@ -342,7 +342,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         _bx = new DenseVector<Prec_>(_entries/3, Prec_(0));
                         _by = new DenseVector<Prec_>(_entries/3, Prec_(0));
 
-                        Cuboid<Prec_> q2(*_height, Prec_(45), Prec_(62), Prec_(3),1,50);
+                        Cuboid<Prec_> q2(*_height, Prec_(45), Prec_(62), Prec_(10),1,50);
                         q2.value();
 
                         ScenarioManager<Prec_, swe_solvers::RELAX, boundaries::REFLECT> scen_man;
