@@ -8,6 +8,11 @@ see the NEWS file.
 2008-04-14 Markus Geveler <apryde@gmx.de>
 
 	* clients/swe/honei_swe.cc, clients/swe/scenario_controller.hh:
+	Added Hydraulic jump scenario.
+
+2008-04-14 Markus Geveler <apryde@gmx.de>
+
+	* clients/swe/honei_swe.cc, clients/swe/scenario_controller.hh:
 	Added channel pump scenario.
 
 2008-04-14 Markus Geveler <apryde@gmx.de>

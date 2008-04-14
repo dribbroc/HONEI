@@ -425,119 +425,191 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         }
                     }
                     break;
+                //Hydraulic jump 80x80 :
+                case 6:
+                    {
+                        _dwidth = 64;
+                        _dheight = 64;
+                        _dt = 5./24.;
+                        _dx = 5;
+                        _dy = 5;
 
+                        _c = new DenseVector<Prec_>(3);
+                        (*_c)[0] = 10.;
+                        (*_c)[1] = 6.;
+                        (*_c)[2] = 11.;
+                        _d = new DenseVector<Prec_>(_c->copy());
+                        (*_d)[0] = 10.;
+                        (*_d)[1] = 5.;
+                        (*_d)[2] = 11.;
 
-            }
+                        _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5));
+                        _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(1.));
+                        _u1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _u2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _entries = 3*((_dwidth*_dheight)+4*(_dwidth+_dheight+4));
+                        _eps = 10e-6;
+                        _manning = 0.05;
 
-        }
+                        _u = new DenseVector<Prec_>(_entries, Prec_(0));
+                        _v = new DenseVector<Prec_>(_entries, Prec_(0));
+                        _w = new DenseVector<Prec_>(_entries, Prec_(0));
 
+                        _bx = new DenseVector<Prec_>(_entries/3, Prec_(0));
+                        _by = new DenseVector<Prec_>(_entries/3, Prec_(0));
+                        Cuboid<Prec_> q_b1(*_bottom, _dwidth, 3, Prec_(2), 20, 0);
+                        q_b1.value();
+                        Cuboid<Prec_> q_b2(*_bottom, _dwidth, 1, Prec_(1.8), 19,0);
+                        q_b2.value();
+                        Cuboid<Prec_> q_b3(*_bottom, _dwidth, 1, Prec_(1.8), 23,0);
+                        q_b3.value();
+                        Cuboid<Prec_> q_b4(*_bottom, _dwidth, 1, Prec_(1.5), 18,0);
+                        q_b4.value();
+                        Cuboid<Prec_> q_b5(*_bottom, _dwidth, 1, Prec_(1.5), 24,0);
+                        q_b5.value();
+                        Cuboid<Prec_> q_b6(*_bottom, _dwidth, 1, Prec_(1.2), 17,0);
+                        q_b6.value();
+                        Cuboid<Prec_> q_b7(*_bottom, _dwidth, 1, Prec_(1.2), 25,0);
+                        q_b7.value();
+                        Cuboid<Prec_> q_b8(*_bottom, _dwidth, 1, Prec_(1.1), 16,0);
+                        q_b8.value();
+                        Cuboid<Prec_> q_b9(*_bottom, _dwidth, 1, Prec_(1.1), 26,0);
+                        q_b9.value();
 
-void do_timestep(void)
-{
-    _update_scenario();
-    _solver->solve();
-    ++_timestep;
-}
+                        Cuboid<Prec_> q_w(*_height, _dwidth, 1, Prec_(10.),0,0);
+                        q_w.value();
 
-void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
-{
-    if (show_ground)
-    {
-        if(use_quads)
-        {
-            glBegin(GL_QUADS);
-            for(unsigned int i = 0; i < _dwidth-1; ++i)
-            {
-                for(unsigned int j = 0; j < _dheight-1; ++j)
-                {
-                    glColor3f(1.0, 0.0, 0.0);
-                    glVertex3d(i,j,(*_bottom)[j][i]);
-                    glColor3f(1.0, 0.8, 0.0);
-                    glVertex3d(i+1,j, (*_bottom)[j][i+1]);
-                    glVertex3d(i+1,j+1, (*_bottom)[j+1][i+1]);
-                    glVertex3d(i,j+1, (*_bottom)[j+1][i]);
-                }
-            }
-            glEnd();
-        }
-        else
-        {
-            glBegin(GL_TRIANGLE_STRIP);
-            for(unsigned int i = 0; i < _dwidth-1; ++i)
-            {
-                for(unsigned int j = 0; j < _dheight; j++)
-                {
-                    glColor3f(1.0, 0.8, 0.0);
-                    glVertex3d(i,j, (*_bottom)[j][i]);
-                    glColor3f(1.0, 0.0, 0.0);
-                    glVertex3d(i+1,j, (*_bottom)[j][i+1]);
-                }
-                ++i;
-                if (i >= _dwidth-1)
+                        ScenarioManager<Prec_, swe_solvers::RELAX, boundaries::REFLECT> scen_man;
+                        _scenario =  new Scenario<Prec_, RELAX, REFLECT>(_dwidth, _dheight);
+
+                        scen_man.allocate_scenario(_scenario);
+                        scen_man.allocate_scalarfields(_height, _bottom, _u1, _u2);
+                        scen_man.allocate_relax_vectors(_u, _v, _w, _c, _d);
+                        scen_man.allocate_bottom_slopes(_bx, _by);
+                        scen_man.set_environmental_variables(_dx, _dy, _dt, _manning, _eps);
+
+                        _solver = new RelaxSolver<Tag_, Prec_, Prec_, Prec_, Prec_, Prec_, source_types::SIMPLE, boundaries::REFLECT, FIXED>(*_scenario);
+
+                        if(scen_man.validate())
+                        {
+                            _solver->do_preprocessing();
+                        }
+                    }
                     break;
-                for(int j2 = _dheight-2; j2 >= 0; --j2)
-                {
-                    glVertex3d(i,j2, (*_bottom)[j2][i]);
-                    glColor3f(1.0, 0.8, 0.0);
-                    glVertex3d(i+1,j2, (*_bottom)[j2][i+1]);
-                }
-            }
-            glEnd();
-        }
-    }
-    if(enable_alpha_blending)
-    {
-        glEnable (GL_BLEND);
-        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-    else
-        glDisable (GL_BLEND);
 
-    if (show_water)
-    {
-        if(use_quads)
+
+
+            }
+
+        }
+
+
+        void do_timestep(void)
         {
-            glBegin(GL_QUADS);
-            for(unsigned int i = 0; i < _dwidth-1; ++i)
+            _update_scenario();
+            _solver->solve();
+            ++_timestep;
+        }
+
+        void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
+        {
+            if (show_ground)
             {
-                for(unsigned int j = 0; j <_dheight-1; ++j)
+                if(use_quads)
                 {
-                    glColor4f(0.0, 0.0, 1.0, alpha);
-                    glVertex3d(i,j, (*_height)[j][i] + (*_bottom)[j][i]);
-                    glColor4f(0.0, 1.0, 1.0, alpha);
-                    glVertex3d(i+1,j, (*_height)[j][i+1] + (*_bottom)[j][i+1]);
-                    glVertex3d(i+1,j+1, (*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]);
-                    glVertex3d(i,j+1, (*_height)[j+1][i] + (*_bottom)[j+1][i]);
+                    glBegin(GL_QUADS);
+                    for(unsigned int i = 0; i < _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j < _dheight-1; ++j)
+                        {
+                            glColor3f(1.0, 0.0, 0.0);
+                            glVertex3d(i,j,(*_bottom)[j][i]);
+                            glColor3f(1.0, 0.8, 0.0);
+                            glVertex3d(i+1,j, (*_bottom)[j][i+1]);
+                            glVertex3d(i+1,j+1, (*_bottom)[j+1][i+1]);
+                            glVertex3d(i,j+1, (*_bottom)[j+1][i]);
+                        }
+                    }
+                    glEnd();
+                }
+                else
+                {
+                    glBegin(GL_TRIANGLE_STRIP);
+                    for(unsigned int i = 0; i < _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j < _dheight; j++)
+                        {
+                            glColor3f(1.0, 0.8, 0.0);
+                            glVertex3d(i,j, (*_bottom)[j][i]);
+                            glColor3f(1.0, 0.0, 0.0);
+                            glVertex3d(i+1,j, (*_bottom)[j][i+1]);
+                        }
+                        ++i;
+                        if (i >= _dwidth-1)
+                            break;
+                        for(int j2 = _dheight-2; j2 >= 0; --j2)
+                        {
+                            glVertex3d(i,j2, (*_bottom)[j2][i]);
+                            glColor3f(1.0, 0.8, 0.0);
+                            glVertex3d(i+1,j2, (*_bottom)[j2][i+1]);
+                        }
+                    }
+                    glEnd();
                 }
             }
-            glEnd();
-        }
-        else
-        {
-            glBegin(GL_TRIANGLE_STRIP);
-            for(unsigned int i = 0; i <  _dwidth-1; ++i)
+            if(enable_alpha_blending)
             {
-                for(unsigned int j = 0; j <  _dheight; j++)
+                glEnable (GL_BLEND);
+                glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
+            else
+                glDisable (GL_BLEND);
+
+            if (show_water)
+            {
+                if(use_quads)
                 {
-                    glColor4f(0.0, 1.0, 1.0,  alpha);
-                    glVertex3d(i,j, (*_height)[j][i] +  (*_bottom)[j][i]);
-                    glColor4f(0.0, 0.0, 1.0,  alpha);
-                    glVertex3d(i+1,j, (*_height)[j][i+1] +  (*_bottom)[j][i+1]);
+                    glBegin(GL_QUADS);
+                    for(unsigned int i = 0; i < _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j <_dheight-1; ++j)
+                        {
+                            glColor4f(0.0, 0.0, 1.0, alpha);
+                            glVertex3d(i,j, (*_height)[j][i] + (*_bottom)[j][i]);
+                            glColor4f(0.0, 1.0, 1.0, alpha);
+                            glVertex3d(i+1,j, (*_height)[j][i+1] + (*_bottom)[j][i+1]);
+                            glVertex3d(i+1,j+1, (*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]);
+                            glVertex3d(i,j+1, (*_height)[j+1][i] + (*_bottom)[j+1][i]);
+                        }
+                    }
+                    glEnd();
                 }
-                ++i;
-                if (i >=  _dwidth-1)
-                    break;
-                for(int j2 =  _dheight-2; j2 >= 0; --j2)
+                else
                 {
-                    glVertex3d(i,j2, (*_height)[j2][i] +  (*_bottom)[j2][i]);
-                    glColor4f(0.0, 1.0, 1.0,  alpha);
-                    glVertex3d(i+1,j2, (*_height)[j2][i+1] +  (*_bottom)[j2][i+1]);
+                    glBegin(GL_TRIANGLE_STRIP);
+                    for(unsigned int i = 0; i <  _dwidth-1; ++i)
+                    {
+                        for(unsigned int j = 0; j <  _dheight; j++)
+                        {
+                            glColor4f(0.0, 1.0, 1.0,  alpha);
+                            glVertex3d(i,j, (*_height)[j][i] +  (*_bottom)[j][i]);
+                            glColor4f(0.0, 0.0, 1.0,  alpha);
+                            glVertex3d(i+1,j, (*_height)[j][i+1] +  (*_bottom)[j][i+1]);
+                        }
+                        ++i;
+                        if (i >=  _dwidth-1)
+                            break;
+                        for(int j2 =  _dheight-2; j2 >= 0; --j2)
+                        {
+                            glVertex3d(i,j2, (*_height)[j2][i] +  (*_bottom)[j2][i]);
+                            glColor4f(0.0, 1.0, 1.0,  alpha);
+                            glVertex3d(i+1,j2, (*_height)[j2][i+1] +  (*_bottom)[j2][i+1]);
+                        }
+                    }
+                    glEnd();
                 }
             }
-            glEnd();
         }
-    }
-}
 
 };
 #endif
