@@ -5,6 +5,11 @@ This file lists every change made except typo and formatting fixes, which are
 only listed in SVN log. For a summary of what has changed between releases,
 see the NEWS file.
 
+2008-04-14 Markus Geveler <apryde@gmx.de>
+
+	* clients/swe/honei_swe.cc, clients/swe/scenario_controller.hh:
+	Added full dam break scenario 64x64.
+
 2008-04-10 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
 
 	* clients/swe/honei_swe.cc, clients/swe/honei_swe.hh, clients/swe/scenario_controller.hh:

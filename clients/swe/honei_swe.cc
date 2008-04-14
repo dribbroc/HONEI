@@ -85,6 +85,7 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Rain 90x90 float", 0);
     glutAddMenuEntry("Rain 64x64 float", 1);
     glutAddMenuEntry("Full dam break 90x90 float", 2);
+    glutAddMenuEntry("Full dam break 64x64 float", 3);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);

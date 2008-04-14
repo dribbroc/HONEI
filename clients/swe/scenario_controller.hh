@@ -261,6 +261,57 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         }
                     }
                     break;
+                //Full dam break 64x64:
+                case 3:
+                    {
+                        _dwidth = 64;
+                        _dheight = 64;
+                        _dt = 5./24.;
+                        _dx = 5;
+                        _dy = 5;
+
+                        _c = new DenseVector<Prec_>(3);
+                        (*_c)[0] = 12.;
+                        (*_c)[1] = 7.;
+                        (*_c)[2] = 12.;
+                        _d = new DenseVector<Prec_>(_c->copy());
+
+                        _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
+                        _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
+                        _u1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _u2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _entries = 3*((_dwidth*_dheight)+4*(_dwidth+_dheight+4));
+                        _eps = 10e-6;
+                        _manning = 0;
+
+                        _u = new DenseVector<Prec_>(_entries, Prec_(0));
+                        _v = new DenseVector<Prec_>(_entries, Prec_(0));
+                        _w = new DenseVector<Prec_>(_entries, Prec_(0));
+
+                        _bx = new DenseVector<Prec_>(_entries/3, Prec_(0));
+                        _by = new DenseVector<Prec_>(_entries/3, Prec_(0));
+
+                        Cuboid<Prec_> q2(*_height, Prec_(15), Prec_(62), Prec_(15),1,63);
+                        q2.value();
+
+                        ScenarioManager<Prec_, swe_solvers::RELAX, boundaries::REFLECT> scen_man;
+                        _scenario =  new Scenario<Prec_, RELAX, REFLECT>(_dwidth, _dheight);
+
+                        scen_man.allocate_scenario(_scenario);
+                        scen_man.allocate_scalarfields(_height, _bottom, _u1, _u2);
+                        scen_man.allocate_relax_vectors(_u, _v, _w, _c, _d);
+                        scen_man.allocate_bottom_slopes(_bx, _by);
+                        scen_man.set_environmental_variables(_dx, _dy, _dt, _manning, _eps);
+
+                        _solver = new RelaxSolver<Tag_, Prec_, Prec_, Prec_, Prec_, Prec_, source_types::SIMPLE, boundaries::REFLECT, FIXED>(*_scenario);
+
+                        if(scen_man.validate())
+                        {
+                            _solver->do_preprocessing();
+                        }
+                    }
+                    break;
+
 
 
             }
