@@ -46,13 +46,17 @@ template<typename Tag_, typename Prec_> class ScenarioController
         DenseVector<Prec_>* _c;
         DenseVector<Prec_>* _d;
 
-        unsigned long _dwidth, _dheight;
+        unsigned long _dwidth, _dheight, _entries;
 
         Prec_ _dt, _dx, _dy, _manning;
 
         double _eps;
 
         RelaxSolver<Tag_, Prec_, Prec_, Prec_, Prec_, Prec_, source_types::SIMPLE, boundaries::REFLECT, FIXED>* _solver;
+
+        void _update_scenario()
+        {
+        }
 
     public:
         ScenarioController(int scen_id) :
@@ -87,6 +91,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
             {
                 //Rain 90x90:
                 case 0:
+                    {
                     _dwidth = 90;
                     _dheight = 90;
                     _dt = 5./24.;
@@ -103,16 +108,16 @@ template<typename Tag_, typename Prec_> class ScenarioController
                     _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
                     _u1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                     _u2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
-                    unsigned long entries = 3*((_dwidth*_dheight)+4*(_dwidth+_dheight+4));
+                    _entries = 3*((_dwidth*_dheight)+4*(_dwidth+_dheight+4));
                     _eps = 10e-6;
                     _manning = 0;
 
-                    _u = new DenseVector<Prec_>(entries, Prec_(0));
-                    _v = new DenseVector<Prec_>(entries, Prec_(0));
-                    _w = new DenseVector<Prec_>(entries, Prec_(0));
+                    _u = new DenseVector<Prec_>(_entries, Prec_(0));
+                    _v = new DenseVector<Prec_>(_entries, Prec_(0));
+                    _w = new DenseVector<Prec_>(_entries, Prec_(0));
 
-                    _bx = new DenseVector<Prec_>(entries/3, Prec_(0));
-                    _by = new DenseVector<Prec_>(entries/3, Prec_(0));
+                    _bx = new DenseVector<Prec_>(_entries/3, Prec_(0));
+                    _by = new DenseVector<Prec_>(_entries/3, Prec_(0));
 
                     Cylinder<Prec_> c1(*_height, Prec_(15.), _dwidth/2, _dheight/2);
                     c1.value();
@@ -132,114 +137,169 @@ template<typename Tag_, typename Prec_> class ScenarioController
                     {
                         _solver->do_preprocessing();
                     }
+                    }
+                    break;
+                    //Rain 64x64:
+                case 1:
+                    {
+                    _dwidth = 64;
+                    _dheight = 64;
+                    _dt = 5./24.;
+                    _dx = 5;
+                    _dy = 5;
+
+                    _c = new DenseVector<Prec_>(3);
+                    (*_c)[0] = 12.;
+                    (*_c)[1] = 7.;
+                    (*_c)[2] = 12.;
+                    _d = new DenseVector<Prec_>(_c->copy());
+
+                    _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
+                    _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
+                    _u1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                    _u2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                    _entries = 3*((_dwidth*_dheight)+4*(_dwidth+_dheight+4));
+                    _eps = 10e-6;
+                    _manning = 0;
+
+                    _u = new DenseVector<Prec_>(_entries, Prec_(0));
+                    _v = new DenseVector<Prec_>(_entries, Prec_(0));
+                    _w = new DenseVector<Prec_>(_entries, Prec_(0));
+
+                    _bx = new DenseVector<Prec_>(_entries/3, Prec_(0));
+                    _by = new DenseVector<Prec_>(_entries/3, Prec_(0));
+
+                    Cylinder<Prec_> c1(*_height, Prec_(15.), _dwidth/2, _dheight/2);
+                    c1.value();
+
+                    ScenarioManager<Prec_, swe_solvers::RELAX, boundaries::REFLECT> scen_man;
+                    _scenario =  new Scenario<Prec_, RELAX, REFLECT>(_dwidth, _dheight);
+
+                    scen_man.allocate_scenario(_scenario);
+                    scen_man.allocate_scalarfields(_height, _bottom, _u1, _u2);
+                    scen_man.allocate_relax_vectors(_u, _v, _w, _c, _d);
+                    scen_man.allocate_bottom_slopes(_bx, _by);
+                    scen_man.set_environmental_variables(_dx, _dy, _dt, _manning, _eps);
+
+                    _solver = new RelaxSolver<Tag_, Prec_, Prec_, Prec_, Prec_, Prec_, source_types::SIMPLE, boundaries::REFLECT, FIXED>(*_scenario);
+
+                    if(scen_man.validate())
+                    {
+                        _solver->do_preprocessing();
+                    }
+                    }
+                    break;
+
             }
-            //break
+
         }
 
-        void do_timestep(void)
+
+void do_timestep(void)
+{
+    _update_scenario();
+    _solver->solve();
+}
+
+void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
+{
+    if (show_ground)
+    {
+        if(use_quads)
         {
-            _solver->solve();
+            glBegin(GL_QUADS);
+            for(unsigned int i = 0; i < _dwidth-1; ++i)
+            {
+                for(unsigned int j = 0; j < _dheight-1; ++j)
+                {
+                    glColor3f(1.0, 0.0, 0.0);
+                    glVertex3d(i,j,(*_bottom)[j][i]);
+                    glColor3f(1.0, 0.8, 0.0);
+                    glVertex3d(i+1,j, (*_bottom)[j][i+1]);
+                    glVertex3d(i+1,j+1, (*_bottom)[j+1][i+1]);
+                    glVertex3d(i,j+1, (*_bottom)[j+1][i]);
+                }
+            }
+            glEnd();
         }
-
-        void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
+        else
         {
-            if (show_ground)
+            glBegin(GL_TRIANGLE_STRIP);
+            for(unsigned int i = 0; i < _dwidth-1; ++i)
             {
-                if(use_quads)
+                for(unsigned int j = 0; j < _dheight; j++)
                 {
-                    glBegin(GL_QUADS);
-                    for(unsigned int i = 0; i < _dwidth-1; ++i)
-                    {
-                        for(unsigned int j = 0; j < _dheight-1; ++j)
-                        {
-                            glColor3f(1.0, 0.0, 0.0);
-                            glVertex3d(i,j,(*_bottom)[j][i]);
-                            glColor3f(1.0, 0.8, 0.0);
-                            glVertex3d(i+1,j, (*_bottom)[j][i+1]);
-                            glVertex3d(i+1,j+1, (*_bottom)[j+1][i+1]);
-                            glVertex3d(i,j+1, (*_bottom)[j+1][i]);
-                        }
-                    }
-                    glEnd();
+                    glColor3f(1.0, 0.8, 0.0);
+                    glVertex3d(i,j, (*_bottom)[j][i]);
+                    glColor3f(1.0, 0.0, 0.0);
+                    glVertex3d(i+1,j, (*_bottom)[j][i+1]);
                 }
-                else
+                ++i;
+                if (i >= _dwidth-1)
+                    break;
+                for(int j2 = _dheight-2; j2 >= 0; --j2)
                 {
-                    glBegin(GL_TRIANGLE_STRIP);
-                    for(unsigned int i = 0; i < _dwidth-1; ++i)
-                    {
-                        for(unsigned int j = 0; j < _dheight; j++)
-                        {
-                            glColor3f(1.0, 0.8, 0.0);
-                            glVertex3d(i,j, (*_bottom)[j][i]);
-                            glColor3f(1.0, 0.0, 0.0);
-                            glVertex3d(i+1,j, (*_bottom)[j][i+1]);
-                        }
-                        ++i;
-                        if (i >= _dwidth-1)
-                            break;
-                        for(int j2 = _dheight-2; j2 >= 0; --j2)
-                        {
-                            glVertex3d(i,j2, (*_bottom)[j2][i]);
-                            glColor3f(1.0, 0.8, 0.0);
-                            glVertex3d(i+1,j2, (*_bottom)[j2][i+1]);
-                        }
-                    }
-                    glEnd();
+                    glVertex3d(i,j2, (*_bottom)[j2][i]);
+                    glColor3f(1.0, 0.8, 0.0);
+                    glVertex3d(i+1,j2, (*_bottom)[j2][i+1]);
                 }
             }
-            if(enable_alpha_blending)
-            {
-                glEnable (GL_BLEND);
-                glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            }
-            else
-                glDisable (GL_BLEND);
-
-            if (show_water)
-            {
-                if(use_quads)
-                {
-                    glBegin(GL_QUADS);
-                    for(unsigned int i = 0; i < _dwidth-1; ++i)
-                    {
-                        for(unsigned int j = 0; j <_dheight-1; ++j)
-                        {
-                            glColor4f(0.0, 0.0, 1.0, alpha);
-                            glVertex3d(i,j, (*_height)[j][i] + (*_bottom)[j][i]);
-                            glColor4f(0.0, 1.0, 1.0, alpha);
-                            glVertex3d(i+1,j, (*_height)[j][i+1] + (*_bottom)[j][i+1]);
-                            glVertex3d(i+1,j+1, (*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]);
-                            glVertex3d(i,j+1, (*_height)[j+1][i] + (*_bottom)[j+1][i]);
-                        }
-                    }
-                    glEnd();
-                }
-                else
-                {
-                    glBegin(GL_TRIANGLE_STRIP);
-                    for(unsigned int i = 0; i <  _dwidth-1; ++i)
-                    {
-                        for(unsigned int j = 0; j <  _dheight; j++)
-                        {
-                            glColor4f(0.0, 1.0, 1.0,  alpha);
-                            glVertex3d(i,j, (*_height)[j][i] +  (*_bottom)[j][i]);
-                            glColor4f(0.0, 0.0, 1.0,  alpha);
-                            glVertex3d(i+1,j, (*_height)[j][i+1] +  (*_bottom)[j][i+1]);
-                        }
-                        ++i;
-                        if (i >=  _dwidth-1)
-                            break;
-                        for(int j2 =  _dheight-2; j2 >= 0; --j2)
-                        {
-                            glVertex3d(i,j2, (*_height)[j2][i] +  (*_bottom)[j2][i]);
-                            glColor4f(0.0, 1.0, 1.0,  alpha);
-                            glVertex3d(i+1,j2, (*_height)[j2][i+1] +  (*_bottom)[j2][i+1]);
-                        }
-                    }
-                    glEnd();
-                }
-            }
+            glEnd();
         }
+    }
+    if(enable_alpha_blending)
+    {
+        glEnable (GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else
+        glDisable (GL_BLEND);
+
+    if (show_water)
+    {
+        if(use_quads)
+        {
+            glBegin(GL_QUADS);
+            for(unsigned int i = 0; i < _dwidth-1; ++i)
+            {
+                for(unsigned int j = 0; j <_dheight-1; ++j)
+                {
+                    glColor4f(0.0, 0.0, 1.0, alpha);
+                    glVertex3d(i,j, (*_height)[j][i] + (*_bottom)[j][i]);
+                    glColor4f(0.0, 1.0, 1.0, alpha);
+                    glVertex3d(i+1,j, (*_height)[j][i+1] + (*_bottom)[j][i+1]);
+                    glVertex3d(i+1,j+1, (*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]);
+                    glVertex3d(i,j+1, (*_height)[j+1][i] + (*_bottom)[j+1][i]);
+                }
+            }
+            glEnd();
+        }
+        else
+        {
+            glBegin(GL_TRIANGLE_STRIP);
+            for(unsigned int i = 0; i <  _dwidth-1; ++i)
+            {
+                for(unsigned int j = 0; j <  _dheight; j++)
+                {
+                    glColor4f(0.0, 1.0, 1.0,  alpha);
+                    glVertex3d(i,j, (*_height)[j][i] +  (*_bottom)[j][i]);
+                    glColor4f(0.0, 0.0, 1.0,  alpha);
+                    glVertex3d(i+1,j, (*_height)[j][i+1] +  (*_bottom)[j][i+1]);
+                }
+                ++i;
+                if (i >=  _dwidth-1)
+                    break;
+                for(int j2 =  _dheight-2; j2 >= 0; --j2)
+                {
+                    glVertex3d(i,j2, (*_height)[j2][i] +  (*_bottom)[j2][i]);
+                    glColor4f(0.0, 1.0, 1.0,  alpha);
+                    glVertex3d(i+1,j2, (*_height)[j2][i+1] +  (*_bottom)[j2][i+1]);
+                }
+            }
+            glEnd();
+        }
+    }
+}
 
 };
 #endif

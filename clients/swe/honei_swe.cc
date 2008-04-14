@@ -49,7 +49,7 @@ int main(int argc, char ** argv)
     screen_width = 640;
     screen_height = 480;
 
-    rotation_x = 0;
+    rotation_x = -25;
     rotation_y = 0;
     rotation_z = 0;
 
@@ -83,7 +83,7 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
     glutAddMenuEntry("Rain 90x90 float", 0);
-    glutAddMenuEntry("Scenario 1", 1);
+    glutAddMenuEntry("Rain 64x64", 1);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
@@ -140,7 +140,6 @@ void switch_scenario(int id)
         controller_d->init();
     }
 #endif
-    std::cout<<"."<<std::endl;
     calc = true;
     glutDisplayFunc(display);
     glutIdleFunc(display);
