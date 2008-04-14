@@ -106,7 +106,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y][i] = h;
+                            height[grid_y][i] += h;
                         }
                     }
                 }
@@ -117,7 +117,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y + 1][i] = h;
+                            height[grid_y + 1][i] += h;
                         }
                     }
                 }
@@ -128,7 +128,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y - 1][i] = h;
+                            height[grid_y - 1][i] += h;
                         }
                     }
                 }
@@ -139,7 +139,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y + 2][i] = h;
+                            height[grid_y + 2][i] += h;
                         }
                     }
 
@@ -151,7 +151,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y - 2][i] = h;
+                            height[grid_y - 2][i] += h;
                         }
                     }
 
@@ -163,7 +163,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y + 3][i] = h;
+                            height[grid_y + 3][i] += h;
                         }
                     }
 
@@ -175,7 +175,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y - 3][i] = h;
+                            height[grid_y - 3][i] += h;
                         }
                     }
 
@@ -187,7 +187,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y + 4][i] = h;
+                            height[grid_y + 4][i] += h;
                         }
                     }
 
@@ -199,7 +199,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y - 4][i] = h;
+                            height[grid_y - 4][i] += h;
                         }
                     }
 
@@ -211,7 +211,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y + 5][i] = h;
+                            height[grid_y + 5][i] += h;
                         }
                     }
 
@@ -223,7 +223,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y - 5][i] = h;
+                            height[grid_y - 5][i] += h;
                         }
                     }
 
@@ -235,7 +235,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y + 6][i] = h;
+                            height[grid_y + 6][i] += h;
                         }
                     }
 
@@ -247,7 +247,7 @@ namespace honei
                     {
                         if(i >= 0 && i < height.columns())
                         {
-                            height[grid_y - 6][i] = h;
+                            height[grid_y - 6][i] += h;
                         }
                     }
 
@@ -295,7 +295,7 @@ namespace honei
                         {
                             if(j >= 0 && j < height.columns())
                             {
-                                height[i][j] = h;
+                                height[i][j] += h;
                             }
                         }
                     }
