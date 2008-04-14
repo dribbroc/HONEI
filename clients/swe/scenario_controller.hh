@@ -46,7 +46,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
         DenseVector<Prec_>* _c;
         DenseVector<Prec_>* _d;
 
-        unsigned long _dwidth, _dheight, _entries;
+        unsigned long _dwidth, _dheight, _entries, _timestep;
 
         Prec_ _dt, _dx, _dy, _manning;
 
@@ -56,6 +56,20 @@ template<typename Tag_, typename Prec_> class ScenarioController
 
         void _update_scenario()
         {
+            switch(scenario_id)
+            {
+                case 1:
+                    {
+                        if(_timestep % 15==0)
+                        {
+                            Cylinder<Prec_> c(*_height, Prec_(15.), _dwidth/3, _dheight/3);
+                            c.value();
+                            _solver->do_preprocessing();
+
+                        }
+                    }
+                    break;
+            }
         }
 
     public:
@@ -86,69 +100,70 @@ template<typename Tag_, typename Prec_> class ScenarioController
 
         void init(void)
         {
+            _timestep = 0;
             //todo delete old data
             switch (scenario_id)
             {
                 //Rain 90x90:
                 case 0:
                     {
-                    _dwidth = 90;
-                    _dheight = 90;
-                    _dt = 5./24.;
-                    _dx = 5;
-                    _dy = 5;
+                        _dwidth = 90;
+                        _dheight = 90;
+                        _dt = 5./24.;
+                        _dx = 5;
+                        _dy = 5;
 
-                    _c = new DenseVector<Prec_>(3);
-                    (*_c)[0] = 12.;
-                    (*_c)[1] = 7.;
-                    (*_c)[2] = 12.;
-                    _d = new DenseVector<Prec_>(_c->copy());
+                        _c = new DenseVector<Prec_>(3);
+                        (*_c)[0] = 12.;
+                        (*_c)[1] = 7.;
+                        (*_c)[2] = 12.;
+                        _d = new DenseVector<Prec_>(_c->copy());
 
-                    _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
-                    _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
-                    _u1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
-                    _u2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
-                    _entries = 3*((_dwidth*_dheight)+4*(_dwidth+_dheight+4));
-                    _eps = 10e-6;
-                    _manning = 0;
+                        _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
+                        _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(5.));
+                        _u1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _u2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _entries = 3*((_dwidth*_dheight)+4*(_dwidth+_dheight+4));
+                        _eps = 10e-6;
+                        _manning = 0;
 
-                    _u = new DenseVector<Prec_>(_entries, Prec_(0));
-                    _v = new DenseVector<Prec_>(_entries, Prec_(0));
-                    _w = new DenseVector<Prec_>(_entries, Prec_(0));
+                        _u = new DenseVector<Prec_>(_entries, Prec_(0));
+                        _v = new DenseVector<Prec_>(_entries, Prec_(0));
+                        _w = new DenseVector<Prec_>(_entries, Prec_(0));
 
-                    _bx = new DenseVector<Prec_>(_entries/3, Prec_(0));
-                    _by = new DenseVector<Prec_>(_entries/3, Prec_(0));
+                        _bx = new DenseVector<Prec_>(_entries/3, Prec_(0));
+                        _by = new DenseVector<Prec_>(_entries/3, Prec_(0));
 
-                    Cylinder<Prec_> c1(*_height, Prec_(15.), _dwidth/2, _dheight/2);
-                    c1.value();
+                        Cylinder<Prec_> c1(*_height, Prec_(15.), _dwidth/2, _dheight/2);
+                        c1.value();
 
-                    ScenarioManager<Prec_, swe_solvers::RELAX, boundaries::REFLECT> scen_man;
-                    _scenario =  new Scenario<Prec_, RELAX, REFLECT>(_dwidth, _dheight);
+                        ScenarioManager<Prec_, swe_solvers::RELAX, boundaries::REFLECT> scen_man;
+                        _scenario =  new Scenario<Prec_, RELAX, REFLECT>(_dwidth, _dheight);
 
-                    scen_man.allocate_scenario(_scenario);
-                    scen_man.allocate_scalarfields(_height, _bottom, _u1, _u2);
-                    scen_man.allocate_relax_vectors(_u, _v, _w, _c, _d);
-                    scen_man.allocate_bottom_slopes(_bx, _by);
-                    scen_man.set_environmental_variables(_dx, _dy, _dt, _manning, _eps);
+                        scen_man.allocate_scenario(_scenario);
+                        scen_man.allocate_scalarfields(_height, _bottom, _u1, _u2);
+                        scen_man.allocate_relax_vectors(_u, _v, _w, _c, _d);
+                        scen_man.allocate_bottom_slopes(_bx, _by);
+                        scen_man.set_environmental_variables(_dx, _dy, _dt, _manning, _eps);
 
-                    _solver = new RelaxSolver<Tag_, Prec_, Prec_, Prec_, Prec_, Prec_, source_types::SIMPLE, boundaries::REFLECT, FIXED>(*_scenario);
+                        _solver = new RelaxSolver<Tag_, Prec_, Prec_, Prec_, Prec_, Prec_, source_types::SIMPLE, boundaries::REFLECT, FIXED>(*_scenario);
 
-                    if(scen_man.validate())
-                    {
-                        _solver->do_preprocessing();
-                    }
+                        if(scen_man.validate())
+                        {
+                            _solver->do_preprocessing();
+                        }
                     }
                     break;
                     //Rain 64x64:
                 case 1:
                     {
-                    _dwidth = 64;
-                    _dheight = 64;
-                    _dt = 5./24.;
-                    _dx = 5;
-                    _dy = 5;
+                        _dwidth = 64;
+                        _dheight = 64;
+                        _dt = 5./24.;
+                        _dx = 5;
+                        _dy = 5;
 
-                    _c = new DenseVector<Prec_>(3);
+                        _c = new DenseVector<Prec_>(3);
                     (*_c)[0] = 12.;
                     (*_c)[1] = 7.;
                     (*_c)[2] = 12.;
@@ -199,6 +214,7 @@ void do_timestep(void)
 {
     _update_scenario();
     _solver->solve();
+    ++_timestep;
 }
 
 void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
