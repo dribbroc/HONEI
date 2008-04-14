@@ -60,9 +60,13 @@ template<typename Tag_, typename Prec_> class ScenarioController
             {
                 case 1:
                     {
-                        if(_timestep % 15==0)
+                        if(_timestep % 25==0)
                         {
-                            Cylinder<Prec_> c(*_height, Prec_(15.), _dwidth/3, _dheight/3);
+                            //generate numbers in [6,_d_width-6]
+                            Prec_ x = rand() % (_dwidth - 14);
+                            Prec_ y = rand() % (_dheight - 14);
+
+                            Cylinder<Prec_> c(*_height, Prec_(15.), x + 7, y +7);
                             c.value();
                             _solver->do_preprocessing();
 
@@ -76,6 +80,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
         ScenarioController(int scen_id) :
             scenario_id(scen_id)
     {
+        srand(time(NULL));
     }
         ~ScenarioController()
         {
