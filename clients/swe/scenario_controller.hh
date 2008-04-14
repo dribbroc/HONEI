@@ -66,7 +66,8 @@ template<typename Tag_, typename Prec_> class ScenarioController
                             Prec_ x = rand() % (_dwidth - 14);
                             Prec_ y = rand() % (_dheight - 14);
 
-                            Cylinder<Prec_> c(*_height, Prec_(15.), x + 7, y +7);
+                            Prec_ strength = rand() % 30;
+                            Cylinder<Prec_> c(*_height, strength, x + 7, y +7);
                             c.value();
                             _solver->do_preprocessing();
 
