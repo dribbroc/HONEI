@@ -7,6 +7,7 @@
 #include <honei/libgraph/graph.hh>
 #include <honei/libgraph/evolving_graph.hh>
 #include <honei/libgraph/position.hh>
+#include <honei/libgraph/test_scenario.hh>
 
 using namespace honei;
 using namespace tests;
@@ -36,59 +37,57 @@ class EngineEvolvingGraphTest :
             int i =1;
             int * pi = &i;
             int nps = _nodes * _slices;
+            int sizes[] =  {2, 3, 4, 5, 6};
+            //EvolvingGraph<DataType_> * eg = TestScenario<DataType_>::Evolving(5, sizes);
             
-            EvolvingGraph<DataType_> eg(2, 0.5);
-            
+            EvolvingGraph<DataType_> eg(2, DataType_(5));
             for (int t(0); t < _slices; ++t)
             {
                 Graph<DataType_> & g(eg.add_timeslice((t+1) * _nodes - t*0));
                 for (int n(t*0); n < (t+1)*_nodes; ++n)
-                    g.add_node(n);
+                    g.add_node(t*_nodes  + n);
                 for (int n(t*0); n < (t+1)*_nodes; ++n)
-                    for (int m(n+1); m < (t+1)*_nodes; ++m)
-                        g.add_edge(n, m, 1);
+                   // for (int m(n+1); m < (t+1)*_nodes; ++m)
+                        g.add_edge(t*_nodes  + n, t*_nodes  +  (n+1) % ((t+1)*_nodes), 1);
             }
             /*
-            eg.addNode(new Node<DataType_>(1, 1));
-            eg.addNode(new Node<DataType_>(2, 1));
-            eg.addNode(new Node<DataType_>(3, 1));
-            eg.addNode(new Node<DataType_>(4, 1));
-            eg.addNode(new Node<DataType_>(5, 2));
-            eg.addNode(new Node<DataType_>(6, 2));
 
-            Graph<DataType_> * t1 = new Graph<DataType_>(4, 2);
-            t1->addNode(eg.getNode(1));
-            t1->addNode(eg.getNode(2));
-            t1->addNode(eg.getNode(5));
-            t1->addNode(eg.getNode(6));
+            Graph<DataType_>  t1(eg.add_timeslice(4));
+            t1.add_node(1,1);
+            t1.add_node(2,1);
+            t1.add_node(5,2);
+            t1.add_node(6,2);
             
-            t1->addEdge(1, 2, 1);
-            t1->addEdge(2, 5, 1);
-            t1->addEdge(5, 6, 1);
-            t1->addEdge(6, 1, 1);
-            eg.addTimeslice(t1);
+            t1.add_edge(1, 2, 1);
+            t1.add_edge(2, 5, 1);
+            t1.add_edge(5, 6, 1);
+            t1.add_edge(6, 1, 1);
+            //eg.addTimeslice(t1);
 
-            Graph<DataType_> * t2 = new Graph<DataType_>(4, 2);
-            t2->addNode(eg.getNode(1));
-            t2->addNode(eg.getNode(2));
-            t2->addNode(eg.getNode(3));
-            eg.getNode(6)->setWeight(3);
-            t2->addNode(eg.getNode(6));
+            Graph<DataType_>  t2(eg.add_timeslice(4));
+            t2.add_node(1,1);
+            t2.add_node(2,1);
+            t2.add_node(3,1);
+            t2.add_node(6,3);
             
-            t2->addEdge(1,2,1);
-            t2->addEdge(1,3,1);
-            t2->addEdge(1,6,2);
-            eg.addTimeslice(t2);   
+            t2.add_edge(1,2,1);
+            t2.add_edge(1,3,1);
+            t2.add_edge(1,6,2);
+            //eg.addTimeslice(t2);   
 
-            Graph<DataType_> * t3 = new Graph<DataType_>(3, 2);   
-            t3->addNode(eg.getNode(1));
-            t3->addNode(eg.getNode(3));
-            t3->addNode(eg.getNode(4));
-            t3->addEdge(1,4,1);
-            t3->addEdge(3,4,1);
-            t3->addEdge(1,3,1);
-            eg.addTimeslice(t3);            
-            */
+            Graph<DataType_>  t3(eg.add_timeslice(3));   
+            t3.add_node(1,1);
+            t3.add_node(3,1);
+            t3.add_node(4,1);
+            t3.add_edge(1,4,1);
+            t3.add_edge(3,4,1);
+            t3.add_edge(1,3,1);
+            //eg.addTimeslice(t3);     
+            */       
+            
+            std::cout << "Scenario created!\n";
+            //eg.reassemble_graph();
+            std::cout << "Assembled\n";
             std::cout << "Evolving: " << eg.coordinates()->rows() << " Nodes, " << eg.edges()->rows() << "² Edges\n";
          //   std::cout << "coordinates eg: " << *eg.coordinates();
          //   std::cout << "edge matrix\n" << *eg.edges();
@@ -97,7 +96,7 @@ class EngineEvolvingGraphTest :
             std::cout << "\nCalculate Position\n";
             //Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(&gl_globals::graph, (DataType_)1);
             
-            Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1), 5);
+            Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1), 15);
             
 
             char * c = "Test: Engine";
@@ -119,5 +118,5 @@ class EngineEvolvingGraphTest :
             TEST_CHECK(true);
         }
 };
-EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double", 4, 5);
+EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 4, 7);
 //EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double");

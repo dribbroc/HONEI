@@ -74,5 +74,5 @@ class EngineGraphTest :
 }; 
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 11);
 
-EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_float("WFR Test Grid", TestScenario<float>::BinaryTree(10));
+EngineGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_float("WFR Test Grid", TestScenario<float>::Grid(16,16));
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200);

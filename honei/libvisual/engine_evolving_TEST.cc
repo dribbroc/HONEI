@@ -37,6 +37,7 @@ class EngineEvolvingTest :
             int * pi = &i;            
             int nps = _nodes * _slices;
             
+            /*
             EvolvingGraph<DataType_> eg(2, 4);
             
             for (int t(0); t < _slices; ++t)
@@ -48,8 +49,19 @@ class EngineEvolvingTest :
                     for (int m(n+1); m < (t+1)*_nodes; ++m)
                         g.add_edge(n, m, 1);
             }
+            */
+            
+            EvolvingGraph<DataType_> eg(2, DataType_(5));
+            for (int t(0); t < _slices; ++t)
+            {
+                Graph<DataType_> & g(eg.add_timeslice((t+1) * _nodes - t*0));
+                for (int n(t*0); n < (t+1)*_nodes; ++n)
+                    g.add_node(t*_nodes  + n);
+                for (int n(t*0); n < (t+1)*_nodes; ++n)
+                   // for (int m(n+1); m < (t+1)*_nodes; ++m)
+                        g.add_edge(t*_nodes  + n, t*_nodes  +  (n+1) % ((t+1)*_nodes), 1);
+            }
             /*
-
             eg.addNode(new Node<DataType_>(1, 1));
             eg.addNode(new Node<DataType_>(2, 1));
             eg.addNode(new Node<DataType_>(3, 1));
@@ -94,15 +106,15 @@ class EngineEvolvingTest :
             std::cout << "edge matrix\n" << *eg.edges();
 
             std::cout << "\nCalculate Position\n";
-            Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(eg, (DataType_)1);
-      //      positions.update(0.0000001, 1000);
+            Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> positions(eg, (DataType_)1);
+            positions.update(0.0, 1000);
             std::cout << "Iterations: " << positions.number_of_iterations() << "\n";
             
             std::cout << "update coordinates in timeslice graphs\n"; 
             eg.update_slice_coordinates(positions.coordinates());
             std::cout << "\nprepare interpolation (generate final coordinate matrices)\n";
             
-            EvolvingAnimator<Tag_, DataType_> animator(eg, 0.01f);            
+            EvolvingAnimator<Tag_, DataType_> animator(eg, 0.001f);            
             animator.prepare_interpolation();
             Engine::setTestCase(animator);
             
@@ -127,4 +139,4 @@ class EngineEvolvingTest :
         }
 };
 //EngineEvolvingTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double");
-EngineEvolvingTest<tags::CPU, float, methods::WeightedKamadaKawai> engine_test_double("wkk double", 5, 5);
+EngineEvolvingTest<tags::CPU, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double", 4, 6);

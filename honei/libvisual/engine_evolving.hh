@@ -72,6 +72,10 @@ namespace honei
         float ebene_z = 0.0f;
         bool calculate = false;
         void * animator;
+        
+        
+        float edgeMaterial[] = {0.2, 0.2, 0.2, 0.8};
+        float edgeTransparent[] = {0.4, 0.4, 0.6, 0.4};
     }
     
     template <typename Tag_, typename DataType_>
@@ -94,15 +98,21 @@ namespace honei
                     gl_globals::colors[4] = new Color(1.0f, 0.0f, 1.0f);
                     gl_globals::colors[5] = new Color(0.0f, 1.0f, 1.0f);
                     gl_globals::colors[6] = new Color(1.0f, 1.0f, 1.0f);
-                glClearColor(0.0, 0.0, 0.2, 0.0);
+                 glClearColor(1.0, 1.0, 1.0, 0.0);
                 glShadeModel(GL_SMOOTH);
                 glViewport(0,0,gl_globals::screen_width,gl_globals::screen_height);
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(45.0f,(GLfloat)gl_globals::screen_width/(GLfloat)gl_globals::screen_height,1.0f,1000.0f);
-                gluLookAt(0.0, 0.0, -20.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+                gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
                 glEnable(GL_DEPTH_TEST);
+                glEnable(GL_LIGHTING);
+                glEnable(GL_POLYGON_SMOOTH);
                 glEnable(GL_LINE_SMOOTH);
+                glEnable(GL_LIGHT0);
+                float pos[] = {100.0, -100.0, -100.0, 1};
+                glLightfv(GL_LIGHT0, GL_POSITION, pos); 
+                
                 glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
             } 
 
@@ -111,6 +121,8 @@ namespace honei
                 gl_globals::screen_width=width; 
                 gl_globals::screen_height=height; 
                 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                glViewport(0,0,gl_globals::screen_width,gl_globals::screen_height);
+                glShadeModel(GL_SMOOTH);
                 glViewport(0,0,gl_globals::screen_width,gl_globals::screen_height);
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
@@ -233,59 +245,58 @@ namespace honei
                 
                 //int timeslice = (int)gl_globals::time;     
 
-                // generate coordinate system
                 glBegin(GL_LINES);
-                glLineWidth(5);
-                glColor3f(1, 0, 0);
-                glVertex3f(0, 0, 0);
-                glVertex3f(1, 0, 0);
-
-                glColor3f(0, 1, 0);
-                glVertex3f(0, 0, 0);
-                glVertex3f(0, 1, 0);
-
-                glColor3f(0, 0, 1);
-                glVertex3f(0, 0, 0);
-                glVertex3f(0, 0, 1);
-
-                glEnd();
-                glFlush();
+                
                 
                 EvolvingAnimator<Tag_, DataType_> * animator(getAnimator());
-                std::cout << "bg\n";
-                // build geometry
-                for(unsigned int i = 0; i < animator->coordinates().rows(); ++i)
-                {
-                    
-                    DenseVectorRange<DataType_> dv(animator->coordinates()[i]);
-                    std::cout << "be\n";
-                    glPushMatrix();
-                    Color * c =  gl_globals::colors[0]; //timeslice % 7];
-                    glColor3f(c->r, c->g, c->b);
-                    glTranslatef((GLfloat)dv[0], (GLfloat)dv[1], gl_globals::ebene_z);
-                    GLUquadricObj  * quad = gluNewQuadric();
-                    gluSphere(quad, (GLfloat)(*animator->node_weights())[i] / 16, 4, 4);
-                    glPopMatrix();
-                }
                 
-                glBegin(GL_LINES);
-                /*
+                
                 for (typename MutableMatrix<DataType_>::ElementIterator i(animator->edges()->begin_non_zero_elements()), i_end(animator->edges()->end_non_zero_elements()); i != i_end ; ++i)
                 {
                     if (i.row() > i.column())
                     {
-                    
-                        glLineWidth((GLfloat)*i * 5);
+                       glLineWidth((GLfloat)*i * 8);
+                       glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, gl_globals::edgeMaterial);
+                            
+                        DenseVectorRange<DataType_> v1((animator->coordinates())[i.row()]);
+                        DenseVectorRange<DataType_> v2((animator->coordinates())[i.column()]);
+                        glVertex3f((GLfloat) v1[0],(GLfloat)v1[1], gl_globals::ebene_z);
+                        glVertex3f((GLfloat) v2[0],(GLfloat)v2[1], gl_globals::ebene_z);
+                    }
+                     /*   glLineWidth((GLfloat)*i * 5);
                         glColor3f(1.0, 1.0, 1.0);
                         DenseVectorRange<DataType_> v1(animator->coordinates()[i.row()]);
                         DenseVectorRange<DataType_> v2(animator->coordinates()[i.column()]);
                         glVertex3f((GLfloat) v1[0], (GLfloat)v1[1], gl_globals::ebene_z);
-                        glVertex3f((GLfloat) v2[0], (GLfloat)v2[1], gl_globals::ebene_z);
-                        
-                    }
-                }*/
+                        glVertex3f((GLfloat) v2[0], (GLfloat)v2[1], gl_globals::ebene_z);*/
+                }
                 
                 glEnd();
+                
+                // build geometry
+                for(unsigned int i = 0; i < animator->coordinates().rows(); ++i)
+                {
+                    DenseVectorRange<DataType_> dv((animator->coordinates())[i]);
+                    glPushMatrix();
+                    Color * c =  gl_globals::colors[0];
+                    float f[4];
+                    f[0] = c->r;
+                    f[1] = c->g;
+                    f[2] = c->b;
+                    f[3] = 1.0f;
+                    float shiny[4] = {0.3, 0.3, 0.3, 1.0 };
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, f);
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, shiny);
+                    //glColor4f();
+                    glTranslatef((GLfloat)dv[0], (GLfloat)dv[1], gl_globals::ebene_z);
+                    GLUquadricObj  * quad = gluNewQuadric();
+                    gluSphere(quad, (GLfloat)(*animator->node_weights())[i] / 10, 8, 8);
+                    glPopMatrix();
+                }
+                
+                
+                
+                
                 glFlush();
                 glutSwapBuffers();
                 std::cout << "time = " << animator->time() << "\n";
