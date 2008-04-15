@@ -566,7 +566,7 @@
                                 e_end(_step_width.end_elements()); e != e_end ; ++e)
                                 {
                                         DataType_ prod( DotProduct<Tag_>::value(_force_direction[e.index()], scaled_forces[e.index()]) );
-                                        if (prod > 0.8) *e *=1.0;
+                                        if (prod > 0.8) *e *=1.5;
                                         if ( (prod < -0.8) || (fabs(prod) < 0.2) ) *e *=0.5;
                                 }
                     }
