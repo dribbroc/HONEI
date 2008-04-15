@@ -60,13 +60,16 @@ namespace honei
                 this->_coordinates = new DM(_total_node_count, _coordinate_dimensions );
                 for (int t(0); t < slice_count(); ++t)
                 {
+                
                     int offset = _slice_offset[t];
                     GraphType * slice = _slices[t];
+                   
                     for (typename DM::ConstElementIterator i(slice->coordinates()->begin_elements()),
                             i_end(slice->coordinates()->end_elements()); i != i_end; ++i)
                     {
                         (*this->_coordinates)(offset + i.row(), i.column()) = *i;
                     }
+                     
                 }
             }
 
@@ -204,6 +207,7 @@ void assemble_edges()
             _slices.push_back(g);
             _slice_offset.push_back(_total_node_count);
             _total_node_count += node_count;
+            std::cout << "added timeslice. total nodes: "<< _total_node_count << " (" << node_count << "new)\n";
             return *_slices.back();
         }
 
@@ -263,11 +267,15 @@ void assemble_edges()
 
         void reassemble_graph()
         {
-            if(this->_coordinates)
-                delete(this->_coordinates);
+            std::cout <<"reassemble graph\n";
+           if(this->_coordinates)
+              delete(this->_coordinates);
+            std::cout <<"reassemble coords\n";
             assemble_coordinates();
+            
             if(this->_node_weights)
-                delete(this->_node_weights);
+               delete(this->_node_weights);
+            std::cout <<"reassemble weights\n";
             assemble_node_weights();
             if(this->_edges)
                 delete(this->_edges);
@@ -276,7 +284,7 @@ void assemble_edges()
         
         void update_slice_coordinates(DM & new_coordinates)
         {
-      //      std::cout << "update slice coordinates\n";
+       //     std::cout << "update slice coordinates\n";
             for (int timeslice_idx(0); timeslice_idx < slice_count(); ++timeslice_idx)
             {
                 DM * slice_coordinates(_slices[timeslice_idx]->coordinates());

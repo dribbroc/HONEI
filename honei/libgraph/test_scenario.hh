@@ -22,12 +22,41 @@
 
 #include <tr1/memory>
 #include <honei/libgraph/graph.hh>
+#include <honei/libgraph/evolving_graph.hh>
 #include <iostream>
 namespace honei
 {
     template <typename DataType_> class TestScenario
     {
         public:
+        static EvolvingGraph<DataType_> * Evolving(int slices, int sizes[])
+        {
+            EvolvingGraph<DataType_> * eg = new EvolvingGraph<DataType_>(2,  DataType_(0.5));
+            for  (int t(0) ; t < slices ; ++t)
+            {
+                int size = sizes[t];
+                int nodes(size * size);
+                 std::cout << "slice " << t << ", size = " << nodes << "Nodes\n";
+               
+                Graph<DataType_> g(eg->add_timeslice(nodes));
+                for (int n(0);  n < nodes; ++n)
+                    g.add_node(n,1);
+            
+                for (int i = 0; i < size - 1; ++i)
+                    for (int j = 0; j < size - 1; j++)
+                    {
+                        g.add_edge(i*size + j, i*size + j + 1);
+                        g.add_edge(i*size + j, (i+1)* size + j);
+                }
+            for (int i = 0; i < size - 1; ++i)
+                g.add_edge(i*size + size-1,  (i+1) * size + size -1);
+            for (int j = 0; j < size - 1; ++j)
+                g.add_edge((size-1)*size + j,  (size-1) * size + j+1);           
+            }
+            return eg;
+        }
+        
+        
         static Graph<DataType_> * Grid(int rows, int columns)
         {
             int nodes = rows * columns;
