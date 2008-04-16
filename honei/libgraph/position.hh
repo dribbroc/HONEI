@@ -297,6 +297,11 @@
                 _imp->step_width(size);
             }
 
+            inline void step_width_factors(DataType_ factor_1, DataType_ factor_2)
+            {
+                _imp->step_width_factors(factor_1, factor_2);
+            }
+
             void noise_duration(DataType_ size)
             {
                 _imp->noise_duration(size);
@@ -356,6 +361,9 @@
                 /// step width
                 DenseVector<DataType_> _step_width;
 
+                /// step width factors: factor_1 increases step_width (if node is moving in correct direction), factor_2 reduces step_width (if node is oscillating or rotating)
+                DataType_ _step_width_factor_1, _step_width_factor_2;
+
                 /// _noise_duration - how long is a noise added to the forces (related to _step_with)?
                 DataType_ _noise_duration;
 
@@ -379,6 +387,12 @@
                 inline void step_width(DenseVector<DataType_> size)
                 {
                     _step_width = size;
+                }
+
+                inline void step_width_factors(DataType_ factor_1, DataType_ factor_2)
+                {
+                    _step_width_factor_1 = factor_1;
+                    _step_width_factor_2 = factor_2;
                 }
 
                 inline void noise_duration(DataType_ size)
@@ -432,7 +446,9 @@
                     _step_width(weights_of_nodes.size()),
                     _repulsive_force_range(DataType_(0)),
                     _noise_duration(DataType_(0)),
-                    _statistic_step(0)
+                    _statistic_step(0),
+                    _step_width_factor_1(1.5),
+                    _step_width_factor_2(0.5)
                 {
                     // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
                     DataType_ _max_ideal_length(0);
@@ -473,7 +489,9 @@
                     _step_width(_weights_of_nodes.size()),
                     _repulsive_force_range(DataType_(0)),
                     _noise_duration(DataType_(0)),
-                    _statistic_step(0)
+                    _statistic_step(0),
+                    _step_width_factor_1(1.5),
+                    _step_width_factor_2(0.5)
                 {
                     // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
                     DataType_ _max_ideal_length(0);
@@ -566,8 +584,8 @@
                                 e_end(_step_width.end_elements()); e != e_end ; ++e)
                                 {
                                         DataType_ prod( DotProduct<Tag_>::value(_force_direction[e.index()], scaled_forces[e.index()]) );
-                                        if (prod > 0.8) *e *=1.5;
-                                        if ( (prod < -0.8) || (fabs(prod) < 0.2) ) *e *=0.5;
+                                        if (prod > 0.8) *e *=_step_width_factor_1;
+                                        if ( (prod < -0.8) || (fabs(prod) < 0.2) ) *e *=_step_width_factor_2;
                                 }
                     }
 
@@ -643,6 +661,9 @@
                 /// vector of step width
                 DenseVector<DataType_> _step_width;
 
+                /// step width factors: factor_1 increases step_width (if node is moving in correct direction), factor_2 reduces step_width (if node is oscillating or rotating)
+                DataType_ _step_width_factor_1, _step_width_factor_2;
+
                 /// _noise_duration - how long is a noise added to the forces (related to _step_with)?
                 DataType_ _noise_duration;
 
@@ -663,6 +684,12 @@
                 inline void step_width(DenseVector<DataType_> size)
                 {
                     _step_width = size;
+                }
+
+                inline void step_width_factors(DataType_ factor_1, DataType_ factor_2)
+                {
+                    _step_width_factor_1 = factor_1;
+                    _step_width_factor_2 = factor_2;
                 }
 
                 inline void statistic(unsigned long size)
@@ -717,11 +744,13 @@
                     _step_width(coordinates.rows(), DataType_(0)),
                     _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
                     _statistic_step(0),
-                    _noise_duration(0)
+                    _noise_duration(0),
+                    _step_width_factor_1(1.05),
+                    _step_width_factor_2(0.35)
                 {
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<Tag_>::value(_graph_distance, _weights_of_nodes, _weights_of_edges))
-                        throw GraphError("Graph has to be coherently");
+                        throw GraphError("Graph must be coherent");
                 }
 
                 Implementation(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
@@ -737,11 +766,13 @@
                     _step_width(_coordinates.rows(), DataType_(0)),
                     _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
                     _statistic_step(0),
-                    _noise_duration(0)
+                    _noise_duration(0),
+                    _step_width_factor_1(1.05),
+                    _step_width_factor_2(0.35)
                 {
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<Tag_>::value(_graph_distance, _weights_of_nodes, _weights_of_edges, graph))
-                        throw GraphError("Graph has to be coherently");
+                        throw GraphError("Graph must be coherent");
                 }
 
                 void init()
@@ -847,8 +878,8 @@
                         *k /= result;
                     }
                     DataType_ prod( DotProduct<Tag_>::value(previous_force, current_force) );
-                    if (prod > 0.8) _step_width[_max_node] *=1.05;
-                    if ( (prod < -0.8) || (fabs(prod) < 0.2) ) _step_width[_max_node] *=0.35;
+                    if (prod > 0.8) _step_width[_max_node] *=_step_width_factor_1;
+                    if ( (prod < -0.8) || (fabs(prod) < 0.2) ) _step_width[_max_node] *=_step_width_factor_2;
 
                     // Calculate the new positions by using resulting forces
                     DataType_ noise(1);

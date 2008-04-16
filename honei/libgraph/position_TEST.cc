@@ -222,6 +222,7 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
             }
             // Creating a Positions object with the test scenario
             Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(*pPosition, *pNode_Weights, *pEdge_Weights);
+            position.step_width_factors(1.0, 0.5);
 
             // update the positions 
             position.update(0.00001,100);
