@@ -51,7 +51,7 @@ class EngineGraphTest :
             
             Positions<Tag_, DataType_, GraphTag_> * fine(new Positions<Tag_, DataType_, GraphTag_>(*_graph, (DataType_)1));
         //    fine->update(0, 256);
-            Engine::setTestCase(*_graph, fine, 29);
+            Engine::setTestCase(*_graph, fine, 1, -140);
             
             
             char * c = "Test: Engine";
@@ -74,5 +74,5 @@ class EngineGraphTest :
 }; 
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 11);
 
-EngineGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_float("WFR Test Grid", TestScenario<float>::Grid(16,16));
+EngineGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_float("WFR Test Grid", TestScenario<float>::Grid(26,26));
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200);

@@ -61,53 +61,10 @@ class EngineEvolvingTest :
                    // for (int m(n+1); m < (t+1)*_nodes; ++m)
                         g.add_edge(t*_nodes  + n, t*_nodes  +  (n+1) % ((t+1)*_nodes), 1);
             }
-            /*
-            eg.addNode(new Node<DataType_>(1, 1));
-            eg.addNode(new Node<DataType_>(2, 1));
-            eg.addNode(new Node<DataType_>(3, 1));
-            eg.addNode(new Node<DataType_>(4, 1));
-            eg.addNode(new Node<DataType_>(5, 2));
-            eg.addNode(new Node<DataType_>(6, 2));
-
-            Graph<DataType_> * t1 = new Graph<DataType_>(4, 2);
-            t1->addNode(eg.getNode(1));
-            t1->addNode(eg.getNode(2));
-            t1->addNode(eg.getNode(5));
-            t1->addNode(eg.getNode(6));
             
-            t1->addEdge(1, 2, 1);
-            t1->addEdge(2, 5, 1);
-            t1->addEdge(5, 6, 1);
-            t1->addEdge(6, 1, 1);
-            eg.addTimeslice(t1);
-
-            Graph<DataType_> * t2 = new Graph<DataType_>(4, 2);
-            t2->addNode(eg.getNode(1));
-            t2->addNode(eg.getNode(2));
-            t2->addNode(eg.getNode(3));
-            eg.getNode(6)->setWeight(3);
-            t2->addNode(eg.getNode(6));
-            
-            t2->addEdge(1,2,1);
-            t2->addEdge(1,3,1);
-            t2->addEdge(1,6,2);
-            eg.addTimeslice(t2);   
-
-            Graph<DataType_> * t3 = new Graph<DataType_>(3, 2);   
-            t3->addNode(eg.getNode(1));
-            t3->addNode(eg.getNode(3));
-            t3->addNode(eg.getNode(4));
-            t3->addEdge(1,4,1);
-            t3->addEdge(3,4,1);
-            t3->addEdge(1,3,1);
-            eg.addTimeslice(t3);
-            */
-            std::cout << "coordinates eg: " << *eg.coordinates();
-            std::cout << "edge matrix\n" << *eg.edges();
-
             std::cout << "\nCalculate Position\n";
-            Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> positions(eg, (DataType_)1);
-            positions.update(0.0, 1000);
+            Positions<Tag_, DataType_, GraphTag_> positions(eg, (DataType_)1);
+            positions.update(0.01, 500);
             std::cout << "Iterations: " << positions.number_of_iterations() << "\n";
             
             std::cout << "update coordinates in timeslice graphs\n"; 
@@ -139,4 +96,4 @@ class EngineEvolvingTest :
         }
 };
 //EngineEvolvingTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double");
-EngineEvolvingTest<tags::CPU, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double", 4, 6);
+EngineEvolvingTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double", 7, 6);

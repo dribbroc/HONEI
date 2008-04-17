@@ -96,7 +96,7 @@ class EngineEvolvingGraphTest :
             std::cout << "\nCalculate Position\n";
             //Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(&gl_globals::graph, (DataType_)1);
             
-            Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1), 15);
+            Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1), 1,-40);
             
 
             char * c = "Test: Engine";
@@ -118,5 +118,5 @@ class EngineEvolvingGraphTest :
             TEST_CHECK(true);
         }
 };
-EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk float", 4, 5);
+EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk float", 7, 6);
 //EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double");

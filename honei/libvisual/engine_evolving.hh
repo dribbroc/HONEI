@@ -104,7 +104,7 @@ namespace honei
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(45.0f,(GLfloat)gl_globals::screen_width/(GLfloat)gl_globals::screen_height,1.0f,1000.0f);
-                gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+                gluLookAt(0.0, 0.0, -32.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
                 glEnable(GL_DEPTH_TEST);
                 glEnable(GL_LIGHTING);
                 glEnable(GL_POLYGON_SMOOTH);
@@ -127,7 +127,7 @@ namespace honei
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(45.0f,(GLfloat)gl_globals::screen_width/(GLfloat)gl_globals::screen_height,1.0f,1000.0f);
-                gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+                gluLookAt(0.0, 0.0, -32.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
                 glutPostRedisplay ();
             }
 

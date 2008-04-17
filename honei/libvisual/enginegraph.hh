@@ -70,6 +70,9 @@ namespace honei
         double translation_x = 0;
         double translation_y = 0;
         double translation_z = 0;
+        
+        double initial_distance = -10;
+        
         float edgeMaterial[] = {0.2, 0.2, 0.2, 0.8};
         float edgeTransparent[] = {0.4, 0.4, 0.6, 0.4};
         Color * colors[10];
@@ -87,11 +90,12 @@ namespace honei
             
             
         public:
-            static void setTestCase(AbstractGraph<DataType_> &graph, Positions<Tag_, DataType_, GraphTag_> * positions, int steps)
+            static void setTestCase(AbstractGraph<DataType_> &graph, Positions<Tag_, DataType_, GraphTag_> * positions, int steps, double initial_distance = -10)
             {                
                 gl_globals::steps = steps;
                 gl_globals::graph = &graph;
                 gl_globals::positions = positions;
+                gl_globals::initial_distance = initial_distance;
                 positions->init();
             }            
             
@@ -112,7 +116,7 @@ namespace honei
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(45.0f,(GLfloat)gl_globals::screen_width/(GLfloat)gl_globals::screen_height,1.0f,1000.0f);
-                gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+                gluLookAt(0.0, 0.0, gl_globals::initial_distance, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
                 glEnable(GL_DEPTH_TEST);
                 glEnable(GL_LIGHTING);
                 glEnable(GL_POLYGON_SMOOTH);
@@ -135,7 +139,7 @@ namespace honei
                 glMatrixMode(GL_PROJECTION);
                 glLoadIdentity();
                 gluPerspective(45.0f,(GLfloat)gl_globals::screen_width/(GLfloat)gl_globals::screen_height,1.0f,1000.0f);
-                gluLookAt(0.0, 0.0, -10.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+                gluLookAt(0.0, 0.0, gl_globals::initial_distance, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
                 glutPostRedisplay ();
             }
 
