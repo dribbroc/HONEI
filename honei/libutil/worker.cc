@@ -21,6 +21,7 @@
 #include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/worker.hh>
 
@@ -29,130 +30,132 @@
 #include <cstring>
 #include <cerrno>
 
-using namespace honei;
-
-struct WorkerThread::Implementation
+namespace honei
 {
-    typedef std::list<WorkerTask> TaskList;
-
-    /// Our thread.
-    pthread_t * const thread;
-
-    /// Our mutex for read/write access to a WorkerThread instance.
-    Mutex * const mutex;
-
-    /// Our exit condition.
-    bool exit;
-
-    /// Our list of queued tasks.
-    TaskList task_list;
-
-    /// Get the next task from the queue.
-    inline WorkerTask * get_next()
+    template <> struct Implementation<WorkerThread>
     {
-        Lock l(*mutex);
-        WorkerTask * result(0);
+        typedef std::list<WorkerTask> TaskList;
 
-        if (! task_list.empty())
-            result = new WorkerTask(task_list.front());
+        /// Our thread.
+        pthread_t * const thread;
 
-        return result;
-    }
+        /// Our mutex for read/write access to a WorkerThread instance.
+        Mutex * const mutex;
 
-    /// Dequeue the next task.
-    inline void dequeue()
-    {
-        Lock l(*mutex);
+        /// Our exit condition.
+        bool exit;
 
-        if (! task_list.empty())
-            task_list.pop_front();
-    }
+        /// Our list of queued tasks.
+        TaskList task_list;
 
-    /// Enqueue a task with us.
-    inline void enqueue(WorkerTask & task)
-    {
-        Lock l(*mutex);
-
-        task_list.push_back(task);
-    }
-
-    /// Return true if we are idling.
-    inline bool idle() const
-    {
-        Lock l(*mutex);
-
-        return task_list.empty();
-    }
-
-    /// Our thread's main function.
-    static void * thread_function(void * argument)
-    {
-        Implementation * imp(static_cast<Implementation *>(argument));
-        WorkerTask * task(0);
-        bool exit(false);
-
-        do
-        {
-            // Get a task
-            task = imp->get_next();
-
-            if (! task)
-            {
-                sleep(1);
-            }
-
-            // Update our exit condition
-            {
-                Lock l(*imp->mutex);
-                exit = imp->exit;
-            }
-
-            // Run our task
-            if (task)
-            {
-                (*task)();
-                imp->dequeue();
-            }
-        }
-        while (! exit);
-
-        pthread_exit(0);
-    }
-
-    Implementation() :
-        thread(new pthread_t),
-        mutex(new Mutex),
-        exit(false)
-    {
-        int retval;
-
-        if (0 != (retval = pthread_create(thread, 0, &thread_function, this)))
-            throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
-    }
-
-    ~Implementation()
-    {
-        // Flag for exit.
+        /// Get the next task from the queue.
+        inline WorkerTask * get_next()
         {
             Lock l(*mutex);
-            exit = true;
+            WorkerTask * result(0);
+
+            if (! task_list.empty())
+                result = new WorkerTask(task_list.front());
+
+            return result;
         }
 
-        pthread_join(*thread, 0);
+        /// Dequeue the next task.
+        inline void dequeue()
+        {
+            Lock l(*mutex);
 
-        delete mutex;
-        delete thread;
-    }
-};
+            if (! task_list.empty())
+                task_list.pop_front();
+        }
+
+        /// Enqueue a task with us.
+        inline void enqueue(WorkerTask & task)
+        {
+            Lock l(*mutex);
+
+            task_list.push_back(task);
+        }
+
+        /// Return true if we are idling.
+        inline bool idle() const
+        {
+            Lock l(*mutex);
+
+            return task_list.empty();
+        }
+
+        /// Our thread's main function.
+        static void * thread_function(void * argument)
+        {
+            Implementation * imp(static_cast<Implementation *>(argument));
+            WorkerTask * task(0);
+            bool exit(false);
+
+            do
+            {
+                // Get a task
+                task = imp->get_next();
+
+                if (! task)
+                {
+                    sleep(1);
+                }
+
+                // Update our exit condition
+                {
+                    Lock l(*imp->mutex);
+                    exit = imp->exit;
+                }
+
+                // Run our task
+                if (task)
+                {
+                    (*task)();
+                    imp->dequeue();
+                }
+            }
+            while (! exit);
+
+            pthread_exit(0);
+        }
+
+        Implementation() :
+            thread(new pthread_t),
+            mutex(new Mutex),
+            exit(false)
+        {
+            int retval;
+
+            if (0 != (retval = pthread_create(thread, 0, &thread_function, this)))
+                throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
+        }
+
+        ~Implementation()
+        {
+            // Flag for exit.
+            {
+                Lock l(*mutex);
+                exit = true;
+            }
+
+            pthread_join(*thread, 0);
+
+            delete mutex;
+            delete thread;
+        }
+    };
+}
+
+using namespace honei;
 
 WorkerThread::WorkerThread() :
-    _imp(new Implementation)
+    PrivateImplementationPattern<WorkerThread, Single>(new Implementation<WorkerThread>)
 {
 }
 
 WorkerThread::~WorkerThread()
 {
-    delete _imp;
 }
 
 void

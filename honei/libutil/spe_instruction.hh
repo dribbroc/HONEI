@@ -23,6 +23,7 @@
 #define LIBUTIL_GUARD_SPE_INSTRUCTION_HH 1
 
 #include <honei/cell/cell.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 #include <honei/libutil/spe_manager.hh>
 #include <honei/libutil/spe_kernel.hh>
 
@@ -34,7 +35,8 @@ namespace honei
     class SPEKernel;
     class SPEInstructionQueue;
 
-    class SPEInstruction
+    class SPEInstruction :
+        public PrivateImplementationPattern<SPEInstruction, Shared>
     {
         public:
             typedef honei::cell::Instruction Instruction;
@@ -42,20 +44,15 @@ namespace honei
             typedef honei::cell::OpCode OpCode;
 
         protected:
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             static const Operand empty;
 
             /// Set our state to finished.
             void set_finished();
 
         public:
-            friend class SPEManager::Implementation;
+            friend class Implementation<SPEManager>;
             friend class SPEInstructionQueue;
-            friend class SPEKernel::Implementation;
+            friend class Implementation<SPEKernel>;
 
             /// Constructor.
             SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a = empty,
@@ -322,16 +319,12 @@ namespace honei
     extern template class SPEFrameworkInstruction<3, float, cell::rtm_dma>;
     extern template class SPEFrameworkInstruction<3, double, cell::rtm_dma>;
 
-    class SPEInstructionQueue
+    class SPEInstructionQueue :
+        public InstantiationPolicy<SPEInstructionQueue, NonCopyable>,
+        public PrivateImplementationPattern<SPEInstructionQueue, Single>
     {
-        private:
-            struct Implementation;
-
-            /// Our implementation.
-            Implementation * _imp;
-
         public:
-            friend class SPEManager::Implementation;
+            friend class Implementation<SPEManager>;
 
             /// Constructor.
             SPEInstructionQueue();

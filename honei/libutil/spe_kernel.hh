@@ -21,8 +21,9 @@
 #define LIBUTIL_GUARD_SPE_KERNEL_HH 1
 
 #include <honei/cell/interface.hh>
-#include <honei/libutil/spe_manager.hh>
 #include <honei/libutil/time_stamp.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
+#include <honei/libutil/spe_manager.hh>
 
 namespace honei
 {
@@ -33,16 +34,13 @@ namespace honei
     /**
      * \ingroup grpcell
      */
-    class SPEKernel
+    class SPEKernel :
+        public PrivateImplementationPattern<SPEKernel, Shared>
     {
         public:
             typedef cell::KernelInfo Info;
+
         private:
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             /// Return a pointer to our kernel's argument.
             void * argument() const;
 

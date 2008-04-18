@@ -22,7 +22,7 @@
 
 #include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/spe_kernel.hh>
-#include <iostream>
+#include <honei/libutil/private_implementation_pattern.hh>
 
 namespace honei
 {
@@ -32,14 +32,10 @@ namespace honei
      * \ingroup grpcell
      */
     class SPEKernelManager :
-        public InstantiationPolicy<SPEKernelManager, Singleton>
+        public InstantiationPolicy<SPEKernelManager, Singleton>,
+        public PrivateImplementationPattern<SPEKernelManager, Single>
     {
         private:
-            struct Implementation;
-
-            /// Our implementation.
-            Implementation * _imp;
-
             /// \name Basic Operations
             /// \{
 

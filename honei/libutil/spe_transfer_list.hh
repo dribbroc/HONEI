@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
@@ -23,6 +23,7 @@
 
 #include <honei/cell/types.hh>
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 #include <honei/libutil/stringify.hh>
 
 namespace honei
@@ -40,18 +41,12 @@ namespace honei
      *
      * \ingroup grpcell
      */
-    class SPETransferList
+    class SPETransferList :
+        public PrivateImplementationPattern<SPETransferList, Shared>
     {
         public:
             typedef cell::ListElement ListElement;
 
-        private:
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
-        public:
             /**
              * Constructor.
              *
@@ -63,6 +58,9 @@ namespace honei
              *                          transfered by this list.
              */
             SPETransferList(unsigned max_size, unsigned max_transfer_size);
+
+            /// Destructor.
+            ~SPETransferList();
 
             /// Add an address/size pair to the list.
             ListElement * add(void * address, unsigned size, bool stall_and_notify = false);

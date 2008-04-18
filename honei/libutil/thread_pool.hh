@@ -42,19 +42,19 @@ namespace honei
         public InstantiationPolicy<ThreadPool, Singleton>
     {
         private:
-            ///Our threads.
+            /// Our threads.
             std::list<PoolThread *> _pool;
 
-            ///Our list of idle threads.
+            /// Our list of idle threads.
             std::list<PoolThread *> _idle_threads;
 
-            ///Our list of untreated tasks.
+            /// Our list of untreated tasks.
             std::list<PoolTask *> _task_list;
 
-            ///Our mutex.
+            /// Our mutex.
             Mutex * const _mutex;
 
-            ///Our condition variable.
+            /// Our condition variable.
             ConditionVariable * const _available;
 
             /// Constructor.
@@ -73,7 +73,6 @@ namespace honei
                     _idle_threads.push_back(poolthread);
                 }
             }
-
 
         public:
             friend class InstantiationPolicy<ThreadPool, Singleton>;

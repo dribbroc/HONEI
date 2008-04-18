@@ -22,6 +22,7 @@
 #define LIBUTIL_GUARD_PARTITIONER_HH 1
 
 #include <honei/libutil/instantiation_policy.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 #include <honei/libutil/tags.hh>
 
 #include <tr1/functional>
@@ -43,23 +44,22 @@ namespace honei
         }
     };
 
-    class PartitionList
+    class PartitionList :
+        public PrivateImplementationPattern<PartitionList, Shared>
     {
-        private:
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
         public:
-            /// \name Creation
+            /// \name Basic operations
             /// \{
 
+            /// Constructor.
             PartitionList();
 
-            struct Filler;
+            /// Destructor.
+            ~PartitionList();
 
             /// \}
+
+            struct Filler;
 
             /// \name Iteration over our elements
             /// \{

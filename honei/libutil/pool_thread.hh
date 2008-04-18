@@ -22,6 +22,7 @@
 
 #include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/pool_task.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 
 #include <tr1/functional>
 
@@ -32,14 +33,9 @@ namespace honei
     class ThreadPool;
 
     class PoolThread :
-        public InstantiationPolicy<PoolThread, NonCopyable>
+        public InstantiationPolicy<PoolThread, NonCopyable>,
+        public PrivateImplementationPattern<PoolThread, Single>
     {
-        private:
-            struct Implementation;
-
-            /// Our implementation.
-            Implementation * _imp;
-
         public:
             /// \name Constructor and destructor
             /// \{

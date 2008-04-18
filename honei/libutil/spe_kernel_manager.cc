@@ -23,11 +23,11 @@
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/spe_kernel.hh>
 #include <honei/libutil/spe_kernel_manager.hh>
 
 #include <algorithm>
-#include <iostream>
 #include <list>
 #include <map>
 #include <string>
@@ -47,11 +47,11 @@ namespace honei
 
     template class InstantiationPolicy<SPEKernelManager, Singleton>;
 
-    struct SPEKernelManager::Implementation
+    template <> struct Implementation<SPEKernelManager>
     {
-        typedef std::list<SPEKernel::Info> KernelList;
+        typedef std::list<cell::KernelInfo> KernelList;
 
-        typedef std::map<OpCode, KernelList> KernelMapByOpCode;
+        typedef std::map<cell::OpCode, KernelList> KernelMapByOpCode;
 
         /// Our list of kernels.
         KernelList kernels;
@@ -76,13 +76,12 @@ namespace honei
     };
 
     SPEKernelManager::SPEKernelManager() :
-        _imp(new Implementation)
+        PrivateImplementationPattern<SPEKernelManager, Single>(new Implementation<SPEKernelManager>)
     {
     }
 
     SPEKernelManager::~SPEKernelManager()
     {
-        delete _imp;
     }
 
     void

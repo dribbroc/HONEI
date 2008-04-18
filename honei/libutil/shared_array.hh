@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -21,6 +21,7 @@
 #define LIBUTIL_GUARD_SHARED_ARRAY_HH 1
 
 #include <honei/libutil/exception.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 
 #include <string>
 #include <tr1/memory>
@@ -43,14 +44,9 @@ namespace honei
     /**
      * SharedArray is a class template that allows sharing one array among several owners.
      */
-    template <typename DataType_> class SharedArray
+    template <typename DataType_> class SharedArray :
+        public PrivateImplementationPattern<SharedArray<DataType_>, Shared>
     {
-        private:
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
         public:
             /// \name Constructors and destructor.
             /// \{

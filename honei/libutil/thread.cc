@@ -21,6 +21,7 @@
 #include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/thread.hh>
 #include <honei/libutil/log.hh>
@@ -30,76 +31,78 @@
 
 #include <pthread.h>
 
+namespace honei
+{
+    template <> struct Implementation<Thread>
+    {
+        /// Our thread function.
+        const Thread::Function function;
+
+        /// Our thread.
+        pthread_t * const thread;
+
+        /// Our mutex.
+        Mutex * const mutex;
+
+        /// Our completion state.
+        bool completed;
+
+        static void * thread_function(void * argument)
+        {
+            CONTEXT("When runing libutil-thread");
+            Implementation * imp(static_cast<Implementation *>(argument));
+
+            /// \todo Implement exception handling for the call to function.
+            try
+            {
+                imp->function();
+            }
+            catch (Exception & e)
+            {
+                throw InternalError("Exception in Thread: " + stringify(e.what()));
+            }
+            catch (...)
+            {
+                LOGMESSAGE(ll_minimal, "Unexpected std::exception or similar in Thread!");
+            }
+
+            Lock l(*imp->mutex);
+            imp->completed = true;
+
+            pthread_exit(0);
+        }
+
+        Implementation(const Thread::Function & f) :
+            function(f),
+            thread(new pthread_t),
+            mutex(new Mutex),
+            completed(false)
+        {
+            int retval;
+
+            if (0 != (retval = pthread_create(thread, 0, &thread_function, this)))
+                throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
+        }
+
+        ~Implementation()
+        {
+            pthread_join(*thread, 0);
+
+            delete thread;
+            delete mutex;
+        }
+    };
+}
+
 using namespace honei;
 
-struct Thread::Implementation
-{
-    /// Our thread function.
-    const Function function;
-
-    /// Our thread.
-    pthread_t * const thread;
-
-    /// Our mutex.
-    Mutex * const mutex;
-
-    /// Our completion state.
-    bool completed;
-
-    static void * thread_function(void * argument)
-    {
-        CONTEXT("When runing libutil-thread");
-        Implementation * imp(static_cast<Implementation *>(argument));
-
-        /// \todo Implement exception handling for the call to function.
-        try
-        {
-            imp->function();
-        }
-        catch (Exception & e)
-        {
-            throw InternalError("Exception in Thread: " + stringify(e.what()));
-        }
-        catch (...)
-        {
-            LOGMESSAGE(ll_minimal, "Unexpected std::exception or similar in Thread!");
-        }
-
-        Lock l(*imp->mutex);
-        imp->completed = true;
-
-        pthread_exit(0);
-    }
-
-    Implementation(const Function & f) :
-        function(f),
-        thread(new pthread_t),
-        mutex(new Mutex),
-        completed(false)
-    {
-        int retval;
-
-        if (0 != (retval = pthread_create(thread, 0, &thread_function, this)))
-            throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
-    }
-
-    ~Implementation()
-    {
-        pthread_join(*thread, 0);
-
-        delete thread;
-        delete mutex;
-    }
-};
-
 Thread::Thread(const Function & function) :
-    _imp(new Implementation(function))
+    PrivateImplementationPattern<Thread, Single>(new Implementation<Thread>(function))
 {
 }
 
 Thread::~Thread()
 {
-    delete _imp;
 }
 
 bool Thread::completed() const

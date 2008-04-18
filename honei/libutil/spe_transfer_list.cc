@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
@@ -10,7 +10,7 @@
  * Public License version 2, as published by the Free Software Foundation.
  *
  * LibUtil is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS    
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
  *
@@ -19,54 +19,64 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libutil/spe_transfer_list.hh>
 #include <honei/libutil/assertion.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
+#include <honei/libutil/spe_transfer_list.hh>
+
 #include <tr1/memory>
+
+namespace honei
+{
+    template <> struct Implementation<SPETransferList>
+    {
+        typedef cell::ListElement ListElement;
+
+        /// Our elements.
+        ListElement * elements;
+
+        /// Our maximal transfer size per element. (must be < 16 KB)
+        unsigned max_transfer_size;
+
+        /// Our maximal number of elements. (must be < 2048)
+        unsigned max_size;
+
+        /// Our actual transfer size.
+        unsigned transfer_size;
+
+        /// Our actual number of elements.
+        unsigned size;
+
+        /// Effective address (64 bit) of the last added element. They all share the upper 32 bit.
+        unsigned long long effective_address;
+
+        Implementation(unsigned s, unsigned ts) :
+            effective_address(0),
+            elements(new ListElement[s]),
+            max_transfer_size(ts),
+            max_size(s),
+            transfer_size(0),
+            size(0)
+        {
+        }
+
+        ~Implementation()
+        {
+            delete[] elements;
+        }
+    };
+}
 
 using namespace honei;
 
-struct SPETransferList::Implementation
-{
-
-    /// Our elements.
-    ListElement * elements;
-
-    /// Our maximal transfer size per element. (must be < 16 KB)
-    unsigned max_transfer_size;
-
-    /// Our maximal number of elements. (must be < 2048)
-    unsigned max_size;
-
-    /// Our actual transfer size.
-    unsigned transfer_size;
-
-    /// Our actual number of elements.
-    unsigned size;
-
-    /// Effective address (64 bit) of the last added element. They all share the upper 32 bit.
-    unsigned long long effective_address;
-
-    Implementation(unsigned s, unsigned ts) :
-        effective_address(0),
-        elements(new ListElement[s]),
-        max_transfer_size(ts),
-        max_size(s),
-        transfer_size(0),
-        size(0)
-    {
-    }
-
-    ~Implementation()
-    {
-        delete[] elements;
-    }
-};
-
 SPETransferList::SPETransferList(unsigned max_size, unsigned max_transfer_size) :
-    _imp(new Implementation(max_size, max_transfer_size))
+    PrivateImplementationPattern<SPETransferList, Shared>(new Implementation<SPETransferList>(max_size, max_transfer_size))
 {
     ASSERT(max_size <= 2048, "Specified number of maximum ListElements exceeds 2048");
     ASSERT(max_transfer_size <= 16384, "Specified maximum TransferList size exceeds 16 KB per ListElement");
+}
+
+SPETransferList::~SPETransferList()
+{
 }
 
 SPETransferList::ListElement *

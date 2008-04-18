@@ -21,82 +21,92 @@
 
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/condition_variable.hh>
+#include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/spe_instruction.hh>
 #include <honei/libutil/spe_kernel.hh>
 
 #include <tr1/functional>
 
-using namespace honei;
-
-struct SPEInstruction::Implementation
+namespace honei
 {
-    /// Our mutex.
-    Mutex * const mutex;
-
-    /// Our condition variable.
-    ConditionVariable * const condition;
-
-    /// Our are-we-finished variable.
-    bool finished;
-
-    /// Our instruction structure.
-    Instruction instruction;
-
-    /// Constructor.
-    Implementation(const OpCode opcode, const unsigned size, const Operand & a,
-            const Operand & b, const Operand & c, const Operand & d, const Operand & e,
-            const Operand & f, const Operand & g, const Operand & h, const Operand & i,
-            const Operand & j, const Operand & k, const Operand & l, const Operand & m,
-            const Operand & n, const Operand & o) :
-        mutex(new Mutex),
-        condition(new ConditionVariable),
-        finished(false)
+    template <> struct Implementation<SPEInstruction>
     {
-        instruction.opcode = opcode;
-        instruction.size = size;
-        instruction.a = a;
-        instruction.b = b;
-        instruction.c = c;
-        instruction.d = d;
-        instruction.e = e;
-        instruction.f = f;
-        instruction.g = g;
-        instruction.h = h;
-        instruction.i = i;
-        instruction.j = j;
-        instruction.k = k;
-        instruction.l = l;
-        instruction.m = m;
-        instruction.n = n;
-        instruction.o = o;
-    }
+        typedef cell::Instruction Instruction;
+        typedef cell::OpCode OpCode;
+        typedef cell::Operand Operand;
 
-    ~Implementation()
-    {
-        delete mutex;
-        delete condition;
-    }
+        /// Our mutex.
+        Mutex * const mutex;
 
-    inline void wait()
-    {
-        Lock l(*mutex);
+        /// Our condition variable.
+        ConditionVariable * const condition;
 
-        while (! finished)
+        /// Our are-we-finished variable.
+        bool finished;
+
+        /// Our instruction structure.
+        Instruction instruction;
+
+        /// Constructor.
+        Implementation(const OpCode opcode, const unsigned size, const Operand & a,
+                const Operand & b, const Operand & c, const Operand & d, const Operand & e,
+                const Operand & f, const Operand & g, const Operand & h, const Operand & i,
+                const Operand & j, const Operand & k, const Operand & l, const Operand & m,
+                const Operand & n, const Operand & o) :
+            mutex(new Mutex),
+            condition(new ConditionVariable),
+            finished(false)
         {
-            condition->wait(*mutex);
+            instruction.opcode = opcode;
+            instruction.size = size;
+            instruction.a = a;
+            instruction.b = b;
+            instruction.c = c;
+            instruction.d = d;
+            instruction.e = e;
+            instruction.f = f;
+            instruction.g = g;
+            instruction.h = h;
+            instruction.i = i;
+            instruction.j = j;
+            instruction.k = k;
+            instruction.l = l;
+            instruction.m = m;
+            instruction.n = n;
+            instruction.o = o;
         }
-    }
-};
+
+        ~Implementation()
+        {
+            delete mutex;
+            delete condition;
+        }
+
+        inline void wait()
+        {
+            Lock l(*mutex);
+
+            while (! finished)
+            {
+                condition->wait(*mutex);
+            }
+        }
+    };
+}
+
+using namespace honei;
 
 SPEInstruction::SPEInstruction(const OpCode opcode, const unsigned size, const Operand & a,
         const Operand & b, const Operand & c, const Operand & d, const Operand & e,
         const Operand & f, const Operand & g, const Operand & h, const Operand & i,
         const Operand & j, const Operand & k, const Operand & l, const Operand & m,
         const Operand & n, const Operand & o) :
-    _imp(new Implementation(opcode, size, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o))
+    PrivateImplementationPattern<SPEInstruction, Shared>(new Implementation<SPEInstruction>(
+                opcode, size, a, b, c, d, e, f, g, h, i, j, k, l, m, n, o))
 {
 }
 
@@ -484,21 +494,23 @@ SPEFrameworkInstruction<3, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
 template class SPEFrameworkInstruction<3, float, cell::rtm_dma>;
 template class SPEFrameworkInstruction<3, double, cell::rtm_dma>;
 
-struct SPEInstructionQueue::Implementation
+namespace honei
 {
-    /// Our list of instructions.
-    std::list<SPEInstruction> instructions;
-};
+    template <> struct Implementation<SPEInstructionQueue>
+    {
+        /// Our list of instructions.
+        std::list<SPEInstruction> instructions;
+    };
+}
 
 SPEInstructionQueue::SPEInstructionQueue() :
-    _imp(new Implementation)
+    PrivateImplementationPattern<SPEInstructionQueue, Single>(new Implementation<SPEInstructionQueue>)
 {
 }
 
 SPEInstructionQueue::~SPEInstructionQueue()
 {
     wait();
-    delete _imp;
 }
 
 void

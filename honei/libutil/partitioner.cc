@@ -20,19 +20,27 @@
 #include <honei/libutil/exception.hh>
 #include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/partitioner.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/stringify.hh>
 
 #include <list>
 
+namespace honei
+{
+    template <> struct Implementation<PartitionList>
+    {
+        std::list<Partition> partitions;
+    };
+}
+
 using namespace honei;
 
-struct PartitionList::Implementation
-{
-    std::list<Partition> partitions;
-};
-
 PartitionList::PartitionList() :
-    _imp(new Implementation)
+    PrivateImplementationPattern<PartitionList, Shared>(new Implementation<PartitionList>)
+{
+}
+
+PartitionList::~PartitionList()
 {
 }
 

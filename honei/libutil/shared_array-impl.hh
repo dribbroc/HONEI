@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,11 +20,11 @@
 #ifndef LIBUTIL_GUARD_SHARED_ARRAY_IMPL_HH
 #define LIBUTIL_GUARD_SHARED_ARRAY_IMPL_HH 1
 
-#include <honei/libutil/shared_array.hh>
-
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
+#include <honei/libutil/shared_array.hh>
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/type_traits.hh>
 
@@ -32,7 +32,7 @@
 
 namespace honei
 {
-    template <typename DataType_> struct SharedArray<DataType_>::Implementation
+    template <typename DataType_> struct Implementation<SharedArray<DataType_> >
     {
         /// Our data.
         DataType_ * array;
@@ -85,13 +85,13 @@ namespace honei
 
     template <typename DataType_>
     SharedArray<DataType_>::SharedArray(unsigned long size) :
-        _imp(new Implementation(size))
+        PrivateImplementationPattern<SharedArray<DataType_>, Shared>(new Implementation<SharedArray<DataType_> >(size))
     {
     }
 
     template <typename DataType_>
     SharedArray<DataType_>::SharedArray(const SharedArray<DataType_> & other) :
-        _imp(other._imp)
+        PrivateImplementationPattern<SharedArray<DataType_>, Shared>(other._imp)
     {
     }
 
@@ -104,40 +104,40 @@ namespace honei
     DataType_ & SharedArray<DataType_>::operator[] (unsigned long index) const
     {
         CONTEXT("When accessing SharedArray-element at index '" + stringify(index) + "' in array of size '" +
-                stringify(_imp->size) + "':");
+                stringify(this->_imp->size) + "':");
         ASSERT(index >= 0, "index '" + stringify(index) + "' is out of bounds!");
-        ASSERT(index < _imp->size, "index '" + stringify(index) + "' is out of bounds!");
+        ASSERT(index < this->_imp->size, "index '" + stringify(index) + "' is out of bounds!");
 
-        return _imp->array[index];
+        return this->_imp->array[index];
     }
 
     template <typename DataType_>
     bool SharedArray<DataType_>::operator! () const
     {
-        return _imp->array == 0;
+        return this->_imp->array == 0;
     }
 
     template <typename DataType_>
     unsigned long SharedArray<DataType_>::size() const
     {
-        return _imp->size;
+        return this->_imp->size;
     }
 
     template <typename DataType_>
     DataType_ * SharedArray<DataType_>::get() const
     {
-        return _imp->array;
+        return this->_imp->array;
     }
 
     template <typename DataType_>
     void SharedArray<DataType_>::reset(unsigned long size, DataType_ * array) const
     {
-        CONTEXT("When resetting SharedArray of size '" + stringify(_imp->size) + "' with POA '" +
+        CONTEXT("When resetting SharedArray of size '" + stringify(this->_imp->size) + "' with POA '" +
                 stringify(array) + "':");
-        ASSERT(_imp->array != array, "new array is identical with old array!");
-        Lock l(*_imp->mutex);
+        ASSERT(this->_imp->array != array, "new array is identical with old array!");
+        Lock l(*this->_imp->mutex);
 
-        _imp->reset(size, array);
+        this->_imp->reset(size, array);
     }
 }
 

@@ -24,6 +24,7 @@
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/profiler.hh>
 #include <honei/libutil/spe_event.hh>
 #include <honei/libutil/spe_instruction.hh>
@@ -41,8 +42,13 @@ namespace honei
 {
     using namespace cell;
 
-    struct SPEKernel::Implementation
+    template <> struct Implementation<SPEKernel>
     {
+        typedef cell::Environment Environment;
+        typedef cell::KernelInfo KernelInfo;
+        typedef cell::Instruction Instruction;
+        typedef cell::OpCode OpCode;
+
         /// Our SPE program.
         spe_program_handle_t handle;
         /// Our set of supported opcodes.
@@ -70,7 +76,7 @@ namespace honei
         unsigned enqueued_counter;
 
         /// Our KernelInfo
-        Info kernel_info;
+        KernelInfo kernel_info;
 
         /// \}
 
@@ -461,7 +467,7 @@ namespace honei
     };
 
     SPEKernel::SPEKernel(const SPEKernel::Info & info) :
-        _imp(new Implementation(info))
+        PrivateImplementationPattern<SPEKernel, Shared>(new Implementation<SPEKernel>(info))
     {
     }
 

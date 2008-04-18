@@ -22,6 +22,7 @@
 #include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 
 #include <cstdlib>
 #include <fstream>
@@ -39,42 +40,49 @@ ConfigurationError::ConfigurationError(const std::string & line) :
 {
 }
 
-struct Configuration::Implementation
+namespace honei
 {
-    typedef std::map<std::string, int> IntValueMap;
-
-    typedef std::map<std::string, std::string> StringValueMap;
-
-    /// Our mutex.
-    Mutex * const mutex;
-
-    /// Our map from names to integer values.
-    IntValueMap int_value_map;
-
-    /// Our map from names to string values.
-    StringValueMap string_value_map;
-
-    /// Our configuration file's name.
-    std::string filename;
-
-    /// Constructor.
-    Implementation() :
-        mutex(new Mutex)
+    template <> struct Implementation<Configuration>
     {
-    }
+        typedef std::map<std::string, int> IntValueMap;
 
-    /// Destructor.
-    ~Implementation()
-    {
-        delete mutex;
-    }
-};
+        typedef std::map<std::string, std::string> StringValueMap;
+
+        /// Our mutex.
+        Mutex * const mutex;
+
+        /// Our map from names to integer values.
+        IntValueMap int_value_map;
+
+        /// Our map from names to string values.
+        StringValueMap string_value_map;
+
+        /// Our configuration file's name.
+        std::string filename;
+
+        /// Constructor.
+        Implementation() :
+            mutex(new Mutex)
+        {
+        }
+
+        /// Destructor.
+        ~Implementation()
+        {
+            delete mutex;
+        }
+    };
+}
 
 
 Configuration::Configuration() :
-    _imp(new Implementation)
+    PrivateImplementationPattern<Configuration, Single>(new Implementation<Configuration>)
 {
     _read();
+}
+
+Configuration::~Configuration()
+{
 }
 
 void
@@ -153,7 +161,7 @@ int
 Configuration::get_value(const std::string & name, int default_value)
 {
     Lock l(*_imp->mutex);
-    Implementation::IntValueMap::const_iterator v(_imp->int_value_map.find(name));
+    Implementation<Configuration>::IntValueMap::const_iterator v(_imp->int_value_map.find(name));
     int result(default_value);
 
     if (v != _imp->int_value_map.end())
@@ -168,7 +176,7 @@ std::string
 Configuration::get_value(const std::string & name, const std::string & default_value)
 {
     Lock l(*_imp->mutex);
-    Implementation::StringValueMap::const_iterator v(_imp->string_value_map.find(name));
+    Implementation<Configuration>::StringValueMap::const_iterator v(_imp->string_value_map.find(name));
     std::string result(default_value);
 
     if (v != _imp->string_value_map.end())
@@ -183,7 +191,7 @@ void
 Configuration::set_value(const std::string & name, int value)
 {
     Lock l(*_imp->mutex);
-    Implementation::IntValueMap::iterator v(_imp->int_value_map.find(name));
+    Implementation<Configuration>::IntValueMap::iterator v(_imp->int_value_map.find(name));
 
     if (v != _imp->int_value_map.end())
     {
@@ -191,7 +199,7 @@ Configuration::set_value(const std::string & name, int value)
     }
     else
     {
-        v = _imp->int_value_map.insert(Implementation::IntValueMap::value_type(name, value)).first;
+        v = _imp->int_value_map.insert(Implementation<Configuration>::IntValueMap::value_type(name, value)).first;
     }
 }
 
@@ -199,7 +207,7 @@ void
 Configuration::set_value(const std::string & name, const std::string & value)
 {
     Lock l(*_imp->mutex);
-    Implementation::StringValueMap::iterator v(_imp->string_value_map.find(name));
+    Implementation<Configuration>::StringValueMap::iterator v(_imp->string_value_map.find(name));
 
     if (v != _imp->string_value_map.end())
     {
@@ -207,7 +215,7 @@ Configuration::set_value(const std::string & name, const std::string & value)
     }
     else
     {
-        v = _imp->string_value_map.insert(Implementation::StringValueMap::value_type(name, value)).first;
+        v = _imp->string_value_map.insert(Implementation<Configuration>::StringValueMap::value_type(name, value)).first;
     }
 }
 
@@ -215,7 +223,7 @@ Configuration::ConstIterator
 Configuration::begin() const
 {
     Lock l(*_imp->mutex);
-    const Implementation & imp(*_imp);
+    const Implementation<Configuration> & imp(*_imp);
 
     return ConstIterator(imp.string_value_map.begin());
 }
@@ -224,7 +232,7 @@ Configuration::ConstIterator
 Configuration::end() const
 {
     Lock l(*_imp->mutex);
-    const Implementation & imp(*_imp);
+    const Implementation<Configuration> & imp(*_imp);
 
     return ConstIterator(imp.string_value_map.end());
 }

@@ -18,13 +18,14 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/cell/cell.hh>
 #include <honei/libutil/configuration.hh>
 #include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/lock.hh>
 #include <honei/libutil/log.hh>
 #include <honei/libutil/mutex.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/spe_instruction.hh>
-#include <honei/cell/cell.hh>
 #include <honei/libutil/spe_kernel.hh>
 #include <honei/libutil/spe_kernel_manager.hh>
 #include <honei/libutil/spe_manager.hh>
@@ -52,9 +53,9 @@ namespace
 
 namespace honei
 {
-    template class InstantiationPolicy<SPEManager, Singleton>
+    template class InstantiationPolicy<SPEManager, Singleton>;
 
-    struct SPEManager::Implementation
+    template <> struct Implementation<SPEManager>
     {
         typedef std::vector<SPE> SPEList;
 
@@ -227,7 +228,7 @@ namespace honei
     };
 
     SPEManager::SPEManager() :
-        _imp(new Implementation)
+        PrivateImplementationPattern<SPEManager, Single>(new Implementation<SPEManager>)
     {
         CONTEXT("When creating SPEManager:");
         Lock l(*_imp->mutex);
@@ -278,8 +279,6 @@ namespace honei
     SPEManager::~SPEManager()
     {
         CONTEXT("When destroying SPEManager:");
-
-        delete _imp;
     }
 
     SPEManager::Iterator

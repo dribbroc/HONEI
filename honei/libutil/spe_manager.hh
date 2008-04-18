@@ -26,6 +26,7 @@
 #include <honei/libutil/exception.hh>
 #include <honei/libutil/instantiation_policy.hh>
 #include <honei/libutil/memory_backend.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/spe.hh>
 
@@ -48,15 +49,10 @@ namespace honei
      * \ingroup grpcell
      */
     class SPEManager :
-        public InstantiationPolicy<SPEManager, Singleton>
+        public InstantiationPolicy<SPEManager, Singleton>,
+        public PrivateImplementationPattern<SPEManager, Single>
     {
         private:
-            /// Our implementation class.
-            class Implementation;
-
-            /// Our implementation.
-            Implementation * _imp;
-
             /// \name Basic Operations
             /// \{
 

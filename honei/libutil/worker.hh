@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -21,6 +21,7 @@
 #define LIBUTIL_GUARD_WORKER_HH 1
 
 #include <honei/libutil/instantiation_policy.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 
 #include <tr1/functional>
 
@@ -29,14 +30,9 @@ namespace honei
     typedef std::tr1::function<void () throw ()> WorkerTask;
 
     class WorkerThread :
-        public InstantiationPolicy<WorkerThread, NonCopyable>
+        public InstantiationPolicy<WorkerThread, NonCopyable>,
+        public PrivateImplementationPattern<WorkerThread, Single>
     {
-        private:
-            struct Implementation;
-
-            /// Our implementation.
-            Implementation * _imp;
-
         public:
             /// \name Constructor and destructor
             /// \{
