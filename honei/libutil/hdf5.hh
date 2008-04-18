@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,6 +22,7 @@
 
 #include <honei/libutil/exception.hh>
 #include <honei/libutil/log.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 #include <honei/libutil/stringify.hh>
 
 #include <string>
@@ -133,21 +134,16 @@ namespace honei
      *
      * \ingroup grphdf5
      */
-    class HDF5File
+    class HDF5File :
+        public PrivateImplementationPattern<HDF5File, Shared>
     {
         private:
-            /// Our implementation class.
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             /**
              * Constructor.
              *
              * For internal use only.
              */
-            HDF5File(Implementation * imp);
+            HDF5File(Implementation<HDF5File> * imp);
 
         public:
             friend class HDF5Group;
@@ -190,15 +186,10 @@ namespace honei
      *
      * \ingroup grphdf5
      */
-    class HDF5Group
+    class HDF5Group :
+        public PrivateImplementationPattern<HDF5Group, Shared>
     {
         private:
-            /// Our implementation class.
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             /**
              * Constructor.
              *
@@ -216,7 +207,7 @@ namespace honei
              *
              * \param imp The group's implementation object.
              */
-            HDF5Group(Implementation * _imp);
+            HDF5Group(Implementation<HDF5Group> * _imp);
 
         public:
             friend class HDF5File;
@@ -247,18 +238,27 @@ namespace honei
      */
     class HDF5DataSpace
     {
-        protected:
-            struct Implementation;
+        public:
+            /// Destructor.
+            virtual ~HDF5DataSpace();
 
-            /// Our implementation
-            std::tr1::shared_ptr<Implementation> _imp;
+            /// Return our HDF5 object id.
+            virtual hid_t id() const = 0;
+    };
 
-            /**
-             * Constructor.
-             *
-             * For use by direct descendants of HDF5DataSpace only.
-             */
-            HDF5DataSpace(Implementation * imp);
+    /**
+     * HDF5LoadedDataSpace is the wrapper for existing and loaded data spaces.
+     *
+     * For use by HDF5 wrapper classes only.
+     *
+     * \ingroup grphdf5
+     */
+    class HDF5LoadedDataSpace :
+        public HDF5DataSpace,
+        public PrivateImplementationPattern<HDF5LoadedDataSpace, Shared>
+    {
+        public:
+            friend class HDF5DataSetBase;
 
             /**
              * Constructor.
@@ -267,16 +267,13 @@ namespace honei
              *
              * \param id The data space's object id.
              */
-            HDF5DataSpace(hid_t id);
-
-        public:
-            friend class HDF5DataSetBase;
+            HDF5LoadedDataSpace(hid_t id);
 
             /// Destructor.
-            virtual ~HDF5DataSpace();
+            virtual ~HDF5LoadedDataSpace();
 
             /// Return our HDF5 object id.
-            hid_t id() const;
+            virtual hid_t id() const;
     };
 
     /**
@@ -296,15 +293,9 @@ namespace honei
      * \ingroup grphdf5
      */
     class HDF5SimpleDataSpace :
-        public HDF5DataSpace
+        public HDF5DataSpace,
+        public PrivateImplementationPattern<HDF5SimpleDataSpace, Shared>
     {
-        private:
-            /// Our simple implementation class.
-            struct SimpleImplementation;
-
-            /// Our simple implementation.
-            SimpleImplementation * _simple_imp;
-
         public:
             /**
              * Constructor.
@@ -326,6 +317,9 @@ namespace honei
              * \param dimension Size of a dimension that is to be added to the data space.
              */
             HDF5SimpleDataSpace & operator[] (hsize_t dimension);
+
+            /// Return our HDF5 object id.
+            virtual hid_t id() const;
     };
 
     /**
@@ -335,15 +329,10 @@ namespace honei
      *
      * \ingroup grphdf5
      */
-    class HDF5DataSetBase
+    class HDF5DataSetBase :
+        PrivateImplementationPattern<HDF5DataSetBase, Shared>
     {
         protected:
-            /// Our implementation class.
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             /**
              * Constructor.
              *
@@ -354,7 +343,7 @@ namespace honei
              * \param data_space The data space which this set shall use.
              * \param type_id The type id of the set's elements.
              */
-            HDF5DataSetBase(const HDF5File & file, const std::string & name, const HDF5DataSpace & data_space,
+            HDF5DataSetBase(const HDF5File & file, const std::string & name, const HDF5SimpleDataSpace & data_space,
                     hid_t type_id);
 
             /**
@@ -397,7 +386,7 @@ namespace honei
              * \param name The new data set's name.
              * \param data_space The new data set's data space.
              */
-            HDF5DataSet(HDF5File & file, const std::string & name, const HDF5DataSpace & data_space) :
+            HDF5DataSet(HDF5File & file, const std::string & name, const HDF5SimpleDataSpace & data_space) :
                 HDF5DataSetBase(file, name, data_space, HDF5Type<DT_>::storage_type_id())
             {
             }
@@ -426,7 +415,7 @@ namespace honei
              * \param data_space The new data set's data space.
              */
             static inline HDF5DataSet<DT_> create(HDF5File & file, const std::string & name,
-                    const HDF5DataSpace & data_space)
+                    const HDF5SimpleDataSpace & data_space)
             {
                 return HDF5DataSet<DT_>(file, name, data_space);
             }
