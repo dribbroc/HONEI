@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
@@ -27,7 +27,8 @@
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/exception.hh>
 #include <honei/libutil/log.hh>
-#include <honei/libutil/shared_array-impl.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
+#include <honei/libutil/shared_array.hh>
 #include <honei/libutil/stringify.hh>
 
 #include <iterator>
@@ -43,15 +44,10 @@ namespace honei
      * \ingroup grpvector
      */
     template <typename DataType_> class SparseVector :
-        public Vector<DataType_>
+        public Vector<DataType_>,
+        public PrivateImplementationPattern<SparseVector<DataType_>, Shared>
     {
         private:
-            /// Our implementation type.
-            class Implementation;
-
-            /// Pointer to our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             /// Out zero element.
             static const DataType_ _zero_element;
 

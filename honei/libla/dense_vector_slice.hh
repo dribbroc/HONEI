@@ -21,6 +21,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_SLICE_HH 1
 
 #include <honei/libla/dense_vector.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 
 namespace honei
 {
@@ -33,14 +34,10 @@ namespace honei
      * \ingroup grpvector
      */
     template <typename DataType_> class DenseVectorSlice :
-        public DenseVectorBase<DataType_>
+        public DenseVectorBase<DataType_>,
+        public PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>
     {
         private:
-            struct Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             /// Our implementation of ElementIteratorBase.
             class DenseElementIterator;
 

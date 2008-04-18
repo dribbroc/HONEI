@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
@@ -28,6 +28,7 @@
 #include <honei/libutil/assertion.hh>
 #include <honei/libutil/exception.hh>
 #include <honei/libutil/log.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/shared_array-impl.hh>
 #include <honei/libutil/stringify.hh>
 #include <honei/libutil/type_traits.hh>
@@ -44,63 +45,55 @@ namespace honei
      *
      * \ingroup grpvector
      */
-    template <typename DataType_> class SparseVector<DataType_>::Implementation
+    template <typename DataType_> struct Implementation<SparseVector<DataType_> >
     {
-        private:
-            /// Unwanted copy-constructor: Do not implement. See EffC++, Item 27.
-            Implementation(const Implementation &);
+        /// Our non-zero elements.
+        SharedArray<DataType_> _elements;
 
-            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
-            Implementation & operator= (const Implementation &);
+        /// Our indices of non-zero elements.
+        SharedArray<unsigned long> _indices;
 
-        public:
-            /// Our non-zero elements.
-            SharedArray<DataType_> _elements;
+        /// Out capacity of non-zero elements.
+        unsigned long _capacity;
 
-            /// Our indices of non-zero elements.
-            SharedArray<unsigned long> _indices;
+        /// Our size, the maximal number of non-zero elements
+        const unsigned long _size;
 
-            /// Out capacity of non-zero elements.
-            unsigned long _capacity;
+        /// Our number of current non-zero elements.
+        unsigned long _used_elements;
 
-            /// Our size, the maximal number of non-zero elements
-            const unsigned long _size;
+        /// \name Constructors
+        /// \{
 
-            /// Our number of current non-zero elements.
-            unsigned long _used_elements;
+        /**
+         * Constructor.
+         *
+         * \param size Size of the new SparseVector.
+         * \param capacity Capacity of elements that can be held without resizing.
+         */
+        Implementation(unsigned long size, unsigned long capacity) :
+            _elements(capacity),
+            _indices(capacity),
+            _capacity(capacity),
+            _size(size),
+            _used_elements(0)
+        {
+            CONTEXT("When creating SparseVector::Implementation:");
+            ASSERT(capacity > 0, "capacity is zero!");
 
-            /// \name Constructors
-            /// \{
+            // Sneak in 'terminating elements', as index can never be size.
+            _elements[0] = DataType_(0);
+            TypeTraits<unsigned long>::fill(_indices.get(), capacity, size);
+        }
 
-            /**
-             * Constructor.
-             *
-             * \param size Size of the new SparseVector.
-             * \param capacity Capacity of elements that can be held without resizing.
-             */
-            Implementation(unsigned long size, unsigned long capacity) :
-                _elements(capacity),
-                _indices(capacity),
-                _capacity(capacity),
-                _size(size),
-                _used_elements(0)
-            {
-                CONTEXT("When creating SparseVector::Implementation:");
-                ASSERT(capacity > 0, "capacity is zero!");
+        /**
+         * Destructor.
+         */
+        ~Implementation()
+        {
+        }
 
-                // Sneak in 'terminating elements', as index can never be size.
-                _elements[0] = DataType_(0);
-                TypeTraits<unsigned long>::fill(_indices.get(), capacity, size);
-            }
-
-            /**
-             * Destructor.
-             */
-            ~Implementation()
-            {
-            }
-
-            /// \}
+        /// \}
     };
 
     template <typename DataType_>
@@ -109,46 +102,46 @@ namespace honei
         CONTEXT("When inserting element at position '" + stringify(position) + "' with index '" +
                 stringify(index) + "':");
 
-        bool realloc(_imp->_capacity <= _imp->_used_elements + 1);
-        unsigned long capacity(realloc ? std::min(_imp->_capacity + 10, _imp->_size + 1) : _imp->_capacity);
-        DataType_ * elements(realloc ? new DataType_[capacity] : _imp->_elements.get());
-        unsigned long * indices(realloc ? new unsigned long[capacity] : _imp->_indices.get());
+        bool realloc(this->_imp->_capacity <= this->_imp->_used_elements + 1);
+        unsigned long capacity(realloc ? std::min(this->_imp->_capacity + 10, this->_imp->_size + 1) : this->_imp->_capacity);
+        DataType_ * elements(realloc ? new DataType_[capacity] : this->_imp->_elements.get());
+        unsigned long * indices(realloc ? new unsigned long[capacity] : this->_imp->_indices.get());
 
         ASSERT(position < capacity, "position '" + stringify(position) + "' out of bounds!");
-        ASSERT(index < _imp->_size, "index '" + stringify(index) + "' out of bounds!");
+        ASSERT(index < this->_imp->_size, "index '" + stringify(index) + "' out of bounds!");
 
         if (realloc)
         {
             // Write out the terminating elements.
-            TypeTraits<unsigned long>::fill(indices, capacity, _imp->_size);
+            TypeTraits<unsigned long>::fill(indices, capacity, this->_imp->_size);
 
-            TypeTraits<DataType_>::copy(_imp->_elements.get(), elements, position + 1);
-            TypeTraits<unsigned long>::copy(_imp->_indices.get(), indices, position + 1);
+            TypeTraits<DataType_>::copy(this->_imp->_elements.get(), elements, position + 1);
+            TypeTraits<unsigned long>::copy(this->_imp->_indices.get(), indices, position + 1);
         }
 
         // Relies on capactiy >= used_elements + 1.
-        std::copy_backward(_imp->_elements.get() + position, _imp->_elements.get() + _imp->_used_elements,
-                elements + _imp->_used_elements + 1);
-        std::copy_backward(_imp->_indices.get() + position, _imp->_indices.get() + _imp->_used_elements,
-                indices + _imp->_used_elements + 1);
+        std::copy_backward(this->_imp->_elements.get() + position, this->_imp->_elements.get() + this->_imp->_used_elements,
+                elements + this->_imp->_used_elements + 1);
+        std::copy_backward(this->_imp->_indices.get() + position, this->_imp->_indices.get() + this->_imp->_used_elements,
+                indices + this->_imp->_used_elements + 1);
 
-        ++_imp->_used_elements;
+        ++this->_imp->_used_elements;
 
         if (realloc)
         {
-            _imp->_elements.reset(capacity, elements);
-            _imp->_indices.reset(capacity, indices);
-            _imp->_capacity = capacity;
+            this->_imp->_elements.reset(capacity, elements);
+            this->_imp->_indices.reset(capacity, indices);
+            this->_imp->_capacity = capacity;
         }
 
         // Set new element's index and reset it to zero.
-        _imp->_indices[position] = index;
-        _imp->_elements[position] = DataType_(0);
+        this->_imp->_indices[position] = index;
+        this->_imp->_elements[position] = DataType_(0);
     }
 
     template <typename DataType_>
     SparseVector<DataType_>::SparseVector(unsigned long size, unsigned long capacity) :
-        _imp(new Implementation(size, capacity))
+        PrivateImplementationPattern<SparseVector<DataType_>, Shared>(new Implementation<SparseVector<DataType_> >(size, capacity))
     {
         CONTEXT("When creating SparseVector:");
         ASSERT(size >= capacity, "capacity '" + stringify(capacity) + "' exceeds size '" +
@@ -170,7 +163,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new SparseElementIterator(*this, _imp->_size));
+        return ConstElementIterator(new SparseElementIterator(*this, this->_imp->_size));
     }
 
     template <typename DataType_>
@@ -182,7 +175,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::end_elements()
     {
-        return ElementIterator(new SparseElementIterator(*this, _imp->_size));
+        return ElementIterator(new SparseElementIterator(*this, this->_imp->_size));
     }
 
     template <typename DataType_>
@@ -194,7 +187,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::end_non_zero_elements() const
     {
-        return ConstElementIterator(new NonZeroElementIterator(*this, _imp->_used_elements));
+        return ConstElementIterator(new NonZeroElementIterator(*this, this->_imp->_used_elements));
     }
 
     template <typename DataType_>
@@ -206,7 +199,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::end_non_zero_elements()
     {
-        return ElementIterator(new NonZeroElementIterator(*this, _imp->_used_elements));
+        return ElementIterator(new NonZeroElementIterator(*this, this->_imp->_used_elements));
     }
 
     template <typename DataType_>
@@ -224,47 +217,47 @@ namespace honei
     template <typename DataType_>
     unsigned long SparseVector<DataType_>::capacity() const
     {
-        return _imp->_capacity;
+        return this->_imp->_capacity;
     }
 
     template <typename DataType_>
     unsigned long SparseVector<DataType_>::used_elements() const
     {
-        return _imp->_used_elements;
+        return this->_imp->_used_elements;
     }
 
     template <typename DataType_>
     unsigned long SparseVector<DataType_>::size() const
     {
-        return _imp->_size;
+        return this->_imp->_size;
     }
 
     template <typename DataType_>
     inline DataType_ * SparseVector<DataType_>::elements() const
     {
-        return _imp->_elements.get();
+        return this->_imp->_elements.get();
     }
 
     template <typename DataType_>
     inline unsigned long * SparseVector<DataType_>::indices() const
     {
-        return _imp->_indices.get();
+        return this->_imp->_indices.get();
     }
 
     template <typename DataType_>
     const DataType_ & SparseVector<DataType_>::operator[] (unsigned long index) const
     {
         CONTEXT("When accessing unassignable element at index '" + stringify(index) + "':");
-        ASSERT(index < _imp->_size, "index '" + stringify(index) + "' exceeds size '" +
-                stringify(_imp->_size) + "'!");
+        ASSERT(index < this->_imp->_size, "index '" + stringify(index) + "' exceeds size '" +
+                stringify(this->_imp->_size) + "'!");
 
         unsigned long i(0);
 
-        for ( ; (i < _imp->_used_elements) && (_imp->_indices[i] < index) ; ++i)
+        for ( ; (i < this->_imp->_used_elements) && (this->_imp->_indices[i] < index) ; ++i)
             ;
 
-        if (_imp->_indices[i] == index)
-            return _imp->_elements[i];
+        if (this->_imp->_indices[i] == index)
+            return this->_imp->_elements[i];
         else
             return _zero_element;
     }
@@ -273,29 +266,29 @@ namespace honei
     DataType_ & SparseVector<DataType_>::operator[] (unsigned long index)
     {
         CONTEXT("When accessing assignable element at index '" + stringify(index) + "':");
-        ASSERT(index < _imp->_size, "index '" + stringify(index) + "' exceeds size '" +
-                stringify(_imp->_size) + "'!");
+        ASSERT(index < this->_imp->_size, "index '" + stringify(index) + "' exceeds size '" +
+                stringify(this->_imp->_size) + "'!");
 
         unsigned long i(0);
 
-        for ( ; (i < _imp->_used_elements) && (_imp->_indices[i] < index) ; ++i)
+        for ( ; (i < this->_imp->_used_elements) && (this->_imp->_indices[i] < index) ; ++i)
             ;
 
-        if (_imp->_indices[i] != index)
+        if (this->_imp->_indices[i] != index)
             _insert_element(i, index);
 
-        return _imp->_elements[i];
+        return this->_imp->_elements[i];
     }
 
     template <typename DataType_>
     SparseVector<DataType_> SparseVector<DataType_>::copy() const
     {
         CONTEXT("When creating a copy:'");
-        SparseVector result(_imp->_size, _imp->_capacity);
+        SparseVector result(this->_imp->_size, this->_imp->_capacity);
 
-        result._imp->_used_elements = _imp->_used_elements;
-        TypeTraits<DataType_>::copy(_imp->_elements.get(), result._imp->_elements.get(), _imp->_used_elements);
-        TypeTraits<unsigned long>::copy(_imp->_indices.get(), result._imp->_indices.get(), _imp->_used_elements);
+        result._imp->_used_elements = this->_imp->_used_elements;
+        TypeTraits<DataType_>::copy(this->_imp->_elements.get(), result._imp->_elements.get(), this->_imp->_used_elements);
+        TypeTraits<unsigned long>::copy(this->_imp->_indices.get(), result._imp->_indices.get(), this->_imp->_used_elements);
 
         return result;
     }

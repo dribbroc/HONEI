@@ -25,7 +25,8 @@
 #include <honei/libla/dense_vector_range.hh>
 #include <honei/libla/element_iterator.hh>
 #include <honei/libutil/assertion.hh>
-#include <honei/libutil/shared_array.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
+#include <honei/libutil/shared_array-impl.hh>
 #include <honei/libutil/stringify.hh>
 
 #include <algorithm>
@@ -38,38 +39,31 @@ namespace honei
      *
      * \ingroup grpvector
      */
-    template <typename DataType_> class DenseVectorRange<DataType_>::Implementation
+    template <typename DataType_> struct Implementation<DenseVectorRange<DataType_> >
     {
-        private:
-            /// Unwanted copy-constructor: Do not implement. See EffC++, Item 27.
-            Implementation(const Implementation &);
+        /// Our elements.
+        SharedArray<DataType_> elements;
 
-            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
-            Implementation & operator= (const Implementation &);
+        /// Our size.
+        const unsigned long size;
 
-        public:
-            /// Our elements.
-            SharedArray<DataType_> elements;
+        /// Our offset.
+        const unsigned long offset;
 
-            /// Our size.
-            const unsigned long size;
-
-            /// Our offset.
-            const unsigned long offset;
-
-            /// Constructor.
-            Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o) :
-                elements(e),
-                size(s),
-                offset(o)
-            {
-            }
+        /// Constructor.
+        Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o) :
+            elements(e),
+            size(s),
+            offset(o)
+        {
+        }
     };
 
     template <typename DataType_>
     DenseVectorRange<DataType_>::DenseVectorRange(const DenseVector<DataType_> & source, const unsigned long size,
             const unsigned long offset) :
-        _imp(new Implementation(source._imp->elements, size, offset))
+        PrivateImplementationPattern<DenseVectorRange<DataType_>, Shared>(new Implementation<DenseVectorRange<DataType_> >(
+                    source._imp->elements, size, offset))
     {
         CONTEXT("When creating DenseVectorRange:");
         ASSERT(size > 0, "size is zero!");
@@ -81,7 +75,8 @@ namespace honei
     template <typename DataType_>
     DenseVectorRange<DataType_>::DenseVectorRange(const SharedArray<DataType_> & e, const unsigned long size,
             const unsigned long offset) :
-        _imp(new Implementation(e, size, offset))
+        PrivateImplementationPattern<DenseVectorRange<DataType_>, Shared>(new Implementation<DenseVectorRange<DataType_> >(
+                    e, size, offset))
     {
         CONTEXT("When creating DenseVectorRange:");
         ASSERT(size > 0, "size is zero!");
@@ -92,14 +87,16 @@ namespace honei
 
     template <typename DataType_>
     DenseVectorRange<DataType_>::DenseVectorRange(const DenseVectorRange<DataType_> & other) :
-        _imp(new Implementation(other._imp->elements, other._imp->size, other._imp->offset))
+        PrivateImplementationPattern<DenseVectorRange<DataType_>, Shared>(new Implementation<DenseVectorRange<DataType_> >(
+                    other._imp->elements, other._imp->size, other._imp->offset))
     {
     }
 
     template <typename DataType_>
     DenseVectorRange<DataType_>::DenseVectorRange(const DenseVectorRange<DataType_> & source, const unsigned long size,
             const unsigned long offset) :
-        _imp(new Implementation(source._imp->elements, size, offset + source._imp->offset))
+        PrivateImplementationPattern<DenseVectorRange<DataType_>, Shared>(new Implementation<DenseVectorRange<DataType_> >(
+                    source._imp->elements, size, offset + source._imp->offset))
     {
         CONTEXT("When creating DenseVectorRange:");
         ASSERT(size > 0, "size is zero!");
@@ -116,7 +113,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVectorRange<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, _imp->size));
+        return ConstElementIterator(new DenseElementIterator(*this, this->_imp->size));
     }
 
     template <typename DataType_>
@@ -134,7 +131,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator DenseVectorRange<DataType_>::end_elements()
     {
-        return ElementIterator(new DenseElementIterator(*this, _imp->size));
+        return ElementIterator(new DenseElementIterator(*this, this->_imp->size));
     }
 
     template <typename DataType_>
@@ -146,25 +143,25 @@ namespace honei
     template <typename DataType_>
     unsigned long DenseVectorRange<DataType_>::size() const
     {
-        return _imp->size;
+        return this->_imp->size;
     }
 
     template <typename DataType_>
     const DataType_ & DenseVectorRange<DataType_>::operator[] (unsigned long index) const
     {
-        return _imp->elements[index + _imp->offset];
+        return this->_imp->elements[index + this->_imp->offset];
     }
 
     template <typename DataType_>
     DataType_ & DenseVectorRange<DataType_>::operator[] (unsigned long index)
     {
-        return _imp->elements[index + _imp->offset];
+        return this->_imp->elements[index + this->_imp->offset];
     }
 
     template <typename DataType_>
     unsigned long DenseVectorRange<DataType_>::offset() const
     {
-        return _imp->offset;
+        return this->_imp->offset;
     }
 
     template <typename DataType_>
@@ -177,18 +174,18 @@ namespace honei
     template <typename DataType_>
     inline DataType_ * DenseVectorRange<DataType_>::elements() const
     {
-        return _imp->elements.get() + _imp->offset;
+        return this->_imp->elements.get() + this->_imp->offset;
     }
 
     template <typename DataType_>
     DenseVector<DataType_> DenseVectorRange<DataType_>::copy() const
     {
-        DenseVector<DataType_> result(_imp->size);
-        DataType_ * source(_imp->elements.get());
+        DenseVector<DataType_> result(this->_imp->size);
+        DataType_ * source(this->_imp->elements.get());
         DataType_ * target(result.elements());
-        for (unsigned long i(0) ; i < _imp->size ; i++)
+        for (unsigned long i(0) ; i < this->_imp->size ; i++)
         {
-            target[i] = source[i + _imp->offset];
+            target[i] = source[i + this->_imp->offset];
         }
 
         /// \todo: Use TypeTraits<DataType_>::copy()

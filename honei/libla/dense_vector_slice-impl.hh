@@ -22,11 +22,12 @@
 
 #include <honei/libla/dense_matrix_tile.hh>
 #include <honei/libla/dense_vector-impl.hh>
-#include <honei/libla/dense_vector_slice.hh>
+#include <honei/libla/dense_vector_slice-impl.hh>
 #include <honei/libla/element_iterator.hh>
 #include <honei/libla/vector.hh>
 #include <honei/libutil/assertion.hh>
-#include <honei/libutil/shared_array.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
+#include <honei/libutil/shared_array-impl.hh>
 #include <honei/libutil/stringify.hh>
 
 #include <iterator>
@@ -36,7 +37,7 @@ namespace honei
     template <typename DataType_> class DenseMatrixTile;
 
     /// Implementation for DenseVectorSlice template.
-    template <typename DataType_> struct DenseVectorSlice<DataType_>::Implementation
+    template <typename DataType_> struct Implementation<DenseVectorSlice<DataType_> >
     {
         /// Pointer to our elements.
         SharedArray<DataType_> elements;
@@ -63,7 +64,8 @@ namespace honei
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const SharedArray<DataType_> & elements, const unsigned long size,
             const unsigned long offset, const unsigned long stepsize) :
-        _imp(new Implementation(elements, size, offset, stepsize))
+        PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
+                    elements, size, offset, stepsize))
     {
         CONTEXT("When creating DenseVectorSlice:");
         ASSERT(size > 0, "size is zero!");
@@ -73,7 +75,8 @@ namespace honei
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVector<DataType_> & source, const unsigned long size,
             const unsigned long offset, const unsigned long stepsize) :
-        _imp(new Implementation(source._imp->elements, size, offset, stepsize))
+        PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
+                    source._imp->elements, size, offset, stepsize))
     {
         CONTEXT("When creating DenseVectorSlice:");
         ASSERT(size > 0, "size is zero!");
@@ -82,7 +85,8 @@ namespace honei
 
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVectorSlice<DataType_> & other) :
-        _imp(new Implementation(other._imp->elements, other._imp->size, other._imp->offset, other._imp->stepsize))
+        PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
+                    other._imp->elements, other._imp->size, other._imp->offset, other._imp->stepsize))
     {
     }
 
@@ -95,7 +99,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVectorSlice<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, _imp->size));
+        return ConstElementIterator(new DenseElementIterator(*this, this->_imp->size));
     }
 
     template <typename DataType_>
@@ -113,7 +117,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator DenseVectorSlice<DataType_>::end_elements()
     {
-        return ElementIterator(new DenseElementIterator(*this, _imp->size));
+        return ElementIterator(new DenseElementIterator(*this, this->_imp->size));
     }
 
     template <typename DataType_>
@@ -125,48 +129,48 @@ namespace honei
     template <typename DataType_>
     unsigned long DenseVectorSlice<DataType_>::stepsize() const
     {
-        return _imp->stepsize;
+        return this->_imp->stepsize;
     }
 
     template <typename DataType_>
     unsigned long DenseVectorSlice<DataType_>::size() const
     {
-        return _imp->size;
+        return this->_imp->size;
     }
 
     template <typename DataType_>
     unsigned long DenseVectorSlice<DataType_>::offset() const
     {
-        return _imp->offset;
+        return this->_imp->offset;
     }
 
     template <typename DataType_>
     const DataType_ & DenseVectorSlice<DataType_>::operator[] (unsigned long index) const
     {
-        return _imp->elements[_imp->stepsize * index + _imp->offset];
+        return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
     }
 
     template <typename DataType_>
     DataType_ & DenseVectorSlice<DataType_>::operator[] (unsigned long index)
     {
-        return _imp->elements[_imp->stepsize * index + _imp->offset];
+        return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
     }
 
     template <typename DataType_>
     inline DataType_ * DenseVectorSlice<DataType_>::elements() const
     {
-        return _imp->elements.get() + _imp->offset;
+        return this->_imp->elements.get() + this->_imp->offset;
     }
 
     template <typename DataType_>
     DenseVector<DataType_> DenseVectorSlice<DataType_>::copy() const
     {
-        DenseVector<DataType_> result(_imp->size);
-        DataType_ * source(_imp->elements.get());
+        DenseVector<DataType_> result(this->_imp->size);
+        DataType_ * source(this->_imp->elements.get());
         DataType_ * target(result.elements());
-        for (unsigned long i(0) ; i < _imp->size ; i++)
+        for (unsigned long i(0) ; i < this->_imp->size ; i++)
         {
-            target[i] = source[_imp->stepsize * i + _imp->offset];
+            target[i] = source[this->_imp->stepsize * i + this->_imp->offset];
         }
 
         ///\todo: Use TypeTraits.

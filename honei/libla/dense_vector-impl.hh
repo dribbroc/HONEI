@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
@@ -27,8 +27,10 @@
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/element_iterator.hh>
 #include <honei/libutil/assertion.hh>
+#include <honei/libutil/private_implementation_pattern-impl.hh>
 #include <honei/libutil/shared_array.hh>
 #include <honei/libutil/stringify.hh>
+#include <honei/libutil/type_traits.hh>
 
 #include <algorithm>
 #include <string>
@@ -44,51 +46,43 @@ namespace honei
      *
      * \ingroup grpvector
      */
-    template <typename DataType_> class DenseVector<DataType_>::Implementation
+    template <typename DataType_> struct Implementation<DenseVector<DataType_> >
     {
-        private:
-            /// Unwanted copy-constructor: Do not implement. See EffC++, Item 27.
-            Implementation(const Implementation &);
+        /// Our elements.
+        SharedArray<DataType_> elements;
 
-            /// Unwanted assignment operator: Do not implement. See EffC++, Item 27.
-            Implementation & operator= (const Implementation &);
+        /// Our size.
+        const unsigned long size;
 
-        public:
-            /// Our elements.
-            SharedArray<DataType_> elements;
+        /// Our offset.
+        const unsigned long offset;
 
-            /// Our size.
-            const unsigned long size;
+        /// Our stepsize.
+        const unsigned long stepsize;
 
-            /// Our offset.
-            const unsigned long offset;
+        /// Constructor.
+        Implementation(unsigned long s, unsigned long o, unsigned long ss) :
+            elements(o + ss * (s + 1) - 1),
+            size(s),
+            offset(o),
+            stepsize(ss)
+        {
+        }
 
-            /// Our stepsize.
-            const unsigned long stepsize;
-
-            /// Constructor.
-            Implementation(unsigned long s, unsigned long o, unsigned long ss) :
-                elements(o + ss * (s + 1) - 1),
-                size(s),
-                offset(o),
-                stepsize(ss)
-            {
-            }
-
-            /// Constructor.
-            Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o, unsigned long ss) :
-                elements(e),
-                size(s),
-                offset(o),
-                stepsize(ss)
-            {
-            }
+        /// Constructor.
+        Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o, unsigned long ss) :
+            elements(e),
+            size(s),
+            offset(o),
+            stepsize(ss)
+        {
+        }
     };
 
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const unsigned long size, const SharedArray<DataType_> & elements,
             unsigned long offset, unsigned stepsize) :
-        _imp(new Implementation(elements, size, offset, stepsize))
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(elements, size, offset, stepsize))
     {
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
@@ -97,7 +91,7 @@ namespace honei
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const unsigned long size, const unsigned long offset,
             const unsigned long stepsize) :
-        _imp(new Implementation(size, offset, stepsize))
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(size, offset, stepsize))
     {
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
@@ -106,7 +100,7 @@ namespace honei
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const unsigned long size, DataType_ value, unsigned long offset,
             unsigned long stepsize) :
-        _imp(new Implementation(size, offset, stepsize))
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(size, offset, stepsize))
     {
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
@@ -114,19 +108,19 @@ namespace honei
         /// \todo Replace by the following once DenseVector has lost Range and Slice functionality:
         // TypeTraits<DataType_>::fill(_imp->elements.get(), size, value);
 
-        DataType_ *  target(_imp->elements.get());
+        DataType_ *  target(this->_imp->elements.get());
         for (unsigned long i(offset) ; i < (stepsize * size + offset) ; i += stepsize)
             target[i] = value;
     }
 
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const SparseVector<DataType_> & other) :
-        _imp(new Implementation(other.size(), 0, 1))
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(other.size(), 0, 1))
     {
         CONTEXT("When creating DenseVector form SparseVector:");
         ASSERT(other.size() > 0, "size is zero!");
 
-        TypeTraits<DataType_>::fill(_imp->elements.get(), other.size(), DataType_(0));
+        TypeTraits<DataType_>::fill(this->_imp->elements.get(), other.size(), DataType_(0));
 
         for (typename Vector<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
                 i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)
@@ -137,7 +131,8 @@ namespace honei
 
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const DenseVector<DataType_> & other) :
-        _imp(new Implementation(other._imp->elements, other._imp->size, other._imp->offset, other._imp->stepsize))
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(other._imp->elements,
+                    other._imp->size, other._imp->offset, other._imp->stepsize))
     {
     }
 
@@ -150,7 +145,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVector<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, _imp->size));
+        return ConstElementIterator(new DenseElementIterator(*this, this->_imp->size));
     }
 
     template <typename DataType_>
@@ -168,7 +163,7 @@ namespace honei
     template <typename DataType_>
     typename Vector<DataType_>::ElementIterator DenseVector<DataType_>::end_elements()
     {
-        return ElementIterator(new DenseElementIterator(*this, _imp->size));
+        return ElementIterator(new DenseElementIterator(*this, this->_imp->size));
     }
 
     template <typename DataType_>
@@ -180,25 +175,25 @@ namespace honei
     template <typename DataType_>
     unsigned long DenseVector<DataType_>::size() const
     {
-        return _imp->size;
+        return this->_imp->size;
     }
 
     template <typename DataType_>
     const DataType_ & DenseVector<DataType_>::operator[] (unsigned long index) const
     {
-        return _imp->elements[_imp->stepsize * index + _imp->offset];
+        return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
     }
 
     template <typename DataType_>
     DataType_ & DenseVector<DataType_>::operator[] (unsigned long index)
     {
-        return _imp->elements[_imp->stepsize * index + _imp->offset];
+        return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
     }
 
     template <typename DataType_>
     unsigned long DenseVector<DataType_>::offset() const
     {
-        return _imp->offset;
+        return this->_imp->offset;
     }
 
     template <typename DataType_>
@@ -211,15 +206,15 @@ namespace honei
     template <typename DataType_>
     inline DataType_ * DenseVector<DataType_>::elements() const
     {
-        return _imp->elements.get();
+        return this->_imp->elements.get();
     }
 
     template <typename DataType_>
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
-        DenseVector result(_imp->size);
+        DenseVector result(this->_imp->size);
 
-        TypeTraits<DataType_>::copy( _imp->elements.get(), result._imp->elements.get(), _imp->size);
+        TypeTraits<DataType_>::copy(this->_imp->elements.get(), result._imp->elements.get(), this->_imp->size);
 
         return result;
     }

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
@@ -23,6 +23,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_HH 1
 
 #include <honei/libla/vector.hh>
+#include <honei/libutil/private_implementation_pattern.hh>
 
 namespace honei
 {
@@ -39,14 +40,10 @@ namespace honei
      * \ingroup grpvector
      */
     template <typename DataType_> class DenseVector :
-        public DenseVectorContinuousBase<DataType_>
+        public DenseVectorContinuousBase<DataType_>,
+        public PrivateImplementationPattern<DenseVector<DataType_>, Shared>
     {
         private:
-            class Implementation;
-
-            /// Our implementation.
-            std::tr1::shared_ptr<Implementation> _imp;
-
             /// Our implementation of ElementIteratorBase.
             class DenseElementIterator;
 
