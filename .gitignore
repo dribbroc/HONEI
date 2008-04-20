@@ -1,0 +1,22 @@
+# Ignore compiled files
+*.o
+*.lo
+*.a
+*.so
+*.so.*
+*.la
+# Ignore autotools stuff
+aclocal.m4
+autom4te.cache
+config.*
+configure
+Makefile
+Makefile.in
+stamp-h1
+libtool
+.deps
+.libs
+# Ignore backup files
+*~
+# Ignore compiled test cases
+*_TEST
