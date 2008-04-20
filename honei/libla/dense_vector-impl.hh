@@ -137,6 +137,11 @@ namespace honei
     }
 
     template <typename DataType_>
+    DenseVector<DataType_>::~DenseVector()
+    {
+    }
+
+    template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVector<DataType_>::begin_elements() const
     {
         return ConstElementIterator(new DenseElementIterator(*this, 0));

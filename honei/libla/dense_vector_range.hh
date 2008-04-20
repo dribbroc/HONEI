@@ -91,6 +91,9 @@ namespace honei
              */
             DenseVectorRange(const DenseVectorRange<DataType_> & source, const unsigned long size, const unsigned long offset);
 
+            /// Destructor.
+            ~DenseVectorRange();
+
             /// \}
 
             /**

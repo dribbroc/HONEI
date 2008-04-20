@@ -107,6 +107,9 @@ namespace honei
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other);
 
+            /// Destructor.
+            ~DenseVector();
+
             /// \}
 
             /**

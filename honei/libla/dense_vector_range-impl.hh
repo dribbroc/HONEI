@@ -104,6 +104,12 @@ namespace honei
         ASSERT(offset <= source._imp->size, "offset is out of bounds!");
         ASSERT(offset + size <= source._imp->size, "end of range is out of bounds!");
     }
+
+    template <typename DataType_>
+    DenseVectorRange<DataType_>::~DenseVectorRange()
+    {
+    }
+
     template <typename DataType_>
     typename Vector<DataType_>::ConstElementIterator DenseVectorRange<DataType_>::begin_elements() const
     {

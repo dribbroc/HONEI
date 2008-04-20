@@ -84,6 +84,9 @@ namespace honei
             /// Copy-constructor.
             DenseVectorSlice(const DenseVectorSlice<DataType_> & other);
 
+            /// Destructor.
+            ~DenseVectorSlice();
+
             /// \}
 
             /**
