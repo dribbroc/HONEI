@@ -81,12 +81,15 @@ class ProfilerTest :
 
         std::tr1::shared_ptr<ConditionVariable> _done;
 
+        bool _complete;
+
         bool _passed;
 
     public:
         ProfilerTest() :
             QuickTest("profiler_test"),
             _mutex(new Mutex),
+            _complete(false),
             _done(new ConditionVariable),
             _passed(false)
         {
@@ -124,6 +127,7 @@ class ProfilerTest :
             if (3 == calls)
             {
                 Lock l(*_mutex);
+                _complete = true;
                 _done->signal();
             }
         }
@@ -141,7 +145,10 @@ class ProfilerTest :
 
             {
                 Lock l(*_mutex);
-                _done->wait(*_mutex);
+                if (! _complete)
+                {
+                    _done->wait(*_mutex);
+                }
             }
 
             TEST_CHECK(_passed);
