@@ -12,7 +12,7 @@ if VISUAL
   VISUALDIR = libvisual
 endif
 
-SUBDIRS = $(CELLDIR) libutil libla libmath libgraph libswe $(VISUALDIR)
+SUBDIRS = $(CELLDIR) libutil libla libmath libgraph libswe liblbm $(VISUALDIR)
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) all
