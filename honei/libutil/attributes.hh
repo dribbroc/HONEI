@@ -27,10 +27,12 @@
 #  define HONEI_ALIGNED(x) __attribute__((__aligned__(x)))
 #  define HONEI_INLINE __attribute__((__always_inline__))
 #  define HONEI_PACKED __attribute__((packed))
+#  define HONEI_THREAD_LOCAL static __thread
 #elif defined (DOXYGEN)
 #  define HONEI_ALIGNED(x)
 #  define HONEI_INLINE
 #  define HONEI_PACKED
+#  define HONEI_THREAD_LOCAL static
 #else
 #  error "Your compiler is not supported yet!"
 #endif
