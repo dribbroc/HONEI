@@ -1,7 +1,10 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ *
+ * Based in parts upon 'exception.cc' from Paludis, which is:
+ *     Copyright (c) 2005, 2006, 2007 Ciaran McCreesh
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -18,62 +21,94 @@
  */
 
 #include <honei/libutil/assertion.hh>
+#include <honei/libutil/attributes.hh>
 #include <honei/libutil/exception.hh>
 #include <honei/libutil/instantiation_policy-impl.hh>
 #include <honei/libutil/stringify.hh>
 
-#include <libebt/libebt.hh>
-#include <libebt/libebt_pthread_threads.hh>
-
-#include <cstring>
 #include <cxxabi.h>
-#include <iostream>
-
-using namespace honei;
+#include <list>
+#include <string>
 
 namespace
 {
-    struct ContextTag;
+    std::string
+    join(std::list<std::string>::const_iterator begin, std::list<std::string>::const_iterator end,
+            const std::string & delimiter)
+    {
+        std::string result;
+
+        if (begin != end)
+        {
+            result = *begin;
+            ++begin;
+
+            while (begin != end)
+            {
+                result += delimiter;
+                result += *begin;
+            }
+        }
+
+        return result;
+    }
 }
 
-namespace libebt
+namespace honei
 {
-    template <> struct BacktraceContextHolder<ContextTag> :
-        public PthreadBacktraceContextHolder<ContextTag>
+    HONEI_THREAD_LOCAL std::list<std::string> * context_stack = 0;
+
+    struct Exception::ContextData
     {
+        std::list<std::string> local_context_stack;
+
+        ContextData()
+        {
+            if (context_stack)
+            {
+                local_context_stack.assign(context_stack->begin(), context_stack->end());
+            }
+        }
+
+        std::string backtrace(const std::string & delimiter) const
+        {
+            return join(local_context_stack.begin(), local_context_stack.end(), delimiter);
+        }
     };
 }
 
-struct Context::ContextData
-{
-    libebt::BacktraceContext<ContextTag> context;
+using namespace honei;
 
-    ContextData(const char * const file, const long line, const std::string & s) :
-        context(s + " (" + stringify(file) + ":" + stringify(line) + ")")
+Context::Context(const char * const file, const long line, const std::string & context)
+{
+    if (! context_stack)
     {
+        context_stack = new std::list<std::string>;
     }
-};
 
-Context::Context(const char * const file, const long line, const std::string & context) :
-    _context_data(new ContextData(file, line, context))
-{
+    context_stack->push_back(context + " (" + stringify(file) + ":" + stringify(line) +")");
 }
 
 Context::~Context()
 {
-    delete _context_data;
+    if (! context_stack)
+        throw InternalError("no context!");
+
+    context_stack->pop_back();
+
+    if (context_stack->empty())
+    {
+        delete context_stack;
+        context_stack = 0;
+    }
 }
 
 std::string
 Context::backtrace(const std::string & delimiter)
 {
-    return libebt::BacktraceContext<ContextTag>::backtrace(delimiter);
+    return join(context_stack->begin(), context_stack->end(), delimiter);
 }
 
-struct Exception::ContextData :
-    public libebt::Backtraceable<ContextTag>
-{
-};
 
 Exception::Exception(const std::string & message) throw () :
     _message(message),
@@ -102,7 +137,6 @@ Exception::message() const throw ()
 std::string
 Exception::backtrace(const std::string & delimiter) const
 {
-    std::cout << "Exception: " << _context_data->backtrace(delimiter) << std::endl;
     return _context_data->backtrace(delimiter);
 }
 

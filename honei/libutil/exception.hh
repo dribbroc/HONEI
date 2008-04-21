@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * Based upon 'exception.hh' from Paludis, which is:
  *     Copyright (c) 2005, 2006, 2007 Ciaran McCreesh
@@ -38,16 +38,6 @@ namespace honei
     class Context :
         public InstantiationPolicy<Context, NonCopyable>
     {
-        private:
-            /// Unwanted operations. Do not implement. See EffCpp, Item 27.
-            /// \{
-            Context(const Context &);
-            const Context & operator= (const Context &);
-            /// \}
-
-            struct ContextData;
-            ContextData * const _context_data;
-
         public:
             /**
              * Constructor.
@@ -99,17 +89,19 @@ namespace honei
      * \nosubgrouping
      */
     class Exception :
-        public std::exception,
-        public InstantiationPolicy<Exception, NonCopyable>
+        public std::exception
     {
         private:
-            const std::string _message;
-            mutable std::string _what_str;
             struct ContextData;
+
+            /// Our (local) context data.
             ContextData * const _context_data;
 
-            /// Unwanted operation. Do not implement. See EffCpp, Item 27.
-            const Exception & operator= (const Exception &);
+            /// Our message.
+            const std::string _message;
+
+            /// Our what string (for std::exception).
+            mutable std::string _what_str;
 
         protected:
             /**

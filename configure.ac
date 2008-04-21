@@ -16,22 +16,6 @@ AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 dnl }}}
 
-dnl {{{ check for libebt
-AC_MSG_CHECKING([for libebt])
-AC_COMPILE_IFELSE([
-#include <libebt/libebt.hh>
-#include <string>
-struct Tag { };
-int main(int, char **)
-{
-	libebt::BacktraceContext<Tag> context("pg512!");
-}
-],
-	[AC_MSG_RESULT([yes])],
-	[AC_MSG_RESULT([no])
-	 AC_MSG_ERROR([libebt (http://libebt.berlios.de/) is required])])
-dnl }}}
-
 dnl {{{ check for a sensible C++ compiler
 dnl {{{ check for partial specialisation of class templates
 AC_MSG_CHECKING([for compiler support for partial specialisation of template classes])
