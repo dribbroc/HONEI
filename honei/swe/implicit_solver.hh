@@ -45,13 +45,13 @@
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/util/tags.hh>
-#include <honei/libmath/methods.hh>
+#include <honei/math/methods.hh>
 #include <honei/swe/boundary_types.hh>
 #include <honei/swe/scenario.hh>
 #include <iostream>
-#include <honei/libmath/interpolation.hh>
-#include <honei/libmath/conjugate_gradients.hh>
-#include <honei/libmath/jacobi.hh>
+#include <honei/math/interpolation.hh>
+#include <honei/math/conjugate_gradients.hh>
+#include <honei/math/jacobi.hh>
 
 using namespace honei;
 using namespace methods;

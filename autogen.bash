@@ -24,7 +24,7 @@ misc/do_m4.bash honei/cell/Makefile.am || exit $?
 misc/do_m4.bash honei/cell/kernels/Makefile.am || exit $?
 misc/do_m4.bash honei/libgraph/Makefile.am || exit $?
 misc/do_m4.bash honei/libla/Makefile.am || exit $?
-misc/do_m4.bash honei/libmath/Makefile.am || exit $?
+misc/do_m4.bash honei/math/Makefile.am || exit $?
 misc/do_m4.bash honei/swe/Makefile.am || exit $?
 misc/do_m4.bash honei/util/Makefile.am || exit $?
 misc/do_m4.bash honei/visual/Makefile.am || exit $?

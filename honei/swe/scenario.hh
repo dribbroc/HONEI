@@ -22,7 +22,7 @@
 
 //#include <swe/implicit_solver.hh>
 #include <honei/swe/boundary_types.hh>
-#include <honei/libmath/methods.hh>
+#include <honei/math/methods.hh>
 
 
 namespace honei

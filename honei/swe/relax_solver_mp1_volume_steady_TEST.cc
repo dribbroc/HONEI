@@ -26,7 +26,7 @@
 #include <honei/swe/scenario_manager.hh>
 #include <sys/time.h>
 #include <volume.hh>
-#include <honei/libmath/quadrature.hh>
+#include <honei/math/quadrature.hh>
 using namespace honei;
 using namespace tests;
 using namespace std;
