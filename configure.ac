@@ -313,7 +313,7 @@ AC_OUTPUT(
 	honei/libla/Makefile
 	honei/liblbm/Makefile
 	honei/libmath/Makefile
-	honei/libswe/Makefile
+	honei/swe/Makefile
 	honei/util/Makefile
 	honei/visual/Makefile
 	unittest/Makefile

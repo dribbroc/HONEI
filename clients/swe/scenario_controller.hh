@@ -22,9 +22,9 @@
 #define SWE_SCENARIO_CONTROLLER_HH
 
 #include <GL/glut.h>
-#include <honei/libswe/volume.hh>
-#include <honei/libswe/relax_solver.hh>
-#include <honei/libswe/scenario_manager.hh>
+#include <honei/swe/volume.hh>
+#include <honei/swe/relax_solver.hh>
+#include <honei/swe/scenario_manager.hh>
 
 template<typename Tag_, typename Prec_> class ScenarioController
 {

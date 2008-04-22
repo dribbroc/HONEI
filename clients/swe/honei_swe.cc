@@ -19,7 +19,7 @@
  */
 
 #include <GL/glut.h>
-#include <honei/libswe/relax_solver.hh>
+#include <honei/swe/relax_solver.hh>
 #include <iostream>
 #include <honei_swe.hh>
 #include <scenario_controller.hh>

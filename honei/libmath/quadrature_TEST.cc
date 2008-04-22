@@ -24,7 +24,7 @@
 #include <cmath>
 #include <limits>
 #include <iostream>
-#include <honei/libswe/volume.hh>
+#include <honei/swe/volume.hh>
 
 using namespace honei;
 using namespace tests;

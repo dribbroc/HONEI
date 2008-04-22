@@ -21,8 +21,8 @@
 //#define SOLVER_VERBOSE 1
 #include <GL/glut.h>
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libswe/implicit_solver.hh>
-#include <honei/libswe/scenario.hh>
+#include <honei/swe/implicit_solver.hh>
+#include <honei/swe/scenario.hh>
 
 namespace honei
 {

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #include <honei/visual/engine.hh>
-#include <honei/libswe/solver.hh>
+#include <honei/swe/solver.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>

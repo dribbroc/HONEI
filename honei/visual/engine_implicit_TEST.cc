@@ -17,7 +17,7 @@
  */
 
 #include <honei/visual/engine_implicit.hh>
-#include <honei/libswe/solver.hh>
+#include <honei/swe/solver.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>

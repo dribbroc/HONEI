@@ -30,8 +30,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libswe/relax_solver.hh>
-#include <honei/libswe/volume.hh>
+#include <honei/swe/relax_solver.hh>
+#include <honei/swe/volume.hh>
 
 #define BUFFER_SIZE 1024
 
