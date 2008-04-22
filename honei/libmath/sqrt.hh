@@ -21,7 +21,7 @@
 #define LIBMATH_GUARD_SQRT_HH 1
 
 #include <honei/libla/dense_vector.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 #include <cmath>
 

@@ -25,8 +25,8 @@
 #include <honei/libla/scaled_sum-mc.hh>
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/vector_error.hh>
-#include <honei/libutil/tags.hh>
-#include <honei/libutil/benchmark_info.hh>
+#include <honei/util/tags.hh>
+#include <honei/util/benchmark_info.hh>
 
 namespace honei
 {

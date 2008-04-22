@@ -18,7 +18,7 @@
  */
 
 #include <honei/libla/vector_error.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 
 #include <string>
 

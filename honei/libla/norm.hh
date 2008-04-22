@@ -24,7 +24,7 @@
 #include <honei/libla/vector.hh>
 #include <honei/libla/dot_product.hh>
 #include <honei/libla/norm-fwd.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 #include <cmath>
 

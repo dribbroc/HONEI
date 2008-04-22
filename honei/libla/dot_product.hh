@@ -26,14 +26,14 @@
 #include <honei/libla/dot_product-mc.hh>
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/vector_error.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 #include <honei/libla/dense_vector_range.hh>
-#include <honei/libutil/lock.hh>
-#include <honei/libutil/pool_task.hh>
-#include <honei/libutil/thread_pool.hh>
-#include <honei/libutil/wrapper.hh>
-#include <honei/libutil/benchmark_info.hh>
+#include <honei/util/lock.hh>
+#include <honei/util/pool_task.hh>
+#include <honei/util/thread_pool.hh>
+#include <honei/util/wrapper.hh>
+#include <honei/util/benchmark_info.hh>
 #include <tr1/functional>
 
 

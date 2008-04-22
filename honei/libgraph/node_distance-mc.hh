@@ -21,11 +21,11 @@
 #define LIBGRAPH_GUARD_NODE_DISTANCE_MC_HH 1
 
 #include <honei/libla/dense_matrix_tile.hh>
-#include <honei/libutil/wrapper.hh>
-#include <honei/libutil/thread_pool.hh>
+#include <honei/util/wrapper.hh>
+#include <honei/util/thread_pool.hh>
 #include <honei/libgraph/graph_error.hh>
 #include <honei/libgraph/node_distance.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <iostream>
 
 

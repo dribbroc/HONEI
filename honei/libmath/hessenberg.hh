@@ -20,7 +20,7 @@
 #ifndef LIBMATH_GUARD_HESSENBERG_HH
 #define LIBMATH_GUARD_HESSENBERG_HH 1
 
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <honei/libla/algorithm.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/dense_matrix_tile.hh>

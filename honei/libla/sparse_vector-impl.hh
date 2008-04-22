@@ -25,13 +25,13 @@
 
 #include <honei/libla/element_iterator.hh>
 #include <honei/libla/sparse_vector.hh>
-#include <honei/libutil/assertion.hh>
-#include <honei/libutil/exception.hh>
-#include <honei/libutil/log.hh>
-#include <honei/libutil/private_implementation_pattern-impl.hh>
-#include <honei/libutil/shared_array-impl.hh>
-#include <honei/libutil/stringify.hh>
-#include <honei/libutil/type_traits.hh>
+#include <honei/util/assertion.hh>
+#include <honei/util/exception.hh>
+#include <honei/util/log.hh>
+#include <honei/util/private_implementation_pattern-impl.hh>
+#include <honei/util/shared_array-impl.hh>
+#include <honei/util/stringify.hh>
+#include <honei/util/type_traits.hh>
 
 #include <iterator>
 #include <string>

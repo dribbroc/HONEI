@@ -23,7 +23,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_HH 1
 
 #include <honei/libla/vector.hh>
-#include <honei/libutil/private_implementation_pattern.hh>
+#include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
 {

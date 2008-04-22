@@ -15,7 +15,7 @@ $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/libla/libla.la \
 	libgraph.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -25,7 +25,7 @@ $1_BENCHMARK_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
 	$(top_builddir)/honei/libla/libla.la \
 	libgraph.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -74,7 +74,7 @@ lib_LTLIBRARIES = libgraph.la
 
 libgraph_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libgraph_la_LIBADD = \
-	$(top_builddir)/honei/libutil/libutil.la
+	$(top_builddir)/honei/util/libhoneiutil.la
 
 libgraph_includedir = $(includedir)/honei/libgraph
 libgraph_include_HEADERS = headerlist
@@ -88,7 +88,7 @@ benchmark_SOURCES = bench.cc
 benchmark_LDADD = $(top_builddir)/benchmark/libbenchmark.a \
 	$(top_builddir)/honei/libla/libla.la \
 	libgraph.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 benchmark_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 

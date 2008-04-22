@@ -12,7 +12,7 @@ $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/libla/libla.la \
 	libvisual.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/libswe/libswe.la \
 	$(top_builddir)/honei/libgraph/libgraph.la \
 	$(DYNAMIC_LD_LIBS)
@@ -44,7 +44,7 @@ lib_LTLIBRARIES = libvisual.la
 
 libvisual_la_SOURCES = filelist
 libvisual_la_LIBADD = \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/libla/libla.la \
 	-lGL \
 	-lglut \

@@ -20,7 +20,7 @@
 #ifndef LIBMATH_GUARD_QR_DECOMPOSITION_HH
 #define LIBMATH_GUARD_QR_DECOMPOSITION_HH 1
 
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/scale.hh>
 #include <honei/libla/scaled_sum.hh>

@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libutil/attributes.hh>
+#include <honei/util/attributes.hh>
 #include <honei/libswe/assembly_processing.hh>
 
 #include <xmmintrin.h>

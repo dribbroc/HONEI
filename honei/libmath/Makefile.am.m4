@@ -15,7 +15,7 @@ $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/libla/libla.la \
 	libmath.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -25,7 +25,7 @@ $1_BENCHMARK_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
 	$(top_builddir)/honei/libla/libla.la \
 	libmath.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -74,7 +74,7 @@ lib_LTLIBRARIES = libmath.la
 
 libmath_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libmath_la_LIBADD = \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/libla/libla.la
 	$(CELLLIB)
 
@@ -91,7 +91,7 @@ benchmark_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
 	$(top_builddir)/honei/libla/libla.la \
 	libmath.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 
 BENCHMARKS = benchmarklist

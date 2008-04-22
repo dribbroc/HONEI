@@ -22,7 +22,7 @@
 #ifndef LIBMATH_GUARD_QUADRATURE_HH
 #define LIBMATH_GUARD_QUADRATURE_HH 1
 
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <functional>
 #include <honei/libmath/interpolation.hh>
 #include <honei/libla/dense_matrix.hh>

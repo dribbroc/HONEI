@@ -44,7 +44,7 @@
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/dense_vector.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <honei/libmath/methods.hh>
 #include <honei/libswe/boundary_types.hh>
 #include <honei/libswe/scenario.hh>

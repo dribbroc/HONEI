@@ -26,7 +26,7 @@
 #include <honei/libgraph/position.hh>
 #include <unittest/unittest.hh>
 #include <honei/libgraph/graph.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <honei/libgraph/test_scenario.hh>
 
 #include <string>

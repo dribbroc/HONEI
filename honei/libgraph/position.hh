@@ -41,7 +41,7 @@
 #include <honei/libla/vector.hh>
 #include <honei/libgraph/abstract_graph.hh>
 #include <honei/libgraph/graph_error.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 #include <cmath>
 #include <tr1/memory>

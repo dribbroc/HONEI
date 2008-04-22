@@ -19,7 +19,7 @@
 
 #include <honei/libmath/hessenberg.hh>
 #include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 
 #include <cmath>
 #include <limits>

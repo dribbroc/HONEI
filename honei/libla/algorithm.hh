@@ -25,7 +25,7 @@
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/banded_matrix.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 #include <limits>
 

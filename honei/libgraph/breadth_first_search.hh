@@ -21,7 +21,7 @@
 #ifndef LIBGRAPH_GUARD_BREADTHFRISTSEARCH_HH
 #define LIBGRAPH_GUARD_BREADTHFRISTSEARCH_HH 1
 
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/dense_vector.hh>

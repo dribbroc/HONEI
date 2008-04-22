@@ -28,10 +28,10 @@
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/vector_iterator.hh>
 #include <honei/libla/vector_error.hh>
-#include <honei/libutil/assertion.hh>
-#include <honei/libutil/log.hh>
-#include <honei/libutil/shared_array-impl.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/assertion.hh>
+#include <honei/util/log.hh>
+#include <honei/util/shared_array-impl.hh>
+#include <honei/util/stringify.hh>
 
 #include <iterator>
 #include <tr1/memory>

@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_VECTOR_ERROR_HH
 #define LIBLA_GUARD_VECTOR_ERROR_HH 1
 
-#include <honei/libutil/exception.hh>
+#include <honei/util/exception.hh>
 
 #include <string>
 

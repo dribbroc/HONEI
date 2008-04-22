@@ -58,7 +58,7 @@
 #include <honei/libla/sum.hh>
 #include <honei/libla/element_product.hh>
 #include <honei/libla/product.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 #include <iostream>
 #include <fstream>
 #include <sys/time.h>

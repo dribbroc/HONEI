@@ -25,10 +25,10 @@
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/scale-mc.hh>
 #include <honei/libla/sparse_matrix.hh>
-#include <honei/libutil/thread_pool.hh>
-#include <honei/libutil/wrapper.hh>
-#include <honei/libutil/tags.hh>
-#include <honei/libutil/benchmark_info.hh>
+#include <honei/util/thread_pool.hh>
+#include <honei/util/wrapper.hh>
+#include <honei/util/tags.hh>
+#include <honei/util/benchmark_info.hh>
 
 #include <list>
 

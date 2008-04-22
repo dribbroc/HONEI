@@ -19,7 +19,7 @@
 
 #include <honei/libmath/conjugate_gradients.hh>
 #include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 #include <iostream>
 #include <endian_swap.hh>
 

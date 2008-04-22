@@ -22,7 +22,7 @@
 #define SWE_HONEI_SWE_HH
 
 #include <scenario_controller.hh>
-#include <honei/libutil/time_stamp.hh>
+#include <honei/util/time_stamp.hh>
 
 ScenarioController<tags::CPU::SSE, float> * controller_f;
 ScenarioController<tags::CPU::SSE, double> * controller_d;

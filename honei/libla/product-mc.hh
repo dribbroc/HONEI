@@ -32,12 +32,12 @@
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/sum.hh>
 #include <honei/libla/scaled_sum.hh>
-#include <honei/libutil/configuration.hh>
-#include <honei/libutil/partitioner.hh>
-#include <honei/libutil/pool_task.hh>
-#include <honei/libutil/tags.hh>
-#include <honei/libutil/thread_pool.hh>
-#include <honei/libutil/wrapper.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/util/pool_task.hh>
+#include <honei/util/tags.hh>
+#include <honei/util/thread_pool.hh>
+#include <honei/util/wrapper.hh>
 
 #include <tr1/functional>
 #include <cmath>

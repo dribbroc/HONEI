@@ -1,9 +1,9 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-#include <honei/libutil/stringify.hh>
-#include <honei/libutil/exception.hh>
-#include <honei/libutil/tags.hh>
-#include <honei/libutil/benchmark_info.hh>
+#include <honei/util/stringify.hh>
+#include <honei/util/exception.hh>
+#include <honei/util/tags.hh>
+#include <honei/util/benchmark_info.hh>
 #include <string> 
 #include <exception>
 #include <time.h>

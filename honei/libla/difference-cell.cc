@@ -20,10 +20,10 @@
 
 #include <honei/cell/cell.hh>
 #include <honei/libla/difference.hh>
-#include <honei/libutil/memory_backend_cell.hh>
-#include <honei/libutil/spe_instruction.hh>
-#include <honei/libutil/spe_manager.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/memory_backend_cell.hh>
+#include <honei/util/spe_instruction.hh>
+#include <honei/util/spe_manager.hh>
+#include <honei/util/stringify.hh>
 
 namespace honei
 {

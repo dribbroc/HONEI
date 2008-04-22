@@ -21,7 +21,7 @@
 #define LIBLA_GUARD_DENSE_VECTOR_RANGE_HH 1
 
 #include <honei/libla/dense_vector.hh>
-#include <honei/libutil/private_implementation_pattern.hh>
+#include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
 {

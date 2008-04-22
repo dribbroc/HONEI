@@ -25,8 +25,8 @@
 #include <honei/libla/dense_vector_range.hh>
 #include <honei/libla/dense_vector_slice.hh>
 #include <honei/libla/matrix_error.hh>
-#include <honei/libutil/shared_array-impl.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/shared_array-impl.hh>
+#include <honei/util/stringify.hh>
 
 #include <iterator>
 

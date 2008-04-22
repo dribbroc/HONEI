@@ -24,13 +24,13 @@
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/scale.hh>
 #include <honei/libla/sparse_matrix.hh>
-#include <honei/libutil/configuration.hh>
-#include <honei/libutil/log.hh>
-#include <honei/libutil/partitioner.hh>
-#include <honei/libutil/stringify.hh>
-#include <honei/libutil/thread_pool.hh>
-#include <honei/libutil/wrapper.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/log.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/util/stringify.hh>
+#include <honei/util/thread_pool.hh>
+#include <honei/util/wrapper.hh>
+#include <honei/util/tags.hh>
 #include <list>
 
 

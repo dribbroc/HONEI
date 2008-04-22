@@ -30,7 +30,7 @@
 #include <honei/libla/matrix_error.hh>
 #include <honei/libla/norm.hh>
 #include <honei/libgraph/node_distance-mc.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 /**
  * \file

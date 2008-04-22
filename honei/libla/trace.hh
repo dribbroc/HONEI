@@ -21,7 +21,7 @@
 #define LIBLA_GUARD_ABSOLUTE_HH 1
 
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 namespace honei
 {

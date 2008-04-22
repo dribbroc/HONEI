@@ -26,7 +26,7 @@
 #include <honei/libla/vector.hh>
 #include <honei/libla/matrix_error.hh>
 #include <honei/libla/vector_iterator.hh>
-#include <honei/libutil/shared_array.hh>
+#include <honei/util/shared_array.hh>
 
 #include <ostream>
 #include <cmath>

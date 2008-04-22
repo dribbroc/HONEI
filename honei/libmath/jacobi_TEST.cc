@@ -19,7 +19,7 @@
 
 #include <honei/libmath/jacobi.hh>
 #include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 #include <iostream>
 
 using namespace honei;

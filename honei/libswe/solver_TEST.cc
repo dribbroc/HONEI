@@ -22,7 +22,7 @@
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 #include <string>
 
 #include <sys/time.h>

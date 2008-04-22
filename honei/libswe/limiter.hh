@@ -23,7 +23,7 @@
 #ifndef LIBSWE_GUARD_LIMITER_HH
 #define LIBSWE_GUARD_LIMITER_HH 1
 
-#include <honei/libutil/attributes.hh>
+#include <honei/util/attributes.hh>
 
 #include <algorithm>
 #include <limits>

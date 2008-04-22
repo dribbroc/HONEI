@@ -21,7 +21,7 @@
 #define SOLVER_VERBOSE 1
 #include "implicit_solver.hh"
 #include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 #include <string>
 #include <honei/libswe/scenario.hh>
 

@@ -26,7 +26,7 @@ misc/do_m4.bash honei/libgraph/Makefile.am || exit $?
 misc/do_m4.bash honei/libla/Makefile.am || exit $?
 misc/do_m4.bash honei/libmath/Makefile.am || exit $?
 misc/do_m4.bash honei/libswe/Makefile.am || exit $?
-misc/do_m4.bash honei/libutil/Makefile.am || exit $?
+misc/do_m4.bash honei/util/Makefile.am || exit $?
 misc/do_m4.bash honei/libvisual/Makefile.am || exit $?
 misc/do_m4.bash honei/liblbm/Makefile.am || exit $?
 run mkdir -p config

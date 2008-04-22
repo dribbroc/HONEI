@@ -24,12 +24,12 @@
 
 #include <honei/libla/element_iterator.hh>
 #include <honei/libla/vector.hh>
-#include <honei/libutil/assertion.hh>
-#include <honei/libutil/exception.hh>
-#include <honei/libutil/log.hh>
-#include <honei/libutil/private_implementation_pattern.hh>
-#include <honei/libutil/shared_array.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/assertion.hh>
+#include <honei/util/exception.hh>
+#include <honei/util/log.hh>
+#include <honei/util/private_implementation_pattern.hh>
+#include <honei/util/shared_array.hh>
+#include <honei/util/stringify.hh>
 
 #include <iterator>
 #include <ostream>

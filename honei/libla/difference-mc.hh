@@ -29,9 +29,9 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/vector.hh>
-#include <honei/libutil/configuration.hh>
-#include <honei/libutil/partitioner.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/util/tags.hh>
 
 #include <list>
 namespace honei

@@ -20,7 +20,7 @@
 #ifndef LIBGRAPH_GUARD_GRAPH_ERROR_HH
 #define LIBGRAPH_GUARD_GRAPH_ERROR_HH 1
 
-#include <honei/libutil/exception.hh>
+#include <honei/util/exception.hh>
 
 namespace honei
 {

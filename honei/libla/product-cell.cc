@@ -22,15 +22,15 @@
 #include <honei/cell/cell.hh>
 #include <honei/libla/product.hh>
 #include <honei/libla/sum.hh>
-#include <honei/libutil/memory_backend_cell.hh>
-#include <honei/libutil/spe_instruction.hh>
-#include <honei/libutil/spe_manager.hh>
-#include <honei/libutil/profiler.hh>
-#include <honei/libutil/spe_transfer_list.hh>
+#include <honei/util/memory_backend_cell.hh>
+#include <honei/util/spe_instruction.hh>
+#include <honei/util/spe_manager.hh>
+#include <honei/util/profiler.hh>
+#include <honei/util/spe_transfer_list.hh>
 #include <list>
 
 //#include <iostream>
-//#include <honei/libutil/time_stamp.hh>
+//#include <honei/util/time_stamp.hh>
 
 namespace honei
 {

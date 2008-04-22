@@ -3,10 +3,10 @@
 #ifndef LIBLA_GUARD_SCALED_SUM_MC_HH
 #define LIBLA_GUARD_SCALED_SUM_MC_HH 1
 
-#include <honei/libutil/partitioner.hh>
-#include <honei/libutil/pool_task.hh>
-#include <honei/libutil/thread_pool.hh>
-#include <honei/libutil/wrapper.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/util/pool_task.hh>
+#include <honei/util/thread_pool.hh>
+#include <honei/util/wrapper.hh>
 
 #include <list>
 #include <tr1/functional>

@@ -23,7 +23,7 @@
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libswe/relax_solver.hh>
 #include <honei/libswe/volume.hh>
-#include <honei/libutil/time_stamp.hh>
+#include <honei/util/time_stamp.hh>
 
 namespace honei
 {

@@ -34,8 +34,8 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/sum.hh>
-#include <honei/libutil/tags.hh>
-#include <honei/libutil/benchmark_info.hh>
+#include <honei/util/tags.hh>
+#include <honei/util/benchmark_info.hh>
 
 #include <cmath>
 

@@ -28,14 +28,14 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/sparse_vector.hh>
 #include <honei/libla/matrix_error.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
-#include <honei/libutil/pool_task.hh>
-#include <honei/libutil/thread_pool.hh>
-#include <honei/libutil/wrapper.hh>
-#include <honei/libutil/configuration.hh>
-#include <honei/libutil/partitioner.hh>
-#include <honei/libutil/benchmark_info.hh>
+#include <honei/util/pool_task.hh>
+#include <honei/util/thread_pool.hh>
+#include <honei/util/wrapper.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/util/benchmark_info.hh>
 
 namespace honei
 {

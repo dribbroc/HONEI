@@ -18,7 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libutil/attributes.hh>
+#include <honei/util/attributes.hh>
 #include <honei/libla/product.hh>
 #include <honei/libla/dense_matrix_tile.hh>
 

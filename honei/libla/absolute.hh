@@ -23,7 +23,7 @@
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/vector.hh>
 #include <honei/libla/sparse_vector.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 namespace honei
 {

@@ -20,12 +20,12 @@
 
 #include <honei/cell/cell.hh>
 #include <honei/libla/scaled_sum.hh>
-#include <honei/libutil/memory_backend_cell.hh>
-#include <honei/libutil/spe_instruction.hh>
-#include <honei/libutil/spe_manager.hh>
-#include <honei/libutil/stringify.hh>
-#include <honei/libutil/partitioner.hh>
-#include <honei/libutil/configuration.hh>
+#include <honei/util/memory_backend_cell.hh>
+#include <honei/util/spe_instruction.hh>
+#include <honei/util/spe_manager.hh>
+#include <honei/util/stringify.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/util/configuration.hh>
 
 namespace honei
 {

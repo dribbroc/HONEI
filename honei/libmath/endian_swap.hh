@@ -21,7 +21,7 @@
 #ifndef LIBMATH_GUARD_ENDIAN_SWAP_HH
 #define LIBMATH_GUARD_ENDIAN_SWAP_HH 1
 
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 #include <iostream>
 
 using namespace honei;

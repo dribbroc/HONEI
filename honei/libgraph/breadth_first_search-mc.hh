@@ -21,8 +21,8 @@
 #define LIBGRAPH_GUARD_BREADTHFRISTSEARCH_MC_HH 1
 
 #include <honei/libla/dense_matrix_tile.hh>
-#include <honei/libutil/wrapper.hh>
-#include <honei/libutil/thread_pool.hh>
+#include <honei/util/wrapper.hh>
+#include <honei/util/thread_pool.hh>
 #include <honei/libgraph/breadth_first_search.hh>
 
 #include <queue>

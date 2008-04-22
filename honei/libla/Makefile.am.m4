@@ -14,7 +14,7 @@ $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	libla.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(CELLTESTLIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -24,7 +24,7 @@ $1_BENCHMARK_SOURCES = $1_BENCHMARK.cc
 $1_BENCHMARK_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
 	libla.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -76,7 +76,7 @@ lib_LTLIBRARIES = libla.la
 
 libla_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libla_la_LIBADD = \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(CELLLIB)
 
 libla_includedir = $(includedir)/honei/libla
@@ -89,7 +89,7 @@ benchmark_SOURCES = bench.cc
 benchmark_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
 	libla.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 benchmark_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
@@ -97,7 +97,7 @@ selected_benchmarks_SOURCES = selected_benchmarks.cc
 selected_benchmarks_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
 	libla.la \
-	$(top_builddir)/honei/libutil/libutil.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 selected_benchmarks_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 

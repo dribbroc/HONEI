@@ -21,7 +21,7 @@
 #include <honei/libmath/hessenberg.hh>
 #include <honei/libmath/qr_decomposition.hh>
 #include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 
 using namespace honei;
 using namespace tests;

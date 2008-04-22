@@ -21,7 +21,7 @@
 #ifndef LIBSWE_GUARD_ASSEMBLY_PROCESSING_HH
 #define LIBSWE_GUARD_ASSEMBLY_PROCESSING_HH 1
 
-#include <honei/libutil/attributes.hh>
+#include <honei/util/attributes.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/product.hh>

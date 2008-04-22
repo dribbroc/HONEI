@@ -25,10 +25,10 @@
 #include <honei/libla/dense_vector_slice-impl.hh>
 #include <honei/libla/element_iterator.hh>
 #include <honei/libla/vector.hh>
-#include <honei/libutil/assertion.hh>
-#include <honei/libutil/private_implementation_pattern-impl.hh>
-#include <honei/libutil/shared_array-impl.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/assertion.hh>
+#include <honei/util/private_implementation_pattern-impl.hh>
+#include <honei/util/shared_array-impl.hh>
+#include <honei/util/stringify.hh>
 
 #include <iterator>
 

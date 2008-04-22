@@ -25,7 +25,7 @@
 #include <honei/libla/vector_iterator.hh>
 #include <honei/libla/matrix.hh>
 #include <honei/libla/sparse_vector-impl.hh>
-#include <honei/libutil/shared_array-impl.hh>
+#include <honei/util/shared_array-impl.hh>
 
 #include <iterator>
 #include <vector>

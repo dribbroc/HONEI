@@ -29,8 +29,8 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/vector.hh>
-#include <honei/libutil/tags.hh>
-#include <honei/libutil/benchmark_info.hh>
+#include <honei/util/tags.hh>
+#include <honei/util/benchmark_info.hh>
 
 namespace honei
 {

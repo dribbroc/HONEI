@@ -18,7 +18,7 @@
  */
 
 #include <honei/libla/matrix_error.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 
 #include <string>
 

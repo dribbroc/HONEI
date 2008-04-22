@@ -18,7 +18,7 @@
 
 #include <honei/libvisual/solver_client.hh>
 #include <unittest/unittest.hh>
-#include <honei/libutil/stringify.hh>
+#include <honei/util/stringify.hh>
 #include <string>
 
 

@@ -25,7 +25,7 @@
 #include <honei/libla/matrix_error.hh>
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/vector_error.hh>
-#include <honei/libutil/tags.hh>
+#include <honei/util/tags.hh>
 
 namespace honei
 {
