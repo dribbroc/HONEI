@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax nu : */
 
-#include <honei/libvisual/engine_evolving.hh>
+#include <honei/visual/engine_evolving.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>

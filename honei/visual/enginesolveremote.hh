@@ -21,7 +21,7 @@
 
 #include <GL/glut.h>
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libvisual/solver_client.hh>
+#include <honei/visual/solver_client.hh>
 #include <honei/util/tags.hh>
 
 namespace honei

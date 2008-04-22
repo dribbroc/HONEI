@@ -9,7 +9,7 @@ if CELL
 endif
 
 if VISUAL
-  VISUALDIR = libvisual
+  VISUALDIR = visual
 endif
 
 SUBDIRS = $(CELLDIR) util libla libmath libgraph libswe liblbm $(VISUALDIR)

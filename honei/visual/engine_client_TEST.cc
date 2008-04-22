@@ -16,7 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libvisual/solver_client.hh>
+#include <honei/visual/engine_client.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>
@@ -26,12 +26,12 @@ using namespace honei;
 using namespace tests;
 
 template <typename Tag_, typename DataType_>
-class SolverClientTest :
+class EngineClientTest :
     public BaseTest
 {
     public:
-        SolverClientTest(const std::string & type) :
-            BaseTest("SoverClient test<" + type + ">")
+        EngineClientTest(const std::string & type) :
+            BaseTest("EngineClient test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
@@ -39,29 +39,29 @@ class SolverClientTest :
         virtual void run() const
         {
             DenseMatrix<double> hf(4, 4);
-            SolverClient<Tag_, DataType_> solver_client;
+            EngineClient<Tag_, DataType_> engine_client;
 
-            solver_client.init("localhost", 4711, 12345);
-            solver_client.do_step(hf);
-            solver_client.quit_server();
+            engine_client.init("localhost", 4711, 12345);
+            engine_client.do_step(hf);
+            engine_client.quit_server();
 
-            solver_client.init("localhost", 4711, 12345);
-            solver_client.do_step(hf);
-            solver_client.do_step(hf);
-            solver_client.do_step(hf);
-            solver_client.do_step(hf);
-            solver_client.do_step(hf);
-            solver_client.do_step(hf);
-            solver_client.restart_scenario();
-            solver_client.do_step(hf);
-            solver_client.do_step(hf);
-            solver_client.quit_server();
+            engine_client.init("localhost", 4711, 12345);
+            engine_client.do_step(hf);
+            engine_client.do_step(hf);
+            engine_client.do_step(hf);
+            engine_client.do_step(hf);
+            engine_client.do_step(hf);
+            engine_client.do_step(hf);
+            engine_client.restart_scenario();
+            engine_client.do_step(hf);
+            engine_client.do_step(hf);
+            engine_client.quit_server();
 
-            solver_client.init("localhost", 4711, 12345);
-            solver_client.do_step(hf);
-            solver_client.do_step(hf);
-            solver_client.shutdown_server();
+            engine_client.init("localhost", 4711, 12345);
+            engine_client.do_step(hf);
+            engine_client.do_step(hf);
+            engine_client.shutdown_server();
             TEST_CHECK(true);
         }
 };
-//SolverClientTest<tags::CPU, float> solver_client_test_double("float");
+//EngineClientTest<tags::CPU, float> engine_client_test_double("float");

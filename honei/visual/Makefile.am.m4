@@ -11,7 +11,7 @@ $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/libla/libla.la \
-	libvisual.la \
+	libhoneivisual.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/libswe/libswe.la \
 	$(top_builddir)/honei/libgraph/libgraph.la \
@@ -26,7 +26,7 @@ ifelse(`$2', `cc', `addcc(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')')dnl
 define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')')dnl
 
-include(`honei/libvisual/files.m4')
+include(`honei/visual/files.m4')
 
 AM_CXXFLAGS = -I$(top_srcdir)
 
@@ -40,18 +40,18 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 
-lib_LTLIBRARIES = libvisual.la
+lib_LTLIBRARIES = libhoneivisual.la
 
-libvisual_la_SOURCES = filelist
-libvisual_la_LIBADD = \
+libhoneivisual_la_SOURCES = filelist
+libhoneivisual_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/libla/libla.la \
 	-lGL \
 	-lglut \
 	-lGLU
 
-libvisual_includedir = $(includedir)/honei/libvisual
-libvisual_include_HEADERS = headerlist
+libhoneivisual_includedir = $(includedir)/honei/visual
+libhoneivisual_include_HEADERS = headerlist
 
 TESTS = testlist
 TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh

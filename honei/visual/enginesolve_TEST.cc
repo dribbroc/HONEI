@@ -16,8 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libvisual/engine_implicit.hh>
-#include <honei/libswe/solver.hh>
+#include <honei/visual/enginesolve.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>
