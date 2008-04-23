@@ -40,7 +40,7 @@ include(`honei/la/files.m4')
 if CELL
 
 CELLFILES = celllist
-CELLTESTLIBS = $(top_builddir)/honei/cell/libcell.la
+CELLTESTLIBS = $(top_builddir)/honei/backends/cell/spe/libhoneibackendscellspe.la
 
 endif
 

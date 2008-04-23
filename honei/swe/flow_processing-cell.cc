@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/cell/cell.hh>
+#include <honei/backends/cell/cell.hh>
 #include <honei/swe/flow_processing.hh>
 #include <honei/util/memory_backend_cell.hh>
 #include <honei/util/spe_instruction.hh>

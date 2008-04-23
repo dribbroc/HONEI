@@ -21,7 +21,7 @@
 #ifndef LIBUTIL_GUARD_SPE_MANAGER_HH
 #define LIBUTIL_GUARD_SPE_MANAGER_HH 1
 
-#include <honei/cell/cell.hh>
+#include <honei/backends/cell/cell.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy.hh>

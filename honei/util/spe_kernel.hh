@@ -20,7 +20,7 @@
 #ifndef LIBUTIL_GUARD_SPE_KERNEL_HH
 #define LIBUTIL_GUARD_SPE_KERNEL_HH 1
 
-#include <honei/cell/interface.hh>
+#include <honei/backends/cell/interface.hh>
 #include <honei/util/time_stamp.hh>
 #include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/spe_manager.hh>

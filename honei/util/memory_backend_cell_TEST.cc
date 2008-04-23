@@ -14,6 +14,8 @@
 #include <cmath>
 #include <map>
 
+#include <iostream>
+
 #include <libspe2.h>
 
 using namespace honei;
@@ -30,6 +32,7 @@ class CellBackendFunctionTest :
 
         virtual void run() const
         {
+            std::cout << "CBFT::run() started!" << std::endl;
             float * a(new float[32]),
                   * b(new float[32]),
                   * c(new float[32]);

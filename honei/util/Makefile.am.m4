@@ -69,7 +69,7 @@ CELLSOURCES = cell_filelist
 CELLTESTS = cell_testlist
 CELLHEADERS = cell_headerlist
 CELLLIBS = -lspe2
-CELLTESTLIBS = $(top_srcdir)/honei/cell/libcell.la
+CELLTESTLIBS = $(top_srcdir)/honei/backends/cell/spe/libhoneibackendscellspe.la
 
 else
 

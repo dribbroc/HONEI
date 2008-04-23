@@ -21,7 +21,7 @@
 #ifndef LIBUTIL_GUARD_SPE_TRANSFER_LIST_HH
 #define LIBUTIL_GUARD_SPE_TRANSFER_LIST_HH 1
 
-#include <honei/cell/types.hh>
+#include <honei/backends/cell/types.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/stringify.hh>

@@ -21,7 +21,7 @@
 #define LIBUTIL_GUARD_STRINGIFY_HH 1
 
 #ifdef HONEI_CELL
-# include <honei/cell/cell.hh>
+# include <honei/backends/cell/cell.hh>
 #endif
 
 #include <sstream>

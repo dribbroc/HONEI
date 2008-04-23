@@ -315,13 +315,15 @@ AC_OUTPUT(
 	clients/swe/Makefile
 	doc/Makefile
 	honei/Makefile
-	honei/cell/Makefile
-	honei/cell/kernels/Makefile
-	honei/cell/libgraph/Makefile
-	honei/cell/libla/Makefile
-	honei/cell/libmath/Makefile
-	honei/cell/libswe/Makefile
-	honei/cell/libutil/Makefile
+	honei/backends/Makefile
+	honei/backends/cell/Makefile
+	honei/backends/cell/spe/Makefile
+	honei/backends/cell/spe/kernels/Makefile
+	honei/backends/cell/spe/libgraph/Makefile
+	honei/backends/cell/spe/libla/Makefile
+	honei/backends/cell/spe/libmath/Makefile
+	honei/backends/cell/spe/libswe/Makefile
+	honei/backends/cell/spe/libutil/Makefile
 	honei/graph/Makefile
 	honei/la/Makefile
 	honei/lbm/Makefile

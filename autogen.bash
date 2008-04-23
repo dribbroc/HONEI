@@ -21,8 +21,8 @@ local ACLOCAL_ARGS=
 [[ -n ${ACLOCAL_INCLUDE} ]] && ACLOCAL_ARGS="-I ${ACLOCAL_INCLUDE}"
 
 misc/do_m4.bash benchmark/Makefile.am || exit $?
-misc/do_m4.bash honei/cell/Makefile.am || exit $?
-misc/do_m4.bash honei/cell/kernels/Makefile.am || exit $?
+misc/do_m4.bash honei/backends/cell/spe/Makefile.am || exit $?
+misc/do_m4.bash honei/backends/cell/spe/kernels/Makefile.am || exit $?
 misc/do_m4.bash honei/graph/Makefile.am || exit $?
 misc/do_m4.bash honei/la/Makefile.am || exit $?
 misc/do_m4.bash honei/math/Makefile.am || exit $?

@@ -22,7 +22,7 @@
 #ifndef LIBUTIL_GUARD_SPE_INSTRUCTION_HH
 #define LIBUTIL_GUARD_SPE_INSTRUCTION_HH 1
 
-#include <honei/cell/cell.hh>
+#include <honei/backends/cell/cell.hh>
 #include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/spe_manager.hh>
 #include <honei/util/spe_kernel.hh>

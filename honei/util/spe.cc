@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/cell/interface.hh>
+#include <honei/backends/cell/interface.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/log.hh>
 #include <honei/util/mutex.hh>
