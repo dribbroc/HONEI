@@ -24,18 +24,18 @@
 #endif
 
 #include <honei/math/jacobi_kernel.hh>
-#include <endian_swap.hh>
+#include <honei/math/endian_swap.hh>
 
 using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
 
-class PoissonJACKernelBench :
+class PoissonJACKernelBenchSSE :
     public Benchmark
 {
     public:
-        PoissonJACKernelBench(const std::string & id) :
+        PoissonJACKernelBenchSSE(const std::string & id) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -147,7 +147,6 @@ class PoissonJACKernelBench :
             }
             //std::cout<<dd[4]<<endl;
             //std::cout<<dd_v<<endl;
-
             long root_n = (long)sqrt(n);
             BandedMatrix<float> A(n,dd_v.copy());
             //std::cout<<A.band(0)<<endl;
@@ -183,7 +182,8 @@ class PoissonJACKernelBench :
             }
             DenseVector<float> zeros(b_v.size(), float(0));
             difference.insert_band(0, zeros);
-            //Scale<tags::CPU>::value(difference, float(-1));
+            Scale<tags::CPU>::value(difference, float(-1));
+
             float konv_rad = std::numeric_limits<float>::epsilon();
             while(fabs(norm_x - norm_x_last) > konv_rad)
             {
@@ -195,10 +195,6 @@ class PoissonJACKernelBench :
             evaluate();
         }
 };
-PoissonJACKernelBench<tags::CPU, float> poisson_jack_bench_float("Poisson JACKernel benchmark float CPU");
 #ifdef HONEI_SSE
-PoissonJACKernelBench<tags::CPU::SSE, float> poisson_jack_bench_float_sse("Poisson JACKernel benchmark float SSE");
+PoissonJACKernelBenchSSE<tags::CPU::SSE, float> poisson_jack_bench_float_sse1("Poisson JACKernel benchmark float SSE");
 #endif
-/*#ifdef HONEI_CELL
-PoissonJACKernelBench<tags::Cell, float> poisson_jack_bench_float_cell("Poisson JACKernel benchmark float Cell");
-#endif*/

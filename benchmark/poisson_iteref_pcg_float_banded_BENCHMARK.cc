@@ -24,7 +24,7 @@
 #endif
 
 #include <honei/math/iterative_refinement.hh>
-#include <endian_swap.hh>
+#include <honei/math/endian_swap.hh>
 
 using namespace std;
 using namespace honei;

@@ -23,19 +23,19 @@
 #include <string>
 #endif
 
-#include <honei/math/jacobi_kernel.hh>
-#include <endian_swap.hh>
+#include <honei/math/conjugate_gradients.hh>
+#include <honei/math/endian_swap.hh>
 
 using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
 
-class PoissonJACKernelBenchSSE :
+class PoissonPCGBenchDouble :
     public Benchmark
 {
     public:
-        PoissonJACKernelBenchSSE(const std::string & id) :
+        PoissonPCGBenchDouble(const std::string & id) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -118,37 +118,38 @@ class PoissonJACKernelBenchSSE :
 
             }
 #endif
-            DenseVector<float> dd_v(n, float(0));
-            DenseVector<float> ll_v(n, float(0));
-            DenseVector<float> ld_v(n, float(0));
-            DenseVector<float> lu_v(n, float(0));
-            DenseVector<float> dl_v(n, float(0));
-            DenseVector<float> du_v(n, float(0));
-            DenseVector<float> ul_v(n, float(0));
-            DenseVector<float> ud_v(n, float(0));
-            DenseVector<float> uu_v(n, float(0));
-            DenseVector<float> b_v(n, float(0));
-            DenseVector<float> ana_sol_v(n, float(0));
-            DenseVector<float> ref_sol_v(n, float(0));
+            DenseVector<double> dd_v(n, double(0));
+            DenseVector<double> ll_v(n, double(0));
+            DenseVector<double> ld_v(n, double(0));
+            DenseVector<double> lu_v(n, double(0));
+            DenseVector<double> dl_v(n, double(0));
+            DenseVector<double> du_v(n, double(0));
+            DenseVector<double> ul_v(n, double(0));
+            DenseVector<double> ud_v(n, double(0));
+            DenseVector<double> uu_v(n, double(0));
+            DenseVector<double> b_v(n, double(0));
+            DenseVector<double> ana_sol_v(n, double(0));
+            DenseVector<double> ref_sol_v(n, double(0));
             for(unsigned long i = 0; i < n; ++i)
             {
-                dd_v[i] = (float)dd[i];
-                ll_v[i] = (float)ll[i];
-                ld_v[i] = (float)ld[i];
-                lu_v[i] = (float)lu[i];
-                dl_v[i] = (float)dl[i];
-                du_v[i] = (float)du[i];
-                ul_v[i] = (float)ul[i];
-                ud_v[i] = (float)ud[i];
-                uu_v[i] = (float)uu[i];
-                b_v[i] = (float)b[i];
-                ana_sol_v[i] = (float)ana_sol[i];
-                ref_sol_v[i] = (float)ref_sol[i];
+                dd_v[i] = dd[i];
+                ll_v[i] = ll[i];
+                ld_v[i] = ld[i];
+                lu_v[i] = lu[i];
+                dl_v[i] = dl[i];
+                du_v[i] = du[i];
+                ul_v[i] = ul[i];
+                ud_v[i] = ud[i];
+                uu_v[i] = uu[i];
+                b_v[i] = b[i];
+                ana_sol_v[i] = ana_sol[i];
+                ref_sol_v[i] = ref_sol[i];
             }
             //std::cout<<dd[4]<<endl;
             //std::cout<<dd_v<<endl;
+
             long root_n = (long)sqrt(n);
-            BandedMatrix<float> A(n,dd_v.copy());
+            BandedMatrix<double> A(n,dd_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
             A.insert_band(1, du_v);
@@ -159,42 +160,19 @@ class PoissonJACKernelBenchSSE :
             A.insert_band(-root_n, ld_v);
             A.insert_band(-root_n-1, ll_v );
             A.insert_band(-root_n+1, lu_v);
-            float x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(ref_sol_v);
-            DenseVector<float> x(b_v.size(), float(0));
-            DenseVector<float> x_last(x.copy());
-            float norm_x_last = float(0);
-            float norm_x = float(1);
-            DenseVector<float> diag(b_v.size(), float(0));
-            DenseVector<float> diag_inverted(b_v.size(), float(0));
-            BandedMatrix<float> difference(A.copy());
-            ///Create Diagonal, invert, compute difference on the fly.
-            for(unsigned long i =0; i < diag.size(); ++i)
-            {
-                diag[i] = A.band(0)[i];
-                if(fabs(diag[i]) >= std::numeric_limits<float>::epsilon())
-                {
-                    diag_inverted[i] = float(1) / diag[i];
-                }
-                else
-                {
-                    diag_inverted[i] = float(1) / std::numeric_limits<float>::epsilon();
-                }
-            }
-            DenseVector<float> zeros(b_v.size(), float(0));
-            difference.insert_band(0, zeros);
-            Scale<tags::CPU>::value(difference, float(-1));
 
-            float konv_rad = std::numeric_limits<float>::epsilon();
-            while(fabs(norm_x - norm_x_last) > konv_rad)
-            {
-                BENCHMARK(JacobiKernel<Tag_>::value(b_v, x, diag_inverted, difference));
-                norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
-                norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
-                x_last = x.copy();
-            }
+            //std::cout<<A.band(0)[0] * double(1) << endl;
+
+            //std::cout<< n << " " << A << " "<< root_n<<endl;
+            DenseVector<double> result(n, double(0));
+            BENCHMARK((ConjugateGradients<Tag_, JAC>::value(A, b_v, std::numeric_limits<double>::epsilon())));
             evaluate();
         }
 };
+PoissonPCGBenchDouble<tags::CPU, double> poisson_pcg_bench_double("Poisson PCG benchmark double CPU");
 #ifdef HONEI_SSE
-PoissonJACKernelBenchSSE<tags::CPU::SSE, float> poisson_jack_bench_float_sse1("Poisson JACKernel benchmark float SSE");
+PoissonPCGBenchDouble<tags::CPU::SSE, double> poisson_pcg_bench_double_sse("Poisson PCG benchmark double SSE");
+#endif
+#ifdef HONEI_CELL
+PoissonPCGBenchDouble<tags::Cell, double> poisson_pcg_bench_double_cell("Poisson PCG benchmark double Cell");
 #endif

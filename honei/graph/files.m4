@@ -9,11 +9,11 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`node_distance',                    `hh', `test', `cell', `sse', `benchmark')
-add(`position',                         `hh', `test', `benchmark')
+add(`position',                         `hh', `test')
 add(`node',                             `hh')
 add(`abstract_graph',                   `hh')
-add(`breadth_first_search',             `hh', `test', `benchmark')
-add(`graph',                            `hh', `test', `benchmark')
+add(`breadth_first_search',             `hh', `test')
+add(`graph',                            `hh', `test')
 add(`evolving_graph',                   `hh', `test')
 add(`graph_error',                      `hh', `cc')
 add(`evolving_animator',                `hh')

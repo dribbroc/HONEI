@@ -1,13 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-#ifndef ALLBENCH
-#include <benchmark/benchmark.cc>
-#include <tr1/memory>
-#include <string>
-#endif
-
+#include <benchmark/benchmark.hh>
 #include <honei/la/sum.hh>
-
 
 using namespace std;
 using namespace honei;

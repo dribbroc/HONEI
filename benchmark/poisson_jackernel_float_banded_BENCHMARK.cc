@@ -23,19 +23,19 @@
 #include <string>
 #endif
 
-#include <honei/math/iterative_refinement.hh>
-#include <endian_swap.hh>
+#include <honei/math/jacobi_kernel.hh>
+#include <honei/math/endian_swap.hh>
 
 using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
 
-class PoissonIteRefCGBench :
+class PoissonJACKernelBench :
     public Benchmark
 {
     public:
-        PoissonIteRefCGBench(const std::string & id) :
+        PoissonJACKernelBench(const std::string & id) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -148,7 +148,6 @@ class PoissonIteRefCGBench :
             //std::cout<<dd[4]<<endl;
             //std::cout<<dd_v<<endl;
 
-
             long root_n = (long)sqrt(n);
             BandedMatrix<float> A(n,dd_v.copy());
             //std::cout<<A.band(0)<<endl;
@@ -161,19 +160,45 @@ class PoissonIteRefCGBench :
             A.insert_band(-root_n, ld_v);
             A.insert_band(-root_n-1, ll_v );
             A.insert_band(-root_n+1, lu_v);
-
-            //std::cout<<A.band(0)[0] * double(1) << endl;
-
-            //std::cout<< n << " " << A << " "<< root_n<<endl;
-            DenseVector<float> result(n, float(0));
-            BENCHMARK((IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<float>::epsilon(), std::numeric_limits<float>::epsilon())));
+            float x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(ref_sol_v);
+            DenseVector<float> x(b_v.size(), float(0));
+            DenseVector<float> x_last(x.copy());
+            float norm_x_last = float(0);
+            float norm_x = float(1);
+            DenseVector<float> diag(b_v.size(), float(0));
+            DenseVector<float> diag_inverted(b_v.size(), float(0));
+            BandedMatrix<float> difference(A.copy());
+            ///Create Diagonal, invert, compute difference on the fly.
+            for(unsigned long i =0; i < diag.size(); ++i)
+            {
+                diag[i] = A.band(0)[i];
+                if(fabs(diag[i]) >= std::numeric_limits<float>::epsilon())
+                {
+                    diag_inverted[i] = float(1) / diag[i];
+                }
+                else
+                {
+                    diag_inverted[i] = float(1) / std::numeric_limits<float>::epsilon();
+                }
+            }
+            DenseVector<float> zeros(b_v.size(), float(0));
+            difference.insert_band(0, zeros);
+            //Scale<tags::CPU>::value(difference, float(-1));
+            float konv_rad = std::numeric_limits<float>::epsilon();
+            while(fabs(norm_x - norm_x_last) > konv_rad)
+            {
+                BENCHMARK(JacobiKernel<Tag_>::value(b_v, x, diag_inverted, difference));
+                norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                x_last = x.copy();
+            }
             evaluate();
         }
 };
-PoissonIteRefCGBench<tags::CPU, float> poisson_ircg_bench_float("Poisson IteRefCG benchmark float CPU");
+PoissonJACKernelBench<tags::CPU, float> poisson_jack_bench_float("Poisson JACKernel benchmark float CPU");
 #ifdef HONEI_SSE
-PoissonIteRefCGBench<tags::CPU::SSE, float> poisson_ircg_bench_float_sse("Poisson IteRefCG benchmark float SSE");
+PoissonJACKernelBench<tags::CPU::SSE, float> poisson_jack_bench_float_sse("Poisson JACKernel benchmark float SSE");
 #endif
-#ifdef HONEI_CELL
-PoissonIteRefCGBench<tags::Cell, float> poisson_ircg_bench_float_cell("Poisson IteRefCG benchmark float Cell");
-#endif
+/*#ifdef HONEI_CELL
+PoissonJACKernelBench<tags::Cell, float> poisson_jack_bench_float_cell("Poisson JACKernel benchmark float Cell");
+#endif*/

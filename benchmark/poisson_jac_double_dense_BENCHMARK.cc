@@ -23,19 +23,19 @@
 #include <string>
 #endif
 
-#include <honei/math/iterative_refinement.hh>
-#include <endian_swap.hh>
+#include <honei/math/jacobi.hh>
+#include <honei/math/endian_swap.hh>
 
 using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
 
-class PoissonIteRefCGBenchDouble :
+class PoissonJACBenchDouble :
     public Benchmark
 {
     public:
-        PoissonIteRefCGBenchDouble(const std::string & id) :
+        PoissonJACBenchDouble(const std::string & id) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -165,14 +165,14 @@ class PoissonIteRefCGBenchDouble :
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<double> result(n, double(0));
-            BENCHMARK((IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::epsilon())));
+            BENCHMARK(Jacobi<Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon()));
             evaluate();
         }
 };
-PoissonIteRefCGBenchDouble<tags::CPU, double> poisson_ircg_bench_double("Poisson IteRefCG benchmark double CPU");
+PoissonJACBenchDouble<tags::CPU, double> poisson_jac_bench_double("Poisson JAC benchmark double CPU");
 #ifdef HONEI_SSE
-PoissonIteRefCGBenchDouble<tags::CPU::SSE, double> poisson_ircg_bench_double_sse("Poisson IteRefCG benchmark double SSE");
+PoissonJACBenchDouble<tags::CPU::SSE, double> poisson_jac_bench_double_sse("Poisson JAC benchmark double SSE");
 #endif
 #ifdef HONEI_CELL
-PoissonIteRefCGBenchDouble<tags::Cell, double> poisson_ircg_bench_double_cell("Poisson IteRefCG benchmark double Cell");
+PoissonJACBenchDouble<tags::Cell, double> poisson_jac_bench_double_cell("Poisson JAC benchmark double Cell");
 #endif

@@ -23,19 +23,19 @@
 #include <string>
 #endif
 
-#include <honei/math/conjugate_gradients.hh>
-#include <endian_swap.hh>
+#include <honei/math/jacobi_kernel.hh>
+#include <honei/math/endian_swap.hh>
 
 using namespace std;
 using namespace honei;
 
 template <typename Tag_, typename DataType_>
 
-class PoissonMIXEDPRECCGBench :
+class PoissonJACKernelBenchDoubleSSE :
     public Benchmark
 {
     public:
-        PoissonMIXEDPRECCGBench(const std::string & id) :
+        PoissonJACKernelBenchDoubleSSE(const std::string & id) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -115,42 +115,39 @@ class PoissonMIXEDPRECCGBench :
                 b[i] = DoubleSwap(b[i]);
                 ana_sol[i] = DoubleSwap(ana_sol[i]);
                 ref_sol[i] = DoubleSwap(ref_sol[i]);
-
             }
 #endif
-            DenseVector<float> dd_v(n, float(0));
-            DenseVector<float> ll_v(n, float(0));
-            DenseVector<float> ld_v(n, float(0));
-            DenseVector<float> lu_v(n, float(0));
-            DenseVector<float> dl_v(n, float(0));
-            DenseVector<float> du_v(n, float(0));
-            DenseVector<float> ul_v(n, float(0));
-            DenseVector<float> ud_v(n, float(0));
-            DenseVector<float> uu_v(n, float(0));
-            DenseVector<float> b_v(n, float(0));
-            DenseVector<float> ana_sol_v(n, float(0));
-            DenseVector<float> ref_sol_v(n, float(0));
+            DenseVector<double> dd_v(n, double(0));
+            DenseVector<double> ll_v(n, double(0));
+            DenseVector<double> ld_v(n, double(0));
+            DenseVector<double> lu_v(n, double(0));
+            DenseVector<double> dl_v(n, double(0));
+            DenseVector<double> du_v(n, double(0));
+            DenseVector<double> ul_v(n, double(0));
+            DenseVector<double> ud_v(n, double(0));
+            DenseVector<double> uu_v(n, double(0));
+            DenseVector<double> b_v(n, double(0));
+            DenseVector<double> ana_sol_v(n, double(0));
+            DenseVector<double> ref_sol_v(n, double(0));
             for(unsigned long i = 0; i < n; ++i)
             {
-                dd_v[i] = (float)dd[i];
-                ll_v[i] = (float)ll[i];
-                ld_v[i] = (float)ld[i];
-                lu_v[i] = (float)lu[i];
-                dl_v[i] = (float)dl[i];
-                du_v[i] = (float)du[i];
-                ul_v[i] = (float)ul[i];
-                ud_v[i] = (float)ud[i];
-                uu_v[i] = (float)uu[i];
-                b_v[i] = (float)b[i];
-                ana_sol_v[i] = (float)ana_sol[i];
-                ref_sol_v[i] = (float)ref_sol[i];
+                dd_v[i] = dd[i];
+                ll_v[i] = ll[i];
+                ld_v[i] = ld[i];
+                lu_v[i] = lu[i];
+                dl_v[i] = dl[i];
+                du_v[i] = du[i];
+                ul_v[i] = ul[i];
+                ud_v[i] = ud[i];
+                uu_v[i] = uu[i];
+                b_v[i] = b[i];
+                ana_sol_v[i] = ana_sol[i];
+                ref_sol_v[i] = ref_sol[i];
             }
             //std::cout<<dd[4]<<endl;
             //std::cout<<dd_v<<endl;
-
-
             long root_n = (long)sqrt(n);
-            BandedMatrix<float> A(n,dd_v.copy());
+            BandedMatrix<double> A(n,dd_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
             A.insert_band(1, du_v);
@@ -161,19 +158,41 @@ class PoissonMIXEDPRECCGBench :
             A.insert_band(-root_n, ld_v);
             A.insert_band(-root_n-1, ll_v );
             A.insert_band(-root_n+1, lu_v);
-
-            //std::cout<<A.band(0)[0] * double(1) << endl;
-
-            //std::cout<< n << " " << A << " "<< root_n<<endl;
-            DenseVector<float> result(n, float(0));
-            BENCHMARK((ConjugateGradients<Tag_, NONE>::value(A, b_v, std::numeric_limits<float>::epsilon(), 20)));
+            double x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(ref_sol_v);
+            DenseVector<double> x(b_v.size(), double(0));
+            DenseVector<double> x_last(x.copy());
+            double norm_x_last = double(0);
+            double norm_x = double(1);
+            DenseVector<double> diag(b_v.size(), double(0));
+            DenseVector<double> diag_inverted(b_v.size(), double(0));
+            BandedMatrix<double> difference(A.copy());
+            ///Create Diagonal, invert, compute difference on the fly.
+            for(unsigned long i =0; i < diag.size(); ++i)
+            {
+                diag[i] = A.band(0)[i];
+                if(fabs(diag[i]) >= std::numeric_limits<double>::epsilon())
+                {
+                    diag_inverted[i] = double(1) / diag[i];
+                }
+                else
+                {
+                    diag_inverted[i] = double(1) / std::numeric_limits<double>::epsilon();
+                }
+            }
+            DenseVector<double> zeros(b_v.size(), double(0));
+            difference.insert_band(0, zeros);
+            Scale<tags::CPU>::value(difference, float(-1));
+            double konv_rad = std::numeric_limits<double>::epsilon();
+            while(fabs(norm_x - norm_x_last) > konv_rad)
+            {
+                BENCHMARK(JacobiKernel<Tag_>::value(b_v, x, diag_inverted, difference));
+                norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                x_last = x.copy();
+            }
             evaluate();
         }
 };
-PoissonMIXEDPRECCGBench<tags::CPU, float> poisson_cg_bench_mixedprec("Poisson CG benchmark MIXEDPREC CPU");
 #ifdef HONEI_SSE
-PoissonMIXEDPRECCGBench<tags::CPU::SSE, float> poisson_cg_bench_mixedprec_sse("Poisson CG benchmark MIXEDPREC SSE");
-#endif
-#ifdef HONEI_CELL
-PoissonMIXEDPRECCGBench<tags::Cell, float> poisson_cg_bench_mixedprec_cell("Poisson CG benchmark MIXEDPREC Cell");
+PoissonJACKernelBenchDoubleSSE<tags::CPU::SSE, double> poisson_jack_bench_double_sse1("Poisson JACKernel benchmark double SSE");
 #endif

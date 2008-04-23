@@ -3,7 +3,6 @@ ifdef(`__gnu__',`',`errprint(`This is not GNU m4...
 
 dnl vim: set ft=m4 noet :
 
-define(`benchmarklist', `')dnl
 define(`filelist', `')dnl
 define(`celllist', `')dnl
 define(`headerlist', `')dnl
@@ -19,16 +18,6 @@ $1_TEST_LDADD = \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
-define(`addbench', `define(`benchmarklist', benchmarklist `$1_BENCHMARK')dnl
-$1_BENCHMARK_SOURCES = $1_BENCHMARK.cc
-$1_BENCHMARK_LDADD = \
-	$(top_builddir)/benchmark/libbenchmark.a \
-	$(top_builddir)/honei/la/libhoneila.la \
-	libhoneimath.la \
-	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(DYNAMIC_LD_LIBS)
-$1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
-')dnl
 define(`addhh', `define(`filelist', filelist `$1.hh')define(`headerlist', headerlist `$1.hh')')dnl
 define(`addimpl', `define(`filelist', filelist `$1-impl.hh')define(`headerlist', headerlist `$1-impl.hh')')dnl
 define(`addcc', `define(`filelist', filelist `$1.cc')')dnl
@@ -41,7 +30,7 @@ ifelse(`$2', `cc', `addcc(`$1')', `')dnl
 ifelse(`$2', `cell', `addcell(`$1')', `')dnl
 ifelse(`$2', `sse', `addsse(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')dnl
-ifelse(`$2', `benchmark', `addbench(`$1')', `')')dnl
+')dnl
 define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')')dnl
 
 include(`honei/math/files.m4')
