@@ -28,7 +28,7 @@ misc/do_m4.bash honei/math/Makefile.am || exit $?
 misc/do_m4.bash honei/swe/Makefile.am || exit $?
 misc/do_m4.bash honei/util/Makefile.am || exit $?
 misc/do_m4.bash honei/visual/Makefile.am || exit $?
-misc/do_m4.bash honei/liblbm/Makefile.am || exit $?
+misc/do_m4.bash honei/lbm/Makefile.am || exit $?
 run mkdir -p config
 run $(get libtoolize 1.5 ) --copy --force --automake
 rm -f config.cache
