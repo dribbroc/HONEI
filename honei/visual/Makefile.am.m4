@@ -54,7 +54,7 @@ libhoneivisual_includedir = $(includedir)/honei/visual
 libhoneivisual_include_HEADERS = headerlist
 
 TESTS = testlist
-TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 

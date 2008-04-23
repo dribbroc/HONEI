@@ -83,7 +83,7 @@ libhoneila_includedir = $(includedir)/honei/la
 libhoneila_include_HEADERS = headerlist
 
 TESTS = testlist
-TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKEND)" TYPE="$(TYPE)" bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
