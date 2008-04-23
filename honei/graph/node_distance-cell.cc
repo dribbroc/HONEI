@@ -18,7 +18,7 @@
  */
 
 #include <honei/cell/cell.hh>
-#include <honei/libgraph/node_distance.hh>
+#include <honei/graph/node_distance.hh>
 #include <honei/util/memory_backend_cell.hh>
 #include <honei/util/spe_instruction.hh>
 #include <honei/util/spe_manager.hh>

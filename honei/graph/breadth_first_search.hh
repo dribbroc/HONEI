@@ -28,9 +28,9 @@
 #include <honei/libla/dense_vector-impl.hh>
 #include <honei/libla/matrix_error.hh>
 #include <honei/libla/vector_error.hh>
-#include <honei/libgraph/graph_error.hh>
-#include <honei/libgraph/abstract_graph.hh>
-#include <honei/libgraph/breadth_first_search-mc.hh>
+#include <honei/graph/graph_error.hh>
+#include <honei/graph/abstract_graph.hh>
+#include <honei/graph/breadth_first_search-mc.hh>
 
 #include <queue>
 #include <iostream>

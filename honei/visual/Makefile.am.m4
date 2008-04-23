@@ -14,7 +14,7 @@ $1_TEST_LDADD = \
 	libhoneivisual.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/swe/libhoneiswe.la \
-	$(top_builddir)/honei/libgraph/libgraph.la \
+	$(top_builddir)/honei/graph/libhoneigraph.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl

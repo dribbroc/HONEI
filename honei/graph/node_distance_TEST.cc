@@ -19,7 +19,7 @@
  */
 
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libgraph/node_distance.hh>
+#include <honei/graph/node_distance.hh>
 #include <unittest/unittest.hh>
 
 #include <string>

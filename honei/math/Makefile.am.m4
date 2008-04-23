@@ -78,7 +78,7 @@ libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/libla/libla.la
 	$(CELLLIB)
 
-libhoneimath_includedir = $(includedir)/honei/libmath
+libhoneimath_includedir = $(includedir)/honei/math
 libhoneimath_include_HEADERS = headerlist
 
 TESTS = testlist
@@ -100,35 +100,35 @@ EXTRA_PROGRAMS = benchmark $(BENCHMARKS)
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libmath/benchmark
+	bash $(top_builddir)/honei/math/benchmark
 
 bench-i:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libmath/benchmark i
+	bash $(top_builddir)/honei/math/benchmark i
 
 bench-sc: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libmath/benchmark sc
+	bash $(top_builddir)/honei/math/benchmark sc
 
 bench-sse: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libmath/benchmark sse
+	bash $(top_builddir)/honei/math/benchmark sse
 
 bench-mc: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libmath/benchmark mc
+	bash $(top_builddir)/honei/math/benchmark mc
 
 bench-cpu: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libmath/benchmark cpu
+	bash $(top_builddir)/honei/math/benchmark cpu
 
 bench-cell: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libmath/benchmark cell
+	bash $(top_builddir)/honei/math/benchmark cell
 
 bench-pdf:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	$(top_builddir)/honei/libmath/benchmark i plot
+	$(top_builddir)/honei/math/benchmark i plot
 	~/../share/bin/gnuplot *.plt
 	pdflatex -shell-escape RecentPlots.tex
 	rm PlotOut_*.plt

@@ -23,11 +23,11 @@
 #include <string>
 #endif
 
-#include <honei/libgraph/position.hh>
+#include <honei/graph/position.hh>
 #include <unittest/unittest.hh>
-#include <honei/libgraph/graph.hh>
+#include <honei/graph/graph.hh>
 #include <honei/util/tags.hh>
-#include <honei/libgraph/test_scenario.hh>
+#include <honei/graph/test_scenario.hh>
 
 #include <string>
 

@@ -23,7 +23,7 @@
 #include <honei/libla/dense_matrix_tile.hh>
 #include <honei/util/wrapper.hh>
 #include <honei/util/thread_pool.hh>
-#include <honei/libgraph/breadth_first_search.hh>
+#include <honei/graph/breadth_first_search.hh>
 
 #include <queue>
 

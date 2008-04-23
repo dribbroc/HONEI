@@ -21,8 +21,8 @@
 #define LIBGRAPH_GUARD_TEST_SCENARIO 1
 
 #include <tr1/memory>
-#include <honei/libgraph/graph.hh>
-#include <honei/libgraph/evolving_graph.hh>
+#include <honei/graph/graph.hh>
+#include <honei/graph/evolving_graph.hh>
 #include <iostream>
 namespace honei
 {

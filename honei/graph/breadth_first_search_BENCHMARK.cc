@@ -23,7 +23,7 @@
 #include <string>
 #endif
 
-#include <honei/libgraph/breadth_first_search.hh>
+#include <honei/graph/breadth_first_search.hh>
 
 
 using namespace std;

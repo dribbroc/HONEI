@@ -20,9 +20,9 @@
 #include <unittest/unittest.hh>
 
 
-#include <honei/libgraph/evolving_graph.hh>
-#include <honei/libgraph/position.hh>
-#include <honei/libgraph/evolving_animator.hh>
+#include <honei/graph/evolving_graph.hh>
+#include <honei/graph/position.hh>
+#include <honei/graph/evolving_animator.hh>
 
 #include <string>
 #include <iostream>

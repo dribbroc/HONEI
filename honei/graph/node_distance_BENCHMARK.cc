@@ -23,7 +23,7 @@
 #include <string>
 #endif
 
-#include <honei/libgraph/node_distance.hh>
+#include <honei/graph/node_distance.hh>
 
 
 using namespace std;

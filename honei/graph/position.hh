@@ -23,9 +23,9 @@
 #ifndef LIBGRAPH_GUARD_POSITIONS_HH
 #define LIBGRAPH_GUARD_POSITIONS_HH 1
 
-#include <honei/libgraph/node_distance.hh>
-#include <honei/libgraph/position-impl.hh>
-#include <honei/libgraph/breadth_first_search.hh>
+#include <honei/graph/node_distance.hh>
+#include <honei/graph/position-impl.hh>
+#include <honei/graph/breadth_first_search.hh>
 #include <honei/libla/banded_matrix.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/sparse_matrix.hh>
@@ -39,8 +39,8 @@
 #include <honei/libla/sum.hh>
 #include <honei/libla/scale.hh>
 #include <honei/libla/vector.hh>
-#include <honei/libgraph/abstract_graph.hh>
-#include <honei/libgraph/graph_error.hh>
+#include <honei/graph/abstract_graph.hh>
+#include <honei/graph/graph_error.hh>
 #include <honei/util/tags.hh>
 
 #include <cmath>

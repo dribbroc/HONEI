@@ -21,10 +21,10 @@
 #include <unittest/unittest.hh>
 
 
-#include <honei/libgraph/graph.hh>
-#include <honei/libgraph/abstract_graph.hh>
-#include <honei/libgraph/position.hh>
-#include <honei/libgraph/test_scenario.hh>
+#include <honei/graph/graph.hh>
+#include <honei/graph/abstract_graph.hh>
+#include <honei/graph/position.hh>
+#include <honei/graph/test_scenario.hh>
 
 #include <string>
 #include <iostream>

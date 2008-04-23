@@ -20,7 +20,7 @@
 #ifndef LIBGRAPH_GUARD_POSITIONS_IMPL_HH
 #define LIBGRAPH_GUARD_POSITIONS_IMPL_HH 1
 
-#include <honei/libgraph/position.hh>
+#include <honei/graph/position.hh>
 
 #include <cmath>
 #include <tr1/memory>

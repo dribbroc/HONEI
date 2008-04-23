@@ -14,7 +14,7 @@ $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/libla/libla.la \
-	libgraph.la \
+	libhoneigraph.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -24,7 +24,7 @@ $1_BENCHMARK_SOURCES = $1_BENCHMARK.cc
 $1_BENCHMARK_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
 	$(top_builddir)/honei/libla/libla.la \
-	libgraph.la \
+	libhoneigraph.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -44,7 +44,7 @@ ifelse(`$2', `benchmark', `addbench(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')')dnl
 define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')')dnl
 
-include(`honei/libgraph/files.m4')
+include(`honei/graph/files.m4')
 
 if CELL
 
@@ -70,14 +70,14 @@ DEFS = \
 	$(SSEDEF) \
 	$(DEBUGDEF)
 
-lib_LTLIBRARIES = libgraph.la
+lib_LTLIBRARIES = libhoneigraph.la
 
-libgraph_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
-libgraph_la_LIBADD = \
+libhoneigraph_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
+libhoneigraph_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la
 
-libgraph_includedir = $(includedir)/honei/libgraph
-libgraph_include_HEADERS = headerlist
+libhoneigraph_includedir = $(includedir)/honei/graph
+libhoneigraph_include_HEADERS = headerlist
 
 TESTS = testlist
 TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
@@ -87,7 +87,7 @@ check_PROGRAMS = $(TESTS)
 benchmark_SOURCES = bench.cc
 benchmark_LDADD = $(top_builddir)/benchmark/libbenchmark.a \
 	$(top_builddir)/honei/libla/libla.la \
-	libgraph.la \
+	libhoneigraph.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 benchmark_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -99,27 +99,27 @@ benchm:
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libgraph/benchmark
+	bash $(top_builddir)/honei/graph/benchmark
 
 bench-sc: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libgraph/benchmark sc
+	bash $(top_builddir)/honei/graph/benchmark sc
 
 bench-sse: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libgraph/benchmark sse
+	bash $(top_builddir)/honei/graph/benchmark sse
 
 bench-mc: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libgraph/benchmark mc
+	bash $(top_builddir)/honei/graph/benchmark mc
 
 bench-cpu: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libgraph/benchmark cpu
+	bash $(top_builddir)/honei/graph/benchmark cpu
 
 bench-cell: 
 	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/libgraph/benchmark cell
+	bash $(top_builddir)/honei/graph/benchmark cell
 
 quickcheck: $(TESTS)
 	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check

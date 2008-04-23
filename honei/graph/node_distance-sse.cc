@@ -18,7 +18,7 @@
  */
 
 #include <honei/util/attributes.hh>
-#include <honei/libgraph/node_distance.hh>
+#include <honei/graph/node_distance.hh>
 
 #if defined (__SSE3__)
 #include <pmmintrin.h>

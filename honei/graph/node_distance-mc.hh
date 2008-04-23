@@ -23,8 +23,8 @@
 #include <honei/libla/dense_matrix_tile.hh>
 #include <honei/util/wrapper.hh>
 #include <honei/util/thread_pool.hh>
-#include <honei/libgraph/graph_error.hh>
-#include <honei/libgraph/node_distance.hh>
+#include <honei/graph/graph_error.hh>
+#include <honei/graph/node_distance.hh>
 #include <honei/util/tags.hh>
 #include <iostream>
 

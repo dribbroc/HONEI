@@ -4,8 +4,8 @@
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>
-#include <honei/libgraph/graph.hh>
-#include <honei/libgraph/position.hh>
+#include <honei/graph/graph.hh>
+#include <honei/graph/position.hh>
 #include <cstdlib>
 
 //

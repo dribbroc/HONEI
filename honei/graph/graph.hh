@@ -24,8 +24,8 @@
 #include <honei/libla/dense_vector.hh>
 #include <honei/libla/dense_matrix.hh>
 #include <honei/libla/sparse_matrix.hh>
-#include <honei/libgraph/node.hh>
-#include <honei/libgraph/abstract_graph.hh>
+#include <honei/graph/node.hh>
+#include <honei/graph/abstract_graph.hh>
 #include <map>
 #include <cstdlib>
 

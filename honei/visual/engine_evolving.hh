@@ -24,8 +24,8 @@
 
 #include <GL/glut.h>
 #include <honei/libla/dense_matrix.hh>
-#include <honei/libgraph/evolving_graph.hh>
-#include <honei/libgraph/evolving_animator.hh>
+#include <honei/graph/evolving_graph.hh>
+#include <honei/graph/evolving_animator.hh>
 #include <iostream>
 
 namespace honei

@@ -26,8 +26,8 @@
 #include <honei/libla/sparse_matrix.hh>
 #include <honei/libla/scale.hh>
 #include <honei/libla/sum.hh>
-#include <honei/libgraph/abstract_graph.hh>
-#include <honei/libgraph/graph.hh>
+#include <honei/graph/abstract_graph.hh>
+#include <honei/graph/graph.hh>
 #include <map>
 #include <iostream>
 #include <math.h>

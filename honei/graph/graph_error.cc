@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libgraph/graph_error.hh>
+#include <honei/graph/graph_error.hh>
 #include <honei/util/stringify.hh>
 
 #include <string>
