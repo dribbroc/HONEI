@@ -10,14 +10,5 @@ noinst_LIBRARIES = libunittest.a
 libunittest_a_SOURCES = \
 	unittest.cc unittest.hh
 
-benchm:
-quickcheck:
-quickcheck-sse:
-quickcheck-cell:
-quickcheck-mc:
-check-sse:
-check-cell:
-check-mc:
-
 DEFS = \
 	$(DEBUGDEF)

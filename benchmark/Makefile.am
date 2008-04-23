@@ -9,11 +9,3 @@ noinst_LIBRARIES = libbenchmark.a
 libbenchmark_a_SOURCES = \
 	benchmark.cc benchmark.hh
 
-benchm:
-quickcheck:
-quickcheck-sse:
-quickcheck-cell:
-quickcheck-mc:
-check-sse:
-check-cell:
-check-mc:

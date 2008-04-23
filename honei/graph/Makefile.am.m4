@@ -84,59 +84,5 @@ TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
-benchmark_SOURCES = bench.cc
-benchmark_LDADD = $(top_builddir)/benchmark/libbenchmark.a \
-	$(top_builddir)/honei/la/libhoneila.la \
-	libhoneigraph.la \
-	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(DYNAMIC_LD_LIBS)
-benchmark_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
-
-EXTRA_PROGRAMS = benchmark benchmarklist
-
-benchm:
-	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-
-bench:
-	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/graph/benchmark
-
-bench-sc: 
-	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/graph/benchmark sc
-
-bench-sse: 
-	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/graph/benchmark sse
-
-bench-mc: 
-	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/graph/benchmark mc
-
-bench-cpu: 
-	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/graph/benchmark cpu
-
-bench-cell: 
-	$(MAKE) $(AM_MAKEFLAGS) $(EXTRA_PROGRAMS)
-	bash $(top_builddir)/honei/graph/benchmark cell
-
-quickcheck: $(TESTS)
-	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick.sh" check
-quickcheck-sse: $(TESTS)
-	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick-sse.sh" check
-quickcheck-cell: $(TESTS)
-	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick-cell.sh" check
-quickcheck-mc: $(TESTS)
-	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run_quick-mc.sh" check
-check-sse: $(TESTS)
-	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run-sse.sh" check
-check-cell: $(TESTS)
-	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run-cell.sh" check
-check-mc: $(TESTS)
-	$(MAKE) $(AM_MAKEFLAGS) TESTS_ENVIRONMENT="bash $(top_builddir)/unittest/run-mc.sh" check
-
 Makefile.am : Makefile.am.m4 files.m4
 	$(top_srcdir)/misc/do_m4.bash Makefile.am
-
-

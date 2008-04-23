@@ -76,12 +76,3 @@ noinst_PROGRAMS = filelist
 
 Makefile.am : Makefile.am.m4 files.m4
 	$(top_srcdir)/misc/do_m4.bash Makefile.am
-
-bench:
-quickcheck:
-quickcheck-sse:
-quickcheck-cell:
-quickcheck-mc:
-check-sse:
-check-cell:
-check-mc:
