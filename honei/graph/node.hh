@@ -22,7 +22,7 @@
 
 #include <iostream>
 #include <tr1/memory>
-#include <honei/libla/dense_vector.hh>
+#include <honei/la/dense_vector.hh>
 
 namespace honei
 {

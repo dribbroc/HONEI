@@ -20,7 +20,7 @@
 #define LIBSWE_GUARD_ENGINE_IMPLICIT_HH 1
 //#define SOLVER_VERBOSE 1
 #include <GL/glut.h>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/swe/implicit_solver.hh>
 #include <honei/swe/scenario.hh>
 

@@ -41,9 +41,9 @@
 #ifndef LIBSWE_GUARD_IMPLICIT_SOLVER_HH
 #define LIBSWE_GUARD_IMPLICIT_SOLVER_HH 1
 
-#include <honei/libla/banded_matrix.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/dense_vector.hh>
+#include <honei/la/banded_matrix.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
 #include <honei/util/tags.hh>
 #include <honei/math/methods.hh>
 #include <honei/swe/boundary_types.hh>

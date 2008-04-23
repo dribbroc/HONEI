@@ -23,7 +23,7 @@
 
 
 #include <GL/glut.h>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/graph/abstract_graph.hh>
 #include <honei/graph/evolving_graph.hh>
 #include <honei/graph/position.hh>

@@ -1,8 +1,8 @@
 #define ALLBENCH
 #include <benchmark/benchmark.cc> 
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/matrix_error.cc>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/matrix_error.cc>
 
 #include <string>
 #include <tr1/memory>

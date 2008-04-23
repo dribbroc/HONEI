@@ -20,9 +20,9 @@
 #ifndef LIBMATH_GUARD_INTERPOLATION_HH
 #define LIBMATH_GUARD_INTERPOLATION_HH 1
 
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/difference.hh>
-#include <honei/libla/norm.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/difference.hh>
+#include <honei/la/norm.hh>
 #include <algorithm>
 
 namespace honei

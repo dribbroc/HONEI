@@ -25,7 +25,7 @@
 #include <honei/util/tags.hh>
 #include <functional>
 #include <honei/math/interpolation.hh>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 
 namespace honei
 {

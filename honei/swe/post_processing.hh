@@ -21,8 +21,8 @@
 #ifndef LIBSWE_GUARD_POST_PROCESSING_HH
 #define LIBSWE_GUARD_POST_PROCESSING_HH 1
 
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/product.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/product.hh>
 #include <honei/swe/directions.hh>
 #include <iostream>
 #include <fstream>

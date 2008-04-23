@@ -47,17 +47,17 @@
  * \ingroup grplibswe
  **/
 
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/banded_matrix.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/banded_matrix.hh>
 #include <cmath>
 #include <limits>
 #include <honei/swe/limiter.hh>
-#include <honei/libla/scale.hh>
-#include <honei/libla/dot_product.hh>
-#include <honei/libla/sum.hh>
-#include <honei/libla/element_product.hh>
-#include <honei/libla/product.hh>
+#include <honei/la/scale.hh>
+#include <honei/la/dot_product.hh>
+#include <honei/la/sum.hh>
+#include <honei/la/element_product.hh>
+#include <honei/la/product.hh>
 #include <honei/util/tags.hh>
 #include <iostream>
 #include <fstream>

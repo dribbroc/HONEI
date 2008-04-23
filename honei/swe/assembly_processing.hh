@@ -22,9 +22,9 @@
 #define LIBSWE_GUARD_ASSEMBLY_PROCESSING_HH 1
 
 #include <honei/util/attributes.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/banded_matrix.hh>
-#include <honei/libla/product.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/banded_matrix.hh>
+#include <honei/la/product.hh>
 #include <honei/swe/directions.hh>
 #include <honei/swe/limiter.hh>
 /**

@@ -23,7 +23,7 @@ local ACLOCAL_ARGS=
 misc/do_m4.bash honei/cell/Makefile.am || exit $?
 misc/do_m4.bash honei/cell/kernels/Makefile.am || exit $?
 misc/do_m4.bash honei/graph/Makefile.am || exit $?
-misc/do_m4.bash honei/libla/Makefile.am || exit $?
+misc/do_m4.bash honei/la/Makefile.am || exit $?
 misc/do_m4.bash honei/math/Makefile.am || exit $?
 misc/do_m4.bash honei/swe/Makefile.am || exit $?
 misc/do_m4.bash honei/util/Makefile.am || exit $?

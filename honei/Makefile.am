@@ -12,7 +12,7 @@ if VISUAL
   VISUALDIR = visual
 endif
 
-SUBDIRS = $(CELLDIR) util libla math graph swe lbm $(VISUALDIR)
+SUBDIRS = $(CELLDIR) util la math graph swe lbm $(VISUALDIR)
 
 bench:
 	$(MAKE) $(AM_MAKEFLAGS) all

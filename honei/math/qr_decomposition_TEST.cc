@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libla/trace.hh>
+#include <honei/la/trace.hh>
 #include <honei/math/hessenberg.hh>
 #include <honei/math/qr_decomposition.hh>
 #include <unittest/unittest.hh>

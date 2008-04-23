@@ -21,19 +21,19 @@
 #define LIBMATH_GUARD_CONJUGATE_GRADIENTS_HH 1
 
 #include <honei/util/tags.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/product.hh>
-#include <honei/libla/sum.hh>
-#include <honei/libla/difference.hh>
-#include <honei/libla/dot_product.hh>
-#include <honei/libla/scale.hh>
-#include <honei/libla/norm.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/product.hh>
+#include <honei/la/sum.hh>
+#include <honei/la/difference.hh>
+#include <honei/la/dot_product.hh>
+#include <honei/la/scale.hh>
+#include <honei/la/norm.hh>
 #include <iostream>
 #include <honei/math/methods.hh>
-#include <honei/libla/element_product.hh>
-#include <honei/libla/sparse_matrix.hh>
-#include <honei/libla/algorithm.hh>
+#include <honei/la/element_product.hh>
+#include <honei/la/sparse_matrix.hh>
+#include <honei/la/algorithm.hh>
 using namespace methods;
 namespace honei
 {

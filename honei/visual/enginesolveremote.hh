@@ -20,7 +20,7 @@
 #define LIBSWE_GUARD_ENGINESOLVEREMOTE_HH 1
 
 #include <GL/glut.h>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/visual/solver_client.hh>
 #include <honei/util/tags.hh>
 

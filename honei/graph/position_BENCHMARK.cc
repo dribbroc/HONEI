@@ -26,7 +26,7 @@
 
 #include <honei/graph/position.hh>
 #include <unittest/unittest.hh>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/util/tags.hh>
 
 #include <string>

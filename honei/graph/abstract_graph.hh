@@ -21,9 +21,9 @@
 #define LIBGRAPH_GUARD_ABSTRACT_GRAPH 1
 
 #include <tr1/memory>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/sparse_matrix.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/sparse_matrix.hh>
 #include <honei/graph/node.hh>
 #include <map>
 #include <fstream>

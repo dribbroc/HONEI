@@ -13,7 +13,7 @@ define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	libhoneiswe.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
@@ -23,7 +23,7 @@ define(`addbench', `define(`benchmarklist', benchmarklist `$1_BENCHMARK')dnl
 $1_BENCHMARK_SOURCES = $1_BENCHMARK.cc
 $1_BENCHMARK_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	libhoneiswe.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
@@ -75,7 +75,7 @@ lib_LTLIBRARIES = libhoneiswe.la
 libhoneiswe_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libhoneiswe_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	$(CELLLIB)
 
 libhoneiswe_includedir = $(includedir)/honei/libhoneiswe
@@ -89,7 +89,7 @@ check_PROGRAMS = $(TESTS)
 selected_benchmarks_SOURCES = selected_benchmarks.cc
 selected_benchmarks_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneiswe.la \
 	$(DYNAMIC_LD_LIBS)

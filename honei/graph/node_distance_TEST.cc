@@ -18,7 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/graph/node_distance.hh>
 #include <unittest/unittest.hh>
 

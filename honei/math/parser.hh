@@ -20,8 +20,8 @@
 #ifndef LIBUTIL_GUARD_PARSER_HH
 #define LIBUTIL_GUARD_PARSER_HH 1
 
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
 #include <iostream>
 #include <fstream>
 #include <string>

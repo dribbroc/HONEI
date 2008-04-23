@@ -21,11 +21,11 @@
 #define LIBGRAPH_GUARD_EVOLVING_GRAPH 1
 
 #include <tr1/memory>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/sparse_matrix.hh>
-#include <honei/libla/scale.hh>
-#include <honei/libla/sum.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/sparse_matrix.hh>
+#include <honei/la/scale.hh>
+#include <honei/la/sum.hh>
 #include <honei/graph/abstract_graph.hh>
 #include <honei/graph/graph.hh>
 #include <map>

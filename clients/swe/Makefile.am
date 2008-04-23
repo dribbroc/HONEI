@@ -13,7 +13,7 @@ honei_swe_HEADERS = scenario_controller.hh
 honei_swe_SOURCES = honei_swe.cc
 honei_swe_LDADD = \
 	$(top_srcdir)/honei/util/libhoneiutil.la \
-	$(top_srcdir)/honei/libla/libla.la \
+	$(top_srcdir)/honei/la/libhoneila.la \
 	$(top_srcdir)/honei/swe/libhoneiswe.la \
 	-lGL \
 	-lglut \

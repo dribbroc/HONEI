@@ -23,7 +23,7 @@
 
 #include <honei/swe/scenario.hh>
 #include <honei/util/exception.hh>
-#include <honei/libla/algorithm.hh>
+#include <honei/la/algorithm.hh>
 /**
  * \file
  * Implementation of ScenarioManager and related (mostly Exception - based) classes.

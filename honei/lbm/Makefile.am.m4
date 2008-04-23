@@ -13,8 +13,8 @@ define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
-	$(top_builddir)/honei/libla/libla.la \
-	liblbm.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	libhoneilbm.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -23,8 +23,8 @@ define(`addbench', `define(`benchmarklist', benchmarklist `$1_BENCHMARK')dnl
 $1_BENCHMARK_SOURCES = $1_BENCHMARK.cc
 $1_BENCHMARK_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
-	$(top_builddir)/honei/libla/libla.la \
-	liblbm.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	libhoneilbm.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -44,7 +44,7 @@ ifelse(`$2', `test', `addtest(`$1')', `')dnl
 ifelse(`$2', `benchmark', `addbench(`$1')', `')')dnl
 define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')')dnl
 
-include(`honei/liblbm/files.m4')
+include(`honei/lbm/files.m4')
 
 if CELL
 
@@ -70,16 +70,16 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 
-lib_LTLIBRARIES = liblbm.la
+lib_LTLIBRARIES = libhoneilbm.la
 
-liblbm_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
-liblbm_la_LIBADD = \
+libhoneilbm_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
+libhoneilbm_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	$(CELLLIB)
 
-liblbm_includedir = $(includedir)/honei/liblbm
-liblbm_include_HEADERS = headerlist
+libhoneilbm_includedir = $(includedir)/honei/libhoneilbm
+libhoneilbm_include_HEADERS = headerlist
 
 TESTS = testlist
 TESTS_ENVIRONMENT = bash $(top_builddir)/unittest/run.sh
@@ -89,9 +89,9 @@ check_PROGRAMS = $(TESTS)
 selected_benchmarks_SOURCES = selected_benchmarks.cc
 selected_benchmarks_LDADD = \
 	$(top_builddir)/benchmark/libbenchmark.a \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
-	liblbm.la \
+	libhoneilbm.la \
 	$(DYNAMIC_LD_LIBS)
 selected_benchmarks_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 

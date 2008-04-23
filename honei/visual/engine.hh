@@ -21,7 +21,7 @@
 
 
 #include <GL/glut.h>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 namespace honei
 {
     namespace gl_globals {

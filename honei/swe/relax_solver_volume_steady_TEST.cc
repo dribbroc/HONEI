@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/swe/relax_solver.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>

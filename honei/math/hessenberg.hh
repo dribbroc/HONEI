@@ -21,17 +21,17 @@
 #define LIBMATH_GUARD_HESSENBERG_HH 1
 
 #include <honei/util/tags.hh>
-#include <honei/libla/algorithm.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/dense_matrix_tile.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_vector_range.hh>
-#include <honei/libla/sum.hh>
-#include <honei/libla/difference.hh>
-#include <honei/libla/dot_product.hh>
-#include <honei/libla/scale.hh>
-#include <honei/libla/norm.hh>
-#include <honei/libla/product.hh>
+#include <honei/la/algorithm.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/dense_matrix_tile.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_vector_range.hh>
+#include <honei/la/sum.hh>
+#include <honei/la/difference.hh>
+#include <honei/la/dot_product.hh>
+#include <honei/la/scale.hh>
+#include <honei/la/norm.hh>
+#include <honei/la/product.hh>
 
 namespace honei
 {

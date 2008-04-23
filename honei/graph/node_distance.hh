@@ -23,12 +23,12 @@
 #ifndef LIBGRAPH_GUARD_NODE_DISTANCE_HH
 #define LIBGRAPH_GUARD_NODE_DISTANCE_HH 1
 
-#include <honei/libla/banded_matrix.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/vector.hh>
-#include <honei/libla/difference.hh>
-#include <honei/libla/matrix_error.hh>
-#include <honei/libla/norm.hh>
+#include <honei/la/banded_matrix.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/vector.hh>
+#include <honei/la/difference.hh>
+#include <honei/la/matrix_error.hh>
+#include <honei/la/norm.hh>
 #include <honei/graph/node_distance-mc.hh>
 #include <honei/util/tags.hh>
 

@@ -310,7 +310,7 @@ AC_OUTPUT(
 	honei/cell/libswe/Makefile
 	honei/cell/libutil/Makefile
 	honei/graph/Makefile
-	honei/libla/Makefile
+	honei/la/Makefile
 	honei/lbm/Makefile
 	honei/math/Makefile
 	honei/swe/Makefile

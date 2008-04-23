@@ -23,8 +23,8 @@
 #include <string>
 #endif
 #include <honei/swe/relax_solver.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/swe/scenario.hh>
 #include <honei/swe/scenario_manager.hh>
 using namespace honei;

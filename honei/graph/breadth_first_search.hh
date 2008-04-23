@@ -22,12 +22,12 @@
 #define LIBGRAPH_GUARD_BREADTHFRISTSEARCH_HH 1
 
 #include <honei/util/tags.hh>
-#include <honei/libla/dense_matrix.hh>
-#include <honei/libla/sparse_matrix.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_vector-impl.hh>
-#include <honei/libla/matrix_error.hh>
-#include <honei/libla/vector_error.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/sparse_matrix.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_vector-impl.hh>
+#include <honei/la/matrix_error.hh>
+#include <honei/la/vector_error.hh>
 #include <honei/graph/graph_error.hh>
 #include <honei/graph/abstract_graph.hh>
 #include <honei/graph/breadth_first_search-mc.hh>

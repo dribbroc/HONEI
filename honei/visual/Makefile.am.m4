@@ -10,7 +10,7 @@ define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	libhoneivisual.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/swe/libhoneiswe.la \
@@ -45,7 +45,7 @@ lib_LTLIBRARIES = libhoneivisual.la
 libhoneivisual_la_SOURCES = filelist
 libhoneivisual_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(top_builddir)/honei/libla/libla.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	-lGL \
 	-lglut \
 	-lGLU

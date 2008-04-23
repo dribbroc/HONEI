@@ -18,7 +18,7 @@
 
 #ifndef LIBSWE_GUARD_SOLVER_SERVER__HH
 #define LIBSWE_GUARD_SOLVER_SERVER_HH 1
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -29,7 +29,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 
 #define BUFFER_SIZE 1024
 
