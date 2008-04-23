@@ -18,5 +18,7 @@ libtool
 .libs
 # Ignore backup files
 *~
+# Ignore vim swap files
+*.swp
 # Ignore compiled test cases
 *_TEST
