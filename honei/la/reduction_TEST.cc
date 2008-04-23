@@ -353,8 +353,7 @@ class DenseVectorRangeReductionToSumTest :
 
                     DT_ v1(Reduction<rt_sum, Tag_>::value(dvr));
                     DT_ s1(size * (size + 1) / 2 / 1.23456789);
-                    //DT_ eps(exp(-19.72 + log(size) * 2.92257));
-                    DT_ eps(exp(-20 + log(size) * 4));
+                    DT_ eps(exp(-20 + (log(log(size + 5)) * 13)));
                     TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
                 }
             }
@@ -452,8 +451,7 @@ class DenseVectorReductionToSumTest :
 
                 DT_ v1(Reduction<rt_sum, Tag_>::value(dv));
                 DT_ s1(size * (size + 1) / 2 / 1.23456789);
-                //DT_ eps(exp(-19.72 + log(size) * 2.92257));
-                DT_ eps(exp(-20 + log(size) * 4));
+                DT_ eps(exp(-20 + (log(log(size + 5)) * 13)));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps);
             }
         }
@@ -546,8 +544,7 @@ class SparseVectorReductionToSumTest :
                 }
 
                 DT_ v1(Reduction<rt_sum, Tag_>::value(sv1));
-                DT_ eps1(exp(-20 + log(sv1.used_elements()) * 4));
-                //DT_ eps1(s1 * 10 * std::numeric_limits<DT_>::epsilon());
+                DT_ eps1(exp(-20 + (log(log(sv1.used_elements() + 5)) * 13)));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
             }
         }

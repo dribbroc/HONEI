@@ -57,22 +57,22 @@ class DenseVectorNormValueTest :
 
                 DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
                 DataType_ smax(s / 1.23456789);
-                TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
                 DataType_ v1(Norm<vnt_l_one>::value(dv));
                 DataType_ s1(s * (s + 1) / 2 / 1.23456789);
-                DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
                 DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
                 DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
-                DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                DataType_ eps2(s2 * 20 * std::numeric_limits<float>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
 
                 DataType_ v3(Norm<vnt_l_two, true, Tag_>::value(dv));
                 DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
                 s3 = sqrt(s3);
-                DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
+                DataType_ eps3(s3 * 20 * std::numeric_limits<float>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
             }
         }
@@ -112,22 +112,22 @@ class DenseVectorNormQuickTest :
 
             DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
             DataType_ smax(s / 1.23456789);
-            TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
             DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(dv));
             DataType_ s1(s * (s + 1) / 2 / 1.23456789);
-            DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+            DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
             DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
             DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
-            DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+            DataType_ eps2(s2 * 20 * std::numeric_limits<float>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
 
             DataType_ v3(Norm<vnt_l_two, true, Tag_>::value(dv));
             DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
             s3 = sqrt(s3);
-            DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
+            DataType_ eps3(s3 * 20 * std::numeric_limits<float>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
 
         }
@@ -173,23 +173,23 @@ class DenseVectorRangeNormValueTest :
                     {
                         DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
                         DataType_ smax(s / 1.23456789);
-                        TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
                         DataType_ v1(Norm<vnt_l_one>::value(dv));
                         DataType_ s1(s * (s + 1) / 2 / 1.23456789);
-                        DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                        DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
                         TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
                     }
 
                     DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
                     DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
-                    DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                    DataType_ eps2(s2 * 20 * std::numeric_limits<float>::epsilon());
                     TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
 
                     DataType_ v3(Norm<vnt_l_two, true, Tag_>::value(dv));
                     DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
                     s3 = sqrt(s3);
-                    DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
+                    DataType_ eps3(s3 * 20 * std::numeric_limits<float>::epsilon());
                     TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
                 }
             }
@@ -240,23 +240,23 @@ class DenseVectorRangeNormQuickTest :
                 {
                     DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
                     DataType_ smax(s / 1.23456789);
-                    TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
                     DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(dv));
                     DataType_ s1(s * (s + 1) / 2 / 1.23456789);
-                    DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                    DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
                     TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
                 }
 
                 DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
                 DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
-                DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                DataType_ eps2(s2 * 20 * std::numeric_limits<float>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
 
                 DataType_ v3(Norm<vnt_l_two, true, Tag_>::value(dv));
                 DataType_ s3(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
                 s3 = sqrt(s3);
-                DataType_ eps3(s3 * 20 * std::numeric_limits<DataType_>::epsilon());
+                DataType_ eps3(s3 * 20 * std::numeric_limits<float>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v3, s3, eps3);
             }
         }
@@ -309,14 +309,14 @@ class SparseVectorNormValueTest :
                 }
 
                 DataType_ vmax(Norm<vnt_max, false, Tag_>::value(sv));
-                TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
                 DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(sv));
-                DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+                DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
                 DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(sv));
-                DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+                DataType_ eps2(s2 * 20 * std::numeric_limits<float>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
             }
         }
@@ -358,14 +358,14 @@ class SparseVectorNormQuickTest :
             }
 
             DataType_ vmax(Norm<vnt_max, false, Tag_>::value(sv));
-            TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
             DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(sv));
-            DataType_ eps1(s1 * 10 * std::numeric_limits<DataType_>::epsilon());
+            DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
             DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(sv));
-            DataType_ eps2(s2 * 20 * std::numeric_limits<DataType_>::epsilon());
+            DataType_ eps2(s2 * 20 * std::numeric_limits<float>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(v2, s2, eps2);
         }
 };

@@ -166,7 +166,7 @@ class DenseDotProductCellTest :
 
                 DataType_ v2(Norm<vnt_l_two, false>::value(dv2));
                 DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
-                float eps(exp(-20 + 4 * log(size)));
+                DataType_ eps(exp(-20 + 15 * log(log(size + 5))));
                 TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
             }
 
@@ -380,7 +380,7 @@ class DenseVectorRangeDotProductCellTest :
 
                     DataType_ v2(Norm<vnt_l_two, false>::value(dvr2));
                     DataType_ p2(DotProduct<Tag_>::value(dvr2, dvr3));
-                    float eps(exp(-20 + 4.3 * log(size)));
+                    DataType_ eps(exp(-20 + 15 * log(log(size + 5))));
                     TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
                 }
             }
