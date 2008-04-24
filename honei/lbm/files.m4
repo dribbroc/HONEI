@@ -8,5 +8,6 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`solver_labswe',            `hh')
-
+add(`solver_labswe',            `hh', `test')
+add(`source',                   `hh', `test')
+add(`tags',                     `hh')

@@ -94,7 +94,7 @@ class Quadrature2DTest :
             //std::cout<<"Volume = "<< v << std::endl;
             //TEST_CHECK(true);
 
-            DataType_ ana_vol = 425. ;
+            DataType_ ana_vol = 450. ;
             TEST_CHECK_EQUAL_WITHIN_EPS(v, ana_vol, std::numeric_limits<DataType_>::epsilon()*10e2);
         }
 };
