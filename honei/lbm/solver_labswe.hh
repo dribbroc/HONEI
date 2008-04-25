@@ -96,11 +96,13 @@ namespace honei
                     _gravity(9.81),
                     _n_alpha(ResPrec_(6))
             {
+                CONTEXT("When creating LABSWE solver.");
                 _e = _delta_x / _delta_t;
                 _distribution_vector_x = new DenseVector<ResPrec_>(9ul);
                 _distribution_vector_y = new DenseVector<ResPrec_>(9ul);
                 _d_bottom_x = new DenseMatrix<ResPrec_>(gx, gy);
                 _d_bottom_y = new DenseMatrix<ResPrec_>(gx, gy);
+
                 (*_distribution_vector_x)[0] = ResPrec_(0.);
                 (*_distribution_vector_x)[1] = ResPrec_(_e * cos(0.));
                 (*_distribution_vector_x)[2] = ResPrec_(sqrt(2.) * _e * cos(_pi / 4.));
@@ -123,6 +125,7 @@ namespace honei
 
             ~SolverLABSWE()
             {
+                CONTEXT("When destroying LABSWE solver.");
                 delete _distribution_vector_x;
                 delete _distribution_vector_y;
                 delete _d_bottom_x;
@@ -131,6 +134,7 @@ namespace honei
 
             void do_preprocessing()
             {
+                CONTEXT("When performing LABSWE preprocessing.");
                 ///Compute bottom slopes in x and y direction
                 for(unsigned long i(0); i < _grid_height; ++i)
                 {
