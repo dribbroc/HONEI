@@ -294,8 +294,6 @@ WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, float, POSI
 WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, double, POSITIONBENCH> mc_sse_weighted_fruchterman_reingold_positions_bench_double("MC SSE WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 #endif
 #ifdef HONEI_CELL
-KamadaKawaiPositionsBench<tags::Cell, float, POSITIONBENCH> cell_kamada_kawai_positions_bench_float("Cell KamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 WeightedKamadaKawaiPositionsBench<tags::Cell, float, POSITIONBENCH> cell_weighted_kamada_kawai_positions_bench_float("Cell WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-FruchtermanReingoldPositionsBench<tags::Cell, float, POSITIONBENCH> cell_fruchterman_reingold_positions_bench_float("Cell FruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 WeightedFruchtermanReingoldPositionsBench<tags::Cell, float, POSITIONBENCH> cell_weighted_fruchterman_reingold_positions_bench_float("Cell WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 #endif
