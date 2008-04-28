@@ -16,41 +16,33 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <honei/liblbm/tags.hh>
+#include <honei/lbm/solver_labswe.hh>
 #include <unittest/unittest.hh>
-#include <honei/liblbm/source.hh>
-
 using namespace honei;
 using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DataType_>
-class SourceLABSWETest :
+class SolverLABSWETest :
     public BaseTest
 {
     public:
-        SourceLABSWETest(const std::string & type) :
-            BaseTest("source_labswe_quick_test<" + type + ">")
+        SolverLABSWETest(const std::string & type) :
+            BaseTest("solver_labswe_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> h(1000ul, 1000ul, DataType_(1.23456));
-            DenseMatrix<DataType_> db(1000ul, 1000ul, DataType_(0.));
-            DataType_ g(9.81);
-            DenseMatrix<DataType_> result(1000ul, 1000ul);
+            DenseMatrix<DataType_> dummy_m(10, 10);
 
-            Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                value(result, h, db, g);
-            for(unsigned long i(0); i < 1000; ++i)
-            {
-                for(unsigned long j(0); j < 1000; ++j)
-                {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(result(i,j), - g * 1.23456 * 0., std::numeric_limits<DataType_>::epsilon());
-                }
-            }
+            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver
+                (1.,1.,1., 1, 1, &dummy_m, &dummy_m, &dummy_m, &dummy_m);
+
+            solver.do_preprocessing();
+            TEST_CHECK(true);
         }
+
 };
-SourceLABSWETest<tags::CPU, float> source_test_float("float");
+SolverLABSWETest<tags::CPU, float> solver_test_float("float");

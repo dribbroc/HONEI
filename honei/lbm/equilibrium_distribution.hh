@@ -21,8 +21,8 @@
 #ifndef LIBLBM_GUARD_EQUILIBRIUM_DISTRIBUTION_HH
 #define LIBLBM_GUARD_EQUILIBRIUM_DISTRIBUTION_HH 1
 
-#include <honei/liblbm/tags.hh>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/lbm/tags.hh>
+#include <honei/la/dense_matrix.hh>
 
 using namespace honei;
 using namespace lbm;

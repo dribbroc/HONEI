@@ -28,9 +28,9 @@
  * \ingroup grpliblbm
  **/
 
-#include <honei/liblbm/tags.hh>
-#include <honei/libla/dense_vector.hh>
-#include <honei/libla/dense_matrix.hh>
+#include <honei/lbm/tags.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
 #include <cmath>
 using namespace honei::lbm;
 
