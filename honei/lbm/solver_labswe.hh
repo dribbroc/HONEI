@@ -31,6 +31,10 @@
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
+#include <honei/la/sum.hh>
+#include <honei/la/scale.hh>
+#include <honei/la/product.hh>
+#include <honei/la/element_inverse.hh>
 #include <cmath>
 
 using namespace honei::lbm;
@@ -106,6 +110,84 @@ namespace honei
                 DenseVector<ResPrec_>* _distribution_vector_x;
                 DenseVector<ResPrec_>* _distribution_vector_y;
 
+                /** Capsule for the extration of SWE physical quantities.
+                 *
+                 **/
+                void extract()
+                {
+                    DenseMatrix<ResPrec_> accu(_distribution_0->copy());
+
+                    Sum<Tag_>::value(accu, *_distribution_1);
+                    Sum<Tag_>::value(accu, *_distribution_2);
+                    Sum<Tag_>::value(accu, *_distribution_3);
+                    Sum<Tag_>::value(accu, *_distribution_4);
+                    Sum<Tag_>::value(accu, *_distribution_5);
+                    Sum<Tag_>::value(accu, *_distribution_6);
+                    Sum<Tag_>::value(accu, *_distribution_7);
+                    Sum<Tag_>::value(accu, *_distribution_8);
+
+                    *_height = accu;
+
+                    DenseMatrix<ResPrec_> d0c(_distribution_0->copy());
+                    DenseMatrix<ResPrec_> d1c(_distribution_1->copy());
+                    DenseMatrix<ResPrec_> d2c(_distribution_2->copy());
+                    DenseMatrix<ResPrec_> d3c(_distribution_3->copy());
+                    DenseMatrix<ResPrec_> d4c(_distribution_4->copy());
+                    DenseMatrix<ResPrec_> d5c(_distribution_5->copy());
+                    DenseMatrix<ResPrec_> d6c(_distribution_6->copy());
+                    DenseMatrix<ResPrec_> d7c(_distribution_7->copy());
+                    DenseMatrix<ResPrec_> d8c(_distribution_8->copy());
+
+                    Scale<Tag_>::value( *_distribution_0, (*_distribution_vector_x)[0]);
+                    Scale<Tag_>::value( *_distribution_1, (*_distribution_vector_x)[1]);
+                    Scale<Tag_>::value( *_distribution_2, (*_distribution_vector_x)[2]);
+                    Scale<Tag_>::value( *_distribution_3, (*_distribution_vector_x)[3]);
+                    Scale<Tag_>::value( *_distribution_4, (*_distribution_vector_x)[4]);
+                    Scale<Tag_>::value( *_distribution_5, (*_distribution_vector_x)[5]);
+                    Scale<Tag_>::value( *_distribution_6, (*_distribution_vector_x)[6]);
+                    Scale<Tag_>::value( *_distribution_7, (*_distribution_vector_x)[7]);
+                    Scale<Tag_>::value( *_distribution_8, (*_distribution_vector_x)[8]);
+
+                    DenseMatrix<ResPrec_> accu2(_distribution_0->copy());
+
+                    Sum<Tag_>::value(accu2, *_distribution_1);
+                    Sum<Tag_>::value(accu2, *_distribution_2);
+                    Sum<Tag_>::value(accu2, *_distribution_3);
+                    Sum<Tag_>::value(accu2, *_distribution_4);
+                    Sum<Tag_>::value(accu2, *_distribution_5);
+                    Sum<Tag_>::value(accu2, *_distribution_6);
+                    Sum<Tag_>::value(accu2, *_distribution_7);
+                    Sum<Tag_>::value(accu2, *_distribution_8);
+
+                    DenseMatrix<ResPrec_> h_inv(_height->copy());
+                    ElementInverse<Tag_>::value(h_inv);
+                    *_u = Product<Tag_>::value(h_inv, accu2);
+
+                    Scale<Tag_>::value( d0c, (*_distribution_vector_y)[0]);
+                    Scale<Tag_>::value( d1c, (*_distribution_vector_y)[1]);
+                    Scale<Tag_>::value( d2c, (*_distribution_vector_y)[2]);
+                    Scale<Tag_>::value( d3c, (*_distribution_vector_y)[3]);
+                    Scale<Tag_>::value( d4c, (*_distribution_vector_y)[4]);
+                    Scale<Tag_>::value( d5c, (*_distribution_vector_y)[5]);
+                    Scale<Tag_>::value( d6c, (*_distribution_vector_y)[6]);
+                    Scale<Tag_>::value( d7c, (*_distribution_vector_y)[7]);
+                    Scale<Tag_>::value( d8c, (*_distribution_vector_y)[8]);
+
+                    DenseMatrix<ResPrec_> accu3(d0c.copy());
+
+                    Sum<Tag_>::value(accu3, d1c);
+                    Sum<Tag_>::value(accu3, d2c);
+                    Sum<Tag_>::value(accu3, d3c);
+                    Sum<Tag_>::value(accu3, d4c);
+                    Sum<Tag_>::value(accu3, d5c);
+                    Sum<Tag_>::value(accu3, d6c);
+                    Sum<Tag_>::value(accu3, d7c);
+                    Sum<Tag_>::value(accu3, d8c);
+
+                    ElementInverse<Tag_>::value(h_inv);
+                    *_v = Product<Tag_>::value(h_inv, accu3);
+
+                }
 
             public:
                 SolverLABSWE(ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseMatrix<ResPrec_>* height,
@@ -131,6 +213,36 @@ namespace honei
                 _distribution_vector_y = new DenseVector<ResPrec_>(9ul);
                 _d_bottom_x = new DenseMatrix<ResPrec_>(gx, gy);
                 _d_bottom_y = new DenseMatrix<ResPrec_>(gx, gy);
+
+                _distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_2 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_3 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_4 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_5 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_6 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_7 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _distribution_8 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+
+                _temp_distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_2 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_3 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_4 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_5 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_6 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_7 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _temp_distribution_8 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+
+                _eq_distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_2 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_3 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_4 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_5 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_6 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_7 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+                _eq_distribution_8 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
 
                 (*_distribution_vector_x)[0] = ResPrec_(0.);
                 (*_distribution_vector_x)[1] = ResPrec_(_e * cos(0.));
@@ -159,6 +271,34 @@ namespace honei
                 delete _distribution_vector_y;
                 delete _d_bottom_x;
                 delete _d_bottom_y;
+
+                delete _distribution_0;
+                delete _distribution_1;
+                delete _distribution_2;
+                delete _distribution_3;
+                delete _distribution_4;
+                delete _distribution_5;
+                delete _distribution_6;
+                delete _distribution_7;
+                delete _distribution_8;
+                delete _temp_distribution_0;
+                delete _temp_distribution_1;
+                delete _temp_distribution_2;
+                delete _temp_distribution_3;
+                delete _temp_distribution_4;
+                delete _temp_distribution_5;
+                delete _temp_distribution_6;
+                delete _temp_distribution_7;
+                delete _temp_distribution_8;
+                delete _eq_distribution_0;
+                delete _eq_distribution_1;
+                delete _eq_distribution_2;
+                delete _eq_distribution_3;
+                delete _eq_distribution_4;
+                delete _eq_distribution_5;
+                delete _eq_distribution_6;
+                delete _eq_distribution_7;
+                delete _eq_distribution_8;
             }
 
             void do_preprocessing()
@@ -193,6 +333,15 @@ namespace honei
                     }
                 }
             }
+
+            /** Capsule for the solution.
+             *
+             **/
+            void solve()
+            {
+                extract();
+            };
+
         };
 }
 #endif

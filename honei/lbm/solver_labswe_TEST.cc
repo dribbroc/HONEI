@@ -41,6 +41,7 @@ class SolverLABSWETest :
                 (1.,1.,1., 1, 1, &dummy_m, &dummy_m, &dummy_m, &dummy_m);
 
             solver.do_preprocessing();
+            solver.solve();
             TEST_CHECK(true);
         }
 
