@@ -64,9 +64,38 @@ namespace honei
                 DenseMatrix<ResPrec_>* _u;
                 DenseMatrix<ResPrec_>* _v;
 
+                DenseMatrix<ResPrec_>* _distribution_0;
+                DenseMatrix<ResPrec_>* _distribution_1;
+                DenseMatrix<ResPrec_>* _distribution_2;
+                DenseMatrix<ResPrec_>* _distribution_3;
+                DenseMatrix<ResPrec_>* _distribution_4;
+                DenseMatrix<ResPrec_>* _distribution_5;
+                DenseMatrix<ResPrec_>* _distribution_6;
+                DenseMatrix<ResPrec_>* _distribution_7;
+                DenseMatrix<ResPrec_>* _distribution_8;
+
+                DenseMatrix<ResPrec_>* _temp_distribution_0;
+                DenseMatrix<ResPrec_>* _temp_distribution_1;
+                DenseMatrix<ResPrec_>* _temp_distribution_2;
+                DenseMatrix<ResPrec_>* _temp_distribution_3;
+                DenseMatrix<ResPrec_>* _temp_distribution_4;
+                DenseMatrix<ResPrec_>* _temp_distribution_5;
+                DenseMatrix<ResPrec_>* _temp_distribution_6;
+                DenseMatrix<ResPrec_>* _temp_distribution_7;
+                DenseMatrix<ResPrec_>* _temp_distribution_8;
+
+                DenseMatrix<ResPrec_>* _eq_distribution_0;
+                DenseMatrix<ResPrec_>* _eq_distribution_1;
+                DenseMatrix<ResPrec_>* _eq_distribution_2;
+                DenseMatrix<ResPrec_>* _eq_distribution_3;
+                DenseMatrix<ResPrec_>* _eq_distribution_4;
+                DenseMatrix<ResPrec_>* _eq_distribution_5;
+                DenseMatrix<ResPrec_>* _eq_distribution_6;
+                DenseMatrix<ResPrec_>* _eq_distribution_7;
+                DenseMatrix<ResPrec_>* _eq_distribution_8;
+
                 unsigned long _grid_width, _grid_height;
 
-                DenseVector<ResPrec_>* _equilibrium_distribution;
                 DenseVector<ResPrec_>* _source_x;
                 DenseVector<ResPrec_>* _source_y;
 

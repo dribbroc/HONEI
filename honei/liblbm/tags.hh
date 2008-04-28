@@ -35,7 +35,18 @@ namespace honei
     {
         namespace lbm_lattice_types
         {
-            class D2Q9;
+            class D2Q9
+            {
+                class DIR_0;
+                class DIR_1;
+                class DIR_2;
+                class DIR_3;
+                class DIR_4;
+                class DIR_5;
+                class DIR_6;
+                class DIR_7;
+                class DIR_8;
+            };
         }
         namespace lbm_grid_types
         {
