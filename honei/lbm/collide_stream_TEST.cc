@@ -46,7 +46,22 @@ class CollideStreamLABSWETest :
 
             CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::
                 value(result, test, test, test, test, e_x, e_y, tau);
-
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_1>::
+                value(result, test, test, test, test, e_x, e_y, tau);
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_2>::
+                value(result, test, test, test, test, e_x, e_y, tau);
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_3>::
+                value(result, test, test, test, test, e_x, e_y, tau);
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_4>::
+                value(result, test, test, test, test, e_x, e_y, tau);
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_5>::
+                value(result, test, test, test, test, e_x, e_y, tau);
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_6>::
+                value(result, test, test, test, test, e_x, e_y, tau);
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_7>::
+                value(result, test, test, test, test, e_x, e_y, tau);
+            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_8>::
+                value(result, test, test, test, test, e_x, e_y, tau);
             TEST_CHECK(true);
         }
 };

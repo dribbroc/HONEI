@@ -43,7 +43,7 @@ namespace honei
     };
 
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_1>
     {
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
@@ -65,17 +65,17 @@ namespace honei
 
                 for(unsigned long j(0); j < x_max; ++j)
                 {
-                    unsigned long j_forward(j + 1);
-                    unsigned long j_backward(j - 1);
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
 
                     ///Respect periodic boundaries:
-                    if(j_forward > x_max)
+                    if(j_forward >= x_max)
                         j_forward = j_forward - x_max;
-                    if(j_backward < 1)
+                    if(j_backward < 0)
                         j_backward = j_backward + x_max;
-                    if(i_forward > y_max)
+                    if(i_forward >= y_max)
                         i_forward = i_forward - y_max;
-                    if(i_backward < 1)
+                    if(i_backward < 0)
                         i_backward = i_backward + y_max;
 
                     ///Perform streaming and collision:
@@ -84,5 +84,344 @@ namespace honei
             }
         }
     };
+
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_2>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i_forward, j_forward) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_3>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i_forward, j) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_4>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i_forward, j_backward) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_5>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i, j_backward) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_6>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i_backward, j_backward) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_7>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i_backward, j) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_8>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i_backward, j_forward) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>
+    {
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    ///Respect periodic boundaries:
+                    if(j_forward >= x_max)
+                        j_forward = j_forward - x_max;
+                    if(j_backward < 0)
+                        j_backward = j_backward + x_max;
+                    if(i_forward >= y_max)
+                        i_forward = i_forward - y_max;
+                    if(i_backward < 0)
+                        i_backward = i_backward + y_max;
+
+                    ///Perform streaming and collision:
+                    result(i, j) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
 }
 #endif
