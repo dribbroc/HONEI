@@ -11,4 +11,4 @@ if SSE
   SSEDIR = sse
 endif
 
-SUBDIRS = $(CELLDIR)
+SUBDIRS = $(SSEDIR) $(CELLDIR)
