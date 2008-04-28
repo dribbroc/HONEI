@@ -42,7 +42,7 @@ class TestList
         }
 
     public:
-        typedef std::list<BaseTest*>::const_iterator Iterator;
+        typedef std::list<BaseTest*>::iterator Iterator;
 
         static TestList * instance()
         {
@@ -65,6 +65,17 @@ class TestList
         {
             return _tests.end();
         }
+
+        unsigned long size()
+        {
+            return _tests.size();
+        }
+
+        Iterator erase (Iterator i)
+        {
+            return _tests.erase(i);
+        }
+
 };
 
 std::list<BaseTest *> TestList::_tests;
@@ -157,6 +168,36 @@ int main(int argc, char** argv)
     {
         cpu_only = true;
     }
+    unsigned long list_size(0);
+
+    for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
+            i != i_end ; ++i)
+    {
+            if (quick && (!(*i)->is_quick_test()) )
+            {
+                continue;
+            }
+            if (sse && !( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse")))
+            {
+                continue;
+            }
+            if (cell && (!((*i)->get_tag_name()=="cell")))
+            {
+                continue;
+            }
+            if (mc && ! ( ((*i)->get_tag_name()=="mc-sse") || ((*i)->get_tag_name()=="mc")))
+            {
+                continue;
+            }
+            if (cpu_only && ( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse") ||
+                        ((*i)->get_tag_name()=="cell")))
+            {
+                continue;
+            }
+            list_size++;
+    }
+
+    unsigned long iterator_index(1);
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
             i != i_end ; ++i)
     {
@@ -175,15 +216,16 @@ int main(int argc, char** argv)
                         ((*i)->get_tag_name()=="cell")))
                 continue;
 
-            std::cout << (*i)->id() + ": \n";
+            std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + ":" << std::endl;
             (*i)->run();
-            std::cout << "PASSED \n";
+            std::cout << "PASSED" << std::endl;
         }
         catch (TestFailedException & e)
         {
             std::cout << "FAILED: " << std::endl << stringify(e.what()) << std::endl;
             result = EXIT_FAILURE;
         }
+        iterator_index++;
     }
 
     return result;
