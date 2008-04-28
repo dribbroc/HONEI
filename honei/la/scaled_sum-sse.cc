@@ -359,7 +359,7 @@ using namespace honei;
 DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x,
         const DenseVectorContinuousBase<float> & y, float b)
 {
-    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (SSE):");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -372,7 +372,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
 DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x,
         const DenseVectorContinuousBase<double> & y, double b)
 {
-    CONTEXT("When calculating ScaledSum form DenseVectoriContinuousBase<double> with SSE:");
+    CONTEXT("When calculating ScaledSum form DenseVectoriContinuousBase<double> (SSE):");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -386,7 +386,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
         const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c)
 {
     CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>, "
-            "DenseVectorContinuousBase<float>) with SSE:");
+            "DenseVectorContinuousBase<float>) (SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -403,7 +403,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
         const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
 {
     CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<doule>, DenseVectorContinuousBase<double>, "
-            "DenseVectorContinuousBase<double>) with SSE:");
+            "DenseVectorContinuousBase<double>) (SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());

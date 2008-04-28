@@ -317,7 +317,7 @@ using namespace honei;
 DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> (SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -330,7 +330,7 @@ DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinu
 DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> (SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -342,7 +342,7 @@ DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContin
 
 DenseMatrix<float> & Sum<tags::CPU::SSE>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
-    CONTEXT("When adding DenseMatrix<float> to DenseMatrix<float> with SSE:");
+    CONTEXT("When adding DenseMatrix<float> to DenseMatrix<float> (SSE):");
 
     if (a.columns() != b.columns())
     {
@@ -361,7 +361,7 @@ DenseMatrix<float> & Sum<tags::CPU::SSE>::value(DenseMatrix<float> & a, const De
 
 DenseMatrix<double> & Sum<tags::CPU::SSE>::value(DenseMatrix<double> & a, const DenseMatrix<double> & b)
 {
-    CONTEXT("When adding DenseMatrix<double> to DenseMatrix<double> with SSE:");
+    CONTEXT("When adding DenseMatrix<double> to DenseMatrix<double> (SSE):");
 
     if (a.columns() != b.columns())
     {
@@ -380,7 +380,7 @@ DenseMatrix<double> & Sum<tags::CPU::SSE>::value(DenseMatrix<double> & a, const 
 
 DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x, const float a)
 {
-    CONTEXT("When adding DenseVectorContinuousBase<float> and float with SSE:");
+    CONTEXT("When adding DenseVectorContinuousBase<float> and float (SSE):");
 
     intern::sse::sum(a, x.elements(), x.size());
 
@@ -389,7 +389,7 @@ DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinu
 
 DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x, const double a)
 {
-    CONTEXT("When adding DenseVectorContinuousBase<double> and double with SSE:");
+    CONTEXT("When adding DenseVectorContinuousBase<double> and double (SSE):");
 
     intern::sse::sum(a, x.elements(), x.size());
 
@@ -398,7 +398,7 @@ DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContin
 
 DenseMatrix<float> & Sum<tags::CPU::SSE>::value(DenseMatrix<float> & x, const float a)
 {
-    CONTEXT("When adding DenseMatrix<float> and float with SSE:");
+    CONTEXT("When adding DenseMatrix<float> and float (SSE):");
 
     intern::sse::sum(a, x.elements(), x.rows() * x.columns());
 
@@ -407,7 +407,7 @@ DenseMatrix<float> & Sum<tags::CPU::SSE>::value(DenseMatrix<float> & x, const fl
 
 DenseMatrix<double> & Sum<tags::CPU::SSE>::value(DenseMatrix<double> & x, const double a)
 {
-    CONTEXT("When adding DenseMatrix<double> and double with SSE:");
+    CONTEXT("When adding DenseMatrix<double> and double (SSE):");
 
     intern::sse::sum(a, x.elements(), x.rows() * x.columns());
 

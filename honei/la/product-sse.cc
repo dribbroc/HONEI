@@ -405,7 +405,7 @@ using namespace honei;
 
 DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> (SSE):");
 
     if (b.size() != a.columns())
     {
@@ -519,7 +519,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
 
 DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & a, const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When multiplying BandedMatrix<double> with DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When multiplying BandedMatrix<double> with DenseVectorContinuousBase<double> (SSE):");
 
     if (b.size() != a.columns())
     {
@@ -632,7 +632,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 
 DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<float> with DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When multiplying DenseMatrix<float> with DenseVectorContinuousBase<float> (SSE):");
 
     if (b.size() != a.columns())
     {
@@ -652,7 +652,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
 
 DenseVector<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a, const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<double> with DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When multiplying DenseMatrix<double> with DenseVectorContinuousBase<double> (SSE):");
 
     if (b.size() != a.columns())
     {
@@ -672,7 +672,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
 
 DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<float> with DenseMatrix<float> with SSE:");
+    CONTEXT("When multiplying DenseMatrix<float> with DenseMatrix<float> (SSE):");
 
     if (a.columns() != b.rows())
         throw MatrixRowsDoNotMatch(b.rows(), a.columns());
@@ -699,7 +699,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
 
 DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a, const DenseMatrix<double> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<double> with DenseMatrix<double> with SSE:");
+    CONTEXT("When multiplying DenseMatrix<double> with DenseMatrix<double> (SSE):");
 
     if (a.columns() != b.rows())
         throw MatrixRowsDoNotMatch(b.rows(), a.columns());
@@ -726,7 +726,7 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
 
 DenseMatrix<float> Product<tags::CPU::SSE>::value(const SparseMatrix<float> & a, const DenseMatrix<float> & b)
 {
-    CONTEXT("When multiplying SparseMatrix<float> with DenseMatrix<float> with SSE:");
+    CONTEXT("When multiplying SparseMatrix<float> with DenseMatrix<float> (SSE):");
 
     if (a.columns() != b.rows())
         throw MatrixRowsDoNotMatch(b.rows(), a.columns());
@@ -744,7 +744,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const SparseMatrix<float> & a,
 
 DenseMatrix<double> Product<tags::CPU::SSE>::value(const SparseMatrix<double> & a, const DenseMatrix<double> & b)
 {
-    CONTEXT("When multiplying SparseMatrix<double> with DenseMatrix<double> with SSE:");
+    CONTEXT("When multiplying SparseMatrix<double> with DenseMatrix<double> (SSE):");
 
     if (a.columns() != b.rows())
         throw MatrixRowsDoNotMatch(b.rows(), a.columns());
@@ -763,7 +763,7 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const SparseMatrix<double> & 
 DenseMatrixTile<float> &
 Product<tags::CPU::SSE>::value(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b)
 {
-    CONTEXT("When multiplying DenseMatrixTile<float> with DenseMatrixTile<float> with SSE:");
+    CONTEXT("When multiplying DenseMatrixTile<float> with DenseMatrixTile<float> (SSE):");
 
     if (a.columns() != b.rows() )
         throw MatrixRowsDoNotMatch(b.rows(), a.columns());
@@ -782,7 +782,7 @@ Product<tags::CPU::SSE>::value(DenseMatrixTile<float> & r, const DenseMatrixTile
 DenseMatrixTile<double> &
 Product<tags::CPU::SSE>::value(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b)
 {
-    CONTEXT("When multiplying DenseMatrixTile<double> with DenseMatrixTile<double> with SSE:");
+    CONTEXT("When multiplying DenseMatrixTile<double> with DenseMatrixTile<double> (SSE):");
 
     if (a.columns() != b.rows() )
         throw MatrixRowsDoNotMatch(b.rows(), a.columns());

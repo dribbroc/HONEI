@@ -75,7 +75,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When calculating the product of DenseVectorBases elements");
+            CONTEXT("When calculating the product of DenseVectorBases elements:");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -94,7 +94,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseVector<DT1_> value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseVector elements");
+            CONTEXT("When calculating the product of SparseVector elements:");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -125,7 +125,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseVector and DenseVectorBase elements");
+            CONTEXT("When calculating the product of SparseVector and DenseVectorBase elements:");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -166,7 +166,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of DenseMatrix elements");
+            CONTEXT("When calculating the product of DenseMatrix elements:");
 
             if (a.columns() != b.columns())
             {
@@ -192,7 +192,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseMatrix and DenseMatrix elements");
+            CONTEXT("When calculating the product of SparseMatrix and DenseMatrix elements:");
 
             if (a.columns() != b.columns())
             {
@@ -216,7 +216,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseMatrix elements");
+            CONTEXT("When calculating the product of SparseMatrix elements:");
 
             if (a.columns() != b.columns())
             {
@@ -256,7 +256,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of BandedMatrix elements");
+            CONTEXT("When calculating the product of BandedMatrix elements:");
 
             if (a.rows() != b.rows())
             {
@@ -283,7 +283,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of BandedMatrix and a DenseMatrix elements");
+            CONTEXT("When calculating the product of BandedMatrix and a DenseMatrix elements:");
 
             if (a.columns() != b.columns())
             {
@@ -309,7 +309,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of BandedMatrix and a SparseMatrix elements");
+            CONTEXT("When calculating the product of BandedMatrix and a SparseMatrix elements:");
 
             if (a.columns() != b.columns())
             {
@@ -347,7 +347,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of DenseMatrix and BandedMatrix elements");
+            CONTEXT("When calculating the product of DenseMatrix and BandedMatrix elements:");
 
             if (a.columns() != b.columns())
             {
@@ -373,7 +373,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
-            CONTEXT("When calculating the product of SparseMatrix and BandedMatrix elements");
+            CONTEXT("When calculating the product of SparseMatrix and BandedMatrix elements:");
 
             if (a.columns() != b.columns())
             {

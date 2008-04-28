@@ -48,7 +48,7 @@ namespace honei
             template<typename DT1_>
             static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
             {
-                CONTEXT("When solving dense LES with iterative refinement (CG)");
+                CONTEXT("When solving dense LES with iterative refinement (CG):");
 
                 DT1_ alpha = DT1_(1.0);
                 DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
@@ -131,7 +131,7 @@ namespace honei
             template<typename DT1_>
                 static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
                 {
-                    CONTEXT("When solving banded LES with iterative refinement (CG)");
+                    CONTEXT("When solving banded LES with iterative refinement (CG):");
 
                     DT1_ alpha = DT1_(1.0);
                     DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
@@ -227,7 +227,7 @@ namespace honei
             template<typename DT1_>
             static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
             {
-                CONTEXT("When solving sparse LES with iterative refinement (CG)");
+                CONTEXT("When solving sparse LES with iterative refinement (CG):");
 
                 DT1_ alpha = DT1_(1.0);
                 DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
@@ -327,7 +327,7 @@ namespace honei
             template<typename DT1_>
             static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
             {
-                CONTEXT("When solving dense LES with iterative refinement (CG)");
+                CONTEXT("When solving dense LES with iterative refinement (CG):");
 
                 DT1_ alpha = DT1_(1.0);
                 DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
@@ -410,7 +410,7 @@ namespace honei
             template<typename DT1_>
                 static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
                 {
-                    CONTEXT("When solving banded LES with iterative refinement (CG)");
+                    CONTEXT("When solving banded LES with iterative refinement (CG):");
 
                     DT1_ alpha = DT1_(1.0);
                     DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
@@ -505,7 +505,7 @@ namespace honei
             template<typename DT1_>
             static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
             {
-                CONTEXT("When solving sparse LES with iterative refinement (PCG::JAC)");
+                CONTEXT("When solving sparse LES with iterative refinement (PCG::JAC):");
 
                 DT1_ alpha = DT1_(1.0);
                 DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
@@ -607,7 +607,7 @@ namespace honei
                     static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
                     {
 
-                        CONTEXT("When solving dense LES with iterative refinement (Jacobi)");
+                        CONTEXT("When solving dense LES with iterative refinement (Jacobi):");
                         DT1_ alpha = DT1_(1.0);
                         DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
                         //inner allocation:
@@ -685,7 +685,7 @@ namespace honei
             template<typename DT1_>
                 static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
                 {
-                    CONTEXT("When solving banded LES with iterative refinement (CG)");
+                    CONTEXT("When solving banded LES with iterative refinement (CG):");
 
                     DT1_ alpha = DT1_(1.0);
                     DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));
@@ -779,7 +779,7 @@ namespace honei
             template<typename DT1_>
             static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, double eps_outer, double eps_inner)
             {
-                CONTEXT("When solving sparse LES with iterative refinement (JAC)");
+                CONTEXT("When solving sparse LES with iterative refinement (JAC):");
 
                 DT1_ alpha = DT1_(1.0);
                 DenseVector<DT1_> x_actual(right_hand_side.size(), DT1_(0));

@@ -177,7 +177,7 @@ using namespace honei;
 
 DenseVectorContinuousBase<float> & ElementInverse<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x)
 {
-    CONTEXT("When inverting DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When inverting DenseVectorContinuousBase<float> (SSE):");
 
     intern::sse::element_inverse(x.elements(), x.size());
 
@@ -186,7 +186,7 @@ DenseVectorContinuousBase<float> & ElementInverse<tags::CPU::SSE>::value(DenseVe
 
 DenseVectorContinuousBase<double> & ElementInverse<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x)
 {
-    CONTEXT("When inverting DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When inverting DenseVectorContinuousBase<double> (SSE):");
 
     intern::sse::element_inverse(x.elements(), x.size());
 
@@ -195,7 +195,7 @@ DenseVectorContinuousBase<double> & ElementInverse<tags::CPU::SSE>::value(DenseV
 
 DenseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<float> & x)
 {
-    CONTEXT("When inverting DenseMatrix<float> with SSE:");
+    CONTEXT("When inverting DenseMatrix<float> (SSE):");
 
     intern::sse::element_inverse(x.elements(), x.rows() * x.columns());
 
@@ -204,7 +204,7 @@ DenseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<float> & 
 
 DenseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<double> & x)
 {
-    CONTEXT("When inverting DenseMatrix<double> with SSE:");
+    CONTEXT("When inverting DenseMatrix<double> (SSE):");
 
     intern::sse::element_inverse(x.elements(), x.rows() * x.columns());
 
@@ -213,7 +213,7 @@ DenseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(DenseMatrix<double> 
 
 SparseVector<float> & ElementInverse<tags::CPU::SSE>::value(SparseVector<float> & x)
 {
-    CONTEXT("When inverting SparseVector<float> with SSE:");
+    CONTEXT("When inverting SparseVector<float> (SSE):");
 
     intern::sse::element_inverse(x.elements(), x.used_elements());
 
@@ -222,7 +222,7 @@ SparseVector<float> & ElementInverse<tags::CPU::SSE>::value(SparseVector<float> 
 
 SparseVector<double> & ElementInverse<tags::CPU::SSE>::value(SparseVector<double> & x)
 {
-    CONTEXT("When inverting SparseVector<double> with SSE:");
+    CONTEXT("When inverting SparseVector<double> (SSE):");
 
     intern::sse::element_inverse(x.elements(), x.used_elements());
 
@@ -231,7 +231,7 @@ SparseVector<double> & ElementInverse<tags::CPU::SSE>::value(SparseVector<double
 
 SparseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<float> & x)
 {
-    CONTEXT("When invertingSparseMatrix<float> with SSE:");
+    CONTEXT("When invertingSparseMatrix<float> (SSE):");
 
     for (SparseMatrix<float>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)
@@ -244,7 +244,7 @@ SparseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<float> 
 
 SparseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<double> & x)
 {
-    CONTEXT("When inverting SparseMatrix<double> with SSE:");
+    CONTEXT("When inverting SparseMatrix<double> (SSE):");
 
     for (SparseMatrix<double>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)

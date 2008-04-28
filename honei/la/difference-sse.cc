@@ -197,7 +197,7 @@ using namespace honei;
 DenseVectorContinuousBase<float> & Difference<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When subtracting DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When subtracting DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> (SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -210,7 +210,7 @@ DenseVectorContinuousBase<float> & Difference<tags::CPU::SSE>::value(DenseVector
 DenseVectorContinuousBase<double> & Difference<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When subtracting DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When subtracting DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -222,7 +222,7 @@ DenseVectorContinuousBase<double> & Difference<tags::CPU::SSE>::value(DenseVecto
 
 DenseMatrix<float> & Difference<tags::CPU::SSE>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
-    CONTEXT("When subtracting DenseMatrix<float> from DenseMatrix<float> with SSE:");
+    CONTEXT("When subtracting DenseMatrix<float> from DenseMatrix<float> (SSE):");
 
     if (a.columns() != b.columns())
     {
@@ -241,7 +241,7 @@ DenseMatrix<float> & Difference<tags::CPU::SSE>::value(DenseMatrix<float> & a, c
 
 DenseMatrix<double> & Difference<tags::CPU::SSE>::value(DenseMatrix<double> & a, const DenseMatrix<double> & b)
 {
-    CONTEXT("When subtracting DenseMatrix<double> from DenseMatrix<double> with SSE:");
+    CONTEXT("When subtracting DenseMatrix<double> from DenseMatrix<double> (SSE):");
 
     if (a.columns() != b.columns())
     {

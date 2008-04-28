@@ -76,7 +76,7 @@ namespace honei
 
         inline SPEList::iterator prepare_spe(const SPEInstruction & instruction)
         {
-            CONTEXT("When preparing a SPE for instruction dispatching");
+            CONTEXT("When preparing a SPE for instruction dispatching:");
 
             //check if any kernels knows the new opcode
             if (SPEKernelManager::instance()->find(instruction.instruction().opcode)
@@ -167,7 +167,7 @@ namespace honei
         /// Dispatch a SPEInstruction to a SPE.
         inline void dispatch(const SPEInstruction & instruction)
         {
-            CONTEXT("When dispatching Instruction to a SPE");
+            CONTEXT("When dispatching Instruction to a SPE:");
             SPEList::iterator spe_it(prepare_spe(instruction));
             LOGMESSAGE(ll_minimal, "Dispatching Instruction to SPE #" + stringify(spe_it->id()) +
                     " (kernel = " + spe_it->kernel()->kernel_info().name + ", load = " + stringify(spe_it->kernel()->instruction_load()) + ") OpCode: " + stringify(instruction.instruction().opcode));
@@ -180,7 +180,7 @@ namespace honei
         /// Dispatch a SPEInstructionQueue to a SPE
         inline void dispatch(SPEInstructionQueue & instruction_queue)
         {
-            CONTEXT("When dispatching InstructionQueue to a SPE");
+            CONTEXT("When dispatching InstructionQueue to a SPE:");
             if (instruction_queue.size() > 0)
             {
                 SPEList::iterator spe_it = prepare_spe(*instruction_queue.begin());

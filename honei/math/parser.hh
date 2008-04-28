@@ -59,7 +59,7 @@ namespace honei
             /// \{
             static float parse(const char* c)
             {
-                CONTEXT("When parsing string.");
+                CONTEXT("When parsing string:");
                 return float(std::atof(c));
             }
 
@@ -74,7 +74,7 @@ namespace honei
             /// \{
             static DenseVector<float> parse(char* filename, unsigned long size)
             {
-                CONTEXT("When parsing file to DenseVector");
+                CONTEXT("When parsing file to DenseVector:");
                 DenseVector<float> result(size, float(0.0));
                 ifstream ifs;
                 ifs.open(filename);
@@ -135,7 +135,7 @@ namespace honei
             /// \{
             static DenseMatrix<float> parse(char* filename, unsigned long width, unsigned long height)
             {
-                CONTEXT("When parsing file to DenseMatrix");
+                CONTEXT("When parsing file to DenseMatrix:");
                 DenseMatrix<float> result(height, width, float(0.0));
                 char lines[height][width*100];
                 unsigned long linescount = 0;
@@ -201,7 +201,7 @@ namespace honei
 
             static double parse(const char* c)
             {
-                CONTEXT("When parsing string.");
+                CONTEXT("When parsing string:");
                 return double(std::atof(c));
             }
             /**
@@ -215,7 +215,7 @@ namespace honei
             /// \{
             static DenseVector<double> parse(char* filename, unsigned long size)
             {
-                CONTEXT("When parsing file to DenseVector");
+                CONTEXT("When parsing file to DenseVector:");
                 DenseVector<double> result(size, double(0.0));
                 ifstream ifs;
                 ifs.open(filename);
@@ -275,7 +275,7 @@ namespace honei
             /// \{
             static DenseMatrix<double> parse(char* filename, unsigned long width, unsigned long height)
             {
-                CONTEXT("When parsing file to DenseMatrix");
+                CONTEXT("When parsing file to DenseMatrix:");
                 DenseMatrix<double> result(height, width, double(0.0));
                 char lines[height][width*50];
                 unsigned long linescount = 0;

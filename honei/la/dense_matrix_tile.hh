@@ -110,7 +110,7 @@ namespace honei
                 _column_offset(column_offset),
                 _source_columns(source._columns)
             {
-                CONTEXT("When creating DenseMatrixTile from DenseMatrix: ");
+                CONTEXT("When creating DenseMatrixTile from DenseMatrix:");
                 ASSERT(rows > 0, "number of rows is zero!");
                 ASSERT(columns > 0, "number of columns is zero!");
             }
@@ -126,7 +126,7 @@ namespace honei
                 _column_offset(source._column_offset + column_offset),
                 _source_columns(source._source_columns)
             {
-                CONTEXT("When creating DenseMatrixTile from DenseMatrixTile: ");
+                CONTEXT("When creating DenseMatrixTile from DenseMatrixTile:");
                 ASSERT(rows > 0, "number of rows is zero!");
                 ASSERT(columns > 0, "number of columns is zero!");
             }

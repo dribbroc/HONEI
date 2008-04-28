@@ -115,7 +115,7 @@ Configuration::_read()
 
     if (0 == ::lstat(_imp->filename.c_str(), &stat_info))
     {
-        CONTEXT("When reading configuration file '" + _imp->filename + "'");
+        CONTEXT("When reading configuration file '" + _imp->filename + "':");
 
         std::fstream file(_imp->filename.c_str(), std::ios_base::in);
         std::string line;

@@ -180,7 +180,7 @@ struct SPE::Implementation
     /// Destructor.
     ~Implementation()
     {
-        CONTEXT("When destroying SPE");
+        CONTEXT("When destroying SPE:");
         LOGMESSAGE(ll_minimal, "SPE: Destroying SPE::Implementation!");
 
         pthread_join(*thread, 0);
@@ -227,7 +227,7 @@ SPE::SPE(const SPE & other) :
 
 SPE::~SPE()
 {
-    CONTEXT("When destroying SPE");
+    CONTEXT("When destroying SPE:");
     LOGMESSAGE(ll_minimal, "SPE (" + stringify(this) + ") destroyed.");
 }
 

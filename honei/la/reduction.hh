@@ -233,7 +233,7 @@ namespace honei
         template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & matrix)
         {
-            CONTEXT("When reducing DenseMatrix to Vector by max");
+            CONTEXT("When reducing DenseMatrix to Vector by max:");
 
             DenseVector<DT_> result(matrix.rows());
 
@@ -248,7 +248,7 @@ namespace honei
                 template <typename DT_>
         static DenseVector<DT_> value(const SparseMatrix<DT_> & matrix)
         {
-            CONTEXT("When reducing SparseMatrix to Vector by max");
+            CONTEXT("When reducing SparseMatrix to Vector by max:");
 
             DenseVector<DT_> result(matrix.rows());
 
@@ -263,7 +263,7 @@ namespace honei
                 template <typename DT_>
         static DenseVector<DT_> value(const BandedMatrix<DT_> & matrix)
         {
-            CONTEXT("When reducing BandedMatrix to Vector by max");
+            CONTEXT("When reducing BandedMatrix to Vector by max:");
             /// \todo Use band interator.
             DenseVector<DT_> result(matrix.rows());
 
@@ -281,7 +281,7 @@ namespace honei
                 template <typename DT_>
         static DT_ value(const DenseVectorBase<DT_> & vector)
         {
-            CONTEXT("When reducing DenseVectorBase to Scalar by max");
+            CONTEXT("When reducing DenseVectorBase to Scalar by max:");
 
             DT_ result(vector[0]);
 
@@ -300,7 +300,7 @@ namespace honei
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & vector)
         {
-            CONTEXT("When reducing SparseVector to Scalar by max");
+            CONTEXT("When reducing SparseVector to Scalar by max:");
 
             DT_ result(vector[0]);
 
@@ -354,7 +354,7 @@ namespace honei
         template <typename DT_>
         static DenseVector<DT_> value(const DenseMatrix<DT_> & matrix)
         {
-            CONTEXT("When reducing DenseMatrix to Vector by min");
+            CONTEXT("When reducing DenseMatrix to Vector by min:");
 
             DenseVector<DT_> result(matrix.rows());
 
@@ -369,7 +369,7 @@ namespace honei
         template <typename DT_>
         static DenseVector<DT_> value(const SparseMatrix<DT_> & matrix)
         {
-            CONTEXT("When reducing SparseMatrix to Vector by min");
+            CONTEXT("When reducing SparseMatrix to Vector by min:");
 
             DenseVector<DT_> result(matrix.rows());
 
@@ -384,7 +384,7 @@ namespace honei
         template <typename DT_>
         static DenseVector<DT_> value(const BandedMatrix<DT_> & matrix)
         {
-            CONTEXT("When reducing BandedMatrix to Vector by max");
+            CONTEXT("When reducing BandedMatrix to Vector by max:");
             /// \todo Use band interator.
 
             DenseVector<DT_> result(matrix.rows());
@@ -407,7 +407,7 @@ namespace honei
         template <typename DT_>
         static DT_ value(const DenseVectorBase<DT_> & vector)
         {
-            CONTEXT("When reducing DenseVector to Scalar by min");
+            CONTEXT("When reducing DenseVector to Scalar by min:");
 
             DT_ result(vector[0]);
 
@@ -426,7 +426,7 @@ namespace honei
         template <typename DT_>
         static DT_ value(const SparseVector<DT_> & vector)
         {
-            CONTEXT("When reducing SparseVector to Scalar by min");
+            CONTEXT("When reducing SparseVector to Scalar by min:");
 
             DT_ result(vector[0]);
 

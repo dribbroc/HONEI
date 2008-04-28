@@ -604,7 +604,7 @@ namespace honei
             NonZeroBandIterator(const BandedMatrix<DataType_> & matrix, unsigned long index) :
                 _matrix(matrix)
             {
-                CONTEXT("When creating NonZeroBandIterator...");
+                CONTEXT("When creating NonZeroBandIterator:");
                 ASSERT(index >= 0 && index <= 2 * matrix._size -1, "Index out of Bounds");
                 if (index == 2 * matrix._size - 1)
                 {
@@ -645,7 +645,7 @@ namespace honei
             /// Preincrement operator.
             virtual VectorIteratorBase<DataType_, DenseVector<DataType_> > & operator++ ()
             {
-                CONTEXT("When incrementing NonZeroBandIterator...");
+                CONTEXT("When incrementing NonZeroBandIterator:");
                 ASSERT(_position != _matrix._nze_list->end(), "Incrementing end iterator.");
                 _position++;
                 if (_position == _matrix._nze_list->end())

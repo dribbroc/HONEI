@@ -122,7 +122,7 @@ namespace honei
                 spe = imp->spe;
             }
 
-            CONTEXT("When handling SPE events for SPE #" + stringify(spe->id())+ " '" + spe->kernel()->kernel_info().name + "'");
+            CONTEXT("When handling SPE events for SPE #" + stringify(spe->id())+ " '" + spe->kernel()->kernel_info().name + "':");
             LOGMESSAGE(ll_minimal, "SPEKernel: Revceived have-been-loaded signal from SPE #" +
                     stringify(spe->id()) + " '" + spe->kernel()->kernel_info().name + "'");
 
@@ -436,7 +436,7 @@ namespace honei
 
         ~Implementation()
         {
-            CONTEXT("When destroying SPEKernel '" + kernel_info.name + "'");
+            CONTEXT("When destroying SPEKernel '" + kernel_info.name + "':");
 
             LOGMESSAGE(ll_minimal, "SPEKernel: Destroying SPEKernel");
             {
@@ -494,7 +494,7 @@ namespace honei
     void
     SPEKernel::enqueue(const SPEInstruction & instruction)
     {
-        CONTEXT("When enqueueing instruction to SPE #" + ((_imp->spe) ? stringify(_imp->spe->id()) : std::string("(anonymous)")));
+        CONTEXT("When enqueueing instruction to SPE #" + ((_imp->spe) ? stringify(_imp->spe->id()) : std::string("(anonymous):")));
         LOGMESSAGE(ll_minimal, std::string("Enqueing SPEInstruction, opcode = " + stringify(instruction.instruction().opcode)
                     + ", size = " + stringify(instruction.instruction().size) + "\na = " + stringify(instruction.instruction().a.ea)
                     + ", b = " + stringify(instruction.instruction().b.ea) + "\nc = " + stringify(instruction.instruction().c.ea)
@@ -614,7 +614,7 @@ namespace honei
     unsigned int SPEKernel::enqueue_queue_element(const SPEInstruction & instruction)
     {
         Lock l(*_imp->mutex);
-        CONTEXT("When enqueueing batch instruction");
+        CONTEXT("When enqueueing batch instruction:");
         LOGMESSAGE(ll_minimal, std::string("Enqueing SPEInstruction to SPEInstructionQueue, opcode = " + stringify(instruction.instruction().opcode)
                     + ", size = " + stringify(instruction.instruction().size) + "\na = " + stringify(instruction.instruction().a.ea)
                     + ", b = " + stringify(instruction.instruction().b.ea) + "\nc = " + stringify(instruction.instruction().c.ea)

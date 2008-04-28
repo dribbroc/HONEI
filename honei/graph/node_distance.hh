@@ -58,7 +58,7 @@ namespace honei
         template <typename DataType_>
         static DenseMatrix<DataType_> value(const DenseMatrix<DataType_> & pos_matrix)
         {
-            CONTEXT("When calculating the distance beetween nodes");
+            CONTEXT("When calculating the distance beetween nodes:");
             // Create the result matrix
             DenseMatrix<DataType_> result(pos_matrix.rows(), pos_matrix.rows());
 

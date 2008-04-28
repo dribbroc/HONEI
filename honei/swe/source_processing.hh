@@ -75,7 +75,7 @@ namespace honei
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> _source(WorkPrec_ h, WorkPrec_ q1, WorkPrec_ q2, WorkPrec_ slope_x, WorkPrec_ slope_y, WorkPrec_ manning_n_squared)
             {
-                CONTEXT("When processing RelaxSolver source, type: simple");
+                CONTEXT("When processing RelaxSolver source, type: simple:");
 
                 DenseVector<WorkPrec_> result((unsigned long)(3), WorkPrec_(0));
 
@@ -117,7 +117,7 @@ namespace honei
             template <typename WorkPrec_>
             static inline DenseVector<WorkPrec_> value(DenseVector<WorkPrec_> & vector, DenseVector<WorkPrec_> & bottom_slopes_x, DenseVector<WorkPrec_> & bottom_slopes_y, WorkPrec_ manning_n_squared)
             {
-                CONTEXT("When processing RelaxSolver source, type: simple");
+                CONTEXT("When processing RelaxSolver source, type: simple:");
 
                 typename DenseVector<WorkPrec_>::ElementIterator writeelementiterator(vector.begin_elements());
                 typename DenseVector<WorkPrec_>::ConstElementIterator bottomslopesxiterator(bottom_slopes_x.begin_elements());

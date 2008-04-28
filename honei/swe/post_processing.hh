@@ -80,7 +80,7 @@ namespace honei
         template<typename ResPrec_>
         static inline void value(DenseMatrix<ResPrec_> & height, unsigned long every, unsigned long d_width, unsigned long d_height, unsigned long solve_time)
         {
-            CONTEXT("When processing RelaxSolver post output.");
+            CONTEXT("When processing RelaxSolver post output:");
             if(solve_time % every == 0 || solve_time == 0)
             {
                 std::string filename;

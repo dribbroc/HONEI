@@ -206,7 +206,7 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> &
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> "
-            "with SSE:");
+            "(SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -218,7 +218,7 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double>
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> "
-            "with SSE:");
+            "(SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());

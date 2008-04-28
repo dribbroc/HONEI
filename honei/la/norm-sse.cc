@@ -172,56 +172,56 @@ using namespace honei;
 
 float Norm<vnt_l_two, false, tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a)
 {
-    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> (SSE):");
 
     return intern::sse::norm_l2(a.elements(), a.size());
 }
 
 double Norm<vnt_l_two, false, tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a)
 {
-    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (SSE):");
 
     return intern::sse::norm_l2(a.elements(), a.size());
 }
 
 float Norm<vnt_l_two, true, tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a)
 {
-    CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<float> with SSE:");
+    CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<float> (SSE):");
 
     return sqrt(intern::sse::norm_l2(a.elements(), a.size()));
 }
 
 double Norm<vnt_l_two, true, tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a)
 {
-    CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<double> with SSE:");
+    CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<double> (SSE):");
 
     return sqrt(intern::sse::norm_l2(a.elements(), a.size()));
 }
 
 float Norm<vnt_l_two, false, tags::CPU::SSE>::value(const SparseVector<float> & a)
 {
-    CONTEXT("When calculating L2 norm (false) of SparseVector<float> with SSE:");
+    CONTEXT("When calculating L2 norm (false) of SparseVector<float> (SSE):");
 
     return intern::sse::norm_l2(a.elements(), a.size());
 }
 
 double Norm<vnt_l_two, false, tags::CPU::SSE>::value(const SparseVector<double> & a)
 {
-    CONTEXT("When calculating L2 norm (false) of SparseVector<double> with SSE:");
+    CONTEXT("When calculating L2 norm (false) of SparseVector<double> (SSE):");
 
     return intern::sse::norm_l2(a.elements(), a.size());
 }
 
 float Norm<vnt_l_two, true, tags::CPU::SSE>::value(const SparseVector<float> & a)
 {
-    CONTEXT("When calculating L2 norm (true) of SparseVector<float> with SSE:");
+    CONTEXT("When calculating L2 norm (true) of SparseVector<float> (SSE):");
 
     return sqrt(intern::sse::norm_l2(a.elements(), a.size()));
 }
 
 double Norm<vnt_l_two, true, tags::CPU::SSE>::value(const SparseVector<double> & a)
 {
-    CONTEXT("When calculating L2 norm (true) of SparseVector<double> with SSE:");
+    CONTEXT("When calculating L2 norm (true) of SparseVector<double> (SSE):");
 
     return sqrt(intern::sse::norm_l2(a.elements(), a.size()));
 }

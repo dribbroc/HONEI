@@ -56,7 +56,7 @@ namespace honei
         template <typename DT_>
         static DenseVectorBase<DT_> & value(DenseVectorBase<DT_> & x)
         {
-            CONTEXT("When calculating the absolute value of DenseVectorBase elements");
+            CONTEXT("When calculating the absolute value of DenseVectorBase elements:");
 
             for (typename Vector<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
                     i != i_end ; ++i)

@@ -25,7 +25,7 @@ template <>
 DenseVectorBase<float> &
 Absolute<tags::CPU>::value(DenseVectorBase<float> & x)
 {
-    CONTEXT("When calculating the absolute value of DenseVectorBase<float> elements");
+    CONTEXT("When calculating the absolute value of DenseVectorBase<float> elements:");
 
     for (Vector<float>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
             i != i_end ; ++i)
@@ -40,7 +40,7 @@ template <>
 SparseVector<float> &
 Absolute<tags::CPU>::value(SparseVector<float> & x)
 {
-    CONTEXT("When calculating the absolute value of SparseVector<float> elements");
+    CONTEXT("When calculating the absolute value of SparseVector<float> elements:");
 
     for (Vector<float>::ElementIterator i(x.begin_non_zero_elements()), i_end(x.end_non_zero_elements()) ;
             i != i_end ; ++i)
@@ -55,7 +55,7 @@ template <>
 DenseVectorBase<double> &
 Absolute<tags::CPU>::value(DenseVectorBase<double> & x)
 {
-    CONTEXT("When calculating the absolute value of DenseVectorBase<double> elements");
+    CONTEXT("When calculating the absolute value of DenseVectorBase<double> elements:");
 
     for (Vector<double>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
             i != i_end ; ++i)
@@ -70,7 +70,7 @@ template <>
 SparseVector<double> &
 Absolute<tags::CPU>::value(SparseVector<double> & x)
 {
-    CONTEXT("When calculating the absolute value of SparseVector<double> elements");
+    CONTEXT("When calculating the absolute value of SparseVector<double> elements:");
 
     for (Vector<double>::ElementIterator i(x.begin_non_zero_elements()), i_end(x.end_non_zero_elements()) ;
             i != i_end ; ++i)

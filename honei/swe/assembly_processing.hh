@@ -69,7 +69,7 @@ namespace honei
             template <typename WorkPrec_>
             static inline void value(BandedMatrix<WorkPrec_> &  m1, BandedMatrix<WorkPrec_> & m3, DenseVector<WorkPrec_> & u, DenseVector<WorkPrec_> & v, WorkPrec_ delta_t, WorkPrec_ delta_x, unsigned long d_width, unsigned long d_height, DenseVector<WorkPrec_> & c)
             {
-                CONTEXT("When processing RelaxSolver assembly, main stage, matrices m_1, m_3");
+                CONTEXT("When processing RelaxSolver assembly, main stage, matrices m_1, m_3:");
 
                 ///The bands containing data.
                 DenseVector<WorkPrec_> m1diag(u.size(), WorkPrec_(0));
@@ -301,7 +301,7 @@ namespace honei
             template <typename WorkPrec_>
             static inline void value(BandedMatrix<WorkPrec_> &  m2, BandedMatrix<WorkPrec_> & m4, DenseVector<WorkPrec_> & u, DenseVector<WorkPrec_> & w, WorkPrec_ delta_t, WorkPrec_ delta_y, unsigned long d_width, unsigned long d_height, DenseVector<WorkPrec_> & dv)
             {
-            CONTEXT("When processing RelaxSolver assembly, main stage, matrices m_2, m_4");
+            CONTEXT("When processing RelaxSolver assembly, main stage, matrices m_2, m_4:");
 
             ///The bands containing data.
             DenseVector<WorkPrec_> m2diag(u.size(), WorkPrec_(0));      //zero
@@ -535,7 +535,7 @@ namespace honei
                 template <typename WorkPrec_>
                     static inline BandedMatrix<WorkPrec_> value(BandedMatrix<WorkPrec_> & m1, BandedMatrix<WorkPrec_> & result, DenseVector<WorkPrec_> & c, unsigned long d_width, unsigned long d_height)
                     {
-                        CONTEXT("When processing RelaxSolver assembly, quick stage, matrix m_6");
+                        CONTEXT("When processing RelaxSolver assembly, quick stage, matrix m_6:");
 
                         ///Bands of the matrix which will be assembled.
                         DenseVector<WorkPrec_> m6diag = (m1.band((unsigned long)(0))).copy();
@@ -606,7 +606,7 @@ namespace honei
                 template <typename WorkPrec_>
                     static inline BandedMatrix<WorkPrec_> value(BandedMatrix<WorkPrec_> & m2, BandedMatrix<WorkPrec_> & result, DenseVector<WorkPrec_> & dv, unsigned long d_width, unsigned long d_height)
                     {
-                        CONTEXT("When processing RelaxSolver assembly, quick stage, matrix m_8");
+                        CONTEXT("When processing RelaxSolver assembly, quick stage, matrix m_8:");
 
                         DenseVector<WorkPrec_> m8diag = (m2.band((unsigned long)(0))).copy();
                         DenseVector<WorkPrec_> m8bandplus3 = (m2.band((unsigned long)(3*(d_width +4)))).copy();

@@ -77,7 +77,7 @@ namespace honei
         template <typename DataType_>
         static DenseVectorBase<DataType_> & value(DenseVectorBase<DataType_> & x)
         {
-            CONTEXT("When calculating the inverse DenseVectorBase elements");
+            CONTEXT("When calculating the inverse DenseVectorBase elements:");
 
             for (typename Vector<DataType_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
@@ -93,7 +93,7 @@ namespace honei
         template <typename DataType_>
         static SparseVector<DataType_> & value(SparseVector<DataType_> & x)
         {
-            CONTEXT("When calculating the inverse value of SparseVector elements");
+            CONTEXT("When calculating the inverse value of SparseVector elements:");
 
 
             for (typename Vector<DataType_>::ElementIterator l(x.begin_non_zero_elements()),
@@ -110,7 +110,7 @@ namespace honei
         template <typename DataType_>
         static DenseMatrix<DataType_> & value(DenseMatrix<DataType_> & x)
         {
-            CONTEXT("When calculating the inverse value of DenseMatrix elements");
+            CONTEXT("When calculating the inverse value of DenseMatrix elements:");
 
             for (typename MutableMatrix<DataType_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
                     i != i_end ; ++i)
@@ -127,7 +127,7 @@ namespace honei
         template <typename DataType_>
         static SparseMatrix<DataType_> & value(SparseMatrix<DataType_> & x)
         {
-            CONTEXT("When calculating the inverse value of DenseMatrix elements");
+            CONTEXT("When calculating the inverse value of DenseMatrix elements:");
 
             for (typename MutableMatrix<DataType_>::ElementIterator i(x.begin_non_zero_elements()),
                     i_end(x.end_non_zero_elements()) ; i != i_end ; ++i)
@@ -144,7 +144,7 @@ namespace honei
         template <typename DataType_>
         static BandedMatrix<DataType_> & value(BandedMatrix<DataType_> & x)
         {
-            CONTEXT("When calculating the inverse value of BandedVector elements");
+            CONTEXT("When calculating the inverse value of BandedVector elements:");
 
             for (typename BandedMatrix<DataType_>::VectorIterator i(x.begin_bands()),
                     i_end(x.end_bands()) ; i != i_end ; ++i)

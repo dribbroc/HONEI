@@ -74,7 +74,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseMatrix<DT2_> & value(DenseMatrix<DT2_> & x, const DT1_ a)
         {
-            CONTEXT("When scaling DenseMatrix");
+            CONTEXT("When scaling DenseMatrix:");
             for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
@@ -87,7 +87,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseMatrix<DT2_> & value(SparseMatrix<DT2_> & x, const DT1_ a)
         {
-            CONTEXT("When scaling SparseMatrix");
+            CONTEXT("When scaling SparseMatrix:");
             for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
@@ -100,7 +100,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static BandedMatrix<DT2_> & value(BandedMatrix<DT2_> & x, const DT1_ a)
         {
-            CONTEXT("When scaling BandedMatrix");
+            CONTEXT("When scaling BandedMatrix:");
             for (typename BandedMatrix<DT2_>::VectorIterator l(x.begin_bands()),
                     l_end(x.end_bands()) ; l != l_end ; ++l)
             {
@@ -113,7 +113,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseVectorBase<DT2_> & value(DenseVectorBase<DT2_> & x, const DT1_ a)
         {
-            CONTEXT("When scaling DenseVectorBase");
+            CONTEXT("When scaling DenseVectorBase:");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
@@ -150,7 +150,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static SparseVector<DT2_> & value(SparseVector<DT2_> & x, const DT1_ a)
         {
-            CONTEXT("When scaling SparseVector");
+            CONTEXT("When scaling SparseVector:");
             for (typename Vector<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {

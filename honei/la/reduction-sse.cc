@@ -159,21 +159,21 @@ using namespace honei;
 
 float Reduction<rt_sum, tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a)
 {
-    CONTEXT("When reducing DenseVectorContinuousBase<float> to sum with SSE:");
+    CONTEXT("When reducing DenseVectorContinuousBase<float> to sum (SSE):");
 
     return intern::sse::reduction_sum(a.elements(), a.size());
 }
 
 double Reduction<rt_sum, tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a)
 {
-    CONTEXT("When reducing DenseVectorContinuousBase<double> to sum with SSE:");
+    CONTEXT("When reducing DenseVectorContinuousBase<double> to sum (SSE):");
 
     return intern::sse::reduction_sum(a.elements(), a.size());
 }
 
 DenseVector<float> Reduction<rt_sum, tags::CPU::SSE>::value(const DenseMatrix<float> & a)
 {
-    CONTEXT("When reducing DenseMatrix<float> to sum with SSE:");
+    CONTEXT("When reducing DenseMatrix<float> to sum (SSE):");
 
     DenseVector<float> result(a.rows());
 
@@ -187,7 +187,7 @@ DenseVector<float> Reduction<rt_sum, tags::CPU::SSE>::value(const DenseMatrix<fl
 
 DenseVector<double> Reduction<rt_sum, tags::CPU::SSE>::value(const DenseMatrix<double> & a)
 {
-    CONTEXT("When reducing DenseMatrix<double> to sum with SSE:");
+    CONTEXT("When reducing DenseMatrix<double> to sum (SSE):");
 
     DenseVector<double> result(a.rows());
 
@@ -201,21 +201,21 @@ DenseVector<double> Reduction<rt_sum, tags::CPU::SSE>::value(const DenseMatrix<d
 
 float Reduction<rt_sum, tags::CPU::SSE>::value(const SparseVector<float> & a)
 {
-    CONTEXT("When reducing SparseVector<float> to sum with SSE:");
+    CONTEXT("When reducing SparseVector<float> to sum (SSE):");
 
     return intern::sse::reduction_sum(a.elements(), a.used_elements());
 }
 
 double Reduction<rt_sum, tags::CPU::SSE>::value(const SparseVector<double> & a)
 {
-    CONTEXT("When reducing SparseVector<double> to sum with SSE:");
+    CONTEXT("When reducing SparseVector<double> to sum (SSE):");
 
     return intern::sse::reduction_sum(a.elements(), a.used_elements());
 }
 
 DenseVector<float> Reduction<rt_sum, tags::CPU::SSE>::value(const SparseMatrix<float> & a)
 {
-    CONTEXT("When reducing SparseMatrix<float> to sum with SSE:");
+    CONTEXT("When reducing SparseMatrix<float> to sum (SSE):");
 
     DenseVector<float> result(a.rows());
 
@@ -229,7 +229,7 @@ DenseVector<float> Reduction<rt_sum, tags::CPU::SSE>::value(const SparseMatrix<f
 
 DenseVector<double> Reduction<rt_sum, tags::CPU::SSE>::value(const SparseMatrix<double> & a)
 {
-    CONTEXT("When reducing SparseMatrix<double> to sum with SSE:");
+    CONTEXT("When reducing SparseMatrix<double> to sum (SSE):");
 
     DenseVector<double> result(a.rows());
 

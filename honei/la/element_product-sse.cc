@@ -198,7 +198,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVe
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
-            "with SSE:");
+            "(SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -212,7 +212,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseV
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
-            "with SSE:");
+            "(SSE):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -224,7 +224,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseV
 
 DenseMatrix<float> & ElementProduct<tags::CPU::SSE>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<float> and DenseMatrix<float> elementwise with SSE:");
+    CONTEXT("When multiplying DenseMatrix<float> and DenseMatrix<float> elementwise (SSE):");
 
     if (a.columns() != b.columns())
     {
@@ -243,7 +243,7 @@ DenseMatrix<float> & ElementProduct<tags::CPU::SSE>::value(DenseMatrix<float> & 
 
 DenseMatrix<double> & ElementProduct<tags::CPU::SSE>::value(DenseMatrix<double> & a, const DenseMatrix<double> & b)
 {
-    CONTEXT("When multiplying DenseMatrix<double> and DenseMatrix<double> elementwise with SSE:");
+    CONTEXT("When multiplying DenseMatrix<double> and DenseMatrix<double> elementwise (SSE):");
 
     if (a.columns() != b.columns())
     {

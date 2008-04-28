@@ -29,7 +29,7 @@ using namespace honei;
 DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, DenseVector<float> & x, DenseVector<float> & d, BandedMatrix<float> & a)
 {
 
-    CONTEXT("When performing singlestep Jacobi method with SSE.");
+    CONTEXT("When performing singlestep Jacobi method with SSE:");
     if (b.size() != a.columns())
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
@@ -169,7 +169,7 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
 DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b, DenseVector<double> & x, DenseVector<double> & d, BandedMatrix<double> & a)
 {
 
-    CONTEXT("When performing singlestep Jacobi method with SSE.");
+    CONTEXT("When performing singlestep Jacobi method with SSE:");
     if (b.size() != a.columns())
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());

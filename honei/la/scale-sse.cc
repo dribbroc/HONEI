@@ -153,7 +153,7 @@ using namespace honei;
 
 DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x, const float a)
 {
-    CONTEXT("When scaling DenseVectorContinuousBase<float> by float with SSE:");
+    CONTEXT("When scaling DenseVectorContinuousBase<float> by float (SSE):");
 
     intern::sse::scale(a, x.elements(), x.size());
 
@@ -162,7 +162,7 @@ DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(DenseVectorConti
 
 DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x, const double a)
 {
-    CONTEXT("When scaling DenseVectorContinuousBase<double> by double with SSE:");
+    CONTEXT("When scaling DenseVectorContinuousBase<double> by double (SSE):");
 
     intern::sse::scale(a, x.elements(), x.size());
 
@@ -171,7 +171,7 @@ DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(DenseVectorCont
 
 DenseMatrix<float> & Scale<tags::CPU::SSE>::value(DenseMatrix<float> & x, const float a)
 {
-    CONTEXT("When scaling DenseMatrix<float> by float with SSE:");
+    CONTEXT("When scaling DenseMatrix<float> by float (SSE):");
 
     intern::sse::scale(a, x.elements(), x.rows() * x.columns());
 
@@ -180,7 +180,7 @@ DenseMatrix<float> & Scale<tags::CPU::SSE>::value(DenseMatrix<float> & x, const 
 
 DenseMatrix<double> & Scale<tags::CPU::SSE>::value(DenseMatrix<double> & x, const double a)
 {
-    CONTEXT("When scaling DenseMatrix<double> by double with SSE:");
+    CONTEXT("When scaling DenseMatrix<double> by double (SSE):");
 
     intern::sse::scale(a, x.elements(), x.rows() * x.columns());
 
@@ -189,7 +189,7 @@ DenseMatrix<double> & Scale<tags::CPU::SSE>::value(DenseMatrix<double> & x, cons
 
 SparseVector<float> & Scale<tags::CPU::SSE>::value(SparseVector<float> & x, const float a)
 {
-    CONTEXT("When scaling SparseVector<float> by float with SSE:");
+    CONTEXT("When scaling SparseVector<float> by float (SSE):");
 
     intern::sse::scale(a, x.elements(), x.used_elements());
 
@@ -198,7 +198,7 @@ SparseVector<float> & Scale<tags::CPU::SSE>::value(SparseVector<float> & x, cons
 
 SparseVector<double> & Scale<tags::CPU::SSE>::value(SparseVector<double> & x, const double a)
 {
-    CONTEXT("When scaling SparseVector<double> by double with SSE:");
+    CONTEXT("When scaling SparseVector<double> by double (SSE):");
 
     intern::sse::scale(a, x.elements(), x.used_elements());
 
@@ -207,7 +207,7 @@ SparseVector<double> & Scale<tags::CPU::SSE>::value(SparseVector<double> & x, co
 
 SparseMatrix<float> & Scale<tags::CPU::SSE>::value(SparseMatrix<float> & x, const float a)
 {
-    CONTEXT("When scaling SparseMatrix<float> by float with SSE:");
+    CONTEXT("When scaling SparseMatrix<float> by float (SSE):");
 
     for (SparseMatrix<float>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)
@@ -220,7 +220,7 @@ SparseMatrix<float> & Scale<tags::CPU::SSE>::value(SparseMatrix<float> & x, cons
 
 SparseMatrix<double> & Scale<tags::CPU::SSE>::value(SparseMatrix<double> & x, const double a)
 {
-    CONTEXT("When scaling SparseMatrix<double> by double with SSE:");
+    CONTEXT("When scaling SparseMatrix<double> by double (SSE):");
 
     for (SparseMatrix<double>::RowIterator l(x.begin_non_zero_rows()),
             l_end(x.end_non_zero_rows()) ; l != l_end ; ++l)
