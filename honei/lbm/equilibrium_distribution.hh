@@ -43,7 +43,7 @@ template<typename Tag_>
 struct EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>
 {
     template<typename DT1_, typename DT2_>
-    static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& eq_distr, DenseMatrix<DT1_>& h, DT2_ g, DT2_ e)
+    static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DT2_ g, DT2_ e)
     {
         for(unsigned long i(0); i < h.rows(); ++i)
         {
@@ -55,4 +55,35 @@ struct EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types
     }
 };
 
+template<typename Tag_>
+struct EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>
+{
+    template<typename DT1_, typename DT2_>
+    static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DenseMatrix<DT1_>& u, DenseMatrix<DT1_>& v, DT2_ g, DT2_ e, DT2_ e_u, DT2_ e_v)
+    {
+        for(unsigned long i(0); i < h.rows(); ++i)
+        {
+            for(unsigned long j(0); j < h.columns(); ++j)
+            {
+                result(i,j) = ((g * h(i,j) * h(i,j)) /(6. * e * e)) + ((h(i,j) / (3. * e * e)) * e_u * u(i,j)) + ((h(i,j) / (2. * e * e)) * e_v * u(i,j) * v(i,j))- ((h(i,j) / (6. * e * e)) * u(i,j) * u(i,j));
+            }
+        }
+    }
+};
+
+template<typename Tag_>
+struct EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>
+{
+    template<typename DT1_, typename DT2_>
+    static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DenseMatrix<DT1_>& u, DenseMatrix<DT1_>& v, DT2_ g, DT2_ e, DT2_ e_u, DT2_ e_v)
+    {
+        for(unsigned long i(0); i < h.rows(); ++i)
+        {
+            for(unsigned long j(0); j < h.columns(); ++j)
+            {
+                result(i,j) = ((g * h(i,j) * h(i,j)) /(24. * e * e)) + ((h(i,j) / (12. * e * e)) * e_u * u(i,j)) + ((h(i,j) / (8. * e * e)) * e_v * u(i,j) * v(i,j))- ((h(i,j) / (24. * e * e)) * u(i,j) * u(i,j));
+            }
+        }
+    }
+};
 #endif

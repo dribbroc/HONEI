@@ -37,6 +37,9 @@ namespace honei
         {
             class D2Q9
             {
+                class DIR_ODD;
+                class DIR_EVEN;
+
                 class DIR_0;
                 class DIR_1;
                 class DIR_2;
