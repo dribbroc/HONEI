@@ -7,4 +7,8 @@ if CELL
   CELLDIR = cell
 endif
 
+if SSE
+  SSEDIR = sse
+endif
+
 SUBDIRS = $(CELLDIR)

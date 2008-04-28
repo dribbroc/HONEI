@@ -324,6 +324,7 @@ AC_OUTPUT(
 	honei/backends/cell/spe/libmath/Makefile
 	honei/backends/cell/spe/libswe/Makefile
 	honei/backends/cell/spe/libutil/Makefile
+	honei/backends/sse/Makefile
 	honei/graph/Makefile
 	honei/la/Makefile
 	honei/lbm/Makefile

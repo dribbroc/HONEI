@@ -47,6 +47,7 @@ endif
 if SSE
 
 SSEFILES = sselist
+SSELIB = $(top_builddir)/honei/backends/sse/libhoneibackendssse.la
 
 endif
 
@@ -67,7 +68,8 @@ lib_LTLIBRARIES = libhoneila.la
 libhoneila_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libhoneila_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(CELLLIB)
+	$(CELLLIB) \
+	$(SSELIB)
 
 libhoneila_includedir = $(includedir)/honei/la
 libhoneila_include_HEADERS = headerlist
