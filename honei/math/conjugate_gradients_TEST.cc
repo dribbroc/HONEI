@@ -57,7 +57,7 @@ class ConjugateGradientsTestDense:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,long(2));
+            DenseVector<DT1_> result = ConjugateGradients<Tag_, methods::NONE>::value(A,b,long(2));
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             cout<<"RESULT(v1):"<<result<<endl;
@@ -272,6 +272,7 @@ class ConjugateGradientsTestDense_big:
         ConjugateGradientsTestDense_big(const std::string & tag) :
             BaseTest("CG  solver BIG!!!! test (dense system)<" + tag + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
