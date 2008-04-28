@@ -82,7 +82,7 @@ std::list<BaseTest *> TestList::_tests;
 
 BaseTest::BaseTest(const std::string & id) :
     _id(id),
-    _tag_name(tags::CPU::name)
+    _tag_name(tags::NONE::name)
 {
     TestList::instance()->register_test(this);
 }
@@ -216,7 +216,8 @@ int main(int argc, char** argv)
                         ((*i)->get_tag_name()=="cell")))
                 continue;
 
-            std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + ":" << std::endl;
+            std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + " Tag: "
+                << (*i)->get_tag_name() << ":" << std::endl;
             (*i)->run();
             std::cout << "PASSED" << std::endl;
         }

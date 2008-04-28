@@ -37,7 +37,8 @@ namespace honei
             tv_cpu_multi_core,
             tv_cell,
             tv_gpu,
-            tv_fake /* used by unit tests */
+            tv_fake, /* used by unit tests */
+            tv_none
         };
 
 
@@ -119,6 +120,18 @@ namespace honei
                 public InstantiationPolicy<GPU, NonCopyable>
         {
             const static TagValue tag_value = tv_gpu;
+            const static std::string name;
+        };
+
+        /**
+         * Tag-type for none architecture specific operations.
+         *
+         * \ingroup gtptagsnone
+         */
+        struct NONE :
+                public InstantiationPolicy<NONE, NonCopyable>
+        {
+            const static TagValue tag_value = tv_none;
             const static std::string name;
         };
     }

@@ -29,6 +29,7 @@ const std::string tags::CPU::MultiCore::name = "mc";
 const std::string tags::CPU::MultiCore::SSE::name = "mc-sse";
 const std::string tags::Cell::name = "cell";
 const std::string tags::GPU::name = "gpu";
+const std::string tags::NONE::name = "none";
 
 std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
 {
@@ -50,6 +51,10 @@ std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
 
             case tags::tv_gpu:
                 left << "GPU";
+                continue;
+
+            case tags::tv_none:
+                left << "NONE";
                 continue;
 
             case tags::tv_fake:
