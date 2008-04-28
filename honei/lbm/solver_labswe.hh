@@ -100,8 +100,8 @@ namespace honei
 
                 unsigned long _grid_width, _grid_height;
 
-                DenseVector<ResPrec_>* _source_x;
-                DenseVector<ResPrec_>* _source_y;
+                DenseMatrix<ResPrec_>* _source_x;
+                DenseMatrix<ResPrec_>* _source_y;
 
                 /** Global constants.
                  *
