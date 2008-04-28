@@ -113,7 +113,7 @@ namespace honei
                 /** Capsule for the extration of SWE physical quantities.
                  *
                  **/
-                void extract()
+                void _extract()
                 {
                     DenseMatrix<ResPrec_> accu(_distribution_0->copy());
 
@@ -207,7 +207,7 @@ namespace honei
                     _gravity(9.81),
                     _n_alpha(ResPrec_(6))
             {
-                CONTEXT("When creating LABSWE solver.");
+                CONTEXT("When creating LABSWE solver:");
                 _e = _delta_x / _delta_t;
                 _distribution_vector_x = new DenseVector<ResPrec_>(9ul);
                 _distribution_vector_y = new DenseVector<ResPrec_>(9ul);
@@ -339,7 +339,7 @@ namespace honei
              **/
             void solve()
             {
-                extract();
+                _extract();
             };
 
         };

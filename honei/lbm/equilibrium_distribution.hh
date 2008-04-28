@@ -45,6 +45,7 @@ struct EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types
     template<typename DT1_, typename DT2_>
     static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DT2_ g, DT2_ e)
     {
+        CONTEXT("When computing LABSWE local equilibrium distribution function (direction 0):");
         for(unsigned long i(0); i < h.rows(); ++i)
         {
             for(unsigned long j(0); j < h.columns(); ++j)
@@ -61,6 +62,7 @@ struct EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types
     template<typename DT1_, typename DT2_>
     static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DenseMatrix<DT1_>& u, DenseMatrix<DT1_>& v, DT2_ g, DT2_ e, DT2_ e_u, DT2_ e_v)
     {
+        CONTEXT("When computing LABSWE local equilibrium distribution function (odd direction):");
         for(unsigned long i(0); i < h.rows(); ++i)
         {
             for(unsigned long j(0); j < h.columns(); ++j)
@@ -77,6 +79,7 @@ struct EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types
     template<typename DT1_, typename DT2_>
     static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DenseMatrix<DT1_>& u, DenseMatrix<DT1_>& v, DT2_ g, DT2_ e, DT2_ e_u, DT2_ e_v)
     {
+        CONTEXT("When computing LABSWE local equilibrium distribution function (even direction):");
         for(unsigned long i(0); i < h.rows(); ++i)
         {
             for(unsigned long j(0); j < h.columns(); ++j)

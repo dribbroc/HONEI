@@ -51,7 +51,7 @@ namespace honei
         template<typename DT1_, typename DT2_, typename DT3_>
             static void value(DenseMatrix<DT1_> & result, DenseMatrix<DT1_>& h, DenseMatrix<DT2_>& dbx, DT3_ g)
             {
-                CONTEXT("When computing LABSWE source term.");
+                CONTEXT("When computing LABSWE source term:");
                 for(unsigned long i(0); i < h.rows(); ++i)
                 {
                     for(unsigned long j(0); j < h.columns(); ++j)
