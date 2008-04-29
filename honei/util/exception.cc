@@ -26,6 +26,8 @@
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/stringify.hh>
 
+#include <iostream>
+
 #include <cxxabi.h>
 #include <list>
 #include <string>
@@ -39,16 +41,14 @@ namespace
         std::string result;
 
         if (begin != end)
-        {
-            result = *begin;
-            ++begin;
-
-            while (begin != end)
+            while (true)
             {
-                result += delimiter;
                 result += *begin;
+                if (++begin == end)
+                    break;
+
+                result += delimiter;
             }
-        }
 
         return result;
     }
@@ -106,6 +106,9 @@ Context::~Context()
 std::string
 Context::backtrace(const std::string & delimiter)
 {
+    if (! context_stack)
+        return "";
+
     return join(context_stack->begin(), context_stack->end(), delimiter);
 }
 
