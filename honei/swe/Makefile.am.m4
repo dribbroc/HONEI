@@ -12,9 +12,10 @@ define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(BACKEND_LIBS) \
 	$(top_builddir)/honei/la/libhoneila.la \
 	libhoneiswe.la \
-	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -35,9 +36,15 @@ define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1
 
 include(`honei/swe/files.m4')
 
+BACKEND_LIBS =
+
 if CELL
 
 CELLFILES = celllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/cell/ppe/libhoneibackendscellppe.la \
+	$(top_builddir)/honei/backends/cell/spe/libhoneibackendscellspe.la
+
 CELLTESTLIBS = $(top_builddir)/honei/cell/libcell.la
 
 endif
@@ -45,6 +52,8 @@ endif
 if SSE
 
 SSEFILES = sselist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/sse/libhoneibackendssse.la
 
 endif
 

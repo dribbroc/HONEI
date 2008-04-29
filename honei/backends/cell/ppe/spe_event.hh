@@ -20,8 +20,8 @@
 #ifndef LIBUTIL_GUARD_SPE_EVENT_HH
 #define LIBUTIL_GUARD_SPE_EVENT_HH 1
 
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/instantiation_policy.hh>
-#include <honei/util/spe_manager.hh>
 
 namespace honei
 {

@@ -19,17 +19,16 @@
  */
 
 #include <honei/backends/cell/cell.hh>
+#include <honei/backends/cell/ppe/spe_instruction.hh>
+#include <honei/backends/cell/ppe/spe_kernel.hh>
+#include <honei/backends/cell/ppe/spe_kernel_manager.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/configuration.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/log.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
-#include <honei/util/spe_instruction.hh>
-#include <honei/util/spe_kernel.hh>
-#include <honei/util/spe_kernel_manager.hh>
-#include <honei/util/spe_manager.hh>
-
 #include <string>
 #include <tr1/functional>
 

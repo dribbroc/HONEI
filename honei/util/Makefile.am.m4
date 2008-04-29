@@ -9,9 +9,6 @@ define(`general_headerlist', `')dnl
 define(`gpu_filelist', `')dnl
 define(`gpu_testlist', `')dnl
 define(`gpu_headerlist', `')dnl
-define(`cell_filelist', `')dnl
-define(`cell_testlist', `')dnl
-define(`cell_headerlist', `')dnl
 define(`hdf5_filelist', `')dnl
 define(`hdf5_testlist', `')dnl
 define(`hdf5_headerlist', `')dnl
@@ -60,24 +57,6 @@ GPUSOURCES =
 GPUTESTS =
 GPUHEADERS =
 GPULIBS =
-
-endif
-
-if CELL
-
-CELLSOURCES = cell_filelist
-CELLTESTS = cell_testlist
-CELLHEADERS = cell_headerlist
-CELLLIBS = -lspe2
-CELLTESTLIBS = $(top_srcdir)/honei/backends/cell/spe/libhoneibackendscellspe.la
-
-else
-
-CELLSOURCES =
-CELLTESTS =
-CELLHEADERS =
-CELLLIBS =
-CELLTESTLIBS =
 
 endif
 

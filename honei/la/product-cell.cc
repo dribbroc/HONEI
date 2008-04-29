@@ -20,17 +20,15 @@
  */
 
 #include <honei/backends/cell/cell.hh>
+#include <honei/backends/cell/ppe/memory_backend_cell.hh>
+#include <honei/backends/cell/ppe/spe_instruction.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
+#include <honei/backends/cell/ppe/spe_transfer_list.hh>
 #include <honei/la/product.hh>
 #include <honei/la/sum.hh>
-#include <honei/util/memory_backend_cell.hh>
-#include <honei/util/spe_instruction.hh>
-#include <honei/util/spe_manager.hh>
 #include <honei/util/profiler.hh>
-#include <honei/util/spe_transfer_list.hh>
-#include <list>
 
-//#include <iostream>
-//#include <honei/util/time_stamp.hh>
+#include <list>
 
 namespace honei
 {

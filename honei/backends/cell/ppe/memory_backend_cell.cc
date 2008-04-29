@@ -19,15 +19,15 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/cell/ppe/memory_backend_cell.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/memory_manager.hh>
-#include <honei/util/memory_backend_cell.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/log.hh>
-#include <honei/util/spe_manager.hh>
 #include <honei/util/tags.hh>
 
 #include <list>

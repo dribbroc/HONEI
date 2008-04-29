@@ -20,10 +20,10 @@
  */
 
 #include <honei/backends/cell/cell.hh>
+#include <honei/backends/cell/ppe/memory_backend_cell.hh>
+#include <honei/backends/cell/ppe/spe_instruction.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/la/sum.hh>
-#include <honei/util/memory_backend_cell.hh>
-#include <honei/util/spe_instruction.hh>
-#include <honei/util/spe_manager.hh>
 #include <honei/util/stringify.hh>
 #include <honei/util/partitioner.hh>
 

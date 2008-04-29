@@ -18,10 +18,10 @@
  */
 
 #include <honei/backends/cell/cell.hh>
+#include <honei/backends/cell/ppe/memory_backend_cell.hh>
+#include <honei/backends/cell/ppe/spe_instruction.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/graph/node_distance.hh>
-#include <honei/util/memory_backend_cell.hh>
-#include <honei/util/spe_instruction.hh>
-#include <honei/util/spe_manager.hh>
 
 namespace honei
 {

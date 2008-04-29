@@ -17,6 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/cell/ppe/spe_kernel.hh>
+#include <honei/backends/cell/ppe/spe_kernel_manager.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy-impl.hh>
@@ -24,8 +26,6 @@
 #include <honei/util/log.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
-#include <honei/util/spe_kernel.hh>
-#include <honei/util/spe_kernel_manager.hh>
 
 #include <algorithm>
 #include <list>

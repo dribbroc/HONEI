@@ -23,7 +23,7 @@
 #define DEBUG 1
 #endif
 
-#include <honei/util/spe_transfer_list.hh>
+#include <honei/backends/cell/ppe/spe_transfer_list.hh>
 #include <unittest/unittest.hh>
 
 #include <iostream>

@@ -17,10 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/cell/ppe/spe_error.hh>
+#include <honei/backends/cell/ppe/spe_event.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy-impl.hh>
-#include <honei/util/spe_event.hh>
 #include <honei/util/stringify.hh>
 
 #include <cerrno>

@@ -21,7 +21,7 @@ EXTRA_DIST = \
 DEFS = \
 	$(DEBUGDEF)
 
-noinst_LTLIBRARIES = libhoneibackendscellspe.la
+lib_LTLIBRARIES = libhoneibackendscellspe.la
 libhoneibackendscellspe_la_SOURCES = sourceslist
 libhoneibackendscellspe_la_LIBADD = objlist
 

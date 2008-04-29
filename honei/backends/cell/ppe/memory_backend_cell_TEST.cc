@@ -5,16 +5,14 @@
 #define DEBUG 1
 #endif
 
+#include <honei/backends/cell/ppe/memory_backend_cell.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/assertion.hh>
-#include <honei/util/memory_backend_cell.hh>
-#include <honei/util/spe_manager.hh>
 #include <honei/util/stringify.hh>
 #include <unittest/unittest.hh>
 
 #include <cmath>
 #include <map>
-
-#include <iostream>
 
 #include <libspe2.h>
 
@@ -32,7 +30,6 @@ class CellBackendFunctionTest :
 
         virtual void run() const
         {
-            std::cout << "CBFT::run() started!" << std::endl;
             float * a(new float[32]),
                   * b(new float[32]),
                   * c(new float[32]);

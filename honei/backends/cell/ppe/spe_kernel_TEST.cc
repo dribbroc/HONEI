@@ -6,13 +6,11 @@
 #endif
 
 #include <honei/backends/cell/cell.hh>
-#include <honei/util/spe_kernel.hh>
+#include <honei/backends/cell/ppe/spe_kernel.hh>
 #include <unittest/unittest.hh>
 
 #include <tr1/functional>
 #include <tr1/memory>
-
-#include <iostream>
 
 using namespace honei;
 using namespace tests;

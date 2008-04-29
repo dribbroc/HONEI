@@ -23,9 +23,9 @@
 #define LIBUTIL_GUARD_SPE_INSTRUCTION_HH 1
 
 #include <honei/backends/cell/cell.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
+#include <honei/backends/cell/ppe/spe_kernel.hh>
 #include <honei/util/private_implementation_pattern.hh>
-#include <honei/util/spe_manager.hh>
-#include <honei/util/spe_kernel.hh>
 
 #include <list>
 #include <vector>

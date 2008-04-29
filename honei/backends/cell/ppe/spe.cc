@@ -18,11 +18,12 @@
  */
 
 #include <honei/backends/cell/interface.hh>
+#include <honei/backends/cell/ppe/spe_error.hh>
+#include <honei/backends/cell/ppe/spe_kernel.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/log.hh>
 #include <honei/util/mutex.hh>
-#include <honei/util/spe_kernel.hh>
-#include <honei/util/spe_manager.hh>
 #include <honei/util/thread.hh>
 
 #include <string>

@@ -178,7 +178,3 @@ PThreadError::PThreadError(const std::string & function, int errno) throw () :
 {
 }
 
-SPEError::SPEError(const std::string & function, int errno) throw () :
-    ExternalError("libspe2", function + " failed, " + stringify(strerror(errno)))
-{
-}

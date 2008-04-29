@@ -183,25 +183,6 @@ namespace honei
              */
             PThreadError(const std::string & function, int errno) throw ();
     };
-
-    /**
-     * SPEError is thrown by SPEManager and related classes whenever an error
-     * occurs in interfacing Libspe2.
-     *
-     * \ingroup grpexceptions
-     * \ingroup grpcell
-     */
-    struct SPEError :
-        public ExternalError
-    {
-        /**
-         * Constructor.
-         *
-         * \param msg The error message.
-         * \param reason The reason for the error message.
-         */
-        SPEError(const std::string & function, int errno) throw ();
-    };
 }
 
 #endif

@@ -2,4 +2,4 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = \
 	Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
-SUBDIRS = spe
+SUBDIRS = spe ppe

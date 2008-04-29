@@ -21,9 +21,9 @@
 #define LIBUTIL_GUARD_SPE_KERNEL_HH 1
 
 #include <honei/backends/cell/interface.hh>
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/time_stamp.hh>
 #include <honei/util/private_implementation_pattern.hh>
-#include <honei/util/spe_manager.hh>
 
 namespace honei
 {

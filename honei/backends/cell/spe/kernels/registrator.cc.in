@@ -20,7 +20,7 @@
  */
 
 #include <honei/backends/cell/interface.hh>
-#include <honei/util/spe_kernel_manager.hh>
+#include <honei/backends/cell/ppe/spe_kernel_manager.hh>
 
 using namespace honei;
 using namespace honei::cell;
@@ -52,4 +52,4 @@ const KernelInfo @IDENTIFIER@_info = {
     "@NAME@"
 };
 
-static const SPEKernelRegistrator @IDENTIFIER@_registrator(@IDENTIFIER@_info);
+extern const SPEKernelRegistrator @IDENTIFIER@_registrator(@IDENTIFIER@_info);

@@ -317,6 +317,7 @@ AC_OUTPUT(
 	honei/Makefile
 	honei/backends/Makefile
 	honei/backends/cell/Makefile
+	honei/backends/cell/ppe/Makefile
 	honei/backends/cell/spe/Makefile
 	honei/backends/cell/spe/kernels/Makefile
 	honei/backends/cell/spe/libgraph/Makefile

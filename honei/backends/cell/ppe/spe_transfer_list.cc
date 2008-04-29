@@ -19,9 +19,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/cell/ppe/spe_transfer_list.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
-#include <honei/util/spe_transfer_list.hh>
 
 #include <tr1/memory>
 

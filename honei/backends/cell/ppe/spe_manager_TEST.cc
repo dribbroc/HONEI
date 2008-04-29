@@ -5,9 +5,9 @@
 #define DEBUG 1
 #endif
 
+#include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/lock.hh>
-#include <honei/util/spe_manager.hh>
 #include <unittest/unittest.hh>
 
 #include <iostream>

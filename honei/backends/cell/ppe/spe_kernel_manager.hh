@@ -20,8 +20,8 @@
 #ifndef LIBUTIL_GUARD_SPE_KERNEL_MANAGER_HH
 #define LIBUTIL_GUARD_SPE_KERNEL_MANAGER_HH 1
 
+#include <honei/backends/cell/ppe/spe_kernel.hh>
 #include <honei/util/instantiation_policy.hh>
-#include <honei/util/spe_kernel.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
