@@ -8,4 +8,4 @@ if VISUAL
   VISUALDIR = visual
 endif
 
-SUBDIRS = backends util la math graph swe lbm $(VISUALDIR)
+SUBDIRS = util backends la math graph swe lbm $(VISUALDIR)

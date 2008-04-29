@@ -15,6 +15,7 @@ $1_TEST_LDADD = \
 	libhoneila.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(CELLTESTLIBS) \
+	$(SSELIB) \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -68,8 +69,8 @@ lib_LTLIBRARIES = libhoneila.la
 libhoneila_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
 libhoneila_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(CELLLIB) \
-	$(SSELIB)
+	$(SSELIB) \
+	$(CELLLIB)
 
 libhoneila_includedir = $(includedir)/honei/la
 libhoneila_include_HEADERS = headerlist

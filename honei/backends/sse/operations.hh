@@ -24,11 +24,36 @@ namespace honei
 {
     namespace sse
     {
-        namespace operations
-        {
-            //extern Operation<1, float, rtm_dma> element_inverse_float;
+        void difference(float * a, const float * b, unsigned long size);
+        void difference(double * a, const double * b, unsigned long size);
 
-        }
+        float dot_product(const float * a, float * b, unsigned long size);
+        double dot_product(double * a, double * b, unsigned long size);
+
+        void element_inverse(float * x, unsigned long size);
+        void element_inverse(double * x, unsigned long size);
+
+        void element_product(float * a, const float * b, unsigned long size);
+        void element_product(double * a, const double * b, unsigned long size);
+
+        float norm_l2(const float * a, unsigned long size);
+        double norm_l2(double * a, unsigned long size);
+
+        float reduction_sum(const float * a, unsigned long size);
+        double reduction_sum(double * a, unsigned long size);
+
+        void scaled_sum(float * x, const float * y, float b, unsigned long size);
+        void scaled_sum(double * x, const double * y, double b, unsigned long size);
+        void scaled_sum(float * x, const float * y, const float * z, unsigned long size);
+        void scaled_sum(double * x, const double * y, const double * z, unsigned long size);
+
+        void scale(const float a, float * x, unsigned long size);
+        void scale(const double a, double * x, unsigned long size);
+
+        void sum(float * a, const float * b, unsigned long size);
+        void sum(double * a, const double * b, unsigned long size);
+        void sum(const float a, float * x, unsigned long size);
+        void sum(const double a, double * x, unsigned long size);
     }
 }
 
