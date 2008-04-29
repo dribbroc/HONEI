@@ -3,11 +3,11 @@
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
- * This file is part of the LBM C++ library. LibLBM is free software;
+ * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLBM is distributed in the hope that it will be useful, but WITHOUT ANY
+ * LBM is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef LIBLBM_GUARD_SOURCE_HH
-#define LIBLBM_GUARD_SOURCE_HH 1
+#ifndef LBM_GUARD_SOURCE_HH
+#define LBM_GUARD_SOURCE_HH 1
 
 /**
  * \file
@@ -36,8 +36,7 @@ using namespace honei::lbm;
 
 namespace honei
 {
-
-    template <typename Tag_,
+   template <typename Tag_,
               typename App_,
               typename SourceType_,
               typename SourceScheme_>
@@ -45,9 +44,25 @@ namespace honei
     {
     };
 
+    /**
+     * \brief Simple source term for use with LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>
     {
+        /**
+         * \name Source term.
+         *
+         * \brief Computes a simple source term value.
+         *
+         * \param result The destination matrix.
+         * \param h The height matrix.
+         * \param dbx The matrix containing the slope values.
+         * \param g The gravitational constant to be used.
+         *
+         */
         template<typename DT1_, typename DT2_, typename DT3_>
             static void value(DenseMatrix<DT1_> & result, DenseMatrix<DT1_>& h, DenseMatrix<DT2_>& dbx, DT3_ g)
             {

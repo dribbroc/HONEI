@@ -3,11 +3,11 @@
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
- * This file is part of the LBM C++ library. LibLBM is free software;
+ * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLBM is distributed in the hope that it will be useful, but WITHOUT ANY
+ * LBM is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -18,8 +18,8 @@
  */
 
 
-#ifndef LIBLBM_GUARD_SOLVER_LABSWE_HH
-#define LIBLBM_GUARD_SOLVER_LABSWE_HH 1
+#ifndef LBM_GUARD_SOLVER_LABSWE_HH
+#define LBM_GUARD_SOLVER_LABSWE_HH 1
 
 /**
  * \file
@@ -115,6 +115,7 @@ namespace honei
                  **/
                 void _extract()
                 {
+                    CONTEXT("When extracting physical quantities in LABSWE:");
                     DenseMatrix<ResPrec_> accu(_distribution_0->copy());
 
                     Sum<Tag_>::value(accu, *_distribution_1);
@@ -161,6 +162,7 @@ namespace honei
 
                     DenseMatrix<ResPrec_> h_inv(_height->copy());
                     ElementInverse<Tag_>::value(h_inv);
+                    //Eventually, elementwise product is to be used here, TODO: verify
                     *_u = Product<Tag_>::value(h_inv, accu2);
 
                     Scale<Tag_>::value( d0c, (*_distribution_vector_y)[0]);
@@ -185,6 +187,7 @@ namespace honei
                     Sum<Tag_>::value(accu3, d8c);
 
                     ElementInverse<Tag_>::value(h_inv);
+                    //Eventually, elementwise product is to be used here, TODO: verify
                     *_v = Product<Tag_>::value(h_inv, accu3);
 
                 }
@@ -204,8 +207,8 @@ namespace honei
                     _u(u),
                     _v(v),
                     _pi(3.14159265),
-                    _gravity(9.81),
-                    _n_alpha(ResPrec_(6))
+                    _gravity(9.80665),
+                    _n_alpha(ResPrec_(6.))
             {
                 CONTEXT("When creating LABSWE solver:");
                 _e = _delta_x / _delta_t;

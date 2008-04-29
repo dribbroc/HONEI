@@ -3,11 +3,11 @@
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
- * This file is part of the LBM C++ library. LibLBM is free software;
+ * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLBM is distributed in the hope that it will be useful, but WITHOUT ANY
+ * LBM is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -18,12 +18,12 @@
  */
 
 
-#ifndef LIBLBM_GUARD_TAGS_HH
-#define LIBLBM_GUARD_TAGS_HH 1
+#ifndef LBM_GUARD_TAGS_HH
+#define LBM_GUARD_TAGS_HH 1
 
 /**
  * \file
- * Implementation of a SWE solver using LBM.
+ * Definition of LBM related tags.
  *
  * \ingroup grpliblbm
  **/

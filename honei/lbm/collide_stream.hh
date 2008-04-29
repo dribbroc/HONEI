@@ -3,11 +3,11 @@
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
- * This file is part of the LBM C++ library. LibLBM is free software;
+ * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLBM is distributed in the hope that it will be useful, but WITHOUT ANY
+ * LBM is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -42,9 +42,28 @@ namespace honei
     {
     };
 
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_1>
     {
+        /**
+         * \name Collision and Streaming for direction 1..
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -85,9 +104,28 @@ namespace honei
         }
     };
 
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_2>
     {
+        /**
+         * \name Collision and Streaming for direction 2.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -128,9 +166,28 @@ namespace honei
         }
     };
 
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_3>
     {
+        /**
+         * \name Collision and Streaming for direction 3.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -170,9 +227,29 @@ namespace honei
             }
         }
     };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_4>
     {
+        /**
+         * \name Collision and Streaming for direction 4.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -212,9 +289,29 @@ namespace honei
             }
         }
     };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_5>
     {
+        /**
+         * \name Collision and Streaming for direction 5.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -254,9 +351,29 @@ namespace honei
             }
         }
     };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_6>
     {
+        /**
+         * \name Collision and Streaming for direction 6.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -296,9 +413,29 @@ namespace honei
             }
         }
     };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_7>
     {
+        /**
+         * \name Collision and Streaming for direction 7.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -338,9 +475,29 @@ namespace honei
             }
         }
     };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_8>
     {
+        /**
+         * \name Collision and Streaming for direction 8.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
@@ -380,9 +537,29 @@ namespace honei
             }
         }
     };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
     template <typename Tag_>
     struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>
     {
+        /**
+         * \name Collision and Streaming for direction 0.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param temp_dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& temp_dist,
