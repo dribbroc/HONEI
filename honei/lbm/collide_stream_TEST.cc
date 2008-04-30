@@ -65,5 +65,9 @@ class CollideStreamLABSWETest :
             TEST_CHECK(true);
         }
 };
-CollideStreamLABSWETest<tags::CPU, float> source_test_float("float");
-CollideStreamLABSWETest<tags::CPU, double> source_test_double("double");
+CollideStreamLABSWETest<tags::CPU, float> source_test_float("CPU float");
+CollideStreamLABSWETest<tags::CPU, double> source_test_double("CPU double");
+#ifdef HONEI_SSE
+CollideStreamLABSWETest<tags::CPU::SSE, float> source_test_float_sse("SSE float");
+CollideStreamLABSWETest<tags::CPU::SSE, double> source_test_double_sse("SSE double");
+#endif

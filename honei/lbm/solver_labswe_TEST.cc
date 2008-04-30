@@ -46,5 +46,9 @@ class SolverLABSWETest :
         }
 
 };
-SolverLABSWETest<tags::CPU, float> solver_test_float("float");
-SolverLABSWETest<tags::CPU, double> solver_test_double("double");
+SolverLABSWETest<tags::CPU, float> solver_test_float("CPU float");
+SolverLABSWETest<tags::CPU, double> solver_test_double("CPU double");
+#ifdef HONEI_SSE
+SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("SSE float");
+SolverLABSWETest<tags::CPU::SSE, double> solver_test_double_sse("SSE double");
+#endif

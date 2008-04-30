@@ -71,3 +71,7 @@ class EqDisLABSWETest :
 };
 EqDisLABSWETest<tags::CPU, double> source_test_double("CPU double");
 EqDisLABSWETest<tags::CPU, float> source_test_float("CPU float");
+#ifdef HONEI_SSE
+EqDisLABSWETest<tags::CPU::SSE, double> source_test_double_sse("SSE double");
+EqDisLABSWETest<tags::CPU::SSE, float> source_test_float_sse("SSE float");
+#endif

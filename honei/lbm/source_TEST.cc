@@ -62,5 +62,9 @@ class SourceLABSWETest :
             }
         }
 };
-SourceLABSWETest<tags::CPU, float> source_test_float("float");
-SourceLABSWETest<tags::CPU, double> source_test_double("double");
+SourceLABSWETest<tags::CPU, float> source_test_float("CPU float");
+SourceLABSWETest<tags::CPU, double> source_test_double("CPU double");
+#ifdef HONEI_SSE
+SourceLABSWETest<tags::CPU::SSE, float> source_test_float_sse("SSE float");
+SourceLABSWETest<tags::CPU::SSE, double> source_test_double_sse("SSE double");
+#endif
