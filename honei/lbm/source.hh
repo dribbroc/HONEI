@@ -76,5 +76,40 @@ namespace honei
                 }
             }
     };
+
+    /**
+     * \brief Simple source term for use with LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>
+    {
+        /**
+         * \name Source term.
+         *
+         * \brief Computes a simple source term value.
+         *
+         * \param result The destination matrix.
+         * \param h The height matrix.
+         * \param dbx The matrix containing the slope values.
+         * \param g The gravitational constant to be used.
+         * \param constant The constant to be applied.
+         *
+         */
+        template<typename DT1_, typename DT2_>
+            static void value(DenseMatrix<DT1_> & result, DenseMatrix<DT1_>& h, DenseMatrix<DT2_>& dbx, DT2_ g, DT2_ constant)
+            {
+                CONTEXT("When computing LABSWE source term:");
+                for(unsigned long i(0); i < h.rows(); ++i)
+                {
+                    for(unsigned long j(0); j < h.columns(); ++j)
+                    {
+                        result(i,j) = constant;
+                    }
+                }
+            }
+    };
+
 }
 #endif

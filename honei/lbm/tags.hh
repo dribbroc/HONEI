@@ -58,6 +58,7 @@ namespace honei
         namespace lbm_source_types
         {
             class SIMPLE;
+            class CONSTANT;
         }
         namespace lbm_source_schemes
         {

@@ -51,6 +51,15 @@ class SourceLABSWETest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(result(i,j), - g * 1.23456 * 0., std::numeric_limits<DataType_>::epsilon());
                 }
             }
+            Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
+                value(result, h, db, g, DataType_(0.000024));
+            for(unsigned long i(0); i < 1000; ++i)
+            {
+                for(unsigned long j(0); j < 1000; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(result(i,j), 0.000024, std::numeric_limits<DataType_>::epsilon());
+                }
+            }
         }
 };
 SourceLABSWETest<tags::CPU, float> source_test_float("float");
