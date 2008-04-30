@@ -67,7 +67,11 @@ class CollideStreamLABSWETest :
 };
 CollideStreamLABSWETest<tags::CPU, float> source_test_float("CPU float");
 CollideStreamLABSWETest<tags::CPU, double> source_test_double("CPU double");
+CollideStreamLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("MC float");
+CollideStreamLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("MC double");
 #ifdef HONEI_SSE
 CollideStreamLABSWETest<tags::CPU::SSE, float> source_test_float_sse("SSE float");
 CollideStreamLABSWETest<tags::CPU::SSE, double> source_test_double_sse("SSE double");
+CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("MCSSE float");
+CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("MCSSE double");
 #endif
