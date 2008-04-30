@@ -47,3 +47,4 @@ class SolverLABSWETest :
 
 };
 SolverLABSWETest<tags::CPU, float> solver_test_float("float");
+SolverLABSWETest<tags::CPU, double> solver_test_double("double");

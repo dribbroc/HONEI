@@ -63,3 +63,4 @@ class SourceLABSWETest :
         }
 };
 SourceLABSWETest<tags::CPU, float> source_test_float("float");
+SourceLABSWETest<tags::CPU, double> source_test_double("double");

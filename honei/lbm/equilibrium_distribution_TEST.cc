@@ -62,11 +62,12 @@ class EqDisLABSWETest :
             {
                 for(unsigned long j(0); j < 1000; ++j)
                 {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(result_1(i,j), (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.))), std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS(result_2(i,j), ((9.81 * 1.23456 * 1.23456) / 6. + ((1.23456 / 3.) * 2. * 1.23456) + ((1.23456 / 2.) * 2. * 1.23456 * 1.23456) - ((1.23456 / 6.) * 1.23456 * 1.23456)), std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS(result_3(i,j), ((9.81 * 1.23456 * 1.23456) / 24. + ((1.23456 / 12.) * 2. * 1.23456) + ((1.23456 / 8.) * 2. * 1.23456 * 1.23456) - ((1.23456 / 24.) * 1.23456 * 1.23456)), std::numeric_limits<DataType_>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(result_1(i,j), (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.))), std::numeric_limits<DataType_>::epsilon() * 7.);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(result_2(i,j), ((9.81 * 1.23456 * 1.23456) / 6. + ((1.23456 / 3.) * 2. * 1.23456) + ((1.23456 / 2.) * 2. * 1.23456 * 1.23456) - ((1.23456 / 6.) * 1.23456 * 1.23456)), std::numeric_limits<DataType_>::epsilon() * 7.);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(result_3(i,j), ((9.81 * 1.23456 * 1.23456) / 24. + ((1.23456 / 12.) * 2. * 1.23456) + ((1.23456 / 8.) * 2. * 1.23456 * 1.23456) - ((1.23456 / 24.) * 1.23456 * 1.23456)), std::numeric_limits<DataType_>::epsilon() * 7.);
                 }
             }
         }
 };
-EqDisLABSWETest<tags::CPU, double> source_test_float("CPU double");
+EqDisLABSWETest<tags::CPU, double> source_test_double("CPU double");
+EqDisLABSWETest<tags::CPU, float> source_test_float("CPU float");

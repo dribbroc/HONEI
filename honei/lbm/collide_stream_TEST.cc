@@ -66,3 +66,4 @@ class CollideStreamLABSWETest :
         }
 };
 CollideStreamLABSWETest<tags::CPU, float> source_test_float("float");
+CollideStreamLABSWETest<tags::CPU, double> source_test_double("double");
