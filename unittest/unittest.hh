@@ -4,7 +4,7 @@
  * Copyright (c) 2007 Andre Matuschek <andre@matuschek.org>
  * Copyright (c) 2007 David Gies <david-gies@gmx.de>
  * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -33,7 +33,7 @@
 /**
  * \file
  *
- * Implementation of Basetest and related classes.
+ * Implementation of BaseTest and related classes.
  *
  * \ingroup tests
  **/
@@ -41,6 +41,7 @@ using namespace honei;
 
 namespace tests
 {
+
     /**
      * Baseclass for all testingclasses
      * \ingroup tests
@@ -60,13 +61,13 @@ namespace tests
             BaseTest(const std::string & id);
 
             /// Destructor.
-            virtual ~BaseTest() {}
+            ~BaseTest() {}
 
             /// Returns our id string.
-            const std::string id() const;
+            virtual const std::string id() const;
 
             /// Utility method used bei TEST_CHECK_*
-            void check(const char * const function, const char * const file,
+            virtual void check(const char * const function, const char * const file,
                     const long line, bool was_ok, const std::string & message) const;
 
             /**
@@ -134,7 +135,65 @@ namespace tests
     };
 
     /**
-     * Abstract Baseclass for all quick-test classes.
+     * Abstract Baseclass for all tagged test classes.
+     * \ingroup tests
+     */
+    template <typename Tag_>
+    class TaggedTest : public BaseTest
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param id The testcase's id string.
+             */
+            TaggedTest(const std::string & id):
+                BaseTest(id)
+            {
+                _tag_name = Tag_::name;
+            };
+
+            /// Destructor.
+            virtual ~TaggedTest() {}
+
+            /// Returns whether we are a quick-test.
+            virtual bool is_quick_test() const
+            {
+                return false;
+            };
+    };
+
+    /**
+     * Abstract Baseclass for all tagged quick test classes.
+     * \ingroup tests
+     */
+    template <typename Tag_>
+    class QuickTaggedTest : public BaseTest
+    {
+        public:
+            /**
+             * Constructor.
+             *
+             * \param id The testcase's id string.
+             */
+            QuickTaggedTest(const std::string & id):
+                BaseTest(id)
+            {
+                _tag_name = Tag_::name;
+            }
+
+            /// Destructor.
+            virtual ~QuickTaggedTest() {}
+
+            /// Returns whether we are a quick-test.
+            virtual bool is_quick_test() const
+            {
+                return true;
+            }
+    };
+
+    /**
+     * Abstract Baseclass for all untagged quick test classes.
      * \ingroup tests
      */
     class QuickTest : public BaseTest
@@ -145,13 +204,19 @@ namespace tests
              *
              * \param id The testcase's id string.
              */
-            QuickTest(const std::string & id);
+            QuickTest(const std::string & id):
+                BaseTest(id)
+            {
+            }
 
             /// Destructor.
             virtual ~QuickTest() {}
 
             /// Returns whether we are a quick-test.
-            virtual bool is_quick_test() const;
+            virtual bool is_quick_test() const
+            {
+                return true;
+            }
     };
 
     /**
