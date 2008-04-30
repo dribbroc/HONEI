@@ -192,6 +192,24 @@ namespace honei
 
                 }
 
+                /** Applies the noslip boundaries in north and south directions.
+                 *
+                 **/
+                void _apply_noslip_boundaries()
+                {
+                    for(unsigned long i(0) ; i < _grid_width ; ++i)
+                    {
+                        (*_temp_distribution_2)(0, i) = (*_temp_distribution_6)(0,i);
+                        (*_temp_distribution_3)(0, i) = (*_temp_distribution_7)(0,i);
+                        (*_temp_distribution_4)(0, i) = (*_temp_distribution_8)(0,i);
+
+                        (*_temp_distribution_6)(0, i) = (*_temp_distribution_2)(0,i);
+                        (*_temp_distribution_7)(0, i) = (*_temp_distribution_3)(0,i);
+                        (*_temp_distribution_8)(0, i) = (*_temp_distribution_4)(0,i);
+                    }
+                };
+
+
             public:
                 SolverLABSWE(ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseMatrix<ResPrec_>* height,
                                                                                                         DenseMatrix<ResPrec_>* bottom,
@@ -342,6 +360,7 @@ namespace honei
              **/
             void solve()
             {
+                _apply_noslip_boundaries();
                 _extract();
             };
 
