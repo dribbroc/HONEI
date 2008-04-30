@@ -33,7 +33,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sum.hh>
 #include <honei/la/scale.hh>
-#include <honei/la/product.hh>
+#include <honei/la/element_product.hh>
 #include <honei/la/element_inverse.hh>
 #include <cmath>
 
@@ -163,7 +163,7 @@ namespace honei
                     DenseMatrix<ResPrec_> h_inv(_height->copy());
                     ElementInverse<Tag_>::value(h_inv);
                     //Eventually, elementwise product is to be used here, TODO: verify
-                    *_u = Product<Tag_>::value(h_inv, accu2);
+                    *_u = ElementProduct<Tag_>::value(h_inv, accu2);
 
                     Scale<Tag_>::value( d0c, (*_distribution_vector_y)[0]);
                     Scale<Tag_>::value( d1c, (*_distribution_vector_y)[1]);
@@ -188,7 +188,7 @@ namespace honei
 
                     ElementInverse<Tag_>::value(h_inv);
                     //Eventually, elementwise product is to be used here, TODO: verify
-                    *_v = Product<Tag_>::value(h_inv, accu3);
+                    *_v = ElementProduct<Tag_>::value(h_inv, accu3);
 
                 }
 
