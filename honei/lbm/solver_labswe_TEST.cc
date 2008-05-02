@@ -34,13 +34,14 @@ class SolverLABSWETest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> dummy_m_1(10, 10);
-            DenseMatrix<DataType_> dummy_m_2(10, 10);
-            DenseMatrix<DataType_> dummy_m_3(10, 10);
-            DenseMatrix<DataType_> dummy_m_4(10, 10);
+            unsigned long g_h(100);
+            unsigned long g_w(100);
+            DenseMatrix<DataType_> h(g_h, g_w);
+            DenseMatrix<DataType_> b(g_h, g_w);
+            DenseMatrix<DataType_> u(g_h, g_w);
+            DenseMatrix<DataType_> v(g_h, g_w);
 
-            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver
-                (1.,1.,1., 10ul, 10ul, &dummy_m_1, &dummy_m_2, &dummy_m_3, &dummy_m_4);
+            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver(1.,1.,1., g_h, g_w, &h, &b, &u, &v);
 
             solver.do_preprocessing();
             solver.solve();
