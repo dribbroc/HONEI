@@ -259,7 +259,7 @@ namespace tests
         try { \
             TwoVarHolder test_h(a, b); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, test_h.result, \
-                    _id + "\n" +  "Expected '" #a "' to equal \n'" + test_h.s_b + \
+                    this->_id + "\n" +  "Expected '" #a "' to equal \n'" + test_h.s_b + \
                     "'\nbut got\n'" + test_h.s_a + "'"); \
         } catch (const TestFailedException &) { \
             throw; \
@@ -281,7 +281,7 @@ namespace tests
         try { \
             TwoVarHolder test_h(a, b); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, !test_h.result, \
-                    _id + "\n" +  "Expected '" #a "' that is'" + test_h.s_a + \
+                    this->_id + "\n" +  "Expected '" #a "' that is'" + test_h.s_a + \
                     "' to equal not '" + test_h.s_b + "'"); \
         } catch (const TestFailedException &) { \
             throw; \
@@ -304,7 +304,7 @@ namespace tests
             std::string s_a(stringify(a)); \
             std::string s_b(stringify(b)); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, s_a == s_b, \
-                    _id + "\n" +  "Expected '" #a "' to equal '" + s_b + \
+                    this->_id + "\n" +  "Expected '" #a "' to equal '" + s_b + \
                     "'\nbut got\n'" + s_a + "'"); \
         } catch (const TestFailedException &) { \
             throw; \
@@ -325,7 +325,7 @@ namespace tests
     do { \
         try { \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, a, \
-                    _id + "\n" +  "Check '" #a "' failed"); \
+                    this->_id + "\n" +  "Check '" #a "' failed"); \
         } catch (const TestFailedException &) { \
             throw; \
         } catch (const std::exception & test_e) { \
@@ -347,7 +347,7 @@ namespace tests
             try { \
                 a; \
                 check(__PRETTY_FUNCTION__, __FILE__, __LINE__, false, \
-                        _id + "\n" +  "Expected exception of type '" #b "' not thrown"); \
+                        this->_id + "\n" +  "Expected exception of type '" #b "' not thrown"); \
             } catch (b &) { \
                 TEST_CHECK(true); \
             } \
@@ -371,7 +371,7 @@ namespace tests
         try { \
             WithinEpsCalculator calc(a, b, eps); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, calc.result,  \
-                _id + "\n" + "Expected '|" #a " - " #b \
+                this->_id + "\n" + "Expected '|" #a " - " #b \
                 "|' < '" + stringify(eps) + "' but was '" + calc.s_diff +"'"); \
         } catch (const TestFailedException & test_e) { \
             throw;  \
