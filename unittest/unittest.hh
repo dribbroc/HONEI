@@ -369,7 +369,7 @@ namespace tests
 #define TEST_CHECK_EQUAL_WITHIN_EPS(a, b, eps) \
     do { \
         try { \
-            WithinEpsCalculator calc(a, b, eps); \
+            BaseTest::WithinEpsCalculator calc(a, b, eps); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, calc.result,  \
                 this->_id + "\n" + "Expected '|" #a " - " #b \
                 "|' < '" + stringify(eps) + "' but was '" + calc.s_diff +"'"); \

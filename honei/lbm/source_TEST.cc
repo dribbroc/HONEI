@@ -26,13 +26,12 @@ using namespace std;
 
 template <typename Tag_, typename DataType_>
 class SourceLABSWETest :
-    public BaseTest
+    public TaggedTest<Tag_>
 {
     public:
         SourceLABSWETest(const std::string & type) :
-            BaseTest("source_labswe_quick_test<" + type + ">")
+            TaggedTest<Tag_>("source_labswe_quick_test<" + type + ">")
         {
-            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -62,14 +61,14 @@ class SourceLABSWETest :
             }
         }
 };
-SourceLABSWETest<tags::CPU, float> source_test_float("CPU float");
-SourceLABSWETest<tags::CPU, double> source_test_double("CPU double");
-SourceLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("MC float");
-SourceLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("MC double");
+SourceLABSWETest<tags::CPU, float> source_test_float("float");
+SourceLABSWETest<tags::CPU, double> source_test_double("double");
+SourceLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("float");
+SourceLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("double");
 #ifdef HONEI_SSE
-SourceLABSWETest<tags::CPU::SSE, float> source_test_float_sse("SSE float");
-SourceLABSWETest<tags::CPU::SSE, double> source_test_double_sse("SSE double");
-SourceLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("MCSSE float");
-SourceLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("MCSSE double");
+SourceLABSWETest<tags::CPU::SSE, float> source_test_float_sse("float");
+SourceLABSWETest<tags::CPU::SSE, double> source_test_double_sse("double");
+SourceLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
+SourceLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
 #endif
 

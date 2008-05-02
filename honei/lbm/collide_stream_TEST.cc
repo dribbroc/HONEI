@@ -26,13 +26,12 @@ using namespace std;
 
 template <typename Tag_, typename DataType_>
 class CollideStreamLABSWETest :
-    public BaseTest
+    public TaggedTest<Tag_>
 {
     public:
         CollideStreamLABSWETest(const std::string & type) :
-            BaseTest("collideandstream_labswe_test<" + type + ">")
+            TaggedTest<Tag_>("collideandstream_labswe_test<" + type + ">")
         {
-            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -65,13 +64,13 @@ class CollideStreamLABSWETest :
             TEST_CHECK(true);
         }
 };
-CollideStreamLABSWETest<tags::CPU, float> source_test_float("CPU float");
-CollideStreamLABSWETest<tags::CPU, double> source_test_double("CPU double");
-CollideStreamLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("MC float");
-CollideStreamLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("MC double");
+CollideStreamLABSWETest<tags::CPU, float> source_test_float("float");
+CollideStreamLABSWETest<tags::CPU, double> source_test_double("double");
+CollideStreamLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("float");
+CollideStreamLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("double");
 #ifdef HONEI_SSE
-CollideStreamLABSWETest<tags::CPU::SSE, float> source_test_float_sse("SSE float");
-CollideStreamLABSWETest<tags::CPU::SSE, double> source_test_double_sse("SSE double");
-CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("MCSSE float");
-CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("MCSSE double");
+CollideStreamLABSWETest<tags::CPU::SSE, float> source_test_float_sse("float");
+CollideStreamLABSWETest<tags::CPU::SSE, double> source_test_double_sse("double");
+CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
+CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
 #endif
