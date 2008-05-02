@@ -24,13 +24,12 @@ using namespace std;
 
 template <typename Tag_, typename DataType_>
 class SolverLABSWETest :
-    public BaseTest
+    public TaggedTest<Tag_>
 {
     public:
         SolverLABSWETest(const std::string & type) :
-            BaseTest("solver_labswe_quick_test<" + type + ">")
+            TaggedTest<Tag_>("solver_labswe_quick_test<" + type + ">")
         {
-            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -49,13 +48,13 @@ class SolverLABSWETest :
         }
 
 };
-SolverLABSWETest<tags::CPU, float> solver_test_float("CPU float");
-SolverLABSWETest<tags::CPU, double> solver_test_double("CPU double");
-SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("MC float");
-SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("MC double");
+SolverLABSWETest<tags::CPU, float> solver_test_float("float");
+SolverLABSWETest<tags::CPU, double> solver_test_double("double");
+SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
+SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("double");
 #ifdef HONEI_SSE
-SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("SSE float");
-SolverLABSWETest<tags::CPU::SSE, double> solver_test_double_sse("SSE double");
-SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("MCSSE float");
-SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("MCSSE double");
+SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("float");
+SolverLABSWETest<tags::CPU::SSE, double> solver_test_double_sse("double");
+SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("float");
+SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("double");
 #endif
