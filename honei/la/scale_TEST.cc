@@ -168,6 +168,7 @@ DenseMatrixScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_dense_matr
 #endif
 #ifdef HONEI_CELL
 DenseMatrixScaleTest<tags::Cell, float> cell_dense_matrix_scale_test_float("Cell float");
+DenseMatrixScaleTest<tags::Cell, double> cell_dense_matrix_scale_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>

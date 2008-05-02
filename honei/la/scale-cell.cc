@@ -58,6 +58,34 @@ namespace honei
         return b;
     }
 
+    DenseMatrix<double> &
+    Scale<tags::Cell>::value(DenseMatrix<double> & b, const double a)
+    {
+        CONTEXT("When scaling DenseMatrix<double> (Cell):");
+
+        SPEFrameworkInstruction<1, double, cell::rtm_dma> instruction(oc_scale_dense_double, b.elements(), b.rows() * b.columns(), a);
+
+        if (instruction.use_spe())
+        {
+            SPEManager::instance()->dispatch(instruction);
+        }
+
+        for (MutableMatrix<double>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        {
+            *i *= a;
+        }
+
+        for (MutableMatrix<double>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
+        {
+            *i *= a;
+        }
+
+        if (instruction.use_spe())
+            instruction.wait();
+
+        return b;
+    }
+
     DenseVectorContinuousBase<float> &
     Scale<tags::Cell>::value(DenseVectorContinuousBase<float> & b, const float a)
     {
