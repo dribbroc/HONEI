@@ -35,6 +35,9 @@
 #include <honei/la/scale.hh>
 #include <honei/la/element_product.hh>
 #include <honei/la/element_inverse.hh>
+#include <honei/lbm/collide_stream.hh>
+#include <honei/lbm/equilibrium_distribution.hh>
+#include <honei/lbm/source.hh>
 #include <cmath>
 
 using namespace honei::lbm;
@@ -98,7 +101,7 @@ namespace honei
                 DenseMatrix<ResPrec_>* _eq_distribution_7;
                 DenseMatrix<ResPrec_>* _eq_distribution_8;
 
-                unsigned long _grid_width, _grid_height;
+                unsigned long _grid_width, _grid_height, _time;
 
                 DenseMatrix<ResPrec_>* _source_x;
                 DenseMatrix<ResPrec_>* _source_y;
@@ -162,7 +165,6 @@ namespace honei
 
                     DenseMatrix<ResPrec_> h_inv(_height->copy());
                     ElementInverse<Tag_>::value(h_inv);
-                    //Eventually, elementwise product is to be used here, TODO: verify
                     *_u = ElementProduct<Tag_>::value(h_inv, accu2);
 
                     Scale<Tag_>::value( d0c, (*_distribution_vector_y)[0]);
@@ -187,7 +189,6 @@ namespace honei
                     Sum<Tag_>::value(accu3, d8c);
 
                     ElementInverse<Tag_>::value(h_inv);
-                    //Eventually, elementwise product is to be used here, TODO: verify
                     *_v = ElementProduct<Tag_>::value(h_inv, accu3);
 
                 }
@@ -226,7 +227,8 @@ namespace honei
                     _v(v),
                     _pi(3.14159265),
                     _gravity(9.80665),
-                    _n_alpha(ResPrec_(6.))
+                    _n_alpha(ResPrec_(6.)),
+                    _time(0)
             {
                 CONTEXT("When creating LABSWE solver:");
                 _e = _delta_x / _delta_t;
@@ -234,6 +236,8 @@ namespace honei
                 _distribution_vector_y = new DenseVector<ResPrec_>(9ul);
                 _d_bottom_x = new DenseMatrix<ResPrec_>(gx, gy);
                 _d_bottom_y = new DenseMatrix<ResPrec_>(gx, gy);
+                _source_x = new DenseMatrix<ResPrec_>(gx, gy);
+                _source_y = new DenseMatrix<ResPrec_>(gx, gy);
 
                 _distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
                 _distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
@@ -292,7 +296,8 @@ namespace honei
                 delete _distribution_vector_y;
                 delete _d_bottom_x;
                 delete _d_bottom_y;
-
+                delete _source_x;
+                delete _source_y;
                 delete _distribution_0;
                 delete _distribution_1;
                 delete _distribution_2;
@@ -353,15 +358,140 @@ namespace honei
                         }
                     }
                 }
+
+                ///Compute initial equilibrium distribution:
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>::
+                    value(*_eq_distribution_0, *_height, _gravity, _e);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[2], (*_distribution_vector_y)[2]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[3], (*_distribution_vector_y)[3]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[4], (*_distribution_vector_y)[4]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[5], (*_distribution_vector_y)[5]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[6], (*_distribution_vector_y)[6]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[7], (*_distribution_vector_y)[7]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
             }
 
-            /** Capsule for the solution.
+            /** Capsule for the solution: Single step time marching.
              *
              **/
             void solve()
             {
+                ++_time;
+
+                ///Compute source terms:
+                //Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                    //value(*_source_x, *_height, *_d_bottom_x, _gravity);
+                //Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                    //value(*_source_y, *_height, *_d_bottom_y, _gravity);
+
+                ///Streaming and collision:
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::
+                    value(*_temp_distribution_0,
+                            *_distribution_0,
+                            *_eq_distribution_0,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[0],
+                            (*_distribution_vector_y)[0],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_1>::
+                    value(*_temp_distribution_1,
+                            *_distribution_1,
+                            *_eq_distribution_1,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[1],
+                            (*_distribution_vector_y)[1],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_2>::
+                    value(*_temp_distribution_2,
+                            *_distribution_2,
+                            *_eq_distribution_2,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[2],
+                            (*_distribution_vector_y)[2],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_3>::
+                    value(*_temp_distribution_3,
+                            *_distribution_3,
+                            *_eq_distribution_3,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[3],
+                            (*_distribution_vector_y)[3],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_4>::
+                    value(*_temp_distribution_4,
+                            *_distribution_4,
+                            *_eq_distribution_4,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[4],
+                            (*_distribution_vector_y)[4],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_5>::
+                    value(*_temp_distribution_5,
+                            *_distribution_5,
+                            *_eq_distribution_5,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[5],
+                            (*_distribution_vector_y)[5],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_6>::
+                    value(*_temp_distribution_6,
+                            *_distribution_6,
+                            *_eq_distribution_6,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[6],
+                            (*_distribution_vector_y)[6],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_7>::
+                    value(*_temp_distribution_7,
+                            *_distribution_7,
+                            *_eq_distribution_7,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[7],
+                            (*_distribution_vector_y)[7],
+                            _relaxation_time);
+                CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_8>::
+                    value(*_temp_distribution_8,
+                            *_distribution_8,
+                            *_eq_distribution_8,
+                            *_source_x, *_source_y,
+                            (*_distribution_vector_x)[8],
+                            (*_distribution_vector_y)[8],
+                            _relaxation_time);
+
+                ///Boundary correction:
                 _apply_noslip_boundaries();
+
+                ///Compute physical quantities:
                 _extract();
+
+                ///Update equilibrium distribution function:
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>::
+                    value(*_eq_distribution_0, *_height, _gravity, _e);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[2], (*_distribution_vector_y)[2]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[3], (*_distribution_vector_y)[3]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[4], (*_distribution_vector_y)[4]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[5], (*_distribution_vector_y)[5]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[6], (*_distribution_vector_y)[6]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[7], (*_distribution_vector_y)[7]);
+                EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
             };
 
         };

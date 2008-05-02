@@ -56,7 +56,7 @@ namespace honei
          * \brief Solves the LB equation.
          *
          * \param result The destination matrix.
-         * \param temp_dist The temporary distribution matrix.
+         * \param dist The temporary distribution matrix.
          * \param eq_dist The equilibrium distribution matrix..
          * \param s_x Source matrix in x direction.
          * \param s_y Source matrix in y direction..
@@ -66,7 +66,7 @@ namespace honei
          */
         template <typename DT1_, typename DT2_>
         static void value(DenseMatrix<DT1_>& result,
-                          DenseMatrix<DT1_>& temp_dist,
+                          DenseMatrix<DT1_>& dist,
                           DenseMatrix<DT1_>& eq_dist,
                           DenseMatrix<DT1_>& s_x,
                           DenseMatrix<DT1_>& s_y,
@@ -98,7 +98,7 @@ namespace honei
                         i_backward = i_backward + y_max;
 
                     ///Perform streaming and collision:
-                    result(i,j_forward) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    result(i,j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
             }
         }
