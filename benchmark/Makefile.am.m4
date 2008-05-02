@@ -13,6 +13,7 @@ $1_BENCHMARK_LDADD = \
 	$(top_builddir)/honei/swe/libhoneiswe.la \
 	$(top_builddir)/honei/graph/libhoneigraph.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(BACKEND_LIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -23,9 +24,20 @@ define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1
 
 include(`benchmark/files.m4')
 
+BACKEND_LIBS =
+
 if CELL
 
-CELLTESTLIBS = $(top_builddir)/honei/cell/libcell.la
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/cell/ppe/libhoneibackendscellppe.la \
+	$(top_builddir)/honei/backends/cell/spe/libhoneibackendscellspe.la
+
+endif
+
+if SSE
+
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/sse/libhoneibackendssse.la
 
 endif
 
