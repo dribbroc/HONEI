@@ -71,4 +71,8 @@ SourceLABSWETest<tags::CPU::SSE, double> source_test_double_sse("double");
 SourceLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
 SourceLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
 #endif
+#ifdef HONEI_CELL
+SourceLABSWETest<tags::Cell, float> source_test_float_cell("float");
+SourceLABSWETest<tags::Cell, double> source_test_double_cell("double");
+#endif
 

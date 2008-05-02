@@ -74,3 +74,7 @@ CollideStreamLABSWETest<tags::CPU::SSE, double> source_test_double_sse("double")
 CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
 CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
 #endif
+#ifdef HONEI_CELL
+CollideStreamLABSWETest<tags::Cell, float> source_test_float_cell("float");
+CollideStreamLABSWETest<tags::Cell, double> source_test_double_cell("double");
+#endif

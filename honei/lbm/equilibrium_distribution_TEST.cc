@@ -78,3 +78,7 @@ EqDisLABSWETest<tags::CPU::SSE, float> source_test_float_sse("float");
 EqDisLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
 EqDisLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
 #endif
+#ifdef HONEI_CELL
+EqDisLABSWETest<tags::Cell, double> source_test_double_cell("double");
+EqDisLABSWETest<tags::Cell, float> source_test_float_cell("float");
+#endif
