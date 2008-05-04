@@ -28,6 +28,8 @@
  * \ingroup grpliblbm
  **/
 
+#define SOLVER_VERBOSE 1
+
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
@@ -119,6 +121,18 @@ namespace honei
                 void _extract()
                 {
                     CONTEXT("When extracting physical quantities in LABSWE:");
+
+                    ///Set temple dis to dis:
+                    *_distribution_0 = *_temp_distribution_0;
+                    *_distribution_1 = *_temp_distribution_1;
+                    *_distribution_2 = *_temp_distribution_2;
+                    *_distribution_3 = *_temp_distribution_3;
+                    *_distribution_4 = *_temp_distribution_4;
+                    *_distribution_5 = *_temp_distribution_5;
+                    *_distribution_6 = *_temp_distribution_6;
+                    *_distribution_7 = *_temp_distribution_7;
+                    *_distribution_8 = *_temp_distribution_8;
+
                     DenseMatrix<ResPrec_> accu(_distribution_0->copy());
 
                     Sum<Tag_>::value(accu, *_distribution_1);
@@ -200,13 +214,13 @@ namespace honei
                 {
                     for(unsigned long i(0) ; i < _grid_width ; ++i)
                     {
-                        (*_temp_distribution_2)(0, i) = (*_temp_distribution_6)(0,i);
-                        (*_temp_distribution_3)(0, i) = (*_temp_distribution_7)(0,i);
-                        (*_temp_distribution_4)(0, i) = (*_temp_distribution_8)(0,i);
+                        (*_temp_distribution_2)(0 , i) = (*_temp_distribution_6)(0 , i);
+                        (*_temp_distribution_3)(0 , i) = (*_temp_distribution_7)(0 , i);
+                        (*_temp_distribution_4)(0 , i) = (*_temp_distribution_8)(0 , i);
 
-                        (*_temp_distribution_6)(0, i) = (*_temp_distribution_2)(0,i);
-                        (*_temp_distribution_7)(0, i) = (*_temp_distribution_3)(0,i);
-                        (*_temp_distribution_8)(0, i) = (*_temp_distribution_4)(0,i);
+                        (*_temp_distribution_6)(0 , i) = (*_temp_distribution_2)(0 , i);
+                        (*_temp_distribution_7)(0 , i) = (*_temp_distribution_3)(0 , i);
+                        (*_temp_distribution_8)(0 , i) = (*_temp_distribution_4)(0 , i);
                     }
                 };
 
@@ -228,9 +242,11 @@ namespace honei
                     _pi(3.14159265),
                     _gravity(9.80665),
                     _n_alpha(ResPrec_(6.)),
+                    _relaxation_time(1.5),
                     _time(0)
             {
                 CONTEXT("When creating LABSWE solver:");
+
                 _e = _delta_x / _delta_t;
                 _distribution_vector_x = new DenseVector<ResPrec_>(9ul);
                 _distribution_vector_y = new DenseVector<ResPrec_>(9ul);
@@ -363,22 +379,30 @@ namespace honei
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>::
                     value(*_eq_distribution_0, *_height, _gravity, _e);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
+                    value(*_eq_distribution_1, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[2], (*_distribution_vector_y)[2]);
+                    value(*_eq_distribution_2, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[2], (*_distribution_vector_y)[2]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[3], (*_distribution_vector_y)[3]);
+                    value(*_eq_distribution_3, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[3], (*_distribution_vector_y)[3]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[4], (*_distribution_vector_y)[4]);
+                    value(*_eq_distribution_4, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[4], (*_distribution_vector_y)[4]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[5], (*_distribution_vector_y)[5]);
+                    value(*_eq_distribution_5, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[5], (*_distribution_vector_y)[5]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[6], (*_distribution_vector_y)[6]);
+                    value(*_eq_distribution_6, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[6], (*_distribution_vector_y)[6]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[7], (*_distribution_vector_y)[7]);
+                    value(*_eq_distribution_7, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[7], (*_distribution_vector_y)[7]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
+                    value(*_eq_distribution_8, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
+#ifdef SOLVER_VERBOSE
+                std::cout << "feq after preprocessing (1) " << std::endl;
+                std::cout << *_eq_distribution_1;
+
+                std::cout << "h after preprocessing:" << std::endl;
+                std::cout << *_height << std::endl;
+#endif
             }
+
 
             /** Capsule for the solution: Single step time marching.
              *
@@ -388,10 +412,10 @@ namespace honei
                 ++_time;
 
                 ///Compute source terms:
-                //Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                    //value(*_source_x, *_height, *_d_bottom_x, _gravity);
-                //Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                    //value(*_source_y, *_height, *_d_bottom_y, _gravity);
+                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                    value(*_source_x, *_height, *_d_bottom_x, _gravity);
+                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                    value(*_source_y, *_height, *_d_bottom_y, _gravity);
 
                 ///Streaming and collision:
                 CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::
@@ -493,7 +517,6 @@ namespace honei
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
                     value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
             };
-
         };
 }
 #endif

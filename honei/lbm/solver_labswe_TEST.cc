@@ -18,6 +18,8 @@
  */
 #include <honei/lbm/solver_labswe.hh>
 #include <unittest/unittest.hh>
+#include <iostream>
+
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -34,30 +36,40 @@ class SolverLABSWETest :
 
         virtual void run() const
         {
-            unsigned long g_h(100);
-            unsigned long g_w(100);
-            DenseMatrix<DataType_> h(g_h, g_w);
-            DenseMatrix<DataType_> b(g_h, g_w);
-            DenseMatrix<DataType_> u(g_h, g_w);
-            DenseMatrix<DataType_> v(g_h, g_w);
+            unsigned long g_h(20);
+            unsigned long g_w(20);
+            unsigned long timesteps(100);
+
+            DenseMatrix<DataType_>h(g_h, g_w, DataType_(0.05));
+            DenseMatrix<DataType_>b(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_>u(g_h, g_w, DataType_(0.25));
+            DenseMatrix<DataType_>v(g_h, g_w, DataType_(0.));
 
             SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver(1.,1.,1., g_h, g_w, &h, &b, &u, &v);
 
             solver.do_preprocessing();
-            solver.solve();
+
+            for(unsigned long i(0); i < timesteps; ++i)
+            {
+#ifdef SOLVER_VERBOSE
+                //std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+#endif
+                solver.solve();
+            }
+            std::cout << h << std::endl;
             TEST_CHECK(true);
         }
 
 };
-SolverLABSWETest<tags::CPU, float> solver_test_float("float");
+/*SolverLABSWETest<tags::CPU, float> solver_test_float("float");
 SolverLABSWETest<tags::CPU, double> solver_test_double("double");
 SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
-SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("double");
+SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("double");*/
 #ifdef HONEI_SSE
-SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("float");
+//SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("float");
 SolverLABSWETest<tags::CPU::SSE, double> solver_test_double_sse("double");
-SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("float");
-SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("double");
+//SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("float");
+//SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("double");
 #endif
 #ifdef HONEI_CELL
 SolverLABSWETest<tags::Cell, float> solver_test_float_cell("float");
