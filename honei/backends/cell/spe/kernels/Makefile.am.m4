@@ -76,4 +76,4 @@ DEFS = \
 noinst_PROGRAMS = filelist
 
 Makefile.am : Makefile.am.m4 files.m4
-	$(top_srcdir)/misc/do_m4.bash Makefile.am
+	cd $(top_srcdir) ; ./misc/do_m4.bash honei/backends/cell/spe/kernels/Makefile.am

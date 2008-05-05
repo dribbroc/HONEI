@@ -8,13 +8,13 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`node_distance',                    `hh', `test', `cell', `sse', `benchmark')
-add(`position',                         `hh', `test')
-add(`node',                             `hh')
 add(`abstract_graph',                   `hh')
-add(`breadth_first_search',             `hh', `test')
-add(`graph',                            `hh', `test')
-add(`evolving_graph',                   `hh', `test')
-add(`graph_error',                      `hh', `cc')
+add(`breadth_first_search',             `hh', `mc', `test')
 add(`evolving_animator',                `hh')
-add(`test_scenario',                `hh')
+add(`evolving_graph',                   `hh', `test')
+add(`graph',                            `hh', `test')
+add(`graph_error',                      `hh', `cc')
+add(`node',                             `hh')
+add(`node_distance',                    `hh', `cell', `mc', `sse', `test', `benchmark')
+add(`position',                         `hh', `impl', `test')
+add(`test_scenario',                    `hh')

@@ -22,8 +22,8 @@ DEFS = \
 	$(DEBUGDEF)
 
 lib_LTLIBRARIES = libhoneibackendscellspe.la
-libhoneibackendscellspe_la_SOURCES = sourceslist
+nodist_libhoneibackendscellspe_la_SOURCES = sourceslist
 libhoneibackendscellspe_la_LIBADD = objlist
 
 Makefile.am : Makefile.am.m4 kernels/files.m4
-	$(top_srcdir)/misc/do_m4.bash Makefile.am
+	cd $(top_srcdir) ; ./misc/do_m4.bash honei/backends/cell/spe/Makefile.am

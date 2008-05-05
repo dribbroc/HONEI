@@ -69,4 +69,4 @@ benchmark: $(BENCHMARKS)
 	done
 
 Makefile.am : Makefile.am.m4 files.m4
-	$(top_srcdir)/misc/do_m4.bash Makefile.am
+	cd $(top_srcdir) ; ./misc/do_m4.bash benchmark/Makefile.am

@@ -85,9 +85,9 @@ libhoneiutil_includedir = $(includedir)/honei/util
 libhoneiutil_include_HEADERS = general_headerlist $(GPUHEADERS) $(CELLHEADERS) $(HDF5HEADERS)
 
 TESTS = general_testlist $(GPUTESTS) $(CELLTESTS) $(HDF5TESTS)
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_builddir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
 Makefile.am : Makefile.am.m4 files.m4
-	$(top_srcdir)/misc/do_m4.bash Makefile.am
+	cd $(top_srcdir) ; ./misc/do_m4.bash honei/util/Makefile.am

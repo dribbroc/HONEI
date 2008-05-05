@@ -78,9 +78,9 @@ libhoneilbm_includedir = $(includedir)/honei/libhoneilbm
 libhoneilbm_include_HEADERS = headerlist
 
 TESTS = testlist
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_builddir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
 
 Makefile.am : Makefile.am.m4 files.m4
-	$(top_srcdir)/misc/do_m4.bash Makefile.am
+	cd $(top_srcdir) ; ./misc/do_m4.bash honei/lbm/Makefile.am

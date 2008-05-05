@@ -9,6 +9,8 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`general', `assertion',                      `hh', `cc', `test')
+add(`general', `attributes',                     `hh')
+add(`general', `benchmark_info',                 `hh')
 add(`general', `condition_variable',             `hh', `cc')
 add(`general', `configuration',                  `hh', `cc', `test')
 add(`general', `exception',                      `hh', `cc')
@@ -25,7 +27,7 @@ add(`general', `pool_task',                      `hh',       `test')
 add(`general', `pool_thread',                    `hh', `cc', `test')
 add(`general', `private_implementation_pattern', `hh', `impl')
 add(`general', `profiler',                       `hh', `cc', `test')
-add(`general', `shared_array',                   `hh', `cc', `test')
+add(`general', `shared_array',                   `hh', `impl', `cc', `test')
 add(`general', `stringify',                      `hh')
 add(`general', `sync_point',                     `hh')
 add(`general', `tags',                           `hh', `cc')
