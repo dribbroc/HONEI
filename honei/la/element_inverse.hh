@@ -327,6 +327,17 @@ namespace honei
         static DenseMatrix<float> & value(DenseMatrix<float> & a);
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a);
 
+        static DenseMatrix<double> & value(DenseMatrix<double> & a)
+        {
+            CONTEXT("When forwarding ElementInverse tags::Cell to tags::CPU:");
+            ElementInverse<tags::CPU>::value(a);
+        }
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a)
+        {
+            CONTEXT("When forwarding ElementInverse tags::Cell to tags::CPU:");
+            ElementInverse<tags::CPU>::value(a);
+        }
+
 
     };
 

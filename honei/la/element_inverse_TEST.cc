@@ -89,6 +89,7 @@ DenseVectorElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_ve
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementInverseTest<tags::Cell, float> cell_dense_vector_element_inverse_test_float("Cell float");
+DenseVectorElementInverseTest<tags::Cell, double> cell_dense_vector_element_inverse_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -152,6 +153,7 @@ DenseVectorElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementInverseQuickTest<tags::Cell, float> cell_dense_vector_element_inverse_quick_test_float("Cell float");
+DenseVectorElementInverseQuickTest<tags::Cell, double> cell_dense_vector_element_inverse_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -220,6 +222,7 @@ DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementInverseTest<tags::Cell, float> cell_dense_vector_range_element_inverse_test_float("Cell float");
+DenseVectorRangeElementInverseTest<tags::Cell, double> cell_dense_vector_range_element_inverse_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -286,6 +289,7 @@ DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_m
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementInverseQuickTest<tags::Cell, float> cell_dense_vector_range_element_inverse_quick_test_float("Cell float");
+DenseVectorRangeElementInverseQuickTest<tags::Cell, double> cell_dense_vector_range_element_inverse_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -506,6 +510,7 @@ DenseMatrixElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_ma
 #endif
 #ifdef HONEI_CELL
 DenseMatrixElementInverseTest<tags::Cell, float> cell_dense_matrix_element_inverse_test_float("Cell float");
+DenseMatrixElementInverseTest<tags::Cell, double> cell_dense_matrix_element_inverse_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -570,6 +575,7 @@ DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CELL
 DenseMatrixElementInverseQuickTest<tags::Cell, float> cell_dense_matrix_element_inverse_quick_test_float("Cell float");
+DenseMatrixElementInverseQuickTest<tags::Cell, double> cell_dense_matrix_element_inverse_quick_test_double("Cell double");
 #endif
 
 template <typename Tag_, typename DataType_>
