@@ -265,12 +265,18 @@ namespace honei
             /// Retrieves element at (row, column), unassignable.
             inline virtual const DataType_ & operator() (unsigned long row, unsigned long column) const
             {
+                CONTEXT("When retrieving DenseMatrix element, unassignable:");
+                ASSERT(row < _rows && row >= 0, "row index is out of bounds!");
+                ASSERT(column < _columns && column >= 0, "column number is out of bounds!");
                 return _elements.get()[column + row * _columns];
             }
 
             /// Retrieves element at (row, column), assignable.
             inline virtual DataType_ & operator() (unsigned long row, unsigned long column)
             {
+                CONTEXT("When retrieving DenseMatrix element, assignable:");
+                ASSERT(row < _rows && row >= 0, "row index is out of bounds!");
+                ASSERT(column < _columns && column >= 0, "column number is out of bounds!");
                 return _elements.get()[column + row * _columns];
             }
 

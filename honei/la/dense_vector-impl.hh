@@ -186,12 +186,16 @@ namespace honei
     template <typename DataType_>
     const DataType_ & DenseVector<DataType_>::operator[] (unsigned long index) const
     {
+        CONTEXT("When retrieving DenseVector element, unassignable:");
+        ASSERT(index < this->_imp->size && index >= 0, "index is out of bounds!");
         return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
     }
 
     template <typename DataType_>
     DataType_ & DenseVector<DataType_>::operator[] (unsigned long index)
     {
+        CONTEXT("When retrieving DenseVector element, assignable:");
+        ASSERT(index < this->_imp->size && index >= 0, "index is out of bounds!");
         return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
     }
 
