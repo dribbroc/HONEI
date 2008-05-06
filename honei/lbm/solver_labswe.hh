@@ -218,12 +218,11 @@ namespace honei
                         (*_temp_distribution_3)(0 , i) = (*_temp_distribution_7)(0 , i);
                         (*_temp_distribution_4)(0 , i) = (*_temp_distribution_8)(0 , i);
 
-                        (*_temp_distribution_6)(0 , i) = (*_temp_distribution_2)(0 , i);
-                        (*_temp_distribution_7)(0 , i) = (*_temp_distribution_3)(0 , i);
-                        (*_temp_distribution_8)(0 , i) = (*_temp_distribution_4)(0 , i);
+                        (*_temp_distribution_6)(_grid_height , i) = (*_temp_distribution_2)(_grid_height , i);
+                        (*_temp_distribution_7)(_grid_height , i) = (*_temp_distribution_3)(_grid_height , i);
+                        (*_temp_distribution_8)(_grid_height , i) = (*_temp_distribution_4)(_grid_height , i);
                     }
                 };
-
 
             public:
                 SolverLABSWE(ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseMatrix<ResPrec_>* height,
@@ -248,12 +247,12 @@ namespace honei
                 CONTEXT("When creating LABSWE solver:");
 
                 _e = _delta_x / _delta_t;
-                _distribution_vector_x = new DenseVector<ResPrec_>(9ul);
-                _distribution_vector_y = new DenseVector<ResPrec_>(9ul);
-                _d_bottom_x = new DenseMatrix<ResPrec_>(gx, gy);
-                _d_bottom_y = new DenseMatrix<ResPrec_>(gx, gy);
-                _source_x = new DenseMatrix<ResPrec_>(gx, gy);
-                _source_y = new DenseMatrix<ResPrec_>(gx, gy);
+                _distribution_vector_x = new DenseVector<ResPrec_>(9ul, ResPrec_(0.));
+                _distribution_vector_y = new DenseVector<ResPrec_>(9ul, ResPrec_(0.));
+                _d_bottom_x = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
+                _d_bottom_y = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
+                _source_x = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
+                _source_y = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
 
                 _distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
                 _distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
@@ -412,11 +411,16 @@ namespace honei
                 ++_time;
 
                 ///Compute source terms:
-                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
                     value(*_source_x, *_height, *_d_bottom_x, _gravity);
                 Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                    value(*_source_y, *_height, *_d_bottom_y, _gravity);
+                value(*_source_y, *_height, *_d_bottom_y, _gravity);
+                */
 
+                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
+                    value(*_source_x, ResPrec_(0.000024));
+                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
+                    value(*_source_y, ResPrec_(0.));
                 ///Streaming and collision:
                 CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::
                     value(*_temp_distribution_0,

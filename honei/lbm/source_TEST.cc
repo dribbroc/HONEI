@@ -51,7 +51,7 @@ class SourceLABSWETest :
                 }
             }
             Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
-                value(result, h, db, g, DataType_(0.000024));
+                value(result, DataType_(0.000024));
             for(unsigned long i(0); i < 1000; ++i)
             {
                 for(unsigned long j(0); j < 1000; ++j)

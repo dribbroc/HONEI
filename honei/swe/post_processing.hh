@@ -102,7 +102,7 @@ namespace honei
                 file.close();
             }
 #ifdef SOLVER_VERBOSE
-            cout <<"Finished postprocessing." << endl;
+            std::cout <<"Finished postprocessing." << std::endl;
 #endif
 
         }

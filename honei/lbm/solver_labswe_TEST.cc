@@ -17,12 +17,14 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/solver_labswe.hh>
+#include <honei/swe/post_processing.hh>
 #include <unittest/unittest.hh>
 #include <iostream>
 
 using namespace honei;
 using namespace tests;
 using namespace std;
+using namespace output_types;
 
 template <typename Tag_, typename DataType_>
 class SolverLABSWETest :
@@ -38,7 +40,7 @@ class SolverLABSWETest :
         {
             unsigned long g_h(20);
             unsigned long g_w(20);
-            unsigned long timesteps(100);
+            unsigned long timesteps(5);
 
             DenseMatrix<DataType_>h(g_h, g_w, DataType_(0.05));
             DenseMatrix<DataType_>b(g_h, g_w, DataType_(0.));
@@ -55,6 +57,7 @@ class SolverLABSWETest :
                 //std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
                 solver.solve();
+                PostProcessing<GNUPLOT>::value(h, 100, g_w, g_h, i);
             }
             std::cout << h << std::endl;
             TEST_CHECK(true);
