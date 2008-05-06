@@ -218,9 +218,9 @@ namespace honei
                         (*_temp_distribution_3)(0 , i) = (*_temp_distribution_7)(0 , i);
                         (*_temp_distribution_4)(0 , i) = (*_temp_distribution_8)(0 , i);
 
-                        (*_temp_distribution_6)(_grid_height , i) = (*_temp_distribution_2)(_grid_height , i);
-                        (*_temp_distribution_7)(_grid_height , i) = (*_temp_distribution_3)(_grid_height , i);
-                        (*_temp_distribution_8)(_grid_height , i) = (*_temp_distribution_4)(_grid_height , i);
+                        (*_temp_distribution_6)(_grid_height - 1 , i) = (*_temp_distribution_2)(_grid_height - 1, i);
+                        (*_temp_distribution_7)(_grid_height - 1 , i) = (*_temp_distribution_3)(_grid_height - 1, i);
+                        (*_temp_distribution_8)(_grid_height - 1 , i) = (*_temp_distribution_4)(_grid_height - 1, i);
                     }
                 };
 
@@ -247,43 +247,101 @@ namespace honei
                 CONTEXT("When creating LABSWE solver:");
 
                 _e = _delta_x / _delta_t;
-                _distribution_vector_x = new DenseVector<ResPrec_>(9ul, ResPrec_(0.));
-                _distribution_vector_y = new DenseVector<ResPrec_>(9ul, ResPrec_(0.));
-                _d_bottom_x = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
-                _d_bottom_y = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
-                _source_x = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
-                _source_y = new DenseMatrix<ResPrec_>(gx, gy, ResPrec_(0.));
 
-                _distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_2 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_3 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_4 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_5 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_6 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_7 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _distribution_8 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+            }
 
-                _temp_distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_2 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_3 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_4 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_5 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_6 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_7 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _temp_distribution_8 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+            ~SolverLABSWE()
+            {
+//                CONTEXT("When destroying LABSWE solver.");
+            }
 
-                _eq_distribution_0 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_1 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_2 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_3 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_4 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_5 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_6 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_7 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
-                _eq_distribution_8 = new DenseMatrix<ResPrec_> (_grid_height, _grid_width, ResPrec_(0));
+            void set_distribution(DenseMatrix<ResPrec_>* dis_0,
+                                  DenseMatrix<ResPrec_>* dis_1,
+                                  DenseMatrix<ResPrec_>* dis_2,
+                                  DenseMatrix<ResPrec_>* dis_3,
+                                  DenseMatrix<ResPrec_>* dis_4,
+                                  DenseMatrix<ResPrec_>* dis_5,
+                                  DenseMatrix<ResPrec_>* dis_6,
+                                  DenseMatrix<ResPrec_>* dis_7,
+                                  DenseMatrix<ResPrec_>* dis_8)
+            {
+                _distribution_0 = dis_0;
+                _distribution_1 = dis_1;
+                _distribution_2 = dis_2;
+                _distribution_3 = dis_3;
+                _distribution_4 = dis_4;
+                _distribution_5 = dis_5;
+                _distribution_6 = dis_6;
+                _distribution_7 = dis_7;
+                _distribution_8 = dis_8;
+            }
 
+            void set_eq_distribution(DenseMatrix<ResPrec_>* dis_0,
+                                  DenseMatrix<ResPrec_>* dis_1,
+                                  DenseMatrix<ResPrec_>* dis_2,
+                                  DenseMatrix<ResPrec_>* dis_3,
+                                  DenseMatrix<ResPrec_>* dis_4,
+                                  DenseMatrix<ResPrec_>* dis_5,
+                                  DenseMatrix<ResPrec_>* dis_6,
+                                  DenseMatrix<ResPrec_>* dis_7,
+                                  DenseMatrix<ResPrec_>* dis_8)
+            {
+                _eq_distribution_0 = dis_0;
+                _eq_distribution_1 = dis_1;
+                _eq_distribution_2 = dis_2;
+                _eq_distribution_3 = dis_3;
+                _eq_distribution_4 = dis_4;
+                _eq_distribution_5 = dis_5;
+                _eq_distribution_6 = dis_6;
+                _eq_distribution_7 = dis_7;
+                _eq_distribution_8 = dis_8;
+            }
+
+            void set_vectors(DenseVector<ResPrec_>* vec_x,
+                             DenseVector<ResPrec_>* vec_y)
+            {
+                _distribution_vector_x = vec_x;
+                _distribution_vector_y = vec_y;
+            }
+
+            void set_source(DenseMatrix<ResPrec_>* s_x,
+                            DenseMatrix<ResPrec_>* s_y)
+            {
+                _source_x = s_x;
+                _source_y = s_y;
+            }
+
+            void set_temp_distribution(DenseMatrix<ResPrec_>* dis_0,
+                                  DenseMatrix<ResPrec_>* dis_1,
+                                  DenseMatrix<ResPrec_>* dis_2,
+                                  DenseMatrix<ResPrec_>* dis_3,
+                                  DenseMatrix<ResPrec_>* dis_4,
+                                  DenseMatrix<ResPrec_>* dis_5,
+                                  DenseMatrix<ResPrec_>* dis_6,
+                                  DenseMatrix<ResPrec_>* dis_7,
+                                  DenseMatrix<ResPrec_>* dis_8)
+            {
+                _temp_distribution_0 = dis_0;
+                _temp_distribution_1 = dis_1;
+                _temp_distribution_2 = dis_2;
+                _temp_distribution_3 = dis_3;
+                _temp_distribution_4 = dis_4;
+                _temp_distribution_5 = dis_5;
+                _temp_distribution_6 = dis_6;
+                _temp_distribution_7 = dis_7;
+                _temp_distribution_8 = dis_8;
+            }
+
+            void set_slopes(DenseMatrix<ResPrec_>* d_x,
+                            DenseMatrix<ResPrec_>* d_y)
+            {
+                _d_bottom_x = d_x;
+                _d_bottom_y = d_y;
+            }
+
+            void do_preprocessing()
+            {
+                CONTEXT("When performing LABSWE preprocessing.");
                 (*_distribution_vector_x)[0] = ResPrec_(0.);
                 (*_distribution_vector_x)[1] = ResPrec_(_e * cos(0.));
                 (*_distribution_vector_x)[2] = ResPrec_(sqrt(2.) * _e * cos(_pi / 4.));
@@ -302,49 +360,7 @@ namespace honei
                 (*_distribution_vector_y)[6] = ResPrec_(sqrt(2.) * _e * sin(5. * _pi / 4.));
                 (*_distribution_vector_y)[7] = ResPrec_(_e * sin(3. * _pi / 2.));
                 (*_distribution_vector_y)[8] = ResPrec_(sqrt(2.) * _e * sin(7. * _pi / 4.));
-            }
 
-            ~SolverLABSWE()
-            {
-                CONTEXT("When destroying LABSWE solver.");
-                delete _distribution_vector_x;
-                delete _distribution_vector_y;
-                delete _d_bottom_x;
-                delete _d_bottom_y;
-                delete _source_x;
-                delete _source_y;
-                delete _distribution_0;
-                delete _distribution_1;
-                delete _distribution_2;
-                delete _distribution_3;
-                delete _distribution_4;
-                delete _distribution_5;
-                delete _distribution_6;
-                delete _distribution_7;
-                delete _distribution_8;
-                delete _temp_distribution_0;
-                delete _temp_distribution_1;
-                delete _temp_distribution_2;
-                delete _temp_distribution_3;
-                delete _temp_distribution_4;
-                delete _temp_distribution_5;
-                delete _temp_distribution_6;
-                delete _temp_distribution_7;
-                delete _temp_distribution_8;
-                delete _eq_distribution_0;
-                delete _eq_distribution_1;
-                delete _eq_distribution_2;
-                delete _eq_distribution_3;
-                delete _eq_distribution_4;
-                delete _eq_distribution_5;
-                delete _eq_distribution_6;
-                delete _eq_distribution_7;
-                delete _eq_distribution_8;
-            }
-
-            void do_preprocessing()
-            {
-                CONTEXT("When performing LABSWE preprocessing.");
                 ///Compute bottom slopes in x and y direction
                 for(unsigned long i(0); i < _grid_height; ++i)
                 {
