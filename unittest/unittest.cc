@@ -134,6 +134,7 @@ int main(int argc, char** argv)
     int result(EXIT_SUCCESS);
     bool quick(false);
     bool sse(false);
+    bool cuda(false);
     bool cell(false);
     bool mc(false);
     bool cpu_only(false);
@@ -144,6 +145,10 @@ int main(int argc, char** argv)
     if ((argc == 3) && (stringify(argv[2]) == "sse"))
     {
         sse = true;
+    }
+    if ((argc == 3) && (stringify(argv[2]) == "cuda"))
+    {
+        cuda = true;
     }
     if ((argc == 3) && (stringify(argv[2]) == "cell"))
     {
@@ -163,26 +168,18 @@ int main(int argc, char** argv)
             i != i_end ; ++i)
     {
             if (quick && (!(*i)->is_quick_test()) )
-            {
                 continue;
-            }
             if (sse && !( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse")))
-            {
                 continue;
-            }
+            if (cuda && (!((*i)->get_tag_name()=="cuda")))
+                continue;
             if (cell && (!((*i)->get_tag_name()=="cell")))
-            {
                 continue;
-            }
             if (mc && ! ( ((*i)->get_tag_name()=="mc-sse") || ((*i)->get_tag_name()=="mc")))
-            {
                 continue;
-            }
             if (cpu_only && ( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse") ||
                         ((*i)->get_tag_name()=="cell")))
-            {
                 continue;
-            }
             list_size++;
     }
 
@@ -197,6 +194,8 @@ int main(int argc, char** argv)
                 continue;
             if (sse && !( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse")))
                 continue;
+            if (cuda && (!((*i)->get_tag_name()=="cuda")))
+                continue;
             if (cell && (!((*i)->get_tag_name()=="cell")))
                 continue;
             if (mc && ! ( ((*i)->get_tag_name()=="mc-sse") || ((*i)->get_tag_name()=="mc")))
@@ -205,8 +204,8 @@ int main(int argc, char** argv)
                         ((*i)->get_tag_name()=="cell")))
                 continue;
 
-            std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + " Tag: "
-                << (*i)->get_tag_name() << ":" << std::endl;
+            std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + " [Backend: "
+                << (*i)->get_tag_name() << "]" << std::endl;
             (*i)->run();
             std::cout << "PASSED" << std::endl;
         }

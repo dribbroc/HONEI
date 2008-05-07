@@ -54,7 +54,7 @@ namespace honei
             const static std::string name;
 
             /**
-             * Tag-type for SSE1/2-optimised operations.
+             * Tag-type for SSE-optimised operations.
              *
              * \ingroup grptagscpusse
              */
@@ -121,6 +121,18 @@ namespace honei
         {
             const static TagValue tag_value = tv_gpu;
             const static std::string name;
+
+            /**
+             * Tag-type for CUDA-optimised operations.
+             *
+             * \ingroup grptagscpusse
+             */
+            struct CUDA :
+                public InstantiationPolicy<GPU::CUDA, NonCopyable>
+            {
+                const static TagValue tag_value = tv_gpu;
+                const static std::string name;
+            };
         };
 
         /**

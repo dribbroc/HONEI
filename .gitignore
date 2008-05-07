@@ -22,3 +22,5 @@ libtool
 *.swp
 # Ignore compiled test cases
 *_TEST
+# Ignore compiled benchmarks
+*_BENCHMARK

@@ -179,6 +179,23 @@ if test "x$ENABLE_GPU" = "xyes" ; then
 	dnl }}}
 fi
 dnl }}}
+dnl {{{ check for CUDA support
+AC_MSG_CHECKING([whether to build CUDA support])
+AC_ARG_ENABLE([cuda],
+	AS_HELP_STRING([--enable-cuda], [Build CUDA support (needs packages: nvidia cuda)]),
+		[ENABLE_CUDA=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_CUDA=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_CUDA])
+AM_CONDITIONAL([CUDA], test "x$ENABLE_CUDA" = "xyes")
+if test "x$ENABLE_CUDA" = "xyes"; then
+	dnl {{{ enable cuda support
+	CUDADEF="-DHONEI_CUDA"
+	dnl }}}
+fi
+AC_SUBST([CUDADEF])
+dnl }}}
 dnl {{{ check for SSE support
 AC_MSG_CHECKING([whether to build SSE support])
 AC_ARG_ENABLE([sse],
@@ -326,6 +343,7 @@ AC_OUTPUT(
 	honei/backends/cell/spe/libswe/Makefile
 	honei/backends/cell/spe/libutil/Makefile
 	honei/backends/sse/Makefile
+	honei/backends/cuda/Makefile
 	honei/graph/Makefile
 	honei/la/Makefile
 	honei/lbm/Makefile

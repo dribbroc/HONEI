@@ -73,6 +73,9 @@ DenseVectorScaledSumTest<tags::CPU::MultiCore::SSE, float>
 DenseVectorScaledSumTest<tags::CPU::MultiCore::SSE, double>
     mc_sse_dense_vector_scaled_sum_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseVectorScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_scaled_sum_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseVectorScaledSumTest<tags::Cell, float> cell_dense_vector_scaled_sum_test_float("Cell float");
 DenseVectorScaledSumTest<tags::Cell, double> cell_dense_vector_scaled_sum_test_double("Cell double");
@@ -118,6 +121,9 @@ DenseVectorScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_scaled_sum
 DenseVectorScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_scaled_sum_quick_test_double("SSE double");
 DenseVectorScaledSumQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_scaled_sum_quick_test_float("MC SSE float");
 DenseVectorScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_scaled_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_scaled_sum_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaledSumQuickTest<tags::Cell, float> cell_dense_vector_scaled_sum_quick_test_float("Cell float");
@@ -175,6 +181,9 @@ DenseVectorRangeScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_range_sca
 DenseVectorRangeScaledSumTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_scaled_sum_test_float("MC SSE float");
 DenseVectorRangeScaledSumTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_scaled_sum_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseVectorRangeScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scaled_sum_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseVectorRangeScaledSumTest<tags::Cell, float> cell_dense_vector_range_scaled_sum_test_float("Cell float");
 DenseVectorRangeScaledSumTest<tags::Cell, double> cell_dense_vector_range_scaled_sum_test_double("Cell double");
@@ -222,6 +231,9 @@ DenseVectorRangeScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_range
 DenseVectorRangeScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_scaled_sum_quick_test_double("SSE double");
 DenseVectorRangeScaledSumQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_scaled_sum_quick_test_float("MC SSE float");
 DenseVectorRangeScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_scaled_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorRangeScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scaled_sum_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeScaledSumQuickTest<tags::Cell, float> cell_dense_vector_range_scaled_sum_quick_test_float("Cell float");

@@ -7,8 +7,12 @@ if CELL
   CELLDIR = cell
 endif
 
+if CUDA
+  CUDADIR = cuda
+endif
+
 if SSE
   SSEDIR = sse
 endif
 
-SUBDIRS = $(SSEDIR) $(CELLDIR)
+SUBDIRS = $(SSEDIR) $(CELLDIR) $(CUDADIR)

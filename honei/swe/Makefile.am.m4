@@ -49,6 +49,13 @@ CELLTESTLIBS = $(top_builddir)/honei/cell/libcell.la
 
 endif
 
+if CUDA
+
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.so
+
+endif
+
 if SSE
 
 SSEFILES = sselist
@@ -65,6 +72,7 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(CUDADEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 

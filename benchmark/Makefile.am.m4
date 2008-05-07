@@ -34,6 +34,14 @@ BACKEND_LIBS += \
 
 endif
 
+if CUDA
+
+CUDAFILES = cudalist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.so
+
+endif
+
 if SSE
 
 BACKEND_LIBS += \
@@ -50,6 +58,7 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(CUDADEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 

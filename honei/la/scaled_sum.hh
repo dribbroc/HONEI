@@ -299,6 +299,44 @@ namespace honei
      * \ingroup grplavectoroperations
      */
     template <>
+    struct ScaledSum<tags::GPU::CUDA>
+    {
+        /**
+         * \name Scaled sums
+         * \{
+         *
+         * \brief Returns the vector x as the scaled sum of two given vectors.
+         *
+         * \param x The vector that shall not be scaled.
+         * \param y The vector that shall be scaled.
+         * \param b The scale factor.
+         *
+         * \retval x Will modify x and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the sizes of x and y do not match.
+         */
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, float b);
+
+        /// \}
+    };
+
+    /**
+     * \brief Scaled sum of two given vectors and a given scalar.
+     *
+     * ScaledSum is the class template for the operation
+     * \f[
+     *     \texttt{ScaledSum}(x, a, y): \quad x \leftarrow a \cdot x + y,
+     *     \texttt{ScaledSum}(x, y, b): \quad x \leftarrow x + b \cdot y,
+     * \f]
+     * which yields the scaled sum of x and y.
+     *
+     * \todo Implement variant using a.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
+    template <>
     struct ScaledSum<tags::Cell>
     {
         /**

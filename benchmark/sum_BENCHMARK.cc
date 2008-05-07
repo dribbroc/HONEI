@@ -133,6 +133,9 @@ DenseVectorSumBench<tags::CPU::SSE, double> SSEDVSBenchdouble1("SSE Dense Vector
 DenseVectorSumBench<tags::CPU::MultiCore::SSE, float> MCSSEDVSBenchfloat1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 50);
 DenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSEDVSBenchdouble1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 50);
 #endif
+#ifdef HONEI_CUDA
+DenseVectorSumBench<tags::GPU::CUDA, float> CUDADVSBenchfloat1("CUDA Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+#endif
 #ifdef HONEI_CELL
 DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul * 64 * 64 * 64, 50);
 DenseVectorSumBench<tags::Cell, double> dvs_bench_cell_double("Cell Dense Vector Sum Benchmark - vector size: 64^3 * 35, double",
@@ -204,10 +207,15 @@ class DenseMatrixSumBench :
             DenseMatrix<DataType_> dm1(_sizex, _sizey, DataType_(rand()));
             for(int i(0) ; i < _count; ++i)
             {
-                BENCHMARK(Sum<Tag_>::value(dm0, dm1));
+                BENCHMARK(
+                        for (unsigned long l(0) ; l < 10 ; ++l)
+                        {
+                        Sum<Tag_>::value(dm0, dm1);
+                        }
+                        );
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info(dm0, dm1));
-            evaluate(info);
+            evaluate(info * 10);
         }
 };
 
@@ -220,6 +228,9 @@ DenseMatrixSumBench<tags::CPU::SSE, float> DMSBenchfloat1sse("SSE Dense Matrix S
 DenseMatrixSumBench<tags::CPU::SSE, double> DMSBenchdouble1sse("SSE Dense Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 4096, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore::SSE, float> DMSBenchfloat1mcsse("MC SSE : Dense Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 4096, 10);
 DenseMatrixSumBench<tags::CPU::MultiCore::SSE, double> DMSBenchdouble1mcsse("MC SSE: Dense Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 4096, 10);
+#endif
+#ifdef HONEI_CUDA
+DenseMatrixSumBench<tags::GPU::CUDA, float> DMSBenchfloat1cuda("CUDA Dense Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 4096, 10);
 #endif
 #ifdef HONEI_CELL
 DenseMatrixSumBench<tags::Cell, float> DMSBenchfloat1cell("Cell Dense Matrix Sum Benchmark - Matrix size: 4096x4096, 4096, float", 4096, 4096, 10);

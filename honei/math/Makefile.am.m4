@@ -47,6 +47,13 @@ BACKEND_LIBS += \
 
 endif
 
+if CUDA
+
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.so
+
+endif
+
 if SSE
 
 SSEFILES = sselist

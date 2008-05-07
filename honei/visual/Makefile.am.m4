@@ -15,6 +15,7 @@ $1_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/swe/libhoneiswe.la \
 	$(top_builddir)/honei/graph/libhoneigraph.la \
+	$(BACKEND_LIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -28,6 +29,33 @@ define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')')dnl
 
 include(`honei/visual/files.m4')
 
+BACKEND_LIBS =
+
+if CELL
+
+CELLFILES = celllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/cell/ppe/libhoneibackendscellppe.la \
+	$(top_builddir)/honei/backends/cell/spe/libhoneibackendscellspe.la
+
+endif
+
+if CUDA
+
+CUDAFILES = cudalist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.so
+
+endif
+
+if SSE
+
+SSEFILES = sselist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/sse/libhoneibackendssse.la
+
+endif
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
@@ -37,6 +65,7 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(CUDADEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 
