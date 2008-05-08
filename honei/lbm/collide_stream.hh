@@ -610,7 +610,7 @@ namespace honei
                         i_backward = i_backward + y_max;
 
                     ///Perform streaming and collision:
-                    result(i, j) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    result(i, j) = temp_dist(i,j) - (temp_dist(i,j) - eq_dist(i,j))/tau;
                 }
             }
         }
