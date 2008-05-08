@@ -126,7 +126,7 @@ void assemble_edges()
 //                _nodes(),
                 _slice_offset(),
                 _total_node_count(0),
-                _last_interpolation(0,0),
+                _last_interpolation(1, 1),
                 _coordinate_dimensions(coordinate_dimensions),
                 _intertimeslice_weight(intertimeslice_weight),
                 _interpolation_coordinates()

@@ -63,7 +63,7 @@ namespace honei
             _alpha(0.0f),
             _graph(graph),
             _step_size(step_size),
-            _last_interpolation(0,0)
+            _last_interpolation(1, 1)
         {
             
         }
