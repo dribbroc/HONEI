@@ -521,21 +521,21 @@ namespace honei
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>::
                     value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
+                    value(*_eq_distribution_1, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[2], (*_distribution_vector_y)[2]);
+                    value(*_eq_distribution_2, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[2], (*_distribution_vector_y)[2]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[3], (*_distribution_vector_y)[3]);
+                    value(*_eq_distribution_3, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[3], (*_distribution_vector_y)[3]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[4], (*_distribution_vector_y)[4]);
+                    value(*_eq_distribution_4, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[4], (*_distribution_vector_y)[4]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[5], (*_distribution_vector_y)[5]);
+                    value(*_eq_distribution_5, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[5], (*_distribution_vector_y)[5]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[6], (*_distribution_vector_y)[6]);
+                    value(*_eq_distribution_6, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[6], (*_distribution_vector_y)[6]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[7], (*_distribution_vector_y)[7]);
+                    value(*_eq_distribution_7, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[7], (*_distribution_vector_y)[7]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
-                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
+                    value(*_eq_distribution_8, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
             };
         };
 }
