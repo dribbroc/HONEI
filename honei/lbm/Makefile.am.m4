@@ -50,7 +50,7 @@ endif
 if CUDA
 
 BACKEND_LIBS += \
-	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.so
+	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.la
 
 endif
 
