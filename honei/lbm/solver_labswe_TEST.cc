@@ -38,8 +38,8 @@ class SolverLABSWETest :
 
         virtual void run() const
         {
-            unsigned long g_h(20);
-            unsigned long g_w(20);
+            unsigned long g_h(100);
+            unsigned long g_w(50);
             unsigned long timesteps(100);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
@@ -106,7 +106,7 @@ class SolverLABSWETest :
                 //std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
                 solver.solve();
-                PostProcessing<GNUPLOT>::value(h, 9000, g_w, g_h, i);
+                PostProcessing<GNUPLOT>::value(h, 10, g_w, g_h, i);
             }
             std::cout << h << std::endl;
             TEST_CHECK(true);

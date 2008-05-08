@@ -74,6 +74,7 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+            CONTEXT("When performing collision and streaming in DIR 1:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -136,6 +137,7 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+            CONTEXT("When performing collision and streaming in DIR 2:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -198,6 +200,8 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+
+            CONTEXT("When performing collision and streaming in DIR 3:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -260,6 +264,8 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+
+            CONTEXT("When performing collision and streaming in DIR 4:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -322,6 +328,8 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+
+            CONTEXT("When performing collision and streaming in DIR 5:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -384,6 +392,8 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+
+            CONTEXT("When performing collision and streaming in DIR 6:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -446,6 +456,8 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+
+            CONTEXT("When performing collision and streaming in DIR 7:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -508,6 +520,8 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+
+            CONTEXT("When performing collision and streaming in DIR 8:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -570,6 +584,8 @@ namespace honei
                           DT2_ e_y,
                           DT2_ tau)
         {
+
+            CONTEXT("When performing collision and streaming in DIR 0:");
             unsigned long y_max(result.rows());
             unsigned long x_max(result.columns());
 
@@ -599,6 +615,5 @@ namespace honei
             }
         }
     };
-
 }
 #endif
