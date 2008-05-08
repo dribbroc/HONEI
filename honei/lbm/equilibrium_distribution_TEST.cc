@@ -49,7 +49,7 @@ class EqDisLABSWETest :
             DenseMatrix<DataType_> result_3(1000ul, 1000ul);
 
             EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>::
-                value(result_1, h, g , e);
+                value(result_1, h, u, v, g, e);
 
             EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
                 value(result_2, h, u, v, g, e, e_u, e_v);
@@ -61,7 +61,7 @@ class EqDisLABSWETest :
             {
                 for(unsigned long j(0); j < 1000; ++j)
                 {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(result_1(i,j), (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.))), std::numeric_limits<DataType_>::epsilon() * 7.);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(result_1(i,j), (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.)) * ((1.23456 * 1.23456) + (1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 9.);
                     TEST_CHECK_EQUAL_WITHIN_EPS(result_2(i,j), ((9.81 * 1.23456 * 1.23456) / 6. + ((1.23456 / 3.) * 2. * 1.23456) + ((1.23456 / 2.) * 2. * 1.23456 * 1.23456) - ((1.23456 / 6.) * 1.23456 * 1.23456)), std::numeric_limits<DataType_>::epsilon() * 7.);
                     TEST_CHECK_EQUAL_WITHIN_EPS(result_3(i,j), ((9.81 * 1.23456 * 1.23456) / 24. + ((1.23456 / 12.) * 2. * 1.23456) + ((1.23456 / 8.) * 2. * 1.23456 * 1.23456) - ((1.23456 / 24.) * 1.23456 * 1.23456)), std::numeric_limits<DataType_>::epsilon() * 7.);
                 }

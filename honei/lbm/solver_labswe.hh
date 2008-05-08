@@ -392,7 +392,7 @@ namespace honei
 
                 ///Compute initial equilibrium distribution:
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>::
-                    value(*_eq_distribution_0, *_height, _gravity, _e);
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
                     value(*_eq_distribution_1, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
@@ -519,7 +519,7 @@ namespace honei
 
                 ///Update equilibrium distribution function:
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_0>::
-                    value(*_eq_distribution_0, *_height, _gravity, _e);
+                    value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_ODD>::
                     value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[1], (*_distribution_vector_y)[1]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::

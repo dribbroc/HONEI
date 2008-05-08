@@ -60,14 +60,14 @@ namespace honei
              * \param e The ratio of space and time stepping.
              */
             template<typename DT1_, typename DT2_>
-                static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DT2_ g, DT2_ e)
+                static void value(DenseMatrix<DT1_>& result, DenseMatrix<DT1_>& h, DenseMatrix<DT1_>& u, DenseMatrix<DT1_>& v, DT2_ g, DT2_ e)
                 {
                     CONTEXT("When computing LABSWE local equilibrium distribution function (direction 0):");
                     for(unsigned long i(0); i < h.rows(); ++i)
                     {
                         for(unsigned long j(0); j < h.columns(); ++j)
                         {
-                            result(i,j) = h(i,j) - ((DT1_(5.) * g * h(i,j) * h(i,j)) / (DT1_(6.) * e * e)) - ((DT1_(2.) * h(i,j)) /(DT1_(3.) * e * e));
+                            result(i,j) = h(i,j) - ((DT1_(5.) * g * h(i,j) * h(i,j)) / (DT1_(6.) * e * e)) - ((DT1_(2.) * h(i,j)) /(DT1_(3.) * e * e) * (u(i,j) * u(i,j) + v(i,j) * v(i,j)));
                         }
                     }
                 }
