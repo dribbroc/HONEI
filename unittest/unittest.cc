@@ -137,31 +137,45 @@ int main(int argc, char** argv)
     bool cuda(false);
     bool cell(false);
     bool mc(false);
-    bool cpu_only(false);
+    bool cpu(false);
+    bool all(true);
     if ((argc > 1) && (stringify(argv[1]) == "quick"))
     {
         quick = true;
     }
-    if ((argc == 3) && (stringify(argv[2]) == "sse"))
+
+    if (argc > 2)
     {
-        sse = true;
+        for (unsigned index(2) ; index < argc ; ++index)
+        {
+            if (stringify(argv[index]) == "sse")
+            {
+                sse = true;
+                all = false;
+            }
+            if (stringify(argv[index]) == "cuda")
+            {
+                cuda = true;
+                all = false;
+            }
+            if (stringify(argv[index]) == "cell")
+            {
+                cell = true;
+                all = false;
+            }
+            if (stringify(argv[index]) == "mc")
+            {
+                mc = true;
+                all = false;
+            }
+            if (stringify(argv[index]) == "cpu")
+            {
+                cpu = true;
+                all = false;
+            }
+        }
     }
-    if ((argc == 3) && (stringify(argv[2]) == "cuda"))
-    {
-        cuda = true;
-    }
-    if ((argc == 3) && (stringify(argv[2]) == "cell"))
-    {
-        cell = true;
-    }
-    if ((argc == 3) && (stringify(argv[2]) == "mc"))
-    {
-        mc = true;
-    }
-    if ((argc == 3) && (stringify(argv[2]) == "cpu"))
-    {
-        cpu_only = true;
-    }
+
     unsigned long list_size(0);
 
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
@@ -169,17 +183,23 @@ int main(int argc, char** argv)
     {
             if (quick && (!(*i)->is_quick_test()) )
                 continue;
-            if (sse && !( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse")))
-                continue;
-            if (cuda && (!((*i)->get_tag_name()=="cuda")))
-                continue;
-            if (cell && (!((*i)->get_tag_name()=="cell")))
-                continue;
-            if (mc && ! ( ((*i)->get_tag_name()=="mc-sse") || ((*i)->get_tag_name()=="mc")))
-                continue;
-            if (cpu_only && ( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse") ||
-                        ((*i)->get_tag_name()=="cell")))
-                continue;
+            if (!all)
+            {
+                if (((*i)->get_tag_name()=="sse") && !sse)
+                    continue;
+                if (((*i)->get_tag_name()=="cuda") && !cuda)
+                    continue;
+                if (((*i)->get_tag_name()=="cell") && !cell)
+                    continue;
+                if (((*i)->get_tag_name()=="mc-sse") && (!mc && !sse))
+                    continue;
+                if (((*i)->get_tag_name()=="mc") && (!mc && !cpu))
+                    continue;
+                if (((*i)->get_tag_name()=="cpu") && !cpu)
+                    continue;
+                if (((*i)->get_tag_name()=="none") && !all)
+                    continue;
+            }
             list_size++;
     }
 
@@ -192,17 +212,23 @@ int main(int argc, char** argv)
         {
             if (quick && (!(*i)->is_quick_test()) )
                 continue;
-            if (sse && !( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse")))
-                continue;
-            if (cuda && (!((*i)->get_tag_name()=="cuda")))
-                continue;
-            if (cell && (!((*i)->get_tag_name()=="cell")))
-                continue;
-            if (mc && ! ( ((*i)->get_tag_name()=="mc-sse") || ((*i)->get_tag_name()=="mc")))
-                continue;
-            if (cpu_only && ( ((*i)->get_tag_name()=="sse") || ((*i)->get_tag_name()=="mc-sse") ||
-                        ((*i)->get_tag_name()=="cell")))
-                continue;
+            if (!all)
+            {
+                if (((*i)->get_tag_name()=="sse") && !sse)
+                    continue;
+                if (((*i)->get_tag_name()=="cuda") && !cuda)
+                    continue;
+                if (((*i)->get_tag_name()=="cell") && !cell)
+                    continue;
+                if (((*i)->get_tag_name()=="mc-sse") && (!mc && !sse))
+                    continue;
+                if (((*i)->get_tag_name()=="mc") && (!mc && !cpu))
+                    continue;
+                if (((*i)->get_tag_name()=="cpu") && !cpu)
+                    continue;
+                if (((*i)->get_tag_name()=="none") && !all)
+                    continue;
+            }
 
             std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + " [Backend: "
                 << (*i)->get_tag_name() << "]" << std::endl;

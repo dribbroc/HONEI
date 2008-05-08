@@ -310,13 +310,7 @@ dnl }}}
 dnl }}}
 
 dnl {{{ global automake variables
-BACKENDS="cpu mc"
-if test "x$ENABLE_CELL" == "xyes" ; then
-	BACKENDS="$BACKENDS cell"
-fi
-if test "x$ENABLE_SSE" = "xyes"; then
-	BACKENDS="$BACKENDS sse mc-sse"
-fi
+BACKENDS="all"
 TYPE="full"
 AC_SUBST([BACKENDS])
 AC_SUBST([TYPE])
