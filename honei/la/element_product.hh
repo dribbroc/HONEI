@@ -522,6 +522,47 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
+    template <> struct ElementProduct<tags::GPU::CUDA>
+    {
+        /**
+         * \name Element products
+         * \{
+         *
+         * \brief Returns the the result of elementwise multiplication of two entities.
+         *
+         * \param a Entity that is a factor of the operation.
+         * \param b idem
+         *
+         * \retval a Will modify the factor a and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         */
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+
+        /// \}
+    };
+
+    /**
+     * \brief Multiplication of the elements of two given entities.
+     *
+     * ElementProduct is the template for the multiplication of the elements
+     * \f[
+     *     \texttt{ElementProduct}(a,b): \quad a \leftarrow a[i] \cdot b[i],
+     * \f]
+     *
+     * of a given entity.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct ElementProduct<tags::CPU::SSE>
     {
         /**

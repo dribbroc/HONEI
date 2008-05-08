@@ -216,6 +216,41 @@ namespace honei
      * \ingroup grplavectoroperations
      */
     template <>
+    struct Scale<tags::GPU::CUDA>
+    {
+        /**
+         * \name Scales
+         * \{
+         *
+         * \brief Returns the product of a scalar factor and a given entity.
+         *
+         * \param a The scalar factor.
+         * \param x The entity that shall be scaled.
+         *
+         * \retval x Will modify the entity x and return it.
+         */
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const float a);
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & x, const float a);
+
+        /// \}
+    };
+
+    /**
+     * \brief Result of scaling an entity by a scalar factor.
+     *
+     * Scale is the class template for the operation
+     * \f[
+     *     \texttt{Scale}(a, x): \quad x[i] \leftarrow a \cdot x[i],
+     * \f]
+     * which yields the former entity scaled by a scalar factor.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <>
     struct Scale<tags::CPU::SSE>
     {
         /**

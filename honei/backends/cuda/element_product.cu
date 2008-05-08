@@ -21,15 +21,15 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void scaled_sum_gpu(float * x, float * y, float b, unsigned long size)
+        __global__ void element_product_gpu(float * x, float * y, unsigned long size)
         {
             int idx = blockDim.x *blockIdx.x + threadIdx.x;
-            x[idx] = x[idx] + b * y[idx];
+            x[idx] = x[idx] * y[idx];
         }
     }
 }
 
-extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigned long size)
+extern "C" void cuda_element_product_two_float(float * x, float * y, unsigned long size)
 {
     dim3 grid;
     dim3 block;
@@ -44,10 +44,9 @@ extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigne
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::scaled_sum_gpu<<<grid, block, 2 * block.x * sizeof(float)>>>(x_gpu, y_gpu, b, size);
+    honei::cuda::element_product_gpu<<<grid, block, 2 * block.x * sizeof(float)>>>(x_gpu, y_gpu, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);
     cudaFree(y_gpu);
 }
-

@@ -15,6 +15,9 @@ NVCCFLAGS = -g
 
 libhoneibackendscuda_la_SOURCES = \
 				 operations.hh \
+				 element_inverse.cu \
+				 element_product.cu \
+				 scale.cu \
 				 scaled_sum.cu \
 				 sum.cu
 libhoneibackendscuda_la_LIBADD = \

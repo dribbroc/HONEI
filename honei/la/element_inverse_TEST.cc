@@ -87,6 +87,9 @@ DenseVectorElementInverseTest<tags::CPU::SSE, double> sse_dense_vector_element_i
 DenseVectorElementInverseTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_element_inverse_test_float("MC SSE float");
 DenseVectorElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_element_inverse_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseVectorElementInverseTest<tags::GPU::CUDA, float> cuda_dense_vector_element_inverse_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseVectorElementInverseTest<tags::Cell, float> cell_dense_vector_element_inverse_test_float("Cell float");
 DenseVectorElementInverseTest<tags::Cell, double> cell_dense_vector_element_inverse_test_double("Cell double");
@@ -150,6 +153,9 @@ DenseVectorElementInverseQuickTest<tags::CPU::SSE, float> sse_dense_vector_eleme
 DenseVectorElementInverseQuickTest<tags::CPU::SSE, double> sse_dense_vector_element_inverse_quick_test_double("SSE double");
 DenseVectorElementInverseQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_element_inverse_quick_test_float("MC SSE float");
 DenseVectorElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_element_inverse_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorElementInverseQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_element_inverse_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementInverseQuickTest<tags::Cell, float> cell_dense_vector_element_inverse_quick_test_float("Cell float");
@@ -220,6 +226,9 @@ DenseVectorRangeElementInverseTest<tags::CPU::SSE, double> sse_dense_vector_rang
 DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_element_inverse_test_float("MC SSE float");
 DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_element_inverse_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseVectorRangeElementInverseTest<tags::GPU::CUDA, float> cuda_dense_vector_range_element_inverse_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementInverseTest<tags::Cell, float> cell_dense_vector_range_element_inverse_test_float("Cell float");
 DenseVectorRangeElementInverseTest<tags::Cell, double> cell_dense_vector_range_element_inverse_test_double("Cell double");
@@ -286,6 +295,9 @@ DenseVectorRangeElementInverseQuickTest<tags::CPU::SSE, float> sse_dense_vector_
 DenseVectorRangeElementInverseQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_element_inverse_quick_test_double("SSE double");
 DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_element_inverse_quick_test_float("MC SSE float");
 DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_element_inverse_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorRangeElementInverseQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_element_inverse_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementInverseQuickTest<tags::Cell, float> cell_dense_vector_range_element_inverse_quick_test_float("Cell float");
@@ -508,6 +520,9 @@ DenseMatrixElementInverseTest<tags::CPU::SSE, double>sse_dense_matrix_element_in
 DenseMatrixElementInverseTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_element_inverse_test_float("MC SSE float");
 DenseMatrixElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_element_inverse_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseMatrixElementInverseTest<tags::GPU::CUDA, float> cuda_dense_matrix_element_inverse_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseMatrixElementInverseTest<tags::Cell, float> cell_dense_matrix_element_inverse_test_float("Cell float");
 DenseMatrixElementInverseTest<tags::Cell, double> cell_dense_matrix_element_inverse_test_double("Cell double");
@@ -568,10 +583,13 @@ DenseMatrixElementInverseQuickTest<tags::CPU, double> dense_matrix_element_inver
 DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_element_inverse_quick_test_float("MC float");
 DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_element_inverse_quick_test_double("MC double");
 #ifdef HONEI_SSE
-DenseMatrixElementInverseQuickTest<tags::CPU::SSE, float>  sse_dense_matrix_element_inverse_quick_test_float("SSE float");
+DenseMatrixElementInverseQuickTest<tags::CPU::SSE, float> sse_dense_matrix_element_inverse_quick_test_float("SSE float");
 DenseMatrixElementInverseQuickTest<tags::CPU::SSE, double> sse_dense_matrix_element_inverse_quick_test_double("SSE double");
 DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_element_inverse_quick_test_float("MC SSE float");
 DenseMatrixElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_element_inverse_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseMatrixElementInverseQuickTest<tags::GPU::CUDA, float> cuda_dense_matrix_element_inverse_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 DenseMatrixElementInverseQuickTest<tags::Cell, float> cell_dense_matrix_element_inverse_quick_test_float("Cell float");

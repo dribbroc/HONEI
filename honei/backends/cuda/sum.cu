@@ -28,6 +28,7 @@ namespace honei
         }
     }
 }
+
 extern "C" void cuda_sum_two_float(float * x, float * y, unsigned long size)
 {
     dim3 grid;
