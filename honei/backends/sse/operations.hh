@@ -39,6 +39,11 @@ namespace honei
         float norm_l2(const float * a, unsigned long size);
         double norm_l2(double * a, unsigned long size);
 
+        void product_dm(float * x, float * y, float b, unsigned long size);
+        void product_dm(double * x, double * y, double b, unsigned long size);
+        void product_dm_nx2(float * result, const float * a, const float * b, unsigned long size);
+        void product_dm_nx2(double * result, const double * a, const double * b, unsigned long size);
+
         float reduction_sum(const float * a, unsigned long size);
         double reduction_sum(double * a, unsigned long size);
 

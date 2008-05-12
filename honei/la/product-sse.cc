@@ -20,6 +20,7 @@
 
 #include <honei/util/attributes.hh>
 #include <honei/la/product.hh>
+#include <honei/backends/sse/operations.hh>
 #include <honei/la/dense_matrix_tile.hh>
 
 #include <xmmintrin.h>
@@ -27,374 +28,120 @@
 
 namespace honei
 {
-    namespace intern
+    namespace sse
     {
-        namespace sse
+        void rec_dm_product(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b)
         {
-            inline void product_dm(float * x, float * y, float b, unsigned long size)
+            /// \todo Use Configuration.
+            unsigned long best_cache_size(1000000);
+            if (r.rows() * r.columns() + a.rows() * a.columns() + b.rows() * b.columns() < best_cache_size)
             {
-                _mm_prefetch(y, _MM_HINT_T0);
-                _mm_prefetch(x, _MM_HINT_T0);
-
-                __m128 m1, m2, m3, m4, m5, m6, m8;
-                float HONEI_ALIGNED(16) b_data;
-                b_data = b;
-                m8 = _mm_load1_ps(&b_data);
-
-                unsigned long x_address = reinterpret_cast<unsigned long>(x);
-                unsigned long x_offset = x_address % 16;
-                unsigned long y_address = reinterpret_cast<unsigned long>(y);
-                unsigned long y_offset = y_address % 16;
-
-                unsigned long z_offset(x_offset / 4);
-                z_offset = (4 - z_offset) % 4;
-
-                unsigned long quad_start = z_offset;
-                unsigned long quad_end(size - ((size - quad_start) % 12));
-
-                if (size < 16)
+                for (unsigned long i(0) ; i < a.rows() ; ++i)
                 {
-                    quad_end = 0;
-                    quad_start = 0;
-                }
-
-                if (x_offset == y_offset)
-                {
-                    for (unsigned long index(quad_start) ; index < quad_end ; index += 12)
+                    for (unsigned long j(0) ; j < a.columns() ; ++j)
                     {
-
-                        m1 = _mm_load_ps(x + index);
-                        m3 = _mm_load_ps(x + index + 4);
-                        m5 = _mm_load_ps(x + index + 8);
-                        m2 = _mm_load_ps(y + index);
-                        m4 = _mm_load_ps(y + index + 4);
-                        m6 = _mm_load_ps(y + index + 8);
-
-                        m2 = _mm_mul_ps(m2, m8);
-                        m4 = _mm_mul_ps(m4, m8);
-                        m6 = _mm_mul_ps(m6, m8);
-
-                        m1 = _mm_add_ps(m1, m2);
-                        m3 = _mm_add_ps(m3, m4);
-                        m5 = _mm_add_ps(m5, m6);
-
-                        _mm_store_ps(x + index, m1);
-                        _mm_store_ps(x + index + 4, m3);
-                        _mm_store_ps(x + index + 8, m5);
+                        honei::sse::product_dm(r[i].elements(), b[j].elements(), a(i, j), b[j].size());
                     }
                 }
+            }
+            else
+            {
+                // case (2.1)
+                if (a.rows() >= a.columns() && a.rows() >= b.columns())
+                {
+                    unsigned long r_lower(r.rows() / 2);
+                    unsigned long r_upper(r_lower + r.rows() % 2);
+                    DenseMatrixTile<float> r_tile_lower(r, r_lower, r.columns(), 0, 0);
+                    DenseMatrixTile<float> r_tile_upper(r, r_upper, r.columns(), r_lower, 0);
+                    DenseMatrixTile<float> a_tile_lower(a, r_lower, a.columns(), 0, 0);
+                    DenseMatrixTile<float> a_tile_upper(a, r_upper, a.columns(), r_lower, 0);
+                    rec_dm_product(r_tile_lower, a_tile_lower, b);
+                    rec_dm_product(r_tile_upper, a_tile_upper, b);
+                }
+
+                // case (2.3)
+                else if(b.columns() >= a.rows() && b.columns() >= a.columns())
+                {
+                    unsigned long r_left(r.columns() / 2);
+                    unsigned long r_right(r_left + r.columns() % 2);
+                    DenseMatrixTile<float> r_tile_left(r, r.rows(), r_left, 0, 0);
+                    DenseMatrixTile<float> r_tile_right(r, r.rows(), r_right, 0, r_left);
+                    DenseMatrixTile<float> b_tile_left(b, b.rows(), r_left, 0, 0);
+                    DenseMatrixTile<float> b_tile_right(b, b.rows(), r_right, 0, r_left);
+                    rec_dm_product(r_tile_left, a, b_tile_left);
+                    rec_dm_product(r_tile_right, a, b_tile_right);
+                }
+
+                // case (2.2)
                 else
                 {
-                    for (unsigned long index(quad_start) ; index < quad_end ; index += 12)
-                    {
-
-                        m1 = _mm_load_ps(x + index);
-                        m3 = _mm_load_ps(x + index + 4);
-                        m5 = _mm_load_ps(x + index + 8);
-                        m2 = _mm_loadu_ps(y + index);
-                        m4 = _mm_loadu_ps(y + index + 4);
-                        m6 = _mm_loadu_ps(y + index + 8);
-
-                        m2 = _mm_mul_ps(m2, m8);
-                        m4 = _mm_mul_ps(m4, m8);
-                        m6 = _mm_mul_ps(m6, m8);
-
-                        m1 = _mm_add_ps(m1, m2);
-                        m3 = _mm_add_ps(m3, m4);
-                        m5 = _mm_add_ps(m5, m6);
-
-                        _mm_store_ps(x + index, m1);
-                        _mm_store_ps(x + index + 4, m3);
-                        _mm_store_ps(x + index + 8, m5);
-                    }
-                }
-
-                for (unsigned long index(0) ; index < quad_start ; index++)
-                {
-                    x[index] += y[index] * b;
-                }
-
-                for (unsigned long index(quad_end) ; index < size ; index++)
-                {
-                    x[index] += y[index] * b;
+                    unsigned long a_left(a.columns() / 2);
+                    unsigned long a_right(a_left + a.columns() % 2);
+                    DenseMatrixTile<float> a_tile_left(a, a.rows(), a_left, 0, 0);
+                    DenseMatrixTile<float> a_tile_right(a, a.rows(), a_right, 0, a_left);
+                    DenseMatrixTile<float> b_tile_upper(b, a_left, b.columns(), 0, 0);
+                    DenseMatrixTile<float> b_tile_lower(b, a_right, b.columns(), a_left, 0);
+                    // Implicit addition.
+                    rec_dm_product(r, a_tile_left, b_tile_upper);
+                    rec_dm_product(r, a_tile_right, b_tile_lower);
                 }
             }
+        }
 
-            inline void product_dm(double * x, double * y, double b, unsigned long size)
+        void rec_dm_product(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b)
+        {
+            /// \todo Use Configuration.
+            unsigned long best_cache_size(500000);
+            if (r.rows() * r.columns() + a.rows() * a.columns() + b.rows() * b.columns() < best_cache_size)
             {
-                _mm_prefetch(y, _MM_HINT_T0);
-                _mm_prefetch(x, _MM_HINT_T0);
-
-                __m128d m1, m2, m3, m4, m5, m6, m8;
-                double HONEI_ALIGNED(16) b_data;
-                b_data = b;
-                m8 = _mm_load1_pd(&b_data);
-
-                unsigned long x_address = (unsigned long)x;
-                unsigned long x_offset = x_address % 16;
-                unsigned long y_address = (unsigned long)y;
-                unsigned long y_offset = y_address % 16;
-
-                unsigned long z_offset(x_offset / 8);
-
-                unsigned long quad_start = z_offset;
-                unsigned long quad_end(size - ((size - quad_start) % 6));
-                if (size < 12)
+                for (unsigned long i(0) ; i < a.rows() ; ++i)
                 {
-                    quad_end = 0;
-                    quad_start = 0;
-                }
-
-                if (x_offset == y_offset)
-                {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 6)
+                    for (unsigned long j(0) ; j < a.columns() ; ++j)
                     {
-
-                        m1 = _mm_load_pd(x + index);
-                        m3 = _mm_load_pd(x + index + 2);
-                        m5 = _mm_load_pd(x + index + 4);
-                        m2 = _mm_load_pd(y + index);
-                        m4 = _mm_load_pd(y + index + 2);
-                        m6 = _mm_load_pd(y + index + 4);
-
-                        m2 = _mm_mul_pd(m2, m8);
-                        m4 = _mm_mul_pd(m4, m8);
-                        m6 = _mm_mul_pd(m6, m8);
-
-                        m1 = _mm_add_pd(m1, m2);
-                        m3 = _mm_add_pd(m3, m4);
-                        m5 = _mm_add_pd(m5, m6);
-
-                        _mm_store_pd(x + index, m1);
-                        _mm_store_pd(x + index + 2, m3);
-                        _mm_store_pd(x + index + 4, m5);
+                        honei::sse::product_dm(r[i].elements(), b[j].elements(), a(i, j), b[j].size());
                     }
                 }
+            }
+            else
+            {
+                // case (2.1)
+                if (a.rows() >= a.columns() && a.rows() >= b.columns())
+                {
+                    unsigned long r_lower(r.rows() / 2);
+                    unsigned long r_upper(r_lower + r.rows() % 2);
+                    DenseMatrixTile<double> r_tile_lower(r, r_lower, r.columns(), 0, 0);
+                    DenseMatrixTile<double> r_tile_upper(r, r_upper, r.columns(), r_lower, 0);
+                    DenseMatrixTile<double> a_tile_lower(a, r_lower, a.columns(), 0, 0);
+                    DenseMatrixTile<double> a_tile_upper(a, r_upper, a.columns(), r_lower, 0);
+                    rec_dm_product(r_tile_lower, a_tile_lower, b);
+                    rec_dm_product(r_tile_upper, a_tile_upper, b);
+                }
+
+                // case (2.3)
+                else if(b.columns() >= a.rows() && b.columns() >= a.columns())
+                {
+                    unsigned long r_left(r.columns() / 2);
+                    unsigned long r_right(r_left + r.columns() % 2);
+                    DenseMatrixTile<double> r_tile_left(r, r.rows(), r_left, 0, 0);
+                    DenseMatrixTile<double> r_tile_right(r, r.rows(), r_right, 0, r_left);
+                    DenseMatrixTile<double> b_tile_left(b, b.rows(), r_left, 0, 0);
+                    DenseMatrixTile<double> b_tile_right(b, b.rows(), r_right, 0, r_left);
+                    rec_dm_product(r_tile_left, a, b_tile_left);
+                    rec_dm_product(r_tile_right, a, b_tile_right);
+                }
+
+                // case (2.2)
                 else
                 {
-                    for (unsigned long index = quad_start ; index < quad_end ; index += 6)
-                    {
-
-                        m1 = _mm_load_pd(x + index);
-                        m3 = _mm_load_pd(x + index + 2);
-                        m5 = _mm_load_pd(x + index + 4);
-                        m2 = _mm_loadu_pd(y + index);
-                        m4 = _mm_loadu_pd(y + index + 2);
-                        m6 = _mm_loadu_pd(y + index + 4);
-
-                        m2 = _mm_mul_pd(m2, m8);
-                        m4 = _mm_mul_pd(m4, m8);
-                        m6 = _mm_mul_pd(m6, m8);
-
-                        m1 = _mm_add_pd(m1, m2);
-                        m3 = _mm_add_pd(m3, m4);
-                        m5 = _mm_add_pd(m5, m6);
-
-                        _mm_store_pd(x + index, m1);
-                        _mm_store_pd(x + index + 2, m3);
-                        _mm_store_pd(x + index + 4, m5);
-                    }
-                }
-                for (unsigned long index(0) ; index < quad_start ; index++)
-                {
-                    x[index] += y[index] * b;
-                }
-                for (unsigned long index = quad_end ; index < size ; index++)
-                {
-                    x[index] += y[index] * b;
-                }
-            }
-
-            inline void product_dm_nx2(float * result, const float * a, const float * b, unsigned long size)
-            {
-                /*
-                float HONEI_ALIGNED(16) result1(0);
-                float HONEI_ALIGNED(16) result2(0);
-
-                union sse4
-                {
-                    __m128 m;
-                    float f[4];
-                } m1, m2, m3, m4, m5, m6, m8;
-                m8.m = _mm_setzero_ps();
-
-                unsigned long a_address = (unsigned long)a;
-                unsigned long a_offset = a_address % 16;
-
-                unsigned long x_offset(a_offset / 4);
-                x_offset = (4 - x_offset) % 4;
-
-                unsigned long quad_start = x_offset;
-                unsigned long quad_end(size - ((size - quad_start) % 2));
-
-                if (size < 24)
-                {
-                    quad_end = 0;
-                    quad_start = 0;
-                }
-
-                for (unsigned long index(0) ; index < quad_start ; ++index)
-                {
-                    result1 += a[index] * b[index * 2];
-                    result2 += a[index] * b[index * 2 + 1];
-                }
-                for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
-                {
-                    m1.m = _mm_set_ps(a[index +1 ], a[index + 1], a[index], a[index]);
-                    m2.m = _mm_load_ps(b + index * 2);
-                    m2.m = _mm_mul_ps(m1.m, m2.m);
-                    m8.m = _mm_add_ps(m8.m, m2.m);
-                }
-                result1 += m8.f[0];
-                result2 += m8.f[1];
-                result1 += m8.f[2];
-                result2 += m8.f[3];
-                for (unsigned long index(quad_end) ; index < size ; ++index)
-                {
-                    result1 += a[index] * b[index * 2];
-                    result2 += a[index] * b[index * 2 + 1];
-                }
-                result[0] = result1;
-                result[1] = result2;*/
-                float result1(0);
-                float result2(0);
-
-                for (unsigned long row(0) ; row < size ; ++row)
-                {
-                    result1 += a[row] * b[row * 2];
-                    result2 += a[row] * b[row * 2 + 1];
-                }
-                result[0] = result1;
-                result[1] = result2;
-            }
-
-            inline void product_dm_nx2(double * result, const double * a, const double * b, unsigned long size)
-            {
-                double result1(0);
-                double result2(0);
-
-                for (unsigned long row(0) ; row < size ; ++row)
-                {
-                    result1 += a[row] * b[row * 2];
-                    result2 += a[row] * b[row * 2 + 1];
-                }
-                result[0] = result1;
-                result[1] = result2;
-            }
-
-            void rec_dm_product(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b)
-            {
-                /// \todo Use Configuration.
-                unsigned long best_cache_size(1000000);
-                if (r.rows() * r.columns() + a.rows() * a.columns() + b.rows() * b.columns() < best_cache_size)
-                {
-                    for (unsigned long i(0) ; i < a.rows() ; ++i)
-                    {
-                        for (unsigned long j(0) ; j < a.columns() ; ++j)
-                        {
-                            honei::intern::sse::product_dm(r[i].elements(), b[j].elements(), a(i, j), b[j].size());
-                        }
-                    }
-                }
-                else
-                {
-                    // case (2.1)
-                    if (a.rows() >= a.columns() && a.rows() >= b.columns())
-                    {
-                        unsigned long r_lower(r.rows() / 2);
-                        unsigned long r_upper(r_lower + r.rows() % 2);
-                        DenseMatrixTile<float> r_tile_lower(r, r_lower, r.columns(), 0, 0);
-                        DenseMatrixTile<float> r_tile_upper(r, r_upper, r.columns(), r_lower, 0);
-                        DenseMatrixTile<float> a_tile_lower(a, r_lower, a.columns(), 0, 0);
-                        DenseMatrixTile<float> a_tile_upper(a, r_upper, a.columns(), r_lower, 0);
-                        rec_dm_product(r_tile_lower, a_tile_lower, b);
-                        rec_dm_product(r_tile_upper, a_tile_upper, b);
-                    }
-
-                    // case (2.3)
-                    else if(b.columns() >= a.rows() && b.columns() >= a.columns())
-                    {
-                        unsigned long r_left(r.columns() / 2);
-                        unsigned long r_right(r_left + r.columns() % 2);
-                        DenseMatrixTile<float> r_tile_left(r, r.rows(), r_left, 0, 0);
-                        DenseMatrixTile<float> r_tile_right(r, r.rows(), r_right, 0, r_left);
-                        DenseMatrixTile<float> b_tile_left(b, b.rows(), r_left, 0, 0);
-                        DenseMatrixTile<float> b_tile_right(b, b.rows(), r_right, 0, r_left);
-                        rec_dm_product(r_tile_left, a, b_tile_left);
-                        rec_dm_product(r_tile_right, a, b_tile_right);
-                    }
-
-                    // case (2.2)
-                    else
-                    {
-                        unsigned long a_left(a.columns() / 2);
-                        unsigned long a_right(a_left + a.columns() % 2);
-                        DenseMatrixTile<float> a_tile_left(a, a.rows(), a_left, 0, 0);
-                        DenseMatrixTile<float> a_tile_right(a, a.rows(), a_right, 0, a_left);
-                        DenseMatrixTile<float> b_tile_upper(b, a_left, b.columns(), 0, 0);
-                        DenseMatrixTile<float> b_tile_lower(b, a_right, b.columns(), a_left, 0);
-                        // Implicit addition.
-                        rec_dm_product(r, a_tile_left, b_tile_upper);
-                        rec_dm_product(r, a_tile_right, b_tile_lower);
-                    }
-                }
-            }
-
-            void rec_dm_product(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b)
-            {
-                /// \todo Use Configuration.
-                unsigned long best_cache_size(500000);
-                if (r.rows() * r.columns() + a.rows() * a.columns() + b.rows() * b.columns() < best_cache_size)
-                {
-                    for (unsigned long i(0) ; i < a.rows() ; ++i)
-                    {
-                        for (unsigned long j(0) ; j < a.columns() ; ++j)
-                        {
-                            honei::intern::sse::product_dm(r[i].elements(), b[j].elements(), a(i, j), b[j].size());
-                        }
-                    }
-                }
-                else
-                {
-                    // case (2.1)
-                    if (a.rows() >= a.columns() && a.rows() >= b.columns())
-                    {
-                        unsigned long r_lower(r.rows() / 2);
-                        unsigned long r_upper(r_lower + r.rows() % 2);
-                        DenseMatrixTile<double> r_tile_lower(r, r_lower, r.columns(), 0, 0);
-                        DenseMatrixTile<double> r_tile_upper(r, r_upper, r.columns(), r_lower, 0);
-                        DenseMatrixTile<double> a_tile_lower(a, r_lower, a.columns(), 0, 0);
-                        DenseMatrixTile<double> a_tile_upper(a, r_upper, a.columns(), r_lower, 0);
-                        rec_dm_product(r_tile_lower, a_tile_lower, b);
-                        rec_dm_product(r_tile_upper, a_tile_upper, b);
-                    }
-
-                    // case (2.3)
-                    else if(b.columns() >= a.rows() && b.columns() >= a.columns())
-                    {
-                        unsigned long r_left(r.columns() / 2);
-                        unsigned long r_right(r_left + r.columns() % 2);
-                        DenseMatrixTile<double> r_tile_left(r, r.rows(), r_left, 0, 0);
-                        DenseMatrixTile<double> r_tile_right(r, r.rows(), r_right, 0, r_left);
-                        DenseMatrixTile<double> b_tile_left(b, b.rows(), r_left, 0, 0);
-                        DenseMatrixTile<double> b_tile_right(b, b.rows(), r_right, 0, r_left);
-                        rec_dm_product(r_tile_left, a, b_tile_left);
-                        rec_dm_product(r_tile_right, a, b_tile_right);
-                    }
-
-                    // case (2.2)
-                    else
-                    {
-                        unsigned long a_left(a.columns() / 2);
-                        unsigned long a_right(a_left + a.columns() % 2);
-                        DenseMatrixTile<double> a_tile_left(a, a.rows(), a_left, 0, 0);
-                        DenseMatrixTile<double> a_tile_right(a, a.rows(), a_right, 0, a_left);
-                        DenseMatrixTile<double> b_tile_upper(b, a_left, b.columns(), 0, 0);
-                        DenseMatrixTile<double> b_tile_lower(b, a_right, b.columns(), a_left, 0);
-                        // Implicit addition.
-                        rec_dm_product(r, a_tile_left, b_tile_upper);
-                        rec_dm_product(r, a_tile_right, b_tile_lower);
-                    }
+                    unsigned long a_left(a.columns() / 2);
+                    unsigned long a_right(a_left + a.columns() % 2);
+                    DenseMatrixTile<double> a_tile_left(a, a.rows(), a_left, 0, 0);
+                    DenseMatrixTile<double> a_tile_right(a, a.rows(), a_right, 0, a_left);
+                    DenseMatrixTile<double> b_tile_upper(b, a_left, b.columns(), 0, 0);
+                    DenseMatrixTile<double> b_tile_lower(b, a_right, b.columns(), a_left, 0);
+                    // Implicit addition.
+                    rec_dm_product(r, a_tile_left, b_tile_upper);
+                    rec_dm_product(r, a_tile_right, b_tile_lower);
                 }
             }
         }
@@ -683,7 +430,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
     {
         for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
-            honei::intern::sse::product_dm_nx2(result[i].elements(), a[i].elements(), b.elements(), b.rows());
+            honei::sse::product_dm_nx2(result[i].elements(), a[i].elements(), b.elements(), b.rows());
         }
     }
     else
@@ -691,7 +438,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
         DenseMatrixTile<float> a_tile(a, a.rows(), a.columns(), 0, 0);
         DenseMatrixTile<float> b_tile(b, b.rows(), b.columns(), 0, 0);
         DenseMatrixTile<float> r_tile(result, result.rows(), result.columns(), 0, 0);
-        honei::intern::sse::rec_dm_product(r_tile, a_tile, b_tile);
+        honei::sse::rec_dm_product(r_tile, a_tile, b_tile);
     }
 
     return result;
@@ -710,7 +457,7 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
     {
         for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
-            honei::intern::sse::product_dm_nx2(result[i].elements(), a[i].elements(), b.elements(), b.rows());
+            honei::sse::product_dm_nx2(result[i].elements(), a[i].elements(), b.elements(), b.rows());
         }
     }
     else
@@ -718,7 +465,7 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
         DenseMatrixTile<double> a_tile(a, a.rows(), a.columns(), 0, 0);
         DenseMatrixTile<double> b_tile(b, b.rows(), b.columns(), 0, 0);
         DenseMatrixTile<double> r_tile(result, result.rows(), result.columns(), 0, 0);
-        honei::intern::sse::rec_dm_product(r_tile, a_tile, b_tile);
+        honei::sse::rec_dm_product(r_tile, a_tile, b_tile);
     }
 
     return result;
@@ -736,7 +483,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const SparseMatrix<float> & a,
     for (SparseMatrix<float>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
-        honei::intern::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+        honei::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
     }
 
     return result;
@@ -754,13 +501,13 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const SparseMatrix<double> & 
     for (SparseMatrix<double>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
-        honei::intern::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
+        honei::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
     }
 
     return result;
 }
 
-DenseMatrixTile<float> &
+    DenseMatrixTile<float> &
 Product<tags::CPU::SSE>::value(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b)
 {
     CONTEXT("When multiplying DenseMatrixTile<float> with DenseMatrixTile<float> (SSE):");
@@ -774,12 +521,12 @@ Product<tags::CPU::SSE>::value(DenseMatrixTile<float> & r, const DenseMatrixTile
     if (b.columns() != r.columns())
         throw MatrixColumnsDoNotMatch(r.columns(), b.columns());
 
-    honei::intern::sse::rec_dm_product(r, a, b);
+    honei::sse::rec_dm_product(r, a, b);
 
     return r;
 }
 
-DenseMatrixTile<double> &
+    DenseMatrixTile<double> &
 Product<tags::CPU::SSE>::value(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b)
 {
     CONTEXT("When multiplying DenseMatrixTile<double> with DenseMatrixTile<double> (SSE):");
@@ -793,7 +540,7 @@ Product<tags::CPU::SSE>::value(DenseMatrixTile<double> & r, const DenseMatrixTil
     if (b.columns() != r.columns())
         throw MatrixColumnsDoNotMatch(r.columns(), b.columns());
 
-    honei::intern::sse::rec_dm_product(r, a, b);
+    honei::sse::rec_dm_product(r, a, b);
 
     return r;
 }

@@ -19,6 +19,7 @@ libhoneibackendssse_la_SOURCES = operations.hh \
 				 element_inverse.cc \
 				 element_product.cc \
 				 norm.cc \
+				 product.cc \
 				 reduction.cc \
 				 scaled_sum.cc \
 				 scale.cc \
