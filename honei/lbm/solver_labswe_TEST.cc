@@ -106,7 +106,7 @@ class SolverLABSWETest :
                 //std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
                 solver.solve();
-                PostProcessing<GNUPLOT>::value(h, 100, g_w, g_h, i);
+                PostProcessing<GNUPLOT>::value(u, 100, g_w, g_h, i);
             }
             std::cout << h << std::endl;
             TEST_CHECK(true);

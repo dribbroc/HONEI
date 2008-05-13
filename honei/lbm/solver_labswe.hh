@@ -155,16 +155,25 @@ namespace honei
                     DenseMatrix<ResPrec_> d6c(_distribution_6->copy());
                     DenseMatrix<ResPrec_> d7c(_distribution_7->copy());
                     DenseMatrix<ResPrec_> d8c(_distribution_8->copy());
+                    DenseMatrix<ResPrec_> d0c_2(_distribution_0->copy());
+                    DenseMatrix<ResPrec_> d1c_2(_distribution_1->copy());
+                    DenseMatrix<ResPrec_> d2c_2(_distribution_2->copy());
+                    DenseMatrix<ResPrec_> d3c_2(_distribution_3->copy());
+                    DenseMatrix<ResPrec_> d4c_2(_distribution_4->copy());
+                    DenseMatrix<ResPrec_> d5c_2(_distribution_5->copy());
+                    DenseMatrix<ResPrec_> d6c_2(_distribution_6->copy());
+                    DenseMatrix<ResPrec_> d7c_2(_distribution_7->copy());
+                    DenseMatrix<ResPrec_> d8c_2(_distribution_8->copy());
 
-                    Scale<Tag_>::value( *_distribution_0, (*_distribution_vector_x)[0]);
-                    Scale<Tag_>::value( *_distribution_1, (*_distribution_vector_x)[1]);
-                    Scale<Tag_>::value( *_distribution_2, (*_distribution_vector_x)[2]);
-                    Scale<Tag_>::value( *_distribution_3, (*_distribution_vector_x)[3]);
-                    Scale<Tag_>::value( *_distribution_4, (*_distribution_vector_x)[4]);
-                    Scale<Tag_>::value( *_distribution_5, (*_distribution_vector_x)[5]);
-                    Scale<Tag_>::value( *_distribution_6, (*_distribution_vector_x)[6]);
-                    Scale<Tag_>::value( *_distribution_7, (*_distribution_vector_x)[7]);
-                    Scale<Tag_>::value( *_distribution_8, (*_distribution_vector_x)[8]);
+                    Scale<Tag_>::value( d0c, (*_distribution_vector_x)[0]);
+                    Scale<Tag_>::value( d1c, (*_distribution_vector_x)[1]);
+                    Scale<Tag_>::value( d2c, (*_distribution_vector_x)[2]);
+                    Scale<Tag_>::value( d3c, (*_distribution_vector_x)[3]);
+                    Scale<Tag_>::value( d4c, (*_distribution_vector_x)[4]);
+                    Scale<Tag_>::value( d5c, (*_distribution_vector_x)[5]);
+                    Scale<Tag_>::value( d6c, (*_distribution_vector_x)[6]);
+                    Scale<Tag_>::value( d7c, (*_distribution_vector_x)[7]);
+                    Scale<Tag_>::value( d8c, (*_distribution_vector_x)[8]);
 
                     DenseMatrix<ResPrec_> accu2(d0c.copy());
 
@@ -179,31 +188,31 @@ namespace honei
 
                     DenseMatrix<ResPrec_> h_inv(_height->copy());
                     ElementInverse<Tag_>::value(h_inv);
+                    DenseMatrix<ResPrec_> h_inv_2(h_inv.copy());
                     *_u = ElementProduct<Tag_>::value(h_inv, accu2);
 
-                    Scale<Tag_>::value( d0c, (*_distribution_vector_y)[0]);
-                    Scale<Tag_>::value( d1c, (*_distribution_vector_y)[1]);
-                    Scale<Tag_>::value( d2c, (*_distribution_vector_y)[2]);
-                    Scale<Tag_>::value( d3c, (*_distribution_vector_y)[3]);
-                    Scale<Tag_>::value( d4c, (*_distribution_vector_y)[4]);
-                    Scale<Tag_>::value( d5c, (*_distribution_vector_y)[5]);
-                    Scale<Tag_>::value( d6c, (*_distribution_vector_y)[6]);
-                    Scale<Tag_>::value( d7c, (*_distribution_vector_y)[7]);
-                    Scale<Tag_>::value( d8c, (*_distribution_vector_y)[8]);
+                    Scale<Tag_>::value( d0c_2, (*_distribution_vector_y)[0]);
+                    Scale<Tag_>::value( d1c_2, (*_distribution_vector_y)[1]);
+                    Scale<Tag_>::value( d2c_2, (*_distribution_vector_y)[2]);
+                    Scale<Tag_>::value( d3c_2, (*_distribution_vector_y)[3]);
+                    Scale<Tag_>::value( d4c_2, (*_distribution_vector_y)[4]);
+                    Scale<Tag_>::value( d5c_2, (*_distribution_vector_y)[5]);
+                    Scale<Tag_>::value( d6c_2, (*_distribution_vector_y)[6]);
+                    Scale<Tag_>::value( d7c_2, (*_distribution_vector_y)[7]);
+                    Scale<Tag_>::value( d8c_2, (*_distribution_vector_y)[8]);
 
-                    DenseMatrix<ResPrec_> accu3(d0c.copy());
+                    DenseMatrix<ResPrec_> accu3(d0c_2.copy());
 
-                    Sum<Tag_>::value(accu3, d1c);
-                    Sum<Tag_>::value(accu3, d2c);
-                    Sum<Tag_>::value(accu3, d3c);
-                    Sum<Tag_>::value(accu3, d4c);
-                    Sum<Tag_>::value(accu3, d5c);
-                    Sum<Tag_>::value(accu3, d6c);
-                    Sum<Tag_>::value(accu3, d7c);
-                    Sum<Tag_>::value(accu3, d8c);
+                    Sum<Tag_>::value(accu3, d1c_2);
+                    Sum<Tag_>::value(accu3, d2c_2);
+                    Sum<Tag_>::value(accu3, d3c_2);
+                    Sum<Tag_>::value(accu3, d4c_2);
+                    Sum<Tag_>::value(accu3, d5c_2);
+                    Sum<Tag_>::value(accu3, d6c_2);
+                    Sum<Tag_>::value(accu3, d7c_2);
+                    Sum<Tag_>::value(accu3, d8c_2);
 
-                    ElementInverse<Tag_>::value(h_inv);
-                    *_v = ElementProduct<Tag_>::value(h_inv, accu3);
+                    *_v = ElementProduct<Tag_>::value(h_inv_2, accu3);
 
                 }
 
