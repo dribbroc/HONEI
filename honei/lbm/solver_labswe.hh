@@ -409,6 +409,17 @@ namespace honei
                     value(*_eq_distribution_7, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[7], (*_distribution_vector_y)[7]);
                 EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::
                     value(*_eq_distribution_8, *_height, *_u, *_v, _gravity, _e, (*_distribution_vector_x)[8], (*_distribution_vector_y)[8]);
+
+                *_distribution_0 = *_eq_distribution_0;
+                *_distribution_1 = *_eq_distribution_1;
+                *_distribution_2 = *_eq_distribution_2;
+                *_distribution_3 = *_eq_distribution_3;
+                *_distribution_4 = *_eq_distribution_4;
+                *_distribution_5 = *_eq_distribution_5;
+                *_distribution_6 = *_eq_distribution_6;
+                *_distribution_7 = *_eq_distribution_7;
+                *_distribution_8 = *_eq_distribution_8;
+
 #ifdef SOLVER_VERBOSE
                 std::cout << "feq after preprocessing (1) " << std::endl;
                 std::cout << *_eq_distribution_1;
@@ -428,10 +439,10 @@ namespace honei
 
                 ///Compute source terms:
                 /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                    value(*_source_x, *_height, *_d_bottom_x, _gravity);
-                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                value(*_source_y, *_height, *_d_bottom_y, _gravity);
-                */
+                  value(*_source_x, *_height, *_d_bottom_x, _gravity);
+                  Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                  value(*_source_y, *_height, *_d_bottom_y, _gravity);
+                  */
 
                 Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
                     value(*_source_x, ResPrec_(0.000024));

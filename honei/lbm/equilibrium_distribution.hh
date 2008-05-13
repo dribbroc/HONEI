@@ -67,7 +67,9 @@ namespace honei
                     {
                         for(unsigned long j(0); j < h.columns(); ++j)
                         {
-                            result(i,j) = h(i,j) - ((DT1_(5.) * g * h(i,j) * h(i,j)) / (DT1_(6.) * e * e)) - ((DT1_(2.) * h(i,j)) /(DT1_(3.) * e * e) * (u(i,j) * u(i,j) + v(i,j) * v(i,j)));
+                            result(i,j) = h(i,j) -
+                                          ((DT1_(5.) * g * h(i,j) * h(i,j)) / (DT1_(6.) * e * e)) -
+                                          ((DT1_(2.) * h(i,j)) /(DT1_(3.) * e * e) * (u(i,j) * u(i,j) + v(i,j) * v(i,j)));
                         }
                     }
                 }
@@ -102,7 +104,10 @@ namespace honei
                     {
                         for(unsigned long j(0); j < h.columns(); ++j)
                         {
-                            result(i,j) = ((g * h(i,j) * h(i,j)) /(6. * e * e)) + ((h(i,j) / (3. * e * e)) * (e_u * u(i,j) + e_v * v(i,j))) + ((h(i,j) / (2. * e * e)) * (e_u * u(i,j) * e_u * u(i,j) + 2. * e_u * u(i,j) * e_v * v(i,j) + e_v * v(i,j) * e_v * v(i,j))) - ((h(i,j) / (6. * e * e)) * (u(i,j) * u(i,j) + v(i,j) * v(i,j)));
+                            result(i,j) = ((g * h(i,j) * h(i,j)) /(DT1_(6.) * e * e)) +
+                                          ((h(i,j) / (DT1_(3.) * e * e)) * (e_u * u(i,j) + e_v * v(i,j))) +
+                                          ((h(i,j) / (DT1_(2.) * e * e)) * (e_u * u(i,j) * e_u * u(i,j) + DT1_(2.) * e_u * u(i,j) * e_v * v(i,j) + e_v * v(i,j) * e_v * v(i,j))) -
+                                          ((h(i,j) / (DT1_(6.) * e * e)) * (u(i,j) * u(i,j) + v(i,j) * v(i,j)));
                         }
                     }
                 }
@@ -136,7 +141,10 @@ namespace honei
                     {
                         for(unsigned long j(0); j < h.columns(); ++j)
                         {
-                            result(i,j) = ((g * h(i,j) * h(i,j)) /(24. * e * e)) + ((h(i,j) / (12. * e * e)) * (e_u * u(i,j) + e_v * v(i,j))) + ((h(i,j) / (8. * e * e)) * (e_u * u(i,j) * e_u * u(i,j) + 2. * e_u * u(i,j) * e_v * v(i,j) + e_v * v(i,j) * e_v * v(i,j))) - ((h(i,j) / (24. * e * e)) * (u(i,j) * u(i,j) + v(i,j) * v(i,j)));
+                            result(i,j) = ((g * h(i,j) * h(i,j)) /(DT1_(24.) * e * e)) +
+                                          ((h(i,j) / (DT1_(12.) * e * e)) * (e_u * u(i,j) + e_v * v(i,j))) +
+                                          ((h(i,j) / (DT1_(8.) * e * e)) * (e_u * u(i,j) * e_u * u(i,j) + DT1_(2.) * e_u * u(i,j) * e_v * v(i,j) + e_v * v(i,j) * e_v * v(i,j))) -
+                                          ((h(i,j) / (DT1_(24.) * e * e)) * (u(i,j) * u(i,j) + v(i,j) * v(i,j)));
 
                         }
                     }
