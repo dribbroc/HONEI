@@ -166,16 +166,16 @@ namespace honei
                     Scale<Tag_>::value( *_distribution_7, (*_distribution_vector_x)[7]);
                     Scale<Tag_>::value( *_distribution_8, (*_distribution_vector_x)[8]);
 
-                    DenseMatrix<ResPrec_> accu2(_distribution_0->copy());
+                    DenseMatrix<ResPrec_> accu2(d0c.copy());
 
-                    Sum<Tag_>::value(accu2, *_distribution_1);
-                    Sum<Tag_>::value(accu2, *_distribution_2);
-                    Sum<Tag_>::value(accu2, *_distribution_3);
-                    Sum<Tag_>::value(accu2, *_distribution_4);
-                    Sum<Tag_>::value(accu2, *_distribution_5);
-                    Sum<Tag_>::value(accu2, *_distribution_6);
-                    Sum<Tag_>::value(accu2, *_distribution_7);
-                    Sum<Tag_>::value(accu2, *_distribution_8);
+                    Sum<Tag_>::value(accu2, d1c);
+                    Sum<Tag_>::value(accu2, d2c);
+                    Sum<Tag_>::value(accu2, d3c);
+                    Sum<Tag_>::value(accu2, d4c);
+                    Sum<Tag_>::value(accu2, d5c);
+                    Sum<Tag_>::value(accu2, d6c);
+                    Sum<Tag_>::value(accu2, d7c);
+                    Sum<Tag_>::value(accu2, d8c);
 
                     DenseMatrix<ResPrec_> h_inv(_height->copy());
                     ElementInverse<Tag_>::value(h_inv);
@@ -241,7 +241,7 @@ namespace honei
                     _pi(3.14159265),
                     _gravity(9.80665),
                     _n_alpha(ResPrec_(6.)),
-                    _relaxation_time(1.5),
+                    _relaxation_time(ResPrec_(1.5)),
                     _time(0)
             {
                 CONTEXT("When creating LABSWE solver:");
@@ -343,23 +343,23 @@ namespace honei
             {
                 CONTEXT("When performing LABSWE preprocessing.");
                 (*_distribution_vector_x)[0] = ResPrec_(0.);
-                (*_distribution_vector_x)[1] = ResPrec_(_e * cos(0.));
-                (*_distribution_vector_x)[2] = ResPrec_(sqrt(2.) * _e * cos(_pi / 4.));
-                (*_distribution_vector_x)[3] = ResPrec_(_e * cos(_pi / 2.));
-                (*_distribution_vector_x)[4] = ResPrec_(sqrt(2.) * _e * cos(3. * _pi / 4.));
+                (*_distribution_vector_x)[1] = ResPrec_(_e * cos(ResPrec_(0.)));
+                (*_distribution_vector_x)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(_pi / ResPrec_(4.)));
+                (*_distribution_vector_x)[3] = ResPrec_(_e * cos(_pi / ResPrec_(2.)));
+                (*_distribution_vector_x)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(3.) * _pi / ResPrec_(4.)));
                 (*_distribution_vector_x)[5] = ResPrec_(_e * cos(_pi));
-                (*_distribution_vector_x)[6] = ResPrec_(sqrt(2.) * _e * cos(5. * _pi / 4.));
-                (*_distribution_vector_x)[7] = ResPrec_(_e * cos(3. * _pi / 2.));
-                (*_distribution_vector_x)[8] = ResPrec_(sqrt(2.) * _e * cos(7. * _pi / 4.));
+                (*_distribution_vector_x)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(5.) * _pi / ResPrec_(4.)));
+                (*_distribution_vector_x)[7] = ResPrec_(_e * cos(ResPrec_(3.) * _pi / ResPrec_(2.)));
+                (*_distribution_vector_x)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(7.) * _pi / ResPrec_(4.)));
                 (*_distribution_vector_y)[0] = ResPrec_(0.);
-                (*_distribution_vector_y)[1] = ResPrec_(_e * sin(0.));
-                (*_distribution_vector_y)[2] = ResPrec_(sqrt(2.) * _e * sin(_pi / 4.));
-                (*_distribution_vector_y)[3] = ResPrec_(_e * sin(_pi / 2.));
-                (*_distribution_vector_y)[4] = ResPrec_(sqrt(2.) * _e * sin(3. * _pi / 4.));
+                (*_distribution_vector_y)[1] = ResPrec_(_e * sin(ResPrec_(0.)));
+                (*_distribution_vector_y)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(_pi / ResPrec_(4.)));
+                (*_distribution_vector_y)[3] = ResPrec_(_e * sin(_pi / ResPrec_(2.)));
+                (*_distribution_vector_y)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(3.) * _pi / ResPrec_(4.)));
                 (*_distribution_vector_y)[5] = ResPrec_(_e * sin(_pi));
-                (*_distribution_vector_y)[6] = ResPrec_(sqrt(2.) * _e * sin(5. * _pi / 4.));
-                (*_distribution_vector_y)[7] = ResPrec_(_e * sin(3. * _pi / 2.));
-                (*_distribution_vector_y)[8] = ResPrec_(sqrt(2.) * _e * sin(7. * _pi / 4.));
+                (*_distribution_vector_y)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(5.) * _pi / ResPrec_(4.)));
+                (*_distribution_vector_y)[7] = ResPrec_(_e * sin(ResPrec_(3.) * _pi / ResPrec_(2.)));
+                (*_distribution_vector_y)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(7.) * _pi / ResPrec_(4.)));
 
                 ///Compute bottom slopes in x and y direction
                 for(unsigned long i(0); i < _grid_height; ++i)

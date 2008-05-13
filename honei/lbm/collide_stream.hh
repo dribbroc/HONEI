@@ -591,25 +591,9 @@ namespace honei
 
             for(unsigned long i(0); i < y_max; ++i)
             {
-                long i_forward(i + 1);
-                long i_backward(i - 1);
-
                 for(unsigned long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
-                    long j_backward(j - 1);
-
-                    ///Respect periodic boundaries:
-                    if(j_forward >= x_max)
-                        j_forward = j_forward - x_max;
-                    if(j_backward < 0)
-                        j_backward = j_backward + x_max;
-                    if(i_forward >= y_max)
-                        i_forward = i_forward - y_max;
-                    if(i_backward < 0)
-                        i_backward = i_backward + y_max;
-
-                    ///Perform streaming and collision:
+                   ///Perform streaming and collision:
                     result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau;
                 }
             }
