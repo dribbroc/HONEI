@@ -30,10 +30,17 @@ namespace honei
     namespace intern
     {
 #ifndef DOXYGEN
-        static inline unsigned multiple_of_sixteen(unsigned v)
+        template <unsigned base> static inline unsigned multiple_of(unsigned value)
         {
-            unsigned r(v & 0xF);
-            return (r > 0) ? v + 16 - r : v;
+            unsigned rest(value % base);
+            unsigned result(value);
+
+            if (rest > 0)
+            {
+                result += base - rest;
+            }
+
+            return result;
         }
 #endif
 
@@ -45,12 +52,12 @@ namespace honei
         {
             /**
              * Allocate memory that suffices to store count instances of
-             * DT_. Memory needs to be aligned at 16 byte boundaries.
+             * DT_. Memory needs to be aligned at 128 byte boundaries.
              *
              * \param count Count of instances that shall fit into the allocated
              *              memory.
              *
-             * \note PODTraits::allocate always allocates a multiple of 16
+             * \note PODTraits::allocate always allocates a multiple of 128
              *       bytes.
              *
              * \todo Exceptions.
@@ -59,7 +66,7 @@ namespace honei
             {
                 void * result(0);
 
-                if (0 != posix_memalign(&result, 16, multiple_of_sixteen(sizeof(DT_) * count)))
+                if (0 != posix_memalign(&result, 128, multiple_of<128>(sizeof(DT_) * count)))
                     throw std::bad_alloc();
 
                 return reinterpret_cast<DT_ *>(result);

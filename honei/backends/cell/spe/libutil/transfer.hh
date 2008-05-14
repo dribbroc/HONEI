@@ -24,6 +24,7 @@
 #include <honei/backends/cell/cell.hh>
 #include <honei/util/attributes.hh>
 
+#include <spu_mfcio.h>
 #include <spu_intrinsics.h>
 
 namespace intern
@@ -132,6 +133,23 @@ template <> inline void fill<double>(void * address, unsigned long size, double 
     {
         p.typed[i * 2 + j] = value;
     }
+}
+
+inline void get(void * lsa, unsigned long long ea, unsigned size, unsigned tag);
+
+void get(void * lsa, unsigned long long ea, unsigned size, unsigned tag)
+{
+    char * _lsa(reinterpret_cast<char *>(lsa));
+
+    while (size > 16384)
+    {
+        mfc_get(_lsa, ea, 16384, tag, 0, 0);
+        size -= 16384;
+        _lsa += 16384;
+        ea += 16384;
+    }
+
+    mfc_get(_lsa, ea, size, tag, 0, 0);
 }
 #endif
 

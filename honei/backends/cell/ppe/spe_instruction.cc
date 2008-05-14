@@ -208,19 +208,19 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
 template <typename DataType_>
 SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * elements,
         const unsigned size, const DataType_ scalar) :
-    SPEInstruction(opcode, 16384, result, elements),
+    SPEInstruction(opcode, 2 * 16384, result, elements),
     _use_spe(true)
 {
     Instruction & instruction(_imp->instruction);
-    unsigned offset(instruction.b.u & 0xF), skip(0);
+    unsigned offset(instruction.b.u & 0x7F), skip(0);
 
     if (offset > 0)
     {
-        instruction.b.u += 16 - offset; // Align the address.
-        skip = (16 - offset) / sizeof(DataType_);
+        instruction.b.u += 128 - offset; // Align the address.
+        skip = (128 - offset) / sizeof(DataType_);
     }
 
-    if (size < 5)
+    if (size <= 128)
     {
         offset = 0;
         instruction.c.u = 0;
@@ -232,7 +232,7 @@ SPEFrameworkInstruction<1, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
     {
         instruction.c.u = (size - skip) * sizeof(DataType_) / instruction.size;
         instruction.d.u = (size - skip) * sizeof(DataType_) % instruction.size;
-        instruction.d.u &= ~0xF;
+        instruction.d.u &= ~0x7F;
 
         _begin_transfers = skip;
         _end_transfers = (instruction.c.u * instruction.size + instruction.d.u) / sizeof(DataType_) + skip;

@@ -95,15 +95,15 @@ Partitioner<tags::Cell>::Partitioner(unsigned long max_count, unsigned long best
     {
         count = overall_size / best_part_size;
         rest = overall_size % best_part_size;
-        rest = rest - rest % 16;
-        part_size = best_part_size - best_part_size % 16;
+        rest = rest - rest % 128;
+        part_size = best_part_size - best_part_size % 128;
     }
     else
     {
         part_size = overall_size / max_count;
-        part_size = part_size - part_size % 16;
+        part_size = part_size - part_size % 128;
         rest = overall_size % part_size;
-        rest = rest - rest % 16;
+        rest = rest - rest % 128;
         count = overall_size / part_size;
     }
 

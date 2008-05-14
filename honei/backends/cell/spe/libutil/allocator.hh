@@ -49,7 +49,14 @@ namespace honei
 
         inline void init_alloc(const Environment & env)
         {
-            char * last_address(const_cast<char *>(reinterpret_cast<const char *>(env.begin)));
+            unsigned address(reinterpret_cast<const unsigned>(env.begin));
+            if (address & 0x7F)
+            {
+                address &= ~0x7F;
+                address += 0x80;
+            }
+
+            char * last_address(reinterpret_cast<char *>(address));
 
             for (Allocation * i(intern::allocations), * i_end(intern::allocations + 16) ;
                     i != i_end ; ++i)

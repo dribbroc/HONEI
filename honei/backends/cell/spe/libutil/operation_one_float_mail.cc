@@ -21,6 +21,7 @@
 #include <honei/backends/cell/cell.hh>
 #include <honei/backends/cell/spe/libutil/allocator.hh>
 #include <honei/backends/cell/spe/libutil/operation_framework.hh>
+#include <honei/backends/cell/spe/libutil/transfer.hh>
 
 #include <spu_intrinsics.h>
 #include <spu_mfcio.h>
@@ -35,19 +36,19 @@ namespace honei
         {
             EffectiveAddress ea_a(instruction.b.ea);
 
-            Allocation * block_a[2] = { acquire_block(), acquire_block() };
+            Allocation * block_a[4] = { acquire_block(), acquire_block(), acquire_block(), acquire_block() };
 
-            Pointer<float> a[2] = { { block_a[0]->address} , { block_a[1]->address } };
+            Pointer<float> a[2] = { { block_a[0]->address} , { block_a[2]->address } };
 
             unsigned counter(instruction.c.u);
             unsigned size(counter > 1 ? instruction.size : instruction.d.u);
             unsigned nextsize;
-            unsigned current(0), next(1);
+            unsigned current(0), next(2);
 
             float scalar = instruction.e.f; // optional scalar value to be computed.
 
             debug_get(ea_a, a[current].untyped, size);
-            mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
+            get(a[current].untyped, ea_a, size, current);
             ea_a += size;
 
             Subscriptable<float> acc = { operation.init() };
@@ -57,7 +58,7 @@ namespace honei
                 nextsize = (counter == 2 ? instruction.d.u : instruction.size);
 
                 debug_get(ea_a, a[next].untyped, nextsize);
-                mfc_get(a[next].untyped, ea_a, nextsize, next, 0, 0);
+                get(a[next].untyped, ea_a, nextsize, next);
                 ea_a += nextsize;
 
                 mfc_write_tag_mask(1 << current);
@@ -81,6 +82,8 @@ namespace honei
 
             release_block(*block_a[0]);
             release_block(*block_a[1]);
+            release_block(*block_a[2]);
+            release_block(*block_a[3]);
 
             MailableResult<float> result = { operation.finish(acc.value) };
 

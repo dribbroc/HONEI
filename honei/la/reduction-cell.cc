@@ -38,9 +38,9 @@ namespace honei
         CONTEXT("When reducing DenseVectorContinuousBase<float> to Scalar by sum (Cell):");
 
         float ppu_result(0.0f);
-        unsigned long skip(a.offset() & 0x3);
+        unsigned long skip(a.offset() & ~0x1F);
         if (0 != skip)
-            skip = 4 - skip;
+            skip = 32 - skip;
 
         unsigned long spe_count(Configuration::instance()->get_value("cell::reduction_sum_dense_float", 2ul));
         spe_count = std::min(spe_count, SPEManager::instance()->spe_count());
@@ -57,7 +57,7 @@ namespace honei
 
         if (skip < a.size())
         {
-            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 16ul), a.size() - skip, PartitionList::Filler(partitions));
+            Partitioner<tags::Cell>(spe_count, std::max(a.size() / spe_count, 128ul), a.size() - skip, PartitionList::Filler(partitions));
             // Assemble instructions.
             for (PartitionList::ConstIterator p(partitions.begin()), p_last(partitions.last()) ;
                     p != p_last ; ++p)
