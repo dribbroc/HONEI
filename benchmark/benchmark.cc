@@ -169,8 +169,8 @@ void Benchmark::evaluate(BenchmarkInfo info)
         _mediantp /= 1024;
         ++i;
     }
-    std::cout << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << std::endl;
-    std::cout << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << std::endl;
+    std::cout << "Transfer rate (mean):   " << _tp << " " << pf[i] << "B/s" << std::endl;
+    std::cout << "Transfer rate (median): " << _mediantp << " " << pf[i] << "B/s" << std::endl;
     int j = 2;
     while (_f > 1000 && j < 8)
     {
