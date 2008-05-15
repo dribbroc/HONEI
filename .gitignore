@@ -24,3 +24,5 @@ libtool
 *_TEST
 # Ignore compiled benchmarks
 *_BENCHMARK
+# Ignore generated data files
+*.dat

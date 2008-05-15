@@ -40,7 +40,6 @@ class ScenarioManagerTest :
         ScenarioManagerTest(const std::string & type) :
             BaseTest("scenario_manager_test<" + type + ">")
         {
-            register_tag("CPU");
         }
 
         virtual void run() const
@@ -138,7 +137,6 @@ class ScenarioManagerConversionTest :
         ScenarioManagerConversionTest(const std::string & type) :
             BaseTest("scenario_manager_conversion_test<" + type + ">")
         {
-            register_tag("CPU");
         }
 
         virtual void run() const
