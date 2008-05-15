@@ -93,7 +93,7 @@ namespace honei
                 {
                     for(unsigned long y = 0; y < d_height; ++y)
                     {
-                        std::string record = stringify(x) + " " + stringify(y) + " " + stringify((height)[y][x]) + "\n";
+                        std::string record = stringify(x) + " " + stringify(y) + " " + stringify((height)(y,x)) + "\n";
                         file << record;
                     }
                     //Create empty record after each row:

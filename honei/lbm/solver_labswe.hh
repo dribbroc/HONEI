@@ -454,7 +454,8 @@ namespace honei
                   */
 
                 Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
-                    value(*_source_x, ResPrec_(0.000024));
+                    //value(*_source_x, ResPrec_(0.000024));
+                    value(*_source_x, ResPrec_(0.0));
                 Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
                     value(*_source_y, ResPrec_(0.));
                 ///Streaming and collision:

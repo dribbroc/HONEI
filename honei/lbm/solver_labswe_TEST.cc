@@ -18,6 +18,7 @@
  */
 #include <honei/lbm/solver_labswe.hh>
 #include <honei/swe/post_processing.hh>
+#include <honei/swe/volume.hh>
 #include <unittest/unittest.hh>
 #include <iostream>
 
@@ -38,11 +39,14 @@ class SolverLABSWETest :
 
         virtual void run() const
         {
-            unsigned long g_h(20);
-            unsigned long g_w(20);
-            unsigned long timesteps(9000);
+            unsigned long g_h(50);
+            unsigned long g_w(50);
+            unsigned long timesteps(100);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+            Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
+            c1.value();
+
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.25));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
@@ -106,7 +110,9 @@ class SolverLABSWETest :
                 //std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
                 solver.solve();
-                PostProcessing<GNUPLOT>::value(u, 100, g_w, g_h, i);
+#ifdef SOLVER_POSTPROCESSING
+                PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
+#endif
             }
             std::cout << h << std::endl;
             TEST_CHECK(true);
