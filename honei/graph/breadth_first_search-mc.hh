@@ -214,7 +214,7 @@ namespace honei
             unsigned long current_index(0);
 
             // Visited nodes
-            DenseMatrix<bool> visited_nodes(distance_matrix.rows(), edge_weights.columns(), false);
+            DenseMatrix<float> visited_nodes(distance_matrix.rows(), edge_weights.columns(), false);
 
             // Start BFS for each node of the graph to calculate all distances between this starting-node and all other nodes
             for (unsigned long i(0); i < visited_nodes.rows(); i++)
@@ -282,7 +282,7 @@ namespace honei
             unsigned long current_index(0);
 
             // Visited nodes
-            DenseMatrix<bool> visited_nodes(distance_matrix.rows(), edge_weights.columns(), false);
+            DenseMatrix<float> visited_nodes(distance_matrix.rows(), edge_weights.columns(), false);
 
             // Start BFS for each node of the graph to calculate all distances between this starting-node and all other nodes
             for (unsigned long i(0); i < visited_nodes.rows(); i++)

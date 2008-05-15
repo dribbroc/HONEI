@@ -89,8 +89,6 @@ public:
 };
 SparseVectorCreationTest<float> sparse_vector_creation_test_float("float");
 SparseVectorCreationTest<double> sparse_vector_creation_test_double("double");
-SparseVectorCreationTest<int> sparse_vector_creation_test_int("int");
-SparseVectorCreationTest<bool> sparse_vector_creation_test_bool("bool");
 
 template <typename DataType_>
 class SparseVectorEqualityTest :

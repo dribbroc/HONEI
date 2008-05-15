@@ -74,8 +74,6 @@ class SparseMatrixCreationTest :
 };
 SparseMatrixCreationTest<float> sparse_matrix_creation_test_float("float");
 SparseMatrixCreationTest<double> sparse_matrix_creation_test_double("double");
-SparseMatrixCreationTest<int> sparse_matrix_creation_test_int("int");
-SparseMatrixCreationTest<bool> sparse_matrix_creation_test_bool("bool");
 
 template <typename DataType_>
 class SparseMatrixLayoutTest :

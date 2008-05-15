@@ -25,9 +25,5 @@ namespace honei
     template class SparseVector<float>;
 
     template class SparseVector<double>;
-
-    template class SparseVector<int>;
-
-    template class SparseVector<long>;
 }
 

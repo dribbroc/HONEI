@@ -87,7 +87,7 @@ namespace honei
             unsigned long number_of_nodes(0);
 
             // Visited nodes
-            DenseMatrix<bool> visited_nodes(edge_weights.rows(), edge_weights.columns(), false);
+            DenseMatrix<float> visited_nodes(edge_weights.rows(), edge_weights.columns(), false);
 
             // Node queue
             std::queue<unsigned long> node_queue;
@@ -173,7 +173,7 @@ namespace honei
             unsigned long number_of_nodes(0);
 
             // Visited nodes
-            DenseMatrix<bool> visited_nodes(edge_weights.rows(), edge_weights.columns(), false);
+            DenseMatrix<float> visited_nodes(edge_weights.rows(), edge_weights.columns(), false);
 
             // Node queue
             std::queue<unsigned long> node_queue;

@@ -25,13 +25,5 @@ namespace honei
     template class DenseVectorRange<float>;
 
     template class DenseVectorRange<double>;
-
-    template class DenseVectorRange<int>;
-
-    template class DenseVectorRange<long>;
-
-    template class DenseVectorRange<unsigned long>;
-
-    template class DenseVectorRange<bool>;
 }
 
