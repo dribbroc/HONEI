@@ -38,6 +38,7 @@ class SPETransferListTest :
         SPETransferListTest() :
             QuickTest("spe_transfer_list_test")
         {
+            register_tag(tags::Cell::name);
         }
 
         virtual void run() const

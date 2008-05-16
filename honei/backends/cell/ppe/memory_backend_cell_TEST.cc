@@ -26,6 +26,7 @@ class CellBackendFunctionTest :
         CellBackendFunctionTest() :
             BaseTest("cell_backend_function_test")
         {
+            register_tag(tags::Cell::name);
         }
 
         virtual void run() const

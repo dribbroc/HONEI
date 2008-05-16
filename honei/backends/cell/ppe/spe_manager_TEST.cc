@@ -22,6 +22,7 @@ class SPEManagerIterationTest :
         SPEManagerIterationTest() :
             QuickTest("spe_manager_iteration_test")
         {
+            register_tag(tags::Cell::name);
         }
 
         virtual void run() const
