@@ -2,9 +2,10 @@
 # All used configuration keys are listed here, accompanied by
 # default values.
 
-# Profiler
+# Util
 ##########
 profiler::output = /dev/null
+log::categories = all
 
 # Cell
 ######

@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * Based in part upon 'log.cc' from Paludis, which is:
  *     Copyright (c) 2006, 2007, 2008 Ciaran McCreesh
@@ -28,6 +29,7 @@
 #include <honei/util/stringify.hh>
 #include <honei/util/thread.hh>
 #include <honei/util/assertion.hh>
+#include <honei/util/configuration.hh>
 
 #include <iostream>
 #include <list>
@@ -94,6 +96,12 @@ namespace honei
         /// Our previous context.
         std::string previous_context;
 
+        /// Our category selections
+        bool sel_all;
+        bool sel_transfer;
+        bool sel_backend;
+        bool sel_application;
+
         /// Write out our log messages.
         void log_function()
         {
@@ -131,11 +139,27 @@ namespace honei
                     }
                 }
 
-                if (previous_context == data->context)
-                    std::cerr << "(same context) " << data->message << std::endl;
+                if (sel_all)
+                {
+                    if (previous_context == data->context)
+                        std::cerr << "(same context) " << data->message << std::endl;
+                    else
+                        std::cerr << data->context << data->message << std::endl;
+                    previous_context = data->context;
+                }
                 else
-                    std::cerr << data->context << data->message << std::endl;
-                previous_context = data->context;
+                {
+                    if ((data->level == ll_transfer && sel_transfer) ||
+                            (data->level == ll_backend && sel_backend) ||
+                            (data->level == ll_application && sel_application))
+                    {
+                        if (previous_context == data->context)
+                            std::cerr << "(same context) " << data->message << std::endl;
+                        else
+                            std::cerr << data->context << data->message << std::endl;
+                        previous_context = data->context;
+                    }
+                }
 
                 delete data;
             }
@@ -144,8 +168,29 @@ namespace honei
         LogQueue() :
             mutex(new Mutex),
             work_pending(new ConditionVariable),
-            previous_context("(none)")
+            previous_context("(none)"),
+            sel_all(true),
+            sel_transfer(false),
+            sel_backend(false),
+            sel_application(false)
         {
+            std::string config_string(Configuration::instance()->get_value("log::categories", "all"));
+            if (config_string.find("transfer", 0) != std::string::npos)
+            {
+                sel_transfer = true;
+                sel_all = false;
+            }
+            if (config_string.find("backend", 0) != std::string::npos)
+            {
+                sel_backend = true;
+                sel_all = false;
+            }
+            if (config_string.find("application", 0) != std::string::npos)
+            {
+                sel_application = true;
+                sel_all = false;
+            }
+
             thread = new Thread(std::tr1::bind(std::tr1::mem_fn(&LogQueue::log_function), this));
         }
 

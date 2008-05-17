@@ -36,9 +36,11 @@ namespace honei
      */
     enum LogLevel
     {
-        ll_full, ///< Output everything, even structure contents.
-        ll_stubs, ///< Output important data alongside the usual message.
-        ll_minimal ///< Output only minimal data.
+        ll_minimal, ///< Deprecated log level
+        ll_transfer,///< Data transfer specific messages
+        ll_backend, ///< Backend specific messages
+        ll_application, ///<Application specific messages
+        ll_none ///< Miscellaneous messages, not fitting in any other category
     };
 
     /**
