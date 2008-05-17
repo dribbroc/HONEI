@@ -166,7 +166,7 @@ class DenseVectorRangeFunctionsTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[i], s,
                             std::numeric_limits<DataType_>::epsilon());
                 }
-                for (int i = 0 ; i < size ; ++i)
+                for (int i = 0 ; i < size - 1 ; ++i)
                 {
                     DataType_ s((i+5)/1.23456789);
                     (dvr)[i] = s;
