@@ -41,7 +41,7 @@ class SolverLABSWETest :
         {
             unsigned long g_h(50);
             unsigned long g_w(50);
-            unsigned long timesteps(100);
+            unsigned long timesteps(1000);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
@@ -107,29 +107,35 @@ class SolverLABSWETest :
             for(unsigned long i(0); i < timesteps; ++i)
             {
 #ifdef SOLVER_VERBOSE
-                //std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
                 solver.solve();
 #ifdef SOLVER_POSTPROCESSING
-                PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
+                PostProcessing<GNUPLOT>::value(h, 100, g_w, g_h, i);
 #endif
             }
+#ifdef SOLVER_VERBOSE
             std::cout << h << std::endl;
+#endif
             TEST_CHECK(true);
         }
 
 };
-/*SolverLABSWETest<tags::CPU, float> solver_test_float("float");
+
+SolverLABSWETest<tags::CPU, float> solver_test_float("float");
 SolverLABSWETest<tags::CPU, double> solver_test_double("double");
 SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
-SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("double");*/
+SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("double");
 #ifdef HONEI_SSE
-//SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("float");
+SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("float");
 SolverLABSWETest<tags::CPU::SSE, double> solver_test_double_sse("double");
-//SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("float");
-//SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("double");
+SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("float");
+SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("double");
 #endif
 #ifdef HONEI_CELL
 SolverLABSWETest<tags::Cell, float> solver_test_float_cell("float");
 SolverLABSWETest<tags::Cell, double> solver_test_double_cell("double");
+#endif
+#ifdef HONEI_CUDA
+SolverLABSWETest<tags::GPU::CUDA, float> solver_test_float_cuda("float");
 #endif

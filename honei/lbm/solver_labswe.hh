@@ -28,7 +28,7 @@
  * \ingroup grpliblbm
  **/
 
-//#define SOLVER_VERBOSE 1
+//#define SOLVER_POSTPROCESSING 1
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
