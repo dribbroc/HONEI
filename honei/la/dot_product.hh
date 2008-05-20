@@ -280,6 +280,42 @@ namespace honei
      * \ingroup grplaoperations
      * \ingroup grplavectoroperations
      */
+    template <> struct DotProduct<tags::GPU::CUDA>
+    {
+        /**
+         * \{
+         *
+         * Returns the dot product of two given vectors.
+         *
+         * \param x One of the vectors of which the dot product shall be computed.
+         * \param y idem
+         *
+         * \retval r Will return an instance of the used data type containing the scalar product.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
+        {
+            CONTEXT("When forwarding CUDA DotProduct to CPU:");
+            return DotProduct<tags::CPU>::value(a, b);
+        }
+
+        /// \}
+    };
+
+    /**
+     * \brief DotProduct of two vectors.
+     *
+     * DotProduct is the class template for the operation
+     * \f[
+     *     \texttt{DotProduct}(x, y): \quad r \leftarrow x \cdot y,
+     * \f]
+     * which yields the dot or inner product of the given vectors x and y.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct DotProduct<tags::CPU::SSE>
     {
         /**

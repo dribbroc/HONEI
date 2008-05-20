@@ -157,6 +157,9 @@ RelaxSolverTest<tags::CPU::SSE, double> sse_relax_solver_test_double("sse double
 RelaxSolverTest<tags::CPU::MultiCore::SSE, float> mc_sse_relax_solver_test_float("mc sse float");
 RelaxSolverTest<tags::CPU::MultiCore::SSE, double> ms_sse_relax_solver_test_double("mc sse double");
 #endif
+#ifdef HONEI_CUDA
+RelaxSolverTest<tags::GPU::CUDA, float> cuda_relax_solver_test_float("float");
+#endif
 #ifdef HONEI_CELL
 RelaxSolverTest<tags::Cell, float> cell_relax_solver_test_float("cell float");
 RelaxSolverTest<tags::Cell, double> cell_relax_solver_test_double("cell double");
