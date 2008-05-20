@@ -276,6 +276,155 @@ namespace honei
             result[0] = result1;
             result[1] = result2;
         }
+
+        void product_bmdv(float * x, const float * y, const float * z, unsigned long size)
+        {
+            __m128 m1, m2, m3, m4, m5, m6;
+
+            unsigned long x_address = reinterpret_cast<unsigned long>(x);
+            unsigned long x_offset = x_address % 16;
+            unsigned long z_address = reinterpret_cast<unsigned long>(z);
+            unsigned long z_offset = z_address % 16;
+
+            unsigned long w_offset(x_offset / 4);
+            w_offset = (4 - w_offset) % 4;
+
+            unsigned long quad_start = w_offset;
+            unsigned long quad_end(size - ((size - quad_start) % 8));
+
+            if (size < 16)
+            {
+                quad_end = 0;
+                quad_start = 0;
+            }
+
+            if (x_offset == z_offset)
+            {
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
+                {
+                    m1 = _mm_load_ps(x + index);
+                    m4 = _mm_load_ps(x + index + 4);
+                    m2 = _mm_load_ps(y + index);
+                    m5 = _mm_load_ps(y + index + 4);
+                    m3 = _mm_load_ps(z + index);
+                    m6 = _mm_load_ps(z + index + 4);
+
+                    m2 = _mm_mul_ps(m2, m3);
+                    m5 = _mm_mul_ps(m5, m6);
+
+                    m1 = _mm_add_ps(m1, m2);
+                    m4 = _mm_add_ps(m4, m5);
+
+                    _mm_store_ps(x + index, m1);
+                    _mm_store_ps(x + index + 4, m4);
+                }
+            }
+            else
+            {
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
+                {
+                    m1 = _mm_load_ps(x + index);
+                    m4 = _mm_load_ps(x + index + 4);
+                    m2 = _mm_load_ps(y + index);
+                    m5 = _mm_load_ps(y + index + 4);
+                    m3 = _mm_loadu_ps(z + index);
+                    m6 = _mm_loadu_ps(z + index + 4);
+
+                    m2 = _mm_mul_ps(m2, m3);
+                    m5 = _mm_mul_ps(m5, m6);
+
+                    m1 = _mm_add_ps(m1, m2);
+                    m4 = _mm_add_ps(m4, m5);
+
+                    _mm_store_ps(x + index, m1);
+                    _mm_store_ps(x + index + 4, m4);
+                }
+            }
+
+            for (unsigned long index(0) ; index < quad_start ; index++)
+            {
+                x[index] += y[index] * z[index];
+            }
+
+            for (unsigned long index(quad_end) ; index < size ; index++)
+            {
+                x[index] += y[index] * z[index];
+            }
+        }
+
+        void product_bmdv(double * x, const double * y, const double * z, unsigned long size)
+        {
+            __m128d m1, m2, m3, m4, m5, m6;
+
+            unsigned long x_address = reinterpret_cast<unsigned long>(x);
+            unsigned long x_offset = x_address % 16;
+            unsigned long z_address = reinterpret_cast<unsigned long>(z);
+            unsigned long z_offset = z_address % 16;
+
+            unsigned long w_offset(x_offset / 8);
+
+            unsigned long quad_start = w_offset;
+            unsigned long quad_end(size - ((size - quad_start) % 4));
+
+            if (size < 16)
+            {
+                quad_end = 0;
+                quad_start = 0;
+            }
+
+            if (x_offset == z_offset)
+            {
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
+                {
+                    m1 = _mm_load_pd(x + index);
+                    m4 = _mm_load_pd(x + index + 2);
+                    m2 = _mm_load_pd(y + index);
+                    m5 = _mm_load_pd(y + index + 2);
+                    m3 = _mm_load_pd(z + index);
+                    m6 = _mm_load_pd(z + index + 2);
+
+                    m2 = _mm_mul_pd(m2, m3);
+                    m5 = _mm_mul_pd(m5, m6);
+
+                    m1 = _mm_add_pd(m1, m2);
+                    m4 = _mm_add_pd(m4, m5);
+
+                    _mm_store_pd(x + index, m1);
+                    _mm_store_pd(x + index + 2, m4);
+                }
+            }
+            else
+            {
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
+                {
+                    m1 = _mm_load_pd(x + index);
+                    m4 = _mm_load_pd(x + index + 2);
+                    m2 = _mm_load_pd(y + index);
+                    m5 = _mm_load_pd(y + index + 2);
+                    m3 = _mm_loadu_pd(z + index);
+                    m6 = _mm_loadu_pd(z + index + 2);
+
+                    m2 = _mm_mul_pd(m2, m3);
+                    m5 = _mm_mul_pd(m5, m6);
+
+                    m1 = _mm_add_pd(m1, m2);
+                    m4 = _mm_add_pd(m4, m5);
+
+                    _mm_store_pd(x + index, m1);
+                    _mm_store_pd(x + index + 2, m4);
+                }
+            }
+
+            for (unsigned long index(0) ; index < quad_start ; index++)
+            {
+                x[index] += y[index] * z[index];
+            }
+
+            for (unsigned long index(quad_end) ; index < size ; index++)
+            {
+                x[index] += y[index] * z[index];
+            }
+        }
     }
 }
 

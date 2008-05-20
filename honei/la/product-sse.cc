@@ -18,13 +18,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/util/attributes.hh>
 #include <honei/la/product.hh>
 #include <honei/backends/sse/operations.hh>
 #include <honei/la/dense_matrix_tile.hh>
-
-#include <xmmintrin.h>
-#include <emmintrin.h>
 
 namespace honei
 {
@@ -161,10 +157,9 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
 
     DenseVector<float> result(a.rows(), float(0));
 
-    __m128 m1, m2, m3, m4, m5, m6;
 
     unsigned long middle_index(a.rows() - 1);
-    unsigned long quad_end, end, quad_start, start, op_offset;
+    unsigned long op_offset;
 
     for (BandedMatrix<float>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
@@ -172,92 +167,13 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
         if (band.index() >= middle_index)
         {
-            float * band_e = band->elements();
-            _mm_prefetch(band_e, _MM_HINT_T0);
-            float * b_e = b.elements();
-            _mm_prefetch(b_e, _MM_HINT_T0);
-            float * r_e = result.elements();
-            _mm_prefetch(r_e, _MM_HINT_T0);
-
             op_offset = band.index() - middle_index;
-            end = a.size() - op_offset; // Calculation of the element-index to stop in iteration!
-            quad_end = end - (end % 8);
-
-            if (end < 32)
-                quad_end = 0;
-
-
-            for (unsigned long index(0) ; index < quad_end ; index += 8)
-            {
-                m2 = _mm_loadu_ps(b_e + index + op_offset);
-                m5 = _mm_loadu_ps(b_e + index + op_offset + 4);
-                m1 = _mm_load_ps(band_e + index);
-                m4 = _mm_load_ps(band_e + index + 4);
-                m3 = _mm_load_ps(r_e + index);
-                m6 = _mm_load_ps(r_e + index + 4);
-
-                m1 = _mm_mul_ps(m1, m2);
-                m4 = _mm_mul_ps(m4, m5);
-                m1 = _mm_add_ps(m1, m3);
-                m4 = _mm_add_ps(m4, m6);
-
-                _mm_store_ps(r_e + index, m1);
-                _mm_store_ps(r_e + index + 4, m4);
-            }
-
-            for (unsigned long index(quad_end) ; index < end ; index++) 
-            {
-                r_e[index] += band_e[index] * b_e[index + op_offset];
-            }
+            honei::sse::product_bmdv(result.elements(), band->elements(), b.elements() + op_offset, a.size() - op_offset);
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
         {
-            float * band_e = band->elements();
-            _mm_prefetch(band_e, _MM_HINT_T0);
-            float * b_e = b.elements();
-            _mm_prefetch(b_e, _MM_HINT_T0);
-            float * r_e = result.elements();
-            _mm_prefetch(r_e, _MM_HINT_T0);
-
             op_offset = middle_index - band.index();
-            start = op_offset; // Calculation of the element-index to start in iteration!
-            quad_start = start + (8 - (start % 8));
-            end = a.size();
-            quad_end = end - (end % 8);
-
-            if ( start + 32 > end)
-            {
-                quad_end = start;
-                quad_start = start;
-            }
-
-            for (unsigned long index(start) ; index < quad_start ; index++)
-            {
-                r_e[index] += band_e[index] * b_e[index - op_offset];
-            }
-
-            for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
-            {
-                m2 = _mm_loadu_ps(b_e + index - op_offset);
-                m5 = _mm_loadu_ps(b_e + index - op_offset + 4);
-                m1 = _mm_load_ps(band_e + index);
-                m4 = _mm_load_ps(band_e + index + 4);
-                m3 = _mm_load_ps(r_e + index);
-                m6 = _mm_load_ps(r_e + index + 4);
-
-                m1 = _mm_mul_ps(m1, m2);
-                m4 = _mm_mul_ps(m4, m5);
-                m1 = _mm_add_ps(m1, m3);
-                m4 = _mm_add_ps(m4, m6);
-
-                _mm_store_ps(r_e + index, m1);
-                _mm_store_ps(r_e + index + 4, m4);
-            }
-
-            for (unsigned long index(quad_end) ; index < end ; index++)
-            {
-                r_e[index] += band_e[index] * b_e[index - op_offset];
-            }
+            honei::sse::product_bmdv(result.elements() + op_offset, band->elements() + op_offset, b.elements(), a.size() - op_offset);
         }
     }
 
@@ -275,10 +191,8 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
 
     DenseVector<double> result(a.rows(), double(0));
 
-    __m128d m1, m2, m3, m4, m5, m6;
-
     unsigned long middle_index(a.rows() - 1);
-    unsigned long quad_end, end, quad_start, start, op_offset;
+    unsigned long op_offset;
 
     for (BandedMatrix<double>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
@@ -286,91 +200,13 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
         if (band.index() >= middle_index)
         {
-            double * band_e = band->elements();
-            _mm_prefetch(band_e, _MM_HINT_T0);
-            double * b_e = b.elements();
-            _mm_prefetch(b_e, _MM_HINT_T0);
-            double * r_e = result.elements();
-            _mm_prefetch(r_e, _MM_HINT_T0);
-
             op_offset = band.index() - middle_index;
-            end = a.size() - op_offset; // Calculation of the element-index to stop in iteration!
-            quad_end = end - (end % 4);
-
-            if (end < 12)
-                quad_end = 0;
-
-
-            for (unsigned long index(0) ; index < quad_end ; index += 4)
-            {
-                m2 = _mm_loadu_pd(b_e + index + op_offset);
-                m5 = _mm_loadu_pd(b_e + index + op_offset + 2);
-                m1 = _mm_load_pd(band_e + index);
-                m4 = _mm_load_pd(band_e + index + 2);
-                m3 = _mm_load_pd(r_e + index);
-                m6 = _mm_load_pd(r_e + index + 2);
-
-                m1 = _mm_mul_pd(m1, m2);
-                m4 = _mm_mul_pd(m4, m5);
-                m1 = _mm_add_pd(m1, m3);
-                m4 = _mm_add_pd(m4, m6);
-
-                _mm_store_pd(r_e + index, m1);
-                _mm_store_pd(r_e + index + 2, m4);
-            }
-
-            for (unsigned long index(quad_end) ; index < end ; index++) 
-            {
-                r_e[index] += band_e[index] * b_e[index + op_offset];
-            }
+            honei::sse::product_bmdv(result.elements(), band->elements(), b.elements() + op_offset, a.size() - op_offset);
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
         {
-            double * band_e = band->elements();
-            _mm_prefetch(band_e, _MM_HINT_T0);
-            double * b_e = b.elements();
-            _mm_prefetch(b_e, _MM_HINT_T0);
-            double * r_e = result.elements();
-            _mm_prefetch(r_e, _MM_HINT_T0);
-
             op_offset = middle_index - band.index();
-            start = op_offset; // Calculation of the element-index to start in iteration!
-            quad_start = start + (4 - (start % 4));
-            end = a.size();
-            quad_end = end - (end % 4);
-
-            if ( start + 12 > end)
-            {
-                quad_end = start;
-                quad_start = start;
-            }
-
-            for (unsigned long index(start) ; index < quad_start ; index++)
-            {
-                r_e[index] += band_e[index] * b_e[index - op_offset];
-            }
-            for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
-            {
-                m2 = _mm_loadu_pd(b_e + index - op_offset);
-                m5 = _mm_loadu_pd(b_e + index - op_offset + 2);
-                m1 = _mm_load_pd(band_e + index);
-                m4 = _mm_load_pd(band_e + index + 2);
-                m3 = _mm_load_pd(r_e + index);
-                m6 = _mm_load_pd(r_e + index + 2);
-
-                m1 = _mm_mul_pd(m1, m2);
-                m4 = _mm_mul_pd(m4, m5);
-                m1 = _mm_add_pd(m1, m3);
-                m4 = _mm_add_pd(m4, m6);
-
-                _mm_store_pd(r_e + index, m1);
-                _mm_store_pd(r_e + index + 2, m4);
-            }
-
-            for (unsigned long index(quad_end) ; index < end ; index++)
-            {
-                r_e[index] += band_e[index] * b_e[index - op_offset];
-            }
+            honei::sse::product_bmdv(result.elements() + op_offset, band->elements() + op_offset, b.elements(), a.size() - op_offset);
         }
     }
 
