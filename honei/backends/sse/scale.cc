@@ -33,13 +33,13 @@ namespace honei
             a_data= a;
             m8 = _mm_load1_ps(&a_data);
 
-            unsigned long x_address = reinterpret_cast<unsigned long>(x);
-            unsigned long x_offset = x_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
 
             unsigned long z_offset(x_offset / 4);
             z_offset = (4 - z_offset) % 4;
 
-            unsigned long quad_start = z_offset;
+            unsigned long quad_start(z_offset);
             unsigned long quad_end(size - ((size - quad_start) % 28));
 
             if (size < 32)
@@ -75,11 +75,11 @@ namespace honei
                 _mm_store_ps(x + index + 24, m7);
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 x[index] *= a;
             }
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 x[index] *= a;
             }
@@ -92,12 +92,12 @@ namespace honei
             a_data= a;
             m8 = _mm_load1_pd(&a_data);
 
-            unsigned long x_address = reinterpret_cast<unsigned long>(x);
-            unsigned long x_offset = x_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
 
             unsigned long z_offset(x_offset / 8);
 
-            unsigned long quad_start = z_offset;
+            unsigned long quad_start(z_offset);
             unsigned long quad_end(size - ((size - quad_start) % 14));
 
             if (size < 16)
@@ -133,11 +133,11 @@ namespace honei
                 _mm_store_pd(x + index + 12, m7);
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 x[index] *= a;
             }
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 x[index] *= a;
             }

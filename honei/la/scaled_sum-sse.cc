@@ -33,7 +33,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
 
     sse::scaled_sum(x.elements(), y.elements(), b, x.size());
 
-    return x; 
+    return x;
 }
 
 DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x,
@@ -46,7 +46,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
 
     sse::scaled_sum(x.elements(), y.elements(), b, x.size());
 
-    return x; 
+    return x;
 }
 
 DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a,

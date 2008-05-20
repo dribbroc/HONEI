@@ -35,13 +35,13 @@ namespace honei
             float HONEI_ALIGNED(16) b_data(std::numeric_limits<float>::infinity());
             m7 = _mm_load1_ps(&b_data);
 
-            unsigned long x_address = reinterpret_cast<unsigned long>(x);
-            unsigned long x_offset = x_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
 
             unsigned long z_offset(x_offset / 4);
             z_offset = (4 - z_offset) % 4;
 
-            unsigned long quad_start = z_offset;
+            unsigned long quad_start(z_offset);
             unsigned long quad_end(size - ((size - quad_start) % 20));
 
             if (size < 24)
@@ -86,12 +86,12 @@ namespace honei
                 _mm_store_ps(x + index + 16, m5);
             }
 
-            for (unsigned long index = 0 ; index < quad_start ; index++)
+            for (unsigned long index = 0 ; index < quad_start ; ++index)
             {
                 if (x[index] != float(0))
                     x[index] = float(1) / x[index];
             }
-            for (unsigned long index = quad_end ; index < size ; index++)
+            for (unsigned long index = quad_end ; index < size ; ++index)
             {
                 if (x[index] != float(0))
                     x[index] = float(1) / x[index];
@@ -106,12 +106,12 @@ namespace honei
             double HONEI_ALIGNED(16) b_data(std::numeric_limits<double>::infinity());
             m7 = _mm_load1_pd(&b_data);
 
-            unsigned long x_address = (unsigned long)x;
-            unsigned long x_offset = x_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
 
             unsigned long z_offset(x_offset / 8);
 
-            unsigned long quad_start = z_offset;
+            unsigned long quad_start(z_offset);
             unsigned long quad_end(size - ((size - quad_start) % 10));
             if (size < 12)
             {
@@ -155,13 +155,13 @@ namespace honei
                 _mm_store_pd(x + index + 8, m5);
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 if (x[index] != double(0))
                     x[index] = double(1) / x[index];
             }
 
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 if (x[index] != double(0))
                     x[index] = double(1) / x[index];

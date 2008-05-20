@@ -33,15 +33,15 @@ namespace honei
             b_data = b;
             m8 = _mm_load1_ps(&b_data);
 
-            unsigned long x_address = reinterpret_cast<unsigned long>(x);
-            unsigned long x_offset = x_address % 16;
-            unsigned long y_address = reinterpret_cast<unsigned long>(y);
-            unsigned long y_offset = y_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
+            unsigned long y_address((unsigned long)y);
+            unsigned long y_offset(y_address % 16);
 
             unsigned long z_offset(x_offset / 4);
             z_offset = (4 - z_offset) % 4;
 
-            unsigned long quad_start = z_offset;
+            unsigned long quad_start(z_offset);
             unsigned long quad_end(size - ((size - quad_start) % 12));
 
             if (size < 16)
@@ -101,12 +101,12 @@ namespace honei
                 }
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 x[index] += y[index] * b;
             }
 
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 x[index] += y[index] * b;
             }
@@ -119,14 +119,14 @@ namespace honei
             b_data = b;
             m8 = _mm_load1_pd(&b_data);
 
-            unsigned long x_address = reinterpret_cast<unsigned long>(x);
-            unsigned long x_offset = x_address % 16;
-            unsigned long y_address = reinterpret_cast<unsigned long>(y);
-            unsigned long y_offset = y_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
+            unsigned long y_address((unsigned long)y);
+            unsigned long y_offset(y_address % 16);
 
             unsigned long z_offset(x_offset / 8);
 
-            unsigned long quad_start = z_offset;
+            unsigned long quad_start(z_offset);
             unsigned long quad_end(size - ((size - quad_start) % 6));
 
             if (size < 12)
@@ -184,12 +184,12 @@ namespace honei
                 }
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 x[index] += y[index] * b;
             }
 
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 x[index] += y[index] * b;
             }
@@ -199,17 +199,17 @@ namespace honei
         {
             __m128 m1, m2, m3, m4, m5, m6;
 
-            unsigned long x_address = reinterpret_cast<unsigned long>(x);
-            unsigned long x_offset = x_address % 16;
-            unsigned long y_address = reinterpret_cast<unsigned long>(y);
-            unsigned long y_offset = y_address % 16;
-            unsigned long z_address = reinterpret_cast<unsigned long>(z);
-            unsigned long z_offset = z_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
+            unsigned long y_address((unsigned long)y);
+            unsigned long y_offset(y_address % 16);
+            unsigned long z_address((unsigned long)z);
+            unsigned long z_offset(z_address % 16);
 
             unsigned long w_offset(x_offset / 4);
             w_offset = (4 - w_offset) % 4;
 
-            unsigned long quad_start = w_offset;
+            unsigned long quad_start(w_offset);
             unsigned long quad_end(size - ((size - quad_start) % 8));
 
             if (size < 16)
@@ -261,12 +261,12 @@ namespace honei
                 }
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 x[index] += y[index] * z[index];
             }
 
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 x[index] += y[index] * z[index];
             }
@@ -276,16 +276,16 @@ namespace honei
         {
             __m128d m1, m2, m3, m4, m5, m6;
 
-            unsigned long x_address = reinterpret_cast<unsigned long>(x);
-            unsigned long x_offset = x_address % 16;
-            unsigned long y_address = reinterpret_cast<unsigned long>(y);
-            unsigned long y_offset = y_address % 16;
-            unsigned long z_address = reinterpret_cast<unsigned long>(z);
-            unsigned long z_offset = z_address % 16;
+            unsigned long x_address((unsigned long)x);
+            unsigned long x_offset(x_address % 16);
+            unsigned long y_address((unsigned long)y);
+            unsigned long y_offset(y_address % 16);
+            unsigned long z_address((unsigned long)z);
+            unsigned long z_offset(z_address % 16);
 
             unsigned long w_offset(x_offset / 8);
 
-            unsigned long quad_start = w_offset;
+            unsigned long quad_start(w_offset);
             unsigned long quad_end(size - ((size - quad_start) % 4));
 
             if (size < 16)
@@ -337,12 +337,12 @@ namespace honei
                 }
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 x[index] += y[index] * z[index];
             }
 
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 x[index] += y[index] * z[index];
             }

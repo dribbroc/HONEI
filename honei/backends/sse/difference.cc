@@ -30,15 +30,15 @@ namespace honei
         {
             __m128 m1, m2, m3, m4, m5, m6, m7, m8;
 
-            unsigned long a_address = reinterpret_cast<unsigned long>(a);
-            unsigned long a_offset = a_address % 16;
-            unsigned long b_address = reinterpret_cast<unsigned long>(b);
-            unsigned long b_offset = b_address % 16;
+            unsigned long a_address((unsigned long)a);
+            unsigned long a_offset(a_address % 16);
+            unsigned long b_address((unsigned long)b);
+            unsigned long b_offset(b_address % 16);
 
             unsigned long x_offset(a_offset / 4);
             x_offset = (4 - x_offset) % 4;
 
-            unsigned long quad_start = x_offset;
+            unsigned long quad_start(x_offset);
             unsigned long quad_end(size - ((size - quad_start) % 16));
 
             if (size < 24)
@@ -96,12 +96,12 @@ namespace honei
                 }
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 a[index] -= b[index];
             }
 
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 a[index] -= b[index];
             }
@@ -111,14 +111,14 @@ namespace honei
         {
             __m128d m1, m2, m3, m4, m5, m6, m7, m8;
 
-            unsigned long a_address = reinterpret_cast<unsigned long>(a);
-            unsigned long a_offset = a_address % 16;
-            unsigned long b_address = reinterpret_cast<unsigned long>(b);
-            unsigned long b_offset = b_address % 16;
+            unsigned long a_address((unsigned long)a);
+            unsigned long a_offset(a_address % 16);
+            unsigned long b_address((unsigned long)b);
+            unsigned long b_offset(b_address % 16);
 
             unsigned long x_offset(a_offset / 8);
 
-            unsigned long quad_start = x_offset;
+            unsigned long quad_start(x_offset);
             unsigned long quad_end(size - ((size - quad_start) % 8));
 
             if (size < 16)
@@ -176,12 +176,12 @@ namespace honei
                 }
             }
 
-            for (unsigned long index(0) ; index < quad_start ; index++)
+            for (unsigned long index(0) ; index < quad_start ; ++index)
             {
                 a[index] -= b[index];
             }
 
-            for (unsigned long index(quad_end) ; index < size ; index++)
+            for (unsigned long index(quad_end) ; index < size ; ++index)
             {
                 a[index] -= b[index];
             }
