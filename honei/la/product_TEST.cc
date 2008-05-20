@@ -88,6 +88,9 @@ BandedMatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_banded_matrix_den
 BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, float> mc_sse_banded_matrix_dense_vector_product_test_float("MC::SSE float");
 BandedMatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> mc_sse_banded_matrix_dense_vector_product_test_double("MC::SSE double");
 #endif
+#ifdef HONEI_CUDA
+BandedMatrixDenseVectorProductTest<tags::GPU::CUDA, float> cuda_banded_matrix_dense_vector_product_test_float("float");
+#endif
 #ifdef HONEI_CELL
 BandedMatrixDenseVectorProductTest<tags::Cell, float> cell_banded_matrix_dense_vector_product_test_float("CELL float");
 BandedMatrixDenseVectorProductTest<tags::Cell, double> cell_banded_matrix_dense_vector_product_test_double("CELL double");
@@ -159,6 +162,9 @@ BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_banded_matrix
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_banded_matrix_dense_vector_product_quick_test_double("SSE double");
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_banded_matrix_dense_vector_product_quick_test_float("MC::SSE float");
 BandedMatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_banded_matrix_dense_vector_product_quick_test_double("MC::SSE double");
+#endif
+#ifdef HONEI_CUDA
+BandedMatrixDenseVectorProductQuickTest<tags::GPU::CUDA, float> cuda_banded_matrix_dense_vector_product_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 BandedMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_banded_matrix_dense_vector_product_quick_test_float("CELL float");

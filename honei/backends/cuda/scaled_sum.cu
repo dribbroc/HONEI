@@ -26,6 +26,12 @@ namespace honei
             int idx = blockDim.x *blockIdx.x + threadIdx.x;
             x[idx] = x[idx] + b * y[idx];
         }
+
+        __global__ void scaled_sum_gpu(float * x, float * y, float * z, unsigned long size)
+        {
+            int idx = blockDim.x *blockIdx.x + threadIdx.x;
+            x[idx] = x[idx] + y[idx] * z[idx];
+        }
     }
 }
 
@@ -51,3 +57,28 @@ extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigne
     cudaFree(y_gpu);
 }
 
+extern "C" void cuda_scaled_sum_three_float(float * x, float * y, float * z, unsigned long size)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = 16;
+    grid.x = ceil(size/(float)block.x);
+    float * x_gpu(0);
+    float * y_gpu(0);
+    float * z_gpu(0);
+
+    cudaMalloc((void**)&x_gpu, size * sizeof(float));
+    cudaMalloc((void**)&y_gpu, size * sizeof(float));
+    cudaMalloc((void**)&z_gpu, size * sizeof(float));
+
+    cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(z_gpu, z, size * sizeof(float), cudaMemcpyHostToDevice);
+
+    honei::cuda::scaled_sum_gpu<<<grid, block, 3 * block.x * sizeof(float)>>>(x_gpu, y_gpu, z_gpu, size);
+
+    cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaFree(x_gpu);
+    cudaFree(y_gpu);
+    cudaFree(z_gpu);
+}

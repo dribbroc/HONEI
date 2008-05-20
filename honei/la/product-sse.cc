@@ -380,5 +380,3 @@ Product<tags::CPU::SSE>::value(DenseMatrixTile<double> & r, const DenseMatrixTil
 
     return r;
 }
-
-

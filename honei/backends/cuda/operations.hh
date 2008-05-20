@@ -23,30 +23,15 @@
 
 extern "C"
 {
-        /*void difference(float * a, const float * b, unsigned long size);
-        void difference(double * a, const double * b, unsigned long size);
-
-        float dot_product(const float * a, float * b, unsigned long size);
-        double dot_product(double * a, double * b, unsigned long size);
-*/
         void cuda_element_inverse_one_float(float * x, unsigned long size);
 
         void cuda_element_product_two_float(float * a, const float * b, unsigned long size);
-/*
-        float norm_l2(const float * a, unsigned long size);
-        double norm_l2(double * a, unsigned long size);
 
-        float reduction_sum(const float * a, unsigned long size);
-        double reduction_sum(double * a, unsigned long size);
-*/
         void cuda_scaled_sum_two_float(float * x, const float * y, float b, unsigned long size);
-        /*void scaled_sum(float * x, const float * y, const float * z, unsigned long size);
-        void scaled_sum(double * x, const double * y, const double * z, unsigned long size);
-*/
+        void cuda_scaled_sum_three_float(float * x, const float * y, const float * z, unsigned long size);
+
         void cuda_scale_one_float(const float a, float * x, unsigned long size);
 
         void cuda_sum_two_float(float * a, const float * b, unsigned long size);
-        /*void sum(const float a, float * x, unsigned long size);
-        void sum(const double a, double * x, unsigned long size);*/
 }
 #endif
