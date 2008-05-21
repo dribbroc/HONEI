@@ -69,6 +69,9 @@ Q1MatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEQ1DVPBenchdouble("SSE
 Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEQ1DVPBenchfloat("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025ul*1025, 100);
 Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEQ1DVPBenchdouble("MC::SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, double", 1025*1025, 100);
 #endif
+#ifdef HONEI_CUDA
+Q1MatrixDenseVectorProductBench<tags::GPU::CUDA, float> CUDAQ1DVPBenchfloat("CUDA Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
+#endif
 #ifdef HONEI_CELL
 Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 100);
 Q1MatrixDenseVectorProductBench<tags::Cell, double> CELLQ1DVPBenchdouble("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, double", 1025ul * 1025, 100);
@@ -127,6 +130,9 @@ BandedMatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEBMDVPBenchdouble(
 BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> MCSSEBMDVPBenchfloat("MC::SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 100);
 BandedMatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEBMDVPBenchdouble("MC::SSE Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 100);
 #endif
+#ifdef HONEI_CUDA
+BandedMatrixDenseVectorProductBench<tags::GPU::CUDA, float> CUDABMDVPBenchfloat("CUDA Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64, 10);
+#endif
 #ifdef HONEI_CELL
 BandedMatrixDenseVectorProductBench<tags::Cell, float> CELLBMDVPBenchfloat("CELL Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 100);
 BandedMatrixDenseVectorProductBench<tags::Cell, double> CELLBMDVPBenchdouble("CELL Banded Matrix Dense Vector Product Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 100);
@@ -176,6 +182,9 @@ class BandedMatrixDenseVectorProductBenchRelax :
 #ifdef HONEI_SSE
 BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, float> SSEBMDVPBenchfloatRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64*64, 100);
 BandedMatrixDenseVectorProductBenchRelax<tags::CPU::SSE, double> SSEBMDVPBenchdoubleRelax("SSE Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, double", 64ul*64ul*64ul, 100);
+#endif
+#ifdef HONEI_CUDA
+BandedMatrixDenseVectorProductBenchRelax<tags::GPU::CUDA, float> CUDABMDVPBenchfloatRelax("CUDA Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64*64, 10);
 #endif
 #ifdef HONEI_CELL
 BandedMatrixDenseVectorProductBenchRelax<tags::Cell, float> CELLBMDVPBenchfloatRelax("CELL Banded Matrix Dense Vector Product Relax Benchmark - matrix size: 64^3, float", 64ul*64ul*64ul, 100);
