@@ -32,15 +32,15 @@ namespace honei
     struct LogQueue;
 
     /**
-     * LogLevel governs the severity of a given LogMessage.
+     * LogCategory governs the severity of a given LogMessage.
      */
-    enum LogLevel
+    enum LogCategory
     {
-        ll_minimal, ///< Deprecated log level
-        ll_transfer,///< Data transfer specific messages
-        ll_backend, ///< Backend specific messages
-        ll_application, ///<Application specific messages
-        ll_none ///< Miscellaneous messages, not fitting in any other category
+        ll_minimal, ///< Deprecated log category
+        lc_transfer, ///< Data transfer specific messages
+        lc_backend, ///< Backend specific messages
+        lc_application, ///<Application specific messages
+        lc_none ///< Miscellaneous messages, not fitting in any other category
     };
 
     /**
@@ -55,19 +55,19 @@ namespace honei
             /**
              * Constructor.
              *
-             * \param level Log-level of the message.
+             * \param category Log-category of the message.
              * \param messag Message to be logged.
              */
-            LogMessage(const LogLevel level, const std::string & message);
+            LogMessage(const LogCategory category, const std::string & message);
 
             /// Destructor.
             ~LogMessage();
     };
 
     /// Log a message.
-    static inline void log(LogLevel level, const std::string & message)
+    static inline void log(LogCategory category, const std::string & message)
     {
-        LogMessage(level, message);
+        LogMessage(category, message);
     }
 
 /**
@@ -78,7 +78,7 @@ namespace honei
  *
  * The created LogMessage will be automatically enqueued with the LogQueue and written.
  *
- * \param l Log level of the message.
+ * \param l Log category of the message.
  * \param m The message.
  *
  * \warning Will only be compiled in when debug support is enabled.

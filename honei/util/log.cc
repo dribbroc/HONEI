@@ -50,17 +50,17 @@ namespace honei
             /// Our context.
             std::string context;
 
-            /// Our log level.
-            LogLevel level;
+            /// Our log category.
+            LogCategory category;
 
             /// Our message.
             std::string message;
 
             /// Constructor.
-            LogData(const std::string & c, LogLevel l, const std::string & m) :
+            LogData(const std::string & c, LogCategory l, const std::string & m) :
                 finish_message(false),
                 context(c),
-                level(l),
+                category(l),
                 message(m)
             {
             }
@@ -69,7 +69,7 @@ namespace honei
             LogData() :
                 finish_message(true),
                 context(""),
-                level(ll_minimal),
+                category(lc_none),
                 message("")
             {
             }
@@ -149,9 +149,9 @@ namespace honei
                 }
                 else
                 {
-                    if ((data->level == ll_transfer && sel_transfer) ||
-                            (data->level == ll_backend && sel_backend) ||
-                            (data->level == ll_application && sel_application))
+                    if ((data->category == lc_transfer && sel_transfer) ||
+                            (data->category == lc_backend && sel_backend) ||
+                            (data->category == lc_application && sel_application))
                     {
                         if (previous_context == data->context)
                             std::cerr << "(same context) " << data->message << std::endl;
@@ -217,11 +217,11 @@ namespace honei
         LogQueue log_queue;
     }
 
-    LogMessage::LogMessage(const LogLevel level, const std::string & message)
+    LogMessage::LogMessage(const LogCategory category, const std::string & message)
     {
         intern::log_queue.enqueue(new intern::LogData(
                     "In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " + Context::backtrace("\n ... "),
-                    level, message));
+                    category, message));
     }
 
     LogMessage::~LogMessage()
