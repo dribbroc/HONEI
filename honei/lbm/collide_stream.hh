@@ -650,7 +650,7 @@ namespace honei
                     if(j_forward < x_max)
                         result(i,j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
-                        result(i,j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                        result(i , j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
             }
         }
@@ -704,8 +704,6 @@ namespace honei
 
                     if(j_forward < x_max && i_forward < y_max)
                         result(i_forward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
-                    else if(i_backward >= 0 && j_backward >= 0)
-                        result(i_backward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
                         result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
 
@@ -764,7 +762,7 @@ namespace honei
                     if(i_forward < y_max)
                         result(i_forward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
-                        result(i_backward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                        result(i , j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
             }
         }
@@ -819,8 +817,6 @@ namespace honei
 
                     if(j_backward >= 0 && i_forward < y_max)
                         result(i_forward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
-                    else if(i_backward >= 0 && j_forward < x_max)
-                        result(i_backward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
                         result(i , j) = dist(i , j) - (dist(i , j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
@@ -878,7 +874,7 @@ namespace honei
                     if(j_backward >= 0)
                         result(i, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
-                        result(i, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                        result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
             }
         }
@@ -933,8 +929,6 @@ namespace honei
 
                     if(j_backward >= 0 && i_backward >= 0)
                         result(i_backward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
-                    else if (i_forward < y_max && j_forward < x_max)
-                        result(i_forward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
                         result(i , j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
@@ -992,7 +986,7 @@ namespace honei
                     if(i_backward >= 0)
                         result(i_backward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
-                        result(i_forward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                        result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
             }
         }
@@ -1047,8 +1041,6 @@ namespace honei
 
                     if(j_forward < x_max && i_backward >= 0)
                         result(i_backward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
-                    else if(i_forward < y_max && j_backward >= 0)
-                        result(i_forward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
                         result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                 }
