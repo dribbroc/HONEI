@@ -68,6 +68,8 @@ namespace honei
         namespace lbm_boundary_types
         {
             class NOSLIP_PERIODIC;
+            class NOSLIP;
+            class PERIODIC;
         }
 
         namespace lbm_applications

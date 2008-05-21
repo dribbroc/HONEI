@@ -48,7 +48,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_1>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_1>
     {
         /**
          * \name Collision and Streaming for direction 1..
@@ -111,7 +111,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_2>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_2>
     {
         /**
          * \name Collision and Streaming for direction 2.
@@ -174,7 +174,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_3>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_3>
     {
         /**
          * \name Collision and Streaming for direction 3.
@@ -238,7 +238,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_4>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_4>
     {
         /**
          * \name Collision and Streaming for direction 4.
@@ -302,7 +302,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_5>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_5>
     {
         /**
          * \name Collision and Streaming for direction 5.
@@ -366,7 +366,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_6>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_6>
     {
         /**
          * \name Collision and Streaming for direction 6.
@@ -430,7 +430,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_7>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_7>
     {
         /**
          * \name Collision and Streaming for direction 7.
@@ -494,7 +494,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_8>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_8>
     {
         /**
          * \name Collision and Streaming for direction 8.
@@ -558,7 +558,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP_PERIODIC, lbm_lattice_types::D2Q9::DIR_0>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_0>
     {
         /**
          * \name Collision and Streaming for direction 0.
@@ -599,5 +599,510 @@ namespace honei
             }
         }
     };
+
+//---------------------------------------------------------------------------------------------------
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_1>
+    {
+        /**
+         * \name Collision and Streaming for direction 1..
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            CONTEXT("When performing collision and streaming in DIR 1:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                unsigned long i_forward(i + 1);
+                unsigned long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(j_forward < x_max)
+                        result(i,j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i,j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_2>
+    {
+        /**
+         * \name Collision and Streaming for direction 2.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+            CONTEXT("When performing collision and streaming in DIR 2:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(j_forward < x_max && i_forward < y_max)
+                        result(i_forward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else if(i_backward >= 0 && j_backward >= 0)
+                        result(i_backward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_3>
+    {
+        /**
+         * \name Collision and Streaming for direction 3.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+
+            CONTEXT("When performing collision and streaming in DIR 3:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(i_forward < y_max)
+                        result(i_forward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i_backward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_4>
+    {
+        /**
+         * \name Collision and Streaming for direction 4.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+
+            CONTEXT("When performing collision and streaming in DIR 4:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(j_backward >= 0 && i_forward < y_max)
+                        result(i_forward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else if(i_backward >= 0 && j_forward < x_max)
+                        result(i_backward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i , j) = dist(i , j) - (dist(i , j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_5>
+    {
+        /**
+         * \name Collision and Streaming for direction 5.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+
+            CONTEXT("When performing collision and streaming in DIR 5:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(j_backward >= 0)
+                        result(i, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_6>
+    {
+        /**
+         * \name Collision and Streaming for direction 6.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+
+            CONTEXT("When performing collision and streaming in DIR 6:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(j_backward >= 0 && i_backward >= 0)
+                        result(i_backward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else if (i_forward < y_max && j_forward < x_max)
+                        result(i_forward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i , j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_7>
+    {
+        /**
+         * \name Collision and Streaming for direction 7.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+
+            CONTEXT("When performing collision and streaming in DIR 7:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(i_backward >= 0)
+                        result(i_backward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i_forward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_8>
+    {
+        /**
+         * \name Collision and Streaming for direction 8.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+
+            CONTEXT("When performing collision and streaming in DIR 8:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                long i_forward(i + 1);
+                long i_backward(i - 1);
+
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                    long j_forward(j + 1);
+                    long j_backward(j - 1);
+
+                    if(j_forward < x_max && i_backward >= 0)
+                        result(i_backward, j_forward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else if(i_forward < y_max && j_backward >= 0)
+                        result(i_forward, j_backward) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                    else
+                        result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
+                }
+            }
+        }
+    };
+
+    /**
+     * \brief Collision and streaming module for LABSWE.
+     *
+     * \ingroup grplbmoperations
+     */
+    template <typename Tag_>
+    struct CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9::DIR_0>
+    {
+        /**
+         * \name Collision and Streaming for direction 0.
+         *
+         * \brief Solves the LB equation.
+         *
+         * \param result The destination matrix.
+         * \param dist The temporary distribution matrix.
+         * \param eq_dist The equilibrium distribution matrix..
+         * \param s_x Source matrix in x direction.
+         * \param s_y Source matrix in y direction..
+         * \param e_x Corresponding distribution scalar.
+         * \param e_y Corresponding distribution scalar.
+         * \param tau The relaxation time.
+         */
+        template <typename DT1_, typename DT2_>
+        static void value(DenseMatrix<DT1_>& result,
+                          DenseMatrix<DT1_>& dist,
+                          DenseMatrix<DT1_>& eq_dist,
+                          DenseMatrix<DT1_>& s_x,
+                          DenseMatrix<DT1_>& s_y,
+                          DT2_ e_x,
+                          DT2_ e_y,
+                          DT2_ tau)
+        {
+
+            CONTEXT("When performing collision and streaming in DIR 0:");
+            unsigned long y_max(result.rows());
+            unsigned long x_max(result.columns());
+
+            for(unsigned long i(0); i < y_max; ++i)
+            {
+                for(unsigned long j(0); j < x_max; ++j)
+                {
+                   ///Perform streaming and collision:
+                    result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau;
+                }
+            }
+        }
+    };
+
 }
 #endif
