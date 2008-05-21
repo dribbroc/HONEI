@@ -23,15 +23,15 @@
 
 extern "C"
 {
-        void cuda_element_inverse_one_float(float * x, unsigned long size);
+        void cuda_element_inverse_one_float(float * x, unsigned long size, unsigned long blocksize);
 
-        void cuda_element_product_two_float(float * a, const float * b, unsigned long size);
+        void cuda_element_product_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
 
-        void cuda_scaled_sum_two_float(float * x, const float * y, float b, unsigned long size);
-        void cuda_scaled_sum_three_float(float * x, const float * y, const float * z, unsigned long size);
+        void cuda_scaled_sum_two_float(float * x, const float * y, float b, unsigned long size, unsigned long blocksize);
+        void cuda_scaled_sum_three_float(float * x, const float * y, const float * z, unsigned long size, unsigned long blocksize);
 
-        void cuda_scale_one_float(const float a, float * x, unsigned long size);
+        void cuda_scale_one_float(const float a, float * x, unsigned long size, unsigned long blocksize);
 
-        void cuda_sum_two_float(float * a, const float * b, unsigned long size);
+        void cuda_sum_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
 }
 #endif

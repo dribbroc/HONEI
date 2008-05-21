@@ -19,6 +19,7 @@
 
 #include <honei/la/sum.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/util/configuration.hh>
 
 
 using namespace honei;
@@ -31,7 +32,9 @@ DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContin
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-    cuda_sum_two_float(a.elements(), b.elements(), a.size());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_float", 128ul));
+
+    cuda_sum_two_float(a.elements(), b.elements(), a.size(), blocksize);
 
     return a;
 }
@@ -50,7 +53,9 @@ DenseMatrix<float> & Sum<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const D
         throw MatrixRowsDoNotMatch(b.rows(), a.rows());
     }
 
-    cuda_sum_two_float(a.elements(), b.elements(), a.rows() * a.columns());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_float", 128ul));
+
+    cuda_sum_two_float(a.elements(), b.elements(), a.rows() * a.columns(), blocksize);
 
     return a;
 }

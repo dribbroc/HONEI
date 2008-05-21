@@ -19,6 +19,7 @@
 
 #include <honei/la/element_product.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/util/configuration.hh>
 
 
 using namespace honei;
@@ -32,7 +33,9 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-    cuda_element_product_two_float(a.elements(), b.elements(), a.size());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
+
+    cuda_element_product_two_float(a.elements(), b.elements(), a.size(), blocksize);
 
     return a;
 }
@@ -52,7 +55,9 @@ DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> &
         throw MatrixRowsDoNotMatch(b.rows(), a.rows());
     }
 
-    cuda_element_product_two_float(a.elements(), b.elements(), a.rows() * a.columns());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
+
+    cuda_element_product_two_float(a.elements(), b.elements(), a.rows() * a.columns(), blocksize);
 
     return a;
 }

@@ -19,6 +19,7 @@
 
 #include <honei/la/element_inverse.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/util/configuration.hh>
 
 
 using namespace honei;
@@ -27,7 +28,9 @@ DenseVectorContinuousBase<float> & ElementInverse<tags::GPU::CUDA>::value(DenseV
 {
     CONTEXT("When inverting DenseVectorContinuousBase<float> (CUDA):");
 
-    cuda_element_inverse_one_float(x.elements(), x.size());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
+
+    cuda_element_inverse_one_float(x.elements(), x.size(), blocksize);
 
     return x;
 }
@@ -36,7 +39,9 @@ DenseMatrix<float> & ElementInverse<tags::GPU::CUDA>::value(DenseMatrix<float> &
 {
     CONTEXT("When inverting DenseMatrix<float> (CUDA):");
 
-    cuda_element_inverse_one_float(x.elements(), x.rows() * x.columns());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
+
+    cuda_element_inverse_one_float(x.elements(), x.rows() * x.columns(), blocksize);
 
     return x;
 }

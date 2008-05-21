@@ -7,6 +7,21 @@
 profiler::output = /dev/null
 log::categories = all
 
+# CUDA
+######
+
+# Size of one Block in a Grid
+cuda::element_inverse_one_float = 128
+
+cuda::element_product_two_float = 128
+
+cuda::scaled_sum_two_float = 128
+cuda::scaled_sum_three_float = 128
+
+cuda::scale_one_float = 128
+
+cuda::sum_two_float = 128
+
 # Cell
 ######
 

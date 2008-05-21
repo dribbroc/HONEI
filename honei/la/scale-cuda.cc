@@ -19,6 +19,7 @@
 
 #include <honei/la/scale.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/util/configuration.hh>
 
 
 using namespace honei;
@@ -27,7 +28,9 @@ DenseVectorContinuousBase<float> & Scale<tags::GPU::CUDA>::value(DenseVectorCont
 {
     CONTEXT("When scaling DenseVectorContinuousBase<float> by float (CUDA):");
 
-    cuda_scale_one_float(a, x.elements(), x.size());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_float", 128ul));
+
+    cuda_scale_one_float(a, x.elements(), x.size(), blocksize);
 
     return x;
 }
@@ -36,7 +39,9 @@ DenseMatrix<float> & Scale<tags::GPU::CUDA>::value(DenseMatrix<float> & x, const
 {
     CONTEXT("When scaling DenseMatrix<float> by float (CUDA):");
 
-    cuda_scale_one_float(a, x.elements(), x.rows() * x.columns());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_float", 128ul));
+
+    cuda_scale_one_float(a, x.elements(), x.rows() * x.columns(), blocksize);
 
     return x;
 }

@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 namespace honei
 {
     namespace cuda
@@ -35,11 +36,11 @@ namespace honei
     }
 }
 
-extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigned long size)
+extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
-    block.x = 16;
+    block.x = blocksize;
     grid.x = ceil(size/(float)block.x);
     float * x_gpu(0);
     float * y_gpu(0);
@@ -57,11 +58,11 @@ extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigne
     cudaFree(y_gpu);
 }
 
-extern "C" void cuda_scaled_sum_three_float(float * x, float * y, float * z, unsigned long size)
+extern "C" void cuda_scaled_sum_three_float(float * x, float * y, float * z, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
-    block.x = 16;
+    block.x = blocksize;
     grid.x = ceil(size/(float)block.x);
     float * x_gpu(0);
     float * y_gpu(0);

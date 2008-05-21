@@ -29,11 +29,11 @@ namespace honei
     }
 }
 
-extern "C" void cuda_scale_one_float(float a, float * x, unsigned long size)
+extern "C" void cuda_scale_one_float(float a, float * x, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
-    block.x = 16;
+    block.x = blocksize;
     grid.x = ceil(size/(float)block.x);
     float * x_gpu(0);
 

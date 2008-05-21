@@ -19,6 +19,7 @@
 
 #include <honei/la/product.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/util/configuration.hh>
 
 using namespace honei;
 
@@ -33,6 +34,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
 
     DenseVector<float> result(a.rows(), float(0));
 
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_three_float", 128ul));
 
     unsigned long middle_index(a.rows() - 1);
     unsigned long op_offset;
@@ -44,12 +46,12 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
         if (band.index() >= middle_index)
         {
             op_offset = band.index() - middle_index;
-            cuda_scaled_sum_three_float(result.elements(), band->elements(), b.elements() + op_offset, a.size() - op_offset);
+            cuda_scaled_sum_three_float(result.elements(), band->elements(), b.elements() + op_offset, a.size() - op_offset, blocksize);
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
         {
             op_offset = middle_index - band.index();
-            cuda_scaled_sum_three_float(result.elements() + op_offset, band->elements() + op_offset, b.elements(), a.size() - op_offset);
+            cuda_scaled_sum_three_float(result.elements() + op_offset, band->elements() + op_offset, b.elements(), a.size() - op_offset, blocksize);
         }
     }
     return result;

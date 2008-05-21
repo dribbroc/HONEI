@@ -19,6 +19,7 @@
 
 #include <honei/la/scaled_sum.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/util/configuration.hh>
 
 
 using namespace honei;
@@ -31,7 +32,28 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
 
-    cuda_scaled_sum_two_float(x.elements(), y.elements(), b, x.size());
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_two_float", 128ul));
+
+    cuda_scaled_sum_two_float(x.elements(), y.elements(), b, x.size(), blocksize);
 
     return x;
+}
+
+DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c)
+{
+    CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>, "
+            "DenseVectorContinuousBase<float>) (CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    if (a.size() != c.size())
+        throw VectorSizeDoesNotMatch(c.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_three_float", 128ul));
+
+    cuda_scaled_sum_three_float(a.elements(), b.elements(), c.elements(), a.size(), blocksize);
+
+    return a;
 }
