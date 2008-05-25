@@ -263,8 +263,8 @@ namespace honei
                 throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
             }
 
-            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands());
-            for (typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()),
+            typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_bands());
+            for (typename BandedMatrix<DT1_>::BandIterator l(a.begin_bands()),
                     l_end(a.end_bands()) ; l != l_end ; ++l)
             {
                 if (! r.exists()) //won't check l.exists() here, cause it is always created by Iterator.
@@ -273,7 +273,8 @@ namespace honei
                     continue;
                 }
 
-                ElementProduct<>::value(*l, *r);
+                DenseVector<DT1_> band(*l);
+                ElementProduct<>::value(band, *r);
                 ++r;
             }
 
@@ -296,7 +297,7 @@ namespace honei
             }
 
             typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+            for (typename BandedMatrix<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
@@ -321,7 +322,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements());
+            typename BandedMatrix<DT1_>::ElementIterator l(a.begin_elements());
             for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()); r != r_end ; )
             {
@@ -335,7 +336,7 @@ namespace honei
                 ++l; ++r;
             }
 
-            for (typename MutableMatrix<DT1_>::ElementIterator l_end(a.end_elements()) ;
+            for (typename BandedMatrix<DT1_>::ElementIterator l_end(a.end_elements()) ;
                 l != l_end ; ++l)
             {
                 *l = DT1_(0);
@@ -359,7 +360,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            typename BandedMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
             for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
@@ -385,7 +386,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            typename BandedMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
             for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {

@@ -146,6 +146,26 @@ namespace honei
 
             /// \}
 
+            /// \{
+
+            /**
+             * Arrow operator
+             *
+             * Used as hack for BandIterator.
+             */
+
+            DenseVector<DataType_> * operator-> ()
+            {
+                return this;
+            }
+
+            const DenseVector<DataType_> * const operator-> () const
+            {
+                return this;
+            }
+
+            /// \}
+
             /**
              * \name Functions inherited by DenseVectorContinousBase
              * \{

@@ -48,13 +48,13 @@ class BandedMatrixScaleTest :
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 BandedMatrix<DataType_> bm1(size, dv1);
                 Scale<Tag_>::value(bm1, DataType_(3));
-                for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()),
+                for (typename BandedMatrix<DataType_>::ConstBandIterator ce(bm1.begin_bands()),
                         ce_end(bm1.end_bands()) ; ce != ce_end ; ++ce)
                 {
                     if (ce.index() != size - 1 )
                     {
                         for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                            i_end(ce->end_elements()) ; i != i_end ; ++i)
+                            i_end(ce->end_elements()) ; i < i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                         }
@@ -62,7 +62,7 @@ class BandedMatrixScaleTest :
                     else
                     {
                         for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                            i_end(ce->end_elements()) ; i != i_end ; ++i)
+                            i_end(ce->end_elements()) ; i < i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 6, std::numeric_limits<DataType_>::epsilon());
                         }
@@ -99,13 +99,13 @@ class BandedMatrixScaleQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(2));
             BandedMatrix<DataType_> bm1(size, dv1);
             Scale<Tag_>::value(bm1, DataType_(3));
-            for (typename BandedMatrix<DataType_>::ConstVectorIterator ce(bm1.begin_bands()),
+            for (typename BandedMatrix<DataType_>::ConstBandIterator ce(bm1.begin_bands()),
                     ce_end(bm1.end_bands()) ; ce != ce_end ; ++ce)
             {
                 if (ce.index() != size - 1 )
                 {
                     for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                            i_end(ce->end_elements()) ; i != i_end ; ++i)
+                            i_end(ce->end_elements()) ; i < i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     }
@@ -113,7 +113,7 @@ class BandedMatrixScaleQuickTest :
                 else
                 {
                     for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
-                            i_end(ce->end_elements()) ; i != i_end ; ++i)
+                            i_end(ce->end_elements()) ; i < i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 6, std::numeric_limits<DataType_>::epsilon());
                     }

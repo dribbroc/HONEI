@@ -101,13 +101,11 @@ namespace honei
         static BandedMatrix<DT2_> & value(BandedMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling BandedMatrix:");
-            for (typename BandedMatrix<DT2_>::VectorIterator l(x.begin_bands()),
-                    l_end(x.end_bands()) ; l != l_end ; ++l)
+            for (typename BandedMatrix<DT2_>::BandIterator l(x.begin_non_zero_bands()),
+                    l_end(x.end_non_zero_bands()) ; l != l_end ; ++l)
             {
-                if (l.exists())
-                {
-                    Scale<>::value(*l, a);
-                }
+                DenseVector<DT2_> band(*l);
+                Scale<>::value(band, a);
             }
 
             return x;

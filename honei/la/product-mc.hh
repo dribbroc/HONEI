@@ -273,7 +273,7 @@ namespace honei
         {
             int middle_index(a.rows() -1);
 
-                for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+                for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                         vi != vi_end ; ++vi)
                 {
                     // If we are below the diagonal band

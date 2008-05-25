@@ -42,12 +42,12 @@ class BandedMatrixElementIterationTest :
             {
                 BandedMatrix<DataType_> bm(size);
 
-                typename BandedMatrix<DataType_>::VectorIterator b(bm.begin_bands()), b_end(bm.end_bands());
+                typename BandedMatrix<DataType_>::BandIterator b(bm.begin_bands()), b_end(bm.end_bands());
                 for (unsigned long i(1 - size) ; i < (size - 1) ; ++i, ++b)
                 {
                     TEST_CHECK_EQUAL(b.index(), i);
 
-                    typename BandedMatrix<DataType_>::ConstVectorIterator cb(b);
+                    typename BandedMatrix<DataType_>::ConstBandIterator cb(b);
                     TEST_CHECK_EQUAL(std::distance((*cb).begin_elements(), (*cb).end_elements()), size);
 
                     for (typename Vector<DataType_>::ConstElementIterator ce((*cb).begin_elements()), ce_end((*cb).end_elements()) ;

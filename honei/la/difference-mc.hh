@@ -178,8 +178,8 @@ namespace honei
                 //ThreadPool * p(ThreadPool::instance());
                 PoolTask * pt[2*a.rows()-1];
                 int taskcount(0);
-                typename BandedMatrix<DT1_>::VectorIterator l(a.begin_non_zero_bands()), l_end(a.end_non_zero_bands());
-                typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands());
+                typename BandedMatrix<DT1_>::BandIterator l(a.begin_non_zero_bands()), l_end(a.end_non_zero_bands());
+                typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands());
                 unsigned long a_index, b_index;
                 while((l != l_end) && (r != r_end))
                 {
@@ -192,7 +192,8 @@ namespace honei
 
                     if (a_index == b_index)
                     {
-                        TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
+                        DenseVector<DT1_> band(*l);
+                        TwoArgWrapper< Difference<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(band, *r);
                         pt[taskcount] = ThreadPool::instance()->dispatch(mywrapper);
                         ++taskcount;
                         ++l;
@@ -279,7 +280,7 @@ namespace honei
             CONTEXT("When partial substracting BandedMatrix to DenseMatrix:");
 
             unsigned long size(a.size());
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator r(a.begin_non_zero_bands()), r_end(a.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT1_>::ConstBandIterator r(a.begin_non_zero_bands()), r_end(a.end_non_zero_bands()) ;
                     r != r_end ; ++r)
             {
 
@@ -559,7 +560,7 @@ namespace honei
                 Mutex mutex[parts];
                 int middle_index(a.rows() -1);
                 //if we are below the diagonal band
-                for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_non_zero_bands()),
+                for (typename BandedMatrix<DT2_>::ConstBandIterator vi(a.begin_non_zero_bands()),
                      vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
                 {
                     unsigned long i(parts), offset(a.size());
@@ -597,7 +598,7 @@ namespace honei
                     }
                 }
                 // If we are above or on the diagonal band
-                for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.band_at(middle_index)),
+                for (typename BandedMatrix<DT2_>::ConstBandIterator vi(a.band_at(middle_index)),
                      vi_end(a.end_non_zero_bands()); vi != vi_end ; ++vi)
                 {
                     unsigned long i(0), offset(0);

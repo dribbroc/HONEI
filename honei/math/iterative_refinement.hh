@@ -150,7 +150,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
+                    typename BandedMatrix<DT1_>::ConstBandIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
                     for(; i != i_end; ++i)
                     {
                         DenseVector<float> band(right_hand_side.size());
@@ -429,7 +429,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
+                    typename BandedMatrix<DT1_>::ConstBandIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
                     for(; i != i_end; ++i)
                     {
                         DenseVector<float> band(right_hand_side.size());
@@ -704,7 +704,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstVectorIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
+                    typename BandedMatrix<DT1_>::ConstBandIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
                     for(; i != i_end; ++i)
                     {
                         DenseVector<float> band(right_hand_side.size());

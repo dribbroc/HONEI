@@ -47,7 +47,7 @@ DenseVector<float> JacobiKernel<tags::CPU::SSE>::value(DenseVector<float> & b, D
     float * r_e = result.elements();
     float * d_e = d.elements();
 
-    for (BandedMatrix<float>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
+    for (BandedMatrix<float>::ConstBandIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
     {
 
@@ -188,7 +188,7 @@ DenseVector<double> JacobiKernel<tags::CPU::SSE>::value(DenseVector<double> & b,
     double * d_e = d.elements();
     double * b_e = b.elements();
 
-    for (BandedMatrix<double>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
+    for (BandedMatrix<double>::ConstBandIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
     {
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.

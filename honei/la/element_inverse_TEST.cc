@@ -411,12 +411,19 @@ class BandedMatrixElementInverseTest :
                         j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() - 1;
-                    if (i.index() - 1 == 0) *j = DataType_(0);
-                    else *j = 1 / DataType_(i.index() - 1);
+
+                    if (i.index() - 1 == 0)
+                        *j = DataType_(0);
+                    else
+                        *j = 1 / DataType_(i.index() - 1);
+
                     ++j;
                 }
+
                 BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
-                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(bm1), bm2);
+                ElementInverse<Tag_>::value(bm1);
+
+                TEST_CHECK_EQUAL(bm1, bm2);
             }
         }
 };
@@ -439,19 +446,27 @@ class BandedMatrixElementInverseQuickTest :
         virtual void run() const
         {
                 unsigned long size(11);
+
                 DenseVector<DataType_> dv1(size);
                 DenseVector<DataType_> dv2(size);
+
                 for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() - 1;
-                    if (i.index() - 1 == 0) *j = DataType_(0);
-                    else *j = 1 / DataType_(i.index() - 1);
+
+                    if (i.index() - 1 == 0)
+                        *j = DataType_(0);
+                    else
+                        *j = 1 / DataType_(i.index() - 1);
+
                     ++j;
                 }
-                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
 
-                TEST_CHECK_EQUAL(ElementInverse<Tag_>::value(bm1), bm2);
+                BandedMatrix<DataType_> bm1(size, dv1), bm2(size, dv2);
+                ElementInverse<Tag_>::value(bm1);
+
+                TEST_CHECK_EQUAL(bm1, bm2);
         }
 };
 BandedMatrixElementInverseQuickTest<tags::CPU, float> banded_matrix_element_inverse_quick_test_float("float");

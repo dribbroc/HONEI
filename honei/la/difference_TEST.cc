@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -55,7 +55,7 @@ class BandedMatrixDenseMatrixDifferenceTest :
                 DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
                 typename MutableMatrix<DT_>::ElementIterator k(dm3.begin_elements());
-                for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
+                for (typename BandedMatrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                     i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
                 {
                     if (*i != DT_(0))
@@ -103,7 +103,7 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
             DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
             typename MutableMatrix<DT_>::ElementIterator k(dm3.begin_elements());
-            for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
+            for (typename BandedMatrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                 i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
             {
                 if (*i != DT_(0))
@@ -192,7 +192,7 @@ class BandedMatrixDifferenceQuickTest :
 
             Difference<Tag_>::value(bm1, bm2);
 
-            for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
+            for (typename BandedMatrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                     i_end(bm1.end_elements()), j(bm3.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
@@ -244,7 +244,7 @@ class BandedMatrixSparseMatrixDifferenceTest :
                 }
 
                 typename MutableMatrix<DT_>::ElementIterator k(sm3.begin_elements());
-                for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
+                for (typename BandedMatrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                         i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
                 {
                     if (*i != DT_(0))
@@ -302,7 +302,7 @@ class BandedMatrixSparseMatrixDifferenceQuickTest :
             }
 
            typename MutableMatrix<DT_>::ElementIterator k(sm3.begin_elements());
-            for (typename Matrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
+            for (typename BandedMatrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                 i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
             {
                 if (*i != DT_(0))

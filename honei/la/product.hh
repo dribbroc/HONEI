@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -162,7 +162,6 @@ namespace honei
         static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When multiplying BandedMatrix with DenseVector(Base):");
-
             if (b.size() != a.columns())
             {
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
@@ -170,7 +169,7 @@ namespace honei
 
             DenseVector<DT1_> result(a.rows(), DT1_(0));
             int middle_index(a.rows() -1);
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
                 // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
@@ -187,7 +186,7 @@ namespace honei
                     //Calculation of the element-index to stop in iteration!
                     unsigned long end(vi->size() - (vi.index() - middle_index));
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
-                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                            c_end(vi->element_at(end)) ; c < c_end ; ++c)
                     {
                         *r += *c * *j;
                         if (j != j_end && r != r_end)
@@ -209,9 +208,10 @@ namespace honei
                         ++r; // Get the right position in result b.
                     }
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
-                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                            c_end(vi->end_elements()) ; c < c_end ; ++c)
                     {
                         *r += *c * *j;
+
                         if (j != j_end && r != r_end)
                         {
                             ++j;
@@ -220,7 +220,8 @@ namespace honei
                     }
                 }
             }
-                return result;
+
+            return result;
         }
 
         template <typename DT1_, typename DT2_>
@@ -236,9 +237,12 @@ namespace honei
             SparseVector<DT1_> result(b.size(), b.capacity());
             unsigned long middle_index(a.rows() -1);
 
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_bands()),
                     vi_end(a.band_at(middle_index)) ; vi != vi_end; ++vi)
             {
+                if (! vi.exists())
+                    continue;
+
                 // If we are below the diagonal band we correct the position in band and result b.
                 unsigned long move_index(middle_index - vi.index()); // is also = the element index to start in iteration for b
                 for (typename Vector<DT2_>::ConstElementIterator j(b.begin_non_zero_elements()),
@@ -259,9 +263,12 @@ namespace honei
                 }
             }
 
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index)),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(middle_index)),
                     vi_end(a.end_bands()) ;  vi != vi_end ; ++vi)
             {
+                if (! vi.exists())
+                    continue;
+
                 // If we are above or on the diagonal band, we first search the first non-zero element, then
                 // we make positions in band and result b meet it.
                 unsigned long move_index(vi.index() - middle_index);
@@ -501,7 +508,7 @@ namespace honei
             unsigned long diag_index(a.size() -1);
 
             // Lower part of a
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_bands()),
                     vi_end(a.band_at(diag_index)) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -509,7 +516,7 @@ namespace honei
 
                 // We start at the zero_based band_index of b that is equal to abs(band_index(a) - diag_index)
                     unsigned long iteration_start(abs(vi.index() - diag_index));
-                    for(typename BandedMatrix<DT1_>::ConstVectorIterator vj(b.band_at(iteration_start)),
+                    for(typename BandedMatrix<DT1_>::ConstBandIterator vj(b.band_at(iteration_start)),
                             vj_end(b.end_bands()) ; vj != vj_end ; ++vj)
                     {
                         if (vj.index() == diag_index) // We are on diagonal of b
@@ -519,7 +526,7 @@ namespace honei
                             typename Vector<DT2_>::ConstElementIterator j(vj->begin_elements());
                             for (typename Vector<DT1_>::ElementIterator
                                     r(result.band(result_band_index).element_at(abs(result_band_index))),
-                                    r_end(result.band(result_band_index).end_elements()) ; r != r_end ;
+                                    r_end(result.band(result_band_index).end_elements()) ; r < r_end ;
                                     ++j, ++i, ++r)
                             {
                                 *r += *i * *j;
@@ -538,7 +545,7 @@ namespace honei
                                 res_end -= result_band_index;
 
                             for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(shift)),
-                                    r_end(result.band(result_band_index).element_at(res_end)) ; r != r_end ; ++j, ++i, ++r)
+                                    r_end(result.band(result_band_index).element_at(res_end)) ; r < r_end ; ++j, ++i, ++r)
                             {
                                 *r += *i * *j;
                             }
@@ -553,7 +560,7 @@ namespace honei
                             typename Vector<DT1_>::ConstElementIterator i(vi->element_at(abs(result_band_index)));
                             typename Vector<DT2_>::ConstElementIterator j(vj->element_at(shift));
                             for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(abs(result_band_index))), 
-                                    r_end(result.band(result_band_index).end_elements()) ; r != r_end ; ++j, ++i, ++r)
+                                    r_end(result.band(result_band_index).end_elements()) ; r < r_end ; ++j, ++i, ++r)
                             {
                                 *r += *i * *j;
                             }
@@ -562,12 +569,12 @@ namespace honei
                 }
 
             // Diagonal of a
-            typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(diag_index));
+            typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(diag_index));
 
             if (vi.exists())
             {
                 // Lower part of b
-                for (typename BandedMatrix<DT2_>::ConstVectorIterator vj(b.begin_bands()),
+                for (typename BandedMatrix<DT2_>::ConstBandIterator vj(b.begin_bands()),
                         vj_end(b.band_at(diag_index)) ; vj != vj_end ; ++vj)
                 {
                     if (! vj.exists())
@@ -577,14 +584,14 @@ namespace honei
                     typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(abs(result_band_index)));
                     typename Vector<DT1_>::ConstElementIterator i(vi->element_at(abs(result_band_index)));
                     for(typename Vector<DT2_>::ConstElementIterator j(vj->element_at(abs(result_band_index))),
-                            j_end(vj->end_elements()) ; j != j_end ; ++j, ++i, ++r)
+                            j_end(vj->end_elements()) ; j < j_end ; ++j, ++i, ++r)
                     {
                         *r += *i * *j;
                     }
                 }
 
                 // Diagonal of b
-                for(typename BandedMatrix<DT2_>::ConstVectorIterator vj(b.band_at(diag_index)),
+                for(typename BandedMatrix<DT2_>::ConstBandIterator vj(b.band_at(diag_index)),
                         vj_end(b.band_at(diag_index + 1)) ; vj != vj_end ; ++vj)
                 {
                         if (! vj.exists())
@@ -595,14 +602,14 @@ namespace honei
                 }
 
                 // Upper part of b
-                for(typename BandedMatrix<DT2_>::ConstVectorIterator vj(b.band_at(diag_index+1)),
+                for(typename BandedMatrix<DT2_>::ConstBandIterator vj(b.band_at(diag_index+1)),
                         vj_end(b.end_bands()) ; vj != vj_end ; ++vj)
                 {
                     signed long result_band_index(vj.index() - diag_index); //index based on diag = 0
                     typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements());
                     typename Vector<DT1_>::ConstElementIterator i(vi->begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator j(vj->begin_elements()),
-                            j_end(vj->element_at(vj->size() - result_band_index)) ; j != j_end ; ++j, ++i, ++r)
+                            j_end(vj->element_at(vj->size() - result_band_index)) ; j < j_end ; ++j, ++i, ++r)
                     {
                         *r += *i * *j;
                     }
@@ -610,7 +617,7 @@ namespace honei
             }
 
             // Upper part of a
-            for(typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(diag_index+1)),
+            for(typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(diag_index+1)),
                     vi_end(a.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -618,7 +625,7 @@ namespace honei
 
                     // We only go on until band_index of b is equal to [numbers of bands] - actual band_index of a (zero_based).
                     unsigned long iteration_end((2*b.size()-1) - (vi.index() - diag_index));
-                    for(typename BandedMatrix<DT1_>::ConstVectorIterator vj(b.begin_bands()), vj_end(b.band_at(iteration_end)) ; vj != vj_end ; ++vj)
+                    for(typename BandedMatrix<DT1_>::ConstBandIterator vj(b.begin_bands()), vj_end(b.band_at(iteration_end)) ; vj != vj_end ; ++vj)
                     {
                         if (vj.index() == diag_index) // We are on diagonal of b
                         {
@@ -626,7 +633,7 @@ namespace honei
                             typename Vector<DT1_>::ConstElementIterator i(vi->begin_elements());
                             typename Vector<DT2_>::ConstElementIterator j(vj->element_at(result_band_index));
                             for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()),
-                                    r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r != r_end ; ++j, ++i, ++r)
+                                    r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r < r_end ; ++j, ++i, ++r)
                             {
                                 *r += *i * *j;
                             }
@@ -640,7 +647,7 @@ namespace honei
                             unsigned long shift(vi.index() - diag_index);
                             typename Vector<DT2_>::ConstElementIterator j(vj->element_at(shift));
                             for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()),
-                                    r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r != r_end ; ++j, ++i, ++r)
+                                    r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r < r_end ; ++j, ++i, ++r)
                             {
                                 *r += *i * *j;
                             }
@@ -664,7 +671,7 @@ namespace honei
                             typename Vector<DT2_>::ConstElementIterator j(vj->element_at(vj_start));
                             long res_end(2*result.size() - (vi.index() + 1));
                             for(typename Vector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(res_start)),
-                                    r_end(result.band(result_band_index).element_at(res_end)) ; r != r_end ; ++j, ++i, ++r)
+                                    r_end(result.band(result_band_index).element_at(res_end)) ; r < r_end ; ++j, ++i, ++r)
                             {
                                 *r += *i * *j;
                             }
@@ -687,7 +694,7 @@ namespace honei
             unsigned long middle_index(a.size() -1);
 
             // Calculation for lower part
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_bands()),
                     vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -712,7 +719,7 @@ namespace honei
             }
 
             // Calculation for diagonal
-            typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index));
+            typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(middle_index));
 
             if (vi.exists())
             {
@@ -724,7 +731,7 @@ namespace honei
             }
 
             // Calculation for upper part
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index+1)),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(middle_index+1)),
                     vi_end(a.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -765,7 +772,7 @@ namespace honei
             unsigned long middle_index(a.size() -1);
 
             // Calculation for lower part
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_bands()),
                     vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -788,7 +795,7 @@ namespace honei
             }
 
             // Calculation for diagonal
-            typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index));
+            typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(middle_index));
 
             if (vi.exists())
             {
@@ -806,7 +813,7 @@ namespace honei
             }
 
             // Calculation for upper part
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index+1)),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(middle_index+1)),
                     vi_end(a.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -844,7 +851,7 @@ namespace honei
             unsigned long middle_index(b.size() -1);
 
             // Calculation for lower part
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(b.begin_bands()),
+            for (typename BandedMatrix<DT2_>::ConstBandIterator vi(b.begin_bands()),
                     vi_end(b.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -859,7 +866,7 @@ namespace honei
                     typename Vector<DT1_>::ConstElementIterator c(row.begin_elements());
                     typename Vector<DT1_>::ElementIterator x(result[z].element_at(real_index));
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->begin_elements()),
-                        d_end(vi->element_at(vi->size()-real_index)) ; d != d_end ; ++x, ++c, ++d)
+                        d_end(vi->element_at(vi->size()-real_index)) ; d < d_end ; ++x, ++c, ++d)
                     {
                         *x += *d * *c;
                     }
@@ -867,7 +874,7 @@ namespace honei
             }
 
             // Calculation for diagonal
-            typename BandedMatrix<DT2_>::ConstVectorIterator vi(b.band_at(middle_index));
+            typename BandedMatrix<DT2_>::ConstBandIterator vi(b.band_at(middle_index));
 
             if (vi.exists())
             {
@@ -877,7 +884,7 @@ namespace honei
                     typename Vector<DT1_>::ConstElementIterator c(row.begin_elements());
                     typename Vector<DT1_>::ElementIterator x(result[z].begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->begin_elements()),
-                        d_end(vi->end_elements()) ; d != d_end ; ++x, ++c, ++d)
+                        d_end(vi->end_elements()) ; d < d_end ; ++x, ++c, ++d)
                     {
                         *x += *d * *c;
                     }
@@ -885,7 +892,7 @@ namespace honei
             }
 
             // Calculation for upper part
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(b.band_at(middle_index+1)),
+            for (typename BandedMatrix<DT2_>::ConstBandIterator vi(b.band_at(middle_index+1)),
                     vi_end(b.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -899,7 +906,7 @@ namespace honei
                     typename Vector<DT1_>::ConstElementIterator c(row.element_at(real_index));
                     typename Vector<DT1_>::ElementIterator x(result[z].begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->element_at(real_index)),
-                        d_end(vi->end_elements()) ; d != d_end ; ++x, ++c, ++d)
+                        d_end(vi->end_elements()) ; d < d_end ; ++x, ++c, ++d)
                     {
                         *x += *d * *c;
                     }
@@ -922,7 +929,7 @@ namespace honei
             unsigned long middle_index(b.size() -1);
 
             // Calculation for lower part
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(b.begin_bands()),
+            for (typename BandedMatrix<DT2_>::ConstBandIterator vi(b.begin_bands()),
                     vi_end(b.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -935,14 +942,14 @@ namespace honei
                     const SparseVector<DT1_> row(a[z]);
                     typename Vector<DT1_>::ElementIterator x(result[z].begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->element_at(real_index)),
-                        d_end(vi->end_elements()) ; d != d_end ; ++x, ++d)
+                        d_end(vi->end_elements()) ; d < d_end ; ++x, ++d)
                     {
                         *x += *d * row[real_index + x.index()];
                     }
                 }
             }
             // Calculation for diagonal part
-            typename BandedMatrix<DT2_>::ConstVectorIterator vi(b.band_at(middle_index));
+            typename BandedMatrix<DT2_>::ConstBandIterator vi(b.band_at(middle_index));
 
             if (vi.exists())
             {
@@ -953,7 +960,7 @@ namespace honei
 
                     typename Vector<DT1_>::ElementIterator x(result[z].begin_elements());
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->begin_elements()),
-                        d_end(vi->end_elements()) ; d != d_end ; ++x, ++c, ++d)
+                        d_end(vi->end_elements()) ; d < d_end ; ++x, ++c, ++d)
                     {
                         *x += *d * *c;
                     }
@@ -961,7 +968,7 @@ namespace honei
             }
 
             // Calculation for upper part
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(b.band_at(middle_index+1)),
+            for (typename BandedMatrix<DT2_>::ConstBandIterator vi(b.band_at(middle_index+1)),
                     vi_end(b.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -975,7 +982,7 @@ namespace honei
                     typename Vector<DT1_>::ConstElementIterator c(row.begin_elements());
                     typename Vector<DT1_>::ElementIterator x(result[z].element_at(real_index));
                     for(typename Vector<DT2_>::ConstElementIterator d(vi->begin_elements()),
-                        d_end(vi->element_at(vi->size()-real_index)) ; d != d_end ; ++x, ++c, ++d)
+                        d_end(vi->element_at(vi->size()-real_index)) ; d < d_end ; ++x, ++c, ++d)
                     {
                         *x += *d * *c;
                     }
@@ -992,7 +999,7 @@ namespace honei
         {
             BenchmarkInfo result;
             unsigned long temp(0);
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
                 temp = vi.index();
@@ -1065,7 +1072,7 @@ namespace honei
             unsigned long middle_index(a.size() -1);
 
             // Calculation for lower part
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_bands()),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_bands()),
                     vi_end(a.band_at(middle_index)) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -1094,7 +1101,7 @@ namespace honei
             }
 
             // Calculation for diagonal
-            typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index));
+            typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(middle_index));
 
             if (vi.exists())
             {
@@ -1108,7 +1115,7 @@ namespace honei
             }
 
             // Calculation for upper part
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.band_at(middle_index+1)),
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.band_at(middle_index+1)),
                     vi_end(a.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())

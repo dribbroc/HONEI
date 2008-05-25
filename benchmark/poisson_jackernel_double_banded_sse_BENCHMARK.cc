@@ -181,7 +181,7 @@ class PoissonJACKernelBenchDoubleSSE :
             }
             DenseVector<double> zeros(b_v.size(), double(0));
             difference.insert_band(0, zeros);
-            Scale<tags::CPU>::value(difference, float(-1));
+            Scale<tags::CPU>::value(difference, double(-1));
             double konv_rad = std::numeric_limits<double>::epsilon();
             while(fabs(norm_x - norm_x_last) > konv_rad)
             {

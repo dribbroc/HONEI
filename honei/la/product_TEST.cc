@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/sparse_vector.hh>
@@ -59,6 +60,8 @@ class BandedMatrixDenseVectorProductTest :
                 BandedMatrix<DataType_> bm1(size, dv1);
                 bm1.insert_band(1, dv4);
                 bm1.insert_band(-1, dv5);
+                //std::cout << "BM: bm1 = " << bm1 << std::endl;
+                //std::cout << "DV: dv = " << dv2 << std::endl;
 
                 DenseVector<DataType_> dv3(size, DataType_(0));
                 (dv3)[0]= DataType_(-1);
@@ -69,6 +72,7 @@ class BandedMatrixDenseVectorProductTest :
                 }
 
                 DenseVector<DataType_> prod (Product<Tag_>::value(bm1, dv2));
+                //std::cout << "prod = " << prod << std::endl;
 
                 TEST_CHECK_EQUAL(prod, dv3);
             }
@@ -723,16 +727,19 @@ class BandedMatrixProductQuickTest :
             SparseMatrix<DataType_> sm1(size, size);
             sm1[0][size-1] = DataType_(3);
             sm1[size-1][0] = DataType_(3);
-
             for(int i=0; i < size ; ++i)
             {
-                sm1[i][i] = DataType_(3);
+                sm1(i, i) = DataType_(3);
             }
 
             //Calculate products for banded * banded and banded * sparse and check equality.
             BandedMatrix<DataType_> prod(Product<>::value(bm1, bm2));
             DenseMatrix<DataType_> prod2(Product<>::value(bm1, sm1));
-            TEST_CHECK_EQUAL(prod, prod2);
+            typename BandedMatrix<DataType_>::ConstElementIterator k(prod.begin_elements());
+            for (typename Matrix<DataType_>::ConstElementIterator l(prod2.begin_elements()), l_end(prod2.end_elements()) ; l != l_end ; ++l, ++k)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*k, *l, std::numeric_limits<DataType_>::epsilon());
+            }
 
             BandedMatrix<DataType_> bm01(5), bm02(6);
 
@@ -1460,7 +1467,11 @@ class BandedMatrixDenseMatrixProductTest :
                 bm3.insert_band(-2, dv6);
                 DenseMatrix<DataType_> prod(Product<>::value(bm1, dm1));
 
-                TEST_CHECK_EQUAL(prod, bm3);
+                typename BandedMatrix<DataType_>::ConstElementIterator k(bm3.begin_elements());
+                for (typename Matrix<DataType_>::ConstElementIterator l(prod.begin_elements()), l_end(prod.end_elements()) ; l != l_end ; ++l, ++k)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*k, *l, std::numeric_limits<DataType_>::epsilon());
+                }
 
                 BandedMatrix<DataType_> bm01(5);
                 DenseMatrix<DataType_> dm02(6, 5);
@@ -1504,7 +1515,11 @@ class BandedMatrixDenseMatrixProductQuickTest :
             bm3.insert_band(-2, dv6);
             DenseMatrix<DataType_> prod(Product<>::value(bm1, dm1));
 
-            TEST_CHECK_EQUAL(prod, bm3);
+            typename BandedMatrix<DataType_>::ConstElementIterator k(bm3.begin_elements());
+            for (typename Matrix<DataType_>::ConstElementIterator l(prod.begin_elements()), l_end(prod.end_elements()) ; l != l_end ; ++l, ++k)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*k, *l, std::numeric_limits<DataType_>::epsilon());
+            }
 
             BandedMatrix<DataType_> bm01(5);
             DenseMatrix<DataType_> dm02(6, 5);
@@ -1681,7 +1696,12 @@ class DenseMatrixBandedMatrixProductTest :
                 bm3.insert_band(-2, dv5);
                 DenseMatrix<DataType_> prod(Product<>::value(dm1, bm1));
 
-                TEST_CHECK_EQUAL(prod, bm3);
+                typename BandedMatrix<DataType_>::ConstElementIterator k(bm3.begin_elements());
+                for (typename Matrix<DataType_>::ConstElementIterator l(prod.begin_elements()), l_end(prod.end_elements()) ; l != l_end ; ++l, ++k)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*k, *l, std::numeric_limits<DataType_>::epsilon());
+                }
+
 
                 DenseMatrix<DataType_> dm03(5, 6);
                 BandedMatrix<DataType_> bm01(5);
@@ -1733,7 +1753,12 @@ class DenseMatrixBandedMatrixProductQuickTest :
             bm3.insert_band(-2, dv5);
             DenseMatrix<DataType_> prod(Product<>::value(dm1, bm1));
 
-            TEST_CHECK_EQUAL(prod, bm3);
+            typename BandedMatrix<DataType_>::ConstElementIterator k(bm3.begin_elements());
+            for (typename Matrix<DataType_>::ConstElementIterator l(prod.begin_elements()), l_end(prod.end_elements()) ; l != l_end ; ++l, ++k)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*k, *l, std::numeric_limits<DataType_>::epsilon());
+            }
+
 
             DenseMatrix<DataType_> dm03(5, 6);
             BandedMatrix<DataType_> bm01(5);
@@ -1784,7 +1809,11 @@ class SparseMatrixBandedMatrixProductTest :
                 bm3.insert_band(-2, dv5.copy());
                 DenseMatrix<DataType_> prod(Product<>::value(sm1, bm1));
 
-                TEST_CHECK_EQUAL(prod, bm3);
+                typename BandedMatrix<DataType_>::ConstElementIterator k(bm3.begin_elements());
+                for (typename Matrix<DataType_>::ConstElementIterator l(prod.begin_elements()), l_end(prod.end_elements()) ; l != l_end ; ++l, ++k)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*k, *l, std::numeric_limits<DataType_>::epsilon());
+                }
 
                 SparseMatrix<DataType_> sm03(5, 6);
                 BandedMatrix<DataType_> bm01(5);
@@ -1836,7 +1865,11 @@ class SparseMatrixBandedMatrixProductQuickTest :
             bm3.insert_band(-2, dv5.copy());
             DenseMatrix<DataType_> prod(Product<>::value(sm1, bm1));
 
-            TEST_CHECK_EQUAL(prod, bm3);
+            typename BandedMatrix<DataType_>::ConstElementIterator k(bm3.begin_elements());
+            for (typename Matrix<DataType_>::ConstElementIterator l(prod.begin_elements()), l_end(prod.end_elements()) ; l != l_end ; ++l, ++k)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*k, *l, std::numeric_limits<DataType_>::epsilon());
+            }
 
             SparseMatrix<DataType_> sm03(5, 6);
             BandedMatrix<DataType_> bm01(5);

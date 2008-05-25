@@ -22,6 +22,8 @@
 #include <honei/la/algorithm.hh>
 #include <unittest/unittest.hh>
 
+#include <iostream>
+
 using namespace honei;
 using namespace tests;
 
@@ -75,11 +77,11 @@ class BandedMatrixConvertTest :
             {
                 BandedMatrix<float> bmf1(size), bmf2(size), bmfr(size);
                 BandedMatrix<double> bmd1(size), bmd2(size), bmdr(size);
-                MutableMatrix<float>::ElementIterator fr(bmfr.begin_elements());
-                MutableMatrix<double>::ElementIterator dr(bmdr.begin_elements());
-                MutableMatrix<float>::ElementIterator f1(bmf1.begin_elements());
-                MutableMatrix<double>::ElementIterator d1(bmd1.begin_elements());
-                for (MutableMatrix<float>::ElementIterator i_end(bmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+                BandedMatrix<float>::ElementIterator fr(bmfr.begin_elements());
+                BandedMatrix<double>::ElementIterator dr(bmdr.begin_elements());
+                BandedMatrix<float>::ElementIterator f1(bmf1.begin_elements());
+                BandedMatrix<double>::ElementIterator d1(bmd1.begin_elements());
+                for (BandedMatrix<float>::ElementIterator i_end(bmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
                 {
                     if (fr.index() % 50 == 0)
                     {
@@ -92,7 +94,7 @@ class BandedMatrixConvertTest :
                 convert(bmf2, bmd1);
                 convert(bmd2, bmf1);
                 TEST_CHECK_EQUAL(bmf2, bmfr);
-                for (Matrix<double>::ConstElementIterator i(bmd2.begin_elements()), r(bmdr.begin_elements()), i_end(bmd2.end_elements())
+                for (BandedMatrix<double>::ConstElementIterator i(bmd2.begin_elements()), r(bmdr.begin_elements()), i_end(bmd2.end_elements())
                         ; i != i_end ; ++i, ++r)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -119,11 +121,11 @@ class BandedMatrixConvertQuickTest :
             unsigned long size(47);
             BandedMatrix<float> bmf1(size), bmf2(size), bmfr(size);
             BandedMatrix<double> bmd1(size), bmd2(size), bmdr(size);
-            MutableMatrix<float>::ElementIterator fr(bmfr.begin_elements());
-            MutableMatrix<double>::ElementIterator dr(bmdr.begin_elements());
-            MutableMatrix<float>::ElementIterator f1(bmf1.begin_elements());
-            MutableMatrix<double>::ElementIterator d1(bmd1.begin_elements());
-            for (MutableMatrix<float>::ElementIterator i_end(bmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+            BandedMatrix<float>::ElementIterator fr(bmfr.begin_elements());
+            BandedMatrix<double>::ElementIterator dr(bmdr.begin_elements());
+            BandedMatrix<float>::ElementIterator f1(bmf1.begin_elements());
+            BandedMatrix<double>::ElementIterator d1(bmd1.begin_elements());
+            for (BandedMatrix<float>::ElementIterator i_end(bmf1.end_elements()) ; f1 < i_end ; ++fr, ++dr, ++f1, ++d1)
             {
                 if (fr.index() % 50 == 0)
                 {
@@ -136,7 +138,7 @@ class BandedMatrixConvertQuickTest :
             convert(bmf2, bmd1);
             convert(bmd2, bmf1);
             TEST_CHECK_EQUAL(bmf2, bmfr);
-            for (Matrix<double>::ConstElementIterator i(bmd2.begin_elements()), r(bmdr.begin_elements()), i_end(bmd2.end_elements())
+            for (BandedMatrix<double>::ConstElementIterator i(bmd2.begin_elements()), r(bmdr.begin_elements()), i_end(bmd2.end_elements())
                     ; i != i_end ; ++i, ++r)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));

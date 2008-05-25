@@ -169,10 +169,10 @@ namespace honei
             unsigned long max_count(Configuration::instance()->get_value("mc::scale[BM]::max-count",
                                         2 * Configuration::instance()->get_value("mc::num-cores", 2)));
 
-            typename BandedMatrix<DT2_>::VectorIterator vi(x.begin_bands());
+            typename BandedMatrix<DT2_>::BandIterator vi(x.begin_bands());
 
             // Calculating lower triangular matrix.
-            for (typename BandedMatrix<DT2_>::VectorIterator vi_end(x.band_at(x.size() - 1)) ;
+            for (typename BandedMatrix<DT2_>::BandIterator vi_end(x.band_at(x.size() - 1)) ;
                     vi != vi_end ; ++vi)
             {
                 unsigned long band_size(x.size() - vi.index() - 1);
@@ -203,7 +203,7 @@ namespace honei
 
             // Calculating diagonal band.
             {
-                typename BandedMatrix<DT2_>::VectorIterator vi_diag(x.band_at(x.size() - 1));
+                typename BandedMatrix<DT2_>::BandIterator vi_diag(x.band_at(x.size() - 1));
                 if (vi == vi_diag)
                 {
 
@@ -224,7 +224,8 @@ namespace honei
                     }
                     else
                     {
-                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVector<DT2_>, const DT1_ > wrapper((*vi), a);
+                        DenseVector<DT2_> band(*vi);
+                        TwoArgWrapper< Scale<typename Tag_::DelegateTo>, DenseVector<DT2_>, const DT1_ > wrapper(band, a);
                         std::tr1::shared_ptr<PoolTask> ptr(tp->dispatch(wrapper));
                         dispatched_tasks.push_back(ptr);
                     }
@@ -234,7 +235,7 @@ namespace honei
             ++vi;
 
             // Calculating upper traingular matrix.
-            for (typename BandedMatrix<DT2_>::VectorIterator vi_end(x.end_bands()) ; vi != vi_end ; ++vi)
+            for (typename BandedMatrix<DT2_>::BandIterator vi_end(x.end_bands()) ; vi != vi_end ; ++vi)
             {
                 unsigned long band_size(2 * x.size() - vi.index() - 1);
 

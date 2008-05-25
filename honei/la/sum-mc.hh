@@ -204,8 +204,8 @@ namespace honei
             //ThreadPool * p(ThreadPool::instance());
             PoolTask * pt[2*a.rows()-1];
             int taskcount(0);
-            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
-            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
+            typename BandedMatrix<DT1_>::BandIterator l(a.begin_bands()), l_end(a.end_bands());
+            typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_bands()), r_end(b.end_bands());
             for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
             {
                 if (! r.exists())
@@ -213,7 +213,8 @@ namespace honei
 
                 if (l.exists())
                 {
-                    TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
+                    DenseVector<DT1_> band(*l);
+                    TwoArgWrapper< Sum<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(band, *r);
                     pt[taskcount] = ThreadPool::instance()->dispatch(mywrapper);
                     ++taskcount;
                 }
@@ -538,7 +539,7 @@ namespace honei
             CONTEXT("When partial adding BandedMatrix to DenseMatrix:");
 
             unsigned long size(b.size());
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
                     r != r_end ; ++r)
             {
 

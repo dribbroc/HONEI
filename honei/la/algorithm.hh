@@ -155,7 +155,7 @@ namespace honei
         if (copy.size() != orig.size())
             throw MatrixSizeDoesNotMatch(orig.size(), copy.size());
 
-        for (typename BandedMatrix<OrigType_>::ConstVectorIterator band(orig.begin_non_zero_bands()), band_end(orig.end_non_zero_bands()) ;
+        for (typename BandedMatrix<OrigType_>::ConstBandIterator band(orig.begin_non_zero_bands()), band_end(orig.end_non_zero_bands()) ;
                 band != band_end ; ++band)
         {
             convert(copy.band_unsigned(band.index()), *band);

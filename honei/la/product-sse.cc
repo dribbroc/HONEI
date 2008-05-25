@@ -161,7 +161,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrix<float> & a,
     unsigned long middle_index(a.rows() - 1);
     unsigned long op_offset;
 
-    for (BandedMatrix<float>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
+    for (BandedMatrix<float>::ConstBandIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
     {
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
@@ -194,7 +194,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     unsigned long middle_index(a.rows() - 1);
     unsigned long op_offset;
 
-    for (BandedMatrix<double>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
+    for (BandedMatrix<double>::ConstBandIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
     {
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.

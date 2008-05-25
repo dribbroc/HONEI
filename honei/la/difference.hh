@@ -32,6 +32,8 @@
 #include <honei/util/tags.hh>
 #include <honei/util/benchmark_info.hh>
 
+#include <iostream>
+
 namespace honei
 {
     template <typename Tag_ = tags::CPU> struct Difference;
@@ -170,15 +172,18 @@ namespace honei
                 throw MatrixSizeDoesNotMatch(b.size(), a.size());
             }
 
-            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
-            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
+            typename BandedMatrix<DT1_>::BandIterator l(a.begin_bands()), l_end(a.end_bands());
+            typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_bands()), r_end(b.end_bands());
             for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
             {
                 if (! r.exists())
                     continue;
 
                 if (l.exists())
-                    Difference<>::value(*l, *r);
+                {
+                    DenseVector<DT1_> band(*l);
+                    Difference<>::value(band, *r);
+                }
                 else
                 {
                     DenseVector<DT2_> band(r->copy());
@@ -231,7 +236,7 @@ namespace honei
 #endif
 
             int middle_index(a.rows() -1);
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
                 // If we are below the diagonal band, we start at Element index and go on until the last element.
@@ -240,7 +245,7 @@ namespace honei
                     unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
                     unsigned long i(0);
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
-                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                            c_end(vi->end_elements()) ; c < c_end ; ++c)
                     {
                         b(start, i) += *c;
                         ++start, ++i;
@@ -256,10 +261,10 @@ namespace honei
                     unsigned long end(vi->size() - offset);
                     unsigned long i(0);
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
-                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                            c_end(vi->element_at(end)) ; c < c_end ; ++c)
                     {
                         b(i, offset) +=  *c;
-                    ++offset, ++i;
+                        ++offset, ++i;
                     }
                 }
             }
@@ -289,7 +294,7 @@ namespace honei
 #endif
 
             int middle_index(a.rows() -1);
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT2_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
                 // If we are below the diagonal band, we start at Element index and go on until the last element.
@@ -298,7 +303,7 @@ namespace honei
                     unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
                     unsigned long i(0);
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
-                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                            c_end(vi->end_elements()) ; c < c_end ; ++c)
                     {
                         b[start][i] += *c;
                         ++start, ++i;
@@ -313,7 +318,7 @@ namespace honei
                     unsigned long end(vi->size() - offset);
                     unsigned long i(0);
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
-                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                            c_end(vi->element_at(end)) ; c < c_end ; ++c)
                     {
                         b[i][offset] +=  *c;
                         ++offset, ++i;
@@ -520,7 +525,7 @@ namespace honei
 
             result = result + Scale<>::get_benchmark_info(b, DT2_(-1));
             int middle_index(a.rows() -1);
-            for (typename BandedMatrix<DT1_>::ConstVectorIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
                 // If we are below the diagonal band, we start at Element index and go on until the last element.
@@ -529,7 +534,7 @@ namespace honei
                     unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
                     unsigned long i(0);
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
-                            c_end(vi->end_elements()) ; c != c_end ; ++c)
+                            c_end(vi->end_elements()) ; c < c_end ; ++c)
                     {
                         //b(start, i) += *c;
                         result.flops += 1;
@@ -548,7 +553,7 @@ namespace honei
                     unsigned long end(vi->size() - offset);
                     unsigned long i(0);
                     for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
-                            c_end(vi->element_at(end)) ; c != c_end ; ++c)
+                            c_end(vi->element_at(end)) ; c < c_end ; ++c)
                     {
                         //b(i, offset) +=  *c;
                         result.flops += 1;

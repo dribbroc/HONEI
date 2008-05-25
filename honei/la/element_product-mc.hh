@@ -175,8 +175,8 @@ namespace honei
             //ThreadPool * p(ThreadPool::instance());
             PoolTask * pt[2 * a.size()-1];
             int taskcount(0);
-            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands());
-            for (typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()),
+            typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_bands());
+            for (typename BandedMatrix<DT1_>::BandIterator l(a.begin_bands()),
                     l_end(a.end_bands()) ; l != l_end ; ++l)
             {
                 if (! r.exists())
@@ -185,7 +185,8 @@ namespace honei
                     continue;
                 }
 
-                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(*l, *r);
+                DenseVector<DT1_> band(*l);
+                TwoArgWrapper< ElementProduct<typename Tag_::DelegateTo>, DenseVector<DT1_>, const DenseVector<DT2_> > mywrapper(band, *r);
                 pt[taskcount] = ThreadPool::instance()->dispatch(mywrapper);
                 ++r;
                 ++taskcount;

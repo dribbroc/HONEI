@@ -77,6 +77,10 @@ namespace honei
             stepsize(ss)
         {
         }
+
+        ~Implementation()
+        {
+        }
     };
 
     template <typename DataType_>
@@ -131,8 +135,7 @@ namespace honei
 
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const DenseVector<DataType_> & other) :
-        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(other._imp->elements,
-                    other._imp->size, other._imp->offset, other._imp->stepsize))
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(other._imp)
     {
     }
 

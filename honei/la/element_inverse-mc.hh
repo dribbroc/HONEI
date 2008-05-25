@@ -180,10 +180,10 @@ namespace honei
 
             std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
-            typename BandedMatrix<DT1_>::VectorIterator vi(x.begin_bands());
+            typename BandedMatrix<DT1_>::BandIterator vi(x.begin_bands());
 
             // Calculating lower triangular matrix.
-            for (typename BandedMatrix<DT1_>::VectorIterator vi(x.begin_bands()), vi_end(x.band_at(x.size() - 1)) ;
+            for (typename BandedMatrix<DT1_>::BandIterator vi(x.begin_bands()), vi_end(x.band_at(x.size() - 1)) ;
                     vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
@@ -248,7 +248,7 @@ namespace honei
             ++vi;
 
             // Calculating upper traingular matrix.
-            for (typename BandedMatrix<DT1_>::VectorIterator vi_end(x.end_bands()) ; vi != vi_end ; ++vi)
+            for (typename BandedMatrix<DT1_>::BandIterator vi_end(x.end_bands()) ; vi != vi_end ; ++vi)
             {
                 if (! vi.exists())
                     continue;

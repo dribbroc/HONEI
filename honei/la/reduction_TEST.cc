@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -808,7 +808,7 @@ class BandedMatrixReductionToMinTest :
                 typename DenseVector<DT_>::ElementIterator resultIter(result.begin_elements());
                 BandedMatrix<DT_> bm1(size);
                 DT_ rand(0);
-                for (typename MutableMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
+                for (typename BandedMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     rand = DT_(std::rand()) / DT_(std::rand()-RAND_MAX / 2);
@@ -867,7 +867,7 @@ class BandedMatrixReductionToMinQuickTest :
             typename DenseVector<DT_>::ElementIterator resultIter(result.begin_elements());
             BandedMatrix<DT_> bm1(size);
             DT_ rand(0);
-            for (typename MutableMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
+            for (typename BandedMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
                 i != i_end ; ++i)
             {
                 rand = DT_(std::rand()) / DT_(std::rand()-RAND_MAX / 2);
@@ -1358,7 +1358,7 @@ class BandedMatrixReductionToMaxTest :
                 typename DenseVector<DT_>::ElementIterator resultIter(result.begin_elements());
                 BandedMatrix<DT_> bm1(size);
                 DT_ rand(0);
-                for (typename MutableMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
+                for (typename BandedMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     rand = DT_(std::rand()) / DT_(std::rand()-RAND_MAX / 2);
@@ -1417,7 +1417,7 @@ class BandedMatrixReductionToMaxQuickTest :
             typename DenseVector<DT_>::ElementIterator resultIter(result.begin_elements());
             BandedMatrix<DT_> bm1(size);
             DT_ rand(0);
-            for (typename MutableMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
+            for (typename BandedMatrix<DT_>::ElementIterator i(bm1.begin_elements()), i_end(bm1.end_elements()) ;
                 i != i_end ; ++i)
             {
                 rand = DT_(std::rand()) / DT_(std::rand()-RAND_MAX / 2);

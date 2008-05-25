@@ -166,15 +166,18 @@ namespace honei
                 throw MatrixSizeDoesNotMatch(b.size(), a.size());
             }
 
-            typename BandedMatrix<DT1_>::VectorIterator l(a.begin_bands()), l_end(a.end_bands());
-            typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_bands()), r_end(b.end_bands());
+            typename BandedMatrix<DT1_>::BandIterator l(a.begin_bands()), l_end(a.end_bands());
+            typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_bands()), r_end(b.end_bands());
             for ( ; ((l != l_end) && (r != r_end)) ; ++l, ++r)
             {
                 if (! r.exists())
                     continue;
 
                 if (l.exists())
-                    Sum<>::value(*l, *r);
+                {
+                    DenseVector<DT1_> band(*l);
+                    Sum<>::value(band, *r);
+                }
                 else
                     a.band(r.index()) = r->copy();
             }
@@ -197,7 +200,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
                     r != r_end ; ++r)
             {
                 unsigned long size(b.size());
@@ -243,7 +246,7 @@ namespace honei
             }
 
             typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements());
-            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements()) ;
+            for (typename BandedMatrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements()) ;
                     r != r_end ; ++r)
             {
                 if (r.index() < l.index())
@@ -487,7 +490,7 @@ namespace honei
         static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, BandedMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            for (typename BandedMatrix<DT2_>::ConstVectorIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
+            for (typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
                     r != r_end ; ++r)
             {
                 unsigned long size(b.size());

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -45,7 +45,7 @@ class BandedMatrixElementIterationTest :
             {
                 BandedMatrix<DataType_> bm(size);
 
-                typename Matrix<DataType_>::ConstElementIterator ce(bm.begin_elements()), ce_end(bm.end_elements());
+                typename BandedMatrix<DataType_>::ConstElementIterator ce(bm.begin_elements()), ce_end(bm.end_elements());
                 for (unsigned long i(0) ; i < (size * size) ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);
@@ -53,7 +53,7 @@ class BandedMatrixElementIterationTest :
                 }
 
                 BandedMatrix<DataType_> bm2(size);
-                for (typename BandedMatrix<DataType_>::ConstVectorIterator cb(bm2.begin_bands()), cb_end(bm2.end_bands()) ;
+                for (typename BandedMatrix<DataType_>::ConstBandIterator cb(bm2.begin_bands()), cb_end(bm2.end_bands()) ;
                     cb != cb_end ; ++cb)
                 {
                     DenseVector<DataType_>  dv = *cb;

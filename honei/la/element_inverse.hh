@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -146,8 +146,8 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of BandedVector elements:");
 
-            for (typename BandedMatrix<DataType_>::VectorIterator i(x.begin_bands()),
-                    i_end(x.end_bands()) ; i != i_end ; ++i)
+            for (typename BandedMatrix<DataType_>::BandIterator i(x.begin_non_zero_bands()),
+                    i_end(x.end_non_zero_bands()) ; i != i_end ; ++i)
             {
                 DenseVector<DataType_> band = *i;
                 int middle_index = x.rows() -1;
@@ -159,7 +159,7 @@ namespace honei
                     unsigned long end = band.size() - (i.index() - middle_index);
 
                     for (typename Vector<DataType_>::ElementIterator b(band.begin_elements()),
-                            b_end(band.element_at(end)) ; b != b_end ; ++b)
+                            b_end(band.element_at(end)) ; b < b_end ; ++b)
                     {
                         if (*b == DataType_(0))
                             continue;
@@ -172,7 +172,7 @@ namespace honei
                     //Calculation of the element-index to start in iteration!
                     unsigned long start = middle_index - i.index();
                     for (typename Vector<DataType_>::ElementIterator b(band.element_at(start)),
-                            b_end(band.end_elements()) ; b != b_end ; ++b)
+                            b_end(band.end_elements()) ; b < b_end ; ++b)
                     {
                         if (*b == DataType_(0))
                             continue;
