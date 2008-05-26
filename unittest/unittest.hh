@@ -272,7 +272,7 @@ namespace tests
 #define TEST_CHECK_EQUAL(a, b) \
     do { \
         try { \
-            TwoVarHolder test_h(a, b); \
+            BaseTest::TwoVarHolder test_h(a, b); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, test_h.result, \
                     this->_id + "\n" +  "Expected '" #a "' to equal \n'" + test_h.s_b + \
                     "'\nbut got\n'" + test_h.s_a + "'"); \
@@ -294,7 +294,7 @@ namespace tests
 #define TEST_CHECK_NOT_EQUAL(a, b) \
     do { \
         try { \
-            TwoVarHolder test_h(a, b); \
+            BaseTest::TwoVarHolder test_h(a, b); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, !test_h.result, \
                     this->_id + "\n" +  "Expected '" #a "' that is'" + test_h.s_a + \
                     "' to equal not '" + test_h.s_b + "'"); \
