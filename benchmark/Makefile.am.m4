@@ -36,7 +36,6 @@ endif
 
 if CUDA
 
-CUDAFILES = cudalist
 BACKEND_LIBS += \
 	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.la
 
