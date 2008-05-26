@@ -22,7 +22,19 @@
  */
 
 /**
- * \defgroup grplibswe LibSWE: Library for Solving Shallow Water Equations
+ * \defgroup grplibmath LibMath: Utility library for mathematics
+ *
+ * \ingroup grphonei
+ */
+
+/**
+ * \defgroup grplibswe LibSWE: Library for solving Shallow Water Equations
+ *
+ * \ingroup grphonei
+ */
+
+/**
+ * \defgroup grpliblbm LibLBM: Library for solving Shallow Water Equations with LBM
  *
  * \ingroup grphonei
  */
