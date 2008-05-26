@@ -99,9 +99,14 @@ namespace tests
                 template <typename T1_, typename T2_>
                 TwoVarHolder(T1_ a, T2_ b) :
                     result(a == b),
-                    s_a(stringify(a)),
-                    s_b(stringify(b))
+                    s_a(),
+                    s_b()
                 {
+                    if (!result)
+                    {
+                        s_a = stringify(a);
+                        s_b = stringify(b);
+                    }
                 }
             };
 
@@ -117,18 +122,28 @@ namespace tests
 
                 template <typename T1_, typename T2_, typename T3_>
                 WithinEpsCalculator(T1_ a, T2_ b, T3_ c) :
-                    s_a(stringify(a)),
-                    s_b(stringify(b))
+                    s_a(),
+                    s_b()
                 {
-                    if (a>=b)
+                    if (a >= b)
                     {
                         result = ((a - b) <= c);
-                        s_diff = stringify(a-b);
+                        if (!result)
+                        {
+                            s_diff = stringify(a - b);
+                            s_a = stringify(a);
+                            s_b = stringify(b);
+                        }
                     }
                     else
                     {
                         result = ((b - a) <= c);
-                        s_diff = stringify(b-a);
+                        if (!result)
+                        {
+                            s_diff = stringify(b - a);
+                            s_a = stringify(a);
+                            s_b = stringify(b);
+                        }
                     }
                 }
             };

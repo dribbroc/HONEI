@@ -24,12 +24,13 @@
 #endif
 
 #include <honei/graph/position.hh>
-#include <unittest/unittest.hh>
 #include <honei/graph/graph.hh>
 #include <honei/util/tags.hh>
 #include <honei/graph/test_scenario.hh>
 
 #include <string>
+
+using namespace honei;
 
 #define RUNS 3;
 #define ITERATIONS 400;
