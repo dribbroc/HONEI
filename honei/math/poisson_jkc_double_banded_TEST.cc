@@ -1,4 +1,4 @@
-/* vim: set number sw=4 sts=4 et nofoldenable : */
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
@@ -17,36 +17,32 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef ALLBENCH
-#include <benchmark/benchmark.cc>
-#include <tr1/memory>
-#include <string>
-#endif
-
 #include <honei/math/jacobi_kernel_cascade.hh>
-#include <honei/math/endian_swap.hh>
-
-using namespace std;
+#include <unittest/unittest.hh>
+#include <honei/util/stringify.hh>
+#include <iostream>
+#include <endian_swap.hh>
+#include <fstream>
 using namespace honei;
+using namespace tests;
+using namespace std;
 using namespace cascade_quantities;
 using namespace cascade_specializations;
 
-template <typename Tag_, typename DataType_, typename Quantity_>
-
-class PoissonJACKernelCascadeBench :
-    public Benchmark
+template <typename Tag_, typename DT1_, typename Quantity_>
+class PoissonTestJACKernelCascadeBandedDouble:
+    public BaseTest
 {
     public:
-        PoissonJACKernelCascadeBench(const std::string & id) :
-            Benchmark(id)
+        PoissonTestJACKernelCascadeBandedDouble(const std::string & tag) :
+            BaseTest("Poisson test for itrerative LES solvers , JAC KernelCascade(banded system) <" + tag + ">")
         {
             register_tag(Tag_::name);
         }
 
-        virtual void run()
+        virtual void run() const
         {
             int n;
-
             FILE* file;
 
             double* dd;
@@ -66,7 +62,6 @@ class PoissonJACKernelCascadeBench :
 
             file = fopen("ehq.1.1.1.1.bin", "rb");
             fread(&n, sizeof(int), 1, file);
-
 #ifdef HONEI_CELL
             unsigned char b1, b2, b3, b4;
             b1 = n & 255;
@@ -75,6 +70,7 @@ class PoissonJACKernelCascadeBench :
             b4 = ( n>>24 ) & 255;
             n = ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
 #endif
+
             dd = new double[n];
             ll = new double[n];
             ld = new double[n];
@@ -101,7 +97,6 @@ class PoissonJACKernelCascadeBench :
             fread(ana_sol, sizeof(double), n, file);
             fread(ref_sol, sizeof(double), n, file);
             fclose(file);
-
 #ifdef HONEI_CELL
             for(unsigned long i(0); i < n; ++i)
             {
@@ -117,41 +112,41 @@ class PoissonJACKernelCascadeBench :
                 b[i] = DoubleSwap(b[i]);
                 ana_sol[i] = DoubleSwap(ana_sol[i]);
                 ref_sol[i] = DoubleSwap(ref_sol[i]);
-
             }
 #endif
-            DenseVector<float> dd_v(n, float(0));
-            DenseVector<float> ll_v(n, float(0));
-            DenseVector<float> ld_v(n, float(0));
-            DenseVector<float> lu_v(n, float(0));
-            DenseVector<float> dl_v(n, float(0));
-            DenseVector<float> du_v(n, float(0));
-            DenseVector<float> ul_v(n, float(0));
-            DenseVector<float> ud_v(n, float(0));
-            DenseVector<float> uu_v(n, float(0));
-            DenseVector<float> b_v(n, float(0));
-            DenseVector<float> ana_sol_v(n, float(0));
-            DenseVector<float> ref_sol_v(n, float(0));
+            DenseVector<double> dd_v(n, double(0));
+            DenseVector<double> ll_v(n, double(0));
+            DenseVector<double> ld_v(n, double(0));
+            DenseVector<double> lu_v(n, double(0));
+            DenseVector<double> dl_v(n, double(0));
+            DenseVector<double> du_v(n, double(0));
+            DenseVector<double> ul_v(n, double(0));
+            DenseVector<double> ud_v(n, double(0));
+            DenseVector<double> uu_v(n, double(0));
+            DenseVector<double> b_v(n, double(0));
+            DenseVector<double> ana_sol_v(n, double(0));
+            DenseVector<double> ref_sol_v(n, double(0));
             for(unsigned long i = 0; i < n; ++i)
             {
-                dd_v[i] = (float)dd[i];
-                ll_v[i] = (float)ll[i];
-                ld_v[i] = (float)ld[i];
-                lu_v[i] = (float)lu[i];
-                dl_v[i] = (float)dl[i];
-                du_v[i] = (float)du[i];
-                ul_v[i] = (float)ul[i];
-                ud_v[i] = (float)ud[i];
-                uu_v[i] = (float)uu[i];
-                b_v[i] = (float)b[i];
-                ana_sol_v[i] = (float)ana_sol[i];
-                ref_sol_v[i] = (float)ref_sol[i];
+                dd_v[i] = dd[i];
+                ll_v[i] = ll[i];
+                ld_v[i] = ld[i];
+                lu_v[i] = lu[i];
+                dl_v[i] = dl[i];
+                du_v[i] = du[i];
+                ul_v[i] = ul[i];
+                ud_v[i] = ud[i];
+                uu_v[i] = uu[i];
+                b_v[i] = b[i];
+                ana_sol_v[i] = ana_sol[i];
+                ref_sol_v[i] = ref_sol[i];
             }
             //std::cout<<dd[4]<<endl;
             //std::cout<<dd_v<<endl;
 
+
             long root_n = (long)sqrt(n);
-            BandedMatrix<float> A(n,dd_v.copy());
+            BandedMatrix<double> A(n,dd_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
             A.insert_band(1, du_v);
@@ -162,43 +157,50 @@ class PoissonJACKernelCascadeBench :
             A.insert_band(-root_n, ld_v);
             A.insert_band(-root_n-1, ll_v );
             A.insert_band(-root_n+1, lu_v);
-            float x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(ref_sol_v);
-            DenseVector<float> x(b_v.size(), float(0));
-            DenseVector<float> x_last(x.copy());
-            float norm_x_last = float(0);
-            float norm_x = float(1);
-            DenseVector<float> diag(b_v.size(), float(0));
-            DenseVector<float> diag_inverted(b_v.size(), float(0));
-            BandedMatrix<float> difference(A.copy());
+            //New:
+            DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(ref_sol_v);
+            DenseVector<DT1_> x(b_v.size(), DT1_(0));
+            DenseVector<DT1_> x_last(x.copy());
+
+            DT1_ norm_x_last = DT1_(0);
+            DT1_ norm_x = DT1_(1);
+            DenseVector<DT1_> diag(b_v.size(), DT1_(0));
+
+            DenseVector<DT1_> diag_inverted(b_v.size(), DT1_(0));
+
+            BandedMatrix<DT1_> difference(A.copy());
             ///Create Diagonal, invert, compute difference on the fly.
             for(unsigned long i =0; i < diag.size(); ++i)
             {
                 diag[i] = A.band(0)[i];
-                if(fabs(diag[i]) >= std::numeric_limits<float>::epsilon())
+                if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
                 {
-                    diag_inverted[i] = float(1) / diag[i];
+                    diag_inverted[i] = DT1_(1) / diag[i];
                 }
                 else
                 {
-                    diag_inverted[i] = float(1) / std::numeric_limits<float>::epsilon();
+                    diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
                 }
             }
-            DenseVector<DataType_> scaled_diag_inverted(b_v.copy());
+            DenseVector<DT1_> scaled_diag_inverted(b_v.copy());
             ElementProduct<>::value(scaled_diag_inverted, diag_inverted);
-
-            DenseVector<float> zeros(b_v.size(), float(0));
+            DenseVector<DT1_> zeros(b_v.size(), DT1_(0));
             difference.insert_band(0, zeros);
-            //Scale<tags::CPU>::value(difference, float(-1));
-            float konv_rad = std::numeric_limits<float>::epsilon();
-            for(unsigned long i(0); i < 100; ++i)
+            Scale<tags::CPU>::value(difference, DT1_(-1));
+
+            DT1_ konv_rad = std::numeric_limits<DT1_>::epsilon();
+            while(fabs(norm_x - norm_x_last) > konv_rad)
             {
-                BENCHMARK((x = JacobiKernelCascade<Tag_, Quantity_, Q1>::value(b_v, x, diag_inverted, difference, scaled_diag_inverted)));
+
+                x = JacobiKernelCascade<Tag_, Quantity_, Q1>::value(b_v, x, diag_inverted, difference, scaled_diag_inverted);
                 norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                 norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                 x_last = x.copy();
             }
-            evaluate();
+            cout << "x: " << x << endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, norm_x , 10e-06);
+
         }
 };
-PoissonJACKernelCascadeBench<tags::CPU, float, ONCE> poisson_jkc_bench_float_1("Poisson JACKernel benchmark ONCE, float");
-PoissonJACKernelCascadeBench<tags::CPU, float, TWICE> poisson_jkc_bench_float_2("Poisson JACKernel benchmark TWICE, float (divide time by 2)");
+PoissonTestJACKernelCascadeBandedDouble<tags::CPU, double, ONCE> poisson_test_jac_banded_double_1("ONCE double");
+PoissonTestJACKernelCascadeBandedDouble<tags::CPU, double, TWICE> poisson_test_jac_banded_double_2("TWICE double");

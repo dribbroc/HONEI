@@ -28,6 +28,7 @@ add(`poisson_jackernel_float_banded',         `test',                   `benchma
 add(`poisson_jackernel_double_banded_sse',    `test',                   `benchmark')
 add(`poisson_jackernel_double_banded',        `test',                   `benchmark')
 add(`poisson_jkc_float_banded',               `test')
+add(`poisson_jkc_double_banded',              `test')
 add(`poisson_jkc_float_banded_sse',           `test')
 add(`poisson_cg_float_banded',                `test',                   `benchmark')
 add(`poisson_pcg_float_banded',               `test',                   `benchmark')
