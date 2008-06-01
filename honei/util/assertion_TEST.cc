@@ -53,5 +53,19 @@ class AssertionTest :
                 no_exception_thrown = false;
             }
             TEST_CHECK(no_exception_thrown);
+
+
+            TEST_CHECK_THROWS(EXTERNAL_ASSERT(false, "Should throw!"), Assertion);
+
+            no_exception_thrown = true;
+            try
+            {
+                EXTERNAL_ASSERT(true, "Shouldn't throw!");
+            }
+            catch (...)
+            {
+                no_exception_thrown = false;
+            }
+            TEST_CHECK(no_exception_thrown);
         }
 } assertion_test;
