@@ -23,9 +23,16 @@
 
 extern "C"
 {
+        void cuda_difference_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
+
         void cuda_element_inverse_one_float(float * x, unsigned long size, unsigned long blocksize);
 
         void cuda_element_product_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
+
+        void cuda_product_bmdv_q1_float(float * ll, float * ld, float * lu,
+                float * dl, float * dd, float *du,
+                float * ul, float * ud, float *uu, float * x, float * y,
+                unsigned long size, unsigned long blocksize, unsigned long m);
 
         void cuda_scaled_sum_two_float(float * x, const float * y, float b, unsigned long size, unsigned long blocksize);
         void cuda_scaled_sum_three_float(float * x, const float * y, const float * z, unsigned long size, unsigned long blocksize);

@@ -70,6 +70,7 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(CUDADEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 

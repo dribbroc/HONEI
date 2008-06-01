@@ -56,3 +56,27 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
     }
     return result;
 }
+
+/*
+DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    DenseVector<float> result(a.rows());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_float", 128ul));
+    unsigned long m((unsigned long)sqrt((double)b.size()));
+
+    cuda_product_bmdv_q1_float(a.band(-m-1).elements(), a.band(-m).elements(), a.band(-m+1).elements(),
+            a.band(-1).elements(), a.band(0).elements(), a.band(1).elements(),
+            a.band(m-1).elements(), a.band(m).elements(), a.band(m+1).elements(),
+            b.elements(), result.elements(), a.size(), blocksize, m);
+
+    return result;
+}
+*/

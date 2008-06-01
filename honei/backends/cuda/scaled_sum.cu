@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/cuda/cuda_util.hh>
 
 namespace honei
 {
@@ -56,6 +57,8 @@ extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigne
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);
     cudaFree(y_gpu);
+
+    CUDA_ERROR();
 }
 
 extern "C" void cuda_scaled_sum_three_float(float * x, float * y, float * z, unsigned long size, unsigned long blocksize)
@@ -82,4 +85,6 @@ extern "C" void cuda_scaled_sum_three_float(float * x, float * y, float * z, uns
     cudaFree(x_gpu);
     cudaFree(y_gpu);
     cudaFree(z_gpu);
+
+    CUDA_ERROR();
 }

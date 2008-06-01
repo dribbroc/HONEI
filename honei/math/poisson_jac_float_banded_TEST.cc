@@ -190,6 +190,9 @@ PoissonTestJACBandedFloat<tags::CPU, float> poisson_test_jac_banded_float("float
 #ifdef HONEI_SSE
 PoissonTestJACBandedFloat<tags::CPU::SSE, float> poisson_test_jac_banded_float_sse("SSE float");
 #endif
+#ifdef HONEI_CUDA
+PoissonTestJACBandedFloat<tags::GPU::CUDA, float> poisson_test_jac_banded_float_cuda("float");
+#endif
 #ifdef HONEI_CELL
 PoissonTestJACBandedFloat<tags::Cell, float> poisson_test_jac_banded_float_cell("CELL float");
 #endif

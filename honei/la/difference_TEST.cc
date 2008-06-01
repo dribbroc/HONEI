@@ -360,6 +360,13 @@ DenseMatrixDifferenceTest<tags::CPU, float> dense_matrix_difference_test_float("
 DenseMatrixDifferenceTest<tags::CPU, double> dense_matrix_difference_test_double("double");
 DenseMatrixDifferenceTest<tags::CPU::MultiCore, float> mc_dense_matrix_difference_test_float("MC float");
 DenseMatrixDifferenceTest<tags::CPU::MultiCore, double> mc_dense_matrix_difference_test_double("MC double");
+#ifdef HONEI_SSE
+DenseMatrixDifferenceTest<tags::CPU::SSE, float> sse_dense_matrix_difference_test_float("float");
+DenseMatrixDifferenceTest<tags::CPU::SSE, double> sse_dense_matrix_difference_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+DenseMatrixDifferenceTest<tags::GPU::CUDA, float> cuda_dense_matrix_difference_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseMatrixDifferenceTest<tags::Cell, float> cell_dense_matrix_difference_test_float("Cell float");
 #endif
@@ -394,6 +401,13 @@ DenseMatrixDifferenceQuickTest<tags::CPU, float> dense_matrix_difference_quick_t
 DenseMatrixDifferenceQuickTest<tags::CPU, double> dense_matrix_difference_quick_test_double("double");
 DenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_difference_quick_test_float("MC float");
 DenseMatrixDifferenceQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_difference_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseMatrixDifferenceQuickTest<tags::CPU::SSE, float> sse_dense_matrix_difference_quick_test_float("float");
+DenseMatrixDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_matrix_difference_quick_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+DenseMatrixDifferenceQuickTest<tags::GPU::CUDA, float> cuda_dense_matrix_difference_quick_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseMatrixDifferenceQuickTest<tags::Cell, float> cell_dense_matrix_difference_quick_test_float("Cell float");
 #endif
@@ -654,6 +668,9 @@ DenseVectorDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_difference_te
 DenseVectorDifferenceTest<tags::CPU::MultiCore::SSE, float>  mc_sse_dense_vector_difference_test_float("MC SSE float");
 DenseVectorDifferenceTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_difference_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseVectorDifferenceTest<tags::GPU::CUDA, float> cuda_dense_vector_difference_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceTest<tags::Cell, float> cell_dense_vector_difference_test_float("Cell float");
 DenseVectorDifferenceTest<tags::Cell, double> cell_dense_vector_difference_test_double("Cell double");
@@ -703,6 +720,9 @@ DenseVectorDifferenceQuickTest<tags::CPU::SSE, float>  sse_dense_vector_differen
 DenseVectorDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_difference_quick_test_double("SSE double");
 DenseVectorDifferenceQuickTest<tags::CPU::MultiCore::SSE, float>  mc_sse_dense_vector_difference_quick_test_float("MC SSE float");
 DenseVectorDifferenceQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_difference_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorDifferenceQuickTest<tags::GPU::CUDA, float>  cuda_dense_vector_difference_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_quick_test_float("Cell float");
@@ -758,6 +778,9 @@ DenseVectorRangeDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_range_di
 //DenseVectorRangeDifferenceTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_difference_test_float("MC SSE float");
 //DenseVectorRangeDifferenceTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_difference_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseVectorRangeDifferenceTest<tags::GPU::CUDA, float> cuda_dense_vector_range_difference_test_float("float");
+#endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceTest<tags::Cell, float> cell_dense_vector_range_difference_test_float("Cell float");
 DenseVectorRangeDifferenceTest<tags::Cell, double> cell_dense_vector_range_difference_test_double("Cell double");
@@ -809,6 +832,9 @@ DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, float> sse_dense_vector_rang
 DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_difference_quick_test_double("SSE double");
 //DenseVectorRangeDifferenceQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_difference_quick_test_float("MC SSE float");
 //DenseVectorRangeDifferenceQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_difference_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorRangeDifferenceQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_difference_quick_test_float("float");
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceQuickTest<tags::Cell, float> cell_dense_vector_range_difference_quick_test_float("Cell float");

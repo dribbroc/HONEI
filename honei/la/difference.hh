@@ -594,6 +594,33 @@ namespace honei
      * \ingroup grplavectoroperations
      */
     template <>
+    struct Difference<tags::GPU::CUDA>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+
+        /// \}
+    };
+
+    /**
+     * \brief Difference of two entities.
+     *
+     * Difference is the class template for the subtraction operation
+     * \f[
+     *     \texttt{Difference}(a, b): \quad r \leftarrow a - b,
+     * \f]
+     * which yields r, the difference of entities a and b.
+     *
+     * Usually, the return value is the minuend a after modification. However,
+     * there are signatures for which b is returned. For these cases a short
+     * notice is added.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
+    template <>
     struct Difference<tags::CPU::SSE>
     {
         /**

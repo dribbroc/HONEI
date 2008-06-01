@@ -17,6 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/cuda/cuda_util.hh>
+
 namespace honei
 {
     namespace cuda
@@ -49,4 +51,6 @@ extern "C" void cuda_element_product_two_float(float * x, float * y, unsigned lo
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);
     cudaFree(y_gpu);
+
+    CUDA_ERROR();
 }

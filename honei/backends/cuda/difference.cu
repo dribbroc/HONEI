@@ -23,15 +23,15 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void sum_gpu(float * x, float * y, unsigned long size)
+        __global__ void difference_gpu(float * x, float * y, unsigned long size)
         {
             int idx = blockDim.x *blockIdx.x + threadIdx.x;
-            x[idx] = x[idx] + y[idx];
+            x[idx] = x[idx] - y[idx];
         }
     }
 }
 
-extern "C" void cuda_sum_two_float(float * x, float * y, unsigned long size, unsigned long blocksize)
+extern "C" void cuda_difference_two_float(float * x, float * y, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
@@ -46,7 +46,7 @@ extern "C" void cuda_sum_two_float(float * x, float * y, unsigned long size, uns
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::sum_gpu<<<grid, block, 2 * block.x * sizeof(float)>>>(x_gpu, y_gpu, size);
+    honei::cuda::difference_gpu<<<grid, block, 2 * block.x * sizeof(float)>>>(x_gpu, y_gpu, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);

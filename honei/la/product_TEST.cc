@@ -171,6 +171,74 @@ BandedMatrixDenseVectorProductQuickTest<tags::Cell, float> cell_banded_matrix_de
 BandedMatrixDenseVectorProductQuickTest<tags::Cell, double> cell_banded_matrix_dense_vector_product_quick_test_double("CELL double");
 #endif
 
+template <typename Tag_, typename DataType_>
+class Q1MatrixDenseVectorProductQuickTest :
+    public QuickTest
+{
+    public:
+        Q1MatrixDenseVectorProductQuickTest(const std::string & type) :
+            QuickTest("Q1_matrix_dense_vector_product_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(16641);
+            unsigned long num_limit(311); //value of used elements will be <= num_limit* size
+
+            DenseVector<DataType_> dv3(size, DataType_(27));
+            DenseVector<DataType_> dv1(size, DataType_(1));
+            BandedMatrix<DataType_> bm1(size);
+            DenseVector<DataType_> dv4(size, DataType_(3));
+            DenseVector<DataType_> dv2(size, DataType_(0));
+
+            for (int i(0); i < size; ++i)
+            {
+                (dv4)[i]= DataType_((i + 1) % num_limit);
+            }
+            bm1.insert_band(- (signed long)sqrt(size) - 1, dv4.copy());
+            bm1.insert_band(-1, dv4.copy());
+            bm1.insert_band(0, dv4.copy());
+            for (int i(0); i < size; ++i)
+            {
+                (dv4)[i]= DataType_((i + 25) % num_limit);
+            }
+            bm1.insert_band(- (signed long)sqrt(size), dv4.copy());
+            bm1.insert_band(- (signed long)sqrt(size) + 1, dv4.copy());
+            bm1.insert_band((signed long)sqrt(size), dv4.copy());
+            for (int i(0); i < size; ++i)
+            {
+                (dv4)[i]= DataType_((i + 7) % num_limit);
+            }
+            bm1.insert_band((signed long)sqrt(size)+ 1, dv4.copy());
+            bm1.insert_band(1, dv4.copy());
+            bm1.insert_band((signed long)sqrt(size) - 1, dv4.copy());
+
+
+            DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv1));
+            dv3 = Product<tags::CPU>::value(bm1, dv1);
+
+            //TEST_CHECK_EQUAL(prod, dv3);
+            for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    it != i_end ; ++it, ++dit)
+            {
+                //std::cout<<it.index() << " ";
+                TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
+            }
+
+            BandedMatrix<DataType_> bm01(5);
+            DenseVector<DataType_> dv01(4, DataType_(1));
+            TEST_CHECK_THROWS(Product<Tag_>::value(bm01, dv01), VectorSizeDoesNotMatch);
+        }
+};
+//Q1MatrixDenseVectorProductQuickTest<tags::CPU, float> q1_prod_quick_test_float("float");
+#ifdef HONEI_SSE
+Q1MatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_q1_prod_quick_test_float("float");
+#endif
+#ifdef HONEI_CUDA
+Q1MatrixDenseVectorProductQuickTest<tags::GPU::CUDA, float> cuda_q1_prod_quick_test_float("float");
+#endif
 template <typename DataType_>
 class BandedMatrixSparseVectorProductTest :
     public BaseTest
