@@ -104,7 +104,10 @@ namespace honei
             for (typename BandedMatrix<DT2_>::VectorIterator l(x.begin_bands()),
                     l_end(x.end_bands()) ; l != l_end ; ++l)
             {
-                Scale<>::value(*l, a);
+                if (l.exists())
+                {
+                    Scale<>::value(*l, a);
+                }
             }
 
             return x;
