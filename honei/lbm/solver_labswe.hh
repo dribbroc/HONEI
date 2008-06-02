@@ -231,13 +231,28 @@ namespace honei
                         (*_temp_distribution_7)(_grid_height - 1 , i) = (*_temp_distribution_3)(_grid_height - 1, i);
                         (*_temp_distribution_8)(_grid_height - 1 , i) = (*_temp_distribution_4)(_grid_height - 1, i);
                     }
+
                 };
+
+                void _apply_noslip_boundaries_2()
+                {
+                    for(unsigned long i(0) ; i < _grid_height; ++i)
+                    {
+                        (*_temp_distribution_4)(i , 0) = (*_temp_distribution_8)(i , 0);
+                        (*_temp_distribution_5)(i , 0) = (*_temp_distribution_1)(i , 0);
+                        (*_temp_distribution_6)(i , 0) = (*_temp_distribution_2)(i , 0);
+
+                        (*_temp_distribution_8)(i , _grid_width - 1) = (*_temp_distribution_4)(i , _grid_width - 1);
+                        (*_temp_distribution_1)(i , _grid_width - 1) = (*_temp_distribution_5)(i , _grid_width - 1);
+                        (*_temp_distribution_2)(i , _grid_width - 1) = (*_temp_distribution_6)(i , _grid_width - 1);
+                    }
+                }
 
             public:
                 SolverLABSWE(ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseMatrix<ResPrec_>* height,
-                                                                                                        DenseMatrix<ResPrec_>* bottom,
-                                                                                                        DenseMatrix<ResPrec_>* u,
-                                                                                                        DenseMatrix<ResPrec_>* v) :
+                        DenseMatrix<ResPrec_>* bottom,
+                        DenseMatrix<ResPrec_>* u,
+                        DenseMatrix<ResPrec_>* v) :
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
@@ -259,64 +274,64 @@ namespace honei
 
             }
 
-            ~SolverLABSWE()
-            {
-//                CONTEXT("When destroying LABSWE solver.");
-            }
+                ~SolverLABSWE()
+                {
+                    //                CONTEXT("When destroying LABSWE solver.");
+                }
 
-            void set_distribution(DenseMatrix<ResPrec_>* dis_0,
-                                  DenseMatrix<ResPrec_>* dis_1,
-                                  DenseMatrix<ResPrec_>* dis_2,
-                                  DenseMatrix<ResPrec_>* dis_3,
-                                  DenseMatrix<ResPrec_>* dis_4,
-                                  DenseMatrix<ResPrec_>* dis_5,
-                                  DenseMatrix<ResPrec_>* dis_6,
-                                  DenseMatrix<ResPrec_>* dis_7,
-                                  DenseMatrix<ResPrec_>* dis_8)
-            {
-                _distribution_0 = dis_0;
-                _distribution_1 = dis_1;
-                _distribution_2 = dis_2;
-                _distribution_3 = dis_3;
-                _distribution_4 = dis_4;
-                _distribution_5 = dis_5;
-                _distribution_6 = dis_6;
-                _distribution_7 = dis_7;
-                _distribution_8 = dis_8;
-            }
+                void set_distribution(DenseMatrix<ResPrec_>* dis_0,
+                        DenseMatrix<ResPrec_>* dis_1,
+                        DenseMatrix<ResPrec_>* dis_2,
+                        DenseMatrix<ResPrec_>* dis_3,
+                        DenseMatrix<ResPrec_>* dis_4,
+                        DenseMatrix<ResPrec_>* dis_5,
+                        DenseMatrix<ResPrec_>* dis_6,
+                        DenseMatrix<ResPrec_>* dis_7,
+                        DenseMatrix<ResPrec_>* dis_8)
+                {
+                    _distribution_0 = dis_0;
+                    _distribution_1 = dis_1;
+                    _distribution_2 = dis_2;
+                    _distribution_3 = dis_3;
+                    _distribution_4 = dis_4;
+                    _distribution_5 = dis_5;
+                    _distribution_6 = dis_6;
+                    _distribution_7 = dis_7;
+                    _distribution_8 = dis_8;
+                }
 
-            void set_eq_distribution(DenseMatrix<ResPrec_>* dis_0,
-                                  DenseMatrix<ResPrec_>* dis_1,
-                                  DenseMatrix<ResPrec_>* dis_2,
-                                  DenseMatrix<ResPrec_>* dis_3,
-                                  DenseMatrix<ResPrec_>* dis_4,
-                                  DenseMatrix<ResPrec_>* dis_5,
-                                  DenseMatrix<ResPrec_>* dis_6,
-                                  DenseMatrix<ResPrec_>* dis_7,
-                                  DenseMatrix<ResPrec_>* dis_8)
-            {
-                _eq_distribution_0 = dis_0;
-                _eq_distribution_1 = dis_1;
-                _eq_distribution_2 = dis_2;
-                _eq_distribution_3 = dis_3;
-                _eq_distribution_4 = dis_4;
-                _eq_distribution_5 = dis_5;
-                _eq_distribution_6 = dis_6;
-                _eq_distribution_7 = dis_7;
-                _eq_distribution_8 = dis_8;
-            }
+                void set_eq_distribution(DenseMatrix<ResPrec_>* dis_0,
+                        DenseMatrix<ResPrec_>* dis_1,
+                        DenseMatrix<ResPrec_>* dis_2,
+                        DenseMatrix<ResPrec_>* dis_3,
+                        DenseMatrix<ResPrec_>* dis_4,
+                        DenseMatrix<ResPrec_>* dis_5,
+                        DenseMatrix<ResPrec_>* dis_6,
+                        DenseMatrix<ResPrec_>* dis_7,
+                        DenseMatrix<ResPrec_>* dis_8)
+                {
+                    _eq_distribution_0 = dis_0;
+                    _eq_distribution_1 = dis_1;
+                    _eq_distribution_2 = dis_2;
+                    _eq_distribution_3 = dis_3;
+                    _eq_distribution_4 = dis_4;
+                    _eq_distribution_5 = dis_5;
+                    _eq_distribution_6 = dis_6;
+                    _eq_distribution_7 = dis_7;
+                    _eq_distribution_8 = dis_8;
+                }
 
-            void set_vectors(DenseVector<ResPrec_>* vec_x,
-                             DenseVector<ResPrec_>* vec_y)
-            {
-                _distribution_vector_x = vec_x;
-                _distribution_vector_y = vec_y;
-            }
+                void set_vectors(DenseVector<ResPrec_>* vec_x,
+                        DenseVector<ResPrec_>* vec_y)
+                {
+                    _distribution_vector_x = vec_x;
+                    _distribution_vector_y = vec_y;
+                }
 
-            void set_source(DenseMatrix<ResPrec_>* s_x,
-                            DenseMatrix<ResPrec_>* s_y)
-            {
-                _source_x = s_x;
+                void set_source(DenseMatrix<ResPrec_>* s_x,
+                        DenseMatrix<ResPrec_>* s_y)
+                {
+                    _source_x = s_x;
                 _source_y = s_y;
             }
 
@@ -455,10 +470,11 @@ namespace honei
 
                 Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
                     //value(*_source_x, ResPrec_(0.000024));
-                    value(*_source_x, ResPrec_(0.0));
+                    value(*_source_x, ResPrec_(0.));
                 Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
                     value(*_source_y, ResPrec_(0.));
                 ///Streaming and collision:
+
                 CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::
                     value(*_temp_distribution_0,
                             *_distribution_0,
@@ -534,6 +550,7 @@ namespace honei
 
                 ///Boundary correction:
                 _apply_noslip_boundaries();
+                _apply_noslip_boundaries_2();
 
                 ///Compute physical quantities:
                 _extract();
