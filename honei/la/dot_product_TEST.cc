@@ -83,6 +83,9 @@ DenseDotProductTest<tags::CPU::SSE, double> sse_dense_scalar_product_test_double
 DenseDotProductTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_scalar_product_test_float("MC SSE float");
 DenseDotProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_product_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseDotProductTest<tags::GPU::CUDA, float> cuda_dense_scalar_product_test_float("float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseDotProductQuickTest :
@@ -133,6 +136,9 @@ DenseDotProductQuickTest<tags::CPU::SSE, float> sse_dense_scalar_product_quick_t
 DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_test_double("SSE double");
 DenseDotProductQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_scalar_product_quick_test_float("MC SSE float");
 DenseDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_product_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseDotProductQuickTest<tags::GPU::CUDA, float> cuda_dense_scalar_product_quick_test_float("float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -284,6 +290,9 @@ DenseVectorRangeDotProductTest<tags::CPU::SSE, double> sse_dense_vector_range_sc
 DenseVectorRangeDotProductTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_scalar_product_test_float("MC SSE float");
 DenseVectorRangeDotProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_scalar_product_test_double("MC SSE double");
 #endif
+#ifdef HONEI_CUDA
+DenseVectorRangeDotProductTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scalar_product_test_float("float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeDotProductQuickTest :
@@ -339,6 +348,9 @@ DenseVectorRangeDotProductQuickTest<tags::CPU::SSE, float> sse_dense_vector_rang
 DenseVectorRangeDotProductQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_scalar_product_quick_test_double("SSE double");
 DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_scalar_product_quick_test_float("MC SSE float");
 DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_scalar_product_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorRangeDotProductQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scalar_product_quick_test_float("float");
 #endif
 
 template <typename Tag_, typename DataType_>

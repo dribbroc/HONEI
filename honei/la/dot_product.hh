@@ -295,11 +295,7 @@ namespace honei
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
 
-        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b)
-        {
-            CONTEXT("When forwarding CUDA DotProduct to CPU:");
-            return DotProduct<tags::CPU>::value(a, b);
-        }
+        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
         /// \}
     };

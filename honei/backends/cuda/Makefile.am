@@ -17,6 +17,7 @@ libhoneibackendscuda_la_SOURCES = \
 				 cuda_util.hh \
 				 operations.hh \
 				 difference.cu \
+				 dot_product.cu \
 				 element_inverse.cu \
 				 element_product.cu \
 				 product.cu \
