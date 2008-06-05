@@ -43,7 +43,7 @@ extern "C" void cuda_scale_one_float(float a, float * x, unsigned long size, uns
 
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::scale_gpu<<<grid, block, block.x * sizeof(float)>>>(a, x_gpu, size);
+    honei::cuda::scale_gpu<<<grid, block>>>(a, x_gpu, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);

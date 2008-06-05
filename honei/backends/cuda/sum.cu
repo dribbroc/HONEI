@@ -46,7 +46,7 @@ extern "C" void cuda_sum_two_float(float * x, float * y, unsigned long size, uns
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::sum_gpu<<<grid, block, 2 * block.x * sizeof(float)>>>(x_gpu, y_gpu, size);
+    honei::cuda::sum_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);

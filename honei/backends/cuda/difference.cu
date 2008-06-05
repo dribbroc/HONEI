@@ -46,7 +46,7 @@ extern "C" void cuda_difference_two_float(float * x, float * y, unsigned long si
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::difference_gpu<<<grid, block, 2 * block.x * sizeof(float)>>>(x_gpu, y_gpu, size);
+    honei::cuda::difference_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);

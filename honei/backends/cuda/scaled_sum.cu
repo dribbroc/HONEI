@@ -52,7 +52,7 @@ extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigne
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::scaled_sum_gpu<<<grid, block, 2 * block.x * sizeof(float)>>>(x_gpu, y_gpu, b, size);
+    honei::cuda::scaled_sum_gpu<<<grid, block>>>(x_gpu, y_gpu, b, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);
@@ -79,7 +79,7 @@ extern "C" void cuda_scaled_sum_three_float(float * x, float * y, float * z, uns
     cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(z_gpu, z, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::scaled_sum_gpu<<<grid, block, 3 * block.x * sizeof(float)>>>(x_gpu, y_gpu, z_gpu, size);
+    honei::cuda::scaled_sum_gpu<<<grid, block>>>(x_gpu, y_gpu, z_gpu, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);

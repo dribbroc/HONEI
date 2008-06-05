@@ -44,7 +44,7 @@ extern "C" void cuda_element_inverse_one_float(float * x, unsigned long size, un
 
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::element_inverse_gpu<<<grid, block, block.x * sizeof(float)>>>(x_gpu, size);
+    honei::cuda::element_inverse_gpu<<<grid, block>>>(x_gpu, size);
 
     cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);
