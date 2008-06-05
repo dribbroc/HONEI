@@ -70,6 +70,7 @@ namespace honei
             class NOSLIP_PERIODIC;
             class NOSLIP;
             class PERIODIC;
+            class DRIVEN_CAVITY;
         }
 
         namespace lbm_applications
