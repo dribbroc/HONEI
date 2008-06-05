@@ -25,14 +25,20 @@ namespace honei
     {
         __global__ void scaled_sum_gpu(float * x, float * y, float b, unsigned long size)
         {
-            int idx = blockDim.x *blockIdx.x + threadIdx.x;
-            x[idx] = x[idx] + b * y[idx];
+            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                x[idx] = x[idx] + b * y[idx];
+            }
         }
 
         __global__ void scaled_sum_gpu(float * x, float * y, float * z, unsigned long size)
         {
-            int idx = blockDim.x *blockIdx.x + threadIdx.x;
-            x[idx] = x[idx] + y[idx] * z[idx];
+            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                x[idx] = x[idx] + y[idx] * z[idx];
+            }
         }
     }
 }
@@ -42,7 +48,8 @@ extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigne
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = ceil(size/(float)block.x);
+    grid.x = ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
     float * x_gpu(0);
     float * y_gpu(0);
 
@@ -66,7 +73,8 @@ extern "C" void cuda_scaled_sum_three_float(float * x, float * y, float * z, uns
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = ceil(size/(float)block.x);
+    grid.x = ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
     float * x_gpu(0);
     float * y_gpu(0);
     float * z_gpu(0);

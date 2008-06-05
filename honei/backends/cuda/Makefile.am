@@ -7,7 +7,7 @@ AUTOMAKE_OPTIONS = foreign dist-bzip2
 lib_LTLIBRARIES = libhoneibackendscuda.la
 
 NVCC = nvcc
-NVCCFLAGS = -v -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEBUGDEF) $(PROFILERDEF)
+NVCCFLAGS = -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEBUGDEF) $(PROFILERDEF)
 
 .cu.lo: libtool-hack.in
 	$(NVCC) $(NVCCFLAGS) -Xcompiler -fPIC -c -o $(patsubst %.lo,%.o,$@) $<

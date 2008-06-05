@@ -25,8 +25,11 @@ namespace honei
     {
         __global__ void difference_gpu(float * x, float * y, unsigned long size)
         {
-            int idx = blockDim.x *blockIdx.x + threadIdx.x;
-            x[idx] = x[idx] - y[idx];
+            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                x[idx] = x[idx] - y[idx];
+            }
         }
     }
 }
@@ -36,7 +39,8 @@ extern "C" void cuda_difference_two_float(float * x, float * y, unsigned long si
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = ceil(size/(float)block.x);
+    grid.x = ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
     float * x_gpu(0);
     float * y_gpu(0);
 
