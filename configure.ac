@@ -324,6 +324,7 @@ AC_OUTPUT(
 	clients/Makefile
 	clients/config/Makefile
 	clients/swe/Makefile
+	clients/lbm/Makefile
 	doc/Makefile
 	honei/Makefile
 	honei/backends/Makefile

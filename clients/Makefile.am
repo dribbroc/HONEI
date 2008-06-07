@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 if VISUAL
   VISUALDIR = swe
+  LBMDIR = lbm
 endif
 
-SUBDIRS = $(VISUALDIR) config
+SUBDIRS = $(VISUALDIR) $(LBMDIR) config
