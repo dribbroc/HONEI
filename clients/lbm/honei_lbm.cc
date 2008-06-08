@@ -58,7 +58,7 @@ int main(int argc, char ** argv)
     int i =1;
     int * pi = &i;
 
-    char * c = "Visual SWE";
+    char * c = "Visual LBM";
     char ** cp = &c;
     glutInit(pi,cp);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -80,13 +80,7 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Toggle primitive type", 6);
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
-    glutAddMenuEntry("Rain 90x90 float", 0);
-    glutAddMenuEntry("Rain 64x64 float", 1);
-    glutAddMenuEntry("Full dam break 90x90 float", 2);
-    glutAddMenuEntry("Full dam break 64x64 float", 3);
-    glutAddMenuEntry("Full dam break(critical) 64x64 float", 4);
-    glutAddMenuEntry("Channel pump 24x64 float", 5);
-    glutAddMenuEntry("Hydraulic jump 64x64 float", 6);
+    glutAddMenuEntry("Laminar flow: Circular dam break 50x50 float", 0);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);

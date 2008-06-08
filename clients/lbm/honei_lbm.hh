@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LBM_HONEI_SWE_HH
-#define LBM_HONEI_SWE_HH
+#ifndef LBM_HONEI_LBM_HH
+#define LBM_HONEI_LBM_HH
 
 #include <scenario_controller.hh>
 #include <honei/util/time_stamp.hh>
