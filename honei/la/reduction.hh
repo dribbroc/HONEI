@@ -657,7 +657,7 @@ namespace honei
             unsigned long range_size(range.size());
             unsigned long startindex(a.size() - (start + range_size)), endindex((2 * a.size() - 1) - start);
             typename DenseVectorRange<DT_>::ElementIterator range_end(range.end_elements());
-            typename BandedMatrix<DT_>::ConstBandIterator vi(a.band_at(startindex)), end(a.band_at(a.size()-1));
+            typename BandedMatrix<DT_>::ConstBandIterator vi(a.band_at(startindex)), end(a.end_bands());
             // Calculation for lower part
             for ( ; vi != end ; ++vi)
             {
@@ -671,7 +671,7 @@ namespace honei
                     ++r;
                     ++b;
                 }
-                for ( ; r != range_end ; ++r, ++b)
+                for ( ; r < range_end ; ++r, ++b)
                 {
                     *r += *b;
                 }
@@ -694,7 +694,9 @@ namespace honei
                         i = endindex - vi.index();
                     for ( ; i > 0 ;--i, ++r, ++b)
                     {
+                        std::cout << "XXX foo XXX" << std::endl;
                         *r += *b;
+                        std::cout << "XXX end foo XXX" << std::endl;
                     }
                 }
             }
@@ -1020,7 +1022,7 @@ namespace honei
             unsigned long range_size(range.size());
             unsigned long startindex(a.size() - (start + range_size)), endindex((2 * a.size() - 1) - start);
             typename DenseVectorRange<DT_>::ElementIterator range_end(range.end_elements());
-            typename BandedMatrix<DT_>::ConstBandIterator vi(a.band_at(startindex)), end(a.band_at(a.size()-1));
+            typename BandedMatrix<DT_>::ConstBandIterator vi(a.band_at(startindex)), end(a.end_bands());
             // Calculation for lower part
             for ( ; vi != end ; ++vi)
             {
@@ -1388,7 +1390,7 @@ namespace honei
             unsigned long range_size(range.size());
             unsigned long startindex(a.size() - (start + range_size)), endindex((2 * a.size() - 1) - start);
             typename DenseVectorRange<DT_>::ElementIterator range_end(range.end_elements());
-            typename BandedMatrix<DT_>::ConstBandIterator vi(a.band_at(startindex)), end(a.band_at(a.size()-1));
+            typename BandedMatrix<DT_>::ConstBandIterator vi(a.band_at(startindex)), end(a.end_bands());
             // Calculation for lower part
             for ( ; vi != end ; ++vi)
             {
