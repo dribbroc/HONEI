@@ -144,7 +144,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         _dheight = 50;
                         _dwidth = 50;
                         _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
-                        Cylinder<Prec_> c1(*_height, Prec_(0.02), 25, 25);
+                        Cylinder<Prec_> c1(*_height, Prec_(0.075), 25, 25);
                         c1.value();
 
                         _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
@@ -280,11 +280,11 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         for(unsigned int j = 0; j <_dheight-1; ++j)
                         {
                             glColor4f(0.0, 0.0, 1.0, alpha);
-                            glVertex3d(i,j, (*_height)[j][i] + (*_bottom)[j][i]);
+                            glVertex3d(i,j, 100.*((*_height)[j][i] + (*_bottom)[j][i]));
                             glColor4f(0.0, 1.0, 1.0, alpha);
-                            glVertex3d(i+1,j, (*_height)[j][i+1] + (*_bottom)[j][i+1]);
-                            glVertex3d(i+1,j+1, (*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]);
-                            glVertex3d(i,j+1, (*_height)[j+1][i] + (*_bottom)[j+1][i]);
+                            glVertex3d(i+1,j, 100.*((*_height)[j][i+1] + (*_bottom)[j][i+1]));
+                            glVertex3d(i+1,j+1, 100.*((*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]));
+                            glVertex3d(i,j+1, 100.*((*_height)[j+1][i] + (*_bottom)[j+1][i]));
                         }
                     }
                     glEnd();
@@ -297,18 +297,18 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         for(unsigned int j = 0; j <  _dheight; j++)
                         {
                             glColor4f(0.0, 1.0, 1.0,  alpha);
-                            glVertex3d(i,j, (*_height)[j][i] +  (*_bottom)[j][i]);
+                            glVertex3d(i,j, 100.*((*_height)[j][i] +  (*_bottom)[j][i]));
                             glColor4f(0.0, 0.0, 1.0,  alpha);
-                            glVertex3d(i+1,j, (*_height)[j][i+1] +  (*_bottom)[j][i+1]);
+                            glVertex3d(i+1,j, 100.*((*_height)[j][i+1] +  (*_bottom)[j][i+1]));
                         }
                         ++i;
                         if (i >=  _dwidth-1)
                             break;
                         for(int j2 =  _dheight-2; j2 >= 0; --j2)
                         {
-                            glVertex3d(i,j2, (*_height)[j2][i] +  (*_bottom)[j2][i]);
+                            glVertex3d(i,j2, 100.*((*_height)[j2][i] +  (*_bottom)[j2][i]));
                             glColor4f(0.0, 1.0, 1.0,  alpha);
-                            glVertex3d(i+1,j2, (*_height)[j2][i+1] +  (*_bottom)[j2][i+1]);
+                            glVertex3d(i+1,j2, 100.*((*_height)[j2][i+1] +  (*_bottom)[j2][i+1]));
                         }
                     }
                     glEnd();
