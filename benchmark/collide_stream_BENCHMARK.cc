@@ -27,8 +27,10 @@
 
 using namespace std;
 using namespace honei;
+using namespace lbm;
+using namespace lbm_lattice_types;
 
-template <typename Tag_, typename DataType_>
+template <typename Tag_, typename DataType_, typename Dir_>
 class CollideStreamBench :
     public Benchmark
 {
@@ -53,18 +55,15 @@ class CollideStreamBench :
 
             DenseMatrix<DataType_> result(_size, _size);
 
-            CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::
-                value(result, test, test, test, test, e_x, e_y, tau);
-
             for(int i = 0; i < _count; ++i)
             {
 
-                BENCHMARK((CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::value(result, test, test, test, test, e_x, e_y, tau)));
+                BENCHMARK((CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, Dir_>::value(result, test, test, test, test, e_x, e_y, tau)));
 
             }
             evaluate();
         }
 };
 
-CollideStreamBench<tags::CPU, float> solver_bench_float_1("CollideStream Benchmark - size: 1000, float", 1000, 100);
-CollideStreamBench<tags::CPU, double> solver_bench_double_1("CollideStream Benchmark - size: 1000, double", 1000, 100);
+CollideStreamBench<tags::CPU, float, D2Q9::DIR_0> solver_bench_float_1("CollideStream Benchmark - size: 1000, float", 1000, 100);
+CollideStreamBench<tags::CPU, double, D2Q9::DIR_0> solver_bench_double_1("CollideStream Benchmark - size: 1000, double", 1000, 100);
