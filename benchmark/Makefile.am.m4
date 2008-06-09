@@ -11,6 +11,7 @@ $1_BENCHMARK_LDADD = \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/libhoneimath.la \
 	$(top_builddir)/honei/swe/libhoneiswe.la \
+	$(top_builddir)/honei/lbm/libhoneilbm.la \
 	$(top_builddir)/honei/graph/libhoneigraph.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(BACKEND_LIBS) \
