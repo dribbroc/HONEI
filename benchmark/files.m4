@@ -9,6 +9,7 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`breadth_first_search',                      `bench')
+add(`collide_stream',                            `bench')
 add(`difference',                                `bench')
 add(`dot_product',                               `bench')
 add(`element_inverse',                           `bench')
