@@ -16,7 +16,6 @@ define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
 $2_TEST_SOURCES = $2_TEST.cc
 $2_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
-	$(CELLTESTLIBS) \
 	libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $2_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -74,18 +73,16 @@ endif
 
 lib_LTLIBRARIES = libhoneiutil.la
 
-libhoneiutil_la_SOURCES = general_filelist $(GPUSOURCES) $(CELLSOURCES) $(HDF5SOURCES)
+libhoneiutil_la_SOURCES = general_filelist $(GPUSOURCES) $(HDF5SOURCES)
 libhoneiutil_la_LIBADD = \
 	-lpthread \
 	$(GPULIBS) \
-	$(CELLLIBS) \
-	$(CELLTESTLIBS) \
 	$(HDF5LIBS)
 
 libhoneiutil_includedir = $(includedir)/honei/util
-libhoneiutil_include_HEADERS = general_headerlist $(GPUHEADERS) $(CELLHEADERS) $(HDF5HEADERS)
+libhoneiutil_include_HEADERS = general_headerlist $(GPUHEADERS) $(HDF5HEADERS)
 
-TESTS = general_testlist $(GPUTESTS) $(CELLTESTS) $(HDF5TESTS)
+TESTS = general_testlist $(GPUTESTS) $(HDF5TESTS)
 TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
