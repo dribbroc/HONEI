@@ -103,6 +103,8 @@ namespace honei
                 CONTEXT("When creating SparseMatrix:");
                 ASSERT(rows > 0, "number of rows is zero!");
                 ASSERT(columns > 0, "number of columns is zero!");
+                ASSERT(columns >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
+                        stringify(columns) + "'!");
 
                 _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
             }
@@ -239,6 +241,7 @@ namespace honei
             /// Returns a copy of the matrix.
             virtual SparseMatrix copy() const
             {
+                CONTEXT("When creating a copy:");
                 SparseMatrix result(_columns, _rows, _capacity);
 
                 for (unsigned long i(0) ; i < _rows ; ++i)

@@ -144,7 +144,7 @@ namespace honei
         PrivateImplementationPattern<SparseVector<DataType_>, Shared>(new Implementation<SparseVector<DataType_> >(size, capacity))
     {
         CONTEXT("When creating SparseVector:");
-        ASSERT(size >= capacity, "capacity '" + stringify(capacity) + "' exceeds size '" +
+        ASSERT(size + 1 >= capacity, "capacity '" + stringify(capacity) + "' exceeds size '" +
                 stringify(size) + "'!");
         ASSERT(size > 0, "size is zero!");
     }
@@ -283,7 +283,7 @@ namespace honei
     template <typename DataType_>
     SparseVector<DataType_> SparseVector<DataType_>::copy() const
     {
-        CONTEXT("When creating a copy:'");
+        CONTEXT("When creating a copy:");
         SparseVector result(this->_imp->_size, this->_imp->_capacity);
 
         result._imp->_used_elements = this->_imp->_used_elements;

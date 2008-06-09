@@ -277,8 +277,8 @@ namespace honei
             {
                 CONTEXT("When retrieving unsigned band '" + stringify(index) + "' of matrix of size '"
                         + stringify(_size) + "':");
-                ASSERT(index < 2 * _size - 1, "index out of bounds!");
-                ASSERT(index > 0, "index out of bounds!");
+                ASSERT(index < 2 * _size - 1, "index '" + stringify(index) + "' is out of bounds!");
+                ASSERT(index >= 0, "index '" + stringify(index) + "' is out of bounds!");
 
                 if (! _bands[index])
                 {
