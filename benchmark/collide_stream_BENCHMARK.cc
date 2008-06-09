@@ -65,5 +65,5 @@ class CollideStreamBench :
         }
 };
 
-CollideStreamBench<tags::CPU, float, D2Q9::DIR_0> solver_bench_float_1("CollideStream Benchmark - size: 1000, float", 1000, 100);
-CollideStreamBench<tags::CPU, double, D2Q9::DIR_0> solver_bench_double_1("CollideStream Benchmark - size: 1000, double", 1000, 100);
+CollideStreamBench<tags::CPU, float, D2Q9::DIR_0> solver_bench_float_1("CollideStream DIR_0 Benchmark - size: 1000, float", 1000, 100);
+CollideStreamBench<tags::CPU, double, D2Q9::DIR_0> solver_bench_double_1("CollideStream DIR_0 Benchmark - size: 1000, double", 1000, 100);
