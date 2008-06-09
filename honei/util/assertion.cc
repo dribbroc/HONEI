@@ -31,8 +31,9 @@ Assertion::Assertion(const char * const function, const char * const file,
     std::cout << backtrace("\n") << this->message() << std::endl;
 }
 
-void external_assertion(bool is_ok, const std::string & message)
+void external_assertion(bool is_ok, const char * const function, const char * const file,
+        const long line, const std::string & message)
 {
     if (! (is_ok))
-        throw Assertion(__PRETTY_FUNCTION__, __FILE__, __LINE__, message);
+        throw Assertion(function, file, line, message);
 }

@@ -24,7 +24,8 @@
 
 #include <string>
 
-void external_assertion(bool is_ok, const std::string & message);
+void external_assertion(bool is_ok, const char * const function, const char * const file,
+        const long line, const std::string & message);
 
 namespace honei
 {
@@ -78,12 +79,11 @@ namespace honei
 #if defined (DEBUG)
 #define EXTERNAL_ASSERT(expr, msg) \
     do { \
-        external_assertion(expr, msg); \
+        external_assertion(expr, __PRETTY_FUNCTION__, __FILE__, __LINE__, msg); \
     } while (false)
 #else
 #define EXTERNAL_ASSERT(expr, msg)
 #endif
 }
-
 
 #endif
