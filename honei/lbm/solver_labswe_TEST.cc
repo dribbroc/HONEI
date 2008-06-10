@@ -123,7 +123,7 @@ class SolverLABSWETest :
         }
 
 };
-/*
+
 SolverLABSWETest<tags::CPU, float> solver_test_float("float");
 SolverLABSWETest<tags::CPU, double> solver_test_double("double");
 SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
@@ -141,7 +141,7 @@ SolverLABSWETest<tags::Cell, double> solver_test_double_cell("double");
 #ifdef HONEI_CUDA
 SolverLABSWETest<tags::GPU::CUDA, float> solver_test_float_cuda("float");
 #endif
-*/
+
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest :
     public TaggedTest<Tag_>
@@ -453,7 +453,7 @@ class SolverLABSWEMassConservationTest :
         }
 
 };
-/*
+
 SolverLABSWEMassConservationTest<tags::CPU, double> solver_mass_cons_test_double("mass conservation, double");
 SolverLABSWEMassConservationTest<tags::CPU, float> solver_mass_cons_test_float("mass conservation, float");
 #ifdef HONEI_SSE
@@ -466,4 +466,4 @@ SolverLABSWEMassConservationTest<tags::Cell, float> solver_mass_cons_test_float_
 #endif
 #ifdef HONEI_CUDA
 SolverLABSWEMassConservationTest<tags::GPU::CUDA, float> solver_mass_cons_test_float_cuda("mass conservation, float");
-#endif*/
+#endif
