@@ -71,3 +71,11 @@ CollideStreamBench<tags::CPU, float, D2Q9::DIR_1> solver_bench_float_1("CollideS
 CollideStreamBench<tags::CPU, double, D2Q9::DIR_1> solver_bench_double_1("CollideStream DIR_1 Benchmark - size: 1000, double", 1000, 100);
 CollideStreamBench<tags::CPU, float, D2Q9::DIR_2> solver_bench_float_2("CollideStream DIR_0 Benchmark - size: 1000, float", 1000, 100);
 CollideStreamBench<tags::CPU, double, D2Q9::DIR_2> solver_bench_double_2("CollideStream DIR_0 Benchmark - size: 1000, double", 1000, 100);
+#ifdef HONEI_SSE
+CollideStreamBench<tags::CPU::SSE, float, D2Q9::DIR_0> solver_bench_float_0_sse("CollideStream DIR_0 Benchmark - size: 1000, float SSE", 1000, 100);
+CollideStreamBench<tags::CPU::SSE, double, D2Q9::DIR_0> solver_bench_double_0_sse("CollideStream DIR_0 Benchmark - size: 1000, double SSE", 1000, 100);
+CollideStreamBench<tags::CPU::SSE, float, D2Q9::DIR_1> solver_bench_float_1_sse("CollideStream DIR_1 Benchmark - size: 1000, float SSE", 1000, 100);
+CollideStreamBench<tags::CPU::SSE, double, D2Q9::DIR_1> solver_bench_double_1_sse("CollideStream DIR_1 Benchmark - size: 1000, double SSE", 1000, 100);
+CollideStreamBench<tags::CPU::SSE, float, D2Q9::DIR_2> solver_bench_float_2_sse("CollideStream DIR_0 Benchmark - size: 1000, float SSE", 1000, 100);
+CollideStreamBench<tags::CPU::SSE, double, D2Q9::DIR_2> solver_bench_double_2_sse("CollideStream DIR_0 Benchmark - size: 1000, double SSE", 1000, 100);
+#endif
