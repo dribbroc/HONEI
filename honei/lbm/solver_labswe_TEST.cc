@@ -123,7 +123,7 @@ class SolverLABSWETest :
         }
 
 };
-
+/*
 SolverLABSWETest<tags::CPU, float> solver_test_float("float");
 SolverLABSWETest<tags::CPU, double> solver_test_double("double");
 SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
@@ -141,7 +141,7 @@ SolverLABSWETest<tags::Cell, double> solver_test_double_cell("double");
 #ifdef HONEI_CUDA
 SolverLABSWETest<tags::GPU::CUDA, float> solver_test_float_cuda("float");
 #endif
-
+*/
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest :
     public TaggedTest<Tag_>
@@ -156,17 +156,17 @@ class SolverLABSWEDrivenCavityTest :
         {
             unsigned long g_h(129);
             unsigned long g_w(129);
-            DataType_ p_d_t(1.08);
+            DataType_ p_d_t(1.);
             DataType_ p_d_x(1.);
             DataType_ p_d_y(1.);
-            DataType_ veloc(0.1);
-            unsigned long timesteps(2000);
+            DataType_ veloc(0.129198966408);
+            DataType_ tau(1.);
+            unsigned long timesteps(14000);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
-            DataType_ tau(1.);
 
             //set initial Dirichlet Boundaries:
             for(unsigned long i(0) ; i < g_w ; ++i)
@@ -246,14 +246,14 @@ class SolverLABSWEDrivenCavityTest :
 #endif
             TEST_CHECK(true);
 
-            double reynolds(0.1 * g_w /(p_d_x * p_d_x * p_d_x * (2. * tau - 1.)/ 6. * p_d_t * p_d_t));
+            double reynolds(veloc * g_w /(p_d_x * p_d_x * (2. * tau - 1.)/ (6. * p_d_t)));
             std::cout<<"Re: " << reynolds << std::endl;
 
             DenseVector<DataType_> test_line(g_h);
             std::cout<<"Index: " << (g_w-1)/2 << std::endl;
             for(unsigned long i(0); i < g_h; ++i)
             {
-                test_line[i] = DataType_(u(i,(g_w-1)/2)/0.1);
+                test_line[i] = DataType_(u(i,(g_w-1)/2)/veloc);
             }
 
             std::cout<<"Result:"<<test_line<<std::endl;
@@ -453,7 +453,7 @@ class SolverLABSWEMassConservationTest :
         }
 
 };
-
+/*
 SolverLABSWEMassConservationTest<tags::CPU, double> solver_mass_cons_test_double("mass conservation, double");
 SolverLABSWEMassConservationTest<tags::CPU, float> solver_mass_cons_test_float("mass conservation, float");
 #ifdef HONEI_SSE
@@ -466,4 +466,4 @@ SolverLABSWEMassConservationTest<tags::Cell, float> solver_mass_cons_test_float_
 #endif
 #ifdef HONEI_CUDA
 SolverLABSWEMassConservationTest<tags::GPU::CUDA, float> solver_mass_cons_test_float_cuda("mass conservation, float");
-#endif
+#endif*/
