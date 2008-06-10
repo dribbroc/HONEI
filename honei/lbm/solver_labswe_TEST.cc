@@ -154,19 +154,24 @@ class SolverLABSWEDrivenCavityTest :
 
         virtual void run() const
         {
-            unsigned long g_h(32);
-            unsigned long g_w(32);
-            unsigned long timesteps(4000);
+            unsigned long g_h(129);
+            unsigned long g_w(129);
+            DataType_ p_d_t(1.08);
+            DataType_ p_d_x(1.);
+            DataType_ p_d_y(1.);
+            DataType_ veloc(0.1);
+            unsigned long timesteps(2000);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+            DataType_ tau(1.);
 
             //set initial Dirichlet Boundaries:
             for(unsigned long i(0) ; i < g_w ; ++i)
             {
-                u(0 , i) = DataType_(0.1);
+                u(0, i) = DataType_(veloc);
             }
 
             //All needed distribution functions:
@@ -212,7 +217,7 @@ class SolverLABSWEDrivenCavityTest :
             DenseMatrix<DataType_> d_x(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> d_y(g_h, g_w, DataType_(0.));
 
-            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::DRIVEN_CAVITY> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
+            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::DRIVEN_CAVITY> solver(p_d_x, p_d_y, p_d_t, g_w, g_h, &h, &b, &u, &v);
 
             solver.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
             solver.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);
@@ -220,6 +225,10 @@ class SolverLABSWEDrivenCavityTest :
             solver.set_vectors(&v_x, &v_y);
             solver.set_source(&s_x, &s_y);
             solver.set_slopes(&d_x, &d_y);
+
+            solver.set_relaxation_time(tau);
+            solver.set_lid_velocity(veloc);
+
             solver.do_preprocessing();
 
             for(unsigned long i(0); i < timesteps; ++i)
@@ -233,9 +242,89 @@ class SolverLABSWEDrivenCavityTest :
 #endif
             }
 #ifdef SOLVER_VERBOSE
-            std::cout << h << std::endl;
+            std::cout << u << std::endl;
 #endif
             TEST_CHECK(true);
+
+            double reynolds(0.1 * g_w /(p_d_x * p_d_x * p_d_x * (2. * tau - 1.)/ 6. * p_d_t * p_d_t));
+            std::cout<<"Re: " << reynolds << std::endl;
+
+            DenseVector<DataType_> test_line(g_h);
+            std::cout<<"Index: " << (g_w-1)/2 << std::endl;
+            for(unsigned long i(0); i < g_h; ++i)
+            {
+                test_line[i] = DataType_(u(i,(g_w-1)/2)/0.1);
+            }
+
+            std::cout<<"Result:"<<test_line<<std::endl;
+
+            //Reference data by Ghia et al. 1982 for reynolds number of 100:
+            DenseVector<double> ref_result_100(17);
+            unsigned long indices_100[17];
+
+            ref_result_100[0] = double(1);
+            indices_100[0] = 0;
+
+            ref_result_100[1] = double(0.84123);
+            indices_100[1] = 3;
+
+            ref_result_100[2] = double(0.78871);
+            indices_100[2] = 4;
+
+            ref_result_100[3] = double(0.73722);
+            indices_100[3] = 5;
+
+            ref_result_100[4] = double(0.68717);
+            indices_100[4] = 6;
+
+            ref_result_100[5] = double(0.23151);
+            indices_100[5] = 19;
+
+            ref_result_100[6] = double(0.00332);
+            indices_100[6] = 34;
+
+            ref_result_100[7] = double(-0.13641);
+            indices_100[7] = 49;
+
+            ref_result_100[8] = double(-0.20581);
+            indices_100[8] = 64;
+
+            ref_result_100[9] = double(-0.21090);
+            indices_100[9] = 70;
+
+            ref_result_100[10] = double(-0.15662);
+            indices_100[10] = 92;
+
+            ref_result_100[11] = double(-0.10150);
+            indices_100[11] = 106;
+
+            ref_result_100[12] = double(-0.06434);
+            indices_100[12] = 115;
+
+            ref_result_100[13] = double(-0.04775);
+            indices_100[13] = 119;
+
+            ref_result_100[14] = double(-0.04192);
+            indices_100[14] = 120;
+
+            ref_result_100[15] = double(-0.03717);
+            indices_100[15] = 121;
+
+            ref_result_100[16] = double(0.);
+            indices_100[16] = 128;
+
+            DenseVector<DataType_> diff(test_line.copy());
+
+            for(unsigned long i(0); i < 17; ++i)
+            {
+                diff[indices_100[i]] = ref_result_100[i];
+                TEST_CHECK_EQUAL_WITHIN_EPS(test_line[indices_100[i]], ref_result_100[i], 0.5);
+            }
+
+            Difference<>::value(diff, test_line);
+
+            std::cout <<"Difference vector: " << diff << std::endl;
+
         }
 
 };

@@ -1069,7 +1069,7 @@ namespace honei
                 /** Global variables.
                  *
                  **/
-                ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t;
+                ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t, _lid_veloc;
                 DenseMatrix<ResPrec_>* _height;
                 DenseMatrix<ResPrec_>* _bottom;
                 DenseMatrix<ResPrec_>* _d_bottom_x;
@@ -1367,6 +1367,16 @@ namespace honei
                     _d_bottom_y = d_y;
                 }
 
+                void set_relaxation_time(ResPrec_ value)
+                {
+                    this->_relaxation_time = value;
+                }
+
+                void set_lid_velocity(ResPrec_ value)
+                {
+                    this->_lid_veloc = value;
+                }
+
                 void do_preprocessing()
                 {
                     CONTEXT("When performing LABSWE preprocessing.");
@@ -1562,7 +1572,7 @@ namespace honei
                     ///Update equilibrium distribution function:
                     for(unsigned long i(0); i < _grid_width; ++i)
                     {
-                        (*_u)(0, i) = ResPrec_(0.1);
+                        (*_u)(0, i) = ResPrec_(_lid_veloc);
                         (*_v)(0, i) = ResPrec_(0.);
                         (*_u)(_grid_height - 1, i) = ResPrec_(0.);
                         (*_v)(_grid_height - 1, i) = ResPrec_(0.);
