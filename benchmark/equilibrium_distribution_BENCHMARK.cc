@@ -124,4 +124,49 @@ EquilibriumDistributionODDBench<tags::CPU::SSE, float, D2Q9::DIR_ODD> solver_ben
 EquilibriumDistributionODDBench<tags::CPU::SSE, double, D2Q9::DIR_ODD> solver_bench_double_1_sse("EquilibriumDistribution DIR_ODD Benchmark - size: 1000, double SSE", 1000, 100);
 #endif
 
+template <typename Tag_, typename DataType_, typename Dir_>
+class EquilibriumDistributionEVENBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        int _count;
+    public:
+        EquilibriumDistributionEVENBench(const std::string & id, unsigned long size, int count) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+        }
 
+        virtual void run()
+        {
+            for(int i = 0; i < _count; ++i)
+            {
+                DenseMatrix<DataType_> h(1000ul, 1000ul, DataType_(1.23456));
+                DenseMatrix<DataType_> u(1000ul, 1000ul, DataType_(1.23456));
+                DenseMatrix<DataType_> v(1000ul, 1000ul, DataType_(1.23456));
+                DataType_ g(9.81);
+                DataType_ e(1.);
+                DataType_ e_u(2.);
+                DataType_ e_v(2.);
+
+                DenseMatrix<DataType_> result_1(1000ul, 1000ul);
+                DenseMatrix<DataType_> result_2(1000ul, 1000ul);
+                DenseMatrix<DataType_> result_3(1000ul, 1000ul);
+
+                BENCHMARK((EquilibriumDistribution<Tag_, lbm_applications::LABSWE, lbm_lattice_types::D2Q9::DIR_EVEN>::value(result_3, h, u, v, g, e, e_u, e_v)));
+
+            }
+            evaluate();
+        }
+};
+
+EquilibriumDistributionEVENBench<tags::CPU, float, D2Q9::DIR_EVEN> solver_bench_float_2("EquilibriumDistribution DIR_EVEN Benchmark - size: 1000, float", 1000, 100);
+EquilibriumDistributionEVENBench<tags::CPU, double, D2Q9::DIR_EVEN> solver_bench_double_2("EquilibriumDistribution DIR_EVEN Benchmark - size: 1000, double", 1000, 100);
+
+#ifdef HONEI_SSE
+EquilibriumDistributionEVENBench<tags::CPU::SSE, float, D2Q9::DIR_EVEN> solver_bench_float_2_sse("EquilibriumDistribution DIR_EVEN Benchmark - size: 1000, float SSE", 1000, 100);
+EquilibriumDistributionEVENBench<tags::CPU::SSE, double, D2Q9::DIR_EVEN> solver_bench_double_2_sse("EquilibriumDistribution DIR_EVEN Benchmark - size: 1000, double SSE", 1000, 100);
+#endif
