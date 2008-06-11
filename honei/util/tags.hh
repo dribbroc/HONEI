@@ -37,6 +37,7 @@ namespace honei
             tv_cpu_multi_core,
             tv_cell,
             tv_gpu,
+            tv_gpu_cuda,
             tv_fake, /* used by unit tests */
             tv_none
         };
@@ -130,7 +131,7 @@ namespace honei
             struct CUDA :
                 public InstantiationPolicy<GPU::CUDA, NonCopyable>
             {
-                const static TagValue tag_value = tv_gpu;
+                const static TagValue tag_value = tv_gpu_cuda;
                 const static std::string name;
             };
         };

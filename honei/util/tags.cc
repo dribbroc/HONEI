@@ -54,6 +54,10 @@ std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
                 left << "GPU";
                 continue;
 
+            case tags::tv_gpu_cuda:
+                left << "GPU CUDA";
+                continue;
+
             case tags::tv_none:
                 left << "NONE";
                 continue;
