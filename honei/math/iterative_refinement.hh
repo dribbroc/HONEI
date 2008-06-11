@@ -150,24 +150,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstBandIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
-                    for(; i != i_end; ++i)
-                    {
-                        DenseVector<float> band(right_hand_side.size());
-                        typename DenseVector<DT1_>::ConstElementIterator j(i->begin_elements()), j_end(i->end_elements());
-                        typename DenseVector<float>::ElementIterator j_inner(band.begin_elements());
-                        while(j != j_end)
-                        {
-                            *j_inner = float(*j);
-                            ++j;
-                            ++j_inner;
-                        }
-
-                        //insert band into inner system: (We have to compute the logical index used by insert_band out of the iterator's index)
-
-                        inner_system.insert_band(i.index() -right_hand_side.size() +1, band);
-
-                    }
+                    convert(inner_system, system_matrix);
 
                     ///Main loop:
                     do
@@ -197,13 +180,7 @@ namespace honei
                         inner_defect = ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, eps_inner);
 
                         //reconvert
-                        typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
-                        typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
-                        while(b_outer != b_end )
-                        {
-                            *b_outer = DT1_(*b_inner);
-                            ++b_inner; ++b_outer;
-                        }
+                        convert(defect, inner_defect);
 
                         ///Update solution:
                         Scale<Tag_>::value(defect, alpha);
@@ -429,24 +406,7 @@ namespace honei
 
                     unsigned long iter_number = 0;
                     ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstBandIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
-                    for(; i != i_end; ++i)
-                    {
-                        DenseVector<float> band(right_hand_side.size());
-                        typename DenseVector<DT1_>::ConstElementIterator j(i->begin_elements()), j_end(i->end_elements());
-                        typename DenseVector<float>::ElementIterator j_inner(band.begin_elements());
-                        while(j != j_end)
-                        {
-                            *j_inner = float(*j);
-                            ++j;
-                            ++j_inner;
-                        }
-
-                        //insert band into inner system: (We have to compute the logical index used by insert_band out of the iterator's index)
-
-                        inner_system.insert_band(i.index() -right_hand_side.size() +1, band);
-
-                    }
+                    convert(inner_system, system_matrix);
 
                     ///Main loop:
                     do
@@ -475,13 +435,7 @@ namespace honei
 
                         inner_defect = ConjugateGradients<Tag_, methods::JAC>::value(inner_system, inner_defect, eps_inner);
                         //reconvert
-                        typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
-                        typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
-                        while(b_outer != b_end )
-                        {
-                            *b_outer = DT1_(*b_inner);
-                            ++b_inner; ++b_outer;
-                        }
+                        convert(defect, inner_defect);
 
                         ///Update solution:
                         Scale<Tag_>::value(defect, alpha);
@@ -703,25 +657,8 @@ namespace honei
                     DT1_ initial_defectnorm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
                     unsigned long iter_number = 0;
-                    ///Do conversion of system matrix once:
-                    typename BandedMatrix<DT1_>::ConstBandIterator i(system_matrix.begin_non_zero_bands()), i_end(system_matrix.end_non_zero_bands());
-                    for(; i != i_end; ++i)
-                    {
-                        DenseVector<float> band(right_hand_side.size());
-                        typename DenseVector<DT1_>::ConstElementIterator j(i->begin_elements()), j_end(i->end_elements());
-                        typename DenseVector<float>::ElementIterator j_inner(band.begin_elements());
-                        while(j != j_end)
-                        {
-                            *j_inner = float(*j);
-                            ++j;
-                            ++j_inner;
-                        }
-
-                        //insert band into inner system: (We have to compute the logical index used by insert_band out of the iterator's index)
-
-                        inner_system.insert_band(i.index() -right_hand_side.size() +1, band);
-
-                    }
+                    //Do conversion of system matrix once:
+                    convert(inner_system, system_matrix);
 
                     ///Main loop:
                     do
@@ -750,13 +687,7 @@ namespace honei
 
                         inner_defect = Jacobi<Tag_>::value(inner_system, inner_defect, eps_inner);
                         //reconvert
-                        typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
-                        typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
-                        while(b_outer != b_end )
-                        {
-                            *b_outer = DT1_(*b_inner);
-                            ++b_inner; ++b_outer;
-                        }
+                        convert(defect, inner_defect);
 
                         ///Update solution:
                         Scale<Tag_>::value(defect, alpha);

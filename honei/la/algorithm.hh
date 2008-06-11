@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -75,6 +75,16 @@ namespace honei
      *
      * \ingroup grpalgorithm
      */
+    template <typename DataType_> void convert(DenseVector<DataType_> & copy,
+            const DenseVector<DataType_> & orig)
+    {
+        CONTEXT("When converting DenseVector to DenseVector:");
+
+        if (copy.size() != orig.size())
+            throw VectorSizeDoesNotMatch(orig.size(), copy.size());
+
+        copy = orig.copy();
+    }
 
     template <typename DataType_, typename OrigType_> void convert(DenseVector<DataType_> & copy,
             const DenseVector<OrigType_> & orig)
@@ -85,6 +95,17 @@ namespace honei
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
         TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.size());
+    }
+
+    template <typename DataType_> void convert(DenseVectorBase<DataType_> & copy,
+            const DenseVectorBase<DataType_> & orig)
+    {
+        CONTEXT("When converting DenseVectorBase to DenseVectorBase:");
+
+        if (copy.size() != orig.size())
+            throw VectorSizeDoesNotMatch(orig.size(), copy.size());
+
+        copy = orig.copy();
     }
 
     template <typename DataType_, typename OrigType_> void convert(DenseVectorBase<DataType_> & copy,
@@ -103,6 +124,17 @@ namespace honei
         }
     }
 
+    template <typename DataType_> void convert(SparseVector<DataType_> & copy,
+            const SparseVector<DataType_> & orig)
+    {
+        CONTEXT("When converting SparseVector to SparseVector:");
+
+        if (copy.size() != orig.size())
+            throw VectorSizeDoesNotMatch(orig.size(), copy.size());
+
+        copy = orig.copy();
+    }
+
     template <typename DataType_, typename OrigType_> void convert(SparseVector<DataType_> & copy,
             const SparseVector<OrigType_> & orig)
     {
@@ -118,6 +150,19 @@ namespace honei
         }
     }
 
+    template <typename DataType_> void convert(DenseMatrix<DataType_> & copy,
+            const DenseMatrix<DataType_> & orig)
+    {
+        CONTEXT("When converting DenseMatrix to DenseMatrix:");
+
+        if (copy.rows() != orig.rows())
+            throw MatrixRowsDoNotMatch(orig.rows(), copy.rows());
+        if (copy.columns() != orig.columns())
+            throw MatrixColumnsDoNotMatch(orig.columns(), copy.columns());
+
+        copy = orig.copy();
+    }
+
     template <typename DataType_, typename OrigType_> void convert(DenseMatrix<DataType_> & copy,
             const DenseMatrix<OrigType_> & orig)
     {
@@ -129,6 +174,19 @@ namespace honei
             throw MatrixColumnsDoNotMatch(orig.columns(), copy.columns());
 
         TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.columns() * orig.rows());
+    }
+
+    template <typename DataType_> void convert(SparseMatrix<DataType_> & copy,
+            const SparseMatrix<DataType_> & orig)
+    {
+        CONTEXT("When converting SparseMatrix to SparseMatrix:");
+
+        if (copy.rows() != orig.rows())
+            throw MatrixRowsDoNotMatch(orig.rows(), copy.rows());
+        if (copy.columns() != orig.columns())
+            throw MatrixColumnsDoNotMatch(orig.columns(), copy.columns());
+
+        copy = orig.copy();
     }
 
     template <typename DataType_, typename OrigType_> void convert(SparseMatrix<DataType_> & copy,
@@ -146,6 +204,18 @@ namespace honei
             convert(copy[i], orig[i]);
         }
     }
+
+    template <typename DataType_> void convert(BandedMatrix<DataType_> & copy,
+            const BandedMatrix<DataType_> & orig)
+    {
+        CONTEXT("When converting BandedMatrix to BandedMatrix:");
+
+        if (copy.size() != orig.size())
+            throw MatrixSizeDoesNotMatch(orig.size(), copy.size());
+
+            copy = orig.copy();
+    }
+
 
     template <typename DataType_, typename OrigType_> void convert(BandedMatrix<DataType_> & copy,
             const BandedMatrix<OrigType_> & orig)
