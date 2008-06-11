@@ -47,7 +47,7 @@ DenseVector<float> JacobiKernelCascade<tags::CPU::SSE, ONCE, NONE>::value(DenseV
     float * r_e = result.elements();
     float * d_e = d.elements();
 
-    for (BandedMatrix<float>::ConstVectorIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
+    for (BandedMatrix<float>::ConstBandIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
     {
 
