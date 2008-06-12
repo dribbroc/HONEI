@@ -111,6 +111,29 @@ namespace tests
             };
 
             /**
+             * Utility class used by TEST_CHECK_NOT_EQUAL.
+             */
+            struct TwoVarHolder2
+            {
+                bool result;
+                std::string s_a;
+                std::string s_b;
+
+                template <typename T1_, typename T2_>
+                TwoVarHolder2(T1_ a, T2_ b) :
+                    result(a == b),
+                    s_a(),
+                    s_b()
+                {
+                    if (result)
+                    {
+                        s_a = stringify(a);
+                        s_b = stringify(b);
+                    }
+                }
+            };
+
+            /**
              * Utility class used by TEST_CHECK_EQUAL_WITHIN_EPS.
              */
             struct WithinEpsCalculator
@@ -294,7 +317,7 @@ namespace tests
 #define TEST_CHECK_NOT_EQUAL(a, b) \
     do { \
         try { \
-            BaseTest::TwoVarHolder test_h(a, b); \
+            BaseTest::TwoVarHolder2 test_h(a, b); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, !test_h.result, \
                     this->_id + "\n" +  "Expected '" #a "' that is'" + test_h.s_a + \
                     "' to equal not '" + test_h.s_b + "'"); \
