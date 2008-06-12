@@ -102,6 +102,15 @@ namespace honei
     }
 
     template <typename DataType_>
+    DenseVector<DataType_>::DenseVector(DenseVector<DataType_> & src, unsigned long size) :
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(src->_imp->elements, size, 0, 1))
+    {
+        CONTEXT("When creating DenseVector from beginning parts of another DenseVector:");
+        ASSERT(size > 0, "size is zero!");
+        ASSERT(size < src.size(), "size is to big!");
+    }
+
+    template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const unsigned long size, DataType_ value, unsigned long offset,
             unsigned long stepsize) :
         PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(size, offset, stepsize))

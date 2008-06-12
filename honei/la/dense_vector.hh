@@ -89,6 +89,14 @@ namespace honei
             /**
              * Constructor.
              *
+             * \param src The source vector, whose data should be used
+             * \param size Size of the new dense vector.
+             */
+            DenseVector(DenseVector<DataType_> & src, unsigned long size);
+
+            /**
+             * Constructor.
+             *
              * \param size Size of the new dense vector.
              * \param value Default value for all of the vector's elements.
              * \param offset Offset of the vector's data inside the shared array.
