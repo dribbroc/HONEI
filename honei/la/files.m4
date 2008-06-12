@@ -11,6 +11,7 @@ dnl on this file at present...
 add(`absolute',                      `hh', `cc', `test')
 add(`algorithm',                     `hh', `test')
 add(`banded_matrix',                 `fwd', `hh', `impl', `cc', `test')
+add(`banded_matrix_q1',              `hh', `impl', `cc', `test')
 add(`dense_matrix',                  `hh', `test')
 add(`dense_matrix_tile',             `hh', `test')
 add(`dense_vector',                  `hh', `impl', `cc', `test')
