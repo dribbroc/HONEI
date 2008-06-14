@@ -74,7 +74,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
 
         unsigned long _dwidth, _dheight, _timestep;
 
-        SolverLABSWE<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> * _solver_1;
+        SolverLABSWE<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> * _solver_1;
 
         void _update_scenario()
         {
@@ -194,7 +194,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         _d_x = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _d_y = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
 
-                        _solver_1 = new SolverLABSWE<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC>(1.,1.,1., _dwidth, _dheight, _height, _bottom, _u, _v);
+                        _solver_1 = new SolverLABSWE<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(1.,1.,1., _dwidth, _dheight, _height, _bottom, _u, _v);
                         _solver_1->set_distribution(_d_0, _d_1, _d_2, _d_3, _d_4, _d_5, _d_6, _d_7, _d_8);
                         _solver_1->set_eq_distribution(_e_d_0, _e_d_1, _e_d_2, _e_d_3, _e_d_4, _e_d_5, _e_d_6, _e_d_7, _e_d_8);
                         _solver_1->set_temp_distribution(_t_d_0, _t_d_1, _t_d_2, _t_d_3, _t_d_4, _t_d_5, _t_d_6, _t_d_7, _t_d_8);

@@ -70,6 +70,7 @@ namespace honei
         {
             class NOSLIP_PERIODIC;
             class NOSLIP;
+            class NOSLIP_2;
             class PERIODIC;
             class DRIVEN_CAVITY;
         }
