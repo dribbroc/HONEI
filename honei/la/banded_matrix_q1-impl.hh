@@ -39,6 +39,7 @@ namespace honei
         /// Array of pointers to our band-data.
         SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > bands;
         /// \todo Use a more flat data structure
+        /// \todo Cache the ranged bands in an own data structure
 
         /// Our size.
         unsigned long size;
@@ -138,8 +139,8 @@ namespace honei
     BandedMatrixQ1<DataType_>::operator() (unsigned long row, unsigned long column) const
     {
         CONTEXT("When retrieving BandedMatrixQ1 element, unassignable:");
-        ASSERT(row < this->_imp->size && row >= 0, "row index '" << stringify(row) << "' is out of bounds!");
-        ASSERT(column < this->_imp->size && column >= 0, "column index '" << stringify(column) << "' is out of bounds!");
+        ASSERT(row < this->_imp->size && row >= 0, "row index '" + stringify(row) + "' is out of bounds!");
+        ASSERT(column < this->_imp->size && column >= 0, "column index '" + stringify(column) + "' is out of bounds!");
 
         long index = column - row;
         long root = this->_imp->root;

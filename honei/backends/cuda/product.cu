@@ -68,12 +68,12 @@ namespace honei
             if (idx < n)
             {
                 float ytemp1 = dd[idx] * Dcache[lindex + 1];
-                if (idx > 0) ytemp1 += dl[idx] * Dcache[lindex];
+                if (idx > 0) ytemp1 += dl[idx - 1] * Dcache[lindex];
                 if (idx < n - 1) ytemp1 += du[idx] * Dcache[lindex + 2];
 
-                if (idx > m) ytemp1 += ll[idx] * Lcache[lindex];
-                if (idx > m - 1) ytemp1 += ld[idx] * Lcache[lindex + 1];
-                if (idx > m - 2) ytemp1 += lu[idx] * Lcache[lindex + 2];
+                if (idx > m) ytemp1 += ll[idx - m - 1] * Lcache[lindex];
+                if (idx > m - 1) ytemp1 += ld[idx - m] * Lcache[lindex + 1];
+                if (idx > m - 2) ytemp1 += lu[idx - m + 1] * Lcache[lindex + 2];
 
                 if (idx < n - m + 1) ytemp1 += ul[idx] * Ucache[lindex];
                 if (idx < n - m) ytemp1 += ud[idx] * Ucache[lindex + 1];
@@ -120,15 +120,15 @@ extern "C" void cuda_product_bmdv_q1_float (float * ll, float * ld, float * lu,
 
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
     //cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ll_gpu, ll, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ld_gpu, ld, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(lu_gpu, lu, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(dl_gpu, dl, size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(ll_gpu, ll, (size - m - 1)* sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(ld_gpu, ld, (size - m ) * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(lu_gpu, lu, (size -m + 1) * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(dl_gpu, dl, (size - 1) * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(dd_gpu, dd, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(du_gpu, du, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ul_gpu, ul, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ud_gpu, ud, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(uu_gpu, uu, size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(du_gpu, du, (size - 1) * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(ul_gpu, ul, (size - m + 1) * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(ud_gpu, ud, (size - m) * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(uu_gpu, uu, (size - m - 1) * sizeof(float), cudaMemcpyHostToDevice);
 
     honei::cuda::product_bmdv_q1_gpu<<<grid,block, 3*(block.x+2)*sizeof(float)>>>(ll_gpu, ld_gpu, lu_gpu, dl_gpu, dd_gpu, du_gpu, ul_gpu, ud_gpu, uu_gpu, x_gpu, y_gpu, size, m);
     cudaMemcpy(y, y_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);

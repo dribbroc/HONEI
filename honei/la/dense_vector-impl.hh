@@ -107,7 +107,7 @@ namespace honei
     {
         CONTEXT("When creating DenseVector from beginning parts of another DenseVector:");
         ASSERT(size > 0, "size is zero!");
-        ASSERT(size < src.size(), "size is to big!");
+        ASSERT(size <= src.size(), "size is to big!");
     }
 
     template <typename DataType_>

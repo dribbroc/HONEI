@@ -21,6 +21,7 @@
 #define LIBGRAPH_GUARD_POSITIONS_IMPL_HH 1
 
 #include <honei/graph/position.hh>
+#include <honei/la/sum.hh>
 
 #include <cmath>
 #include <tr1/memory>

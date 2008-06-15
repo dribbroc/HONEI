@@ -22,6 +22,7 @@
 #define LIBLA_GUARD_PRODUCT_HH 1
 
 #include <honei/la/banded_matrix.hh>
+#include <honei/la/banded_matrix_q1.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_matrix_tile.hh>
@@ -38,6 +39,7 @@
 #include <honei/util/benchmark_info.hh>
 
 #include <cmath>
+#include <iostream>
 
 namespace honei
 {
@@ -219,6 +221,52 @@ namespace honei
                         }
                     }
                 }
+            }
+
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVector<DT1_> value(const BandedMatrixQ1<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorBase:");
+            if (b.size() != a.columns())
+            {
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
+            }
+
+            //DenseVector<DT1_> result(a.rows(), DT1_(0));
+            DenseVector<DT1_> result(a.rows());
+            long root(a.root());
+
+            for (long index(0) ; index < b.size() ; ++index)
+            {
+                //y->data[i] = A->sDD_CPU[i]*x->data[i];
+                result[index] = a.band(DD)[index];
+                if ((index - root - 1) >= 0)
+                    //y->data[i] += A->sLL_CPU[i]*x->data[i-m-1];
+                    result[index] += a.band(LL)[index - root - 1];
+                if ((index - root) >= 0)
+                    //y->data[i] += A->sLD_CPU[i]*x->data[i-m];
+                    result[index] += a.band(LD)[index - root];
+                if ((index - root + 1) >= 0)
+                    //y->data[i] += A->sLU_CPU[i]*x->data[i-m+1];
+                    result[index] += a.band(LU)[index - root + 1];
+                if ((index - 1) >= 0)
+                    //y->data[i] += A->sDL_CPU[i]*x->data[i-1];
+                    result[index] += a.band(DL)[index - 1];
+                if ((index + 1) < b.size())
+                    //y->data[i] += A->sDU_CPU[i]*x->data[i+1];
+                    result[index] += a.band(DU)[index];
+                if ((index + root - 1) < b.size())
+                    //y->data[i] += A->sUL_CPU[i]*x->data[i+m-1];
+                    result[index] += a.band(UL)[index];
+                if ((index + root) < b.size())
+                    //y->data[i] += A->sUD_CPU[i]*x->data[i+m];
+                    result[index] += a.band(UD)[index];
+                if ((index + root + 1) < b.size())
+                    //y->data[i] += A->sUU_CPU[i]*x->data[i+m+1];
+                    result[index] += a.band(UU)[index];
             }
 
             return result;
@@ -1191,6 +1239,8 @@ namespace honei
          */
 
         static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVector<float> value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b);
 
         /// \}
     };

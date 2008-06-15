@@ -24,7 +24,6 @@
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/matrix_error.hh>
-#include <honei/la/product.hh>
 #include <honei/la/scale.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
