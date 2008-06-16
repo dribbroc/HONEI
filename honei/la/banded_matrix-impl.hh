@@ -92,6 +92,33 @@ namespace honei
     }
 
     template <typename DataType_>
+    BandedMatrix<DataType_>::BandedMatrix(const BandedMatrixQ1<DataType_> & src) :
+        PrivateImplementationPattern<BandedMatrix<DataType_>, Shared>(new Implementation<BandedMatrix<DataType_> >(src.size()))
+    {
+            this->insert_band(0, src.band_full(DD));
+            this->insert_band(1, src.band_full(DU));
+            this->insert_band(src.root() - 1, src.band_full(UL));
+            this->insert_band(src.root(), src.band_full(UD));
+            this->insert_band(src.root() + 1, src.band_full(UU));
+            for (unsigned long i(0) ; i < src.band(DL).size() ; ++i)
+            {
+                this->band(-1)[i + 1] = src.band(DL)[i];
+            }
+            for (unsigned long i(0) ; i < src.band(LL).size() ; ++i)
+            {
+                this->band(-src.root() - 1)[i + src.root() + 1] = src.band(LL)[i];
+            }
+            for (unsigned long i(0) ; i < src.band(LD).size() ; ++i)
+            {
+                this->band(-src.root())[i + src.root()] = src.band(LD)[i];
+            }
+            for (unsigned long i(0) ; i < src.band(LU).size() ; ++i)
+            {
+                this->band(-src.root() + 1)[i + src.root() - 1] = src.band(LU)[i];
+            }
+    }
+
+    template <typename DataType_>
     BandedMatrix<DataType_>::~BandedMatrix()
     {
     }

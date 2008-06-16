@@ -26,6 +26,7 @@
 #include <honei/la/band_iterator.hh>
 #include <honei/la/element_iterator.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/la/banded_matrix_q1.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
@@ -79,6 +80,13 @@ namespace honei
              * \param diagonal Diagonal of the new banded matrix.
              */
             BandedMatrix(unsigned long size, const DenseVector<DataType_> & diagonal);
+
+            /**
+             * Constructor.
+             *
+             * \param source The source q1 matrix our matrix will be created from.
+             */
+            BandedMatrix(const BandedMatrixQ1<DataType_> & src);
 
             /// Destructor.
             ~BandedMatrix();
