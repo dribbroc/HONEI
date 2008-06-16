@@ -45,7 +45,7 @@ namespace honei
         unsigned long size;
 
         /// The square roote of our size
-        unsigned long root;
+        signed long root;
 
         /// Our zero element.
         static const DataType_ zero_element;
@@ -168,7 +168,7 @@ namespace honei
     }
 
     template <typename DataType_>
-    unsigned long
+    signed long
     BandedMatrixQ1<DataType_>::root() const
     {
         return this->_imp->root;

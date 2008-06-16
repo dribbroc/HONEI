@@ -97,7 +97,7 @@ namespace honei
             BandedMatrixQ1 copy() const;
 
             /// Returns the square root of our size.
-            unsigned long root() const;
+            signed long root() const;
     };
 
     /**

@@ -130,7 +130,7 @@ extern "C" void cuda_product_bmdv_q1_float (float * ll, float * ld, float * lu,
     cudaMemcpy(ud_gpu, ud, (size - m) * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(uu_gpu, uu, (size - m - 1) * sizeof(float), cudaMemcpyHostToDevice);
 
-    honei::cuda::product_bmdv_q1_gpu<<<grid,block, 3*(block.x+2)*sizeof(float)>>>(ll_gpu, ld_gpu, lu_gpu, dl_gpu, dd_gpu, du_gpu, ul_gpu, ud_gpu, uu_gpu, x_gpu, y_gpu, size, m);
+    honei::cuda::product_bmdv_q1_gpu<<<grid, block, 3 * (block.x + 2 ) * sizeof(float)>>>(ll_gpu, ld_gpu, lu_gpu, dl_gpu, dd_gpu, du_gpu, ul_gpu, ud_gpu, uu_gpu, x_gpu, y_gpu, size, m);
     cudaMemcpy(y, y_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);
     cudaFree(y_gpu);
