@@ -32,15 +32,12 @@
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
 
-#include <iostream>
-
 namespace honei
 {
     template <typename DataType_> struct Implementation<BandedMatrixQ1<DataType_> >
     {
         /// Array of pointers to our band-data.
         SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > bands;
-        /// \todo Cache the ranged bands in an own data structure
 
         /// Our size.
         unsigned long size;
@@ -77,7 +74,16 @@ namespace honei
         PrivateImplementationPattern<BandedMatrixQ1<DataType_>, Shared>(new Implementation<BandedMatrixQ1<DataType_> >(size))
     {
         CONTEXT("When creating BandedMatrixQ1 with initial bands:");
-        ASSERT(size > 0, "size is zero!"); /// todo Ln erkennen
+        ASSERT(size > 0, "size is zero!");
+
+        unsigned long target;
+        for (unsigned long level(1) ; level <= 50 ; ++level)
+        {
+            target = (unsigned long)pow((pow(2, level) + 1), 2);
+            if (target >= size)
+                break;
+        }
+        ASSERT(size == target, "size matches not ((2^L) +1)^2, L integer.");
 
         if (ll.size() != size)
             throw VectorSizeDoesNotMatch(ll.size(), size);
@@ -114,7 +120,16 @@ namespace honei
         PrivateImplementationPattern<BandedMatrixQ1<DataType_>, Shared>(new Implementation<BandedMatrixQ1<DataType_> >(src.size()))
     {
         CONTEXT("When creating BandedMatrixQ1 from BandedMatrix:");
-        ASSERT(src.size() > 0, "size is zero!"); /// todo Ln erkennen
+        ASSERT(src.size() > 0, "size is zero!");
+
+        unsigned long target;
+        for (unsigned long level(1) ; level <= 50 ; ++level)
+        {
+            target = (unsigned long)pow((pow(2, level) + 1), 2);
+            if (target >= src.size())
+                break;
+        }
+        ASSERT(src.size() == target, "size matches not ((2^L) +1)^2, L integer.");
 
         this->_imp->bands[LL].reset(new DenseVector<DataType_>(src.band(-this->_imp->root - 1)));
         this->_imp->bands[LD].reset(new DenseVector<DataType_>(src.band(-this->_imp->root)));
@@ -214,14 +229,13 @@ namespace honei
         switch(index)
         {
             case LL:
-                return DenseVectorRange<DataType_>(*this->_imp->bands[LL], this->_imp->size - this->_imp->root - 1, this->_imp->root - 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[LL], this->_imp->size - this->_imp->root - 1, this->_imp->root + 1);
                 break;
             case LD:
                 return DenseVectorRange<DataType_>(*this->_imp->bands[LD], this->_imp->size - this->_imp->root, this->_imp->root);
                 break;
             case LU:
-                std::cout<<this->_imp->bands[LL]->size()<<" "<<this->_imp->size - this->_imp->root + 1<<" "<<this->_imp->root + 1<<std::endl;
-                return DenseVectorRange<DataType_>(*this->_imp->bands[LU], this->_imp->size - this->_imp->root + 1, this->_imp->root + 1 );
+                return DenseVectorRange<DataType_>(*this->_imp->bands[LU], this->_imp->size - this->_imp->root + 1, this->_imp->root - 1 );
                 break;
             case DL:
                 return DenseVectorRange<DataType_>(*this->_imp->bands[DL], this->_imp->size - 1, 1);

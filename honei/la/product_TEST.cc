@@ -191,7 +191,7 @@ class Q1MatrixDenseVectorProductTest :
             unsigned long size;
             for (unsigned long level(1) ; level <= 7 ; ++level)
             {
-                size = (unsigned long)pow((pow(2, level) + 1), 2);
+                size  = (unsigned long)pow((pow(2, level) + 1), 2);
                 unsigned long num_limit(311); //value of used elements will be <= num_limit* size
 
                 DenseVector<DataType_> dv1(size, DataType_(1));
@@ -230,8 +230,8 @@ class Q1MatrixDenseVectorProductTest :
             }
 
             DenseVector<DataType_> dv01(4, DataType_(1));
-            DenseVector<DataType_> dv02(5, DataType_(1));
-            BandedMatrixQ1<DataType_> bm01(5, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
+            DenseVector<DataType_> dv02(1089, DataType_(1));
+            BandedMatrixQ1<DataType_> bm01(1089, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
             TEST_CHECK_THROWS(Product<Tag_>::value(bm01, dv01), VectorSizeDoesNotMatch);
         }
 };
@@ -295,8 +295,8 @@ class Q1MatrixDenseVectorProductQuickTest :
             }
 
             DenseVector<DataType_> dv01(4, DataType_(1));
-            DenseVector<DataType_> dv02(5, DataType_(1));
-            BandedMatrixQ1<DataType_> bm01(5, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
+            DenseVector<DataType_> dv02(1089, DataType_(1));
+            BandedMatrixQ1<DataType_> bm01(1089, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
             TEST_CHECK_THROWS(Product<Tag_>::value(bm01, dv01), VectorSizeDoesNotMatch);
         }
 };
