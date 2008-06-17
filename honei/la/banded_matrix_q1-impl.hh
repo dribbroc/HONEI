@@ -32,6 +32,8 @@
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
 
+#include <iostream>
+
 namespace honei
 {
     template <typename DataType_> struct Implementation<BandedMatrixQ1<DataType_> >
@@ -105,6 +107,24 @@ namespace honei
         this->_imp->bands[UL].reset(new DenseVector<DataType_>(ul));
         this->_imp->bands[UD].reset(new DenseVector<DataType_>(ud));
         this->_imp->bands[UU].reset(new DenseVector<DataType_>(uu));
+    }
+
+    template <typename DataType_>
+    BandedMatrixQ1<DataType_>::BandedMatrixQ1(BandedMatrix<DataType_> & src) :
+        PrivateImplementationPattern<BandedMatrixQ1<DataType_>, Shared>(new Implementation<BandedMatrixQ1<DataType_> >(src.size()))
+    {
+        CONTEXT("When creating BandedMatrixQ1 from BandedMatrix:");
+        ASSERT(src.size() > 0, "size is zero!"); /// todo Ln erkennen
+
+        this->_imp->bands[LL].reset(new DenseVector<DataType_>(src.band(-this->_imp->root - 1)));
+        this->_imp->bands[LD].reset(new DenseVector<DataType_>(src.band(-this->_imp->root)));
+        this->_imp->bands[LU].reset(new DenseVector<DataType_>(src.band(-this->_imp->root + 1)));
+        this->_imp->bands[DL].reset(new DenseVector<DataType_>(src.band(-1)));
+        this->_imp->bands[DD].reset(new DenseVector<DataType_>(src.band(0)));
+        this->_imp->bands[DU].reset(new DenseVector<DataType_>(src.band(1)));
+        this->_imp->bands[UL].reset(new DenseVector<DataType_>(src.band(this->_imp->root - 1)));
+        this->_imp->bands[UD].reset(new DenseVector<DataType_>(src.band(this->_imp->root)));
+        this->_imp->bands[UU].reset(new DenseVector<DataType_>(src.band(this->_imp->root + 1)));
     }
 
     template <typename DataType_>
@@ -194,13 +214,14 @@ namespace honei
         switch(index)
         {
             case LL:
-                return DenseVectorRange<DataType_>(*this->_imp->bands[LL], this->_imp->size - this->_imp->root - 1, this->_imp->size - this->_imp->root + 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[LL], this->_imp->size - this->_imp->root - 1, this->_imp->root - 1);
                 break;
             case LD:
                 return DenseVectorRange<DataType_>(*this->_imp->bands[LD], this->_imp->size - this->_imp->root, this->_imp->root);
                 break;
             case LU:
-                return DenseVectorRange<DataType_>(*this->_imp->bands[LU], this->_imp->size - this->_imp->root + 1, this->_imp->size - this->_imp->root -1 );
+                std::cout<<this->_imp->bands[LL]->size()<<" "<<this->_imp->size - this->_imp->root + 1<<" "<<this->_imp->root + 1<<std::endl;
+                return DenseVectorRange<DataType_>(*this->_imp->bands[LU], this->_imp->size - this->_imp->root + 1, this->_imp->root + 1 );
                 break;
             case DL:
                 return DenseVectorRange<DataType_>(*this->_imp->bands[DL], this->_imp->size - 1, 1);

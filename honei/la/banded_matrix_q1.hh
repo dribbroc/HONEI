@@ -22,10 +22,14 @@
 #define LIBLA_GUARD_BANDED_MATRIX_Q1_HH 1
 
 #include <honei/la/dense_vector.hh>
+#include <honei/la/banded_matrix.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
 {
+    // Forward declarations
+    template <typename DataType_> class BandedMatrix;
+
     enum Q1BandIndex
     {
         LL = 0,
@@ -69,11 +73,17 @@ namespace honei
                     const DenseVector<DataType_> & ud,
                     const DenseVector<DataType_> & uu);
 
+            /**
+             * Constructor.
+             *
+             * \param src The BandedMatrix our matrix will be created from.
+             */
+            BandedMatrixQ1(BandedMatrix<DataType_> & src);
+
             /// Destructor.
             ~BandedMatrixQ1();
 
             /// \}
-
 
             /// Returns the number of our columns.
             unsigned long columns() const;

@@ -31,6 +31,9 @@
 
 namespace honei
 {
+    // Forward declarations
+    template <typename DataType_> class BandedMatrixQ1;
+
     /**
      * \brief BandedMatrix is a square matrix with O(size) non-zero bands which keeps its data
      * \brief non-sequential.

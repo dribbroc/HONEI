@@ -18,6 +18,7 @@
  */
 
 #include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -55,9 +56,18 @@ class BandedMatrixQ1QuickTest :
 
             BandedMatrixQ1<DataType_> bm1(size, dv1, dv2, dv3, dv4, dv5, dv6, dv7, dv8, dv9);
             BandedMatrixQ1<DataType_> bm0(size, dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy());
+            (bm0 == bm1);
             TEST_CHECK_NOT_EQUAL(bm0, bm1);
             TEST_CHECK_EQUAL(bm0, bm0);
             TEST_CHECK_EQUAL(bm1, bm1.copy());
+
+            BandedMatrix<DataType_> am(bm1);
+            BandedMatrixQ1<DataType_> bm3(am);
+            /*TEST_CHECK_EQUAL(am, bm1);
+            TEST_CHECK_EQUAL(bm3, am);
+            TEST_CHECK_EQUAL(bm1, bm3);*/
+            /// \todo activate when bm==bmq1 is available
+
 
             DenseVector<DataType_> dv01(5, DataType_(1));
             TEST_CHECK_THROWS(BandedMatrixQ1<DataType_> bm01(6, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01), VectorSizeDoesNotMatch);
