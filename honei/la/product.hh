@@ -245,16 +245,16 @@ namespace honei
                 result[index] = a.band(DD)[index] * b[index];
                 if ((index - root - 1) >= 0)
                     //y->data[i] += A->sLL_CPU[i]*x->data[i-m-1];
-                    result[index] += a.band(LL)[index - root - 1] * b[index - root - 1];
+                    result[index] += a.band(LL)[index] * b[index - root - 1];
                 if ((index - root) >= 0)
                     //y->data[i] += A->sLD_CPU[i]*x->data[i-m];
-                    result[index] += a.band(LD)[index - root] * b[index - root];
+                    result[index] += a.band(LD)[index] * b[index - root];
                 if ((index - root + 1) >= 0)
                     //y->data[i] += A->sLU_CPU[i]*x->data[i-m+1];
-                    result[index] += a.band(LU)[index - root + 1] * b[index - root + 1];
+                    result[index] += a.band(LU)[index] * b[index - root + 1];
                 if ((index - 1) >= 0)
                     //y->data[i] += A->sDL_CPU[i]*x->data[i-1];
-                    result[index] += a.band(DL)[index - 1] * b[index - 1];
+                    result[index] += a.band(DL)[index] * b[index - 1];
                 if ((index + 1) < b.size())
                     //y->data[i] += A->sDU_CPU[i]*x->data[i+1];
                     result[index] += a.band(DU)[index] * b[index + 1];

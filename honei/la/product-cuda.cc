@@ -72,8 +72,8 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_float", 128ul));
     unsigned long m(a.root());
 
-    cuda_product_bmdv_q1_float(a.band_full(LL).elements(), a.band(LD).elements(), a.band(LU).elements(),
-            a.band(DL).elements(), a.band(DD).elements(), a.band_full(DU).elements(),
+    cuda_product_bmdv_q1_float(a.band(LL).elements(), a.band(LD).elements(), a.band(LU).elements(),
+            a.band(DL).elements(), a.band(DD).elements(), a.band(DU).elements(),
             a.band(UL).elements(), a.band(UD).elements(), a.band(UU).elements(),
             b.elements(), result.elements(), a.size(), blocksize, m);
 

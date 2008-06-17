@@ -88,10 +88,10 @@ namespace honei
             const DataType_ & operator() (unsigned long row, unsigned long column) const;
 
             /// Returns a full band-vector by index.
-            DenseVector<DataType_> & band_full(Q1BandIndex index) const;
+            DenseVector<DataType_> & band(Q1BandIndex index) const;
 
-            /// Returns a band-vector by index.
-            DenseVector<DataType_> band(Q1BandIndex index) const;
+            /// Returns a band-vector range by index.
+            DenseVectorRange<DataType_> band_range(Q1BandIndex index) const;
 
             /// Returns a copy of the matrix.
             BandedMatrixQ1 copy() const;

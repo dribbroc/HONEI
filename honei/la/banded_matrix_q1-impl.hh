@@ -38,7 +38,6 @@ namespace honei
     {
         /// Array of pointers to our band-data.
         SharedArray<std::tr1::shared_ptr<DenseVector<DataType_> > > bands;
-        /// \todo Use a more flat data structure
         /// \todo Cache the ranged bands in an own data structure
 
         /// Our size.
@@ -146,13 +145,13 @@ namespace honei
         long root = this->_imp->root;
 
         if (index == -root - 1)
-            return (*this->_imp->bands[LL])[row - root -1];
+            return (*this->_imp->bands[LL])[row];
         else if (index == -root)
-            return (*this->_imp->bands[LD])[row - root];
+            return (*this->_imp->bands[LD])[row];
         else if (index == -root + 1)
-            return (*this->_imp->bands[LU])[row - root + 1];
+            return (*this->_imp->bands[LU])[row];
         else if (index == -1)
-            return (*this->_imp->bands[DL])[row - 1];
+            return (*this->_imp->bands[DL])[row];
         else if (index == 0)
             return (*this->_imp->bands[DD])[row];
         else if (index == 1)
@@ -176,9 +175,9 @@ namespace honei
 
     template <typename DataType_>
     DenseVector<DataType_> &
-    BandedMatrixQ1<DataType_>::band_full(Q1BandIndex index) const
+    BandedMatrixQ1<DataType_>::band(Q1BandIndex index) const
     {
-        CONTEXT("When retrieving full band '" + stringify(index) + "' of matrix of size '"
+        CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '"
                 + stringify(this->_imp->size) + "':");
 
 
@@ -186,43 +185,43 @@ namespace honei
     }
 
     template <typename DataType_>
-    DenseVector<DataType_>
-    BandedMatrixQ1<DataType_>::band(Q1BandIndex index) const
+    DenseVectorRange<DataType_>
+    BandedMatrixQ1<DataType_>::band_range(Q1BandIndex index) const
     {
-        CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '"
+        CONTEXT("When retrieving band range '" + stringify(index) + "' of matrix of size '"
                 + stringify(this->_imp->size) + "':");
 
         switch(index)
         {
             case LL:
-                return DenseVector<DataType_>(*this->_imp->bands[LL], this->_imp->size - this->_imp->root - 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[LL], this->_imp->size - this->_imp->root - 1, this->_imp->size - this->_imp->root + 1);
                 break;
             case LD:
-                return DenseVector<DataType_>(*this->_imp->bands[LD], this->_imp->size - this->_imp->root);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[LD], this->_imp->size - this->_imp->root, this->_imp->root);
                 break;
             case LU:
-                return DenseVector<DataType_>(*this->_imp->bands[LU], this->_imp->size - this->_imp->root + 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[LU], this->_imp->size - this->_imp->root + 1, this->_imp->size - this->_imp->root -1 );
                 break;
             case DL:
-                return DenseVector<DataType_>(*this->_imp->bands[DL], this->_imp->size - 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[DL], this->_imp->size - 1, 1);
                 break;
             case DD:
-                return DenseVector<DataType_>(*this->_imp->bands[DD], this->_imp->size);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[DD], this->_imp->size, 0);
                 break;
             case DU:
-                return DenseVector<DataType_>(*this->_imp->bands[DU], this->_imp->size - 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[DU], this->_imp->size - 1, 0);
                 break;
             case UL:
-                return DenseVector<DataType_>(*this->_imp->bands[UL], this->_imp->size - this->_imp->root + 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[UL], this->_imp->size - this->_imp->root + 1, 0);
                 break;
             case UD:
-                return DenseVector<DataType_>(*this->_imp->bands[UD], this->_imp->size - this->_imp->root);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[UD], this->_imp->size - this->_imp->root, 0);
                 break;
             case UU:
-                return DenseVector<DataType_>(*this->_imp->bands[UU], this->_imp->size - this->_imp->root - 1);
+                return DenseVectorRange<DataType_>(*this->_imp->bands[UU], this->_imp->size - this->_imp->root - 1, 0);
                 break;
             default:
-                return DenseVector<DataType_>(this->_imp->zero_vector, this->_imp->size);
+                return DenseVectorRange<DataType_>(this->_imp->zero_vector, this->_imp->size, 0);
         }
     }
 
@@ -254,15 +253,15 @@ namespace honei
 
         bool result(true);
 
-        result &= (a.band(LL) == b.band(LL));
-        result &= (a.band(LD) == b.band(LD));
-        result &= (a.band(LU) == b.band(LU));
-        result &= (a.band(DL) == b.band(DL));
-        result &= (a.band(DD) == b.band(DD));
-        result &= (a.band(DU) == b.band(DU));
-        result &= (a.band(UL) == b.band(UL));
-        result &= (a.band(UD) == b.band(UD));
-        result &= (a.band(UU) == b.band(UU));
+        result &= (a.band_range(LL) == b.band_range(LL));
+        result &= (a.band_range(LD) == b.band_range(LD));
+        result &= (a.band_range(LU) == b.band_range(LU));
+        result &= (a.band_range(DL) == b.band_range(DL));
+        result &= (a.band_range(DD) == b.band_range(DD));
+        result &= (a.band_range(DU) == b.band_range(DU));
+        result &= (a.band_range(UL) == b.band_range(UL));
+        result &= (a.band_range(UD) == b.band_range(UD));
+        result &= (a.band_range(UU) == b.band_range(UU));
 
         return result;
     }
