@@ -122,6 +122,9 @@ namespace honei
 
             /// Return a pointer to our elements.
             virtual DataType_ * elements() const = 0;
+
+            /// Return our memory id
+            virtual unsigned long memid() const = 0;
     };
 
     /**

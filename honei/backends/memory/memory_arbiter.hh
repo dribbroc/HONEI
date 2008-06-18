@@ -177,6 +177,7 @@ namespace honei
                             {
                                 switch(*j)
                                 {
+                                    /// \todo nach reset j aus readers list loeschen?
                                     case tags::tv_cpu:
                                         MemoryBackend<tags::CPU>::instance()->reset(memid, address, bytes);
                                         break;
@@ -191,6 +192,7 @@ namespace honei
                             }
 
                         }
+                        temp.readers.clear();
                         temp.writer= Tag_::tag_value;
                         temp.write_count++;
                         temp.readers.insert(tags::TagValue(Tag_::tag_value));
