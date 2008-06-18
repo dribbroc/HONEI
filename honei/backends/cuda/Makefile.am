@@ -23,11 +23,13 @@ libhoneibackendscuda_la_SOURCES = \
 				 product.cu \
 				 scale.cu \
 				 scaled_sum.cu \
-				 sum.cu
+				 sum.cu \
+				 transfer.cu \
+				 transfer.hh
 libhoneibackendscuda_la_LIBADD = \
 				 $(top_builddir)/honei/util/libhoneiutil.la \
 				-lcudart
 
 libhoneibackendscuda_includedir = $(includedir)/honei/backends/cuda/
 
-libhoneibackendscuda_include_HEADERS = operations.hh cuda_util.hh
+libhoneibackendscuda_include_HEADERS = operations.hh cuda_util.hh transfer.hh

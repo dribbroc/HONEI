@@ -6,12 +6,13 @@
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/tags.hh>
 
+#include <map>
+
 namespace honei
 {
 
     template<typename Tag_>
     class MemoryBackend
-        //public InstantiationPolicy<MemoryBackend<Tag_>, Singleton>
     {
     };
 
@@ -20,12 +21,12 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>
     {
     public:
-        unsigned long upload(unsigned long memid)
+        unsigned long upload(unsigned long memid, unsigned long address, unsigned long size)
         {
-            return memid;
+            return address;
         }
 
-        void download(unsigned long memid)
+        void download(unsigned long memid, unsigned long address, unsigned long size)
         {
         }
 
@@ -35,10 +36,13 @@ namespace honei
     class MemoryBackend<tags::GPU::CUDA> :
         public InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>
     {
-    public:
-        unsigned long upload(unsigned long memid);
+        private:
+            std::map<unsigned long, unsigned long> address_map;
 
-        void download(unsigned long memid);
+        public:
+            unsigned long upload(unsigned long memid, unsigned long address, unsigned long size);
+
+            void download(unsigned long memid, unsigned long address, unsigned long size);
 
     };
 }

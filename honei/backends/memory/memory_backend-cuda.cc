@@ -17,17 +17,41 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/util/exception.hh>
 #include <honei/backends/memory/memory_backend.hh>
+#include <honei/backends/cuda/transfer.hh>
 
 
 namespace honei
 {
-    unsigned long MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid)
+    unsigned long MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, unsigned long address, unsigned long bytes)
     {
-        return memid;
+        std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
+        if (i == address_map.end())
+        {
+            unsigned long temp(cuda_upload(address, bytes));
+            address_map.insert(std::pair<unsigned long, unsigned long>(address, temp));
+            return temp;
+        }
+        else
+        {
+            return i->second;
+        }
     }
 
-    void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid)
+    void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid, unsigned long address, unsigned long bytes)
     {
+        std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
+        if (i == address_map.end())
+        {
+            throw InternalError("MemoryBackend<tags::GPU::CUDA> download address not found!");
+        }
+        else
+        {
+            cuda_download(i->second, address, bytes);
+            cuda_free(i->second);
+            address_map.erase(i);
+        }
+
     }
 }

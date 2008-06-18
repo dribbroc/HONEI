@@ -36,7 +36,7 @@ namespace honei
 {
 
 /**
- * \def ASSERT
+ * \def CUDA_ERROR
  *
  * \brief Convenience definition that provides a way to test for cuda errors.
  *
