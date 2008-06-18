@@ -244,6 +244,12 @@ namespace honei
                 return _rows;
             }
 
+            /// Returns the number of our elements.
+            inline virtual unsigned long size() const
+            {
+                return _rows * _columns;
+            }
+
             /// Retrieves row vector by index, zero-based, unassignable.
             virtual const DenseVectorRange<DataType_> & operator[] (unsigned long row) const
             {
