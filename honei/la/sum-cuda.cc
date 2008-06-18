@@ -19,6 +19,7 @@
 
 #include <honei/la/sum.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/memory/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 
@@ -55,7 +56,11 @@ DenseMatrix<float> & Sum<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const D
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_float", 128ul));
 
-    cuda_sum_two_float(a.elements(), b.elements(), a.rows() * a.columns(), blocksize);
+    float * a_gpu = (float *)MemoryArbiter::instance()->write<tags::GPU::CUDA>(a.memid(), (unsigned long)a.elements(), a.rows() * a.columns() * sizeof(float));
+    float * b_gpu = (float *)MemoryArbiter::instance()->read<tags::GPU::CUDA>(b.memid(), (unsigned long)b.elements(), b.rows() * b.columns() * sizeof(float));
+    cuda_sum_two_float(a_gpu, b_gpu, a.rows() * a.columns(), blocksize);
+    MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(b.memid());
+    MemoryArbiter::instance()->release_write<tags::GPU::CUDA>(a.memid());
 
     return a;
 }

@@ -17,21 +17,29 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <cuda_util.hh>
+
 extern "C" unsigned long cuda_upload(unsigned long src, unsigned long bytes)
 {
-    unsigned long gpu;
+    float * gpu;
+    float * cpu((float *)src);
     cudaMalloc((void**)&gpu, bytes);
-    cudaMemcpy((void*)&gpu, (void*)&src, bytes, cudaMemcpyHostToDevice);
-    return gpu;
+    cudaMemcpy(gpu, cpu, bytes, cudaMemcpyHostToDevice);
+    CUDA_ERROR();
+    return (unsigned long)gpu;
 }
 
 extern "C" void cuda_download(unsigned long src, unsigned long target, unsigned long bytes)
 {
-    cudaMemcpy((void*)&target, (void*)&src, bytes, cudaMemcpyDeviceToHost);
+    float * gpu((float *)src);
+    float * cpu((float *)target);
+    cudaMemcpy(cpu, gpu, bytes, cudaMemcpyDeviceToHost);
+    CUDA_ERROR();
 }
 
 extern "C" void cuda_free(unsigned long src)
 {
-    cudaFree((void*)&src);
+    cudaFree((float *)src);
+    CUDA_ERROR();
 }
 

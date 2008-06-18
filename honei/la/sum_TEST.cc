@@ -23,6 +23,7 @@
 #include <honei/la/matrix_error.hh>
 #include <honei/la/sum.hh>
 #include <unittest/unittest.hh>
+#include <honei/backends/memory/memory_arbiter.hh>
 
 #include <limits>
 #include <tr1/memory>
@@ -484,10 +485,13 @@ class DenseMatrixSumTest :
                     dm3(size+1, size, DataType_(-1));
 
                 Sum<Tag_>::value(dm1, dm2);
+                MemoryArbiter::instance()->read<tags::CPU>(dm1.memid(), dm1.memid(), dm1.rows() * dm1.columns() *sizeof(DataType_));
 
                 TEST_CHECK_EQUAL(dm1, dm3);
+                MemoryArbiter::instance()->release_read<tags::CPU>(dm1.memid());
 
                 DenseMatrix<DataType_> dm4(size + 1, size, DataType_(117));
+                MemoryArbiter::instance()->write<tags::CPU>(dm2.memid(), dm2.memid(), dm2.rows() * dm2.columns() *sizeof(DataType_));
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm4.begin_elements()), i_end(dm4.end_elements()),
                         si(dm2.begin_elements()), ri(dm3.begin_elements()) ; i != i_end ; ++i, ++si, ++ri)
@@ -497,8 +501,11 @@ class DenseMatrixSumTest :
                     *ri = DataType_(117) + DataType_(2) * ri.row() - DataType_(3);
                 }
 
+                MemoryArbiter::instance()->release_write<tags::CPU>(dm2.memid());
                 Sum<Tag_>::value(dm4, dm2);
+                MemoryArbiter::instance()->read<tags::CPU>(dm4.memid(), dm4.memid(), dm4.rows() * dm4.columns() *sizeof(DataType_));
                 TEST_CHECK_EQUAL(dm4, dm3);
+                MemoryArbiter::instance()->release_read<tags::CPU>(dm4.memid());
             }
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);

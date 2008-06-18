@@ -19,9 +19,9 @@ namespace honei
     {
         public:
 
-            MemoryBlock(unsigned long m, tags::TagValue v) :
+            MemoryBlock(unsigned long m, tags::TagValue w) :
                 memid(m),
-                value(v)
+                writer(w)
             {
                 read_count = 0;
                 write_count = 0;
@@ -31,7 +31,8 @@ namespace honei
 
             unsigned read_count;
             unsigned write_count;
-            tags::TagValue value;
+            tags::TagValue writer;
+            std::set<tags::TagValue> readers;
     };
 
     struct MBCompare
@@ -82,15 +83,16 @@ namespace honei
                     if (i == blocks.end())
                     {
                         new_block.read_count++;
+                        new_block.readers.insert(tags::TagValue(Tag_::tag_value));
                         blocks.insert(new_block);
                     }
                     else
                     {
                         MemoryBlock temp(*i);
                         blocks.erase(i);
-                        if (temp.value != tags::tv_none && temp.value != Tag_::tag_value)
+                        if (temp.writer != tags::tv_none && temp.writer != Tag_::tag_value)
                         {
-                            switch(temp.value)
+                            switch(temp.writer)
                             {
                                 case tags::tv_cpu:
                                     MemoryBackend<tags::CPU>::instance()->download(memid, address, bytes);
@@ -105,7 +107,7 @@ namespace honei
                             }
                         }
                         temp.read_count++;
-                        temp.value = tags::tv_none;
+                        new_block.readers.insert(tags::TagValue(Tag_::tag_value));
                         blocks.insert(temp);
                     }
                 }
@@ -128,15 +130,16 @@ namespace honei
                     if (i == blocks.end())
                     {
                         new_block.write_count++;
+                        new_block.readers.insert(tags::TagValue(Tag_::tag_value));
                         blocks.insert(new_block);
                     }
                     else
                     {
                         MemoryBlock temp(*i);
                         blocks.erase(i);
-                        if (temp.value != tags::tv_none && temp.value != Tag_::tag_value)
+                        if (temp.writer != tags::tv_none && temp.writer != Tag_::tag_value)
                         {
-                            switch(temp.value)
+                            switch(temp.writer)
                             {
                                 case tags::tv_cpu:
                                     MemoryBackend<tags::CPU>::instance()->download(memid, address, bytes);
@@ -147,12 +150,33 @@ namespace honei
                                     break;
 #endif
                                 default:
-                                    throw InternalError("MemoryArbiter::write tag not found!");
-
+                                    throw InternalError("MemoryArbiter::write writer not found!");
                             }
                         }
-                        temp.value= Tag_::tag_value;
+                        for (std::set<tags::TagValue>::iterator j(temp.readers.begin()), j_end(temp.readers.end()) ;
+                                j != j_end ; ++j)
+                        {
+                            if (*j != Tag_::tag_value)
+                            {
+                                switch(*j)
+                                {
+                                    case tags::tv_cpu:
+                                        MemoryBackend<tags::CPU>::instance()->reset(memid, address, bytes);
+                                        break;
+#ifdef HONEI_CUDA
+                                    case tags::tv_gpu_cuda:
+                                        MemoryBackend<tags::GPU::CUDA>::instance()->reset(memid, address, bytes);
+                                        break;
+#endif
+                                    default:
+                                        throw InternalError("MemoryArbiter::write reader not found!");
+                                }
+                            }
+
+                        }
+                        temp.writer= Tag_::tag_value;
                         temp.write_count++;
+                        temp.readers.insert(tags::TagValue(Tag_::tag_value));
                         blocks.insert(temp);
                     }
                 }
@@ -178,10 +202,10 @@ namespace honei
                     {
                         throw InternalError("MemoryArbiter::release_read: read counter is already zero!");
                     }
-                    else if((temp.value == tags::tv_cpu || temp.value == tags::tv_none) && temp.read_count == 1 && temp.write_count == 0)
+                    /*else if((temp.writer == tags::tv_cpu || temp.writer == tags::tv_none) && temp.read_count == 1 && temp.write_count == 0)
                     {
                         // leave block deleted
-                    }
+                    }*/
                     else
                     {
                         temp.read_count--;
@@ -210,10 +234,10 @@ namespace honei
                     {
                         throw InternalError("MemoryArbiter::release_write: write counter is already zero!");
                     }
-                    else if((temp.value == tags::tv_cpu || temp.value == tags::tv_none) && temp.read_count == 0 && temp.write_count == 1)
+                    /*else if((temp.writer == tags::tv_cpu || temp.writer == tags::tv_none) && temp.read_count == 0 && temp.write_count == 1)
                     {
                         // leave block deleted
-                    }
+                    }*/
                     else
                     {
                         temp.write_count--;

@@ -21,7 +21,6 @@
 #include <honei/backends/memory/memory_backend.hh>
 #include <honei/backends/cuda/transfer.hh>
 
-
 namespace honei
 {
     unsigned long MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, unsigned long address, unsigned long bytes)
@@ -53,5 +52,15 @@ namespace honei
             address_map.erase(i);
         }
 
+    }
+
+    void MemoryBackend<tags::GPU::CUDA>::reset(unsigned long memid, unsigned long address, unsigned long size)
+    {
+        std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
+        if (i != address_map.end())
+        {
+            cuda_free(i->second);
+            address_map.erase(i);
+        }
     }
 }

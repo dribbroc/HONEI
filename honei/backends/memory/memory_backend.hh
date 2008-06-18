@@ -30,6 +30,10 @@ namespace honei
         {
         }
 
+        void reset(unsigned long memid, unsigned long address, unsigned long size)
+        {
+        }
+
     };
 
     template<>
@@ -44,6 +48,7 @@ namespace honei
 
             void download(unsigned long memid, unsigned long address, unsigned long size);
 
+            void reset(unsigned long memid, unsigned long address, unsigned long size);
     };
 }
 #endif

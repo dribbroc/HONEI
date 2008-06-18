@@ -87,6 +87,7 @@ lib_LTLIBRARIES = libhoneila.la
 libhoneila_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES)
 libhoneila_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/backends/memory/libhoneibackendsmemory.la \
 	$(CELLLIB)
 
 libhoneila_includedir = $(includedir)/honei/la
