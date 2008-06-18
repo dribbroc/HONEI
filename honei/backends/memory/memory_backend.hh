@@ -20,12 +20,12 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>
     {
     public:
-        unsigned long upload(unsigned long host_address, unsigned long bytes)
+        unsigned long upload(unsigned long memid)
         {
-            return host_address;
+            return memid;
         }
 
-        void download(unsigned long host_address, unsigned long bytes)
+        void download(unsigned long memid)
         {
         }
 
@@ -36,9 +36,9 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>
     {
     public:
-        unsigned long upload(unsigned long host_address, unsigned long bytes);
+        unsigned long upload(unsigned long memid);
 
-        void download(unsigned long host_address, unsigned long bytes);
+        void download(unsigned long memid);
 
     };
 }

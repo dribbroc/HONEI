@@ -10,5 +10,5 @@ dnl on this file at present...
 
 add(`general', `memory_arbiter',                      `hh', `cc', `test')
 add(`general', `memory_backend',                      `hh', `cc')
-dnl add(`cuda', `memory_backend-cuda',                   `hh', `cc')
+add(`cuda', `memory_backend-cuda',                    `cc')
 

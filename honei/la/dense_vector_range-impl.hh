@@ -190,7 +190,8 @@ namespace honei
     template <typename DataType_>
     inline unsigned long DenseVectorRange<DataType_>::memid() const
     {
-        return (unsigned long)this->_imp->elements.get();
+        /// \todo return base address without offset
+        return (unsigned long)this->_imp->elements.get() + this->_imp->offset;
     }
 
     template <typename DataType_>
