@@ -144,6 +144,9 @@ namespace honei
             /// Return a pointer to our elements.
             virtual DataType_ * elements() const;
 
+            /// Return our memory id
+            virtual unsigned long memid() const;
+
             /// \}
 
             /// Return a copy of the Vector.

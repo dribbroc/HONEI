@@ -231,6 +231,12 @@ namespace honei
     }
 
     template <typename DataType_>
+    unsigned long DenseVector<DataType_>::memid() const
+    {
+        return (unsigned long)this->_imp->elements.get();
+    }
+
+    template <typename DataType_>
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
         DenseVector result(this->_imp->size);

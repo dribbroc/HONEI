@@ -310,6 +310,12 @@ namespace honei
                 return _elements.get();
             }
 
+            /// Return our memory id
+            inline unsigned long memid() const
+            {
+                return (unsigned long)_elements.get();
+            }
+
             /// Returns a copy of the matrix.
             DenseMatrix copy() const
             {
