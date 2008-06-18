@@ -3,11 +3,11 @@
 /*
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
- * This file is part of the Utility C++ library. LibUtil is free software;
+ * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibUtil is distributed in the hope that it will be useful, but WITHOUT ANY
+ * HONEI is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -25,6 +25,7 @@ namespace honei
 {
     unsigned long MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, unsigned long address, unsigned long bytes)
     {
+        CONTEXT("When uploading data:");
         std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
         if (i == address_map.end())
         {
@@ -40,6 +41,7 @@ namespace honei
 
     void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid, unsigned long address, unsigned long bytes)
     {
+        CONTEXT("When downloading data:");
         std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
         if (i == address_map.end())
         {
@@ -56,6 +58,7 @@ namespace honei
 
     void MemoryBackend<tags::GPU::CUDA>::reset(unsigned long memid, unsigned long address, unsigned long size)
     {
+        CONTEXT("When resetting data:");
         std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
         if (i != address_map.end())
         {
