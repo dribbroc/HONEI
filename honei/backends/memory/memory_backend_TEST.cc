@@ -19,10 +19,45 @@
  */
 
 #include <unittest/unittest.hh>
-#include <honei/backends/memory/memory_arbiter.hh>
+#include <honei/util/memory_arbiter.hh>
+#include <honei/backends/memory/memory_backend.hh>
 
 using namespace honei;
 using namespace tests;
+
+template <typename Tag_>
+class MemoryBackendQuickTest :
+    public QuickTaggedTest<Tag_>
+{
+    public:
+        MemoryBackendQuickTest() :
+            QuickTaggedTest<Tag_>("memory_backend_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            int data_array [10];
+            for (int i(0) ; i < 10 ; ++i)
+            {
+                data_array[i] = i;
+            }
+            void * data = data_array;
+
+            void * device(MemoryBackend<Tag_>::instance()->upload(0, data, 5 * sizeof(int)));
+            if (device != data)
+            {
+                data_array[3] = -50;
+            }
+            MemoryBackend<Tag_>::instance()->download(0, data, 5 * sizeof(int));
+            MemoryBackend<Tag_>::instance()->free(0, data, 5 * sizeof(int));
+            TEST_CHECK_EQUAL(data_array[3], 3);
+        }
+};
+MemoryBackendQuickTest<tags::CPU> memory_backend_quick_test;
+#ifdef HONEI_CUDA
+MemoryBackendQuickTest<tags::GPU::CUDA> cuda_memory_backend_quick_test;
+#endif
 
 class MemoryArbiterQuickTest :
     public QuickTest

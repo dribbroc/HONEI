@@ -50,13 +50,14 @@ namespace honei
         else
         {
             cuda_download(i->second, address, bytes);
+            /// todo free hier noch weglassen?
             cuda_free(i->second);
             address_map.erase(i);
         }
 
     }
 
-    void MemoryBackend<tags::GPU::CUDA>::reset(unsigned long memid, void * address, unsigned long size)
+    void MemoryBackend<tags::GPU::CUDA>::free(unsigned long memid, void * address, unsigned long size)
     {
         CONTEXT("When resetting data:");
         std::map<void *, void *>::iterator i(address_map.find(address));

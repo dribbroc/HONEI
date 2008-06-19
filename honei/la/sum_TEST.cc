@@ -23,7 +23,7 @@
 #include <honei/la/matrix_error.hh>
 #include <honei/la/sum.hh>
 #include <unittest/unittest.hh>
-#include <honei/backends/memory/memory_arbiter.hh>
+#include <honei/util/memory_arbiter.hh>
 
 #include <limits>
 #include <tr1/memory>

@@ -17,19 +17,20 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/backends/memory/memory_backend.hh>
-#include <honei/util/instantiation_policy-impl.hh>
-#include <honei/util/memory_arbiter.hh>
+#ifndef UTIL_GUARD_MEMORY_BACKEND_BASE_HH
+#define UTIL_GUARD_MEMORY_BACKEND_BASE_HH 1
+
 
 namespace honei
 {
-    template class InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>;
-    template class MemoryBackend<tags::CPU>;
+    class MemoryBackendBase
+    {
+        public:
+            virtual void * upload(unsigned long memid, void * address, unsigned long size) = 0;
 
-    template class InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>;
-    template class MemoryBackend<tags::GPU::CUDA>;
+            virtual void download(unsigned long memid, void * address, unsigned long size) = 0;
+
+            virtual void free(unsigned long memid, void * address, unsigned long size) = 0;
+    };
 }
-
-using namespace honei;
-static MemoryBackendRegistrator cpu_backend_registrator(tags::CPU::memory_value, MemoryBackend<tags::CPU>::instance());
-static MemoryBackendRegistrator gpu_backend_registrator(tags::GPU::CUDA::memory_value, MemoryBackend<tags::GPU::CUDA>::instance());
+#endif

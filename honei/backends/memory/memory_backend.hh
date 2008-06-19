@@ -21,6 +21,7 @@
 #define MEMORY_GUARD_MEMORY_BACKEND_HH 1
 
 #include <honei/util/instantiation_policy.hh>
+#include <honei/util/memory_backend_base.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/exception.hh>
 
@@ -28,29 +29,30 @@
 
 namespace honei
 {
-
     template<typename Tag_>
-    class MemoryBackend
+    class MemoryBackend :
+        public MemoryBackendBase
     {
     };
 
     template<>
     class MemoryBackend<tags::CPU> :
+        public MemoryBackendBase,
         public InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>
     {
     public:
-        void * upload(unsigned long memid, void * address, unsigned long size)
+        virtual void * upload(unsigned long memid, void * address, unsigned long size)
         {
             CONTEXT("When uploading data:");
             return address;
         }
 
-        void download(unsigned long memid, void * address, unsigned long size)
+        virtual void download(unsigned long memid, void * address, unsigned long size)
         {
             CONTEXT("When downloading data:");
         }
 
-        void reset(unsigned long memid, void * address, unsigned long size)
+        virtual void free(unsigned long memid, void * address, unsigned long size)
         {
         }
 
@@ -58,17 +60,18 @@ namespace honei
 
     template<>
     class MemoryBackend<tags::GPU::CUDA> :
+        public MemoryBackendBase,
         public InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>
     {
         private:
             std::map<void *, void *> address_map;
 
         public:
-            void * upload(unsigned long memid, void * address, unsigned long size);
+            virtual void * upload(unsigned long memid, void * address, unsigned long size);
 
-            void download(unsigned long memid, void * address, unsigned long size);
+            virtual void download(unsigned long memid, void * address, unsigned long size);
 
-            void reset(unsigned long memid, void * address, unsigned long size);
+            virtual void free(unsigned long memid, void * address, unsigned long size);
     };
 }
 #endif

@@ -18,7 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/backends/memory/memory_arbiter.hh>
+#include <honei/util/memory_arbiter.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 
 namespace honei

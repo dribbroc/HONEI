@@ -19,7 +19,7 @@
 
 #include <honei/la/sum.hh>
 #include <honei/backends/cuda/operations.hh>
-#include <honei/backends/memory/memory_arbiter.hh>
+#include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 

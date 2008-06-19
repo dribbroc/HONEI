@@ -24,9 +24,11 @@
 #include <honei/util/tags.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/lock.hh>
+#include <honei/util/log.hh>
+#include <honei/util/stringify.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/condition_variable.hh>
-#include <honei/backends/memory/memory_backend.hh>
+#include <honei/util/memory_backend_base.hh>
 
 #include <set>
 #include <map>
@@ -54,24 +56,26 @@ namespace honei
         public InstantiationPolicy<MemoryArbiter, Singleton>
     {
         private:
-            Mutex * const mutex;
-            ConditionVariable * access_finished;
+            Mutex * const _mutex;
+            ConditionVariable * _access_finished;
 
-            std::map<unsigned long, MemoryBlock> blocks;
+            std::map<unsigned long, MemoryBlock> _blocks;
+            std::map<tags::TagValue, MemoryBackendBase *> _backends;
 
         public:
             friend class InstantiationPolicy<MemoryArbiter, Singleton>;
+            friend class MemoryBackendRegistrator;
 
             MemoryArbiter() :
-                mutex(new Mutex),
-                access_finished(new ConditionVariable)
+                _mutex(new Mutex),
+                _access_finished(new ConditionVariable)
             {
             }
 
             ~MemoryArbiter()
             {
-                delete access_finished;
-                delete mutex;
+                delete _access_finished;
+                delete _mutex;
             }
 
         template<typename Tag_>
@@ -79,43 +83,33 @@ namespace honei
             {
                 CONTEXT("When retrieving read lock:");
                 {
-                    Lock l(*mutex);
-                    std::map<unsigned long, MemoryBlock>::iterator i(blocks.find(memid));
-                    while (i != blocks.end() && i->second.write_count != 0)
+                    Lock l(*_mutex);
+                    std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                    while (i != _blocks.end() && i->second.write_count != 0)
                     {
-                        access_finished->wait(*mutex);
-                        i = blocks.find(memid);
+                        _access_finished->wait(*_mutex);
+                        i = _blocks.find(memid);
                     }
-                    if (i == blocks.end())
+                    if (i == _blocks.end())
                     {
                         MemoryBlock new_block(tags::tv_none);
                         new_block.read_count++;
                         new_block.readers.insert(tags::TagValue(Tag_::memory_value));
-                        blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
+                        _blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
                     }
                     else
                     {
                         if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                         {
-                            switch(i->second.writer)
-                            {
-                                case tags::tv_cpu:
-                                    MemoryBackend<tags::CPU>::instance()->download(memid, address, bytes);
-                                    break;
-#ifdef HONEI_CUDA
-                                case tags::tv_gpu_cuda:
-                                    MemoryBackend<tags::GPU::CUDA>::instance()->download(memid, address, bytes);
-                                    break;
-#endif
-                                default:
-                                    throw InternalError("MemoryArbiter::read tag not found!");
-                            }
+                            _backends[i->second.writer]->download(memid, address, bytes);
+                            i->second.writer = tags::tv_none;
                         }
                         i->second.read_count++;
                         i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                     }
                 }
-                return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
+                //return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
+                return _backends[Tag_::tag_value]->upload(memid, address, bytes);
             }
 
         template<typename Tag_>
@@ -123,56 +117,32 @@ namespace honei
             {
                 CONTEXT("When retrieving write lock:");
                 {
-                    Lock l(*mutex);
-                    std::map<unsigned long, MemoryBlock>::iterator i(blocks.find(memid));
-                    while (i != blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
+                    Lock l(*_mutex);
+                    std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                    while (i != _blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
                     {
-                        access_finished->wait(*mutex);
-                        i = blocks.find(memid);
+                        _access_finished->wait(*_mutex);
+                        i = _blocks.find(memid);
                     }
-                    if (i == blocks.end())
+                    if (i == _blocks.end())
                     {
                         MemoryBlock new_block(Tag_::memory_value);
                         new_block.write_count++;
                         new_block.readers.insert(tags::TagValue(Tag_::memory_value));
-                        blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
+                        _blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
                     }
                     else
                     {
                         if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                         {
-                            switch(i->second.writer)
-                            {
-                                case tags::tv_cpu:
-                                    MemoryBackend<tags::CPU>::instance()->download(memid, address, bytes);
-                                    break;
-#ifdef HONEI_CUDA
-                                case tags::tv_gpu_cuda:
-                                    MemoryBackend<tags::GPU::CUDA>::instance()->download(memid, address, bytes);
-                                    break;
-#endif
-                                default:
-                                    throw InternalError("MemoryArbiter::write writer not found!");
-                            }
+                            _backends[i->second.writer]->download(memid, address, bytes);
                         }
                         for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
                                 j != j_end ; ++j)
                         {
                             if (*j != Tag_::memory_value)
                             {
-                                switch(*j)
-                                {
-                                    case tags::tv_cpu:
-                                        MemoryBackend<tags::CPU>::instance()->reset(memid, address, bytes);
-                                        break;
-#ifdef HONEI_CUDA
-                                    case tags::tv_gpu_cuda:
-                                        MemoryBackend<tags::GPU::CUDA>::instance()->reset(memid, address, bytes);
-                                        break;
-#endif
-                                    default:
-                                        throw InternalError("MemoryArbiter::write reader not found!");
-                                }
+                                _backends[*j]->free(memid, address, bytes);
                             }
 
                         }
@@ -182,16 +152,17 @@ namespace honei
                         i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                     }
                 }
-                return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
+                //return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
+                return _backends[Tag_::tag_value]->upload(memid, address, bytes);
             }
 
         template<typename Tag_>
             void release_read(unsigned long memid)
             {
                 CONTEXT("When releasing read lock:");
-                Lock l(*mutex);
-                std::map<unsigned long, MemoryBlock>::iterator i(blocks.find(memid));
-                if(i == blocks.end())
+                Lock l(*_mutex);
+                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                if(i == _blocks.end())
                 {
                     throw InternalError("MemoryArbiter::release_read MemoryBlock not found!");
                 }
@@ -209,7 +180,7 @@ namespace honei
                     {
                         i->second.read_count--;
                     }
-                    access_finished->broadcast();
+                    _access_finished->broadcast();
                 }
             }
 
@@ -217,9 +188,9 @@ namespace honei
             void release_write(unsigned long memid)
             {
                 CONTEXT("When releasing write lock:");
-                Lock l(*mutex);
-                std::map<unsigned long, MemoryBlock>::iterator i(blocks.find(memid));
-                if(i == blocks.end())
+                Lock l(*_mutex);
+                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                if(i == _blocks.end())
                 {
                     throw InternalError("MemoryArbiter::release_write MemoryBlock not found!");
                 }
@@ -237,7 +208,7 @@ namespace honei
                     {
                         i->second.write_count--;
                     }
-                    access_finished->broadcast();
+                    _access_finished->broadcast();
                 }
             }
 
@@ -245,18 +216,38 @@ namespace honei
             void try_download(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When trying to download unneeded data:");
-                Lock l(*mutex);
-                std::map<unsigned long, MemoryBlock>::iterator i(blocks.find(memid));
-                if(i == blocks.end())
+                Lock l(*_mutex);
+                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                if(i == _blocks.end())
                 {
                     throw InternalError("MemoryArbiter::try_download MemoryBlock not found!");
                 }
                 else if (i->second.write_count == 0 && i->second.read_count == 0)
                 {
-                    MemoryBackend<Tag_>::instance->download(memid, address, bytes);
-                    blocks.erase(i);
+                    //MemoryBackend<Tag_>::instance->download(memid, address, bytes);
+                    _backends[Tag_::tag_value]->download(memid, address, bytes);
+                    _blocks.erase(i);
                 }
             }
+    };
+
+    /**
+     * MemoryBackendRegistrator registers a descendant of MemoryBackend with MemoryManager.
+     *
+     * \ingroup grpmemorymanager
+     */
+    struct MemoryBackendRegistrator
+    {
+        /**
+         * Constructor.
+         *
+         * \param v Tag value that the backend is associated with.
+         * \param f Singleton-instance pointer to the backend.
+         */
+        MemoryBackendRegistrator(const tags::TagValue v, MemoryBackendBase * m)
+        {
+            MemoryArbiter::instance()->_backends.insert(std::make_pair(v, m));
+        }
     };
 }
 #endif
