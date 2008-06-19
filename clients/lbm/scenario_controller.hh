@@ -204,6 +204,81 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         _solver_1->do_preprocessing();
                     }
                     break;
+
+                case 1:
+                    {
+                        _dheight = 50;
+                        _dwidth = 50;
+                        _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
+                        Cylinder<Prec_> c1(*_height, Prec_(0.05), 25, 25);
+                        c1.value();
+
+                        _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        srand(time(NULL));
+                        for (unsigned long i(0); i < _dheight; ++i)
+                        {
+                            for (unsigned long j(0); j < _dwidth; ++j)
+                            {
+                                (*_bottom)( i , j) += (Prec_)(Prec_(rand()) / RAND_MAX * 0.01);
+                            }
+                        }
+
+                        //All needed distribution functions:
+
+                        _d_0 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_3 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_4 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_5 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_6 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_7 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_8 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+
+                        _e_d_0 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_3 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_4 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_5 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_6 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_7 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _e_d_8 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+
+                        _t_d_0 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_1 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_2 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_3 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_4 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_5 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_6 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_7 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _t_d_8 = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+
+                        //All needed vectors:
+                        _v_x = new DenseVector<Prec_>(9, Prec_(0));
+                        _v_y = new DenseVector<Prec_>(9, Prec_(0));
+
+                        //Other matrices needed by solver:
+
+                        _s_x = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _s_y = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_x = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _d_y = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+
+                        _solver_1 = new SolverLABSWE<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(1.,1.,1., _dwidth, _dheight, _height, _bottom, _u, _v);
+                        _solver_1->set_distribution(_d_0, _d_1, _d_2, _d_3, _d_4, _d_5, _d_6, _d_7, _d_8);
+                        _solver_1->set_eq_distribution(_e_d_0, _e_d_1, _e_d_2, _e_d_3, _e_d_4, _e_d_5, _e_d_6, _e_d_7, _e_d_8);
+                        _solver_1->set_temp_distribution(_t_d_0, _t_d_1, _t_d_2, _t_d_3, _t_d_4, _t_d_5, _t_d_6, _t_d_7, _t_d_8);
+                        _solver_1->set_vectors(_v_x, _v_y);
+                        _solver_1->set_source(_s_x, _s_y);
+                        _solver_1->set_slopes(_d_x, _d_y);
+                        _solver_1->do_preprocessing();
+                    }
+                    break;
+
             }
 
         }
@@ -218,9 +293,10 @@ template<typename Tag_, typename Prec_> class ScenarioController
 
         void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
         {
+
+            glScalef(1.0f, 1.0f, 100.0f);
             if (show_ground)
             {
-                glScalef(1.0f, 1.0f, 100.0f);
                 if(use_quads)
                 {
                     glBegin(GL_QUADS);
@@ -281,11 +357,11 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         for(unsigned int j = 0; j <_dheight-1; ++j)
                         {
                             glColor4f(0.0, 0.0, 1.0, alpha);
-                            glVertex3d(i,j,((*_height)[j][i] + (*_bottom)[j][i]));
+                            glVertex3d(i,j,((*_height)[j][i] /*- (*_bottom)[j][i]*/));
                             glColor4f(0.0, 1.0, 1.0, alpha);
-                            glVertex3d(i+1,j,((*_height)[j][i+1] + (*_bottom)[j][i+1]));
-                            glVertex3d(i+1,j+1,((*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]));
-                            glVertex3d(i,j+1,((*_height)[j+1][i] + (*_bottom)[j+1][i]));
+                            glVertex3d(i+1,j,((*_height)[j][i+1] /*- (*_bottom)[j][i+1]*/));
+                            glVertex3d(i+1,j+1,((*_height)[j+1][i+1] /*- (*_bottom)[j+1][i+1]*/));
+                            glVertex3d(i,j+1,((*_height)[j+1][i] /*- (*_bottom)[j+1][i]*/));
                         }
                     }
                     glEnd();
@@ -298,18 +374,18 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         for(unsigned int j = 0; j <  _dheight; j++)
                         {
                             glColor4f(0.0, 1.0, 1.0,  alpha);
-                            glVertex3d(i,j, ((*_height)[j][i] +  (*_bottom)[j][i]));
+                            glVertex3d(i,j, ((*_height)[j][i] /*-  (*_bottom)[j][i]*/));
                             glColor4f(0.0, 0.0, 1.0,  alpha);
-                            glVertex3d(i+1,j,((*_height)[j][i+1] +  (*_bottom)[j][i+1]));
+                            glVertex3d(i+1,j,((*_height)[j][i+1] /*-  (*_bottom)[j][i+1]*/));
                         }
                         ++i;
                         if (i >=  _dwidth-1)
                             break;
                         for(int j2 =  _dheight-2; j2 >= 0; --j2)
                         {
-                            glVertex3d(i,j2, ((*_height)[j2][i] +  (*_bottom)[j2][i]));
+                            glVertex3d(i,j2, ((*_height)[j2][i] /*- (*_bottom)[j2][i]*/));
                             glColor4f(0.0, 1.0, 1.0,  alpha);
-                            glVertex3d(i+1,j2, ((*_height)[j2][i+1] +  (*_bottom)[j2][i+1]));
+                            glVertex3d(i+1,j2, ((*_height)[j2][i+1] /*-  (*_bottom)[j2][i+1]*/));
                         }
                     }
                     glEnd();

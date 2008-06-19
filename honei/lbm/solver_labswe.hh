@@ -461,17 +461,17 @@ namespace honei
                 ++_time;
 
                 ///Compute source terms:
-                /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
                   value(*_source_x, *_height, *_d_bottom_x, _gravity);
                   Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
                   value(*_source_y, *_height, *_d_bottom_y, _gravity);
-                  */
 
-                Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
+                /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
                     //value(*_source_x, ResPrec_(0.000024));
                     value(*_source_x, ResPrec_(0.));
                 Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
                     value(*_source_y, ResPrec_(0.));
+                */
                 ///Streaming and collision:
 
                 CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::PERIODIC, lbm_lattice_types::D2Q9::DIR_0>::
