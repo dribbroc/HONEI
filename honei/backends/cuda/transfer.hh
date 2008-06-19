@@ -22,10 +22,10 @@
 
 extern "C"
 {
-        unsigned long cuda_upload(unsigned long src, unsigned long bytes);
+        void * cuda_upload(void * src, unsigned long bytes);
 
-        void cuda_download(unsigned long src, unsigned long target, unsigned long bytes);
+        void cuda_download(void * src, void * target, unsigned long bytes);
 
-        void cuda_free(unsigned long src);
+        void cuda_free(void *src);
 }
 #endif

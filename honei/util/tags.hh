@@ -52,6 +52,7 @@ namespace honei
             public InstantiationPolicy<CPU, NonCopyable>
         {
             const static TagValue tag_value = tv_cpu;
+            const static TagValue memory_value = tv_cpu;
             const static std::string name;
 
             /**
@@ -63,6 +64,7 @@ namespace honei
                 public InstantiationPolicy<CPU::SSE, NonCopyable>
             {
                 const static TagValue tag_value = tv_cpu;
+                const static TagValue memory_value = tv_cpu;
                 const static std::string name;
             };
 
@@ -75,6 +77,7 @@ namespace honei
                 public InstantiationPolicy<MultiCore, NonCopyable>
             {
                 const static TagValue tag_value = tv_cpu_multi_core;
+                const static TagValue memory_value = tv_cpu;
                 const static std::string name;
 
                 typedef tags::CPU DelegateTo;
@@ -88,6 +91,7 @@ namespace honei
                     public InstantiationPolicy<MultiCore::SSE, NonCopyable>
                 {
                     const static TagValue tag_value = tv_cpu_multi_core;
+                    const static TagValue memory_value = tv_cpu;
                     const static std::string name;
 
                     typedef tags::CPU::SSE DelegateTo;
@@ -104,6 +108,7 @@ namespace honei
                 public InstantiationPolicy<Cell, NonCopyable>
         {
             const static TagValue tag_value = tv_cell;
+            const static TagValue memory_value = tv_cpu;
 
             struct SPE;
 
@@ -121,6 +126,7 @@ namespace honei
                 public InstantiationPolicy<GPU, NonCopyable>
         {
             const static TagValue tag_value = tv_gpu;
+            const static TagValue memory_value = tv_gpu;
             const static std::string name;
 
             /**
@@ -132,6 +138,7 @@ namespace honei
                 public InstantiationPolicy<GPU::CUDA, NonCopyable>
             {
                 const static TagValue tag_value = tv_gpu_cuda;
+                const static TagValue memory_value = tv_gpu_cuda;
                 const static std::string name;
             };
         };
@@ -145,6 +152,7 @@ namespace honei
                 public InstantiationPolicy<NONE, NonCopyable>
         {
             const static TagValue tag_value = tv_none;
+            const static TagValue memory_value = tv_none;
             const static std::string name;
         };
     }

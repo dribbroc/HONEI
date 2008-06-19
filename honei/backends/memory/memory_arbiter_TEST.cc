@@ -35,11 +35,14 @@ class MemoryArbiterQuickTest :
 
         virtual void run() const
         {
-            MemoryArbiter::instance()->read<tags::CPU>(0, 1, 2);
-            MemoryArbiter::instance()->read<tags::CPU>(1, 2 , 1);
+            char  data_array [10];
+            void * data = data_array;
+
+            MemoryArbiter::instance()->read<tags::CPU>(0, data, 2);
+            MemoryArbiter::instance()->read<tags::CPU>(1, data, 1);
             MemoryArbiter::instance()->release_read<tags::CPU>(1);
             MemoryArbiter::instance()->release_read<tags::CPU>(0);
-            MemoryArbiter::instance()->write<tags::CPU>(0, 7, 2);
+            MemoryArbiter::instance()->write<tags::CPU>(0, data, 2);
             MemoryArbiter::instance()->release_write<tags::CPU>(0);
 
             TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::CPU>(25), InternalError);
@@ -60,13 +63,15 @@ class CUDAMemoryArbiterQuickTest :
 
         virtual void run() const
         {
-            MemoryArbiter::instance()->read<tags::CPU>(0, 1, 1);
-            MemoryArbiter::instance()->read<tags::GPU::CUDA>(0, 1, 1);
-            MemoryArbiter::instance()->read<tags::CPU>(1, 1, 1);
+            char  data_array [10];
+            void * data = data_array;
+            MemoryArbiter::instance()->read<tags::CPU>(0, data, 1);
+            MemoryArbiter::instance()->read<tags::GPU::CUDA>(0, data, 1);
+            MemoryArbiter::instance()->read<tags::CPU>(1, data, 1);
             MemoryArbiter::instance()->release_read<tags::CPU>(1);
             MemoryArbiter::instance()->release_read<tags::CPU>(0);
             MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(0);
-            MemoryArbiter::instance()->write<tags::CPU>(0, 1, 1);
+            MemoryArbiter::instance()->write<tags::CPU>(0, data, 1);
             MemoryArbiter::instance()->release_write<tags::CPU>(0);
 
             TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(25), InternalError);

@@ -75,7 +75,7 @@ namespace honei
             }
 
         template<typename Tag_>
-            unsigned long read(unsigned long memid, unsigned long address, unsigned long bytes)
+            void * read(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving read lock:");
                 {
@@ -90,12 +90,12 @@ namespace honei
                     {
                         MemoryBlock new_block(tags::tv_none);
                         new_block.read_count++;
-                        new_block.readers.insert(tags::TagValue(Tag_::tag_value));
+                        new_block.readers.insert(tags::TagValue(Tag_::memory_value));
                         blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
                     }
                     else
                     {
-                        if (i->second.writer != tags::tv_none && i->second.writer != Tag_::tag_value)
+                        if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                         {
                             switch(i->second.writer)
                             {
@@ -112,14 +112,14 @@ namespace honei
                             }
                         }
                         i->second.read_count++;
-                        i->second.readers.insert(tags::TagValue(Tag_::tag_value));
+                        i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                     }
                 }
                 return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
             }
 
         template<typename Tag_>
-            unsigned long write(unsigned long memid, unsigned long address, unsigned long bytes)
+            void * write(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving write lock:");
                 {
@@ -132,14 +132,14 @@ namespace honei
                     }
                     if (i == blocks.end())
                     {
-                        MemoryBlock new_block(Tag_::tag_value);
+                        MemoryBlock new_block(Tag_::memory_value);
                         new_block.write_count++;
-                        new_block.readers.insert(tags::TagValue(Tag_::tag_value));
+                        new_block.readers.insert(tags::TagValue(Tag_::memory_value));
                         blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
                     }
                     else
                     {
-                        if (i->second.writer != tags::tv_none && i->second.writer != Tag_::tag_value)
+                        if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                         {
                             switch(i->second.writer)
                             {
@@ -158,7 +158,7 @@ namespace honei
                         for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
                                 j != j_end ; ++j)
                         {
-                            if (*j != Tag_::tag_value)
+                            if (*j != Tag_::memory_value)
                             {
                                 switch(*j)
                                 {
@@ -177,9 +177,9 @@ namespace honei
 
                         }
                         i->second.readers.clear();
-                        i->second.writer= Tag_::tag_value;
+                        i->second.writer= Tag_::memory_value;
                         i->second.write_count++;
-                        i->second.readers.insert(tags::TagValue(Tag_::tag_value));
+                        i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                     }
                 }
                 return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
@@ -242,7 +242,7 @@ namespace honei
             }
 
         template <typename Tag_>
-            void try_download(unsigned long memid, unsigned long address, unsigned long bytes)
+            void try_download(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When trying to download unneeded data:");
                 Lock l(*mutex);

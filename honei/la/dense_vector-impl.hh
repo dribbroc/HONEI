@@ -237,6 +237,12 @@ namespace honei
     }
 
     template <typename DataType_>
+    inline void * DenseVector<DataType_>::address() const
+    {
+        return this->_imp->elements.get();
+    }
+
+    template <typename DataType_>
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
         DenseVector result(this->_imp->size);

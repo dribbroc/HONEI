@@ -23,14 +23,14 @@
 
 namespace honei
 {
-    unsigned long MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, unsigned long address, unsigned long bytes)
+    void *  MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, void * address, unsigned long bytes)
     {
         CONTEXT("When uploading data:");
-        std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
+        std::map<void *, void *>::iterator i(address_map.find(address));
         if (i == address_map.end())
         {
-            unsigned long temp(cuda_upload(address, bytes));
-            address_map.insert(std::pair<unsigned long, unsigned long>(address, temp));
+            void * temp(cuda_upload(address, bytes));
+            address_map.insert(std::pair<void *, void *>(address, temp));
             return temp;
         }
         else
@@ -39,10 +39,10 @@ namespace honei
         }
     }
 
-    void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid, unsigned long address, unsigned long bytes)
+    void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid, void * address, unsigned long bytes)
     {
         CONTEXT("When downloading data:");
-        std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
+        std::map<void *, void *>::iterator i(address_map.find(address));
         if (i == address_map.end())
         {
             throw InternalError("MemoryBackend<tags::GPU::CUDA> download address not found!");
@@ -56,10 +56,10 @@ namespace honei
 
     }
 
-    void MemoryBackend<tags::GPU::CUDA>::reset(unsigned long memid, unsigned long address, unsigned long size)
+    void MemoryBackend<tags::GPU::CUDA>::reset(unsigned long memid, void * address, unsigned long size)
     {
         CONTEXT("When resetting data:");
-        std::map<unsigned long, unsigned long>::iterator i(address_map.find(address));
+        std::map<void *, void *>::iterator i(address_map.find(address));
         if (i != address_map.end())
         {
             cuda_free(i->second);

@@ -310,6 +310,12 @@ namespace honei
                 return _elements.get();
             }
 
+            /// Return the address of our data
+            inline void * address() const
+            {
+                return _elements.get();
+            }
+
             /// Return our memory id
             inline unsigned long memid() const
             {

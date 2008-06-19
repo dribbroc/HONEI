@@ -39,18 +39,18 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>
     {
     public:
-        unsigned long upload(unsigned long memid, unsigned long address, unsigned long size)
+        void * upload(unsigned long memid, void * address, unsigned long size)
         {
             CONTEXT("When uploading data:");
             return address;
         }
 
-        void download(unsigned long memid, unsigned long address, unsigned long size)
+        void download(unsigned long memid, void * address, unsigned long size)
         {
             CONTEXT("When downloading data:");
         }
 
-        void reset(unsigned long memid, unsigned long address, unsigned long size)
+        void reset(unsigned long memid, void * address, unsigned long size)
         {
         }
 
@@ -61,14 +61,14 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>
     {
         private:
-            std::map<unsigned long, unsigned long> address_map;
+            std::map<void *, void *> address_map;
 
         public:
-            unsigned long upload(unsigned long memid, unsigned long address, unsigned long size);
+            void * upload(unsigned long memid, void * address, unsigned long size);
 
-            void download(unsigned long memid, unsigned long address, unsigned long size);
+            void download(unsigned long memid, void * address, unsigned long size);
 
-            void reset(unsigned long memid, unsigned long address, unsigned long size);
+            void reset(unsigned long memid, void * address, unsigned long size);
     };
 }
 #endif

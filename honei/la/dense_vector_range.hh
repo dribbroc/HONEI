@@ -147,6 +147,9 @@ namespace honei
             /// Return our memory id
             virtual unsigned long memid() const;
 
+            /// Return the address of our data
+            virtual void * address() const;
+
             /// \}
 
             /// Return a copy of the Vector.

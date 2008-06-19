@@ -42,6 +42,6 @@ extern "C"
 
         void cuda_scale_one_float(const float a, float * x, unsigned long size, unsigned long blocksize);
 
-        void cuda_sum_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
+        void cuda_sum_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
 }
 #endif

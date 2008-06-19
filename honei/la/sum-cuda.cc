@@ -35,8 +35,8 @@ DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContin
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_float", 128ul));
 
-    float * a_gpu = (float *)MemoryArbiter::instance()->write<tags::GPU::CUDA>(a.memid(), (unsigned long)a.elements(), a.size() * sizeof(float));
-    float * b_gpu = (float *)MemoryArbiter::instance()->read<tags::GPU::CUDA>(b.memid(), (unsigned long)b.elements(), b.size() * sizeof(float));
+    void * a_gpu = MemoryArbiter::instance()->write<tags::GPU::CUDA>(a.memid(), a.address(), a.size() * sizeof(float));
+    void * b_gpu = MemoryArbiter::instance()->read<tags::GPU::CUDA>(b.memid(), b.address(), b.size() * sizeof(float));
     cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
     MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(b.memid());
     MemoryArbiter::instance()->release_write<tags::GPU::CUDA>(a.memid());
@@ -60,8 +60,8 @@ DenseMatrix<float> & Sum<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const D
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_float", 128ul));
 
-    float * a_gpu = (float *)MemoryArbiter::instance()->write<tags::GPU::CUDA>(a.memid(), (unsigned long)a.elements(), a.size() * sizeof(float));
-    float * b_gpu = (float *)MemoryArbiter::instance()->read<tags::GPU::CUDA>(b.memid(), (unsigned long)b.elements(), b.size() * sizeof(float));
+    void * a_gpu = MemoryArbiter::instance()->write<tags::GPU::CUDA>(a.memid(), a.address(), a.size() * sizeof(float));
+    void * b_gpu = MemoryArbiter::instance()->read<tags::GPU::CUDA>(b.memid(), b.address(), b.size() * sizeof(float));
     cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
     MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(b.memid());
     MemoryArbiter::instance()->release_write<tags::GPU::CUDA>(a.memid());

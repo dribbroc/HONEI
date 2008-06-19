@@ -19,27 +19,24 @@
 
 #include <cuda_util.hh>
 
-extern "C" unsigned long cuda_upload(unsigned long src, unsigned long bytes)
+extern "C" void * cuda_upload(void * cpu, unsigned long bytes)
 {
-    float * gpu;
-    float * cpu((float *)src);
+    void * gpu;
     cudaMalloc((void**)&gpu, bytes);
     cudaMemcpy(gpu, cpu, bytes, cudaMemcpyHostToDevice);
     CUDA_ERROR();
-    return (unsigned long)gpu;
+    return gpu;
 }
 
-extern "C" void cuda_download(unsigned long src, unsigned long target, unsigned long bytes)
+extern "C" void cuda_download(void * gpu, void * cpu, unsigned long bytes)
 {
-    float * gpu((float *)src);
-    float * cpu((float *)target);
     cudaMemcpy(cpu, gpu, bytes, cudaMemcpyDeviceToHost);
     CUDA_ERROR();
 }
 
-extern "C" void cuda_free(unsigned long src)
+extern "C" void cuda_free(void * gpu)
 {
-    cudaFree((float *)src);
+    cudaFree(gpu);
     CUDA_ERROR();
 }
 
