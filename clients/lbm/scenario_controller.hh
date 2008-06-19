@@ -144,7 +144,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
                         _dheight = 50;
                         _dwidth = 50;
                         _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
-                        Cylinder<Prec_> c1(*_height, Prec_(0.075), 25, 25);
+                        Cylinder<Prec_> c1(*_height, Prec_(0.05), 25, 25);
                         c1.value();
 
                         _bottom = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
