@@ -52,7 +52,7 @@ namespace honei
             CONTEXT("When downloading data:");
         }
 
-        virtual void free(unsigned long memid, void * address, unsigned long size)
+        virtual void free(unsigned long memid)
         {
         }
 
@@ -64,14 +64,28 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>
     {
         private:
-            std::map<void *, void *> address_map;
+            struct Chunk
+            {
+                public:
+                    Chunk(void * a, void * d, unsigned long b) :
+                        address(a),
+                        device(d),
+                        bytes(b)
+                    {
+                    }
+                    void * address;
+                    void * device;
+                    unsigned long bytes;
+            };
+            std::map<void *, void *> _address_map;
+            std::multimap<unsigned long, Chunk> _id_map;
 
         public:
             virtual void * upload(unsigned long memid, void * address, unsigned long size);
 
             virtual void download(unsigned long memid, void * address, unsigned long size);
 
-            virtual void free(unsigned long memid, void * address, unsigned long size);
+            virtual void free(unsigned long memid);
     };
 }
 #endif

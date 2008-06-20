@@ -27,6 +27,7 @@
 #include <honei/util/shared_array.hh>
 #include <honei/util/stringify.hh>
 #include <honei/util/type_traits.hh>
+#include <honei/util/memory_arbiter.hh>
 
 #include <algorithm>
 
@@ -53,6 +54,7 @@ namespace honei
             mutex(new Mutex)
         {
             TypeTraits<DataType_>::create(array, s, DataType_());
+            MemoryArbiter::instance()->add_memblock((unsigned long) array);
         }
 
         /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
@@ -64,6 +66,7 @@ namespace honei
         /// Destructor.
         ~Implementation()
         {
+            MemoryArbiter::instance()->remove_memblock((unsigned long) array);
             TypeTraits<DataType_>::destroy(array, size);
             TypeTraits<DataType_>::free(array, size);
 

@@ -26,12 +26,13 @@ namespace honei
     void *  MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, void * address, unsigned long bytes)
     {
         CONTEXT("When uploading data:");
-        std::map<void *, void *>::iterator i(address_map.find(address));
-        if (i == address_map.end())
+        std::map<void *, void *>::iterator i(_address_map.find(address));
+        if (i == _address_map.end())
         {
-            void * temp(cuda_upload(address, bytes));
-            address_map.insert(std::pair<void *, void *>(address, temp));
-            return temp;
+            void * device(cuda_upload(address, bytes));
+            _address_map.insert(std::pair<void *, void *>(address, device));
+            _id_map.insert(std::pair<unsigned long, Chunk>(memid, Chunk(address, device, bytes)));
+            return device;
         }
         else
         {
@@ -42,29 +43,28 @@ namespace honei
     void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid, void * address, unsigned long bytes)
     {
         CONTEXT("When downloading data:");
-        std::map<void *, void *>::iterator i(address_map.find(address));
-        if (i == address_map.end())
+        std::map<void *, void *>::iterator i(_address_map.find(address));
+        if (i == _address_map.end())
         {
             throw InternalError("MemoryBackend<tags::GPU::CUDA> download address not found!");
         }
         else
         {
             cuda_download(i->second, address, bytes);
-            /// todo free hier noch weglassen?
-            cuda_free(i->second);
-            address_map.erase(i);
         }
 
     }
 
-    void MemoryBackend<tags::GPU::CUDA>::free(unsigned long memid, void * address, unsigned long size)
+    void MemoryBackend<tags::GPU::CUDA>::free(unsigned long memid)
     {
-        CONTEXT("When resetting data:");
-        std::map<void *, void *>::iterator i(address_map.find(address));
-        if (i != address_map.end())
+        CONTEXT("When freeing data:");
+        std::multimap<unsigned long, Chunk>::iterator i;
+        std::pair<std::multimap<unsigned long, Chunk>::iterator, std::multimap<unsigned long, Chunk>::iterator> range(_id_map.equal_range(memid));
+        for (std::multimap<unsigned long, Chunk>::iterator i(range.first) ; i != range.second ; ++i)
         {
-            cuda_free(i->second);
-            address_map.erase(i);
+            cuda_free(i->second.device);
+            _address_map.erase(i->second.address);
         }
+        _id_map.erase(range.first, range.second);
     }
 }

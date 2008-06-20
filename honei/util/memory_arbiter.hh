@@ -38,7 +38,6 @@ namespace honei
     struct MemoryBlock
     {
         public:
-
             MemoryBlock(tags::TagValue w) :
                 writer(w)
             {
@@ -78,6 +77,43 @@ namespace honei
                 delete _mutex;
             }
 
+        void add_memblock(unsigned long memid)
+        {
+            CONTEXT("When adding Memory Block:");
+            Lock l(*_mutex);
+            std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+            if (i != _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Duplicate Memory Block!");
+            }
+            else
+            {
+                MemoryBlock new_block(tags::tv_none);
+                _blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
+            }
+        }
+
+        void remove_memblock(unsigned long memid)
+        {
+            CONTEXT("When removing Memory Block:");
+            Lock l(*_mutex);
+            std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+            if (i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                        j != j_end ; ++j)
+                {
+                    _backends[*j]->free(memid);
+                }
+                _blocks.erase(i);
+            }
+        }
+
+
         template<typename Tag_>
             void * read(unsigned long memid, void * address, unsigned long bytes)
             {
@@ -92,10 +128,7 @@ namespace honei
                     }
                     if (i == _blocks.end())
                     {
-                        MemoryBlock new_block(tags::tv_none);
-                        new_block.read_count++;
-                        new_block.readers.insert(tags::TagValue(Tag_::memory_value));
-                        _blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
+                        throw InternalError("MemoryArbiter: Memory Block not found!");
                     }
                     else
                     {
@@ -108,8 +141,7 @@ namespace honei
                         i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                     }
                 }
-                //return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
-                return _backends[Tag_::tag_value]->upload(memid, address, bytes);
+                return _backends[Tag_::memory_value]->upload(memid, address, bytes);
             }
 
         template<typename Tag_>
@@ -126,10 +158,7 @@ namespace honei
                     }
                     if (i == _blocks.end())
                     {
-                        MemoryBlock new_block(Tag_::memory_value);
-                        new_block.write_count++;
-                        new_block.readers.insert(tags::TagValue(Tag_::memory_value));
-                        _blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
+                        throw InternalError("MemoryArbiter: Memory Block not found!");
                     }
                     else
                     {
@@ -142,7 +171,7 @@ namespace honei
                         {
                             if (*j != Tag_::memory_value)
                             {
-                                _backends[*j]->free(memid, address, bytes);
+                                _backends[*j]->free(memid);
                             }
 
                         }
@@ -152,8 +181,7 @@ namespace honei
                         i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                     }
                 }
-                //return MemoryBackend<Tag_>::instance()->upload(memid, address, bytes);
-                return _backends[Tag_::tag_value]->upload(memid, address, bytes);
+                return _backends[Tag_::memory_value]->upload(memid, address, bytes);
             }
 
         template<typename Tag_>
@@ -172,10 +200,6 @@ namespace honei
                     {
                         throw InternalError("MemoryArbiter::release_read: read counter is already zero!");
                     }
-                    /*else if((temp.writer == tags::tv_cpu || temp.writer == tags::tv_none) && temp.read_count == 1 && temp.write_count == 0)
-                    {
-                        // delete block
-                    }*/
                     else
                     {
                         i->second.read_count--;
@@ -200,10 +224,6 @@ namespace honei
                     {
                         throw InternalError("MemoryArbiter::release_write: write counter is already zero!");
                     }
-                    /*else if((temp.writer == tags::tv_cpu || temp.writer == tags::tv_none) && temp.read_count == 0 && temp.write_count == 1)
-                    {
-                        // delete block
-                    }*/
                     else
                     {
                         i->second.write_count--;
@@ -212,7 +232,7 @@ namespace honei
                 }
             }
 
-        template <typename Tag_>
+        /*template <typename Tag_>
             void try_download(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When trying to download unneeded data:");
@@ -225,10 +245,10 @@ namespace honei
                 else if (i->second.write_count == 0 && i->second.read_count == 0)
                 {
                     //MemoryBackend<Tag_>::instance->download(memid, address, bytes);
-                    _backends[Tag_::tag_value]->download(memid, address, bytes);
+                    _backends[Tag_::memory_value]->download(memid, address, bytes);
                     _blocks.erase(i);
                 }
-            }
+            }*/
     };
 
     /**

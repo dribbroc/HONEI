@@ -30,7 +30,7 @@ namespace honei
 
             virtual void download(unsigned long memid, void * address, unsigned long size) = 0;
 
-            virtual void free(unsigned long memid, void * address, unsigned long size) = 0;
+            virtual void free(unsigned long memid) = 0;
     };
 }
 #endif

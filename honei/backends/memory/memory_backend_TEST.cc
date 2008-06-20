@@ -50,7 +50,7 @@ class MemoryBackendQuickTest :
                 data_array[3] = -50;
             }
             MemoryBackend<Tag_>::instance()->download(0, data, 5 * sizeof(int));
-            MemoryBackend<Tag_>::instance()->free(0, data, 5 * sizeof(int));
+            MemoryBackend<Tag_>::instance()->free(0);
             TEST_CHECK_EQUAL(data_array[3], 3);
         }
 };
@@ -70,18 +70,27 @@ class MemoryArbiterQuickTest :
 
         virtual void run() const
         {
-            char  data_array [10];
-            void * data = data_array;
+            char  data_array1 [10];
+            void * data1 = data_array1;
+            unsigned long mem1((unsigned long)data1);
+            char  data_array2 [10];
+            void * data2 = data_array2;
+            unsigned long mem2((unsigned long)data2);
 
-            MemoryArbiter::instance()->read<tags::CPU>(0, data, 2);
-            MemoryArbiter::instance()->read<tags::CPU>(1, data, 1);
-            MemoryArbiter::instance()->release_read<tags::CPU>(1);
-            MemoryArbiter::instance()->release_read<tags::CPU>(0);
-            MemoryArbiter::instance()->write<tags::CPU>(0, data, 2);
-            MemoryArbiter::instance()->release_write<tags::CPU>(0);
+            MemoryArbiter::instance()->add_memblock(mem2);
+            MemoryArbiter::instance()->add_memblock(mem1);
+            MemoryArbiter::instance()->read<tags::CPU>(mem1, data1, 2);
+            MemoryArbiter::instance()->read<tags::CPU>(mem2, data2, 1);
+            MemoryArbiter::instance()->release_read<tags::CPU>(mem2);
+            MemoryArbiter::instance()->release_read<tags::CPU>(mem1);
+            MemoryArbiter::instance()->write<tags::CPU>(mem1, data1, 2);
+            MemoryArbiter::instance()->release_write<tags::CPU>(mem1);
 
             TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::CPU>(25), InternalError);
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::CPU>(0), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::CPU>(mem1), InternalError);
+
+            MemoryArbiter::instance()->remove_memblock(mem2);
+            MemoryArbiter::instance()->remove_memblock(mem1);
         }
 } memory_arbiter_quick_test;
 
@@ -98,19 +107,30 @@ class CUDAMemoryArbiterQuickTest :
 
         virtual void run() const
         {
-            char  data_array [10];
-            void * data = data_array;
-            MemoryArbiter::instance()->read<tags::CPU>(0, data, 1);
-            MemoryArbiter::instance()->read<tags::GPU::CUDA>(0, data, 1);
-            MemoryArbiter::instance()->read<tags::CPU>(1, data, 1);
-            MemoryArbiter::instance()->release_read<tags::CPU>(1);
-            MemoryArbiter::instance()->release_read<tags::CPU>(0);
-            MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(0);
-            MemoryArbiter::instance()->write<tags::CPU>(0, data, 1);
-            MemoryArbiter::instance()->release_write<tags::CPU>(0);
+            char  data_array1 [10];
+            void * data1 = data_array1;
+            unsigned long mem1((unsigned long)data1);
+            char  data_array2 [10];
+            void * data2 = data_array2;
+            unsigned long mem2((unsigned long)data2);
+            MemoryArbiter::instance()->add_memblock(mem1);
+            MemoryArbiter::instance()->read<tags::CPU>(mem1, data1, 1);
+            MemoryArbiter::instance()->add_memblock(mem2);
+            MemoryArbiter::instance()->read<tags::GPU::CUDA>(mem2, data2, 1);
+            MemoryArbiter::instance()->read<tags::CPU>(mem2, data2, 1);
+            MemoryArbiter::instance()->release_read<tags::CPU>(mem1);
+            MemoryArbiter::instance()->release_read<tags::CPU>(mem2);
+            MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(mem2);
+            MemoryArbiter::instance()->write<tags::CPU>(mem1, data1, 1);
+            MemoryArbiter::instance()->write<tags::CPU>(mem2, data2, 1);
+            MemoryArbiter::instance()->release_write<tags::CPU>(mem1);
+            MemoryArbiter::instance()->release_write<tags::CPU>(mem2);
 
             TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(25), InternalError);
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(0), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(mem1), InternalError);
+
+            MemoryArbiter::instance()->remove_memblock(mem2);
+            MemoryArbiter::instance()->remove_memblock(mem1);
         }
 } cuda_memory_arbiter_quick_test;
 #endif
