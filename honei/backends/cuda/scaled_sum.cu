@@ -43,27 +43,27 @@ namespace honei
     }
 }
 
-extern "C" void cuda_scaled_sum_two_float(float * x, float * y, float b, unsigned long size, unsigned long blocksize)
+extern "C" void cuda_scaled_sum_two_float(void * x, const void * y, float b, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
     block.x = blocksize;
     grid.x = ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
-    float * x_gpu(0);
-    float * y_gpu(0);
+    float * x_gpu((float *)x);
+    float * y_gpu((float *)y);
 
-    cudaMalloc((void**)&x_gpu, size * sizeof(float));
+    /*cudaMalloc((void**)&x_gpu, size * sizeof(float));
     cudaMalloc((void**)&y_gpu, size * sizeof(float));
 
     cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);*/
 
     honei::cuda::scaled_sum_gpu<<<grid, block>>>(x_gpu, y_gpu, b, size);
 
-    cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
+    /*cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
     cudaFree(x_gpu);
-    cudaFree(y_gpu);
+    cudaFree(y_gpu);*/
 
     CUDA_ERROR();
 }

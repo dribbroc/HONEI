@@ -37,7 +37,7 @@ extern "C"
                 float * ul, float * ud, float *uu, float * x, float * y,
                 unsigned long size, unsigned long blocksize, unsigned long m);
 
-        void cuda_scaled_sum_two_float(float * x, const float * y, float b, unsigned long size, unsigned long blocksize);
+        void cuda_scaled_sum_two_float(void * x, const void * y, float b, unsigned long size, unsigned long blocksize);
         void cuda_scaled_sum_three_float(float * x, const float * y, const float * z, unsigned long size, unsigned long blocksize);
 
         void cuda_scale_one_float(const float a, float * x, unsigned long size, unsigned long blocksize);

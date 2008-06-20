@@ -30,6 +30,7 @@
 #include <honei/util/memory_arbiter.hh>
 
 #include <algorithm>
+#include <iostream>
 
 namespace honei
 {
@@ -78,11 +79,13 @@ namespace honei
         /// Reset us with a new array.
         inline void reset(unsigned long s, DataType_ * a)
         {
+            MemoryArbiter::instance()->remove_memblock((unsigned long) array);
             TypeTraits<DataType_>::destroy(array, size);
             TypeTraits<DataType_>::free(array, size);
 
             array = a;
             size = s;
+            MemoryArbiter::instance()->add_memblock((unsigned long) array);
         }
     };
 
