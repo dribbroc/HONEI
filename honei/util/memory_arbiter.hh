@@ -118,28 +118,26 @@ namespace honei
             void * read(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving read lock:");
+                Lock l(*_mutex);
+                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                while (i != _blocks.end() && i->second.write_count != 0)
                 {
-                    Lock l(*_mutex);
-                    std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
-                    while (i != _blocks.end() && i->second.write_count != 0)
+                    _access_finished->wait(*_mutex);
+                    i = _blocks.find(memid);
+                }
+                if (i == _blocks.end())
+                {
+                    throw InternalError("MemoryArbiter: Memory Block not found!");
+                }
+                else
+                {
+                    if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                     {
-                        _access_finished->wait(*_mutex);
-                        i = _blocks.find(memid);
+                        _backends[i->second.writer]->download(memid, address, bytes);
+                        i->second.writer = tags::tv_none;
                     }
-                    if (i == _blocks.end())
-                    {
-                        throw InternalError("MemoryArbiter: Memory Block not found!");
-                    }
-                    else
-                    {
-                        if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
-                        {
-                            _backends[i->second.writer]->download(memid, address, bytes);
-                            i->second.writer = tags::tv_none;
-                        }
-                        i->second.read_count++;
-                        i->second.readers.insert(tags::TagValue(Tag_::memory_value));
-                    }
+                    i->second.read_count++;
+                    i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                 }
                 return _backends[Tag_::memory_value]->upload(memid, address, bytes);
             }
@@ -148,38 +146,36 @@ namespace honei
             void * write(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving write lock:");
+                Lock l(*_mutex);
+                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                while (i != _blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
                 {
-                    Lock l(*_mutex);
-                    std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
-                    while (i != _blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
+                    _access_finished->wait(*_mutex);
+                    i = _blocks.find(memid);
+                }
+                if (i == _blocks.end())
+                {
+                    throw InternalError("MemoryArbiter: Memory Block not found!");
+                }
+                else
+                {
+                    if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                     {
-                        _access_finished->wait(*_mutex);
-                        i = _blocks.find(memid);
+                        _backends[i->second.writer]->download(memid, address, bytes);
                     }
-                    if (i == _blocks.end())
+                    for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                            j != j_end ; ++j)
                     {
-                        throw InternalError("MemoryArbiter: Memory Block not found!");
-                    }
-                    else
-                    {
-                        if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
+                        if (*j != Tag_::memory_value)
                         {
-                            _backends[i->second.writer]->download(memid, address, bytes);
+                            _backends[*j]->free(memid);
                         }
-                        for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
-                                j != j_end ; ++j)
-                        {
-                            if (*j != Tag_::memory_value)
-                            {
-                                _backends[*j]->free(memid);
-                            }
 
-                        }
-                        i->second.readers.clear();
-                        i->second.writer= Tag_::memory_value;
-                        i->second.write_count++;
-                        i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                     }
+                    i->second.readers.clear();
+                    i->second.writer= Tag_::memory_value;
+                    i->second.write_count++;
+                    i->second.readers.insert(tags::TagValue(Tag_::memory_value));
                 }
                 return _backends[Tag_::memory_value]->upload(memid, address, bytes);
             }
