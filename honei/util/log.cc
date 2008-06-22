@@ -33,6 +33,7 @@
 
 #include <iostream>
 #include <list>
+#include <set>
 #include <string>
 #include <tr1/functional>
 
@@ -97,10 +98,7 @@ namespace honei
         std::string previous_context;
 
         /// Our category selections
-        bool sel_all;
-        bool sel_transfer;
-        bool sel_backend;
-        bool sel_application;
+        std::set<LogCategory> selections;
 
         /// Write out our log messages.
         void log_function()
@@ -139,7 +137,7 @@ namespace honei
                     }
                 }
 
-                if (sel_all)
+                if (selections.size() == 0)
                 {
                     if (previous_context == data->context)
                         std::cerr << "(same context) " << data->message << std::endl;
@@ -149,9 +147,7 @@ namespace honei
                 }
                 else
                 {
-                    if ((data->category == lc_transfer && sel_transfer) ||
-                            (data->category == lc_backend && sel_backend) ||
-                            (data->category == lc_application && sel_application))
+                    if (selections.count(data->category) == 1)
                     {
                         if (previous_context == data->context)
                             std::cerr << "(same context) " << data->message << std::endl;
@@ -168,27 +164,20 @@ namespace honei
         LogQueue() :
             mutex(new Mutex),
             work_pending(new ConditionVariable),
-            previous_context("(none)"),
-            sel_all(true),
-            sel_transfer(false),
-            sel_backend(false),
-            sel_application(false)
+            previous_context("(none)")
         {
             std::string config_string(Configuration::instance()->get_value("log::categories", "all"));
             if (config_string.find("transfer", 0) != std::string::npos)
             {
-                sel_transfer = true;
-                sel_all = false;
+                selections.insert(lc_transfer);
             }
             if (config_string.find("backend", 0) != std::string::npos)
             {
-                sel_backend = true;
-                sel_all = false;
+                selections.insert(lc_backend);
             }
             if (config_string.find("application", 0) != std::string::npos)
             {
-                sel_application = true;
-                sel_all = false;
+                selections.insert(lc_application);
             }
 
             thread = new Thread(std::tr1::bind(std::tr1::mem_fn(&LogQueue::log_function), this));
