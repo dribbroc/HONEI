@@ -35,15 +35,16 @@
 
 namespace honei
 {
+    /// Logical representation of a used chunk of memory.
     struct MemoryBlock
     {
         public:
             MemoryBlock(tags::TagValue w) :
                 writer(w)
-            {
-                read_count = 0;
-                write_count = 0;
-            }
+        {
+            read_count = 0;
+            write_count = 0;
+        }
 
             unsigned read_count;
             unsigned write_count;
@@ -51,75 +52,111 @@ namespace honei
             std::set<tags::TagValue> readers;
     };
 
+    /**
+     * MemoryArbiter handles read/write locks for all used memory blocks and
+     * distributes necessary memory transfers jobs.
+     *
+     * \ingroup grpmemorymanager
+     */
     class MemoryArbiter :
         public InstantiationPolicy<MemoryArbiter, Singleton>
     {
         private:
+            /// Our mutex.
             Mutex * const _mutex;
+
+            /// Our one read/write lock has faded condition variable.
             ConditionVariable * _access_finished;
 
+            /// Our map of all memory blocks.
             std::map<unsigned long, MemoryBlock> _blocks;
+
+            /// Our map of all memory backends
             std::map<tags::TagValue, MemoryBackendBase *> _backends;
 
         public:
             friend class InstantiationPolicy<MemoryArbiter, Singleton>;
             friend class MemoryBackendRegistrator;
 
+            /**
+             * Constructor.
+             */
             MemoryArbiter() :
                 _mutex(new Mutex),
                 _access_finished(new ConditionVariable)
             {
             }
 
+            /**
+             * Destructor.
+             */
             ~MemoryArbiter()
             {
                 delete _access_finished;
                 delete _mutex;
             }
 
-        void add_memblock(unsigned long memid)
-        {
-            CONTEXT("When adding Memory Block:");
-            Lock l(*_mutex);
-            std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
-            if (i != _blocks.end())
+            /**
+             * Add a chunk of memory to the memory block map.
+             *
+             * \param memid A unique key identifying the added chunk.
+             */
+            void add_memblock(unsigned long memid)
             {
-                throw InternalError("MemoryArbiter: Duplicate Memory Block!");
-            }
-            else
-            {
-                MemoryBlock new_block(tags::tv_none);
-                _blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
-            }
-        }
-
-        void remove_memblock(unsigned long memid)
-        {
-            CONTEXT("When removing Memory Block:");
-            Lock l(*_mutex);
-            std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
-            if (i == _blocks.end())
-            {
-                throw InternalError("MemoryArbiter: Memory Block not found!");
-            }
-            else
-            {
-                for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
-                        j != j_end ; ++j)
+                CONTEXT("When adding Memory Block:");
+                Lock l(*_mutex);
+                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                if (i != _blocks.end())
                 {
-                    _backends[*j]->free(memid);
+                    throw InternalError("MemoryArbiter: Duplicate Memory Block!");
                 }
-                _blocks.erase(i);
+                else
+                {
+                    MemoryBlock new_block(tags::tv_none);
+                    _blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
+                }
             }
-        }
 
+            /**
+             * Remove a chunk of memory from the memory block map.
+             *
+             * \param memid A unique key identifying the removed chunk.
+             */
+            void remove_memblock(unsigned long memid)
+            {
+                CONTEXT("When removing Memory Block:");
+                Lock l(*_mutex);
+                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                if (i == _blocks.end())
+                {
+                    throw InternalError("MemoryArbiter: Memory Block not found!");
+                }
+                else
+                {
+                    // Delete the deprecated memory block in all relevant memory backends
+                    for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                            j != j_end ; ++j)
+                    {
+                        _backends[*j]->free(memid);
+                    }
+                    _blocks.erase(i);
+                }
+            }
 
-        template<typename Tag_>
+            /**
+             * Request a read lock for a specific memory block.
+             *
+             * \param memid A unique key identifying the requested chunk.
+             * \param address The address where our reading will begin.
+             * \param bytes The amount of bytes we want to read.
+             */
+            template<typename Tag_>
             void * read(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving read lock:");
                 Lock l(*_mutex);
                 std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                // Wait until no one writes on our memory block
                 while (i != _blocks.end() && i->second.write_count != 0)
                 {
                     _access_finished->wait(*_mutex);
@@ -131,6 +168,7 @@ namespace honei
                 }
                 else
                 {
+                    // If our memory block was changed on any other remote side, write it back to the main memory.
                     if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                     {
                         _backends[i->second.writer]->download(memid, address, bytes);
@@ -142,12 +180,20 @@ namespace honei
                 return _backends[Tag_::memory_value]->upload(memid, address, bytes);
             }
 
-        template<typename Tag_>
+            /**
+             * Request a write lock for a specific memory block.
+             *
+             * \param memid A unique key identifying the requested chunk.
+             * \param address The address where our writing will begin.
+             * \param bytes The amount of bytes we want to write.
+             */
+            template<typename Tag_>
             void * write(unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving write lock:");
                 Lock l(*_mutex);
                 std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
+                // Wait until no one reads or writes on our memory block
                 while (i != _blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
                 {
                     _access_finished->wait(*_mutex);
@@ -159,10 +205,12 @@ namespace honei
                 }
                 else
                 {
+                    // If our memory block was changed on any other remote side, write it back to the main memory.
                     if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
                     {
                         _backends[i->second.writer]->download(memid, address, bytes);
                     }
+                    // Delete the deprecated memory block in all relevant memory backends
                     for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
                             j != j_end ; ++j)
                     {
@@ -180,7 +228,12 @@ namespace honei
                 return _backends[Tag_::memory_value]->upload(memid, address, bytes);
             }
 
-        template<typename Tag_>
+            /**
+             * Release a read lock for a specific memory block.
+             *
+             * \param memid A unique key identifying the released chunk.
+             */
+            template<typename Tag_>
             void release_read(unsigned long memid)
             {
                 CONTEXT("When releasing read lock:");
@@ -204,7 +257,12 @@ namespace honei
                 }
             }
 
-        template<typename Tag_>
+            /**
+             * Release a write lock for a specific memory block.
+             *
+             * \param memid A unique key identifying the released chunk.
+             */
+            template<typename Tag_>
             void release_write(unsigned long memid)
             {
                 CONTEXT("When releasing write lock:");
@@ -228,27 +286,10 @@ namespace honei
                 }
             }
 
-        /*template <typename Tag_>
-            void try_download(unsigned long memid, void * address, unsigned long bytes)
-            {
-                CONTEXT("When trying to download unneeded data:");
-                Lock l(*_mutex);
-                std::map<unsigned long, MemoryBlock>::iterator i(_blocks.find(memid));
-                if(i == _blocks.end())
-                {
-                    throw InternalError("MemoryArbiter::try_download MemoryBlock not found!");
-                }
-                else if (i->second.write_count == 0 && i->second.read_count == 0)
-                {
-                    //MemoryBackend<Tag_>::instance->download(memid, address, bytes);
-                    _backends[Tag_::memory_value]->download(memid, address, bytes);
-                    _blocks.erase(i);
-                }
-            }*/
     };
 
     /**
-     * MemoryBackendRegistrator registers a descendant of MemoryBackend with MemoryManager.
+     * MemoryBackendRegistrator registers a descendant of MemoryBackendBase with MemoryArbiter.
      *
      * \ingroup grpmemorymanager
      */
@@ -257,7 +298,7 @@ namespace honei
         /**
          * Constructor.
          *
-         * \param v Tag value that the backend is associated with.
+         * \param v Memory tag value that the backend is associated with.
          * \param f Singleton-instance pointer to the backend.
          */
         MemoryBackendRegistrator(const tags::TagValue v, MemoryBackendBase * m)
