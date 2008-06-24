@@ -322,6 +322,30 @@ namespace honei
                 return (unsigned long)_elements.get();
             }
 
+            /// Request a read lock for our data.
+            void * read(tags::TagValue memory) const
+            {
+                return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+            }
+
+            /// Request a write lock for our data.
+            void * write(tags::TagValue memory) const
+            {
+                return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+            }
+
+            /// Release a read lock for our data.
+            void release_read() const
+            {
+                MemoryArbiter::instance()->release_read(this->memid());
+            }
+
+            /// Release a write lock for our data.
+            void release_write() const
+            {
+                MemoryArbiter::instance()->release_write(this->memid());
+            }
+
             /// Returns a copy of the matrix.
             DenseMatrix copy() const
             {

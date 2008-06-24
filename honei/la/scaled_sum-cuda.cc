@@ -34,11 +34,11 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_two_float", 128ul));
 
-    void * x_gpu = MemoryArbiter::instance()->write<tags::GPU::CUDA>(x.memid(), x.address(), x.size() * sizeof(float));
-    void * y_gpu = MemoryArbiter::instance()->read<tags::GPU::CUDA>(y.memid(), y.address(), y.size() * sizeof(float));
+    void * x_gpu (x.write(tags::GPU::CUDA::memory_value));
+    void * y_gpu (y.read(tags::GPU::CUDA::memory_value));
     cuda_scaled_sum_two_float(x_gpu, y_gpu, b, x.size(), blocksize);
-    MemoryArbiter::instance()->release_read<tags::GPU::CUDA>(y.memid());
-    MemoryArbiter::instance()->release_write<tags::GPU::CUDA>(x.memid());
+    y.release_read();
+    x.release_write();
 
     return x;
 }

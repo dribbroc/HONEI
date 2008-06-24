@@ -53,7 +53,8 @@ class DenseVectorScaledSumTest :
                 DataType_ scal(DataType_(2));
 
                 ScaledSum<Tag_>::value(dv1, dv2, scal);
-                MemoryArbiter::instance()->read<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
+                //MemoryArbiter::instance()->read<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
+                dv1.read<tags::CPU>();
                 DenseVector<DataType_> dv3(size, DataType_(8));
                 MemoryArbiter::instance()->release_read<tags::CPU>(dv1.memid());
 

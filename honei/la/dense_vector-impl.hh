@@ -31,6 +31,7 @@
 #include <honei/util/shared_array.hh>
 #include <honei/util/stringify.hh>
 #include <honei/util/type_traits.hh>
+#include <honei/util/memory_arbiter.hh>
 
 #include <algorithm>
 #include <string>
@@ -240,6 +241,30 @@ namespace honei
     inline void * DenseVector<DataType_>::address() const
     {
         return this->_imp->elements.get();
+    }
+
+    template <typename DataType_>
+    void * DenseVector<DataType_>::read(tags::TagValue memory) const
+    {
+        return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+    }
+
+    template <typename DataType_>
+    void * DenseVector<DataType_>::write(tags::TagValue memory) const
+    {
+        return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+    }
+
+    template <typename DataType_>
+    void DenseVector<DataType_>::release_read() const
+    {
+        MemoryArbiter::instance()->release_read(this->memid());
+    }
+
+    template <typename DataType_>
+    void DenseVector<DataType_>::release_write() const
+    {
+        MemoryArbiter::instance()->release_write(this->memid());
     }
 
     template <typename DataType_>

@@ -20,6 +20,7 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_RANGE_HH
 #define LIBLA_GUARD_DENSE_VECTOR_RANGE_HH 1
 
+#include <honei/util/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
@@ -149,6 +150,18 @@ namespace honei
 
             /// Return the address of our data
             virtual void * address() const;
+
+            /// Request a read lock for our data.
+            virtual void * read(tags::TagValue memory) const;
+
+            /// Request a write lock for our data.
+            virtual void * write(tags::TagValue memory) const;
+
+            /// Release a read lock for our data.
+            virtual void release_read() const;
+
+            /// Release a write lock for our data.
+            virtual void release_write() const;
 
             /// \}
 

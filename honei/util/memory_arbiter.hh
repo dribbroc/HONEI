@@ -150,8 +150,7 @@ namespace honei
              * \param address The address where our reading will begin.
              * \param bytes The amount of bytes we want to read.
              */
-            template<typename Tag_>
-            void * read(unsigned long memid, void * address, unsigned long bytes)
+            void * read(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving read lock:");
                 Lock l(*_mutex);
@@ -169,15 +168,15 @@ namespace honei
                 else
                 {
                     // If our memory block was changed on any other remote side, write it back to the main memory.
-                    if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
+                    if (i->second.writer != tags::tv_none && i->second.writer != memory)
                     {
                         _backends[i->second.writer]->download(memid, address, bytes);
                         i->second.writer = tags::tv_none;
                     }
                     i->second.read_count++;
-                    i->second.readers.insert(tags::TagValue(Tag_::memory_value));
+                    i->second.readers.insert(memory);
                 }
-                return _backends[Tag_::memory_value]->upload(memid, address, bytes);
+                return _backends[memory]->upload(memid, address, bytes);
             }
 
             /**
@@ -187,8 +186,7 @@ namespace honei
              * \param address The address where our writing will begin.
              * \param bytes The amount of bytes we want to write.
              */
-            template<typename Tag_>
-            void * write(unsigned long memid, void * address, unsigned long bytes)
+            void * write(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
             {
                 CONTEXT("When retrieving write lock:");
                 Lock l(*_mutex);
@@ -206,7 +204,7 @@ namespace honei
                 else
                 {
                     // If our memory block was changed on any other remote side, write it back to the main memory.
-                    if (i->second.writer != tags::tv_none && i->second.writer != Tag_::memory_value)
+                    if (i->second.writer != tags::tv_none && i->second.writer != memory)
                     {
                         _backends[i->second.writer]->download(memid, address, bytes);
                     }
@@ -214,18 +212,18 @@ namespace honei
                     for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
                             j != j_end ; ++j)
                     {
-                        if (*j != Tag_::memory_value)
+                        if (*j != memory)
                         {
                             _backends[*j]->free(memid);
                         }
 
                     }
                     i->second.readers.clear();
-                    i->second.writer= Tag_::memory_value;
+                    i->second.writer= memory;
                     i->second.write_count++;
-                    i->second.readers.insert(tags::TagValue(Tag_::memory_value));
+                    i->second.readers.insert(memory);
                 }
-                return _backends[Tag_::memory_value]->upload(memid, address, bytes);
+                return _backends[memory]->upload(memid, address, bytes);
             }
 
             /**
@@ -233,7 +231,6 @@ namespace honei
              *
              * \param memid A unique key identifying the released chunk.
              */
-            template<typename Tag_>
             void release_read(unsigned long memid)
             {
                 CONTEXT("When releasing read lock:");
@@ -262,7 +259,6 @@ namespace honei
              *
              * \param memid A unique key identifying the released chunk.
              */
-            template<typename Tag_>
             void release_write(unsigned long memid)
             {
                 CONTEXT("When releasing write lock:");
