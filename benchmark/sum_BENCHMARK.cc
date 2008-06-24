@@ -111,10 +111,6 @@ class DenseVectorSumBench :
         {
             DenseVector<DataType_> dv0(_size, DataType_(rand()));
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
-            MemoryArbiter::instance()->write<tags::CPU>(dv0.memid(), dv0.address(), dv0.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dv0.memid());
-            MemoryArbiter::instance()->write<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dv1.memid());
             for(int i(0) ; i < _count; ++i)
             {
                 BENCHMARK(
@@ -210,10 +206,6 @@ class DenseMatrixSumBench :
         {
             DenseMatrix<DataType_> dm0(_sizex, _sizey, DataType_(rand()));
             DenseMatrix<DataType_> dm1(_sizex, _sizey, DataType_(rand()));
-            MemoryArbiter::instance()->write<tags::CPU>(dm0.memid(), dm0.address(), dm0.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dm0.memid());
-            MemoryArbiter::instance()->write<tags::CPU>(dm1.memid(), dm1.address(), dm1.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dm1.memid());
             for(int i(0) ; i < _count; ++i)
             {
                 BENCHMARK(

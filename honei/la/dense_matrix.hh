@@ -331,7 +331,7 @@ namespace honei
             /// Request a write lock for our data.
             void * write(tags::TagValue memory) const
             {
-                return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+                return MemoryArbiter::instance()->write(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
             }
 
             /// Release a read lock for our data.

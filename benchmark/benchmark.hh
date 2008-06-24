@@ -99,17 +99,9 @@ class BenchFailedException :
  */
 #define BENCHMARK(a) \
     do { \
-        try { \
         gettimeofday(&_start, 0); \
         a; \
         gettimeofday(&_end, 0); \
         _benchlist.push_back(((double)_end.tv_sec + ((double)_end.tv_usec/1000000)) - ((double)_start.tv_sec + ((double)_start.tv_usec/1000000))); \
-        } catch (const std::exception & test_e) { \
-            throw BenchFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Benchmark threw exception."); \
-        } catch (...) { \
-            throw BenchFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
-                    "Benchmark threw unknown exception."); \
-        } \
     } while (false)
 

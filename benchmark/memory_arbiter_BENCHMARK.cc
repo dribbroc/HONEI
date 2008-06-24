@@ -52,7 +52,7 @@ class MemoryArbiterBench :
             for (unsigned long i(0) ; i < _arrays ; ++i)
             {
                 vectors[i] = new DenseVector<DataType_>(1);
-                MemoryArbiter::instance()->read<Tag_>(vectors[i]->memid(), vectors[i]->address(), vectors[i]->size());
+                MemoryArbiter::instance()->read(Tag_::memory_value, vectors[i]->memid(), vectors[i]->address(), vectors[i]->size());
             }
             DenseVector<DataType_> dv(_size, DataType_(42));
             for(int i(0) ; i < _count ; ++i)
@@ -60,17 +60,17 @@ class MemoryArbiterBench :
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 10000 ; ++j)
                         {
-                            MemoryArbiter::instance()->write<Tag_>(dv.memid(), dv.address(), dv.size());
-                            MemoryArbiter::instance()->release_write<Tag_>(dv.memid());
-                            MemoryArbiter::instance()->read<Tag_>(dv.memid(), dv.address(), dv.size());
-                            MemoryArbiter::instance()->release_read<Tag_>(dv.memid());
+                            MemoryArbiter::instance()->write(Tag_::memory_value, dv.memid(), dv.address(), dv.size());
+                            MemoryArbiter::instance()->release_write(dv.memid());
+                            MemoryArbiter::instance()->read(Tag_::memory_value, dv.memid(), dv.address(), dv.size());
+                            MemoryArbiter::instance()->release_read(dv.memid());
                         }
                         );
             }
             evaluate();
             for (unsigned long i(0) ; i < _arrays ; ++i)
             {
-                MemoryArbiter::instance()->release_read<Tag_>(vectors[i]->memid());
+                MemoryArbiter::instance()->release_read(vectors[i]->memid());
                 delete vectors[i];
             }
     }
