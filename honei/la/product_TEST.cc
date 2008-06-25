@@ -74,7 +74,9 @@ class BandedMatrixDenseVectorProductTest :
                 DenseVector<DataType_> prod (Product<Tag_>::value(bm1, dv2));
                 //std::cout << "prod = " << prod << std::endl;
 
+                prod.read();
                 TEST_CHECK_EQUAL(prod, dv3);
+                prod.release_read();
             }
 
             BandedMatrix<DataType_> bm01(5);
@@ -145,12 +147,14 @@ class BandedMatrixDenseVectorProductQuickTest :
             }
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
+            prod.read();
             for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
                     it != i_end ; ++it, ++dit)
             {
                 //std::cout<<it.index() << " ";
                 TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
             }
+            prod.release_read();
 
             BandedMatrix<DataType_> bm01(5);
             DenseVector<DataType_> dv01(4, DataType_(1));

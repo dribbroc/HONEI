@@ -44,18 +44,8 @@ extern "C" void cuda_sum_two_float(void * x, void * y, unsigned long size, unsig
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
 
-    /*cudaMalloc((void**)&x_gpu, size * sizeof(float));
-    cudaMalloc((void**)&y_gpu, size * sizeof(float));
-
-    cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
-*/
     honei::cuda::sum_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
     cudaThreadSynchronize();
 
-    /*cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaFree(x_gpu);
-    cudaFree(y_gpu);
-*/
     CUDA_ERROR();
 }

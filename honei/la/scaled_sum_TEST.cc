@@ -271,9 +271,11 @@ class DenseVector3ScaledSumTest :
                 DenseVectorRange<DataType_> sumr(sum, size / 2, 5);
 
                 ScaledSum<Tag_>::value(sumr, dvr1, dvr2);
+                sumr.read();
                 DataType_ v1(Norm<vnt_l_one>::value(sumr));
 
                 TEST_CHECK_EQUAL(v1, 8 * (size / 2));
+                sumr.release_read();
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -292,6 +294,9 @@ DenseVector3ScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_3_scaled_sum_t
 DenseVector3ScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_3_scaled_sum_test_double("SSE double");
 DenseVector3ScaledSumTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_3_scaled_sum_test_float("MC SSE float");
 DenseVector3ScaledSumTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_scaled_3_sum_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVector3ScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_3_scaled_sum_test_float("float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -316,8 +321,10 @@ class DenseVector3ScaledSumQuickTest :
             DenseVectorRange<DataType_> sumr(sum, size / 2, 5);
 
             ScaledSum<Tag_>::value(sumr, dvr1, dvr2);
+            sumr.read();
             DataType_ v1(Norm<vnt_l_one>::value(sumr));
             TEST_CHECK_EQUAL(v1, 8 * (size / 2));
+            sumr.release_read();
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
@@ -335,6 +342,9 @@ DenseVector3ScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_3_scaled_
 DenseVector3ScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_3_scaled_sum_quick_test_double("SSE double");
 DenseVector3ScaledSumQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_3_scaled_sum_quick_test_float("MC SSE float");
 DenseVector3ScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_scaled_3_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVector3ScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_3_scaled_sum_quick_test_float("float");
 #endif
 
 template <typename DataType_>

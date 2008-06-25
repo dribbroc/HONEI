@@ -39,6 +39,9 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
     unsigned long middle_index(a.rows() - 1);
     unsigned long op_offset;
 
+    void * b_gpu(b.read(tags::GPU::CUDA::memory_value));
+    void * result_gpu(result.write(tags::GPU::CUDA::memory_value));
+
     for (BandedMatrix<float>::ConstBandIterator band(a.begin_non_zero_bands()), band_end(a.end_non_zero_bands()) ;
             band != band_end ; ++band)
     {
@@ -46,14 +49,26 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
         if (band.index() >= middle_index)
         {
             op_offset = band.index() - middle_index;
-            cuda_scaled_sum_three_float(result.elements(), band->elements(), b.elements() + op_offset, a.size() - op_offset, blocksize);
+            void * band_gpu(band->read(tags::GPU::CUDA::memory_value));
+            void * temp_b_gpu = (void *)((float *)b_gpu + op_offset);
+            cuda_scaled_sum_three_float(result_gpu, band_gpu, temp_b_gpu, a.size() - op_offset, blocksize);
+            band->release_read();
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
         {
             op_offset = middle_index - band.index();
-            cuda_scaled_sum_three_float(result.elements() + op_offset, band->elements() + op_offset, b.elements(), a.size() - op_offset, blocksize);
+            void * band_gpu(band->read(tags::GPU::CUDA::memory_value));
+            band_gpu = (void *)((float *)band_gpu + op_offset);
+            void * temp_result_gpu = (void *)((float *)result_gpu + op_offset);
+            cuda_scaled_sum_three_float(temp_result_gpu, band_gpu, b_gpu,
+                    a.size() - op_offset, blocksize);
+            band->release_read();
         }
     }
+
+    result.release_write();
+    b.release_read();
+
     return result;
 }
 

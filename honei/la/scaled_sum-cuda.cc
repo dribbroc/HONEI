@@ -57,7 +57,13 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_three_float", 128ul));
 
-    cuda_scaled_sum_three_float(a.elements(), b.elements(), c.elements(), a.size(), blocksize);
+    void * a_gpu (a.write(tags::GPU::CUDA::memory_value));
+    void * b_gpu (b.read(tags::GPU::CUDA::memory_value));
+    void * c_gpu (c.read(tags::GPU::CUDA::memory_value));
+    cuda_scaled_sum_three_float(a_gpu, b_gpu, c_gpu, a.size(), blocksize);
+    c.release_read();
+    b.release_read();
+    a.release_write();
 
     return a;
 }
