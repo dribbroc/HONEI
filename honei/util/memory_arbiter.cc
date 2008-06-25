@@ -19,6 +19,7 @@
  */
 
 #include <honei/util/memory_arbiter.hh>
+#include <honei/util/memory_arbiter-impl.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 
 namespace honei
