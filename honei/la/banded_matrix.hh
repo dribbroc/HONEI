@@ -159,6 +159,18 @@ namespace honei
             /// Returns a band-vector by unsigned index.
             DenseVector<DataType_> & band_unsigned(unsigned long index);
 
+            /// Request a read lock for our data.
+            virtual void read() const;
+
+            /// Request a write lock for our data.
+            virtual void write() const;
+
+            /// Release a read lock for our data.
+            virtual void release_read() const;
+
+            /// Release a write lock for our data.
+            virtual void release_write() const;
+
             /// Returns a copy of the matrix.
             BandedMatrix copy() const;
     };

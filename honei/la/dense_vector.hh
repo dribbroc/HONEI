@@ -196,10 +196,10 @@ namespace honei
             virtual void * address() const;
 
             /// Request a read lock for our data.
-            virtual void * read(tags::TagValue memory) const;
+            virtual void * read(tags::TagValue memory = tags::CPU::memory_value) const;
 
             /// Request a write lock for our data.
-            virtual void * write(tags::TagValue memory) const;
+            virtual void * write(tags::TagValue memory = tags::CPU::memory_value) const;
 
             /// Release a read lock for our data.
             virtual void release_read() const;

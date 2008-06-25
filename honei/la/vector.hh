@@ -131,10 +131,10 @@ namespace honei
             virtual void * address() const = 0;
 
             /// Request a read lock for our data.
-            virtual void * read(tags::TagValue memory) const = 0;
+            virtual void * read(tags::TagValue memory = tags::CPU::memory_value) const = 0;
 
             /// Request a write lock for our data.
-            virtual void * write(tags::TagValue memory) const = 0;
+            virtual void * write(tags::TagValue memory = tags::CPU::memory_value) const = 0;
 
             /// Release a read lock for our data.
             virtual void release_read() const = 0;

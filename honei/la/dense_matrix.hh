@@ -323,13 +323,13 @@ namespace honei
             }
 
             /// Request a read lock for our data.
-            void * read(tags::TagValue memory) const
+            void * read(tags::TagValue memory = tags::CPU::memory_value) const
             {
                 return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
             }
 
             /// Request a write lock for our data.
-            void * write(tags::TagValue memory) const
+            void * write(tags::TagValue memory = tags::CPU::memory_value) const
             {
                 return MemoryArbiter::instance()->write(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
             }

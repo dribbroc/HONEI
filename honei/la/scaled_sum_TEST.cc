@@ -46,19 +46,14 @@ class DenseVectorScaledSumTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(2));
                 DenseVector<DataType_> dv2(size, DataType_(3));
-                MemoryArbiter::instance()->write<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
-                MemoryArbiter::instance()->release_write<tags::CPU>(dv1.memid());
-                MemoryArbiter::instance()->write<tags::CPU>(dv2.memid(), dv2.address(), dv2.size() * sizeof(DataType_));
-                MemoryArbiter::instance()->release_write<tags::CPU>(dv2.memid());
                 DataType_ scal(DataType_(2));
 
                 ScaledSum<Tag_>::value(dv1, dv2, scal);
-                //MemoryArbiter::instance()->read<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
-                dv1.read<tags::CPU>();
+                dv1.read();
                 DenseVector<DataType_> dv3(size, DataType_(8));
-                MemoryArbiter::instance()->release_read<tags::CPU>(dv1.memid());
 
                 TEST_CHECK_EQUAL(dv1, dv3);
+                dv1.release_read();
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -105,18 +100,14 @@ class DenseVectorScaledSumQuickTest :
 
             DenseVector<DataType_> dv1(size, DataType_(2));
             DenseVector<DataType_> dv2(size, DataType_(3));
-            MemoryArbiter::instance()->write<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dv1.memid());
-            MemoryArbiter::instance()->write<tags::CPU>(dv2.memid(), dv2.address(), dv2.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dv2.memid());
             DataType_ scal(DataType_(2));
 
             ScaledSum<Tag_>::value(dv1, dv2, scal);
             DenseVector<DataType_> dv3(size, DataType_(8));
 
-            MemoryArbiter::instance()->read<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
+            dv1.read();
             TEST_CHECK_EQUAL(dv1, dv3);
-            MemoryArbiter::instance()->release_read<tags::CPU>(dv1.memid());
+            dv1.release_read();
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
@@ -167,18 +158,14 @@ class DenseVectorRangeScaledSumTest :
 
                         DenseVector<DataType_> dv2_source(size * 2, DataType_(3));
                         DenseVectorRange<DataType_> dv2(dv2_source, size, j);
-                        MemoryArbiter::instance()->write<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
-                        MemoryArbiter::instance()->release_write<tags::CPU>(dv1.memid());
-                        MemoryArbiter::instance()->write<tags::CPU>(dv2.memid(), dv2.address(), dv2.size() * sizeof(DataType_));
-                        MemoryArbiter::instance()->release_write<tags::CPU>(dv2.memid());
                         DataType_ scal(DataType_(2));
 
                         ScaledSum<Tag_>::value(dv1, dv2, scal);
-                        MemoryArbiter::instance()->read<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
                         DenseVector<DataType_> dv3(size, DataType_(8));
 
+                        dv1.read();
                         TEST_CHECK_EQUAL(dv1, dv3);
-                        MemoryArbiter::instance()->release_read<tags::CPU>(dv1.memid());
+                        dv1.release_read();
                     }
                 }
             }
@@ -228,17 +215,13 @@ class DenseVectorRangeScaledSumQuickTest :
 
             DenseVector<DataType_> dv2_source(size * 2, DataType_(3));
             DenseVectorRange<DataType_> dv2(dv2_source, size, 3);
-            MemoryArbiter::instance()->write<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dv1.memid());
-            MemoryArbiter::instance()->write<tags::CPU>(dv2.memid(), dv2.address(), dv2.size() * sizeof(DataType_));
-            MemoryArbiter::instance()->release_write<tags::CPU>(dv2.memid());
 
             DataType_ scal(DataType_(2));
             DenseVector<DataType_> dv3(size, DataType_(8));
             ScaledSum<Tag_>::value(dv1, dv2, scal);
-            MemoryArbiter::instance()->read<tags::CPU>(dv1.memid(), dv1.address(), dv1.size() * sizeof(DataType_));
+            dv1.read();
             TEST_CHECK_EQUAL(dv1, dv3);
-            MemoryArbiter::instance()->release_read<tags::CPU>(dv1.memid());
+            dv1.release_read();
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));

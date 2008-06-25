@@ -52,25 +52,25 @@ class MemoryArbiterBench :
             for (unsigned long i(0) ; i < _arrays ; ++i)
             {
                 vectors[i] = new DenseVector<DataType_>(1);
-                MemoryArbiter::instance()->read(Tag_::memory_value, vectors[i]->memid(), vectors[i]->address(), vectors[i]->size());
+                vectors[i]->read(Tag_::memory_value);
+                vectors[i]->release_read();
             }
-            DenseVector<DataType_> dv(_size, DataType_(42));
             for(int i(0) ; i < _count ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 10000 ; ++j)
                         {
-                            MemoryArbiter::instance()->write(Tag_::memory_value, dv.memid(), dv.address(), dv.size());
-                            MemoryArbiter::instance()->release_write(dv.memid());
-                            MemoryArbiter::instance()->read(Tag_::memory_value, dv.memid(), dv.address(), dv.size());
-                            MemoryArbiter::instance()->release_read(dv.memid());
+                            unsigned long index(rand() % _arrays);
+                            vectors[index]->write(Tag_::memory_value);
+                            vectors[index]->release_write();
+                            vectors[index]->read(Tag_::memory_value);
+                            vectors[index]->release_read();
                         }
                         );
             }
             evaluate();
             for (unsigned long i(0) ; i < _arrays ; ++i)
             {
-                MemoryArbiter::instance()->release_read(vectors[i]->memid());
                 delete vectors[i];
             }
     }

@@ -23,6 +23,7 @@
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/exception.hh>
+#include <honei/util/assertion.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/log.hh>
 #include <honei/util/stringify.hh>
@@ -133,6 +134,7 @@ namespace honei
                 }
                 else
                 {
+                    ASSERT(i->second.read_count == 0 && i->second.write_count == 0, "Deleting MemoryBlock that is still under access!");
                     // Delete the deprecated memory block in all relevant memory backends
                     for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
                             j != j_end ; ++j)
