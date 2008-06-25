@@ -42,7 +42,7 @@ namespace honei
         /// Our size.
         unsigned long size;
 
-        /// The square roote of our size
+        /// The square roote of our size.
         signed long root;
 
         /// Our zero element.
@@ -176,8 +176,8 @@ namespace honei
         ASSERT(row < this->_imp->size && row >= 0, "row index '" + stringify(row) + "' is out of bounds!");
         ASSERT(column < this->_imp->size && column >= 0, "column index '" + stringify(column) + "' is out of bounds!");
 
-        long index = column - row;
-        long root = this->_imp->root;
+        long index(column - row);
+        long root(this->_imp->root);
 
         if (index == -root - 1)
             return (*this->_imp->bands[LL])[row];
@@ -214,7 +214,6 @@ namespace honei
     {
         CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '"
                 + stringify(this->_imp->size) + "':");
-
 
         return *this->_imp->bands[index];
     }

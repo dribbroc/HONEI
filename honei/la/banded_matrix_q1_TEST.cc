@@ -55,7 +55,8 @@ class BandedMatrixQ1QuickTest :
             DenseVector<DataType_> dv9(size, DataType_(9));
 
             BandedMatrixQ1<DataType_> bm1(size, dv1, dv2, dv3, dv4, dv5, dv6, dv7, dv8, dv9);
-            BandedMatrixQ1<DataType_> bm0(size, dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy());
+            BandedMatrixQ1<DataType_> bm0(size, dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(),
+                    dv0.copy(), dv0.copy());
             TEST_CHECK_NOT_EQUAL(bm0, bm1);
             TEST_CHECK_EQUAL(bm0, bm0);
             TEST_CHECK_EQUAL(bm1, bm1.copy());
@@ -72,7 +73,6 @@ class BandedMatrixQ1QuickTest :
             TEST_CHECK_THROWS(BandedMatrixQ1<DataType_> bm01(9, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01), VectorSizeDoesNotMatch);
         }
 };
-
 BandedMatrixQ1QuickTest<float> banded_matrix_q1_quick_test_float("float");
 BandedMatrixQ1QuickTest<double> banded_matrix_q1quick_test_double("double");
 

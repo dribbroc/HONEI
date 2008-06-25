@@ -235,37 +235,27 @@ namespace honei
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
 
-            //DenseVector<DT1_> result(a.rows(), DT1_(0));
             DenseVector<DT1_> result(a.rows());
             long root(a.root());
 
             for (long index(0) ; index < b.size() ; ++index)
             {
-                //y->data[i] = A->sDD_CPU[i]*x->data[i];
                 result[index] = a.band(DD)[index] * b[index];
                 if ((index - root - 1) >= 0)
-                    //y->data[i] += A->sLL_CPU[i]*x->data[i-m-1];
                     result[index] += a.band(LL)[index] * b[index - root - 1];
                 if ((index - root) >= 0)
-                    //y->data[i] += A->sLD_CPU[i]*x->data[i-m];
                     result[index] += a.band(LD)[index] * b[index - root];
                 if ((index - root + 1) >= 0)
-                    //y->data[i] += A->sLU_CPU[i]*x->data[i-m+1];
                     result[index] += a.band(LU)[index] * b[index - root + 1];
                 if ((index - 1) >= 0)
-                    //y->data[i] += A->sDL_CPU[i]*x->data[i-1];
                     result[index] += a.band(DL)[index] * b[index - 1];
                 if ((index + 1) < b.size())
-                    //y->data[i] += A->sDU_CPU[i]*x->data[i+1];
                     result[index] += a.band(DU)[index] * b[index + 1];
                 if ((index + root - 1) < b.size())
-                    //y->data[i] += A->sUL_CPU[i]*x->data[i+m-1];
                     result[index] += a.band(UL)[index] * b[index + root - 1];
                 if ((index + root) < b.size())
-                    //y->data[i] += A->sUD_CPU[i]*x->data[i+m];
                     result[index] += a.band(UD)[index] * b[index + root];
                 if ((index + root + 1) < b.size())
-                    //y->data[i] += A->sUU_CPU[i]*x->data[i+m+1];
                     result[index] += a.band(UU)[index] * b[index + root + 1];
             }
 

@@ -87,7 +87,7 @@ namespace honei
             /**
              * Constructor.
              *
-             * \param source The source q1 matrix our matrix will be created from.
+             * \param source The q1 matrix our matrix will be created from.
              */
             BandedMatrix(const BandedMatrixQ1<DataType_> & src);
 
