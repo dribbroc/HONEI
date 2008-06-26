@@ -26,9 +26,11 @@ namespace honei
     class MemoryBackendBase
     {
         public:
-            virtual void * upload(unsigned long memid, void * address, unsigned long size) = 0;
+            virtual void * upload(unsigned long memid, void * address, unsigned long bytes) = 0;
 
-            virtual void download(unsigned long memid, void * address, unsigned long size) = 0;
+            virtual void download(unsigned long memid, void * address, unsigned long bytes) = 0;
+
+            virtual void * alloc(unsigned long memid, void * address, unsigned long bytes) = 0;
 
             virtual void free(unsigned long memid) = 0;
     };

@@ -50,6 +50,7 @@ namespace honei
 #if defined (DEBUG)
 #define CUDA_ERROR() \
     do { \
+        cudaThreadSynchronize(); \
         honei::cuda::honeiCudaError = cudaGetLastError(); \
         EXTERNAL_ASSERT(honei::cuda::honeiCudaError == cudaSuccess, cudaGetErrorString(honei::cuda::honeiCudaError)); \
     } while (false)

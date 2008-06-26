@@ -193,7 +193,7 @@ class Q1MatrixDenseVectorProductTest :
         virtual void run() const
         {
             unsigned long size;
-            for (unsigned long level(1) ; level <= 7 ; ++level)
+            for (unsigned long level(1) ; level <= 10 ; ++level)
             {
                 size  = (unsigned long)pow((pow(2, level) + 1), 2);
                 unsigned long num_limit(311); //value of used elements will be <= num_limit* size

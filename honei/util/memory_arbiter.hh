@@ -98,17 +98,31 @@ namespace honei
              * \param memid A unique key identifying the requested chunk.
              * \param address The address where our reading will begin.
              * \param bytes The amount of bytes we want to read.
+             * \retval device A pointer to the data on the device.
              */
             void * read(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes);
 
             /**
              * Request a write lock for a specific memory block.
+             * A read lock is request implicit, too!
              *
              * \param memid A unique key identifying the requested chunk.
              * \param address The address where our writing will begin.
              * \param bytes The amount of bytes we want to write.
+             * \retval device A pointer to the data on the device.
              */
             void * write(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes);
+
+            /**
+             * Request a write lock for a specific memory block.
+             * A read lock is not request.
+             *
+             * \param memid A unique key identifying the requested chunk.
+             * \param address The address where our writing will begin.
+             * \param bytes The amount of bytes we want to write.
+             * \retval device A pointer to the data on the device.
+             */
+            void * write_only(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes);
 
             /**
              * Release a read lock for a specific memory block.

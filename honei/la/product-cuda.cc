@@ -88,7 +88,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
     unsigned long m(a.root());
 
     void * b_gpu(b.read(tags::GPU::CUDA::memory_value));
-    void * result_gpu(result.write(tags::GPU::CUDA::memory_value));
+    void * result_gpu(result.write_only(tags::GPU::CUDA::memory_value));
     void * ll_gpu(a.band(LL).read(tags::GPU::CUDA::memory_value));
     void * ld_gpu(a.band(LD).read(tags::GPU::CUDA::memory_value));
     void * lu_gpu(a.band(LU).read(tags::GPU::CUDA::memory_value));

@@ -41,19 +41,28 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>
     {
     public:
-        virtual void * upload(unsigned long memid, void * address, unsigned long size)
+        virtual void * upload(unsigned long memid, void * address, unsigned long bytes)
         {
             CONTEXT("When uploading data:");
+
             return address;
         }
 
-        virtual void download(unsigned long memid, void * address, unsigned long size)
+        virtual void download(unsigned long memid, void * address, unsigned long bytes)
         {
             CONTEXT("When downloading data:");
         }
 
+        virtual void * alloc(unsigned long memid, void * address, unsigned long bytes)
+        {
+            CONTEXT("When allocating data:");
+
+            return address;
+        }
+
         virtual void free(unsigned long memid)
         {
+            CONTEXT("When freeing data:");
         }
 
     };
@@ -81,9 +90,11 @@ namespace honei
             std::multimap<unsigned long, Chunk> _id_map;
 
         public:
-            virtual void * upload(unsigned long memid, void * address, unsigned long size);
+            virtual void * upload(unsigned long memid, void * address, unsigned long bytes);
 
-            virtual void download(unsigned long memid, void * address, unsigned long size);
+            virtual void download(unsigned long memid, void * address, unsigned long bytes);
+
+            virtual void * alloc(unsigned long memid, void * address, unsigned long bytes);
 
             virtual void free(unsigned long memid);
     };

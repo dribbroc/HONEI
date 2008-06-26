@@ -256,6 +256,12 @@ namespace honei
     }
 
     template <typename DataType_>
+    void * DenseVector<DataType_>::write_only(tags::TagValue memory) const
+    {
+        return MemoryArbiter::instance()->write_only(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+    }
+
+    template <typename DataType_>
     void DenseVector<DataType_>::release_read() const
     {
         MemoryArbiter::instance()->release_read(this->memid());

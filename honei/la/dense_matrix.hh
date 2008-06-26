@@ -334,6 +334,12 @@ namespace honei
                 return MemoryArbiter::instance()->write(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
             }
 
+            /// Request a write-only lock for our data.
+            void * write_only(tags::TagValue memory = tags::CPU::memory_value) const
+            {
+                return MemoryArbiter::instance()->write_only(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+            }
+
             /// Release a read lock for our data.
             void release_read() const
             {

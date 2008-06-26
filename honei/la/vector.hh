@@ -136,6 +136,9 @@ namespace honei
             /// Request a write lock for our data.
             virtual void * write(tags::TagValue memory = tags::CPU::memory_value) const = 0;
 
+            /// Request a write-only lock for our data.
+            virtual void * write_only(tags::TagValue memory = tags::CPU::memory_value) const = 0;
+
             /// Release a read lock for our data.
             virtual void release_read() const = 0;
 

@@ -186,6 +186,41 @@ namespace honei
         return this->_imp->_backends[memory]->upload(memid, address, bytes);
     }
 
+    void * MemoryArbiter::write_only(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When retrieving write-only lock:");
+        Lock l(*this->_imp->_mutex);
+        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
+        // Wait until no one reads or writes on our memory block
+        while (i != this->_imp->_blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
+        {
+            this->_imp->_access_finished->wait(*this->_imp->_mutex);
+            i = this->_imp->_blocks.find(memid);
+        }
+        if (i == this->_imp->_blocks.end())
+        {
+            throw InternalError("MemoryArbiter: Memory Block not found!");
+        }
+        else
+        {
+            // Delete the deprecated memory block in all relevant memory backends
+            for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                    j != j_end ; ++j)
+            {
+                if (*j != memory)
+                {
+                    this->_imp->_backends[*j]->free(memid);
+                }
+
+            }
+            i->second.readers.clear();
+            i->second.writer= memory;
+            i->second.write_count++;
+            i->second.readers.insert(memory);
+        }
+        return this->_imp->_backends[memory]->alloc(memid, address, bytes);
+    }
+
     void MemoryArbiter::release_read(unsigned long memid)
     {
         CONTEXT("When releasing read lock:");

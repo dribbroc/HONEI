@@ -23,15 +23,14 @@
 
 namespace honei
 {
-    void *  MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, void * address, unsigned long bytes)
     {
         CONTEXT("When uploading data:");
         std::map<void *, void *>::iterator i(_address_map.find(address));
         if (i == _address_map.end())
         {
-            void * device(cuda_upload(address, bytes));
-            _address_map.insert(std::pair<void *, void *>(address, device));
-            _id_map.insert(std::pair<unsigned long, Chunk>(memid, Chunk(address, device, bytes)));
+            void * device(this->alloc(memid, address, bytes));
+            cuda_upload(address, device, bytes);
             return device;
         }
         else
@@ -53,6 +52,15 @@ namespace honei
             cuda_download(i->second, address, bytes);
         }
 
+    }
+
+    void * MemoryBackend<tags::GPU::CUDA>::alloc(unsigned long memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When allocating data:");
+        void * device(cuda_malloc(bytes));
+        _id_map.insert(std::pair<unsigned long, Chunk>(memid, Chunk(address, device, bytes)));
+        _address_map.insert(std::pair<void *, void *>(address, device));
+        return device;
     }
 
     void MemoryBackend<tags::GPU::CUDA>::free(unsigned long memid)
