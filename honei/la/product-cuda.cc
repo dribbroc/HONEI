@@ -87,10 +87,34 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_float", 128ul));
     unsigned long m(a.root());
 
-    cuda_product_bmdv_q1_float(a.band(LL).elements(), a.band(LD).elements(), a.band(LU).elements(),
-            a.band(DL).elements(), a.band(DD).elements(), a.band(DU).elements(),
-            a.band(UL).elements(), a.band(UD).elements(), a.band(UU).elements(),
-            b.elements(), result.elements(), a.size(), blocksize, m);
+    void * b_gpu(b.read(tags::GPU::CUDA::memory_value));
+    void * result_gpu(result.write(tags::GPU::CUDA::memory_value));
+    void * ll_gpu(a.band(LL).read(tags::GPU::CUDA::memory_value));
+    void * ld_gpu(a.band(LD).read(tags::GPU::CUDA::memory_value));
+    void * lu_gpu(a.band(LU).read(tags::GPU::CUDA::memory_value));
+    void * dl_gpu(a.band(DL).read(tags::GPU::CUDA::memory_value));
+    void * dd_gpu(a.band(DD).read(tags::GPU::CUDA::memory_value));
+    void * du_gpu(a.band(DU).read(tags::GPU::CUDA::memory_value));
+    void * ul_gpu(a.band(UL).read(tags::GPU::CUDA::memory_value));
+    void * ud_gpu(a.band(UD).read(tags::GPU::CUDA::memory_value));
+    void * uu_gpu(a.band(UU).read(tags::GPU::CUDA::memory_value));
+
+    cuda_product_bmdv_q1_float(ll_gpu, ld_gpu, lu_gpu,
+            dl_gpu, dd_gpu, du_gpu,
+            ul_gpu, ud_gpu, uu_gpu,
+            b_gpu, result_gpu, a.size(), blocksize, m);
+
+    result.release_write();
+    b.release_read();
+    a.band(LL).release_read();
+    a.band(LD).release_read();
+    a.band(LU).release_read();
+    a.band(DL).release_read();
+    a.band(DD).release_read();
+    a.band(DU).release_read();
+    a.band(UL).release_read();
+    a.band(UD).release_read();
+    a.band(UU).release_read();
 
     return result;
 }

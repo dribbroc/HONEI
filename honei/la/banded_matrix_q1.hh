@@ -103,6 +103,18 @@ namespace honei
             /// Returns a band-vector range by index.
             DenseVectorRange<DataType_> band_range(Q1BandIndex index) const;
 
+            /// Request a read lock for our data.
+            virtual void read() const;
+
+            /// Request a write lock for our data.
+            virtual void write() const;
+
+            /// Release a read lock for our data.
+            virtual void release_read() const;
+
+            /// Release a write lock for our data.
+            virtual void release_write() const;
+
             /// Returns a copy of the matrix.
             BandedMatrixQ1 copy() const;
 

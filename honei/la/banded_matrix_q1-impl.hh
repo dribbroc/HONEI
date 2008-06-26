@@ -260,6 +260,62 @@ namespace honei
     }
 
     template <typename DataType_>
+    void BandedMatrixQ1<DataType_>::read() const
+    {
+        this->_imp->bands[LL]->read();
+        this->_imp->bands[LD]->read();
+        this->_imp->bands[LU]->read();
+        this->_imp->bands[DL]->read();
+        this->_imp->bands[DD]->read();
+        this->_imp->bands[DU]->read();
+        this->_imp->bands[UL]->read();
+        this->_imp->bands[UD]->read();
+        this->_imp->bands[UU]->read();
+    }
+
+    template <typename DataType_>
+    void BandedMatrixQ1<DataType_>::write() const
+    {
+        this->_imp->bands[LL]->write();
+        this->_imp->bands[LD]->write();
+        this->_imp->bands[LU]->write();
+        this->_imp->bands[DL]->write();
+        this->_imp->bands[DD]->write();
+        this->_imp->bands[DU]->write();
+        this->_imp->bands[UL]->write();
+        this->_imp->bands[UD]->write();
+        this->_imp->bands[UU]->write();
+    }
+
+    template <typename DataType_>
+    void BandedMatrixQ1<DataType_>::release_read() const
+    {
+        this->_imp->bands[LL]->release_read();
+        this->_imp->bands[LD]->release_read();
+        this->_imp->bands[LU]->release_read();
+        this->_imp->bands[DL]->release_read();
+        this->_imp->bands[DD]->release_read();
+        this->_imp->bands[DU]->release_read();
+        this->_imp->bands[UL]->release_read();
+        this->_imp->bands[UD]->release_read();
+        this->_imp->bands[UU]->release_read();
+    }
+
+    template <typename DataType_>
+    void BandedMatrixQ1<DataType_>::release_write() const
+    {
+        this->_imp->bands[LL]->release_write();
+        this->_imp->bands[LD]->release_write();
+        this->_imp->bands[LU]->release_write();
+        this->_imp->bands[DL]->release_write();
+        this->_imp->bands[DD]->release_write();
+        this->_imp->bands[DU]->release_write();
+        this->_imp->bands[UL]->release_write();
+        this->_imp->bands[UD]->release_write();
+        this->_imp->bands[UU]->release_write();
+    }
+
+    template <typename DataType_>
     BandedMatrixQ1<DataType_>
     BandedMatrixQ1<DataType_>::copy() const
     {

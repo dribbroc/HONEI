@@ -121,6 +121,10 @@ class CUDAMemoryArbiterQuickTest :
             MemoryArbiter::instance()->release_read(mem1);
             MemoryArbiter::instance()->release_read(mem2);
             MemoryArbiter::instance()->release_read(mem2);
+            MemoryArbiter::instance()->write(tags::GPU::CUDA::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->release_write(mem2);
+            MemoryArbiter::instance()->read(tags::CPU::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->release_read(mem2);
             MemoryArbiter::instance()->write(tags::CPU::memory_value, mem1, data1, 1);
             MemoryArbiter::instance()->write(tags::CPU::memory_value, mem2, data2, 1);
             MemoryArbiter::instance()->release_write(mem1);

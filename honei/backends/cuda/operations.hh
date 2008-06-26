@@ -32,9 +32,9 @@ extern "C"
 
         void cuda_element_product_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
 
-        void cuda_product_bmdv_q1_float(float * ll, float * ld, float * lu,
-                float * dl, float * dd, float *du,
-                float * ul, float * ud, float *uu, float * x, float * y,
+        void cuda_product_bmdv_q1_float(void * ll, void * ld, void * lu,
+                void * dl, void * dd, void *du,
+                void * ul, void * ud, void *uu, void * x, void * y,
                 unsigned long size, unsigned long blocksize, unsigned long m);
 
         void cuda_scaled_sum_two_float(void * x, const void * y, float b, unsigned long size, unsigned long blocksize);

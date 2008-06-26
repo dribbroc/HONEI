@@ -84,65 +84,29 @@ namespace honei
     }
 }
 
-extern "C" void cuda_product_bmdv_q1_float (float * ll, float * ld, float * lu,
-        float * dl, float * dd, float *du,
-        float * ul, float * ud, float *uu, float * x, float * y,
+extern "C" void cuda_product_bmdv_q1_float (void * ll, void * ld, void * lu,
+        void * dl, void * dd, void *du,
+        void * ul, void * ud, void *uu, void * x, void * y,
         unsigned long size, unsigned long blocksize, unsigned long m)
 {
     dim3 grid;
     dim3 block;
     block.x = blocksize;
     grid.x = (int)ceil(size/(double)(block.x));
-    float * x_gpu(0);
-    float * y_gpu(0);
-    float * ll_gpu;
-    float * ld_gpu;
-    float * lu_gpu;
-    float * dl_gpu;
-    float * dd_gpu;
-    float * du_gpu;
-    float * ul_gpu;
-    float * ud_gpu;
-    float * uu_gpu;
+    float * x_gpu((float *)x);
+    float * y_gpu((float *)y);
+    float * ll_gpu((float *)ll);
+    float * ld_gpu((float *)ld);
+    float * lu_gpu((float *)lu);
+    float * dl_gpu((float *)dl);
+    float * dd_gpu((float *)dd);
+    float * du_gpu((float *)du);
+    float * ul_gpu((float *)ul);
+    float * ud_gpu((float *)ud);
+    float * uu_gpu((float *)uu);
 
-    //todo: malloc and transfer only non zero padded parts
-    cudaMalloc((void**)&x_gpu, size * sizeof(float));
-    cudaMalloc((void**)&y_gpu, size * sizeof(float));
-    cudaMalloc((void**)&ll_gpu, size * sizeof(float));
-    cudaMalloc((void**)&ld_gpu, size * sizeof(float));
-    cudaMalloc((void**)&lu_gpu, size * sizeof(float));
-    cudaMalloc((void**)&dl_gpu, size * sizeof(float));
-    cudaMalloc((void**)&dd_gpu, size * sizeof(float));
-    cudaMalloc((void**)&du_gpu, size * sizeof(float));
-    cudaMalloc((void**)&ul_gpu, size * sizeof(float));
-    cudaMalloc((void**)&ud_gpu, size * sizeof(float));
-    cudaMalloc((void**)&uu_gpu, size * sizeof(float));
-
-    cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
-    //cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ll_gpu, ll, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ld_gpu, ld, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(lu_gpu, lu, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(dl_gpu, dl, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(dd_gpu, dd, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(du_gpu, du, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ul_gpu, ul, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(ud_gpu, ud, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(uu_gpu, uu, size * sizeof(float), cudaMemcpyHostToDevice);
 
     honei::cuda::product_bmdv_q1_gpu<<<grid, block, 3 * (block.x + 2 ) * sizeof(float)>>>(ll_gpu, ld_gpu, lu_gpu, dl_gpu, dd_gpu, du_gpu, ul_gpu, ud_gpu, uu_gpu, x_gpu, y_gpu, size, m);
-    cudaMemcpy(y, y_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaFree(x_gpu);
-    cudaFree(y_gpu);
-    cudaFree(ll_gpu);
-    cudaFree(ld_gpu);
-    cudaFree(lu_gpu);
-    cudaFree(dl_gpu);
-    cudaFree(dd_gpu);
-    cudaFree(du_gpu);
-    cudaFree(ul_gpu);
-    cudaFree(ud_gpu);
-    cudaFree(uu_gpu);
 
     CUDA_ERROR();
 }
