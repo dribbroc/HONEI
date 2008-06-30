@@ -213,6 +213,50 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     return result;
 }
 
+DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> (SSE):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    DenseVector<float> result(a.rows());
+
+    unsigned long m(a.root());
+
+
+    honei::sse::product_bmdv_q1(a.band(LL).elements(), a.band(LD).elements(), a.band(LU).elements(),
+            a.band(DL).elements(), a.band(DD).elements(), a.band(DU).elements(),
+            a.band(UL).elements(), a.band(UD).elements(), a.band(UU).elements(),
+            b.elements(), result.elements(), a.size(), a.root());
+
+    return result;
+}
+
+DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When multiplying BandedMatrix<double> with DenseVectorContinuousBase<double> (SSE):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    DenseVector<double> result(a.rows());
+
+    unsigned long m(a.root());
+
+
+    honei::sse::product_bmdv_q1(a.band(LL).elements(), a.band(LD).elements(), a.band(LU).elements(),
+            a.band(DL).elements(), a.band(DD).elements(), a.band(DU).elements(),
+            a.band(UL).elements(), a.band(UD).elements(), a.band(UU).elements(),
+            b.elements(), result.elements(), a.size(), a.root());
+
+    return result;
+}
+
 DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying DenseMatrix<float> with DenseVectorContinuousBase<float> (SSE):");

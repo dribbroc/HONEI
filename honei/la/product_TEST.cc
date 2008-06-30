@@ -248,7 +248,8 @@ class Q1MatrixDenseVectorProductTest :
 Q1MatrixDenseVectorProductTest<tags::CPU, float> q1_prod_test_float("float");
 Q1MatrixDenseVectorProductTest<tags::CPU, double> q1_prod_test_double("double");
 #ifdef HONEI_SSE
-//Q1MatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_q1_prod_test_float("float");
+Q1MatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_q1_prod_test_float("float");
+Q1MatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_q1_prod_test_double("double");
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductTest<tags::GPU::CUDA, float> cuda_q1_prod_test_float("float");
@@ -319,7 +320,8 @@ class Q1MatrixDenseVectorProductQuickTest :
 Q1MatrixDenseVectorProductQuickTest<tags::CPU, float> q1_prod_quick_test_float("float");
 Q1MatrixDenseVectorProductQuickTest<tags::CPU, double> q1_prod_quick_test_double("double");
 #ifdef HONEI_SSE
-//Q1MatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_q1_prod_quick_test_float("float");
+Q1MatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_q1_prod_quick_test_float("float");
+Q1MatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_q1_prod_quick_test_double("double");
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductQuickTest<tags::GPU::CUDA, float> cuda_q1_prod_quick_test_float("float");

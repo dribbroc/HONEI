@@ -45,6 +45,16 @@ namespace honei
         void product_dm_nx2(double * result, const double * a, const double * b, unsigned long size);
         void product_bmdv(float * x, const float * y, const float * z, unsigned long size);
         void product_bmdv(double * x, const double * y, const double * z, unsigned long size);
+        void product_bmdv_q1(float * ll, float * ld, float * lu,
+                float * dl, float * dd, float * du,
+                float * ul, float * ud, float * uu,
+                float * b, float * result,
+                unsigned long, unsigned long m);
+        void product_bmdv_q1(double * ll, double * ld, double * lu,
+                double * dl, double * dd, double * du,
+                double * ul, double * ud, double * uu,
+                double * b, double * result,
+                unsigned long, unsigned long m);
 
         float reduction_sum(const float * a, unsigned long size);
         double reduction_sum(double * a, unsigned long size);

@@ -425,6 +425,582 @@ namespace honei
                 x[index] += y[index] * z[index];
             }
         }
+
+        void product_bmdv_q1(float * ll, float * ld, float * lu,
+                float * dl, float * dd, float * du,
+                float * ul, float * ud, float * uu,
+                float * b, float * result,
+                unsigned long size, unsigned long m)
+        {
+            __m128 m1, m2, m3;
+
+            unsigned long index(0);
+
+            //index 0
+            result[index] = dd[index] * b[index]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m]
+                + uu[index] * b[index + m + 1];
+
+            //index in [1, root_n -1[
+            index = 1;
+            unsigned long quad_start(index + 4 - (index % 4));
+            unsigned long quad_end(m - 1 - ((m - 1 - quad_start) % 4));
+
+            for (unsigned long si(index) ; si < quad_start ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+            for (unsigned long si(quad_start) ; si < quad_end ; si+=4)
+            {
+                //result[si] = dd[si] * b[si]
+                m2 = _mm_loadu_ps(b + si);
+                m3 = _mm_load_ps(dd + si);
+                m1 = _mm_mul_ps(m3, m2);
+
+                //+ dl[si] * b[si - 1]
+                m2 = _mm_loadu_ps(b + si - 1);
+                m3 = _mm_load_ps(dl + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ du[si] * b[si + 1]
+                m2 = _mm_loadu_ps(b + si + 1);
+                m3 = _mm_load_ps(du + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ ul[si] * b[si + m - 1]
+                m2 = _mm_loadu_ps(b + si + m - 1);
+                m3 = _mm_load_ps(ul + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ ud[si] * b[si + m]
+                m2 = _mm_loadu_ps(b + si + m);
+                m3 = _mm_load_ps(ud + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ uu[si] * b[si + m + 1];
+                m2 = _mm_loadu_ps(b + si + m + 1);
+                m3 = _mm_load_ps(uu + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                _mm_store_ps(result + si, m1);
+            }
+
+            for (unsigned long si(quad_end) ; si < m - 1 ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+
+            //index root_n -1
+            index = m - 1;
+            result[index] = dd[index] * b[index]
+                + lu[index] * b[index - m + 1]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m]
+                + uu[index] * b[index + m + 1];
+
+            //index root_n
+            index = m;
+            result[index] = dd[index] * b[index]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m]
+                + uu[index] * b[index + m + 1];
+
+            //index in [root_n + 1, n - (root_n + 1)[
+            index = m + 1;
+            quad_start = index + 4 - (index % 4);
+            quad_end = size - m - 1 - ((size - m - 1 - quad_start) % 4);
+
+            for (unsigned long si(index) ; si < quad_start ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+            for (unsigned long si(quad_start) ; si < quad_end ; si+=4)
+            {
+                //result[si] = dd[si] * b[si]
+                m2 = _mm_loadu_ps(b + si);
+                m3 = _mm_load_ps(dd + si);
+                m1 = _mm_mul_ps(m3, m2);
+
+                //+ ll[si] * b[si - m - 1]
+                m2 = _mm_loadu_ps(b + si -m - 1);
+                m3 = _mm_load_ps(ll + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ lu[si] * b[si - m + 1]
+                m2 = _mm_loadu_ps(b + si - m + 1);
+                m3 = _mm_load_ps(lu + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ ld[si] * b[si - m]
+                m2 = _mm_loadu_ps(b + si - m);
+                m3 = _mm_load_ps(ld + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ dl[si] * b[si - 1]
+                m2 = _mm_loadu_ps(b + si - 1);
+                m3 = _mm_load_ps(dl + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ du[si] * b[si + 1]
+                m2 = _mm_loadu_ps(b + si + 1);
+                m3 = _mm_load_ps(du + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ ul[si] * b[si + m - 1]
+                m2 = _mm_loadu_ps(b + si + m - 1);
+                m3 = _mm_load_ps(ul + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ ud[si] * b[si + m]
+                m2 = _mm_loadu_ps(b + si + m);
+                m3 = _mm_load_ps(ud + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ uu[si] * b[si + m + 1];
+                m2 = _mm_loadu_ps(b + si + m + 1);
+                m3 = _mm_load_ps(uu + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                _mm_store_ps(result + si, m1);
+            }
+
+            for (unsigned long si(quad_end) ; si < size - m - 1 ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+            //index n - (root_n + 1)
+            index = size - m - 1;
+            result[index] = dd[index] * b[index]
+                + ll[index] * b[index - m - 1]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m];
+
+            //index n - root_n
+            index = size - m;
+            result[index] = dd[index] * b[index]
+                + ll[index] * b[index - m - 1]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1];
+
+            //index in [n - root_n + 1, n -1[
+            index = size - m + 1;
+            quad_start = index + 4 - (index % 4);
+            quad_end = size - 1 - ((size - 1 - quad_start) % 4);
+
+            for (unsigned long si(index) ; si < quad_start ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1];
+            }
+
+            for (unsigned long si(quad_start) ; si < quad_end ; si+=4)
+            {
+                //result[si] = dd[si] * b[si]
+                m2 = _mm_loadu_ps(b + si);
+                m3 = _mm_load_ps(dd + si);
+                m1 = _mm_mul_ps(m3, m2);
+
+                //+ ll[si] * b[si - m - 1]
+                m2 = _mm_loadu_ps(b + si -m - 1);
+                m3 = _mm_load_ps(ll + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ lu[si] * b[si - m + 1]
+                m2 = _mm_loadu_ps(b + si - m + 1);
+                m3 = _mm_load_ps(lu + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ ld[si] * b[si - m]
+                m2 = _mm_loadu_ps(b + si - m);
+                m3 = _mm_load_ps(ld + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ dl[si] * b[si - 1]
+                m2 = _mm_loadu_ps(b + si - 1);
+                m3 = _mm_load_ps(dl + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                //+ du[si] * b[si + 1]
+                m2 = _mm_loadu_ps(b + si + 1);
+                m3 = _mm_load_ps(du + si);
+                m3 = _mm_mul_ps(m3, m2);
+                m1 = _mm_add_ps(m1, m3);
+
+                _mm_store_ps(result + si, m1);
+            }
+
+            for (unsigned long si(quad_end) ; si < size - m - 1 ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1];
+            }
+
+            //index n - 1
+            index = size - 1;
+            result[index] = dd[index] * b[index]
+                + ll[index] * b[index - m - 1]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1];
+        }
+
+        void product_bmdv_q1(double * ll, double * ld, double * lu,
+                double * dl, double * dd, double * du,
+                double * ul, double * ud, double * uu,
+                double * b, double * result,
+                unsigned long size, unsigned long m)
+        {
+            __m128d m1, m2, m3;
+
+            unsigned long index(0);
+
+            //index 0
+            result[index] = dd[index] * b[index]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m]
+                + uu[index] * b[index + m + 1];
+
+            //index in [1, root_n -1[
+            index = 1;
+            unsigned long quad_start(index + (index % 2));
+            unsigned long quad_end(m - 1 - ((m - 1 - quad_start) % 2));
+
+            for (unsigned long si(index) ; si < quad_start ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+            for (unsigned long si(quad_start) ; si < quad_end ; si+=2)
+            {
+                //result[si] = dd[si] * b[si]
+                m2 = _mm_loadu_pd(b + si);
+                m3 = _mm_load_pd(dd + si);
+                m1 = _mm_mul_pd(m3, m2);
+
+                //+ dl[si] * b[si - 1]
+                m2 = _mm_loadu_pd(b + si - 1);
+                m3 = _mm_load_pd(dl + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ du[si] * b[si + 1]
+                m2 = _mm_loadu_pd(b + si + 1);
+                m3 = _mm_load_pd(du + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ ul[si] * b[si + m - 1]
+                m2 = _mm_loadu_pd(b + si + m - 1);
+                m3 = _mm_load_pd(ul + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ ud[si] * b[si + m]
+                m2 = _mm_loadu_pd(b + si + m);
+                m3 = _mm_load_pd(ud + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ uu[si] * b[si + m + 1];
+                m2 = _mm_loadu_pd(b + si + m + 1);
+                m3 = _mm_load_pd(uu + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                _mm_store_pd(result + si, m1);
+            }
+
+            for (unsigned long si(quad_end) ; si < m - 1 ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+
+            //index root_n -1
+            index = m - 1;
+            result[index] = dd[index] * b[index]
+                + lu[index] * b[index - m + 1]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m]
+                + uu[index] * b[index + m + 1];
+
+            //index root_n
+            index = m;
+            result[index] = dd[index] * b[index]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m]
+                + uu[index] * b[index + m + 1];
+
+            //index in [root_n + 1, n - (root_n + 1)[
+            index = m + 1;
+            quad_start = index + (index % 2);
+            quad_end = size - m - 1 - ((size - m - 1 - quad_start) % 2);
+
+            for (unsigned long si(index) ; si < quad_start ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+            for (unsigned long si(quad_start) ; si < quad_end ; si+=2)
+            {
+                //result[si] = dd[si] * b[si]
+                m2 = _mm_loadu_pd(b + si);
+                m3 = _mm_load_pd(dd + si);
+                m1 = _mm_mul_pd(m3, m2);
+
+                //+ ll[si] * b[si - m - 1]
+                m2 = _mm_loadu_pd(b + si -m - 1);
+                m3 = _mm_load_pd(ll + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ lu[si] * b[si - m + 1]
+                m2 = _mm_loadu_pd(b + si - m + 1);
+                m3 = _mm_load_pd(lu + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ ld[si] * b[si - m]
+                m2 = _mm_loadu_pd(b + si - m);
+                m3 = _mm_load_pd(ld + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ dl[si] * b[si - 1]
+                m2 = _mm_loadu_pd(b + si - 1);
+                m3 = _mm_load_pd(dl + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ du[si] * b[si + 1]
+                m2 = _mm_loadu_pd(b + si + 1);
+                m3 = _mm_load_pd(du + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ ul[si] * b[si + m - 1]
+                m2 = _mm_loadu_pd(b + si + m - 1);
+                m3 = _mm_load_pd(ul + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ ud[si] * b[si + m]
+                m2 = _mm_loadu_pd(b + si + m);
+                m3 = _mm_load_pd(ud + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ uu[si] * b[si + m + 1];
+                m2 = _mm_loadu_pd(b + si + m + 1);
+                m3 = _mm_load_pd(uu + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                _mm_store_pd(result + si, m1);
+            }
+
+            for (unsigned long si(quad_end) ; si < size - m - 1 ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1]
+                    + ul[si] * b[si + m - 1]
+                    + ud[si] * b[si + m]
+                    + uu[si] * b[si + m + 1];
+            }
+
+            //index n - (root_n + 1)
+            index = size - m - 1;
+            result[index] = dd[index] * b[index]
+                + ll[index] * b[index - m - 1]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1]
+                + ud[index] * b[index + m];
+
+            //index n - root_n
+            index = size - m;
+            result[index] = dd[index] * b[index]
+                + ll[index] * b[index - m - 1]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1]
+                + du[index] * b[index + 1]
+                + ul[index] * b[index + m - 1];
+
+            //index in [n - root_n + 1, n -1[
+            index = size - m + 1;
+            quad_start = index + (index % 2);
+            quad_end = size - 1 - ((size - 1 - quad_start) % 2);
+
+            for (unsigned long si(index) ; si < quad_start ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1];
+            }
+
+            for (unsigned long si(quad_start) ; si < quad_end ; si+=2)
+            {
+                //result[si] = dd[si] * b[si]
+                m2 = _mm_loadu_pd(b + si);
+                m3 = _mm_load_pd(dd + si);
+                m1 = _mm_mul_pd(m3, m2);
+
+                //+ ll[si] * b[si - m - 1]
+                m2 = _mm_loadu_pd(b + si -m - 1);
+                m3 = _mm_load_pd(ll + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ lu[si] * b[si - m + 1]
+                m2 = _mm_loadu_pd(b + si - m + 1);
+                m3 = _mm_load_pd(lu + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ ld[si] * b[si - m]
+                m2 = _mm_loadu_pd(b + si - m);
+                m3 = _mm_load_pd(ld + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ dl[si] * b[si - 1]
+                m2 = _mm_loadu_pd(b + si - 1);
+                m3 = _mm_load_pd(dl + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                //+ du[si] * b[si + 1]
+                m2 = _mm_loadu_pd(b + si + 1);
+                m3 = _mm_load_pd(du + si);
+                m3 = _mm_mul_pd(m3, m2);
+                m1 = _mm_add_pd(m1, m3);
+
+                _mm_store_pd(result + si, m1);
+            }
+
+            for (unsigned long si(quad_end) ; si < size - m - 1 ; ++si)
+            {
+                result[si] = dd[si] * b[si]
+                    + ll[si] * b[si - m - 1]
+                    + lu[si] * b[si - m + 1]
+                    + ld[si] * b[si - m]
+                    + dl[si] * b[si - 1]
+                    + du[si] * b[si + 1];
+            }
+
+            //index n - 1
+            index = size - 1;
+            result[index] = dd[index] * b[index]
+                + ll[index] * b[index - m - 1]
+                + lu[index] * b[index - m + 1]
+                + ld[index] * b[index - m]
+                + dl[index] * b[index - 1];
+        }
     }
 }
 
