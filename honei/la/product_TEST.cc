@@ -224,7 +224,11 @@ class Q1MatrixDenseVectorProductTest :
                 BandedMatrix<DataType_> bm2(bm1);
 
                 DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv1));
-                DenseVector<DataType_> dv_ref(Product<tags::CPU>::value(bm2, dv1));
+#ifdef HONEI_SSE
+            DenseVector<DataType_> dv_ref(Product<tags::CPU::SSE>::value(bm2, dv1));
+#else
+            DenseVector<DataType_> dv_ref(Product<tags::CPU>::value(bm2, dv1));
+#endif
 
                 prod.read();
                 for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
@@ -263,7 +267,7 @@ class Q1MatrixDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(16641);
+            unsigned long size(1025ul * 1025);
             unsigned long num_limit(311); //value of used elements will be <= num_limit* size
 
             DenseVector<DataType_> dv1(size, DataType_(1));
@@ -292,7 +296,11 @@ class Q1MatrixDenseVectorProductQuickTest :
             BandedMatrix<DataType_> bm2(bm1);
 
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv1));
+#ifdef HONEI_SSE
+            DenseVector<DataType_> dv_ref(Product<tags::CPU::SSE>::value(bm2, dv1));
+#else
             DenseVector<DataType_> dv_ref(Product<tags::CPU>::value(bm2, dv1));
+#endif
 
             prod.read();
             for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;

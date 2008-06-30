@@ -47,21 +47,21 @@ namespace honei
             // data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
             // x_0 ... x_blockdim-1 into c_1...c_blockdim
             Dcache[lindex + 1] = x[idx];
-            Lcache[lindex + 1] = x[idx - m];
-            Ucache[lindex + 1] = x[idx + m];
+            if (idx - m >= 0) Lcache[lindex + 1] = x[idx - m];
+            if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
             if (lindex == 0)
             {
                 // x_-1 in c_0
-                Dcache[0] = x[blockDim.x * blockIdx.x - 1];
-                Lcache[0] = x[blockDim.x * blockIdx.x - m - 1];
-                Ucache[0] = x[blockDim.x * blockIdx.x + m - 1];
+                if (blockDim.x * blockIdx.x - 1 >= 0 && blockDim.x * blockIdx.x - 1 < n) Dcache[0] = x[blockDim.x * blockIdx.x - 1];
+                if (blockDim.x * blockIdx.x - m - 1 >= 0 && blockDim.x * blockIdx.x - m - 1 < n) Lcache[0] = x[blockDim.x * blockIdx.x - m - 1];
+                if (blockDim.x * blockIdx.x + m - 1 >= 0 && blockDim.x * blockIdx.x + m - 1 < n) Ucache[0] = x[blockDim.x * blockIdx.x + m - 1];
             }
             if (lindex == blockDim.x - 1)
             {
                 // x_blockdim in c_blockdim+1
-                Dcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1)];
-                Lcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) - m];
-                Ucache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) + m];
+                if (blockDim.x * (blockIdx.x +1) >= 0 && blockDim.x * (blockIdx.x +1) < n) Dcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1)];
+                if (blockDim.x * (blockIdx.x +1) - m >= 0 && blockDim.x * (blockIdx.x +1) - m < n) Lcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) - m];
+                if (blockDim.x * (blockIdx.x +1) + m  >= 0 && blockDim.x * (blockIdx.x +1) + m  < n) Ucache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) + m];
             }
             __syncthreads();
             // now, compute

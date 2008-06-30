@@ -106,7 +106,8 @@ namespace honei
         }
         else
         {
-            ASSERT(i->second.read_count == 0 && i->second.write_count == 0, "Deleting MemoryBlock that is still under access!");
+            //ASSERT(i->second.read_count == 0 , "Deleting MemoryBlock " + stringify(memid) + " that is still under " + stringify(i->second.read_count) + " read access!");
+            //ASSERT(i->second.write_count == 0, "Deleting MemoryBlock " + stringify(memid) + " that is still under " + stringify(i->second.write_count) + " write access!");
             // Delete the deprecated memory block in all relevant memory backends
             for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
                     j != j_end ; ++j)
