@@ -23,7 +23,7 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void scale_gpu(float a, float * x, unsigned long size)
+        __global__ void scale_gpu(float * x, float a, unsigned long size)
         {
             int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
@@ -34,23 +34,16 @@ namespace honei
     }
 }
 
-extern "C" void cuda_scale_one_float(float a, float * x, unsigned long size, unsigned long blocksize)
+extern "C" void cuda_scale_one_float(void * x, float a, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
     block.x = blocksize;
     grid.x = ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
-    float * x_gpu(0);
+    float * x_gpu((float *)x);
 
-    cudaMalloc((void**)&x_gpu, size * sizeof(float));
-
-    cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
-
-    honei::cuda::scale_gpu<<<grid, block>>>(a, x_gpu, size);
-
-    cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaFree(x_gpu);
+    honei::cuda::scale_gpu<<<grid, block>>>(x_gpu, a, size);
 
     CUDA_ERROR();
 }

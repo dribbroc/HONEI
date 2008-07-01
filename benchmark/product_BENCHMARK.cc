@@ -59,22 +59,22 @@ class GenericQ1MatrixDenseVectorProductBench :
             evaluate(info * 10);
         }
 };
-GenericQ1MatrixDenseVectorProductBench<tags::CPU, float> GenericQ1DVPBenchfloat("Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 100);
-GenericQ1MatrixDenseVectorProductBench<tags::CPU, double> GenericQ1DVPBenchdouble("Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 100);
-GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore, float> GenericMCQ1DVPBenchfloat("MC Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025*1025ul, 100);
-GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore, double> GenericMCQ1DVPBenchdouble("MC Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 64^3, double", 1025ul*1025, 100);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU, float> GenericQ1DVPBenchfloat("Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU, double> GenericQ1DVPBenchdouble("Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore, float> GenericMCQ1DVPBenchfloat("MC Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025*1025ul, 10);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore, double> GenericMCQ1DVPBenchdouble("MC Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 64^3, double", 1025ul*1025, 10);
 #ifdef HONEI_SSE
-GenericQ1MatrixDenseVectorProductBench<tags::CPU::SSE, float> GenericSSEQ1DVPBenchfloat("SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 100);
-GenericQ1MatrixDenseVectorProductBench<tags::CPU::SSE, double> GenericSSEQ1DVPBenchdouble("SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025 ,double", 1025ul*1025, 100);
-GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> GenericMCSSEQ1DVPBenchfloat("MC::SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025ul*1025, 100);
-GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> GenericMCSSEQ1DVPBenchdouble("MC::SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, double", 1025*1025, 100);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU::SSE, float> GenericSSEQ1DVPBenchfloat("SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU::SSE, double> GenericSSEQ1DVPBenchdouble("SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025 ,double", 1025ul*1025, 10);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> GenericMCSSEQ1DVPBenchfloat("MC::SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, float", 1025ul*1025, 10);
+GenericQ1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> GenericMCSSEQ1DVPBenchdouble("MC::SSE Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, double", 1025*1025, 10);
 #endif
 #ifdef HONEI_CUDA
 GenericQ1MatrixDenseVectorProductBench<tags::GPU::CUDA, float> GenericCUDAQ1DVPBenchfloat("CUDA Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
 #endif
 #ifdef HONEI_CELL
-GenericQ1MatrixDenseVectorProductBench<tags::Cell, float> GenericCELLQ1DVPBenchfloat("CELL Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 100);
-GenericQ1MatrixDenseVectorProductBench<tags::Cell, double> GenericCELLQ1DVPBenchdouble("CELL Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025^2, double", 1025ul * 1025, 100);
+GenericQ1MatrixDenseVectorProductBench<tags::Cell, float> GenericCELLQ1DVPBenchfloat("CELL Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 10);
+GenericQ1MatrixDenseVectorProductBench<tags::Cell, double> GenericCELLQ1DVPBenchdouble("CELL Banded Matrix (Q1 generic) Dense Vector Product Benchmark - matrix size: 1025^2, double", 1025ul * 1025, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -125,18 +125,18 @@ class Q1MatrixDenseVectorProductBench :
             evaluate(info * 10);
         }
 };
-Q1MatrixDenseVectorProductBench<tags::CPU, float> Q1DVPBenchfloat("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 100);
-Q1MatrixDenseVectorProductBench<tags::CPU, double> Q1DVPBenchdouble("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 100);
+Q1MatrixDenseVectorProductBench<tags::CPU, float> Q1DVPBenchfloat("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+Q1MatrixDenseVectorProductBench<tags::CPU, double> Q1DVPBenchdouble("Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
 #ifdef HONEI_SSE
-Q1MatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEQ1DVPBenchfloat("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 100);
-Q1MatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEQ1DVPBenchdouble("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025 ,double", 1025ul*1025, 100);
+Q1MatrixDenseVectorProductBench<tags::CPU::SSE, float> SSEQ1DVPBenchfloat("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
+Q1MatrixDenseVectorProductBench<tags::CPU::SSE, double> SSEQ1DVPBenchdouble("SSE Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025 ,double", 1025ul*1025, 10);
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductBench<tags::GPU::CUDA, float> CUDAQ1DVPBenchfloat("CUDA Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
 #endif
 #ifdef HONEI_CELL
-Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 100);
-Q1MatrixDenseVectorProductBench<tags::Cell, double> CELLQ1DVPBenchdouble("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, double", 1025ul * 1025, 100);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, double> CELLQ1DVPBenchdouble("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, double", 1025ul * 1025, 10);
 #endif
 
 template <typename Tag_, typename DataType_>

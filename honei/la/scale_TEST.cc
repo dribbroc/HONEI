@@ -152,7 +152,9 @@ class DenseMatrixScaleTest :
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm2(size+1, size, DataType_(6));
                 Scale<Tag_>::value(dm1, DataType_(3));
 
+                dm1.read();
                 TEST_CHECK_EQUAL(dm1, dm2);
+                dm1.release_read();
             }
         }
 };
@@ -191,6 +193,7 @@ class DenseMatrixScaleQuickTest :
             DenseMatrix<DataType_> dm(size+1, size, DataType_(2));
             Scale<Tag_>::value(dm, DataType_(3));
 
+            dm.read();
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
             for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
                     i_end(dm.end_elements()) ; i != i_end ; ++i)
@@ -199,6 +202,7 @@ class DenseMatrixScaleQuickTest :
             }
             TEST_CHECK_EQUAL_WITHIN_EPS(vsum, static_cast<DataType_>(6 * size * (size +1)),
                 std::numeric_limits<DataType_>::epsilon());
+            dm.release_read();
         }
 };
 DenseMatrixScaleQuickTest<tags::CPU, float> dense_matrix_scale_quick_test_float("float");
@@ -331,8 +335,10 @@ class DenseVectorScaleTest :
             {
                 DenseVector<DataType_> dv(size, DataType_(3));
                 Scale<Tag_>::value(dv, DataType_(2));
+                dv.read();
                 DataType_ v1(Norm<vnt_l_one>::value(dv));
                 TEST_CHECK_EQUAL(v1, 6 * size);
+                dv.release_read();
             }
         }
 };
@@ -376,8 +382,10 @@ class DenseVectorScaleQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(3));
 
             Scale<Tag_>::value(dv1, DataType_(2));
+            dv1.read();
             DataType_ v1(Norm<vnt_l_one>::value(dv1));
             TEST_CHECK_EQUAL(v1, 6 * size);
+            dv1.release_read();
         }
 };
 DenseVectorScaleQuickTest<tags::CPU, float>  dense_vector_scale_quick_test_float("float");
@@ -500,8 +508,10 @@ class DenseVectorRangeScaleTest :
                     DenseVector<DataType_> source(size + 3, DataType_(3));
                     DenseVectorRange<DataType_> dvr(source, size, i);
                     Scale<Tag_>::value(dvr, DataType_(2));
+                    dvr.read();
                     DataType_ rslt(Norm<vnt_l_one>::value(dvr));
                     TEST_CHECK_EQUAL(rslt, 6 * size);
+                    dvr.release_read();
                 }
             }
         }
@@ -545,8 +555,10 @@ class DenseVectorRangeScaleQuickTest :
                     DenseVector<DataType_> source(size + 3, DataType_(3));
                     DenseVectorRange<DataType_> dvr(source, size, i);
                     Scale<Tag_>::value(dvr, DataType_(2));
+                    dvr.read();
                     DataType_ rslt(Norm<vnt_l_one>::value(dvr));
                     TEST_CHECK_EQUAL(rslt, 6 * size);
+                    dvr.release_read();
                 }
             }
         }

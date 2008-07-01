@@ -26,10 +26,14 @@ namespace honei
     template class InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>;
     template class MemoryBackend<tags::CPU>;
 
+#ifdef HONEI_CUDA
     template class InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>;
     template class MemoryBackend<tags::GPU::CUDA>;
+#endif
 }
 
 using namespace honei;
 static MemoryBackendRegistrator cpu_backend_registrator(tags::CPU::memory_value, MemoryBackend<tags::CPU>::instance());
+#ifdef HONEI_CUDA
 static MemoryBackendRegistrator gpu_backend_registrator(tags::GPU::CUDA::memory_value, MemoryBackend<tags::GPU::CUDA>::instance());
+#endif
