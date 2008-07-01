@@ -32,10 +32,15 @@ class DenseVectorDifferenceBench :
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
             for(int i(0) ; i < _count ; ++i)
             {
-                BENCHMARK(Difference<Tag_>::value(dv0, dv1));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        {
+                        Difference<Tag_>::value(dv0, dv1);
+                        }
+                        );
             }
             BenchmarkInfo info(Difference<>::get_benchmark_info(dv0, dv1));
-            evaluate(info);
+            evaluate(info * 10);
         }
 };
 DenseVectorDifferenceBench<tags::CPU, float> DVDBenchfloat1("Dense Vector Difference Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
@@ -47,6 +52,9 @@ DenseVectorDifferenceBench<tags::CPU::SSE, float> SSEDVDBenchfloat1("SSE Dense V
 DenseVectorDifferenceBench<tags::CPU::SSE, double> SSEDVDBenchdouble1("SSE Dense Vector Difference Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
 DenseVectorDifferenceBench<tags::CPU::MultiCore::SSE, float> MCSSEDVDBenchfloat1("MC::SSE Dense Vector Difference Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
 DenseVectorDifferenceBench<tags::CPU::MultiCore::SSE, double> MCSSEDVDBenchdouble1("MC::SSE Dense Vector Difference Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+#endif
+#ifdef HONEI_CUDA
+DenseVectorDifferenceBench<tags::GPU::CUDA, float> CUDADVDBenchfloat1("CUDA Dense Vector Difference Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceBench<tags::Cell, float> CELLDVDBenchfloat1("Cell Dense Vector Difference Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);

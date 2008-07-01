@@ -21,6 +21,7 @@
 #include <honei/backends/memory/memory_backend.hh>
 #include <honei/backends/cuda/transfer.hh>
 
+/// \todo How can we handle multiple device memories (numa wise)? -> One must know the choosen device (multiple memory_values).
 namespace honei
 {
     void * MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, void * address, unsigned long bytes)
