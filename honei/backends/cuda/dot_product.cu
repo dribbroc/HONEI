@@ -47,49 +47,32 @@ namespace honei
     }
 }
 
-extern "C" float cuda_dot_product_two_float(const float * x, const float * y, unsigned long size, unsigned long blocksize,
+extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsigned long size, unsigned long blocksize,
         unsigned long gridsize)
 {
     float result(0.);
 
-    if (size < gridsize * blocksize)
+    dim3 grid(gridsize);
+    dim3 block(blocksize);
+    float * x_gpu((float* )x);
+    float * y_gpu((float *)y);
+    float * tmp_cpu(0);
+    float * tmp_gpu(0);
+
+    cudaMalloc((void**)&tmp_gpu, gridsize * blocksize * sizeof(float));
+    cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(float));
+
+    honei::cuda::dot_product_gpu<<<grid, block>>>(x_gpu, y_gpu, tmp_gpu, size, blocksize);
+
+    cudaMemcpy(tmp_cpu, tmp_gpu, blocksize * gridsize * sizeof(float), cudaMemcpyDeviceToHost);
+    for (unsigned long i(0) ; i < blocksize * gridsize ; ++i)
     {
-        for (unsigned long i(0) ; i < size ; ++i)
-        {
-            result += x[i] * y[i];
-        }
+        result += tmp_cpu[i];
     }
-    else
-    {
-        dim3 grid(gridsize);
-        dim3 block(blocksize);
-        float * x_gpu(0);
-        float * y_gpu(0);
-        float * tmp_cpu(0);
-        float * tmp_gpu(0);
 
-        cudaMalloc((void**)&x_gpu, size * sizeof(float));
-        cudaMalloc((void**)&y_gpu, size * sizeof(float));
-        cudaMalloc((void**)&tmp_gpu, gridsize * blocksize * sizeof(float));
-        cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(float));
+    cudaFree(tmp_gpu);
+    cudaFreeHost(tmp_cpu);
 
-        cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
-        cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
-
-        honei::cuda::dot_product_gpu<<<grid, block>>>(x_gpu, y_gpu, tmp_gpu, size, blocksize);
-
-        cudaMemcpy(tmp_cpu, tmp_gpu, blocksize * gridsize * sizeof(float), cudaMemcpyDeviceToHost);
-        for (unsigned long i(0) ; i < blocksize * gridsize ; ++i)
-        {
-            result += tmp_cpu[i];
-        }
-
-        cudaFree(x_gpu);
-        cudaFree(y_gpu);
-        cudaFree(tmp_gpu);
-        cudaFreeHost(tmp_cpu);
-
-        CUDA_ERROR();
-    }
+    CUDA_ERROR();
     return result;
 }

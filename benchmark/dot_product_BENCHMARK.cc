@@ -52,6 +52,9 @@ DotProductBench<double, tags::CPU::MultiCore::SSE> SSEMCDPBenchdouble("MC: SSE  
 DotProductBench<float, tags::CPU::SSE> SSEDPBenchfloat("SSE Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
 DotProductBench<double, tags::CPU::SSE> SSEDPBenchdouble("SSE Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
 #endif
+#ifdef HONEI_CUDA
+DotProductBench<float, tags::GPU::CUDA> CUDADPBenchfloat("CUDA Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
+#endif
 #ifdef HONEI_CELL
 DotProductBench<float, tags::Cell> CELLDPBenchfloat("Cell Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
 #endif

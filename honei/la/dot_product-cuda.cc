@@ -36,7 +36,23 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::dot_product_two_float", 128ul));
     unsigned long gridsize(Configuration::instance()->get_value("cuda::dot_product_two_float_grid", 16ul));
 
-    float result = cuda_dot_product_two_float(a.elements(), b.elements(), a.size(), blocksize, gridsize);
+    float result (0.);
+
+    if (a.size() < gridsize * blocksize)
+    {
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * b[i];
+        }
+    }
+    else
+    {
+        void * a_gpu(a.read(tags::GPU::CUDA::memory_value));
+        void * b_gpu(b.read(tags::GPU::CUDA::memory_value));
+        result = cuda_dot_product_two_float(a_gpu, b_gpu, a.size(), blocksize, gridsize);
+        b.release_read();
+        a.release_read();
+    }
 
     return result;
 
