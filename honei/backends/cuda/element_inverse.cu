@@ -41,16 +41,9 @@ extern "C" void cuda_element_inverse_one_float(float * x, unsigned long size, un
     dim3 block;
     grid.x = ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
-    float * x_gpu(0);
-
-    cudaMalloc((void**)&x_gpu, size * sizeof(float));
-
-    cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
+    float * x_gpu((float *)x);
 
     honei::cuda::element_inverse_gpu<<<grid, block>>>(x_gpu, size);
-
-    cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaFree(x_gpu);
 
     CUDA_ERROR();
 }

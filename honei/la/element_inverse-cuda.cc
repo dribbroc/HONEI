@@ -30,7 +30,9 @@ DenseVectorContinuousBase<float> & ElementInverse<tags::GPU::CUDA>::value(DenseV
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
 
-    cuda_element_inverse_one_float(x.elements(), x.size(), blocksize);
+    void * x_gpu(x.write(tags::GPU::CUDA::memory_value));
+    cuda_element_inverse_one_float(x_gpu, x.size(), blocksize);
+    x.release_write();
 
     return x;
 }
@@ -41,7 +43,9 @@ DenseMatrix<float> & ElementInverse<tags::GPU::CUDA>::value(DenseMatrix<float> &
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
 
-    cuda_element_inverse_one_float(x.elements(), x.rows() * x.columns(), blocksize);
+    void * x_gpu(x.write(tags::GPU::CUDA::memory_value));
+    cuda_element_inverse_one_float(x_gpu, x.size(), blocksize);
+    x.release_write();
 
     return x;
 }

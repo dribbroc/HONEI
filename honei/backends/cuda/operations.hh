@@ -28,7 +28,7 @@ extern "C"
         float cuda_dot_product_two_float(const void * a, const void *b, unsigned long size, unsigned long blocksize,
                 unsigned long gridsize);
 
-        void cuda_element_inverse_one_float(float * x, unsigned long size, unsigned long blocksize);
+        void cuda_element_inverse_one_float(void * x, unsigned long size, unsigned long blocksize);
 
         void cuda_element_product_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
 
