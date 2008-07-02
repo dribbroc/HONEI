@@ -34,27 +34,17 @@ namespace honei
     }
 }
 
-extern "C" void cuda_element_product_two_float(float * x, float * y, unsigned long size, unsigned long blocksize)
+extern "C" void cuda_element_product_two_float(void * x, void * y, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
     block.x = blocksize;
     grid.x = ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
-    float * x_gpu(0);
-    float * y_gpu(0);
-
-    cudaMalloc((void**)&x_gpu, size * sizeof(float));
-    cudaMalloc((void**)&y_gpu, size * sizeof(float));
-
-    cudaMemcpy(x_gpu, x, size * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(y_gpu, y, size * sizeof(float), cudaMemcpyHostToDevice);
+    float * x_gpu((float *)x);
+    float * y_gpu((float *)y);
 
     honei::cuda::element_product_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
-
-    cudaMemcpy(x, x_gpu, size * sizeof(float), cudaMemcpyDeviceToHost);
-    cudaFree(x_gpu);
-    cudaFree(y_gpu);
 
     CUDA_ERROR();
 }

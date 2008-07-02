@@ -202,19 +202,19 @@ namespace honei
     template <typename DataType_>
     void * DenseVectorRange<DataType_>::read(tags::TagValue memory) const
     {
-        return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+        return MemoryArbiter::instance()->read(memory, this->memid(), this->_imp->elements.get() + this->_imp->offset, this->size() * sizeof(DataType_));
     }
 
     template <typename DataType_>
     void * DenseVectorRange<DataType_>::write(tags::TagValue memory) const
     {
-        return MemoryArbiter::instance()->write(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+        return MemoryArbiter::instance()->write(memory, this->memid(), this->_imp->elements.get() + this->_imp->offset, this->size() * sizeof(DataType_));
     }
 
     template <typename DataType_>
     void * DenseVectorRange<DataType_>::write_only(tags::TagValue memory) const
     {
-        return MemoryArbiter::instance()->write_only(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+        return MemoryArbiter::instance()->write_only(memory, this->memid(), this->_imp->elements.get() + this->_imp->offset, this->size() * sizeof(DataType_));
     }
 
     template <typename DataType_>

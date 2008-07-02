@@ -30,7 +30,7 @@ extern "C"
 
         void cuda_element_inverse_one_float(void * x, unsigned long size, unsigned long blocksize);
 
-        void cuda_element_product_two_float(float * a, const float * b, unsigned long size, unsigned long blocksize);
+        void cuda_element_product_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
 
         void cuda_product_bmdv_q1_float(void * ll, void * ld, void * lu,
                 void * dl, void * dd, void *du,
