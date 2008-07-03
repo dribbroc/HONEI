@@ -13,9 +13,9 @@ define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
 $2_TEST_SOURCES = $2_TEST.cc
 $2_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \
+	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendsmemory.la \
 	$(DYNAMIC_LD_LIBS)
-	$(top_builddir)/honei/util/libhoneiutil.la
 $2_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
 define(`addhh', `define(`$1_filelist', $1_filelist `$2.hh')define(`$1_headerlist', $1_headerlist `$2.hh')')dnl
