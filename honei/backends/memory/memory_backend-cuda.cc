@@ -26,7 +26,7 @@ namespace honei
 {
     void * MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, void * address, unsigned long bytes)
     {
-        CONTEXT("When uploading data:");
+        CONTEXT("When uploading data (CUDA):");
         std::map<void *, void *>::iterator i(_address_map.find(address));
         if (i == _address_map.end())
         {
@@ -42,7 +42,7 @@ namespace honei
 
     void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid, void * address, unsigned long bytes)
     {
-        CONTEXT("When downloading data:");
+        CONTEXT("When downloading data (CUDA):");
         std::map<void *, void *>::iterator i(_address_map.find(address));
         if (i == _address_map.end())
         {
@@ -57,7 +57,7 @@ namespace honei
 
     void * MemoryBackend<tags::GPU::CUDA>::alloc(unsigned long memid, void * address, unsigned long bytes)
     {
-        CONTEXT("When allocating data:");
+        CONTEXT("When allocating data (CUDA):");
         void * device(cuda_malloc(bytes));
         _id_map.insert(std::pair<unsigned long, Chunk>(memid, Chunk(address, device, bytes)));
         _address_map.insert(std::pair<void *, void *>(address, device));
@@ -66,7 +66,7 @@ namespace honei
 
     void MemoryBackend<tags::GPU::CUDA>::free(unsigned long memid)
     {
-        CONTEXT("When freeing data:");
+        CONTEXT("When freeing data (CUDA):");
         std::multimap<unsigned long, Chunk>::iterator i;
         std::pair<std::multimap<unsigned long, Chunk>::iterator, std::multimap<unsigned long, Chunk>::iterator> range(_id_map.equal_range(memid));
         for (std::multimap<unsigned long, Chunk>::iterator i(range.first) ; i != range.second ; ++i)

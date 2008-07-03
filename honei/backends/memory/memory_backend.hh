@@ -29,6 +29,11 @@
 
 namespace honei
 {
+    /**
+     * MemoryBackend handles local copies of memory chunks in a specific device memory.
+     *
+     * \ingroup grpmemorymanager
+     */
     template<typename Tag_>
     class MemoryBackend :
         public MemoryBackendBase
@@ -43,26 +48,26 @@ namespace honei
     public:
         virtual void * upload(unsigned long memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When uploading data:");
+            CONTEXT("When uploading data (CPU):");
 
             return address;
         }
 
         virtual void download(unsigned long memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When downloading data:");
+            CONTEXT("When downloading data (CPU):");
         }
 
         virtual void * alloc(unsigned long memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When allocating data:");
+            CONTEXT("When allocating data (CPU):");
 
             return address;
         }
 
         virtual void free(unsigned long memid)
         {
-            CONTEXT("When freeing data:");
+            CONTEXT("When freeing data (CPU):");
         }
 
     };

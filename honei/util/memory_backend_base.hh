@@ -23,6 +23,11 @@
 
 namespace honei
 {
+    /**
+     * MemoryBackendBase is the abstract base class for all memory backends.
+     *
+     * \ingroup grpmemorymanager
+     */
     class MemoryBackendBase
     {
         public:
