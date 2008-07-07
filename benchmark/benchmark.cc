@@ -115,7 +115,9 @@ void Benchmark::calculate(BenchmarkInfo info)
     if (_median > 0)
     {
         _mediantp = ((double)(info.load + info.store) / (1024 * 1024)) / _median;
+        _mintp = ((double)(info.load + info.store) / (1024 * 1024)) / _min;
         _medianf = ((double)(info.flops) / 1000000) / _median;
+        _minf = ((double)(info.flops) / 1000000) / _min;
     }
     else
     {
@@ -167,19 +169,23 @@ void Benchmark::evaluate(BenchmarkInfo info)
     {
         _tp /= 1024;
         _mediantp /= 1024;
+        _mintp /= 1024;
         ++i;
     }
     std::cout << "Transfer rate (mean):   " << _tp << " " << pf[i] << "B/s" << std::endl;
     std::cout << "Transfer rate (median): " << _mediantp << " " << pf[i] << "B/s" << std::endl;
+    std::cout << "Transfer rate (peak):   " << _mintp << " " << pf[i] << "B/s" << std::endl;
     int j = 2;
     while (_f > 1000 && j < 8)
     {
         _f /= 1000;
         _medianf /= 1000;
+        _minf /= 1000;
         ++j;
     }
     std::cout << _f << " " << pf[j] << "FLOPS (mean)" << std::endl;
     std::cout << _medianf << " " << pf[j] << "FLOPS (median)" << std::endl;
+    std::cout << _minf << " " << pf[j] << "FLOPS (peak)" << std::endl;
     if (info.scale != 1)
     {
         std::cout << "Dense version calculates " << info.scale << " times more flops.\n(Depends on used elements of Sparse/Banded Operands.)" << std::endl;
@@ -203,8 +209,10 @@ void Benchmark::evaluate(BenchmarkInfo info)
         ofs << "Runtime - median:  " << _median << "sec" << std::endl;
         ofs << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << std::endl;
         ofs << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << std::endl;
+        ofs << "Transfer rate (peak):   " << _mintp << pf[i] << "B/s" << std::endl;
         ofs << _f << " " << pf[j] << "FLOPS (mean)" << std::endl;
         ofs << _medianf << " " << pf[j] << "FLOPS (median)" << std::endl;
+        ofs << _minf << " " << pf[j] << "FLOPS (peak)" << std::endl;
         ofs << std::endl << std::endl << std::endl;
     }
 }

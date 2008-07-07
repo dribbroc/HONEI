@@ -21,7 +21,7 @@ class Benchmark
         timeval _start, _end;
         std::list<double> _benchlist;
         int _x, _xmin, _xmax;
-        double _total, _min, _max, _avg, _median, _tp, _mediantp, _f, _medianf;
+        double _total, _min, _max, _avg, _median, _tp, _mediantp, _f, _medianf, _mintp, _minf;
         std::string _tag_name;
         bool _plots;
 
