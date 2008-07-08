@@ -147,7 +147,7 @@ namespace honei
             /// Returns our size.
             virtual unsigned long size() const;
 
-            /// Retrieves element by index, zero-based, assignable.
+            /// Retrieves element by index, zero-based, unassignable.
             virtual const DataType_ & operator[] (unsigned long index) const;
 
             /// Retrieves element by index, zero-based, assignable.
