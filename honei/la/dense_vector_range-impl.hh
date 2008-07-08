@@ -233,6 +233,8 @@ namespace honei
     DenseVector<DataType_> DenseVectorRange<DataType_>::copy() const
     {
         DenseVector<DataType_> result(this->_imp->size);
+        this->read();
+
         DataType_ * source(this->_imp->elements.get());
         DataType_ * target(result.elements());
         for (unsigned long i(0) ; i < this->_imp->size ; i++)
@@ -242,6 +244,7 @@ namespace honei
 
         /// \todo: Use TypeTraits<DataType_>::copy()
 
+        this->release_read();
         return result;
     }
 

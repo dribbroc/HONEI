@@ -356,9 +356,11 @@ namespace honei
             DenseMatrix copy() const
             {
                 DenseMatrix result(_rows, _columns);
+                this->read();
 
                 TypeTraits<DataType_>::copy(_elements.get(), result._elements.get(), _columns * _rows);
 
+                this->release_read();
                 return result;
             }
     };

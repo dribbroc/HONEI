@@ -277,9 +277,11 @@ namespace honei
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
         DenseVector result(this->_imp->size);
+        this->read();
 
         TypeTraits<DataType_>::copy(this->_imp->elements.get(), result._imp->elements.get(), this->_imp->size);
 
+        this->release_read();
         return result;
     }
 
