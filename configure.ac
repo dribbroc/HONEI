@@ -213,6 +213,23 @@ if test "x$ENABLE_SSE" = "xyes"; then
 fi
 AC_SUBST([SSEDEF])
 dnl }}}
+dnl {{{ check for MPI support
+AC_MSG_CHECKING([whether to build MPI support])
+AC_ARG_ENABLE([mpi],
+	AS_HELP_STRING([--enable-mpi], [Build MPI support (needs packages: none)]),
+		[ENABLE_MPI=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_MPI=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_MPI])
+AM_CONDITIONAL([MPI], test "x$ENABLE_MPI" = "xyes")
+if test "x$ENABLE_MPI" = "xyes"; then
+	dnl {{{ enable mpi support
+	MPIDEF="-DHONEI_MPI"
+	dnl }}}
+fi
+AC_SUBST([MPIDEF])
+dnl }}}
 dnl {{{ check for debug support
 AC_MSG_CHECKING([whether to build debug support])
 AC_ARG_ENABLE([debug],
@@ -323,6 +340,7 @@ AC_OUTPUT(
 	benchmark/Makefile
 	clients/Makefile
 	clients/config/Makefile
+	clients/mpi/Makefile
 	clients/swe/Makefile
 	clients/lbm/Makefile
 	doc/Makefile

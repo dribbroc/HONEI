@@ -6,4 +6,8 @@ if VISUAL
   LBMDIR = lbm
 endif
 
-SUBDIRS = $(VISUALDIR) $(LBMDIR) config
+if MPI
+  MPIDIR = mpi
+endif
+
+SUBDIRS = $(VISUALDIR) $(LBMDIR) $(MPIDIR) config
