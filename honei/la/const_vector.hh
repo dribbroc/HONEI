@@ -92,6 +92,21 @@ namespace honei
             /// \}
     };
 
+    /**
+     * Equality operator for ConstVector.
+     *
+     * Compares if corresponding elements of two const vectors are equal
+     * within machine precision.
+     */
+    template <typename DataType_> bool operator== (const ConstVector<DataType_> & a, const ConstVector<DataType_> & b);
+
+    /**
+     * Output operator for ConstVector.
+     *
+     * Outputs a ConstVector to an output stream.
+     */
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const ConstVector<DataType_> & vector);
+
     extern template class ConstVector<float>;
 
     extern template class ConstVector<double>;

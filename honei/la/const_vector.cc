@@ -24,6 +24,14 @@ namespace honei
 {
     template class ConstVector<float>;
 
+    template bool operator== (const ConstVector<float> & a, const ConstVector<float> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const ConstVector<float> & vector);
+
     template class ConstVector<double>;
+
+    template bool operator== (const ConstVector<double> & a, const ConstVector<double> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const ConstVector<double> & vector);
 }
 

@@ -50,6 +50,7 @@ class ConstVectorTest :
                 TEST_CHECK_EQUAL(cv2.offset(), cv.offset());
                 TEST_CHECK_EQUAL(cv2[8], cv[8]);
                 TEST_CHECK_EQUAL(cv2[size - 2], cv[size - 2]);
+                TEST_CHECK_EQUAL(cv, cv2);
             }
         }
 };

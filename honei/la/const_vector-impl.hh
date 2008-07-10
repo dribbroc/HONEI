@@ -44,6 +44,7 @@ namespace honei
     struct Implementation<ConstVector<DataType_> >
     {
         public:
+
             /// Our size.
             virtual const unsigned long size() const = 0;;
 
@@ -167,27 +168,60 @@ namespace honei
 
 
     template <typename DataType_>
-    unsigned long DenseVector<DataType_>::memid() const
+    unsigned long ConstVector<DataType_>::memid() const
     {
         return this->_imp->memid();
     }
 
     template <typename DataType_>
-    void * DenseVector<DataType_>::address() const
+    void * ConstVector<DataType_>::address() const
     {
         return this->_imp->address();
     }
 
     template <typename DataType_>
-    void * DenseVector<DataType_>::read(tags::TagValue memory) const
+    void * ConstVector<DataType_>::read(tags::TagValue memory) const
     {
         return this->_imp->read(memory);
     }
 
     template <typename DataType_>
-    void DenseVector<DataType_>::release_read() const
+    void ConstVector<DataType_>::release_read() const
     {
         this->_imp->release_read();
+    }
+
+    template <typename DataType_>
+    bool
+    operator== (const ConstVector<DataType_> & a, const ConstVector<DataType_> & b)
+    {
+        if (a.size() != b.size())
+            throw VectorSizeDoesNotMatch(a.size(), b.size());
+
+        for (unsigned long index(0) ; index < a.size() ; ++index)
+        {
+            if (fabs(a[index] - b[index]) <= std::numeric_limits<DataType_>::epsilon())
+            {
+                continue;
+            }
+            else return false;
+        }
+        return true;
+
+    }
+
+    template <typename DataType_>
+    std::ostream &
+    operator<< (std::ostream & lhs, const ConstVector<DataType_> & vector)
+    {
+        lhs << "[ ";
+        for (unsigned long index(0) ; index < vector.size() ; ++index)
+        {
+            lhs << vector[index] << " ";
+        }
+        lhs << "]";
+
+        return lhs;
     }
 }
 
