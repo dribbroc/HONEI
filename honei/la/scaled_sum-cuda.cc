@@ -34,11 +34,11 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_two_float", 128ul));
 
-    void * x_gpu (x.write(tags::GPU::CUDA::memory_value));
-    void * y_gpu (y.read(tags::GPU::CUDA::memory_value));
+    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * y_gpu (y.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     cuda_scaled_sum_two_float(x_gpu, y_gpu, b, x.size(), blocksize);
-    y.release_read();
-    x.release_write();
+    y.unlock(lm_read_only);
+    x.unlock(lm_read_and_write);
 
     return x;
 }
@@ -57,13 +57,13 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_three_float", 128ul));
 
-    void * a_gpu (a.write(tags::GPU::CUDA::memory_value));
-    void * b_gpu (b.read(tags::GPU::CUDA::memory_value));
-    void * c_gpu (c.read(tags::GPU::CUDA::memory_value));
+    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * c_gpu (c.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     cuda_scaled_sum_three_float(a_gpu, b_gpu, c_gpu, a.size(), blocksize);
-    c.release_read();
-    b.release_read();
-    a.release_write();
+    c.unlock(lm_read_only);
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_and_write);
 
     return a;
 }

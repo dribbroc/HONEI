@@ -52,8 +52,8 @@ class MemoryArbiterBench :
             for (unsigned long i(0) ; i < _arrays ; ++i)
             {
                 vectors[i] = new DenseVector<DataType_>(1);
-                vectors[i]->read(Tag_::memory_value);
-                vectors[i]->release_read();
+                vectors[i]->lock(lm_read_only, Tag_::memory_value);
+                vectors[i]->unlock(lm_read_only);
             }
             for(int i(0) ; i < _count ; ++i)
             {
@@ -61,10 +61,10 @@ class MemoryArbiterBench :
                         for (unsigned long j(0) ; j < 10000 ; ++j)
                         {
                             unsigned long index(rand() % _arrays);
-                            vectors[index]->write(Tag_::memory_value);
-                            vectors[index]->release_write();
-                            vectors[index]->read(Tag_::memory_value);
-                            vectors[index]->release_read();
+                            vectors[index]->lock(lm_read_and_write, Tag_::memory_value);
+                            vectors[index]->unlock(lm_read_and_write);
+                            vectors[index]->lock(lm_read_only, Tag_::memory_value);
+                            vectors[index]->unlock(lm_read_only);
                         }
                         );
             }

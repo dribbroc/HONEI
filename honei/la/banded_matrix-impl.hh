@@ -290,49 +290,25 @@ namespace honei
     }
 
     template <typename DataType_>
-    void BandedMatrix<DataType_>::read() const
+    void * BandedMatrix<DataType_>::lock(LockMode mode, tags::TagValue memory) const
     {
         for (unsigned long i(0) ; i < 2 * this->_imp->size - 1 ; ++i)
         {
             if (this->_imp->bands[i])
             {
-                this->_imp->bands[i]->read();
+                this->_imp->bands[i]->lock(mode, memory);
             }
         }
     }
 
     template <typename DataType_>
-    void BandedMatrix<DataType_>::write() const
+    void BandedMatrix<DataType_>::unlock(LockMode mode) const
     {
         for (unsigned long i(0) ; i < 2 * this->_imp->size - 1 ; ++i)
         {
             if (this->_imp->bands[i])
             {
-                this->_imp->bands[i]->write();
-            }
-        }
-    }
-
-    template <typename DataType_>
-    void BandedMatrix<DataType_>::release_read() const
-    {
-        for (unsigned long i(0) ; i < 2 * this->_imp->size - 1 ; ++i)
-        {
-            if (this->_imp->bands[i])
-            {
-                this->_imp->bands[i]->release_read();
-            }
-        }
-    }
-
-    template <typename DataType_>
-    void BandedMatrix<DataType_>::release_write() const
-    {
-        for (unsigned long i(0) ; i < 2 * this->_imp->size - 1 ; ++i)
-        {
-            if (this->_imp->bands[i])
-            {
-                this->_imp->bands[i]->release_write();
+                this->_imp->bands[i]->unlock(mode);
             }
         }
     }

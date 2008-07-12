@@ -62,9 +62,9 @@ class DenseVectorElementProductTest :
                 }
                 ElementProduct<Tag_>::value(dv1, dv2);
 
-                dv1.read();
+                dv1.lock(lm_read_only);
                 TEST_CHECK_EQUAL(dv1, dv3);
-                dv1.release_read();
+                dv1.unlock(lm_read_only);
             }
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
@@ -123,13 +123,13 @@ class DenseVectorElementProductQuickTest :
 
             ElementProduct<Tag_>::value(dv1, dv2);
 
-            dv1.read();
+            dv1.lock(lm_read_only);
             for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                 k(dv3.begin_elements()) ; i != i_end ; ++i, ++k)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
             }
-            dv1.release_read();
+            dv1.unlock(lm_read_only);
 
             DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
 
@@ -199,14 +199,14 @@ class DenseVectorRangeElementProductTest :
                                 *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index() + offset2)%num_limit) -1);
                             }
 
-                            dvr1.write();
-                            dvr1.release_write();
-                            dvr2.write();
-                            dvr2.release_write();
+                            dvr1.lock(lm_read_and_write);
+                            dvr1.unlock(lm_read_and_write);
+                            dvr2.lock(lm_read_and_write);
+                            dvr2.unlock(lm_read_and_write);
                             ElementProduct<Tag_>::value(dvr1, dvr2);
-                            dvr1.read();
+                            dvr1.lock(lm_read_only);
                             TEST_CHECK_EQUAL(dvr1, dvr3);
-                            dvr1.release_read();
+                            dvr1.unlock(lm_read_only);
                         }
                     }
                 }
@@ -283,14 +283,14 @@ class DenseVectorRangeElementProductQuickTest :
                             *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index()+offset2)%num_limit) -1);
                         }
 
-                        dvr1.write();
-                        dvr1.release_write();
-                        dvr2.write();
-                        dvr2.release_write();
+                        dvr1.lock(lm_read_and_write);
+                        dvr1.unlock(lm_read_and_write);
+                        dvr2.lock(lm_read_and_write);
+                        dvr2.unlock(lm_read_and_write);
                         ElementProduct<Tag_>::value(dvr1, dvr2);
-                        dvr1.read();
+                        dvr1.lock(lm_read_only);
                         TEST_CHECK_EQUAL(dvr1, dvr3);
-                        dvr1.release_read();
+                        dvr1.unlock(lm_read_only);
                     }
                 }
             }
@@ -753,13 +753,13 @@ class DenseMatrixElementProductTest :
                 }
 
                 ElementProduct<Tag_>::value(dm1, dm2);
-                dm1.read();
+                dm1.lock(lm_read_only);
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
                     i_end(dm1.end_elements()),k(dm3.begin_elements()) ; i != i_end ; ++i, ++k)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
                 }
-                dm1.release_read();
+                dm1.unlock(lm_read_only);
             }
             DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(4, 3, static_cast<DataType_>(1)),
                 dm03(4, 2, static_cast<DataType_>(1));
@@ -817,9 +817,9 @@ class DenseMatrixElementProductQuickTest :
 
             ElementProduct<Tag_>::value(dm1, dm2);
 
-            dm1.read();
+            dm1.lock(lm_read_only);
             TEST_CHECK_EQUAL(dm1, dm3);
-            dm1.release_read();
+            dm1.unlock(lm_read_only);
 
             DenseMatrix<DataType_> dm01(3, 2, static_cast<DataType_>(1)), dm02(4, 3, DataType_(1)),
                 dm03(4, 2, DataType_(1));

@@ -347,9 +347,9 @@ class DenseMatrixDifferenceTest :
                     dm3(size+1, size, DT_(-1));
                 Difference<Tag_>::value(dm1, dm2);
 
-                dm1.read();
+                dm1.lock(lm_read_only);
                 TEST_CHECK_EQUAL(dm1, dm3);
-                dm1.release_read();
+                dm1.unlock(lm_read_only);
             }
 
             DenseMatrix<DT_> dm01(5, 5), dm02(6, 6), dm03(5, 6);
@@ -391,9 +391,9 @@ class DenseMatrixDifferenceQuickTest :
                 dm3(size+1, size, DT_(-1));
             Difference<Tag_>::value(dm1, dm2);
 
-            dm1.read();
+            dm1.lock(lm_read_only);
             TEST_CHECK_EQUAL(dm1, dm3);
-            dm1.release_read();
+            dm1.unlock(lm_read_only);
 
             DenseMatrix<DT_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
 
@@ -655,9 +655,9 @@ class DenseVectorDifferenceTest :
                 }
                 Difference<Tag_>::value(dv1, dv2);
 
-                dv1.read();
+                dv1.lock(lm_read_only);
                 TEST_CHECK_EQUAL(dv1, dv3);
-                dv1.release_read();
+                dv1.unlock(lm_read_only);
             }
 
             DenseVector<DT_> dv00(1, DT_(1));
@@ -710,9 +710,9 @@ class DenseVectorDifferenceQuickTest :
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
             }
             Difference<Tag_>::value(dv1, dv2);
-            dv1.read();
+            dv1.lock(lm_read_only);
             TEST_CHECK_EQUAL(dv1, dv3);
-            dv1.release_read();
+            dv1.unlock(lm_read_only);
 
             DenseVector<DT_> dv00(1, DT_(1));
             DenseVector<DT_> dv01(5, DT_(1));
@@ -767,9 +767,9 @@ class DenseVectorRangeDifferenceTest :
 
                         DenseVectorRange<DT_> dvr1(dv1, size, i), dvr2(dv2, size, j);
                         Difference<Tag_>::value(dvr1, dvr2);
-                        dvr1.read();
+                        dvr1.lock(lm_read_only);
                         TEST_CHECK_EQUAL(dvr1, dv3);
-                        dvr1.release_read();
+                        dvr1.unlock(lm_read_only);
                     }
                 }
             }
@@ -825,9 +825,9 @@ class DenseVectorRangeDifferenceQuickTest :
 
                     DenseVectorRange<DT_> dvr1(dv1, size, i), dvr2(dv2, size, j);
                     Difference<Tag_>::value(dvr1, dvr2);
-                    dvr1.read();
+                    dvr1.lock(lm_read_only);
                     TEST_CHECK_EQUAL(dvr1, dv3);
-                    dvr1.release_read();
+                    dvr1.unlock(lm_read_only);
                 }
             }
 

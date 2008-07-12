@@ -26,6 +26,7 @@
 #include <honei/la/vector_error.hh>
 #include <honei/util/shared_array.hh>
 #include <honei/util/tags.hh>
+#include <honei/util/memory_arbiter.hh>
 
 #include <cmath>
 #include <iterator>
@@ -130,20 +131,11 @@ namespace honei
             /// Return the address of our data
             virtual void * address() const = 0;
 
-            /// Request a read lock for our data.
-            virtual void * read(tags::TagValue memory = tags::CPU::memory_value) const = 0;
+            /// Request a memory access lock for our data.
+            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const = 0;
 
-            /// Request a write lock for our data.
-            virtual void * write(tags::TagValue memory = tags::CPU::memory_value) const = 0;
-
-            /// Request a write-only lock for our data.
-            virtual void * write_only(tags::TagValue memory = tags::CPU::memory_value) const = 0;
-
-            /// Release a read lock for our data.
-            virtual void release_read() const = 0;
-
-            /// Release a write lock for our data.
-            virtual void release_write() const = 0;
+            /// Release a memory access lock for our data.
+            virtual void unlock(LockMode mode) const = 0;
     };
 
     /**

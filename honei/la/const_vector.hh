@@ -79,16 +79,16 @@ namespace honei
             unsigned long offset() const;
 
             /// Return our memory id
-            unsigned long memid() const;
+            virtual void * memid() const;
 
             /// Return the address of our data
-            void * address() const;
+            virtual void * address() const;
 
-            /// Request a read lock for our data.
-            void * read(tags::TagValue memory = tags::CPU::memory_value) const;
+            /// Request a memory access lock for our data.
+            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const;
 
-            /// Release a read lock for our data.
-            void release_read() const;
+            /// Release a memory access lock for our data.
+            virtual void unlock(LockMode mode) const;
 
             /// \}
     };

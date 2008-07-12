@@ -118,7 +118,36 @@ namespace honei
         }
     }
 
-    void * MemoryArbiter::read(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryArbiter::lock(LockMode mode, tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    {
+        switch (mode)
+        {
+            case lm_read_only:
+                return read_only(memory, memid, address, bytes);
+            case lm_write_only:
+                return write_only(memory, memid, address, bytes);
+            case lm_read_and_write:
+                return read_and_write(memory, memid, address, bytes);
+        }
+    }
+
+    void MemoryArbiter::unlock(LockMode mode, unsigned long memid)
+    {
+        switch (mode)
+        {
+            case lm_read_only:
+                release_read(memid);
+                break;
+            case lm_write_only:
+                release_write(memid);
+                break;
+            case lm_read_and_write:
+                release_write(memid);
+                break;
+        }
+    }
+
+    void * MemoryArbiter::read_only(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
     {
         CONTEXT("When retrieving read lock:");
         Lock l(*this->_imp->_mutex);
@@ -147,7 +176,7 @@ namespace honei
         return this->_imp->_backends[memory]->upload(memid, address, bytes);
     }
 
-    void * MemoryArbiter::write(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryArbiter::read_and_write(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
     {
         CONTEXT("When retrieving write lock:");
         Lock l(*this->_imp->_mutex);

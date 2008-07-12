@@ -200,40 +200,22 @@ namespace honei
     }
 
     template <typename DataType_>
-    void * DenseVectorRange<DataType_>::read(tags::TagValue memory) const
+    void * DenseVectorRange<DataType_>::lock(LockMode mode, tags::TagValue memory) const
     {
-        return MemoryArbiter::instance()->read(memory, this->memid(), this->_imp->elements.get() + this->_imp->offset, this->size() * sizeof(DataType_));
+        return MemoryArbiter::instance()->lock(mode, memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
     }
 
     template <typename DataType_>
-    void * DenseVectorRange<DataType_>::write(tags::TagValue memory) const
+    void DenseVectorRange<DataType_>::unlock(LockMode mode) const
     {
-        return MemoryArbiter::instance()->write(memory, this->memid(), this->_imp->elements.get() + this->_imp->offset, this->size() * sizeof(DataType_));
-    }
-
-    template <typename DataType_>
-    void * DenseVectorRange<DataType_>::write_only(tags::TagValue memory) const
-    {
-        return MemoryArbiter::instance()->write_only(memory, this->memid(), this->_imp->elements.get() + this->_imp->offset, this->size() * sizeof(DataType_));
-    }
-
-    template <typename DataType_>
-    void DenseVectorRange<DataType_>::release_read() const
-    {
-        MemoryArbiter::instance()->release_read(this->memid());
-    }
-
-    template <typename DataType_>
-    void DenseVectorRange<DataType_>::release_write() const
-    {
-        MemoryArbiter::instance()->release_write(this->memid());
+        MemoryArbiter::instance()->unlock(mode, this->memid());
     }
 
     template <typename DataType_>
     DenseVector<DataType_> DenseVectorRange<DataType_>::copy() const
     {
         DenseVector<DataType_> result(this->_imp->size);
-        this->read();
+        this->lock(lm_read_only);
 
         DataType_ * source(this->_imp->elements.get());
         DataType_ * target(result.elements());
@@ -244,7 +226,7 @@ namespace honei
 
         /// \todo: Use TypeTraits<DataType_>::copy()
 
-        this->release_read();
+        this->unlock(lm_read_only);
         return result;
     }
 

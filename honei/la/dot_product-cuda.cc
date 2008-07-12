@@ -47,11 +47,11 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
     }
     else
     {
-        void * a_gpu(a.read(tags::GPU::CUDA::memory_value));
-        void * b_gpu(b.read(tags::GPU::CUDA::memory_value));
+        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+        void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
         result = cuda_dot_product_two_float(a_gpu, b_gpu, a.size(), blocksize, gridsize);
-        b.release_read();
-        a.release_read();
+        b.unlock(lm_read_only);
+        a.unlock(lm_read_only);
     }
 
     return result;

@@ -30,9 +30,9 @@ DenseVectorContinuousBase<float> & Scale<tags::GPU::CUDA>::value(DenseVectorCont
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_float", 128ul));
 
-    void * x_gpu (x.write(tags::GPU::CUDA::memory_value));
+    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     cuda_scale_one_float(x_gpu, a, x.size(), blocksize);
-    x.release_write();
+    x.unlock(lm_read_and_write);
 
     return x;
 }
@@ -43,9 +43,9 @@ DenseMatrix<float> & Scale<tags::GPU::CUDA>::value(DenseMatrix<float> & x, const
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_float", 128ul));
 
-    void * x_gpu (x.write(tags::GPU::CUDA::memory_value));
+    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     cuda_scale_one_float(x_gpu, a, x.size(), blocksize);
-    x.release_write();
+    x.unlock(lm_read_and_write);
 
     return x;
 }

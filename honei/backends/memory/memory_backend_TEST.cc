@@ -79,15 +79,15 @@ class MemoryArbiterQuickTest :
 
             MemoryArbiter::instance()->add_memblock(mem2);
             MemoryArbiter::instance()->add_memblock(mem1);
-            MemoryArbiter::instance()->read(tags::CPU::memory_value, mem1, data1, 2);
-            MemoryArbiter::instance()->read(tags::CPU::memory_value, mem2, data2, 1);
-            MemoryArbiter::instance()->release_read(mem2);
-            MemoryArbiter::instance()->release_read(mem1);
-            MemoryArbiter::instance()->write(tags::CPU::memory_value, mem1, data1, 2);
-            MemoryArbiter::instance()->release_write(mem1);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 2);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem2);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem1);
+            MemoryArbiter::instance()->lock(lm_read_and_write, tags::CPU::memory_value, mem1, data1, 2);
+            MemoryArbiter::instance()->unlock(lm_read_and_write, mem1);
 
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read(25), InternalError);
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read(mem1), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, 25), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, mem1), InternalError);
 
             MemoryArbiter::instance()->remove_memblock(mem2);
             MemoryArbiter::instance()->remove_memblock(mem1);
@@ -114,24 +114,24 @@ class CUDAMemoryArbiterQuickTest :
             void * data2 = data_array2;
             unsigned long mem2((unsigned long)data2);
             MemoryArbiter::instance()->add_memblock(mem1);
-            MemoryArbiter::instance()->read(tags::CPU::memory_value, mem1, data1, 1);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 1);
             MemoryArbiter::instance()->add_memblock(mem2);
-            MemoryArbiter::instance()->read(tags::GPU::CUDA::memory_value, mem2, data2, 1);
-            MemoryArbiter::instance()->read(tags::CPU::memory_value, mem2, data2, 1);
-            MemoryArbiter::instance()->release_read(mem1);
-            MemoryArbiter::instance()->release_read(mem2);
-            MemoryArbiter::instance()->release_read(mem2);
-            MemoryArbiter::instance()->write(tags::GPU::CUDA::memory_value, mem2, data2, 1);
-            MemoryArbiter::instance()->release_write(mem2);
-            MemoryArbiter::instance()->read(tags::CPU::memory_value, mem2, data2, 1);
-            MemoryArbiter::instance()->release_read(mem2);
-            MemoryArbiter::instance()->write(tags::CPU::memory_value, mem1, data1, 1);
-            MemoryArbiter::instance()->write(tags::CPU::memory_value, mem2, data2, 1);
-            MemoryArbiter::instance()->release_write(mem1);
-            MemoryArbiter::instance()->release_write(mem2);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::GPU::CUDA::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem1);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem2);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem2);
+            MemoryArbiter::instance()->lock(lm_read_and_write, tags::GPU::CUDA::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->unlock(lm_read_and_write, mem2);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem2);
+            MemoryArbiter::instance()->lock(lm_read_and_write, tags::CPU::memory_value, mem1, data1, 1);
+            MemoryArbiter::instance()->lock(lm_read_and_write, tags::CPU::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->unlock(lm_read_and_write, mem1);
+            MemoryArbiter::instance()->unlock(lm_read_and_write, mem2);
 
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read(25), InternalError);
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->release_read(mem1), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, 25), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, mem1), InternalError);
 
             MemoryArbiter::instance()->remove_memblock(mem2);
             MemoryArbiter::instance()->remove_memblock(mem1);

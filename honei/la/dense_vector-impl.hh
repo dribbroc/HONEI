@@ -244,44 +244,26 @@ namespace honei
     }
 
     template <typename DataType_>
-    void * DenseVector<DataType_>::read(tags::TagValue memory) const
+    void * DenseVector<DataType_>::lock(LockMode mode, tags::TagValue memory) const
     {
-        return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+        return MemoryArbiter::instance()->lock(mode, memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
     }
 
     template <typename DataType_>
-    void * DenseVector<DataType_>::write(tags::TagValue memory) const
+    void DenseVector<DataType_>::unlock(LockMode mode) const
     {
-        return MemoryArbiter::instance()->write(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
-    }
-
-    template <typename DataType_>
-    void * DenseVector<DataType_>::write_only(tags::TagValue memory) const
-    {
-        return MemoryArbiter::instance()->write_only(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
-    }
-
-    template <typename DataType_>
-    void DenseVector<DataType_>::release_read() const
-    {
-        MemoryArbiter::instance()->release_read(this->memid());
-    }
-
-    template <typename DataType_>
-    void DenseVector<DataType_>::release_write() const
-    {
-        MemoryArbiter::instance()->release_write(this->memid());
+        MemoryArbiter::instance()->unlock(mode, this->memid());
     }
 
     template <typename DataType_>
     DenseVector<DataType_> DenseVector<DataType_>::copy() const
     {
         DenseVector result(this->_imp->size);
-        this->read();
+        this->lock(lm_read_only);
 
         TypeTraits<DataType_>::copy(this->_imp->elements.get(), result._imp->elements.get(), this->_imp->size);
 
-        this->release_read();
+        this->unlock(lm_read_only);
         return result;
     }
 

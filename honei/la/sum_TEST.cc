@@ -486,12 +486,12 @@ class DenseMatrixSumTest :
 
                 Sum<Tag_>::value(dm1, dm2);
 
-                dm1.read();
+                dm1.lock(lm_read_only);
                 TEST_CHECK_EQUAL(dm1, dm3);
-                dm1.release_read();
+                dm1.unlock(lm_read_only);
 
                 DenseMatrix<DataType_> dm4(size + 1, size, DataType_(117));
-                dm2.write();
+                dm2.lock(lm_read_and_write);
 
                 for (typename MutableMatrix<DataType_>::ElementIterator i(dm4.begin_elements()), i_end(dm4.end_elements()),
                         si(dm2.begin_elements()), ri(dm3.begin_elements()) ; i != i_end ; ++i, ++si, ++ri)
@@ -501,11 +501,11 @@ class DenseMatrixSumTest :
                     *ri = DataType_(117) + DataType_(2) * ri.row() - DataType_(3);
                 }
 
-                dm2.release_write();
+                dm2.unlock(lm_read_and_write);
                 Sum<Tag_>::value(dm4, dm2);
-                dm4.read();
+                dm4.lock(lm_read_only);
                 TEST_CHECK_EQUAL(dm4, dm3);
-                dm4.release_read();
+                dm4.unlock(lm_read_only);
             }
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
@@ -550,9 +550,9 @@ class DenseMatrixSumQuickTest :
                 dm3(size+1, size, DataType_(-1));
             Sum<Tag_>::value(dm1, dm2);
 
-            dm1.read();
+            dm1.lock(lm_read_only);
             TEST_CHECK_EQUAL(dm1, dm3);
-            dm1.release_read();
+            dm1.unlock(lm_read_only);
 
             DenseMatrix<DataType_> dm01(5, 5), dm02(6, 6), dm03(6, 5);
 
@@ -946,7 +946,7 @@ class DenseVectorRangeSumTest :
                 DenseVectorRange<DataType_> dvr1 (dv1, size / 2, 5);
                 DenseVectorRange<DataType_> dvr2 (dv2, size / 2, 5);
                 Sum<Tag_>::value(dvr1, dvr2);
-                dvr1.read();
+                dvr1.lock(lm_read_only);
 
                 for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
                         i_end(dvr1.end_elements()) ; i != i_end ; ++i)
@@ -954,7 +954,7 @@ class DenseVectorRangeSumTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 5 + 1) * 3 / 1.23456789),
                             std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 5 + 1) * 3 / 1.23456789);
                 }
-                dvr1.release_read();
+                dvr1.unlock(lm_read_only);
                 DenseVectorRange<DataType_> dvr3 (dv1, size / 6, (size / 2) + 2);
                 DenseVectorRange<DataType_> dvr4 (dv2, size / 6, size / 2);
                 Sum<Tag_>::value(dvr3, dvr4);
@@ -1009,14 +1009,14 @@ class DenseVectorRangeSumQuickTest :
             DenseVectorRange<DataType_> dvr2 (dv2, 11, 5);
             Sum<Tag_>::value(dvr1, dvr2);
 
-            dvr1.read();
+            dvr1.lock(lm_read_only);
             for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
                     i_end(dvr1.end_elements()) ; i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 5 + 1) * 3 / 1.23456789),
                         std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 5 + 1) * 3 / 1.23456789);
             }
-            dvr1.release_read();
+            dvr1.unlock(lm_read_only);
 
             DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
             DenseVectorRange<DataType_> dvr01(dv01, 4, 2), dvr02(dv02, 3 , 1);
@@ -1066,25 +1066,25 @@ class DenseVectorSumTest :
 
                 Sum<Tag_>::value(dv1, dv2);
 
-                dv1.read();
+                dv1.lock(lm_read_only);
                 for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                         i_end(dv1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 3 / 1.23456789),
                             std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 1) * 3 / 1.23456789);
                 }
-                dv1.release_read();
+                dv1.unlock(lm_read_only);
 
                 Sum<Tag_>::value(dv1, dv2);
 
-                dv1.read();
+                dv1.lock(lm_read_only);
                 for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                         i_end(dv1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 5 / 1.23456789),
                             std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 1) * 5 / 1.23456789);
                 }
-                dv1.release_read();
+                dv1.unlock(lm_read_only);
 
                 DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
                 TEST_CHECK_THROWS(Sum<Tag_>::value(dv01, dv02), VectorSizeDoesNotMatch);
@@ -1142,14 +1142,14 @@ class DenseVectorSumQuickTest :
             Sum<Tag_>::value(dv1, dv2);
             Sum<Tag_>::value(dv1, dv2);
 
-            dv1.read();
+            dv1.lock(lm_read_only);
             for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                     i_end(dv1.end_elements()) ; i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 5 / 1.23456789),
                         std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 1) * 5 / 1.23456789);
             }
-            dv1.release_read();
+            dv1.unlock(lm_read_only);
 
             DenseVector<DataType_> dv01(6, DataType_(1)), dv02(4, DataType_(1));
             TEST_CHECK_THROWS(Sum<Tag_>::value(dv01, dv02), VectorSizeDoesNotMatch);

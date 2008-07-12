@@ -51,16 +51,16 @@ namespace honei
             virtual const unsigned long offset() const = 0;
 
             /// Return our memory id
-            virtual unsigned long memid() const = 0;
+            virtual void * memid() const = 0;
 
             /// Return the address of our data
             virtual void * address() const = 0;
 
-            /// Request a read lock for our data.
-            virtual void * read(tags::TagValue memory) const = 0;
+            /// Request a memory access lock for our data.
+            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const = 0;
 
-            /// Release a read lock for our data.
-            virtual void release_read() const = 0;
+            /// Release a memory access lock for our data.
+            virtual void unlock(LockMode mode) const = 0;
 
             /// Retrieve element at position index, unassignable
             virtual const DataType_ & element(unsigned long index) const = 0;
@@ -91,7 +91,7 @@ namespace honei
             }
 
             /// Return our memory id
-            virtual unsigned long memid() const
+            virtual void * memid() const
             {
                 return _v.memid();
             }
@@ -102,16 +102,16 @@ namespace honei
                 return _v.address();
             }
 
-            /// Request a read lock for our data.
-            virtual void * read(tags::TagValue memory) const
+            /// Request a memory access lock for our data.
+            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const
             {
-                return _v.read(memory);
+                return _v.lock(mode, memory);
             }
 
-            /// Release a read lock for our data.
-            virtual void release_read() const
+            /// Release a memory access lock for our data.
+            virtual void unlock(LockMode mode) const
             {
-                _v.release_read();
+                _v.unlock(mode);
             }
 
             /// Constructor
@@ -196,7 +196,7 @@ namespace honei
 
 
     template <typename DataType_>
-    unsigned long
+    void *
     ConstVector<DataType_>::memid() const
     {
         return this->_imp->memid();
@@ -211,16 +211,18 @@ namespace honei
 
     template <typename DataType_>
     void *
-    ConstVector<DataType_>::read(tags::TagValue memory) const
+    ConstVector<DataType_>::lock(LockMode mode, tags::TagValue memory) const
     {
-        return this->_imp->read(memory);
+        ASSERT(mode == lm_read_only, "Only read_only access is allowed!");
+        return this->_imp->lock(mode, memory);
     }
 
     template <typename DataType_>
     void
-    ConstVector<DataType_>::release_read() const
+    ConstVector<DataType_>::unlock(LockMode mode) const
     {
-        this->_imp->release_read();
+        ASSERT(mode == lm_read_only, "Only read_only access is allowed!");
+        this->_imp->unlock(mode);
     }
 
     template <typename DataType_>

@@ -34,11 +34,11 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVecto
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::difference_two_float", 128ul));
 
-    void * a_gpu (a.write(tags::GPU::CUDA::memory_value));
-    void * b_gpu (b.read(tags::GPU::CUDA::memory_value));
+    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     cuda_difference_two_float(a_gpu, b_gpu, a.size(), blocksize);
-    b.release_read();
-    a.release_write();
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_and_write);
 
     return a;
 }
@@ -59,11 +59,11 @@ DenseMatrix<float> & Difference<tags::GPU::CUDA>::value(DenseMatrix<float> & a, 
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::difference_two_float", 128ul));
 
-    void * a_gpu (a.write(tags::GPU::CUDA::memory_value));
-    void * b_gpu (b.read(tags::GPU::CUDA::memory_value));
+    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     cuda_difference_two_float(a_gpu, b_gpu, a.size(), blocksize);
-    b.release_read();
-    a.release_write();
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_and_write);
 
     return a;
 }

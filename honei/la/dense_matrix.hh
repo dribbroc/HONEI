@@ -322,45 +322,27 @@ namespace honei
                 return (unsigned long)_elements.get();
             }
 
-            /// Request a read lock for our data.
-            void * read(tags::TagValue memory = tags::CPU::memory_value) const
+            /// Request a memory access lock for our data.
+            void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const
             {
-                return MemoryArbiter::instance()->read(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+                return MemoryArbiter::instance()->lock(mode, memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
             }
 
-            /// Request a write lock for our data.
-            void * write(tags::TagValue memory = tags::CPU::memory_value) const
+            /// Release a memory access lock for our data.
+            void unlock(LockMode mode) const
             {
-                return MemoryArbiter::instance()->write(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
-            }
-
-            /// Request a write-only lock for our data.
-            void * write_only(tags::TagValue memory = tags::CPU::memory_value) const
-            {
-                return MemoryArbiter::instance()->write_only(memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
-            }
-
-            /// Release a read lock for our data.
-            void release_read() const
-            {
-                MemoryArbiter::instance()->release_read(this->memid());
-            }
-
-            /// Release a write lock for our data.
-            void release_write() const
-            {
-                MemoryArbiter::instance()->release_write(this->memid());
+                MemoryArbiter::instance()->unlock(mode, this->memid());
             }
 
             /// Returns a copy of the matrix.
             DenseMatrix copy() const
             {
                 DenseMatrix result(_rows, _columns);
-                this->read();
+                this->lock(lm_read_only);
 
                 TypeTraits<DataType_>::copy(_elements.get(), result._elements.get(), _columns * _rows);
 
-                this->release_read();
+                this->unlock(lm_read_only);
                 return result;
             }
     };
