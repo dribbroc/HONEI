@@ -54,48 +54,8 @@ class MemoryBackendQuickTest :
             TEST_CHECK_EQUAL(data_array[3], 3);
         }
 };
-MemoryBackendQuickTest<tags::CPU> memory_backend_quick_test;
-#ifdef HONEI_CUDA
 MemoryBackendQuickTest<tags::GPU::CUDA> cuda_memory_backend_quick_test;
-#endif
 
-class MemoryArbiterQuickTest :
-    public QuickTest
-{
-    public:
-        MemoryArbiterQuickTest() :
-            QuickTest("memory_arbiter_test")
-        {
-        }
-
-        virtual void run() const
-        {
-            char  data_array1 [10];
-            void * data1 = data_array1;
-            void * mem1(data1);
-            char  data_array2 [10];
-            void * data2 = data_array2;
-            void * mem2(data2);
-
-            MemoryArbiter::instance()->register_address(mem2);
-            MemoryArbiter::instance()->register_address(mem1);
-            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 2);
-            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
-            MemoryArbiter::instance()->unlock(lm_read_only, mem2);
-            MemoryArbiter::instance()->unlock(lm_read_only, mem1);
-            MemoryArbiter::instance()->lock(lm_read_and_write, tags::CPU::memory_value, mem1, data1, 2);
-            MemoryArbiter::instance()->unlock(lm_read_and_write, mem1);
-
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, (void *)25), InternalError);
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, mem1), InternalError);
-
-            MemoryArbiter::instance()->remove_address(mem2);
-            MemoryArbiter::instance()->remove_address(mem1);
-        }
-} memory_arbiter_quick_test;
-
-
-#ifdef HONEI_CUDA
 class CUDAMemoryArbiterQuickTest :
     public QuickTest
 {
@@ -137,4 +97,3 @@ class CUDAMemoryArbiterQuickTest :
             MemoryArbiter::instance()->remove_address(mem1);
         }
 } cuda_memory_arbiter_quick_test;
-#endif

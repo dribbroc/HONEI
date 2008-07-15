@@ -88,7 +88,6 @@ namespace honei
 
         void register_address(void * memid)
         {
-            CONTEXT("When registering memory address:");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             if (i != _blocks.end())
@@ -104,7 +103,6 @@ namespace honei
 
         void remove_address(void * memid)
         {
-            CONTEXT("When removing memory address:");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             if (i == _blocks.end())
@@ -127,7 +125,6 @@ namespace honei
 
         void * read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When retrieving read lock:");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             // Wait until no one writes on our memory block
@@ -156,7 +153,6 @@ namespace honei
 
         void * read_and_write(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When retrieving write lock:");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             // Wait until no one reads or writes on our memory block
@@ -196,7 +192,6 @@ namespace honei
 
         void * write_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When retrieving write-only lock:");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             // Wait until no one reads or writes on our memory block
@@ -231,7 +226,6 @@ namespace honei
 
         void release_read(void * memid)
         {
-            CONTEXT("When releasing read lock:");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             if(i == _blocks.end())
@@ -254,7 +248,6 @@ namespace honei
 
         void release_write(void * memid)
         {
-            CONTEXT("When releasing write lock:");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             if(i == _blocks.end())
@@ -287,11 +280,13 @@ namespace honei
 
     void MemoryArbiter::register_address(void * memid)
     {
+        CONTEXT("When registering memory address:");
         _imp->register_address(memid);
     }
 
     void MemoryArbiter::remove_address(void * memid)
     {
+        CONTEXT("When removing memory address:");
         _imp->remove_address(memid);
     }
 
@@ -326,26 +321,31 @@ namespace honei
 
     void * MemoryArbiter::read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
     {
+        CONTEXT("When retrieving read_only lock:");
         return _imp->read_only(memory, memid, address, bytes);
     }
 
     void * MemoryArbiter::read_and_write(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
     {
+        CONTEXT("When retrieving read_and_write lock:");
         return _imp->read_and_write(memory, memid, address, bytes);
     }
 
     void * MemoryArbiter::write_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
     {
+        CONTEXT("When retrieving write_only lock:");
         return _imp->write_only(memory, memid, address, bytes);
     }
 
     void MemoryArbiter::release_read(void * memid)
     {
+        CONTEXT("When releasing read lock:");
         _imp->release_read(memid);
     }
 
     void MemoryArbiter::release_write(void * memid)
     {
+        CONTEXT("When releasing write lock:");
         _imp->release_write(memid);
     }
 

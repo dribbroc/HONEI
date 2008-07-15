@@ -15,4 +15,4 @@ if SSE
   SSEDIR = sse
 endif
 
-SUBDIRS = $(SSEDIR) $(CELLDIR) $(CUDADIR) memory
+SUBDIRS = $(SSEDIR) $(CELLDIR) $(CUDADIR)

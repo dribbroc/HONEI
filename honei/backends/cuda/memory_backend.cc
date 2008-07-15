@@ -35,16 +35,6 @@ namespace honei
      */
     template <> struct Implementation<MemoryBackend<tags::GPU::CUDA> >
     {
-        /// Constructor.
-        Implementation() //:
-            //elements(e),
-        {
-        }
-
-        ~Implementation()
-        {
-        }
-
         struct Chunk
         {
             public:
@@ -58,12 +48,13 @@ namespace honei
                 void * device;
                 unsigned long bytes;
         };
+
         std::map<void *, void *> _address_map;
+
         std::multimap<void *, Chunk> _id_map;
 
         void * upload(void * memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When uploading data (CUDA):");
             std::map<void *, void *>::iterator i(_address_map.find(address));
             if (i == _address_map.end())
             {
@@ -79,7 +70,6 @@ namespace honei
 
         void download(void * memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When downloading data (CUDA):");
             std::map<void *, void *>::iterator i(_address_map.find(address));
             if (i == _address_map.end())
             {
@@ -94,7 +84,6 @@ namespace honei
 
         void * alloc(void * memid, void * address, unsigned long bytes)
         {
-            CONTEXT("When allocating data (CUDA):");
             void * device(cuda_malloc(bytes));
             _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes)));
             _address_map.insert(std::pair<void *, void *>(address, device));
@@ -103,7 +92,6 @@ namespace honei
 
         void free(void * memid)
         {
-            CONTEXT("When freeing data (CUDA):");
             std::multimap<void *, Chunk>::iterator i;
             std::pair<std::multimap<void *, Chunk>::iterator, std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
             for (std::multimap<void *, Chunk>::iterator i(range.first) ; i != range.second ; ++i)
@@ -128,21 +116,25 @@ namespace honei
 
     void * MemoryBackend<tags::GPU::CUDA>::upload(void * memid, void * address, unsigned long bytes)
     {
+        CONTEXT("When uploading data (CUDA):");
         return _imp->upload(memid, address, bytes);
     }
 
     void MemoryBackend<tags::GPU::CUDA>::download(void * memid, void * address, unsigned long bytes)
     {
+        CONTEXT("When downloading data (CUDA):");
         _imp->download(memid, address, bytes);
     }
 
     void * MemoryBackend<tags::GPU::CUDA>::alloc(void * memid, void * address, unsigned long bytes)
     {
+        CONTEXT("When allocating data (CUDA):");
         return _imp->alloc(memid, address, bytes);
     }
 
     void MemoryBackend<tags::GPU::CUDA>::free(void * memid)
     {
+        CONTEXT("When freeing data (CUDA):");
         _imp->free(memid);
     }
 
