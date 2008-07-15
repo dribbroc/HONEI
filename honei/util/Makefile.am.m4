@@ -28,7 +28,7 @@ ifelse(`$3', `hh', `addhh(`$1',`$2')', `')dnl
 ifelse(`$3', `impl', `addimpl(`$1', `$2')', `')dnl
 ifelse(`$3', `cc', `addcc(`$1',`$2')', `')dnl
 ifelse(`$3', `test', `addtest(`$1',`$2')', `')')dnl
-define(`add', `addthis(`$1',`$2',`$3')addthis(`$1',`$2',`$4')addthis(`$1',`$2',`$5')')dnl
+define(`add', `addthis(`$1',`$2',`$3')addthis(`$1',`$2',`$4')addthis(`$1',`$2',`$5')addthis(`$1',`$2',`$6')')dnl
 
 include(`honei/util/files.m4')
 
