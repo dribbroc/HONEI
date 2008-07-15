@@ -44,7 +44,6 @@ namespace honei
     struct Implementation<ConstVector<DataType_> >
     {
         public:
-
             /// Our size.
             virtual const unsigned long size() const = 0;;
 
@@ -77,6 +76,7 @@ namespace honei
     {
         private:
             VectorType_ _v;
+
         public:
             /// Our size.
             virtual const unsigned long size() const
@@ -147,6 +147,27 @@ namespace honei
     }
 
     template <typename DataType_>
+    typename ConstVector<DataType_>::ConstVectorElementIterator ConstVector<DataType_>::begin_elements() const
+    {
+        ConstVectorElementIterator result(*this, 0);
+        return result;
+    }
+
+    template <typename DataType_>
+    typename ConstVector<DataType_>::ConstVectorElementIterator ConstVector<DataType_>::end_elements() const
+    {
+        ConstVectorElementIterator result(*this, this->size());
+        return result;
+    }
+
+    template <typename DataType_>
+    typename ConstVector<DataType_>::ConstVectorElementIterator ConstVector<DataType_>::element_at(unsigned long index) const
+    {
+        ConstVectorElementIterator result(*this, index);
+        return result;
+    }
+
+    template <typename DataType_>
     unsigned long ConstVector<DataType_>::size() const
     {
         return this->_imp->size();
@@ -157,6 +178,7 @@ namespace honei
     {
         CONTEXT("When retrieving ConstVector element, unassignable:");
         ASSERT(index < this->_imp->size() && index >= 0, "index is out of bounds!");
+
         return this->_imp->element(index);
     }
 
