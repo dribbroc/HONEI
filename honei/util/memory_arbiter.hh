@@ -59,16 +59,6 @@ namespace honei
             friend class MemoryBackendRegistrator;
 
             /**
-             * Constructor.
-             */
-            MemoryArbiter();
-
-            /**
-             * Destructor.
-             */
-            ~MemoryArbiter();
-
-            /**
              * Add a chunk of memory to the memory block map.
              *
              * \param memid A unique key identifying the added chunk.
@@ -112,6 +102,12 @@ namespace honei
              */
 
         private:
+            /// Constructor
+            MemoryArbiter();
+
+            /// Destructor
+            ~MemoryArbiter();
+
             void * read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes);
 
             /**

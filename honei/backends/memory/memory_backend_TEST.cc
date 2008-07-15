@@ -20,7 +20,7 @@
 
 #include <unittest/unittest.hh>
 #include <honei/util/memory_arbiter.hh>
-#include <honei/backends/memory/memory_backend.hh>
+#include <honei/util/memory_backend.hh>
 
 using namespace honei;
 using namespace tests;

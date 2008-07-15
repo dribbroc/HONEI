@@ -21,6 +21,7 @@
 #define MEMORY_GUARD_MEMORY_BACKEND_HH 1
 
 #include <honei/util/instantiation_policy.hh>
+#include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/memory_backend_base.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/exception.hh>
@@ -75,26 +76,16 @@ namespace honei
     template<>
     class MemoryBackend<tags::GPU::CUDA> :
         public MemoryBackendBase,
-        public InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>
+        public InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>,
+        public PrivateImplementationPattern<MemoryBackend<tags::GPU::CUDA>, Single>
     {
-        private:
-            struct Chunk
-            {
-                public:
-                    Chunk(void * a, void * d, unsigned long b) :
-                        address(a),
-                        device(d),
-                        bytes(b)
-                    {
-                    }
-                    void * address;
-                    void * device;
-                    unsigned long bytes;
-            };
-            std::map<void *, void *> _address_map;
-            std::multimap<void *, Chunk> _id_map;
-
         public:
+            /// Constructor.
+            MemoryBackend<tags::GPU::CUDA>();
+
+            /// Destructor.
+            ~MemoryBackend<tags::GPU::CUDA>();
+
             virtual void * upload(void * memid, void * address, unsigned long bytes);
 
             virtual void download(void * memid, void * address, unsigned long bytes);
