@@ -423,4 +423,18 @@ namespace tests
         } \
     } while (false)
 
+/**
+ * Run the given test with pre- and postprocessing
+ */
+#define TEST(pre, test, post) \
+    do { \
+        pre; \
+        try { \
+            test; \
+        } catch (const TestFailedException & test_e) { \
+            post; \
+            throw; } \
+        post; \
+    } while (false)
+
 #endif
