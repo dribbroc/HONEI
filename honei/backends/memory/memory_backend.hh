@@ -46,26 +46,26 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>
     {
     public:
-        virtual void * upload(unsigned long memid, void * address, unsigned long bytes)
+        virtual void * upload(void * memid, void * address, unsigned long bytes)
         {
             CONTEXT("When uploading data (CPU):");
 
             return address;
         }
 
-        virtual void download(unsigned long memid, void * address, unsigned long bytes)
+        virtual void download(void * memid, void * address, unsigned long bytes)
         {
             CONTEXT("When downloading data (CPU):");
         }
 
-        virtual void * alloc(unsigned long memid, void * address, unsigned long bytes)
+        virtual void * alloc(void * memid, void * address, unsigned long bytes)
         {
             CONTEXT("When allocating data (CPU):");
 
             return address;
         }
 
-        virtual void free(unsigned long memid)
+        virtual void free(void * memid)
         {
             CONTEXT("When freeing data (CPU):");
         }
@@ -92,16 +92,16 @@ namespace honei
                     unsigned long bytes;
             };
             std::map<void *, void *> _address_map;
-            std::multimap<unsigned long, Chunk> _id_map;
+            std::multimap<void *, Chunk> _id_map;
 
         public:
-            virtual void * upload(unsigned long memid, void * address, unsigned long bytes);
+            virtual void * upload(void * memid, void * address, unsigned long bytes);
 
-            virtual void download(unsigned long memid, void * address, unsigned long bytes);
+            virtual void download(void * memid, void * address, unsigned long bytes);
 
-            virtual void * alloc(unsigned long memid, void * address, unsigned long bytes);
+            virtual void * alloc(void * memid, void * address, unsigned long bytes);
 
-            virtual void free(unsigned long memid);
+            virtual void free(void * memid);
     };
 }
 #endif

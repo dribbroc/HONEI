@@ -55,7 +55,7 @@ namespace honei
             mutex(new Mutex)
         {
             TypeTraits<DataType_>::create(array, s, DataType_());
-            MemoryArbiter::instance()->add_memblock((unsigned long) array);
+            MemoryArbiter::instance()->register_address(array);
         }
 
         /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
@@ -67,7 +67,7 @@ namespace honei
         /// Destructor.
         ~Implementation()
         {
-            MemoryArbiter::instance()->remove_memblock((unsigned long) array);
+            MemoryArbiter::instance()->remove_address(array);
             TypeTraits<DataType_>::destroy(array, size);
             TypeTraits<DataType_>::free(array, size);
 
@@ -79,13 +79,13 @@ namespace honei
         /// Reset us with a new array.
         inline void reset(unsigned long s, DataType_ * a)
         {
-            MemoryArbiter::instance()->remove_memblock((unsigned long) array);
+            MemoryArbiter::instance()->remove_address(array);
             TypeTraits<DataType_>::destroy(array, size);
             TypeTraits<DataType_>::free(array, size);
 
             array = a;
             size = s;
-            MemoryArbiter::instance()->add_memblock((unsigned long) array);
+            MemoryArbiter::instance()->register_address(array);
         }
     };
 

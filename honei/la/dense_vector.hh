@@ -190,7 +190,7 @@ namespace honei
             virtual DataType_ * elements() const;
 
             /// Return our memory id
-            virtual unsigned long memid() const;
+            virtual void * memid() const;
 
             /// Return the address of our data
             virtual void * address() const;

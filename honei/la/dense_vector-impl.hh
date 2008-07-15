@@ -232,9 +232,9 @@ namespace honei
     }
 
     template <typename DataType_>
-    unsigned long DenseVector<DataType_>::memid() const
+    void * DenseVector<DataType_>::memid() const
     {
-        return (unsigned long)this->_imp->elements.get();
+        return this->_imp->elements.get();
     }
 
     template <typename DataType_>

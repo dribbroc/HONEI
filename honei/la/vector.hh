@@ -126,7 +126,7 @@ namespace honei
             virtual DataType_ * elements() const = 0;
 
             /// Return our memory id
-            virtual unsigned long memid() const = 0;
+            virtual void * memid() const = 0;
 
             /// Return the address of our data
             virtual void * address() const = 0;

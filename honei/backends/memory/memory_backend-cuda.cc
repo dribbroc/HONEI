@@ -19,12 +19,14 @@
 
 #include <honei/util/exception.hh>
 #include <honei/backends/memory/memory_backend.hh>
+#include <honei/util/instantiation_policy-impl.hh>
 #include <honei/backends/cuda/transfer.hh>
+#include <honei/util/memory_arbiter.hh>
 
 /// \todo How can we handle multiple device memories (numa wise)? -> One must know the choosen device (multiple memory_values).
 namespace honei
 {
-    void * MemoryBackend<tags::GPU::CUDA>::upload(unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryBackend<tags::GPU::CUDA>::upload(void * memid, void * address, unsigned long bytes)
     {
         CONTEXT("When uploading data (CUDA):");
         std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -40,7 +42,7 @@ namespace honei
         }
     }
 
-    void MemoryBackend<tags::GPU::CUDA>::download(unsigned long memid, void * address, unsigned long bytes)
+    void MemoryBackend<tags::GPU::CUDA>::download(void * memid, void * address, unsigned long bytes)
     {
         CONTEXT("When downloading data (CUDA):");
         std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -55,25 +57,31 @@ namespace honei
 
     }
 
-    void * MemoryBackend<tags::GPU::CUDA>::alloc(unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryBackend<tags::GPU::CUDA>::alloc(void * memid, void * address, unsigned long bytes)
     {
         CONTEXT("When allocating data (CUDA):");
         void * device(cuda_malloc(bytes));
-        _id_map.insert(std::pair<unsigned long, Chunk>(memid, Chunk(address, device, bytes)));
+        _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes)));
         _address_map.insert(std::pair<void *, void *>(address, device));
         return device;
     }
 
-    void MemoryBackend<tags::GPU::CUDA>::free(unsigned long memid)
+    void MemoryBackend<tags::GPU::CUDA>::free(void * memid)
     {
         CONTEXT("When freeing data (CUDA):");
-        std::multimap<unsigned long, Chunk>::iterator i;
-        std::pair<std::multimap<unsigned long, Chunk>::iterator, std::multimap<unsigned long, Chunk>::iterator> range(_id_map.equal_range(memid));
-        for (std::multimap<unsigned long, Chunk>::iterator i(range.first) ; i != range.second ; ++i)
+        std::multimap<void *, Chunk>::iterator i;
+        std::pair<std::multimap<void *, Chunk>::iterator, std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
+        for (std::multimap<void *, Chunk>::iterator i(range.first) ; i != range.second ; ++i)
         {
             cuda_free(i->second.device);
             _address_map.erase(i->second.address);
         }
         _id_map.erase(range.first, range.second);
     }
+
+    template class InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>;
+    template class MemoryBackend<tags::GPU::CUDA>;
 }
+
+using namespace honei;
+static MemoryBackendRegistrator gpu_backend_registrator(tags::GPU::CUDA::memory_value, MemoryBackend<tags::GPU::CUDA>::instance());

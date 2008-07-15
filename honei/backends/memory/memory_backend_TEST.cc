@@ -72,13 +72,13 @@ class MemoryArbiterQuickTest :
         {
             char  data_array1 [10];
             void * data1 = data_array1;
-            unsigned long mem1((unsigned long)data1);
+            void * mem1(data1);
             char  data_array2 [10];
             void * data2 = data_array2;
-            unsigned long mem2((unsigned long)data2);
+            void * mem2(data2);
 
-            MemoryArbiter::instance()->add_memblock(mem2);
-            MemoryArbiter::instance()->add_memblock(mem1);
+            MemoryArbiter::instance()->register_address(mem2);
+            MemoryArbiter::instance()->register_address(mem1);
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 2);
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
             MemoryArbiter::instance()->unlock(lm_read_only, mem2);
@@ -86,11 +86,11 @@ class MemoryArbiterQuickTest :
             MemoryArbiter::instance()->lock(lm_read_and_write, tags::CPU::memory_value, mem1, data1, 2);
             MemoryArbiter::instance()->unlock(lm_read_and_write, mem1);
 
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, 25), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, (void *)25), InternalError);
             TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, mem1), InternalError);
 
-            MemoryArbiter::instance()->remove_memblock(mem2);
-            MemoryArbiter::instance()->remove_memblock(mem1);
+            MemoryArbiter::instance()->remove_address(mem2);
+            MemoryArbiter::instance()->remove_address(mem1);
         }
 } memory_arbiter_quick_test;
 
@@ -109,13 +109,13 @@ class CUDAMemoryArbiterQuickTest :
         {
             char  data_array1 [10];
             void * data1 = data_array1;
-            unsigned long mem1((unsigned long)data1);
+            void * mem1(data1);
             char  data_array2 [10];
             void * data2 = data_array2;
-            unsigned long mem2((unsigned long)data2);
-            MemoryArbiter::instance()->add_memblock(mem1);
+            void * mem2(data2);
+            MemoryArbiter::instance()->register_address(mem1);
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 1);
-            MemoryArbiter::instance()->add_memblock(mem2);
+            MemoryArbiter::instance()->register_address(mem2);
             MemoryArbiter::instance()->lock(lm_read_only, tags::GPU::CUDA::memory_value, mem2, data2, 1);
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
             MemoryArbiter::instance()->unlock(lm_read_only, mem1);
@@ -130,11 +130,11 @@ class CUDAMemoryArbiterQuickTest :
             MemoryArbiter::instance()->unlock(lm_read_and_write, mem1);
             MemoryArbiter::instance()->unlock(lm_read_and_write, mem2);
 
-            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, 25), InternalError);
+            TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, (void *)25), InternalError);
             TEST_CHECK_THROWS(MemoryArbiter::instance()->unlock(lm_read_only, mem1), InternalError);
 
-            MemoryArbiter::instance()->remove_memblock(mem2);
-            MemoryArbiter::instance()->remove_memblock(mem1);
+            MemoryArbiter::instance()->remove_address(mem2);
+            MemoryArbiter::instance()->remove_address(mem1);
         }
 } cuda_memory_arbiter_quick_test;
 #endif

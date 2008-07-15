@@ -188,9 +188,9 @@ namespace honei
     }
 
     template <typename DataType_>
-    inline unsigned long DenseVectorRange<DataType_>::memid() const
+    inline void * DenseVectorRange<DataType_>::memid() const
     {
-        return (unsigned long)this->_imp->elements.get();
+        return this->_imp->elements.get();
     }
 
     template <typename DataType_>

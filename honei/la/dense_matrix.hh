@@ -317,9 +317,9 @@ namespace honei
             }
 
             /// Return our memory id
-            inline unsigned long memid() const
+            inline void * memid() const
             {
-                return (unsigned long)_elements.get();
+                return _elements.get();
             }
 
             /// Request a memory access lock for our data.

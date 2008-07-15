@@ -44,23 +44,6 @@ namespace honei
         lm_read_and_write
     };
 
-    /// Logical representation of a used chunk of memory.
-    struct MemoryBlock
-    {
-        public:
-            MemoryBlock(tags::TagValue w) :
-                writer(w)
-        {
-            read_count = 0;
-            write_count = 0;
-        }
-
-            unsigned read_count;
-            unsigned write_count;
-            tags::TagValue writer;
-            std::set<tags::TagValue> readers;
-    };
-
     /**
      * MemoryArbiter handles read/write locks for all used memory blocks and
      * distributes necessary memory transfers jobs.
@@ -90,14 +73,14 @@ namespace honei
              *
              * \param memid A unique key identifying the added chunk.
              */
-            void add_memblock(unsigned long memid);
+            void register_address(void *);
 
             /**
              * Remove a chunk of memory from the memory block map.
              *
              * \param memid A unique key identifying the removed chunk.
              */
-            void remove_memblock(unsigned long memid);
+            void remove_address(void * memid);
 
 
             /**
@@ -109,7 +92,7 @@ namespace honei
              * \param bytes The amount of bytes we want to read.
              * \retval device A pointer to the data on the device.
              */
-            void * lock(LockMode mode, tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes);
+            void * lock(LockMode mode, tags::TagValue memory, void * memid, void * address, unsigned long bytes);
 
             /**
              * Release a lock for a specific memory block.
@@ -117,7 +100,7 @@ namespace honei
              * \param mode The released memory access mode.
              * \param memid A unique key identifying the released chunk.
              */
-            void unlock(LockMode mode, unsigned long memid);
+            void unlock(LockMode mode, void * memid);
 
             /**
              * Request a read lock for a specific memory block.
@@ -129,7 +112,7 @@ namespace honei
              */
 
         private:
-            void * read_only(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes);
+            void * read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes);
 
             /**
              * Request a write lock for a specific memory block.
@@ -140,7 +123,7 @@ namespace honei
              * \param bytes The amount of bytes we want to write.
              * \retval device A pointer to the data on the device.
              */
-            void * read_and_write(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes);
+            void * read_and_write(tags::TagValue memory, void * memid, void * address, unsigned long bytes);
 
             /**
              * Request a write lock for a specific memory block.
@@ -151,21 +134,21 @@ namespace honei
              * \param bytes The amount of bytes we want to write.
              * \retval device A pointer to the data on the device.
              */
-            void * write_only(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes);
+            void * write_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes);
 
             /**
              * Release a read lock for a specific memory block.
              *
              * \param memid A unique key identifying the released chunk.
              */
-            void release_read(unsigned long memid);
+            void release_read(void * memid);
 
             /**
              * Release a write lock for a specific memory block.
              *
              * \param memid A unique key identifying the released chunk.
              */
-            void release_write(unsigned long memid);
+            void release_write(void * memid);
 
             void insert_backend(std::pair<tags::TagValue, MemoryBackendBase *> backend);
 

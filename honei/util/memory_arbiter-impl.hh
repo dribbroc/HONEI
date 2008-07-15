@@ -47,11 +47,28 @@ namespace honei
         /// Our one read/write lock has faded condition variable.
         ConditionVariable * _access_finished;
 
-        /// Our map of all memory blocks.
-        std::map<unsigned long, MemoryBlock> _blocks;
-
         /// Our map of all memory backends
         std::map<tags::TagValue, MemoryBackendBase *> _backends;
+
+        /// Logical representation of a used chunk of memory.
+        struct MemoryBlock
+        {
+            public:
+                MemoryBlock(tags::TagValue w) :
+                    writer(w)
+            {
+                read_count = 0;
+                write_count = 0;
+            }
+
+                unsigned read_count;
+                unsigned write_count;
+                tags::TagValue writer;
+                std::set<tags::TagValue> readers;
+        };
+
+        /// Our map of all memory blocks.
+        std::map<void *, MemoryBlock> _blocks;
 
         friend class MemoryBackendRegistrator;
 
@@ -68,6 +85,195 @@ namespace honei
             delete _access_finished;
             delete _mutex;
         }
+
+        void register_address(void * memid)
+        {
+            CONTEXT("When registering memory address:");
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            if (i != _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Duplicate Memory Block!");
+            }
+            else
+            {
+                MemoryBlock new_block(tags::tv_none);
+                _blocks.insert(std::pair<void *, MemoryBlock>(memid, new_block));
+            }
+        }
+
+        void remove_address(void * memid)
+        {
+            CONTEXT("When removing memory address:");
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            if (i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                ASSERT(i->second.read_count == 0 , "Deleting MemoryBlock " + stringify(memid) + " that is still under " + stringify(i->second.read_count) + " read access!");
+                ASSERT(i->second.write_count == 0, "Deleting MemoryBlock " + stringify(memid) + " that is still under " + stringify(i->second.write_count) + " write access!");
+                // Delete the deprecated memory block in all relevant memory backends
+                for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                        j != j_end ; ++j)
+                {
+                    _backends[*j]->free(memid);
+                }
+                _blocks.erase(i);
+            }
+        }
+
+        void * read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
+        {
+            CONTEXT("When retrieving read lock:");
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            // Wait until no one writes on our memory block
+            while (i != _blocks.end() && i->second.write_count != 0)
+            {
+                _access_finished->wait(*_mutex);
+                i = _blocks.find(memid);
+            }
+            if (i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                // If our memory block was changed on any other remote side, write it back to the main memory.
+                if (i->second.writer != tags::tv_none && i->second.writer != memory)
+                {
+                    _backends[i->second.writer]->download(memid, address, bytes);
+                    i->second.writer = tags::tv_none;
+                }
+                i->second.read_count++;
+                i->second.readers.insert(memory);
+            }
+            return _backends[memory]->upload(memid, address, bytes);
+        }
+
+        void * read_and_write(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
+        {
+            CONTEXT("When retrieving write lock:");
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            // Wait until no one reads or writes on our memory block
+            while (i != _blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                i = _blocks.find(memid);
+            }
+            if (i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                // If our memory block was changed on any other remote side, write it back to the main memory.
+                if (i->second.writer != tags::tv_none && i->second.writer != memory)
+                {
+                    _backends[i->second.writer]->download(memid, address, bytes);
+                }
+                // Delete the deprecated memory block in all relevant memory backends
+                for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                        j != j_end ; ++j)
+                {
+                    if (*j != memory)
+                    {
+                        _backends[*j]->free(memid);
+                    }
+
+                }
+                i->second.readers.clear();
+                i->second.writer= memory;
+                i->second.write_count++;
+                i->second.readers.insert(memory);
+            }
+            return _backends[memory]->upload(memid, address, bytes);
+        }
+
+        void * write_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
+        {
+            CONTEXT("When retrieving write-only lock:");
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            // Wait until no one reads or writes on our memory block
+            while (i != _blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                i = _blocks.find(memid);
+            }
+            if (i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                // Delete the deprecated memory block in all relevant memory backends
+                for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                        j != j_end ; ++j)
+                {
+                    if (*j != memory)
+                    {
+                        _backends[*j]->free(memid);
+                    }
+
+                }
+                i->second.readers.clear();
+                i->second.writer= memory;
+                i->second.write_count++;
+                i->second.readers.insert(memory);
+            }
+            return _backends[memory]->alloc(memid, address, bytes);
+        }
+
+        void release_read(void * memid)
+        {
+            CONTEXT("When releasing read lock:");
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            if(i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter::release_read MemoryBlock not found!");
+            }
+            else
+            {
+                if (i->second.read_count == 0)
+                {
+                    throw InternalError("MemoryArbiter::release_read: read counter is already zero!");
+                }
+                else
+                {
+                    i->second.read_count--;
+                }
+                _access_finished->broadcast();
+            }
+        }
+
+        void release_write(void * memid)
+        {
+            CONTEXT("When releasing write lock:");
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            if(i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter::release_write MemoryBlock not found!");
+            }
+            else
+            {
+                if (i->second.write_count == 0)
+                {
+                    throw InternalError("MemoryArbiter::release_write: write counter is already zero!");
+                }
+                else
+                {
+                    i->second.write_count--;
+                }
+                _access_finished->broadcast();
+            }
+        }
     };
 
     MemoryArbiter::MemoryArbiter() :
@@ -79,46 +285,17 @@ namespace honei
     {
     }
 
-    void MemoryArbiter::add_memblock(unsigned long memid)
+    void MemoryArbiter::register_address(void * memid)
     {
-        CONTEXT("When adding Memory Block:");
-        Lock l(*this->_imp->_mutex);
-        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
-        if (i != this->_imp->_blocks.end())
-        {
-            throw InternalError("MemoryArbiter: Duplicate Memory Block!");
-        }
-        else
-        {
-            MemoryBlock new_block(tags::tv_none);
-            this->_imp->_blocks.insert(std::pair<unsigned long, MemoryBlock>(memid, new_block));
-        }
+        _imp->register_address(memid);
     }
 
-    void MemoryArbiter::remove_memblock(unsigned long memid)
+    void MemoryArbiter::remove_address(void * memid)
     {
-        CONTEXT("When removing Memory Block:");
-        Lock l(*this->_imp->_mutex);
-        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
-        if (i == this->_imp->_blocks.end())
-        {
-            throw InternalError("MemoryArbiter: Memory Block not found!");
-        }
-        else
-        {
-            //ASSERT(i->second.read_count == 0 , "Deleting MemoryBlock " + stringify(memid) + " that is still under " + stringify(i->second.read_count) + " read access!");
-            //ASSERT(i->second.write_count == 0, "Deleting MemoryBlock " + stringify(memid) + " that is still under " + stringify(i->second.write_count) + " write access!");
-            // Delete the deprecated memory block in all relevant memory backends
-            for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
-                    j != j_end ; ++j)
-            {
-                this->_imp->_backends[*j]->free(memid);
-            }
-            this->_imp->_blocks.erase(i);
-        }
+        _imp->remove_address(memid);
     }
 
-    void * MemoryArbiter::lock(LockMode mode, tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryArbiter::lock(LockMode mode, tags::TagValue memory, void * memid, void * address, unsigned long bytes)
     {
         switch (mode)
         {
@@ -131,7 +308,7 @@ namespace honei
         }
     }
 
-    void MemoryArbiter::unlock(LockMode mode, unsigned long memid)
+    void MemoryArbiter::unlock(LockMode mode, void * memid)
     {
         switch (mode)
         {
@@ -147,154 +324,29 @@ namespace honei
         }
     }
 
-    void * MemoryArbiter::read_only(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryArbiter::read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
     {
-        CONTEXT("When retrieving read lock:");
-        Lock l(*this->_imp->_mutex);
-        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
-        // Wait until no one writes on our memory block
-        while (i != this->_imp->_blocks.end() && i->second.write_count != 0)
-        {
-            this->_imp->_access_finished->wait(*this->_imp->_mutex);
-            i = this->_imp->_blocks.find(memid);
-        }
-        if (i == this->_imp->_blocks.end())
-        {
-            throw InternalError("MemoryArbiter: Memory Block not found!");
-        }
-        else
-        {
-            // If our memory block was changed on any other remote side, write it back to the main memory.
-            if (i->second.writer != tags::tv_none && i->second.writer != memory)
-            {
-                this->_imp->_backends[i->second.writer]->download(memid, address, bytes);
-                i->second.writer = tags::tv_none;
-            }
-            i->second.read_count++;
-            i->second.readers.insert(memory);
-        }
-        return this->_imp->_backends[memory]->upload(memid, address, bytes);
+        return _imp->read_only(memory, memid, address, bytes);
     }
 
-    void * MemoryArbiter::read_and_write(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryArbiter::read_and_write(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
     {
-        CONTEXT("When retrieving write lock:");
-        Lock l(*this->_imp->_mutex);
-        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
-        // Wait until no one reads or writes on our memory block
-        while (i != this->_imp->_blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
-        {
-            this->_imp->_access_finished->wait(*this->_imp->_mutex);
-            i = this->_imp->_blocks.find(memid);
-        }
-        if (i == this->_imp->_blocks.end())
-        {
-            throw InternalError("MemoryArbiter: Memory Block not found!");
-        }
-        else
-        {
-            // If our memory block was changed on any other remote side, write it back to the main memory.
-            if (i->second.writer != tags::tv_none && i->second.writer != memory)
-            {
-                this->_imp->_backends[i->second.writer]->download(memid, address, bytes);
-            }
-            // Delete the deprecated memory block in all relevant memory backends
-            for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
-                    j != j_end ; ++j)
-            {
-                if (*j != memory)
-                {
-                    this->_imp->_backends[*j]->free(memid);
-                }
-
-            }
-            i->second.readers.clear();
-            i->second.writer= memory;
-            i->second.write_count++;
-            i->second.readers.insert(memory);
-        }
-        return this->_imp->_backends[memory]->upload(memid, address, bytes);
+        return _imp->read_and_write(memory, memid, address, bytes);
     }
 
-    void * MemoryArbiter::write_only(tags::TagValue memory, unsigned long memid, void * address, unsigned long bytes)
+    void * MemoryArbiter::write_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
     {
-        CONTEXT("When retrieving write-only lock:");
-        Lock l(*this->_imp->_mutex);
-        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
-        // Wait until no one reads or writes on our memory block
-        while (i != this->_imp->_blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
-        {
-            this->_imp->_access_finished->wait(*this->_imp->_mutex);
-            i = this->_imp->_blocks.find(memid);
-        }
-        if (i == this->_imp->_blocks.end())
-        {
-            throw InternalError("MemoryArbiter: Memory Block not found!");
-        }
-        else
-        {
-            // Delete the deprecated memory block in all relevant memory backends
-            for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
-                    j != j_end ; ++j)
-            {
-                if (*j != memory)
-                {
-                    this->_imp->_backends[*j]->free(memid);
-                }
-
-            }
-            i->second.readers.clear();
-            i->second.writer= memory;
-            i->second.write_count++;
-            i->second.readers.insert(memory);
-        }
-        return this->_imp->_backends[memory]->alloc(memid, address, bytes);
+        return _imp->write_only(memory, memid, address, bytes);
     }
 
-    void MemoryArbiter::release_read(unsigned long memid)
+    void MemoryArbiter::release_read(void * memid)
     {
-        CONTEXT("When releasing read lock:");
-        Lock l(*this->_imp->_mutex);
-        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
-        if(i == this->_imp->_blocks.end())
-        {
-            throw InternalError("MemoryArbiter::release_read MemoryBlock not found!");
-        }
-        else
-        {
-            if (i->second.read_count == 0)
-            {
-                throw InternalError("MemoryArbiter::release_read: read counter is already zero!");
-            }
-            else
-            {
-                i->second.read_count--;
-            }
-            this->_imp->_access_finished->broadcast();
-        }
+        _imp->release_read(memid);
     }
 
-    void MemoryArbiter::release_write(unsigned long memid)
+    void MemoryArbiter::release_write(void * memid)
     {
-        CONTEXT("When releasing write lock:");
-        Lock l(*this->_imp->_mutex);
-        std::map<unsigned long, MemoryBlock>::iterator i(this->_imp->_blocks.find(memid));
-        if(i == this->_imp->_blocks.end())
-        {
-            throw InternalError("MemoryArbiter::release_write MemoryBlock not found!");
-        }
-        else
-        {
-            if (i->second.write_count == 0)
-            {
-                throw InternalError("MemoryArbiter::release_write: write counter is already zero!");
-            }
-            else
-            {
-                i->second.write_count--;
-            }
-            this->_imp->_access_finished->broadcast();
-        }
+        _imp->release_write(memid);
     }
 
     void MemoryArbiter::insert_backend(std::pair<tags::TagValue, MemoryBackendBase *> backend)
@@ -303,7 +355,5 @@ namespace honei
         Lock l(*this->_imp->_mutex);
         this->_imp->_backends.insert(backend);
     }
-
-
 }
 #endif
