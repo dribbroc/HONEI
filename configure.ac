@@ -339,7 +339,6 @@ AC_OUTPUT(
 	honei/backends/cell/spe/libutil/Makefile
 	honei/backends/sse/Makefile
 	honei/backends/cuda/Makefile
-	honei/backends/memory/Makefile
 	honei/graph/Makefile
 	honei/la/Makefile
 	honei/lbm/Makefile
