@@ -74,9 +74,7 @@ class BandedMatrixDenseVectorProductTest :
                 DenseVector<DataType_> prod (Product<Tag_>::value(bm1, dv2));
                 //std::cout << "prod = " << prod << std::endl;
 
-                prod.lock(lm_read_only);
-                TEST_CHECK_EQUAL(prod, dv3);
-                prod.unlock(lm_read_only);
+                TEST(prod.lock(lm_read_only), TEST_CHECK_EQUAL(prod, dv3), prod.unlock(lm_read_only));
             }
 
             BandedMatrix<DataType_> bm01(5);
@@ -147,14 +145,13 @@ class BandedMatrixDenseVectorProductQuickTest :
             }
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
-            prod.lock(lm_read_only);
-            for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
-                    it != i_end ; ++it, ++dit)
-            {
-                //std::cout<<it.index() << " ";
-                TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
-            }
-            prod.unlock(lm_read_only);
+            TEST(prod.lock(lm_read_only),
+                    for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+                        it != i_end ; ++it, ++dit)
+                    {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
+                    },
+                    prod.unlock(lm_read_only));
 
             BandedMatrix<DataType_> bm01(5);
             DenseVector<DataType_> dv01(4, DataType_(1));
@@ -230,13 +227,13 @@ class Q1MatrixDenseVectorProductTest :
             DenseVector<DataType_> dv_ref(Product<tags::CPU>::value(bm2, dv1));
 #endif
 
-                prod.lock(lm_read_only);
-                for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+            TEST(prod.lock(lm_read_only),
+                    for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
                         it != i_end ; ++it, ++dit)
-                {
+                    {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
-                }
-                prod.unlock(lm_read_only);
+                    },
+                    prod.unlock(lm_read_only));
             }
 
             DenseVector<DataType_> dv01(4, DataType_(1));
@@ -303,13 +300,13 @@ class Q1MatrixDenseVectorProductQuickTest :
             DenseVector<DataType_> dv_ref(Product<tags::CPU>::value(bm2, dv1));
 #endif
 
-            prod.lock(lm_read_only);
-            for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
-                    it != i_end ; ++it, ++dit)
-            {
-                TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
-            }
-            prod.unlock(lm_read_only);
+            TEST(prod.lock(lm_read_only),
+                    for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+                        it != i_end ; ++it, ++dit)
+                    {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
+                    },
+                    prod.unlock(lm_read_only));
 
             DenseVector<DataType_> dv01(4, DataType_(1));
             DenseVector<DataType_> dv02(1089, DataType_(1));

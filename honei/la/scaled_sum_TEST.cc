@@ -49,11 +49,9 @@ class DenseVectorScaledSumTest :
                 DataType_ scal(DataType_(2));
 
                 ScaledSum<Tag_>::value(dv1, dv2, scal);
-                dv1.lock(lm_read_only);
                 DenseVector<DataType_> dv3(size, DataType_(8));
 
-                TEST_CHECK_EQUAL(dv1, dv3);
-                dv1.unlock(lm_read_only);
+                TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -105,9 +103,7 @@ class DenseVectorScaledSumQuickTest :
             ScaledSum<Tag_>::value(dv1, dv2, scal);
             DenseVector<DataType_> dv3(size, DataType_(8));
 
-            dv1.lock(lm_read_only);
-            TEST_CHECK_EQUAL(dv1, dv3);
-            dv1.unlock(lm_read_only);
+            TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
@@ -163,9 +159,7 @@ class DenseVectorRangeScaledSumTest :
                         ScaledSum<Tag_>::value(dv1, dv2, scal);
                         DenseVector<DataType_> dv3(size, DataType_(8));
 
-                        dv1.lock(lm_read_only);
-                        TEST_CHECK_EQUAL(dv1, dv3);
-                        dv1.unlock(lm_read_only);
+                        TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
                     }
                 }
             }
@@ -219,9 +213,7 @@ class DenseVectorRangeScaledSumQuickTest :
             DataType_ scal(DataType_(2));
             DenseVector<DataType_> dv3(size, DataType_(8));
             ScaledSum<Tag_>::value(dv1, dv2, scal);
-            dv1.lock(lm_read_only);
-            TEST_CHECK_EQUAL(dv1, dv3);
-            dv1.unlock(lm_read_only);
+            TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
@@ -273,9 +265,9 @@ class DenseVector3ScaledSumTest :
                 ScaledSum<Tag_>::value(sumr, dvr1, dvr2);
                 sumr.lock(lm_read_only);
                 DataType_ v1(Norm<vnt_l_one>::value(sumr));
+                sumr.unlock(lm_read_only);
 
                 TEST_CHECK_EQUAL(v1, 8 * (size / 2));
-                sumr.unlock(lm_read_only);
             }
 
             DenseVector<DataType_> dv00(1, DataType_(1));
@@ -323,8 +315,8 @@ class DenseVector3ScaledSumQuickTest :
             ScaledSum<Tag_>::value(sumr, dvr1, dvr2);
             sumr.lock(lm_read_only);
             DataType_ v1(Norm<vnt_l_one>::value(sumr));
-            TEST_CHECK_EQUAL(v1, 8 * (size / 2));
             sumr.unlock(lm_read_only);
+            TEST_CHECK_EQUAL(v1, 8 * (size / 2));
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
