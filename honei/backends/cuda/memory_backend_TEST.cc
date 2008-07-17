@@ -63,6 +63,7 @@ class CUDAMemoryArbiterQuickTest :
         CUDAMemoryArbiterQuickTest() :
             QuickTest("cuda_memory_arbiter_test")
         {
+            register_tag(tags::GPU::CUDA::name);
         }
 
         virtual void run() const
