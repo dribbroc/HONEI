@@ -23,6 +23,7 @@
 #define LIBLA_GUARD_ELEMENT_ITERATOR_HH 1
 
 #include <honei/la/banded_matrix-fwd.hh>
+#include <honei/la/const_vector-fwd.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 #include <iterator>
@@ -41,6 +42,8 @@ namespace honei
     namespace storage
     {
         struct Banded;
+
+        struct Const;
 
         struct Dense;
 
@@ -176,6 +179,62 @@ namespace honei
     extern template class ConstElementIterator<storage::Banded, container::Matrix, float>;
 
     extern template class ConstElementIterator<storage::Banded, container::Matrix, double>;
+
+    template <typename DataType_> class ConstElementIterator<storage::Const, container::Vector, DataType_> :
+        public PrivateImplementationPattern<ConstElementIterator<storage::Const, container::Vector, DataType_>, Single>
+    {
+        private:
+            /// Constructor.
+            ConstElementIterator(const ConstVector<DataType_> & vector, unsigned long index);
+
+        public:
+            /// \name Friends of ConstElementIterator
+            /// \{
+
+            friend class ConstVector<DataType_>;
+
+            /// \}
+
+            /// Copy-constructor.
+            ConstElementIterator(const ConstElementIterator & other);
+
+            /// Destructor.
+            ~ConstElementIterator();
+
+            /// \name Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            ConstElementIterator & operator++ ();
+
+            /// In-place-add operator.
+            ConstElementIterator & operator+= (const unsigned long step);
+
+            /// Dereference operator returning an unassignable reference.
+            const DataType_ & operator* () const;
+
+            /// Comparison operator for less-than relations.
+            bool operator< (const ConstElementIterator & other) const;
+
+            /// Comparison operator for is-equal relations.
+            bool operator== (const ConstElementIterator & other) const;
+
+            /// Comparison operator for is-unequal relations.
+            bool operator!= (const ConstElementIterator & other) const;
+
+            /// \}
+
+            /// \name Vector element iteration interface
+            /// \{
+
+            unsigned long index() const;
+
+            /// \}
+    };
+
+    extern template class ConstElementIterator<storage::Const, container::Vector, float>;
+
+    extern template class ConstElementIterator<storage::Const, container::Vector, double>;
 
     template <typename DataType_> class Vector;
 

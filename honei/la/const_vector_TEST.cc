@@ -53,7 +53,7 @@ class ConstVectorTest :
                 TEST_CHECK_EQUAL(cv, cv2);
 
                 typename Vector<DataType_>::ElementIterator j(dv.begin_elements());
-                for (typename ConstVector<DataType_>::ConstVectorElementIterator i(cv.begin_elements()), i_end(cv.end_elements()) ;
+                for (typename ConstVector<DataType_>::ConstElementIterator i(cv.begin_elements()), i_end(cv.end_elements()) ;
                         i != i_end ; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL(*i, *j);

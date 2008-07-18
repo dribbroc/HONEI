@@ -22,6 +22,7 @@
 
 #include <honei/util/tags.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#include <honei/la/element_iterator.hh>
 #include <honei/util/stringify.hh>
 #include <honei/la/dense_vector.hh>
 
@@ -36,9 +37,11 @@ namespace honei
         public PrivateImplementationPattern<ConstVector<DataType_>, Shared>
     {
         public:
+            /// Type of the const iterator over our elements.
+            typedef ConstElementIterator<storage::Const, container::Vector, DataType_> ConstElementIterator;
+
             /// Constructors
             /// \{
-
 
             /**
              * Constructor.
@@ -56,126 +59,15 @@ namespace honei
 
             /// \}
 
-            /**
-             * \brief ConstVector::ConstVectorElementIterator is a simple const iterator implementation for const vectors.
-             *
-             * \ingroup grpvector
-             **/
-            class ConstVectorElementIterator
-            {
-                private:
-                    /// Our parent vector.
-                    const ConstVector<DataType_> & _vector;
-
-                    /// Our index.
-                    unsigned long _index;
-
-                public:
-                    /// \name Constructors
-                    /// \{
-
-                    /**
-                     * Constructor.
-                     *
-                     * \param vector The parent vector that is referenced by the iterator.
-                     * \param index The index into the vector.
-                     **/
-                    ConstVectorElementIterator(const ConstVector<DataType_> & vector, unsigned long index) :
-                        _vector(vector),
-                        _index(index)
-                    {
-                    }
-
-                    /// Copy-constructor.
-                    ConstVectorElementIterator(const ConstVector<DataType_>::ConstVectorElementIterator & other) :
-                        _vector(other._vector),
-                        _index(other._index)
-                    {
-                    }
-
-                    /// Destructor.
-                    ~ConstVectorElementIterator()
-                    {
-                    }
-
-                    /// \}
-
-                    /// \name Forward iterator interface
-                    /// \{
-
-                    /// Preincrement operator.
-                    ConstVectorElementIterator & operator++ ()
-                    {
-                        CONTEXT("When incrementing iterator by one:");
-
-                        ++_index;
-
-                        return *this;
-                    }
-
-                    /// In-place-add operator.
-                    ConstVectorElementIterator & operator+= (const unsigned long step)
-                    {
-                        CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
-
-                        _index += step;
-
-                        return *this;
-                    }
-
-                    /// Dereference operator that returns an unassignable reference.
-                    const DataType_ & operator* () const
-                    {
-                        CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
-
-                        return _vector[_index];
-                    }
-
-                    /// Less-than operator.
-                    bool operator< (const ConstVectorElementIterator & other) const
-                    {
-                        return _index < other.index();
-                    }
-
-                    /// Equality operator.
-                    bool operator== (const ConstVectorElementIterator & other) const
-                    {
-                        return ((&_vector == other.parent()) && (_index == other.index()));
-                    }
-
-                    /// Inequality operator.
-                    bool operator!= (const ConstVectorElementIterator & other) const
-                    {
-                        return ((&_vector != other.parent()) || (_index != other.index()));
-                    }
-
-                    /// \}
-
-                    /// \name IteratorTraits interface
-                    /// \{
-
-                    /// Returns our index.
-                    virtual unsigned long index() const
-                    {
-                        return _index;
-                    }
-
-                    /// Returns a pointer to our parent container.
-                    virtual const ConstVector<DataType_> * parent() const
-                    {
-                        return &_vector;
-                    }
-                    /// \}
-            };
 
             /// Returns const iterator pointing to the first element of the vector.
-            ConstVectorElementIterator begin_elements() const;
+            ConstElementIterator begin_elements() const;
 
             /// Returns const iterator pointing behind the last element of the vector.
-            ConstVectorElementIterator end_elements() const;
+            ConstElementIterator end_elements() const;
 
             /// Returns const iterator pointing to a given element of the vector.
-            ConstVectorElementIterator element_at(unsigned long index) const;
+            ConstElementIterator element_at(unsigned long index) const;
 
             /// Returns our size.
             unsigned long size() const;

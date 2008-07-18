@@ -20,6 +20,7 @@
 
 #include <honei/la/element_iterator.hh>
 #include <honei/la/banded_matrix.hh>
+#include <const_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_vector.hh>
 #include <unittest/unittest.hh>
@@ -69,6 +70,42 @@ class BandedMatrixElementIterationTest :
 
 BandedMatrixElementIterationTest<float> banded_matrix_element_iteration_test_float("float");
 BandedMatrixElementIterationTest<double> banded_matrix_element_iteration_test_double("double");
+
+template <typename DataType_>
+class ConstVectorElementIterationTest :
+    public BaseTest
+{
+    public:
+        ConstVectorElementIterationTest(const std::string & type) :
+            BaseTest("const_vector_element_iteration_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 8) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv(size, DataType_(10));
+
+                typename Vector<DataType_>::ElementIterator e(dv.begin_elements()), e_end(dv.end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i, ++e)
+                {
+                    *e = 222;
+                }
+
+                ConstVector<DataType_> cv(dv);
+                typename ConstVector<DataType_>::ConstElementIterator ce(cv.begin_elements()), ce_end(cv.end_elements()) ;
+                for (unsigned long i(0) ; i < size ; ++i, ++ce)
+                {
+                    TEST_CHECK_EQUAL(ce.index(), i);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 222, std::numeric_limits<DataType_>::epsilon());
+                }
+            }
+        }
+};
+
+ConstVectorElementIterationTest<float> const_vector_element_iteration_test_float("float");
+ConstVectorElementIterationTest<double> const_vector_element_iteration_test_double("double");
 
 template <typename DataType_>
 class DenseMatrixElementIterationTest :

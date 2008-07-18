@@ -147,34 +147,39 @@ namespace honei
     }
 
     template <typename DataType_>
-    typename ConstVector<DataType_>::ConstVectorElementIterator ConstVector<DataType_>::begin_elements() const
+    typename ConstVector<DataType_>::ConstElementIterator
+    ConstVector<DataType_>::begin_elements() const
     {
-        ConstVectorElementIterator result(*this, 0);
+        ConstElementIterator result(*this, 0);
         return result;
     }
 
     template <typename DataType_>
-    typename ConstVector<DataType_>::ConstVectorElementIterator ConstVector<DataType_>::end_elements() const
+    typename ConstVector<DataType_>::ConstElementIterator
+    ConstVector<DataType_>::end_elements() const
     {
-        ConstVectorElementIterator result(*this, this->size());
+        ConstElementIterator result(*this, this->size());
         return result;
     }
 
     template <typename DataType_>
-    typename ConstVector<DataType_>::ConstVectorElementIterator ConstVector<DataType_>::element_at(unsigned long index) const
+    typename ConstVector<DataType_>::ConstElementIterator
+    ConstVector<DataType_>::element_at(unsigned long index) const
     {
-        ConstVectorElementIterator result(*this, index);
+        ConstElementIterator result(*this, index);
         return result;
     }
 
     template <typename DataType_>
-    unsigned long ConstVector<DataType_>::size() const
+    unsigned long
+    ConstVector<DataType_>::size() const
     {
         return this->_imp->size();
     }
 
     template <typename DataType_>
-    const DataType_ & ConstVector<DataType_>::operator[] (unsigned long index) const
+    const DataType_ &
+    ConstVector<DataType_>::operator[] (unsigned long index) const
     {
         CONTEXT("When retrieving ConstVector element, unassignable:");
         ASSERT(index < this->_imp->size() && index >= 0, "index is out of bounds!");
@@ -183,32 +188,37 @@ namespace honei
     }
 
     template <typename DataType_>
-    unsigned long ConstVector<DataType_>::offset() const
+    unsigned long
+    ConstVector<DataType_>::offset() const
     {
         return this->_imp->offset();
     }
 
 
     template <typename DataType_>
-    unsigned long ConstVector<DataType_>::memid() const
+    unsigned long
+    ConstVector<DataType_>::memid() const
     {
         return this->_imp->memid();
     }
 
     template <typename DataType_>
-    void * ConstVector<DataType_>::address() const
+    void *
+    ConstVector<DataType_>::address() const
     {
         return this->_imp->address();
     }
 
     template <typename DataType_>
-    void * ConstVector<DataType_>::read(tags::TagValue memory) const
+    void *
+    ConstVector<DataType_>::read(tags::TagValue memory) const
     {
         return this->_imp->read(memory);
     }
 
     template <typename DataType_>
-    void ConstVector<DataType_>::release_read() const
+    void
+    ConstVector<DataType_>::release_read() const
     {
         this->_imp->release_read();
     }
@@ -245,6 +255,106 @@ namespace honei
 
         return lhs;
     }
-}
 
+    template <typename DataType_> struct Implementation<ConstElementIterator<storage::Const, container::Vector, DataType_> >
+    {
+        const ConstVector<DataType_> & vector;
+
+        unsigned long index;
+
+        Implementation(const ConstVector<DataType_> & vector, unsigned long index) :
+            vector(vector),
+            index(index)
+        {
+        }
+
+        Implementation(const Implementation<ElementIterator<storage::Const, container::Vector, DataType_> > & other) :
+            vector(other.vector),
+            index(other.index)
+        {
+        }
+    };
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::ConstElementIterator(const ConstVector<DataType_> & vector,
+            unsigned long index) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Const, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Const, container::Vector, DataType_> >(vector, index))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::ConstElementIterator(const ConstElementIterator & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Const, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Const, container::Vector, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::~ConstElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Const, container::Vector, DataType_> &
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ConstElementIterator<Const, Vector> by one:");
+
+        ++this->_imp->index;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Const, container::Vector, DataType_> &
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ConstElementIterator<Const, Vector> by '" + stringify(step) + "':");
+
+        this->_imp->index += step;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    const DataType_ &
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at index '" + stringify(this->_imp->index) + "':");
+
+        return this->_imp->vector[this->_imp->index];
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::operator< (
+            const ConstElementIterator<storage::Const, container::Vector, DataType_> & other) const
+    {
+        return this->_imp->index < other._imp->index;
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::operator== (
+            const ConstElementIterator<storage::Const, container::Vector, DataType_> & other) const
+    {
+        return ((&(this->_imp->vector) == &(other._imp->vector)) && (this->_imp->index == other._imp->index));
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::operator!= (
+            const ConstElementIterator<storage::Const, container::Vector, DataType_> & other) const
+    {
+        return ((&(this->_imp->vector) != &(other._imp->vector)) || (this->_imp->index != other._imp->index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::index() const
+    {
+        return this->_imp->index;
+    }
+}
 #endif

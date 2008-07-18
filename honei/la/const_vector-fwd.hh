@@ -17,25 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/la/const_vector.hh>
-#include <honei/la/const_vector-impl.hh>
+#ifndef HONEI_GUARD_HONEI_LA_CONST_VECTOR_FWD_HH
+#define HONEI_GUARD_HONEI_LA_CONST_VECTOR_FWD_HH 1
 
 namespace honei
 {
-    template class ConstElementIterator<storage::Const, container::Vector, float>;
-
-    template class ConstVector<float>;
-
-    template bool operator== (const ConstVector<float> & a, const ConstVector<float> & b);
-
-    template std::ostream & operator<< (std::ostream & lhs, const ConstVector<float> & vector);
-
-    template class ConstElementIterator<storage::Const, container::Vector, double>;
-
-    template class ConstVector<double>;
-
-    template bool operator== (const ConstVector<double> & a, const ConstVector<double> & b);
-
-    template std::ostream & operator<< (std::ostream & lhs, const ConstVector<double> & vector);
+    template <typename DataType_> class ConstVector;
 }
 
+#endif
