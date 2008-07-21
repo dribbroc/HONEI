@@ -36,5 +36,6 @@ add(`general', `thread',                         `hh', `cc', `test')
 add(`general', `thread_pool',                    `hh',       `test')
 add(`general', `type_traits',                    `hh', `cc', `test')
 add(`general', `worker',                         `hh', `cc', `test')
+add(`general', `wrapped_forward_iterator',       `hh', `fwd', `impl')
 add(`general', `wrapper',                        `hh')
 
