@@ -23,6 +23,7 @@
 #include <honei/util/lock.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
+#include <honei/util/wrapped_forward_iterator-impl.hh>
 
 #include <cstdlib>
 #include <fstream>
@@ -30,6 +31,11 @@
 #include <string>
 #include <sstream>
 #include <sys/stat.h>
+
+namespace honei
+{
+    template class WrappedForwardIterator<Configuration::ConstIteratorTag, const std::pair<const std::string, std::string> >;
+}
 
 using namespace honei;
 

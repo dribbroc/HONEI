@@ -22,11 +22,14 @@
 #include <honei/util/partitioner.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/stringify.hh>
+#include <honei/util/wrapped_forward_iterator-impl.hh>
 
 #include <list>
 
 namespace honei
 {
+    template class WrappedForwardIterator<PartitionList::ConstIteratorTag, Partition>;
+
     template <> struct Implementation<PartitionList>
     {
         std::list<Partition> partitions;

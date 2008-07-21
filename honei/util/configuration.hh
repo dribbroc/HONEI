@@ -23,10 +23,9 @@
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#include <honei/util/wrapped_forward_iterator.hh>
 
 #include <string>
-
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace honei
 {
@@ -113,7 +112,8 @@ namespace honei
              * \{
              */
 
-            typedef libwrapiter::ForwardIterator<Configuration, const std::pair<const std::string, std::string> > ConstIterator;
+            struct ConstIteratorTag;
+            typedef WrappedForwardIterator<ConstIteratorTag, const std::pair<const std::string, std::string> > ConstIterator;
 
             ConstIterator begin() const;
 

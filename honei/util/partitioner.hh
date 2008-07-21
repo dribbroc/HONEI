@@ -24,11 +24,10 @@
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/tags.hh>
+#include <honei/util/wrapped_forward_iterator.hh>
 
 #include <tr1/functional>
 #include <tr1/memory>
-
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace honei
 {
@@ -64,7 +63,8 @@ namespace honei
             /// \name Iteration over our elements
             /// \{
 
-            typedef libwrapiter::ForwardIterator<PartitionList, Partition> ConstIterator;
+            struct ConstIteratorTag;
+            typedef WrappedForwardIterator<ConstIteratorTag, Partition> ConstIterator;
 
             ConstIterator begin() const;
 
