@@ -39,7 +39,7 @@ extern "C" void cuda_element_inverse_one_float(float * x, unsigned long size, un
 {
     dim3 grid;
     dim3 block;
-    grid.x = ceil(sqrt(size/(double)block.x));
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
     float * x_gpu((float *)x);
 

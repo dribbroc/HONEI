@@ -39,7 +39,7 @@ extern "C" void cuda_scale_one_float(void * x, float a, unsigned long size, unsi
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = ceil(sqrt(size/(double)block.x));
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
     float * x_gpu((float *)x);
 

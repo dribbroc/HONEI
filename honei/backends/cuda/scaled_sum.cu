@@ -48,7 +48,7 @@ extern "C" void cuda_scaled_sum_two_float(void * x, const void * y, float b, uns
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = ceil(sqrt(size/(double)block.x));
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
@@ -63,7 +63,7 @@ extern "C" void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsign
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = ceil(sqrt(size/(double)block.x));
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);

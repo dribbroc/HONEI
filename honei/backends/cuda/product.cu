@@ -59,9 +59,9 @@ namespace honei
             if (lindex == blockDim.x - 1)
             {
                 // x_blockdim in c_blockdim+1
-                if (blockDim.x * (blockIdx.x +1) >= 0 && blockDim.x * (blockIdx.x +1) < n) Dcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1)];
-                if (blockDim.x * (blockIdx.x +1) - m >= 0 && blockDim.x * (blockIdx.x +1) - m < n) Lcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) - m];
-                if (blockDim.x * (blockIdx.x +1) + m  >= 0 && blockDim.x * (blockIdx.x +1) + m  < n) Ucache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) + m];
+                if (blockDim.x * (blockIdx.x + 1) >= 0 && blockDim.x * (blockIdx.x + 1) < n) Dcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1)];
+                if (blockDim.x * (blockIdx.x + 1) - m >= 0 && blockDim.x * (blockIdx.x + 1) - m < n) Lcache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) - m];
+                if (blockDim.x * (blockIdx.x + 1) + m  >= 0 && blockDim.x * (blockIdx.x + 1) + m  < n) Ucache[blockDim.x + 1] = x[blockDim.x * (blockIdx.x + 1) + m];
             }
             __syncthreads();
             // now, compute
@@ -92,7 +92,7 @@ extern "C" void cuda_product_bmdv_q1_float (void * ll, void * ld, void * lu,
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = (int)ceil(size/(double)(block.x));
+    grid.x = (unsigned)ceil(size/(double)(block.x));
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
     float * ll_gpu((float *)ll);
