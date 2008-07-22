@@ -172,6 +172,30 @@ namespace honei
     }
 
     template <typename DataType_>
+    void * DenseVectorSlice<DataType_>::memid() const
+    {
+        return this->_imp->elements.get();
+    }
+
+    template <typename DataType_>
+    inline void * DenseVectorSlice<DataType_>::address() const
+    {
+        return this->_imp->elements.get();
+    }
+
+    template <typename DataType_>
+    void * DenseVectorSlice<DataType_>::lock(LockMode mode, tags::TagValue memory) const
+    {
+        return MemoryArbiter::instance()->lock(mode, memory, this->memid(), this->address(), this->size() * sizeof(DataType_));
+    }
+
+    template <typename DataType_>
+    void DenseVectorSlice<DataType_>::unlock(LockMode mode) const
+    {
+        MemoryArbiter::instance()->unlock(mode, this->memid());
+    }
+
+    template <typename DataType_>
     DenseVector<DataType_> DenseVectorSlice<DataType_>::copy() const
     {
         DenseVector<DataType_> result(this->_imp->size);

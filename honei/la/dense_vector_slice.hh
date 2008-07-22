@@ -121,15 +121,20 @@ namespace honei
             /// Returns our size.
             virtual unsigned long size() const;
 
-            /// \}
-
-            /**
-             * \name Functions inherited by DenseVectorContinousBase
-             * \{
-             */
-
             /// Return a pointer to our elements.
             virtual DataType_ * elements() const;
+
+            /// Return our memory id
+            virtual void * memid() const;
+
+            /// Return the address of our data
+            virtual void * address() const;
+
+            /// Request a memory access lock for our data.
+            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const;
+
+            /// Release a memory access lock for our data.
+            virtual void unlock(LockMode mode) const;
 
             /// \}
 

@@ -104,6 +104,21 @@ namespace honei
 
             /// Returns iterator pointing to a given element of the vector.
             virtual ElementIterator element_at(unsigned long index) = 0;
+
+            /// Return a pointer to our elements.
+            virtual DataType_ * elements() const = 0;
+
+            /// Return our memory id
+            virtual void * memid() const = 0;
+
+            /// Return the address of our data
+            virtual void * address() const = 0;
+
+            /// Request a memory access lock for our data.
+            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const = 0;
+
+            /// Release a memory access lock for our data.
+            virtual void unlock(LockMode mode) const = 0;
     };
 
     /**
@@ -121,21 +136,6 @@ namespace honei
 
             /// Return a range of our DenseVectorContinuousBase.
             virtual DenseVectorRange<DataType_> range(unsigned long size, unsigned long offset) const = 0;
-
-            /// Return a pointer to our elements.
-            virtual DataType_ * elements() const = 0;
-
-            /// Return our memory id
-            virtual void * memid() const = 0;
-
-            /// Return the address of our data
-            virtual void * address() const = 0;
-
-            /// Request a memory access lock for our data.
-            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const = 0;
-
-            /// Release a memory access lock for our data.
-            virtual void unlock(LockMode mode) const = 0;
     };
 
     /**
