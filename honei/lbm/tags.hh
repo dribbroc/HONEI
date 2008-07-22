@@ -78,6 +78,7 @@ namespace honei
         namespace lbm_applications
         {
             class LABSWE;
+            class LABNAVSTO;
         }
 
         namespace lbm_directions
