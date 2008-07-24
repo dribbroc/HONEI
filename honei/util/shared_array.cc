@@ -37,4 +37,6 @@ namespace honei
     template class SharedArray<long>;
 
     template class SharedArray<unsigned long>;
+
+    template class SharedArray<bool>;
 }

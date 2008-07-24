@@ -25,5 +25,7 @@ namespace honei
     template class DenseVectorSlice<float>;
 
     template class DenseVectorSlice<double>;
+
+    template class DenseVectorSlice<bool>;
 }
 
