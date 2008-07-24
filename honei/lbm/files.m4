@@ -11,6 +11,8 @@ dnl on this file at present...
 add(`collide_stream',           `hh', `test')
 add(`dc_advanced',                    `test')
 add(`equilibrium_distribution', `hh', `test')
+add(`grid',                     `hh')
+add(`grid_packer',              `hh', `test')
 add(`solver_labswe',            `hh', `test')
 add(`solver_labnavsto',         `hh', `test')
 add(`source',                   `hh', `test')
