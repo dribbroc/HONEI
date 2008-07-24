@@ -49,7 +49,7 @@ namespace honei
             static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
             {
                 unsigned long fluid_count(0);
-                /*for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
+                for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
                 {
                     for(unsigned long j(0); j < grid.obstacles->columns(); ++j)
                     {
@@ -77,7 +77,7 @@ namespace honei
                             }
                         }
                     }
-                }*/
+                }
                 data.h = new DenseVector<DT_>(fluid_count);
                 data.u = new DenseVector<DT_>(fluid_count);
                 data.v = new DenseVector<DT_>(fluid_count);
@@ -112,7 +112,7 @@ namespace honei
                 data.f_temp_7 = new DenseVector<DT_>(fluid_count);
                 data.f_temp_8 = new DenseVector<DT_>(fluid_count);
 
-                /*for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
+                for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
                 {
                     for(unsigned long j(0); j < grid.obstacles->columns(); ++j)
                     {
@@ -123,7 +123,7 @@ namespace honei
 
                         }
                     }
-                }*/
+                }
 
 
             }

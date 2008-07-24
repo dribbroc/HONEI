@@ -38,16 +38,18 @@ class GridPackerTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> dummy(10,11, DataType_(0));
+            DenseMatrix<DataType_> dummy(10, 11, DataType_(0));
+            DenseMatrix<bool> obst(10, 11, false);
             PackedGridInfo<D2Q9> info;
             PackedGridData<D2Q9, DataType_> data;
             GridPacker<D2Q9, DataType_> packer;
 
             Grid<D2Q9, DataType_> grid;
 
-            grid.h = &(dummy.copy());
-            grid.u = &(dummy.copy());
-            grid.v = &(dummy.copy());
+            grid.h = &dummy.copy();
+            grid.u = &dummy.copy();
+            grid.v = &dummy.copy();
+            grid.obstacles = &obst;
 
             packer.pack(grid, info, data);
             TEST_CHECK(true);
