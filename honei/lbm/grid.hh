@@ -40,6 +40,24 @@ using namespace lbm_lattice_types;
 
 namespace honei
 {
+    enum BoundaryTypeD2Q9
+    {
+        bt_none = 0,
+        bt_E,
+        bt_N,
+        bt_W,
+        bt_S,
+
+        bt_N_E,
+        bt_N_E_S,
+        bt_E_S,
+        bt_E_S_W,
+        bt_S_W,
+        bt_S_W_N,
+        bt_W_N,
+        bt_W_N_E
+
+    };
 
     template <typename LatticeType_, typename DT_> struct Grid
     {
@@ -64,7 +82,7 @@ namespace honei
     template <> struct PackedGridInfo<D2Q9>
     {
         DenseVector<unsigned long> * limits;
-        DenseVector<unsigned long> * types;
+        DenseVector<BoundaryTypeD2Q9> * types;
         DenseVector<unsigned long> * dir_0;
         DenseVector<unsigned long> * dir_1;
         DenseVector<unsigned long> * dir_2;
@@ -111,25 +129,6 @@ namespace honei
         DenseVector<DT_> * f_temp_6;
         DenseVector<DT_> * f_temp_7;
         DenseVector<DT_> * f_temp_8;
-    };
-
-    enum BoundaryTypeD2Q9
-    {
-        bt_none = 0,
-        bt_E,
-        bt_N,
-        bt_W,
-        bt_S,
-
-        bt_N_E,
-        bt_N_E_S,
-        bt_E_S,
-        bt_E_S_W,
-        bt_S_W,
-        bt_S_W_N,
-        bt_W_N,
-        bt_W_N_E
-
     };
 }
 
