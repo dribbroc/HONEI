@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
@@ -48,9 +48,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      */
-    template <typename DataType_> class DenseMatrix :
-        public RowAccessMatrix<DataType_>,
-        public MutableMatrix<DataType_>
+    template <typename DataType_> class DenseMatrix
     {
         private:
             /// Pointer to our elements.
@@ -484,13 +482,70 @@ namespace honei
             }
 
             /// Returns a pointer to our parent container.
-            virtual const Matrix<DataType_> * parent() const
+            virtual const void * parent() const
             {
                 return &_matrix;
             }
 
             /// \}
     };
+
+    /**
+     * \brief Compare two Matrices for equality.
+     *
+     * \ingroup grpmatrixoperations
+     **/
+    template <typename DataType_> bool operator== (const DenseMatrix<DataType_> & left, const DenseMatrix<DataType_> & right)
+    {
+        CONTEXT("When comparing two dense matrices:");
+
+        bool result(true);
+
+        if (left.columns() != right.columns())
+        {
+            throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+        }
+
+        if (left.rows() != right.rows())
+        {
+            throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+        }
+
+        for (typename DenseMatrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
+                j(right.begin_elements()) ; i != i_end ; ++i)
+        {
+            CONTEXT("When comparing elements at index '" + stringify(i.index()) + "':");
+
+            if (fabs((*i - *j)) <= std::numeric_limits<DataType_>::epsilon())
+            {
+                ++j;
+                continue;
+            }
+
+            result = false;
+            break;
+        }
+
+        return result;
+    }
+
+    /**
+     * \brief Output our DenseMatrix to an ostream.
+     *
+     * \ingroup grpmatrixoperations
+     **/
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const DenseMatrix<DataType_> & m)
+    {
+        lhs << "[" << std::endl;
+        for (unsigned long r(0) ; r < m.rows() ; ++r) ///< \todo Add row-iteration to DenseMatrix.
+        {
+            lhs << " " << m[r] << std::endl;
+        }
+        lhs << "]" << std::endl;
+
+        return lhs;
+    }
+
 }
 
 #endif

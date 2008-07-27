@@ -113,7 +113,7 @@ namespace honei
             {
                 CONTEXT("When performing Hessenberg decomposition:");
 
-                if (! matrix.square())
+                if (matrix.rows() != matrix.columns())
                     throw MatrixIsNotSquare(matrix.rows(), matrix.columns());
 
                 for (unsigned i(0) ; i < matrix.rows() - 2 ; ++i)

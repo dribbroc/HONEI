@@ -58,10 +58,10 @@ namespace honei
         static bool value(DenseMatrix<DataType_> & distance_matrix, const DenseVector<DataType_> & node_weights,
         const SparseMatrix<DataType_> & edge_weights)
         {
-            if (! edge_weights.square())
+            if (edge_weights.rows() != edge_weights.columns())
                 throw MatrixIsNotSquare(edge_weights.rows(), edge_weights.columns());
 
-            if (! distance_matrix.square())
+            if (distance_matrix.rows() != distance_matrix.columns())
                 throw MatrixIsNotSquare(distance_matrix.rows(), distance_matrix.columns());
 
             if (edge_weights.rows() != distance_matrix.rows())
@@ -144,10 +144,10 @@ namespace honei
         static bool value(DenseMatrix<DataType_> & distance_matrix, const DenseVector<DataType_> & node_weights,
         const SparseMatrix<DataType_> & edge_weights, AbstractGraph<DataType_> & graph)
         {
-            if (! edge_weights.square())
+            if (edge_weights.rows() != edge_weights.columns())
                 throw MatrixIsNotSquare(edge_weights.rows(), edge_weights.columns());
 
-            if (! distance_matrix.square())
+            if (distance_matrix.rows() != distance_matrix.columns())
                 throw MatrixIsNotSquare(distance_matrix.rows(), distance_matrix.columns());
 
             if (edge_weights.rows() != distance_matrix.rows())

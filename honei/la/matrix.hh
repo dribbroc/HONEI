@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
  *
@@ -357,7 +357,7 @@ namespace honei
             }
 
             /// Returns a pointer to our parent container.
-            virtual const Matrix<DataType_> * parent() const
+            virtual const void * parent() const
             {
                 return _iterator->parent();
             }

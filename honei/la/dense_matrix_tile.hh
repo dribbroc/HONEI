@@ -390,7 +390,7 @@ namespace honei
             }
 
             /// Returns a pointer to our parent container.
-            virtual const Matrix<DataType_> * parent() const
+            virtual const void * parent() const
             {
                 return &_tile;
             }

@@ -273,7 +273,7 @@ namespace honei
             virtual unsigned long row() const = 0;
 
             /// Returns a pointer to our parent container.
-            virtual const Matrix<DataType_> * parent() const = 0;
+            virtual const void * parent() const = 0;
 
             /// Destructor.
             virtual ~IteratorTraits() {}
