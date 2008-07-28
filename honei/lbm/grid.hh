@@ -55,7 +55,9 @@ namespace honei
         bt_S_W,
         bt_S_W_N,
         bt_W_N,
-        bt_W_N_E
+        bt_W_N_E,
+        bt_E_W,
+        bt_N_S
 
     };
 
@@ -82,7 +84,7 @@ namespace honei
     template <> struct PackedGridInfo<D2Q9>
     {
         DenseVector<unsigned long> * limits;
-        DenseVector<BoundaryTypeD2Q9> * types;
+        DenseVector<unsigned long> * types;
         DenseVector<unsigned long> * dir_0;
         DenseVector<unsigned long> * dir_1;
         DenseVector<unsigned long> * dir_2;

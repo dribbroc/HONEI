@@ -27,5 +27,7 @@ namespace honei
     template class DenseVector<double>;
 
     template class DenseVector<bool>;
+
+    template class DenseVector<unsigned long>;
 }
 

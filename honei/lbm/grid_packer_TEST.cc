@@ -40,6 +40,10 @@ class GridPackerTest :
         {
             DenseMatrix<DataType_> dummy(10, 11, DataType_(0));
             DenseMatrix<bool> obst(10, 11, false);
+            obst(0,5) = true;
+            obst(0,4) = true;
+            obst(1,5) = true;
+            obst(1,4) = true;
             PackedGridInfo<D2Q9> info;
             PackedGridData<D2Q9, DataType_> data;
             GridPacker<D2Q9, DataType_> packer;
