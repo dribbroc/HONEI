@@ -134,6 +134,19 @@ namespace honei
         CONTEXT("When creating ConstVector from DenseVector:");
     }
 
+    template <typename DataType_>
+    ConstVector<DataType_>::ConstVector(const DenseVectorRange<DataType_> & src) :
+        PrivateImplementationPattern<ConstVector<DataType_>, Shared>(new VectorImplementation<ConstVector<DenseVectorRange<DataType_> > >(src))
+    {
+        CONTEXT("When creating ConstVector from DenseVectorRange:");
+    }
+
+    template <typename DataType_>
+    ConstVector<DataType_>::ConstVector(const DenseVectorSlice<DataType_> & src) :
+        PrivateImplementationPattern<ConstVector<DataType_>, Shared>(new VectorImplementation<ConstVector<DenseVectorSlice<DataType_> > >(src))
+    {
+        CONTEXT("When creating ConstVector from DenseVectorSlice:");
+    }
 
     template <typename DataType_>
     ConstVector<DataType_>::ConstVector(const ConstVector<DataType_> & other) :

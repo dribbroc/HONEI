@@ -25,6 +25,8 @@
 #include <honei/la/element_iterator.hh>
 #include <honei/util/stringify.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/la/dense_vector_range.hh>
+#include <honei/la/dense_vector_slice.hh>
 
 namespace honei
 {
@@ -46,9 +48,23 @@ namespace honei
             /**
              * Constructor.
              *
-             * \param src The source vector, whose data should be used
+             * \param src The DenseVector, whose data should be used
              */
             ConstVector(const DenseVector<DataType_> & src);
+
+            /**
+             * Constructor.
+             *
+             * \param src The DenseVectorRange, whose data should be used
+             */
+            ConstVector(const DenseVectorRange<DataType_> & src);
+
+            /**
+             * Constructor.
+             *
+             * \param src The source DenseVectorSlice, whose data should be used
+             */
+            ConstVector(const DenseVectorSlice<DataType_> & src);
 
 
             /// Copy-constructor.
