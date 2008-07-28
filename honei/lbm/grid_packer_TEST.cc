@@ -43,7 +43,12 @@ class GridPackerTest :
             obst(0,5) = true;
             obst(0,4) = true;
             obst(1,5) = true;
-            obst(1,4) = true;
+            obst(1,6) = true;
+            obst(0,6) = true;
+            for (MutableMatrix<bool>::ElementIterator i(obst.begin_elements()) ; i.index() < 62 ; ++i)
+            {
+                *i = true;
+            }
             PackedGridInfo<D2Q9> info;
             PackedGridData<D2Q9, DataType_> data;
             GridPacker<D2Q9, DataType_> packer;

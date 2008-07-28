@@ -80,11 +80,11 @@ namespace honei
                 if( j <  (*grid.obstacles).columns() - 1 && (*grid.obstacles)(i, j + 1))
                     east = true;
 
+                if((*grid.obstacles)(i, j) || north && south && west && east)
+                    return bt_obstacle;
+
                 if(!north && !south && !west && !east)
                     return bt_none;
-
-                if(north && south && west && east)
-                    throw InternalError("Found inclosed fluid!");
 
                 if(north && south && west && !east)
                     return bt_S_W_N;
@@ -140,9 +140,9 @@ namespace honei
                         ///Zero is fluid, One means obstacle
                         if(!(*grid.obstacles)(i,j))
                         {
-                            if( i - 1 >= 0
+                            if( i > 0
                                     && i + 1 < grid.obstacles->rows()
-                                    && j - 1 >= 0
+                                    && j > 0
                                     && j + 1 < grid.obstacles->columns()
                                     && (*grid.obstacles)(i - 1, j)
                                     && (*grid.obstacles)(i, j - 1)
@@ -196,37 +196,53 @@ namespace honei
                 data.f_temp_7 = new DenseVector<DT_>(fluid_count);
                 data.f_temp_8 = new DenseVector<DT_>(fluid_count);
 
-                std::set<unsigned long> temp_limits;
+                std::vector<unsigned long> temp_limits;
+                std::vector<unsigned long> temp_types;
+                unsigned long packed_index(0);
 
-                temp_limits.insert(0);
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
                 {
                     for(unsigned long j(0); j < grid.obstacles->columns(); ++j)
                     {
-                        if(j > 0)
+                        if((*grid.obstacles)(i, j))
                         {
-                            if (_element_type(i, j, grid) != _element_type(i, j - 1, grid))
-                            {
-                                temp_limits.insert(i * grid.obstacles->columns() + j);
-                            }
+                            // do nothig, ignore obstacle cell
                         }
+
                         else
                         {
-                            temp_limits.insert(i * grid.obstacles->columns() + j);
+                            if(j > 0)
+                            {
+                                if (_element_type(i, j, grid) != _element_type(i, j - 1, grid))
+                                {
+                                    temp_limits.push_back(packed_index);
+                                    temp_types.push_back(_element_type(i, j, grid));
+                                }
+                            }
+                            else
+                            {
+                                temp_limits.push_back(packed_index);
+                                temp_types.push_back(_element_type(i, j, grid));
+                            }
+                            if (packed_index == 0)
+                                std::cout<<"start: "<<i <<", "<<j<<std::endl;
+                            ++packed_index;
                         }
                     }
                 }
-                temp_limits.insert(grid.obstacles->size());
+                temp_limits.push_back(packed_index);
+                temp_types.push_back(bt_obstacle);
 
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
                 info.types = new DenseVector<unsigned long>(temp_limits.size());
 
-                unsigned long index(0);
-                for (std::set<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i)
+                unsigned long index2(0);
+                std::vector<unsigned long>::iterator j(temp_types.begin());
+                for (std::vector<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i, ++j)
                 {
-                    (*info.limits)[index] = *i;
-                    (*info.types)[index] = _element_type(*i / grid.obstacles->columns(), *i % grid.obstacles->columns(), grid);
-                    ++index;
+                    (*info.limits)[index2] = *i;
+                    (*info.types)[index2] = *j;
+                    ++index2;
                 }
                 for (unsigned long i(0) ; i < info.limits->size() ; ++i)
                 {

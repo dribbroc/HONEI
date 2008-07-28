@@ -43,11 +43,11 @@ namespace honei
     enum BoundaryTypeD2Q9
     {
         bt_none = 0,
+        bt_obstacle,
         bt_E,
         bt_N,
         bt_W,
         bt_S,
-
         bt_N_E,
         bt_N_E_S,
         bt_E_S,
