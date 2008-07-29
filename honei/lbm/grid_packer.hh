@@ -25,7 +25,6 @@
 #include <honei/lbm/grid.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
-#include <set>
 #include <vector>
 #include <iostream>
 
@@ -49,6 +48,79 @@ namespace honei
     template <typename DT_> struct GridPacker<D2Q9, DT_>
     {
         private:
+            static void _element_direction(unsigned long packed_index, unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid,
+                    std::vector<unsigned long> & dir_0,
+                    std::vector<unsigned long> & dir_1,
+                    std::vector<unsigned long> & dir_2,
+                    std::vector<unsigned long> & dir_3,
+                    std::vector<unsigned long> & dir_4,
+                    std::vector<unsigned long> & dir_5,
+                    std::vector<unsigned long> & dir_6,
+                    std::vector<unsigned long> & dir_7,
+                    std::vector<unsigned long> & dir_8)
+            {
+                /* D2Q9 according to Markus
+                        3
+                      4 . 2
+                        .
+                     5..0..1
+                        .
+                      6 . 8
+                        7
+                 */
+                dir_0.push_back(packed_index);
+                dir_1.push_back(packed_index + 1);
+                dir_5.push_back(packed_index - 1);
+
+                if (i == grid.obstacles->rows() - 1)
+                {
+                    dir_7.push_back(0);
+                    dir_6.push_back(0);
+                    dir_8.push_back(0);
+                }
+                else
+                {
+                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
+                    unsigned long temp_index(packed_index);
+                    while (it.index() != (i + 1) * grid.obstacles->columns() + j)
+                    {
+                        if (!*it)
+                        {
+                            ++temp_index;
+                        }
+                        ++it;
+                    }
+                    dir_7.push_back(temp_index);
+                    dir_6.push_back(temp_index - 1);
+                    dir_8.push_back(temp_index + 1);
+                }
+
+                if (i == 0)
+                {
+                    dir_3.push_back(0);
+                    dir_2.push_back(0);
+                    dir_4.push_back(0);
+                }
+                else
+                {
+                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
+                    unsigned long it_index(it.index());
+                    unsigned long temp_index(packed_index);
+                    while (it.index() != (i - 1) * grid.obstacles->columns() + j)
+                    {
+                        if (!*it)
+                        {
+                            --temp_index;
+                        }
+                        --it_index;
+                        it = grid.obstacles->element_at(it_index);
+                    }
+                    dir_3.push_back(temp_index);
+                    dir_2.push_back(temp_index + 1);
+                    dir_4.push_back(temp_index - 1);
+                }
+            }
+
             static BoundaryTypeD2Q9 _element_type(unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid)
             {
                 bool north(false);
@@ -59,13 +131,13 @@ namespace honei
                 if(i == 0)
                     north = true;
 
-                if(i == (*grid.obstacles).rows() -1)
+                if(i == (*grid.obstacles).rows() - 1)
                     south = true;
 
                 if(j == 0)
                     west = true;
 
-                if(j == (*grid.obstacles).columns() -1)
+                if(j == (*grid.obstacles).columns() - 1)
                     east = true;
 
                 if( i > 0 && (*grid.obstacles)(i - 1, j))
@@ -198,6 +270,16 @@ namespace honei
 
                 std::vector<unsigned long> temp_limits;
                 std::vector<unsigned long> temp_types;
+                std::vector<unsigned long> dir_0;
+                std::vector<unsigned long> dir_1;
+                std::vector<unsigned long> dir_2;
+                std::vector<unsigned long> dir_3;
+                std::vector<unsigned long> dir_4;
+                std::vector<unsigned long> dir_5;
+                std::vector<unsigned long> dir_6;
+                std::vector<unsigned long> dir_7;
+                std::vector<unsigned long> dir_8;
+
                 unsigned long packed_index(0);
 
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
@@ -217,15 +299,15 @@ namespace honei
                                 {
                                     temp_limits.push_back(packed_index);
                                     temp_types.push_back(_element_type(i, j, grid));
+                                    _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                                 }
                             }
                             else
                             {
                                 temp_limits.push_back(packed_index);
                                 temp_types.push_back(_element_type(i, j, grid));
+                                _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                             }
-                            if (packed_index == 0)
-                                std::cout<<"start: "<<i <<", "<<j<<std::endl;
                             ++packed_index;
                         }
                     }
@@ -235,6 +317,15 @@ namespace honei
 
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
                 info.types = new DenseVector<unsigned long>(temp_limits.size());
+                info.dir_0 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_1 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_2 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_3 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_4 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_5 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_6 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_7 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_8 = new DenseVector<unsigned long>(dir_0.size());
 
                 unsigned long index2(0);
                 std::vector<unsigned long>::iterator j(temp_types.begin());
@@ -244,10 +335,25 @@ namespace honei
                     (*info.types)[index2] = *j;
                     ++index2;
                 }
+                for (unsigned long i(0) ; i < dir_0.size() ; ++i)
+                {
+                    (*info.dir_0)[i] = dir_0[i];
+                    (*info.dir_1)[i] = dir_1[i];
+                    (*info.dir_2)[i] = dir_2[i];
+                    (*info.dir_3)[i] = dir_3[i];
+                    (*info.dir_4)[i] = dir_4[i];
+                    (*info.dir_5)[i] = dir_5[i];
+                    (*info.dir_6)[i] = dir_6[i];
+                    (*info.dir_7)[i] = dir_7[i];
+                    (*info.dir_8)[i] = dir_8[i];
+                }
                 for (unsigned long i(0) ; i < info.limits->size() ; ++i)
                 {
                     std::cout<<(*info.limits)[i] << " "<<(*info.types)[i]<<std::endl;
                 }
+                unsigned long observe(8);
+                std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
+                std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
 
             }
     };

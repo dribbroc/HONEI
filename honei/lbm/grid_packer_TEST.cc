@@ -38,17 +38,25 @@ class GridPackerTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> dummy(10, 11, DataType_(0));
-            DenseMatrix<bool> obst(10, 11, false);
+            DenseMatrix<DataType_> dummy(10, 12, DataType_(0));
+            DenseMatrix<bool> obst(10, 12, false);
+            /*
+             +++++*+++++*
+             +++++X+++++*
+             ++++++++++++
+             */
             obst(0,5) = true;
-            obst(0,4) = true;
+            obst(0, 11) = true;
+            obst(1, 11) = true;
+
+            /*obst(0,4) = true;
             obst(1,5) = true;
             obst(1,6) = true;
             obst(0,6) = true;
             for (MutableMatrix<bool>::ElementIterator i(obst.begin_elements()) ; i.index() < 62 ; ++i)
             {
                 *i = true;
-            }
+            }*/
             PackedGridInfo<D2Q9> info;
             PackedGridData<D2Q9, DataType_> data;
             GridPacker<D2Q9, DataType_> packer;
