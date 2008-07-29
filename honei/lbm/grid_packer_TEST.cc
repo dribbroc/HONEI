@@ -63,13 +63,21 @@ class GridPackerTest :
 
             Grid<D2Q9, DataType_> grid;
 
-            grid.h = &dummy.copy();
-            grid.u = &dummy.copy();
-            grid.v = &dummy.copy();
-            grid.obstacles = &obst;
+            grid.h = new DenseMatrix<DataType_>(dummy.copy());
+            grid.u = new DenseMatrix<DataType_>(dummy.copy());
+            grid.v = new DenseMatrix<DataType_>(dummy.copy());
+            grid.obstacles = new DenseMatrix<bool>(obst);
 
-            packer.pack(grid, info, data);
+            GridPacker<D2Q9, DataType_>::pack(grid, info, data);
             TEST_CHECK(true);
+
+            for (unsigned long i(0) ; i < info.limits->size() ; ++i)
+            {
+                std::cout<<(*info.limits)[i] << " "<<(*info.types)[i]<<std::endl;
+            }
+            unsigned long observe(8);
+            std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
+            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
         }
 };
 

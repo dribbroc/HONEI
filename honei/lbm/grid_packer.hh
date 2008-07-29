@@ -234,6 +234,7 @@ namespace honei
                         }
                     }
                 }
+                std::cout<<"Fluid count: "<<fluid_count<<std::endl;
                 data.h = new DenseVector<DT_>(fluid_count);
                 data.u = new DenseVector<DT_>(fluid_count);
                 data.v = new DenseVector<DT_>(fluid_count);
@@ -290,7 +291,6 @@ namespace honei
                         {
                             // do nothig, ignore obstacle cell
                         }
-
                         else
                         {
                             if(j > 0)
@@ -347,14 +347,19 @@ namespace honei
                     (*info.dir_7)[i] = dir_7[i];
                     (*info.dir_8)[i] = dir_8[i];
                 }
-                for (unsigned long i(0) ; i < info.limits->size() ; ++i)
-                {
-                    std::cout<<(*info.limits)[i] << " "<<(*info.types)[i]<<std::endl;
-                }
-                unsigned long observe(8);
-                std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
-                std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
 
+                index2 = 0;
+                for (DenseVector<unsigned long>::ConstElementIterator begin(info.limits->begin_elements()),end(info.limits->element_at(1))
+                        ; end < info.limits->end_elements() ; ++begin, ++end)
+                {
+                    for (unsigned long i(*begin) ; i < *end ; ++i)
+                    {
+                        (*data.h)[index2] = *(grid.h->element_at(i));
+                        (*data.u)[index2] = *(grid.u->element_at(i));
+                        (*data.v)[index2] = *(grid.v->element_at(i));
+                        ++index2;
+                    }
+                }
             }
     };
 }
