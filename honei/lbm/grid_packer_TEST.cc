@@ -41,13 +41,15 @@ class GridPackerTest :
             DenseMatrix<DataType_> dummy(10, 12, DataType_(0));
             DenseMatrix<bool> obst(10, 12, false);
             /*
-             +++++*+++++*
-             +++++X+++++*
-             ++++++++++++
+             +++++++++++*
+             +++++++++++*
+             ++++*+++++++
+             +++X++++++++
              */
-            obst(0,5) = true;
+            //obst(0,5) = true;
             obst(0, 11) = true;
             obst(1, 11) = true;
+            obst(2, 4) = true;
 
             /*obst(0,4) = true;
             obst(1,5) = true;
@@ -57,6 +59,7 @@ class GridPackerTest :
             {
                 *i = true;
             }*/
+            std::cout<<obst;
             PackedGridInfo<D2Q9> info;
             PackedGridData<D2Q9, DataType_> data;
 
@@ -70,13 +73,20 @@ class GridPackerTest :
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
             TEST_CHECK(true);
 
-            for (unsigned long i(0) ; i < info.limits->size() ; ++i)
+            /*for (unsigned long i(0) ; i < info.limits->size() ; ++i)
             {
-                std::cout<<(*info.limits)[i] /*<< " "<<(*info.types)[i]*/<<std::endl;
-            }
-            unsigned long observe(8);
+                std::cout<<(*info.limits)[i] <<std::endl;
+            }*/
+            unsigned long observe(19);
             std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
             std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
+            ++observe;
+            std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
+            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
+            ++observe;
+            std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
+            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
+
         }
 };
 

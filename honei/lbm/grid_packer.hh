@@ -354,7 +354,6 @@ namespace honei
                 data.f_temp_8 = new DenseVector<DT_>(fluid_count);
 
                 std::vector<unsigned long> temp_limits;
-                //std::vector<unsigned long> temp_types;
                 std::vector<unsigned long> dir_0;
                 std::vector<unsigned long> dir_1;
                 std::vector<unsigned long> dir_2;
@@ -366,6 +365,7 @@ namespace honei
                 std::vector<unsigned long> dir_8;
 
                 unsigned long packed_index(0);
+                bool dirty_cell(false);
 
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
                 {
@@ -381,26 +381,63 @@ namespace honei
                             {
                                 if (_element_type(i, j, grid) != _element_type(i, j - 1, grid))
                                 {
+                                    // search for obstacles in diagonal directions DIR_4 and DIR_6
+                                    /// \todo 2 directions too much in condition
+                                    if(
+                                            (i > 0 &&  (*grid.obstacles)(i - 1, j - 1)) ||
+                                            (i > 0 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i - 1, j + 1)) ||
+                                            (i < grid.obstacles->rows() - 1 &&  (*grid.obstacles)(i + 1, j - 1)) ||
+                                            (i < grid.obstacles->rows() - 1 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i + 1, j + 1))
+                                       )
+                                    {
+                                        dirty_cell = true;
+                                    }
+
+                                    // insert current cell
                                     temp_limits.push_back(packed_index);
-                                    //temp_types.push_back(_element_type(i, j, grid));
                                     _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
+                                    std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
+
+                                }
+                                // search for obstacles in diagonal directions DIR_2 and DIR_8
+                                /// \todo 2 directions too much in condition
+                                else if (
+                                            (i > 0 &&  (*grid.obstacles)(i - 1, j - 1)) ||
+                                            (i > 0 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i - 1, j + 1)) ||
+                                            (i < grid.obstacles->rows() - 1 &&  (*grid.obstacles)(i + 1, j - 1)) ||
+                                            (i < grid.obstacles->rows() - 1 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i + 1, j + 1))
+                                        )
+                                {
+                                    // insert current cell
+                                    temp_limits.push_back(packed_index);
+                                    _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
+                                    std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
+                                    dirty_cell = false;
+                                }
+                                else if (dirty_cell)
+                                {
+                                    // insert current cell
+                                    temp_limits.push_back(packed_index);
+                                    _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
+                                    std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
+                                    dirty_cell = false;
                                 }
                             }
                             else
                             {
+                                // leftmost boundary cells
                                 temp_limits.push_back(packed_index);
-                                //temp_types.push_back(_element_type(i, j, grid));
                                 _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
+                                std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
+                                dirty_cell = false;
                             }
                             ++packed_index;
                         }
                     }
                 }
                 temp_limits.push_back(packed_index);
-                //temp_types.push_back(bt_obstacle);
 
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
-                //info.types = new DenseVector<unsigned long>(temp_limits.size());
                 info.dir_0 = new DenseVector<unsigned long>(dir_0.size());
                 info.dir_1 = new DenseVector<unsigned long>(dir_0.size());
                 info.dir_2 = new DenseVector<unsigned long>(dir_0.size());
@@ -412,11 +449,9 @@ namespace honei
                 info.dir_8 = new DenseVector<unsigned long>(dir_0.size());
 
                 unsigned long index2(0);
-                //std::vector<unsigned long>::iterator j(temp_types.begin());
                 for (std::vector<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i)//, ++j)
                 {
                     (*info.limits)[index2] = *i;
-                    //(*info.types)[index2] = *j;
                     ++index2;
                 }
                 for (unsigned long i(0) ; i < dir_0.size() ; ++i)
