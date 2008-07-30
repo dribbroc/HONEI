@@ -37,5 +37,29 @@ namespace honei
     template bool operator== (const ConstVector<double> & a, const ConstVector<double> & b);
 
     template std::ostream & operator<< (std::ostream & lhs, const ConstVector<double> & vector);
+
+    template class ConstElementIterator<storage::Const, container::Vector, int>;
+
+    template class ConstVector<int>;
+
+    template bool operator== (const ConstVector<int> & a, const ConstVector<int> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const ConstVector<int> & vector);
+
+    template class ConstElementIterator<storage::Const, container::Vector, long>;
+
+    template class ConstVector<long>;
+
+    template bool operator== (const ConstVector<long> & a, const ConstVector<long> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const ConstVector<long> & vector);
+
+    template class ConstElementIterator<storage::Const, container::Vector, unsigned long>;
+
+    template class ConstVector<unsigned long>;
+
+    template bool operator== (const ConstVector<unsigned long> & a, const ConstVector<unsigned long> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const ConstVector<unsigned long> & vector);
 }
 
