@@ -103,6 +103,7 @@ namespace honei
                 }
                 else
                 {
+                    /// \todo Use Iterator::operator--
                     MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
                     unsigned long it_index(it.index());
                     unsigned long temp_index(packed_index);
@@ -350,7 +351,7 @@ namespace honei
 
                 index2 = 0;
                 for (DenseVector<unsigned long>::ConstElementIterator begin(info.limits->begin_elements()),end(info.limits->element_at(1))
-                        ; end < info.limits->end_elements() ; ++begin, ++end)
+                        ; end != info.limits->end_elements() ; ++begin, ++end)
                 {
                     for (unsigned long i(*begin) ; i < *end ; ++i)
                     {
@@ -360,6 +361,8 @@ namespace honei
                         ++index2;
                     }
                 }
+
+
             }
     };
 }

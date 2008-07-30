@@ -61,76 +61,191 @@ namespace honei
 
     };
 
-    template <typename LatticeType_, typename DT_> struct Grid
+    template <typename LatticeType_, typename DT_> class Grid
     {
     };
 
-    template <typename LatticeType_> struct PackedGridInfo
+    template <typename LatticeType_> class PackedGridInfo
     {
     };
 
-    template <typename LatticeType_, typename DT_> struct PackedGridData
+    template <typename LatticeType_, typename DT_> class PackedGridData
     {
     };
 
-    template <typename DT_> struct Grid<D2Q9, DT_>
+    template <typename DT_> class Grid<D2Q9, DT_>
     {
-        DenseMatrix<bool> * obstacles;
-        DenseMatrix<DT_> * h;
-        DenseMatrix<DT_> * u;
-        DenseMatrix<DT_> * v;
+        public:
+            Grid():
+                obstacles(0),
+                h(0),
+                u(0),
+                v(0)
+            {
+            }
+            ~Grid()
+            {
+                delete obstacles;
+                delete h;
+                delete u;
+                delete v;
+            }
+            DenseMatrix<bool> * obstacles;
+            DenseMatrix<DT_> * h;
+            DenseMatrix<DT_> * u;
+            DenseMatrix<DT_> * v;
     };
 
-    template <> struct PackedGridInfo<D2Q9>
+    template <> class PackedGridInfo<D2Q9>
     {
-        DenseVector<unsigned long> * limits;
-        DenseVector<unsigned long> * types;
-        DenseVector<unsigned long> * dir_0;
-        DenseVector<unsigned long> * dir_1;
-        DenseVector<unsigned long> * dir_2;
-        DenseVector<unsigned long> * dir_3;
-        DenseVector<unsigned long> * dir_4;
-        DenseVector<unsigned long> * dir_5;
-        DenseVector<unsigned long> * dir_6;
-        DenseVector<unsigned long> * dir_7;
-        DenseVector<unsigned long> * dir_8;
+        public:
+            PackedGridInfo():
+                limits(0),
+                types(0),
+                dir_0(0),
+                dir_1(0),
+                dir_2(0),
+                dir_3(0),
+                dir_4(0),
+                dir_5(0),
+                dir_6(0),
+                dir_7(0),
+                dir_8(0)
+            {
+            }
+
+            ~PackedGridInfo()
+            {
+                delete limits;
+                delete types;
+                delete dir_0;
+                delete dir_1;
+                delete dir_2;
+                delete dir_3;
+                delete dir_4;
+                delete dir_5;
+                delete dir_6;
+                delete dir_7;
+                delete dir_8;
+            }
+
+            DenseVector<unsigned long> * limits;
+            DenseVector<unsigned long> * types;
+            DenseVector<unsigned long> * dir_0;
+            DenseVector<unsigned long> * dir_1;
+            DenseVector<unsigned long> * dir_2;
+            DenseVector<unsigned long> * dir_3;
+            DenseVector<unsigned long> * dir_4;
+            DenseVector<unsigned long> * dir_5;
+            DenseVector<unsigned long> * dir_6;
+            DenseVector<unsigned long> * dir_7;
+            DenseVector<unsigned long> * dir_8;
     };
 
-    template <typename DT_> struct PackedGridData<D2Q9, DT_>
+    template <typename DT_> class PackedGridData<D2Q9, DT_>
     {
-        DenseVector<DT_> * h;
-        DenseVector<DT_> * u;
-        DenseVector<DT_> * v;
+        public:
 
-        DenseVector<DT_> * f_0;
-        DenseVector<DT_> * f_1;
-        DenseVector<DT_> * f_2;
-        DenseVector<DT_> * f_3;
-        DenseVector<DT_> * f_4;
-        DenseVector<DT_> * f_5;
-        DenseVector<DT_> * f_6;
-        DenseVector<DT_> * f_7;
-        DenseVector<DT_> * f_8;
+            PackedGridData():
+                h(0),
+                u(0),
+                v(0),
+                f_0(0),
+                f_1(0),
+                f_2(0),
+                f_3(0),
+                f_4(0),
+                f_5(0),
+                f_6(0),
+                f_7(0),
+                f_8(0),
+                f_eq_0(0),
+                f_eq_1(0),
+                f_eq_2(0),
+                f_eq_3(0),
+                f_eq_4(0),
+                f_eq_5(0),
+                f_eq_6(0),
+                f_eq_7(0),
+                f_eq_8(0),
+                f_temp_0(0),
+                f_temp_1(0),
+                f_temp_2(0),
+                f_temp_3(0),
+                f_temp_4(0),
+                f_temp_5(0),
+                f_temp_6(0),
+                f_temp_7(0),
+                f_temp_8(0)
+            {
+            }
 
-        DenseVector<DT_> * f_eq_0;
-        DenseVector<DT_> * f_eq_1;
-        DenseVector<DT_> * f_eq_2;
-        DenseVector<DT_> * f_eq_3;
-        DenseVector<DT_> * f_eq_4;
-        DenseVector<DT_> * f_eq_5;
-        DenseVector<DT_> * f_eq_6;
-        DenseVector<DT_> * f_eq_7;
-        DenseVector<DT_> * f_eq_8;
+            ~PackedGridData()
+            {
+                delete h;
+                delete u;
+                delete v;
+                delete f_0;
+                delete f_1;
+                delete f_2;
+                delete f_3;
+                delete f_4;
+                delete f_5;
+                delete f_6;
+                delete f_7;
+                delete f_8;
+                delete f_eq_0;
+                delete f_eq_1;
+                delete f_eq_2;
+                delete f_eq_3;
+                delete f_eq_4;
+                delete f_eq_5;
+                delete f_eq_6;
+                delete f_eq_7;
+                delete f_eq_8;
+                delete f_temp_0;
+                delete f_temp_1;
+                delete f_temp_2;
+                delete f_temp_3;
+                delete f_temp_4;
+                delete f_temp_5;
+                delete f_temp_6;
+                delete f_temp_7;
+                delete f_temp_8;
+            }
+            DenseVector<DT_> * h;
+            DenseVector<DT_> * u;
+            DenseVector<DT_> * v;
 
-        DenseVector<DT_> * f_temp_0;
-        DenseVector<DT_> * f_temp_1;
-        DenseVector<DT_> * f_temp_2;
-        DenseVector<DT_> * f_temp_3;
-        DenseVector<DT_> * f_temp_4;
-        DenseVector<DT_> * f_temp_5;
-        DenseVector<DT_> * f_temp_6;
-        DenseVector<DT_> * f_temp_7;
-        DenseVector<DT_> * f_temp_8;
+            DenseVector<DT_> * f_0;
+            DenseVector<DT_> * f_1;
+            DenseVector<DT_> * f_2;
+            DenseVector<DT_> * f_3;
+            DenseVector<DT_> * f_4;
+            DenseVector<DT_> * f_5;
+            DenseVector<DT_> * f_6;
+            DenseVector<DT_> * f_7;
+            DenseVector<DT_> * f_8;
+
+            DenseVector<DT_> * f_eq_0;
+            DenseVector<DT_> * f_eq_1;
+            DenseVector<DT_> * f_eq_2;
+            DenseVector<DT_> * f_eq_3;
+            DenseVector<DT_> * f_eq_4;
+            DenseVector<DT_> * f_eq_5;
+            DenseVector<DT_> * f_eq_6;
+            DenseVector<DT_> * f_eq_7;
+            DenseVector<DT_> * f_eq_8;
+
+            DenseVector<DT_> * f_temp_0;
+            DenseVector<DT_> * f_temp_1;
+            DenseVector<DT_> * f_temp_2;
+            DenseVector<DT_> * f_temp_3;
+            DenseVector<DT_> * f_temp_4;
+            DenseVector<DT_> * f_temp_5;
+            DenseVector<DT_> * f_temp_6;
+            DenseVector<DT_> * f_temp_7;
+            DenseVector<DT_> * f_temp_8;
     };
 }
 
