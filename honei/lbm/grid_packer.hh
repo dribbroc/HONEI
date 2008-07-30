@@ -41,87 +41,13 @@ using namespace lbm_lattice_types;
 
 namespace honei
 {
-    template <typename LatticeType_, typename DT_> struct GridPacker
+    template <typename LatticeType_, typename BoundaryType_, typename DT_> struct GridPacker
     {
     };
 
-    template <typename DT_> struct GridPacker<D2Q9, DT_>
+    template <typename DT_> struct GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>
     {
         private:
-            static void _element_direction(unsigned long packed_index, unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid,
-                    std::vector<unsigned long> & dir_0,
-                    std::vector<unsigned long> & dir_1,
-                    std::vector<unsigned long> & dir_2,
-                    std::vector<unsigned long> & dir_3,
-                    std::vector<unsigned long> & dir_4,
-                    std::vector<unsigned long> & dir_5,
-                    std::vector<unsigned long> & dir_6,
-                    std::vector<unsigned long> & dir_7,
-                    std::vector<unsigned long> & dir_8)
-            {
-                /* D2Q9 according to Markus
-                        3
-                      4 . 2
-                        .
-                     5..0..1
-                        .
-                      6 . 8
-                        7
-                 */
-                dir_0.push_back(packed_index);
-                dir_1.push_back(packed_index + 1);
-                dir_5.push_back(packed_index - 1);
-
-                if (i == grid.obstacles->rows() - 1)
-                {
-                    dir_7.push_back(0);
-                    dir_6.push_back(0);
-                    dir_8.push_back(0);
-                }
-                else
-                {
-                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
-                    unsigned long temp_index(packed_index);
-                    while (it.index() != (i + 1) * grid.obstacles->columns() + j)
-                    {
-                        if (!*it)
-                        {
-                            ++temp_index;
-                        }
-                        ++it;
-                    }
-                    dir_7.push_back(temp_index);
-                    dir_6.push_back(temp_index - 1);
-                    dir_8.push_back(temp_index + 1);
-                }
-
-                if (i == 0)
-                {
-                    dir_3.push_back(0);
-                    dir_2.push_back(0);
-                    dir_4.push_back(0);
-                }
-                else
-                {
-                    /// \todo Use Iterator::operator--
-                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
-                    unsigned long it_index(it.index());
-                    unsigned long temp_index(packed_index);
-                    while (it.index() != (i - 1) * grid.obstacles->columns() + j)
-                    {
-                        if (!*it)
-                        {
-                            --temp_index;
-                        }
-                        --it_index;
-                        it = grid.obstacles->element_at(it_index);
-                    }
-                    dir_3.push_back(temp_index);
-                    dir_2.push_back(temp_index + 1);
-                    dir_4.push_back(temp_index - 1);
-                }
-            }
-
             static BoundaryTypeD2Q9 _element_type(unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid)
             {
                 bool north(false);
@@ -202,6 +128,163 @@ namespace honei
                     return bt_E;
             }
 
+            static void _element_direction(unsigned long packed_index, unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid,
+                    std::vector<unsigned long> & dir_0,
+                    std::vector<unsigned long> & dir_1,
+                    std::vector<unsigned long> & dir_2,
+                    std::vector<unsigned long> & dir_3,
+                    std::vector<unsigned long> & dir_4,
+                    std::vector<unsigned long> & dir_5,
+                    std::vector<unsigned long> & dir_6,
+                    std::vector<unsigned long> & dir_7,
+                    std::vector<unsigned long> & dir_8)
+            {
+                /* D2Q9 according to Markus
+                        3
+                      4 . 2
+                        .
+                     5..0..1
+                        .
+                      6 . 8
+                        7
+                 */
+                BoundaryTypeD2Q9 boundary(_element_type(i, j, grid));
+
+                // DIR_0
+                dir_0.push_back(packed_index);
+
+                // DIR_1
+                if (boundary == bt_E || boundary == bt_N_E || boundary == bt_W_N_E || boundary == bt_E_W || boundary == bt_E_S ||
+                        boundary == bt_E_S_W)
+                    dir_1.push_back(packed_index);
+                else
+                    dir_1.push_back(packed_index + 1);
+
+                // DIR_5
+                if (boundary == bt_W || boundary == bt_W_N || boundary == bt_W_N_E || boundary == bt_E_W || boundary == bt_S_W ||
+                        boundary == bt_E_S_W)
+                    dir_5.push_back(packed_index);
+                else
+                    dir_5.push_back(packed_index - 1);
+
+
+                // DIR_7 DIR_6 DIR_8
+                if (i == grid.obstacles->rows() - 1)
+                {
+                    dir_7.push_back(packed_index);
+                    dir_6.push_back(packed_index);
+                    dir_8.push_back(packed_index);
+                }
+                else
+                {
+                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
+                    unsigned long temp_index(packed_index);
+                    while (it.index() != (i + 1) * grid.obstacles->columns() + j)
+                    {
+                        if (!*it)
+                        {
+                            ++temp_index;
+                        }
+                        ++it;
+                    }
+
+                    // DIR_7
+                    if (boundary == bt_S || boundary == bt_S_W || boundary == bt_E_S || boundary == bt_N_S || boundary == bt_S_W_N ||
+                            boundary == bt_E_S_W)
+                        dir_7.push_back(packed_index);
+                    else
+                        dir_7.push_back(temp_index);
+
+                    // DIR_6
+                    if (j > 0 && i < grid.obstacles->rows() - 1)
+                    {
+                        if ((*grid.obstacles)(i + 1, j - 1))
+                            dir_6.push_back(packed_index);
+                        else
+                            if (boundary == bt_S_W || boundary == bt_S_W_N || boundary == bt_E_S_W)
+                                dir_6.push_back(packed_index);
+                            else
+                                dir_6.push_back(temp_index - 1);
+                    }
+                    else
+                        dir_6.push_back(packed_index);
+
+                    // DIR_8
+                    if (j < grid.obstacles->columns() - 1 && i < grid.obstacles->rows() -1)
+                    {
+                        if ((*grid.obstacles)(i + 1, j + 1))
+                            dir_8.push_back(packed_index);
+                        else
+                            if (boundary == bt_E_S || boundary == bt_N_E_S || boundary == bt_E_S_W)
+                                dir_8.push_back(packed_index);
+                            else
+                                dir_8.push_back(temp_index + 1);
+                    }
+                    else
+                        dir_8.push_back(packed_index);
+                }
+
+                // DIR_3 DIR_2 DIR_4
+                if (i == 0)
+                {
+                    dir_3.push_back(0);
+                    dir_2.push_back(0);
+                    dir_4.push_back(0);
+                }
+                else
+                {
+                    /// \todo Use Iterator::operator--
+                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
+                    unsigned long it_index(it.index());
+                    unsigned long temp_index(packed_index);
+                    while (it.index() != (i - 1) * grid.obstacles->columns() + j)
+                    {
+                        if (!*it)
+                        {
+                            --temp_index;
+                        }
+                        --it_index;
+                        it = grid.obstacles->element_at(it_index);
+                    }
+
+                    // DIR_3
+                    if (boundary == bt_N || boundary == bt_W_N || boundary == bt_N_E || boundary == bt_N_S || boundary == bt_S_W_N ||
+                            boundary == bt_W_N_E)
+                        dir_3.push_back(packed_index);
+                    else
+                        dir_3.push_back(temp_index);
+
+                    // DIR_2
+                    if (j < grid.obstacles->columns() - 1 && i > 0)
+                    {
+                        if ((*grid.obstacles)(i -1, j + 1))
+                            dir_2.push_back(packed_index);
+                        else
+                            if (boundary == bt_N_E || boundary == bt_N_E_S || boundary == bt_W_N_E)
+                                dir_2.push_back(packed_index);
+                            else
+                                dir_2.push_back(temp_index + 1);
+                    }
+                    else
+                        dir_2.push_back(packed_index);
+
+                    // DIR_4
+                    if (j > 0 && i > 0)
+                    {
+                        if ((*grid.obstacles)(i -1, j - 1))
+                            dir_4.push_back(packed_index);
+                        else
+                            if (boundary == bt_W_N || boundary == bt_S_W_N || boundary == bt_W_N_E)
+                                dir_4.push_back(packed_index);
+                            else
+                                dir_4.push_back(temp_index -1);
+                    }
+                    else
+                        dir_4.push_back(packed_index);
+                }
+            }
+
+
         public:
             static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
             {
@@ -271,7 +354,7 @@ namespace honei
                 data.f_temp_8 = new DenseVector<DT_>(fluid_count);
 
                 std::vector<unsigned long> temp_limits;
-                std::vector<unsigned long> temp_types;
+                //std::vector<unsigned long> temp_types;
                 std::vector<unsigned long> dir_0;
                 std::vector<unsigned long> dir_1;
                 std::vector<unsigned long> dir_2;
@@ -299,14 +382,14 @@ namespace honei
                                 if (_element_type(i, j, grid) != _element_type(i, j - 1, grid))
                                 {
                                     temp_limits.push_back(packed_index);
-                                    temp_types.push_back(_element_type(i, j, grid));
+                                    //temp_types.push_back(_element_type(i, j, grid));
                                     _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                                 }
                             }
                             else
                             {
                                 temp_limits.push_back(packed_index);
-                                temp_types.push_back(_element_type(i, j, grid));
+                                //temp_types.push_back(_element_type(i, j, grid));
                                 _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                             }
                             ++packed_index;
@@ -314,10 +397,10 @@ namespace honei
                     }
                 }
                 temp_limits.push_back(packed_index);
-                temp_types.push_back(bt_obstacle);
+                //temp_types.push_back(bt_obstacle);
 
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
-                info.types = new DenseVector<unsigned long>(temp_limits.size());
+                //info.types = new DenseVector<unsigned long>(temp_limits.size());
                 info.dir_0 = new DenseVector<unsigned long>(dir_0.size());
                 info.dir_1 = new DenseVector<unsigned long>(dir_0.size());
                 info.dir_2 = new DenseVector<unsigned long>(dir_0.size());
@@ -329,11 +412,11 @@ namespace honei
                 info.dir_8 = new DenseVector<unsigned long>(dir_0.size());
 
                 unsigned long index2(0);
-                std::vector<unsigned long>::iterator j(temp_types.begin());
-                for (std::vector<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i, ++j)
+                //std::vector<unsigned long>::iterator j(temp_types.begin());
+                for (std::vector<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i)//, ++j)
                 {
                     (*info.limits)[index2] = *i;
-                    (*info.types)[index2] = *j;
+                    //(*info.types)[index2] = *j;
                     ++index2;
                 }
                 for (unsigned long i(0) ; i < dir_0.size() ; ++i)
@@ -355,14 +438,13 @@ namespace honei
                 {
                     for (unsigned long i(*begin) ; i < *end ; ++i)
                     {
-                        while (*(grid.obstacles->element_at(index2)))
+                        while ((*grid.obstacles)(index2))
                         {
                             ++index2;
                         }
-                        std::cout<<i<<" "<<index2<<std::endl;
-                        (*data.h)[i] = *(grid.h->element_at(index2));
-                        (*data.u)[i] = *(grid.u->element_at(index2));
-                        (*data.v)[i] = *(grid.v->element_at(index2));
+                        (*data.h)[i] = (*grid.h)(index2);
+                        (*data.u)[i] = (*grid.u)(index2);
+                        (*data.v)[i] = (*grid.v)(index2);
                         ++index2;
                     }
                 }

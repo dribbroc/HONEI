@@ -101,7 +101,7 @@ namespace honei
         public:
             PackedGridInfo():
                 limits(0),
-                types(0),
+//                types(0),
                 dir_0(0),
                 dir_1(0),
                 dir_2(0),
@@ -117,7 +117,7 @@ namespace honei
             ~PackedGridInfo()
             {
                 delete limits;
-                delete types;
+  //              delete types;
                 delete dir_0;
                 delete dir_1;
                 delete dir_2;
@@ -130,7 +130,7 @@ namespace honei
             }
 
             DenseVector<unsigned long> * limits;
-            DenseVector<unsigned long> * types;
+    //        DenseVector<unsigned long> * types;
             DenseVector<unsigned long> * dir_0;
             DenseVector<unsigned long> * dir_1;
             DenseVector<unsigned long> * dir_2;
