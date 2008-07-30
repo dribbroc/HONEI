@@ -355,9 +355,14 @@ namespace honei
                 {
                     for (unsigned long i(*begin) ; i < *end ; ++i)
                     {
-                        (*data.h)[index2] = *(grid.h->element_at(i));
-                        (*data.u)[index2] = *(grid.u->element_at(i));
-                        (*data.v)[index2] = *(grid.v->element_at(i));
+                        while (*(grid.obstacles->element_at(index2)))
+                        {
+                            ++index2;
+                        }
+                        std::cout<<i<<" "<<index2<<std::endl;
+                        (*data.h)[i] = *(grid.h->element_at(index2));
+                        (*data.u)[i] = *(grid.u->element_at(index2));
+                        (*data.v)[i] = *(grid.v->element_at(index2));
                         ++index2;
                     }
                 }
