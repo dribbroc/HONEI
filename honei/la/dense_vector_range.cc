@@ -28,6 +28,10 @@ namespace honei
 
     template class DenseVectorRange<bool>;
 
+    template class DenseVectorRange<int>;
+
+    template class DenseVectorRange<long>;
+
     template class DenseVectorRange<unsigned long>;
 }
 
