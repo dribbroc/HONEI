@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -27,6 +27,10 @@ namespace honei
     template class DenseVector<double>;
 
     template class DenseVector<bool>;
+
+    template class DenseVector<int>;
+
+    template class DenseVector<long>;
 
     template class DenseVector<unsigned long>;
 }
