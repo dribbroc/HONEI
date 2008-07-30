@@ -286,6 +286,22 @@ namespace honei
                 return _elements.get()[column + row * _columns];
             }
 
+            /// Retrieves element at (index), unassignable.
+            inline virtual const DataType_ & operator() (unsigned long index) const
+            {
+                CONTEXT("When retrieving DenseMatrix element, unassignable:");
+                ASSERT(index < this->size(), "index is out of bounds!");
+                return _elements.get()[index];
+            }
+
+            /// Retrieves element at (index), assignable.
+            inline virtual DataType_ & operator() (unsigned long index)
+            {
+                CONTEXT("When retrieving DenseMatrix element, assignable:");
+                ASSERT(index < this->size(), "index is out of bounds!");
+                return _elements.get()[index];
+            }
+
             /// Retrieves column vector by index, zero-based, unassignable.
             virtual const DenseVectorSlice<DataType_> & column(unsigned long column) const
             {
