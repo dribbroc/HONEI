@@ -90,7 +90,7 @@ namespace honei
             return true;
         }
         
-        void write_gml(char filename[], bool include_coordinates = false)
+        void write_gml(const char filename[], bool include_coordinates = false)
         {
             std::ofstream fs(filename, std::ios_base::out);
             fs << "graph [\n";

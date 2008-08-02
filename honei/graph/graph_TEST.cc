@@ -53,7 +53,8 @@ class GraphTest :
         
         Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> p(*g, DataType_(1));
         p.update(0, 10000);
-        g->write_gml("test.gml",true);
+        std::string file("test.gml");
+        g->write_gml(file.c_str(), true);
         TEST_CHECK(true);
     }
 };
