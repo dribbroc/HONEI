@@ -22,6 +22,8 @@
 #include <honei/backends/cell/ppe/spe_instruction.hh>
 #include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/la/element_product.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/partitioner.hh>
 
 namespace honei
 {

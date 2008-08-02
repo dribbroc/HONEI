@@ -21,27 +21,14 @@
 #ifndef LIBLA_GUARD_SCALE_HH
 #define LIBLA_GUARD_SCALE_HH 1
 
-#include <honei/la/dense_matrix.hh>
 #include <honei/la/banded_matrix.hh>
-#include <honei/la/scale-mc.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_matrix.hh>
-#include <honei/util/thread_pool.hh>
-#include <honei/util/wrapper.hh>
-#include <honei/util/tags.hh>
 #include <honei/util/benchmark_info.hh>
-
-#include <list>
-
-
-///\todo: Do not use define for setting size of multicore-partitions.
-// For optimization purposes
-#define MIN_CHUNK_SIZE 256
-#define PARTS 8
+#include <honei/util/tags.hh>
 
 namespace honei
 {
-//    template <typename Tag_> struct MCScale;
-
     template <typename Tag_ = tags::CPU> struct Scale;
 
     /**
@@ -216,8 +203,7 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <>
-    struct Scale<tags::GPU::CUDA>
+    template <> struct Scale<tags::GPU::CUDA>
     {
         /**
          * \name Scales
@@ -251,8 +237,7 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <>
-    struct Scale<tags::CPU::SSE>
+    template <> struct Scale<tags::CPU::SSE>
     {
         /**
          * \name Scales
@@ -297,8 +282,7 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <>
-    struct Scale<tags::Cell>
+    template <> struct Scale<tags::Cell>
     {
         /**
          * \name Scales
@@ -327,6 +311,14 @@ namespace honei
         /// \}
     };
 
+    namespace mc
+    {
+        template <typename Tag_> struct Scale :
+            public honei::Scale<typename Tag_::DelegateTo>
+        {
+        };
+    }
+
     /**
      * \brief Result of scaling an entity by a scalar factor.
      *
@@ -340,8 +332,15 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <> struct Scale<tags::CPU::MultiCore> : public MCScale<tags::CPU::MultiCore> {};
-    template <> struct Scale<tags::CPU::MultiCore::SSE> : public MCScale<tags::CPU::MultiCore::SSE> {};
 
+    template <> struct Scale<tags::CPU::MultiCore> :
+        public mc::Scale<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct Scale<tags::CPU::MultiCore::SSE> :
+        public mc::Scale<tags::CPU::MultiCore>
+    {
+    };
 }
 #endif

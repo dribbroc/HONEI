@@ -23,23 +23,21 @@
 
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/banded_matrix_q1.hh>
-#include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_matrix_tile.hh>
+#include <honei/la/dense_vector.hh>
 #include <honei/la/dot_product.hh>
 #include <honei/la/element_product.hh>
 #include <honei/la/matrix_error.hh>
-#include <honei/la/product-mc.hh>
 #include <honei/la/scale.hh>
 #include <honei/la/scaled_sum.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/sum.hh>
-#include <honei/util/tags.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/tags.hh>
 
 #include <cmath>
-#include <iostream>
 
 namespace honei
 {
@@ -1311,6 +1309,14 @@ namespace honei
         static DenseMatrix<float> value(const SparseMatrix<float> & a, const DenseMatrix<float> & b);
     };
 
+    namespace mc
+    {
+        template <typename Tag_> struct Product :
+            public honei::Product<typename Tag_::DelegateTo>
+        {
+        };
+    }
+
     /**
      * \brief Product of two entities.
      *
@@ -1327,8 +1333,15 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <> struct Product <tags::CPU::MultiCore> : MCProduct <tags::CPU::MultiCore> {};
-    template <> struct Product <tags::CPU::MultiCore::SSE> : MCProduct <tags::CPU::MultiCore::SSE> {};
 
+    template <> struct Product<tags::CPU::MultiCore> :
+        public mc::Product<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct Product<tags::CPU::MultiCore::SSE> :
+        public mc::Product<tags::CPU::MultiCore::SSE>
+    {
+    };
 }
 #endif

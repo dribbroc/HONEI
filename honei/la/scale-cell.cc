@@ -23,6 +23,7 @@
 #include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/backends/cell/ppe/spe_transfer_list.hh>
 #include <honei/la/scale.hh>
+#include <honei/util/configuration.hh>
 #include <honei/util/partitioner.hh>
 
 namespace honei

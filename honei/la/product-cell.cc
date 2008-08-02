@@ -25,6 +25,7 @@
 #include <honei/backends/cell/ppe/spe_transfer_list.hh>
 #include <honei/la/product.hh>
 #include <honei/la/sum.hh>
+#include <honei/util/configuration.hh>
 #include <honei/util/profiler.hh>
 
 #include <list>

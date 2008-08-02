@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2008 Danny van Dyk <dyk@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,7 +23,6 @@
 
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
-#include <honei/la/difference-mc.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/scale.hh>
 #include <honei/la/sparse_matrix.hh>
@@ -732,6 +732,14 @@ namespace honei
         /// \}
     };
 
+    namespace mc
+    {
+        template <typename Tag_> struct Difference :
+            public honei::Difference<typename Tag_::DelegateTo>
+        {
+        };
+    }
+
     /**
      * \brief Difference of two entities.
      *
@@ -749,8 +757,15 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <> struct Difference <tags::CPU::MultiCore> : MCDifference <tags::CPU::MultiCore> {};
-    template <> struct Difference <tags::CPU::MultiCore::SSE> : MCDifference <tags::CPU::MultiCore::SSE> {};
 
+    template <> struct Difference<tags::CPU::MultiCore> :
+        public mc::Difference<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct Difference<tags::CPU::MultiCore::SSE> :
+        public mc::Difference<tags::CPU::MultiCore::SSE>
+    {
+    };
 }
 #endif

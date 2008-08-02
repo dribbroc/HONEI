@@ -20,25 +20,18 @@
 #ifndef LIBLA_GUARD_ELEMENT_PRODUCT_HH
 #define LIBLA_GUARD_ELEMENT_PRODUCT_HH 1
 
+#include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/la/element_product-mc.hh>
-#include <honei/la/banded_matrix.hh>
+#include <honei/la/dense_vector_range.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/vector_error.hh>
-#include <honei/util/tags.hh>
-
-#include <honei/la/dense_vector_range.hh>
-#include <honei/util/pool_task.hh>
-#include <honei/util/thread_pool.hh>
-#include <honei/util/wrapper.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/tags.hh>
 
 namespace honei
 {
-    template <typename Tag_> struct MCElementProduct;
-
     /**
      * \brief Multiplication of the elements of two given entities.
      *
@@ -606,6 +599,14 @@ namespace honei
         /// \}
     };
 
+    namespace mc
+    {
+        template <typename Tag_> struct ElementProduct :
+            public honei::ElementProduct<typename Tag_::DelegateTo>
+        {
+        };
+    }
+
     /**
      * \brief Multiplication of the elements of two given entities.
      *
@@ -620,7 +621,15 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <> struct ElementProduct <tags::CPU::MultiCore> : MCElementProduct <tags::CPU::MultiCore> {};
-    template <> struct ElementProduct <tags::CPU::MultiCore::SSE> : MCElementProduct <tags::CPU::MultiCore::SSE> {};
+
+    template <> struct ElementProduct<tags::CPU::MultiCore> :
+        public mc::ElementProduct<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct ElementProduct<tags::CPU::MultiCore::SSE> :
+        public mc::ElementProduct<tags::CPU::MultiCore::SSE>
+    {
+    };
 }
 #endif

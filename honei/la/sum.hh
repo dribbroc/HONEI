@@ -24,7 +24,6 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/sparse_matrix.hh>
-#include <honei/la/sum-mc.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/benchmark_info.hh>
 
@@ -785,6 +784,14 @@ namespace honei
         /// \}
     };
 
+    namespace mc
+    {
+        template <typename Tag_> struct Sum :
+            public honei::Sum<typename Tag_::DelegateTo>
+        {
+        };
+    }
+
     /**
      * \brief Sum of two entities
      *
@@ -800,8 +807,16 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <> struct Sum <tags::CPU::MultiCore> : MCSum <tags::CPU::MultiCore> {};
-    template <> struct Sum <tags::CPU::MultiCore::SSE> : MCSum <tags::CPU::MultiCore::SSE> {};
+
+    template <> struct Sum<tags::CPU::MultiCore> :
+        public mc::Sum<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct Sum<tags::CPU::MultiCore::SSE> :
+        public mc::Sum<tags::CPU::MultiCore::SSE>
+    {
+    };
 }
 
 #endif

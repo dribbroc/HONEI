@@ -22,11 +22,10 @@
 
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/la/scaled_sum-mc.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/vector_error.hh>
-#include <honei/util/tags.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/tags.hh>
 
 namespace honei
 {
@@ -365,9 +364,22 @@ namespace honei
         /// \}
     };
 
-    template <> struct ScaledSum<tags::CPU::MultiCore> : public MCScaledSum<tags::CPU::MultiCore> {};
+    namespace mc
+    {
+        template <typename Tag_> struct ScaledSum :
+            public honei::ScaledSum<typename Tag_::DelegateTo>
+        {
+        };
+    }
 
-    template <> struct ScaledSum<tags::CPU::MultiCore::SSE> : public MCScaledSum<tags::CPU::MultiCore::SSE> {};
+    template <> struct ScaledSum<tags::CPU::MultiCore> :
+        public mc::ScaledSum<tags::CPU::MultiCore>
+    {
+    };
 
+    template <> struct ScaledSum<tags::CPU::MultiCore::SSE> :
+        public mc::ScaledSum<tags::CPU::MultiCore::SSE>
+    {
+    };
 }
 #endif

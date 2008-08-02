@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -23,24 +23,14 @@
 
 #include <honei/la/vector.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/la/dot_product-mc.hh>
+#include <honei/la/dense_vector_range.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/vector_error.hh>
-#include <honei/util/tags.hh>
-
-#include <honei/la/dense_vector_range.hh>
-#include <honei/util/lock.hh>
-#include <honei/util/pool_task.hh>
-#include <honei/util/thread_pool.hh>
-#include <honei/util/wrapper.hh>
 #include <honei/util/benchmark_info.hh>
-#include <tr1/functional>
-
+#include <honei/util/tags.hh>
 
 namespace honei
 {
-    template <typename Tag_> struct MCDotProduct;
-
     template <typename Tag_ = tags::CPU> struct DotProduct;
 
     /**
@@ -334,6 +324,14 @@ namespace honei
         /// \}
     };
 
+    namespace mc
+    {
+        template <typename Tag_> struct DotProduct :
+            public honei::DotProduct<typename Tag_::DelegateTo>
+        {
+        };
+    }
+
     /**
      * \brief DotProduct of two vectors.
      *
@@ -346,8 +344,16 @@ namespace honei
      * \ingroup grplaoperations
      * \ingroup grplavectoroperations
      */
-    template <> struct DotProduct <tags::CPU::MultiCore> : MCDotProduct <tags::CPU::MultiCore> {};
-    template <> struct DotProduct <tags::CPU::MultiCore::SSE> : MCDotProduct <tags::CPU::MultiCore::SSE> {};
+
+    template <> struct DotProduct <tags::CPU::MultiCore> :
+        public mc::DotProduct<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct DotProduct<tags::CPU::MultiCore::SSE> :
+        public mc::DotProduct<tags::CPU::MultiCore::SSE>
+    {
+    };
 }
 
 #endif

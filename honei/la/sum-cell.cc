@@ -23,8 +23,9 @@
 #include <honei/backends/cell/ppe/spe_instruction.hh>
 #include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/la/sum.hh>
-#include <honei/util/stringify.hh>
+#include <honei/util/configuration.hh>
 #include <honei/util/partitioner.hh>
+#include <honei/util/stringify.hh>
 
 namespace honei
 {

@@ -21,32 +21,21 @@
 #ifndef LIBLA_GUARD_ELEMENT_INVERSE_HH
 #define LIBLA_GUARD_ELEMENT_INVERSE_HH 1
 
-#include <honei/la/dense_vector_range.hh>
-#include <honei/la/dense_vector_slice.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/la/element_inverse-mc.hh>
+#include <honei/la/dense_vector_range.hh>
+#include <honei/la/dense_vector_slice.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/vector_error.hh>
+#include <honei/util/benchmark_info.hh>
 #include <honei/util/tags.hh>
 
-#include <honei/la/dense_vector_range.hh>
-#include <honei/util/pool_task.hh>
-#include <honei/util/thread_pool.hh>
-#include <honei/util/wrapper.hh>
-#include <honei/util/benchmark_info.hh>
-
 #include <algorithm>
-#include <iostream>
-
-#define PARTS 8
 
 namespace honei
 {
-    template <typename Tag_> struct MCElementInverse;
-
     /**
      * \brief Inversion of the elements of the given entity.
      *
@@ -313,6 +302,14 @@ namespace honei
         /// \}
     };
 
+    namespace mc
+    {
+        template <typename Tag_> struct ElementInverse :
+            public honei::ElementInverse<typename Tag_::DelegateTo>
+        {
+        };
+    }
+
     /**
      * \brief Inversion of the elements of the given entity.
      *
@@ -328,8 +325,15 @@ namespace honei
      * \ingroup grplavectoroperations
      */
 
-    template <> struct ElementInverse<tags::CPU::MultiCore> : MCElementInverse <tags::CPU::MultiCore> {};
-    template <> struct ElementInverse<tags::CPU::MultiCore::SSE> : MCElementInverse <tags::CPU::MultiCore::SSE> {};
+    template <> struct ElementInverse<tags::CPU::MultiCore> :
+        public mc::ElementInverse<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct ElementInverse<tags::CPU::MultiCore::SSE> :
+        public mc::ElementInverse<tags::CPU::MultiCore::SSE>
+    {
+    };
 
     /**
      * \brief Inversion of the elements of the given entity.
@@ -371,10 +375,6 @@ namespace honei
             CONTEXT("When forwarding ElementInverse tags::Cell to tags::CPU:");
             ElementInverse<tags::CPU>::value(a);
         }
-
-
     };
-
-
 }
 #endif
