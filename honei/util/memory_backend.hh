@@ -31,6 +31,18 @@
 namespace honei
 {
     /**
+     * DeviceId uniquely identifies one of the available remote memory devices that a backend
+     * can interface. Possible are e.g. several Cell BE SPE Local Stores or several video memories.
+     */
+    typedef unsigned long DeviceId;
+
+    /**
+     * If there is only one device supported by a MemoryBackend, it must not accept requests for
+     * other devices except default_device.
+     */
+    const DeviceId default_device(~0x0L);
+
+    /**
      * MemoryBackend handles local copies of memory chunks in a specific device memory.
      *
      * \ingroup grpmemorymanager
