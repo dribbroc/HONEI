@@ -26,12 +26,12 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DataType_>
-class CollideStreamLABSWETest :
+class CollideStreamGridLABSWETest :
     public TaggedTest<Tag_>
 {
     public:
-        CollideStreamLABSWETest(const std::string & type) :
-            TaggedTest<Tag_>("collideandstream_labswe_test<" + type + ">")
+        CollideStreamGridLABSWETest(const std::string & type) :
+            TaggedTest<Tag_>("collideandstream_grid_labswe_test<" + type + ">")
         {
         }
 
@@ -119,17 +119,17 @@ class CollideStreamLABSWETest :
             TEST_CHECK(true);
         }
 };
-CollideStreamLABSWETest<tags::CPU, float> source_test_float("float");
-CollideStreamLABSWETest<tags::CPU, double> source_test_double("double");
-CollideStreamLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("float");
-CollideStreamLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("double");
+CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
+CollideStreamGridLABSWETest<tags::CPU, double> collidestream_grid_test_double("double");
+CollideStreamGridLABSWETest<tags::CPU::MultiCore, float> collidestream_grid_test_float_mc("float");
+CollideStreamGridLABSWETest<tags::CPU::MultiCore, double> collidestream_grid_test_double_mc("double");
 #ifdef HONEI_SSE
-CollideStreamLABSWETest<tags::CPU::SSE, float> source_test_float_sse("float");
-CollideStreamLABSWETest<tags::CPU::SSE, double> source_test_double_sse("double");
-CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
-CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
+CollideStreamGridLABSWETest<tags::CPU::SSE, float> collidestream_grid_test_float_sse("float");
+CollideStreamGridLABSWETest<tags::CPU::SSE, double> collidestream_grid_test_double_sse("double");
+CollideStreamGridLABSWETest<tags::CPU::MultiCore::SSE, float> collidestream_grid_test_float_mc_sse("float");
+CollideStreamGridLABSWETest<tags::CPU::MultiCore::SSE, double> collidestream_grid_test_double_mc_sse("double");
 #endif
 #ifdef HONEI_CELL
-CollideStreamLABSWETest<tags::Cell, float> source_test_float_cell("float");
-CollideStreamLABSWETest<tags::Cell, double> source_test_double_cell("double");
+CollideStreamGridLABSWETest<tags::Cell, float> collidestream_grid_test_float_cell("float");
+CollideStreamGridLABSWETest<tags::Cell, double> collidestream_grid_test_double_cell("double");
 #endif
