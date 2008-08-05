@@ -28,6 +28,7 @@ libhoneibackendscuda_la_SOURCES = \
 				 dot_product.cu \
 				 element_inverse.cu \
 				 element_product.cu \
+				 norm.cu \
 				 product.cu \
 				 scale.cu \
 				 scaled_sum.cu \

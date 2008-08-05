@@ -375,7 +375,53 @@ namespace honei
     };
 
     /**
-     * \brief Norm of an entity.
+     * \brief Norm of an entity (CUDA implementation).
+     *
+     * Norm is the class template for the operation
+     * \f[
+     *     \texttt{Norm}(x): \quad r \leftarrow ||(x_{0}, \dots, x_{size - 1}||_2,
+     * \f]
+     * which yields c, the norm of entity x.
+     *
+     * The referenced containers are invariant under this operation.
+     * In every case, a new object is created and returned.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplavectoroperations
+     */
+    template <> struct Norm<vnt_l_two, false, tags::GPU::CUDA>
+    {
+        /**
+         * \name Norms
+         * \{
+         *
+         * \brief Returns the L2 norm of a vector.
+         *
+         * \param x The entity whose norm is to be computed.
+         *
+         * \retval r Will create a new object of type DT_ and return it.
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & x);
+    };
+    template <> struct Norm<vnt_l_two, true, tags::GPU::CUDA>
+    {
+        /**
+         * \name Norms
+         * \{
+         *
+         * \brief Returns the square root of the L2 norm of a vector.
+         *
+         * \param x The entity whose norm is to be computed.
+         *
+         * \retval r Will create a new object of type DT_ and return it.
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & x);
+    };
+
+    /**
+     * \brief Norm of an entity (SSE Implementaion).
      *
      * Norm is the class template for the operation
      * \f[
