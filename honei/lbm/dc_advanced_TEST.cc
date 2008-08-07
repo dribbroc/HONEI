@@ -1332,7 +1332,7 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
 
                 unsigned long g_h(129);
                 unsigned long g_w(129);
-                DataType_ p_d_t(1.);
+                DataType_ p_d_t(0.99551);
                 DataType_ p_d_x(1.);
                 DataType_ p_d_y(1.);
 
@@ -1341,7 +1341,7 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
 
                 recent_tau[i] = tau;
 
-                unsigned long timesteps(10000);
+                unsigned long timesteps(35000);
                 DataType_ veloc((100. * (p_d_x * p_d_x/p_d_t) * (2. * tau -1.))/(6. * 129. * p_d_x));
 
                 std::cout << "t= "<< tau << std::endl;
@@ -2285,4 +2285,4 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, NONE, H>:
 
 };
 
-//SolverLABNAVSTODrivenCavityTest<tags::CPU, double, VELOC, DT> solver_DV_test_double("double", 5, 0.993, 0.995);
+//SolverLABNAVSTODrivenCavityTest<tags::CPU, double, VELOC, RTIME> solver_DV_test_double("double", 2, 1.0022, 1.0023);
