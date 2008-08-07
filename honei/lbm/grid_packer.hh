@@ -48,84 +48,54 @@ namespace honei
     template <typename DT_> struct GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>
     {
         private:
-            static BoundaryTypeD2Q9 _element_type(unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid)
+            static unsigned long _element_type(unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid)
             {
-                bool north(false);
-                bool south(false);
-                bool west(false);
-                bool east(false);
+                unsigned long type(0);
 
+                // Given DIR_N:
+                // type &= 1<<(N-1)
+
+                // Outer Boundaries
                 if(i == 0)
-                    north = true;
+                    type |= 1<<2;
 
                 if(i == (*grid.obstacles).rows() - 1)
-                    south = true;
+                    type |= 1<<6;
 
                 if(j == 0)
-                    west = true;
+                    type |= 1<<4;
 
                 if(j == (*grid.obstacles).columns() - 1)
-                    east = true;
+                    type |= 1<<0;
 
-                if( i > 0 && (*grid.obstacles)(i - 1, j))
-                    north = true;
 
-                if( i <  (*grid.obstacles).rows() - 1 && (*grid.obstacles)(i + 1, j))
-                    south = true;
+                // Inner Boundaries
+                if(i > 0 && (*grid.obstacles)(i - 1, j))
+                    type |= 1<<2;
 
-                if( j > 0 && (*grid.obstacles)(i, j - 1))
-                    west = true;
+                if(i <  (*grid.obstacles).rows() - 1 && (*grid.obstacles)(i + 1, j))
+                    type |= 1<<6;
 
-                if( j <  (*grid.obstacles).columns() - 1 && (*grid.obstacles)(i, j + 1))
-                    east = true;
+                if(j > 0 && (*grid.obstacles)(i, j - 1))
+                    type |= 1<<4;
 
-                if((*grid.obstacles)(i, j) || north && south && west && east)
-                    return bt_obstacle;
+                if(j <  (*grid.obstacles).columns() - 1 && (*grid.obstacles)(i, j + 1))
+                    type |= 1<<0;
 
-                if(!north && !south && !west && !east)
-                    return bt_none;
+                // Diagonal Boundaries
+                if (i > 0 && j <  (*grid.obstacles).columns() - 1 && (*grid.obstacles)(i - 1, j + 1))
+                    type |= 1<<1;
 
-                if(north && south && west && !east)
-                    return bt_S_W_N;
+                if (i > 0 && j > 0 && (*grid.obstacles)(i - 1, j - 1))
+                    type |= 1<<3;
 
-                if(north && south && !west && east)
-                    return bt_N_E_S;
+                if (i < (*grid.obstacles).rows() - 1 && j > 0 && (*grid.obstacles)(i + 1, j - 1))
+                    type |= 1<<5;
 
-                if(north && !south && west && east)
-                    return bt_W_N_E;
+                if (i < (*grid.obstacles).rows() - 1 && j < (*grid.obstacles).columns() - 1 && (*grid.obstacles)(i + 1, j + 1))
+                    type |= 1<<7;
 
-                if(!north && south && west && east)
-                    return bt_E_S_W;
-
-                if(!north && !south && west && east)
-                    return bt_E_W;
-
-                if(north && south && !west && !east)
-                    return bt_N_S;
-
-                if(!north && south && !west && east)
-                    return bt_E_S;
-
-                if(!north && south && west && !east)
-                    return bt_S_W;
-
-                if(north && !south && west && !east)
-                    return bt_W_N;
-
-                if(north && !south && !west && east)
-                    return bt_N_E;
-
-                if(north && !south && !west && !east)
-                    return bt_N;
-
-                if(!north && south && !west && !east)
-                    return bt_S;
-
-                if(!north && !south && west && !east)
-                    return bt_W;
-
-                if(!north && !south && !west && east)
-                    return bt_E;
+                return type;
             }
 
             static void _element_direction(unsigned long packed_index, unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid,
@@ -148,21 +118,20 @@ namespace honei
                       6 . 8
                         7
                  */
-                BoundaryTypeD2Q9 boundary(_element_type(i, j, grid));
+                unsigned long type(_element_type(i, j, grid));
 
                 // DIR_0
                 dir_0.push_back(packed_index);
 
                 // DIR_1
-                if (boundary == bt_E || boundary == bt_N_E || boundary == bt_W_N_E || boundary == bt_E_W || boundary == bt_E_S ||
-                        boundary == bt_E_S_W)
+                if ((type & 1<<0) == 1<<0)
                     dir_1.push_back(packed_index);
                 else
                     dir_1.push_back(packed_index + 1);
 
+
                 // DIR_5
-                if (boundary == bt_W || boundary == bt_W_N || boundary == bt_W_N_E || boundary == bt_E_W || boundary == bt_S_W ||
-                        boundary == bt_E_S_W)
+                if ((type & 1<<4) == 1<<4)
                     dir_5.push_back(packed_index);
                 else
                     dir_5.push_back(packed_index - 1);
@@ -189,39 +158,25 @@ namespace honei
                     }
 
                     // DIR_7
-                    if (boundary == bt_S || boundary == bt_S_W || boundary == bt_E_S || boundary == bt_N_S || boundary == bt_S_W_N ||
-                            boundary == bt_E_S_W)
+                    if ((type & 1<<6) == 1<<6)
                         dir_7.push_back(packed_index);
                     else
                         dir_7.push_back(temp_index);
 
                     // DIR_6
-                    if (j > 0 && i < grid.obstacles->rows() - 1)
-                    {
-                        if ((*grid.obstacles)(i + 1, j - 1))
-                            dir_6.push_back(packed_index);
-                        else
-                            if (boundary == bt_S_W || boundary == bt_S_W_N || boundary == bt_E_S_W)
-                                dir_6.push_back(packed_index);
-                            else
-                                dir_6.push_back(temp_index - 1);
-                    }
-                    else
+                    if ((type & 1<<5) == 1<<5)
                         dir_6.push_back(packed_index);
+                    else
+                        dir_6.push_back(temp_index - 1);
 
                     // DIR_8
-                    if (j < grid.obstacles->columns() - 1 && i < grid.obstacles->rows() -1)
-                    {
-                        if ((*grid.obstacles)(i + 1, j + 1))
-                            dir_8.push_back(packed_index);
-                        else
-                            if (boundary == bt_E_S || boundary == bt_N_E_S || boundary == bt_E_S_W)
-                                dir_8.push_back(packed_index);
-                            else
-                                dir_8.push_back(temp_index + 1);
-                    }
-                    else
+                    if ((type & 1<<7) == 1<<7)
                         dir_8.push_back(packed_index);
+                    else
+                        if ((type & 1<<6) == 1<<6)
+                            dir_8.push_back(temp_index);
+                        else
+                            dir_8.push_back(temp_index + 1);
                 }
 
                 // DIR_3 DIR_2 DIR_4
@@ -248,39 +203,25 @@ namespace honei
                     }
 
                     // DIR_3
-                    if (boundary == bt_N || boundary == bt_W_N || boundary == bt_N_E || boundary == bt_N_S || boundary == bt_S_W_N ||
-                            boundary == bt_W_N_E)
+                    if ((type & (1<<2)) == (1<<2))
                         dir_3.push_back(packed_index);
                     else
                         dir_3.push_back(temp_index);
 
                     // DIR_2
-                    if (j < grid.obstacles->columns() - 1 && i > 0)
-                    {
-                        if ((*grid.obstacles)(i -1, j + 1))
-                            dir_2.push_back(packed_index);
-                        else
-                            if (boundary == bt_N_E || boundary == bt_N_E_S || boundary == bt_W_N_E)
-                                dir_2.push_back(packed_index);
-                            else
-                                dir_2.push_back(temp_index + 1);
-                    }
-                    else
+                    if ((type & 1<<1) == 1<<1)
                         dir_2.push_back(packed_index);
+                    else
+                        dir_2.push_back(temp_index + 1);
 
                     // DIR_4
-                    if (j > 0 && i > 0)
-                    {
-                        if ((*grid.obstacles)(i -1, j - 1))
-                            dir_4.push_back(packed_index);
-                        else
-                            if (boundary == bt_W_N || boundary == bt_S_W_N || boundary == bt_W_N_E)
-                                dir_4.push_back(packed_index);
-                            else
-                                dir_4.push_back(temp_index -1);
-                    }
-                    else
+                    if ((type & 1<<3) == 1<<3)
                         dir_4.push_back(packed_index);
+                    else
+                        if ((type & 1<<2) == 1<<2)
+                            dir_4.push_back(temp_index);
+                        else
+                            dir_4.push_back(temp_index - 1);
                 }
             }
 
@@ -354,6 +295,7 @@ namespace honei
                 data.f_temp_8 = new DenseVector<DT_>(fluid_count);
 
                 std::vector<unsigned long> temp_limits;
+                std::vector<unsigned long> temp_types;
                 std::vector<unsigned long> dir_0;
                 std::vector<unsigned long> dir_1;
                 std::vector<unsigned long> dir_2;
@@ -381,52 +323,20 @@ namespace honei
                             {
                                 if (_element_type(i, j, grid) != _element_type(i, j - 1, grid))
                                 {
-                                    // search for obstacles in diagonal directions DIR_4 and DIR_6
-                                    /// \todo 2 directions too much in condition
-                                    if(
-                                            (i > 0 &&  (*grid.obstacles)(i - 1, j - 1)) ||
-                                            (i > 0 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i - 1, j + 1)) ||
-                                            (i < grid.obstacles->rows() - 1 &&  (*grid.obstacles)(i + 1, j - 1)) ||
-                                            (i < grid.obstacles->rows() - 1 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i + 1, j + 1))
-                                       )
-                                    {
-                                        dirty_cell = true;
-                                    }
 
+                                    // common case
                                     // insert current cell
                                     temp_limits.push_back(packed_index);
+                                    temp_types.push_back(_element_type(i, j, grid));
                                     _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                                     std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
-
-                                }
-                                // search for obstacles in diagonal directions DIR_2 and DIR_8
-                                /// \todo 2 directions too much in condition
-                                else if (
-                                            (i > 0 &&  (*grid.obstacles)(i - 1, j - 1)) ||
-                                            (i > 0 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i - 1, j + 1)) ||
-                                            (i < grid.obstacles->rows() - 1 &&  (*grid.obstacles)(i + 1, j - 1)) ||
-                                            (i < grid.obstacles->rows() - 1 &&  j < grid.obstacles->columns() - 1 && (*grid.obstacles)(i + 1, j + 1))
-                                        )
-                                {
-                                    // insert current cell
-                                    temp_limits.push_back(packed_index);
-                                    _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
-                                    std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
-                                    dirty_cell = false;
-                                }
-                                else if (dirty_cell)
-                                {
-                                    // insert current cell
-                                    temp_limits.push_back(packed_index);
-                                    _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
-                                    std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
-                                    dirty_cell = false;
                                 }
                             }
                             else
                             {
                                 // leftmost boundary cells
                                 temp_limits.push_back(packed_index);
+                                temp_types.push_back(_element_type(i, j, grid));
                                 _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                                 std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
                                 dirty_cell = false;
@@ -436,8 +346,10 @@ namespace honei
                     }
                 }
                 temp_limits.push_back(packed_index);
+                temp_types.push_back(0);
 
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
+                info.types = new DenseVector<unsigned long>(temp_limits.size());
                 info.dir_0 = new DenseVector<unsigned long>(dir_0.size());
                 info.dir_1 = new DenseVector<unsigned long>(dir_0.size());
                 info.dir_2 = new DenseVector<unsigned long>(dir_0.size());
@@ -449,9 +361,10 @@ namespace honei
                 info.dir_8 = new DenseVector<unsigned long>(dir_0.size());
 
                 unsigned long index2(0);
-                for (std::vector<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i)
+                for (std::vector<unsigned long>::iterator i(temp_limits.begin()), j(temp_types.begin()) ; i != temp_limits.end() ; ++i, ++j)
                 {
                     (*info.limits)[index2] = *i;
+                    (*info.types)[index2] = *j;
                     ++index2;
                 }
                 for (unsigned long i(0) ; i < dir_0.size() ; ++i)
@@ -483,8 +396,6 @@ namespace honei
                         ++index2;
                     }
                 }
-
-
             }
     };
 }

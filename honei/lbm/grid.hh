@@ -40,27 +40,6 @@ using namespace lbm_lattice_types;
 
 namespace honei
 {
-    enum BoundaryTypeD2Q9
-    {
-        bt_none = 0,
-        bt_obstacle,
-        bt_E,
-        bt_N,
-        bt_W,
-        bt_S,
-        bt_N_E,
-        bt_N_E_S,
-        bt_E_S,
-        bt_E_S_W,
-        bt_S_W,
-        bt_S_W_N,
-        bt_W_N,
-        bt_W_N_E,
-        bt_E_W,
-        bt_N_S
-
-    };
-
     template <typename LatticeType_, typename DT_> class Grid
     {
     };
@@ -101,6 +80,7 @@ namespace honei
         public:
             PackedGridInfo():
                 limits(0),
+                types(0),
                 dir_0(0),
                 dir_1(0),
                 dir_2(0),
@@ -116,6 +96,7 @@ namespace honei
             ~PackedGridInfo()
             {
                 delete limits;
+                delete types;
                 delete dir_0;
                 delete dir_1;
                 delete dir_2;
@@ -128,6 +109,7 @@ namespace honei
             }
 
             DenseVector<unsigned long> * limits;
+            DenseVector<unsigned long> * types;
             DenseVector<unsigned long> * dir_0;
             DenseVector<unsigned long> * dir_1;
             DenseVector<unsigned long> * dir_2;
