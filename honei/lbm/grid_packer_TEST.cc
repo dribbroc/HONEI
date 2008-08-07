@@ -73,10 +73,10 @@ class GridPackerTest :
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
             TEST_CHECK(true);
 
-            /*for (unsigned long i(0) ; i < info.limits->size() ; ++i)
+            for (unsigned long i(0) ; i < info.limits->size() ; ++i)
             {
-                std::cout<<(*info.limits)[i] <<std::endl;
-            }*/
+                std::cout << (*info.limits)[i] << " " << (*info.types)[i] << std::endl;
+            }
             unsigned long observe(19);
             std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
             std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;

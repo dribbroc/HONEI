@@ -259,7 +259,6 @@ namespace honei
                         }
                     }
                 }
-                std::cout<<"Fluid count: "<<fluid_count<<std::endl;
                 data.h = new DenseVector<DT_>(fluid_count);
                 data.u = new DenseVector<DT_>(fluid_count);
                 data.v = new DenseVector<DT_>(fluid_count);
@@ -329,7 +328,6 @@ namespace honei
                                     temp_limits.push_back(packed_index);
                                     temp_types.push_back(_element_type(i, j, grid));
                                     _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
-                                    std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
                                 }
                             }
                             else
@@ -338,7 +336,6 @@ namespace honei
                                 temp_limits.push_back(packed_index);
                                 temp_types.push_back(_element_type(i, j, grid));
                                 _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
-                                std::cout<<packed_index<<" "<<_element_type(i, j, grid)<<std::endl;
                                 dirty_cell = false;
                             }
                             ++packed_index;
