@@ -449,7 +449,7 @@ namespace honei
                 info.dir_8 = new DenseVector<unsigned long>(dir_0.size());
 
                 unsigned long index2(0);
-                for (std::vector<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i)//, ++j)
+                for (std::vector<unsigned long>::iterator i(temp_limits.begin()) ; i != temp_limits.end() ; ++i)
                 {
                     (*info.limits)[index2] = *i;
                     ++index2;
@@ -473,13 +473,13 @@ namespace honei
                 {
                     for (unsigned long i(*begin) ; i < *end ; ++i)
                     {
-                        while ((*grid.obstacles)(index2))
+                        while ((*grid.obstacles)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns()))
                         {
                             ++index2;
                         }
-                        (*data.h)[i] = (*grid.h)(index2);
-                        (*data.u)[i] = (*grid.u)(index2);
-                        (*data.v)[i] = (*grid.v)(index2);
+                        (*data.h)[i] = (*grid.h)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
+                        (*data.u)[i] = (*grid.u)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
+                        (*data.v)[i] = (*grid.v)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
                         ++index2;
                     }
                 }

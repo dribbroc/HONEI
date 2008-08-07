@@ -68,17 +68,17 @@ class EqDisLABSWETest :
             }
         }
 };
-EqDisLABSWETest<tags::CPU, double> source_test_double("double");
-EqDisLABSWETest<tags::CPU, float> source_test_float("float");
-EqDisLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("double");
-EqDisLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("float");
+EqDisLABSWETest<tags::CPU, double> eqdis_test_double("double");
+EqDisLABSWETest<tags::CPU, float> dqdis_test_float("float");
+EqDisLABSWETest<tags::CPU::MultiCore, double> eqdis_test_double_mc("double");
+EqDisLABSWETest<tags::CPU::MultiCore, float> eqdis_test_float_mc("float");
 #ifdef HONEI_SSE
-EqDisLABSWETest<tags::CPU::SSE, double> source_test_double_sse("double");
-EqDisLABSWETest<tags::CPU::SSE, float> source_test_float_sse("float");
-EqDisLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
-EqDisLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
+EqDisLABSWETest<tags::CPU::SSE, double> eqdis_test_double_sse("double");
+EqDisLABSWETest<tags::CPU::SSE, float> eqdis_test_float_sse("float");
+EqDisLABSWETest<tags::CPU::MultiCore::SSE, double> eqdis_test_double_mc_sse("double");
+EqDisLABSWETest<tags::CPU::MultiCore::SSE, float> eqdis_test_float_mc_sse("float");
 #endif
 #ifdef HONEI_CELL
-EqDisLABSWETest<tags::Cell, double> source_test_double_cell("double");
-EqDisLABSWETest<tags::Cell, float> source_test_float_cell("float");
+EqDisLABSWETest<tags::Cell, double> eqdis_test_double_cell("double");
+EqDisLABSWETest<tags::Cell, float> eqdis_test_float_cell("float");
 #endif
