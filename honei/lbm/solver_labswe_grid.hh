@@ -40,6 +40,7 @@
 #include <honei/lbm/collide_stream_grid.hh>
 #include <honei/lbm/equilibrium_distribution_grid.hh>
 #include <honei/lbm/source_grid.hh>
+#include <honei/lbm/update_velocity_directions_grid.hh>
 #include <cmath>
 #include <grid.hh>
 
@@ -221,40 +222,7 @@ namespace honei
 
                 }
 
-                /** Applies the noslip boundaries in north and south directions.
-                 *
-                 **/
-                void _apply_noslip_boundaries()
-                {
-                    //TODO
-                    /*for(unsigned long i(0) ; i < _grid_width ; ++i)
-                    {
-                        (*_temp_distribution_2)(0 , i) = (*_temp_distribution_6)(0 , i);
-                        (*_temp_distribution_3)(0 , i) = (*_temp_distribution_7)(0 , i);
-                        (*_temp_distribution_4)(0 , i) = (*_temp_distribution_8)(0 , i);
-
-                        (*_temp_distribution_6)(_grid_height - 1 , i) = (*_temp_distribution_2)(_grid_height - 1, i);
-                        (*_temp_distribution_7)(_grid_height - 1 , i) = (*_temp_distribution_3)(_grid_height - 1, i);
-                        (*_temp_distribution_8)(_grid_height - 1 , i) = (*_temp_distribution_4)(_grid_height - 1, i);
-                    }*/
-
-                };
-
-                void _apply_noslip_boundaries_2()
-                {
-                    /*for(unsigned long i(0) ; i < _grid_height; ++i)
-                    {
-                        (*_temp_distribution_8)(i , 0) = (*_temp_distribution_4)(i , 0);
-                        (*_temp_distribution_1)(i , 0) = (*_temp_distribution_5)(i , 0);
-                        (*_temp_distribution_2)(i , 0) = (*_temp_distribution_6)(i , 0);
-
-                        (*_temp_distribution_4)(i , _grid_width - 1) = (*_temp_distribution_8)(i , _grid_width - 1);
-                        (*_temp_distribution_5)(i , _grid_width - 1) = (*_temp_distribution_1)(i , _grid_width - 1);
-                        (*_temp_distribution_6)(i , _grid_width - 1) = (*_temp_distribution_2)(i , _grid_width - 1);
-                    }*/
-                }
-
-            public:
+           public:
                 SolverLABSWE(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseVector<ResPrec_>* bottom) :
                     _delta_x(dx),
                     _delta_y(dy),
@@ -497,6 +465,9 @@ namespace honei
                               _relaxation_time);
 
                     ///Boundary correction:
+                    UpdateVelocityDirectionsGrid<D2Q9, NOSLIP>::
+                        value(*data, *info);
+
                     _apply_noslip_boundaries();
                     _apply_noslip_boundaries_2();
 

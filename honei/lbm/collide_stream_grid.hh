@@ -74,9 +74,9 @@ namespace honei
             CONTEXT("When performing collision and streaming:");
             for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
             {
-                for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+
+                for (unsigned long i((*info.limits)[begin]), offset(0) ; i != (*info.limits)[begin + 1] ; ++i, ++offset)
                 {
-                    unsigned long offset(0);
 
                     (*data.f_temp_0)[(*info.dir_0)[begin] + offset] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
                     (*data.f_temp_1)[(*info.dir_1)[begin] + offset] = (*data.f_1)[i] - ((*data.f_1)[i] - (*data.f_eq_1)[i])/tau + DT1_(1./6.)
@@ -95,8 +95,6 @@ namespace honei
                         * (e_x[7] * s_x[i] + e_y[7] * s_y[i]);
                     (*data.f_temp_8)[(*info.dir_8)[begin] + offset] = (*data.f_8)[i] - ((*data.f_8)[i] - (*data.f_eq_8)[i])/tau + DT1_(1./6.)
                         * (e_x[8] * s_x[i] + e_y[8] * s_y[i]);
-
-                    ++offset;
                 }
             }
         }
