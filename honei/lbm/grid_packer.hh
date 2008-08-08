@@ -57,16 +57,32 @@ namespace honei
 
                 // Outer Boundaries
                 if(i == 0)
+                {
+                    type |= 1<<1;
                     type |= 1<<2;
+                    type |= 1<<3;
+                }
 
                 if(i == (*grid.obstacles).rows() - 1)
+                {
+                    type |= 1<<5;
                     type |= 1<<6;
+                    type |= 1<<7;
+                }
 
                 if(j == 0)
+                {
+                    type |= 1<<3;
                     type |= 1<<4;
+                    type |= 1<<5;
+                }
 
                 if(j == (*grid.obstacles).columns() - 1)
+                {
                     type |= 1<<0;
+                    type |= 1<<1;
+                    type |= 1<<7;
+                }
 
 
                 // Inner Boundaries
@@ -173,10 +189,12 @@ namespace honei
                     if ((type & 1<<7) == 1<<7)
                         dir_8.push_back(packed_index);
                     else
+                    {
                         if ((type & 1<<6) == 1<<6)
                             dir_8.push_back(temp_index);
                         else
                             dir_8.push_back(temp_index + 1);
+                    }
                 }
 
                 // DIR_3 DIR_2 DIR_4
@@ -218,10 +236,12 @@ namespace honei
                     if ((type & 1<<3) == 1<<3)
                         dir_4.push_back(packed_index);
                     else
+                    {
                         if ((type & 1<<2) == 1<<2)
                             dir_4.push_back(temp_index);
                         else
                             dir_4.push_back(temp_index - 1);
+                    }
                 }
             }
 
