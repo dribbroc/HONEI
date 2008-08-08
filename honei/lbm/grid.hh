@@ -155,7 +155,10 @@ namespace honei
                 f_temp_5(0),
                 f_temp_6(0),
                 f_temp_7(0),
-                f_temp_8(0)
+                f_temp_8(0),
+
+                distribution_x(0),
+                distribution_y(0)
             {
             }
 
@@ -191,6 +194,9 @@ namespace honei
                 delete f_temp_6;
                 delete f_temp_7;
                 delete f_temp_8;
+
+                delete distribution_x;
+                delete distribution_y;
             }
             DenseVector<DT_> * h;
             DenseVector<DT_> * u;
@@ -225,6 +231,9 @@ namespace honei
             DenseVector<DT_> * f_temp_6;
             DenseVector<DT_> * f_temp_7;
             DenseVector<DT_> * f_temp_8;
+
+            DenseVector<DT_> * distribution_x;
+            DenseVector<DT_> * distribution_y;
     };
 }
 

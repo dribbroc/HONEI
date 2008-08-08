@@ -32,6 +32,7 @@
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
+#include <honei/lbm/grid.hh>
 #include <cmath>
 using namespace honei::lbm;
 
@@ -57,8 +58,8 @@ namespace honei
          *
          * \param s_x Source vector in x direction.
          * \param s_y Source vector in y direction..
-         * \param e_x Corresponding distribution vector.
-         * \param e_y Corresponding distribution vector.
+         * \param (*data.distribution_x) Corresponding distribution vector.
+         * \param (*data.distribution_y) Corresponding distribution vector.
          * \param tau The relaxation time.
          */
         template <typename DT1_, typename DT2_>
@@ -67,8 +68,6 @@ namespace honei
                           PackedGridData<lbm_lattice_types::D2Q9, DT1_> & data,
                           DenseVector<DT1_> & s_x,
                           DenseVector<DT1_> & s_y,
-                          DenseVector<DT2_> & e_x,
-                          DenseVector<DT2_> & e_y,
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming:");
@@ -80,21 +79,21 @@ namespace honei
 
                     (*data.f_temp_0)[(*info.dir_0)[begin] + offset] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
                     (*data.f_temp_1)[(*info.dir_1)[begin] + offset] = (*data.f_1)[i] - ((*data.f_1)[i] - (*data.f_eq_1)[i])/tau + DT1_(1./6.)
-                        * (e_x[1] * s_x[i] + e_y[1] * s_y[i]);
+                        * ((*data.distribution_x)[1] * s_x[i] + (*data.distribution_y)[1] * s_y[i]);
                     (*data.f_temp_2)[(*info.dir_2)[begin] + offset] = (*data.f_2)[i] - ((*data.f_2)[i] - (*data.f_eq_2)[i])/tau + DT1_(1./6.)
-                        * (e_x[2] * s_x[i] + e_y[2] * s_y[i]);
+                        * ((*data.distribution_x)[2] * s_x[i] + (*data.distribution_y)[2] * s_y[i]);
                     (*data.f_temp_3)[(*info.dir_3)[begin] + offset] = (*data.f_3)[i] - ((*data.f_3)[i] - (*data.f_eq_3)[i])/tau + DT1_(1./6.)
-                        * (e_x[3] * s_x[i] + e_y[3] * s_y[i]);
+                        * ((*data.distribution_x)[3] * s_x[i] + (*data.distribution_y)[3] * s_y[i]);
                     (*data.f_temp_4)[(*info.dir_4)[begin] + offset] = (*data.f_4)[i] - ((*data.f_4)[i] - (*data.f_eq_4)[i])/tau + DT1_(1./6.)
-                        * (e_x[4] * s_x[i] + e_y[4] * s_y[i]);
+                        * ((*data.distribution_x)[4] * s_x[i] + (*data.distribution_y)[4] * s_y[i]);
                     (*data.f_temp_5)[(*info.dir_5)[begin] + offset] = (*data.f_5)[i] - ((*data.f_5)[i] - (*data.f_eq_5)[i])/tau + DT1_(1./6.)
-                        * (e_x[5] * s_x[i] + e_y[5] * s_y[i]);
+                        * ((*data.distribution_x)[5] * s_x[i] + (*data.distribution_y)[5] * s_y[i]);
                     (*data.f_temp_6)[(*info.dir_6)[begin] + offset] = (*data.f_6)[i] - ((*data.f_6)[i] - (*data.f_eq_6)[i])/tau + DT1_(1./6.)
-                        * (e_x[6] * s_x[i] + e_y[6] * s_y[i]);
+                        * ((*data.distribution_x)[6] * s_x[i] + (*data.distribution_y)[6] * s_y[i]);
                     (*data.f_temp_7)[(*info.dir_7)[begin] + offset] = (*data.f_7)[i] - ((*data.f_7)[i] - (*data.f_eq_7)[i])/tau + DT1_(1./6.)
-                        * (e_x[7] * s_x[i] + e_y[7] * s_y[i]);
+                        * ((*data.distribution_x)[7] * s_x[i] + (*data.distribution_y)[7] * s_y[i]);
                     (*data.f_temp_8)[(*info.dir_8)[begin] + offset] = (*data.f_8)[i] - ((*data.f_8)[i] - (*data.f_eq_8)[i])/tau + DT1_(1./6.)
-                        * (e_x[8] * s_x[i] + e_y[8] * s_y[i]);
+                        * ((*data.distribution_x)[8] * s_x[i] + (*data.distribution_y)[8] * s_y[i]);
                 }
             }
         }

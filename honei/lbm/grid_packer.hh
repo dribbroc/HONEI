@@ -263,36 +263,37 @@ namespace honei
                 data.u = new DenseVector<DT_>(fluid_count);
                 data.v = new DenseVector<DT_>(fluid_count);
 
-                data.f_0 = new DenseVector<DT_>(fluid_count);
-                data.f_1 = new DenseVector<DT_>(fluid_count);
-                data.f_2 = new DenseVector<DT_>(fluid_count);
-                data.f_3 = new DenseVector<DT_>(fluid_count);
-                data.f_4 = new DenseVector<DT_>(fluid_count);
-                data.f_5 = new DenseVector<DT_>(fluid_count);
-                data.f_6 = new DenseVector<DT_>(fluid_count);
-                data.f_7 = new DenseVector<DT_>(fluid_count);
-                data.f_8 = new DenseVector<DT_>(fluid_count);
+                data.f_0 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_1 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_2 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_3 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_4 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_5 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_6 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_7 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_8 = new DenseVector<DT_>(fluid_count, DT_(0));
 
-                data.f_eq_0 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_1 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_2 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_3 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_4 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_5 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_6 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_7 = new DenseVector<DT_>(fluid_count);
-                data.f_eq_8 = new DenseVector<DT_>(fluid_count);
+                data.f_eq_0 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_1 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_2 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_3 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_4 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_5 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_6 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_7 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_eq_8 = new DenseVector<DT_>(fluid_count, DT_(0));
 
-                data.f_temp_0 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_1 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_2 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_3 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_4 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_5 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_6 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_7 = new DenseVector<DT_>(fluid_count);
-                data.f_temp_8 = new DenseVector<DT_>(fluid_count);
-
+                data.f_temp_0 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_1 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_2 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_3 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_4 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_5 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_6 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_7 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.f_temp_8 = new DenseVector<DT_>(fluid_count, DT_(0));
+                data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
+                data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
                 std::vector<unsigned long> temp_limits;
                 std::vector<unsigned long> temp_types;
                 std::vector<unsigned long> dir_0;
@@ -306,7 +307,6 @@ namespace honei
                 std::vector<unsigned long> dir_8;
 
                 unsigned long packed_index(0);
-                bool dirty_cell(false);
 
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
                 {
@@ -336,7 +336,6 @@ namespace honei
                                 temp_limits.push_back(packed_index);
                                 temp_types.push_back(_element_type(i, j, grid));
                                 _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
-                                dirty_cell = false;
                             }
                             ++packed_index;
                         }

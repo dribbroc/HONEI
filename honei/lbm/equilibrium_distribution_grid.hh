@@ -60,54 +60,54 @@ namespace honei
              * \param e The ratio of space and time stepping.
              */
             template<typename DT1_, typename DT2_>
-                static void value(DT2_ g, DT2_ e, DenseVector<DT1_> & e_u, DenseVector<DT1_> & e_v, PackedGridData<D2Q9, DT1_> & grid_data)
+                static void value(DT2_ g, DT2_ e, PackedGridData<D2Q9, DT1_> & data)
                 {
                     CONTEXT("When computing LABSWE local equilibrium distribution function:");
-                    for(unsigned long i(0); i < grid_data.h->size(); ++i)
+                    for(unsigned long i(0); i < data.h->size(); ++i)
                     {
-                        DT1_ u((*grid_data.u)[i]);
-                        DT1_ v((*grid_data.v)[i]);
-                        DT1_ h((*grid_data.h)[i]);
+                        DT1_ u((*data.u)[i]);
+                        DT1_ v((*data.v)[i]);
+                        DT1_ h((*data.h)[i]);
 
-                        (*grid_data.f_eq_0)[i] = h -
+                        (*data.f_eq_0)[i] = h -
                             ((DT1_(5.) * g * h * h) / (DT1_(6.) * e * e)) -
                             ((DT1_(2.) * h) /(DT1_(3.) * e * e) * (u * u + v * v));
 
-                        (*grid_data.f_eq_1)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * (e_u[1] * u + e_v[1] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * (e_u[1] * u * e_u[1] * u + DT1_(2.) * e_u[1] * u * e_v[1] * v + e_v[1] * v * e_v[1] * v)) -
+                        (*data.f_eq_1)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
+                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[1] * u + (*data.distribution_y)[1] * v)) +
+                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[1] * u * (*data.distribution_x)[1] * u + DT1_(2.) * (*data.distribution_x)[1] * u * (*data.distribution_y)[1] * v + (*data.distribution_y)[1] * v * (*data.distribution_y)[1] * v)) -
                             ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
-                        (*grid_data.f_eq_3)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * (e_u[3] * u + e_v[3] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * (e_u[3] * u * e_u[3] * u + DT1_(2.) * e_u[3] * u * e_v[3] * v + e_v[3] * v * e_v[3] * v)) -
+                        (*data.f_eq_3)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
+                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[3] * u + (*data.distribution_y)[3] * v)) +
+                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[3] * u * (*data.distribution_x)[3] * u + DT1_(2.) * (*data.distribution_x)[3] * u * (*data.distribution_y)[3] * v + (*data.distribution_y)[3] * v * (*data.distribution_y)[3] * v)) -
                             ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
-                        (*grid_data.f_eq_5)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * (e_u[5] * u + e_v[5] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * (e_u[5] * u * e_u[5] * u + DT1_(2.) * e_u[5] * u * e_v[5] * v + e_v[5] * v * e_v[5] * v)) -
+                        (*data.f_eq_5)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
+                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[5] * u + (*data.distribution_y)[5] * v)) +
+                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[5] * u * (*data.distribution_x)[5] * u + DT1_(2.) * (*data.distribution_x)[5] * u * (*data.distribution_y)[5] * v + (*data.distribution_y)[5] * v * (*data.distribution_y)[5] * v)) -
                             ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
-                        (*grid_data.f_eq_7)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * (e_u[7] * u + e_v[7] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * (e_u[7] * u * e_u[7] * u + DT1_(2.) * e_u[7] * u * e_v[7] * v + e_v[7] * v * e_v[7] * v)) -
+                        (*data.f_eq_7)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
+                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[7] * u + (*data.distribution_y)[7] * v)) +
+                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[7] * u * (*data.distribution_x)[7] * u + DT1_(2.) * (*data.distribution_x)[7] * u * (*data.distribution_y)[7] * v + (*data.distribution_y)[7] * v * (*data.distribution_y)[7] * v)) -
                             ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
 
-                        (*grid_data.f_eq_2)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * (e_u[2] * u + e_v[2] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * (e_u[2] * u * e_u[2] * u + DT1_(2.) * e_u[2] * u * e_v[2] * v + e_v[2] * v * e_v[2] * v)) -
+                        (*data.f_eq_2)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
+                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[2] * u + (*data.distribution_y)[2] * v)) +
+                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[2] * u * (*data.distribution_x)[2] * u + DT1_(2.) * (*data.distribution_x)[2] * u * (*data.distribution_y)[2] * v + (*data.distribution_y)[2] * v * (*data.distribution_y)[2] * v)) -
                             ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
 
-                        (*grid_data.f_eq_4)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * (e_u[4] * u + e_v[4] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * (e_u[4] * u * e_u[4] * u + DT1_(2.) * e_u[4] * u * e_v[4] * v + e_v[4] * v * e_v[4] * v)) -
+                        (*data.f_eq_4)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
+                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[4] * u + (*data.distribution_y)[4] * v)) +
+                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[4] * u * (*data.distribution_x)[4] * u + DT1_(2.) * (*data.distribution_x)[4] * u * (*data.distribution_y)[4] * v + (*data.distribution_y)[4] * v * (*data.distribution_y)[4] * v)) -
                             ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
 
-                        (*grid_data.f_eq_6)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * (e_u[6] * u + e_v[6] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * (e_u[6] * u * e_u[6] * u + DT1_(2.) * e_u[6] * u * e_v[6] * v + e_v[6] * v * e_v[6] * v)) -
+                        (*data.f_eq_6)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
+                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[6] * u + (*data.distribution_y)[6] * v)) +
+                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[6] * u * (*data.distribution_x)[6] * u + DT1_(2.) * (*data.distribution_x)[6] * u * (*data.distribution_y)[6] * v + (*data.distribution_y)[6] * v * (*data.distribution_y)[6] * v)) -
                             ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
 
-                        (*grid_data.f_eq_8)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * (e_u[8] * u + e_v[8] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * (e_u[8] * u * e_u[8] * u + DT1_(2.) * e_u[8] * u * e_v[8] * v + e_v[8] * v * e_v[8] * v)) -
+                        (*data.f_eq_8)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
+                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[8] * u + (*data.distribution_y)[8] * v)) +
+                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[8] * u * (*data.distribution_x)[8] * u + DT1_(2.) * (*data.distribution_x)[8] * u * (*data.distribution_y)[8] * v + (*data.distribution_y)[8] * v * (*data.distribution_y)[8] * v)) -
                             ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
                     }
                 }

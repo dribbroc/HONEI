@@ -64,24 +64,25 @@ namespace honei
                    {
                        for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                        {
-                           if((data.types[begin] & 1<<0) == 1<<0)
+                           if(((*info.types)[begin] & 1<<0) == 1<<0)
                                (*data.f_temp_1)[i] = (*data.f_temp_5)[i];
-                           if((data.types[begin] & 1<<1) == 1<<0)
+                           if(((*info.types)[begin] & 1<<1) == 1<<0)
                                (*data.f_temp_2)[i] = (*data.f_temp_6)[i];
-                           if((data.types[begin] & 1<<2) == 1<<0)
+                           if(((*info.types)[begin] & 1<<2) == 1<<0)
                                (*data.f_temp_3)[i] = (*data.f_temp_7)[i];
-                           if((data.types[begn] & 1<<3) == 1<<0)
+                           if(((*info.types)[begin] & 1<<3) == 1<<0)
                                (*data.f_temp_4)[i] = (*data.f_temp_8)[i];
-                           if((data.types[begin] & 1<<4) == 1<<0)
+                           if(((*info.types)[begin] & 1<<4) == 1<<0)
                                (*data.f_temp_5)[i] = (*data.f_temp_1)[i];
-                           if((data.types[begin] & 1<<5) == 1<<0)
+                           if(((*info.types)[begin] & 1<<5) == 1<<0)
                                (*data.f_temp_6)[i] = (*data.f_temp_2)[i];
-                           if((data.types[begin] & 1<<6) == 1<<0)
+                           if(((*info.types)[begin] & 1<<6) == 1<<0)
                                (*data.f_temp_7)[i] = (*data.f_temp_3)[i];
-                           if((data.types[begin] & 1<<7) == 1<<0)
+                           if(((*info.types)[begin] & 1<<7) == 1<<0)
                                (*data.f_temp_8)[i] = (*data.f_temp_4)[i];
                        }
                    }
-               };
-       }
+               }
+       };
+}
 #endif

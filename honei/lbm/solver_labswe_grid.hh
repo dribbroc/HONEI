@@ -45,6 +45,7 @@
 #include <grid.hh>
 
 using namespace honei::lbm;
+using namespace honei::lbm::lbm_boundary_types;
 
 namespace honei
 {
@@ -56,12 +57,12 @@ namespace honei
         typename GridType_,
         typename LatticeType_,
         typename BoundaryType_>
-            class SolverLABSWE
+            class SolverLABSWEGrid
             {
             };
 
     template<typename Tag_, typename ResPrec_>
-        class SolverLABSWE<Tag_, ResPrec_, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+        class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
         {
             private:
                 /** Global variables.
@@ -223,7 +224,7 @@ namespace honei
                 }
 
            public:
-                SolverLABSWE(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseVector<ResPrec_>* bottom) :
+                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseVector<ResPrec_>* bottom) :
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
@@ -238,6 +239,8 @@ namespace honei
                     _n_alpha(ResPrec_(6.)),
                     _relaxation_time(ResPrec_(1.5)),
                     _time(0),
+                    data(data),
+                    info(info),
                     _distribution_0(data->f_0),
                     _distribution_1(data->f_1),
                     _distribution_2(data->f_2),
@@ -266,13 +269,15 @@ namespace honei
                     _temp_distribution_5(data->f_temp_5),
                     _temp_distribution_6(data->f_temp_6),
                     _temp_distribution_7(data->f_temp_7),
-                    _temp_distribution_8(data->f_temp_8)
+                    _temp_distribution_8(data->f_temp_8),
+                    _distribution_vector_x(data->distribution_x),
+                    _distribution_vector_y(data->distribution_y)
                     {
                         CONTEXT("When creating LABSWE solver:");
                         _e = _delta_x / _delta_t;
                     }
 
-                ~SolverLABSWE()
+                ~SolverLABSWEGrid()
                 {
                     //                CONTEXT("When destroying LABSWE solver.");
                 }
@@ -413,8 +418,8 @@ namespace honei
                     }*/
 
                     ///Compute initial equilibrium distribution:
-                    EquilibriumDistribution<Tag_, lbm_applications::LABSWE>::
-                        value(_gravity, _e, *_distribution_vector_x, *_distribution_vector_y, *data);
+                    EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
+                       value(_gravity, _e, *data);
 
                     *_distribution_0 = *_eq_distribution_0;
                     *_distribution_1 = *_eq_distribution_1;
@@ -456,26 +461,21 @@ namespace honei
                     value(*_source_y, ResPrec_(0.));*/
                     ///Streaming and collision:
 
-                    CollideStream<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
+                    CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(*info,
                               *data,
                               *_source_x, *_source_y,
-                              *_distribution_vector_x,
-                              *_distribution_vector_y,
                               _relaxation_time);
 
                     ///Boundary correction:
                     UpdateVelocityDirectionsGrid<D2Q9, NOSLIP>::
                         value(*data, *info);
 
-                    _apply_noslip_boundaries();
-                    _apply_noslip_boundaries_2();
-
                     ///Compute physical quantities:
                     _extract();
 
-                    EquilibriumDistribution<Tag_, lbm_applications::LABSWE>::
-                        value(_gravity, _e, *_distribution_vector_x, *_distribution_vector_y, *data);
+                    EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
+                        value(_gravity, _e, *data);
                 };
         };
 }

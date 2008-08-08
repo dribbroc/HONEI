@@ -43,7 +43,8 @@ class EqDisGridLABSWETest :
             data.v = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
             DataType_ g(9.81);
             DataType_ e(1.);
-            DenseVector<DataType_> e_u(9ul, DataType_(2.));
+            data.distribution_x = new DenseVector<DataType_>(9ul, DataType_(2.));
+            data.distribution_y = new DenseVector<DataType_>(9ul, DataType_(2.));
             data.f_eq_0 = new DenseVector<DataType_>(1000);
             data.f_eq_1 = new DenseVector<DataType_>(1000);
             data.f_eq_2 = new DenseVector<DataType_>(1000);
@@ -54,7 +55,7 @@ class EqDisGridLABSWETest :
             data.f_eq_7 = new DenseVector<DataType_>(1000);
             data.f_eq_8 = new DenseVector<DataType_>(1000);
             EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                value(g, e, e_u, e_u, data);
+                value(g, e, data);
 
             for(unsigned long i(0); i < 1000; ++i)
             {

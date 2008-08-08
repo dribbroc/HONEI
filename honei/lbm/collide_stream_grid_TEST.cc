@@ -40,8 +40,8 @@ class CollideStreamGridLABSWETest :
             PackedGridData<lbm_lattice_types::D2Q9, DataType_> data;
             PackedGridInfo<lbm_lattice_types::D2Q9> info;
 
-            DenseVector<DataType_> e_x(9ul, DataType_(2.));
-            DenseVector<DataType_> e_y(9ul, DataType_(2.));
+            data.distribution_x = new DenseVector<DataType_>(9ul, DataType_(2.));
+            data.distribution_y = new DenseVector<DataType_>(9ul, DataType_(2.));
             DenseVector<DataType_> s_x(1000ul, DataType_(2.));
             DenseVector<DataType_> s_y(1000ul, DataType_(2.));
             data.f_eq_0 = new DenseVector<DataType_>(1000);
@@ -115,7 +115,7 @@ class CollideStreamGridLABSWETest :
             (*info.dir_8)[2] = 0;
 
             CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                value(info, data, s_x, s_y, e_x, e_y, tau);
+                value(info, data, s_x, s_y, tau);
             TEST_CHECK(true);
         }
 };
