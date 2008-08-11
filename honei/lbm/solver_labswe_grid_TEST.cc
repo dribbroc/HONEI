@@ -26,6 +26,8 @@
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
 
+//#define SOLVER_VERBOSE
+//
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -88,6 +90,7 @@ class SolverLABSWEGridTest :
 #endif
             }
 #ifdef SOLVER_VERBOSE
+            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
             std::cout << h << std::endl;
 #endif
             TEST_CHECK(true);

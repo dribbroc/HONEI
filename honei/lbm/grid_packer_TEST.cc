@@ -38,7 +38,8 @@ class GridPackerTest :
 
         virtual void run() const
         {
-            DenseMatrix<DataType_> dummy(10, 12, DataType_(0));
+            DenseMatrix<DataType_> dummy(10, 12, DataType_(2));
+            dummy(2, 5) = DataType_(5);
             DenseMatrix<bool> obst(10, 12, false);
             /*
              +++++++++++*
@@ -71,7 +72,6 @@ class GridPackerTest :
             grid.obstacles = new DenseMatrix<bool>(obst);
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
-            TEST_CHECK(true);
 
             for (unsigned long i(0) ; i < info.limits->size() ; ++i)
             {
@@ -87,6 +87,11 @@ class GridPackerTest :
             std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
             std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
 
+
+            GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::unpack(grid, info, data);
+            std::cout << *grid.h << std::endl;
+
+            TEST_CHECK(true);
         }
 };
 

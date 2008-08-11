@@ -413,6 +413,27 @@ namespace honei
                     }
                 }
             }
+
+            static void unpack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            {
+                unsigned long packed_index(0);
+
+                for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
+                {
+                    for(unsigned long j(0); j < grid.obstacles->columns(); ++j)
+                    {
+                        if((*grid.obstacles)(i, j))
+                        {
+                            (*grid.h)(i, j) = DT_(0);
+                        }
+                        else
+                        {
+                            (*grid.h)(i, j) = (*data.h)[packed_index];
+                            ++packed_index;
+                        }
+                    }
+                }
+            }
     };
 }
 

@@ -64,10 +64,10 @@ namespace honei
             }
             ~Grid()
             {
-                delete obstacles;
+                /*delete obstacles;
                 delete h;
                 delete u;
-                delete v;
+                delete v;*/
             }
             DenseMatrix<bool> * obstacles;
             DenseMatrix<DT_> * h;
@@ -95,7 +95,7 @@ namespace honei
 
             ~PackedGridInfo()
             {
-                delete limits;
+                /*delete limits;
                 delete types;
                 delete dir_0;
                 delete dir_1;
@@ -105,7 +105,7 @@ namespace honei
                 delete dir_5;
                 delete dir_6;
                 delete dir_7;
-                delete dir_8;
+                delete dir_8;*/
             }
 
             DenseVector<unsigned long> * limits;
@@ -164,7 +164,7 @@ namespace honei
 
             ~PackedGridData()
             {
-                delete h;
+                /*delete h;
                 delete u;
                 delete v;
                 delete f_0;
@@ -196,7 +196,7 @@ namespace honei
                 delete f_temp_8;
 
                 delete distribution_x;
-                delete distribution_y;
+                delete distribution_y;*/
             }
             DenseVector<DT_> * h;
             DenseVector<DT_> * u;
