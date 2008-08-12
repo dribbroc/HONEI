@@ -24,7 +24,6 @@
 #include <honei/lbm/grid.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
-#include <list>
 #include <vector>
 #include <iostream>
 #include <limits>
@@ -50,7 +49,7 @@ namespace honei
     {
         public:
             static void partition(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
-                    std::list<PackedGridInfo<D2Q9> > & info_list, std::list<PackedGridData<D2Q9, DT_> > & data_list)
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
             {
                 CONTEXT("When creating grid partitions:");
                 std::vector<unsigned long> temp_limits;
@@ -79,13 +78,14 @@ namespace honei
                     temp_dir_7.push_back((*info.dir_7)[i]);
                     temp_dir_8.push_back((*info.dir_8)[i]);
                 }
-                /*std::cout<<std::endl;
+
+                std::cout<<std::endl;
                 for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_limits[i]<<" ";
                 }
                 std::cout<<std::endl;
-                for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
+                /*for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_types[i]<<" ";
                 }
@@ -106,8 +106,8 @@ namespace honei
                     end += (i==0 ? first_size : normal_size);
                     std::vector<unsigned long>::iterator start_index(std::lower_bound(temp_limits.begin(), temp_limits.end(), start));
                     std::vector<unsigned long>::iterator end_index(std::lower_bound(temp_limits.begin(), temp_limits.end(), end));
-                    //std::cout<<"start: "<<start<<" "<<*start_index<<std::endl;
-                    //std::cout<<"end: "<<end<<" "<<*end_index<<std::endl;
+                    std::cout<<"start: "<<start<<" "<<*start_index<<std::endl;
+                    std::cout<<"end: "<<end<<" "<<*end_index<<std::endl;
                     if (*end_index != end)
                     {
                         // Insert dummy nodes
@@ -174,7 +174,8 @@ namespace honei
                 std::vector<std::vector<unsigned long> > temp_dir_6_list;
                 std::vector<std::vector<unsigned long> > temp_dir_7_list;
                 std::vector<std::vector<unsigned long> > temp_dir_8_list;
-                std::vector<unsigned long> temp_offset_list;
+                std::vector<unsigned long> temp_min_list;
+                std::vector<unsigned long> temp_max_list;
 
                 for (unsigned long i(0) ; i < barriers.size() - 1; ++i)
                 {
@@ -214,12 +215,37 @@ namespace honei
                     temp_dir_6_list.push_back(new_dir_6);
                     temp_dir_7_list.push_back(new_dir_7);
                     temp_dir_8_list.push_back(new_dir_8);
-                    temp_offset_list.push_back(new_limits[0]);
+
+                    std::vector<unsigned long> max_collection;
+                    max_collection.push_back(*max_element(new_dir_0.begin(), new_dir_0.end()));
+                    max_collection.push_back(*max_element(new_dir_1.begin(), new_dir_1.end()));
+                    max_collection.push_back(*max_element(new_dir_2.begin(), new_dir_2.end()));
+                    max_collection.push_back(*max_element(new_dir_3.begin(), new_dir_3.end()));
+                    max_collection.push_back(*max_element(new_dir_4.begin(), new_dir_4.end()));
+                    max_collection.push_back(*max_element(new_dir_5.begin(), new_dir_5.end()));
+                    max_collection.push_back(*max_element(new_dir_6.begin(), new_dir_6.end()));
+                    max_collection.push_back(*max_element(new_dir_7.begin(), new_dir_7.end()));
+                    max_collection.push_back(*max_element(new_dir_8.begin(), new_dir_8.end()));
+                    temp_max_list.push_back(*max_element(max_collection.begin(), max_collection.end()));
+
+                    std::vector<unsigned long> min_collection;
+                    min_collection.push_back(*min_element(new_dir_0.begin(), new_dir_0.end()));
+                    min_collection.push_back(*min_element(new_dir_1.begin(), new_dir_1.end()));
+                    min_collection.push_back(*min_element(new_dir_2.begin(), new_dir_2.end()));
+                    min_collection.push_back(*min_element(new_dir_3.begin(), new_dir_3.end()));
+                    min_collection.push_back(*min_element(new_dir_4.begin(), new_dir_4.end()));
+                    min_collection.push_back(*min_element(new_dir_5.begin(), new_dir_5.end()));
+                    min_collection.push_back(*min_element(new_dir_6.begin(), new_dir_6.end()));
+                    min_collection.push_back(*min_element(new_dir_7.begin(), new_dir_7.end()));
+                    min_collection.push_back(*min_element(new_dir_8.begin(), new_dir_8.end()));
+                    temp_min_list.push_back(*min_element(min_collection.begin(), min_collection.end()));
                 }
 
+                // Fill the real info vectors
                 for (unsigned long i(0) ; i < temp_limits_list.size() ; ++i)
                 {
                     PackedGridInfo<D2Q9> new_info;
+                    new_info.offset = temp_min_list[i];
                     new_info.limits = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     new_info.types = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     new_info.dir_0 = new DenseVector<unsigned long>(temp_limits_list[i].size());
@@ -233,19 +259,68 @@ namespace honei
                     new_info.dir_8 = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     for (unsigned long j(0) ; j < temp_limits_list[i].size() ; ++j)
                     {
-                        (*new_info.limits)[j] = temp_limits_list[i][j];
-                        (*new_info.types)[j] = temp_types_list[i][j];
-                        (*new_info.dir_0)[j] = temp_dir_0_list[i][j];
-                        (*new_info.dir_1)[j] = temp_dir_1_list[i][j];
-                        (*new_info.dir_2)[j] = temp_dir_2_list[i][j];
-                        (*new_info.dir_3)[j] = temp_dir_3_list[i][j];
-                        (*new_info.dir_4)[j] = temp_dir_4_list[i][j];
-                        (*new_info.dir_5)[j] = temp_dir_5_list[i][j];
-                        (*new_info.dir_6)[j] = temp_dir_6_list[i][j];
-                        (*new_info.dir_7)[j] = temp_dir_7_list[i][j];
-                        (*new_info.dir_8)[j] = temp_dir_8_list[i][j];
+                        (*new_info.limits)[j] = temp_limits_list[i][j] - new_info.offset;
+                        (*new_info.types)[j] = temp_types_list[i][j] - new_info.offset;
+                        (*new_info.dir_0)[j] = temp_dir_0_list[i][j] - new_info.offset;
+                        (*new_info.dir_1)[j] = temp_dir_1_list[i][j] - new_info.offset;
+                        (*new_info.dir_2)[j] = temp_dir_2_list[i][j] - new_info.offset;
+                        (*new_info.dir_3)[j] = temp_dir_3_list[i][j] - new_info.offset;
+                        (*new_info.dir_4)[j] = temp_dir_4_list[i][j] - new_info.offset;
+                        (*new_info.dir_5)[j] = temp_dir_5_list[i][j] - new_info.offset;
+                        (*new_info.dir_6)[j] = temp_dir_6_list[i][j] - new_info.offset;
+                        (*new_info.dir_7)[j] = temp_dir_7_list[i][j] - new_info.offset;
+                        (*new_info.dir_8)[j] = temp_dir_8_list[i][j] - new_info.offset;
                     }
                     info_list.push_back(new_info);
+                }
+
+                // Fill the real data vectors
+                for (unsigned long i(0) ; i < info_list.size() ; ++i)
+                {
+                    PackedGridData<D2Q9,DT_> new_data;
+                    new_data.h = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
+                    new_data.u = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
+                    new_data.v = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
+
+                    new_data.f_0 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_1 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_2 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_3 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_4 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_5 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_6 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_7 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_8 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+
+                    new_data.f_eq_0 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_1 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_2 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_3 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_4 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_5 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_6 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_7 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_8 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+
+                    new_data.f_temp_0 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_1 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_2 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_3 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_4 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_5 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_6 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_7 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_8 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
+                    new_data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
+
+                    for (unsigned long j(0) ; j < temp_max_list[i] - temp_min_list[i] + 1 ; ++j)
+                    {
+                        (*new_data.h)[j] = (*data.h)[j + info_list[i].offset];
+                        (*new_data.u)[j] = (*data.u)[j + info_list[i].offset];
+                        (*new_data.v)[j] = (*data.v)[j + info_list[i].offset];
+                    }
+                    data_list.push_back(new_data);
                 }
 
                 std::cout<<std::endl;
@@ -254,11 +329,17 @@ namespace honei
                     std::cout<<temp_limits[i]<<" ";
                 }
                 std::cout<<std::endl;
+                std::cout<<std::endl;
                 for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
+                {
+                    std::cout<<temp_dir_0[i]<<" ";
+                }
+                std::cout<<std::endl;
+                /*for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_types[i]<<" ";
                 }
-                std::cout<<std::endl;
+                std::cout<<std::endl;*/
                 std::cout<<"barriers: ";
                 for (unsigned long i(0) ; i < barriers.size() ; ++i)
                 {
@@ -275,21 +356,23 @@ namespace honei
                     std::cout<<std::endl;
                 }
                 std::cout<<std::endl;
-                std::cout<<"neue type vektoren: "<<std::endl;
-                for (unsigned long i(0) ; i < temp_types_list.size() ; ++i)
+                std::cout<<"min / max"<<std::endl;
+                for (unsigned long i(0) ; i < temp_min_list.size() ; ++i)
                 {
-                    for (unsigned long j(0); j < temp_types_list[i].size() ; ++j)
+                    std::cout << temp_min_list[i] << "/";
+                    std::cout << temp_max_list[i] << " ";
+                    std::cout<<std::endl;
+                }
+
+                std::cout<<"echte limits vektoren: "<<std::endl;
+                for (unsigned long i(0) ; i < info_list.size() ; ++i)
+                {
+                    for (unsigned long j(0); j < info_list[i].limits->size() ; ++j)
                     {
-                        std::cout<<temp_types_list[i][j]<<" ";
+                        std::cout<<(*info_list[i].limits)[j]<<" ";
                     }
                     std::cout<<std::endl;
                 }
-                std::cout<<"offsets:";
-                for (unsigned long i(0); i< temp_offset_list.size() ; ++i)
-                {
-                    std::cout<<temp_offset_list[i]<<" ";
-                }
-                std::cout<<std::endl;
             }
     };
 }

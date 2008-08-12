@@ -73,11 +73,11 @@ class GridPartitionerTest :
             grid.v = new DenseMatrix<DataType_>(dummy.copy());
             grid.obstacles = new DenseMatrix<bool>(obst);
 
-            std::list<PackedGridInfo<D2Q9> > info_list;
-            std::list<PackedGridData<D2Q9, DataType_> > data_list;
+            std::vector<PackedGridInfo<D2Q9> > info_list;
+            std::vector<PackedGridData<D2Q9, DataType_> > data_list;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
-            GridPartitioner<D2Q9, DataType_>::partition(2, info, data, info_list, data_list);
+            GridPartitioner<D2Q9, DataType_>::partition(10, info, data, info_list, data_list);
 
             TEST_CHECK(true);
         }
