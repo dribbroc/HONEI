@@ -52,6 +52,7 @@ namespace honei
             static void partition(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::list<PackedGridInfo<D2Q9> > & info_list, std::list<PackedGridData<D2Q9, DT_> > & data_list)
             {
+                CONTEXT("When creating grid partitions:");
                 std::vector<unsigned long> temp_limits;
                 std::vector<unsigned long> temp_types;
                 std::vector<unsigned long> temp_dir_0;
@@ -173,6 +174,7 @@ namespace honei
                 std::vector<std::vector<unsigned long> > temp_dir_6_list;
                 std::vector<std::vector<unsigned long> > temp_dir_7_list;
                 std::vector<std::vector<unsigned long> > temp_dir_8_list;
+                std::vector<unsigned long> temp_offset_list;
 
                 for (unsigned long i(0) ; i < barriers.size() - 1; ++i)
                 {
@@ -212,9 +214,41 @@ namespace honei
                     temp_dir_6_list.push_back(new_dir_6);
                     temp_dir_7_list.push_back(new_dir_7);
                     temp_dir_8_list.push_back(new_dir_8);
+                    temp_offset_list.push_back(new_limits[0]);
                 }
 
-                /*std::cout<<std::endl;
+                for (unsigned long i(0) ; i < temp_limits_list.size() ; ++i)
+                {
+                    PackedGridInfo<D2Q9> new_info;
+                    new_info.limits = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.types = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_0 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_1 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_2 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_3 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_4 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_5 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_6 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_7 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_8 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    for (unsigned long j(0) ; j < temp_limits_list[i].size() ; ++j)
+                    {
+                        (*new_info.limits)[j] = temp_limits_list[i][j];
+                        (*new_info.types)[j] = temp_types_list[i][j];
+                        (*new_info.dir_0)[j] = temp_dir_0_list[i][j];
+                        (*new_info.dir_1)[j] = temp_dir_1_list[i][j];
+                        (*new_info.dir_2)[j] = temp_dir_2_list[i][j];
+                        (*new_info.dir_3)[j] = temp_dir_3_list[i][j];
+                        (*new_info.dir_4)[j] = temp_dir_4_list[i][j];
+                        (*new_info.dir_5)[j] = temp_dir_5_list[i][j];
+                        (*new_info.dir_6)[j] = temp_dir_6_list[i][j];
+                        (*new_info.dir_7)[j] = temp_dir_7_list[i][j];
+                        (*new_info.dir_8)[j] = temp_dir_8_list[i][j];
+                    }
+                    info_list.push_back(new_info);
+                }
+
+                std::cout<<std::endl;
                 for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_limits[i]<<" ";
@@ -249,7 +283,13 @@ namespace honei
                         std::cout<<temp_types_list[i][j]<<" ";
                     }
                     std::cout<<std::endl;
-                }*/
+                }
+                std::cout<<"offsets:";
+                for (unsigned long i(0); i< temp_offset_list.size() ; ++i)
+                {
+                    std::cout<<temp_offset_list[i]<<" ";
+                }
+                std::cout<<std::endl;
             }
     };
 }
