@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General

@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -76,7 +77,6 @@ namespace honei
 
                 for (unsigned long i((*info.limits)[begin]), offset(0) ; i != (*info.limits)[begin + 1] ; ++i, ++offset)
                 {
-
                     (*data.f_temp_0)[(*info.dir_0)[begin] + offset] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
                     (*data.f_temp_1)[(*info.dir_1)[begin] + offset] = (*data.f_1)[i] - ((*data.f_1)[i] - (*data.f_eq_1)[i])/tau + DT1_(1./6.)
                         * ((*data.distribution_x)[1] * s_x[i] + (*data.distribution_y)[1] * s_y[i]);

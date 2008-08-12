@@ -79,6 +79,7 @@ namespace honei
     {
         public:
             PackedGridInfo():
+                offset(0),
                 limits(0),
                 types(0),
                 dir_0(0),
@@ -108,7 +109,9 @@ namespace honei
                 delete dir_8;*/
             }
 
+            unsigned long offset;
             DenseVector<unsigned long> * limits;
+            /// \todo Use std::bitset instead of unsigned long for types?
             DenseVector<unsigned long> * types;
             DenseVector<unsigned long> * dir_0;
             DenseVector<unsigned long> * dir_1;

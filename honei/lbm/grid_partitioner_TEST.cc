@@ -17,6 +17,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include <honei/lbm/grid_partitioner.hh>
 #include <honei/lbm/grid_packer.hh>
 #include <unittest/unittest.hh>
 #include <iostream>
@@ -28,12 +29,12 @@ using namespace lbm;
 using namespace lbm_lattice_types;
 
 template <typename Tag_, typename DataType_>
-class GridPackerTest :
+class GridPartitionerTest :
     public TaggedTest<Tag_>
 {
     public:
-        GridPackerTest(const std::string & type) :
-            TaggedTest<Tag_>("grid_packer_quick_test<" + type + ">")
+        GridPartitionerTest(const std::string & type) :
+            TaggedTest<Tag_>("grid_partitioner_quick_test<" + type + ">")
         {
         }
 
@@ -72,29 +73,15 @@ class GridPackerTest :
             grid.v = new DenseMatrix<DataType_>(dummy.copy());
             grid.obstacles = new DenseMatrix<bool>(obst);
 
+            std::list<PackedGridInfo<D2Q9> > info_list;
+            std::list<PackedGridData<D2Q9, DataType_> > data_list;
+
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
-
-            for (unsigned long i(0) ; i < info.limits->size() ; ++i)
-            {
-                std::cout << (*info.limits)[i] << " " << (*info.types)[i] << std::endl;
-            }
-            unsigned long observe(19);
-            std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
-            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
-            ++observe;
-            std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
-            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
-            ++observe;
-            std::cout<<(*info.dir_0)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
-            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
-
-
-            GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::unpack(grid, info, data);
-            std::cout << *grid.h << std::endl;
+            GridPartitioner<D2Q9, DataType_>::partition(2, info, data, info_list, data_list);
 
             TEST_CHECK(true);
         }
 };
 
-GridPackerTest<tags::CPU, float> gptest_float("float");
+GridPartitionerTest<tags::CPU, float> gptest_float("float");
 
