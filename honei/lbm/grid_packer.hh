@@ -200,9 +200,9 @@ namespace honei
                 // DIR_3 DIR_2 DIR_4
                 if (i == 0)
                 {
-                    dir_3.push_back(0);
-                    dir_2.push_back(0);
-                    dir_4.push_back(0);
+                    dir_3.push_back(packed_index);
+                    dir_2.push_back(packed_index);
+                    dir_4.push_back(packed_index);
                 }
                 else
                 {
@@ -363,15 +363,15 @@ namespace honei
                 }
                 temp_limits.push_back(packed_index);
                 temp_types.push_back(0);
-                dir_0.push_back(0);
-                dir_1.push_back(0);
-                dir_2.push_back(0);
-                dir_3.push_back(0);
-                dir_4.push_back(0);
-                dir_5.push_back(0);
-                dir_6.push_back(0);
-                dir_7.push_back(0);
-                dir_8.push_back(0);
+                dir_0.push_back(packed_index - 1);
+                dir_1.push_back(packed_index - 1);
+                dir_2.push_back(packed_index - 1);
+                dir_3.push_back(packed_index - 1);
+                dir_4.push_back(packed_index - 1);
+                dir_5.push_back(packed_index - 1);
+                dir_6.push_back(packed_index - 1);
+                dir_7.push_back(packed_index - 1);
+                dir_8.push_back(packed_index - 1);
 
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
                 info.types = new DenseVector<unsigned long>(temp_limits.size());
