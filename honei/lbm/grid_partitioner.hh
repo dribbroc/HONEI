@@ -110,9 +110,12 @@ namespace honei
                     std::cout<<"end: "<<end<<" "<<*end_index<<std::endl;
                     if (*end_index != end)
                     {
+                        std::vector<unsigned long>::iterator one_before(end_index);
+                        --one_before;
                         // Insert dummy nodes
                         temp_limits.insert(end_index, end);
 
+                        unsigned long one_before_offset(end - *one_before);
                         unsigned long i(0);
                         std::vector<unsigned long>::iterator it_types(temp_types.begin());
                         std::vector<unsigned long>::iterator it_dir_0(temp_dir_0.begin());
@@ -140,15 +143,15 @@ namespace honei
                         }
                         barriers.push_back(i);
                         temp_types.insert(it_types, *(--it_types));
-                        temp_dir_0.insert(it_dir_0, *(--it_dir_0));
-                        temp_dir_1.insert(it_dir_1, *(--it_dir_1));
-                        temp_dir_2.insert(it_dir_2, *(--it_dir_2));
-                        temp_dir_3.insert(it_dir_3, *(--it_dir_3));
-                        temp_dir_4.insert(it_dir_4, *(--it_dir_4));
-                        temp_dir_5.insert(it_dir_5, *(--it_dir_5));
-                        temp_dir_6.insert(it_dir_6, *(--it_dir_6));
-                        temp_dir_7.insert(it_dir_7, *(--it_dir_7));
-                        temp_dir_8.insert(it_dir_8, *(--it_dir_8));
+                        temp_dir_0.insert(++it_dir_0, *(--it_dir_0) + one_before_offset);
+                        temp_dir_1.insert(++it_dir_1, *(--it_dir_1) + one_before_offset);
+                        temp_dir_2.insert(++it_dir_2, *(--it_dir_2) + one_before_offset);
+                        temp_dir_3.insert(++it_dir_3, *(--it_dir_3) + one_before_offset);
+                        temp_dir_4.insert(++it_dir_4, *(--it_dir_4) + one_before_offset);
+                        temp_dir_5.insert(++it_dir_5, *(--it_dir_5) + one_before_offset);
+                        temp_dir_6.insert(++it_dir_6, *(--it_dir_6) + one_before_offset);
+                        temp_dir_7.insert(++it_dir_7, *(--it_dir_7) + one_before_offset);
+                        temp_dir_8.insert(++it_dir_8, *(--it_dir_8) + one_before_offset);
                     }
                     else
                     {
@@ -332,7 +335,7 @@ namespace honei
                 std::cout<<std::endl;
                 for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
-                    std::cout<<temp_dir_0[i]<<" ";
+                    std::cout<<temp_dir_4[i]<<" ";
                 }
                 std::cout<<std::endl;
                 /*for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
