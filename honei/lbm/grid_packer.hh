@@ -443,6 +443,29 @@ namespace honei
                     }
                 }
             }
+
+            static DenseMatrix<DT_> extract_ftemp2(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            {
+                unsigned long packed_index(0);
+                DenseMatrix<DT_> result(grid.obstacles->rows(), grid.obstacles->columns());
+
+                for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
+                {
+                    for(unsigned long j(0); j < grid.obstacles->columns(); ++j)
+                    {
+                        if((*grid.obstacles)(i, j))
+                        {
+                            result(i, j) = DT_(0);
+                        }
+                        else
+                        {
+                            result(i, j) = (*data.f_temp_2)[packed_index];
+                            ++packed_index;
+                        }
+                    }
+                }
+                return result;
+            }
     };
 }
 

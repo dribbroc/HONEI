@@ -92,6 +92,8 @@ class GridPackerTest :
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::unpack(grid, info, data);
             std::cout << *grid.h << std::endl;
 
+            std::cout << GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::extract_ftemp2(grid, info, data) << std::endl;
+
             TEST_CHECK(true);
         }
 };
