@@ -123,7 +123,6 @@ class SolverLABSWETest :
         }
 
 };
-
 SolverLABSWETest<tags::CPU, float> solver_test_float("float");
 SolverLABSWETest<tags::CPU, double> solver_test_double("double");
 SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
@@ -141,7 +140,6 @@ SolverLABSWETest<tags::Cell, double> solver_test_double_cell("double");
 #ifdef HONEI_CUDA
 SolverLABSWETest<tags::GPU::CUDA, float> solver_test_float_cuda("float");
 #endif
-
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest :
     public TaggedTest<Tag_>
@@ -453,7 +451,6 @@ class SolverLABSWEMassConservationTest :
         }
 
 };
-
 SolverLABSWEMassConservationTest<tags::CPU, double> solver_mass_cons_test_double("mass conservation, double");
 SolverLABSWEMassConservationTest<tags::CPU, float> solver_mass_cons_test_float("mass conservation, float");
 #ifdef HONEI_SSE
@@ -467,3 +464,100 @@ SolverLABSWEMassConservationTest<tags::Cell, float> solver_mass_cons_test_float_
 #ifdef HONEI_CUDA
 SolverLABSWEMassConservationTest<tags::GPU::CUDA, float> solver_mass_cons_test_float_cuda("mass conservation, float");
 #endif
+template <typename Tag_, typename DataType_>
+class SolverLABSWENOSLIPTest :
+    public TaggedTest<Tag_>
+{
+    public:
+        SolverLABSWENOSLIPTest(const std::string & type) :
+            TaggedTest<Tag_>("solver_labswenoslip_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long g_h(50);
+            unsigned long g_w(50);
+            unsigned long timesteps(1);
+
+            DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+            Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
+            c1.value();
+
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+
+            //All needed distribution functions:
+
+            DenseMatrix<DataType_> d_0(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_1(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_2(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_3(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_4(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_5(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_6(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_7(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_8(g_h, g_w, DataType_(0.));
+
+            DenseMatrix<DataType_> e_d_0(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_1(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_2(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_3(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_4(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_5(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_6(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_7(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> e_d_8(g_h, g_w, DataType_(0.));
+
+            DenseMatrix<DataType_> t_d_0(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_1(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_2(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_3(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_4(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_5(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_6(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_7(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> t_d_8(g_h, g_w, DataType_(0.));
+
+            //All needed vectors:
+            DenseVector<DataType_> v_x(9, DataType_(0));
+            DenseVector<DataType_> v_y(9, DataType_(0));
+
+            //Other matrices needed by solver:
+
+            DenseMatrix<DataType_> s_x(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> s_y(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_x(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> d_y(g_h, g_w, DataType_(0.));
+
+            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
+
+            solver.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
+            solver.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);
+            solver.set_temp_distribution(&t_d_0, &t_d_1, &t_d_2, &t_d_3, &t_d_4, &t_d_5, &t_d_6, &t_d_7, &t_d_8);
+            solver.set_vectors(&v_x, &v_y);
+            solver.set_source(&s_x, &s_y);
+            solver.set_slopes(&d_x, &d_y);
+            solver.do_preprocessing();
+
+            for(unsigned long i(0); i < timesteps; ++i)
+            {
+#ifdef SOLVER_VERBOSE
+                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+#endif
+                solver.solve();
+#ifdef SOLVER_POSTPROCESSING
+                PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
+#endif
+            }
+#ifdef SOLVER_VERBOSE
+            std::cout << h << std::endl;
+#endif
+            TEST_CHECK(true);
+        }
+
+};
+SolverLABSWENOSLIPTest<tags::CPU, float> solver_noslip_test_float("float");
+SolverLABSWENOSLIPTest<tags::CPU, double> solver_noslip_test_double("double");
+
