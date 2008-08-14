@@ -20,10 +20,12 @@
 #include <unittest/unittest.hh>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/collide_stream_grid.hh>
-
+#include <honei/lbm/grid_packer.hh>
 using namespace honei;
 using namespace tests;
 using namespace std;
+using namespace lbm;
+using namespace lbm_boundary_types;
 
 template <typename Tag_, typename DataType_>
 class CollideStreamGridLABSWETest :
@@ -37,91 +39,70 @@ class CollideStreamGridLABSWETest :
 
         virtual void run() const
         {
-            PackedGridData<lbm_lattice_types::D2Q9, DataType_> data;
-            PackedGridInfo<lbm_lattice_types::D2Q9> info;
+            unsigned long g_h(50);
+            unsigned long g_w(50);
+
+            DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+
+            DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+
+            Grid<D2Q9, DataType_> grid;
+            DenseMatrix<bool> obstacles(g_h, g_w, false);
+            grid.obstacles = &obstacles;
+            grid.h = &h;
+            grid.u = &u;
+            grid.v = &v;
+            PackedGridData<D2Q9, DataType_>  data;
+            PackedGridInfo<D2Q9> info;
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+
+            //Other matrices needed by solver:
+            /// \todo
+            DenseVector<DataType_> s_x(data.h->size(), DataType_(0.));
+            DenseVector<DataType_> s_y(data.h->size(), DataType_(0.));
+            DenseVector<DataType_> b(data.h->size(), DataType_(0.));
 
             data.distribution_x = new DenseVector<DataType_>(9ul, DataType_(2.));
             data.distribution_y = new DenseVector<DataType_>(9ul, DataType_(2.));
-            DenseVector<DataType_> s_x(1000ul, DataType_(2.));
-            DenseVector<DataType_> s_y(1000ul, DataType_(2.));
-            data.f_eq_0 = new DenseVector<DataType_>(1000);
-            data.f_eq_1 = new DenseVector<DataType_>(1000);
-            data.f_eq_2 = new DenseVector<DataType_>(1000);
-            data.f_eq_3 = new DenseVector<DataType_>(1000);
-            data.f_eq_4 = new DenseVector<DataType_>(1000);
-            data.f_eq_5 = new DenseVector<DataType_>(1000);
-            data.f_eq_6 = new DenseVector<DataType_>(1000);
-            data.f_eq_7 = new DenseVector<DataType_>(1000);
-            data.f_eq_8 = new DenseVector<DataType_>(1000);
-            data.f_0 = new DenseVector<DataType_>(1000);
-            data.f_1 = new DenseVector<DataType_>(1000);
-            data.f_2 = new DenseVector<DataType_>(1000);
-            data.f_3 = new DenseVector<DataType_>(1000);
-            data.f_4 = new DenseVector<DataType_>(1000);
-            data.f_5 = new DenseVector<DataType_>(1000);
-            data.f_6 = new DenseVector<DataType_>(1000);
-            data.f_7 = new DenseVector<DataType_>(1000);
-            data.f_8 = new DenseVector<DataType_>(1000);
-            data.f_temp_0 = new DenseVector<DataType_>(1000);
-            data.f_temp_1 = new DenseVector<DataType_>(1000);
-            data.f_temp_2 = new DenseVector<DataType_>(1000);
-            data.f_temp_3 = new DenseVector<DataType_>(1000);
-            data.f_temp_4 = new DenseVector<DataType_>(1000);
-            data.f_temp_5 = new DenseVector<DataType_>(1000);
-            data.f_temp_6 = new DenseVector<DataType_>(1000);
-            data.f_temp_7 = new DenseVector<DataType_>(1000);
-            data.f_temp_8 = new DenseVector<DataType_>(1000);
             DataType_ tau (1);
-            info.limits = new DenseVector<unsigned long>(3);
-            (*info.limits)[0] = 0;
-            (*info.limits)[1] = 10;
-            (*info.limits)[2] = 1000;
 
-            info.dir_0 = new DenseVector<unsigned long>(3);
-            (*info.dir_0)[0] = 0;
-            (*info.dir_0)[1] = 10;
-            (*info.dir_0)[2] = 100;
-            info.dir_1 = new DenseVector<unsigned long>(3);
-            (*info.dir_1)[0] = 0;
-            (*info.dir_1)[1] = 0;
-            (*info.dir_1)[2] = 0;
-            info.dir_2 = new DenseVector<unsigned long>(3);
-            (*info.dir_2)[0] = 0;
-            (*info.dir_2)[1] = 0;
-            (*info.dir_2)[2] = 0;
-            info.dir_3 = new DenseVector<unsigned long>(3);
-            (*info.dir_3)[0] = 0;
-            (*info.dir_3)[1] = 0;
-            (*info.dir_3)[2] = 0;
-            info.dir_4 = new DenseVector<unsigned long>(3);
-            (*info.dir_4)[0] = 0;
-            (*info.dir_4)[1] = 0;
-            (*info.dir_4)[2] = 0;
-            info.dir_5 = new DenseVector<unsigned long>(3);
-            (*info.dir_5)[0] = 0;
-            (*info.dir_5)[1] = 0;
-            (*info.dir_5)[2] = 0;
-            info.dir_6 = new DenseVector<unsigned long>(3);
-            (*info.dir_6)[0] = 0;
-            (*info.dir_6)[1] = 0;
-            (*info.dir_6)[2] = 0;
-            info.dir_7 = new DenseVector<unsigned long>(3);
-            (*info.dir_7)[0] = 0;
-            (*info.dir_7)[1] = 0;
-            (*info.dir_7)[2] = 0;
-            info.dir_8 = new DenseVector<unsigned long>(3);
-            (*info.dir_8)[0] = 0;
-            (*info.dir_8)[1] = 0;
-            (*info.dir_8)[2] = 0;
+            for(unsigned long i(0); i < data.h->size(); i++)
+            {
+                (*data.f_eq_0)[i] = DataType_(1.234);
+                (*data.f_eq_1)[i] = DataType_(1.234);
+                (*data.f_eq_2)[i] = DataType_(1.234);
+                (*data.f_eq_3)[i] = DataType_(1.234);
+                (*data.f_eq_4)[i] = DataType_(1.234);
+                (*data.f_eq_5)[i] = DataType_(1.234);
+                (*data.f_eq_6)[i] = DataType_(1.234);
+                (*data.f_eq_7)[i] = DataType_(1.234);
+                (*data.f_eq_8)[i] = DataType_(1.234);
+                (*data.f_0)[i] = DataType_(2.234);
+                (*data.f_1)[i] = DataType_(2.234);
+                (*data.f_2)[i] = DataType_(11.234);
+                (*data.f_3)[i] = DataType_(2.234);
+                (*data.f_4)[i] = DataType_(2.234);
+                (*data.f_5)[i] = DataType_(2.234);
+                (*data.f_6)[i] = DataType_(2.234);
+                (*data.f_7)[i] = DataType_(2.234);
+                (*data.f_8)[i] = DataType_(2.234);
 
+            }
             CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, s_x, s_y, tau);
             TEST_CHECK(true);
+
+            //std::cout<<GridPacker<D2Q9, NOSLIP, DataType_>::extract_ftemp2(grid, info, data)<<std::endl;
+            //std::cout<<*info.limits<<std::endl;
+            //std::cout<<*info.dir_2<<std::endl;
+
         }
 };
-CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
+//CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
 CollideStreamGridLABSWETest<tags::CPU, double> collidestream_grid_test_double("double");
-CollideStreamGridLABSWETest<tags::CPU::MultiCore, float> collidestream_grid_test_float_mc("float");
+/*CollideStreamGridLABSWETest<tags::CPU::MultiCore, float> collidestream_grid_test_float_mc("float");
 CollideStreamGridLABSWETest<tags::CPU::MultiCore, double> collidestream_grid_test_double_mc("double");
 #ifdef HONEI_SSE
 CollideStreamGridLABSWETest<tags::CPU::SSE, float> collidestream_grid_test_float_sse("float");
@@ -133,3 +114,4 @@ CollideStreamGridLABSWETest<tags::CPU::MultiCore::SSE, double> collidestream_gri
 CollideStreamGridLABSWETest<tags::Cell, float> collidestream_grid_test_float_cell("float");
 CollideStreamGridLABSWETest<tags::Cell, double> collidestream_grid_test_double_cell("double");
 #endif
+*/

@@ -26,8 +26,7 @@
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
 
-//#define SOLVER_VERBOSE
-//
+
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -51,8 +50,8 @@ class SolverLABSWEGridTest :
             unsigned long timesteps(100);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
-            //Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
-            //c1.value();
+            Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
+            c1.value();
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
@@ -91,12 +90,11 @@ class SolverLABSWEGridTest :
             }
 #ifdef SOLVER_VERBOSE
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-            std::cout << h << std::endl;
+            std::cout << *grid.h << std::endl;
 #endif
             TEST_CHECK(true);
         }
 
 };
 
-SolverLABSWEGridTest<tags::CPU, float> solver_test_float("float");
 SolverLABSWEGridTest<tags::CPU, double> solver_test_double("double");

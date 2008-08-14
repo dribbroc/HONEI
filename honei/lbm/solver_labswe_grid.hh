@@ -29,7 +29,7 @@
  * \ingroup grpliblbm
  **/
 
-//#define SOLVER_POSTPROCESSING 1
+//#define SOLVER_VERBOSE
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
@@ -43,7 +43,7 @@
 #include <honei/lbm/source_grid.hh>
 #include <honei/lbm/update_velocity_directions_grid.hh>
 #include <cmath>
-#include <grid.hh>
+#include <honei/lbm/grid.hh>
 
 using namespace honei::lbm;
 using namespace honei::lbm::lbm_boundary_types;
@@ -433,9 +433,6 @@ namespace honei
                     *_distribution_8 = *_eq_distribution_8;
 
 #ifdef SOLVER_VERBOSE
-                    std::cout << "feq after preprocessing (1) " << std::endl;
-                    std::cout << *_eq_distribution_1;
-
                     std::cout << "h after preprocessing:" << std::endl;
                     std::cout << *_height << std::endl;
 #endif
@@ -471,6 +468,7 @@ namespace honei
                     ///Boundary correction:
                     UpdateVelocityDirectionsGrid<D2Q9, NOSLIP>::
                         value(*data, *info);
+
 
                     ///Compute physical quantities:
                     _extract();
