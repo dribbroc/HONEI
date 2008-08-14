@@ -31,7 +31,7 @@
  **/
 
 #include <honei/lbm/tags.hh>
-#include <grid.hh>
+#include <honei/lbm/grid.hh>
 #include <honei/la/dense_vector.hh>
 #include <cmath>
 using namespace honei::lbm;

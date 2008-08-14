@@ -35,7 +35,7 @@ BACKEND_LIBS += \
 
 endif
 
-bin_PROGRAMS = honei-lbm
+bin_PROGRAMS = honei-lbm honei-lbm-grid
 honei_lbmdir = $(top_srcdir)/clients/lbm
 honei_lbm_HEADERS = scenario_controller.hh
 honei_lbm_SOURCES = honei_lbm.cc
@@ -43,6 +43,20 @@ honei_lbm_LDADD = \
 	$(top_srcdir)/honei/util/libhoneiutil.la \
 	$(top_srcdir)/honei/la/libhoneila.la \
 	$(top_srcdir)/honei/swe/libhoneiswe.la \
+	$(top_srcdir)/honei/lbm/libhoneilbm.la \
+	$(BACKEND_LIBS) \
+	-lGL \
+	-lglut \
+	-lGLU
+
+honei_lbm_griddir = $(top_srcdir)/clients/lbm
+honei_lbm_grid_HEADERS = scenario_controller_grid.hh
+honei_lbm_grid_SOURCES = honei_lbm_grid.cc
+honei_lbm_grid_LDADD = \
+	$(top_srcdir)/honei/util/libhoneiutil.la \
+	$(top_srcdir)/honei/la/libhoneila.la \
+	$(top_srcdir)/honei/swe/libhoneiswe.la \
+	$(top_srcdir)/honei/lbm/libhoneilbm.la \
 	$(BACKEND_LIBS) \
 	-lGL \
 	-lglut \
