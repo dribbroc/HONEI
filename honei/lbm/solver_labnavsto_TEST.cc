@@ -47,9 +47,9 @@ class SolverLABNAVSTODrivenCavityTest :
             DataType_ p_d_t(1.);
             DataType_ p_d_x(1.);
             DataType_ p_d_y(1.);
-            DataType_ veloc(1.);
-            DataType_ tau(1.5);
-            unsigned long timesteps(140);
+            DataType_ veloc(0.013);
+            DataType_ tau(1.0022);
+            unsigned long timesteps(1000);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
