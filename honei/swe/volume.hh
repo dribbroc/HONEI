@@ -265,7 +265,7 @@ namespace honei
                 this->value(*_height, _l, _w, _h, _grid_x, _grid_y);
             }
 
-            Cuboid(DenseMatrix<DataType_> & height, DataType_ l, DataType_ w, DataType_ h, signed long g_w, signed long g_h)
+            Cuboid(DenseMatrix<DataType_> & height, signed long l, signed long w, DataType_ h, signed long g_w, signed long g_h)
             {
                 this->_height = &height;
                 this->_h = h;
@@ -280,12 +280,12 @@ namespace honei
         private:
             DenseMatrix<DataType_> * _height;
             DataType_ _h;
-            DataType_ _w;
-            DataType_ _l;
+            signed long _w;
+            signed long _l;
             signed long _grid_x;
             signed long _grid_y;
 
-            void value(DenseMatrix<DataType_> & height, DataType_ l, DataType_ w, DataType_ h, signed long grid_x, signed long grid_y)
+            void value(DenseMatrix<DataType_> & height, signed long l, signed long w, DataType_ h, signed long grid_x, signed long grid_y)
             {
                 for(signed long i(grid_y); i < grid_y + l; ++i)
                 {
