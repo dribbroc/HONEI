@@ -48,7 +48,7 @@ namespace honei
     template <typename DT_> struct GridPartitioner<D2Q9, DT_>
     {
         public:
-            static void partition(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
+            static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
             {
                 CONTEXT("When creating grid partitions:");
@@ -79,12 +79,12 @@ namespace honei
                     temp_dir_8.push_back((*info.dir_8)[i]);
                 }
 
-                std::cout<<std::endl;
+                /*std::cout<<std::endl;
                 for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_limits[i]<<" ";
                 }
-                std::cout<<std::endl;
+                std::cout<<std::endl;*/
                 /*for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_types[i]<<" ";
@@ -106,8 +106,8 @@ namespace honei
                     end += (i==0 ? first_size : normal_size);
                     std::vector<unsigned long>::iterator start_index(std::lower_bound(temp_limits.begin(), temp_limits.end(), start));
                     std::vector<unsigned long>::iterator end_index(std::lower_bound(temp_limits.begin(), temp_limits.end(), end));
-                    std::cout<<"start: "<<start<<" "<<*start_index<<std::endl;
-                    std::cout<<"end: "<<end<<" "<<*end_index<<std::endl;
+                    //std::cout<<"start: "<<start<<" "<<*start_index<<std::endl;
+                    //std::cout<<"end: "<<end<<" "<<*end_index<<std::endl;
                     if (*end_index != end)
                     {
                         std::vector<unsigned long>::iterator one_before(end_index);
@@ -326,7 +326,7 @@ namespace honei
                     data_list.push_back(new_data);
                 }
 
-                std::cout<<std::endl;
+                /*std::cout<<std::endl;
                 for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_limits[i]<<" ";
@@ -337,13 +337,13 @@ namespace honei
                 {
                     std::cout<<temp_dir_4[i]<<" ";
                 }
-                std::cout<<std::endl;
+                std::cout<<std::endl;*/
                 /*for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
                 {
                     std::cout<<temp_types[i]<<" ";
                 }
                 std::cout<<std::endl;*/
-                std::cout<<"barriers: ";
+                /*std::cout<<"barriers: ";
                 for (unsigned long i(0) ; i < barriers.size() ; ++i)
                 {
                     std::cout<<temp_limits[barriers[i]] <<"("<<barriers[i]<<")"<<" ";
@@ -375,7 +375,7 @@ namespace honei
                         std::cout<<(*info_list[i].limits)[j]<<" ";
                     }
                     std::cout<<std::endl;
-                }
+                }*/
             }
     };
 }

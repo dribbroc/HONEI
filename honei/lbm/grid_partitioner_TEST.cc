@@ -77,7 +77,7 @@ class GridPartitionerTest :
             std::vector<PackedGridData<D2Q9, DataType_> > data_list;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
-            GridPartitioner<D2Q9, DataType_>::partition(10, info, data, info_list, data_list);
+            GridPartitioner<D2Q9, DataType_>::decompose(10, info, data, info_list, data_list);
 
             TEST_CHECK(true);
         }
