@@ -112,7 +112,7 @@ class SolverLABSWEGridPartitionerTest :
         {
             unsigned long g_h(50);
             unsigned long g_w(50);
-            unsigned long timesteps(100);
+            unsigned long timesteps(1);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
@@ -161,11 +161,15 @@ class SolverLABSWEGridPartitionerTest :
 #endif
                 solver_0.solve();
                 solver_1.solve();
+
+                GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
 #ifdef SOLVER_POSTPROCESSING
                 PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
 #endif
             }
 #ifdef SOLVER_VERBOSE
+
+            GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
             std::cout << *grid.h << std::endl;
 #endif

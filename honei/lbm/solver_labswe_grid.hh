@@ -29,7 +29,7 @@
  * \ingroup grpliblbm
  **/
 
-//#define SOLVER_VERBOSE
+#define SOLVER_VERBOSE
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
@@ -446,6 +446,8 @@ namespace honei
                 {
                     ++_time;
 
+                    EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
+                        value(_gravity, _e, *data);
                     ///Compute source terms:
                     /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
                         value(*_source_x, *_height, *_d_bottom_x, _gravity);
@@ -473,8 +475,6 @@ namespace honei
                     ///Compute physical quantities:
                     _extract();
 
-                    EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                        value(_gravity, _e, *data);
                 };
         };
 }

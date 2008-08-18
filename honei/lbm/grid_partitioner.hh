@@ -48,6 +48,164 @@ namespace honei
     template <typename DT_> struct GridPartitioner<D2Q9, DT_>
     {
         public:
+
+            static void compose(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                /*for (unsigned long i(0); i < data_list[0].h->size(); ++i)
+                {
+                    (*data.h)[i] = (*data_list[0].h)[i];
+                }
+                for(unsigned long index(1); index < data_list.size(); ++index)
+                {
+                    for(unsigned long i(0); i < data_list[index].h->size(); ++i)
+                    {
+                        (*data.h)[i + info_list[index].offset] += (*data_list[index].h)[i];
+                    }
+                }*/
+
+                for(unsigned long i(0); i < data.h->size(); ++i)
+                {
+                    unsigned long index(0);
+                    while(info_list[index].offset + data_list[index].h->size() < i)
+                    {
+                        ++index;
+                    }
+                    unsigned long start(index);
+                    while(index < info_list.size () && info_list.at(index).offset < i)
+                    {
+                        ++index;
+                    }
+                    unsigned long end(index);
+                    (*data.h)[i] = (*data_list[start].h)[i - (info_list[start].offset)];
+                }
+            }
+
+            static void synch(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for(unsigned long i(0); i < data.h->size(); ++i)
+                {
+                    unsigned long index(0);
+                    while(info_list[index].offset + data_list[index].h->size() < i)
+                    {
+                        ++index;
+                    }
+                    unsigned long start(index);
+                    while(index < info_list.size () && info_list[index].offset < i)
+                    {
+                        ++index;
+                    }
+                    unsigned long end(index);
+                    DT_ values_h[end - start];
+                    DT_ values_u[end - start];
+                    DT_ values_v[end - start];
+
+                    DT_ values_f_0[end - start];
+                    DT_ values_f_1[end - start];
+                    DT_ values_f_2[end - start];
+                    DT_ values_f_3[end - start];
+                    DT_ values_f_4[end - start];
+                    DT_ values_f_5[end - start];
+                    DT_ values_f_6[end - start];
+                    DT_ values_f_7[end - start];
+                    DT_ values_f_8[end - start];
+                    DT_ values_f_9[end - start];
+
+                    DT_ values_f_eq_0[end - start];
+                    DT_ values_f_eq_1[end - start];
+                    DT_ values_f_eq_2[end - start];
+                    DT_ values_f_eq_3[end - start];
+                    DT_ values_f_eq_4[end - start];
+                    DT_ values_f_eq_5[end - start];
+                    DT_ values_f_eq_6[end - start];
+                    DT_ values_f_eq_7[end - start];
+                    DT_ values_f_eq_8[end - start];
+
+                    for(unsigned long l(start); l < end; ++l)
+                    {
+                        values_h[l] = (*data_list[l].h)[i - (info_list[l].offset)];
+                        values_u[l] = (*data_list[l].u)[i - (info_list[l].offset)];
+                        values_v[l] = (*data_list[l].v)[i - (info_list[l].offset)];
+
+                        values_f_0[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_1[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_2[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_3[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_4[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_5[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_6[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_7[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_8[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+
+                        values_f_eq_0[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_1[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_2[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_3[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_4[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_5[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_6[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_7[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_8[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                    }
+
+                    for(unsigned long k(start); k < end; ++k)
+                    {
+                        (*data_list[k].h)[i - (info_list[k].offset)] = values_h[0];
+                        (*data_list[k].u)[i - (info_list[k].offset)] = values_u[0];
+                        (*data_list[k].v)[i - (info_list[k].offset)] = values_v[0];
+
+                        (*data_list[k].f_0)[i - (info_list[k].offset)] = values_f_0[0];
+                        (*data_list[k].f_1)[i - (info_list[k].offset)] = values_f_1[0];
+                        (*data_list[k].f_2)[i - (info_list[k].offset)] = values_f_2[0];
+                        (*data_list[k].f_3)[i - (info_list[k].offset)] = values_f_3[0];
+                        (*data_list[k].f_4)[i - (info_list[k].offset)] = values_f_4[0];
+                        (*data_list[k].f_5)[i - (info_list[k].offset)] = values_f_5[0];
+                        (*data_list[k].f_6)[i - (info_list[k].offset)] = values_f_6[0];
+                        (*data_list[k].f_7)[i - (info_list[k].offset)] = values_f_7[0];
+                        (*data_list[k].f_8)[i - (info_list[k].offset)] = values_f_8[0];
+
+
+                        (*data_list[k].f_eq_0)[i - (info_list[k].offset)] = values_f_eq_0[0];
+                        (*data_list[k].f_eq_1)[i - (info_list[k].offset)] = values_f_eq_1[0];
+                        (*data_list[k].f_eq_2)[i - (info_list[k].offset)] = values_f_eq_2[0];
+                        (*data_list[k].f_eq_3)[i - (info_list[k].offset)] = values_f_eq_3[0];
+                        (*data_list[k].f_eq_4)[i - (info_list[k].offset)] = values_f_eq_4[0];
+                        (*data_list[k].f_eq_5)[i - (info_list[k].offset)] = values_f_eq_5[0];
+                        (*data_list[k].f_eq_6)[i - (info_list[k].offset)] = values_f_eq_6[0];
+                        (*data_list[k].f_eq_7)[i - (info_list[k].offset)] = values_f_eq_7[0];
+                        (*data_list[k].f_eq_8)[i - (info_list[k].offset)] = values_f_eq_8[0];
+
+                        for(unsigned long j(1); j < end - start; ++j)
+                        {
+                            (*data_list[k].h)[i - (info_list[k].offset)] += values_h[j];
+                            (*data_list[k].u)[i - (info_list[k].offset)] += values_u[j];
+                            (*data_list[k].v)[i - (info_list[k].offset)] += values_v[j];
+
+                            (*data_list[k].f_0)[i - (info_list[k].offset)] += values_f_0[j];
+                            (*data_list[k].f_1)[i - (info_list[k].offset)] += values_f_1[j];
+                            (*data_list[k].f_2)[i - (info_list[k].offset)] += values_f_2[j];
+                            (*data_list[k].f_3)[i - (info_list[k].offset)] += values_f_3[j];
+                            (*data_list[k].f_4)[i - (info_list[k].offset)] += values_f_4[j];
+                            (*data_list[k].f_5)[i - (info_list[k].offset)] += values_f_5[j];
+                            (*data_list[k].f_6)[i - (info_list[k].offset)] += values_f_6[j];
+                            (*data_list[k].f_7)[i - (info_list[k].offset)] += values_f_7[j];
+                            (*data_list[k].f_8)[i - (info_list[k].offset)] += values_f_8[j];
+
+                            (*data_list[k].f_eq_0)[i - (info_list[k].offset)] += values_f_eq_0[j];
+                            (*data_list[k].f_eq_1)[i - (info_list[k].offset)] += values_f_eq_1[j];
+                            (*data_list[k].f_eq_2)[i - (info_list[k].offset)] += values_f_eq_2[j];
+                            (*data_list[k].f_eq_3)[i - (info_list[k].offset)] += values_f_eq_3[j];
+                            (*data_list[k].f_eq_4)[i - (info_list[k].offset)] += values_f_eq_4[j];
+                            (*data_list[k].f_eq_5)[i - (info_list[k].offset)] += values_f_eq_5[j];
+                            (*data_list[k].f_eq_6)[i - (info_list[k].offset)] += values_f_eq_6[j];
+                            (*data_list[k].f_eq_7)[i - (info_list[k].offset)] += values_f_eq_7[j];
+                            (*data_list[k].f_eq_8)[i - (info_list[k].offset)] += values_f_eq_8[j];
+                        }
+                    }
+                }
+            }
+
             static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
             {
