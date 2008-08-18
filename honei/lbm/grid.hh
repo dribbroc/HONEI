@@ -62,12 +62,17 @@ namespace honei
                 v(0)
             {
             }
-            ~Grid()
+            void destroy()
             {
-                /*delete obstacles;
+                delete obstacles;
                 delete h;
                 delete u;
-                delete v;*/
+                delete v;
+
+                obstacles = 0;
+                h = 0;
+                u = 0;
+                v = 0;
             }
             DenseMatrix<bool> * obstacles;
             DenseMatrix<DT_> * h;
@@ -94,9 +99,9 @@ namespace honei
             {
             }
 
-            ~PackedGridInfo()
+            void destroy()
             {
-                /*delete limits;
+                delete limits;
                 delete types;
                 delete dir_0;
                 delete dir_1;
@@ -106,7 +111,19 @@ namespace honei
                 delete dir_5;
                 delete dir_6;
                 delete dir_7;
-                delete dir_8;*/
+                delete dir_8;
+
+                limits = 0;
+                types = 0;
+                dir_0 = 0;
+                dir_1 = 0;
+                dir_2 = 0;
+                dir_3 = 0;
+                dir_4 = 0;
+                dir_5 = 0;
+                dir_6 = 0;
+                dir_7 = 0;
+                dir_8 = 0;
             }
 
             unsigned long offset;
@@ -165,9 +182,9 @@ namespace honei
             {
             }
 
-            ~PackedGridData()
+            void destroy()
             {
-                /*delete h;
+                delete h;
                 delete u;
                 delete v;
                 delete f_0;
@@ -199,7 +216,41 @@ namespace honei
                 delete f_temp_8;
 
                 delete distribution_x;
-                delete distribution_y;*/
+                delete distribution_y;
+
+                h = 0;
+                u = 0;
+                v = 0;
+                f_0 = 0;
+                f_1 = 0;
+                f_2 = 0;
+                f_3 = 0;
+                f_4 = 0;
+                f_5 = 0;
+                f_6 = 0;
+                f_7 = 0;
+                f_8 = 0;
+                f_eq_0 = 0;
+                f_eq_1 = 0;
+                f_eq_2 = 0;
+                f_eq_3 = 0;
+                f_eq_4 = 0;
+                f_eq_5 = 0;
+                f_eq_6 = 0;
+                f_eq_7 = 0;
+                f_eq_8 = 0;
+                f_temp_0 = 0;
+                f_temp_1 = 0;
+                f_temp_2 = 0;
+                f_temp_3 = 0;
+                f_temp_4 = 0;
+                f_temp_5 = 0;
+                f_temp_6 = 0;
+                f_temp_7 = 0;
+                f_temp_8 = 0;
+
+                distribution_x = 0;
+                distribution_y = 0;
             }
             DenseVector<DT_> * h;
             DenseVector<DT_> * u;
