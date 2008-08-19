@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007 Nina Harmuth <nina.harmuth@uni-dortmund.de>
  * Copyright (c) 2007 Mathias Kadolsky <mathkad@gmx.de>
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
  *
  * This file is part of the Graph C library. LibGraph is free software;
@@ -452,9 +452,9 @@
                 {
                     // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
                     DataType_ _max_ideal_length(0);
-                    typename MutableMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
-                    typename Matrix<DataType_>::ConstElementIterator g(_weights_of_edges.begin_elements());
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(_repulsive_force_parameter.begin_elements()),
+                    typename DenseMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
+                    typename DenseMatrix<DataType_>::ConstElementIterator g(_weights_of_edges.begin_elements());
+                    for (typename DenseMatrix<DataType_>::ElementIterator e(_repulsive_force_parameter.begin_elements()),
                         e_end(_repulsive_force_parameter.end_elements()); e != e_end ; ++e, ++f, ++g)
                     {
                         DataType_ node_weight(_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]);
@@ -495,9 +495,9 @@
                 {
                     // Calculate parameter matrix for repulsive forces and attractive forces, _repulsive_force_range and _step_width
                     DataType_ _max_ideal_length(0);
-                    typename MutableMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
-                    typename Matrix<DataType_>::ConstElementIterator g(_weights_of_edges.begin_elements());
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(_repulsive_force_parameter.begin_elements()),
+                    typename DenseMatrix<DataType_>::ElementIterator f(_attractive_force_parameter.begin_elements());
+                    typename DenseMatrix<DataType_>::ConstElementIterator g(_weights_of_edges.begin_elements());
+                    for (typename DenseMatrix<DataType_>::ElementIterator e(_repulsive_force_parameter.begin_elements()),
                         e_end(_repulsive_force_parameter.end_elements()); e != e_end ; ++e, ++f, ++g)
                     {
                         DataType_ node_weight(_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]);
@@ -572,7 +572,7 @@
 
                     // Calculate the new _step_width
                     DenseMatrix<DataType_> scaled_forces(_force_direction.rows(), _force_direction.columns(), DataType_(0));
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(scaled_forces.begin_elements()),
+                    for (typename DenseMatrix<DataType_>::ElementIterator e(scaled_forces.begin_elements()),
                         e_end(scaled_forces.end_elements()), k(attractive_forces.begin_elements()); e != e_end ; ++e, ++k)
                     {
                         resulting_forces[e.row()] > 0  ? *e = *k / resulting_forces[e.row()] :
@@ -592,7 +592,7 @@
                     // Calculate the new positions by using scaled forces
                     DataType_ noise(1);
                     DataType_ delta(0);
-                    for (typename MutableMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
+                    for (typename DenseMatrix<DataType_>::ElementIterator e(_coordinates.begin_elements()),
                         e_end(_coordinates.end_elements()), k(scaled_forces.begin_elements()) ; e != e_end ; ++e, ++k)
                     {
                         if ( e.column() == 0 )
@@ -836,7 +836,8 @@
                     {
                         DenseVector<DataType_> _spring_force_of_max_node(_spring_forces[_max_node].copy());
                         Scale<>::value(_spring_force_of_max_node, _step_width[_max_node] / result);
-                        Sum<>::value(_coordinates[_max_node], _spring_force_of_max_node);
+                        typename DenseMatrix<DataType_>::Row row(_coordinates[_max_node]);
+                        Sum<>::value(row, _spring_force_of_max_node);
                     }
 
                     // Calculate statistic values
@@ -889,7 +890,8 @@
                         DataType_ delta(std::min(_step_width[_max_node], result));
                         delta *=noise;
                         Scale<>::value(current_force, delta);
-                        Sum<>::value(_coordinates[_max_node], current_force);
+                        typename DenseMatrix<DataType_>::Row row(_coordinates[_max_node]);
+                        Sum<>::value(row, current_force);
                     }
 
                     // Calculate statistic values

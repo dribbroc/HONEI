@@ -88,8 +88,8 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+            typename DenseMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename DenseMatrix<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l -= *r;
@@ -117,7 +117,7 @@ namespace honei
                      r_end(b.end_non_zero_elements());
             for ( ; r != r_end ; ++r )
             {
-                a[r.row()][r.column()] -= *r;
+                a(r.row(), r.column()) -= *r;
             }
 
             return a;
@@ -344,6 +344,49 @@ namespace honei
          *
          * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
          */
+
+        template <typename DT1_, typename DT2_>
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const ConstVector<DT2_> & b)
+        {
+            CONTEXT("When subtracting DenseVectorBase from DenseVectorBase:");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+            typename ConstVector<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+                    l_end(a.end_elements()) ; l != l_end ; ++l)
+            {
+                *l -= *r;
+                ++r;
+            }
+
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const ConstVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const ConstVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const ConstVector<DT2_> & b)
+        {
+            DenseVectorBase<DT1_> & temp = a;
+            Difference<>::value(temp, b);
+            return a;
+        }
 
         template <typename DT1_, typename DT2_>
         static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
@@ -603,8 +646,6 @@ namespace honei
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
-
-        /// \}
     };
 
     /**

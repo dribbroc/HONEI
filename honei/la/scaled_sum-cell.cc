@@ -192,15 +192,15 @@ namespace honei
         }
 
         // Calculate the first 4 - a_offset % 4 elements on PPU.
-        Matrix<float>::ConstElementIterator j(b.begin_elements());
-        for (MutableMatrix<float>::ElementIterator i(a.begin_elements()),
+        DenseMatrix<float>::ConstElementIterator j(b.begin_elements());
+        for (DenseMatrix<float>::ElementIterator i(a.begin_elements()),
             i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i, ++j)
         {
             *i += *j * c;
         }
 
-        Matrix<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
-        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
+        DenseMatrix<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
+        for (DenseMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
             i_end(a.end_elements()) ; i != i_end ; ++i, ++k)
         {
             *i += *k * c;

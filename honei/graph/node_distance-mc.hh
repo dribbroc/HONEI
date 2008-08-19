@@ -299,13 +299,13 @@ namespace honei
         DenseMatrix<DataType_> & square_dist, DenseMatrix<DataType_> & inv_square_dist,
         const DataType_ repulsive_force_range)
         {
-            if (! edge_weights.square())
+            if (edge_weights.rows() != edge_weights.columns())
                 throw MatrixIsNotSquare(edge_weights.rows(), edge_weights.columns());
 
-            if (! square_dist.square())
+            if (square_dist.rows() != square_dist.columns())
                 throw MatrixIsNotSquare(square_dist.rows(), square_dist.columns());
 
-            if (! inv_square_dist.square())
+            if (inv_square_dist.rows() != square_dist.columns())
                 throw MatrixIsNotSquare(inv_square_dist.rows(), inv_square_dist.columns());
 
             if (edge_weights.rows() != pos_matrix.rows())

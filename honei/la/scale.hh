@@ -62,7 +62,7 @@ namespace honei
         static DenseMatrix<DT2_> & value(DenseMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling DenseMatrix:");
-            for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_elements()),
+            for (typename DenseMatrix<DT2_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= a;

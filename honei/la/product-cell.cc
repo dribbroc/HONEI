@@ -1611,7 +1611,8 @@ namespace honei
 
             for(SparseMatrix<float>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
             {
-                ScaledSum<tags::Cell>::value(result[i.row()], b[i.column()], *i);
+                DenseMatrix<float>::Row row(result[i.row()]);
+                ScaledSum<tags::Cell>::value(row, b[i.column()], *i);
             }
 
             return result;

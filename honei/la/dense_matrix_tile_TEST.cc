@@ -67,10 +67,10 @@ class DenseMatrixTileCopyTest :
             {
                 DenseMatrix<DataType_> dm(size, size, DataType_(0));
                 DenseMatrixTile<DataType_> dmt(dm, size - 3, size - 3, 1, 2);
-                std::tr1::shared_ptr<DenseMatrix<DataType_> > c(new DenseMatrix<DataType_>(dmt.copy()));
+                DenseMatrix<DataType_> c(dmt.copy());
 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(c->begin_elements()),
-                        i_end(c->end_elements()) ; i != i_end ; ++i)
+                for (typename DenseMatrix<DataType_>::ElementIterator i(c.begin_elements()),
+                        i_end(c.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     *i = 1;
@@ -102,7 +102,7 @@ class DenseMatrixTileEqualityTest :
             for (unsigned long size(20) ; size < (1 << 7) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm0(size, size, DataType_(0));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), i_end(dm0.end_elements());
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), i_end(dm0.end_elements());
                         i != i_end; ++i)
                 {
                     *i += i.column() + i.row();
@@ -138,7 +138,7 @@ class DenseMatrixTileLayoutTest :
 
                 DenseMatrix<DataType_> dm(rows, columns);
                 DenseMatrixTile<DataType_> dmt(dm, size - 6, size - 8, 3, 7);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = DataType_(i.index());
@@ -150,36 +150,36 @@ class DenseMatrixTileLayoutTest :
                 TEST_CHECK_EQUAL(dmt.columns(), size - 8);
                 TEST_CHECK_EQUAL(dmt.rows(), size - 6);
 
-                Vector<DataType_> & row1 = dm[0];
-                Vector<DataType_> & col1 = dm.column(0);
+                typename DenseMatrix<DataType_>::ConstRow row1(dm[0]);
+                typename DenseMatrix<DataType_>::ConstColumn col1(dm.column(0));
 
-                DenseVectorRange<DataType_> & dmtrow1(dmt[0]);
-                DenseVectorSlice<DataType_> & dmtcol1(dmt.column(0));
+                DenseVectorRange<DataType_> dmtrow1(dmt[0]);
+                DenseVectorSlice<DataType_> dmtcol1(dmt.column(0));
 
                 TEST_CHECK_EQUAL(row1.size(), columns);
                 TEST_CHECK_EQUAL(col1.size(), rows);
                 TEST_CHECK_EQUAL(dmtrow1.size(), size - 8);
                 TEST_CHECK_EQUAL(dmtcol1.size(), size - 6);
 
-                for (typename Vector<DataType_>::ConstElementIterator i(row1.begin_elements()), i_end(row1.end_elements()) ;
+                for (typename DenseMatrix<DataType_>::ConstRow::ConstElementIterator i(row1.begin_elements()), i_end(row1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, i.index(), std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(col1.begin_elements()), i_end(col1.end_elements()) ;
+                for (typename DenseMatrix<DataType_>::ConstColumn::ConstElementIterator i(col1.begin_elements()), i_end(col1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, i.index() * columns, std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dmtrow1.begin_elements()), i_end(dmtrow1.end_elements());
+                for (typename DenseMatrix<DataType_>::Row::ConstElementIterator i(dmtrow1.begin_elements()), i_end(dmtrow1.end_elements());
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 3 * columns + 7 + i.index(), std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dmtcol1.begin_elements()), i_end(dmtcol1.end_elements());
+                for (typename DenseVectorSlice<DataType_>::ConstElementIterator i(dmtcol1.begin_elements()), i_end(dmtcol1.end_elements());
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, (3 + i.index()) * columns + 7, std::numeric_limits<DataType_>::epsilon());
@@ -214,11 +214,11 @@ class DenseMatrixTileQuickTest :
             TEST_CHECK_EQUAL(dmt.rows(), rows - 1);
             TEST_CHECK_EQUAL(dmt.columns(), columns - 1);
 
-            Vector<DataType_> & row1 = dm[0];
-            Vector<DataType_> & col1 = dm.column(0);
+            typename DenseMatrix<DataType_>::ConstRow row1(dm[0]);
+            typename DenseMatrix<DataType_>::ConstColumn col1(dm.column(0));
 
-            Vector<DataType_> & dmtrow1 = dmt[0];
-            Vector<DataType_> & dmtcol1 = dmt.column(0);
+            DenseVectorRange<DataType_> dmtrow1(dmt[0]);
+            DenseVectorSlice<DataType_> dmtcol1(dmt.column(0));
 
             TEST_CHECK_EQUAL(row1.size(), columns);
             TEST_CHECK_EQUAL(col1.size(), rows);

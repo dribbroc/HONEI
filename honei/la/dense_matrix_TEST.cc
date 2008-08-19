@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -69,20 +69,20 @@ class DenseMatrixCopyTest :
                     dm2(size+1, size, static_cast<DataType_>(1));
                 DenseMatrix<DataType_> c(dm1.copy());
 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(c.begin_elements()),
+                for (typename DenseMatrix<DataType_>::ElementIterator i(c.begin_elements()),
                         i_end(c.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     *i = 1;
                 }
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(dm1.begin_elements()),
+                for (typename DenseMatrix<DataType_>::ConstElementIterator i(dm1.begin_elements()),
                         i_end(dm1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(dm2.begin_elements()),
+                for (typename DenseMatrix<DataType_>::ConstElementIterator i(dm2.begin_elements()),
                         i_end(dm2.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 1, std::numeric_limits<DataType_>::epsilon());
@@ -109,8 +109,9 @@ class DenseMatrixDensifyQuickTest :
                 DenseMatrix<DataType_> dm0(size + 2, size, DataType_(0));
                 SparseMatrix<DataType_> sm0(size + 2, size, size / 8 + 1);
 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), j(sm0.begin_elements()),
-                    i_end(dm0.end_elements()) ; i != i_end ; ++i , ++j)
+                typename MutableMatrix<DataType_>::ElementIterator j(sm0.begin_elements());
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), i_end(dm0.end_elements()) ;
+                        i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 7 == 0)
                     {
@@ -168,7 +169,7 @@ class DenseMatrixLayoutTest :
                 unsigned long columns(size + 1), rows(size);
 
                 DenseMatrix<DataType_> dm(rows, columns);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>(i.index());

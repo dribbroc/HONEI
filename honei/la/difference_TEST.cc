@@ -54,7 +54,7 @@ class BandedMatrixDenseMatrixDifferenceTest :
                 bm1.insert_band(-5,dv1);
                 DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
-                typename MutableMatrix<DT_>::ElementIterator k(dm3.begin_elements());
+                typename DenseMatrix<DT_>::ElementIterator k(dm3.begin_elements());
                 for (typename BandedMatrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                     i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
                 {
@@ -102,7 +102,7 @@ class BandedMatrixDenseMatrixDifferenceQuickTest :
             bm1.insert_band(-5,dv1);
             DenseMatrix<DT_> dm2(size, size, DT_(1)), dm3(size, size, DT_(-1));
 
-            typename MutableMatrix<DT_>::ElementIterator k(dm3.begin_elements());
+            typename DenseMatrix<DT_>::ElementIterator k(dm3.begin_elements());
             for (typename BandedMatrix<DT_>::ConstElementIterator i(bm1.begin_elements()),
                 i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
             {
@@ -430,8 +430,9 @@ class DenseMatrixSparseMatrixDifferenceTest :
                 DenseMatrix<DT_> dm1(size+1, size, DT_(0)),
                         dm3(size+1, size, DT_(0));
                 SparseMatrix<DT_> sm2(size+1, size, size / 7 + 1);
-                for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
-                    i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
+                typename MutableMatrix<DT_>::ElementIterator j(sm2.begin_elements());
+                for (typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
+                    i_end(dm1.end_elements()), k(dm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0)
@@ -483,8 +484,9 @@ class DenseMatrixSparseMatrixDifferenceQuickTest :
             DenseMatrix<DT_> dm1(size+1, size, DT_(0)),
                     dm3(size+1, size, DT_(0));
             SparseMatrix<DT_> sm2(size+1, size, size / 7 + 1);
-            for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
-                i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
+            typename MutableMatrix<DT_>::ElementIterator j(sm2.begin_elements());
+            for (typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
+                i_end(dm1.end_elements()), k(dm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0)

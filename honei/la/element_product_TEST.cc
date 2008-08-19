@@ -735,7 +735,7 @@ class DenseMatrixElementProductTest :
 
                 unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
                 DataType_ sign_1(1), sign_2(1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
                     i_end(dm1.end_elements()), j(dm2.begin_elements()), k(dm3.begin_elements()) ; 
                     i != i_end ; ++i, ++j, ++k)
                 {
@@ -748,7 +748,7 @@ class DenseMatrixElementProductTest :
 
                 ElementProduct<Tag_>::value(dm1, dm2);
                 TEST(dm1.lock(lm_read_only),
-                        for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
+                        for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
                             i_end(dm1.end_elements()),k(dm3.begin_elements()) ; i != i_end ; ++i, ++k)
                         {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
@@ -798,7 +798,7 @@ class DenseMatrixElementProductQuickTest :
             unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
 
             DataType_ sign_1(1), sign_2(1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), 
                 i_end(dm1.end_elements()), j(dm2.begin_elements()), k(dm3.begin_elements()) ; 
                 i != i_end ; ++i, ++j, ++k)
             {

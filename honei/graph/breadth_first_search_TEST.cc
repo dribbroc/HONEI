@@ -175,7 +175,7 @@ class BreadthFirstSearchCliqueTest :
             bool coherent(BreadthFirstSearch<Tag_>::value(distance2, pNW, pEW));
 
             TEST_CHECK(coherent);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(distance2.begin_elements()), e_end(distance2.end_elements()); e != e_end ; ++e)
+            for (typename DenseMatrix<DataType_>::ElementIterator e(distance2.begin_elements()), e_end(distance2.end_elements()); e != e_end ; ++e)
             {
                 if (e.row() != e.column()) 
                 {

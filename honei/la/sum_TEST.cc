@@ -72,14 +72,14 @@ class BandedMatrixDenseMatrixSumTest :
 
                 // randomized content for dense matrices
                 DenseMatrix<DataType_> dm2(size, size), dm3(size, size);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()), j(dm3.begin_elements());
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm2.begin_elements()), i_end(dm2.end_elements()), j(dm3.begin_elements());
                     i != i_end; ++i, ++j)
                 {
                     *i = *j = getRandom();
                 } 
 
                 // calculate reference result
-                typename MutableMatrix<DataType_>::ElementIterator k(dm3.begin_elements());
+                typename DenseMatrix<DataType_>::ElementIterator k(dm3.begin_elements());
                 for (typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
                     i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
                 { 
@@ -121,7 +121,7 @@ class BandedMatrixDenseMatrixSumQuickTest :
             BandedMatrix<DataType_> bm1(size, dv1);
             DenseMatrix<DataType_> dm2(size, size, DataType_(1)), dm3(size, size, DataType_(1));
 
-            typename MutableMatrix<DataType_>::ElementIterator k(dm3.begin_elements());
+            typename DenseMatrix<DataType_>::ElementIterator k(dm3.begin_elements());
             for (typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
                 i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k)
             {
@@ -378,8 +378,9 @@ class DenseMatrixSparseMatrixSumTest :
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
                         dm3(size+1, size, DataType_(0));
                 SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
-                    i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
+                typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
+                    i_end(dm1.end_elements()), k(dm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0)
@@ -431,8 +432,9 @@ class DenseMatrixSparseMatrixSumQuickTest :
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
                     dm3(size+1, size, DataType_(0));
             SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
-                i_end(dm1.end_elements()), j(sm2.begin_elements()), k(dm3.begin_elements()) ;
+            typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
+                i_end(dm1.end_elements()), k(dm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0)
@@ -491,7 +493,7 @@ class DenseMatrixSumTest :
                 DenseMatrix<DataType_> dm4(size + 1, size, DataType_(117));
                 dm2.lock(lm_read_and_write);
 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm4.begin_elements()), i_end(dm4.end_elements()),
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm4.begin_elements()), i_end(dm4.end_elements()),
                         si(dm2.begin_elements()), ri(dm3.begin_elements()) ; i != i_end ; ++i, ++si, ++ri)
                 {
                     *i  = *i + i.row() + i.column();
@@ -698,7 +700,7 @@ class ScalarDenseMatrixSumTest :
                 DenseMatrix<DataType_> dm4(size + 1, size, DataType_(0)),
                                        dm5(size + 1, size, DataType_(0)),
                                        dm6(size + 1, size, DataType_(0));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm3.begin_elements()),
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm3.begin_elements()),
                         i_end(dm3.end_elements()), li(dm4.begin_elements()),
                         mi(dm5.begin_elements()), ni(dm6.begin_elements())
                         ; i != i_end ; ++i, ++li, ++mi, ++ni)
@@ -751,7 +753,7 @@ class ScalarDenseMatrixSumQuickTest :
             Sum<Tag_>::value(dm, DataType_(3));
 
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
                     i_end(dm.end_elements()) ; i != i_end ; ++i)
             {
                 vsum += *i;

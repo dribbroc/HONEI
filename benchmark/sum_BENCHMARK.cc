@@ -2,6 +2,7 @@
 
 #include <benchmark/benchmark.hh>
 #include <honei/la/sum.hh>
+#include <honei/util/configuration.hh>
 #include <honei/util/memory_arbiter.hh>
 
 using namespace std;

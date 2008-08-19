@@ -123,7 +123,7 @@ class DenseMatrixElementIterationTest :
             {
                 DenseMatrix<DataType_> dm(size, size, DataType_(10));
 
-                typename MutableMatrix<DataType_>::ElementIterator e(dm.begin_elements()), e_end(dm.end_elements()) ;
+                typename DenseMatrix<DataType_>::ElementIterator e(dm.begin_elements()), e_end(dm.end_elements()) ;
                 for (unsigned long i(0) ; i < (size * size) ; ++i, ++e)
                 {
                     TEST_CHECK_EQUAL(e.index(), i);
@@ -131,13 +131,13 @@ class DenseMatrixElementIterationTest :
                     *e = 333;
                 }
 
-                for (typename MutableMatrix<DataType_>::ElementIterator me(dm.begin_elements()),
+                for (typename DenseMatrix<DataType_>::ElementIterator me(dm.begin_elements()),
                         me_end(dm.end_elements()) ; me != me_end ; ++me)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*me, 333, std::numeric_limits<DataType_>::epsilon());
                 }
 
-                typename Matrix<DataType_>::ConstElementIterator ce(dm.begin_elements()), ce_end(dm.end_elements()) ;
+                typename DenseMatrix<DataType_>::ConstElementIterator ce(dm.begin_elements()), ce_end(dm.end_elements()) ;
                 for (unsigned long i(0) ; i < (size * size) ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);

@@ -101,7 +101,7 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of DenseMatrix elements:");
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
+            for (typename DenseMatrix<DataType_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (*i == DataType_(0))

@@ -44,7 +44,7 @@ class NodeDistanceQuickTest :
             unsigned long columns(2), rows(3);
             DenseMatrix<DataType_> dm(rows, columns);
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
                     i_end(dm.end_elements()) ; i != i_end ; ++i)
             {
                 *i = i.index();
@@ -131,14 +131,14 @@ class NodeDistanceTest :
             unsigned long columns(2), rows(_nodecount);
             DenseMatrix<DataType_> dm(rows, columns, DataType_(0));
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
                     i_end(dm.end_elements()) ; i != i_end ; ++i)
             {
                 i.index() % 2 == 0 ? *i = i.index() : *i = 0;
             }
 
             DenseMatrix<DataType_> weight_of_edges(_nodecount, _nodecount, DataType_(0));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(weight_of_edges.begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(weight_of_edges.begin_elements()),
                     i_end(weight_of_edges.end_elements()) ; i != i_end ; ++i)
             {
                 i.index()%3 != 0 ? *i = i.index() / 13 : 0;
@@ -150,7 +150,7 @@ class NodeDistanceTest :
 
             DenseMatrix<DataType_> distance = NodeDistance<Tag_>::value(dm);
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(distance.begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(distance.begin_elements()),
                     i_end(distance.end_elements()) ; i != i_end ; ++i)
             {
                 DataType_ value(abs(i.row()-i.column()) * 2);
@@ -160,9 +160,9 @@ class NodeDistanceTest :
 
             NodeDistance<Tag_>::value(dm, weight_of_edges, pSquarDist, pInv_SquarDist, range);
 
-            typename MutableMatrix<DataType_>::ElementIterator j(pSquarDist.begin_elements());
-            typename MutableMatrix<DataType_>::ElementIterator g(weight_of_edges.begin_elements());
-            for (typename MutableMatrix<DataType_>::ElementIterator i(pInv_SquarDist.begin_elements()),
+            typename DenseMatrix<DataType_>::ElementIterator j(pSquarDist.begin_elements());
+            typename DenseMatrix<DataType_>::ElementIterator g(weight_of_edges.begin_elements());
+            for (typename DenseMatrix<DataType_>::ElementIterator i(pInv_SquarDist.begin_elements()),
                     i_end(pInv_SquarDist.end_elements()) ; i != i_end ; ++i, ++j, ++g)
             {
                 DataType_ value(abs(i.row()-i.column()) * 2);

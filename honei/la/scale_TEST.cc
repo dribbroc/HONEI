@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -193,7 +193,7 @@ class DenseMatrixScaleQuickTest :
 
             dm.lock(lm_read_only);
             DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
                     i_end(dm.end_elements()) ; i != i_end ; ++i)
             {
                 vsum += *i;

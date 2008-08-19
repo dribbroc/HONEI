@@ -190,8 +190,8 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        Matrix<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
-        for (MutableMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
+        DenseMatrix<float>::ConstElementIterator k(b.element_at(instruction.transfer_end()));
+        for (DenseMatrix<float>::ElementIterator i(a.element_at(instruction.transfer_end())),
             i_end(a.end_elements()) ; i != i_end ; ++i, ++k)
         {
             *i -= *k;

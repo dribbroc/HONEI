@@ -117,15 +117,15 @@ namespace honei
         {
             unsigned starting_point(ppu_start_row * pos_matrix.rows());
 
-            MutableMatrix<float>::ElementIterator j(result.element_at(starting_point));
-            for(Matrix<float>::ConstElementIterator k(pos_matrix.element_at(ppu_start_row * 2)), k_end(pos_matrix.end_elements()) ; k != k_end ; )
+            DenseMatrix<float>::ElementIterator j(result.element_at(starting_point));
+            for(DenseMatrix<float>::ConstElementIterator k(pos_matrix.element_at(ppu_start_row * 2)), k_end(pos_matrix.end_elements()) ; k != k_end ; )
             {
                 float a_x = *k;
                 ++k;
                 float a_y = *k;
                 ++k;
 
-                for (Matrix<float>::ConstElementIterator i(pos_matrix.begin_elements()), i_end(pos_matrix.end_elements()) ; i != i_end ; )
+                for (DenseMatrix<float>::ConstElementIterator i(pos_matrix.begin_elements()), i_end(pos_matrix.end_elements()) ; i != i_end ; )
                 {
                     float x_temp = a_x - *i;
                     ++i;
@@ -243,19 +243,19 @@ namespace honei
         DenseMatrix<float> tiny_result(ppu_rows, pos_matrix.rows());
 
         unsigned starting_point(ppu_start_row * pos_matrix.rows());
-        MutableMatrix<float>::ElementIterator e(inv_square_dist.element_at(starting_point));
-        MutableMatrix<float>::ElementIterator f(square_dist.element_at(starting_point));
-        Matrix<float>::ConstElementIterator g(edge_weights.element_at(starting_point));
+        DenseMatrix<float>::ElementIterator e(inv_square_dist.element_at(starting_point));
+        DenseMatrix<float>::ElementIterator f(square_dist.element_at(starting_point));
+        DenseMatrix<float>::ConstElementIterator g(edge_weights.element_at(starting_point));
 
-        MutableMatrix<float>::ElementIterator j(tiny_result.begin_elements());
-        for(Matrix<float>::ConstElementIterator k(pos_matrix.element_at(ppu_start_row * 2)), k_end(pos_matrix.end_elements()) ; k != k_end ; )
+        DenseMatrix<float>::ElementIterator j(tiny_result.begin_elements());
+        for(DenseMatrix<float>::ConstElementIterator k(pos_matrix.element_at(ppu_start_row * 2)), k_end(pos_matrix.end_elements()) ; k != k_end ; )
         {
             float a_x = *k;
             ++k;
             float a_y = *k;
             ++k;
 
-            for (Matrix<float>::ConstElementIterator i(pos_matrix.begin_elements()), i_end(pos_matrix.end_elements()) ; i != i_end ; )
+            for (DenseMatrix<float>::ConstElementIterator i(pos_matrix.begin_elements()), i_end(pos_matrix.end_elements()) ; i != i_end ; )
             {
                 float x_temp = a_x - *i;
                 ++i;

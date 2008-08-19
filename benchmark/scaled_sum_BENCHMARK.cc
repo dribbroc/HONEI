@@ -7,6 +7,7 @@
 #endif
 
 #include <honei/la/scaled_sum.hh>
+#include <honei/util/configuration.hh>
 
 
 using namespace std;

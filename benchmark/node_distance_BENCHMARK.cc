@@ -63,7 +63,7 @@ class NodeDistanceBench<Tag_, DataType_, NodeDistanceMethods::ForWeightedKamadaK
         {
             // Create a test scenario
             DenseMatrix<DataType_>  pPos(_nodecount, 2);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pPos.begin_elements()), e_end(pPos.end_elements()); e != e_end ; ++e)
+            for (typename DenseMatrix<DataType_>::ElementIterator e(pPos.begin_elements()), e_end(pPos.end_elements()); e != e_end ; ++e)
             {
                 *e = e.index();
             }
@@ -98,13 +98,13 @@ class NodeDistanceBench<Tag_, DataType_, NodeDistanceMethods::ForWeightedFruchte
         {
             // Create a test scenario
             DenseMatrix<DataType_>  pPos(_nodecount, 2);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pPos.begin_elements()), e_end(pPos.end_elements()); e != e_end ; ++e)
+            for (typename DenseMatrix<DataType_>::ElementIterator e(pPos.begin_elements()), e_end(pPos.end_elements()); e != e_end ; ++e)
             {
                 *e = e.index();
             }
 
             DenseMatrix<DataType_>  pEW(_nodecount, _nodecount, DataType_(0));
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
+            for (typename DenseMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
             {
                 if (e.row() < e.column())
                 {

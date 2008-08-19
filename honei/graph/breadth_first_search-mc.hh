@@ -20,6 +20,7 @@
 #ifndef LIBGRAPH_GUARD_BREADTHFRISTSEARCH_MC_HH
 #define LIBGRAPH_GUARD_BREADTHFRISTSEARCH_MC_HH 1
 
+#include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_matrix_tile.hh>
 #include <honei/util/wrapper.hh>
 #include <honei/util/thread_pool.hh>

@@ -60,7 +60,7 @@
             static void initializeForces(const DenseMatrix<DataType_> & spring_force_parameters, const DenseMatrix<DataType_> & coordinates,
             DenseMatrix<DataType_> & spring_forces, DenseMatrix<DataType_> & node_forces)
             {
-                typename Matrix<DataType_>::ConstElementIterator x(spring_force_parameters.begin_elements());
+                typename DenseMatrix<DataType_>::ConstElementIterator x(spring_force_parameters.begin_elements());
                 long int _size(coordinates.rows() * coordinates.columns());
                 long int _row_number(0);
                 for (int i(0); i < coordinates.rows(); i++)
@@ -69,9 +69,10 @@
                     TypeTraits<DataType_>::copy(coordinates.elements(), position_differences.elements(), coordinates.rows() * coordinates.columns());
                     for (int j(0); j < coordinates.rows(); j++)
                     {
-                        Difference<Tag_>::value(position_differences[j], coordinates[i]);
-                        Scale<Tag_>::value(position_differences[j], * x);
-                        Sum<Tag_>::value(spring_forces[i], position_differences[j]);
+                        typename DenseMatrix<DataType_>::Row pos_row(position_differences[j]), spring_row(spring_forces[i]);
+                        Difference<Tag_>::value(pos_row, coordinates[i]);
+                        Scale<Tag_>::value(pos_row, * x);
+                        Sum<Tag_>::value(spring_row, pos_row);
                         ++x;
                     }
                     TypeTraits<DataType_>::copy(position_differences.elements(), node_forces[_row_number].elements(), _size);
@@ -92,30 +93,32 @@
                 for (int i(0) ; i != coordinates.rows() ; ++i)
                 {
                     // Calculate force parameter vector of node with maximal force(_auxiliary)
-                    Difference<Tag_>::value(node_forces[pos_1], coordinates[_previous_max_node]);
-                    DataType_ _auxiliary(Norm<vnt_l_two, false, Tag_>::value(node_forces[pos_1]));
+                    typename DenseMatrix<DataType_>::Row nf_row(node_forces[pos_1]), spring_row(spring_forces[i]);
+                    Difference<Tag_>::value(nf_row, coordinates[_previous_max_node]);
+                    DataType_ _auxiliary(Norm<vnt_l_two, false, Tag_>::value(nf_row));
                     DataType_ _auxiliary2(_auxiliary * DataType_(2));
                     _auxiliary = _auxiliary + graph_distance[i];
                     (_auxiliary != 0) ? _auxiliary = _auxiliary2 / _auxiliary - DataType_(1): _auxiliary = DataType_(0);
                     // Subtract the node forces of _previous_max_node from the spring_forces
-                    Difference<Tag_>::value(spring_forces[i], node_forces[pos_2]);
+                    Difference<Tag_>::value(spring_row, node_forces[pos_2]);
                     // Calcultae the new force differences(node_forces)
-                    Scale<Tag_>::value(node_forces[pos_1], DataType_(-1) * _auxiliary);
+                    Scale<Tag_>::value(nf_row, DataType_(-1) * _auxiliary);
                     Difference<Tag_>::value(_force_difference_of_max_node, node_forces[pos_1]);
                     // Calculate the _spring_forces = _spring_forces + node_forces
-                    Sum<Tag_>::value(spring_forces[i], node_forces[pos_1]);
+                    Sum<Tag_>::value(spring_row, node_forces[pos_1]);
                     // Calculate the resulting forces, the maximal force and the node with maximal force
                     DataType_ resulting_force(Norm<vnt_l_two, true, Tag_>::value(spring_forces[i]));
                     resulting_force > result ? result = resulting_force, max_node = i : 0;
                     // Write new node_forces back
                     TypeTraits<DataType_>::copy(node_forces[pos_1].elements(), node_forces[pos_2].elements(), coordinates.columns());
-                    Scale<Tag_>::value(node_forces[pos_1], DataType_(-1));
+                    Scale<Tag_>::value(nf_row, DataType_(-1));
                     pos_2 += coordinates.rows();
                     pos_1 ++;
                 }
                 // Calculate the _spring_forces at _previous_max_node = _spring_forces + _force_difference_of_max_node
-                Sum<Tag_>::value(spring_forces[_previous_max_node], _force_difference_of_max_node);
-                DataType_ resulting_force(Norm<vnt_l_two, true, Tag_>::value(spring_forces[_previous_max_node]));
+                typename DenseMatrix<DataType_>::Row spring_row(spring_forces[_previous_max_node]);
+                Sum<Tag_>::value(spring_row, _force_difference_of_max_node);
+                DataType_ resulting_force(Norm<vnt_l_two, true, Tag_>::value(spring_row));
                 // Calculate the resulting forces, the maximal force and the node with maximal force for _previous_max_node
                 resulting_force > result ? result = resulting_force, max_node = _previous_max_node: 0;
             }

@@ -426,7 +426,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
             DenseMatrix<DT1_> result(a.rows(), b.columns());
-            typename MutableMatrix<DT1_>::ElementIterator i(result.begin_elements());
+            typename DenseMatrix<DT1_>::ElementIterator i(result.begin_elements());
 
             for (unsigned int s(0) ; s < a.rows() ; ++s)
             {
@@ -476,7 +476,8 @@ namespace honei
             for( typename Matrix<DT2_>::ConstElementIterator i(b.begin_non_zero_elements()), i_end(b.end_non_zero_elements()) ;
                     i < i_end ; ++i )
             {
-                ScaledSum<>::value(result.column(i.column()), a.column(i.row()), *i);
+                typename DenseMatrix<DT1_>::Column column(result.column(i.column()));
+                ScaledSum<>::value(column, a.column(i.row()), *i);
             }
 
             return result;
@@ -525,7 +526,8 @@ namespace honei
             for( typename Matrix<DT1_>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
                     i < i_end ; ++i )
             {
-                ScaledSum<>::value(result[i.row()], b[i.column()], *i);
+                typename DenseMatrix<DT1_>::Row row(result[i.row()]);
+                ScaledSum<>::value(row, b[i.column()], *i);
             }
 
             return result;
@@ -750,7 +752,8 @@ namespace honei
                         ++c; ++d;
                     }
 
-                    Sum<>::value(result.column(s), temp);
+                    typename DenseMatrix<DT2_>::Column col(result.column(s));
+                    Sum<>::value(col, temp);
                 }
             }
 
@@ -762,7 +765,8 @@ namespace honei
                 for (unsigned int s(0) ; s < b.columns() ; ++s)
                 {
                     DenseVector<DT2_> temp(b.column(s).copy());
-                    Sum<>::value(result.column(s), ElementProduct<>::value(temp, *vi));
+                    typename DenseMatrix<DT2_>::Column col(result.column(s));
+                    Sum<>::value(col, ElementProduct<>::value(temp, *vi));
                 }
             }
 
@@ -789,7 +793,9 @@ namespace honei
                         *x = *c * *d;
                         ++c; ++d;
                     }
-                        Sum<>::value(result.column(s), temp);
+
+                    typename DenseMatrix<DT2_>::Column col(result.column(s));
+                    Sum<>::value(col, temp);
                 }
             }
 
@@ -1132,7 +1138,7 @@ namespace honei
                     }
 
                     //Sum<>::value(presult.column(s), temp);
-                    result = result + Sum<>::get_benchmark_info(presult.column(s), temp);
+                    result = result + Sum<>::get_benchmark_info(temp, presult.column(s));
                 }
             }
 

@@ -24,6 +24,7 @@
 
 #include <honei/la/banded_matrix-fwd.hh>
 #include <honei/la/const_vector-fwd.hh>
+#include <honei/la/dense_matrix-fwd.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 #include <iterator>
@@ -60,7 +61,7 @@ namespace honei
         public PrivateImplementationPattern<ElementIterator<storage::Banded, container::Matrix, DataType_>, Single>
     {
         private:
-            /// Constructor.
+           /// Constructor.
             ElementIterator(const BandedMatrix<DataType_> & matrix, unsigned long index);
 
         public:
@@ -117,6 +118,70 @@ namespace honei
 
     extern template class ElementIterator<storage::Banded, container::Matrix, double>;
 
+    template <typename DataType_> class ElementIterator<storage::Dense, container::Matrix, DataType_> :
+        public PrivateImplementationPattern<ElementIterator<storage::Dense, container::Matrix, DataType_>, Single>
+    {
+        private:
+            /// Constructor.
+            ElementIterator(const DenseMatrix<DataType_> & matrix, unsigned long index);
+
+        public:
+            /// \name Friends of ElementIterator
+            /// \{
+
+            friend class ConstElementIterator<storage::Dense, container::Matrix, DataType_>;
+            friend class DenseMatrix<DataType_>;
+
+            /// \}
+
+            /// Copy-constructor.
+            ElementIterator(const ElementIterator &);
+
+            /// Destructor.
+            ~ElementIterator();
+
+            /// Assignment operator.
+            ElementIterator & operator= (const ElementIterator &);
+
+            /// \name Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            ElementIterator & operator++ ();
+
+            /// In-place-add operator.
+            ElementIterator & operator+= (const unsigned long step);
+
+            /// Dereference operator returning an unassignable reference.
+            DataType_ & operator* () const;
+
+            /// Comparison operator for less-than relations.
+            bool operator< (const ElementIterator & other) const;
+
+            /// Comparison operator for is-equal relations.
+            bool operator== (const ElementIterator & other) const;
+
+            /// Comparison operator for is-unequal relations.
+            bool operator!= (const ElementIterator & other) const;
+
+            /// \}
+
+            /// \name Matrix element iteration interface
+            /// \{
+
+            unsigned long column() const;
+
+            unsigned long index() const;
+
+            unsigned long row() const;
+
+            /// \}
+    };
+
+    extern template class ElementIterator<storage::Dense, container::Matrix, float>;
+
+    extern template class ElementIterator<storage::Dense, container::Matrix, double>;
+
     template <typename DataType_> class ConstElementIterator<storage::Banded, container::Matrix, DataType_> :
         public PrivateImplementationPattern<ConstElementIterator<storage::Banded, container::Matrix, DataType_>, Single>
     {
@@ -138,7 +203,7 @@ namespace honei
             /// Constructor from ElementIterator.
             ConstElementIterator(const ElementIterator<storage::Banded, container::Matrix, DataType_> & other);
 
-             /// Destructor.
+            /// Destructor.
             ~ConstElementIterator();
 
             /// \name Forward iterator interface
@@ -235,6 +300,72 @@ namespace honei
     extern template class ConstElementIterator<storage::Const, container::Vector, float>;
 
     extern template class ConstElementIterator<storage::Const, container::Vector, double>;
+
+    template <typename DataType_> class ConstElementIterator<storage::Dense, container::Matrix, DataType_> :
+        public PrivateImplementationPattern<ConstElementIterator<storage::Dense, container::Matrix, DataType_>, Single>
+    {
+        private:
+            /// Constructor.
+            ConstElementIterator(const DenseMatrix<DataType_> & matrix, unsigned long index);
+
+        public:
+            /// \name Friends of ConstElementIterator
+            /// \{
+
+            friend class DenseMatrix<DataType_>;
+
+            /// \}
+
+            /// Copy-constructor.
+            ConstElementIterator(const ConstElementIterator & other);
+
+            /// Constructor from ElementIterator.
+            ConstElementIterator(const ElementIterator<storage::Dense, container::Matrix, DataType_> & other);
+
+            /// Destructor.
+            ~ConstElementIterator();
+
+            /// Assignment operator.
+            ConstElementIterator & operator= (const ConstElementIterator &);
+
+            /// \name Forward iterator interface
+            /// \{
+
+            /// Preincrement operator.
+            ConstElementIterator & operator++ ();
+
+            /// In-place-add operator.
+            ConstElementIterator & operator+= (const unsigned long step);
+
+            /// Dereference operator returning an unassignable reference.
+            const DataType_ & operator* () const;
+
+            /// Comparison operator for less-than relations.
+            bool operator< (const ConstElementIterator & other) const;
+
+            /// Comparison operator for is-equal relations.
+            bool operator== (const ConstElementIterator & other) const;
+
+            /// Comparison operator for is-unequal relations.
+            bool operator!= (const ConstElementIterator & other) const;
+
+            /// \}
+
+            /// \name Matrix element iteration interface
+            /// \{
+
+            unsigned long column() const;
+
+            unsigned long index() const;
+
+            unsigned long row() const;
+
+            /// \}
+    };
+
+    extern template class ConstElementIterator<storage::Dense, container::Matrix, float>;
+
+    extern template class ConstElementIterator<storage::Dense, container::Matrix, double>;
 
     template <typename DataType_> class Vector;
 

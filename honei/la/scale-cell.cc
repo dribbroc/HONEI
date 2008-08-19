@@ -42,12 +42,12 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (MutableMatrix<float>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        for (DenseMatrix<float>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
             *i *= a;
         }
 
-        for (MutableMatrix<float>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
+        for (DenseMatrix<float>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
         {
             *i *= a;
         }
@@ -70,12 +70,12 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (MutableMatrix<double>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        for (DenseMatrix<double>::ElementIterator i(b.begin_elements()), i_end(b.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
             *i *= a;
         }
 
-        for (MutableMatrix<double>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
+        for (DenseMatrix<double>::ElementIterator i(b.element_at(instruction.transfer_end())), i_end(b.end_elements()) ; i != i_end ; ++i)
         {
             *i *= a;
         }

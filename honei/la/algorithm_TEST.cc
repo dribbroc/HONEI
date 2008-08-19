@@ -18,6 +18,7 @@
  */
 
 #include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/algorithm.hh>
 #include <unittest/unittest.hh>
@@ -40,7 +41,7 @@ class IteratorToDenseVectorCopyTest :
         virtual void run() const
         {
             DenseMatrix<DT_> dm(17, 9);
-            for (typename MutableMatrix<DT_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
+            for (typename DenseMatrix<DT_>::ElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = DT_(i.row() + i.column() * 0.1f);
@@ -49,10 +50,10 @@ class IteratorToDenseVectorCopyTest :
             DenseVectorSlice<DT_> dvs(dm.column(0));
 
             DenseVector<DT_> dv(16);
-            typename Vector<DT_>::ElementIterator begin(++dvs.begin_elements()), end(dvs.end_elements());
+            typename DenseVectorSlice<DT_>::ElementIterator begin(++dvs.begin_elements()), end(dvs.end_elements());
             honei::copy(begin, end, dv);
 
-            for (typename Vector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                     i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, (i.index() + 1), std::numeric_limits<DT_>::epsilon());
@@ -165,11 +166,11 @@ class DenseMatrixConvertTest :
             {
                 DenseMatrix<float> dmf1(size, size + 1), dmf2(size, size + 1), dmfr(size, size + 1);
                 DenseMatrix<double> dmd1(size, size + 1), dmd2(size, size + 1), dmdr(size, size + 1);
-                MutableMatrix<float>::ElementIterator fr(dmfr.begin_elements());
-                MutableMatrix<double>::ElementIterator dr(dmdr.begin_elements());
-                MutableMatrix<float>::ElementIterator f1(dmf1.begin_elements());
-                MutableMatrix<double>::ElementIterator d1(dmd1.begin_elements());
-                for (MutableMatrix<float>::ElementIterator i_end(dmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+                DenseMatrix<float>::ElementIterator fr(dmfr.begin_elements());
+                DenseMatrix<double>::ElementIterator dr(dmdr.begin_elements());
+                DenseMatrix<float>::ElementIterator f1(dmf1.begin_elements());
+                DenseMatrix<double>::ElementIterator d1(dmd1.begin_elements());
+                for (DenseMatrix<float>::ElementIterator i_end(dmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
                 {
                     *fr = float(fr.index()) / 1.1234;
                     *dr = double(fr.index()) / 1.1234;
@@ -179,7 +180,7 @@ class DenseMatrixConvertTest :
                 convert(dmf2, dmd1);
                 convert(dmd2, dmf1);
                 TEST_CHECK_EQUAL(dmf2, dmfr);
-                for (Matrix<double>::ConstElementIterator i(dmd2.begin_elements()), r(dmdr.begin_elements()), i_end(dmd2.end_elements())
+                for (DenseMatrix<double>::ConstElementIterator i(dmd2.begin_elements()), r(dmdr.begin_elements()), i_end(dmd2.end_elements())
                         ; i != i_end ; ++i, ++r)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -206,11 +207,11 @@ class DenseMatrixConvertQuickTest :
             unsigned long size(47);
             DenseMatrix<float> dmf1(size, size + 1), dmf2(size, size + 1), dmfr(size, size + 1);
             DenseMatrix<double> dmd1(size, size + 1), dmd2(size, size + 1), dmdr(size, size + 1);
-            MutableMatrix<float>::ElementIterator fr(dmfr.begin_elements());
-            MutableMatrix<double>::ElementIterator dr(dmdr.begin_elements());
-            MutableMatrix<float>::ElementIterator f1(dmf1.begin_elements());
-            MutableMatrix<double>::ElementIterator d1(dmd1.begin_elements());
-            for (MutableMatrix<float>::ElementIterator i_end(dmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+            DenseMatrix<float>::ElementIterator fr(dmfr.begin_elements());
+            DenseMatrix<double>::ElementIterator dr(dmdr.begin_elements());
+            DenseMatrix<float>::ElementIterator f1(dmf1.begin_elements());
+            DenseMatrix<double>::ElementIterator d1(dmd1.begin_elements());
+            for (DenseMatrix<float>::ElementIterator i_end(dmf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
             {
                 *fr = float(fr.index()) / 1.1234;
                 *dr = double(fr.index()) / 1.1234;
@@ -220,7 +221,7 @@ class DenseMatrixConvertQuickTest :
             convert(dmf2, dmd1);
             convert(dmd2, dmf1);
             TEST_CHECK_EQUAL(dmf2, dmfr);
-            for (Matrix<double>::ConstElementIterator i(dmd2.begin_elements()), r(dmdr.begin_elements()), i_end(dmd2.end_elements())
+            for (DenseMatrix<double>::ConstElementIterator i(dmd2.begin_elements()), r(dmdr.begin_elements()), i_end(dmd2.end_elements())
                     ; i != i_end ; ++i, ++r)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -652,7 +653,7 @@ class DenseMatrixFillQuickTest :
 
             fill(dm, DT_(8.472));
 
-            for (typename Matrix<DT_>::ConstElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ; i != i_end ; ++i)
+            for (typename DenseMatrix<DT_>::ConstElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ; i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(8.472), std::numeric_limits<DT_>::epsilon());
             }

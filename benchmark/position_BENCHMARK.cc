@@ -76,7 +76,7 @@ struct Scenario<DataType_, Scenarios::Clique>
         unsigned long _nodecount(Position.rows());
 
         // create Position
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+        for (typename DenseMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
                     e_end(Position.end_elements());e != e_end ; ++e)
             {
                 e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
@@ -91,7 +91,7 @@ struct Scenario<DataType_, Scenarios::Clique>
         }
 
         // create Edge_Weights
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+        for (typename DenseMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
                     e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
             {
                 if (e.row() != e.column()) *e = 1;
@@ -109,7 +109,7 @@ struct Scenario<DataType_, Scenarios::SquareGrid>
         unsigned long _nodecount_2((unsigned long)sqrt(_nodecount));
 
         // create Position
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+        for (typename DenseMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
                     e_end(Position.end_elements());e != e_end ; ++e)
             {
                 e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
@@ -146,7 +146,7 @@ struct Scenario<DataType_, Scenarios::BinaryTree>
         unsigned long _nodecount(Position.rows());
 
         // create Position
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+        for (typename DenseMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
                     e_end(Position.end_elements());e != e_end ; ++e)
             {
                 e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
@@ -161,7 +161,7 @@ struct Scenario<DataType_, Scenarios::BinaryTree>
         }
 
         // create Edge_Weights
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+        for (typename DenseMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
                     e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
             {
                 if ((e.column() == e.row() * 2 +1) || (e.column() == e.row() * 2 +2)) 

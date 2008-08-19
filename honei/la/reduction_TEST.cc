@@ -127,7 +127,7 @@ class DenseMatrixReductionToSumTest :
             {
                 DenseMatrix<DT_> dm1(size, size);
                 DenseVector<DT_> dv1(size, DT_(0));
-                for(typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
+                for(typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()),
                         i_end(dm1.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index();
@@ -176,7 +176,7 @@ class DenseMatrixReductionQuickTest :
             unsigned long size(5);
             DenseMatrix<DT_> dm1(size, size);
             DenseVector<DT_> dv1(size, DT_(0));
-            for(typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), 
+            for(typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()), 
                     i_end(dm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = i.index();
@@ -628,7 +628,7 @@ class DenseMatrixReductionToMinTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size);
-                for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                for (typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 2 == 0)
@@ -673,7 +673,7 @@ class DenseMatrixReductionToMinQuickTest :
         {
             unsigned long size(23);
             DenseMatrix<DT_> dm1(size, size);
-            for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+            for (typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
                 {
                     if (i.index() % 2 == 0)
@@ -1177,7 +1177,7 @@ class DenseMatrixReductionToMaxTest :
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseMatrix<DT_> dm1(size, size);
-                for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+                for (typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                         i != i_end ; ++i)
             {
                 if (i.index() % 2 == 0)
@@ -1222,7 +1222,7 @@ class DenseMatrixReductionToMaxQuickTest :
         {
             unsigned long size(23);
             DenseMatrix<DT_> dm1(size, size);
-            for (typename MutableMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
+            for (typename DenseMatrix<DT_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 2 == 0)

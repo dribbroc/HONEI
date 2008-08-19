@@ -501,7 +501,7 @@ class DenseMatrixElementInverseTest :
             {
                 DenseMatrix<DataType_> dm1(size, size + 3, DataType_(0)),
                         dm2(size, size + 3, DataType_(0));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+                for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
                         j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 20 == 0)
@@ -528,7 +528,7 @@ class DenseMatrixElementInverseTest :
                 ElementInverse<Tag_>::value(dm1);
 
                 TEST(dm1.lock(lm_read_only),
-                        for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+                        for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
                             j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
                         {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
@@ -571,7 +571,7 @@ class DenseMatrixElementInverseQuickTest :
             unsigned long size(333);
             DenseMatrix<DataType_> dm1(size, size + 3, DataType_(0)),
                     dm2(size, size + 3, DataType_(0));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
                     j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 if (i.index() % 20 == 0)
@@ -599,7 +599,7 @@ class DenseMatrixElementInverseQuickTest :
             ElementInverse<Tag_>::value(dm1);
 
             TEST(dm1.lock(lm_read_only),
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()),
                     j(dm2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());

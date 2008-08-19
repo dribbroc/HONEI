@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2007 Thorsten Deinert <thorsten.deinert@uni-dortmund.de>
  * Copyright (c) 2007 Mathias Kadolsky <mathkad@gmx.de>
@@ -106,7 +106,7 @@ struct Scenario<DataType_, Scenarios::SquareGrid>
         unsigned long _nodecount_2((unsigned long)sqrt(_nodecount));
 
         // create Position
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+        for (typename DenseMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
                     e_end(Position.end_elements());e != e_end ; ++e)
             {
                 e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
@@ -195,7 +195,7 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
             int i(0);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
                 *e = pos[i++]; 
@@ -270,7 +270,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
             // Now, fill that numbers into the real matrices
             std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
             int i(0);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
+            for (typename DenseMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
             {
                 *e = pos[i++];

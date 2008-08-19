@@ -24,6 +24,7 @@
 #include <honei/la/matrix.hh>
 #include <honei/la/dense_vector_range.hh>
 #include <honei/la/dense_vector_slice.hh>
+#include <honei/la/dense_matrix-impl.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
@@ -101,14 +102,14 @@ namespace honei
              */
             DenseMatrixTile(const DenseMatrix<DataType_> & source, const unsigned long rows, const unsigned long columns,
                                 const unsigned long row_offset, const unsigned long column_offset) :
-                _elements(source._elements),
+                _elements(source._imp->elements),
                 _columns(columns),
                 _column_vectors(columns),
                 _rows(rows),
                 _row_vectors(rows),
                 _row_offset(row_offset),
                 _column_offset(column_offset),
-                _source_columns(source._columns)
+                _source_columns(source.columns())
             {
                 CONTEXT("When creating DenseMatrixTile from DenseMatrix:");
                 ASSERT(rows > 0, "number of rows is zero!");
@@ -397,6 +398,50 @@ namespace honei
 
             /// \}
     };
+
+    template <typename DataType_>
+    std::ostream &
+    operator<< (std::ostream & lhs, const DenseMatrixTile<DataType_> & b)
+    {
+        lhs << "[" << std::endl;
+        for (typename DenseMatrixTile<DataType_>::ConstElementIterator i(b.begin_elements()), i_end(b.end_elements()) ;
+                i != i_end ; ++i)
+        {
+            lhs << "  " << *i;
+        }
+        lhs << "]" << std::endl;
+
+        return lhs;
+    }
+
+
+    template <typename DataType_>
+    bool
+    operator== (const DenseMatrixTile<DataType_> & a, const DenseMatrixTile<DataType_> & b)
+    {
+        CONTEXT("When comparing two tiles of dense matrices:");
+
+        bool result(true);
+
+        if (a.columns() != b.columns())
+        {
+            throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+        }
+
+        if (a.rows() != b.rows())
+        {
+            throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+        }
+
+        for (typename DenseMatrixTile<DataType_>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()), j(b.begin_elements()) ;
+                i != i_end ; ++i, ++j)
+        {
+            if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+                return false;
+        }
+
+        return true;
+    }
 }
 
 #endif

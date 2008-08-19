@@ -111,7 +111,7 @@ namespace honei
                 }
                 fs << "    ]\n";
             }
-            for (typename DenseMatrix<DataType_>::ConstElementIterator i(_edges->begin_elements()), end_i(_edges->end_elements());
+            for (typename Matrix<DataType_>::ConstElementIterator i(_edges->begin_elements()), end_i(_edges->end_elements());
                 i != end_i; ++i)
                 if (i.column() > i.row() && *i > 0)
                 {

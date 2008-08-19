@@ -63,7 +63,7 @@ namespace honei
             DenseMatrix<DataType_> result(pos_matrix.rows(), pos_matrix.rows());
 
             // Retrieving an ElementIterator e initialized to the first element in the result matrix
-            typename MutableMatrix<DataType_>::ElementIterator e(result.begin_elements());
+            typename DenseMatrix<DataType_>::ElementIterator e(result.begin_elements());
 
             // Iterate over all nodes (=columns) in the given position matrix
             for (unsigned long i =  0; i < pos_matrix.rows(); ++i)
@@ -115,9 +115,9 @@ namespace honei
                 throw GraphError("Repulsive-Force-Range must be positiv");
 
             // Initialize ElementIterators
-            typename MutableMatrix<DataType_>::ElementIterator e(inv_square_dist.begin_elements());
-            typename MutableMatrix<DataType_>::ElementIterator f(square_dist.begin_elements());
-            typename Matrix<DataType_>::ConstElementIterator g(edge_weights.begin_elements());
+            typename DenseMatrix<DataType_>::ElementIterator e(inv_square_dist.begin_elements());
+            typename DenseMatrix<DataType_>::ElementIterator f(square_dist.begin_elements());
+            typename DenseMatrix<DataType_>::ConstElementIterator g(edge_weights.begin_elements());
             DataType_ square_force_range(repulsive_force_range * repulsive_force_range);
 
             // Iterate over all nodes (=columns) in the given position matrix

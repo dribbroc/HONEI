@@ -162,7 +162,7 @@ namespace honei
                 }
                 else
                 {
-                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
+                    DenseMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
                     unsigned long temp_index(packed_index);
                     while (it.index() != (i + 1) * grid.obstacles->columns() + j)
                     {
@@ -207,7 +207,7 @@ namespace honei
                 else
                 {
                     /// \todo Use Iterator::operator--
-                    MutableMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
+                    DenseMatrix<bool>::ElementIterator it(grid.obstacles->element_at(i * grid.obstacles->columns() + j));
                     unsigned long it_index(it.index());
                     unsigned long temp_index(packed_index);
                     while (it.index() != (i - 1) * grid.obstacles->columns() + j)

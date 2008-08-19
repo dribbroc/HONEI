@@ -7,6 +7,7 @@
 #endif
 
 #include <honei/la/product.hh>
+#include <honei/util/configuration.hh>
 #include <iostream>
 #include <cmath>
 //using namespace std;

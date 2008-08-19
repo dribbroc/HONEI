@@ -171,8 +171,8 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+            typename DenseMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename DenseMatrix<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
@@ -200,7 +200,7 @@ namespace honei
             for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()); l != l_end ; ++l)
             {
-                *l *= b[l.row()][l.column()];
+                *l *= b(l.row(), l.column());
             }
 
             return a; ///\todo: perhaps sparsify, dense_matrix[row][col] may be zero.
@@ -289,7 +289,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            typename DenseMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
             for (typename BandedMatrix<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {

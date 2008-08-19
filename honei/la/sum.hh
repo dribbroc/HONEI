@@ -83,8 +83,8 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+            typename DenseMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename DenseMatrix<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l += *r;
@@ -111,7 +111,7 @@ namespace honei
             for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
             {
-                a[r.row()][r.column()] += *r;
+                a(r.row(), r.column()) += *r;
             }
 
             return a;
@@ -281,7 +281,7 @@ namespace honei
         {
             CONTEXT("When adding scalar to DenseMatrix:");
 
-            for (typename MutableMatrix<DT_>::ElementIterator l(x.begin_elements()),
+            for (typename DenseMatrix<DT_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
                 *l += a;
@@ -474,7 +474,7 @@ namespace honei
         /// \}
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
             result.flops = a.rows() * a.columns();
@@ -486,7 +486,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, BandedMatrix<DT2_> & b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
             for (typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
@@ -523,7 +523,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             BenchmarkInfo result;
             result.flops = a.size();
@@ -535,7 +535,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT1_> & a, DT2_ b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseMatrix<DT1_> & a, DT2_ b)
         {
             BenchmarkInfo result;
             result.flops = a.rows() * a.columns();
@@ -546,7 +546,7 @@ namespace honei
         }
 
         template <typename DT1_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, float b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, float b)
         {
             BenchmarkInfo result;
             result.flops = a.size();
@@ -557,7 +557,7 @@ namespace honei
         }
 
         template <typename DT1_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, double b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, double b)
         {
             BenchmarkInfo result;
             result.flops = a.size();

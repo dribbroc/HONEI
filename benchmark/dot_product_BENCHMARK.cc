@@ -7,6 +7,7 @@
 #endif
 
 #include <honei/la/dot_product.hh>
+#include <honei/util/configuration.hh>
 
 using namespace std;
 using namespace honei;
