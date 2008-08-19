@@ -29,7 +29,8 @@
  * \ingroup grpliblbm
  **/
 
-#define SOLVER_VERBOSE
+//#define SOLVER_VERBOSE
+//#define SOLVER_POSTPROCESSING
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
@@ -131,15 +132,15 @@ namespace honei
                     CONTEXT("When extracting physical quantities in LABSWE:");
 
                     ///Set temple dis to dis:
-                    *_distribution_0 = *_temp_distribution_0;
-                    *_distribution_1 = *_temp_distribution_1;
-                    *_distribution_2 = *_temp_distribution_2;
-                    *_distribution_3 = *_temp_distribution_3;
-                    *_distribution_4 = *_temp_distribution_4;
-                    *_distribution_5 = *_temp_distribution_5;
-                    *_distribution_6 = *_temp_distribution_6;
-                    *_distribution_7 = *_temp_distribution_7;
-                    *_distribution_8 = *_temp_distribution_8;
+                    *_distribution_0 = _temp_distribution_0->copy();
+                    *_distribution_1 = _temp_distribution_1->copy();
+                    *_distribution_2 = _temp_distribution_2->copy();
+                    *_distribution_3 = _temp_distribution_3->copy();
+                    *_distribution_4 = _temp_distribution_4->copy();
+                    *_distribution_5 = _temp_distribution_5->copy();
+                    *_distribution_6 = _temp_distribution_6->copy();
+                    *_distribution_7 = _temp_distribution_7->copy();
+                    *_distribution_8 = _temp_distribution_8->copy();
 
                     DenseVector<ResPrec_> accu(_distribution_0->copy());
 

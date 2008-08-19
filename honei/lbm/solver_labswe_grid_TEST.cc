@@ -85,6 +85,7 @@ class SolverLABSWEGridTest :
 #endif
                 solver.solve();
 #ifdef SOLVER_POSTPROCESSING
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                 PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
 #endif
             }
@@ -96,8 +97,8 @@ class SolverLABSWEGridTest :
         }
 
 };
-
 SolverLABSWEGridTest<tags::CPU, double> solver_test_double("double");
+
 template <typename Tag_, typename DataType_>
 class SolverLABSWEGridPartitionerTest :
     public TaggedTest<Tag_>
@@ -112,7 +113,7 @@ class SolverLABSWEGridPartitionerTest :
         {
             unsigned long g_h(50);
             unsigned long g_w(50);
-            unsigned long timesteps(1);
+            unsigned long timesteps(100);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
@@ -164,6 +165,8 @@ class SolverLABSWEGridPartitionerTest :
 
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
 #ifdef SOLVER_POSTPROCESSING
+                GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                 PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
 #endif
             }
@@ -176,5 +179,4 @@ class SolverLABSWEGridPartitionerTest :
             TEST_CHECK(true);
         }
 };
-
 SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");

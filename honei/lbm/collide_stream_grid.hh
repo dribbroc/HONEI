@@ -34,6 +34,7 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
+#include <honei/la/algorithm.hh>
 #include <cmath>
 using namespace honei::lbm;
 
@@ -72,6 +73,17 @@ namespace honei
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming:");
+
+            fill(*data.f_temp_0, DT1_(0));
+            fill(*data.f_temp_1, DT1_(0));
+            fill(*data.f_temp_2, DT1_(0));
+            fill(*data.f_temp_3, DT1_(0));
+            fill(*data.f_temp_4, DT1_(0));
+            fill(*data.f_temp_5, DT1_(0));
+            fill(*data.f_temp_6, DT1_(0));
+            fill(*data.f_temp_7, DT1_(0));
+            fill(*data.f_temp_8, DT1_(0));
+
             for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
             {
 

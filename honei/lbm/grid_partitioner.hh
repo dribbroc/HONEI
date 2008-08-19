@@ -124,29 +124,29 @@ namespace honei
 
                     for(unsigned long l(start); l < end; ++l)
                     {
-                        values_h[l] = (*data_list[l].h)[i - (info_list[l].offset)];
-                        values_u[l] = (*data_list[l].u)[i - (info_list[l].offset)];
-                        values_v[l] = (*data_list[l].v)[i - (info_list[l].offset)];
+                        values_h[l - start] = (*data_list[l].h)[i - (info_list[l].offset)];
+                        values_u[l - start] = (*data_list[l].u)[i - (info_list[l].offset)];
+                        values_v[l - start] = (*data_list[l].v)[i - (info_list[l].offset)];
 
-                        values_f_0[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_1[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_2[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_3[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_4[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_5[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_6[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_7[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_8[l] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_0[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_1[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_2[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_3[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_4[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_5[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_6[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_7[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
+                        values_f_8[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
 
-                        values_f_eq_0[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_1[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_2[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_3[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_4[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_5[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_6[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_7[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_8[l] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_0[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_1[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_2[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_3[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_4[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_5[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_6[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_7[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
+                        values_f_eq_8[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
                     }
 
                     for(unsigned long k(start); k < end; ++k)
