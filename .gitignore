@@ -18,7 +18,11 @@ libtool
 .libs
 # Ignore backup files
 *~
+# Ignore patch remains
+*.orig
+*.rej
 # Ignore vim swap files
+*.swo
 *.swp
 # Ignore compiled test cases
 *_TEST
@@ -26,3 +30,8 @@ libtool
 *_BENCHMARK
 # Ignore generated data files
 *.dat
+# Ignore tarballs
+*.tar.bz2
+*.tar.gz
+# Ignore patch mails
+*.eml
