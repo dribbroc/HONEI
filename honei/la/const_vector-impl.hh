@@ -21,6 +21,7 @@
 #define LIBLA_GUARD_CONST_VECTOR_IMPL_HH 1
 
 #include <honei/la/const_vector.hh>
+#include <honei/la/vector_error.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/shared_array.hh>
@@ -28,6 +29,7 @@
 #include <honei/util/memory_arbiter.hh>
 
 #include <algorithm>
+#include <cmath>
 #include <string>
 
 namespace honei
@@ -247,7 +249,7 @@ namespace honei
 
         for (unsigned long index(0) ; index < a.size() ; ++index)
         {
-            if (fabs(a[index] - b[index]) <= std::numeric_limits<DataType_>::epsilon())
+            if (std::fabs(a[index] - b[index]) <= std::numeric_limits<DataType_>::epsilon())
             {
                 continue;
             }
