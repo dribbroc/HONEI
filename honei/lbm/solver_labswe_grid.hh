@@ -423,15 +423,15 @@ namespace honei
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
                        value(_gravity, _e, *data);
 
-                    *_distribution_0 = *_eq_distribution_0;
-                    *_distribution_1 = *_eq_distribution_1;
-                    *_distribution_2 = *_eq_distribution_2;
-                    *_distribution_3 = *_eq_distribution_3;
-                    *_distribution_4 = *_eq_distribution_4;
-                    *_distribution_5 = *_eq_distribution_5;
-                    *_distribution_6 = *_eq_distribution_6;
-                    *_distribution_7 = *_eq_distribution_7;
-                    *_distribution_8 = *_eq_distribution_8;
+                    *_distribution_0 = _eq_distribution_0->copy();
+                    *_distribution_1 = _eq_distribution_1->copy();
+                    *_distribution_2 = _eq_distribution_2->copy();
+                    *_distribution_3 = _eq_distribution_3->copy();
+                    *_distribution_4 = _eq_distribution_4->copy();
+                    *_distribution_5 = _eq_distribution_5->copy();
+                    *_distribution_6 = _eq_distribution_6->copy();
+                    *_distribution_7 = _eq_distribution_7->copy();
+                    *_distribution_8 = _eq_distribution_8->copy();
 
 #ifdef SOLVER_VERBOSE
                     std::cout << "h after preprocessing:" << std::endl;
