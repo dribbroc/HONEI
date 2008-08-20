@@ -30,7 +30,6 @@
 #include <honei/util/memory_arbiter.hh>
 
 #include <algorithm>
-#include <iostream>
 
 namespace honei
 {
