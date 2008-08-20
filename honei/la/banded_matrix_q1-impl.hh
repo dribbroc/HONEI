@@ -32,6 +32,8 @@
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
 
+#include <cmath>
+
 namespace honei
 {
     template <typename DataType_> struct Implementation<BandedMatrixQ1<DataType_> >
@@ -54,7 +56,7 @@ namespace honei
         Implementation(unsigned long size) :
             bands(9),
             size(size),
-            root((unsigned long)sqrt(size)),
+            root(static_cast<signed long>(std::sqrt(size))),
             zero_vector(size, DataType_(0))
         {
         }
