@@ -35,3 +35,7 @@ libtool
 *.tar.gz
 # Ignore patch mails
 *.eml
+# Ignore files created by our own build system
+*.body
+*.functions
+*.opcodes
