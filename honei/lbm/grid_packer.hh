@@ -115,7 +115,6 @@ namespace honei
             }
 
             static void _element_direction(unsigned long packed_index, unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid,
-                    std::vector<unsigned long> & dir_0,
                     std::vector<unsigned long> & dir_1,
                     std::vector<unsigned long> & dir_2,
                     std::vector<unsigned long> & dir_3,
@@ -135,9 +134,6 @@ namespace honei
                         7
                  */
                 unsigned long type(_element_type(i, j, grid));
-
-                // DIR_0
-                dir_0.push_back(packed_index);
 
                 // DIR_1
                 if ((type & 1<<0) == 1<<0)
@@ -316,7 +312,6 @@ namespace honei
                 data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
                 std::vector<unsigned long> temp_limits;
                 std::vector<unsigned long> temp_types;
-                std::vector<unsigned long> dir_0;
                 std::vector<unsigned long> dir_1;
                 std::vector<unsigned long> dir_2;
                 std::vector<unsigned long> dir_3;
@@ -347,7 +342,7 @@ namespace honei
                                     // insert current cell
                                     temp_limits.push_back(packed_index);
                                     temp_types.push_back(_element_type(i, j, grid));
-                                    _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
+                                    _element_direction(packed_index, i, j, grid, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                                 }
                             }
                             else
@@ -355,7 +350,7 @@ namespace honei
                                 // leftmost boundary cells
                                 temp_limits.push_back(packed_index);
                                 temp_types.push_back(_element_type(i, j, grid));
-                                _element_direction(packed_index, i, j, grid, dir_0, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
+                                _element_direction(packed_index, i, j, grid, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                             }
                             ++packed_index;
                         }
@@ -363,7 +358,6 @@ namespace honei
                 }
                 temp_limits.push_back(packed_index);
                 temp_types.push_back(0);
-                dir_0.push_back(packed_index - 1);
                 dir_1.push_back(packed_index - 1);
                 dir_2.push_back(packed_index - 1);
                 dir_3.push_back(packed_index - 1);
@@ -375,15 +369,14 @@ namespace honei
 
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
                 info.types = new DenseVector<unsigned long>(temp_limits.size());
-                info.dir_0 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_1 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_2 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_3 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_4 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_5 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_6 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_7 = new DenseVector<unsigned long>(dir_0.size());
-                info.dir_8 = new DenseVector<unsigned long>(dir_0.size());
+                info.dir_1 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_2 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_3 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_4 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_5 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_6 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_7 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_8 = new DenseVector<unsigned long>(dir_1.size());
 
                 unsigned long index2(0);
                 for (std::vector<unsigned long>::iterator i(temp_limits.begin()), j(temp_types.begin()) ; i != temp_limits.end() ; ++i, ++j)
@@ -392,9 +385,8 @@ namespace honei
                     (*info.types)[index2] = *j;
                     ++index2;
                 }
-                for (unsigned long i(0) ; i < dir_0.size() ; ++i)
+                for (unsigned long i(0) ; i < dir_1.size() ; ++i)
                 {
-                    (*info.dir_0)[i] = dir_0[i];
                     (*info.dir_1)[i] = dir_1[i];
                     (*info.dir_2)[i] = dir_2[i];
                     (*info.dir_3)[i] = dir_3[i];

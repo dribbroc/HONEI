@@ -212,7 +212,6 @@ namespace honei
                 CONTEXT("When creating grid partitions:");
                 std::vector<unsigned long> temp_limits;
                 std::vector<unsigned long> temp_types;
-                std::vector<unsigned long> temp_dir_0;
                 std::vector<unsigned long> temp_dir_1;
                 std::vector<unsigned long> temp_dir_2;
                 std::vector<unsigned long> temp_dir_3;
@@ -226,7 +225,6 @@ namespace honei
                 {
                     temp_limits.push_back((*info.limits)[i]);
                     temp_types.push_back((*info.types)[i]);
-                    temp_dir_0.push_back((*info.dir_0)[i]);
                     temp_dir_1.push_back((*info.dir_1)[i]);
                     temp_dir_2.push_back((*info.dir_2)[i]);
                     temp_dir_3.push_back((*info.dir_3)[i]);
@@ -276,7 +274,6 @@ namespace honei
                         unsigned long one_before_offset(end - *one_before);
                         unsigned long i(0);
                         std::vector<unsigned long>::iterator it_types(temp_types.begin());
-                        std::vector<unsigned long>::iterator it_dir_0(temp_dir_0.begin());
                         std::vector<unsigned long>::iterator it_dir_1(temp_dir_1.begin());
                         std::vector<unsigned long>::iterator it_dir_2(temp_dir_2.begin());
                         std::vector<unsigned long>::iterator it_dir_3(temp_dir_3.begin());
@@ -289,7 +286,6 @@ namespace honei
                         {
                             ++i;
                             ++it_types;
-                            ++it_dir_0;
                             ++it_dir_1;
                             ++it_dir_2;
                             ++it_dir_3;
@@ -301,7 +297,6 @@ namespace honei
                         }
                         barriers.push_back(i);
                         temp_types.insert(it_types, *(--it_types));
-                        temp_dir_0.insert(++it_dir_0, *(--it_dir_0) + one_before_offset);
                         temp_dir_1.insert(++it_dir_1, *(--it_dir_1) + one_before_offset);
                         temp_dir_2.insert(++it_dir_2, *(--it_dir_2) + one_before_offset);
                         temp_dir_3.insert(++it_dir_3, *(--it_dir_3) + one_before_offset);
@@ -326,7 +321,6 @@ namespace honei
                 // Create partitions
                 std::vector<std::vector<unsigned long> > temp_limits_list;
                 std::vector<std::vector<unsigned long> > temp_types_list;
-                std::vector<std::vector<unsigned long> > temp_dir_0_list;
                 std::vector<std::vector<unsigned long> > temp_dir_1_list;
                 std::vector<std::vector<unsigned long> > temp_dir_2_list;
                 std::vector<std::vector<unsigned long> > temp_dir_3_list;
@@ -342,7 +336,6 @@ namespace honei
                 {
                     std::vector<unsigned long> new_limits;
                     std::vector<unsigned long> new_types;
-                    std::vector<unsigned long> new_dir_0;
                     std::vector<unsigned long> new_dir_1;
                     std::vector<unsigned long> new_dir_2;
                     std::vector<unsigned long> new_dir_3;
@@ -355,7 +348,6 @@ namespace honei
                     {
                         new_limits.push_back(temp_limits[index]);
                         new_types.push_back(temp_types[index]);
-                        new_dir_0.push_back(temp_dir_0[index]);
                         new_dir_1.push_back(temp_dir_1[index]);
                         new_dir_2.push_back(temp_dir_2[index]);
                         new_dir_3.push_back(temp_dir_3[index]);
@@ -367,7 +359,6 @@ namespace honei
                     }
                     temp_limits_list.push_back(new_limits);
                     temp_types_list.push_back(new_types);
-                    temp_dir_0_list.push_back(new_dir_0);
                     temp_dir_1_list.push_back(new_dir_1);
                     temp_dir_2_list.push_back(new_dir_2);
                     temp_dir_3_list.push_back(new_dir_3);
@@ -378,7 +369,6 @@ namespace honei
                     temp_dir_8_list.push_back(new_dir_8);
 
                     std::vector<unsigned long> max_collection;
-                    max_collection.push_back(*max_element(new_dir_0.begin(), new_dir_0.end()));
                     max_collection.push_back(*max_element(new_dir_1.begin(), new_dir_1.end()));
                     max_collection.push_back(*max_element(new_dir_2.begin(), new_dir_2.end()));
                     max_collection.push_back(*max_element(new_dir_3.begin(), new_dir_3.end()));
@@ -390,7 +380,6 @@ namespace honei
                     temp_max_list.push_back(*max_element(max_collection.begin(), max_collection.end()));
 
                     std::vector<unsigned long> min_collection;
-                    min_collection.push_back(*min_element(new_dir_0.begin(), new_dir_0.end()));
                     min_collection.push_back(*min_element(new_dir_1.begin(), new_dir_1.end()));
                     min_collection.push_back(*min_element(new_dir_2.begin(), new_dir_2.end()));
                     min_collection.push_back(*min_element(new_dir_3.begin(), new_dir_3.end()));
@@ -409,7 +398,6 @@ namespace honei
                     new_info.offset = temp_min_list[i];
                     new_info.limits = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     new_info.types = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_0 = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     new_info.dir_1 = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     new_info.dir_2 = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     new_info.dir_3 = new DenseVector<unsigned long>(temp_limits_list[i].size());
@@ -422,7 +410,6 @@ namespace honei
                     {
                         (*new_info.limits)[j] = temp_limits_list[i][j] - new_info.offset;
                         (*new_info.types)[j] = temp_types_list[i][j] - new_info.offset;
-                        (*new_info.dir_0)[j] = temp_dir_0_list[i][j] - new_info.offset;
                         (*new_info.dir_1)[j] = temp_dir_1_list[i][j] - new_info.offset;
                         (*new_info.dir_2)[j] = temp_dir_2_list[i][j] - new_info.offset;
                         (*new_info.dir_3)[j] = temp_dir_3_list[i][j] - new_info.offset;

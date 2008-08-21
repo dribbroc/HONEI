@@ -87,7 +87,6 @@ namespace honei
                 offset(0),
                 limits(0),
                 types(0),
-                dir_0(0),
                 dir_1(0),
                 dir_2(0),
                 dir_3(0),
@@ -103,7 +102,6 @@ namespace honei
             {
                 delete limits;
                 delete types;
-                delete dir_0;
                 delete dir_1;
                 delete dir_2;
                 delete dir_3;
@@ -115,7 +113,6 @@ namespace honei
 
                 limits = 0;
                 types = 0;
-                dir_0 = 0;
                 dir_1 = 0;
                 dir_2 = 0;
                 dir_3 = 0;
@@ -130,7 +127,6 @@ namespace honei
             DenseVector<unsigned long> * limits;
             /// \todo Use std::bitset instead of unsigned long for types?
             DenseVector<unsigned long> * types;
-            DenseVector<unsigned long> * dir_0;
             DenseVector<unsigned long> * dir_1;
             DenseVector<unsigned long> * dir_2;
             DenseVector<unsigned long> * dir_3;

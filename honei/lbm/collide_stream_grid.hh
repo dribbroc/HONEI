@@ -89,7 +89,7 @@ namespace honei
 
                 for (unsigned long i((*info.limits)[begin]), offset(0) ; i != (*info.limits)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_0)[(*info.dir_0)[begin] + offset] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
+                    (*data.f_temp_0)[i] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
                     if ((*info.dir_1)[begin] + offset != i)
                     {
                     (*data.f_temp_1)[(*info.dir_1)[begin] + offset] = (*data.f_1)[i] - ((*data.f_1)[i] - (*data.f_eq_1)[i])/tau + DT1_(1./6.)
