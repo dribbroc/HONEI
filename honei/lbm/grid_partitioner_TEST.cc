@@ -78,6 +78,8 @@ class GridPartitionerTest :
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
             GridPartitioner<D2Q9, DataType_>::decompose(10, info, data, info_list, data_list);
+            GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
+            GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
 
             TEST_CHECK(true);
         }
