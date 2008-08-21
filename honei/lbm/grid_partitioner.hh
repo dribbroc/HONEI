@@ -67,12 +67,12 @@ namespace honei
                 for(unsigned long i(0); i < data.h->size(); ++i)
                 {
                     unsigned long index(0);
-                    while(info_list[index].offset + data_list[index].h->size() < i)
+                    while(info_list[index].offset + data_list[index].h->size() <= i)
                     {
                         ++index;
                     }
                     unsigned long start(index);
-                    while(index < info_list.size () && info_list.at(index).offset < i)
+                    while(index < info_list.size() && info_list.at(index).offset <= i)
                     {
                         ++index;
                     }
@@ -87,12 +87,12 @@ namespace honei
                 for(unsigned long i(0); i < data.h->size(); ++i)
                 {
                     unsigned long index(0);
-                    while(index < info_list.size () && info_list[index].offset + data_list[index].h->size() < i)
+                    while(info_list[index].offset + data_list[index].h->size() <= i)
                     {
                         ++index;
                     }
                     unsigned long start(index);
-                    while(index < info_list.size () && info_list[index].offset <= i)
+                    while(index < info_list.size() && info_list[index].offset <= i)
                     {
                         ++index;
                     }
