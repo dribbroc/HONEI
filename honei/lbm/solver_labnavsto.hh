@@ -583,17 +583,17 @@ namespace honei {
                     for(unsigned long i(0); i < _grid_width; ++i)
                     {
                         (*_u)(0, i) = ResPrec_(_lid_veloc);
-                        //(*_v)(0, i) = ResPrec_(0.);
-                        //(*_u)(_grid_height - 1, i) = ResPrec_(0.);
-                        //(*_v)(_grid_height - 1, i) = ResPrec_(0.);
+                        (*_v)(0, i) = ResPrec_(0.);
+                        (*_u)(_grid_height - 1, i) = ResPrec_(0.);
+                        (*_v)(_grid_height - 1, i) = ResPrec_(0.);
                     }
-                    /*for(unsigned long i(1); i < _grid_height -1 ; ++i)
+                    for(unsigned long i(1); i < _grid_height -1 ; ++i)
                     {
                         (*_u)(i, 0) = ResPrec_(0.);
                         (*_v)(i, 0) = ResPrec_(0.);
                         (*_u)(i, _grid_width - 1) = ResPrec_(0.);
                         (*_v)(i, _grid_width - 1) = ResPrec_(0.);
-                    }*/
+                    }
 
                     EquilibriumDistribution<Tag_, lbm_applications::LABNAVSTO, lbm_lattice_types::D2Q9::DIR_0>::
                         value(*_eq_distribution_0, *_height, *_u, *_v, _gravity, _e);
