@@ -81,6 +81,28 @@ namespace honei
                                (*data.f_temp_3)[i] = (*data.f_temp_7)[i];
                            if(((*info.types)[begin] & 1<<7) == 1<<7)
                                (*data.f_temp_4)[i] = (*data.f_temp_8)[i];
+
+                           // Corners
+                           if(((*info.types)[begin] & 1<<2) == 1<<2 && ((*info.types)[begin] & 1<<4) == 1<<4)
+                           {
+                               (*data.f_temp_2)[i] = (*data.f_temp_8)[i];
+                               (*data.f_temp_6)[i] = (*data.f_temp_8)[i];
+                           }
+                           if(((*info.types)[begin] & 1<<4) == 1<<4 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                           {
+                               (*data.f_temp_4)[i] = (*data.f_temp_2)[i];
+                               (*data.f_temp_8)[i] = (*data.f_temp_2)[i];
+                           }
+                           if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                           {
+                               (*data.f_temp_2)[i] = (*data.f_temp_4)[i];
+                               (*data.f_temp_6)[i] = (*data.f_temp_4)[i];
+                           }
+                           if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<2) == 1<<2)
+                           {
+                               (*data.f_temp_4)[i] = (*data.f_temp_6)[i];
+                               (*data.f_temp_8)[i] = (*data.f_temp_6)[i];
+                           }
                        }
                    }
                }
