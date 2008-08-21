@@ -178,6 +178,50 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid
 
                     }
                     break;
+
+                case 2:
+                    {
+                        _dheight = 50;
+                        _dwidth = 50;
+                        _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
+                        /*Cylinder<Prec_> c1(*_h, Prec_(0.06), 25, 25);
+                        c1.value();
+                        */
+
+                        Cuboid<Prec_> reservoir(*_h, 50, 18, Prec_(0.035), 32, 0);
+                        reservoir.value();
+
+                        _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+
+                        _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
+                        /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
+                          c2.value();*/
+
+                        Cuboid<bool> q2(*_obstacles, 15, 2, 1, 30, 0);
+                        q2.value();
+                        Cuboid<bool> q3(*_obstacles, 40, 2, 1, 30, 20);
+                        q3.value();
+                        _grid.obstacles = _obstacles;
+                        _grid.h = _h;
+                        _grid.u = _u;
+                        _grid.v = _v;
+
+                        GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
+
+                        _s_x = new DenseVector<Prec_>(_data.h->size(), Prec_(0.));
+                        _s_y = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
+                        _b_v = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
+
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _dwidth, _dheight, _b_v);
+
+                        _solver->set_source(_s_x, _s_y);
+                        _solver->do_preprocessing();
+
+
+                    }
+                    break;
             }
 
         }
