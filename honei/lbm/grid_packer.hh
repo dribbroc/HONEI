@@ -48,6 +48,28 @@ namespace honei
     template <typename DT_> struct GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>
     {
         private:
+            static void _dir_post_pack(std::vector<unsigned long> & dir, std::vector<unsigned long> & dir_post,
+                    std::vector<unsigned long> & dir_index, std::vector<unsigned long> & limits)
+            {
+                for (unsigned long i(0) ; i < limits.size() - 1; ++i)
+                {
+                    // if dir points not to our own cell (reflection)
+                    if (dir[i] != limits[i])
+                    {
+                        dir_post.push_back(dir[i]);
+                        dir_index.push_back(limits[i]);
+                        // search for the sequence end
+                        unsigned long end(i + 1);
+                        while(end != limits.size() - 1 && dir[end] - dir[i]== limits[end] - limits[i])
+                        {
+                            ++end;
+                        }
+                        dir_index.push_back(limits[end]);
+                        i = end - 1;
+                    }
+                }
+            }
+
             static unsigned long _element_type(unsigned long i, unsigned long j, Grid<D2Q9, DT_> & grid)
             {
                 unsigned long type(0);
@@ -320,6 +342,22 @@ namespace honei
                 std::vector<unsigned long> dir_6;
                 std::vector<unsigned long> dir_7;
                 std::vector<unsigned long> dir_8;
+                std::vector<unsigned long> dir_post_1;
+                std::vector<unsigned long> dir_post_2;
+                std::vector<unsigned long> dir_post_3;
+                std::vector<unsigned long> dir_post_4;
+                std::vector<unsigned long> dir_post_5;
+                std::vector<unsigned long> dir_post_6;
+                std::vector<unsigned long> dir_post_7;
+                std::vector<unsigned long> dir_post_8;
+                std::vector<unsigned long> dir_index_1;
+                std::vector<unsigned long> dir_index_2;
+                std::vector<unsigned long> dir_index_3;
+                std::vector<unsigned long> dir_index_4;
+                std::vector<unsigned long> dir_index_5;
+                std::vector<unsigned long> dir_index_6;
+                std::vector<unsigned long> dir_index_7;
+                std::vector<unsigned long> dir_index_8;
 
                 unsigned long packed_index(0);
 
@@ -367,16 +405,34 @@ namespace honei
                 dir_7.push_back(packed_index - 1);
                 dir_8.push_back(packed_index - 1);
 
+                /// todo postpack direction vectors
+                _dir_post_pack(dir_1, dir_post_1, dir_index_1, temp_limits);
+                _dir_post_pack(dir_2, dir_post_2, dir_index_2, temp_limits);
+                _dir_post_pack(dir_3, dir_post_3, dir_index_3, temp_limits);
+                _dir_post_pack(dir_4, dir_post_4, dir_index_4, temp_limits);
+                _dir_post_pack(dir_5, dir_post_5, dir_index_5, temp_limits);
+                _dir_post_pack(dir_6, dir_post_6, dir_index_6, temp_limits);
+                _dir_post_pack(dir_7, dir_post_7, dir_index_7, temp_limits);
+                _dir_post_pack(dir_8, dir_post_8, dir_index_8, temp_limits);
+
                 info.limits = new DenseVector<unsigned long>(temp_limits.size());
                 info.types = new DenseVector<unsigned long>(temp_limits.size());
-                info.dir_1 = new DenseVector<unsigned long>(dir_1.size());
-                info.dir_2 = new DenseVector<unsigned long>(dir_1.size());
-                info.dir_3 = new DenseVector<unsigned long>(dir_1.size());
-                info.dir_4 = new DenseVector<unsigned long>(dir_1.size());
-                info.dir_5 = new DenseVector<unsigned long>(dir_1.size());
-                info.dir_6 = new DenseVector<unsigned long>(dir_1.size());
-                info.dir_7 = new DenseVector<unsigned long>(dir_1.size());
-                info.dir_8 = new DenseVector<unsigned long>(dir_1.size());
+                info.dir_1 = new DenseVector<unsigned long>(dir_post_1.size());
+                info.dir_2 = new DenseVector<unsigned long>(dir_post_2.size());
+                info.dir_3 = new DenseVector<unsigned long>(dir_post_3.size());
+                info.dir_4 = new DenseVector<unsigned long>(dir_post_4.size());
+                info.dir_5 = new DenseVector<unsigned long>(dir_post_5.size());
+                info.dir_6 = new DenseVector<unsigned long>(dir_post_6.size());
+                info.dir_7 = new DenseVector<unsigned long>(dir_post_7.size());
+                info.dir_8 = new DenseVector<unsigned long>(dir_post_8.size());
+                info.dir_index_1 = new DenseVector<unsigned long>(dir_index_1.size());
+                info.dir_index_2 = new DenseVector<unsigned long>(dir_index_2.size());
+                info.dir_index_3 = new DenseVector<unsigned long>(dir_index_3.size());
+                info.dir_index_4 = new DenseVector<unsigned long>(dir_index_4.size());
+                info.dir_index_5 = new DenseVector<unsigned long>(dir_index_5.size());
+                info.dir_index_6 = new DenseVector<unsigned long>(dir_index_6.size());
+                info.dir_index_7 = new DenseVector<unsigned long>(dir_index_7.size());
+                info.dir_index_8 = new DenseVector<unsigned long>(dir_index_8.size());
 
                 unsigned long index2(0);
                 for (std::vector<unsigned long>::iterator i(temp_limits.begin()), j(temp_types.begin()) ; i != temp_limits.end() ; ++i, ++j)
@@ -385,16 +441,69 @@ namespace honei
                     (*info.types)[index2] = *j;
                     ++index2;
                 }
-                for (unsigned long i(0) ; i < dir_1.size() ; ++i)
+                for (unsigned long i(0) ; i < dir_post_1.size() ; ++i)
                 {
-                    (*info.dir_1)[i] = dir_1[i];
-                    (*info.dir_2)[i] = dir_2[i];
-                    (*info.dir_3)[i] = dir_3[i];
-                    (*info.dir_4)[i] = dir_4[i];
-                    (*info.dir_5)[i] = dir_5[i];
-                    (*info.dir_6)[i] = dir_6[i];
-                    (*info.dir_7)[i] = dir_7[i];
-                    (*info.dir_8)[i] = dir_8[i];
+                    (*info.dir_1)[i] = dir_post_1[i];
+                }
+                for (unsigned long i(0) ; i < dir_post_2.size() ; ++i)
+                {
+                    (*info.dir_2)[i] = dir_post_2[i];
+                }
+                for (unsigned long i(0) ; i < dir_post_3.size() ; ++i)
+                {
+                    (*info.dir_3)[i] = dir_post_3[i];
+                }
+                for (unsigned long i(0) ; i < dir_post_4.size() ; ++i)
+                {
+                    (*info.dir_4)[i] = dir_post_4[i];
+                }
+                for (unsigned long i(0) ; i < dir_post_5.size() ; ++i)
+                {
+                    (*info.dir_5)[i] = dir_post_5[i];
+                }
+                for (unsigned long i(0) ; i < dir_post_6.size() ; ++i)
+                {
+                    (*info.dir_6)[i] = dir_post_6[i];
+                }
+                for (unsigned long i(0) ; i < dir_post_7.size() ; ++i)
+                {
+                    (*info.dir_7)[i] = dir_post_7[i];
+                }
+                for (unsigned long i(0) ; i < dir_post_8.size() ; ++i)
+                {
+                    (*info.dir_8)[i] = dir_post_8[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_1.size() ; ++i)
+                {
+                    (*info.dir_index_1)[i] = dir_index_1[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_2.size() ; ++i)
+                {
+                    (*info.dir_index_2)[i] = dir_index_2[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_3.size() ; ++i)
+                {
+                    (*info.dir_index_3)[i] = dir_index_3[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_4.size() ; ++i)
+                {
+                    (*info.dir_index_4)[i] = dir_index_4[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_5.size() ; ++i)
+                {
+                    (*info.dir_index_5)[i] = dir_index_5[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_6.size() ; ++i)
+                {
+                    (*info.dir_index_6)[i] = dir_index_6[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_7.size() ; ++i)
+                {
+                    (*info.dir_index_7)[i] = dir_index_7[i];
+                }
+                for (unsigned long i(0) ; i < dir_index_8.size() ; ++i)
+                {
+                    (*info.dir_index_8)[i] = dir_index_8[i];
                 }
 
                 index2 = 0;

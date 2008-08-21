@@ -94,7 +94,15 @@ namespace honei
                 dir_5(0),
                 dir_6(0),
                 dir_7(0),
-                dir_8(0)
+                dir_8(0),
+                dir_index_1(0),
+                dir_index_2(0),
+                dir_index_3(0),
+                dir_index_4(0),
+                dir_index_5(0),
+                dir_index_6(0),
+                dir_index_7(0),
+                dir_index_8(0)
             {
             }
 
@@ -110,6 +118,14 @@ namespace honei
                 delete dir_6;
                 delete dir_7;
                 delete dir_8;
+                delete dir_index_1;
+                delete dir_index_2;
+                delete dir_index_3;
+                delete dir_index_4;
+                delete dir_index_5;
+                delete dir_index_6;
+                delete dir_index_7;
+                delete dir_index_8;
 
                 limits = 0;
                 types = 0;
@@ -121,6 +137,14 @@ namespace honei
                 dir_6 = 0;
                 dir_7 = 0;
                 dir_8 = 0;
+                dir_index_1 = 0;
+                dir_index_2 = 0;
+                dir_index_3 = 0;
+                dir_index_4 = 0;
+                dir_index_5 = 0;
+                dir_index_6 = 0;
+                dir_index_7 = 0;
+                dir_index_8 = 0;
             }
 
             unsigned long offset;
@@ -135,6 +159,14 @@ namespace honei
             DenseVector<unsigned long> * dir_6;
             DenseVector<unsigned long> * dir_7;
             DenseVector<unsigned long> * dir_8;
+            DenseVector<unsigned long> * dir_index_1;
+            DenseVector<unsigned long> * dir_index_2;
+            DenseVector<unsigned long> * dir_index_3;
+            DenseVector<unsigned long> * dir_index_4;
+            DenseVector<unsigned long> * dir_index_5;
+            DenseVector<unsigned long> * dir_index_6;
+            DenseVector<unsigned long> * dir_index_7;
+            DenseVector<unsigned long> * dir_index_8;
     };
 
     template <typename DT_> class PackedGridData<D2Q9, DT_>
