@@ -143,6 +143,10 @@ class DenseMatrixElementIterationTest :
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 333, std::numeric_limits<DataType_>::epsilon());
                 }
+
+                // Test the assignment operator and proper iterator deletion
+                typename DenseMatrix<DataType_>::ElementIterator it(dm.element_at(size / 2));
+                it = dm.element_at(it.index());
             }
         }
 };
