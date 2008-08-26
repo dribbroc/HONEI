@@ -40,6 +40,12 @@ extern "C"
                 void * ul, void * ud, void *uu, void * x, void * y,
                 unsigned long size, unsigned long blocksize, unsigned long m);
 
+        void cuda_prolongation_float(void * fine, unsigned long size_fine, void * coarse, unsigned long size_coarse,
+                unsigned long * macroBorderMask, unsigned long blocksize);
+
+        void cuda_restriction_float(void * coarse, unsigned long size_coarse, void * fine, unsigned long size_fine,
+                unsigned long * macroBorderMask, unsigned long blocksize);
+
         void cuda_scaled_sum_two_float(void * x, const void * y, float b, unsigned long size, unsigned long blocksize);
         void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsigned long size, unsigned long blocksize);
 

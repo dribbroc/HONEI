@@ -47,3 +47,4 @@ class ProlongationTest:
         }
 };
 ProlongationTest<tags::CPU, float> prolongate_test("float");
+ProlongationTest<tags::GPU::CUDA, float> cuda_prolongate_test("float");

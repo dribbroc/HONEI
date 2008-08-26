@@ -32,6 +32,10 @@ cuda::scale_one_float = 128
 
 cuda::sum_two_float = 128
 
+cuda::prolongation_float = 64
+
+cuda::restriction_float = 64
+
 # Cell
 ######
 

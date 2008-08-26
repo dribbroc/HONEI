@@ -7,6 +7,7 @@ define(`filelist', `')dnl
 define(`celllist', `')dnl
 define(`headerlist', `')dnl
 define(`sselist', `')dnl
+define(`cudalist', `')dnl
 define(`testlist', `')dnl
 define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
@@ -24,15 +25,17 @@ define(`addimpl', `define(`filelist', filelist `$1-impl.hh')define(`headerlist',
 define(`addcc', `define(`filelist', filelist `$1.cc')')dnl
 define(`addcell', `define(`celllist', celllist `$1-cell.cc')')dnl
 define(`addsse', `define(`sselist', sselist `$1-sse.cc')')dnl
+define(`addcuda', `define(`cudalist', cudalist `$1-cuda.cc')')dnl
 define(`addthis', `dnl
 ifelse(`$2', `hh', `addhh(`$1')', `')dnl
 ifelse(`$2', `impl', `addimpl(`$1')', `')dnl
 ifelse(`$2', `cc', `addcc(`$1')', `')dnl
 ifelse(`$2', `cell', `addcell(`$1')', `')dnl
 ifelse(`$2', `sse', `addsse(`$1')', `')dnl
+ifelse(`$2', `cuda', `addcuda(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')dnl
 ')dnl
-define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')')dnl
+define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')addthis(`$1',`$7')')dnl
 
 include(`honei/math/files.m4')
 
@@ -49,6 +52,7 @@ endif
 
 if CUDA
 
+CUDAFILES = cudalist
 BACKEND_LIBS += \
 	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.la
 
@@ -76,7 +80,7 @@ DEFS = \
 
 lib_LTLIBRARIES = libhoneimath.la
 
-libhoneimath_la_SOURCES = filelist $(CELLFILES) $(SSEFILES)
+libhoneimath_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES)
 libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la

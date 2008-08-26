@@ -47,3 +47,4 @@ class RestrictionTest:
         }
 };
 RestrictionTest<tags::CPU, float> restriction_test("float");
+RestrictionTest<tags::GPU::CUDA, float> cuda_restriction_test("float");

@@ -123,5 +123,11 @@ namespace honei
                         ApplyDirichletBoundaries<Tag_>::value(fine, mask);
                     }
         };
+
+    template <> struct Prolongation<tags::GPU::CUDA>
+    {
+        static DenseVector<float> & value(DenseVector<float> & fine,
+                const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask);
+    };
 }
 #endif
