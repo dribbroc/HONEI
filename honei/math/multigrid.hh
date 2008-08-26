@@ -1,9 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-#ifndef LIBMATH_GUARD_METHODS_HH
-#define LIBMATH_GUARD_METHODS_HH 1
 /*
- * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the MATH C++ library. LibMath is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,33 +17,28 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-namespace methods
+#ifndef LIBMATH_GUARD_MULTIGRID_HH
+#define LIBMATH_GUARD_MULTIGRID_HH 1
+
+#include<honei/la/dense_vector.hh>
+#include<honei/la/banded_matrix_q1.hh>
+#include<honei/math/methods.hh>
+
+using namespace methods;
+namespace honei
 {
-    class CG
-    {
-    };
+    template<typename Tag_, typename SmootherType_, typename CycleType_, typename Mode_>
+        class Multigrid
+        {
+        };
 
-    class JAC
-    {
-    };
-
-    class NONE
-    {
-    };
-
-    class PCG
-    {
-        class JAC;
-    };
-
-    class CYCLE
-    {
-        class F;
-        class W;
-        class V;
-    };
-    class FIXED;
-    class MIXED;
+    template<typename Tag_>
+        class Multigrid<Tag_, JAC, CYCLE::V, FIXED>
+        {
+            template<typename Prec_>
+            static inline DenseVector<Prec_> & value(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& rhs)
+            {
+            }
+        };
 }
-
 #endif

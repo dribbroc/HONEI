@@ -8,6 +8,7 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
+add(`apply_dirichlet_boundaries',       `hh')
 add(`conjugate_gradients',              `hh', `test')
 add(`endian_swap',                      `hh')
 add(`hessenberg',                       `hh', `test')
@@ -35,6 +36,7 @@ add(`poisson_pcg_float_banded',               `test',                   `benchma
 add(`poisson_iteref_cg_float_banded',         `test',                   `benchmark')
 add(`poisson_iteref_pcg_float_banded',        `test',                   `benchmark')
 add(`poisson_mixedprec_cg',                   `test',                   `benchmark')
+add(`prolongate',                       `hh', `test')
 add(`qr_decomposition',                 `hh', `test')
 add(`quadrature',                       `hh', `test')
 add(`sqrt',                             `hh', `test', `sse', `cell')
