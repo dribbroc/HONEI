@@ -354,7 +354,7 @@ class DenseVectorSparseVectorScaledSumTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(0));
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = DataType_(2);
@@ -369,7 +369,7 @@ class DenseVectorSparseVectorScaledSumTest :
                 DataType_ scal(2);
 
                 DenseVector<DataType_> sum2(size, DataType_(0));
-                for (typename Vector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 7 == 0) *i = DataType_(6);
@@ -406,7 +406,7 @@ class DenseVectorSparseVectorScaledSumQuickTest :
         {
             unsigned long size (22);
             DenseVector<DataType_> dv1(size, DataType_(0));
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = DataType_(2);
@@ -421,7 +421,7 @@ class DenseVectorSparseVectorScaledSumQuickTest :
             DataType_ scal(2);
 
             DenseVector<DataType_> sum2(size, DataType_(0));
-            for (typename Vector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 7 == 0) *i = DataType_(6);

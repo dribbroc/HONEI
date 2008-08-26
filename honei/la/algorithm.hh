@@ -59,8 +59,8 @@ namespace honei
         if (end.index() - begin.index() != dest.size())
             throw VectorSizeDoesNotMatch(dest.size(), end.index() - begin.index());
 
-        typename Vector<DT_>::ConstElementIterator i(begin), i_end(end);
-        for (typename Vector<DT_>::ElementIterator d(dest.begin_elements()) ; i != i_end ; ++i, ++d)
+        typename DenseVector<DT_>::ConstElementIterator i(begin), i_end(end);
+        for (typename DenseVector<DT_>::ElementIterator d(dest.begin_elements()) ; i != i_end ; ++i, ++d)
         {
             *d = *i;
         }
@@ -116,8 +116,8 @@ namespace honei
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
-        typename Vector<DataType_>::ElementIterator f(copy.begin_elements());
-        for (typename Vector<OrigType_>::ConstElementIterator i(orig.begin_elements()),
+        typename DenseVector<DataType_>::ElementIterator f(copy.begin_elements());
+        for (typename DenseVector<OrigType_>::ConstElementIterator i(orig.begin_elements()),
                 i_end(orig.end_elements()) ; i != i_end ; ++i, ++f)
         {
             *f = *i;
@@ -260,7 +260,7 @@ namespace honei
     {
         CONTEXT("When filling elements of iterator range with '" + stringify(proto) + "':");
 
-        for (typename Vector<DT_>::ElementIterator i(begin), i_end(end) ; i != i_end ; ++i)
+        for (IT_ i(begin), i_end(end) ; i != i_end ; ++i)
         {
             *i = proto;
         }

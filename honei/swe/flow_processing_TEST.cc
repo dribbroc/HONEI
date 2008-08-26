@@ -54,13 +54,13 @@ class FlowProcessingTest:
                     analytical_result_y[i] = DT1_(5.905);
             }
 
-            for (typename Vector<DT1_>::ConstElementIterator i(vector_x.begin_elements()), i_end(vector_x.end_elements()),
+            for (typename DenseVector<DT1_>::ConstElementIterator i(vector_x.begin_elements()), i_end(vector_x.end_elements()),
                     j(analytical_result_x.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
             }
 
-            for (typename Vector<DT1_>::ConstElementIterator i(vector_y.begin_elements()), i_end(vector_y.end_elements()),
+            for (typename DenseVector<DT1_>::ConstElementIterator i(vector_y.begin_elements()), i_end(vector_y.end_elements()),
                     j(analytical_result_y.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
@@ -89,13 +89,13 @@ class FlowProcessingTest:
             FlowProcessing<X, tags::CPU>::value(cpu_result_x_2);
             FlowProcessing<Y, tags::CPU>::value(cpu_result_y_2);
 
-            for (typename Vector<DT1_>::ConstElementIterator i(vector_x_2.begin_elements()), i_end(vector_x_2.end_elements()),
+            for (typename DenseVector<DT1_>::ConstElementIterator i(vector_x_2.begin_elements()), i_end(vector_x_2.end_elements()),
                     j(cpu_result_x_2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());
             }
 
-            for (typename Vector<DT1_>::ConstElementIterator i(vector_y_2.begin_elements()), i_end(vector_y_2.end_elements()),
+            for (typename DenseVector<DT1_>::ConstElementIterator i(vector_y_2.begin_elements()), i_end(vector_y_2.end_elements()),
                     j(cpu_result_y_2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * *j * std::numeric_limits<DT1_>::epsilon());

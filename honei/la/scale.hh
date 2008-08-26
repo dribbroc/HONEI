@@ -102,7 +102,7 @@ namespace honei
         static DenseVectorBase<DT2_> & value(DenseVectorBase<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling DenseVectorBase:");
-            for (typename Vector<DT2_>::ElementIterator l(x.begin_elements()),
+            for (typename DenseVectorBase<DT2_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= a;

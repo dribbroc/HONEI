@@ -111,39 +111,45 @@ namespace honei
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator DenseVectorRange<DataType_>::begin_elements() const
+    typename DenseVectorRange<DataType_>::ConstElementIterator
+    DenseVectorRange<DataType_>::begin_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, 0));
+        return ConstElementIterator(this->_imp->elements, 0, this->_imp->offset, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator DenseVectorRange<DataType_>::end_elements() const
+    typename DenseVectorRange<DataType_>::ConstElementIterator
+    DenseVectorRange<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, this->_imp->size));
+        return ConstElementIterator(this->_imp->elements, this->_imp->size, this->_imp->offset, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator DenseVectorRange<DataType_>::element_at(unsigned long index) const
+    typename DenseVectorRange<DataType_>::ConstElementIterator
+    DenseVectorRange<DataType_>::element_at(unsigned long index) const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, index));
+        return ConstElementIterator(this->_imp->elements, index, this->_imp->offset, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator DenseVectorRange<DataType_>::begin_elements()
+    typename DenseVectorRange<DataType_>::ElementIterator
+    DenseVectorRange<DataType_>::begin_elements()
     {
-        return ElementIterator(new DenseElementIterator(*this, 0));
+        return ElementIterator(this->_imp->elements, 0, this->_imp->offset, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator DenseVectorRange<DataType_>::end_elements()
+    typename DenseVectorRange<DataType_>::ElementIterator
+    DenseVectorRange<DataType_>::end_elements()
     {
-        return ElementIterator(new DenseElementIterator(*this, this->_imp->size));
+        return ElementIterator(this->_imp->elements, this->_imp->size, this->_imp->offset, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator DenseVectorRange<DataType_>::element_at(unsigned long index)
+    typename DenseVectorRange<DataType_>::ElementIterator
+    DenseVectorRange<DataType_>::element_at(unsigned long index)
     {
-        return ElementIterator(new DenseElementIterator(*this, index));
+        return ElementIterator(this->_imp->elements, index, this->_imp->offset, 1);
     }
 
     template <typename DataType_>
@@ -230,130 +236,37 @@ namespace honei
         return result;
     }
 
+    template <typename DataType_>
+    bool
+    operator== (const DenseVectorRange<DataType_> & a, const DenseVectorRange<DataType_> & b)
+    {
+        if (a.size() != b.size())
+            throw VectorSizeDoesNotMatch(a.size(), b.size());
 
-    /**
-     * \brief DenseVectorRange::DenseElementIterator is a simple iterator implementation for dense vector ranges.
-     *
-     * \ingroup grpvector
-     */
-    template <> template <typename DataType_> class DenseVectorRange<DataType_>::DenseElementIterator :
-        public VectorElementIterator
+        for (typename DenseVectorRange<DataType_>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
+                j(b.begin_elements()) ; i != i_end ; ++i, ++j)
         {
-            private:
-                /// Our parent range.
-                const DenseVectorRange<DataType_> & _vector;
+            if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+                return false;
+        }
 
-                /// Our index.
-                unsigned long _index;
+        return true;
+    }
 
-            public:
-                /// \name Constructors
-                /// \{
+    template <typename DataType_>
+    std::ostream &
+    operator<< (std::ostream & lhs, const DenseVectorRange<DataType_> & b)
+    {
+        lhs << "[";
+        for (typename DenseVectorRange<DataType_>::ConstElementIterator i(b.begin_elements()), i_end(b.end_elements()) ;
+                i != i_end ; ++i)
+        {
+            lhs << "  " << *i;
+        }
+        lhs << "]" << std::endl;
 
-                /**
-                 * Constructor.
-                 *
-                 * \param vector The parent vector that is referenced by the iterator.
-                 * \param index The index into the vector.
-                 */
-                DenseElementIterator(const DenseVectorRange<DataType_> & vector, unsigned long index) :
-                    _vector(vector),
-                    _index(index)
-                {
-                }
-
-                /// Copy-constructor.
-                DenseElementIterator(DenseElementIterator const & other) :
-                    _vector(other._vector),
-                    _index(other._index)
-                {
-                }
-
-                /// Destructor.
-                virtual ~DenseElementIterator()
-                {
-                }
-
-                /// \}
-
-                /// \name Forward iterator interface
-                /// \{
-
-                /// Preincrement operator.
-                virtual DenseElementIterator & operator++ ()
-                {
-                    CONTEXT("When incrementing iterator by one:");
-
-                    ++_index;
-
-                    return *this;
-                }
-
-                /// In-place-add operator.
-                virtual DenseElementIterator & operator+= (const unsigned long step)
-                {
-                    CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
-
-                    _index += step;
-
-                    return *this;
-                }
-
-                /// Dereference operator that returns an assignable reference.
-                virtual DataType_ & operator* ()
-                {
-                    CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
-
-                    return _vector._imp->elements[_index + _vector._imp->offset];
-                }
-
-                /// Dereference operator that returns an unassignable reference.
-                virtual const DataType_ & operator* () const
-                {
-                    CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
-
-                    return _vector._imp->elements[_index + _vector._imp->offset];
-                }
-
-                /// Less-than operator.
-                virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-                {
-                    return _index < other.index();
-                }
-
-                /// Equality operator.
-                virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-                {
-                    return ((&_vector == other.parent()) && (_index == other.index()));
-                }
-
-                /// Inequality operator.
-                virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-                {
-                    return ((&_vector != other.parent()) || (_index != other.index()));
-                }
-
-                /// \}
-
-                /// \name IteratorTraits interface
-                /// \{
-
-                /// Returns our index.
-                virtual unsigned long index() const
-                {
-                    return _index;
-                }
-
-                /// Returns a pointer to our parent container.
-                virtual const Vector<DataType_> * parent() const
-                {
-                    return &_vector;
-                }
-
-                /// \}
-        };
-
-
+        return lhs;
+    }
 }
 
 #endif

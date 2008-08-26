@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
@@ -146,7 +146,7 @@ namespace honei
         for (unsigned i(0) ; i < ppu_rows ; i++)
         {
             DenseVectorRange<float> row = a[(spe_count * rows_per_spe) + i];
-            for (Vector<float>::ConstElementIterator c(row.begin_elements()), c_end(row.end_elements()), d(x.begin_elements()) ; c != c_end ; ++c, ++d)
+            for (DenseVectorRange<float>::ConstElementIterator c(row.begin_elements()), c_end(row.end_elements()), d(x.begin_elements()) ; c != c_end ; ++c, ++d)
             {
                 result[(spe_count * rows_per_spe) + i] += *c * *d;
             }
@@ -276,7 +276,7 @@ namespace honei
         for (unsigned i(0) ; i < ppu_rows ; i++)
         {
             DenseVectorRange<double> row = a[(spe_count * rows_per_spe) + i];
-            for (Vector<double>::ConstElementIterator c(row.begin_elements()), c_end(row.end_elements()), d(x.begin_elements()) ; c != c_end ; ++c, ++d)
+            for (DenseVectorRange<double>::ConstElementIterator c(row.begin_elements()), c_end(row.end_elements()), d(x.begin_elements()) ; c != c_end ; ++c, ++d)
             {
                 result[(spe_count * rows_per_spe) + i] += *c * *d;
             }

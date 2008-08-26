@@ -146,7 +146,7 @@ class BandedMatrixDenseVectorProductQuickTest :
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv2));
 
             TEST(prod.lock(lm_read_only),
-                    for (typename Vector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    for (typename DenseVector<DataType_>::ConstElementIterator dit(dv3.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
                         it != i_end ; ++it, ++dit)
                     {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
@@ -228,7 +228,7 @@ class Q1MatrixDenseVectorProductTest :
 #endif
 
             TEST(prod.lock(lm_read_only),
-                    for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    for (typename DenseVector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
                         it != i_end ; ++it, ++dit)
                     {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
@@ -301,7 +301,7 @@ class Q1MatrixDenseVectorProductQuickTest :
 #endif
 
             TEST(prod.lock(lm_read_only),
-                    for (typename Vector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    for (typename DenseVector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
                         it != i_end ; ++it, ++dit)
                     {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
@@ -536,7 +536,11 @@ class DenseMatrixSparseVectorProductTest :
                 }
                 DenseVector<DataType_> prod(Product<>::value(dm1, sv1));
 
-                TEST_CHECK_EQUAL(prod, sv2);
+                for (typename DenseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(6 * (size / 10 + 1)), std::numeric_limits<DataType_>::epsilon());
+                }
             }
 
             DenseMatrix<DataType_> dm01(4, 3, DataType_(1));
@@ -569,15 +573,12 @@ class DenseMatrixSparseVectorProductQuickTest :
             {
                 if (i.index() % 10 == 0) *i = DataType_(3);
             }
-            SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
-                    i != i_end ; ++i)
-            {
-                *i = DataType_(12);
-            }
             DenseVector<DataType_> prod(Product<>::value(dm1, sv1));
-
-            TEST_CHECK_EQUAL(prod, sv2);
+            for (typename DenseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+                i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(12), std::numeric_limits<DataType_>::epsilon());
+            }
 
             DenseMatrix<DataType_> dm01(4, 3, DataType_(1));
             SparseVector<DataType_> sv01(4, 3);
@@ -612,7 +613,11 @@ class SparseMatrixDenseVectorProductTest :
                 }
                 SparseVector<DataType_> prod(Product<>::value(sm1, dv1));
 
-                TEST_CHECK_EQUAL(prod, dv2);
+                for (typename Vector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(6 * size), std::numeric_limits<DataType_>::epsilon());
+                }
             }
 
             SparseMatrix<DataType_> sm01(4, 3, 1);
@@ -646,7 +651,11 @@ class SparseMatrixDenseVectorProductQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
             SparseVector<DataType_> prod(Product<>::value(sm1, dv1));
 
-            TEST_CHECK_EQUAL(prod, dv2);
+            for (typename Vector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(6 * size), std::numeric_limits<DataType_>::epsilon());
+            }
 
             SparseMatrix<DataType_> sm01(4, 3, 1);
             DenseVector<DataType_> dv01(4, DataType_(1));

@@ -283,7 +283,7 @@ class BandedMatrixSumTest :
                 {
                     if (ce.index() != size - 1 )
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                        for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                                 i_end(ce->end_elements()) ; i < i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -291,7 +291,7 @@ class BandedMatrixSumTest :
                         }
                         else
                         {
-                            for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                            for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                                     i_end(ce->end_elements()) ; i < i_end ; ++i)
                             {
                                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, 5, std::numeric_limits<DataType_>::epsilon());
@@ -334,7 +334,7 @@ class BandedMatrixSumQuickTest :
             {
                 if (ce.index() != size - 1 )
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                    for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                             i_end(ce->end_elements()) ; i < i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -342,7 +342,7 @@ class BandedMatrixSumQuickTest :
                 }
                 else
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                    for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                         i_end(ce->end_elements()) ; i < i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 5, std::numeric_limits<DataType_>::epsilon());
@@ -932,7 +932,7 @@ class DenseVectorRangeSumTest :
             for (unsigned long size(40) ; size < (1 << 15) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size), dv2(size);
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     *i = (i.index() + 1) / 1.23456789;
@@ -944,7 +944,7 @@ class DenseVectorRangeSumTest :
                 Sum<Tag_>::value(dvr1, dvr2);
 
                 TEST(dvr1.lock(lm_read_only),
-                        for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
+                        for (typename DenseVectorRange<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
                             i_end(dvr1.end_elements()) ; i != i_end ; ++i)
                         {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 5 + 1) * 3 / 1.23456789),
@@ -994,7 +994,7 @@ class DenseVectorRangeSumQuickTest :
         {
             unsigned long size(40);
             DenseVector<DataType_> dv1(size), dv2(size);
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 *i = (i.index() + 1) / 1.23456789;
@@ -1006,7 +1006,7 @@ class DenseVectorRangeSumQuickTest :
             Sum<Tag_>::value(dvr1, dvr2);
 
             TEST(dvr1.lock(lm_read_only),
-                    for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
+                    for (typename DenseVectorRange<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
                         i_end(dvr1.end_elements()) ; i != i_end ; ++i)
                     {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 5 + 1) * 3 / 1.23456789),
@@ -1053,7 +1053,7 @@ class DenseVectorSumTest :
             for (unsigned long size(1) ; size < (1 << 15) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size + 3), dv2(size + 3);
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     *i = (i.index() + 1) / 1.23456789;
@@ -1063,7 +1063,7 @@ class DenseVectorSumTest :
                 Sum<Tag_>::value(dv1, dv2);
 
                 dv1.lock(lm_read_only);
-                for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
+                for (typename DenseVector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                         i_end(dv1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 3 / 1.23456789),
@@ -1074,7 +1074,7 @@ class DenseVectorSumTest :
                 Sum<Tag_>::value(dv1, dv2);
 
                 TEST(dv1.lock(lm_read_only),
-                        for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
+                        for (typename DenseVector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                             i_end(dv1.end_elements()) ; i != i_end ; ++i)
                         {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 5 / 1.23456789),
@@ -1128,7 +1128,7 @@ class DenseVectorSumQuickTest :
 #endif
 
             DenseVector<DataType_> dv1(size), dv2(size);
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 *i = (i.index() + 1) / 1.23456789;
@@ -1139,7 +1139,7 @@ class DenseVectorSumQuickTest :
             Sum<Tag_>::value(dv1, dv2);
 
             TEST(dv1.lock(lm_read_only),
-                    for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
+                    for (typename DenseVector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                         i_end(dv1.end_elements()) ; i != i_end ; ++i)
                     {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 5 / 1.23456789),
@@ -1186,8 +1186,9 @@ class DenseVectorSparseVectorSumTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
                 SparseVector<DataType_> sv2(size, size / 7 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                    j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                typename Vector<DataType_>::ElementIterator j(sv2.begin_elements());
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -1239,8 +1240,9 @@ class DenseVectorSparseVectorSumQuickTest :
             unsigned long size(22);
             DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
             SparseVector<DataType_> sv2(size, size / 7 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            typename Vector<DataType_>::ElementIterator j(sv2.begin_elements());
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0)
                 {

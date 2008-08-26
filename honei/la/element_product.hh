@@ -73,8 +73,8 @@ namespace honei
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+            typename DenseVectorBase<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;

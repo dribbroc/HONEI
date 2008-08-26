@@ -29,7 +29,10 @@
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
 
+#include <cmath>
 #include <iterator>
+#include <limits>
+#include <ostream>
 
 namespace honei
 {
@@ -40,9 +43,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      */
-    template <typename DataType_> class DenseMatrixTile :
-        public MutableMatrix<DataType_> ,
-        public RowAccessMatrix<DataType_>
+    template <typename DataType_> class DenseMatrixTile
     {
         private:
             /// Pointer to our elements.

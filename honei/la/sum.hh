@@ -206,7 +206,7 @@ namespace honei
                 unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
                 unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
 
-                typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+                typename DenseVector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
 
                 if (r.index() < size - 1)
                 {
@@ -314,8 +314,8 @@ namespace honei
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+            typename DenseVectorBase<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l += *r;
@@ -439,7 +439,7 @@ namespace honei
         {
             CONTEXT("When adding scalar to DenseVectorBase:");
 
-            for (typename Vector<DT_>::ElementIterator l(x.begin_elements()),
+            for (typename DenseVectorBase<DT_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
                 *l += a;
@@ -496,7 +496,7 @@ namespace honei
                 unsigned long row_index(std::max(long(-(r.index() - size + 1)), long(0)));
                 unsigned long col_index(std::max(long(r.index() - size + 1), long(0)));
 
-                typename Vector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
+                typename DenseVector<DT2_>::ConstElementIterator c(r->begin_elements()), c_end(r->end_elements());
 
                 if (r.index() < size - 1)
                 {

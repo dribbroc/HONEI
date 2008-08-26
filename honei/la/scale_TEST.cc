@@ -53,7 +53,7 @@ class BandedMatrixScaleTest :
                 {
                     if (ce.index() != size - 1 )
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                        for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                             i_end(ce->end_elements()) ; i < i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -61,7 +61,7 @@ class BandedMatrixScaleTest :
                     }
                     else
                     {
-                        for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                        for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                             i_end(ce->end_elements()) ; i < i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 6, std::numeric_limits<DataType_>::epsilon());
@@ -104,7 +104,7 @@ class BandedMatrixScaleQuickTest :
             {
                 if (ce.index() != size - 1 )
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                    for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                             i_end(ce->end_elements()) ; i < i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -112,7 +112,7 @@ class BandedMatrixScaleQuickTest :
                 }
                 else
                 {
-                    for (typename Vector<DataType_>::ConstElementIterator i(ce->begin_elements()),
+                    for (typename DenseVector<DataType_>::ConstElementIterator i(ce->begin_elements()),
                             i_end(ce->end_elements()) ; i < i_end ; ++i)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, 6, std::numeric_limits<DataType_>::epsilon());

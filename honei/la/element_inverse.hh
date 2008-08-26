@@ -68,7 +68,7 @@ namespace honei
         {
             CONTEXT("When calculating the inverse DenseVectorBase elements:");
 
-            for (typename Vector<DataType_>::ElementIterator l(x.begin_elements()),
+            for (typename DenseVectorBase<DataType_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l)
             {
                  if (*l == DataType_(0))
@@ -147,7 +147,7 @@ namespace honei
                     //Calculation of the element-index to stop in iteration!
                     unsigned long end = band.size() - (i.index() - middle_index);
 
-                    for (typename Vector<DataType_>::ElementIterator b(band.begin_elements()),
+                    for (typename DenseVector<DataType_>::ElementIterator b(band.begin_elements()),
                             b_end(band.element_at(end)) ; b < b_end ; ++b)
                     {
                         if (*b == DataType_(0))
@@ -160,7 +160,7 @@ namespace honei
                 {
                     //Calculation of the element-index to start in iteration!
                     unsigned long start = middle_index - i.index();
-                    for (typename Vector<DataType_>::ElementIterator b(band.element_at(start)),
+                    for (typename DenseVector<DataType_>::ElementIterator b(band.element_at(start)),
                             b_end(band.end_elements()) ; b < b_end ; ++b)
                     {
                         if (*b == DataType_(0))

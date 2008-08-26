@@ -42,7 +42,7 @@ class SqrtBigValuesTest :
             const unsigned size(4096);
             DenseVector<DT_> test(size), reference(size);
 
-            for (typename Vector<DT_>::ElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 *i = DT_(1.0) + DT_(1.23456789) * i.index();
@@ -51,7 +51,7 @@ class SqrtBigValuesTest :
 
             Sqrt<Tag_>::value(test);
 
-            for (typename Vector<DT_>::ConstElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
+            for (typename DenseVector<DT_>::ConstElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 6 * *j * std::numeric_limits<DT_>::epsilon());
@@ -84,7 +84,7 @@ class SqrtSmallValuesTest :
             const unsigned size(4096);
             DenseVector<DT_> test(size), reference(size);
 
-            for (typename Vector<DT_>::ElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 *i = DT_(1) + i.index() * DT_(3) / DT_(size);
@@ -93,7 +93,7 @@ class SqrtSmallValuesTest :
 
             Sqrt<Tag_>::value(test);
 
-            for (typename Vector<DT_>::ConstElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
+            for (typename DenseVector<DT_>::ConstElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 6 * std::numeric_limits<DT_>::epsilon());
@@ -127,7 +127,7 @@ class SqrtTinyValuesTest :
             const unsigned size(4096);
             DenseVector<DT_> test(size), reference(size);
 
-            for (typename Vector<DT_>::ElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 *i = i.index() * DT_(1) / DT_(size);
@@ -136,7 +136,7 @@ class SqrtTinyValuesTest :
 
             Sqrt<Tag_>::value(test);
 
-            for (typename Vector<DT_>::ConstElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
+            for (typename DenseVector<DT_>::ConstElementIterator i(test.begin_elements()), i_end(test.end_elements()), j(reference.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 2 * std::numeric_limits<DT_>::epsilon());

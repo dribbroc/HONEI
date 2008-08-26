@@ -24,6 +24,7 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_vector_range.hh>
+#include <honei/la/element_iterator.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/element_iterator.hh>
 #include <honei/util/assertion.hh>
@@ -155,39 +156,45 @@ namespace honei
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator DenseVector<DataType_>::begin_elements() const
+    typename DenseVector<DataType_>::ConstElementIterator
+    DenseVector<DataType_>::begin_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, 0));
+        return ConstElementIterator(this->_imp->elements, 0, 0, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator DenseVector<DataType_>::end_elements() const
+    typename DenseVector<DataType_>::ConstElementIterator
+    DenseVector<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, this->_imp->size));
+        return ConstElementIterator(this->_imp->elements, this->_imp->size, 0, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator DenseVector<DataType_>::element_at(unsigned long index) const
+    typename DenseVector<DataType_>::ConstElementIterator
+    DenseVector<DataType_>::element_at(unsigned long index) const
     {
-        return ConstElementIterator(new DenseElementIterator(*this, index));
+        return ConstElementIterator(this->_imp->elements, index, 0, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator DenseVector<DataType_>::begin_elements()
+    typename DenseVector<DataType_>::ElementIterator
+    DenseVector<DataType_>::begin_elements()
     {
-        return ElementIterator(new DenseElementIterator(*this, 0));
+        return ElementIterator(this->_imp->elements, 0, 0, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator DenseVector<DataType_>::end_elements()
+    typename DenseVector<DataType_>::ElementIterator
+    DenseVector<DataType_>::end_elements()
     {
-        return ElementIterator(new DenseElementIterator(*this, this->_imp->size));
+        return ElementIterator(this->_imp->elements, this->_imp->size, 0, 1);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator DenseVector<DataType_>::element_at(unsigned long index)
+    typename DenseVector<DataType_>::ElementIterator
+    DenseVector<DataType_>::element_at(unsigned long index)
     {
-        return ElementIterator(new DenseElementIterator(*this, index));
+        return ElementIterator(this->_imp->elements, index, 0, 1);
     }
 
     template <typename DataType_>
@@ -267,127 +274,288 @@ namespace honei
         return result;
     }
 
-    /**
-     * \brief DenseVector::DenseElementIterator is a simple iterator implementation for dense vectors.
-     *
-     * \ingroup grpvector
-     **/
-    template <> template <typename DataType_> class DenseVector<DataType_>::DenseElementIterator :
-        public VectorElementIterator
+    template <typename DataType_> struct Implementation<ConstElementIterator<storage::Dense, container::Vector, DataType_> >
+    {
+        SharedArray<DataType_> elements;
+
+        unsigned long index;
+
+        unsigned long offset;
+
+        unsigned long stepsize;
+
+        Implementation(const SharedArray<DataType_> & elements, unsigned long index, unsigned long offset, unsigned long stepsize) :
+            elements(elements),
+            index(index),
+            offset(offset),
+            stepsize(stepsize)
         {
-            private:
-                /// Our parent vector.
-                const DenseVector<DataType_> & _vector;
+        }
 
-                /// Our index.
-                unsigned long _index;
+        Implementation(const Implementation<ElementIterator<storage::Dense, container::Vector, DataType_> > & other) :
+            elements(other.elements),
+            index(other.index),
+            offset(other.offset),
+            stepsize(other.stepsize)
+        {
+        }
+    };
 
-            public:
-                /// \name Constructors
-                /// \{
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::ConstElementIterator(const SharedArray<DataType_> & elements,
+            unsigned long index, unsigned long offset, unsigned long stepsize) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Dense, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Dense, container::Vector, DataType_> >(elements, index, offset, stepsize))
+    {
+    }
 
-                /**
-                 * Constructor.
-                 *
-                 * \param vector The parent vector that is referenced by the iterator.
-                 * \param index The index into the vector.
-                 **/
-                DenseElementIterator(const DenseVector<DataType_> & vector, unsigned long index) :
-                    _vector(vector),
-                    _index(index)
-                {
-                }
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::ConstElementIterator(const ConstElementIterator & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Dense, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Dense, container::Vector, DataType_> >(*other._imp))
+    {
+    }
 
-                /// Copy-constructor.
-                DenseElementIterator(DenseElementIterator const & other) :
-                    _vector(other._vector),
-                    _index(other._index)
-                {
-                }
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::ConstElementIterator(
+            const ElementIterator<storage::Dense, container::Vector, DataType_> & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Dense, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Dense, container::Vector, DataType_> >(*other._imp))
+    {
+    }
 
-                /// Destructor.
-                virtual ~DenseElementIterator()
-                {
-                }
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::~ConstElementIterator()
+    {
+    }
 
-                /// \}
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::Vector, DataType_> &
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::operator= (
+            const ConstElementIterator<storage::Dense, container::Vector, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
 
-                /// \name Forward iterator interface
-                /// \{
+        this->_imp->elements = other._imp->elements;
+        this->_imp->index = other._imp->index;
+        this->_imp->offset = other._imp->offset;
+        this->_imp->stepsize = other._imp->stepsize;
 
-                /// Preincrement operator.
-                virtual DenseElementIterator & operator++ ()
-                {
-                    CONTEXT("When incrementing iterator by one:");
+        return *this;
+    }
 
-                    ++_index;
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::Vector, DataType_> &
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ConstElementIterator<Dense, Vector> by one:");
 
-                    return *this;
-                }
+        ++this->_imp->index;
 
-                /// In-place-add operator.
-                virtual DenseElementIterator & operator+= (const unsigned long step)
-                {
-                    CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+        return *this;
+    }
 
-                    _index += step;
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::Vector, DataType_> &
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ConstElementIterator<Dense, Vector> by '" + stringify(step) + "':");
 
-                    return *this;
-                }
+        this->_imp->index += step;
 
-                /// Dereference operator that returns an assignable reference.
-                virtual DataType_ & operator* ()
-                {
-                    CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
+        return *this;
+    }
 
-                    return _vector._imp->elements[_vector._imp->stepsize * _index + _vector._imp->offset];
-                }
+    template <typename DataType_>
+    const DataType_ &
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at index '" + stringify(this->_imp->index) + "':");
 
-                /// Dereference operator that returns an unassignable reference.
-                virtual const DataType_ & operator* () const
-                {
-                    CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
+        return this->_imp->elements[this->_imp->stepsize * this->_imp->index + this->_imp->offset];
+    }
 
-                    return _vector._imp->elements[_vector._imp->stepsize * _index + _vector._imp->offset];
-                }
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::operator< (
+            const ConstElementIterator<storage::Dense, container::Vector, DataType_> & other) const
+    {
+        return this->_imp->index < other._imp->index;
+    }
 
-                /// Less-than operator.
-                virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-                {
-                    return _index < other.index();
-                }
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::operator== (
+            const ConstElementIterator<storage::Dense, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->elements.get() == other._imp->elements.get()) && (this->_imp->index == other._imp->index));
+    }
 
-                /// Equality operator.
-                virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-                {
-                    return ((&_vector == other.parent()) && (_index == other.index()));
-                }
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::operator!= (
+            const ConstElementIterator<storage::Dense, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->elements.get() != other._imp->elements.get()) || (this->_imp->index != other._imp->index));
+    }
 
-                /// Inequality operator.
-                virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-                {
-                    return ((&_vector != other.parent()) || (_index != other.index()));
-                }
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Dense, container::Vector, DataType_>::index() const
+    {
+        return this->_imp->index;
+    }
 
-                /// \}
+    template <typename DataType_> struct Implementation<ElementIterator<storage::Dense, container::Vector, DataType_> >
+    {
+        SharedArray<DataType_> elements;
 
-                /// \name IteratorTraits interface
-                /// \{
+        unsigned long index;
 
-                /// Returns our index.
-                virtual unsigned long index() const
-                {
-                    return _index;
-                }
+        unsigned long offset;
 
-                /// Returns a pointer to our parent container.
-                virtual const Vector<DataType_> * parent() const
-                {
-                    return &_vector;
-                }
+        unsigned long stepsize;
 
-                /// \}
-        };
+        Implementation(const SharedArray<DataType_> & elements, unsigned long index, unsigned long offset, unsigned long stepsize) :
+            elements(elements),
+            index(index),
+            offset(offset),
+            stepsize(stepsize)
+        {
+        }
+    };
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::Vector, DataType_>::ElementIterator(const SharedArray<DataType_> & elements,
+            unsigned long index, unsigned long offset, unsigned long stepsize) :
+        PrivateImplementationPattern<ElementIterator<storage::Dense, container::Vector, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Dense, container::Vector, DataType_> >(elements, index, offset, stepsize))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::Vector, DataType_>::ElementIterator(
+            const ElementIterator<storage::Dense, container::Vector, DataType_> & other) :
+        PrivateImplementationPattern<ElementIterator<storage::Dense, container::Vector, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Dense, container::Vector, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::Vector, DataType_>::~ElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::Vector, DataType_> &
+    ElementIterator<storage::Dense, container::Vector, DataType_>::operator= (
+            const ElementIterator<storage::Dense, container::Vector, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->elements = other._imp->elements;
+        this->_imp->index = other._imp->index;
+        this->_imp->offset = other._imp->offset;
+        this->_imp->stepsize = other._imp->stepsize;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::Vector, DataType_> &
+    ElementIterator<storage::Dense, container::Vector, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ElementIterator<Dense, Vector> by one:");
+
+        ++this->_imp->index;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::Vector, DataType_> &
+    ElementIterator<storage::Dense, container::Vector, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ElementIterator<Dense, Vector> by '" + stringify(step) + "':");
+
+        this->_imp->index += step;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    DataType_ &
+    ElementIterator<storage::Dense, container::Vector, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing assignable element at index '" + stringify(this->_imp->index) + "':");
+
+        return this->_imp->elements[this->_imp->stepsize * this->_imp->index + this->_imp->offset];
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Dense, container::Vector, DataType_>::operator< (
+            const ElementIterator<storage::Dense, container::Vector, DataType_> & other) const
+    {
+        return this->_imp->index < other._imp->index;
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Dense, container::Vector, DataType_>::operator== (
+            const ElementIterator<storage::Dense, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->elements.get() == other._imp->elements.get()) && (this->_imp->index == other._imp->index));
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Dense, container::Vector, DataType_>::operator!= (
+            const ElementIterator<storage::Dense, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->elements.get() != other._imp->elements.get()) || (this->_imp->index != other._imp->index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Dense, container::Vector, DataType_>::index() const
+    {
+        return this->_imp->index;
+    }
+
+    template <typename DataType_>
+    bool
+    operator== (const DenseVectorBase<DataType_> & a, const DenseVectorBase<DataType_> & b)
+    {
+        if (a.size() != b.size())
+            throw VectorSizeDoesNotMatch(a.size(), b.size());
+
+        for (typename DenseVectorBase<DataType_>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
+                j(b.begin_elements()) ; i != i_end ; ++i, ++j)
+        {
+            if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+                return false;
+        }
+
+        return true;
+    }
+
+    template <typename DataType_>
+    std::ostream &
+    operator<< (std::ostream & lhs, const DenseVector<DataType_> & b)
+    {
+        lhs << "[";
+        for (typename DenseVector<DataType_>::ConstElementIterator i(b.begin_elements()), i_end(b.end_elements()) ;
+                i != i_end ; ++i)
+        {
+            lhs << "  " << *i;
+        }
+        lhs << "]" << std::endl;
+
+        return lhs;
+    }
 }
 
 #endif

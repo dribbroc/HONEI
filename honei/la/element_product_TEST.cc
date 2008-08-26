@@ -51,7 +51,7 @@ class DenseVectorElementProductTest :
 
                 unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
                 DataType_ sign_1(1), sign_2(1);
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
                     *i = sign_1 * (i.index() % num_limit);
@@ -109,7 +109,7 @@ class DenseVectorElementProductQuickTest :
 
             unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
             DataType_ sign_1(1), sign_2(1);
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                 j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 *i = sign_1 * (i.index() % num_limit);
@@ -122,7 +122,7 @@ class DenseVectorElementProductQuickTest :
             ElementProduct<Tag_>::value(dv1, dv2);
 
             TEST(dv1.lock(lm_read_only),
-                    for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         k(dv3.begin_elements()) ; i != i_end ; ++i, ++k)
                     {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
@@ -173,7 +173,7 @@ class DenseVectorRangeElementProductTest :
 
                 unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
                 DataType_ sign_1(1), sign_2(1);
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()); i != i_end ; ++i, ++j)
                 {
                     *i = sign_1 * (i.index() % num_limit);
@@ -191,7 +191,7 @@ class DenseVectorRangeElementProductTest :
                             DenseVectorRange<DataType_> dvr1(dv1.copy(), range_size, offset1);
                             DenseVectorRange<DataType_> dvr2(dv2, range_size, offset2);
                             DenseVector<DataType_> dvr3(range_size, DataType_(0));
-                            for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()), 
+                            for (typename DenseVectorRange<DataType_>::ElementIterator i(dvr3.begin_elements()), 
                                 i_end(dvr3.end_elements()); i != i_end ; ++i)
                             {
                                 *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index() + offset2)%num_limit) -1);
@@ -256,7 +256,7 @@ class DenseVectorRangeElementProductQuickTest :
 
             unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
             DataType_ sign_1(1), sign_2(1);
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                 j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 *i = sign_1 * (i.index() % num_limit);
@@ -273,7 +273,7 @@ class DenseVectorRangeElementProductQuickTest :
                         DenseVectorRange<DataType_> dvr1(dv1.copy(), range_size, offset1);
                         DenseVectorRange<DataType_> dvr2(dv2, range_size, offset2);
                         DenseVector<DataType_> dvr3(range_size, DataType_(0));
-                        for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()),
+                        for (typename DenseVectorRange<DataType_>::ElementIterator i(dvr3.begin_elements()),
                             i_end(dvr3.end_elements()); i != i_end ; ++i)
                         {
                             *i = ((i.index() + offset1)%2? DataType_(-1) : DataType_(1)) * ((i.index() + offset2)%4 < 2? DataType_(1) : DataType_(-1)) * ((i.index()+offset1)%num_limit) * (num_limit - ((i.index()+offset2)%num_limit) -1);

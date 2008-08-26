@@ -18,8 +18,10 @@
  */
 
 #include <honei/la/dense_vector_slice.hh>
+#include <honei/la/vector_error.hh>
 #include <unittest/unittest.hh>
 
+#include <cmath>
 #include <string>
 
 
@@ -67,14 +69,14 @@ class DenseVectorSliceCopyTest :
                 DenseVectorSlice<DataType_> dvs(dv, size - 5, 3, 1);
                 std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dvs.copy()));
 
-                for (typename Vector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     *i = 1;
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dvs.begin_elements()),
+                for (typename DenseVectorSlice<DataType_>::ConstElementIterator i(dvs.begin_elements()),
                         i_end(dvs.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -101,7 +103,7 @@ class DenseVectorSliceEqualityTest :
             {
                 DenseVector<DataType_> dv0(size, DataType_(1.23456));
 
-                for (typename Vector<DataType_>::ElementIterator i(dv0.begin_elements()), i_end(dv0.end_elements());
+                for (typename DenseVector<DataType_>::ElementIterator i(dv0.begin_elements()), i_end(dv0.end_elements());
                         i != i_end; ++i)
                 {
                     *i += i.index() % (size / 5);
@@ -110,7 +112,7 @@ class DenseVectorSliceEqualityTest :
                 DenseVectorSlice<DataType_> dvs0(dv0, size / 5, size / 5, 2);
                 DenseVectorSlice<DataType_> dvs1(dv0, size / 5, size / 5 * 3, 2);
 
-                for (typename Vector<DataType_>::ElementIterator i(dvs0.begin_elements()), j(dvs1.begin_elements()),
+                for (typename DenseVectorSlice<DataType_>::ElementIterator i(dvs0.begin_elements()), j(dvs1.begin_elements()),
                     i_end(dvs0.end_elements()) ; i != i_end ; ++i , ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
@@ -142,7 +144,7 @@ class DenseVectorSliceFunctionsTest :
             {
                 DenseVector<DataType_> dv(size);
                 DenseVectorSlice<DataType_> dvs(dv, size / 5, size / 5 * 2, 3);
-                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = DataType_((i.index() + 1) / 1.23456789);
@@ -187,15 +189,15 @@ class DenseVectorSliceQuickTest :
             TEST_CHECK_EQUAL(dvs.size(), 238);
             TEST_CHECK_EQUAL(dv, dv);
             TEST_CHECK_EQUAL(dvs, dvs);
-            TEST_CHECK_EQUAL_WITHIN_EPS(dv[4710] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[89], 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS(dv[4710] , 123.987, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[89], 123.987, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
             DataType_ s = DataType_(1.2345);
             dv[999] = s;
             dvs[67] = s + 5;
-            TEST_CHECK_EQUAL_WITHIN_EPS(dv[999] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[67], s + 5, sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[6], s, sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dv[1792], s + 5, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS(dv[999] , s, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[67], s + 5, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[6], s, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS(dv[1792], s + 5, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
         }
 };
 DenseVectorSliceQuickTest<float>  dense_vector_slice_quick_test_float("float");

@@ -641,12 +641,12 @@ class DenseVectorDifferenceTest :
             {
                 DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
 
-                for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
                 }
-                for (typename Vector<DT_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+                for (typename DenseVector<DT_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
@@ -695,12 +695,12 @@ class DenseVectorDifferenceQuickTest :
             unsigned long size(120);
             DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
 
-            for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
             }
-            for (typename Vector<DT_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
@@ -861,8 +861,8 @@ class DenseVectorSparseVectorDifferenceTest :
             {
                 DenseVector<DT_> dv1(size, DT_(0)), dv3(size, DT_(0));
                 SparseVector<DT_> sv2(size, size / 7 + 1);
-                for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                        j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()), k(dv3.begin_elements());
+                for (typename Vector<DT_>::ElementIterator j(sv2.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -909,8 +909,8 @@ class DenseVectorSparseVectorDifferenceQuickTest :
             unsigned long size(22);
             DenseVector<DT_> dv1(size, DT_(0)), dv3(size, DT_(0));
             SparseVector<DT_> sv2(size, size / 7 + 1);
-            for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
-                    j(sv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()), k(dv3.begin_elements());
+            for (typename Vector<DT_>::ElementIterator j(sv2.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0)
                 {
@@ -1050,8 +1050,8 @@ class SparseVectorDenseVectorDifferenceTest :
                 SparseVector<DT_> sv1(size, size / 7 + 1);
                 DenseVector<DT_> dv2(size, DT_(0)), dv3(size, DT_(0));
 
-                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                        j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements());
+                for (typename DenseVector<DT_>::ElementIterator j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -1098,9 +1098,8 @@ class SparseVectorDenseVectorDifferenceQuickTest :
 
             SparseVector<DT_> sv1(size, size / 7 + 1);
             DenseVector<DT_> dv2(size, DT_(0)), dv3(size, DT_(0));
-
-            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                    j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements());
+            for (typename DenseVector<DT_>::ElementIterator j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0)
                 {
@@ -1148,8 +1147,9 @@ class SparseVectorDenseVectorDifferenceCellTest :
                 SparseVector<DT_> sv1(size, size / 7 + 1);
                 DenseVector<DT_> dv2(size, DT_(0)), dv3(size, DT_(0));
 
-                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                        j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                typename DenseVector<DT_>::ElementIterator j(dv2.begin_elements()), k(dv3.begin_elements());
+                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                        i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -1199,8 +1199,9 @@ class SparseVectorDenseVectorDifferenceCellQuickTest :
             SparseVector<DT_> sv1(size, size / 7 + 1);
             DenseVector<DT_> dv2(size, DT_(0)), dv3(size, DT_(0));
 
-            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                    j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            typename DenseVector<DT_>::ElementIterator j(dv2.begin_elements()), k(dv3.begin_elements());
+            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                   i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0)
                 {

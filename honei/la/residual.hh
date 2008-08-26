@@ -78,7 +78,7 @@ namespace honei
             if (a.rows() != a.columns())
                 throw MatrixIsNotSquare(a.rows(), a.columns());
 
-            for (typename Vector<DT1_>::ElementIterator i(b.begin_elements()),
+            for (typename DenseVector<DT1_>::ElementIterator i(b.begin_elements()),
                     i_end(b.end_elements()) ; i != i_end ; ++i)
             {
                 *i -= DotProduct<>::value(a[i.index()], x);
@@ -103,7 +103,7 @@ namespace honei
             if (! a.square())
                 throw MatrixIsNotSquare(a.rows(), a.columns());
 
-            for (typename Vector<DT1_>::ElementIterator i(b.begin_elements()),
+            for (typename DenseVector<DT1_>::ElementIterator i(b.begin_elements()),
                     i_end(b.end_elements()) ; i != i_end ; ++i)
             {
                 *i -= DotProduct<>::value(a[i.index()], x);

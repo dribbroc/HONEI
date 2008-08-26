@@ -19,6 +19,7 @@
 
 #include <honei/la/banded_matrix_q1.hh>
 #include <honei/la/banded_matrix.hh>
+#include <honei/la/vector_error.hh>
 #include <unittest/unittest.hh>
 
 #include <string>

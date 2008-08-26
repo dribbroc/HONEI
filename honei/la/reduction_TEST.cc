@@ -58,7 +58,7 @@ class BandedMatrixReductionToSumTest :
                 bm1.insert_band(-size + 2, dv1);
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(bm1));
 
-                for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()),
+                for(typename DenseVector<DT_>::ConstElementIterator i(sum.begin_elements()),
                         i_end(sum.end_elements()), j(dv1.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
@@ -98,7 +98,7 @@ class BandedMatrixReductionQuickTest :
             bm1.insert_band(-size + 2, dv1);
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(bm1));
 
-            for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()),
+            for(typename DenseVector<DT_>::ConstElementIterator i(sum.begin_elements()),
                     i_end(sum.end_elements()), j(dv1.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
@@ -136,7 +136,7 @@ class DenseMatrixReductionToSumTest :
 
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
-                for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()),
+                for(typename DenseVector<DT_>::ConstElementIterator i(sum.begin_elements()),
                         i_end(sum.end_elements()), j(dv1.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
@@ -184,7 +184,7 @@ class DenseMatrixReductionQuickTest :
             }
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(dm1));
 
-            for(typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
+            for(typename DenseVector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
@@ -244,7 +244,7 @@ class SparseMatrixReductionToSumTest :
                 }
                 DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
-                for (typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
+                for (typename DenseVector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
                     i != i_end ; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
@@ -304,7 +304,7 @@ class SparseMatrixReductionQuickTest :
             }
             DenseVector<DT_> sum(Reduction<rt_sum, Tag_>::value(sm1));
 
-            for (typename Vector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
+            for (typename DenseVector<DT_>::ConstElementIterator i(sum.begin_elements()), i_end(sum.end_elements()), j(dv1.begin_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DT_>::epsilon());
@@ -345,7 +345,7 @@ class DenseVectorRangeReductionToSumTest :
                 for(int i(0) ; i < 4 ; i++)
                 {
                     DenseVectorRange<DT_> dvr(dv, size, i);
-                    for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                    for (typename DenseVectorRange<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
                             i != i_end ; ++i)
                     {
                         *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
@@ -395,7 +395,7 @@ class DenseVectorRangeReductionToSumQuickTest :
             for (int i(0) ; i < 4 ; i++)
             {
                 DenseVectorRange<DT_> dvr(dv, size, i);
-                for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                for (typename DenseVectorRange<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
@@ -443,7 +443,7 @@ class DenseVectorReductionToSumTest :
             for (unsigned long size(1) ; size < (1 << 16) ; size <<= 1)
             {
                 DenseVector<DT_> dv(size);
-                for (typename Vector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                for (typename DenseVector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
@@ -487,7 +487,7 @@ class DenseVectorReductionToSumQuickTest :
         {
             unsigned long size(22);
             DenseVector<DT_> dv(size);
-            for (typename Vector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
@@ -926,7 +926,7 @@ class DenseVectorRangeReductionToMinTest :
                 for(int i(0) ; i < 4 ; i++)
                 {
                     DenseVectorRange<DT_> dvr(dv, size, i);
-                    for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                    for (typename DenseVectorRange<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
                             i != i_end ; ++i)
                     {
 
@@ -983,7 +983,7 @@ class DenseVectorRangeReductionToMinQuickTest :
             for(int i(0) ; i < 4 ; i++)
             {
                 DenseVectorRange<DT_> dvr(dv, size, i);
-                for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                for (typename DenseVectorRange<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
                         i != i_end ; ++i)
                 {
 
@@ -1036,7 +1036,7 @@ class DenseVectorReductionToMinTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size);
-                for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = i.index() + 500;
@@ -1072,7 +1072,7 @@ class DenseVectorReductionToMinQuickTest :
         {
             unsigned long size(22);
             DenseVector<DT_> dv1(size);
-            for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = i.index() + 500;
@@ -1476,7 +1476,7 @@ class DenseVectorRangeReductionToMaxTest :
                 for(int j(0) ; j < 4 ; j++)
                 {
                     DenseVectorRange<DT_> dvr(dv, size, j);
-                    for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                    for (typename DenseVectorRange<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
                             i != i_end ; ++i)
                     {
 
@@ -1533,7 +1533,7 @@ class DenseVectorRangeReductionToMaxQuickTest :
             for(int j(0) ; j < 4 ; j++)
             {
                 DenseVectorRange<DT_> dvr(dv, size, j);
-                for (typename Vector<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                for (typename DenseVectorRange<DT_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
                         i != i_end ; ++i)
                 {
 
@@ -1587,7 +1587,7 @@ class DenseVectorReductionToMaxTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DT_> dv1(size);
-                for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = i.index();
@@ -1620,7 +1620,7 @@ class DenseVectorReductionToMaxQuickTest :
         {
             unsigned long size(22);
             DenseVector<DT_> dv1(size);
-            for (typename Vector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = i.index();

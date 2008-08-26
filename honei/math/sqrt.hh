@@ -50,7 +50,8 @@ namespace honei
          */
         template <typename DT_> static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x)
         {
-            for (typename Vector<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ; i != i_end ; ++i)
+            for (typename DenseVectorContinuousBase<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
+                    i != i_end ; ++i)
             {
                 *i = std::sqrt(*i);
             }

@@ -131,13 +131,14 @@ namespace honei
 
             float ppu_result(0.0f);
 
-            for (Vector<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
+            for (DenseVectorRange<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
                     i != i_end ; ++i)
             {
                 ppu_result += *i;
             }
 
-            for (Vector<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ; i != i_end ; ++i)
+            for (DenseVectorRange<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ;
+                    i != i_end ; ++i)
             {
                 ppu_result += *i;
             }
@@ -251,13 +252,14 @@ namespace honei
 
             double ppu_result(0.0);
 
-            for (Vector<double>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
+            for (DenseVectorRange<double>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
                     i != i_end ; ++i)
             {
                 ppu_result += *i;
             }
 
-            for (Vector<double>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ; i != i_end ; ++i)
+            for (DenseVectorRange<double>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ;
+                    i != i_end ; ++i)
             {
                 ppu_result += *i;
             }
@@ -290,12 +292,12 @@ namespace honei
 
         float ppu_result(std::numeric_limits<float>::max());
 
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        for (DenseVectorRange<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
         {
             ppu_result = (ppu_result < *i) ? ppu_result : *i;
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (DenseVectorRange<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
         {
             ppu_result = (ppu_result < *i) ? ppu_result : *i;
         }
@@ -327,12 +329,14 @@ namespace honei
 
             float ppu_result(std::numeric_limits<float>::max());
 
-            for (Vector<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+            for (DenseVectorRange<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
+                    i != i_end ; ++i)
             {
                 ppu_result = (ppu_result < *i) ? ppu_result : *i;
             }
 
-            for (Vector<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ; i != i_end ; ++i)
+            for (DenseVectorRange<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ;
+                    i != i_end ; ++i)
             {
                 ppu_result = (ppu_result < *i) ? ppu_result : *i;
             }
@@ -364,12 +368,14 @@ namespace honei
 
         float ppu_result(std::numeric_limits<float>::min());
 
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        for (DenseVectorRange<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ;
+                i != i_end ; ++i)
         {
             ppu_result = (ppu_result > *i) ? ppu_result : *i;
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (DenseVectorRange<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ;
+                i != i_end ; ++i)
         {
             ppu_result = (ppu_result > *i) ? ppu_result : *i;
         }
@@ -401,12 +407,14 @@ namespace honei
 
             float ppu_result(std::numeric_limits<float>::min());
 
-            for (Vector<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+            for (DenseVectorRange<float>::ConstElementIterator i(row.begin_elements()), i_end(row.element_at(instruction.transfer_begin())) ;
+                    i != i_end ; ++i)
             {
                 ppu_result = (ppu_result > *i) ? ppu_result : *i;
             }
 
-            for (Vector<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ; i != i_end ; ++i)
+            for (DenseVectorRange<float>::ConstElementIterator i(row.element_at(instruction.transfer_end())), i_end(row.end_elements()) ;
+                    i != i_end ; ++i)
             {
                 ppu_result = (ppu_result > *i) ? ppu_result : *i;
             }

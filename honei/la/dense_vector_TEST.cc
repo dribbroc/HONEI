@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -67,20 +67,20 @@ class DenseVectorCopyTest :
                 DenseVector<DataType_> dv1(size, static_cast<DataType_>(0)), dv2(size, static_cast<DataType_>(1));
                 std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dv1.copy()));
 
-                for (typename Vector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     *i = 1;
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
+                for (typename DenseVector<DataType_>::ConstElementIterator i(dv1.begin_elements()),
                         i_end(dv1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dv2.begin_elements()),
+                for (typename DenseVector<DataType_>::ConstElementIterator i(dv2.begin_elements()),
                         i_end(dv2.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 1, std::numeric_limits<DataType_>::epsilon());
@@ -107,8 +107,9 @@ class DenseVectorDensifyQuickTest :
                 DenseVector<DataType_> dv0(size, DataType_(0));
                 SparseVector<DataType_> sv0(size, size / 8 + 1);
 
-                for (typename Vector<DataType_>::ElementIterator i(dv0.begin_elements()), j(sv0.begin_elements()),
-                    i_end(dv0.end_elements()) ; i != i_end ; ++i , ++j)
+                typename Vector<DataType_>::ElementIterator j(sv0.begin_elements());
+                for (typename DenseVector<DataType_>::ElementIterator i(dv0.begin_elements()), i_end(dv0.end_elements()) ;
+                        i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 7 == 0)
                     {
@@ -142,7 +143,7 @@ class DenseVectorEqualityTest :
                 DenseVector<DataType_> dv0(size, DataType_(1.23456));
                 DenseVector<DataType_> dv1(size, DataType_(1.23456));
 
-                for (typename Vector<DataType_>::ElementIterator i(dv0.begin_elements()), j(dv1.begin_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv0.begin_elements()), j(dv1.begin_elements()),
                     i_end(dv0.end_elements()) ; i != i_end ; ++i , ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
@@ -173,7 +174,7 @@ class DenseVectorFunctionsTest :
             for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv(size);
-                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);

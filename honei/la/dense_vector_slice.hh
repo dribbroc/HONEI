@@ -38,11 +38,6 @@ namespace honei
         public PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>
     {
         private:
-            /// Our implementation of ElementIteratorBase.
-            class DenseElementIterator;
-
-            typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
-
             /**
              * Constructor.
              *
@@ -57,15 +52,19 @@ namespace honei
                     const unsigned long stepsize);
 
         public:
-            friend class DenseElementIterator;
+            /// \name Friends of DenseVectorSlice
+            /// \{
+
             friend class DenseMatrix<DataType_>;
             friend class DenseMatrixTile<DataType_>;
 
+            /// \}
+
             /// Type of the const iterator over our elements.
-            typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
+            typedef ConstElementIterator<storage::Dense, container::Vector, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef typename Vector<DataType_>::ElementIterator ElementIterator;
+            typedef ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
 
             /// Constructors
             /// \{
@@ -148,15 +147,50 @@ namespace honei
             unsigned long stepsize() const;
     };
 
+    /**
+     * Equality operator for DenseVectorSlice.
+     *
+     * Compares if corresponding elements of two banded matrices are equal
+     * within machine precision.
+     */
+    template <typename DataType_> bool operator== (const DenseVectorSlice<DataType_> & a, const DenseVectorSlice<DataType_> & b);
+
+    /**
+     * Output operator for DenseVectorSlice.
+     *
+     * Outputs a dense vector to an output stream.
+     */
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<DataType_> & vector);
+
     extern template class DenseVectorSlice<float>;
+
+    extern template bool operator== (const DenseVectorSlice<float> & a, const DenseVectorSlice<float> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<float> & vector);
 
     extern template class DenseVectorSlice<double>;
 
+    extern template bool operator== (const DenseVectorSlice<double> & a, const DenseVectorSlice<double> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<double> & vector);
+
     extern template class DenseVectorSlice<int>;
+
+    extern template bool operator== (const DenseVectorSlice<int> & a, const DenseVectorSlice<int> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<int> & vector);
 
     extern template class DenseVectorSlice<long>;
 
+    extern template bool operator== (const DenseVectorSlice<long> & a, const DenseVectorSlice<long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<long> & vector);
+
     extern template class DenseVectorSlice<unsigned long>;
+
+    extern template bool operator== (const DenseVectorSlice<unsigned long> & a, const DenseVectorSlice<unsigned long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<unsigned long> & vector);
 }
 
 #endif

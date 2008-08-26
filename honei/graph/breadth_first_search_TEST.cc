@@ -65,7 +65,7 @@ class BreadthFirstSearchQuickTest :
 
             i = 0;
             DenseVector<DataType_>  pNW(7);
-            for (typename Vector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
+            for (typename DenseVector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
             {
                 *e = NW[i];
                 i++;
@@ -163,7 +163,7 @@ class BreadthFirstSearchCliqueTest :
             }
 
             DenseVector<DataType_>  pNW(_nodecount);
-            for (typename Vector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
+            for (typename DenseVector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
             {
                 *e = DataType_(4);
             }
@@ -250,7 +250,7 @@ class BreadthFirstSearchBinaryTreeTest :
 
             DenseVector<DataType_>  pNW(_nodecount);
             unsigned long exp(0);
-            for (typename Vector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
+            for (typename DenseVector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
             {
                 *e = DataType_(1 + (exp % 2));
                 if (e.index() + 1 == (1 << (exp +1)) -1) exp++;

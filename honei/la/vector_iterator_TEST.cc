@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -48,9 +48,9 @@ class BandedMatrixElementIterationTest :
                     TEST_CHECK_EQUAL(b.index(), i);
 
                     typename BandedMatrix<DataType_>::ConstBandIterator cb(b);
-                    TEST_CHECK_EQUAL(std::distance((*cb).begin_elements(), (*cb).end_elements()), size);
+                    TEST_CHECK_EQUAL(cb->end_elements().index() - cb->begin_elements().index(), size);
 
-                    for (typename Vector<DataType_>::ConstElementIterator ce((*cb).begin_elements()), ce_end((*cb).end_elements()) ;
+                    for (typename DenseVector<DataType_>::ConstElementIterator ce(cb->begin_elements()), ce_end(cb->end_elements()) ;
                             ce != ce_end ; ++ce)
                     {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());

@@ -41,12 +41,14 @@ namespace honei
             SPEManager::instance()->dispatch(instruction);
         }
 
-        for (Vector<float>::ElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        for (DenseVectorContinuousBase<float>::ElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ;
+                i != i_end ; ++i)
         {
             *i = sqrt(*i);
         }
 
-        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (DenseVectorContinuousBase<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ;
+                i != i_end ; ++i)
         {
             *i = sqrt(*i);
         }

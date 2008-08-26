@@ -947,7 +947,7 @@ namespace honei
         for (typename BandedMatrix<DataType_>::ConstBandIterator i(a.begin_bands()), i_end(a.end_bands()),
                 j(b.begin_bands()) ; i != i_end ; ++i, ++j)
         {
-            for (typename Vector<DataType_>::ConstElementIterator x(i->begin_elements()), x_end(i->end_elements()),
+            for (typename DenseVector<DataType_>::ConstElementIterator x(i->begin_elements()), x_end(i->end_elements()),
                     y(j->begin_elements()) ; x < x_end ; ++x, ++y)
             {
                 if (std::fabs(*x - *y) > std::numeric_limits<DataType_>::epsilon())

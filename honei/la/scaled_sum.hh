@@ -71,8 +71,8 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(y.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(x.begin_elements()),
+            typename DenseVectorBase<DT2_>::ConstElementIterator r(y.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l += b * (*r);
@@ -188,9 +188,9 @@ namespace honei
             if (a.size() != c.size())
                 throw VectorSizeDoesNotMatch(c.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator l(b.begin_elements());
-            typename Vector<DT3_>::ConstElementIterator r(c.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator s(a.begin_elements()),
+            typename DenseVectorBase<DT2_>::ConstElementIterator l(b.begin_elements());
+            typename DenseVectorBase<DT3_>::ConstElementIterator r(c.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator s(a.begin_elements()),
                     s_end(a.end_elements()) ; s != s_end ; ++l)
             {
                 *s += *l * *r;

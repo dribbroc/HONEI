@@ -24,14 +24,32 @@ namespace honei
 {
     template class DenseVectorRange<float>;
 
+    template bool operator== (const DenseVectorRange<float> & a, const DenseVectorRange<float> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<float> & vector);
+
     template class DenseVectorRange<double>;
 
-    template class DenseVectorRange<bool>;
+    template bool operator== (const DenseVectorRange<double> & a, const DenseVectorRange<double> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<double> & vector);
 
     template class DenseVectorRange<int>;
 
+    template bool operator== (const DenseVectorRange<int> & a, const DenseVectorRange<int> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<int> & vector);
+
     template class DenseVectorRange<long>;
 
+    template bool operator== (const DenseVectorRange<long> & a, const DenseVectorRange<long> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<long> & vector);
+
     template class DenseVectorRange<unsigned long>;
+
+    template bool operator== (const DenseVectorRange<unsigned long> & a, const DenseVectorRange<unsigned long> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<unsigned long> & vector);
 }
 

@@ -119,13 +119,13 @@ namespace honei
         }
 
         template <typename DT_>
-        static DT_ value(const Vector<DT_> & vector)
+        static DT_ value(const DenseVectorBase<DT_> & vector)
         {
             CONTEXT("When reducing Vector to Scalar by sum:");
 
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator i(vector.begin_elements()), i_end(vector.end_elements()) ;
+            for (typename DenseVectorBase<DT_>::ConstElementIterator i(vector.begin_elements()), i_end(vector.end_elements()) ;
                     i != i_end ; ++i)
             {
                 result += *i;
@@ -285,7 +285,7 @@ namespace honei
 
             DT_ result(vector[0]);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+            for (typename DenseVectorBase<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 if (*l > result)
@@ -411,7 +411,7 @@ namespace honei
 
             DT_ result(vector[0]);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+            for (typename DenseVectorBase<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 if (*l < result)
@@ -714,7 +714,7 @@ namespace honei
             unsigned long overall_size(a.rows());
             if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
-                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                typename DenseVector<DT_>::ElementIterator l(result.begin_elements());
                 for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
                 {
                     *l = Reduction<rt_sum, Tag_>::value(a[i]);
@@ -753,7 +753,7 @@ namespace honei
         template <typename DT_>
         static void value(const DenseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
         {
-            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            typename DenseVectorRange<DT_>::ElementIterator l(b.begin_elements());
             for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
             {
                 *l = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a[i]);
@@ -772,7 +772,7 @@ namespace honei
             unsigned long overall_size(a.rows());
             if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
-                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                typename DenseVector<DT_>::ElementIterator l(result.begin_elements());
                 for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
                 {
                     *l = Reduction<rt_sum, Tag_>::value(a[i]);
@@ -811,7 +811,7 @@ namespace honei
         template <typename DT_>
         static void value(const SparseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
         {
-            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            typename DenseVectorRange<DT_>::ElementIterator l(b.begin_elements());
             for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
             {
                 *l = Reduction<rt_sum, typename Tag_::DelegateTo>::value(a[i]);
@@ -840,7 +840,7 @@ namespace honei
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
 
                 for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++pri)
                 {
@@ -890,12 +890,12 @@ namespace honei
                 {
                     offset = p->start;
                     part_size = p->size;
-                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                     pri += i;
-                    typename Vector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
+                    typename DenseVectorSlice<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
                     start += offset;
                     stop += (offset + part_size);
-                    ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename DenseVector<DT_>::ElementIterator, typename DenseVectorSlice<DT_>::ConstElementIterator, typename DenseVectorSlice<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
                     std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
@@ -938,12 +938,12 @@ namespace honei
                 {
                     offset = p->start;
                     part_size = p->size;
-                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                     pri += i;
                     typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
                     start += offset;
                     stop += (offset + part_size);
-                    ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    ThreeArgWrapper< Reduction<rt_sum, Tag_>, typename DenseVector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
                     std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
@@ -1079,7 +1079,7 @@ namespace honei
             unsigned long overall_size(a.rows());
             if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
-                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                typename DenseVector<DT_>::ElementIterator l(result.begin_elements());
                 for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
                 {
                     *l = Reduction<rt_max, Tag_>::value(a[i]);
@@ -1118,7 +1118,7 @@ namespace honei
         template <typename DT_>
         static void value(const DenseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
         {
-            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            typename DenseVectorRange<DT_>::ElementIterator l(b.begin_elements());
             for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
             {
                 *l = Reduction<rt_max, typename Tag_::DelegateTo>::value(a[i]);
@@ -1137,7 +1137,7 @@ namespace honei
             unsigned long overall_size(a.rows());
             if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
-                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                typename DenseVector<DT_>::ElementIterator l(result.begin_elements());
                 for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
                 {
                     *l = Reduction<rt_max, Tag_>::value(a[i]);
@@ -1176,7 +1176,7 @@ namespace honei
         template <typename DT_>
         static void value(const SparseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
         {
-            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            typename DenseVectorRange<DT_>::ElementIterator l(b.begin_elements());
             for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
             {
                 *l = Reduction<rt_max, typename Tag_::DelegateTo>::value(a[i]);
@@ -1206,7 +1206,7 @@ namespace honei
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
 
                 for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++pri)
                 {
@@ -1256,12 +1256,12 @@ namespace honei
                 {
                     offset = p->start;
                     part_size = p->size;
-                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                     pri += i;
-                    typename Vector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
+                    typename DenseVector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
                     start += offset;
                     stop += (offset + part_size);
-                    ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    ThreeArgWrapper< Reduction<rt_max, Tag_>, typename DenseVector<DT_>::ElementIterator, typename DenseVector<DT_>::ConstElementIterator, typename DenseVector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
                     std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
@@ -1305,12 +1305,12 @@ namespace honei
                 {
                     offset = p->start;
                     part_size = p->size;
-                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                     pri += i;
                     typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
                     start += offset;
                     stop += (offset + part_size);
-                    ThreeArgWrapper< Reduction<rt_max, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    ThreeArgWrapper< Reduction<rt_max, Tag_>, typename DenseVector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
                     std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
@@ -1447,7 +1447,7 @@ namespace honei
             unsigned long overall_size(a.rows());
             if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
-                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                typename DenseVector<DT_>::ElementIterator l(result.begin_elements());
                 for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
                 {
                     *l = Reduction<rt_min, Tag_>::value(a[i]);
@@ -1486,7 +1486,7 @@ namespace honei
         template <typename DT_>
         static void value(const DenseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
         {
-            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            typename DenseVector<DT_>::ElementIterator l(b.begin_elements());
             for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
             {
                 *l = Reduction<rt_min, typename Tag_::DelegateTo>::value(a[i]);
@@ -1505,7 +1505,7 @@ namespace honei
             unsigned long overall_size(a.rows());
             if ((overall_size < max_count) && ((a.columns() / min_part_size) > overall_size) && ((a.columns() / min_part_size) >= 2))
             {
-                typename Vector<DT_>::ElementIterator l(result.begin_elements());
+                typename DenseVector<DT_>::ElementIterator l(result.begin_elements());
                 for (unsigned long i(0) ; i < a.rows() ; ++i, ++l)
                 {
                     *l = Reduction<rt_min, Tag_>::value(a[i]);
@@ -1544,7 +1544,7 @@ namespace honei
         template <typename DT_>
         static void value(const SparseMatrix<DT_> & a, DenseVectorRange<DT_> & b, unsigned long start, unsigned long part_size)
         {
-            typename Vector<DT_>::ElementIterator l(b.begin_elements());
+            typename DenseVector<DT_>::ElementIterator l(b.begin_elements());
             for (unsigned long i(start) ; i < (start + part_size) ; ++i, ++l)
             {
                 *l = Reduction<rt_min, typename Tag_::DelegateTo>::value(a[i]);
@@ -1574,7 +1574,7 @@ namespace honei
                 std::list< std::tr1::shared_ptr<PoolTask> > dispatched_tasks;
 
                 unsigned long offset, part_size;
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
 
                 for (PartitionList::ConstIterator p(partitions.begin()), p_end(partitions.end()); p != p_end ; ++p, ++pri)
                 {
@@ -1624,12 +1624,12 @@ namespace honei
                 {
                     offset = p->start;
                     part_size = p->size;
-                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                     pri += i;
-                    typename Vector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
+                    typename DenseVector<DT_>::ConstElementIterator start(a.begin_elements()), stop(a.begin_elements());
                     start += offset;
                     stop += (offset + part_size);
-                    ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    ThreeArgWrapper< Reduction<rt_min, Tag_>, typename DenseVector<DT_>::ElementIterator, typename DenseVector<DT_>::ConstElementIterator, typename DenseVector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
                     std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }
@@ -1672,12 +1672,12 @@ namespace honei
                 {
                     offset = p->start;
                     part_size = p->size;
-                    typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                    typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                     pri += i;
                     typename Vector<DT_>::ConstElementIterator start(a.begin_non_zero_elements()), stop(a.begin_non_zero_elements());
                     start += offset;
                     stop += (offset + part_size);
-                    ThreeArgWrapper< Reduction<rt_min, Tag_>, typename Vector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
+                    ThreeArgWrapper< Reduction<rt_min, Tag_>, typename DenseVector<DT_>::ElementIterator, typename Vector<DT_>::ConstElementIterator, typename Vector<DT_>::ConstElementIterator> mywrapper(pri, start, stop);
                     std::tr1::shared_ptr<PoolTask> ptr(ThreadPool::instance()->dispatch(mywrapper));
                     dispatched_tasks.push_back(ptr);
                 }

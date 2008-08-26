@@ -50,12 +50,14 @@ namespace honei
 
         float ppu_result(0.0f);
 
-        for (Vector<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ; i != i_end ; ++i)
+        for (DenseVectorContinuousBase<float>::ConstElementIterator i(a.begin_elements()), i_end(a.element_at(instruction.transfer_begin())) ;
+                i != i_end ; ++i)
         {
             ppu_result = (ppu_result > fabs(*i)) ? ppu_result : fabs(*i);
         }
 
-        for (Vector<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ; i != i_end ; ++i)
+        for (DenseVectorContinuousBase<float>::ConstElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()) ;
+                i != i_end ; ++i)
         {
             ppu_result = (ppu_result > fabs(*i)) ? ppu_result : fabs(*i);
         }

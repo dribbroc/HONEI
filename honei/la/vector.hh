@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
  *
@@ -84,58 +84,6 @@ namespace honei
 
             /// Destructor.
             virtual ~Vector() {}
-    };
-
-    /**
-     * DenseVectorBase is the abstract base class for all dense vectors, i.e. vector
-     * with O(size) elements.
-     *
-     * \ingroup grpvector
-     */
-    template <typename DataType_> class DenseVectorBase :
-        public Vector<DataType_>
-    {
-        public:
-            typedef typename honei::Vector<DataType_>::ConstElementIterator ConstElementIterator;
-            typedef typename honei::Vector<DataType_>::ElementIterator ElementIterator;
-
-            /// Returns const iterator pointing to a given element of the vector.
-            virtual ConstElementIterator element_at(unsigned long index) const = 0;
-
-            /// Returns iterator pointing to a given element of the vector.
-            virtual ElementIterator element_at(unsigned long index) = 0;
-
-            /// Return a pointer to our elements.
-            virtual DataType_ * elements() const = 0;
-
-            /// Return our memory id
-            virtual void * memid() const = 0;
-
-            /// Return the address of our data
-            virtual void * address() const = 0;
-
-            /// Request a memory access lock for our data.
-            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const = 0;
-
-            /// Release a memory access lock for our data.
-            virtual void unlock(LockMode mode) const = 0;
-    };
-
-    /**
-     * DenseVectorContinousBase is the abstract base class for all dense vectors which
-     * keep their data continous in memory.
-     *
-     * \ingroup grpvector
-     */
-    template <typename DataType_> class DenseVectorContinuousBase :
-        public DenseVectorBase<DataType_>
-    {
-        public:
-            /// Return our offset.
-            virtual unsigned long offset() const = 0;
-
-            /// Return a range of our DenseVectorContinuousBase.
-            virtual DenseVectorRange<DataType_> range(unsigned long size, unsigned long offset) const = 0;
     };
 
     /**

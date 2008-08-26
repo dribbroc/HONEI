@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -27,7 +27,7 @@ Absolute<tags::CPU>::value(DenseVectorBase<float> & x)
 {
     CONTEXT("When calculating the absolute value of DenseVectorBase<float> elements:");
 
-    for (Vector<float>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
+    for (DenseVectorBase<float>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
             i != i_end ; ++i)
     {
         *i = fabs(*i);
@@ -57,7 +57,7 @@ Absolute<tags::CPU>::value(DenseVectorBase<double> & x)
 {
     CONTEXT("When calculating the absolute value of DenseVectorBase<double> elements:");
 
-    for (Vector<double>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
+    for (DenseVectorBase<double>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
             i != i_end ; ++i)
     {
         *i = fabs(*i);

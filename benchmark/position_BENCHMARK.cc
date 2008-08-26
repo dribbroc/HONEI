@@ -84,7 +84,7 @@ struct Scenario<DataType_, Scenarios::Clique>
             }
 
         // create Node_Weights
-        for (typename Vector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
+        for (typename DenseVector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
                 e_end(Node_Weights.end_elements()); e != e_end ; ++e)
         {
             *e = 1;
@@ -117,7 +117,7 @@ struct Scenario<DataType_, Scenarios::SquareGrid>
             }
 
         // create Node_Weights
-        for (typename Vector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
+        for (typename DenseVector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
                 e_end(Node_Weights.end_elements()); e != e_end ; ++e)
         {
             *e = 1;
@@ -154,7 +154,7 @@ struct Scenario<DataType_, Scenarios::BinaryTree>
             }
 
         // create Node_Weights
-        for (typename Vector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
+        for (typename DenseVector<DataType_>::ElementIterator e(Node_Weights.begin_elements()),
                 e_end(Node_Weights.end_elements()); e != e_end ; ++e)
         {
             *e = 1;

@@ -52,7 +52,7 @@ class ConstVectorTest :
                 TEST_CHECK_EQUAL(cv2[size - 2], cv[size - 2]);
                 TEST_CHECK_EQUAL(cv, cv2);
 
-                typename Vector<DataType_>::ElementIterator j(dv.begin_elements());
+                typename DenseVector<DataType_>::ElementIterator j(dv.begin_elements());
                 for (typename ConstVector<DataType_>::ConstElementIterator i(cv.begin_elements()), i_end(cv.end_elements()) ;
                         i != i_end ; ++i, ++j)
                 {

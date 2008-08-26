@@ -71,7 +71,7 @@ namespace honei
                 throw VectorSizeDoesNotMatch(node_weights.size(), distance_matrix.rows());
 
             bool invalid(true);
-            for (typename Vector<DataType_>::ConstElementIterator e(node_weights.begin_elements()),
+            for (typename DenseVector<DataType_>::ConstElementIterator e(node_weights.begin_elements()),
                 e_end(node_weights.end_elements()); e != e_end ; ++e)
             {
                 if (*e <= DataType_(0)) invalid = false;
@@ -157,7 +157,7 @@ namespace honei
                 throw VectorSizeDoesNotMatch(node_weights.size(), distance_matrix.rows());
 
             bool invalid(true);
-            for (typename Vector<DataType_>::ConstElementIterator e(node_weights.begin_elements()),
+            for (typename DenseVector<DataType_>::ConstElementIterator e(node_weights.begin_elements()),
                 e_end(node_weights.end_elements()); e != e_end ; ++e)
             {
                 if (*e <= DataType_(0)) invalid = false;

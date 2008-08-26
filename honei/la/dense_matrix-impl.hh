@@ -330,6 +330,7 @@ namespace honei
 
         Implementation(const Implementation<ElementIterator<storage::Dense, container::Matrix, DataType_> > & other) :
             elements(other.elements),
+            columns(other.columns),
             index(other.index)
         {
         }

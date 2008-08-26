@@ -18,8 +18,10 @@
  */
 
 #include <honei/la/dense_vector_range.hh>
+#include <honei/la/vector_error.hh>
 #include <unittest/unittest.hh>
 
+#include <cmath>
 #include <string>
 
 
@@ -69,20 +71,20 @@ class DenseVectorRangeCopyTest :
                 DenseVectorRange<DataType_> dvr1(dv1, size - 1, 0), dvr2(dv2, size - 1, 0);
                 std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dvr1.copy()));
 
-                for (typename Vector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                     *i = 1;
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
+                for (typename DenseVector<DataType_>::ConstElementIterator i(dvr1.begin_elements()),
                         i_end(dvr1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(dvr2.begin_elements()),
+                for (typename DenseVector<DataType_>::ConstElementIterator i(dvr2.begin_elements()),
                         i_end(dvr2.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 1, std::numeric_limits<DataType_>::epsilon());
@@ -112,7 +114,7 @@ class DenseVectorRangeEqualityTest :
                 DenseVectorRange<DataType_> dvr0(dv0, size - 1, 0);
                 DenseVectorRange<DataType_> dvr1(dv1, size - 1, 1);
 
-                for (typename Vector<DataType_>::ElementIterator i(dvr0.begin_elements()), j(dvr1.begin_elements()),
+                for (typename DenseVectorRange<DataType_>::ElementIterator i(dvr0.begin_elements()), j(dvr1.begin_elements()),
                         i_end(dvr0.end_elements()) ; i != i_end ; ++i , ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
@@ -122,7 +124,7 @@ class DenseVectorRangeEqualityTest :
 
                 DenseVectorRange<DataType_> dvr2(dv0, size, 0);
                 DenseVectorRange<DataType_> dvr3(dvr0, size - 3, 2), dvr4(dvr1, size - 3, 1);
-                for (typename Vector<DataType_>::ElementIterator i(dvr3.begin_elements()), j(dvr4.begin_elements()),
+                for (typename DenseVectorRange<DataType_>::ElementIterator i(dvr3.begin_elements()), j(dvr4.begin_elements()),
                         i_end(dvr3.end_elements()) ; i != i_end; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, std::numeric_limits<DataType_>::epsilon());
@@ -153,7 +155,7 @@ class DenseVectorRangeFunctionsTest :
             {
                 DenseVector<DataType_> dv(size);
                 DenseVectorRange<DataType_> dvr(dv, size - 1, 0);
-                for (typename Vector<DataType_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = DataType_((i.index() + 1) / 1.23456789);
@@ -181,7 +183,7 @@ class DenseVectorRangeFunctionsTest :
                 DenseVector<DataType_> dv(size, DataType_(1.234));
                 DenseVectorRange<DataType_> dvr(dv, size - 5, 3);
 
-                for (typename Vector<DataType_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements());
+                for (typename DenseVectorRange<DataType_>::ElementIterator i(dvr.begin_elements()), i_end(dvr.end_elements());
                         i != i_end; ++i)
                 {
                     *i = DataType_(3.98765421);
@@ -191,7 +193,7 @@ class DenseVectorRangeFunctionsTest :
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS((dv)[i], DataType_(1.234), std::numeric_limits<DataType_>::epsilon());
                 }
-                for (typename Vector<DataType_>::ConstElementIterator ri(dv.element_at(3)), ri_end(dv.element_at(size - 2));
+                for (typename DenseVector<DataType_>::ConstElementIterator ri(dv.element_at(3)), ri_end(dv.element_at(size - 2));
                         ri != ri_end; ++ri)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ri, DataType_(3.98765421), std::numeric_limits<DataType_>::epsilon());
@@ -224,7 +226,7 @@ class DenseVectorRangeQuickTest :
             DenseVectorRange<DataType_> dvr2(dvr, 113, 35);
             TEST_CHECK_EQUAL(dvr.size(), 238);
             TEST_CHECK_EQUAL(dvr, dvr);
-            TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[79] , 123.987, sqrt(std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[79] , 123.987, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
             DataType_ s = DataType_(1.2345);
             (dvr)[39] = s;
             TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[39] , s, sqrt(std::numeric_limits<DataType_>::epsilon()));

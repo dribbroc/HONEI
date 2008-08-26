@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2007 Markus Geveler <apryde@gmx.de>
  *
@@ -47,7 +47,7 @@ class DenseVectorNormValueTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_>dv(size);
-                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
@@ -102,7 +102,7 @@ class DenseVectorNormQuickTest :
         {
             unsigned long size(5);
             DenseVector<DataType_> dv(size);
-            for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
@@ -165,7 +165,7 @@ class DenseVectorRangeNormValueTest :
                 for (int j(0) ; j < 4 ; j++)
                 {
                     DenseVectorRange<DataType_>dv(d, size, j);
-                    for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                    for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                             i != i_end ; ++i)
                     {
                         *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
@@ -236,7 +236,7 @@ class DenseVectorRangeNormQuickTest :
             for (int j(0) ; j < 4 ; j++)
             {
                 DenseVectorRange<DataType_> dv(d, size, j);
-                for (typename Vector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);

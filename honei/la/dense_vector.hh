@@ -22,16 +22,16 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_HH
 #define LIBLA_GUARD_DENSE_VECTOR_HH 1
 
-#include <honei/la/vector.hh>
+#include <honei/la/dense_matrix-fwd.hh>
+#include <honei/la/dense_vector_base.hh>
+#include <honei/la/dense_vector_range-fwd.hh>
+#include <honei/la/dense_vector_slice-fwd.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
 {
-    // Forward declarations.
-    template <typename DataType_> class DenseMatrix;
-    template <typename DataType_> class DenseVectorRange;
-    template <typename DataType_> class DenseVectorSlice;
+    // Forward declarations
     template <typename DataType_> class SparseVector;
 
     /**
@@ -45,11 +45,6 @@ namespace honei
         public PrivateImplementationPattern<DenseVector<DataType_>, Shared>
     {
         private:
-            /// Our implementation of ElementIteratorBase.
-            class DenseElementIterator;
-
-            typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
-
             /**
              * Constructor.
              *
@@ -64,16 +59,20 @@ namespace honei
                     unsigned stepsize = 1);
 
         public:
-            friend class DenseElementIterator;
+            /// \name Friends of DenseVector
+            /// \{
+
             friend class DenseMatrix<DataType_>;
             friend class DenseVectorRange<DataType_>;
             friend class DenseVectorSlice<DataType_>;
 
+            /// \}
+
             /// Type of the const iterator over our elements.
-            typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
+            typedef ConstElementIterator<storage::Dense, container::Vector, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef typename Vector<DataType_>::ElementIterator ElementIterator;
+            typedef ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
 
             /// Constructors
             /// \{
@@ -207,15 +206,50 @@ namespace honei
             DenseVector<DataType_> copy() const;
     };
 
+    /**
+     * Equality operator for DenseVector.
+     *
+     * Compares if corresponding elements of two banded matrices are equal
+     * within machine precision.
+     */
+    template <typename DataType_> bool operator== (const DenseVectorBase<DataType_> & a, const DenseVectorBase<DataType_> & b);
+
+    /**
+     * Output operator for DenseVector.
+     *
+     * Outputs a dense vector to an output stream.
+     */
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const DenseVector<DataType_> & vector);
+
     extern template class DenseVector<float>;
+
+    extern template bool operator== (const DenseVectorBase<float> & a, const DenseVectorBase<float> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVector<float> & vector);
 
     extern template class DenseVector<double>;
 
+    extern template bool operator== (const DenseVectorBase<double> & a, const DenseVectorBase<double> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVector<double> & vector);
+
     extern template class DenseVector<int>;
+
+    extern template bool operator== (const DenseVectorBase<int> & a, const DenseVectorBase<int> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVector<int> & vector);
 
     extern template class DenseVector<long>;
 
+    extern template bool operator== (const DenseVectorBase<long> & a, const DenseVectorBase<long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVector<long> & vector);
+
     extern template class DenseVector<unsigned long>;
+
+    extern template bool operator== (const DenseVectorBase<unsigned long> & a, const DenseVectorBase<unsigned long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVector<unsigned long> & vector);
 }
 
 #endif

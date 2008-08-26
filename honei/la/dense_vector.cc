@@ -22,16 +22,54 @@
 
 namespace honei
 {
+    template class ConstElementIterator<storage::Dense, container::Vector, float>;
+
     template class DenseVector<float>;
+
+    template class ElementIterator<storage::Dense, container::Vector, float>;
+
+    template bool operator== (const DenseVectorBase<float> & a, const DenseVectorBase<float> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVector<float> & vector);
+
+    template class ConstElementIterator<storage::Dense, container::Vector, double>;
 
     template class DenseVector<double>;
 
-    template class DenseVector<bool>;
+    template class ElementIterator<storage::Dense, container::Vector, double>;
+
+    template bool operator== (const DenseVectorBase<double> & a, const DenseVectorBase<double> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVector<double> & vector);
+
+    template class ConstElementIterator<storage::Dense, container::Vector, int>;
 
     template class DenseVector<int>;
 
+    template class ElementIterator<storage::Dense, container::Vector, int>;
+
+    template bool operator== (const DenseVectorBase<int> & a, const DenseVectorBase<int> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVector<int> & vector);
+
+    template class ConstElementIterator<storage::Dense, container::Vector, long>;
+
     template class DenseVector<long>;
 
+    template class ElementIterator<storage::Dense, container::Vector, long>;
+
+    template bool operator== (const DenseVectorBase<long> & a, const DenseVectorBase<long> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVector<long> & vector);
+
+    template class ConstElementIterator<storage::Dense, container::Vector, unsigned long>;
+
     template class DenseVector<unsigned long>;
+
+    template class ElementIterator<storage::Dense, container::Vector, unsigned long>;
+
+    template bool operator== (const DenseVectorBase<unsigned long> & a, const DenseVectorBase<unsigned long> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVector<unsigned long> & vector);
 }
 

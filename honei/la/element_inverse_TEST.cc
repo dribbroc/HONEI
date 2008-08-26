@@ -41,7 +41,7 @@ class DenseVectorElementInverseTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 20 == 0)
@@ -69,7 +69,7 @@ class DenseVectorElementInverseTest :
                 ElementInverse<Tag_>::value(dv1);
 
                 TEST(dv1.lock(lm_read_only),
-                        for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                        for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                             j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                         {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
@@ -112,7 +112,7 @@ class DenseVectorElementInverseQuickTest :
         {
             unsigned long size(4711);
             DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0));
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 if (i.index() % 20 == 0)
@@ -140,7 +140,7 @@ class DenseVectorElementInverseQuickTest :
             ElementInverse<Tag_>::value(dv1);
 
             TEST(dv1.lock(lm_read_only),
-                    for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                     {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
@@ -185,7 +185,7 @@ class DenseVectorRangeElementInverseTest :
                 {
                     DenseVector<DataType_> dv1(size * 2, DataType_(0)), dv2(size, DataType_(0));
                     DenseVectorRange<DataType_> dv1r(dv1, size, o);
-                    for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                    for (typename DenseVectorRange<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
                             j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                     {
                         if (i.index() % 20 == 0)
@@ -212,7 +212,7 @@ class DenseVectorRangeElementInverseTest :
                     ElementInverse<Tag_>::value(dv1r);
 
                     TEST(dv1r.lock(lm_read_only),
-                            for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                            for (typename DenseVector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
                                 j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                             {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 *std::numeric_limits<DataType_>::epsilon());
@@ -259,7 +259,7 @@ class DenseVectorRangeElementInverseQuickTest :
             {
                 DenseVector<DataType_> dv1(size * 2, DataType_(0)), dv2(size, DataType_(0));
                 DenseVectorRange<DataType_> dv1r(dv1, size, o);
-                for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                for (typename DenseVectorRange<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 20 == 0)
@@ -286,7 +286,7 @@ class DenseVectorRangeElementInverseQuickTest :
 
                 ElementInverse<Tag_>::value(dv1r);
                 TEST(dv1r.lock(lm_read_only),
-                        for (typename Vector<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
+                        for (typename DenseVectorRange<DataType_>::ElementIterator i(dv1r.begin_elements()), i_end(dv1r.end_elements()),
                             j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                         {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 3 * std::numeric_limits<DataType_>::epsilon());
@@ -417,7 +417,7 @@ class BandedMatrixElementInverseTest :
             {
                 DenseVector<DataType_> dv1(size);
                 DenseVector<DataType_> dv2(size);
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() - 1;
@@ -460,7 +460,7 @@ class BandedMatrixElementInverseQuickTest :
                 DenseVector<DataType_> dv1(size);
                 DenseVector<DataType_> dv2(size);
 
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i)
                 {
                     *i = i.index() - 1;

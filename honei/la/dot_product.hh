@@ -71,7 +71,7 @@ namespace honei
 
             DT1_ result(0);
 
-            for (typename Vector<DT1_>::ConstElementIterator l(x.begin_elements()),
+            for (typename DenseVector<DT1_>::ConstElementIterator l(x.begin_elements()),
                     l_end(x.end_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * y[l.index()];

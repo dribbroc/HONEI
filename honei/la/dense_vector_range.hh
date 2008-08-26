@@ -41,11 +41,6 @@ namespace honei
         public PrivateImplementationPattern<DenseVectorRange<DataType_>, Shared>
     {
         private:
-            /// Our implementation of ElementIteratorBase.
-            class DenseElementIterator;
-
-            typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
-
             /**
              * Constructor.
              *
@@ -58,15 +53,19 @@ namespace honei
             DenseVectorRange(const SharedArray<DataType_> & source, const unsigned long size, const unsigned long offset);
 
         public:
-            friend class DenseElementIterator;
+            /// \name Friends of DenseVector
+            /// \{
+
             friend class DenseMatrix<DataType_>;
             friend class DenseMatrixTile<DataType_>;
 
+            /// \}
+
             /// Type of the const iterator over our elements.
-            typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
+            typedef ConstElementIterator<storage::Dense, container::Vector, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef typename Vector<DataType_>::ElementIterator ElementIterator;
+            typedef ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
 
             /// Constructors
             /// \{
@@ -163,15 +162,50 @@ namespace honei
             DenseVector<DataType_> copy() const;
     };
 
+    /**
+     * Equality operator for DenseVectorRange.
+     *
+     * Compares if corresponding elements of two banded matrices are equal
+     * within machine precision.
+     */
+    template <typename DataType_> bool operator== (const DenseVectorRange<DataType_> & a, const DenseVectorRange<DataType_> & b);
+
+    /**
+     * Output operator for DenseVectorRange.
+     *
+     * Outputs a dense vector to an output stream.
+     */
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<DataType_> & vector);
+
     extern template class DenseVectorRange<float>;
+
+    extern template bool operator== (const DenseVectorRange<float> & a, const DenseVectorRange<float> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<float> & vector);
 
     extern template class DenseVectorRange<double>;
 
+    extern template bool operator== (const DenseVectorRange<double> & a, const DenseVectorRange<double> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<double> & vector);
+
     extern template class DenseVectorRange<int>;
+
+    extern template bool operator== (const DenseVectorRange<int> & a, const DenseVectorRange<int> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<int> & vector);
 
     extern template class DenseVectorRange<long>;
 
+    extern template bool operator== (const DenseVectorRange<long> & a, const DenseVectorRange<long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<long> & vector);
+
     extern template class DenseVectorRange<unsigned long>;
+
+    extern template bool operator== (const DenseVectorRange<unsigned long> & a, const DenseVectorRange<unsigned long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<unsigned long> & vector);
 }
 
 #endif

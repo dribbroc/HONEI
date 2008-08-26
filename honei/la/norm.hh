@@ -124,7 +124,7 @@ namespace honei
 
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
+            for (typename DenseVectorBase<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
                     l != l_end ; ++l)
             {
                 if (fabs(*l) > result)
@@ -193,7 +193,7 @@ namespace honei
 
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
+            for (typename DenseVectorBase<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
                     l != l_end ; ++l)
             {
                 result += fabs(*l);
@@ -345,7 +345,7 @@ namespace honei
             DT_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
-            for (typename Vector<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
+            for (typename DenseVectorBase<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
                     l != l_end ; ++l)
             {
                 if (*l != static_cast<DT_>(0))
@@ -555,7 +555,7 @@ namespace honei
             DenseVector<DT_> preresult(parts, DT_(0));
             for (unsigned long i(0) ; i < (modulo) ; ++i)
             {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                 pri += i;
                 DenseVectorRange<DT_> range(x.range(div+1, i * (div + 1)));
                 ResultOneArgWrapper< Norm<vnt_max, root_, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
@@ -563,7 +563,7 @@ namespace honei
             }
             for (unsigned long i(modulo) ; i < parts ; ++i)
             {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                 pri += i;
                 DenseVectorRange<DT_> range(x.range(div, modulo + div * i));
                 ResultOneArgWrapper< Norm<vnt_max, root_, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
@@ -618,7 +618,7 @@ namespace honei
             DenseVector<DT_> preresult(parts, DT_(0));
             for (unsigned long i(0) ; i < (modulo) ; ++i)
             {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                 pri += i;
                 DenseVectorRange<DT_> range(x.range(div+1, i * (div + 1)));
                 ResultOneArgWrapper< Norm<vnt_l_one, root_, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);
@@ -626,7 +626,7 @@ namespace honei
             }
             for (unsigned long i(modulo) ; i < parts ; ++i)
             {
-                typename Vector<DT_>::ElementIterator pri(preresult.begin_elements());
+                typename DenseVector<DT_>::ElementIterator pri(preresult.begin_elements());
                 pri += i;
                 DenseVectorRange<DT_> range(x.range(div, modulo + div * i));
                 ResultOneArgWrapper< Norm<vnt_l_one, root_, typename Tag_::DelegateTo>, DT_, const DenseVectorRange<DT_> > wrapper(*pri, range);

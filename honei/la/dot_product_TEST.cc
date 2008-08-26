@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -53,7 +53,7 @@ class DenseDotProductTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
 
                 DenseVector<DataType_> dv2(size);
-                for (typename Vector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
@@ -109,7 +109,7 @@ class DenseDotProductQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
 
             DenseVector<DataType_> dv2(size);
-            for (typename Vector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = DataType_((i.index() + 1) / 1.23456789);
@@ -164,7 +164,7 @@ class DenseDotProductCellTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
 
                 DenseVector<DataType_> dv2(size);
-                for (typename Vector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>((i.index() + 1) / 1.23456789);
@@ -211,7 +211,7 @@ class DenseDotProductCellQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
 
             DenseVector<DataType_> dv2(size);
-            for (typename Vector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+            for (typename DenseVector<DataType_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = DataType_((i.index() + 1) / 1.23456789);
@@ -261,7 +261,7 @@ class DenseVectorRangeDotProductTest :
                         TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
                     }
                     DenseVector<DataType_> dv2(size+3);
-                    for (typename Vector<DataType_>::ElementIterator k(dv2.begin_elements()), k_end(dv2.end_elements()) ;
+                    for (typename DenseVector<DataType_>::ElementIterator k(dv2.begin_elements()), k_end(dv2.end_elements()) ;
                         k != k_end ; ++k)
                     {
                         *k = static_cast<DataType_>((k.index() + 1) / 1.23456789);
@@ -321,7 +321,7 @@ class DenseVectorRangeDotProductQuickTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
                 }
                 DenseVector<DataType_> dv2(size+3);
-                for (typename Vector<DataType_>::ElementIterator k(dv2.begin_elements()), k_end(dv2.end_elements()) ;
+                for (typename DenseVector<DataType_>::ElementIterator k(dv2.begin_elements()), k_end(dv2.end_elements()) ;
                     k != k_end ; ++k)
                 {
                     *k = static_cast<DataType_>((k.index() + 1) / 1.23456789);
@@ -381,7 +381,7 @@ class DenseVectorRangeDotProductCellTest :
                         TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
                    }
                     DenseVector<DataType_> dv2(size+3), dv3(size+3);
-                    for (typename Vector<DataType_>::ElementIterator k(dv2.begin_elements()), l(dv3.begin_elements()), k_end(dv2.end_elements()),
+                    for (typename DenseVector<DataType_>::ElementIterator k(dv2.begin_elements()), l(dv3.begin_elements()), k_end(dv2.end_elements()),
                             l_end(dv3.end_elements()) ; k != k_end ; ++k, ++l)
                     {
                         *k = static_cast<DataType_>((k.index() + 1) / 1.23456789);
@@ -436,7 +436,7 @@ class DenseVectorRangeDotProductCellQuickTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(p1, size, std::numeric_limits<DataType_>::epsilon());
                 }
                 DenseVector<DataType_> dv2(size+3), dv3(size+3);
-                for (typename Vector<DataType_>::ElementIterator k(dv2.begin_elements()), l(dv3.begin_elements()), k_end(dv2.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator k(dv2.begin_elements()), l(dv3.begin_elements()), k_end(dv2.end_elements()),
                         l_end(dv3.end_elements()) ; k != k_end ; ++k, ++l)
                 {
                     *k = static_cast<DataType_>((k.index() + 1) / 1.23456789);
@@ -480,8 +480,9 @@ class SparseDenseDotProductTest :
                 DataType_ p1(0);
                 SparseVector<DataType_> sv1(size, size / 7 + 1);
                 DenseVector<DataType_> dv2(size, DataType_(0));
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                        j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+                typename DenseVector<DataType_>::ElementIterator j(dv2.begin_elements());
+                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements());
+                        i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 10 == 0)
                     {
@@ -532,8 +533,9 @@ class SparseDenseDotProductQuickTest :
             DataType_ p1(0);
             SparseVector<DataType_> sv1(size, size / 7 + 1);
             DenseVector<DataType_> dv2(size, DataType_(0));
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
-                    j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
+            typename DenseVector<DataType_>::ElementIterator j(dv2.begin_elements());
+            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                    i != i_end ; ++i, ++j)
             {
                 if (i.index() % 10 == 0)
                 {

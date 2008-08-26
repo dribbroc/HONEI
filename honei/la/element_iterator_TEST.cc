@@ -58,7 +58,7 @@ class BandedMatrixElementIterationTest :
                     cb != cb_end ; ++cb)
                 {
                     DenseVector<DataType_>  dv = *cb;
-                        for (typename Vector<DataType_>::ConstElementIterator i(dv.begin_elements()),
+                        for (typename DenseVector<DataType_>::ConstElementIterator i(dv.begin_elements()),
                             i_end(dv.end_elements()) ; i != i_end ; ++i)
                         {
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -87,7 +87,7 @@ class ConstVectorElementIterationTest :
             {
                 DenseVector<DataType_> dv(size, DataType_(10));
 
-                typename Vector<DataType_>::ElementIterator e(dv.begin_elements()), e_end(dv.end_elements()) ;
+                typename DenseVector<DataType_>::ElementIterator e(dv.begin_elements()), e_end(dv.end_elements()) ;
                 for (unsigned long i(0) ; i < size ; ++i, ++e)
                 {
                     *e = 222;
@@ -170,7 +170,7 @@ class DenseVectorElementIterationTest :
             {
                 DenseVector<DataType_> dv(size, DataType_(10));
 
-                typename Vector<DataType_>::ElementIterator e(dv.begin_elements()), e_end(dv.end_elements()) ;
+                typename DenseVector<DataType_>::ElementIterator e(dv.begin_elements()), e_end(dv.end_elements()) ;
                 for (unsigned long i(0) ; i < size ; ++i, ++e)
                 {
                     TEST_CHECK_EQUAL(e.index(), i);
@@ -178,7 +178,7 @@ class DenseVectorElementIterationTest :
                     *e = 222;
                 }
 
-                typename Vector<DataType_>::ConstElementIterator ce(dv.begin_elements()), ce_end(dv.end_elements()) ;
+                typename DenseVector<DataType_>::ConstElementIterator ce(dv.begin_elements()), ce_end(dv.end_elements()) ;
                 for (unsigned long i(0) ; i < size ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);

@@ -243,7 +243,7 @@ namespace honei
                 {
                     unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
                     unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                    for(typename DenseVector<DT1_>::ConstElementIterator c(vi->element_at(start)),
                             c_end(vi->end_elements()) ; c < c_end ; ++c)
                     {
                         b(start, i) += *c;
@@ -259,7 +259,7 @@ namespace honei
                     unsigned long offset(vi.index() - middle_index);
                     unsigned long end(vi->size() - offset);
                     unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                    for(typename DenseVector<DT1_>::ConstElementIterator c(vi->begin_elements()),
                             c_end(vi->element_at(end)) ; c < c_end ; ++c)
                     {
                         b(i, offset) +=  *c;
@@ -301,7 +301,7 @@ namespace honei
                 {
                     unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
                     unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                    for (typename DenseVector<DT1_>::ConstElementIterator c(vi->element_at(start)),
                             c_end(vi->end_elements()) ; c < c_end ; ++c)
                     {
                         b[start][i] += *c;
@@ -316,7 +316,7 @@ namespace honei
                     unsigned long offset(vi.index() - middle_index);
                     unsigned long end(vi->size() - offset);
                     unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                    for(typename DenseVector<DT1_>::ConstElementIterator c(vi->begin_elements()),
                             c_end(vi->element_at(end)) ; c < c_end ; ++c)
                     {
                         b[i][offset] +=  *c;
@@ -354,7 +354,7 @@ namespace honei
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
             typename ConstVector<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+            for (typename DenseVectorBase<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l -= *r;
@@ -396,8 +396,8 @@ namespace honei
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename Vector<DT1_>::ElementIterator l(a.begin_elements()),
+            typename DenseVectorBase<DT2_>::ConstElementIterator r(b.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l -= *r;
@@ -510,7 +510,7 @@ namespace honei
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
             typename Vector<DT1_>::ConstElementIterator l(a.begin_elements());
-            for (typename Vector<DT2_>::ElementIterator r(b.begin_elements()),
+            for (typename DenseVectorBase<DT2_>::ElementIterator r(b.begin_elements()),
                     r_end(b.end_elements()) ; r != r_end ; ++r , ++l)
             {
                 *r = *l - *r;
@@ -575,7 +575,7 @@ namespace honei
                 {
                     unsigned long start(middle_index - vi.index()); //Calculation of the element-index to start in iteration!
                     unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->element_at(start)),
+                    for (typename DenseVector<DT1_>::ConstElementIterator c(vi->element_at(start)),
                             c_end(vi->end_elements()) ; c < c_end ; ++c)
                     {
                         //b(start, i) += *c;
@@ -594,7 +594,7 @@ namespace honei
                     unsigned long offset(vi.index() - middle_index);
                     unsigned long end(vi->size() - offset);
                     unsigned long i(0);
-                    for(typename Vector<DT1_>::ConstElementIterator c(vi->begin_elements()),
+                    for (typename DenseVector<DT1_>::ConstElementIterator c(vi->begin_elements()),
                             c_end(vi->element_at(end)) ; c < c_end ; ++c)
                     {
                         //b(i, offset) +=  *c;

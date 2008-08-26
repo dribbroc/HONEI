@@ -185,13 +185,13 @@ class DenseMatrixLayoutTest :
                 TEST_CHECK_EQUAL(row1.size(), columns);
                 TEST_CHECK_EQUAL(col1.size(), rows);
 
-                for (typename Vector<DataType_>::ConstElementIterator i(row1.begin_elements()), i_end(row1.end_elements()) ;
+                for (typename DenseVectorRange<DataType_>::ConstElementIterator i(row1.begin_elements()), i_end(row1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, i.index(), std::numeric_limits<DataType_>::epsilon());
                 }
 
-                for (typename Vector<DataType_>::ConstElementIterator i(col1.begin_elements()), i_end(col1.end_elements()) ;
+                for (typename DenseVectorSlice<DataType_>::ConstElementIterator i(col1.begin_elements()), i_end(col1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, i.index() * columns, std::numeric_limits<DataType_>::epsilon());

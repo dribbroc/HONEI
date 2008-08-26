@@ -43,7 +43,7 @@ namespace honei
         if (instruction.use_spe())
             instruction.wait();
 
-        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()),
+        for (DenseVector<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()),
                 j(a.element_at(instruction.transfer_end())) ; i.index() + 2 < i_end.index() ; ++i, ++j)
         {
             float h(*i);
@@ -80,7 +80,7 @@ namespace honei
         if (instruction.use_spe())
             instruction.wait();
 
-        for (Vector<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()),
+        for (DenseVector<float>::ElementIterator i(a.element_at(instruction.transfer_end())), i_end(a.end_elements()),
                 j(a.element_at(instruction.transfer_end())) ; i.index() + 2 < i_end.index() ; ++i, ++j)
         {
             float h(*i);

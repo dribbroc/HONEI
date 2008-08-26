@@ -185,7 +185,7 @@
 
             inline void elements_check(const DenseVector<DataType_> & weights_of_nodes, bool & positiv)
             {
-                for (typename Vector<DataType_>::ConstElementIterator e(weights_of_nodes.begin_elements()),
+                for (typename DenseVector<DataType_>::ConstElementIterator e(weights_of_nodes.begin_elements()),
                 e_end(weights_of_nodes.end_elements()); e != e_end ; ++e)
                 {
                     if (*e < 0) positiv = false;
@@ -470,7 +470,7 @@
                     _repulsive_force_range = _max_ideal_length * _weights_of_edges.rows();
                     DataType_ s_w(_repulsive_force_range / 20);
 
-                    for (typename Vector<DataType_>::ElementIterator e(_step_width.begin_elements()),
+                    for (typename DenseVector<DataType_>::ElementIterator e(_step_width.begin_elements()),
                         e_end(_step_width.end_elements()); e != e_end ; ++e)
                         {
                             *e = s_w;
@@ -514,7 +514,7 @@
                     _repulsive_force_range = _max_ideal_length * _weights_of_edges.rows();
                     DataType_ s_w(_repulsive_force_range / 20);
 
-                    for (typename Vector<DataType_>::ElementIterator e(_step_width.begin_elements()),
+                    for (typename DenseVector<DataType_>::ElementIterator e(_step_width.begin_elements()),
                         e_end(_step_width.end_elements()); e != e_end ; ++e)
                         {
                             *e = s_w;
@@ -580,7 +580,7 @@
                     }
                     if (_number_of_iterations > 1)
                     {
-                        for (typename Vector<DataType_>::ElementIterator e(_step_width.begin_elements()),
+                        for (typename DenseVector<DataType_>::ElementIterator e(_step_width.begin_elements()),
                                 e_end(_step_width.end_elements()); e != e_end ; ++e)
                                 {
                                         DataType_ prod( DotProduct<Tag_>::value(_force_direction[e.index()], scaled_forces[e.index()]) );

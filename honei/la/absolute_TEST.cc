@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -44,7 +44,7 @@ class DenseVectorAbsoluteValueTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size), dv2(size);
-                for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                         j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     *i = DataType_(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
@@ -74,7 +74,7 @@ class DenseVectorAbsoluteQuickTest :
         {
             unsigned long size(5);
             DenseVector<DataType_> dv1(size), dv2(size);
-            for (typename Vector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     j(dv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 *i = DataType_(i.index() / 0.987654321 * (i.index() % 2 == 1 ? -1 : 1));
