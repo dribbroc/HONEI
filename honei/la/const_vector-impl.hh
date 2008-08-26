@@ -275,7 +275,7 @@ namespace honei
 
     template <typename DataType_> struct Implementation<ConstElementIterator<storage::Const, container::Vector, DataType_> >
     {
-        const ConstVector<DataType_> & vector;
+        ConstVector<DataType_> vector;
 
         unsigned long index;
 
@@ -310,6 +310,20 @@ namespace honei
     template <typename DataType_>
     ConstElementIterator<storage::Const, container::Vector, DataType_>::~ConstElementIterator()
     {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Const, container::Vector, DataType_> &
+    ConstElementIterator<storage::Const, container::Vector, DataType_>::operator= (
+            const ConstElementIterator<storage::Const, container::Vector, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->vector = other._imp->vector;
+        this->_imp->index = other._imp->index;
+
+        return *this;
     }
 
     template <typename DataType_>
@@ -356,7 +370,7 @@ namespace honei
     ConstElementIterator<storage::Const, container::Vector, DataType_>::operator== (
             const ConstElementIterator<storage::Const, container::Vector, DataType_> & other) const
     {
-        return ((&(this->_imp->vector) == &(other._imp->vector)) && (this->_imp->index == other._imp->index));
+        return ((this->_imp->vector.address() == other._imp->vector.address()) && (this->_imp->index == other._imp->index));
     }
 
     template <typename DataType_>
@@ -364,7 +378,7 @@ namespace honei
     ConstElementIterator<storage::Const, container::Vector, DataType_>::operator!= (
             const ConstElementIterator<storage::Const, container::Vector, DataType_> & other) const
     {
-        return ((&(this->_imp->vector) != &(other._imp->vector)) || (this->_imp->index != other._imp->index));
+        return ((this->_imp->vector.address() != other._imp->vector.address()) || (this->_imp->index != other._imp->index));
     }
 
     template <typename DataType_>

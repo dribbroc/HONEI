@@ -384,6 +384,20 @@ namespace honei
 
     template <typename DataType_>
     ElementIterator<storage::Banded, container::Matrix, DataType_> &
+    ElementIterator<storage::Banded, container::Matrix, DataType_>::operator= (
+            const ElementIterator<storage::Banded, container::Matrix, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->matrix = other._imp->matrix;
+        this->_imp->index = other._imp->index;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Banded, container::Matrix, DataType_> &
     ElementIterator<storage::Banded, container::Matrix, DataType_>::operator++ ()
     {
         CONTEXT("When incrementing iterator by one:");
@@ -513,6 +527,20 @@ namespace honei
     template <typename DataType_>
     ConstElementIterator<storage::Banded, container::Matrix, DataType_>::~ConstElementIterator()
     {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Banded, container::Matrix, DataType_> &
+    ConstElementIterator<storage::Banded, container::Matrix, DataType_>::operator= (
+            const ConstElementIterator<storage::Banded, container::Matrix, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->matrix = other._imp->matrix;
+        this->_imp->index = other._imp->index;
+
+        return *this;
     }
 
     template <typename DataType_>

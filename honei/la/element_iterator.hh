@@ -83,6 +83,9 @@ namespace honei
             /// Destructor.
             ~ElementIterator();
 
+            /// Assignment operator.
+            ElementIterator & operator= (const ElementIterator &);
+
             /// \name Forward iterator interface
             /// \{
 
@@ -273,6 +276,9 @@ namespace honei
             /// Destructor.
             ~ConstElementIterator();
 
+            /// Assignment operator.
+            ConstElementIterator & operator= (const ConstElementIterator &);
+
             /// \name Forward iterator interface
             /// \{
 
@@ -332,6 +338,9 @@ namespace honei
 
             /// Destructor.
             ~ConstElementIterator();
+
+            /// Assignment operator.
+            ConstElementIterator & operator= (const ConstElementIterator &);
 
             /// \name Forward iterator interface
             /// \{

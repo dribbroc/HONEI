@@ -64,6 +64,12 @@ class BandedMatrixElementIterationTest :
                             TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
                         }
                 }
+
+                // Test the assignment operator and proper iterator deletion
+                typename BandedMatrix<DataType_>::ElementIterator i(bm.begin_elements());
+                typename BandedMatrix<DataType_>::ConstElementIterator j(bm.begin_elements());
+                i = bm.end_elements();
+                j = bm.end_elements();
             }
         }
 };
@@ -100,6 +106,10 @@ class ConstVectorElementIterationTest :
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 222, std::numeric_limits<DataType_>::epsilon());
                 }
+
+                // Test the assignment operator and proper iterator deletion
+                typename ConstVector<DataType_>::ConstElementIterator i(cv.element_at(size / 2));
+                i = cv.element_at(i.index());
             }
         }
 };
@@ -145,8 +155,10 @@ class DenseMatrixElementIterationTest :
                 }
 
                 // Test the assignment operator and proper iterator deletion
-                typename DenseMatrix<DataType_>::ElementIterator it(dm.element_at(size / 2));
-                it = dm.element_at(it.index());
+                typename DenseMatrix<DataType_>::ElementIterator i(dm.element_at(size / 2));
+                typename DenseMatrix<DataType_>::ConstElementIterator j(dm.element_at(size / 2));
+                i = dm.element_at(i.index());
+                j = dm.element_at(j.index());
             }
         }
 };
@@ -184,6 +196,12 @@ class DenseVectorElementIterationTest :
                     TEST_CHECK_EQUAL(ce.index(), i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 222, std::numeric_limits<DataType_>::epsilon());
                 }
+
+                // Test the assignment operator and proper iterator deletion
+                typename DenseVector<DataType_>::ElementIterator i(dv.element_at(size / 2));
+                typename DenseVector<DataType_>::ConstElementIterator j(dv.element_at(size / 2));
+                i = dv.element_at(i.index());
+                j = dv.element_at(j.index());
             }
         }
 };
@@ -252,6 +270,12 @@ class SparseVectorElementIterationTest :
                 }
 
                 TEST_CHECK_EQUAL(count, sv.used_elements());
+
+                // Test the assignment operator and proper iterator deletion
+                typename SparseVector<DataType_>::ElementIterator i(sv.begin_elements());
+                typename SparseVector<DataType_>::ConstElementIterator j(sv.begin_elements());
+                i = sv.end_elements();
+                j = sv.end_elements();
             }
         }
 };
