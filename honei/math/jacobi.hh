@@ -148,6 +148,9 @@ namespace honei
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
                 BandedMatrix<DT1_> difference(system_matrix.copy());
+
+                DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
+                difference.insert_band(0, zeros);
                 ///Create Diagonal, invert, compute difference on the fly.
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
@@ -161,8 +164,6 @@ namespace honei
                     {
                         diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
                     }
-                    DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
-                    difference.insert_band(0, zeros);
                 }
 
                 DenseVector<DT1_> x(right_hand_side.copy());
@@ -236,6 +237,9 @@ namespace honei
 
                 BandedMatrix<DT1_> difference(system_matrix.copy());
                 ///Create Diagonal, invert, compute difference on the fly.
+
+                DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
+                difference.insert_band(0, zeros);
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
 
@@ -248,8 +252,6 @@ namespace honei
                     {
                         diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
                     }
-                    DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
-                    difference.insert_band(0, zeros);
                 }
 
 
@@ -265,92 +267,92 @@ namespace honei
             }
 
             /**
-            * \brief Returns solution of LES with the Jacobi method given by a SparseMatrix and a Vector.
-            *
-            * \param system_matrix The system matrix.
-            * \param right_hand_side The right hand side of the system.
-            * \param iter_number The fixed number of iterations.
-            *
-            */
+             * \brief Returns solution of LES with the Jacobi method given by a SparseMatrix and a Vector.
+             *
+             * \param system_matrix The system matrix.
+             * \param right_hand_side The right hand side of the system.
+             * \param iter_number The fixed number of iterations.
+             *
+             */
 
             /// \{
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
-            {
-                CONTEXT("When solving sparse linear system with Jacobi (fixed # iterations):");
-                DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
-
-                DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
-
-                SparseMatrix<DT1_> difference(system_matrix.copy());
-                ///Create Diagonal, invert, compute difference on the fly.
-                for(unsigned long i =0; i < diag.size(); ++i)
+                static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
                 {
+                    CONTEXT("When solving sparse linear system with Jacobi (fixed # iterations):");
+                    DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
 
-                    diag[i] = system_matrix[i][i];
-                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+                    DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
+
+                    SparseMatrix<DT1_> difference(system_matrix.copy());
+                    ///Create Diagonal, invert, compute difference on the fly.
+                    for(unsigned long i =0; i < diag.size(); ++i)
                     {
-                        diag_inverted[i] = DT1_(1) / diag[i];
+
+                        diag[i] = system_matrix[i][i];
+                        if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+                        {
+                            diag_inverted[i] = DT1_(1) / diag[i];
+                        }
+                        else
+                        {
+                            diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                        }
+                        difference[i][i] = DT1_(0);
                     }
-                    else
+
+                    DenseVector<DT1_> x(right_hand_side.copy());
+
+                    for(unsigned long i = 0; i<iter_number; ++i)
                     {
-                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                        jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
                     }
-                    difference[i][i] = DT1_(0);
+                    return x;
+
                 }
-
-                DenseVector<DT1_> x(right_hand_side.copy());
-
-                for(unsigned long i = 0; i<iter_number; ++i)
-                {
-                    jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
-                }
-                return x;
-
-            }
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
-            {
-                CONTEXT("When solving sparse linear system with Jacobi (with given convergence parameter):");
-
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                DenseVector<DT1_> x_last(x.copy());
-
-                DT1_ norm_x_last = DT1_(0);
-                DT1_ norm_x = DT1_(1);
-                DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
-
-                DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
-
-                SparseMatrix<DT1_> difference(system_matrix.copy());
-                ///Create Diagonal, invert, compute difference on the fly.
-                for(unsigned long i =0; i < diag.size(); ++i)
+                static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
                 {
+                    CONTEXT("When solving sparse linear system with Jacobi (with given convergence parameter):");
 
-                    diag[i] = system_matrix[i][i];
-                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+
+                    DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+                    DenseVector<DT1_> x_last(x.copy());
+
+                    DT1_ norm_x_last = DT1_(0);
+                    DT1_ norm_x = DT1_(1);
+                    DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
+
+                    DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
+
+                    SparseMatrix<DT1_> difference(system_matrix.copy());
+                    ///Create Diagonal, invert, compute difference on the fly.
+                    for(unsigned long i =0; i < diag.size(); ++i)
                     {
-                        diag_inverted[i] = DT1_(1) / diag[i];
+
+                        diag[i] = system_matrix[i][i];
+                        if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+                        {
+                            diag_inverted[i] = DT1_(1) / diag[i];
+                        }
+                        else
+                        {
+                            diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                        }
+                        difference[i][i] = DT1_(0);
                     }
-                    else
+
+
+                    while(fabs(norm_x - norm_x_last) > konv_rad)
                     {
-                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+
+                        jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
+                        norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                        norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                        x_last = x.copy();
                     }
-                    difference[i][i] = DT1_(0);
+                    return x;
                 }
-
-
-                while(fabs(norm_x - norm_x_last) > konv_rad)
-                {
-
-                    jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
-                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
-                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
-                    x_last = x.copy();
-                }
-                return x;
-            }
 
 
 
