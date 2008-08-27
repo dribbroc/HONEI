@@ -23,7 +23,7 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void restriction_gpu(float * fine, float * coarse, int Nc, int Nf, int Mc, int Mf,
+        __global__ void restriction_gpu(float * coarse, float * fine, int Nc, int Nf, int Mc, int Mf,
                 int n1, int n2, int n3, int n4, int e1, int e2, int e3, int e4)
         {
             // index in the coarse array (output index)

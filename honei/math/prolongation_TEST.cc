@@ -20,7 +20,8 @@
 #include <honei/math/prolongation.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
-
+#include <iostream>
+#include <honei/la/dense_matrix.hh>
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -38,11 +39,35 @@ class ProlongationTest:
 
         virtual void run() const
         {
-            DenseVector<DT1_> fine(9, DT1_(0));
-            DenseVector<DT1_> coarse(4, DT1_(0));
+            unsigned long N_fine = 289;
+            unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
+            unsigned long N_coarse = 81;
+            unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
+
+            DenseVector<DT1_> fine(N_fine, DT1_(2));
+            DenseVector<DT1_> coarse(N_coarse, DT1_(1));
+            coarse[N_coarse/2] = DT1_(4);
             DenseVector<unsigned long> mask(8);
+            for(unsigned long i(0) ; i < 8 ; ++i)
+            {
+                if(i % 2  == 0)
+                    mask[i] = 2;
+            }
 
             Prolongation<Tag_>::value(fine, coarse, mask);
+            fine.lock(lm_read_only);
+
+            DenseMatrix<DT1_> grid_fine(width_fine, width_fine, DT1_(0));
+            for(unsigned long i(0) ; i < width_fine ; ++i)
+            {
+                for(unsigned long j(0); j < width_fine; ++j)
+                {
+                    grid_fine(i,j) = fine[i*j + j];
+                }
+            }
+            fine.unlock(lm_read_only);
+
+            std::cout << grid_fine << std::endl;
             TEST_CHECK(true);
         }
 };

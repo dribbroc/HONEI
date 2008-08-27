@@ -56,7 +56,7 @@ namespace honei
                         {
                             for(unsigned long j(0), k(0) ; j < n_y_coarse ; ++j, k +=2)
                             {
-                                coarse[1 + n_y_coarse * (i - 1) - 1 + j] = fine[1 + 2 * n_y_fine * (i - 1) + k -1];
+                                coarse[1 + n_y_coarse * (i - 1) - 1 + j] = fine[2 * n_y_fine * (i - 1) + k];
                             }
                         }
 
@@ -154,10 +154,10 @@ namespace honei
 
                             for(unsigned long j(0) ; j < n_x_coarse; ++j)
                             {
-                                coarse[(n_y_coarse + 1) * i + j] += 0.25 * fine[i_aux - 1 + j * 2];
+                                coarse[1 + n_y_coarse * i + j] += 0.25 * fine[i_aux - 1 + j * 2];
                             }
                         }
-                        ApplyDirichletBoundaries<Tag_>::value(fine, mask);
+                        ApplyDirichletBoundaries<Tag_>::value(coarse, mask);
                     }
         };
 
