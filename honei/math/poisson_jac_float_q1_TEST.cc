@@ -163,17 +163,24 @@ class PoissonTestJACBandedQ1Float:
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
+
+            result.lock(lm_read_only);
             for(unsigned long i = 0; i < n; i++)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-04);
             }
+            result.unlock(lm_read_only);
             DenseVector<float> x(n, float(0));
             Difference<Tag_>::value(result, ana_sol_v);
             Difference<Tag_>::value(x, result);
-            double norm = Norm<vnt_l_two, false, Tag_>::value(x);
+            x.lock(lm_read_only);
+            double norm = Norm<vnt_l_two, false>::value(x);
+            x.unlock(lm_read_only);
             cout<<"L2: "<<norm<<endl;
-
             //TEST_CHECK(true);
         }
 };
 PoissonTestJACBandedQ1Float<tags::CPU, float> poisson_test_jac_banded_float("float");
+#ifdef HONEI_CUDA
+PoissonTestJACBandedQ1Float<tags::GPU::CUDA, float> poisson_test_jac_banded_float_cuda("float");
+#endif

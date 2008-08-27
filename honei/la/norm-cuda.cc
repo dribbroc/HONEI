@@ -36,10 +36,12 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
 
     if (a.size() < gridsize * blocksize)
     {
+        a.lock(lm_read_only);
         for (unsigned long i(0) ; i < a.size() ; ++i)
         {
             result += a[i] * a[i];
         }
+        a.unlock(lm_read_only);
     }
     else
     {
@@ -62,10 +64,12 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
 
     if (a.size() < gridsize * blocksize)
     {
+        a.lock(lm_read_only);
         for (unsigned long i(0) ; i < a.size() ; ++i)
         {
             result += a[i] * a[i];
         }
+        a.unlock(lm_read_only);
     }
     else
     {

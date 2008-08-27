@@ -30,6 +30,7 @@
 #include <honei/la/scale.hh>
 #include <honei/la/norm.hh>
 #include <iostream>
+#include <honei/util/memory_arbiter.hh>
 
 namespace honei
 {
@@ -164,8 +165,11 @@ namespace honei
                 BandedMatrixQ1<DT1_> difference(system_matrix.copy());
 
                 DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
+                difference.lock(lm_read_and_write);
+                difference.unlock(lm_read_and_write);
                 difference.band(DD) = zeros;
                 ///Create Diagonal, invert, compute difference on the fly.
+                system_matrix.lock(lm_read_only);
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
 
@@ -179,6 +183,7 @@ namespace honei
                         diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
                     }
                 }
+                system_matrix.unlock(lm_read_only);
 
                 DenseVector<DT1_> x(right_hand_side.copy());
 
