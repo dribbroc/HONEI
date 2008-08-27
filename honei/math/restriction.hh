@@ -56,7 +56,7 @@ namespace honei
                         {
                             for(unsigned long j(0), k(0) ; j < n_y_coarse ; ++j, k +=2)
                             {
-                                coarse[1 + n_y_coarse * (i - 1) - 1 + j] = fine[1 + 2 * n_y_fine * (i - 1) + j * 2];
+                                coarse[1 + n_y_coarse * (i - 1) - 1 + j] = fine[1 + 2 * n_y_fine * (i - 1) + k -1];
                             }
                         }
 
@@ -81,16 +81,16 @@ namespace honei
                             // ||/_        |        _\||
                             // x___________|___________x
 
-                            for(unsigned long j(0), k(0) ; j < n_y_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_y_coarse; ++j)
                             {
-                                coarse[i_aux - 1 + j] += 0.5 * fine[i_aux_1 - 1 + j * 2];
+                                coarse[i_aux_1 - 1 + j] += 0.5 * fine[i_aux - 1 + j * 2];
                             }
 
                             i_aux_1 = i_aux_1 - n_y_coarse;
 
-                            for(unsigned long j(0), k(0) ; j < n_y_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_y_coarse; ++j)
                             {
-                                coarse[i_aux - 1 + j] += 0.5 * fine[i_aux_1 - 1 + j * 2];
+                                coarse[i_aux_1 - 1 + j] += 0.5 * fine[i_aux - 1 + j * 2];
                             }
 
                             // x___________o___________x
@@ -109,12 +109,12 @@ namespace honei
                             // | /  1/2  \ | /  1/2  \ |
                             // x___________o___________x
 
-                            for(unsigned long j(0), k(0) ; j < n_y_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_y_coarse; ++j)
                             {
                                 coarse[i - 1 + j * n_y_coarse] += 0.5 * fine[2 * i - 1 + j * i_step];
                             }
 
-                            for(unsigned long j(0), k(0) ; j < n_y_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_y_coarse; ++j)
                             {
                                 coarse[i + j * n_y_coarse] += 0.5 * fine[2 * i - 1 + j * i_step];
                             }
@@ -137,22 +137,22 @@ namespace honei
                             // | |/_       |        _\||
                             // x___________|___________x
 
-                            for(unsigned long j(0), k(0) ; j < n_x_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_x_coarse; ++j)
                             {
                                 coarse[i_aux_1 -1 + j] += 0.25 * fine[i_aux - 1 + j * 2];
                             }
 
-                            for(unsigned long j(0), k(0) ; j < n_x_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_x_coarse; ++j)
                             {
                                 coarse[i_aux_1 + j] += 0.25 * fine[i_aux - 1 + j * 2];
                             }
 
-                            for(unsigned long j(0), k(0) ; j < n_x_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_x_coarse; ++j)
                             {
                                 coarse[n_y_coarse * i + j] += 0.25 * fine[i_aux - 1 + j * 2];
                             }
 
-                            for(unsigned long j(0), k(0) ; j < n_x_coarse; ++j, k += 2)
+                            for(unsigned long j(0) ; j < n_x_coarse; ++j)
                             {
                                 coarse[(n_y_coarse + 1) * i + j] += 0.25 * fine[i_aux - 1 + j * 2];
                             }
