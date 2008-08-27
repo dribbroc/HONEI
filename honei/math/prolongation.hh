@@ -29,7 +29,7 @@ using namespace methods;
 namespace honei
 {
     template<typename Tag_>
-        class Prolongate
+        class Prolongation
         {
             public:
                 template <typename Prec_>

@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/math/prolongate.hh>
+#include <honei/math/restriction.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 
@@ -26,12 +26,12 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DT1_>
-class ProlongateTest:
+class RestrictionTest:
     public BaseTest
 {
     public:
-        ProlongateTest(const std::string & tag) :
-            BaseTest("Prolongate test <" + tag + ">")
+        RestrictionTest(const std::string & tag) :
+            BaseTest("Restriction test <" + tag + ">")
         {
             register_tag(Tag_::name);
         }
@@ -40,10 +40,10 @@ class ProlongateTest:
         {
             DenseVector<DT1_> fine(9, DT1_(0));
             DenseVector<DT1_> coarse(4, DT1_(0));
-            DenseVector<unsigned long> mask(9);
+            DenseVector<unsigned long> mask(8);
 
-            Prolongate<Tag_>::value(fine, coarse, mask);
+            Restriction<Tag_>::value(coarse, fine, mask);
             TEST_CHECK(true);
         }
 };
-ProlongateTest<tags::CPU, float> prolongate_test("float");
+RestrictionTest<tags::CPU, float> restriction_test("float");
