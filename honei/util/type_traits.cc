@@ -318,7 +318,7 @@ namespace honei
             x_offset = (4 - x_offset) % 4;
 
             unsigned long quad_start = x_offset;
-            unsigned long quad_end(count - 4 - ((count - quad_start) % 8));
+            unsigned long quad_end(count - 8 - ((count - quad_start) % 8));
             if (count < 24)
             {
                 quad_end = 0;
@@ -327,11 +327,12 @@ namespace honei
 
             for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
             {
-                m1 = _mm_load_ps(orig + index);
+                m1 = _mm_loadu_ps(orig + index);
                 m2 = _mm_load_ps(orig + index + 2);
-                m3 = _mm_load_ps(orig + index + 4);
+                m3 = _mm_loadu_ps(orig + index + 4);
                 m4 = _mm_load_ps(orig + index + 6);
 
+                /// \todo shuffle from 2 into 4 __m128 registers and use _mm_load_ps
                 m5 = _mm_cvtps_pd(m1);
                 m6 = _mm_cvtps_pd(m2);
                 m7 = _mm_cvtps_pd(m3);
@@ -384,6 +385,7 @@ namespace honei
                 m7 = _mm_cvtpd_ps(m3);
                 m8 = _mm_cvtpd_ps(m4);
 
+                /// \todo shuffle into 2 _m128 registers
                 _mm_store_ps(copy + index, m5);
                 _mm_store_ps(copy + index + 2, m6);
                 _mm_store_ps(copy + index + 4, m7);
