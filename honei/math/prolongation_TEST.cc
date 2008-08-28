@@ -72,4 +72,6 @@ class ProlongationTest:
         }
 };
 ProlongationTest<tags::CPU, float> prolongate_test("float");
+#ifdef HONEI_CUDA
 ProlongationTest<tags::GPU::CUDA, float> cuda_prolongate_test("float");
+#endif
