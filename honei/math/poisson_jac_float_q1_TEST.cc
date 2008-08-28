@@ -173,9 +173,7 @@ class PoissonTestJACBandedQ1Float:
             DenseVector<float> x(n, float(0));
             Difference<Tag_>::value(result, ana_sol_v);
             Difference<Tag_>::value(x, result);
-            x.lock(lm_read_only);
-            double norm = Norm<vnt_l_two, false>::value(x);
-            x.unlock(lm_read_only);
+            double norm = Norm<vnt_l_two, false, Tag_>::value(x);
             cout<<"L2: "<<norm<<endl;
             //TEST_CHECK(true);
         }
