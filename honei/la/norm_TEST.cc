@@ -155,7 +155,7 @@ class DenseVectorRangeNormValueTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 15) ; size <<= 1)
             {
                 DenseVector<DataType_> d(size * 4, DataType_(100));
                 for (int j(0) ; j < 4 ; j++)
@@ -169,17 +169,14 @@ class DenseVectorRangeNormValueTest :
 
                     DataType_ s(size);
 
-                    if ((Tag_::name != "sse") && (Tag_::name != "mc-sse"))
-                    {
-                        DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
-                        DataType_ smax(s / 1.23456789);
-                        TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
+                    DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
+                    DataType_ smax(s / 1.23456789);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
-                        DataType_ v1(Norm<vnt_l_one>::value(dv));
-                        DataType_ s1(s * (s + 1) / 2 / 1.23456789);
-                        DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
-                        TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
-                    }
+                    DataType_ v1(Norm<vnt_l_one>::value(dv));
+                    DataType_ s1(s * (s + 1) / 2 / 1.23456789);
+                    DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
                     DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
                     DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
@@ -226,7 +223,7 @@ class DenseVectorRangeNormQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(5);
+            unsigned long size(1 << 13);
             DenseVector<DataType_> d(size * 4, DataType_(100));
             for (int j(0) ; j < 4 ; j++)
             {
@@ -239,17 +236,14 @@ class DenseVectorRangeNormQuickTest :
 
                 DataType_ s(size);
 
-                if ((Tag_::name != "sse") && (Tag_::name != "mc-sse"))
-                {
-                    DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
-                    DataType_ smax(s / 1.23456789);
-                    TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
+                DataType_ vmax(Norm<vnt_max, false, Tag_>::value(dv));
+                DataType_ smax(s / 1.23456789);
+                TEST_CHECK_EQUAL_WITHIN_EPS(vmax, smax, std::numeric_limits<float>::epsilon());
 
-                    DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(dv));
-                    DataType_ s1(s * (s + 1) / 2 / 1.23456789);
-                    DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
-                }
+                DataType_ v1(Norm<vnt_l_one, false, Tag_>::value(dv));
+                DataType_ s1(s * (s + 1) / 2 / 1.23456789);
+                DataType_ eps1(s1 * 10 * std::numeric_limits<float>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(v1, s1, eps1);
 
                 DataType_ v2(Norm<vnt_l_two, false, Tag_>::value(dv));
                 DataType_ s2(s * (s + 1) * (2 * s + 1) / 6 / 1.23456789 / 1.23456789);
