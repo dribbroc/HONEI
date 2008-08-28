@@ -138,7 +138,7 @@ SolverLABSWETest<tags::Cell, float> solver_test_float_cell("float");
 SolverLABSWETest<tags::Cell, double> solver_test_double_cell("double");
 #endif
 #ifdef HONEI_CUDA
-SolverLABSWETest<tags::GPU::CUDA, float> solver_test_float_cuda("float");
+//SolverLABSWETest<tags::GPU::CUDA, float> solver_test_float_cuda("float");
 #endif
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest :
@@ -462,7 +462,7 @@ SolverLABSWEMassConservationTest<tags::Cell, double> solver_mass_cons_test_doubl
 SolverLABSWEMassConservationTest<tags::Cell, float> solver_mass_cons_test_float_cell("mass conservation, float");
 #endif
 #ifdef HONEI_CUDA
-SolverLABSWEMassConservationTest<tags::GPU::CUDA, float> solver_mass_cons_test_float_cuda("mass conservation, float");
+//SolverLABSWEMassConservationTest<tags::GPU::CUDA, float> solver_mass_cons_test_float_cuda("mass conservation, float");
 #endif
 template <typename Tag_, typename DataType_>
 class SolverLABSWENOSLIPTest :
