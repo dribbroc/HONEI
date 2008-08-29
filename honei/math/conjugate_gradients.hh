@@ -100,6 +100,47 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
+            static inline void cg_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
+            {
+                ///Compute x_i+1: (in energy)
+                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
+                DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
+                DT1_ lower = DotProduct<Tag_>::value(energy, utility);
+                DenseVector<DT1_> u_c(utility.copy());
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    Scale<Tag_>::value(u_c, DT1_(upper/lower));
+                    energy = u_c;
+                }
+                else
+                {
+                    Scale<Tag_>::value(u_c, DT1_(upper/std::numeric_limits<DT1_>::epsilon()));
+                    energy = u_c;
+                }
+                Sum<Tag_>::value(energy, former_result);
+                ///Compute new gradient
+                DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
+                Difference<Tag_>::value(new_gradient, right_hand_side);
+
+                ///Compute new utility
+                upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
+                lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
+                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
+                {
+                    Scale<Tag_>::value(utility, DT1_(upper/lower));
+                }
+                else
+                {
+                    Scale<Tag_>::value(utility, DT1_(upper/std::numeric_limits<DT1_>::epsilon()));
+                }
+                Difference<Tag_>::value(utility, new_gradient);
+
+                ///Finishing:
+                former_gradient = new_gradient;//.copy();
+                former_result = energy;//.copy();
+
+            }
+            template<typename DT1_, typename DT2_>
             static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
                 ///Compute x_i+1: (in energy)
@@ -326,6 +367,45 @@ namespace honei
 
             }
 
+            /**
+            * \brief Returns solution of LES given by a BandedMatrix and a Vector.
+            *
+            * \param system_matrix The system matrix.
+            * \param right_hand_side The right hand side of the system.
+            * \param konv_rad The parameter for convergence control.
+            *
+            */
+
+            /// \{
+
+
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            {
+                CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
+
+
+                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
+                DenseVector<DT1_> g_c(g.copy());
+                Scale<Tag_>::value(g_c, DT1_(-1.));
+                DenseVector<DT1_> u(g_c.copy());
+                DenseVector<DT1_> x_last(x.copy());
+
+                DT1_ norm_x_last = DT1_(0);
+                DT1_ norm_x = DT1_(1);
+
+                while(norm_x - norm_x_last > konv_rad)
+                {
+
+                    cg_kernel(system_matrix, right_hand_side, g, x, u);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                    x_last = x.copy();
+                }
+                return x;
+            }
             ///Mixed precision implementations:
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad, int mixed_prec_iter_num)
