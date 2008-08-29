@@ -29,7 +29,7 @@ using namespace methods;
 namespace honei
 {
     template<typename Tag_>
-        class Restriction
+        struct Restriction
         {
             public:
                 template <typename Prec_>
