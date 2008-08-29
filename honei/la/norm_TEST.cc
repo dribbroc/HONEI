@@ -155,7 +155,11 @@ class DenseVectorRangeNormValueTest :
 
         virtual void run() const
         {
+#ifdef HONEI_CELL
+            for (unsigned long size(1) ; size < (1 << 11) ; size <<= 1)
+#else
             for (unsigned long size(1) ; size < (1 << 15) ; size <<= 1)
+#endif
             {
                 DenseVector<DataType_> d(size * 4, DataType_(100));
                 for (int j(0) ; j < 4 ; j++)
@@ -223,7 +227,11 @@ class DenseVectorRangeNormQuickTest :
 
         virtual void run() const
         {
+#ifdef HONEI_CELL
+            unsigned long size(1 << 10);
+#else
             unsigned long size(1 << 13);
+#endif
             DenseVector<DataType_> d(size * 4, DataType_(100));
             for (int j(0) ; j < 4 ; j++)
             {
