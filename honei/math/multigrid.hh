@@ -63,17 +63,17 @@ namespace honei
 
             //Data:
             // matrices
-            BandedMatrixQ1<Prec_>** a;
+            BandedMatrixQ1<Prec_>* a[11];
             // iteration vectors
-            DenseVector<Prec_>** c;
+            DenseVector<Prec_>* c[11];
             // defects
-            DenseVector<Prec_>** d;
+            DenseVector<Prec_>* d[11];
             // right hand sides
-            DenseVector<Prec_>** rhs;
+            DenseVector<Prec_>* rhs[11];
             // solution vectors
-            DenseVector<Prec_>** x;
+            DenseVector<Prec_>* x[11];
             // aux vectors
-            DenseVector<Prec_>** temp;
+            DenseVector<Prec_>* temp[11];
     };
 
     template<typename Tag_, typename SmootherType_, typename CycleType_, typename Mode_>
@@ -95,13 +95,19 @@ namespace honei
                         // when start vector is not zero: d = rhs - A*x
                         if(info.initial_zero)
                         {
-                            delete info.d[info.max_level];
-                            info.d[info.max_level] = new DenseVector<Prec_>(info.rhs[info.max_level]->copy());
+                            std::cout<<"DELETE" <<info.d[info.max_level]->size() << std::endl;
+                            //delete info.d[info.max_level];
+                            //info.d[info.max_level] = 0;
+                            *(info.d[info.max_level]) = (info.rhs[info.max_level]->copy());
                         }
                         else
                         {
                             DenseVector<Prec_> rhs_c(info.rhs[info.max_level]->copy());
-                            info.d[info.max_level] = &(Difference<Tag_>::value(rhs_c, Product<Tag_>::value(*(info.a[info.max_level]), info.x[info.max_level]->copy())));
+                            std::cout << rhs_c.size() << " " << info.a[info.max_level]->size() << std::endl;
+                            std::cout.flush();
+                            //delete info.d[info.max_level];
+                            //info.d[info.max_level] = 0;
+                            *(info.d[info.max_level]) = (Difference<Tag_>::value(rhs_c, Product<Tag_>::value(*(info.a[info.max_level]), info.x[info.max_level]->copy())));
                         }
 
                         Prec_ defect, initial_defect;
@@ -157,8 +163,9 @@ namespace honei
                                         if (restriction_started)
                                         {
                                             // When the restriction loop just started
-                                            delete info.d[current_level];
-                                            info.d[current_level] = new DenseVector<Prec_>(Jacobi<Tag_>::value(*(info.a[current_level]), *(info.c[current_level]), info.n_pre_smooth));
+                                            //delete info.d[current_level];
+                                            //info.d[current_level] = 0;
+                                            *(info.d[current_level]) = (Jacobi<Tag_>::value(*(info.a[current_level]), *(info.c[current_level]), info.n_pre_smooth));
                                             Sum<Tag_>::value(*(info.x[current_level]), *(info.c[current_level]));
                                         }
                                         else
@@ -166,12 +173,14 @@ namespace honei
                                             // otherwise the solution process can be started directly with
                                             // the cleared solution vector (as the solution vector itself represents
                                             // the defect correction here)
-                                            delete info.x[current_level];
-                                            info.x[current_level] = new DenseVector<Prec_>(Jacobi<Tag_>::value(*(info.a[current_level]), *(info.d[current_level]), info.n_pre_smooth));
+                                            //delete info.x[current_level];
+                                            //info.x[current_level] = 0;
+                                            *(info.x[current_level]) = (Jacobi<Tag_>::value(*(info.a[current_level]), *(info.d[current_level]), info.n_pre_smooth));
                                         }
                                         DenseVector<Prec_> rhs_c_2(info.rhs[current_level]->copy());
-                                        delete info.d[current_level];
-                                        info.d[current_level] = new DenseVector<Prec_>(Difference<Tag_>::value(rhs_c_2, Product<Tag_>::value(*(info.a[current_level]), info.x[current_level]->copy())));
+                                        //delete info.d[current_level];
+                                        //info.d[current_level] = 0;
+                                        *(info.d[current_level]) = (Difference<Tag_>::value(rhs_c_2, Product<Tag_>::value(*(info.a[current_level]), info.x[current_level]->copy())));
                                         //----------------------------------
                                         //restriction ("go down one level")
                                         //----------------------------------
@@ -183,8 +192,9 @@ namespace honei
                                         // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
                                         Restriction<Tag_>::value(*(info.d[current_level]), *(info.d[current_level + 1]), *info.macro_border_mask);
-                                        delete info.rhs[current_level];
-                                        info.rhs[current_level] = new DenseVector<Prec_>(info.d[current_level]->copy());
+                                        //delete info.rhs[current_level];
+                                        //info.rhs[current_level] = 0;
+                                        *(info.rhs[current_level]) =(info.d[current_level]->copy());
 
                                         // if we reached the coarsest level exit the restricition loop
                                         if (current_level == info.min_level)
@@ -201,12 +211,14 @@ endRestrictionLoop:
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        delete info.d[current_level];
-                                        info.d[current_level] = new DenseVector<Prec_>(ConjugateGradients<Tag_, NONE>::value(*(info.a[current_level]), *(info.x[current_level]), info.tolerance));
+                                        //delete info.d[current_level];
+                                        //info.d[current_level] = 0;
+                                        *(info.d[current_level]) =(ConjugateGradients<Tag_, NONE>::value(*(info.a[current_level]), *(info.x[current_level]), info.tolerance));
 
-                                        delete info.d[current_level];
+                                        //delete info.d[current_level];
+                                        //info.d[current_level] = 0;
                                         DenseVector<Prec_> rhs_c_4(info.rhs[current_level]->copy());
-                                        info.d[current_level] = new DenseVector<Prec_>(Difference<Tag_>::value(rhs_c_4, Product<Tag_>::value(*(info.a[current_level]), info.x[current_level]->copy())));
+                                        *(info.d[current_level]) = (Difference<Tag_>::value(rhs_c_4, Product<Tag_>::value(*(info.a[current_level]), info.x[current_level]->copy())));
                                         //
                                         // the MG cycle can be exited immediately
                                         //
@@ -218,8 +230,9 @@ endRestrictionLoop:
                                         // started with a zero start vector
                                         //manager->log(OL_TRACE2, "MG(GPU): coarse grid correction for neqs", data->neqs[icurrentLevel]);
 
-                                        delete info.d[current_level];
-                                        info.d[current_level] = new DenseVector<Prec_>(ConjugateGradients<Tag_, NONE>::value(*(info.a[current_level]), *(info.x[current_level]), info.tolerance));
+                                        //delete info.d[current_level];
+                                        //info.d[current_level] = 0;
+                                        *(info.d[current_level]) =(ConjugateGradients<Tag_, NONE>::value(*(info.a[current_level]), *(info.x[current_level]), info.tolerance));
                                     }
 
                                     //-------------
@@ -251,8 +264,9 @@ endRestrictionLoop:
                                             //(data->d[icurrentLevel]) and c the prolongated correction (c[icurrentLevel])
                                             Prec_ d1,d2;
                                             d1 = DotProduct<Tag_>::value(*(info.d[current_level]), *(info.c[current_level]));
-                                            delete info.temp[current_level];
-                                            info.temp[current_level] = new DenseVector<Prec_>(Product<Tag_>::value(*(info.a[current_level]), *(info.c[current_level])));
+                                            //delete info.temp[current_level];
+                                            //info.temp[current_level] = 0;
+                                            *(info.temp[current_level]) = (Product<Tag_>::value(*(info.a[current_level]), *(info.c[current_level])));
                                             d2 = DotProduct<Tag_>::value(*(info.temp[current_level]), *(info.c[current_level]));
 
                                             alpha = Prec_(d1 / d2);
@@ -275,16 +289,18 @@ endRestrictionLoop:
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
                                         //
 
-                                        delete info.x[current_level];
-                                        info.x[current_level] = new DenseVector<Prec_>(Jacobi<Tag_>::value(*(info.a[current_level]), *(info.rhs[current_level]), info.n_post_smooth));
+                                        //delete info.x[current_level];
+                                        //info.x[current_level] = 0;
+                                        *(info.x[current_level]) =(Jacobi<Tag_>::value(*(info.a[current_level]), *(info.rhs[current_level]), info.n_post_smooth));
 
                                         //
                                         // update defect
                                         //
 
-                                        delete info.d[current_level];
+                                        //delete info.d[current_level];
+                                        //info.d[current_level] = 0;
                                         DenseVector<Prec_> rhs_c_5(info.rhs[current_level]->copy());
-                                        info.d[current_level] = new DenseVector<Prec_>(Difference<Tag_>::value(rhs_c_5, Product<Tag_>::value(*(info.a[current_level]), info.x[current_level]->copy())));
+                                        *(info.d[current_level]) = (Difference<Tag_>::value(rhs_c_5, Product<Tag_>::value(*(info.a[current_level]), info.x[current_level]->copy())));
 
                                         // if the maximal level is reached then the MG cycle is finished,
                                         // so exit the MG cycle loop
@@ -326,7 +342,7 @@ endCycleLoop:
                         info.macro_border_mask = new DenseVector<unsigned long>(8);
                         for(unsigned long i(0); i < 8; ++i)
                         {
-                            info.macro_border_mask[i] = 2;
+                            (*info.macro_border_mask)[i] = 2;
                         }
 
                         // current and initial defect
@@ -335,7 +351,6 @@ endCycleLoop:
                         // cycle control
                         unsigned long restriction_started, iter;
                         unsigned long local_cycle[max_levels]; //former MAXLEVELS
-
                         //configuration constants: /TODO: set/allocate!!!
                         info.is_smoother = true;
                         DenseVector<unsigned long> mask(8);
@@ -346,48 +361,59 @@ endCycleLoop:
                         }
 
                         info.min_level = 3;
+                        std::cout << "N: " << right_hand_side.size() << std::endl;
                         switch(right_hand_side.size())
                         {
                             case 1050625:
                                 {
                                     info.max_level = 10;
                                 }
+                                break;
                             case 263169:
                                 {
                                     info.max_level = 9;
                                 }
+                                break;
                             case 663169:
                                 {
                                     info.max_level = 8;
                                 }
+                                break;
                             case 16641:
                                 {
                                     info.max_level = 7;
                                 }
+                                break;
                             case 4225:
                                 {
                                     info.max_level = 6;
                                 }
+                                break;
                             case 1089:
                                 {
                                     info.max_level = 5;
                                 }
+                                break;
                             case 289:
                                 {
                                     info.max_level = 4;
                                 }
+                                break;
                             case 81:
                                 {
                                     info.max_level = 3;
                                 }
+                                break;
                             case 27:
                                 {
                                     info.max_level = 2;
                                 }
+                                break;
                             case 9:
                                 {
                                     info.max_level = 1;
                                 }
+                                break;
                         }
 
                         info.n_max_iter = 2;
@@ -403,10 +429,10 @@ endCycleLoop:
                         info.n_truncate_d_o_f = 1;
                         info.n_threshold_d_o_f = 1;
 
-                        for (unsigned long i (info.min_level) ; i <= info.max_level; ++i)
+                        /*for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
                         {
-                            unsigned long size = (unsigned long)((unsigned long)pow(2, i + 1) * (unsigned long)pow(2, i + 1));
-
+                            unsigned long size = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
+                            std::cout<<size<<std::endl;
                             DenseVector<Prec_> dummy_band(size, Prec_(0));
                             info.a[i] = new BandedMatrixQ1<Prec_>(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                             // iteration vectors
@@ -415,17 +441,37 @@ endCycleLoop:
                             info.rhs[i] = new DenseVector<Prec_>(size, Prec_(0));
                             info.x[i] = new DenseVector<Prec_>(size, Prec_(0));
                             info.temp[i] = new DenseVector<Prec_>(size, Prec_(0));
-                        }
+                        }*/
 
+                        for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
+                        {
+                            unsigned long size = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
+                            std::cout<<size<<std::endl;
+                            DenseVector<Prec_> dummy_band(size, Prec_(0));
+                            BandedMatrixQ1<Prec_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                            *(info.a[i]) = ac_a;
+                            // iteration vectors
+                            DenseVector<Prec_> ac_c(size, Prec_(0));
+                            *(info.c[i]) = ac_c;
+                            DenseVector<Prec_> ac_d(size, Prec_(0));
+                            *(info.d[i]) = ac_d;
+                            DenseVector<Prec_> ac_rhs(size, Prec_(0));
+                            *(info.rhs[i]) = ac_rhs;
+                            DenseVector<Prec_> ac_x(size, Prec_(0));
+                            *(info.x[i]) = ac_x;
+                            DenseVector<Prec_> ac_temp(size, Prec_(0));
+                            *(info.temp[i]) = ac_temp;
+                        }
+                        std::cout<<"Size: " <<  info.a[info.max_level]->size() << std::endl;
                         DenseVector<Prec_> result(right_hand_side.size(), Prec_(0)); //final result
                         DenseVector<Prec_> initial_guess(right_hand_side.size(), Prec_(0)); //x_0
                         DenseVector<Prec_> outer_defect(right_hand_side.size(), Prec_(0));
                         DenseVector<Prec_> temp_vector(right_hand_side.size(), Prec_(0)); //delete if unneeded
 
+
                         // apply Dirichlet BCs for boundary nodes (semi-implicit approach)
                         // note that we cleared the solution vector previously
                         unsigned long sqrt_N((unsigned long)sqrt((double)right_hand_side.size()));
-
                         for (unsigned long i(0) ; i < sqrt_N; ++i)
                         {
                             initial_guess[i] = right_hand_side[i];
@@ -445,7 +491,6 @@ endCycleLoop:
                         }
 
                         unsigned long timing_loop(1);
-
                         for(unsigned long timing(0); timing < timing_loop; ++timing)
                         {
                             unsigned long inner_iterations(0);
@@ -469,10 +514,9 @@ endCycleLoop:
                                 {
                                     temp_vector[i] = (Prec_)outer_defect[i];
                                 }
-                                delete info.rhs[info.max_level];
-
-                                info.rhs[info.max_level] = new DenseVector<Prec_>(temp_vector.copy());
-
+                                //delete (info.rhs)[info.max_level];
+                                //info.rhs[info.max_level] = 0;
+                                *(info.rhs)[info.max_level] = (temp_vector.copy());
                                 // run inner solver as long as neccessary
                                 _multigrid_kernel<Prec_>(system, right_hand_side, max_levels, cappa, info);
                                 inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
