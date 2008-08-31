@@ -34,7 +34,8 @@
 #include<honei/math/restriction.hh>
 #include<honei/math/prolongation.hh>
 #include<vector>
-
+#include<string>
+#include<fstream>
 using namespace methods;
 namespace honei
 {
@@ -335,7 +336,6 @@ endCycleLoop:
                         }
 
                         info.min_level = 3;
-                        std::cout << "N: " << right_hand_side.size() << std::endl;
                         switch(right_hand_side.size())
                         {
                             case 1050625:
@@ -407,7 +407,6 @@ endCycleLoop:
                         for (unsigned long i(0) ; i < info.min_level; ++i)
                         {
                             unsigned long size = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
-                            std::cout<<size<<std::endl;
                             DenseVector<Prec_> dummy_band(size, Prec_(0));
                             BandedMatrixQ1<Prec_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                             info.a.push_back(ac_a);
@@ -426,10 +425,6 @@ endCycleLoop:
                         for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
                         {
                             unsigned long size = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
-                            std::cout<<size<<std::endl;
-                            DenseVector<Prec_> dummy_band(size, Prec_(0));
-                            BandedMatrixQ1<Prec_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
-                            info.a.push_back(ac_a);
                             // iteration vectors
                             DenseVector<Prec_> ac_c(size, Prec_(0));
                             info.c.push_back(ac_c);
@@ -442,7 +437,97 @@ endCycleLoop:
                             DenseVector<Prec_> ac_temp(size, Prec_(0));
                             info.temp.push_back(ac_temp);
                         }
-                        std::cout<<"Size: " <<  info.a.at(info.max_level).size() << std::endl;
+
+                        //assemble all needed levels' matrices:
+                        for(unsigned long i(info.min_level); i <= info.max_level; ++i)
+                        {
+                            unsigned long N = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
+                            DenseVector<Prec_> LL_v(N);
+                            DenseVector<Prec_> LD_v(N);
+                            DenseVector<Prec_> LU_v(N);
+                            DenseVector<Prec_> DL_v(N);
+                            DenseVector<Prec_> DD_v(N);
+                            DenseVector<Prec_> DU_v(N);
+                            DenseVector<Prec_> UL_v(N);
+                            DenseVector<Prec_> UD_v(N);
+                            DenseVector<Prec_> UU_v(N);
+                            BandedMatrixQ1<Prec_> current_matrix(N,LL_v, LD_v, LU_v, DL_v, DD_v, DU_v, UL_v, UD_v, UU_v);
+                            int n;
+
+                            FILE* file;
+
+                            double* dd;
+
+                            double* ll;
+                            double* ld;
+                            double* lu;
+                            double* dl;
+                            double* du;
+                            double* ul;
+                            double* ud;
+                            double* uu;
+                            std::string file_path("testdata/" + stringify(DD_v.size()) +"/ehq.1.1.1.1.bin");
+                            file = fopen(file_path.c_str(), "rb");
+                            fread(&n, sizeof(int), 1, file);
+
+#ifdef HONEI_CELL
+                            unsigned char b1, b2, b3, b4;
+                            b1 = n & 255;
+                            b2 = ( n >> 8 ) & 255;
+                            b3 = ( n>>16 ) & 255;
+                            b4 = ( n>>24 ) & 255;
+                            n = ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+#endif
+                            dd = new double[n];
+                            ll = new double[n];
+                            ld = new double[n];
+                            lu = new double[n];
+                            dl = new double[n];
+                            du = new double[n];
+                            ul = new double[n];
+                            ud = new double[n];
+                            uu = new double[n];
+
+                            fread(dd, sizeof(double), n, file);
+                            fread(ll, sizeof(double), n, file);
+                            fread(ld, sizeof(double), n, file);
+                            fread(lu, sizeof(double), n, file);
+                            fread(dl, sizeof(double), n, file);
+                            fread(du, sizeof(double), n, file);
+                            fread(ul, sizeof(double), n, file);
+                            fread(ud, sizeof(double), n, file);
+                            fread(uu, sizeof(double), n, file);
+                            fclose(file);
+
+#ifdef HONEI_CELL
+                            for(unsigned long j(0); j < n; ++j)
+                            {
+                                dd[j] = DoubleSwap(dd[j]);
+                                ll[j] = DoubleSwap(ll[j]);
+                                ld[j] = DoubleSwap(ld[j]);
+                                lu[j] = DoubleSwap(lu[j]);
+                                dl[j] = DoubleSwap(dl[j]);
+                                du[j] = DoubleSwap(du[j]);
+                                ul[j] = DoubleSwap(ul[j]);
+                                ud[j] = DoubleSwap(ud[j]);
+                                uu[j] = DoubleSwap(uu[j]);
+                            }
+#endif
+                            for(unsigned long j(0); j < DD_v.size(); ++j)
+                            {
+                                LL_v[j] = (Prec_)ll[j];
+                                LD_v[j] = (Prec_)ld[j];
+                                LU_v[j] = (Prec_)lu[j];
+                                DL_v[j] = (Prec_)dl[j];
+                                DD_v[j] = (Prec_)dd[j];
+                                DU_v[j] = (Prec_)du[j];
+                                UL_v[j] = (Prec_)ul[j];
+                                UD_v[j] = (Prec_)ud[j];
+                                UU_v[j] = (Prec_)uu[j];
+                            }
+                            info.a.push_back(current_matrix);
+
+                        }
                         DenseVector<Prec_> initial_guess(right_hand_side.size(), Prec_(0)); //x_0
                         DenseVector<Prec_> outer_defect(right_hand_side.size(), Prec_(0));
                         DenseVector<Prec_> temp_vector(right_hand_side.size(), Prec_(0)); //delete if unneeded
