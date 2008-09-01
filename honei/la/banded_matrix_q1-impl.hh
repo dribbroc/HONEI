@@ -77,13 +77,13 @@ namespace honei
         ASSERT(size > 0, "size is zero!");
 
         unsigned long target;
-        for (unsigned long level(1) ; level <= 50 ; ++level)
+        for (unsigned long level(0) ; level <= 50 ; ++level)
         {
             target = (unsigned long)pow((pow(2, level) + 1), 2);
             if (target >= size)
                 break;
         }
-        ASSERT(size == target, "size matches not ((2^L) +1)^2, L integer.");
+        ASSERT(size == target, "size of " + stringify(size) + " matches not ((2^L) +1)^2, L integer.");
 
         if (ll.size() != size)
             throw VectorSizeDoesNotMatch(ll.size(), size);
