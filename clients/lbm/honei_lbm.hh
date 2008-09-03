@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of HONEI. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,11 +21,11 @@
 #ifndef LBM_HONEI_LBM_HH
 #define LBM_HONEI_LBM_HH
 
-#include <scenario_controller.hh>
+#include <scenario_controller_base.hh>
 #include <honei/util/time_stamp.hh>
 
-ScenarioController<tags::CPU, float> * controller_f;
-ScenarioController<tags::CPU, double> * controller_d;
+ScenarioControllerBase * controller_f;
+ScenarioControllerBase * controller_d;
 
 double rotation_x_increment;
 double rotation_y_increment;

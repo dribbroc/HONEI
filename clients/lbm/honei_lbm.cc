@@ -19,8 +19,10 @@
 
 #include <GL/glut.h>
 #include <iostream>
-#include <honei_lbm.hh>
+#include <scenario_controller_base.hh>
 #include <scenario_controller.hh>
+#include <scenario_controller_grid.hh>
+#include <honei_lbm.hh>
 
 int main(int argc, char ** argv)
 {
@@ -80,8 +82,11 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Toggle primitive type", 6);
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
-    glutAddMenuEntry("Laminar flow: Circular dam break 50x50 float", 0);
-    glutAddMenuEntry("Laminar flow: Circular dam break above uneven bed 50x50 float", 1);
+    glutAddMenuEntry("Mono: Laminar flow: Circular dam break 50x50 float", 0);
+    glutAddMenuEntry("Mono: Laminar flow: Circular dam break above uneven bed 50x50 float", 1);
+    glutAddMenuEntry("Grid: Laminar flow: Circular dam break 50x50 float", 100);
+    glutAddMenuEntry("Grid: Laminar flow: Circular dam break 50x50 with cuboidal obstacles", 101);
+    glutAddMenuEntry("Grid: Laminar flow: Partial dam break 50x50", 102);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
@@ -120,21 +125,43 @@ void switch_scenario(int id)
     glutIdleFunc(NULL);
     glutDisplayFunc(display_null);
     calc = false;
-    if (ScenarioController<tags::CPU, float>::get_precision(id) == 0)
+    if (id < 100)
     {
-        delete controller_f;
-        delete controller_d;
-        controller_d = 0;
-        controller_f = new ScenarioController<tags::CPU, float> (id);
-        controller_f->init();
+        if (ScenarioController<tags::CPU, float>::get_precision(id) == 0)
+        {
+            delete controller_f;
+            delete controller_d;
+            controller_d = 0;
+            controller_f = new ScenarioController<tags::CPU, float> (id);
+            controller_f->init();
+        }
+        else if (ScenarioController<tags::CPU, float>::get_precision(id) == 1)
+        {
+            delete controller_f;
+            delete controller_d;
+            controller_f = 0;
+            controller_d = new ScenarioController<tags::CPU, double> (id);
+            controller_d->init();
+        }
     }
-    else if (ScenarioController<tags::CPU, float>::get_precision(id) == 1)
+    else if (id < 200)
     {
-        delete controller_f;
-        delete controller_d;
-        controller_f = 0;
-        controller_d = new ScenarioController<tags::CPU, double> (id);
-        controller_d->init();
+        if (ScenarioControllerGrid<tags::CPU, float>::get_precision(id) == 0)
+        {
+            delete controller_f;
+            delete controller_d;
+            controller_d = 0;
+            controller_f = new ScenarioControllerGrid<tags::CPU, float> (id);
+            controller_f->init();
+        }
+        else if (ScenarioControllerGrid<tags::CPU, float>::get_precision(id) == 1)
+        {
+            delete controller_f;
+            delete controller_d;
+            controller_f = 0;
+            controller_d = new ScenarioControllerGrid<tags::CPU, double> (id);
+            controller_d->init();
+        }
     }
     calc = true;
     glutDisplayFunc(display);
@@ -208,19 +235,19 @@ static void keyboard (unsigned char key, int x, int y)
             break;
 
         case ',':
-            translation_y_increment = translation_x_increment -0.1;
+            translation_y_increment = translation_y_increment -0.1;
             break;
 
         case '.':
-            translation_y_increment = translation_x_increment +0.1;
+            translation_y_increment = translation_y_increment +0.1;
             break;
 
         case 'v':
-            translation_y_increment = translation_x_increment -0.1;
+            translation_z_increment = translation_z_increment -0.1;
             break;
 
         case 'b':
-            translation_y_increment = translation_x_increment +0.1;
+            translation_z_increment = translation_z_increment +0.1;
             break;
 
         case 'q':
