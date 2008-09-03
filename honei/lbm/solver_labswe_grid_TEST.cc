@@ -179,4 +179,4 @@ class SolverLABSWEGridPartitionerTest :
             TEST_CHECK(true);
         }
 };
-//SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");
+SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");

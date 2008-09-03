@@ -206,6 +206,100 @@ namespace honei
                 }
             }
 
+            static void partition_directions(std::vector<unsigned long> & dir_index, std::vector<unsigned long> & dir,
+                    std::vector<unsigned long> & barriers, unsigned long start, unsigned long end)
+            {
+                CONTEXT("When partitioning one single direction:");
+                /// todo bei abbruch dennoch barriers einbauen
+                if (dir_index.size() == 0)
+                    return;
+                if (dir_index[dir_index.size() - 1] < start)
+                    return;
+                if (dir_index[0] > end)
+                    return;
+
+                std::vector<unsigned long>::iterator start_it(dir_index.begin());
+                unsigned long start_index(0);
+                while (start_index < dir_index.size() - 2 && dir_index[start_index] < start && dir_index[start_index + 1] <= start)
+                {
+                    start_index += 2;
+                    start_it += 2;
+                }
+
+                if (dir_index[start_index + 1] < start)
+                {
+                    start_index += 2;
+                    start_it += 2;
+                }
+
+                std::vector<unsigned long>::iterator end_it(start_it);
+                ++end_it;
+                unsigned long end_index(start_index);
+                ++end_index;
+                while (end_index < dir_index.size() - 1 && dir_index[end_index] < end)
+                {
+                    end_index += 2;
+                    end_it += 2;
+                }
+                if (dir_index[end_index - 1] > end)
+                {
+                    end_index -= 2;
+                    end_it -= 2;
+                }
+                //std::cout<<"start_index: "<<start_index<<"("<<*start_it<<") end_index: "<<end_index<<"("<<*end_it<<")"<<std::endl;
+                if (dir_index[start_index] < start)
+                {
+                    std::vector<unsigned long>::iterator temp_it(start_it);
+                    ++temp_it;
+                    temp_it = dir_index.insert(temp_it, start);
+                    dir_index.insert(temp_it, start);
+
+                    std::vector<unsigned long>::iterator temp_dir(dir.begin());
+                    for (unsigned long i(0) ; i < start_index / 2 ; ++i)
+                    {
+                        ++temp_dir;
+                    }
+                    temp_dir = dir.insert(temp_dir, *temp_dir);
+                    ++temp_dir;
+                    *temp_dir = *temp_dir + (dir_index[start_index + 2] - dir_index[start_index]);
+                    barriers.push_back(start_index + 2);
+
+                    end_index += 2;
+                }
+                else
+                {
+                    //nur start-barrier einfuegen
+                    barriers.push_back(start_index);
+                }
+
+                end_it = dir_index.begin();
+                for (unsigned long i(0) ; i < end_index ; ++i)
+                {
+                    ++end_it;
+                }
+                if (dir_index[end_index] > end)
+                {
+                    std::vector<unsigned long>::iterator temp_it(end_it);
+                    temp_it = dir_index.insert(temp_it, end);
+                    dir_index.insert(temp_it, end);
+
+                    std::vector<unsigned long>::iterator temp_dir(dir.begin());
+                    for (unsigned long i(0) ; i < end_index / 2 ; ++i)
+                    {
+                        ++temp_dir;
+                    }
+                    temp_dir = dir.insert(temp_dir, *temp_dir);
+                    ++temp_dir;
+                    *temp_dir = *temp_dir + (dir_index[end_index + 1] - dir_index[end_index - 1]);
+                    barriers.push_back(end_index);
+                }
+                else
+                {
+                    //nur end-barrier einfuegen
+                    barriers.push_back(end_index);
+                }
+            }
+
             static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
             {
@@ -220,19 +314,76 @@ namespace honei
                 std::vector<unsigned long> temp_dir_6;
                 std::vector<unsigned long> temp_dir_7;
                 std::vector<unsigned long> temp_dir_8;
+                std::vector<unsigned long> temp_dir_index_1;
+                std::vector<unsigned long> temp_dir_index_2;
+                std::vector<unsigned long> temp_dir_index_3;
+                std::vector<unsigned long> temp_dir_index_4;
+                std::vector<unsigned long> temp_dir_index_5;
+                std::vector<unsigned long> temp_dir_index_6;
+                std::vector<unsigned long> temp_dir_index_7;
+                std::vector<unsigned long> temp_dir_index_8;
+                std::vector<unsigned long> barriers;
+                std::vector<unsigned long> barriers_1;
+                std::vector<unsigned long> barriers_2;
+                std::vector<unsigned long> barriers_3;
+                std::vector<unsigned long> barriers_4;
+                std::vector<unsigned long> barriers_5;
+                std::vector<unsigned long> barriers_6;
+                std::vector<unsigned long> barriers_7;
+                std::vector<unsigned long> barriers_8;
 
                 for (unsigned long i(0) ; i < info.limits->size() ; ++i)
                 {
                     temp_limits.push_back((*info.limits)[i]);
                     temp_types.push_back((*info.types)[i]);
+                }
+                for (unsigned long i(0) ; i < info.dir_1->size() ; ++i)
+                {
                     temp_dir_1.push_back((*info.dir_1)[i]);
+                    temp_dir_index_1.push_back((*info.dir_index_1)[i * 2]);
+                    temp_dir_index_1.push_back((*info.dir_index_1)[i * 2 + 1]);
+                }
+                for (unsigned long i(0) ; i < info.dir_2->size() ; ++i)
+                {
                     temp_dir_2.push_back((*info.dir_2)[i]);
+                    temp_dir_index_2.push_back((*info.dir_index_2)[i * 2]);
+                    temp_dir_index_2.push_back((*info.dir_index_2)[i * 2 + 1]);
+                }
+                for (unsigned long i(0) ; i < info.dir_3->size() ; ++i)
+                {
                     temp_dir_3.push_back((*info.dir_3)[i]);
+                    temp_dir_index_3.push_back((*info.dir_index_3)[i * 2]);
+                    temp_dir_index_3.push_back((*info.dir_index_3)[i * 2 + 1]);
+                }
+                for (unsigned long i(0) ; i < info.dir_4->size() ; ++i)
+                {
                     temp_dir_4.push_back((*info.dir_4)[i]);
+                    temp_dir_index_4.push_back((*info.dir_index_4)[i * 2]);
+                    temp_dir_index_4.push_back((*info.dir_index_4)[i * 2 + 1]);
+                }
+                for (unsigned long i(0) ; i < info.dir_5->size() ; ++i)
+                {
                     temp_dir_5.push_back((*info.dir_5)[i]);
+                    temp_dir_index_5.push_back((*info.dir_index_5)[i * 2]);
+                    temp_dir_index_5.push_back((*info.dir_index_5)[i * 2 + 1]);
+                }
+                for (unsigned long i(0) ; i < info.dir_6->size() ; ++i)
+                {
                     temp_dir_6.push_back((*info.dir_6)[i]);
+                    temp_dir_index_6.push_back((*info.dir_index_6)[i * 2]);
+                    temp_dir_index_6.push_back((*info.dir_index_6)[i * 2 + 1]);
+                }
+                for (unsigned long i(0) ; i < info.dir_7->size() ; ++i)
+                {
                     temp_dir_7.push_back((*info.dir_7)[i]);
+                    temp_dir_index_7.push_back((*info.dir_index_7)[i * 2]);
+                    temp_dir_index_7.push_back((*info.dir_index_7)[i * 2 + 1]);
+                }
+                for (unsigned long i(0) ; i < info.dir_8->size() ; ++i)
+                {
                     temp_dir_8.push_back((*info.dir_8)[i]);
+                    temp_dir_index_8.push_back((*info.dir_index_8)[i * 2]);
+                    temp_dir_index_8.push_back((*info.dir_index_8)[i * 2 + 1]);
                 }
 
                 /*std::cout<<std::endl;
@@ -255,7 +406,6 @@ namespace honei
 
                 unsigned long end(0);
                 unsigned long start(0);
-                std::vector<unsigned long> barriers;
                 barriers.push_back(0);
                 for (unsigned long i(0) ; i < parts ; ++i)
                 {
@@ -274,37 +424,37 @@ namespace honei
                         unsigned long one_before_offset(end - *one_before);
                         unsigned long i(0);
                         std::vector<unsigned long>::iterator it_types(temp_types.begin());
-                        std::vector<unsigned long>::iterator it_dir_1(temp_dir_1.begin());
+                        /*std::vector<unsigned long>::iterator it_dir_1(temp_dir_1.begin());
                         std::vector<unsigned long>::iterator it_dir_2(temp_dir_2.begin());
                         std::vector<unsigned long>::iterator it_dir_3(temp_dir_3.begin());
                         std::vector<unsigned long>::iterator it_dir_4(temp_dir_4.begin());
                         std::vector<unsigned long>::iterator it_dir_5(temp_dir_5.begin());
                         std::vector<unsigned long>::iterator it_dir_6(temp_dir_6.begin());
                         std::vector<unsigned long>::iterator it_dir_7(temp_dir_7.begin());
-                        std::vector<unsigned long>::iterator it_dir_8(temp_dir_8.begin());
+                        std::vector<unsigned long>::iterator it_dir_8(temp_dir_8.begin());*/
                         while (i != temp_limits.size() - 1 && temp_limits[i] != end)
                         {
                             ++i;
                             ++it_types;
-                            ++it_dir_1;
+                            /*++it_dir_1;
                             ++it_dir_2;
                             ++it_dir_3;
                             ++it_dir_4;
                             ++it_dir_5;
                             ++it_dir_6;
                             ++it_dir_7;
-                            ++it_dir_8;
+                            ++it_dir_8;*/
                         }
                         barriers.push_back(i);
                         temp_types.insert(it_types, *(--it_types));
-                        temp_dir_1.insert(++it_dir_1, *(--it_dir_1) + one_before_offset);
+                        /*temp_dir_1.insert(++it_dir_1, *(--it_dir_1) + one_before_offset);
                         temp_dir_2.insert(++it_dir_2, *(--it_dir_2) + one_before_offset);
                         temp_dir_3.insert(++it_dir_3, *(--it_dir_3) + one_before_offset);
                         temp_dir_4.insert(++it_dir_4, *(--it_dir_4) + one_before_offset);
                         temp_dir_5.insert(++it_dir_5, *(--it_dir_5) + one_before_offset);
                         temp_dir_6.insert(++it_dir_6, *(--it_dir_6) + one_before_offset);
                         temp_dir_7.insert(++it_dir_7, *(--it_dir_7) + one_before_offset);
-                        temp_dir_8.insert(++it_dir_8, *(--it_dir_8) + one_before_offset);
+                        temp_dir_8.insert(++it_dir_8, *(--it_dir_8) + one_before_offset);*/
                     }
                     else
                     {
@@ -315,6 +465,16 @@ namespace honei
                         }
                         barriers.push_back(i);
                     }
+                    // prepare direction vectors
+                    partition_directions(temp_dir_index_1, temp_dir_1, barriers_1, start, end);
+                    partition_directions(temp_dir_index_2, temp_dir_2, barriers_2, start, end);
+                    partition_directions(temp_dir_index_3, temp_dir_3, barriers_3, start, end);
+                    partition_directions(temp_dir_index_4, temp_dir_4, barriers_4, start, end);
+                    partition_directions(temp_dir_index_5, temp_dir_5, barriers_5, start, end);
+                    partition_directions(temp_dir_index_6, temp_dir_6, barriers_6, start, end);
+                    partition_directions(temp_dir_index_7, temp_dir_7, barriers_7, start, end);
+                    partition_directions(temp_dir_index_8, temp_dir_8, barriers_8, start, end);
+
                     start = end;
                 }
 
@@ -329,9 +489,24 @@ namespace honei
                 std::vector<std::vector<unsigned long> > temp_dir_6_list;
                 std::vector<std::vector<unsigned long> > temp_dir_7_list;
                 std::vector<std::vector<unsigned long> > temp_dir_8_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_1_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_2_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_3_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_4_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_5_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_6_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_7_list;
+                std::vector<std::vector<unsigned long> > temp_dir_index_8_list;
                 std::vector<unsigned long> temp_min_list;
                 std::vector<unsigned long> temp_max_list;
 
+                std::cout<<"barriers 0 vs 6: "<<barriers.size() <<" "<<barriers_6.size()<<std::endl;
+                for (unsigned long i(0) ; i < barriers.size() ; ++i)
+                    std::cout<<barriers[i]<<" ";
+                std::cout<<std::endl;
+                for (unsigned long i(0) ; i < barriers_6.size() ; ++i)
+                    std::cout<<barriers_6[i]<<" ";
+                std::cout<<std::endl;
                 for (unsigned long i(0) ; i < barriers.size() - 1; ++i)
                 {
                     std::vector<unsigned long> new_limits;
@@ -344,18 +519,75 @@ namespace honei
                     std::vector<unsigned long> new_dir_6;
                     std::vector<unsigned long> new_dir_7;
                     std::vector<unsigned long> new_dir_8;
+                    std::vector<unsigned long> new_dir_index_1;
+                    std::vector<unsigned long> new_dir_index_2;
+                    std::vector<unsigned long> new_dir_index_3;
+                    std::vector<unsigned long> new_dir_index_4;
+                    std::vector<unsigned long> new_dir_index_5;
+                    std::vector<unsigned long> new_dir_index_6;
+                    std::vector<unsigned long> new_dir_index_7;
+                    std::vector<unsigned long> new_dir_index_8;
+
                     for(unsigned long index(barriers[i]) ; index <= barriers[i + 1] ; ++index)
                     {
                         new_limits.push_back(temp_limits[index]);
                         new_types.push_back(temp_types[index]);
-                        new_dir_1.push_back(temp_dir_1[index]);
+                        /*new_dir_1.push_back(temp_dir_1[index]);
                         new_dir_2.push_back(temp_dir_2[index]);
                         new_dir_3.push_back(temp_dir_3[index]);
                         new_dir_4.push_back(temp_dir_4[index]);
                         new_dir_5.push_back(temp_dir_5[index]);
                         new_dir_6.push_back(temp_dir_6[index]);
                         new_dir_7.push_back(temp_dir_7[index]);
-                        new_dir_8.push_back(temp_dir_8[index]);
+                        new_dir_8.push_back(temp_dir_8[index]);*/
+                    }
+                    for (unsigned long index(barriers_1[i * 2]) ; index <= barriers_1[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_1.push_back(temp_dir_index_1[index]);
+                        if (index % 2 == 0)
+                            new_dir_1.push_back(temp_dir_1[index / 2]);
+                    }
+                    for (unsigned long index(barriers_2[i * 2]) ; index <= barriers_2[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_2.push_back(temp_dir_index_2[index]);
+                        if (index % 2 == 0)
+                            new_dir_2.push_back(temp_dir_2[index / 2]);
+                    }
+                    for (unsigned long index(barriers_3[i * 2]) ; index <= barriers_3[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_3.push_back(temp_dir_index_3[index]);
+                        if (index % 2 == 0)
+                            new_dir_3.push_back(temp_dir_3[index / 2]);
+                    }
+                    for (unsigned long index(barriers_4[i * 2]) ; index <= barriers_4[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_4.push_back(temp_dir_index_4[index]);
+                        if (index % 2 == 0)
+                            new_dir_4.push_back(temp_dir_4[index / 2]);
+                    }
+                    for (unsigned long index(barriers_5[i * 2]) ; index <= barriers_5[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_5.push_back(temp_dir_index_5[index]);
+                        if (index % 2 == 0)
+                            new_dir_5.push_back(temp_dir_5[index / 2]);
+                    }
+                    for (unsigned long index(barriers_6[i * 2]) ; index <= barriers_6[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_6.push_back(temp_dir_index_6[index]);
+                        if (index % 2 == 0)
+                            new_dir_6.push_back(temp_dir_6[index / 2]);
+                    }
+                    for (unsigned long index(barriers_7[i * 2]) ; index <= barriers_7[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_7.push_back(temp_dir_index_7[index]);
+                        if (index % 2 == 0)
+                            new_dir_7.push_back(temp_dir_7[index / 2]);
+                    }
+                    for (unsigned long index(barriers_8[i * 2]) ; index <= barriers_8[i * 2 + 1] ; ++index)
+                    {
+                        new_dir_index_8.push_back(temp_dir_index_8[index]);
+                        if (index % 2 == 0)
+                            new_dir_8.push_back(temp_dir_8[index / 2]);
                     }
                     temp_limits_list.push_back(new_limits);
                     temp_types_list.push_back(new_types);
@@ -367,7 +599,16 @@ namespace honei
                     temp_dir_6_list.push_back(new_dir_6);
                     temp_dir_7_list.push_back(new_dir_7);
                     temp_dir_8_list.push_back(new_dir_8);
+                    temp_dir_index_1_list.push_back(new_dir_index_1);
+                    temp_dir_index_2_list.push_back(new_dir_index_2);
+                    temp_dir_index_3_list.push_back(new_dir_index_3);
+                    temp_dir_index_4_list.push_back(new_dir_index_4);
+                    temp_dir_index_5_list.push_back(new_dir_index_5);
+                    temp_dir_index_6_list.push_back(new_dir_index_6);
+                    temp_dir_index_7_list.push_back(new_dir_index_7);
+                    temp_dir_index_8_list.push_back(new_dir_index_8);
 
+                    /// \todo max von dir muss jeweils noch + "offset" gerechnet werden
                     std::vector<unsigned long> max_collection;
                     max_collection.push_back(*max_element(new_dir_1.begin(), new_dir_1.end()));
                     max_collection.push_back(*max_element(new_dir_2.begin(), new_dir_2.end()));
@@ -398,26 +639,74 @@ namespace honei
                     new_info.offset = temp_min_list[i];
                     new_info.limits = new DenseVector<unsigned long>(temp_limits_list[i].size());
                     new_info.types = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_1 = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_2 = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_3 = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_4 = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_5 = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_6 = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_7 = new DenseVector<unsigned long>(temp_limits_list[i].size());
-                    new_info.dir_8 = new DenseVector<unsigned long>(temp_limits_list[i].size());
+                    new_info.dir_1 = new DenseVector<unsigned long>(temp_dir_1_list[i].size());
+                    new_info.dir_2 = new DenseVector<unsigned long>(temp_dir_2_list[i].size());
+                    new_info.dir_3 = new DenseVector<unsigned long>(temp_dir_3_list[i].size());
+                    new_info.dir_4 = new DenseVector<unsigned long>(temp_dir_4_list[i].size());
+                    new_info.dir_5 = new DenseVector<unsigned long>(temp_dir_5_list[i].size());
+                    new_info.dir_6 = new DenseVector<unsigned long>(temp_dir_6_list[i].size());
+                    new_info.dir_7 = new DenseVector<unsigned long>(temp_dir_7_list[i].size());
+                    new_info.dir_8 = new DenseVector<unsigned long>(temp_dir_8_list[i].size());
+                    new_info.dir_index_1 = new DenseVector<unsigned long>(temp_dir_index_1_list[i].size());
+                    new_info.dir_index_2 = new DenseVector<unsigned long>(temp_dir_index_2_list[i].size());
+                    new_info.dir_index_3 = new DenseVector<unsigned long>(temp_dir_index_3_list[i].size());
+                    new_info.dir_index_4 = new DenseVector<unsigned long>(temp_dir_index_4_list[i].size());
+                    new_info.dir_index_5 = new DenseVector<unsigned long>(temp_dir_index_5_list[i].size());
+                    new_info.dir_index_6 = new DenseVector<unsigned long>(temp_dir_index_6_list[i].size());
+                    new_info.dir_index_7 = new DenseVector<unsigned long>(temp_dir_index_7_list[i].size());
+                    new_info.dir_index_8 = new DenseVector<unsigned long>(temp_dir_index_8_list[i].size());
                     for (unsigned long j(0) ; j < temp_limits_list[i].size() ; ++j)
                     {
                         (*new_info.limits)[j] = temp_limits_list[i][j] - new_info.offset;
                         (*new_info.types)[j] = temp_types_list[i][j] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_1_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_1)[j] = temp_dir_1_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_1)[j * 2] = temp_dir_index_1_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_1)[j * 2 + 1] = temp_dir_index_1_list[i][j * 2 + 1] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_2_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_2)[j] = temp_dir_2_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_2)[j * 2] = temp_dir_index_2_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_2)[j * 2 + 1] = temp_dir_index_2_list[i][j * 2 + 1] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_3_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_3)[j] = temp_dir_3_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_3)[j * 2] = temp_dir_index_3_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_3)[j * 2 + 1] = temp_dir_index_3_list[i][j * 2 + 1] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_4_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_4)[j] = temp_dir_4_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_4)[j * 2] = temp_dir_index_4_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_4)[j * 2 + 1] = temp_dir_index_4_list[i][j * 2 + 1] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_5_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_5)[j] = temp_dir_5_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_5)[j * 2] = temp_dir_index_5_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_5)[j * 2 + 1] = temp_dir_index_5_list[i][j * 2 + 1] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_6_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_6)[j] = temp_dir_6_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_6)[j * 2] = temp_dir_index_6_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_6)[j * 2 + 1] = temp_dir_index_6_list[i][j * 2 + 1] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_7_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_7)[j] = temp_dir_7_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_7)[j * 2] = temp_dir_index_7_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_7)[j * 2 + 1] = temp_dir_index_7_list[i][j * 2 + 1] - new_info.offset;
+                    }
+                    for (unsigned long j(0) ; j < temp_dir_8_list[i].size() ; ++j)
+                    {
                         (*new_info.dir_8)[j] = temp_dir_8_list[i][j] - new_info.offset;
+                        (*new_info.dir_index_8)[j * 2] = temp_dir_index_8_list[i][j * 2] - new_info.offset;
+                        (*new_info.dir_index_8)[j * 2 + 1] = temp_dir_index_8_list[i][j * 2 + 1] - new_info.offset;
                     }
                     info_list.push_back(new_info);
                 }

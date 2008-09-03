@@ -51,20 +51,22 @@ namespace honei
             static void _dir_post_pack(std::vector<unsigned long> & dir, std::vector<unsigned long> & dir_post,
                     std::vector<unsigned long> & dir_index, std::vector<unsigned long> & limits)
             {
+                // todo keine ahnung was richtig ist: -1 oder ohne
                 for (unsigned long i(0) ; i < limits.size() - 1; ++i)
+                //for (unsigned long i(0) ; i < limits.size() ; ++i)
                 {
                     // if dir points not to our own cell (reflection)
                     if (dir[i] != limits[i])
                     {
                         dir_post.push_back(dir[i]);
-                        dir_index.push_back(limits[i]);
+                        dir_index.push_back(limits.at(i));
                         // search for the sequence end
                         unsigned long end(i + 1);
-                        while(end != limits.size() - 1 && dir[end] - dir[i]== limits[end] - limits[i])
+                        while(end < limits.size() - 1 && (dir[end] - dir[i]) == (limits[end] - limits[i]))
                         {
                             ++end;
                         }
-                        dir_index.push_back(limits[end]);
+                        dir_index.push_back(limits.at(end));
                         i = end - 1;
                     }
                 }
@@ -405,7 +407,6 @@ namespace honei
                 dir_7.push_back(packed_index - 1);
                 dir_8.push_back(packed_index - 1);
 
-                /// todo postpack direction vectors
                 _dir_post_pack(dir_1, dir_post_1, dir_index_1, temp_limits);
                 _dir_post_pack(dir_2, dir_post_2, dir_index_2, temp_limits);
                 _dir_post_pack(dir_3, dir_post_3, dir_index_3, temp_limits);

@@ -84,6 +84,70 @@ class GridPartitionerTest :
             TEST_CHECK(true);
         }
 };
-
 GridPartitionerTest<tags::CPU, float> gptest_float("float");
+
+template <typename Tag_, typename DataType_>
+class DirPartitionerTest :
+    public TaggedTest<Tag_>
+{
+    public:
+        DirPartitionerTest(const std::string & type) :
+            TaggedTest<Tag_>("dir_partitioner_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+
+            std::vector<unsigned long> dir;
+            std::vector<unsigned long> dir_index;
+            std::vector<unsigned long> barrier;
+            dir_index.push_back(5);
+            dir_index.push_back(7);
+            dir_index.push_back(7);
+            dir_index.push_back(10);
+            dir_index.push_back(12);
+            dir_index.push_back(15);
+            dir_index.push_back(20);
+            dir_index.push_back(30);
+            dir.push_back(0);
+            dir.push_back(10);
+            dir.push_back(20);
+            dir.push_back(30);
+            //std::cout<<"start: "<<start<<" end: "<<end<<std::endl;
+            std::cout<<"dir index vorher: "<<std::endl;
+            for (unsigned long i(0) ; i < dir_index.size() - 1 ; i+=2)
+            {
+                std::cout<<dir_index[i]<<", "<<dir_index[i+1]<<std::endl;
+            }
+            std::cout<<"dir vorher: "<<std::endl;
+            for (unsigned long i(0) ; i < dir.size() ; ++i)
+            {
+                std::cout<<dir[i]<<", ";
+            }
+            std::cout<<endl;
+            GridPartitioner<D2Q9, DataType_>::partition_directions(dir_index, dir, barrier, 8, 14);
+            GridPartitioner<D2Q9, DataType_>::partition_directions(dir_index, dir, barrier, 14, 19);
+            std::cout<<"dir index nachher: "<<std::endl;
+            for (unsigned long i(0) ; i < dir_index.size() - 1 ; i+=2)
+            {
+                std::cout<<dir_index[i]<<", "<<dir_index[i+1]<<std::endl;
+            }
+            std::cout<<"dir nachher: "<<std::endl;
+            for (unsigned long i(0) ; i < dir.size() ; ++i)
+            {
+                std::cout<<dir[i]<<", ";
+            }
+            std::cout<<endl;
+            std::cout<<"barrier nachher: "<<std::endl;
+            for (unsigned long i(0) ; i < barrier.size() ; ++i)
+            {
+                std::cout<<barrier[i]<<", ";
+            }
+            std::cout<<endl;
+
+            TEST_CHECK(true);
+        }
+};
+DirPartitionerTest<tags::CPU, float> dptest_float("float");
 
