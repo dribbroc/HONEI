@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of HONEI. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,8 +24,10 @@
 #include <GL/glut.h>
 #include <honei/swe/volume.hh>
 #include <honei/lbm/solver_labswe.hh>
+#include <clients/lbm/scenario_controller_base.hh>
 
-template<typename Tag_, typename Prec_> class ScenarioController
+template<typename Tag_, typename Prec_> class ScenarioController :
+    public ScenarioControllerBase
 {
     private:
         int scenario_id;

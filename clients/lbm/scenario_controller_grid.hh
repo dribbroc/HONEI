@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of HONEI. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -24,8 +25,10 @@
 #include <honei/swe/volume.hh>
 #include <honei/lbm/solver_labswe_grid.hh>
 #include <honei/lbm/grid_packer.hh>
+#include <clients/lbm/scenario_controller_base.hh>
 
-template<typename Tag_, typename Prec_> class ScenarioControllerGrid
+template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
+    public ScenarioControllerBase
 {
     private:
         int scenario_id;
@@ -97,7 +100,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid
             _timestep = 0;
             switch (scenario_id)
             {
-                case 0:
+                case 100:
                     {
                         _dheight = 50;
                         _dwidth = 50;
@@ -139,7 +142,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid
                     break;
 
 
-                case 1:
+                case 101:
                     {
                         _dheight = 50;
                         _dwidth = 50;
@@ -179,7 +182,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid
                     }
                     break;
 
-                case 2:
+                case 102:
                     {
                         _dheight = 50;
                         _dwidth = 50;

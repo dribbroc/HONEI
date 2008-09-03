@@ -37,7 +37,7 @@ endif
 
 bin_PROGRAMS = honei-lbm honei-lbm-grid
 honei_lbmdir = $(top_srcdir)/clients/lbm
-honei_lbm_HEADERS = scenario_controller.hh
+honei_lbm_HEADERS = scenario_controller.hh scenario_controller_base.hh honei_lbm.hh
 honei_lbm_SOURCES = honei_lbm.cc
 honei_lbm_LDADD = \
 	$(top_srcdir)/honei/util/libhoneiutil.la \

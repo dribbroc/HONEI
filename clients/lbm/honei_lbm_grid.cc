@@ -389,12 +389,12 @@ static void display(void)
     glTranslatef(0.0, translation_y, 0.0);
     glTranslatef(0.0, 0.0 , translation_z);
 
-    do
+    /*do
     {
         actual.take();
     }
     while(actual.usec() - last.usec() < 60000ul); // 1/25 = 40000
-    last.take();
+    last.take();*/
 
     if (calc)
     {
