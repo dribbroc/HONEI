@@ -83,10 +83,8 @@ namespace honei
         {
             private:
                     template <typename Prec_>
-                    static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ cappa, MGInfo<Prec_> info)
+                    static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> info)
                     {
-
-
                         // compute initial defect
                         // when start vector is zero: set d = rhs (we can save one matvec here)
                         // when start vector is not zero: d = rhs - A*x
@@ -291,7 +289,7 @@ endCycleLoop:
                                 {
                                     defect = Norm<vnt_l_two, false, Tag_>::value((info.d[info.max_level]));
 
-                                    cappa = pow(defect / initial_defect, 1.0/((Prec_)iter));
+                                    *cappa = pow(defect / initial_defect, 1.0/((Prec_)iter));
 
                                     if (defect <= info.tolerance)
                                         break;
@@ -300,7 +298,7 @@ endCycleLoop:
                                 }
                                 else
                                 {
-                                    cappa = Prec_(-1);
+                                    *cappa = Prec_(-1);
                                 }
                             }
                         }
@@ -310,8 +308,10 @@ endCycleLoop:
 
             public:
                 template<typename Prec_>
-                    static DenseVector<Prec_> value(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ cappa, Prec_ conv_rad)
+                    static DenseVector<Prec_> value(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ conv_rad)
                     {
+                        Prec_ cappa;
+
                         DenseVector<Prec_> result(right_hand_side.size(), Prec_(0)); //final result
                         MGInfo<Prec_> info;
                         info.macro_border_mask = new DenseVector<unsigned long>(8);
@@ -406,7 +406,10 @@ endCycleLoop:
                         //push back dummy matrices/vectors in order not to disturb std::vectors index range:
                         for (unsigned long i(0) ; i < info.min_level; ++i)
                         {
-                            unsigned long size = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
+                            unsigned long size((unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1)));
+                            if(i == 0)
+                                size = 9;
+
                             DenseVector<Prec_> dummy_band(size, Prec_(0));
                             BandedMatrixQ1<Prec_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                             info.a.push_back(ac_a);
@@ -587,7 +590,7 @@ endCycleLoop:
                                 }
                                 (info.rhs)[info.max_level] = (temp_vector.copy());
                                 // run inner solver as long as neccessary
-                                _multigrid_kernel<Prec_>(system, right_hand_side, max_levels, cappa, info);
+                                _multigrid_kernel<Prec_>(system, right_hand_side, max_levels, &cappa, info);
                                 inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
 
                                 // get "solution" and update outer solution

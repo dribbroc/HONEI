@@ -158,7 +158,7 @@ class PoissonTestMGBandedQ1Float:
             //std::cout<<A.band(0)[0] * double(1) << endl;
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            result = Multigrid<Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, float(0.0), std::numeric_limits<float>::epsilon());
+            result = Multigrid<Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<float>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
