@@ -392,7 +392,7 @@ endCycleLoop:
 
                         info.n_max_iter = 2;
                         info.initial_zero = true;
-                        Prec_ tolerance = 1e-2;
+                        info.tolerance = 1e-2;
                         info.convergence_check = true;
 
                         info.n_pre_smooth = 2;
@@ -430,8 +430,6 @@ endCycleLoop:
                             info.c.push_back(ac_c);
                             DenseVector<Prec_> ac_d(size, Prec_(0));
                             info.d.push_back(ac_d);
-                            DenseVector<Prec_> ac_rhs(size, Prec_(0));
-                            info.rhs.push_back(ac_rhs);
                             DenseVector<Prec_> ac_x(size, Prec_(0));
                             info.x.push_back(ac_x);
                             DenseVector<Prec_> ac_temp(size, Prec_(0));
@@ -452,6 +450,8 @@ endCycleLoop:
                             DenseVector<Prec_> UD_v(N);
                             DenseVector<Prec_> UU_v(N);
                             BandedMatrixQ1<Prec_> current_matrix(N,LL_v, LD_v, LU_v, DL_v, DD_v, DU_v, UL_v, UD_v, UU_v);
+
+                            DenseVector<Prec_> current_rhs(N);
                             int n;
 
                             FILE* file;
@@ -466,6 +466,7 @@ endCycleLoop:
                             double* ul;
                             double* ud;
                             double* uu;
+                            double* b;
                             std::string file_path("testdata/" + stringify(DD_v.size()) +"/ehq.1.1.1.1.bin");
                             file = fopen(file_path.c_str(), "rb");
                             fread(&n, sizeof(int), 1, file);
@@ -488,6 +489,7 @@ endCycleLoop:
                             ud = new double[n];
                             uu = new double[n];
 
+                            b = new double[n];
                             fread(dd, sizeof(double), n, file);
                             fread(ll, sizeof(double), n, file);
                             fread(ld, sizeof(double), n, file);
@@ -497,6 +499,7 @@ endCycleLoop:
                             fread(ul, sizeof(double), n, file);
                             fread(ud, sizeof(double), n, file);
                             fread(uu, sizeof(double), n, file);
+                            fread(b,  sizeof(double), n, file);
                             fclose(file);
 
 #ifdef HONEI_CELL
@@ -511,6 +514,8 @@ endCycleLoop:
                                 ul[j] = DoubleSwap(ul[j]);
                                 ud[j] = DoubleSwap(ud[j]);
                                 uu[j] = DoubleSwap(uu[j]);
+
+                                b[j] = DoubleSwap(b[j]);
                             }
 #endif
                             for(unsigned long j(0); j < DD_v.size(); ++j)
@@ -524,7 +529,9 @@ endCycleLoop:
                                 UL_v[j] = (Prec_)ul[j];
                                 UD_v[j] = (Prec_)ud[j];
                                 UU_v[j] = (Prec_)uu[j];
+                                current_rhs[j] = (Prec_)b[j];
                             }
+                            info.rhs.push_back(current_rhs);
                             info.a.push_back(current_matrix);
 
                         }
