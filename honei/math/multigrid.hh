@@ -82,7 +82,20 @@ namespace honei
         class Multigrid<Tag_, JAC, CYCLE::V, FIXED>
         {
             private:
-                    template <typename Prec_>
+                template<typename Prec_>
+                static bool CONTAINS_NAN(DenseVector<Prec_> vector, std::string name)
+                {
+                    for (unsigned long i(0); i < vector.size(); ++i)
+                    {
+                        if(vector[i] != vector[i])
+                        {
+                            std::cout << name << " contains NAN!!!" << std::endl;
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+                template <typename Prec_>
                     static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> info)
                     {
                         // compute initial defect
@@ -91,11 +104,14 @@ namespace honei
                         if(info.initial_zero)
                         {
                             info.d[info.max_level] = info.rhs[info.max_level].copy();
+                            CONTAINS_NAN(info.rhs[info.max_level], "1");
                         }
                         else
                         {
                             DenseVector<Prec_> rhs_c(info.rhs[info.max_level].copy());
                             info.d[info.max_level] = (Difference<Tag_>::value(rhs_c, Product<Tag_>::value(info.a[info.max_level], info.x[info.max_level].copy())));
+
+                            CONTAINS_NAN(info.d[info.max_level], "2");
                         }
 
                         Prec_ defect, initial_defect;
@@ -152,7 +168,10 @@ namespace honei
                                         {
                                             // When the restriction loop just started
                                             (info.d[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.c[current_level], info.n_pre_smooth));
+
+                                            CONTAINS_NAN(info.d[current_level], "3");
                                             Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
+                                            CONTAINS_NAN(info.x[current_level], "4");
                                         }
                                         else
                                         {
@@ -160,6 +179,7 @@ namespace honei
                                             // the cleared solution vector (as the solution vector itself represents
                                             // the defect correction here)
                                             info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), info.n_pre_smooth));
+                                            CONTAINS_NAN(info.x[current_level], "5");
                                         }
                                         DenseVector<Prec_> rhs_c_2(info.rhs[current_level]->copy());
                                         info.d[current_level] = (Difference<Tag_>::value(rhs_c_2, Product<Tag_>::value(info.a[current_level], info.x[current_level].copy())));
@@ -174,8 +194,11 @@ namespace honei
                                         // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
                                         Restriction<Tag_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask);
+
+                                        CONTAINS_NAN(info.d[current_level], "6");
                                         info.rhs[current_level] =(info.d[current_level].copy());
 
+                                        CONTAINS_NAN(info.rhs[current_level], "7");
                                         // if we reached the coarsest level exit the restricition loop
                                         if (current_level == info.min_level)
                                             goto endRestrictionLoop;
@@ -191,10 +214,13 @@ endRestrictionLoop:
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.d[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.x[current_level]), info.tolerance));
+                                        (info.d[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.x[current_level]), info.tolerance_coarse));
+                                        CONTAINS_NAN(info.d[current_level], "8");
 
                                         DenseVector<Prec_> rhs_c_4(info.rhs[current_level].copy());
                                         (info.d[current_level]) = (Difference<Tag_>::value(rhs_c_4, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy())));
+
+                                        CONTAINS_NAN(info.d[current_level], "9");
                                         //
                                         // the MG cycle can be exited immediately
                                         //
@@ -206,7 +232,7 @@ endRestrictionLoop:
                                         // started with a zero start vector
                                         //manager->log(OL_TRACE2, "MG(GPU): coarse grid correction for neqs", data->neqs[icurrentLevel]);
 
-                                        (info.d[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.x[current_level]), info.tolerance));
+                                        (info.d[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.x[current_level]), info.tolerance_coarse));
                                     }
 
                                     //-------------
@@ -226,7 +252,9 @@ endRestrictionLoop:
                                         // set homogeneous Dirichlet boundary conditions in the prolongated correction vector
                                         // depending on Dirichlet mask passed in from FEAST (see code for details)
                                         //
-                                        Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level]), *info.macro_border_mask);
+                                        Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+
+                                        CONTAINS_NAN(info.c[current_level], "8");
 
                                         //
                                         // perform adaptive coarse grid correction if required
@@ -241,6 +269,8 @@ endRestrictionLoop:
                                             //delete info.temp[current_level];
                                             //info.temp[current_level] = 0;
                                             (info.temp[current_level]) = (Product<Tag_>::value((info.a[current_level]), (info.c[current_level])));
+
+                                            CONTAINS_NAN(info.temp[current_level], "9");
                                             d2 = DotProduct<Tag_>::value((info.temp[current_level]), (info.c[current_level]));
 
                                             alpha = Prec_(d1 / d2);
@@ -256,6 +286,7 @@ endRestrictionLoop:
                                         //
                                         ScaledSum<Tag_>::value((info.x[current_level]), (info.c[current_level]), alpha);
 
+                                        CONTAINS_NAN(info.x[current_level], "10");
                                         //--------------
                                         //postsmoothing
                                         //--------------
@@ -263,8 +294,9 @@ endRestrictionLoop:
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
                                         //
 
-                                        (info.x[current_level]) =(Jacobi<Tag_>::value((info.a[current_level]), (info.rhs[current_level]), info.n_post_smooth));
+                                        (info.x[current_level]) =(Jacobi<Tag_>::value((info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth));
 
+                                        CONTAINS_NAN(info.x[current_level], "11");
                                         //
                                         // update defect
                                         //
@@ -273,6 +305,7 @@ endRestrictionLoop:
                                         //info.d[current_level] = 0;
                                         DenseVector<Prec_> rhs_c_5(info.rhs[current_level].copy());
                                         (info.d[current_level]) = (Difference<Tag_>::value(rhs_c_5, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy())));
+                                        CONTAINS_NAN(info.d[current_level], "12");
 
                                         // if the maximal level is reached then the MG cycle is finished,
                                         // so exit the MG cycle loop
@@ -291,10 +324,8 @@ endCycleLoop:
 
                                     *cappa = pow(defect / initial_defect, 1.0/((Prec_)iter));
 
-                                    if (defect <= info.tolerance)
+                                    if (defect <= initial_defect * info.tolerance)
                                         break;
-
-
                                 }
                                 else
                                 {
@@ -303,7 +334,6 @@ endCycleLoop:
                             }
                         }
                         return (info.x[info.max_level]);
-
                     }
 
             public:
@@ -393,10 +423,10 @@ endCycleLoop:
                         info.n_max_iter = 2;
                         info.initial_zero = true;
                         info.tolerance = 1e-2;
-                        info.convergence_check = true;
+                        info.convergence_check = false;
 
-                        info.n_pre_smooth = 2;
-                        info.n_post_smooth = 2;
+                        info.n_pre_smooth = 4;
+                        info.n_post_smooth = 4;
                         info.n_max_iter_coarse = ((unsigned long)sqrt((double)81.));
                         info.tolerance_coarse = 1e-2;
                         info.adapt_correction_factor = 1.;
@@ -574,10 +604,12 @@ endCycleLoop:
                             // calc initial defect
                             // D = B - Ax, d0 = ||D||
                             DenseVector<Prec_> product(Product<Tag_>::value(system, initial_guess));
+                            CONTAINS_NAN(product, "v1");
                             DenseVector<Prec_> rhs_c(right_hand_side.copy());
+                            CONTAINS_NAN(rhs_c, "v2");
                             outer_defect = Difference<Tag_>::value(rhs_c, product);
+                            CONTAINS_NAN(outer_defect, "v3");
                             initial_defect = Norm<vnt_l_two, false, Tag_>::value(outer_defect);
-
                             Prec_ def_norm;
                             Prec_ inv;
                             unsigned long step_iterations;
@@ -588,23 +620,39 @@ endCycleLoop:
                                 {
                                     temp_vector[i] = (Prec_)outer_defect[i];
                                 }
+
+                                CONTAINS_NAN(temp_vector, "v4");
                                 (info.rhs)[info.max_level] = (temp_vector.copy());
+                                CONTAINS_NAN(info.rhs[info.max_level], "v5");
                                 // run inner solver as long as neccessary
+                                std::cout << inner_iterations << "th iteration!" << std::endl;
                                 _multigrid_kernel<Prec_>(system, right_hand_side, max_levels, &cappa, info);
                                 inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
 
                                 // get "solution" and update outer solution
                                 temp_vector = info.x[info.max_level].copy();
+
+                                CONTAINS_NAN(info.x[info.max_level], "v6");
+
                                 for (unsigned long i(0); i < right_hand_side.size(); ++i)
                                 {
                                     result[i] += scale_factor * (Prec_)temp_vector[i];
                                 }
 
+                                CONTAINS_NAN(result, "v7");
+                                std::cout << scale_factor << std::endl;
+
                                 // calculate defect
                                 DenseVector<Prec_> rhs_c_1(right_hand_side.copy());
+
+                                CONTAINS_NAN(rhs_c_1, "v8");
                                 outer_defect = Difference<Tag_>::value(rhs_c_1, Product<Tag_>::value(system, result));
+
+                                CONTAINS_NAN(outer_defect, "v9");
                                 // calc norm of defect
                                 def_norm = Norm<vnt_l_two, false, Tag_>::value(outer_defect);
+                                std::cout << "defnorm: " << def_norm << std::endl;
+                                std::cout << "initial_defect: " << initial_defect << std::endl;
 
                                 // check for convergence
                                 Prec_ outer_eps(1e-8);
@@ -615,8 +663,10 @@ endCycleLoop:
                                 // scale defect
                                 scale_factor = def_norm;
 
-                                Prec_ inv(1.0 / scale_factor);
+                                inv = (1.0 / scale_factor);
                                 Scale<Tag_>::value(outer_defect, inv);
+
+                                CONTAINS_NAN(outer_defect, "v10");
                                 outer_iterations++;
                             }
                         }
