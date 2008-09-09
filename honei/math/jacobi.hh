@@ -194,6 +194,45 @@ namespace honei
                 return x;
             }
 
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega)
+            {
+                CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+                DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
+
+                DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
+
+                BandedMatrixQ1<DT1_> difference(system_matrix.copy());
+
+                DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
+                difference.lock(lm_read_and_write);
+                difference.unlock(lm_read_and_write);
+                difference.band(DD) = zeros;
+                ///Create Diagonal, invert, compute difference on the fly.
+                system_matrix.lock(lm_read_only);
+                for(unsigned long i =0; i < diag.size(); ++i)
+                {
+
+                    diag[i] = system_matrix.band(DD)[i];
+                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+                    {
+                        diag_inverted[i] = omega * (DT1_(1) / diag[i]);
+                    }
+                    else
+                    {
+                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                    }
+                }
+                system_matrix.unlock(lm_read_only);
+
+                DenseVector<DT1_> x(right_hand_side.copy());
+
+                for(unsigned long i = 0; i<iter_number; ++i)
+                {
+                    jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
+                }
+                return x;
+            }
             /**
             * \brief Returns solution of LES with the Jacobi method given by a BandedMatrix and a Vector.
             *
