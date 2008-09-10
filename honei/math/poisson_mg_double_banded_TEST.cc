@@ -166,14 +166,14 @@ class PoissonTestMGBandedQ1Double:
             //result.lock(lm_read_only);
             for(unsigned long i = 0; i < n; i++)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-04);
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-02);
             }
             //result.unlock(lm_read_only);
             DenseVector<double> x(n, double(0));
             Difference<Tag_>::value(result, ana_sol_v);
             Difference<Tag_>::value(x, result);
             //x.lock(lm_read_only);
-            double norm = Norm<vnt_l_two, false>::value(x);
+            double norm = Norm<vnt_l_two, true>::value(x);
             //x.unlock(lm_read_only);
             cout<<"L2: "<<norm<<endl;
             //TEST_CHECK(true);

@@ -86,6 +86,29 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
+            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
+            {
+                DenseVector<DT1_> temp(Product<Tag_>::value(difference, former_result.copy()));
+
+                DenseVector<DT1_> temp2(right_hand_side.copy());
+
+                Difference<Tag_>::value(temp2, temp);
+                ElementProduct<Tag_>::value(temp2, diag_inverted);
+                former_result = Sum<Tag_>::value(temp2, to_smooth);
+            }
+
+            template<typename DT1_, typename DT2_>
+            static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted)
+            {
+                DenseVector<DT1_> temp(former_result.copy());
+
+                DenseVector<DT1_> temp2(right_hand_side.copy());
+
+                ElementProduct<Tag_>::value(temp2, diag_inverted);
+                former_result = temp2;
+            }
+
+            template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, SparseMatrix<DT1_> & difference)
             {
                 DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result.copy());
@@ -230,6 +253,76 @@ namespace honei
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted, difference);
+                }
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DT1_ omega)
+            {
+                CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+                DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
+
+                DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
+
+                system_matrix.lock(lm_read_only);
+                for(unsigned long i =0; i < diag.size(); ++i)
+                {
+
+                    diag[i] = system_matrix.band(DD)[i];
+                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+                    {
+                        diag_inverted[i] = omega * (DT1_(1) / diag[i]);
+                    }
+                    else
+                    {
+                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                    }
+                }
+                system_matrix.unlock(lm_read_only);
+
+                DenseVector<DT1_> x(right_hand_side.copy());
+
+                jacobi_kernel(system_matrix, right_hand_side, x, diag, diag_inverted);
+
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+                static DenseVector<DT1_> value(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega)
+                {
+                    CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+                    DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
+
+                    DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
+
+                BandedMatrixQ1<DT1_> difference(system_matrix.copy());
+
+                //DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
+                difference.lock(lm_read_and_write);
+                difference.unlock(lm_read_and_write);
+                //difference.band(DD) = zeros;
+                system_matrix.lock(lm_read_only);
+                for(unsigned long i =0; i < diag.size(); ++i)
+                {
+
+                    diag[i] = system_matrix.band(DD)[i];
+                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
+                    {
+                        diag_inverted[i] = omega * (DT1_(1) / diag[i]);
+                    }
+                    else
+                    {
+                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                    }
+                }
+                system_matrix.unlock(lm_read_only);
+
+                DenseVector<DT1_> x(right_hand_side.copy());
+
+                for(unsigned long i = 0; i<iter_number; ++i)
+                {
+                    jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag, diag_inverted, difference);
                 }
                 return x;
             }
