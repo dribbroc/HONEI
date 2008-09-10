@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Math C++ library. LibMath is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -39,14 +40,18 @@ class ProlongationTest:
 
         virtual void run() const
         {
-            unsigned long N_fine = 289;
+            unsigned long N_fine = 66049;
             unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
-            unsigned long N_coarse = 81;
+            unsigned long N_coarse = 16641;
             unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
-            DenseVector<DT1_> fine(N_fine, DT1_(2));
-            DenseVector<DT1_> coarse(N_coarse, DT1_(1));
-            coarse[N_coarse/2] = DT1_(4);
+            DenseVector<DT1_> fine(N_fine);
+            DenseVector<DT1_> fine_ref(N_fine);
+            DenseVector<DT1_> coarse(N_coarse);
+            for (unsigned long i(0) ; i < coarse.size() ; ++i)
+            {
+                coarse[i] = DT1_(i % 1000);
+            }
             DenseVector<unsigned long> mask(8);
             for(unsigned long i(0) ; i < 8 ; ++i)
             {
@@ -55,19 +60,23 @@ class ProlongationTest:
             }
 
             Prolongation<Tag_>::value(fine, coarse, mask);
+            Prolongation<tags::CPU>::value(fine_ref, coarse, mask);
             fine.lock(lm_read_only);
+            fine_ref.lock(lm_read_only);
+            TEST_CHECK_EQUAL(fine, fine_ref);
 
-            DenseMatrix<DT1_> grid_fine(width_fine, width_fine, DT1_(0));
+            /*DenseMatrix<DT1_> grid_fine(width_fine, width_fine, DT1_(0));
             for(unsigned long i(0) ; i < width_fine ; ++i)
             {
                 for(unsigned long j(0); j < width_fine; ++j)
                 {
-                    grid_fine(i,j) = fine[i*j + j];
+                    grid_fine(i,j) = fine[i * j + j];
                 }
             }
+            std::cout << grid_fine << std::endl;*/
             fine.unlock(lm_read_only);
+            fine_ref.unlock(lm_read_only);
 
-            std::cout << grid_fine << std::endl;
             TEST_CHECK(true);
         }
 };

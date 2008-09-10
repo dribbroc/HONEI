@@ -23,19 +23,19 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void restriction_gpu(float * coarse, float * fine, int Nc, int Nf, int Mc, int Mf,
-                int n1, int n2, int n3, int n4, int e1, int e2, int e3, int e4)
+        __global__ void restriction_gpu(float * coarse, float * fine, unsigned long Nc, unsigned long Nf, unsigned long Mc, unsigned long Mf,
+                unsigned long n1, unsigned long n2, unsigned long n3, unsigned long n4, unsigned long e1, unsigned long e2, unsigned long e3, unsigned long e4)
         {
             // index in the coarse array (output index)
-            int ic = blockDim.x*blockIdx.x+threadIdx.x;
+            unsigned long ic = blockDim.x*blockIdx.x+threadIdx.x;
             // row in the coarse array
-            int rc = (int)floorf(ic/(float)Mc);
-            // TODO integer-division
+            unsigned long rc = (unsigned long)floorf(ic/(float)Mc);
+            // TODO unsigned longeger-division
 
             // column offset in the coarse array
-            int cc = ic - rc*Mc;
+            unsigned long cc = ic - rc*Mc;
             // index in the fine array (center element)
-            int jf = 2 * rc * Mf + 2*cc;
+            unsigned long jf = 2 * rc * Mf + 2*cc;
 
 
             // create stencil  // what a waste of precious registers
@@ -45,7 +45,7 @@ namespace honei
                 0.5f, 1.0f, 0.5f,
                 0.25f, 0.5f, 0.25f};
 
-            int isDirichlet = 0;
+            unsigned long isDirichlet = 0;
 
             // boundary treatment:
             // simple idea: read in some crap out-of-bounds (rely on zero-padding),
@@ -110,17 +110,17 @@ namespace honei
                 // compute weighted sum
 
                 // center
-                double result = coeffs[1][1] * fine[jf];
+                float result = coeffs[1][1] * fine[jf];
                 // direct neighbours
                 result += coeffs[1][0] * fine[jf-1];
                 result += coeffs[1][2] * fine[jf+1];
                 result += coeffs[0][1] * fine[jf-Mf];
-                result += coeffs[2][1] * fine[jf+Mf];
+                if (jf+Mf < Nf) result += coeffs[2][1] * fine[jf+Mf];
                 // diagonal neighbours
                 result += coeffs[0][0] * fine[jf-Mf-1];
                 result += coeffs[0][2] * fine[jf-Mf+1];
-                result += coeffs[2][0] * fine[jf+Mf-1];
-                result += coeffs[2][2] * fine[jf+Mf+1];
+                if (jf+Mf-1 < Nf) result += coeffs[2][0] * fine[jf+Mf-1];
+                if (jf+Mf+1 < Nf) result += coeffs[2][2] * fine[jf+Mf+1];
                 // done
                 coarse[ic] = result;
             }
@@ -145,7 +145,7 @@ extern "C" void cuda_restriction_float(void * coarse, unsigned long size_coarse,
     float * coarse_gpu((float *)coarse);
 
     // version directly including Dirichlet treatment
-    grid.x = (int)ceil(Nc/(double)block.x);
+    grid.x = (unsigned long)ceil(Nc/(double)block.x);
     honei::cuda::restriction_gpu<<<grid,block>>>(coarse_gpu, fine_gpu, Nc, Nf, Mc, Mf,
             macroBorderMask[0], macroBorderMask[1], macroBorderMask[2], macroBorderMask[3],
             macroBorderMask[4], macroBorderMask[5], macroBorderMask[6], macroBorderMask[7]);

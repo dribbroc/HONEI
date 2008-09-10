@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Math C++ library. LibMath is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -39,14 +40,18 @@ class RestrictionTest:
 
         virtual void run() const
         {
-            unsigned long N_fine = 289;
+            unsigned long N_fine = 66049;
             unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
-            unsigned long N_coarse = 81;
+            unsigned long N_coarse = 16641;
             unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
-            DenseVector<DT1_> fine(N_fine, DT1_(2));
-            DenseVector<DT1_> coarse(N_coarse, DT1_(1));
-            coarse[N_fine/2] = DT1_(4);
+            DenseVector<DT1_> fine(N_fine);
+            DenseVector<DT1_> coarse(N_coarse);
+            DenseVector<DT1_> coarse_ref(N_coarse);
+            for (unsigned long i(0) ; i < fine.size() ; ++i)
+            {
+                fine[i] = DT1_(i % 1000);
+            }
             DenseVector<unsigned long> mask(8);
             for(unsigned long i(0) ; i < 8 ; ++i)
             {
@@ -55,9 +60,12 @@ class RestrictionTest:
             }
 
             Restriction<Tag_>::value(coarse, fine, mask);
+            Restriction<tags::CPU>::value(coarse_ref, fine, mask);
             coarse.lock(lm_read_only);
+            coarse_ref.lock(lm_read_only);
+            TEST_CHECK_EQUAL(coarse, coarse_ref);
 
-            DenseMatrix<DT1_> grid_coarse(width_coarse, width_coarse, DT1_(0));
+            /*DenseMatrix<DT1_> grid_coarse(width_coarse, width_coarse, DT1_(0));
             for(unsigned long i(0) ; i < width_coarse ; ++i)
             {
                 for(unsigned long j(0); j < width_coarse; ++j)
@@ -65,9 +73,10 @@ class RestrictionTest:
                     grid_coarse(i,j) = coarse[i*j + j];
                 }
             }
+            std::cout << grid_coarse << std::endl;*/
             coarse.unlock(lm_read_only);
+            coarse_ref.unlock(lm_read_only);
 
-            std::cout << grid_coarse << std::endl;
             TEST_CHECK(true);
         }
 };
