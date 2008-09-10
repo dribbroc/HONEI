@@ -990,13 +990,13 @@ namespace honei
     std::ostream &
     operator<< (std::ostream & lhs, const BandedMatrix<DataType_> & b)
     {
-        lhs << "BandedMatrix" << std::endl << "{" << std::endl;
+        lhs << "[";
         for (typename BandedMatrix<DataType_>::ConstBandIterator i(b.begin_bands()), i_end(b.end_bands()) ;
                 i != i_end ; ++i)
         {
-            lhs << "  " << *i << std::endl;
+            lhs << "  " << *i;
         }
-        lhs << "}" << std::endl;
+        lhs << "]" << std::endl;
 
         return lhs;
     }
