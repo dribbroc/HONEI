@@ -125,6 +125,7 @@ namespace honei
                         {
                             defect = Prec_(1e8);
                         }
+                        std::cout << defect << std::endl;
 
                         // check if nothing needs to be done
                         if(info.convergence_check && defect <= info.tolerance)
@@ -187,6 +188,7 @@ namespace honei
 
                                         info.temp[current_level] = info.d[current_level];
 
+                                        std::cout << "-----------------------------------------------------" << std::endl;
                                         std::cout << "Presmoothing ||D|| on level " << current_level << " " << Norm<vnt_l_two, false, Tag_>::value(info.d[current_level]) << std::endl;
                                         //----------------------------------
                                         //restriction ("go down one level")
@@ -199,12 +201,12 @@ namespace honei
                                         // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
                                         Restriction<Tag_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask);
-                                        std::cout << info.d[current_level] << std::endl;
                                         std::cout << "Restricted." << std::endl;
                                         CONTAINS_NAN(info.d[current_level], "6");
                                         info.rhs[current_level] =(info.d[current_level].copy());
                                         CONTAINS_NAN(info.rhs[current_level], "7");
 
+                                        std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, false, Tag_>::value(info.d[current_level]) << std::endl;
                                         // if we reached the coarsest level exit the restricition loop
                                         if (current_level == info.min_level)
                                             goto endRestrictionLoop;
@@ -238,6 +240,7 @@ endRestrictionLoop:
                                         // started with a zero start vector
 
                                         (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+
                                         std::cout << "Coarse Grid solver." << std::endl;
                                     }
 
@@ -259,7 +262,7 @@ endRestrictionLoop:
                                         // depending on Dirichlet mask passed in from FEAST (see code for details)
                                         //
                                         Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
-                                        std::cout << info.c[current_level] << std::endl;
+                                        //std::cout << info.c[current_level] << std::endl;
                                         std::cout << "Prolongated." << std::endl;
                                         info.temp[current_level] = info.c[current_level].copy();
                                         std::cout << "Prolongation on level " << current_level << " ||c|| " << Norm<vnt_l_two, false, Tag_>::value(info.c[current_level]) << std::endl;
@@ -314,8 +317,10 @@ endRestrictionLoop:
                                         //
                                         DenseVector<Prec_> rhs_c_5(info.rhs[current_level].copy());
                                         (info.d[current_level]) = (Difference<Tag_>::value(rhs_c_5, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy())));
-                                        CONTAINS_NAN(info.d[current_level], "12");
+
                                         std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, false, Tag_>::value(info.d[current_level]) << std::endl;
+                                        std::cout << "-----------------------------------------------------" << std::endl;
+                                        CONTAINS_NAN(info.d[current_level], "12");
                                         // if the maximal level is reached then the MG cycle is finished,
                                         // so exit the MG cycle loop
                                         if (current_level == info.max_level)
