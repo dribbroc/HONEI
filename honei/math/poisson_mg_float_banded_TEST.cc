@@ -166,7 +166,7 @@ class PoissonTestMGBandedQ1Float:
             //result.lock(lm_read_only);
             for(unsigned long i = 0; i < n; i++)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-04);
+                TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-02);
             }
             //result.unlock(lm_read_only);
             DenseVector<float> x(n, float(0));
