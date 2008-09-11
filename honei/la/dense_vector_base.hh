@@ -104,6 +104,9 @@ namespace honei
 
             /// Return a range of our DenseVectorContinuousBase.
             virtual DenseVectorRange<DataType_> range(unsigned long size, unsigned long offset) const = 0;
+
+            /// Return a copy of the Vector.
+            virtual DenseVector<DataType_> copy() const = 0;
     };
 }
 

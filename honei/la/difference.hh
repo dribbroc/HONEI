@@ -348,7 +348,7 @@ namespace honei
         template <typename DT1_, typename DT2_>
         static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const ConstVector<DT2_> & b)
         {
-            CONTEXT("When subtracting DenseVectorBase from DenseVectorBase:");
+            CONTEXT("When subtracting ConstVector from DenseVectorBase:");
 
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
