@@ -16,7 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef LIBSWE_GUARD_SOLVER_SERVER__HH
+#ifndef LIBSWE_GUARD_SOLVER_SERVER_HH
 #define LIBSWE_GUARD_SOLVER_SERVER_HH 1
 #include <honei/la/dense_matrix.hh>
 #include <stdio.h>
@@ -52,7 +52,7 @@ namespace honei
 
                 delete _height_field;
                 _height_field = new DenseMatrix<DataType_>(4, 4, DataType_(0));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(_height_field->begin_elements()),
+                for (typename DenseMatrix<DataType_>::ElementIterator i(_height_field->begin_elements()),
                         i_end(_height_field->end_elements()) ; i != i_end ; ++i)
                 {
                     *i = DataType_(i.index() + 1) / DataType_(1.123);
