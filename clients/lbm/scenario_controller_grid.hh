@@ -132,7 +132,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _s_y = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
                         _b_v = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _dwidth, _dheight, _b_v);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _b_v);
 
                         _solver->set_source(_s_x, _s_y);
                         _solver->do_preprocessing();
@@ -173,7 +173,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _s_y = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
                         _b_v = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _dwidth, _dheight, _b_v);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _b_v);
 
                         _solver->set_source(_s_x, _s_y);
                         _solver->do_preprocessing();
@@ -217,7 +217,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _s_y = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
                         _b_v = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _dwidth, _dheight, _b_v);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _b_v);
 
                         _solver->set_source(_s_x, _s_y);
                         _solver->do_preprocessing();

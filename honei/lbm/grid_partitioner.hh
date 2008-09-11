@@ -211,12 +211,10 @@ namespace honei
             {
                 CONTEXT("When partitioning one single direction:");
                 /// todo bei abbruch dennoch barriers einbauen
-                if (dir_index.size() == 0)
+                if (dir_index.size() == 0 || dir_index[dir_index.size() - 1] < start || dir_index[0] > end)
+                {
                     return;
-                if (dir_index[dir_index.size() - 1] < start)
-                    return;
-                if (dir_index[0] > end)
-                    return;
+                }
 
                 std::vector<unsigned long>::iterator start_it(dir_index.begin());
                 unsigned long start_index(0);

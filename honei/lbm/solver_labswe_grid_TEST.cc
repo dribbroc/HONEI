@@ -73,7 +73,7 @@ class SolverLABSWEGridTest :
             DenseVector<DataType_> s_y(data.h->size(), DataType_(0.));
             DenseVector<DataType_> b(data.h->size(), DataType_(0.));
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., g_w, g_h, &b);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., &b);
 
             solver.set_source(&s_x, &s_y);
             solver.do_preprocessing();
@@ -146,9 +146,9 @@ class SolverLABSWEGridPartitionerTest :
             DenseVector<DataType_> s_y_1(data_list[1].h->size(), DataType_(0.));
             DenseVector<DataType_> b_1(data_list[1].h->size(), DataType_(0.));
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_0(&data_list[0], &info_list[0], 1., 1., 1., g_w, g_h, &b_0);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_0(&data_list[0], &info_list[0], 1., 1., 1., &b_0);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_1(&data_list[1], &info_list[1], 1., 1., 1., g_w, g_h, &b_1);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_1(&data_list[1], &info_list[1], 1., 1., 1., &b_1);
 
             solver_0.set_source(&s_x_0, &s_y_0);
             solver_1.set_source(&s_x_1, &s_y_1);

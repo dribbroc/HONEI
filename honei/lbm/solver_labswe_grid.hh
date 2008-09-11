@@ -112,7 +112,7 @@ namespace honei
                 DenseVector<ResPrec_>* _eq_distribution_7;
                 DenseVector<ResPrec_>* _eq_distribution_8;
 
-                unsigned long _grid_width, _grid_height, _time;
+                unsigned long _time;
 
                 DenseVector<ResPrec_>* _source_x;
                 DenseVector<ResPrec_>* _source_y;
@@ -226,12 +226,10 @@ namespace honei
                 }
 
            public:
-                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, unsigned long gx, unsigned long gy, DenseVector<ResPrec_>* bottom) :
+                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, DenseVector<ResPrec_>* bottom) :
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
-                    _grid_width(gx),
-                    _grid_height(gy),
                     _height(data->h),
                     _bottom(bottom),
                     _u(data->u),
