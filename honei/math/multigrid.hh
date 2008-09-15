@@ -98,6 +98,8 @@ namespace honei
                 template <typename Prec_>
                     static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> info)
                     {
+
+                        bool restriction_started(false);
                         // compute initial defect
                         // when start vector is zero: set d = rhs (we can save one matvec here)
                         // when start vector is not zero: d = rhs - A*x
@@ -135,11 +137,11 @@ namespace honei
                         else
                         {
                             //start cycles
-                            unsigned long iter, current_level = info.max_level;
+                            unsigned long iter, current_level(info.max_level);
                             unsigned long local_cycle[max_levels];
-                            bool restriction_started;
                             for(iter = 1 ; iter <= info.n_max_iter ; ++iter)
                             {
+                                std::cout << iter << "th iteration" <<std::endl;
                                 // set current level to the maximal level
                                 current_level = info.max_level;
 
@@ -149,9 +151,10 @@ namespace honei
                                 {
                                     local_cycle[i] = 1; //Using 1 to code local V cycle
                                 }
-                                //Restriction loop:
+                                //cycle loop
                                 while(true)
                                 {
+                                    //Restriction loop:
                                     // set a flag that the restriction has just started
                                     restriction_started = true;
                                     while(true)
@@ -171,7 +174,7 @@ namespace honei
 
                                             (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7))).copy();
                                             //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7))).copy();
+                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level].copy() , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7))).copy();
 
                                             CONTAINS_NAN(info.c[current_level], "3");
                                             Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
@@ -184,7 +187,7 @@ namespace honei
                                             // the defect correction here)
                                             info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7))).copy();
                                             //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7))).copy();
+                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7))).copy();
                                             CONTAINS_NAN(info.x[current_level], "5");
                                         }
 
@@ -205,10 +208,11 @@ namespace honei
                                         // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                                         // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                                        Restriction<Tag_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask);
+                                        info.d[current_level] = Restriction<Tag_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask);
                                         std::cout << "Restricted." << std::endl;
                                         CONTAINS_NAN(info.d[current_level], "6");
                                         info.rhs[current_level] =(info.d[current_level]).copy();
+
                                         CONTAINS_NAN(info.rhs[current_level], "7");
 
                                         std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
@@ -266,7 +270,7 @@ endRestrictionLoop:
                                         // set homogeneous Dirichlet boundary conditions in the prolongated correction vector
                                         // depending on Dirichlet mask passed in from FEAST (see code for details)
                                         //
-                                        Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                                        info.c[current_level] = Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
                                         //std::cout << info.c[current_level] << std::endl;
                                         std::cout << "Prolongated." << std::endl;
                                         info.temp[current_level] = (info.c[current_level]).copy();
@@ -302,7 +306,7 @@ endRestrictionLoop:
                                         ScaledSum<Tag_>::value((info.x[current_level]), (info.c[current_level]), alpha);
 
                                         info.temp[current_level] = (info.x[current_level]).copy();
-                                        std::cout << "Prolongation on level " << current_level << " ||x|| " << Norm<vnt_l_two, true, Tag_>::value(info.temp[current_level]) << std::endl;
+                                        std::cout << "Prolongation on level " << current_level << " ||x|| " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
                                         CONTAINS_NAN(info.x[current_level], "10");
 
                                         //--------------
@@ -311,7 +315,7 @@ endRestrictionLoop:
                                         //
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
                                         //
-                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level] , (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7))).copy();
+                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7))).copy();
                                         CONTAINS_NAN(info.x[current_level], "11");
                                         info.temp[current_level] = (info.x[current_level]).copy();
 
@@ -385,7 +389,7 @@ endCycleLoop:
                                 }
                             }
                         }
-                        return (info.x[info.max_level]);
+                        return (info.x[info.max_level]).copy();
                     }
 
             public:

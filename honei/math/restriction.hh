@@ -158,6 +158,7 @@ namespace honei
                             }
                         }
                         ApplyDirichletBoundaries<Tag_>::value(coarse, mask);
+                        return coarse;
                     }
         };
 

@@ -121,6 +121,7 @@ namespace honei
                             }
                         }
                         ApplyDirichletBoundaries<Tag_>::value(fine, mask);
+                        return fine;
                     }
         };
 
