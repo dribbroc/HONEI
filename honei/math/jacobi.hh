@@ -88,7 +88,7 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
             {
-                DenseVector<DT1_> temp(Product<Tag_>::value(difference, former_result.copy()));
+                DenseVector<DT1_> temp(Product<Tag_>::value(difference, to_smooth.copy()));
 
                 DenseVector<DT1_> temp2(right_hand_side.copy());
 
@@ -313,7 +313,7 @@ namespace honei
                     }
                     else
                     {
-                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
+                        diag_inverted[i] = omega * (DT1_(1) / std::numeric_limits<DT1_>::epsilon());
                     }
                 }
                 system_matrix.unlock(lm_read_only);
@@ -323,8 +323,10 @@ namespace honei
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag, diag_inverted, difference);
+                    DenseVector<DT1_> ts_c(to_smooth.copy());
                     DenseVector<DT1_> x_c(x.copy());
                     to_smooth = x_c.copy();
+                    x = ts_c.copy();
                 }
                 return x;
             }
