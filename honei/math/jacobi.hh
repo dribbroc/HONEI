@@ -328,7 +328,10 @@ namespace honei
                     to_smooth = x_c.copy();
                     x = ts_c.copy();
                 }
-                return x;
+                if(iter_number % 2 != 0)
+                    return x;
+                else
+                    return to_smooth;
             }
             /**
             * \brief Returns solution of LES with the Jacobi method given by a BandedMatrix and a Vector.
